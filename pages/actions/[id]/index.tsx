@@ -5,6 +5,7 @@ import { GetStaticProps, GetStaticPaths } from 'next'
 import { UserAction } from 'interfaces'
 
 import AddActionModal from "components/action/AddActionModal";
+import ActionComp from "components/action/Action";
 
 type Props = {
   actions: UserAction[]
@@ -16,7 +17,7 @@ function Action({actions}: Props) {
   return (
     <div>
       <h1>Les actions de Kenji Girac</h1>
-      <p>retrouvez le détail des actions de votre bénéficiaire</p>
+      <p>Retrouvez le détail des actions de votre bénéficiaire</p>
 
       <button onClick={() => setShowModal(true)}> Créer une nouvelle action </button>
       <AddActionModal
@@ -28,7 +29,12 @@ function Action({actions}: Props) {
 
       <ul>
         {actions.map((action : UserAction) => (
-          <li key={action.id}>{action.contenu}</li>
+          <li key={action.id}> 
+            <ActionComp 
+              contenu={action.contenu}
+              commentaire={action.commentaire}
+            />
+          </li>
         ))}
       </ul>
 
@@ -36,7 +42,12 @@ function Action({actions}: Props) {
 
       <ul>
         {actions.map((action : UserAction) => (
-          <li key={`done_${action.id}`}>{action.contenu}</li>
+          <li key={`done_${action.id}`}> 
+            <ActionComp 
+              contenu={action.contenu}
+              commentaire={action.commentaire}
+            />
+          </li>
         ))}
       </ul>
       
@@ -62,7 +73,10 @@ export const getStaticProps: GetStaticProps = async () => {
       actions: [
           {id:'1', contenu: 'Prendre contact avec un employeur pour un stage', commentaire: '', isDone : false, creationDate: '', lastUpdate : ''},
           {id:'2', contenu: 'Participer à un atelier CV à la Mission Locale Antenne vieux port de Marseille le 19.08.2021 à 10H', commentaire: 'Commentaire : Se rendre à l’adresse suivante : 19 Rue Vacon, 13001 Marseille et arriver 15 min en avance', isDone : false, creationDate: '', lastUpdate : ''},
-          {id:'3', contenu: 'Compléter le dossier d’aide au permis', commentaire: '', isDone : true, creationDate: '', lastUpdate : ''},
+          {id:'3', contenu: 'Compléter le dossier d’aide au permis', commentaire: '', isDone : false, creationDate: '', lastUpdate : ''},
+          {id:'4', contenu: 'Prendre contact avec un employeur pour un stage', commentaire: '', isDone : true, creationDate: '', lastUpdate : ''},
+          {id:'5', contenu: 'Participer à un atelier CV à la Mission Locale Antenne vieux port de Marseille le 19.08.2021 à 10H', commentaire: 'Commentaire : Se rendre à l’adresse suivante : 19 Rue Vacon, 13001 Marseille et arriver 15 min en avance', isDone : true, creationDate: '', lastUpdate : ''},
+          {id:'6', contenu: 'Compléter le dossier d’aide au permis', commentaire: '', isDone : true, creationDate: '', lastUpdate : ''},
       ],
     } 
   }
