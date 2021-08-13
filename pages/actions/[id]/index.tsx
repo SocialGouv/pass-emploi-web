@@ -1,38 +1,43 @@
 import React, { useState } from "react";
 
-import { GetStaticProps, GetStaticPaths } from 'next'
+import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next'
 
-import { UserAction } from 'interfaces'
+import { UserAction, Jeune } from 'interfaces'
 
 import AddActionModal from "components/action/AddActionModal";
 import ActionComp from "components/action/Action";
 
 type Props = {
-  actions: UserAction[]
+  jeune: Jeune
+  actions_en_cours: UserAction[]
+  actions_terminees: UserAction[]
 }
 
-function Action({actions}: Props) {
+function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   const [showModal, setShowModal] = useState(false);
+  const [actionsEnCours, setActionsEnCours] = useState(actions_en_cours);
 
   return (
     <div>
-      <h1>Les actions de Kenji Girac</h1>
+      <h1>Les actions de {`${jeune.firstName} ${jeune.lastName}`} </h1>
       <p>Retrouvez le détail des actions de votre bénéficiaire</p>
 
       <button onClick={() => setShowModal(true)}> Créer une nouvelle action </button>
+
       <AddActionModal
         onClose={() => setShowModal(false)}
+        onAdd={(newAction: UserAction) => setActionsEnCours(actionsEnCours.concat(newAction)) }
         show={showModal}
       />
         
       <h2>Ses actions en cours</h2>
-
+    
       <ul>
-        {actions.map((action : UserAction) => (
+        {actionsEnCours.map((action : UserAction) => (
           <li key={action.id}> 
             <ActionComp 
-              contenu={action.contenu}
-              commentaire={action.commentaire}
+              content={action.content}
+              comment={action.comment}
             />
           </li>
         ))}
@@ -41,11 +46,11 @@ function Action({actions}: Props) {
       <h2>Ses actions terminées</h2>
 
       <ul>
-        {actions.map((action : UserAction) => (
+        {actions_terminees.map((action : UserAction) => (
           <li key={`done_${action.id}`}> 
             <ActionComp 
-              contenu={action.contenu}
-              commentaire={action.commentaire}
+              content={action.content}
+              comment={action.comment}
             />
           </li>
         ))}
@@ -56,7 +61,7 @@ function Action({actions}: Props) {
   )
 }
 
-// doc https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation
+//doc https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [
@@ -67,18 +72,22 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  return {  
-    props: {
-      name: 'Kenji',
-      actions: [
-          {id:'1', contenu: 'Prendre contact avec un employeur pour un stage', commentaire: '', isDone : false, creationDate: '', lastUpdate : ''},
-          {id:'2', contenu: 'Participer à un atelier CV à la Mission Locale Antenne vieux port de Marseille le 19.08.2021 à 10H', commentaire: 'Commentaire : Se rendre à l’adresse suivante : 19 Rue Vacon, 13001 Marseille et arriver 15 min en avance', isDone : false, creationDate: '', lastUpdate : ''},
-          {id:'3', contenu: 'Compléter le dossier d’aide au permis', commentaire: '', isDone : false, creationDate: '', lastUpdate : ''},
-          {id:'4', contenu: 'Prendre contact avec un employeur pour un stage', commentaire: '', isDone : true, creationDate: '', lastUpdate : ''},
-          {id:'5', contenu: 'Participer à un atelier CV à la Mission Locale Antenne vieux port de Marseille le 19.08.2021 à 10H', commentaire: 'Commentaire : Se rendre à l’adresse suivante : 19 Rue Vacon, 13001 Marseille et arriver 15 min en avance', isDone : true, creationDate: '', lastUpdate : ''},
-          {id:'6', contenu: 'Compléter le dossier d’aide au permis', commentaire: '', isDone : true, creationDate: '', lastUpdate : ''},
-      ],
-    } 
+  const res = await fetch(`http://127.0.0.1:5000/jeunes/test/actions/web`) //TODO use api_endpoint
+
+  const data = await res.json()
+
+  if (!data) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props:  {
+      jeune: data.jeune,
+      actions_en_cours: data.actions.filter((action: UserAction) => !action.isDone), //TODO use UserActionJson
+      actions_terminees: data.actions.filter((action: UserAction)  => action.isDone),
+    } ,
   }
 }
 

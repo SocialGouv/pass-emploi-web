@@ -1,12 +1,16 @@
-// example, to import the interface below do:
-//
-// import { UserAction } from 'path/to/interfaces';
+// TODO create JsonModel
 
 export type UserAction = {
   id: string
-  contenu: string
-  commentaire: string
+  content: string
+  comment: string
   isDone: boolean
   creationDate: string
   lastUpdate: string
+}
+
+export type Jeune = {
+  id: string
+  firstName: string
+  lastName: string
 }
