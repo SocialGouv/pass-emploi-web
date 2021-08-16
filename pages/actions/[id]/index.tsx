@@ -61,18 +61,9 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   )
 }
 
-//doc https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [
-      { params: { id: 'un-id' } },
-    ],
-    fallback: false 
-  };
-}
 
-export const getStaticProps: GetStaticProps = async () => {
-  const res = await fetch(`http://127.0.0.1:5000/jeunes/test/actions/web`) //TODO use api_endpoint
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const res = await fetch(`http://127.0.0.1:5000/jeunes/${query.id}/actions/web`) //TODO use api_endpoint
 
   const data = await res.json()
 
