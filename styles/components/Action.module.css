@@ -1,0 +1,12 @@
+.container {
+	display: flex;
+	background-color: theme('colors.bleu_nuit');
+	padding: 24px 34px 18px 18px;
+	border: 2px solid theme('colors.bleu_nuit');
+	border-radius: 5px;
+	align-items: baseline;
+}
+
+.checkbox {
+	margin-right: 18px;
+}

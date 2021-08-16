@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Modal from "components/Modal";
 import ActionComp from "components/action/Action";
-import { UserAction } from 'interfaces'
 
 type ActionModalProps = {
   show: boolean
@@ -26,9 +25,6 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
       creationDate: now,
       lastUpdate: now,
     }
-
-    //TODO : cors problem
-    //TODO : 500 on POST
 
     fetch('http://127.0.0.1:5000/actions/jeune/test/web', {
         method: 'POST',

@@ -1,3 +1,6 @@
+
+import styles from 'styles/components/Action.module.css'
+
 type ActionProps = {
   content: string
   comment: string
@@ -16,15 +19,16 @@ function EditMode(content: string, comment: string, onContentChange: any, onComm
 
 function NonEditMode(content: string, comment: string) {
   return <span>
-          <p>{content}</p>
-          <p>{comment}</p>
+          <p className='text-lg'>{content}</p>
+          <p className='text-sm'>{comment}</p>
         </span>;
 }
 
 
 const Action = ({ content, comment, onContentChange, onCommentChange, editMode = false }: ActionProps) => {
   return(
-  <div>
+  <div className={`text-blanc ${styles.container}`}>
+    <input type="checkbox" className={styles.checkbox}/>
     {  editMode ?  EditMode(content, comment, onContentChange, onCommentChange) : NonEditMode(content, comment)}
   </div>
     )

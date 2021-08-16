@@ -1,0 +1,90 @@
+/* TODO: font */
+
+.h1 {
+	font-family: Rubik;
+	font-size: 44px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 55px;
+	letter-spacing: -0.3px;
+}
+
+.h2 {
+	font-family: Rubik;
+	font-family: Rubik;
+	font-size: 32px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 40px;
+	letter-spacing: -0.3px;
+}
+
+.h3 {
+	font-family: Rubik;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 30px;
+	letter-spacing: -0.3px;
+}
+
+.h4 {
+	font-family: Rubik;
+	font-size: 22px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 28px;
+	letter-spacing: -0.3px;
+}
+
+.chapo {
+	font-family: Rubik;
+	font-size: 22px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 28px;
+	letter-spacing: -0.3px;
+}
+
+.text-lg {
+	font-family: Rubik;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 27px;
+	letter-spacing: -0.3px;
+}
+
+.text-md {
+	font-family: Rubik;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 24px;
+	letter-spacing: -0.3px;
+}
+
+.text-sm {
+	font-family: Rubik;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 21px;
+	letter-spacing: 0px;
+	text-align: left;
+}
+
+.text-xs {
+	font-family: Rubik;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 18px;
+	letter-spacing: 0px;
+	text-align: left;
+}
+
+/* Exemple d'utilisation du violet
+ .test-tailwind {
+	background-color: theme('colors.violet');
+} */

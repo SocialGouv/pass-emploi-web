@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
-import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next'
+import { GetServerSideProps } from 'next'
 
 import { UserAction, Jeune } from 'interfaces'
 
 import AddActionModal from "components/action/AddActionModal";
 import ActionComp from "components/action/Action";
+
+import styles from 'styles/Actions.module.css'
 
 type Props = {
   jeune: Jeune
@@ -18,11 +20,17 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   const [actionsEnCours, setActionsEnCours] = useState(actions_en_cours);
 
   return (
-    <div>
-      <h1 className="text-bleu_nuit">Les actions de {`${jeune.firstName} ${jeune.lastName}`} </h1>
-      <p>Retrouvez le détail des actions de votre bénéficiaire</p>
+    <div className="page">
+      <div className={styles.titleIntroBtnContainer}>
 
-      <button onClick={() => setShowModal(true)}> Créer une nouvelle action </button>
+        <div className={styles.titleBtnContainer}>
+          <h1 className={`h3 text-bleu_nuit ${styles.title}`}>Les actions de {`${jeune.firstName} ${jeune.lastName}`} </h1>
+          <button onClick={() => setShowModal(true)}> Créer une nouvelle action </button>
+        </div>
+
+        <p className='text-md text-bleu_violet'>Retrouvez le détail des actions de votre bénéficiaire</p>
+      </div>
+      
 
       <AddActionModal
         onClose={() => setShowModal(false)}
@@ -30,11 +38,11 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
         show={showModal}
       />
         
-      <h2>Ses actions en cours</h2>
+      <h2 className={`h3 text-bleu_nuit ${styles.subTitle}`}>Ses actions en cours</h2>
     
       <ul>
         {actionsEnCours.map((action : UserAction) => (
-          <li key={action.id}> 
+          <li key={action.id} className={styles.listItem}> 
             <ActionComp 
               content={action.content}
               comment={action.comment}
@@ -43,7 +51,7 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
         ))}
       </ul>
 
-      <h2>Ses actions terminées</h2>
+      <h2 className='h3 text-bleu_nuit'>Ses actions terminées</h2>
 
       <ul>
         {actions_terminees.map((action : UserAction) => (

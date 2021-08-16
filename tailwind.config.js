@@ -15,8 +15,18 @@ module.exports = {
 			lg: '976px',
 			xl: '1440px',
 		},
+		/**
+		 * Usage
+		 * - CSS : background-color: theme('colors.violet');
+		 * - HTML: <p className="text-violet" >
+		 */
 		colors: {
 			bleu_nuit: '#333866',
+			bleu_violet: '#767BA8',
+			bleu_clair: '#9196C0',
+			bleu_gris: '#C8CBE4',
+			blanc: '#FFFFFF',
+			violet: '#9762DA',
 		},
 		extend: {},
 	},

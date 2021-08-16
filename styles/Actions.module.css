@@ -1,0 +1,21 @@
+.titleIntroBtnContainer {
+	margin-bottom: 45px;
+}
+
+.titleBtnContainer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.title {
+	margin-bottom: 20px;
+}
+
+.subTitle {
+	margin-bottom: 30px;
+}
+
+.listItem {
+	margin-bottom: 20px;
+}
