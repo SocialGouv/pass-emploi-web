@@ -19,7 +19,7 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
 
   return (
     <div>
-      <h1>Les actions de {`${jeune.firstName} ${jeune.lastName}`} </h1>
+      <h1 className="text-bleu_nuit">Les actions de {`${jeune.firstName} ${jeune.lastName}`} </h1>
       <p>Retrouvez le détail des actions de votre bénéficiaire</p>
 
       <button onClick={() => setShowModal(true)}> Créer une nouvelle action </button>
