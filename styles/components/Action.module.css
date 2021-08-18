@@ -1,12 +1,22 @@
 .container {
 	display: flex;
-	background-color: theme('colors.bleu_nuit');
-	padding: 24px 34px 18px 18px;
+	background-color: theme('colors.blanc');
+	padding: 21px 34px 21px 18px;
 	border: 2px solid theme('colors.bleu_nuit');
+	color: theme('colors.bleu_nuit');
 	border-radius: 5px;
 	align-items: baseline;
 }
 
+.isDone {
+	color: theme('colors.blanc');
+	background-color: theme('colors.bleu_nuit');
+}
+
 .checkbox {
 	margin-right: 18px;
+}
+
+.checkbox :hover {
+	cursor: pointer;
 }

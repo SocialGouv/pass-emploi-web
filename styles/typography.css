@@ -1,7 +1,6 @@
 /* TODO: font */
 
 .h1 {
-	font-family: Rubik;
 	font-size: 44px;
 	font-style: normal;
 	font-weight: 500;
@@ -10,8 +9,6 @@
 }
 
 .h2 {
-	font-family: Rubik;
-	font-family: Rubik;
 	font-size: 32px;
 	font-style: normal;
 	font-weight: 500;
@@ -20,7 +17,6 @@
 }
 
 .h3 {
-	font-family: Rubik;
 	font-size: 24px;
 	font-style: normal;
 	font-weight: 500;
@@ -29,7 +25,6 @@
 }
 
 .h4 {
-	font-family: Rubik;
 	font-size: 22px;
 	font-style: normal;
 	font-weight: 500;
@@ -38,7 +33,6 @@
 }
 
 .chapo {
-	font-family: Rubik;
 	font-size: 22px;
 	font-style: normal;
 	font-weight: 500;
@@ -47,7 +41,6 @@
 }
 
 .text-lg {
-	font-family: Rubik;
 	font-size: 18px;
 	font-style: normal;
 	font-weight: 400;
@@ -56,7 +49,6 @@
 }
 
 .text-md {
-	font-family: Rubik;
 	font-size: 16px;
 	font-style: normal;
 	font-weight: 400;
@@ -65,7 +57,6 @@
 }
 
 .text-sm {
-	font-family: Rubik;
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 400;
@@ -75,7 +66,6 @@
 }
 
 .text-xs {
-	font-family: Rubik;
 	font-size: 12px;
 	font-style: normal;
 	font-weight: 400;

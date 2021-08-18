@@ -1,11 +1,6 @@
-/**
- * DEPRECATED
- */
-
 import React, { useState } from "react";
 
 import { GetServerSideProps } from 'next'
-import Router from 'next/router'
 
 import Link from 'next/link'
 
@@ -21,8 +16,8 @@ import styles from 'styles/Actions.module.css'
  * relative path since babel doesn't support alliases, see https://github.com/airbnb/babel-plugin-inline-react-svg/pull/17
  * TODO: workaround for path
  */
-import AddIcon from '../../../assets/icons/add.svg' 
-import BackIcon from '../../../assets/icons/arrow_back.svg' 
+import AddIcon from '../../../../assets/icons/add.svg'
+import BackIcon from '../../../../assets/icons/arrow_back.svg' 
 
 
 type Props = {
@@ -55,7 +50,6 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
 
   const toggleStatusAction = (action: UserAction) => {
 
-    const { id } = Router.query
     const endpoint = process.env.API_ENDPOINT || 'http://127.0.0.1:5000'
 
      fetch(`${endpoint}/actions/${action.id}`, {
@@ -133,23 +127,23 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   )
 }
 
-const patchActionStatus = (actionStatus: boolean) => {
-  const { id } = Router.query
+const patchActionStatus = (action: UserAction) => {
 
   const endpoint = process.env.API_ENDPOINT || 'http://127.0.0.1:5000'
 
-   fetch(`${endpoint}/actions/${id}`, {
+   fetch(`${endpoint}/actions/${action.id}`, {
     method: 'PATCH',
     headers:{'content-type': 'application/json'},
-    body: JSON.stringify({isDone: actionStatus})
+    body: JSON.stringify({isDone: action.isDone})
   }).then(function(response) {
+    console.log('Hi')
     return response;
   });
 }
 
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const res = await fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes/${query.id}/actions`)
+  const res = await fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes/${query.jeune_id}/actions`)
 
   const data = await res.json()
 

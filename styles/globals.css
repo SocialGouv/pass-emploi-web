@@ -23,3 +23,11 @@ a {
 * {
 	box-sizing: border-box;
 }
+
+@font-face {
+	font-family: 'Rubik', sans-serif;
+	src: url('/fonts/Rubik/static/Rubik-Regular.ttf');
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+}

@@ -22,13 +22,18 @@ module.exports = {
 		 */
 		colors: {
 			bleu_nuit: '#333866',
-			bleu_violet: '#767BA8',
-			bleu_clair: '#9196C0',
-			bleu_gris: '#C8CBE4',
+			bleu: '#767BA8',
 			blanc: '#FFFFFF',
+			bleu_gris: '#9196C0',
+			bleu_clair: '#C8CBE4',
+			bleu_blanc: '#F4F5FF',
 			violet: '#9762DA',
 		},
-		extend: {},
+		extend: {
+			fontFamily: {
+				sans: ['Rubik'],
+			},
+		},
 	},
 	variants: {
 		extend: {},

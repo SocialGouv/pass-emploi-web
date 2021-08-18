@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "components/Modal";
-import ActionComp from "components/action/Action";
+import ActionEditMode from "components/action/ActionEditMode";
 
 type ActionModalProps = {
   show: boolean
@@ -26,7 +26,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
       lastUpdate: now,
     }
 
-    fetch('http://127.0.0.1:5000/actions/jeune/test/web', {
+    fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes/test/action`, {
         method: 'POST',
         headers:{'content-type': 'application/json'},
         body: JSON.stringify(newAction)
@@ -46,10 +46,9 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
       show={show}
     >
       <form onSubmit={handleAddClick}>
-        <ActionComp 
+        <ActionEditMode 
               content={content}
               comment={comment}
-              editMode={true}
               onContentChange={(newContent: string) => setContent(newContent)}
               onCommentChange={(newComment: string) => setComment(newComment)}
         />

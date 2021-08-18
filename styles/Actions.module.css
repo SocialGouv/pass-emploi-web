@@ -1,15 +1,24 @@
-.titleIntroBtnContainer {
+.backIntroContainer {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
 	margin-bottom: 45px;
 }
 
-.titleBtnContainer {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
+.backLink {
+	padding: 3px;
+}
+
+.titleIntroContainer {
+	flex: 1 1 auto;
 }
 
 .title {
 	margin-bottom: 20px;
+}
+
+.addIcon {
+	margin-right: 6.6px;
 }
 
 .subTitle {
