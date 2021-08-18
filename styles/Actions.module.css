@@ -1,0 +1,30 @@
+.backIntroContainer {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-bottom: 45px;
+}
+
+.backLink {
+	padding: 3px;
+}
+
+.titleIntroContainer {
+	flex: 1 1 auto;
+}
+
+.title {
+	margin-bottom: 20px;
+}
+
+.addIcon {
+	margin-right: 6.6px;
+}
+
+.subTitle {
+	margin-bottom: 30px;
+}
+
+.listItem {
+	margin-bottom: 20px;
+}

@@ -1,31 +1,29 @@
+import classNames from 'classnames';
+import { UserAction } from 'interfaces'
+
+import styles from 'styles/components/Action.module.css'
+
+
 type ActionProps = {
-  content: string
-  comment: string
-  editMode?: boolean
-  onContentChange?: any
-  onCommentChange?: any
+  action: UserAction,
+  toggleStatus: any,
 }
 
-function EditMode(content: string, comment: string, onContentChange: any, onCommentChange: any){
+const Action = ( {action, toggleStatus}: ActionProps) => {
 
-  return <span>
-          <input type="text" name="content" onChange={(event) => onContentChange(event.target.value)} value={content} required /> 
-          <input type="text" name="comment" onChange={(event) => onCommentChange(event.target.value)} value={comment} /> 
-        </span>;
-}
+  const handleCheckChange = () => {
+    toggleStatus(action)
+  };
 
-function NonEditMode(content: string, comment: string) {
-  return <span>
-          <p>{content}</p>
-          <p>{comment}</p>
-        </span>;
-}
+  var containerStyles = classNames(styles.container, action.isDone ? styles.isDone : '');
 
-
-const Action = ({ content, comment, onContentChange, onCommentChange, editMode = false }: ActionProps) => {
   return(
-  <div>
-    {  editMode ?  EditMode(content, comment, onContentChange, onCommentChange) : NonEditMode(content, comment)}
+  <div className={containerStyles}>
+    <input type="checkbox" className={styles.checkbox} onChange={handleCheckChange} defaultChecked={action.isDone}/>
+    <div>
+      <p className='text-lg'>{action.content}</p>
+      <p className='text-sm'>{action.comment}</p>
+    </div>
   </div>
     )
 };
