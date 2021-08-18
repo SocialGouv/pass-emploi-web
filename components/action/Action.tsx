@@ -19,11 +19,12 @@ const Action = ( {action, toggleStatus}: ActionProps) => {
 
   return(
   <div className={containerStyles}>
-    <input type="checkbox" className={styles.checkbox} onChange={handleCheckChange} defaultChecked={action.isDone}/>
-    <div>
+    <input type="checkbox" id="checkbox" onChange={handleCheckChange} defaultChecked={action.isDone} aria-checked={action.isDone}/>
+    <label htmlFor="checkbox"><span></span>
       <p className='text-lg'>{action.content}</p>
       <p className='text-sm'>{action.comment}</p>
-    </div>
+    </label>
+    
   </div>
     )
 };

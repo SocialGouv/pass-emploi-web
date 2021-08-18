@@ -49,27 +49,22 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   }
 
   const toggleStatusAction = (action: UserAction) => {
+    action.isDone = !action.isDone
 
-    const endpoint = process.env.API_ENDPOINT || 'http://127.0.0.1:5000'
+    patchActionStatus(action).then(function() {
+        if(action.isDone){
+          addToActionTerminees(action)
+          deleteFromActionEnCours(action)
+        }else{
+          addToActionEnCours(action)
+          deleteFromActionTerminees(action)
+        }
+        
+      }).catch(function(error) {
+        console.error(error.message);
+        action.isDone = !action.isDone
 
-     fetch(`${endpoint}/actions/${action.id}`, {
-      method: 'PATCH',
-      headers:{'content-type': 'application/json'},
-      body: JSON.stringify({isDone: !action.isDone})
-    }).then(function() {
-      action.isDone = !action.isDone
-
-      if(action.isDone){
-        addToActionTerminees(action)
-        deleteFromActionEnCours(action)
-      }else{
-        addToActionEnCours(action)
-        deleteFromActionTerminees(action)
-      }
-      
-    }).catch(function(error) {
-      console.error(error.message);
-    });
+      });
   };
 
 
@@ -85,10 +80,12 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
               <BackIcon role="img" focusable="false" aria-label="Retour sur la page d'acceuil"/> 
             </a>
         </Link>
+
         <div className={styles.titleIntroContainer}>
           <h1 className={`h2 text-bleu_nuit ${styles.title}`}>Les actions de {`${jeune.firstName} ${jeune.lastName}`} </h1>
           <p className='text-md text-bleu'>Retrouvez le détail des actions de votre bénéficiaire</p>
         </div>
+
         <Button onClick={() => setShowModal(true)}> 
             <AddIcon focusable="false" aria-hidden="true" className={styles.addIcon}/>
               Créer une nouvelle action
@@ -101,9 +98,9 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
         onAdd={(newAction: UserAction) => addToActionEnCours(newAction) }
         show={showModal}
       />
+
         
       <h2 className={`h3 text-bleu_nuit ${styles.subTitle}`}>Ses actions en cours</h2>
-    
       <ul>
         {actionsEnCours.map((action : UserAction) => (
           <li key={action.id} className={styles.listItem}> 
@@ -113,7 +110,6 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
       </ul>
 
       <h2 className={`h3 text-bleu_nuit ${styles.subTitle}`}>Ses actions terminées</h2>
-
       <ul>
         {actionsTerminees.map((action : UserAction) => (
           <li key={`done_${action.id}`} className={styles.listItem}> 
@@ -127,18 +123,17 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   )
 }
 
-const patchActionStatus = (action: UserAction) => {
+const patchActionStatus = async (action: UserAction) => {
 
   const endpoint = process.env.API_ENDPOINT || 'http://127.0.0.1:5000'
 
-   fetch(`${endpoint}/actions/${action.id}`, {
+   const response = fetch(`${endpoint}/actions/${action.id}`, {
     method: 'PATCH',
     headers:{'content-type': 'application/json'},
     body: JSON.stringify({isDone: action.isDone})
-  }).then(function(response) {
-    console.log('Hi')
-    return response;
-  });
+   })
+
+   return response
 }
 
 

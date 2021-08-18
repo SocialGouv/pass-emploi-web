@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 
       <main >
         <h1 className='h1'>Titre principal</h1>
-        <Link href="/actions/un-id">
+        <Link href="/jeunes/kendji/actions">
           <a>Actions de Kendji</a>
         </Link>
       </main>
