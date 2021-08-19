@@ -1,10 +1,12 @@
-// TODO : 
-// supprimer les any 
-// cleaner le css
 
 import React, { useEffect, useState } from "react";
 var ReactDOM = require('react-dom')
-import styled from "styled-components";
+
+
+import CloseIcon from '../assets/icons/close.svg' 
+
+import styles from 'styles/components/Modal.module.css'
+
 
 type ModalProps = {
   title: string
@@ -26,17 +28,17 @@ const Modal = ({ show, onClose, children, title }: ModalProps) => {
   };
 
   const modalContent = show ? (
-    <StyledModalOverlay>
-      <StyledModal>
-        <StyledModalHeader>
-          {title && <StyledModalTitle>{title}</StyledModalTitle>}
+    <div className={styles.modalOverlay}>
+      <div className={styles.modal}>
+        <div className={`text-blanc ${styles.modalHeader}`}>
+          {title && <div className={`h4-semi ${styles.modalTitle}`}>{title}</div>}
           <a href="#" onClick={handleCloseClick}>
-            x
+            <CloseIcon role="img" focusable="false" aria-label="Fermer la modal"/> 
           </a>
-        </StyledModalHeader>
-        <StyledModalBody>{children}</StyledModalBody>
-      </StyledModal>
-    </StyledModalOverlay>
+        </div>
+        <div className={styles.modalBody}>{children}</div>
+      </div>
+    </div>
   ) : null;
 
   if (isBrowser) {
@@ -48,39 +50,5 @@ const Modal = ({ show, onClose, children, title }: ModalProps) => {
     return null;
   }
 };
-
-const StyledModalOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-`;
-
-const StyledModal = styled.div`
-  background: white;
-  width: 791px;
-  height: 697px;
-  border-radius: 8px;
-  padding: 20px;
-`;
-
-const StyledModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 25px;
-`;
-
-const StyledModalTitle = styled.div`
-  padding-top: 10px;
-`;
-
-const StyledModalBody = styled.div`
-  padding-top: 10px;
-`;
 
 export default Modal;

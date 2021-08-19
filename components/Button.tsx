@@ -2,13 +2,14 @@ import styles from 'styles/components/Button.module.css'
 
 
 type ButtonProps = {
-  onClick: React.MouseEventHandler<HTMLButtonElement>,
+  onClick?: React.MouseEventHandler<HTMLButtonElement>,
   children?:  React.ReactNode,
+  type?: any
 }
 
-const Button = ({onClick, children}: ButtonProps) => {
+const Button = ({onClick, children, type =  'button'}: ButtonProps) => {
   return (
-    <button onClick={onClick} className={`text-md ${styles.buttonBlue}`}> {children} </button>
+    <button onClick={onClick} className={`text-md ${styles.buttonBlue}`} type={type}> {children} </button>
   )
 }
 

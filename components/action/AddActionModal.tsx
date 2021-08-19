@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+
+import { UserAction } from 'interfaces'
+
 import Modal from "components/Modal";
-import ActionEditMode from "components/action/ActionEditMode";
+import Button from "components/Button";
+import ActionComponent from "components/action/Action";
 
 type ActionModalProps = {
   show: boolean
@@ -8,32 +12,49 @@ type ActionModalProps = {
   onAdd: any
 }
 
-const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
-  const [content, setContent] = useState('');
-  const [comment, setComment] = useState('');
+const now = new Date()
 
+const actionsPredefinies : UserAction[] = [
+  {
+    id: '1',
+    content: 'Un contenu',
+    comment: 'Un commentaire',
+    isDone: false,
+    creationDate: now,
+    lastUpdate: now,
+  },
+  {
+    id: '2',
+    content: 'Un contenu 2',
+    comment: 'Un commentaire 2',
+    isDone: false,
+    creationDate: now,
+    lastUpdate: now,
+  }
+]
+
+const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
+  const now = new Date()
+
+  let actionPredefinie : UserAction = {
+    id: '',
+    content: 'Un contenu',
+    comment: 'Un commentaire',
+    isDone: false,
+    creationDate: now,
+    lastUpdate: now,
+  }
 
   const handleAddClick = (event: any) => {
     event.preventDefault();
 
-    const now = new Date()
-    let newAction = {
-      id: '',
-      content,
-      comment,
-      isDone: false,
-      creationDate: now,
-      lastUpdate: now,
-    }
-
     fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes/test/action`, {
         method: 'POST',
         headers:{'content-type': 'application/json'},
-        body: JSON.stringify(newAction)
+        body: JSON.stringify(actionPredefinie)
       }).then(function(response) {
-        onAdd(newAction);
+        onAdd(actionPredefinie);
         onClose()
-        console.log(response)
         return response.json();
       });
   };
@@ -46,14 +67,15 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
       show={show}
     >
       <form onSubmit={handleAddClick}>
-        <ActionEditMode 
-              content={content}
-              comment={comment}
-              onContentChange={(newContent: string) => setContent(newContent)}
-              onCommentChange={(newComment: string) => setComment(newComment)}
-        />
 
-        <input type="submit" value="AJOUTER" /> 
+          {actionsPredefinies.map((action: UserAction) => (
+            <ActionComponent action={action} key={action.id}/>
+          ))}
+        
+        <Button type="submit"> 
+          AJOUTER
+        </Button>
+
       </form>
     </Modal>
     )

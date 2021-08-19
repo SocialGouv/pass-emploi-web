@@ -1,3 +1,16 @@
+/**
+ * Usage : 
+ * 
+ * const [content, setContent] = useState('');
+ * const [comment, setComment] = useState('');
+ * 
+ * <ActionEditMode 
+              content={content}
+              comment={comment}
+              onContentChange={(newContent: string) => setContent(newContent)}
+              onCommentChange={(newComment: string) => setComment(newComment)}
+        />
+ */
 
 import styles from 'styles/components/Action.module.css'
 

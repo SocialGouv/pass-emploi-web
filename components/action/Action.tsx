@@ -6,7 +6,7 @@ import styles from 'styles/components/Action.module.css'
 
 type ActionProps = {
   action: UserAction,
-  toggleStatus: any,
+  toggleStatus?: any,
 }
 
 const Action = ( {action, toggleStatus}: ActionProps) => {
@@ -19,10 +19,13 @@ const Action = ( {action, toggleStatus}: ActionProps) => {
 
   return(
   <div className={containerStyles}>
-    <input type="checkbox" id="checkbox" onChange={handleCheckChange} defaultChecked={action.isDone} aria-checked={action.isDone}/>
-    <label htmlFor="checkbox"><span></span>
+    <input type="checkbox" id={action.id} onChange={handleCheckChange} defaultChecked={action.isDone} aria-checked={action.isDone}/>
+    <label htmlFor={action.id} ><span></span>
+    <div>
       <p className='text-lg'>{action.content}</p>
       <p className='text-sm'>{action.comment}</p>
+    </div>
+      
     </label>
     
   </div>

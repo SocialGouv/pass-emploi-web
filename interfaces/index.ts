@@ -5,8 +5,8 @@ export type UserAction = {
   content: string
   comment: string
   isDone: boolean
-  creationDate: string
-  lastUpdate: string
+  creationDate: Date
+  lastUpdate: Date
 }
 
 export type Jeune = {

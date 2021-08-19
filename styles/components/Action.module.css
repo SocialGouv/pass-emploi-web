@@ -1,7 +1,7 @@
 .container {
 	display: flex;
 	background-color: theme('colors.blanc');
-	padding: 21px 34px 21px 18px;
+	padding: 21px 18px;
 	border: 2px solid theme('colors.bleu_nuit');
 	color: theme('colors.bleu_nuit');
 	border-radius: 5px;
@@ -17,6 +17,8 @@
 .container input[type='checkbox'] {
 	opacity: 0;
 	position: absolute;
+	width: 1em;
+	height: 1em;
 	left: 12px;
 	bottom: 28px;
 	cursor: pointer;
