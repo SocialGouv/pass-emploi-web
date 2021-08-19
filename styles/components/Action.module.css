@@ -14,6 +14,7 @@
 	background-color: theme('colors.bleu_nuit');
 }
 
+.container input[type='radio'],
 .container input[type='checkbox'] {
 	opacity: 0;
 	position: absolute;
@@ -24,10 +25,13 @@
 	cursor: pointer;
 }
 
+.container input[type='radio'] + label,
 .container input[type='checkbox'] + label {
 	display: flex;
+	/* flex: 1 20 auto; */
 }
 
+.container input[type='radio'] + label span,
 .container input[type='checkbox'] + label span {
 	display: inline-block;
 	width: 20px;
@@ -37,6 +41,7 @@
 	background: no-repeat url(../../assets/icons/radio_button_unchecked.svg);
 }
 
+.container input[type='radio']:checked + label span,
 .container input[type='checkbox']:checked + label span {
 	background: no-repeat url(../../assets/icons/checkbox_checked.svg);
 }

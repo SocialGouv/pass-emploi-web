@@ -14,7 +14,7 @@
 .modal {
 	background: white;
 	width: 791px;
-	height: 697px;
+	height: 664px;
 	border-radius: 8px;
 }
 
@@ -27,6 +27,6 @@
 }
 
 .modalBody {
-	padding-top: 10px;
-	padding: 20px;
+	/* padding-top: 10px; */
+	padding: 30px;
 }
