@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 import { GetServerSideProps } from 'next'
-
 import Link from 'next/link'
+import Router from 'next/router'
 
 import { UserAction, Jeune } from 'interfaces'
 
@@ -96,7 +96,7 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
 
         <AddActionModal
           onClose={() => setShowModal(false)}
-          onAdd={(newAction: UserAction) => addToActionEnCours(newAction) }
+          onAdd={(newAction: UserAction) => { addToActionEnCours(newAction); Router.reload() } } //reload, since we dont have the id after add
           show={showModal}
         />
 
