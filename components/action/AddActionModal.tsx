@@ -18,10 +18,11 @@ type ActionModalProps = {
 
 const now = new Date()
 
+//TODO move to data 
 const actionsPredefinies : UserAction[] = [
   {
     id: 'no-com-1',
-    content: 'Un contenu',
+    content: 'Mettre à jour son CV',
     comment: '',
     isDone: false,
     creationDate: now,
@@ -29,7 +30,7 @@ const actionsPredefinies : UserAction[] = [
   },
   {
     id: 'no-com-2',
-    content: 'Un contenu 2',
+    content: 'Contacter la Mission Locale',
     comment: '',
     isDone: false,
     creationDate: now,
@@ -37,7 +38,7 @@ const actionsPredefinies : UserAction[] = [
   },
   {
     id: 'no-com-3',
-    content: 'Un contenu 3',
+    content: 'Explorer le site 1jeune1solution',
     comment: '',
     isDone: false,
     creationDate: now,
@@ -45,7 +46,7 @@ const actionsPredefinies : UserAction[] = [
   },
   {
     id: 'no-com-4',
-    content: 'Un contenu 4',
+    content: "Trouver un employeur pour une période d'immersion",
     comment: '',
     isDone: false,
     creationDate: now,
@@ -53,48 +54,48 @@ const actionsPredefinies : UserAction[] = [
   },
   {
     id: '1',
-    content: 'Un contenu',
-    comment: 'Un commentaire',
+    content: 'Remplir son profil de compétence',
+    comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
   },
   {
     id: '2',
-    content: 'Un contenu 2',
-    comment: 'Un commentaire 2',
+    content: 'Créer sa carte de visite',
+    comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
   },
   {
     id: '3',
-    content: 'Un contenu 3',
-    comment: 'Un commentaire 3',
+    content: 'Mettre son CV en ligne',
+    comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
   },
   {
     id: '4',
-    content: 'Un contenu 4',
-    comment: 'Un commentaire 4',
+    content: "Candidater aux offres d'emploi",
+    comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
   },
   {
     id: '5',
-    content: 'Un contenu 5',
-    comment: 'Un commentaire 5',
+    content: "Consulter l'emploi-store",
+    comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
   },
   {
     id: '6',
-    content: 'Un contenu 6',
-    comment: 'Un commentaire 6',
+    content: 'Effectuer une enquête métier',
+    comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
@@ -125,7 +126,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const handleAddClick = (event: any) => {
     event.preventDefault();
 
-    if(selectedAction.id === ''){
+    if(noSelectedAction()){
       return
     }
 
@@ -145,6 +146,8 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         onClose()
       });
   };
+
+  const noSelectedAction = () => Boolean(selectedAction.id === '')
 
 
   const [selectedAction, setSelectedAction] = useState(defaultAction);
@@ -179,7 +182,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         </div>
 
         <div className={styles.submitContainer}>
-          <Button type="submit"> 
+          <Button type="submit" disabled={noSelectedAction()}> 
             AJOUTER
           </Button>
         </div>

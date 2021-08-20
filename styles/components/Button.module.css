@@ -25,3 +25,12 @@
 	color: theme('colors.bleu_nuit');
 	border: 0.1rem solid theme('colors.bleu_nuit');
 }
+
+.buttonBlue[disabled] {
+	background-color: theme('colors.bleu_gris');
+	cursor: not-allowed;
+}
+
+.buttonBlue[disabled]:hover {
+	color: theme('colors.blanc');
+}
