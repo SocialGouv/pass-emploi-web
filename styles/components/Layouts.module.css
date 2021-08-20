@@ -28,4 +28,5 @@
 	margin-left: 107px;
 	position: relative;
 	padding: 45px 58px;
+	min-height: 100vh;
 }
