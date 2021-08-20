@@ -1,0 +1,8 @@
+.header {
+	display: flex;
+	background: theme('colors.bleu_blanc');
+	color: theme('colors.bleu_nuit');
+	justify-content: space-between;
+	padding: 15px 20px;
+	align-items: center;
+}
