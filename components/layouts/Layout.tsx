@@ -2,9 +2,11 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
-//  import Navbar from './navbar'
  import Header from './Header'
- 
+ import Sidebar from './Sidebar'
+
+
+ import styles from 'styles/components/Layouts.module.css'
 
 type LayoutProps = {
   children: any
@@ -13,9 +15,11 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
    return (
      <>
-       <Header />
-       <main>{children}</main>
-       {/* <Footer /> */}
+      <Header />
+      <div style={{position: "relative"}}>
+          <Sidebar />
+          <main className={styles.page} role="main">{children}</main>
+      </div>
      </>
    )
  }

@@ -10,11 +10,6 @@ body {
 		Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-.page {
-	position: relative;
-	padding: 45px 58px;
-}
-
 a {
 	color: inherit;
 	text-decoration: none;

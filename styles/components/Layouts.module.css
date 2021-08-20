@@ -1,8 +1,31 @@
 .header {
 	display: flex;
-	background: theme('colors.bleu_blanc');
+	background-color: theme('colors.bleu_blanc');
 	color: theme('colors.bleu_nuit');
 	justify-content: space-between;
 	padding: 15px 20px;
 	align-items: center;
+}
+
+.sidebar {
+	height: 100%;
+	width: 107px;
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	background-color: theme('colors.bleu_nuit');
+	overflow-x: hidden; /* Disable horizontal scroll */
+	padding-top: 20px;
+	text-align: center;
+}
+
+.sidebar svg {
+	margin: auto;
+}
+
+.page {
+	margin-left: 107px;
+	position: relative;
+	padding: 45px 58px;
 }

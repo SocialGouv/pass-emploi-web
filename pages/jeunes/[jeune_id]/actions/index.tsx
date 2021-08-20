@@ -73,8 +73,8 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   const [actionsTerminees, setActionsTerminees] = useState(actions_terminees);
 
   return (
-    <div>
-      <div className="page">
+    <>
+      <div>
         <div className={styles.backIntroContainer}>
           <Link href="/" passHref>
               <a className={styles.backLink}> 
@@ -120,7 +120,7 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
       </ul>
       </div>
       <div id="modal-root"></div> {/* TODO move to default Layout */} 
-    </div>
+    </>
   )
 }
 
