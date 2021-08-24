@@ -74,7 +74,6 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
 
   return (
     <>
-      <div>
         <div className={styles.backIntroContainer}>
           <Link href="/" passHref>
               <a className={styles.backLink}> 
@@ -118,8 +117,6 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
           </li>
         ))}
       </ul>
-      </div>
-      <div id="modal-root"></div> {/* TODO move to default Layout */} 
     </>
   )
 }
