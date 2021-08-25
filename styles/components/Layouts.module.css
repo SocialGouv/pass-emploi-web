@@ -1,3 +1,11 @@
+.page {
+	margin-left: 107px; /* sidebar width */
+	margin-right: 400px; /* chatRoom width */
+	position: relative;
+	padding: 45px 58px;
+	min-height: 100vh;
+}
+
 .header {
 	display: flex;
 	background-color: theme('colors.bleu_blanc');
@@ -24,9 +32,49 @@
 	margin: auto;
 }
 
-.page {
-	margin-left: 107px;
-	position: relative;
-	padding: 45px 58px;
-	min-height: 100vh;
+/* ChatRoom*/
+
+.chatRoom {
+	height: 100%;
+	width: 400px;
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	right: 0;
+	/* background-color: theme('colors.bleu_blanc'); */
+	padding-top: 20px;
+}
+
+.discussionTitle {
+	color: theme('colors.bleu_nuit');
+	margin-bottom: 60px;
+}
+
+.message {
+	width: max-content;
+	margin: 0 0 20px auto;
+}
+
+.sentMessage {
+	text-align: right;
+	color: theme('colors.bleu_nuit');
+	background-color: theme('colors.bleu_blanc');
+	padding: 16px;
+	border-radius: 16px;
+	overflow-wrap: break-word;
+	width: max-content;
+	margin: 0 0 20px auto;
+	max-width: 350px;
+}
+
+.receivedMessage {
+	text-align: left;
+	color: theme('colors.blanc');
+	background-color: theme('colors.bleu_nuit');
+	padding: 16px;
+	border-radius: 16px;
+	overflow-wrap: break-word;
+	width: max-content;
+	margin-bottom: 20px;
+	max-width: 350px;
 }

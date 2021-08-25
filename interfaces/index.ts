@@ -13,4 +13,5 @@ export type Jeune = {
   id: string
   firstName: string
   lastName: string
+  chatId?: string
 }

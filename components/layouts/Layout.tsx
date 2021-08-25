@@ -2,9 +2,11 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
+ import Head from 'next/head'
+
  import Header from './Header'
  import Sidebar from './Sidebar'
- import Head from 'next/head'
+ import ChatBox from './ChatRoom'
 
 
  import styles from 'styles/components/Layouts.module.css'
@@ -31,7 +33,8 @@ export default function Layout({ children }: LayoutProps) {
       <div style={{position: "relative"}}>
           <Sidebar />
           <main className={styles.page} role="main">{children}</main>
-          <div id="modal-root"></div> 
+          <div id="modal-root"></div>
+          <ChatBox /> 
       </div>
      </>
    )
