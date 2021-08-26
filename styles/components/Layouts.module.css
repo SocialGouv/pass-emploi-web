@@ -5,6 +5,7 @@
 	justify-content: space-between;
 	padding: 15px 20px;
 	align-items: center;
+	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
 }
 
 .container {
@@ -26,6 +27,7 @@
 	overflow-x: hidden; /* Disable horizontal scroll */
 	padding-top: 20px;
 	text-align: center;
+	min-height: 100vh;
 }
 
 .sidebar svg {
@@ -36,21 +38,41 @@
 
 .chatRoom {
 	height: 100%;
-	width: 400px;
+	width: 500px;
 	margin-left: auto;
 	z-index: 1;
 	padding-top: 20px;
 	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
 }
 
-.discussionTitle {
-	color: theme('colors.bleu_nuit');
-	margin-bottom: 60px;
+.conversationTitleConainer {
+	display: flex;
+	align-items: baseline;
 }
 
-.message {
-	width: max-content;
-	margin: 0 0 20px auto;
+.conversationTitleConainer button {
+	margin-left: 46px;
+	margin-right: 30px;
+}
+
+.conversationTitleConainer h2 {
+	color: theme('colors.bleu_nuit');
+	margin-bottom: 30px;
+}
+
+.messages {
+	height: 800px;
+	overflow: scroll;
+	padding: 16px 16px;
+}
+
+.messages li {
+	margin-bottom: 20px;
+}
+
+.day {
+	text-align: center;
+	margin-bottom: 10px;
 }
 
 .sentMessage {
@@ -61,8 +83,8 @@
 	border-radius: 16px;
 	overflow-wrap: break-word;
 	width: max-content;
-	margin: 0 0 20px auto;
-	max-width: 350px;
+	margin: 0 0 5px auto;
+	max-width: 400px;
 }
 
 .receivedMessage {
@@ -73,6 +95,19 @@
 	border-radius: 16px;
 	overflow-wrap: break-word;
 	width: max-content;
-	margin-bottom: 20px;
-	max-width: 350px;
+	margin-bottom: 5px;
+	max-width: 400px;
+}
+
+.form {
+	margin: 11px 24px;
+	display: flex;
+}
+
+.form input {
+	flex-grow: 1;
+	padding: 13px 16px;
+	background-color: theme('colors.bleu_blanc');
+	border-radius: 34px;
+	margin-right: 24px;
 }

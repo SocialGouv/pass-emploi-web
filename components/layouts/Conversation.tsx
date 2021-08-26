@@ -1,28 +1,56 @@
-import styles from 'styles/components/Layouts.module.css'
-
-
 import { useEffect, useRef, useState } from "react";
+
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+
 import { Jeune } from 'interfaces';
 
-type DiscussionProps = {
+import styles from 'styles/components/Layouts.module.css'
+
+import SendIcon from '../../assets/icons/btn_send.svg'
+import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
+
+type ConversationProps = {
   db: any
   jeune: Jeune
 }
 
+//TODO: move to models
+
 type Message = {
   id: string
   content: string
-  creationDate: Date
+  creationDate: any
   sentBy: string
 }
 
-export default function Discussion({db, jeune}: DiscussionProps) {
+type DailyMessages = {
+  date: Date,
+  messages: Message[]
+}
+
+//TODO: move to utils
+const datesAreOnSameDay = (firstDate: Date, secondDate: Date) =>
+    firstDate.getFullYear() === secondDate.getFullYear() &&
+    firstDate.getMonth() === secondDate.getMonth() &&
+    firstDate.getDate() === secondDate.getDate();
+
+const formatDayDate = (date: Date) => 
+{
+  const day = (date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())
+  const month = (date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))
+  const year = date.getFullYear()
+
+  return `${day}/${month}/${year}`
+}
+
+const formatHourMinuteDate = (date: Date) => `${date.getHours()}:${date.getMinutes()}`
+
+export default function Conversation({db, jeune}: ConversationProps) {
 
   const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([]);
 
   const dummySpace = useRef<HTMLElement>(null);
 
@@ -50,49 +78,86 @@ export default function Discussion({db, jeune}: DiscussionProps) {
   useEffect(() => {
     db.collection('chat').doc(jeune.chatId).collection('messages')
       .orderBy('creationDate')
-      .limit(100)
       .onSnapshot((querySnapShot: any) => {
         // get all documents from collection with id
         const data = querySnapShot.docs.map((doc: any) => ({
           ...doc.data(),
           id: doc.id,
         }));
+//TEST SANDRA
+        let currentMessages: Message[] = [...data]
+        
+        let tmpdate:Date = currentMessages[0].creationDate.toDate()
+        let tmpDateMessages: DailyMessages[] = [{date:tmpdate, messages:[]}]
+        let tmpDateMessagesIndex = 0
 
-        //   update state
-        setMessages(data);
+        currentMessages.forEach((message: Message, index: number) => {
+          if(datesAreOnSameDay(tmpdate, message.creationDate.toDate())){
+            tmpDateMessages[tmpDateMessagesIndex].messages.push(message)
+          }else{
+            tmpdate = message.creationDate.toDate()
+            tmpDateMessagesIndex++
+            tmpDateMessages.push({date:tmpdate, messages:[]})
+          }
+        });
+
+        setDailyMessages(tmpDateMessages)
+//done test
+
       });
   }, [db, jeune.chatId]);
 
    return (
      <>
-     <h2 className={`h2-semi ${styles.discussionTitle}`}>Discuter avec {jeune.firstName}</h2>
 
-     <ul>
-       {console.log(messages)}
-        {messages.map((message: Message) => (
+      <div className={styles.conversationTitleConainer}>
+        <button>
+          <ChevronLeftIcon role="img" focusable="false" aria-label="Retour sur ma messagerie"/>
+        </button>
+        <h2 className='h2-semi'>Discuter avec {jeune.firstName}</h2>
+      </div>
 
-          
-          <li key={message.id} className={message.sentBy === 'conseiller' ? styles.sentMessage : styles.receivedMessage}>
-              <p className='text-md'>{message.content}</p>
+      <ul className={styles.messages}>
+        {dailyMessages.map((dailyMessage: DailyMessages) => (
+          <li key={dailyMessage.date.getTime()} >
+
+            <div className={`text-md text-bleu ${styles.day}`}>
+              Le {formatDayDate(dailyMessage.date)}
+            </div>
+
+            <ul>
+              {dailyMessage.messages.map((message: Message) => (
+                <li key={message.id} >
+                    <p className={`text-md ${message.sentBy === 'conseiller' ? styles.sentMessage : styles.receivedMessage}`}>
+                      {message.content}
+                    </p>
+                    <p className='text-xs text-bleu_nuit' style={{textAlign: message.sentBy === 'conseiller' ? 'right':'left'}}>
+                      à {formatHourMinuteDate(message.creationDate.toDate())}
+                    </p>
+                </li>
+              ))}
+            </ul>
+            
           </li>
         ))}
       </ul>
 
-
       <section ref={dummySpace} />
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <input
           type="text"
           value={newMessage}
+          className='text-md text-bleu_nuit'
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Écrivez votre message ici..."
         />
 
         <button type="submit" disabled={!newMessage}>
-          Send
+          <SendIcon aria-hidden="true" focusable="false" />
         </button>
       </form>
+    
      </>
    )
  }
