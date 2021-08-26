@@ -1,11 +1,3 @@
-.page {
-	margin-left: 107px; /* sidebar width */
-	margin-right: 400px; /* chatRoom width */
-	position: relative;
-	padding: 45px 58px;
-	min-height: 100vh;
-}
-
 .header {
 	display: flex;
 	background-color: theme('colors.bleu_blanc');
@@ -15,13 +7,21 @@
 	align-items: center;
 }
 
+.container {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.page {
+	flex-grow: 1;
+	position: relative;
+	padding: 45px 58px;
+}
+
 .sidebar {
-	height: 100%;
 	width: 107px;
-	position: absolute;
 	z-index: 1;
-	top: 0;
-	left: 0;
 	background-color: theme('colors.bleu_nuit');
 	overflow-x: hidden; /* Disable horizontal scroll */
 	padding-top: 20px;
@@ -37,12 +37,10 @@
 .chatRoom {
 	height: 100%;
 	width: 400px;
-	position: absolute;
+	margin-left: auto;
 	z-index: 1;
-	top: 0;
-	right: 0;
-	/* background-color: theme('colors.bleu_blanc'); */
 	padding-top: 20px;
+	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
 }
 
 .discussionTitle {

@@ -30,7 +30,7 @@ export default function Layout({ children }: LayoutProps) {
          />
      </Head>
       <Header />
-      <div style={{position: "relative"}}>
+      <div className={styles.container}>
           <Sidebar />
           <main className={styles.page} role="main">{children}</main>
           <div id="modal-root"></div>
