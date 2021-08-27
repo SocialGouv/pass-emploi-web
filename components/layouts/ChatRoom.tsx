@@ -12,7 +12,7 @@ export default function ChatBox({}: ChatBoxProps) {
     id:'fake-id',
     firstName: 'Kenji',
     lastName: 'Jirac',
-    chatId: 'Yjj6wxbiCnQcptcJD6zN',
+    chatId: 'oaxtOWlJqhMpd2KTQDqy',
   }
 
 

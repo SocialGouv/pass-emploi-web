@@ -4,7 +4,8 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 
-import { Jeune } from 'interfaces';
+import { Jeune, Message, DailyMessages, ListDailyMessages } from 'interfaces';
+import { formatDayDate, formatHourMinuteDate } from 'utils/date';
 
 import styles from 'styles/components/Layouts.module.css'
 
@@ -16,37 +17,6 @@ type ConversationProps = {
   jeune: Jeune
 }
 
-//TODO: move to models
-
-type Message = {
-  id: string
-  content: string
-  creationDate: any
-  sentBy: string
-}
-
-type DailyMessages = {
-  date: Date,
-  messages: Message[]
-}
-
-//TODO: move to utils
-const datesAreOnSameDay = (firstDate: Date, secondDate: Date) =>
-    firstDate.getFullYear() === secondDate.getFullYear() &&
-    firstDate.getMonth() === secondDate.getMonth() &&
-    firstDate.getDate() === secondDate.getDate();
-
-const formatDayDate = (date: Date) => 
-{
-  const day = (date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())
-  const month = (date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))
-  const year = date.getFullYear()
-
-  return `${day}/${month}/${year}`
-}
-
-const formatHourMinuteDate = (date: Date) => `${date.getHours()}:${date.getMinutes()}`
-
 export default function Conversation({db, jeune}: ConversationProps) {
 
   const [newMessage, setNewMessage] = useState('');
@@ -54,13 +24,11 @@ export default function Conversation({db, jeune}: ConversationProps) {
 
   const dummySpace = useRef<HTMLElement>(null);
 
-  
-
   // when form is submitted
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
-    db.collection("chat").doc(jeune.chatId).collection('messages').add({ //TODO chatId
+    db.collection("chat").doc(jeune.chatId).collection('messages').add({
       content: newMessage,
       creationDate: firebase.firestore.FieldValue.serverTimestamp(),
       sentBy: 'conseiller',
@@ -84,25 +52,14 @@ export default function Conversation({db, jeune}: ConversationProps) {
           ...doc.data(),
           id: doc.id,
         }));
-//TEST SANDRA
+
         let currentMessages: Message[] = [...data]
         
-        let tmpdate:Date = currentMessages[0].creationDate.toDate()
-        let tmpDateMessages: DailyMessages[] = [{date:tmpdate, messages:[]}]
-        let tmpDateMessagesIndex = 0
+        if(!currentMessages || !currentMessages[currentMessages.length -1]?.creationDate){
+          return
+        }
 
-        currentMessages.forEach((message: Message, index: number) => {
-          if(datesAreOnSameDay(tmpdate, message.creationDate.toDate())){
-            tmpDateMessages[tmpDateMessagesIndex].messages.push(message)
-          }else{
-            tmpdate = message.creationDate.toDate()
-            tmpDateMessagesIndex++
-            tmpDateMessages.push({date:tmpdate, messages:[]})
-          }
-        });
-
-        setDailyMessages(tmpDateMessages)
-//done test
+        setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
 
       });
   }, [db, jeune.chatId]);
