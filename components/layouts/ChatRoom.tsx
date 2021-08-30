@@ -65,7 +65,9 @@ export default function ChatBox({}: ChatBoxProps) {
               jeune.chatId && 
                 <li key={jeune.id}>
                   <button onClick={() => setSelectedJeune(jeune)}>
-                    <span className='h4-semi text-bleu_nuit'>{jeune.firstName} {jeune.lastName}</span>
+                    <span className='h4-semi text-bleu_nuit' style={{marginBottom:'7px'}}>{jeune.firstName} {jeune.lastName}</span>
+                    <span className='text-sm text-bleu_nuit' style={{marginBottom:'8px'}}>Vous: Pensez à mettre à jour votre CV</span>
+                    <span className='text-xxs-italic text-bleu_nuit' style={{alignSelf:'flex-end'}}>le 09 août à 09h52</span>
                   </button>
                 </li>
             ))}

@@ -38,7 +38,7 @@
 
 .chatRoom {
 	height: 100%;
-	width: 500px;
+	width: 450px;
 	margin-left: auto;
 	z-index: 1;
 	padding-top: 44px;
@@ -64,6 +64,8 @@
 	padding: 16px 12px 9px 35px;
 	width: 100%;
 	text-align: start;
+	display: flex;
+	flex-direction: column;
 }
 
 .conversationTitleConainer {
