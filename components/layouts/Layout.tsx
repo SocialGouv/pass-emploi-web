@@ -33,9 +33,9 @@ export default function Layout({ children }: LayoutProps) {
       <div className={styles.container}>
           <Sidebar />
           <main className={styles.page} role="main">{children}</main>
-          <div id="modal-root"></div>
           <ChatBox /> 
       </div>
+      <div id="modal-root"></div>
      </>
    )
  }

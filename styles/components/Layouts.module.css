@@ -40,7 +40,7 @@
 	height: 100%;
 	width: 450px;
 	margin-left: auto;
-	z-index: 1;
+	/* z-index: 1; */
 	padding-top: 44px;
 	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
 }
