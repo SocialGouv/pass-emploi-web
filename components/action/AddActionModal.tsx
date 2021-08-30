@@ -136,7 +136,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
     selectedAction.lastUpdate = now
     selectedAction.creationDate = now
 
-    fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes/${router.query.jeune_id}/action`, {
+    fetch(`${process.env.API_ENDPOINT}/jeunes/${router.query.jeune_id}/action`, {
         method: 'POST',
         headers:{'content-type': 'application/json'},
         body: JSON.stringify(selectedAction)

@@ -18,7 +18,15 @@ export type Jeune = {
   firstName: string
   lastName: string
   chatId?: string
+  chatInfo?: ChatInfo
 }
+
+export type ChatInfo = {
+  id: string
+  lastMessage: Message
+}
+
+
 
 /**
  * Firebase Models. TODO: replace in another file?
@@ -50,7 +58,6 @@ export class ListDailyMessages{
     let tmpDateMessages: DailyMessages[] = [new DailyMessages(tmpdate,[])]
     let tmpDateMessagesIndex = 0
     currentMessages.forEach((message: Message) => {
-      console.log(message)
       if(datesAreOnSameDay(tmpdate, message.creationDate.toDate())){
         tmpDateMessages[tmpDateMessagesIndex].messages.push(message)
       }else{

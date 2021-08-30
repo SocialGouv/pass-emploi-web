@@ -41,8 +41,29 @@
 	width: 500px;
 	margin-left: auto;
 	z-index: 1;
-	padding-top: 20px;
+	padding-top: 44px;
 	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+}
+
+.chatroomTitle {
+	margin-left: 35px;
+	margin-bottom: 23px;
+}
+
+.conversations {
+	height: 700px;
+	overflow: scroll;
+}
+
+.conversations li {
+	margin-bottom: 2px;
+}
+
+.conversations button {
+	background-color: theme('colors.bleu_blanc');
+	padding: 16px 12px 9px 35px;
+	width: 100%;
+	text-align: start;
 }
 
 .conversationTitleConainer {
@@ -61,7 +82,8 @@
 }
 
 .messages {
-	height: 800px;
+	height: 600px;
+	min-height: 200px;
 	overflow: scroll;
 	padding: 16px 16px;
 }

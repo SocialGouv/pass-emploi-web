@@ -5,7 +5,7 @@ import "firebase/auth";
 import "firebase/firestore";
 
 import { Jeune, Message, DailyMessages, ListDailyMessages } from 'interfaces';
-import { formatDayDate, formatHourMinuteDate } from 'utils/date';
+import { dateIsToday, formatDayDate, formatHourMinuteDate } from 'utils/date';
 
 import styles from 'styles/components/Layouts.module.css'
 
@@ -15,14 +15,15 @@ import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 type ConversationProps = {
   db: any
   jeune: Jeune
+  onBack: any
 }
 
-export default function Conversation({db, jeune}: ConversationProps) {
+export default function Conversation({db, jeune, onBack}: ConversationProps) {
 
   const [newMessage, setNewMessage] = useState('');
   const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([]);
 
-  const dummySpace = useRef<HTMLElement>(null);
+  const dummySpace = useRef<HTMLLIElement>(null);
 
   // when form is submitted
   const handleSubmit = (e: any) => {
@@ -37,8 +38,7 @@ export default function Conversation({db, jeune}: ConversationProps) {
     setNewMessage('');
 
     if(dummySpace && dummySpace.current) {
-      // scroll down the chat
-      dummySpace.current.scrollIntoView({ behavior: "smooth" });
+      dummySpace.current.scrollIntoView(true);
     }
   };
 
@@ -68,22 +68,23 @@ export default function Conversation({db, jeune}: ConversationProps) {
      <>
 
       <div className={styles.conversationTitleConainer}>
-        <button>
+        <button onClick={onBack}>
           <ChevronLeftIcon role="img" focusable="false" aria-label="Retour sur ma messagerie"/>
         </button>
         <h2 className='h2-semi'>Discuter avec {jeune.firstName}</h2>
       </div>
 
       <ul className={styles.messages}>
-        {dailyMessages.map((dailyMessage: DailyMessages) => (
+        {dailyMessages.map((dailyMessage: DailyMessages, dailyIndex:number) => (
           <li key={dailyMessage.date.getTime()} >
 
             <div className={`text-md text-bleu ${styles.day}`}>
-              Le {formatDayDate(dailyMessage.date)}
+             { dateIsToday(dailyMessage.date) && <span>Aujourd&rsquo;hui</span>}
+             { !dateIsToday(dailyMessage.date) && <span>Le {formatDayDate(dailyMessage.date)}</span>}
             </div>
 
             <ul>
-              {dailyMessage.messages.map((message: Message) => (
+              {dailyMessage.messages.map((message: Message, index: number) => (
                 <li key={message.id} >
                     <p className={`text-md ${message.sentBy === 'conseiller' ? styles.sentMessage : styles.receivedMessage}`}>
                       {message.content}
@@ -91,6 +92,9 @@ export default function Conversation({db, jeune}: ConversationProps) {
                     <p className='text-xs text-bleu_nuit' style={{textAlign: message.sentBy === 'conseiller' ? 'right':'left'}}>
                       à {formatHourMinuteDate(message.creationDate.toDate())}
                     </p>
+
+                    {((dailyIndex === (dailyMessages.length -1))&&(index === (dailyMessage.messages.length -1))) &&<section ref={dummySpace} />    
+                    }
                 </li>
               ))}
             </ul>
@@ -98,8 +102,6 @@ export default function Conversation({db, jeune}: ConversationProps) {
           </li>
         ))}
       </ul>
-
-      <section ref={dummySpace} />
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <input

@@ -3,6 +3,8 @@ const datesAreOnSameDay = (firstDate: Date, secondDate: Date) =>
     firstDate.getMonth() === secondDate.getMonth() &&
     firstDate.getDate() === secondDate.getDate();
 
+const dateIsToday = (dateToCheck: Date) => datesAreOnSameDay(new Date(), dateToCheck)
+
 const formatDayDate = (date: Date) => 
 {
   const day = (date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())
@@ -14,4 +16,4 @@ const formatDayDate = (date: Date) =>
 
 const formatHourMinuteDate = (date: Date) => `${date.getHours()}:${date.getMinutes()}`
 
-export {datesAreOnSameDay, formatDayDate, formatHourMinuteDate}
+export {datesAreOnSameDay, dateIsToday, formatDayDate, formatHourMinuteDate}
