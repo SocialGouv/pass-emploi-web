@@ -5,28 +5,131 @@
 	justify-content: space-between;
 	padding: 15px 20px;
 	align-items: center;
+	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+}
+
+.container {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.page {
+	flex-grow: 1;
+	position: relative;
+	padding: 45px 58px;
 }
 
 .sidebar {
-	height: 100%;
 	width: 107px;
-	position: absolute;
 	z-index: 1;
-	top: 0;
-	left: 0;
 	background-color: theme('colors.bleu_nuit');
 	overflow-x: hidden; /* Disable horizontal scroll */
 	padding-top: 20px;
 	text-align: center;
+	min-height: 100vh;
 }
 
 .sidebar svg {
 	margin: auto;
 }
 
-.page {
-	margin-left: 107px;
-	position: relative;
-	padding: 45px 58px;
-	min-height: 100vh;
+/* ChatRoom*/
+
+.chatRoom {
+	height: 100%;
+	width: 500px;
+	margin-left: auto;
+	z-index: 1;
+	padding-top: 44px;
+	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+}
+
+.chatroomTitle {
+	margin-left: 35px;
+	margin-bottom: 23px;
+}
+
+.conversations {
+	height: 700px;
+	overflow: scroll;
+}
+
+.conversations li {
+	margin-bottom: 2px;
+}
+
+.conversations button {
+	background-color: theme('colors.bleu_blanc');
+	padding: 16px 12px 9px 35px;
+	width: 100%;
+	text-align: start;
+}
+
+.conversationTitleConainer {
+	display: flex;
+	align-items: baseline;
+}
+
+.conversationTitleConainer button {
+	margin-left: 46px;
+	margin-right: 30px;
+}
+
+.conversationTitleConainer h2 {
+	color: theme('colors.bleu_nuit');
+	margin-bottom: 30px;
+}
+
+.messages {
+	height: 600px;
+	min-height: 200px;
+	overflow: scroll;
+	padding: 16px 16px;
+}
+
+.messages li {
+	margin-bottom: 20px;
+}
+
+.day {
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.sentMessage {
+	text-align: right;
+	color: theme('colors.bleu_nuit');
+	background-color: theme('colors.bleu_blanc');
+	padding: 16px;
+	border-radius: 16px;
+	overflow-wrap: break-word;
+	width: max-content;
+	margin: 0 0 5px auto;
+	max-width: 400px;
+}
+
+.receivedMessage {
+	text-align: left;
+	color: theme('colors.blanc');
+	background-color: theme('colors.bleu_nuit');
+	padding: 16px;
+	border-radius: 16px;
+	overflow-wrap: break-word;
+	width: max-content;
+	margin-bottom: 5px;
+	max-width: 400px;
+}
+
+.form {
+	margin: 11px 24px;
+	display: flex;
+}
+
+.form input {
+	flex-grow: 1;
+	padding: 13px 16px;
+	background-color: theme('colors.bleu_blanc');
+	border-radius: 34px;
+	margin-right: 24px;
 }
