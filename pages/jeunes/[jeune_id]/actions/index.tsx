@@ -10,7 +10,7 @@ import AddActionModal from "components/action/AddActionModal";
 import ActionComp from "components/action/Action";
 import Button from "components/Button";
 
-import styles from 'styles/Actions.module.css'
+import styles from 'styles/JeuneActions.module.css'
 
 /**
  * relative path since babel doesn't support alliases, see https://github.com/airbnb/babel-plugin-inline-react-svg/pull/17
@@ -75,7 +75,7 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
   return (
     <>
         <div className={styles.backIntroContainer}>
-          <Link href="/" passHref>
+          <Link href="/actions" passHref>
               <a className={styles.backLink}> 
                 <BackIcon role="img" focusable="false" aria-label="Retour sur la page d'acceuil"/> 
               </a>
@@ -101,6 +101,8 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
 
           
         <h2 className={`h3 text-bleu_nuit ${styles.subTitle}`}>Ses actions en cours</h2>
+        {actionsEnCours.length === 0 && <p className='text-md text-bleu mb-8'> {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le moment</p>}
+        
         <ul>
           {actionsEnCours.map((action : UserAction) => (
             <li key={action.id} className={styles.listItem}> 
@@ -110,6 +112,8 @@ function Action({jeune, actions_en_cours, actions_terminees}: Props) {
         </ul>
 
         <h2 className={`h3 text-bleu_nuit ${styles.subTitle}`}>Ses actions terminées</h2>
+        {actionsTerminees.length === 0 && <p className='text-md text-bleu mb-8'> {jeune.firstName} n&rsquo;a pas d&rsquo;actions terminées pour le moment</p>}
+
         <ul>
         {actionsTerminees.map((action : UserAction) => (
           <li key={`done_${action.id}`} className={styles.listItem}> 

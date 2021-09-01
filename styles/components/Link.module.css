@@ -1,0 +1,27 @@
+.buttonBlue {
+	background-color: theme('colors.bleu_nuit');
+	color: theme('colors.blanc');
+	padding: 7px 11px;
+	border: 0.1rem solid transparent;
+	border-radius: 2px;
+	transition: border-color, color 0.2s, background-color 0.2s;
+	display: flex;
+	align-items: center;
+	height: 46px;
+}
+
+.buttonBlue:hover {
+	background-color: theme('colors.blanc');
+	color: theme('colors.bleu_nuit');
+	border: 0.1rem solid theme('colors.bleu_nuit');
+}
+
+.buttonBlue:hover svg path {
+	fill: theme('colors.bleu_nuit');
+}
+
+.buttonBlue:active {
+	background-color: theme('colors.blanc');
+	color: theme('colors.bleu_nuit');
+	border: 0.1rem solid theme('colors.bleu_nuit');
+}

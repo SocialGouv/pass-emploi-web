@@ -17,7 +17,7 @@ export default function Sidebar({}: SidebarProps) {
             <span className="text-xs text-blanc">Tableau de bord</span>
           </a>
         </Link>
-        <Link href="/jeunes/kendji/actions">
+        <Link href="/actions">
           <a>
             <ViewlistIcon role="img" focusable="false" aria-label="Aller sur la liste des actions"/>
             <span className="text-xs text-blanc">Actions</span>

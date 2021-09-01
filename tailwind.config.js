@@ -5,6 +5,7 @@
  */
 
 module.exports = {
+	mode: 'jit', // Just in Time mode, see: https://tailwindcss.com/docs/just-in-time-mode
 	purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
 	darkMode: false, // or 'media' or 'class'
 	theme: {
@@ -29,6 +30,20 @@ module.exports = {
 			bleu_blanc: '#F4F5FF',
 			violet: '#9762DA',
 		},
+
+		backgroundColor: (theme) => ({
+			...theme('colors'),
+		}),
+
+		borderRadius: {
+			none: '0',
+			x_small: '2px',
+			small: '5px',
+			medium: '8px',
+			large: '16px',
+			x_large: '34px',
+		},
+
 		extend: {
 			fontFamily: {
 				sans: ['Rubik'],

@@ -29,14 +29,14 @@ const Modal = ({ show, onClose, children, title }: ModalProps) => {
 
   const modalContent = show ? (
     <div className={styles.modalOverlay}>
-      <div className={styles.modal}>
+      <div className='rounded-medium h-[664px] w-[791px] bg-blanc'>
         <div className={`text-blanc ${styles.modalHeader}`}>
           {title && <div className={`h4-semi ${styles.modalTitle}`}>{title}</div>}
           <a href="#" onClick={handleCloseClick}>
             <CloseIcon role="img" focusable="false" aria-label="Fermer la modal"/> 
           </a>
         </div>
-        <div className={styles.modalBody}>{children}</div>
+        <div className='p-[30px]'>{children}</div>
       </div>
     </div>
   ) : null;

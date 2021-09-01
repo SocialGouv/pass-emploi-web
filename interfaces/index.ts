@@ -18,14 +18,7 @@ export type Jeune = {
   firstName: string
   lastName: string
   chatId?: string
-  chatInfo?: ChatInfo
 }
-
-export type ChatInfo = {
-  id: string
-  lastMessage: Message
-}
-
 
 
 /**
