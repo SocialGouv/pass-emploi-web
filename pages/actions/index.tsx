@@ -5,8 +5,6 @@ import { Jeune, UserAction } from 'interfaces'
 
 import linkStyles from 'styles/components/Link.module.css'
 
-import InfoIcon from '../../assets/icons/info_outline.svg'
-
 interface JeuneActions extends Jeune {
   actions: UserAction[]
   nbActionsEnCours: number
@@ -30,13 +28,11 @@ function Home({jeunes}: HomeProps)  {
 
             
             <p className='text-xs text-bleu_nuit flex mb-[25px]'>
-              <InfoIcon  focusable="false" aria-hidden="true" className='mr-[6px]'/>
-              <span>{jeune.nbActionsEnCours !== 0 ? `${jeune.firstName} a ${jeune.nbActionsEnCours} ${jeune.nbActionsEnCours === 1 ? 'action' : 'actions'} en cours` : `${jeune.firstName} n'a pas d'actions en cours pour le moment`}</span>
+              {jeune.nbActionsEnCours !== 0 ? `${jeune.firstName} a ${jeune.nbActionsEnCours} ${jeune.nbActionsEnCours === 1 ? 'action' : 'actions'} en cours` : `${jeune.firstName} n'a pas d'actions en cours pour le moment`}
             </p>
 
             <p className='text-xs text-bleu_nuit flex mb-[45px]'>
-              <InfoIcon  focusable="false" aria-hidden="true" className='mr-[6px]'/>
-              <span>{jeune.nbActionsTerminees !== 0 ? `${jeune.firstName} a ${jeune.nbActionsTerminees} ${jeune.nbActionsTerminees === 1 ? 'action terminée' : 'actions terminées'}` : `${jeune.firstName} n'a pas d'actions terminées pour le moment`}</span>
+              {jeune.nbActionsTerminees !== 0 ? `${jeune.firstName} a ${jeune.nbActionsTerminees} ${jeune.nbActionsTerminees === 1 ? 'action terminée' : 'actions terminées'}` : `${jeune.firstName} n'a pas d'actions terminées pour le moment`}
             </p>
 
             <Link href={`/jeunes/${jeune.id}/actions`} passHref>
