@@ -3,6 +3,8 @@ import Link from 'next/link'
 
 import { Jeune, UserAction } from 'interfaces'
 
+import EmptyActionsImage from '../../assets/icons/empty_data.svg'
+
 import linkStyles from 'styles/components/Link.module.css'
 
 interface JeuneActions extends Jeune {
@@ -19,6 +21,11 @@ function Home({jeunes}: HomeProps)  {
   return (
     <>
       <h1 className='h2 text-bleu_nuit mb-[45px]'>Les actions de mes bénéficaires</h1>
+
+      {!jeunes?.length && <>
+          <EmptyActionsImage focusable="false" aria-hidden="true" className='m-auto mb-[30px]'/> 
+          <p className='text-md-semi text-bleu_nuit text-center'>Vous devriez avoir des jeunes inscrits pour visualiser leurs actions </p>
+      </>}
 
       <ul className='grid grid-cols-1 gap-5 md:grid-cols-3'>
         {jeunes.map((jeune: JeuneActions) => (
