@@ -2,10 +2,12 @@
 import { useEffect, useState } from 'react';
 
 import {db} from 'utils/firebase'
+import firebase from "firebase/app";
+import "firebase/firestore";
 
 import Conversation from 'components/layouts/Conversation'
-import { Jeune } from 'interfaces';
-
+import { Jeune, JeuneChat } from 'interfaces';
+import {formatDayAndHourDate} from 'utils/date';
 import EmptyMessagesImage from '../../assets/icons/empty_messages.svg'
 
 import styles from 'styles/components/Layouts.module.css'
@@ -13,16 +15,21 @@ import styles from 'styles/components/Layouts.module.css'
 type ChatBoxProps = {
 }
 
-const defaultJeune:Jeune = {
+const defaultJeune:JeuneChat = {
   id:'',
   firstName: '',
   lastName: '',
+  seenByConseiller: false,
+  seenByJeune: false,
+  lastMessageContent: '',
+  lastMessageSentBy: '',
+  lastMessageSentAt: new firebase.firestore.Timestamp(1562524200,  0)
 }
 
 
 export default function ChatBox({}: ChatBoxProps) {
-  const [jeunes, setJeunes] = useState<Jeune[]>([])
-  const [selectedJeune, setSelectedJeune] = useState<Jeune>(defaultJeune)
+  const [jeunes, setJeunes] = useState<JeuneChat[]>([])
+  const [selectedJeune, setSelectedJeune] = useState<JeuneChat>(defaultJeune)
   
   const isInChatRoom = () => Boolean(selectedJeune === defaultJeune)
 
@@ -32,21 +39,30 @@ export default function ChatBox({}: ChatBoxProps) {
       return await res.json()
     }
 
-    async function fetchFirebaseData(data: Jeune[]): Promise<Jeune[]>{
+    async function fetchFirebaseData(data: Jeune[]): Promise<JeuneChat[]>{
+      let jeunesChats:JeuneChat[] = []
+
       await Promise.all(data.map(async (jeune: Jeune, index: number) => {
         await db.collection('chat').where('jeuneId','==',jeune.id).get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             if(doc.exists){
-              console.log(doc.data())
-              data[index] = {
+
+              const newJeuneChat:JeuneChat = {
                 ...data[index],
-                chatId:doc.id
+                chatId:doc.id,
+                seenByConseiller: doc.data().seenByConseiller,
+                seenByJeune: doc.data().seenByJeune,
+                lastMessageContent: doc.data().lastMessageContent,
+                lastMessageSentAt: doc.data().lastMessageSentAt,
+                lastMessageSentBy: doc.data().lastMessageSentBy
               }
+
+              jeunesChats.push(newJeuneChat)
             }
         });
         })
       }))
-      return data
+      return jeunesChats
     }
 
     fetchData().then((data) => {
@@ -71,13 +87,14 @@ export default function ChatBox({}: ChatBoxProps) {
           </div>}
 
           <ul className={styles.conversations}>  
-            {jeunes.map((jeune: Jeune) => (
+            {jeunes.map((jeune: JeuneChat) => (
               jeune.chatId && 
                 <li key={jeune.id}>
                   <button onClick={() => setSelectedJeune(jeune)}>
                     <span className='h4-semi text-bleu_nuit' style={{marginBottom:'7px'}}>{jeune.firstName} {jeune.lastName}</span>
-                    <span className='text-sm text-bleu_nuit' style={{marginBottom:'8px'}}>Vous: Pensez à mettre à jour votre CV</span>
-                    <span className='text-xxs-italic text-bleu_nuit' style={{alignSelf:'flex-end'}}>le 09 août à 09h52</span>
+                    <span>Nouveau message</span>
+                    <span className='text-sm text-bleu_nuit' style={{marginBottom:'8px'}}> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
+                    <span className='text-xxs-italic text-bleu_nuit' style={{alignSelf:'flex-end'}}>{formatDayAndHourDate(jeune.lastMessageSentAt.toDate())} </span>
                   </button>
                 </li>
             ))}

@@ -18,6 +18,8 @@ type ConversationProps = {
   onBack: any
 }
 
+const todayOrDate = (date: Date) =>  dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
+
 export default function Conversation({db, jeune, onBack}: ConversationProps) {
 
   const [newMessage, setNewMessage] = useState('');
@@ -29,10 +31,20 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
+    const firestoreNow = firebase.firestore.FieldValue.serverTimestamp()
+
     db.collection("chat").doc(jeune.chatId).collection('messages').add({
       content: newMessage,
-      creationDate: firebase.firestore.FieldValue.serverTimestamp(),
+      creationDate: firestoreNow,
       sentBy: 'conseiller',
+    });
+
+    db.collection("chat").doc(jeune.chatId).update({
+      seenByConseiller: true,
+      seenByJeune: false,
+      lastMessageContent: newMessage,
+      lastMessageSentAt: firestoreNow,
+      lastMessageSentBy: 'conseiller'
     });
 
     setNewMessage('');
@@ -44,6 +56,8 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
 
   // automatically check db for new messages
   useEffect(() => {
+    let currentMessages: Message[]
+
     db.collection('chat').doc(jeune.chatId).collection('messages')
       .orderBy('creationDate')
       .onSnapshot((querySnapShot: any) => {
@@ -53,15 +67,20 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
           id: doc.id,
         }));
 
-        let currentMessages: Message[] = [...data]
+        currentMessages = [...data]
         
         if(!currentMessages || !currentMessages[currentMessages.length -1]?.creationDate){
           return
         }
 
         setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
-
+        
       });
+
+      db.collection("chat").doc(jeune.chatId).update({
+        seenByConseiller: true,
+      });
+
   }, [db, jeune.chatId]);
 
    return (
@@ -79,8 +98,9 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
           <li key={dailyMessage.date.getTime()} >
 
             <div className={`text-md text-bleu ${styles.day}`}>
-             { dateIsToday(dailyMessage.date) && <span>Aujourd&rsquo;hui</span>}
-             { !dateIsToday(dailyMessage.date) && <span>Le {formatDayDate(dailyMessage.date)}</span>}
+            <span>{todayOrDate(dailyMessage.date)}</span>
+             {/* { dateIsToday(dailyMessage.date) && <span>Aujourd&rsquo;hui</span>}
+             { !dateIsToday(dailyMessage.date) && <span>Le {formatDayDate(dailyMessage.date)}</span>} */}
             </div>
 
             <ul>

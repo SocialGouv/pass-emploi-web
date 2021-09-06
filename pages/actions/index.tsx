@@ -27,7 +27,7 @@ function Home({jeunes}: HomeProps)  {
           <p className='text-md-semi text-bleu_nuit text-center'>Vous devriez avoir des jeunes inscrits pour visualiser leurs actions </p>
       </>}
 
-      <ul className='grid grid-cols-1 gap-5 md:grid-cols-3'>
+      <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3'>
         {jeunes.map((jeune: JeuneActions) => (
           <li key={`actions-${jeune.id}`} className='p-[15px] rounded-medium' style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
 

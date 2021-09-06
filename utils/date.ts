@@ -16,4 +16,6 @@ const formatDayDate = (date: Date) =>
 
 const formatHourMinuteDate = (date: Date) => `${date.getHours()}:${date.getMinutes()}`
 
-export {datesAreOnSameDay, dateIsToday, formatDayDate, formatHourMinuteDate}
+const formatDayAndHourDate = (date:Date) => `le ${formatDayDate(date)} à ${formatHourMinuteDate(date)}`
+
+export {datesAreOnSameDay, dateIsToday, formatDayDate, formatHourMinuteDate, formatDayAndHourDate}

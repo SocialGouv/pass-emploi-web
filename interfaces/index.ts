@@ -20,6 +20,13 @@ export type Jeune = {
   chatId?: string
 }
 
+export interface JeuneChat extends Jeune{
+  seenByConseiller: boolean,
+  seenByJeune: boolean,
+  lastMessageContent: string,
+  lastMessageSentAt: firebase.firestore.Timestamp,
+  lastMessageSentBy: string
+}
 
 /**
  * Firebase Models. TODO: replace in another file?
@@ -28,7 +35,9 @@ export type Message = {
   id: string
   content: string
   creationDate: firebase.firestore.Timestamp
-  sentBy: string
+  sentBy: string,
+  seenByConseiller?: boolean,
+  seenByJeune?: boolean,
 }
 
 export class DailyMessages{
