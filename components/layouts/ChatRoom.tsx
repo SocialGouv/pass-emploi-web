@@ -12,17 +12,21 @@ import EmptyMessagesImage from '../../assets/icons/empty_messages.svg'
 
 import styles from 'styles/components/Layouts.module.css'
 
+import FbCheckIcon from '../../assets/icons/fb_check.svg'
+import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
+
 type ChatBoxProps = {
+  // db: firebase.firestore.Firestore
 }
 
 const defaultJeune:JeuneChat = {
   id:'',
   firstName: '',
   lastName: '',
-  seenByConseiller: false,
-  seenByJeune: false,
+  seenByConseiller: true,
+  newConseillerMessageCount: 0,
   lastMessageContent: '',
-  lastMessageSentBy: '',
+  lastMessageSentBy: 'conseiller',
   lastMessageSentAt: new firebase.firestore.Timestamp(1562524200,  0)
 }
 
@@ -51,10 +55,10 @@ export default function ChatBox({}: ChatBoxProps) {
                 ...data[index],
                 chatId:doc.id,
                 seenByConseiller: doc.data().seenByConseiller,
-                seenByJeune: doc.data().seenByJeune,
-                lastMessageContent: doc.data().lastMessageContent,
-                lastMessageSentAt: doc.data().lastMessageSentAt,
-                lastMessageSentBy: doc.data().lastMessageSentBy
+                newConseillerMessageCount: doc.data().newConseillerMessageCount,
+                lastMessageContent: doc.data().lastMessageContent || defaultJeune.lastMessageContent,
+                lastMessageSentAt: doc.data().lastMessageSentAt || defaultJeune.lastMessageSentAt,
+                lastMessageSentBy: doc.data().lastMessageSentBy || defaultJeune.lastMessageSentBy
               }
 
               jeunesChats.push(newJeuneChat)
@@ -68,6 +72,7 @@ export default function ChatBox({}: ChatBoxProps) {
     fetchData().then((data) => {
       fetchFirebaseData(data).then((dataWithChatId)=> setJeunes(dataWithChatId))
     })
+
   },[])
     
    return (
@@ -91,10 +96,15 @@ export default function ChatBox({}: ChatBoxProps) {
               jeune.chatId && 
                 <li key={jeune.id}>
                   <button onClick={() => setSelectedJeune(jeune)}>
-                    <span className='h4-semi text-bleu_nuit' style={{marginBottom:'7px'}}>{jeune.firstName} {jeune.lastName}</span>
-                    <span>Nouveau message</span>
-                    <span className='text-sm text-bleu_nuit' style={{marginBottom:'8px'}}> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
-                    <span className='text-xxs-italic text-bleu_nuit' style={{alignSelf:'flex-end'}}>{formatDayAndHourDate(jeune.lastMessageSentAt.toDate())} </span>
+                    <span className='h4-semi text-bleu_nuit w-full mb-[7px]'>
+                      {jeune.firstName} {jeune.lastName}
+                      {!jeune.seenByConseiller && <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>Nouveau message</span>}
+                    </span>
+                    <span className='text-sm text-bleu_nuit mb-[8px]'> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
+                    <span className='text-xxs-italic text-bleu_nuit self-end flex'>
+                      <span className='mr-[7px]'>{formatDayAndHourDate(jeune.lastMessageSentAt.toDate())} </span>
+                      {jeune.seenByConseiller ? <FbCheckIcon  focusable="false" aria-hidden="true" /> : <FbCheckFillIcon  focusable="false" aria-hidden="true" />}
+                    </span>
                   </button>
                 </li>
             ))}

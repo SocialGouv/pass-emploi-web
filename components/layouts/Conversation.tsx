@@ -41,7 +41,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
 
     db.collection("chat").doc(jeune.chatId).update({
       seenByConseiller: true,
-      seenByJeune: false,
+      newConseillerMessageCount: firebase.firestore.FieldValue.increment(1),
       lastMessageContent: newMessage,
       lastMessageSentAt: firestoreNow,
       lastMessageSentBy: 'conseiller'
@@ -80,7 +80,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
       db.collection("chat").doc(jeune.chatId).update({
         seenByConseiller: true,
       });
-
+      
   }, [db, jeune.chatId]);
 
    return (

@@ -22,7 +22,7 @@ export type Jeune = {
 
 export interface JeuneChat extends Jeune{
   seenByConseiller: boolean,
-  seenByJeune: boolean,
+  newConseillerMessageCount: number,
   lastMessageContent: string,
   lastMessageSentAt: firebase.firestore.Timestamp,
   lastMessageSentBy: string
@@ -36,8 +36,6 @@ export type Message = {
   content: string
   creationDate: firebase.firestore.Timestamp
   sentBy: string,
-  seenByConseiller?: boolean,
-  seenByJeune?: boolean,
 }
 
 export class DailyMessages{
