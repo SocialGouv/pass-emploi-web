@@ -111,8 +111,6 @@ const defaultAction: UserAction ={
   creationDate: now,
 }
 
-
-
 const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const handleSlectedChange = (event: any) => {
      let currentAction = actionsPredefinies?.find(action => action.id === event.target.value)
@@ -148,7 +146,6 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   };
 
   const noSelectedAction = () => Boolean(selectedAction.id === '')
-
 
   const [selectedAction, setSelectedAction] = useState(defaultAction);
 

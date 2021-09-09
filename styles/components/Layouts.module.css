@@ -22,7 +22,6 @@
 
 .sidebar {
 	width: 107px;
-	z-index: 1;
 	background-color: theme('colors.bleu_nuit');
 	overflow-x: hidden; /* Disable horizontal scroll */
 	padding-top: 20px;

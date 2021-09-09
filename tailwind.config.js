@@ -35,6 +35,10 @@ module.exports = {
 			...theme('colors'),
 		}),
 
+		borderColor: (theme) => ({
+			...theme('colors'),
+		}),
+
 		borderRadius: {
 			none: '0',
 			x_small: '2px',

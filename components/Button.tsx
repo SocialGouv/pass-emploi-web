@@ -6,11 +6,12 @@ type ButtonProps = {
   children?:  React.ReactNode,
   type?: any
   disabled?: boolean
+  className?: any
 }
 
-const Button = ({onClick, children, type =  'button', disabled = false}: ButtonProps) => {
+const Button = ({onClick, children, type =  'button', disabled = false, className}: ButtonProps) => {
   return (
-    <button onClick={onClick} className={`text-md ${styles.buttonBlue}`} type={type} disabled={disabled}> {children} </button>
+    <button onClick={onClick} className={`text-md ${styles.buttonBlue} ${className? className : ''}`} type={type} disabled={disabled}> {children} </button>
   )
 }
 
