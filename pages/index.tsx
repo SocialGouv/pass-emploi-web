@@ -33,6 +33,10 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
         </Button>
       </span>
 
+      {
+        rdvs?.length === 0 && <p className="text-md text-bleu mb-8">Vous n&rsquo;avez pas de rendez-vous à venir pour le moment</p>
+      }
+
       <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
 
       {rdvs.map((rdv:Rdv)=>(
@@ -57,9 +61,13 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
       ))}
       </ul>
 
-      <h3 className='h3-semi text-bleu_nuit'>
+      <h3 className='h3-semi text-bleu_nuit mb-[20px]'>
         Historique de mes rendez-vous
       </h3>
+
+      {
+        oldRdvs?.length === 0 && <p className="text-md text-bleu mb-8">Vous n&rsquo;avez pas de rendez-vous archivés pour le moment</p>
+      }
 
       <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
 
@@ -87,7 +95,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
 
       <AddRdvModal
         onClose={() => setShowModal(false)}
-        onAdd={ ()=> {/*Router.reload()*/} }
+        onAdd={ ()=> {Router.reload()} }
         show={showModal}
       />
     </>
@@ -123,7 +131,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   return {
     props:  {
-      rdvs: serializedRdvs,
+      rdvs: serializedRdvs.filter(rdv => new Date(rdv.date) >= today),
       oldRdvs: serializedRdvs.filter(rdv => new Date(rdv.date) < today),
     } ,
   }
