@@ -4,22 +4,22 @@ const durees = [{
     value:'',
     text:'',
   },{
-    value:'00:15:00',
+    value:'0:15:00',
     text:'15min'
   },{
-    value:'00:30:00',
+    value:'0:30:00',
     text:'30min'
   },{
-    value:'00:45:00',
+    value:'0:45:00',
     text:'45min'
   },{
-    value:'01:00:00',
+    value:'1:00:00',
     text:'1h'
   },{
-    value:'01:30:00',
+    value:'1:30:00',
     text:'1h30'
   },{
-    value:'02:00:00',
+    value:'2:00:00',
     text:'2h'
 }]
 
