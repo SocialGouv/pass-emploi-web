@@ -2,6 +2,8 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
+ import {db} from 'utils/firebase'
+
  import Head from 'next/head'
 
  import Header from './Header'
@@ -33,7 +35,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className={styles.container}>
           <Sidebar />
           <main className={styles.page} role="main">{children}</main>
-          <ChatBox /> 
+          <ChatBox db={db}/> 
       </div>
       <div id="modal-root"></div>
      </>

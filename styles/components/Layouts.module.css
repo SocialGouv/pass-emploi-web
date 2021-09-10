@@ -50,7 +50,7 @@
 }
 
 .conversations {
-	height: 700px;
+	height: 580px;
 	overflow: scroll;
 }
 
@@ -83,7 +83,7 @@
 }
 
 .messages {
-	height: 600px;
+	height: 500px;
 	min-height: 200px;
 	overflow: scroll;
 	padding: 16px 16px;

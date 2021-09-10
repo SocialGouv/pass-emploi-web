@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from 'react';
 
-import {db} from 'utils/firebase'
 import firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -16,7 +15,7 @@ import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 
 type ChatBoxProps = {
-  // db: firebase.firestore.Firestore
+  db: firebase.firestore.Firestore
 }
 
 const defaultJeune:JeuneChat = {
@@ -31,7 +30,7 @@ const defaultJeune:JeuneChat = {
 }
 
 
-export default function ChatBox({}: ChatBoxProps) {
+export default function ChatBox({db}: ChatBoxProps) {
   const [jeunes, setJeunes] = useState<JeuneChat[]>([])
   const [selectedJeune, setSelectedJeune] = useState<JeuneChat>(defaultJeune)
   
@@ -73,7 +72,7 @@ export default function ChatBox({}: ChatBoxProps) {
       fetchFirebaseData(data).then((dataWithChatId)=> setJeunes(dataWithChatId))
     })
 
-  },[])
+  },[db])
     
    return (
      <article  className={styles.chatRoom}>

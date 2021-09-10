@@ -13,7 +13,7 @@ import SendIcon from '../../assets/icons/btn_send.svg'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 
 type ConversationProps = {
-  db: any
+  db: firebase.firestore.Firestore
   jeune: Jeune
   onBack: any
 }
@@ -50,7 +50,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
     setNewMessage('');
 
     if(dummySpace && dummySpace.current) {
-      dummySpace.current.scrollIntoView(true);
+      dummySpace.current.scrollIntoView({block: "end", inline: "nearest"});
     }
   };
 
@@ -113,7 +113,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
                       à {formatHourMinuteDate(message.creationDate.toDate())}
                     </p>
 
-                    {((dailyIndex === (dailyMessages.length -1))&&(index === (dailyMessage.messages.length -1))) &&<section ref={dummySpace} />    
+                    {((dailyIndex === (dailyMessages.length -1))&&(index === (dailyMessage.messages.length -1))) &&<section aria-hidden="true" ref={dummySpace}/>    
                     }
                 </li>
               ))}
@@ -122,7 +122,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
           </li>
         ))}
       </ul>
-
+      
       <form onSubmit={handleSubmit} className={styles.form}>
         <input
           type="text"
