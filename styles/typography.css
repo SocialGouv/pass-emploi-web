@@ -62,7 +62,6 @@
 	font-weight: 400;
 	line-height: 21px;
 	letter-spacing: 0px;
-	text-align: left;
 }
 
 .text-xs {
@@ -71,7 +70,6 @@
 	font-weight: 500;
 	line-height: 18px;
 	letter-spacing: 0px;
-	text-align: left;
 }
 
 /* Semi Bold */
@@ -138,7 +136,6 @@
 	font-weight: 500;
 	line-height: 21px;
 	letter-spacing: 0px;
-	text-align: left;
 }
 
 .text-xs-semi {
@@ -147,7 +144,6 @@
 	font-weight: 400;
 	line-height: 18px;
 	letter-spacing: 0px;
-	text-align: left;
 }
 
 .text-xxs-italic {

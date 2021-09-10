@@ -24,14 +24,18 @@ function Home({jeunes}: HomeProps)  {
 
       {!jeunes?.length && <>
           <EmptyActionsImage focusable="false" aria-hidden="true" className='m-auto mb-[30px]'/> 
-          <p className='text-md-semi text-bleu_nuit text-center'>Vous devriez avoir des jeunes inscrits pour visualiser leurs actions </p>
+          <p className='text-md-semi text-bleu_nuit text-center'>
+            Vous devriez avoir des jeunes inscrits pour visualiser leurs actions 
+          </p>
       </>}
 
-      <ul className='grid grid-cols-1 gap-5 md:grid-cols-3 xl:grid-cols-3'>
+      <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3'>
         {jeunes.map((jeune: JeuneActions) => (
           <li key={`actions-${jeune.id}`} className='p-[15px] rounded-medium' style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
 
-            <h2 className='text-md text-bleu_nuit mb-[19px]'>Les actions de {jeune.firstName} {jeune.lastName}</h2>
+            <h2 className='text-md text-bleu_nuit mb-[19px]'>
+              Les actions de {jeune.firstName} {jeune.lastName}
+            </h2>
 
             
             <p className='text-xs text-bleu_nuit flex mb-[25px]'>

@@ -1,21 +1,31 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps } from 'next'
+import Router from 'next/router'
 import { useState } from 'react';
+
+import { Rdv } from 'interfaces/rdv';
+import { formatDayDate, formatHourMinuteDate } from 'utils/date';
 
 import AddRdvModal from "components/rdv/AddRdvModal";
 import Button from "components/Button";
 
 import AddIcon from '../assets/icons/add.svg'
+import CalendarIcon from '../assets/icons/calendar.svg'
+import TimeIcon from '../assets/icons/time.svg'
+import { RdvJson } from 'interfaces/json/rdv';
+import { Jeune } from 'interfaces';
+import { durees } from 'referentiel/rdv';
 
 type HomeProps = {
-
+  rdvs: Rdv[]
+  oldRdvs: Rdv[]
 }
 
-const Home = ({} : HomeProps) => {
+const Home = ({rdvs, oldRdvs} : HomeProps) => {
   const [showModal, setShowModal] = useState(false);
   
   return (
     <>
-      <span className="flex justify-between">
+      <span className="flex justify-between mb-[20px]">
         <h1 className='h2-semi text-bleu_nuit'>Mes rendez-vous à venir</h1>
         <Button onClick={() => setShowModal(true)}> 
           <AddIcon focusable="false" aria-hidden="true"/>
@@ -23,13 +33,100 @@ const Home = ({} : HomeProps) => {
         </Button>
       </span>
 
+      <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
+
+      {rdvs.map((rdv:Rdv)=>(
+        <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium'  style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
+          
+          <p className="flex justify-between mb-[15px]">
+            <span className="flex" >
+              <CalendarIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
+              {formatDayDate(new Date(rdv.date))}
+            </span>
+            <span className="flex" >
+              <TimeIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
+              {formatHourMinuteDate(new Date(rdv.date))}
+              {` - ${rdv.duration}`}
+            </span>
+          </p>
+
+          <p className="text-md-semi mb-[15px]">Rendez-vous avec {rdv.jeune.firstName} </p>
+          <p className='text-xs text-right mb-[15px]'>{rdv.modality}</p>
+          {rdv.comment && <p className='text-xs'>Notes: {rdv.comment}</p>}
+        </li>
+      ))}
+      </ul>
+
+      <h3 className='h3-semi text-bleu_nuit'>
+        Historique de mes rendez-vous
+      </h3>
+
+      <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
+
+      {oldRdvs.map((rdv:Rdv)=>(
+        <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium'  style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
+          
+          <p className="flex justify-between mb-[15px]">
+            <span className="flex" >
+              <CalendarIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
+              {formatDayDate(new Date(rdv.date))}
+            </span>
+            <span className="flex" >
+              <TimeIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
+              {formatHourMinuteDate(new Date(rdv.date))}
+              {` - ${rdv.duration}`}
+            </span>
+          </p>
+
+          <p className="text-md-semi mb-[15px]">Rendez-vous avec {rdv.jeune.firstName} </p>
+          <p className='text-xs text-right mb-[15px]'>{rdv.modality}</p>
+          {rdv.comment && <p className='text-xs'>Notes: {rdv.comment}</p>}
+        </li>
+      ))}
+      </ul>
+
       <AddRdvModal
         onClose={() => setShowModal(false)}
-        onAdd={ ()=> {} }
+        onAdd={ ()=> {/*Router.reload()*/} }
         show={showModal}
       />
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const res = await fetch(`${process.env.API_ENDPOINT}/conseiller/rendezvous`)
+  const data = await res.json()
+
+  const resJeunes = await fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes`)
+  const dataJeunes = await resJeunes.json()
+
+  let serializedRdvs: Rdv[] = []
+  
+  data.map((rdvData: RdvJson) => {
+    const newrdv:Rdv = {
+      ...rdvData,
+      jeune: dataJeunes.find((jeune:Jeune) => jeune.id === rdvData.jeuneId),
+      duration: (durees.find((duree:any) => duree.value === rdvData.duration))?.text || rdvData.duration
+    }
+    
+    serializedRdvs.push(newrdv)
+  })
+
+  if (!data) {
+    return {
+      notFound: true,
+    }
+  }
+
+  const today = new Date()
+
+  return {
+    props:  {
+      rdvs: serializedRdvs,
+      oldRdvs: serializedRdvs.filter(rdv => new Date(rdv.date) < today),
+    } ,
+  }
 }
 
 export default Home
