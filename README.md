@@ -4,8 +4,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 Create a new file on the root of the project and name it `.env.local`. Then, copy the content of `.env.example.local` file and past it in your new one.
 
-Add the environnement variables according to your needs.
-
+Add the environnement variables according to your needs. For Firebase information, retrieve required values in project's 
+Firebase console, under `Paramètres du projet > Paramètres généraux > Applications Web`
 ## Getting Started
 
 First, install the dependencies:
