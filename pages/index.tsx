@@ -12,7 +12,6 @@ import AddIcon from '../assets/icons/add.svg'
 import CalendarIcon from '../assets/icons/calendar.svg'
 import TimeIcon from '../assets/icons/time.svg'
 import { RdvJson } from 'interfaces/json/rdv';
-import { Jeune } from 'interfaces';
 import { durees } from 'referentiel/rdv';
 
 type HomeProps = {
@@ -22,7 +21,7 @@ type HomeProps = {
 
 const Home = ({rdvs, oldRdvs} : HomeProps) => {
   const [showModal, setShowModal] = useState(false);
-  
+
   return (
     <>
       <span className="flex justify-between mb-[20px]">
@@ -41,7 +40,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
 
       {rdvs.map((rdv:Rdv)=>(
         <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium'  style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
-          
+
           <p className="flex justify-between mb-[15px]">
             <span className="flex" >
               <CalendarIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
@@ -54,7 +53,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
             </span>
           </p>
 
-          <p className="text-md-semi mb-[15px]">Rendez-vous avec {rdv.jeune.firstName} </p>
+          <p className="text-md-semi mb-[15px]">{rdv.title} </p>
           <p className='text-xs text-right mb-[15px]'>{rdv.modality}</p>
           {rdv.comment && <p className='text-xs'>Notes: {rdv.comment}</p>}
         </li>
@@ -73,7 +72,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
 
       {oldRdvs.map((rdv:Rdv)=>(
         <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium'  style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
-          
+
           <p className="flex justify-between mb-[15px]">
             <span className="flex" >
               <CalendarIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
@@ -86,7 +85,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
             </span>
           </p>
 
-          <p className="text-md-semi mb-[15px]">Rendez-vous avec {rdv.jeune.firstName} </p>
+          <p className="text-md-semi mb-[15px]">{rdv.title} </p>
           <p className='text-xs text-right mb-[15px]'>{rdv.modality}</p>
           {rdv.comment && <p className='text-xs'>Notes: {rdv.comment}</p>}
         </li>
@@ -103,21 +102,17 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await fetch(`${process.env.API_ENDPOINT}/conseiller/rendezvous`)
+  const res = await fetch(`${process.env.API_ENDPOINT}/conseillers/1/rendezvous`)
   const data = await res.json()
 
-  const resJeunes = await fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes`)
-  const dataJeunes = await resJeunes.json()
-
   let serializedRdvs: Rdv[] = []
-  
+
   data.map((rdvData: RdvJson) => {
     const newrdv:Rdv = {
       ...rdvData,
-      jeune: dataJeunes.find((jeune:Jeune) => jeune.id === rdvData.jeuneId),
       duration: (durees.find((duree:any) => duree.value === rdvData.duration))?.text || rdvData.duration
     }
-    
+
     serializedRdvs.push(newrdv)
   })
 
