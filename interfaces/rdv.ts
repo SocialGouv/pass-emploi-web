@@ -1,5 +1,3 @@
-import { Jeune } from 'interfaces';
-
 export type Rdv = {
   id: string
   title: string
@@ -7,6 +5,5 @@ export type Rdv = {
   comment: string
   date: string
   duration: string
-  jeune: Jeune
   modality: string
 }
