@@ -58,7 +58,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
   useEffect(() => {
     let currentMessages: Message[]
 
-    db.collection('chat').doc(jeune.chatId).collection('messages')
+    const unsub = db.collection('chat').doc(jeune.chatId).collection('messages')
       .orderBy('creationDate')
       .onSnapshot((querySnapShot: any) => {
         // get all documents from collection with id
@@ -80,6 +80,10 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
       db.collection("chat").doc(jeune.chatId).update({
         seenByConseiller: true,
       });
+
+      return function cleanup() {
+        unsub()
+      };
       
   }, [db, jeune.chatId]);
 

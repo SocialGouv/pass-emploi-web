@@ -37,7 +37,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
         rdvs?.length === 0 && <p className="text-md text-bleu mb-8">Vous n&rsquo;avez pas de rendez-vous à venir pour le moment</p>
       }
 
-      <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
+      <ul className='grid grid-cols-2 gap-5 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 mb-[50px]'>
 
       {rdvs.map((rdv:Rdv)=>(
         <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium'  style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>

@@ -43,29 +43,38 @@ export default function ChatBox({db}: ChatBoxProps) {
     }
 
     async function fetchFirebaseData(data: Jeune[]): Promise<JeuneChat[]>{
-      let jeunesChats:JeuneChat[] = []
+      let promises:Promise<JeuneChat>[] = []
 
-      await Promise.all(data.map(async (jeune: Jeune, index: number) => {
-        await db.collection('chat').where('jeuneId','==',jeune.id).get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            if(doc.exists){
+      data.map(async (jeune: Jeune, index: number) => {
 
+        const newPromise = new Promise<JeuneChat>((resolve, reject) => {
+
+          db.collection('chat').where('jeuneId','==',jeune.id).onSnapshot((querySnapshot) => {
+            querySnapshot.docs.forEach((doc) => {
+
+              if(!doc.exists){
+                return
+              }
+  
               const newJeuneChat:JeuneChat = {
                 ...data[index],
                 chatId:doc.id,
-                seenByConseiller: doc.data().seenByConseiller,
+                seenByConseiller: doc.data().seenByConseiller === false ? false : true, // when undefined seenByConseiller will be true
                 newConseillerMessageCount: doc.data().newConseillerMessageCount,
                 lastMessageContent: doc.data().lastMessageContent || defaultJeune.lastMessageContent,
                 lastMessageSentAt: doc.data().lastMessageSentAt || defaultJeune.lastMessageSentAt,
                 lastMessageSentBy: doc.data().lastMessageSentBy || defaultJeune.lastMessageSentBy
               }
 
-              jeunesChats.push(newJeuneChat)
-            }
+              resolve(newJeuneChat)
+          });
+          }, reject)
         });
-        })
-      }))
-      return jeunesChats
+
+        promises.push(newPromise)
+      })
+      
+    return await Promise.all(promises).then((jeunesChats) => jeunesChats)
     }
 
     fetchData().then((data) => {
@@ -73,7 +82,7 @@ export default function ChatBox({db}: ChatBoxProps) {
     })
 
   },[db])
-    
+
    return (
      <article  className={styles.chatRoom}>
 
