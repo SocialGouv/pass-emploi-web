@@ -36,6 +36,10 @@ select svg {
 	box-sizing: border-box;
 }
 
+.bar-of-progress {
+	z-index: 50;
+}
+
 @font-face {
 	font-family: 'Rubik', sans-serif;
 	src: url('/fonts/Rubik/static/Rubik-Regular.ttf');
