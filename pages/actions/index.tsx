@@ -1,28 +1,27 @@
 import type { GetServerSideProps } from 'next'
 import Link from 'next/link'
 
-import { Jeune, UserAction } from 'interfaces'
+import { JeuneActionJson } from 'interfaces/json/action'
+import { JeuneActions } from 'interfaces/action'
+import { Jeune } from 'interfaces'
 
 import EmptyActionsImage from '../../assets/icons/empty_data.svg'
 
 import linkStyles from 'styles/components/Link.module.css'
 
-interface JeuneActions extends Jeune {
-  actions: UserAction[]
-  nbActionsEnCours: number
-  nbActionsTerminees: number
-}
 
 type HomeProps = {
-  jeunes: JeuneActions[]
+  jeuneActionsList: JeuneActions[]
 }
 
-function Home({jeunes}: HomeProps)  {
+const conseiller_id = 1
+
+function Home({jeuneActionsList}: HomeProps)  {
   return (
     <>
       <h1 className='h2 text-bleu_nuit mb-[45px]'>Les actions de mes bénéficaires</h1>
 
-      {!jeunes?.length && <>
+      {!jeuneActionsList?.length && <>
           <EmptyActionsImage focusable="false" aria-hidden="true" className='m-auto mb-[30px]'/> 
           <p className='text-md-semi text-bleu_nuit text-center'>
             Vous devriez avoir des jeunes inscrits pour visualiser leurs actions 
@@ -30,23 +29,23 @@ function Home({jeunes}: HomeProps)  {
       </>}
 
       <ul className='grid grid-cols-2 gap-5 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1'>
-        {jeunes.map((jeune: JeuneActions) => (
-          <li key={`actions-${jeune.id}`} className='p-[15px] rounded-medium' style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
+        {jeuneActionsList.map((jeuneActions: JeuneActions) => (
+          <li key={`actions-${jeuneActions.jeune.id}`} className='p-[15px] rounded-medium' style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
 
             <h2 className='text-md text-bleu_nuit mb-[19px]'>
-              Les actions de {jeune.firstName} {jeune.lastName}
+              Les actions de {jeuneActions.jeune.firstName} {jeuneActions.jeune.lastName}
             </h2>
 
             
             <p className='text-xs text-bleu_nuit flex mb-[25px]'>
-              {jeune.nbActionsEnCours !== 0 ? `${jeune.firstName} a ${jeune.nbActionsEnCours} ${jeune.nbActionsEnCours === 1 ? 'action' : 'actions'} en cours` : `${jeune.firstName} n'a pas d'actions en cours pour le moment`}
+              {jeuneActions.nbActionsEnCours !== 0 ? `${jeuneActions.jeune.firstName} a ${jeuneActions.nbActionsEnCours} ${jeuneActions.nbActionsEnCours === 1 ? 'action' : 'actions'} en cours` : `${jeuneActions.jeune.firstName} n'a pas d'actions en cours pour le moment`}
             </p>
 
             <p className='text-xs text-bleu_nuit flex mb-[45px]'>
-              {jeune.nbActionsTerminees !== 0 ? `${jeune.firstName} a ${jeune.nbActionsTerminees} ${jeune.nbActionsTerminees === 1 ? 'action terminée' : 'actions terminées'}` : `${jeune.firstName} n'a pas d'actions terminées pour le moment`}
+              {jeuneActions.nbActionsTerminees !== 0 ? `${jeuneActions.jeune.firstName} a ${jeuneActions.nbActionsTerminees} ${jeuneActions.nbActionsTerminees === 1 ? 'action terminée' : 'actions terminées'}` : `${jeuneActions.jeune.firstName} n'a pas d'actions terminées pour le moment`}
             </p>
 
-            <Link href={`/jeunes/${jeune.id}/actions`} passHref>
+            <Link href={`/jeunes/${jeuneActions.jeune.id}/actions`} passHref>
               <a className={`text-xs float-right ${linkStyles.buttonBlue}`}>
                 VOIR LES ACTIONS
               </a>
@@ -61,8 +60,7 @@ function Home({jeunes}: HomeProps)  {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes`)
-
+  const res = await fetch(`${process.env.API_ENDPOINT}/conseillers/${conseiller_id}/actions`)
   const data = await res.json()
 
   if (!data) {
@@ -71,22 +69,30 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
   }
 
-   await Promise.all(
-    data.map(async (jeune: JeuneActions) => {
-      const actionsRes = await fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes/${jeune.id}/actions`)
-      const actionRes = await actionsRes.json()
-      jeune.actions = actionRes.actions
-      jeune.nbActionsEnCours = actionRes.actions.filter((action: UserAction) => !action.isDone).length
-      jeune.nbActionsTerminees = actionRes.actions.filter((action: UserAction) => action.isDone).length
-    })
-  )
+  let jeunesActions: JeuneActions[] = []
 
+  data.map((jeuneActionJson: JeuneActionJson) =>{
+    const newJeune:Jeune = {
+      id: jeuneActionJson.jeuneId,
+      firstName: jeuneActionJson.jeuneFirstName,
+      lastName: jeuneActionJson.jeuneLastName
+    }
+
+    const newJeuneAction: JeuneActions = {
+      jeune: newJeune,
+      nbActionsEnCours: jeuneActionJson.todoActionsCount,
+      nbActionsTerminees: jeuneActionJson.doneActionsCount,
+    }
+
+    jeunesActions.push(newJeuneAction)
+  })
 
   return {
     props:  {
-      jeunes: data
+      jeuneActionsList: jeunesActions
     } ,
   }
 }
 
 export default Home
+

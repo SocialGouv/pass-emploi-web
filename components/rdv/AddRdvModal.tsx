@@ -12,11 +12,11 @@ type RdvModalProps = {
   onAdd: any
 }
 
-let jeunes: Jeune[] = []
-
 const conseiller_id = 1
 
 const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
+  const [jeunes, setJeunes] = useState<Jeune[]>([])
+
   const [jeune, selectJeune] = useState("")
   const [creneau, selectCreneau] = useState("")
   const [duree, selectDuree] = useState("")
@@ -37,7 +37,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
         lastName:''
       }
 
-      jeunes = [defaultJeune, ...data]
+      setJeunes([defaultJeune, ...data])
     })
   },[])
 

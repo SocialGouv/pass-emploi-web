@@ -93,11 +93,11 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
       ))}
       </ul>
 
-      <AddRdvModal
+      {showModal && <AddRdvModal
         onClose={() => setShowModal(false)}
         onAdd={ ()=> {Router.reload()} }
         show={showModal}
-      />
+      />}
     </>
   )
 }
