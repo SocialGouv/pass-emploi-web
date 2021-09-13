@@ -29,9 +29,12 @@ const defaultJeune:JeuneChat = {
   lastMessageSentAt: new firebase.firestore.Timestamp(1562524200,  0)
 }
 
+let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
+
 
 export default function ChatBox({db}: ChatBoxProps) {
-  const [jeunes, setJeunes] = useState<JeuneChat[]>([])
+  const [jeunesChat, setJeunesChat] = useState<JeuneChat[]>([])
+  const [jeunes, setJeunes] = useState<Jeune[]>([])
   const [selectedJeune, setSelectedJeune] = useState<JeuneChat>(defaultJeune)
   
   const isInChatRoom = () => Boolean(selectedJeune === defaultJeune)
@@ -42,10 +45,18 @@ export default function ChatBox({db}: ChatBoxProps) {
       return await res.json()
     }
 
-    async function fetchFirebaseData(data: Jeune[]): Promise<JeuneChat[]>{
+    fetchData().then((data) => {
+      setJeunes(data)
+      currentJeunesChat = []
+    })
+  }, [])
+
+  useEffect(() => {
+    async function fetchFirebaseData(): Promise<JeuneChat[]>{
       let promises:Promise<JeuneChat>[] = []
 
-      data.map(async (jeune: Jeune, index: number) => {
+
+      jeunes.map(async (jeune: Jeune, index: number) => {
 
         const newPromise = new Promise<JeuneChat>((resolve, reject) => {
 
@@ -57,15 +68,15 @@ export default function ChatBox({db}: ChatBoxProps) {
               }
   
               const newJeuneChat:JeuneChat = {
-                ...data[index],
+                ...jeunes[index],
                 chatId:doc.id,
-                seenByConseiller: doc.data().seenByConseiller === false ? false : true, // when undefined seenByConseiller will be true
+                seenByConseiller: doc.data().seenByConseiller === false ? false : true, // when undefined seenByConseiller has be true
                 newConseillerMessageCount: doc.data().newConseillerMessageCount,
                 lastMessageContent: doc.data().lastMessageContent || defaultJeune.lastMessageContent,
                 lastMessageSentAt: doc.data().lastMessageSentAt || defaultJeune.lastMessageSentAt,
                 lastMessageSentBy: doc.data().lastMessageSentBy || defaultJeune.lastMessageSentBy
               }
-
+              updateJeunesChat(newJeuneChat)
               resolve(newJeuneChat)
           });
           }, reject)
@@ -74,14 +85,22 @@ export default function ChatBox({db}: ChatBoxProps) {
         promises.push(newPromise)
       })
       
-    return await Promise.all(promises).then((jeunesChats) => jeunesChats)
+    return await Promise.all(promises)
+                        .then((jeunesChats) => jeunesChats)
     }
 
-    fetchData().then((data) => {
-      fetchFirebaseData(data).then((dataWithChatId)=> setJeunes(dataWithChatId))
-    })
+    fetchFirebaseData().then((dataWithChatId)=> {currentJeunesChat = [...dataWithChatId]; setJeunesChat(currentJeunesChat);})
 
-  },[db])
+  },[db,jeunes])
+
+  const updateJeunesChat = (newJeuneChat: JeuneChat) => {
+    const idxOfJeune = currentJeunesChat.findIndex(j => j.chatId === newJeuneChat.chatId)
+
+    if(idxOfJeune !== -1){
+      currentJeunesChat[idxOfJeune] = newJeuneChat
+      setJeunesChat([...currentJeunesChat])
+    }
+  }
 
    return (
      <article  className={styles.chatRoom}>
@@ -94,13 +113,13 @@ export default function ChatBox({db}: ChatBoxProps) {
         <>
           <h2 className={`h2-semi text-bleu_nuit ${styles.chatroomTitle}`}>Ma messagerie</h2>
 
-          {!jeunes?.length && <div className={styles.conversations}> 
+          {!jeunesChat?.length && <div className={styles.conversations}> 
             <EmptyMessagesImage focusable="false" aria-hidden="true" className='m-auto mt-[50px] mb-[50px]' /> 
             <p className='text-md-semi text-bleu_nuit text-center ml-[50px] mr-[50px]'>Vous devriez avoir des jeunes inscrits pour discuter avec eux </p>
           </div>}
 
           <ul className={styles.conversations}>  
-            {jeunes.map((jeune: JeuneChat) => (
+            {jeunesChat.map((jeune: JeuneChat) => (
               jeune.chatId && 
                 <li key={jeune.id}>
                   <button onClick={() => setSelectedJeune(jeune)}>
