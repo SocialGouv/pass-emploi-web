@@ -6,6 +6,7 @@
 	padding: 15px 20px;
 	align-items: center;
 	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+	height: 60px;
 }
 
 .container {
@@ -31,6 +32,10 @@
 
 .sidebar svg {
 	margin: auto;
+}
+
+.activeLink {
+	border-left: 5px solid theme('colors.blanc');
 }
 
 /* ChatRoom*/
@@ -100,8 +105,8 @@
 
 .sentMessage {
 	text-align: right;
-	color: theme('colors.bleu_nuit');
-	background-color: theme('colors.bleu_blanc');
+	color: theme('colors.blanc');
+	background-color: theme('colors.bleu_nuit');
 	padding: 16px;
 	border-radius: 16px;
 	overflow-wrap: break-word;
@@ -112,8 +117,8 @@
 
 .receivedMessage {
 	text-align: left;
-	color: theme('colors.blanc');
-	background-color: theme('colors.bleu_nuit');
+	color: theme('colors.bleu_nuit');
+	background-color: theme('colors.bleu_blanc');
 	padding: 16px;
 	border-radius: 16px;
 	overflow-wrap: break-word;
