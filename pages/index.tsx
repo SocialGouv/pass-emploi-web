@@ -24,7 +24,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
 
   return (
     <>
-      <span className="flex justify-between mb-[20px]">
+      <span className="flex flex-wrap justify-between mb-[20px]">
         <h1 className='h2-semi text-bleu_nuit'>Mes rendez-vous à venir</h1>
         <Button onClick={() => setShowModal(true)}> 
           <AddIcon focusable="false" aria-hidden="true"/>
@@ -73,12 +73,12 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
       {oldRdvs.map((rdv:Rdv)=>(
         <li key={rdv.id} className='text-bleu_nuit p-[15px] border-2 border-bleu_blanc rounded-medium'>
 
-          <p className="flex justify-between mb-[15px]">
-            <span className="flex" >
+          <p className="flex flex-wrap justify-between mb-[15px]">
+            <span className="flex flex-wrap" >
               <CalendarIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
               {formatDayDate(new Date(rdv.date))}
             </span>
-            <span className="flex" >
+            <span className="flex flex-wrap" >
               <TimeIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
               {formatHourMinuteDate(new Date(rdv.date))}
               {` - ${rdv.duration}`}
@@ -92,11 +92,11 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
       ))}
       </ul>
 
-      {showModal && <AddRdvModal
+      <AddRdvModal
         onClose={() => setShowModal(false)}
         onAdd={ ()=> {Router.reload()} }
         show={showModal}
-      />}
+      />
     </>
   )
 }

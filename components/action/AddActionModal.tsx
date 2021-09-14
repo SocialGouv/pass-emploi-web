@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import router from 'next/router'
 
 import { UserAction } from 'interfaces'
+import { actionsPredefinies } from "referentiel/action";
 
 import Modal from "components/Modal";
 import Button from "components/Button";
@@ -18,89 +19,6 @@ type ActionModalProps = {
 
 const now = new Date()
 
-//TODO move to data 
-const actionsPredefinies : UserAction[] = [
-  {
-    id: 'no-com-1',
-    content: 'Mettre à jour son CV',
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: 'no-com-2',
-    content: 'Contacter la Mission Locale',
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: 'no-com-3',
-    content: 'Explorer le site 1jeune1solution',
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: 'no-com-4',
-    content: "Trouver un employeur pour une période d'immersion",
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: '1',
-    content: 'Remplir son profil de compétence',
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: '2',
-    content: 'Créer sa carte de visite',
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: '3',
-    content: 'Mettre son CV en ligne',
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: '4',
-    content: "Candidater aux offres d'emploi",
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: '5',
-    content: "Consulter l'emploi-store",
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  },
-  {
-    id: '6',
-    content: 'Effectuer une enquête métier',
-    comment: '',
-    isDone: false,
-    creationDate: now,
-    lastUpdate: now,
-  }
-]
 
 const defaultAction: UserAction ={
   id: '',
