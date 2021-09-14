@@ -60,9 +60,9 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
       ))}
       </ul>
 
-      <h3 className='h3-semi text-bleu_nuit mb-[20px]'>
+      <h2 className='h3-semi text-bleu_nuit mb-[20px]'>
         Historique de mes rendez-vous
-      </h3>
+      </h2>
 
       {
         oldRdvs?.length === 0 && <p className="text-md text-bleu mb-8">Vous n&rsquo;avez pas de rendez-vous archivés pour le moment</p>
