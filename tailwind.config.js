@@ -27,6 +27,7 @@ module.exports = {
 			bleu_gris: '#9196C0',
 			bleu_clair: '#C8CBE4',
 			bleu_blanc: '#F4F5FF',
+			gris_blanc: '#F6F9FC',
 			violet: '#9762DA',
 		},
 

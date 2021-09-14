@@ -39,7 +39,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
       <ul className='grid grid-cols-2 gap-5 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 mb-[50px]'>
 
       {rdvs.map((rdv:Rdv)=>(
-        <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium'  style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
+        <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium border-2 border-bleu_blanc' >
 
           <p className="flex justify-between mb-[15px]">
             <span className="flex" >
@@ -54,8 +54,8 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
           </p>
 
           <p className="text-md-semi mb-[15px]">{rdv.title} </p>
-          <p className='text-xs text-right mb-[15px]'>{rdv.modality}</p>
-          {rdv.comment && <p className='text-xs'>Notes: {rdv.comment}</p>}
+          <p className='text-xs text-bleu_gris mb-[15px]'>{rdv.modality}</p>
+          {rdv.comment && <p className='text-xs text-bleu_gris'>Notes: {rdv.comment}</p>}
         </li>
       ))}
       </ul>
@@ -71,7 +71,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
       <ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
 
       {oldRdvs.map((rdv:Rdv)=>(
-        <li key={rdv.id} className='text-bleu_nuit p-[15px] rounded-medium'  style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
+        <li key={rdv.id} className='text-bleu_nuit p-[15px] border-2 border-bleu_blanc rounded-medium'>
 
           <p className="flex justify-between mb-[15px]">
             <span className="flex" >
@@ -86,8 +86,8 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
           </p>
 
           <p className="text-md-semi mb-[15px]">{rdv.title} </p>
-          <p className='text-xs text-right mb-[15px]'>{rdv.modality}</p>
-          {rdv.comment && <p className='text-xs'>Notes: {rdv.comment}</p>}
+          <p className='text-xs text-bleu_gris mb-[15px]'>{rdv.modality}</p>
+          {rdv.comment && <p className='text-xs text-bleu_gris'>Notes: {rdv.comment}</p>}
         </li>
       ))}
       </ul>

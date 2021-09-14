@@ -123,11 +123,11 @@ export default function ChatBox({db}: ChatBoxProps) {
               jeune.chatId && 
                 <li key={jeune.id}>
                   <button onClick={() => setSelectedJeune(jeune)}>
-                    <span className='h4-semi text-bleu_nuit w-full mb-[7px]'>
+                    <span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
                       {jeune.firstName} {jeune.lastName}
                       {!jeune.seenByConseiller && <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>Nouveau message</span>}
                     </span>
-                    <span className='text-sm text-bleu_nuit mb-[8px]'> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
+                    <span className='text-sm text-bleu_gris mb-[8px]'> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
                     <span className='text-xxs-italic text-bleu_nuit self-end flex'>
                       <span className='mr-[7px]'>{formatDayAndHourDate(jeune.lastMessageSentAt.toDate())} </span>
                       {jeune.seenByConseiller ? <FbCheckIcon  focusable="false" aria-hidden="true" /> : <FbCheckFillIcon  focusable="false" aria-hidden="true" />}

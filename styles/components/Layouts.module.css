@@ -5,23 +5,28 @@
 	justify-content: space-between;
 	padding: 15px 20px;
 	align-items: center;
-	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+	/* box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2); */
 	height: 60px;
+	position: fixed;
+	width: 100%;
+	z-index: 5;
 }
 
 .container {
 	position: relative;
-	display: flex;
-	flex-wrap: wrap;
+	top: 60px;
 }
 
 .page {
-	flex-grow: 1;
-	position: relative;
+	position: absolute;
 	padding: 45px 58px;
+	left: 107px;
+	right: 450px;
 }
 
 .sidebar {
+	position: fixed;
+	left: 0;
 	width: 107px;
 	background-color: theme('colors.bleu_nuit');
 	overflow-x: hidden; /* Disable horizontal scroll */
@@ -41,12 +46,14 @@
 /* ChatRoom*/
 
 .chatRoom {
+	position: fixed;
+	right: 0;
+	z-index: 5;
 	height: 100%;
 	width: 450px;
 	margin-left: auto;
-	/* z-index: 1; */
 	padding-top: 44px;
-	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+	border-left: 2px solid theme('colors.bleu_blanc');
 }
 
 .chatroomTitle {
@@ -55,8 +62,9 @@
 }
 
 .conversations {
-	height: 580px;
+	height: 100%;
 	overflow: scroll;
+	background-color: theme('colors.bleu_blanc');
 }
 
 .conversations li {
@@ -64,7 +72,7 @@
 }
 
 .conversations button {
-	background-color: theme('colors.bleu_blanc');
+	background-color: theme('colors.blanc');
 	padding: 16px 12px 9px 35px;
 	width: 100%;
 	text-align: start;
@@ -88,8 +96,7 @@
 }
 
 .messages {
-	height: 500px;
-	min-height: 200px;
+	height: 75%;
 	overflow: scroll;
 	padding: 16px 16px;
 }

@@ -23,7 +23,7 @@ export default function Layout({ children }: LayoutProps) {
      <Head>
        <title>Espace conseiller Pass Emploi</title>
        <meta name="description" content="Espace conseiller de l'outil pass emploi" />
-       <link rel="icon" href="/favicon.ico" />
+       <link rel="icon" href="/favicon.png" />
        {/* TODO: what s going on with Font?
           <link
            rel="preload"

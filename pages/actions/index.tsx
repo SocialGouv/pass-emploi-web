@@ -30,18 +30,18 @@ function Home({jeuneActionsList}: HomeProps)  {
 
       <ul className='grid grid-cols-2 gap-5 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1'>
         {jeuneActionsList.map((jeuneActions: JeuneActions) => (
-          <li key={`actions-${jeuneActions.jeune.id}`} className='p-[15px] rounded-medium' style={{boxShadow:'0px 0px 10px rgba(118, 123, 168, 0.3)'}}>
+          <li key={`actions-${jeuneActions.jeune.id}`} className='p-[15px]  border-2 border-bleu_blanc rounded-medium'>
 
             <h2 className='text-md text-bleu_nuit mb-[19px]'>
               Les actions de {jeuneActions.jeune.firstName} {jeuneActions.jeune.lastName}
             </h2>
 
             
-            <p className='text-xs text-bleu_nuit flex mb-[25px]'>
+            <p className='text-xs text-bleu_gris flex mb-[25px]'>
               {jeuneActions.nbActionsEnCours !== 0 ? `${jeuneActions.jeune.firstName} a ${jeuneActions.nbActionsEnCours} ${jeuneActions.nbActionsEnCours === 1 ? 'action' : 'actions'} en cours` : `${jeuneActions.jeune.firstName} n'a pas d'actions en cours pour le moment`}
             </p>
 
-            <p className='text-xs text-bleu_nuit flex mb-[45px]'>
+            <p className='text-xs text-bleu_gris flex mb-[45px]'>
               {jeuneActions.nbActionsTerminees !== 0 ? `${jeuneActions.jeune.firstName} a ${jeuneActions.nbActionsTerminees} ${jeuneActions.nbActionsTerminees === 1 ? 'action terminée' : 'actions terminées'}` : `${jeuneActions.jeune.firstName} n'a pas d'actions terminées pour le moment`}
             </p>
 
