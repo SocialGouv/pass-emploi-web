@@ -14,10 +14,6 @@ import styles from 'styles/components/Layouts.module.css'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 
-type ChatBoxProps = {
-  db: firebase.firestore.Firestore
-}
-
 const defaultJeune:JeuneChat = {
   id:'',
   firstName: '',
@@ -31,6 +27,11 @@ const defaultJeune:JeuneChat = {
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
+const collection = process.env.FIREBASE_COLLECTION_NAME || ''
+
+type ChatBoxProps = {
+  db: firebase.firestore.Firestore
+}
 
 export default function ChatBox({db}: ChatBoxProps) {
   const [jeunesChat, setJeunesChat] = useState<JeuneChat[]>([])
@@ -60,7 +61,8 @@ export default function ChatBox({db}: ChatBoxProps) {
 
         const newPromise = new Promise<JeuneChat>((resolve, reject) => {
 
-          db.collection('chat').where('jeuneId','==',jeune.id).onSnapshot((querySnapshot) => {
+
+          db.collection(collection).where('jeuneId','==',jeune.id).onSnapshot((querySnapshot) => {
             querySnapshot.docs.forEach((doc) => {
 
               if(!doc.exists){
