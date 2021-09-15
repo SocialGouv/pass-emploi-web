@@ -131,7 +131,7 @@ export default function ChatBox({db}: ChatBoxProps) {
                     </span>
                     <span className='text-sm text-bleu_gris mb-[8px]'> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
                     <span className='text-xxs-italic text-bleu_nuit self-end flex'>
-                      <span className='mr-[7px]'>{formatDayAndHourDate(jeune.lastMessageSentAt.toDate())} </span>
+                      {jeune.lastMessageContent && <span className='mr-[7px]'>{formatDayAndHourDate(jeune.lastMessageSentAt.toDate())} </span>}
                       {jeune.seenByConseiller ? <FbCheckIcon  focusable="false" aria-hidden="true" /> : <FbCheckFillIcon  focusable="false" aria-hidden="true" />}
                     </span>
                   </button>
