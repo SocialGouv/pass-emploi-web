@@ -91,7 +91,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
   }, [db, jeune.chatId]);
 
    return (
-     <>
+     <div className={styles.conversationConainer}>
 
       <div className={styles.conversationTitleConainer}>
         <button onClick={onBack}>
@@ -144,6 +144,6 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
         </button>
       </form>
     
-     </>
+     </div>
    )
  }
