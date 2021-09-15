@@ -46,9 +46,9 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
               <CalendarIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
               {formatDayDate(new Date(rdv.date))}
             </span>
-            <span className="flex" >
+            <span className="flex flex-wrap" >
               <TimeIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
-              {formatHourMinuteDate(new Date(rdv.date))}
+              {`${(new Date(rdv.date)).getUTCHours()}:00`}
               {` - ${rdv.duration}`}
             </span>
           </p>
@@ -80,7 +80,7 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
             </span>
             <span className="flex flex-wrap" >
               <TimeIcon focusable="false" aria-hidden="true" className="mr-[7px]"/>
-              {formatHourMinuteDate(new Date(rdv.date))}
+              {`${(new Date(rdv.date)).getUTCHours()}:00`}
               {` - ${rdv.duration}`}
             </span>
           </p>
