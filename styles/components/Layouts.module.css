@@ -5,22 +5,27 @@
 	justify-content: space-between;
 	padding: 15px 20px;
 	align-items: center;
-	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+	height: 60px;
+	position: fixed;
+	width: 100%;
+	z-index: 5;
 }
 
 .container {
 	position: relative;
-	display: flex;
-	flex-wrap: wrap;
+	top: 60px;
 }
 
 .page {
-	flex-grow: 1;
-	position: relative;
+	position: absolute;
 	padding: 45px 58px;
+	left: 107px;
+	right: 450px;
 }
 
 .sidebar {
+	position: fixed;
+	left: 0;
 	width: 107px;
 	background-color: theme('colors.bleu_nuit');
 	overflow-x: hidden; /* Disable horizontal scroll */
@@ -33,15 +38,21 @@
 	margin: auto;
 }
 
+.activeLink {
+	border-left: 5px solid theme('colors.blanc');
+}
+
 /* ChatRoom*/
 
 .chatRoom {
+	position: fixed;
+	right: 0;
+	z-index: 5;
 	height: 100%;
 	width: 450px;
 	margin-left: auto;
-	/* z-index: 1; */
 	padding-top: 44px;
-	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+	border-left: 2px solid theme('colors.bleu_blanc');
 }
 
 .chatroomTitle {
@@ -50,8 +61,9 @@
 }
 
 .conversations {
-	height: 700px;
+	height: 100%;
 	overflow: scroll;
+	background-color: theme('colors.bleu_blanc');
 }
 
 .conversations li {
@@ -59,12 +71,19 @@
 }
 
 .conversations button {
-	background-color: theme('colors.bleu_blanc');
+	background-color: theme('colors.blanc');
 	padding: 16px 12px 9px 35px;
 	width: 100%;
 	text-align: start;
 	display: flex;
 	flex-direction: column;
+}
+
+/* Conversation */
+
+.conversationConainer {
+	position: relative;
+	height: 100%;
 }
 
 .conversationTitleConainer {
@@ -83,10 +102,13 @@
 }
 
 .messages {
-	height: 600px;
-	min-height: 200px;
+	position: absolute;
+	right: 0;
+	left: 0;
 	overflow: scroll;
 	padding: 16px 16px;
+	padding-bottom: 200px;
+	height: 100%;
 }
 
 .messages li {
@@ -100,8 +122,8 @@
 
 .sentMessage {
 	text-align: right;
-	color: theme('colors.bleu_nuit');
-	background-color: theme('colors.bleu_blanc');
+	color: theme('colors.blanc');
+	background-color: theme('colors.bleu_nuit');
 	padding: 16px;
 	border-radius: 16px;
 	overflow-wrap: break-word;
@@ -112,8 +134,8 @@
 
 .receivedMessage {
 	text-align: left;
-	color: theme('colors.blanc');
-	background-color: theme('colors.bleu_nuit');
+	color: theme('colors.bleu_nuit');
+	background-color: theme('colors.bleu_blanc');
 	padding: 16px;
 	border-radius: 16px;
 	overflow-wrap: break-word;
@@ -123,7 +145,11 @@
 }
 
 .form {
-	margin: 11px 24px;
+	position: absolute;
+	bottom: 60px;
+	width: 100%;
+	background-color: theme('colors.blanc');
+	padding: 11px;
 	display: flex;
 }
 

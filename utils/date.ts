@@ -14,7 +14,16 @@ const formatDayDate = (date: Date) =>
   return `${day}/${month}/${year}`
 }
 
-const formatHourMinuteDate = (date: Date) => `${date.getHours()}:${date.getMinutes()}`
+const formatHourMinuteDate = (date: Date) => 
+{
+  let hours = date.getHours().toString();
+  hours = ("0" + hours).slice(-2);
+
+  let minutes = date.getMinutes().toString();
+  minutes = ("0" + minutes).slice(-2);
+
+  return `${hours}:${minutes}`
+}
 
 const formatDayAndHourDate = (date:Date) => `le ${formatDayDate(date)} à ${formatHourMinuteDate(date)}`
 

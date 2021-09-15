@@ -4,6 +4,7 @@ import Modal from "components/Modal";
 import Button from "components/Button";
 import { useEffect, useState } from "react";
 import { Jeune } from "interfaces";
+import { RdvJson } from "interfaces/json/rdv";
 
 type RdvModalProps = {
   show: boolean
@@ -11,9 +12,11 @@ type RdvModalProps = {
   onAdd: any
 }
 
-let jeunes: Jeune[] = []
+const conseiller_id = 1
 
 const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
+  const [jeunes, setJeunes] = useState<Jeune[]>([])
+
   const [jeune, selectJeune] = useState("")
   const [creneau, selectCreneau] = useState("")
   const [duree, selectDuree] = useState("")
@@ -34,7 +37,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
         lastName:''
       }
 
-      jeunes = [defaultJeune, ...data]
+      setJeunes([defaultJeune, ...data])
     })
   },[])
 
@@ -46,7 +49,8 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
     const hours:number = Number(creneau.substring(0, 2))
     rdvDate.setUTCHours(hours)
 
-    const newRdv = {
+    const newRdv:RdvJson = {
+      id:'',
       title:'titre',
       subtitle:'sous-titre',
       jeuneId: jeune,
@@ -56,12 +60,13 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
       comment: notes,
     }
 
-    fetch(`${process.env.API_ENDPOINT}/rendezvous`, {
+    fetch(`${process.env.API_ENDPOINT}/conseillers/${conseiller_id}/rendezvous`, {
       method: 'POST',
       headers:{'content-type': 'application/json'},
       body: JSON.stringify(newRdv)
     }).then(function(response) {
       onClose()
+      onAdd()
     });
   }
 

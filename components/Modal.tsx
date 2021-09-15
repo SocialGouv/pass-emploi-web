@@ -42,9 +42,20 @@ const Modal = ({ show, onClose, children, title }: ModalProps) => {
   ) : null;
 
   if (isBrowser) {
+
+    const note = document.querySelector('html');
+    if(note){
+      if(show){
+        note.style.overflowY = 'hidden'
+      }else{
+        note.style.overflowY = ''
+      }
+
+    }
+
     return ReactDOM.createPortal(
       modalContent,
-      document.getElementById("modal-root")
+      document.getElementById("modal-root"),
     );
   } else {
     return null;

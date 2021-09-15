@@ -12,13 +12,16 @@ import styles from 'styles/components/Layouts.module.css'
 import SendIcon from '../../assets/icons/btn_send.svg'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 
+
+const collection = process.env.FIREBASE_COLLECTION_NAME || ''
+
+const todayOrDate = (date: Date) =>  dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
+
 type ConversationProps = {
-  db: any
+  db: firebase.firestore.Firestore
   jeune: Jeune
   onBack: any
 }
-
-const todayOrDate = (date: Date) =>  dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 export default function Conversation({db, jeune, onBack}: ConversationProps) {
 
@@ -33,13 +36,13 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
 
     const firestoreNow = firebase.firestore.FieldValue.serverTimestamp()
 
-    db.collection("chat").doc(jeune.chatId).collection('messages').add({
+    db.collection(collection).doc(jeune.chatId).collection('messages').add({
       content: newMessage,
       creationDate: firestoreNow,
       sentBy: 'conseiller',
     });
 
-    db.collection("chat").doc(jeune.chatId).update({
+    db.collection(collection).doc(jeune.chatId).update({
       seenByConseiller: true,
       newConseillerMessageCount: firebase.firestore.FieldValue.increment(1),
       lastMessageContent: newMessage,
@@ -50,7 +53,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
     setNewMessage('');
 
     if(dummySpace && dummySpace.current) {
-      dummySpace.current.scrollIntoView(true);
+      dummySpace.current.scrollIntoView({block: "end", inline: "nearest"});
     }
   };
 
@@ -58,7 +61,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
   useEffect(() => {
     let currentMessages: Message[]
 
-    db.collection('chat').doc(jeune.chatId).collection('messages')
+    const unsubscribe = db.collection(collection).doc(jeune.chatId).collection('messages')
       .orderBy('creationDate')
       .onSnapshot((querySnapShot: any) => {
         // get all documents from collection with id
@@ -77,14 +80,18 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
         
       });
 
-      db.collection("chat").doc(jeune.chatId).update({
+      db.collection(collection).doc(jeune.chatId).update({
         seenByConseiller: true,
       });
+
+      return (() => {
+        unsubscribe() 
+     })
       
   }, [db, jeune.chatId]);
 
    return (
-     <>
+     <div className={styles.conversationConainer}>
 
       <div className={styles.conversationTitleConainer}>
         <button onClick={onBack}>
@@ -113,7 +120,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
                       à {formatHourMinuteDate(message.creationDate.toDate())}
                     </p>
 
-                    {((dailyIndex === (dailyMessages.length -1))&&(index === (dailyMessage.messages.length -1))) &&<section ref={dummySpace} />    
+                    {((dailyIndex === (dailyMessages.length -1))&&(index === (dailyMessage.messages.length -1))) &&<section aria-hidden="true" ref={dummySpace}/>    
                     }
                 </li>
               ))}
@@ -122,7 +129,7 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
           </li>
         ))}
       </ul>
-
+      
       <form onSubmit={handleSubmit} className={styles.form}>
         <input
           type="text"
@@ -137,6 +144,6 @@ export default function Conversation({db, jeune, onBack}: ConversationProps) {
         </button>
       </form>
     
-     </>
+     </div>
    )
  }

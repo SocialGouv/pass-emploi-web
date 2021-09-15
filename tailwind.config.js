@@ -10,11 +10,10 @@ module.exports = {
 	darkMode: false, // or 'media' or 'class'
 	theme: {
 		screens: {
-			//TODO check with UI
 			sm: '480px',
 			md: '768px',
 			lg: '976px',
-			xl: '1440px',
+			xl: '1441px',
 		},
 		/**
 		 * Usage
@@ -28,6 +27,7 @@ module.exports = {
 			bleu_gris: '#9196C0',
 			bleu_clair: '#C8CBE4',
 			bleu_blanc: '#F4F5FF',
+			gris_blanc: '#F6F9FC',
 			violet: '#9762DA',
 		},
 

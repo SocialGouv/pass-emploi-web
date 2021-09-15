@@ -5,6 +5,7 @@ module.exports = {
 
 	env: {
 		API_ENDPOINT: process.env.API_ENDPOINT,
+		FIREBASE_COLLECTION_NAME: process.env.FIREBASE_COLLECTION_NAME,
 		FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
 		FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
 		FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
@@ -13,5 +14,10 @@ module.exports = {
 		FIREBASE_MESSAGING_SENDER: process.env.FIREBASE_MESSAGING_SENDER,
 		FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
 		FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
+	},
+
+	i18n: {
+		locales: ['fr-FR'],
+		defaultLocale: 'fr-FR',
 	},
 }

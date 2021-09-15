@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from 'react';
 
-import {db} from 'utils/firebase'
 import firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -15,10 +14,6 @@ import styles from 'styles/components/Layouts.module.css'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 
-type ChatBoxProps = {
-  // db: firebase.firestore.Firestore
-}
-
 const defaultJeune:JeuneChat = {
   id:'',
   firstName: '',
@@ -30,9 +25,17 @@ const defaultJeune:JeuneChat = {
   lastMessageSentAt: new firebase.firestore.Timestamp(1562524200,  0)
 }
 
+let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
-export default function ChatBox({}: ChatBoxProps) {
-  const [jeunes, setJeunes] = useState<JeuneChat[]>([])
+const collection = process.env.FIREBASE_COLLECTION_NAME || ''
+
+type ChatBoxProps = {
+  db: firebase.firestore.Firestore
+}
+
+export default function ChatBox({db}: ChatBoxProps) {
+  const [jeunesChat, setJeunesChat] = useState<JeuneChat[]>([])
+  const [jeunes, setJeunes] = useState<Jeune[]>([])
   const [selectedJeune, setSelectedJeune] = useState<JeuneChat>(defaultJeune)
   
   const isInChatRoom = () => Boolean(selectedJeune === defaultJeune)
@@ -43,38 +46,64 @@ export default function ChatBox({}: ChatBoxProps) {
       return await res.json()
     }
 
-    async function fetchFirebaseData(data: Jeune[]): Promise<JeuneChat[]>{
-      let jeunesChats:JeuneChat[] = []
+    fetchData().then((data) => {
+      setJeunes(data)
+      currentJeunesChat = []
+    })
+  }, [])
 
-      await Promise.all(data.map(async (jeune: Jeune, index: number) => {
-        await db.collection('chat').where('jeuneId','==',jeune.id).get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            if(doc.exists){
+  useEffect(() => {
+    async function fetchFirebaseData(): Promise<JeuneChat[]>{
+      let promises:Promise<JeuneChat>[] = []
 
+
+      jeunes.map(async (jeune: Jeune, index: number) => {
+
+        const newPromise = new Promise<JeuneChat>((resolve, reject) => {
+
+
+          db.collection(collection).where('jeuneId','==',jeune.id).onSnapshot((querySnapshot) => {
+            querySnapshot.docs.forEach((doc) => {
+
+              if(!doc.exists){
+                return
+              }
+  
               const newJeuneChat:JeuneChat = {
-                ...data[index],
+                ...jeunes[index],
                 chatId:doc.id,
-                seenByConseiller: doc.data().seenByConseiller,
+                seenByConseiller: doc.data().seenByConseiller === false ? false : true, // when undefined seenByConseiller has be true
                 newConseillerMessageCount: doc.data().newConseillerMessageCount,
                 lastMessageContent: doc.data().lastMessageContent || defaultJeune.lastMessageContent,
                 lastMessageSentAt: doc.data().lastMessageSentAt || defaultJeune.lastMessageSentAt,
                 lastMessageSentBy: doc.data().lastMessageSentBy || defaultJeune.lastMessageSentBy
               }
-
-              jeunesChats.push(newJeuneChat)
-            }
+              updateJeunesChat(newJeuneChat)
+              resolve(newJeuneChat)
+          });
+          }, reject)
         });
-        })
-      }))
-      return jeunesChats
+
+        promises.push(newPromise)
+      })
+      
+    return await Promise.all(promises)
+                        .then((jeunesChats) => jeunesChats)
     }
 
-    fetchData().then((data) => {
-      fetchFirebaseData(data).then((dataWithChatId)=> setJeunes(dataWithChatId))
-    })
+    fetchFirebaseData().then((dataWithChatId)=> {currentJeunesChat = [...dataWithChatId]; setJeunesChat(currentJeunesChat);})
 
-  },[])
-    
+  },[db,jeunes])
+
+  const updateJeunesChat = (newJeuneChat: JeuneChat) => {
+    const idxOfJeune = currentJeunesChat.findIndex(j => j.chatId === newJeuneChat.chatId)
+
+    if(idxOfJeune !== -1){
+      currentJeunesChat[idxOfJeune] = newJeuneChat
+      setJeunesChat([...currentJeunesChat])
+    }
+  }
+
    return (
      <article  className={styles.chatRoom}>
 
@@ -86,21 +115,21 @@ export default function ChatBox({}: ChatBoxProps) {
         <>
           <h2 className={`h2-semi text-bleu_nuit ${styles.chatroomTitle}`}>Ma messagerie</h2>
 
-          {!jeunes?.length && <div className={styles.conversations}> 
+          {!jeunesChat?.length && <div className={styles.conversations}> 
             <EmptyMessagesImage focusable="false" aria-hidden="true" className='m-auto mt-[50px] mb-[50px]' /> 
             <p className='text-md-semi text-bleu_nuit text-center ml-[50px] mr-[50px]'>Vous devriez avoir des jeunes inscrits pour discuter avec eux </p>
           </div>}
 
           <ul className={styles.conversations}>  
-            {jeunes.map((jeune: JeuneChat) => (
+            {jeunesChat.map((jeune: JeuneChat) => (
               jeune.chatId && 
                 <li key={jeune.id}>
                   <button onClick={() => setSelectedJeune(jeune)}>
-                    <span className='h4-semi text-bleu_nuit w-full mb-[7px]'>
+                    <span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
                       {jeune.firstName} {jeune.lastName}
                       {!jeune.seenByConseiller && <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>Nouveau message</span>}
                     </span>
-                    <span className='text-sm text-bleu_nuit mb-[8px]'> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
+                    <span className='text-sm text-bleu_gris mb-[8px]'> {jeune.lastMessageSentBy === 'conseiller' ? 'Vous' : jeune.firstName} : {jeune.lastMessageContent}</span>
                     <span className='text-xxs-italic text-bleu_nuit self-end flex'>
                       <span className='mr-[7px]'>{formatDayAndHourDate(jeune.lastMessageSentAt.toDate())} </span>
                       {jeune.seenByConseiller ? <FbCheckIcon  focusable="false" aria-hidden="true" /> : <FbCheckFillIcon  focusable="false" aria-hidden="true" />}

@@ -9,6 +9,7 @@
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0.2);
 	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
+	z-index: 10;
 }
 
 .modalHeader {
