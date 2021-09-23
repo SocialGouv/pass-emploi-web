@@ -3,7 +3,7 @@
 	color: theme('colors.blanc');
 	padding: 11px 14px;
 	border: 0.1rem solid transparent;
-	border-radius: 2px;
+	border-radius: 74px;
 	transition: border-color, color 0.2s, background-color 0.2s;
 	display: flex;
 	align-items: center;
