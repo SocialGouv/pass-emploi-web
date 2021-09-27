@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
 import firebase from "firebase/app";
-import "firebase/auth";
 import "firebase/firestore";
 
 import { Jeune, Message, DailyMessages, ListDailyMessages } from 'interfaces';

@@ -2,8 +2,8 @@ import type { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import { useState } from 'react';
 
-import { Rdv } from 'interfaces/rdv';
-import { formatDayDate, formatHourMinuteDate } from 'utils/date';
+import { formatDayDate } from 'utils/date';
+import withSession from "utils/session";
 
 import AddRdvModal from "components/rdv/AddRdvModal";
 import Button from "components/Button";
@@ -11,6 +11,8 @@ import Button from "components/Button";
 import AddIcon from '../assets/icons/add.svg'
 import CalendarIcon from '../assets/icons/calendar.svg'
 import TimeIcon from '../assets/icons/time.svg'
+
+import { Rdv } from 'interfaces/rdv';
 import { RdvJson } from 'interfaces/json/rdv';
 import { durees } from 'referentiel/rdv';
 
@@ -100,6 +102,21 @@ const Home = ({rdvs, oldRdvs} : HomeProps) => {
     </>
   )
 }
+
+// export const getServerSideProps = withSession(async function ({ req, res }) {
+//   const user = req.session.get("user");
+
+//   if (user === undefined) {
+//     res.setHeader("location", "/login");
+//     res.statusCode = 302;
+//     res.end();
+//     return { props: {} };
+//   }
+
+//   return {
+//     props: { user: req.session.get("user") },
+//   };
+// });
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const res = await fetch(`${process.env.API_ENDPOINT}/conseillers/1/rendezvous`)
