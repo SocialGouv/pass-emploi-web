@@ -8,12 +8,12 @@ import { Jeune } from 'interfaces'
 import EmptyActionsImage from '../../assets/icons/empty_data.svg'
 
 import linkStyles from 'styles/components/Link.module.css'
+import withSession, { ServerSideHandler } from 'utils/session'
+import fetchJson from 'utils/fetchJson'
 
 type HomeProps = {
 	jeuneActionsList: JeuneActions[]
 }
-
-const conseiller_id = 1
 
 function Home({ jeuneActionsList }: HomeProps) {
 	return (
@@ -80,41 +80,53 @@ function Home({ jeuneActionsList }: HomeProps) {
 	)
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-	const res = await fetch(
-		`${process.env.API_ENDPOINT}/conseillers/${conseiller_id}/actions`
-	)
-	const data = await res.json()
+export const getServerSideProps = withSession<ServerSideHandler>(
+	async ({ req, res }) => {
+		const user = req.session.get('user')
 
-	if (!data) {
+		if (user === undefined) {
+			res.setHeader('location', '/login')
+			res.statusCode = 302
+			res.end()
+			return {
+				props: {},
+			}
+		}
+
+		const data = await fetchJson(
+			`${process.env.API_ENDPOINT}/conseillers/${user.id}/actions`
+		)
+
+		if (!data) {
+			return {
+				notFound: true,
+			}
+		}
+
+		let jeunesActions: JeuneActions[] = []
+
+		data.map((jeuneActionJson: JeuneActionJson) => {
+			const newJeune: Jeune = {
+				id: jeuneActionJson.jeuneId,
+				firstName: jeuneActionJson.jeuneFirstName,
+				lastName: jeuneActionJson.jeuneLastName,
+			}
+
+			const newJeuneAction: JeuneActions = {
+				jeune: newJeune,
+				nbActionsEnCours: jeuneActionJson.todoActionsCount,
+				nbActionsTerminees: jeuneActionJson.doneActionsCount,
+			}
+
+			jeunesActions.push(newJeuneAction)
+		})
+
 		return {
-			notFound: true,
+			props: {
+				jeuneActionsList: jeunesActions,
+			},
 		}
 	}
-
-	let jeunesActions: JeuneActions[] = []
-
-	data.map((jeuneActionJson: JeuneActionJson) => {
-		const newJeune: Jeune = {
-			id: jeuneActionJson.jeuneId,
-			firstName: jeuneActionJson.jeuneFirstName,
-			lastName: jeuneActionJson.jeuneLastName,
-		}
-
-		const newJeuneAction: JeuneActions = {
-			jeune: newJeune,
-			nbActionsEnCours: jeuneActionJson.todoActionsCount,
-			nbActionsTerminees: jeuneActionJson.doneActionsCount,
-		}
-
-		jeunesActions.push(newJeuneAction)
-	})
-
-	return {
-		props: {
-			jeuneActionsList: jeunesActions,
-		},
-	}
-}
+)
 
 export default Home

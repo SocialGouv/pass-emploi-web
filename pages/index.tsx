@@ -141,10 +141,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 			res.statusCode = 302
 			res.end()
 			return {
-				props: {
-					rdvs: [],
-					oldRdvs: [],
-				},
+				props: {},
 			}
 		}
 
