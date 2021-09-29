@@ -13,7 +13,7 @@
 }
 
 .modalHeader {
-	background: theme('colors.bleu_nuit');
+	/* background: theme('colors.bleu_nuit'); */
 	display: flex;
 	justify-content: space-between;
 	padding: 23px 23px 19px 24px;
