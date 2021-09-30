@@ -13,6 +13,14 @@ export type UserAction = {
   lastUpdate: Date
 }
 
+export type Conseiller = {
+  isLoggedIn?: boolean
+  id: string
+  firstName: string
+  lastName: string
+  jeunes: Jeune[]
+}
+
 export type Jeune = {
   id: string
   firstName: string
