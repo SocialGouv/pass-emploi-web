@@ -13,9 +13,8 @@
 }
 
 .modalHeader {
-	/* background: theme('colors.bleu_nuit'); */
 	display: flex;
 	justify-content: space-between;
-	padding: 23px 23px 19px 24px;
+	padding: 40px 40px 10px 40px;
 	border-radius: 8px 8px 0 0;
 }

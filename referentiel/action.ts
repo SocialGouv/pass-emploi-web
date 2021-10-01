@@ -6,7 +6,7 @@ const actionsPredefinies : UserAction[] = [
   {
     id: 'no-com-1',
     content: 'Identifier ses atouts et ses compétences',
-    comment: 'test com',
+    comment: 'Hello from comment',
     isDone: false,
     creationDate: now,
     lastUpdate: now,

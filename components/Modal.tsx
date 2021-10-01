@@ -10,9 +10,18 @@ type ModalProps = {
 	show: boolean
 	onClose: any
 	children: any
+	customHeight?: string
+	customWidth?: string
 }
 
-const Modal = ({ show, onClose, children, title }: ModalProps) => {
+const Modal = ({
+	show,
+	onClose,
+	children,
+	title,
+	customHeight,
+	customWidth,
+}: ModalProps) => {
 	const [isBrowser, setIsBrowser] = useState(false)
 
 	useEffect(() => {
@@ -26,11 +35,15 @@ const Modal = ({ show, onClose, children, title }: ModalProps) => {
 
 	const modalContent = show ? (
 		<div className={styles.modalOverlay}>
-			<div className='rounded-x_large h-[664px] w-[791px] bg-blanc'>
+			<div
+				className='rounded-x_large bg-blanc'
+				style={{
+					height: customHeight || '664px',
+					width: customWidth || '791px',
+				}}
+			>
 				<div className={`text-bleu_nuit ${styles.modalHeader}`}>
-					{title && (
-						<div className={`h4-semi ${styles.modalTitle}`}>{title}</div>
-					)}
+					{title && <div className='h4-semi'>{title}</div>}
 					<a href='#' onClick={handleCloseClick}>
 						<CloseIcon
 							role='img'
@@ -39,7 +52,7 @@ const Modal = ({ show, onClose, children, title }: ModalProps) => {
 						/>
 					</a>
 				</div>
-				<div className='p-[30px]'>{children}</div>
+				<div className='p-[40px] pt-0'>{children}</div>
 			</div>
 		</div>
 	) : null
