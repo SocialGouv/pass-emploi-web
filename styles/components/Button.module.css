@@ -50,17 +50,11 @@
 	background-color: theme('colors.blanc');
 	color: theme('colors.bleu_nuit');
 	border: 0.1rem solid theme('colors.bleu_nuit');
-
-	/* background-color: theme('colors.bleu_nuit');
-	color: theme('colors.blanc'); */
 }
 
 .buttonWhite:hover {
 	background-color: theme('colors.bleu_nuit');
 	color: theme('colors.blanc');
-	/* background-color: theme('colors.blanc');
-	color: theme('colors.bleu_nuit');
-	border: 0.1rem solid theme('colors.bleu_nuit'); */
 }
 
 .buttonWhite:hover svg path {
