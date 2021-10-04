@@ -44,7 +44,9 @@ const Action = ({ action, toggleStatus }: ActionProps) => {
 					/>
 					<span style={{ flex: '0 0 95%' }}>
 						<p className='text-sm text-blanc break-all'>{action.content}</p>
-						<p className='text-sm text-bleu break-all'>{action.comment}</p>
+						<p className='text-sm text-bleu_clair break-all'>
+							{action.comment}
+						</p>
 					</span>
 				</button>
 			)}
