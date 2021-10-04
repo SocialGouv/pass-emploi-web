@@ -1,6 +1,4 @@
-.buttonBlue {
-	background-color: theme('colors.bleu_nuit');
-	color: theme('colors.blanc');
+.button {
 	padding: 11px 14px;
 	border: 0.1rem solid transparent;
 	border-radius: 74px;
@@ -8,6 +6,15 @@
 	display: flex;
 	align-items: center;
 	height: 46px;
+}
+
+/**
+* Button Blue (default)
+*/
+
+.buttonBlue {
+	background-color: theme('colors.bleu_nuit');
+	color: theme('colors.blanc');
 }
 
 .buttonBlue:hover {
@@ -33,4 +40,29 @@
 
 .buttonBlue[disabled]:hover {
 	color: theme('colors.blanc');
+}
+
+/**
+* Button white
+*/
+
+.buttonWhite {
+	background-color: theme('colors.blanc');
+	color: theme('colors.bleu_nuit');
+	border: 0.1rem solid theme('colors.bleu_nuit');
+
+	/* background-color: theme('colors.bleu_nuit');
+	color: theme('colors.blanc'); */
+}
+
+.buttonWhite:hover {
+	background-color: theme('colors.bleu_nuit');
+	color: theme('colors.blanc');
+	/* background-color: theme('colors.blanc');
+	color: theme('colors.bleu_nuit');
+	border: 0.1rem solid theme('colors.bleu_nuit'); */
+}
+
+.buttonWhite:hover svg path {
+	fill: theme('colors.bleu_nuit');
 }
