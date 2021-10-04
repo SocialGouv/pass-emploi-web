@@ -1,110 +1,146 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 import router from 'next/router'
 
 import { UserAction } from 'interfaces'
-import { actionsPredefinies } from "referentiel/action";
+import { actionsPredefinies } from 'referentiel/action'
 
-import Modal from "components/Modal";
-import Button from "components/Button";
-
-
-import actionStyles from 'styles/components/Action.module.css'
-import styles from 'styles/components/AddActionModal.module.css'
+import Modal from 'components/Modal'
+import Button from 'components/Button'
 
 type ActionModalProps = {
-  show: boolean
-  onClose: any
-  onAdd: any
+	show: boolean
+	onClose: any
+	onAdd: any
 }
 
 const now = new Date()
 
-
-const defaultAction: UserAction ={
-  id: '',
-  content: '',
-  comment:'',
-  isDone: false,
-  lastUpdate: now,
-  creationDate: now,
+const defaultAction: UserAction = {
+	id: '',
+	content: '',
+	comment: '',
+	isDone: false,
+	lastUpdate: now,
+	creationDate: now,
 }
 
 const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
-  const handleSlectedChange = (event: any) => {
-     let currentAction = actionsPredefinies?.find(action => action.id === event.target.value)
+	const [selectedAction, setSelectedAction] = useState(defaultAction)
+	const [newComment, setNewComment] = useState('')
+	const [isCommentMode, setIsCommentMode] = useState(false)
 
-    if(currentAction){
-      currentAction.isDone = true
-      setSelectedAction(currentAction)
-    }
-  };
+	const noSelectedAction = () => Boolean(selectedAction.id === '')
 
-  const handleAddClick = (event: any) => {
-    event.preventDefault();
+	const handleSelectedAction = (selectedAction: UserAction) => {
+		setSelectedAction(selectedAction)
+		setIsCommentMode(true)
+	}
 
-    if(noSelectedAction()){
-      return
-    }
+	const handleAddClick = (event: any) => {
+		event.preventDefault()
 
-    const now = new Date()
-    selectedAction.id = Date.now().toString()
-    selectedAction.isDone = false
-    selectedAction.lastUpdate = now
-    selectedAction.creationDate = now
+		if (noSelectedAction()) {
+			return
+		}
 
-    fetch(`${process.env.API_ENDPOINT}/jeunes/${router.query.jeune_id}/action`, {
-        method: 'POST',
-        headers:{'content-type': 'application/json'},
-        body: JSON.stringify(selectedAction)
-      }).then(function(response) {
-        setSelectedAction(defaultAction);
-        onAdd(selectedAction);
-        onClose()
-      });
-  };
+		const now = new Date()
+		selectedAction.id = Date.now().toString()
+		selectedAction.isDone = false
+		selectedAction.lastUpdate = now
+		selectedAction.creationDate = now
+		selectedAction.comment = newComment
 
-  const noSelectedAction = () => Boolean(selectedAction.id === '')
+		console.log('selectedAction', selectedAction)
 
-  const [selectedAction, setSelectedAction] = useState(defaultAction);
+		fetch(
+			`${process.env.API_ENDPOINT}/jeunes/${router.query.jeune_id}/action`,
+			{
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(selectedAction),
+			}
+		).then(function (response) {
+			setSelectedAction(defaultAction)
+			onAdd(selectedAction)
+			onClose()
+		})
+	}
 
-  return(
-    <Modal
-      title='Créer une nouvelle action'
-      onClose={() => {setSelectedAction(defaultAction); onClose()}}
-      show={show}
-    >
-      <div  style={{marginBottom: "30px"}}>
-        <Button type="button"> 
-            ACTIONS PRÉDÉFINIES
-        </Button>
-      </div>
-      <form onSubmit={handleAddClick}>
+	const handleCloseModal = () => {
+		setSelectedAction(defaultAction)
+		setIsCommentMode(false)
+		setNewComment('')
+		onClose()
+	}
 
-        <div className={styles.scrollableContainer}>
+	return (
+		<>
+			<Modal
+				title='Créer une nouvelle action'
+				onClose={handleCloseModal}
+				show={!isCommentMode && show}
+				customHeight='636px'
+				customWidth='939px'
+			>
+				<div className='mb-[40px]'>
+					<Button type='button'>Actions prédéfinies</Button>
+				</div>
 
-          {actionsPredefinies.map((action: UserAction) => (
-            <div className={`${styles.actionContainer} ${actionStyles.container} ${action.id === selectedAction.id ? actionStyles.isDone : ''}`} key={action.id}>
-            <input type="radio" id={action.id} checked={action.isDone && selectedAction.id === action.id} value={action.id} aria-checked={action.isDone && selectedAction.id === action.id} onChange={handleSlectedChange}/>
-            <label htmlFor={action.id} ><span></span>
-              <div>
-                <p className='text-lg'>{action.content}</p>
-                <p className='text-sm'>{action.comment}</p>
-              </div>
-            </label>
-          </div>
-          ))}
+				<div className='h-[425px] overflow-scroll mb-[40px]'>
+					{actionsPredefinies.map((action: UserAction) => (
+						<button
+							key={action.id}
+							type='button'
+							className='w-full px-[24px] py-[16px] mb-[8px] text-left border border-bleu_blanc rounded-medium'
+							onClick={() => handleSelectedAction(action)}
+						>
+							<p className='text-sm text-bleu_nuit'>{action.content}</p>
+						</button>
+					))}
+				</div>
+			</Modal>
 
-        </div>
+			<Modal
+				title={selectedAction.content}
+				onClose={handleCloseModal}
+				onBack={() => {
+					setIsCommentMode(false)
+					setNewComment('')
+				}}
+				show={isCommentMode && show}
+				customHeight='360px'
+				customWidth='939px'
+			>
+				<form onSubmit={handleAddClick}>
+					<label
+						htmlFor='comment'
+						className='text-sm text-bleu_nuit block mb-[20px]'
+					>
+						Ajouter un commentaire à votre action
+					</label>
 
-        <div className={styles.submitContainer}>
-          <Button type="submit" disabled={noSelectedAction()}> 
-            AJOUTER
-          </Button>
-        </div>
+					<textarea
+						id='comment'
+						name='comment'
+						rows={3}
+						cols={5}
+						value={newComment}
+						onChange={(e) => setNewComment(e.target.value)}
+						className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
+						placeholder='Ajouter un commentaire...'
+					></textarea>
 
-      </form>
-    </Modal>
-    )
-};
+					<Button
+						type='submit'
+						className='px-[48px] py-[11px] m-auto'
+						disabled={noSelectedAction()}
+					>
+						<span className='px-[51px]'>Envoyer l&apos;action</span>
+					</Button>
+				</form>
+			</Modal>
+		</>
+	)
+}
 
-export default AddActionModal;
+export default AddActionModal

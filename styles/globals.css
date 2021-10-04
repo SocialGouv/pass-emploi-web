@@ -20,6 +20,10 @@ a {
 	text-decoration: none;
 }
 
+textarea {
+	resize: none;
+}
+
 select {
 	-webkit-appearance: none;
 	-moz-appearance: none;

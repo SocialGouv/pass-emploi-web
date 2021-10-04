@@ -11,11 +11,3 @@
 	box-shadow: 0 0 0.8rem rgba(37, 48, 59, 0.2);
 	z-index: 10;
 }
-
-.modalHeader {
-	background: theme('colors.bleu_nuit');
-	display: flex;
-	justify-content: space-between;
-	padding: 23px 23px 19px 24px;
-	border-radius: 8px 8px 0 0;
-}
