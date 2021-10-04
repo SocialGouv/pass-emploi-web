@@ -25,9 +25,9 @@ const Action = ({ action, toggleStatus }: ActionProps) => {
 						aria-hidden='true'
 						className='mr-[9px]'
 					/>
-					<span style={{ flex: '0 0 90%' }}>
-						<p className='text-sm text-bleu_nuit'>{action.content}</p>
-						<p className='text-sm text-bleu'>{action.comment}</p>
+					<span style={{ flex: '0 0 95%' }}>
+						<p className='text-sm text-bleu_nuit break-all'>{action.content}</p>
+						<p className='text-sm text-bleu break-all'>{action.comment}</p>
 					</span>
 				</button>
 			)}
@@ -42,9 +42,9 @@ const Action = ({ action, toggleStatus }: ActionProps) => {
 						aria-hidden='true'
 						className='mr-[9px]'
 					/>
-					<span style={{ flex: '0 0 90%' }}>
-						<p className='text-sm text-blanc'>{action.content}</p>
-						<p className='text-sm text-bleu'>{action.comment}</p>
+					<span style={{ flex: '0 0 95%' }}>
+						<p className='text-sm text-blanc break-all'>{action.content}</p>
+						<p className='text-sm text-bleu break-all'>{action.comment}</p>
 					</span>
 				</button>
 			)}
