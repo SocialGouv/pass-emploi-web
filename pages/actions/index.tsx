@@ -42,8 +42,7 @@ function Home({ jeuneActionsList }: HomeProps) {
 						className='p-[15px]  border-2 border-bleu_blanc rounded-medium'
 					>
 						<h2 className='text-md text-bleu_nuit mb-[19px]'>
-							Les actions de {jeuneActions.jeune.firstName}{' '}
-							{jeuneActions.jeune.lastName}
+							{jeuneActions.jeune.firstName} {jeuneActions.jeune.lastName}
 						</h2>
 
 						<p className='text-xs text-bleu_gris flex mb-[25px]'>

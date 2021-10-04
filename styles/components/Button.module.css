@@ -36,10 +36,12 @@
 .buttonBlue[disabled] {
 	background-color: theme('colors.bleu_gris');
 	cursor: not-allowed;
+	border: unset;
 }
 
 .buttonBlue[disabled]:hover {
 	color: theme('colors.blanc');
+	border: unset;
 }
 
 /**

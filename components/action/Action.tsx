@@ -1,35 +1,55 @@
-import classNames from 'classnames';
 import { UserAction } from 'interfaces'
 
-import styles from 'styles/components/Action.module.css'
-
+import UncheckedIcon from '../../assets/icons/checkbox_unchecked.svg'
+import CheckedIcon from '../../assets/icons/checkbox_checked.svg'
 
 type ActionProps = {
-  action: UserAction,
-  toggleStatus?: any,
+	action: UserAction
+	toggleStatus?: any
 }
 
-const Action = ( {action, toggleStatus}: ActionProps) => {
+const Action = ({ action, toggleStatus }: ActionProps) => {
+	const handleCheckChange = () => {
+		toggleStatus(action)
+	}
 
-  const handleCheckChange = () => {
-    toggleStatus(action)
-  };
+	return (
+		<>
+			{!action.isDone && (
+				<button
+					className='w-full flex px-[16px] py-[16px] mb-[8px] text-left border border-bleu_blanc rounded-medium'
+					onClick={handleCheckChange}
+				>
+					<UncheckedIcon
+						focusable='false'
+						aria-hidden='true'
+						className='mr-[9px]'
+					/>
+					<span style={{ flex: '0 0 90%' }}>
+						<p className='text-sm text-bleu_nuit'>{action.content}</p>
+						<p className='text-sm text-bleu'>{action.comment}</p>
+					</span>
+				</button>
+			)}
 
-  var containerStyles = classNames(styles.container, action.isDone ? styles.isDone : '');
+			{action.isDone && (
+				<button
+					className='w-full flex px-[16px] py-[16px] mb-[8px] text-left bg-bleu_nuit border border-bleu_nuit rounded-medium'
+					onClick={handleCheckChange}
+				>
+					<CheckedIcon
+						focusable='false'
+						aria-hidden='true'
+						className='mr-[9px]'
+					/>
+					<span style={{ flex: '0 0 90%' }}>
+						<p className='text-sm text-blanc'>{action.content}</p>
+						<p className='text-sm text-bleu'>{action.comment}</p>
+					</span>
+				</button>
+			)}
+		</>
+	)
+}
 
-  return(
-  <div className={containerStyles}>
-    <input type="checkbox" id={action.id} onChange={handleCheckChange} defaultChecked={action.isDone} aria-checked={action.isDone}/>
-    <label htmlFor={action.id} ><span></span>
-    <div>
-      <p className='text-lg'>{action.content}</p>
-      <p className='text-sm'>{action.comment}</p>
-    </div>
-      
-    </label>
-    
-  </div>
-    )
-};
-
-export default Action;
+export default Action

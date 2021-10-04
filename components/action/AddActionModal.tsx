@@ -7,6 +7,8 @@ import { actionsPredefinies } from 'referentiel/action'
 import Modal from 'components/Modal'
 import Button from 'components/Button'
 
+const INPUT_MAX_LENGTH = 250
+
 type ActionModalProps = {
 	show: boolean
 	onClose: any
@@ -127,6 +129,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 							<input
 								id='customContent'
 								name='customContent'
+								maxLength={INPUT_MAX_LENGTH}
 								value={newContent}
 								onChange={(e) => setNewContent(e.target.value)}
 								className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
@@ -143,6 +146,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 							<textarea
 								id='cutomComment'
 								name='cutomComment'
+								maxLength={INPUT_MAX_LENGTH}
 								rows={3}
 								cols={5}
 								value={newComment}
@@ -188,6 +192,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 						rows={3}
 						cols={5}
 						value={newComment}
+						maxLength={INPUT_MAX_LENGTH}
 						onChange={(e) => setNewComment(e.target.value)}
 						className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
 						placeholder='Ajouter un commentaire...'
