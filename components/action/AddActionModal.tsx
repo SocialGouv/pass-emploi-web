@@ -103,23 +103,30 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 			<Modal
 				title={selectedAction.content}
 				onClose={handleCloseModal}
+				onBack={() => {
+					setIsCommentMode(false)
+					setNewComment('')
+				}}
 				show={isCommentMode && show}
-				customHeight='380px'
+				customHeight='360px'
 				customWidth='939px'
 			>
 				<form onSubmit={handleAddClick}>
-					<label htmlFor='comment' className='hidden'>
+					<label
+						htmlFor='comment'
+						className='text-sm text-bleu_nuit block mb-[20px]'
+					>
 						Ajouter un commentaire à votre action
 					</label>
 
 					<textarea
 						id='comment'
 						name='comment'
-						rows={5}
+						rows={3}
 						cols={5}
 						value={newComment}
 						onChange={(e) => setNewComment(e.target.value)}
-						className='w-full text-sm text-bleu_nuit p-[16px] mb-[40px] border border-bleu_blanc rounded-medium'
+						className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
 						placeholder='Ajouter un commentaire...'
 					></textarea>
 
@@ -128,7 +135,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 						className='px-[48px] py-[11px] m-auto'
 						disabled={noSelectedAction()}
 					>
-						<span className='px-[76px]'>Envoyer</span>
+						<span className='px-[51px]'>Envoyer l&apos;action</span>
 					</Button>
 				</form>
 			</Modal>

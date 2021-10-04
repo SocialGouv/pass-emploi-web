@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 var ReactDOM = require('react-dom')
 
-import CloseIcon from '../assets/icons/close.svg'
+import CloseIcon from '../assets/icons/close_modal.svg'
+import BackIcon from '../assets/icons/back_modale.svg'
 
 import styles from 'styles/components/Modal.module.css'
 
@@ -10,6 +11,7 @@ type ModalProps = {
 	show: boolean
 	onClose: any
 	children: any
+	onBack?: any
 	customHeight?: string
 	customWidth?: string
 }
@@ -17,6 +19,7 @@ type ModalProps = {
 const Modal = ({
 	show,
 	onClose,
+	onBack,
 	children,
 	title,
 	customHeight,
@@ -33,6 +36,11 @@ const Modal = ({
 		onClose()
 	}
 
+	const handleBackClick = (e: any) => {
+		e.preventDefault()
+		onBack()
+	}
+
 	const modalContent = show ? (
 		<div className={styles.modalOverlay}>
 			<div
@@ -42,13 +50,23 @@ const Modal = ({
 					width: customWidth || '791px',
 				}}
 			>
-				<div className={`text-bleu_nuit ${styles.modalHeader}`}>
-					{title && <div className='h4-semi'>{title}</div>}
+				<div className='text-bleu_nuit flex justify-between items-center p-[40px] pb-[10px]'>
+					{onBack && (
+						<a href='#' onClick={handleBackClick}>
+							<BackIcon
+								role='img'
+								focusable='false'
+								className='mr-[24px]'
+								aria-label='Revenir sur la fenêtre précédente'
+							/>
+						</a>
+					)}
+					{title && <div className='h4-semi flex-auto'>{title}</div>}
 					<a href='#' onClick={handleCloseClick}>
 						<CloseIcon
 							role='img'
 							focusable='false'
-							aria-label='Fermer la modal'
+							aria-label='Fermer la fenêtre'
 						/>
 					</a>
 				</div>
