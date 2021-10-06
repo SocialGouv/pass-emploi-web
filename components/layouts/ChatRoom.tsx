@@ -88,7 +88,6 @@ export default function ChatBox({ db }: ChatBoxProps) {
 											defaultJeune.lastMessageSentBy,
 									}
 
-									console.log('Hi from promise', newJeuneChat)
 									updateJeunesChat(newJeuneChat)
 								})
 							},
