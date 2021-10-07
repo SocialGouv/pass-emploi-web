@@ -25,9 +25,15 @@ type Props = {
 	actions_terminees: UserAction[]
 }
 
+const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
+	new Date(action1.lastUpdate).getTime() >
+	new Date(action2.lastUpdate).getTime()
+		? -1
+		: 1
+
 function Action({ jeune, actions_en_cours, actions_terminees }: Props) {
 	const addToActionTerminees = (action: UserAction) => {
-		setActionsTerminees(actionsTerminees.concat(action))
+		setActionsTerminees([action, ...actionsTerminees])
 	}
 
 	const deleteFromActionTerminees = (action: UserAction) => {
@@ -37,7 +43,7 @@ function Action({ jeune, actions_en_cours, actions_terminees }: Props) {
 	}
 
 	const addToActionEnCours = (action: UserAction) => {
-		setActionsEnCours(actionsEnCours.concat(action))
+		setActionsEnCours([action, ...actionsEnCours])
 	}
 
 	const deleteFromActionEnCours = (action: UserAction) => {
@@ -104,7 +110,7 @@ function Action({ jeune, actions_en_cours, actions_terminees }: Props) {
 			<AddActionModal
 				onClose={() => setShowModal(false)}
 				onAdd={(newAction: UserAction) => {
-					addToActionEnCours(newAction)
+					// addToActionEnCours(newAction) uncomment when be sends id
 					Router.reload()
 				}} //reload, since we dont have the id after add
 				show={showModal}
@@ -185,12 +191,12 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 	return {
 		props: {
 			jeune: data.jeune,
-			actions_en_cours: data.actions.filter(
-				(action: UserAction) => !action.isDone
-			), //TODO use UserActionJson
-			actions_terminees: data.actions.filter(
-				(action: UserAction) => action.isDone
-			),
+			actions_en_cours: data.actions
+				.filter((action: UserAction) => !action.isDone)
+				.sort(sortLastUpdate), //TODO use UserActionJson
+			actions_terminees: data.actions
+				.filter((action: UserAction) => action.isDone)
+				.sort(sortLastUpdate),
 		},
 	}
 }

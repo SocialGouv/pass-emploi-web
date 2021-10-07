@@ -109,7 +109,7 @@
 .chapo-semi {
 	font-size: 22px;
 	font-style: normal;
-	font-weight: 400;
+	font-weight: 500;
 	line-height: 28px;
 	letter-spacing: -0.3px;
 }
@@ -141,7 +141,7 @@
 .text-xs-semi {
 	font-size: 12px;
 	font-style: normal;
-	font-weight: 400;
+	font-weight: 500;
 	line-height: 18px;
 	letter-spacing: 0px;
 }
@@ -149,7 +149,7 @@
 .text-xxs-italic {
 	font-size: 11px;
 	font-style: italic;
-	font-weight: 400;
+	font-weight: 500;
 	line-height: 13px;
 	letter-spacing: 0em;
 	text-align: right;
