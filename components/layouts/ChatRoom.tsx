@@ -156,7 +156,7 @@ export default function ChatBox({ db }: ChatBoxProps) {
 						{jeunesChat.map(
 							(jeune: JeuneChat) =>
 								jeune.chatId && (
-									<li key={jeune.id}>
+									<li key={`chat-${jeune.id}`}>
 										<button onClick={() => setSelectedJeune(jeune)}>
 											<span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
 												{jeune.firstName} {jeune.lastName}

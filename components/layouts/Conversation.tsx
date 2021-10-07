@@ -14,7 +14,7 @@ import { dateIsToday, formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 import styles from 'styles/components/Layouts.module.css'
 
-import SendIcon from '../../assets/icons/btn_send.svg'
+import SendIcon from '../../assets/icons/send.svg'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import fetchJson from 'utils/fetchJson'
 
@@ -67,7 +67,9 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 			{
 				method: 'POST',
 			}
-		)
+		).catch(function (error) {
+			console.error('Conversation: Error while fetching /notify-message', error)
+		})
 
 		setNewMessage('')
 
@@ -158,11 +160,11 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 												{message.content}
 											</p>
 											<p
-												className='text-xs text-bleu_nuit'
-												style={{
-													textAlign:
-														message.sentBy === 'conseiller' ? 'right' : 'left',
-												}}
+												className={`text-xs text-bleu_nuit ${
+													message.sentBy === 'conseiller'
+														? 'text-right'
+														: 'text-left'
+												}`}
 											>
 												à {formatHourMinuteDate(message.creationDate.toDate())}
 											</p>
@@ -189,7 +191,11 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 					placeholder='Écrivez votre message ici...'
 				/>
 
-				<button type='submit' disabled={!newMessage}>
+				<button
+					type='submit'
+					disabled={!newMessage}
+					className='bg-bleu_nuit w-[48px] p-[17px] rounded rounded-x_large'
+				>
 					<SendIcon aria-hidden='true' focusable='false' />
 				</button>
 			</form>
