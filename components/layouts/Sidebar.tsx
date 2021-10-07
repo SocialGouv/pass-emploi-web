@@ -106,13 +106,15 @@ export default function Sidebar({}: SidebarProps) {
 			<div className='flex justify-between'>
 				<p className='text-lg-semi text-bleu_nuit'>{conseillerName}</p>
 
-				<a href='/api/logout' onClick={handleLogout} className='mr-[8px]'>
-					<LogoutIcon
-						role='img'
-						focusable='false'
-						aria-label='Se déconnecter'
-					/>
-				</a>
+				<Link href='/api/logout'>
+					<a onClick={handleLogout} className='mr-[8px]'>
+						<LogoutIcon
+							role='img'
+							focusable='false'
+							aria-label='Se déconnecter'
+						/>
+					</a>
+				</Link>
 			</div>
 		</div>
 	)
