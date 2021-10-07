@@ -14,6 +14,7 @@ import PersonIcon from '../../assets/icons/person.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 
 import styles from 'styles/components/Layouts.module.css'
+import useUser from 'utils/useUser'
 
 type SidebarProps = {}
 
@@ -21,6 +22,7 @@ export default function Sidebar({}: SidebarProps) {
 	const router = useRouter()
 
 	const [conseillerName, setConseillerName] = useState<String>('')
+	const { user, mutateUser } = useUser()
 
 	useEffect(() => {
 		async function fetchConseiller(): Promise<Conseiller> {
@@ -31,6 +33,12 @@ export default function Sidebar({}: SidebarProps) {
 			setConseillerName(conseiller.firstName)
 		})
 	}, [])
+
+	async function handleLogout(event: any) {
+		event.preventDefault()
+		mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
+		router.push('/login')
+	}
 
 	return (
 		<div className={styles.sidebar}>
@@ -97,12 +105,14 @@ export default function Sidebar({}: SidebarProps) {
 
 			<div className='flex justify-between'>
 				<p className='text-lg-semi text-bleu_nuit'>{conseillerName}</p>
-				<LogoutIcon
-					role='img'
-					focusable='false'
-					aria-label='Se déconnecter'
-					className='mr-[8px]'
-				/>
+
+				<a href='/api/logout' onClick={handleLogout} className='mr-[8px]'>
+					<LogoutIcon
+						role='img'
+						focusable='false'
+						aria-label='Se déconnecter'
+					/>
+				</a>
 			</div>
 		</div>
 	)
