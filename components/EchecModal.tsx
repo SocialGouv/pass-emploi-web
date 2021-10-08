@@ -1,15 +1,13 @@
 import Modal from 'components/Modal'
 import Button from 'components/Button'
 
-import CheckIcon from '../assets/icons/check.svg'
-
-type SuccessModalProps = {
+type EchecModalProps = {
 	show: boolean
 	onClose: any
 	message: string
 }
 
-const SuccessModal = ({ show, onClose, message }: SuccessModalProps) => {
+const EchecModal = ({ show, onClose, message }: EchecModalProps) => {
 	const handleCloseModal = () => {
 		onClose()
 	}
@@ -20,15 +18,9 @@ const SuccessModal = ({ show, onClose, message }: SuccessModalProps) => {
 				title='   '
 				onClose={handleCloseModal}
 				show={show}
-				customHeight='350px'
+				customHeight='250px'
 				customWidth='780px'
 			>
-				<CheckIcon
-					className='m-auto mb-[30px]'
-					focusable='false'
-					aria-hidden='true'
-				/>
-
 				<p className='text-md text-bleu_nuit text-center mb-[30px]'>
 					{message}
 				</p>
@@ -41,4 +33,4 @@ const SuccessModal = ({ show, onClose, message }: SuccessModalProps) => {
 	)
 }
 
-export default SuccessModal
+export default EchecModal

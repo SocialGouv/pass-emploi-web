@@ -1,5 +1,6 @@
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
+import EchecModal from 'components/EchecModal'
 import Button from 'components/Button'
 
 import { formatDayDate } from 'utils/date'
@@ -16,25 +17,33 @@ type RdvModalProps = {
 
 const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
 	const [isSuccess, setIsSuccess] = useState(false)
+	const [isEchec, setIsEchec] = useState(false)
 
 	const handleDeleteRdv = () => {
 		fetch(`${process.env.API_ENDPOINT}/rendezvous/${rdv.id}`, {
 			method: 'DELETE',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify({}),
-		}).then(function (response) {
-			setIsSuccess(true)
-			onDelete()
 		})
+			.then(function (response) {
+				setIsSuccess(true)
+				onDelete()
+			})
+			.catch(function (error) {
+				setIsEchec(true)
+				console.error('Conversation: Error while deleting rdv', error)
+			})
 	}
 
 	const handleCloseModal = () => {
+		setIsSuccess(false)
+		setIsEchec(false)
 		onClose()
 	}
 
 	return (
 		<>
-			{!isSuccess && (
+			{Boolean(!isSuccess && !isEchec) && (
 				<Modal
 					title='Confirmation de suppression du rendez-vous'
 					onClose={handleCloseModal}
@@ -68,6 +77,14 @@ const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
 				<SuccessModal
 					show={isSuccess && show}
 					message='Votre rendez-vous a bien été supprimé'
+					onClose={handleCloseModal}
+				/>
+			)}
+
+			{isEchec && (
+				<EchecModal
+					show={isEchec && show}
+					message="Votre rendez-vous n'a pas été supprimé, veuillez essayer ultérieurement"
 					onClose={handleCloseModal}
 				/>
 			)}
