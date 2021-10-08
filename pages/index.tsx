@@ -6,11 +6,13 @@ import { formatDayDate } from 'utils/date'
 import withSession, { ServerSideHandler } from 'utils/session'
 
 import AddRdvModal from 'components/rdv/AddRdvModal'
+import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import Button from 'components/Button'
 
 import AddIcon from '../assets/icons/add.svg'
 import CalendarIcon from '../assets/icons/calendar.svg'
 import TimeIcon from '../assets/icons/time.svg'
+import DeleteIcon from '../assets/icons/delete.svg'
 
 import { Rdv } from 'interfaces/rdv'
 import { RdvJson } from 'interfaces/json/rdv'
@@ -22,30 +24,43 @@ type HomeProps = {
 	oldRdvs: Rdv[]
 }
 
+const defaultRdv = {
+	id: 'string',
+	title: 'string',
+	subtitle: 'string',
+	comment: 'string',
+	date: 'string',
+	duration: 'string',
+	modality: 'string',
+}
+
 const Home = ({ rdvs, oldRdvs }: HomeProps) => {
-	const [showModal, setShowModal] = useState(false)
+	const [showAddModal, setShowAddModal] = useState(false)
+	const [showDeleteModal, setShowDeleteModal] = useState(false)
+	const [selectedRdv, setSelectedRdv] = useState(defaultRdv)
+	const [rdvsAvenir, setRdvsAvenir] = useState(rdvs)
 
 	return (
 		<>
 			<span className='flex flex-wrap justify-between mb-[20px]'>
 				<h1 className='h2-semi text-bleu_nuit'>Mes rendez-vous à venir</h1>
-				<Button onClick={() => setShowModal(true)}>
+				<Button onClick={() => setShowAddModal(true)}>
 					<AddIcon focusable='false' aria-hidden='true' />
 					Fixer un rendez-vous
 				</Button>
 			</span>
 
-			{rdvs?.length === 0 && (
+			{rdvsAvenir?.length === 0 && (
 				<p className='text-md text-bleu mb-8'>
 					Vous n&rsquo;avez pas de rendez-vous à venir pour le moment
 				</p>
 			)}
 
 			<ul className='grid grid-cols-2 gap-5 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 mb-[50px]'>
-				{rdvs.map((rdv: Rdv) => (
+				{rdvsAvenir.map((rdv: Rdv) => (
 					<li
 						key={rdv.id}
-						className='text-bleu_nuit p-[15px] rounded-medium border-2 border-bleu_blanc'
+						className='text-bleu_nuit p-[15px] rounded-medium border-2 border-bleu_blanc relative'
 					>
 						<p className='flex justify-between mb-[15px]'>
 							<span className='flex'>
@@ -72,6 +87,16 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 						{rdv.comment && (
 							<p className='text-xs text-bleu_gris'>Notes: {rdv.comment}</p>
 						)}
+
+						<button
+							onClick={() => {
+								setShowDeleteModal(true)
+								setSelectedRdv(rdv)
+							}}
+							className='mt-[15px] absolute bottom-3 right-3'
+						>
+							<DeleteIcon aria-hidden='true' focusable='false' />
+						</button>
 					</li>
 				))}
 			</ul>
@@ -113,6 +138,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 						</p>
 
 						<p className='text-md-semi mb-[15px]'>{rdv.title} </p>
+
 						<p className='text-xs text-bleu_gris mb-[15px]'>{rdv.modality}</p>
 						{rdv.comment && (
 							<p className='text-xs text-bleu_gris'>Notes: {rdv.comment}</p>
@@ -122,11 +148,25 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 			</ul>
 
 			<AddRdvModal
-				onClose={() => setShowModal(false)}
+				onClose={() => setShowAddModal(false)}
 				onAdd={() => {
 					Router.reload()
 				}}
-				show={showModal}
+				show={showAddModal}
+			/>
+
+			<DeleteRdvModal
+				onClose={() => setShowDeleteModal(false)}
+				onDelete={() => {
+					const index = rdvsAvenir.indexOf(selectedRdv)
+					const newArray = [
+						...rdvsAvenir.slice(0, index),
+						...rdvsAvenir.slice(index + 1, rdvsAvenir.length),
+					]
+					setRdvsAvenir(newArray)
+				}}
+				show={showDeleteModal}
+				rdv={selectedRdv}
 			/>
 		</>
 	)
