@@ -5,6 +5,7 @@ import Button from "components/Button";
 import { useEffect, useState } from "react";
 import { Jeune } from "interfaces";
 import { RdvJson } from "interfaces/json/rdv";
+import fetchJson from "utils/fetchJson";
 
 type RdvModalProps = {
   show: boolean
@@ -25,12 +26,12 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
   const [notes, selectNotes] = useState("")
   
   useEffect(() => {
-    async function fetchData(): Promise<Jeune[]> {
-      const res = await fetch(`${process.env.API_ENDPOINT}/conseiller/jeunes`)
-      return await res.json()
+    async function fetchJeunes(): Promise<Jeune[]> {
+      const currentUser = await fetchJson('/api/user')
+      return currentUser?.jeunes || []
     }
 
-    fetchData().then((data) => {
+    fetchJeunes().then((data) => {
       const defaultJeune:Jeune = {
         id:'',
         firstName:'',

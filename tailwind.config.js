@@ -45,7 +45,7 @@ module.exports = {
 			small: '5px',
 			medium: '8px',
 			large: '16px',
-			x_large: '34px',
+			x_large: '24px',
 		},
 
 		extend: {

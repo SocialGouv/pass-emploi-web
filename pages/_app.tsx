@@ -1,6 +1,6 @@
 import ProgressBar from "@badrap/bar-of-progress";
 
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import type { AppProps } from 'next/app'
 
 import Layout from 'components/layouts/Layout'
@@ -21,10 +21,18 @@ Router.events.on("routeChangeComplete", progress.finish);
 Router.events.on("routeChangeError", progress.finish);
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter()
+  const isLoginPage = router.pathname === '/login'
+
   return (
-    <Layout>
-      <Component {...pageProps}/>
-    </Layout>
+    <>
+    { isLoginPage ?
+        <Component {...pageProps}/> : 
+        <Layout>
+          <Component {...pageProps}/>
+        </Layout>
+    }
+    </>
   )
 }
 export default MyApp

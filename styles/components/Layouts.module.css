@@ -1,45 +1,37 @@
-.header {
-	display: flex;
-	background-color: theme('colors.bleu_blanc');
-	color: theme('colors.bleu_nuit');
-	justify-content: space-between;
-	padding: 15px 20px;
-	align-items: center;
-	height: 60px;
-	position: fixed;
-	width: 100%;
-	z-index: 5;
-}
-
 .container {
 	position: relative;
-	top: 60px;
 }
 
 .page {
 	position: absolute;
 	padding: 45px 58px;
-	left: 107px;
+	left: 170px;
 	right: 450px;
 }
 
 .sidebar {
 	position: fixed;
 	left: 0;
-	width: 107px;
-	background-color: theme('colors.bleu_nuit');
+	width: 170px;
+	padding: 16px;
 	overflow-x: hidden; /* Disable horizontal scroll */
 	padding-top: 20px;
 	text-align: center;
 	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
-.sidebar svg {
-	margin: auto;
+.sidebar nav a {
+	padding: 11px;
+	display: flex;
+	border-radius: 8px;
+	margin-bottom: 7px;
 }
 
 .activeLink {
-	border-left: 5px solid theme('colors.blanc');
+	background-color: theme('colors.bleu_blanc');
 }
 
 /* ChatRoom*/
@@ -146,7 +138,7 @@
 
 .form {
 	position: absolute;
-	bottom: 60px;
+	bottom: 0;
 	width: 100%;
 	background-color: theme('colors.blanc');
 	padding: 11px;

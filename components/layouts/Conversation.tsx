@@ -1,149 +1,204 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react'
 
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+import firebase from 'firebase/app'
+import 'firebase/firestore'
 
-import { Jeune, Message, DailyMessages, ListDailyMessages } from 'interfaces';
-import { dateIsToday, formatDayDate, formatHourMinuteDate } from 'utils/date';
+import {
+	Jeune,
+	Message,
+	DailyMessages,
+	ListDailyMessages,
+	Conseiller,
+} from 'interfaces'
+import { dateIsToday, formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 import styles from 'styles/components/Layouts.module.css'
 
-import SendIcon from '../../assets/icons/btn_send.svg'
+import SendIcon from '../../assets/icons/send.svg'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
-
+import fetchJson from 'utils/fetchJson'
 
 const collection = process.env.FIREBASE_COLLECTION_NAME || ''
 
-const todayOrDate = (date: Date) =>  dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
+const todayOrDate = (date: Date) =>
+	dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 type ConversationProps = {
-  db: firebase.firestore.Firestore
-  jeune: Jeune
-  onBack: any
+	db: firebase.firestore.Firestore
+	jeune: Jeune
+	onBack: any
 }
 
-export default function Conversation({db, jeune, onBack}: ConversationProps) {
+let conseillerId = '0'
 
-  const [newMessage, setNewMessage] = useState('');
-  const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([]);
+export default function Conversation({ db, jeune, onBack }: ConversationProps) {
+	const [newMessage, setNewMessage] = useState('')
+	const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
 
-  const dummySpace = useRef<HTMLLIElement>(null);
+	const dummySpace = useRef<HTMLLIElement>(null)
 
-  // when form is submitted
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
+	// when form is submitted
+	const handleSubmit = (e: any) => {
+		e.preventDefault()
 
-    const firestoreNow = firebase.firestore.FieldValue.serverTimestamp()
+		const firestoreNow = firebase.firestore.FieldValue.serverTimestamp()
 
-    db.collection(collection).doc(jeune.chatId).collection('messages').add({
-      content: newMessage,
-      creationDate: firestoreNow,
-      sentBy: 'conseiller',
-    });
+		db.collection(collection).doc(jeune.chatId).collection('messages').add({
+			content: newMessage,
+			creationDate: firestoreNow,
+			sentBy: 'conseiller',
+		})
 
-    db.collection(collection).doc(jeune.chatId).update({
-      seenByConseiller: true,
-      newConseillerMessageCount: firebase.firestore.FieldValue.increment(1),
-      lastMessageContent: newMessage,
-      lastMessageSentAt: firestoreNow,
-      lastMessageSentBy: 'conseiller'
-    });
+		db.collection(collection)
+			.doc(jeune.chatId)
+			.update({
+				seenByConseiller: true,
+				newConseillerMessageCount: firebase.firestore.FieldValue.increment(1),
+				lastMessageContent: newMessage,
+				lastMessageSentAt: firestoreNow,
+				lastMessageSentBy: 'conseiller',
+			})
 
-    setNewMessage('');
+		/**
+		 * Route send from web to notify mobile, no need to await for response
+		 */
+		fetch(
+			`${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${jeune.id}/notify-message`,
+			{
+				method: 'POST',
+			}
+		).catch(function (error) {
+			console.error('Conversation: Error while fetching /notify-message', error)
+		})
 
-    if(dummySpace && dummySpace.current) {
-      dummySpace.current.scrollIntoView({block: "end", inline: "nearest"});
-    }
-  };
+		setNewMessage('')
 
-  // automatically check db for new messages
-  useEffect(() => {
-    let currentMessages: Message[]
+		if (dummySpace && dummySpace.current) {
+			dummySpace.current.scrollIntoView({ block: 'end', inline: 'nearest' })
+		}
+	}
 
-    const unsubscribe = db.collection(collection).doc(jeune.chatId).collection('messages')
-      .orderBy('creationDate')
-      .onSnapshot((querySnapShot: any) => {
-        // get all documents from collection with id
-        const data = querySnapShot.docs.map((doc: any) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
+	// automatically check db for new messages
+	useEffect(() => {
+		let currentMessages: Message[]
 
-        currentMessages = [...data]
-        
-        if(!currentMessages || !currentMessages[currentMessages.length -1]?.creationDate){
-          return
-        }
+		const unsubscribe = db
+			.collection(collection)
+			.doc(jeune.chatId)
+			.collection('messages')
+			.orderBy('creationDate')
+			.onSnapshot((querySnapShot: any) => {
+				// get all documents from collection with id
+				const data = querySnapShot.docs.map((doc: any) => ({
+					...doc.data(),
+					id: doc.id,
+				}))
 
-        setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
-        
-      });
+				currentMessages = [...data]
 
-      db.collection(collection).doc(jeune.chatId).update({
-        seenByConseiller: true,
-      });
+				if (
+					!currentMessages ||
+					!currentMessages[currentMessages.length - 1]?.creationDate
+				) {
+					return
+				}
 
-      return (() => {
-        unsubscribe() 
-     })
-      
-  }, [db, jeune.chatId]);
+				setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
+			})
 
-   return (
-     <div className={styles.conversationConainer}>
+		db.collection(collection).doc(jeune.chatId).update({
+			seenByConseiller: true,
+		})
 
-      <div className={styles.conversationTitleConainer}>
-        <button onClick={onBack}>
-          <ChevronLeftIcon role="img" focusable="false" aria-label="Retour sur ma messagerie"/>
-        </button>
-        <h2 className='h2-semi'>Discuter avec {jeune.firstName}</h2>
-      </div>
+		return () => {
+			unsubscribe()
+		}
+	}, [db, jeune.chatId])
 
-      <ul className={styles.messages}>
-        {dailyMessages.map((dailyMessage: DailyMessages, dailyIndex:number) => (
-          <li key={dailyMessage.date.getTime()} >
+	useEffect(() => {
+		async function fetchConseiller(): Promise<Conseiller> {
+			return await fetchJson('/api/user')
+		}
 
-            <div className={`text-md text-bleu ${styles.day}`}>
-            <span>{todayOrDate(dailyMessage.date)}</span>
-             {/* { dateIsToday(dailyMessage.date) && <span>Aujourd&rsquo;hui</span>}
-             { !dateIsToday(dailyMessage.date) && <span>Le {formatDayDate(dailyMessage.date)}</span>} */}
-            </div>
+		fetchConseiller().then((conseiller) => {
+			conseillerId = conseiller.id
+		})
+	}, [])
 
-            <ul>
-              {dailyMessage.messages.map((message: Message, index: number) => (
-                <li key={message.id} >
-                    <p className={`text-md ${message.sentBy === 'conseiller' ? styles.sentMessage : styles.receivedMessage}`}>
-                      {message.content}
-                    </p>
-                    <p className='text-xs text-bleu_nuit' style={{textAlign: message.sentBy === 'conseiller' ? 'right':'left'}}>
-                      à {formatHourMinuteDate(message.creationDate.toDate())}
-                    </p>
+	return (
+		<div className={styles.conversationConainer}>
+			<div className={styles.conversationTitleConainer}>
+				<button onClick={onBack}>
+					<ChevronLeftIcon
+						role='img'
+						focusable='false'
+						aria-label='Retour sur ma messagerie'
+					/>
+				</button>
+				<h2 className='h2-semi'>Discuter avec {jeune.firstName}</h2>
+			</div>
 
-                    {((dailyIndex === (dailyMessages.length -1))&&(index === (dailyMessage.messages.length -1))) &&<section aria-hidden="true" ref={dummySpace}/>    
-                    }
-                </li>
-              ))}
-            </ul>
-            
-          </li>
-        ))}
-      </ul>
-      
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input
-          type="text"
-          value={newMessage}
-          className='text-md text-bleu_nuit'
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Écrivez votre message ici..."
-        />
+			<ul className={styles.messages}>
+				{dailyMessages.map(
+					(dailyMessage: DailyMessages, dailyIndex: number) => (
+						<li key={dailyMessage.date.getTime()}>
+							<div className={`text-md text-bleu ${styles.day}`}>
+								<span>{todayOrDate(dailyMessage.date)}</span>
+							</div>
 
-        <button type="submit" disabled={!newMessage}>
-          <SendIcon aria-hidden="true" focusable="false" />
-        </button>
-      </form>
-    
-     </div>
-   )
- }
+							<ul>
+								{dailyMessage.messages.map(
+									(message: Message, index: number) => (
+										<li key={message.id}>
+											<p
+												className={`text-md ${
+													message.sentBy === 'conseiller'
+														? styles.sentMessage
+														: styles.receivedMessage
+												}`}
+											>
+												{message.content}
+											</p>
+											<p
+												className={`text-xs text-bleu_nuit ${
+													message.sentBy === 'conseiller'
+														? 'text-right'
+														: 'text-left'
+												}`}
+											>
+												à {formatHourMinuteDate(message.creationDate.toDate())}
+											</p>
+
+											{dailyIndex === dailyMessages.length - 1 &&
+												index === dailyMessage.messages.length - 1 && (
+													<section aria-hidden='true' ref={dummySpace} />
+												)}
+										</li>
+									)
+								)}
+							</ul>
+						</li>
+					)
+				)}
+			</ul>
+
+			<form onSubmit={handleSubmit} className={styles.form}>
+				<input
+					type='text'
+					value={newMessage}
+					className='text-md text-bleu_nuit'
+					onChange={(e) => setNewMessage(e.target.value)}
+					placeholder='Écrivez votre message ici...'
+				/>
+
+				<button
+					type='submit'
+					disabled={!newMessage}
+					className='bg-bleu_nuit w-[48px] p-[17px] rounded rounded-x_large'
+				>
+					<SendIcon aria-hidden='true' focusable='false' />
+				</button>
+			</form>
+		</div>
+	)
+}
