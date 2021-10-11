@@ -18,18 +18,6 @@ const Login = () => {
 		redirectIfFound: true,
 	})
 
-	// useEffect(() => {
-	//   async function fetchConseiller(): Promise<Conseiller> {
-	//     return await fetchJson('/api/user')
-	//   }
-
-	//   fetchConseiller().then((conseiller) => {
-	//     if (conseiller?.isLoggedIn){
-	//       Router.push("/")
-	//     }
-	//   })
-	// }, [])
-
 	const [errorMsg, setErrorMsg] = useState('')
 
 	async function handleSubmit(event: any) {

@@ -14,7 +14,6 @@
 	left: 0;
 	width: 170px;
 	padding: 16px;
-	/* background-color: theme('colors.bleu_blanc'); */
 	overflow-x: hidden; /* Disable horizontal scroll */
 	padding-top: 20px;
 	text-align: center;
@@ -24,7 +23,7 @@
 	justify-content: space-between;
 }
 
-.sidebar a {
+.sidebar nav a {
 	padding: 11px;
 	display: flex;
 	border-radius: 8px;
