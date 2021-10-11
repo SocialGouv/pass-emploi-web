@@ -33,44 +33,54 @@ const defaultRdv = {
 const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 	const [showAddModal, setShowAddModal] = useState(false)
 	const [showDeleteModal, setShowDeleteModal] = useState(false)
+	const [displayOldRdv, setDisplayOldRdv] = useState(false)
 	const [selectedRdv, setSelectedRdv] = useState(defaultRdv)
 	const [rdvsAvenir, setRdvsAvenir] = useState(rdvs)
 
 	return (
 		<>
 			<span className='flex flex-wrap justify-between mb-[20px]'>
-				<h1 className='h2-semi text-bleu_nuit'>Mes rendez-vous à venir</h1>
+				<h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
 				<Button onClick={() => setShowAddModal(true)}>
 					<AddIcon focusable='false' aria-hidden='true' />
 					Fixer un rendez-vous
 				</Button>
 			</span>
 
-			{rdvsAvenir?.length === 0 && (
-				<p className='text-md text-bleu mb-8'>
-					Vous n&rsquo;avez pas de rendez-vous à venir pour le moment
-				</p>
+			<div className='flex mb-[40px]'>
+				<Button
+					type='button'
+					className='mr-[8px]'
+					style={displayOldRdv ? 'white' : 'blue'}
+					onClick={() => {
+						setDisplayOldRdv(!displayOldRdv)
+					}}
+				>
+					Prochains rendez-vous
+				</Button>
+
+				<Button
+					type='button'
+					style={displayOldRdv ? 'blue' : 'white'}
+					onClick={() => {
+						setDisplayOldRdv(!displayOldRdv)
+					}}
+				>
+					Rendez-vous passés
+				</Button>
+			</div>
+
+			{displayOldRdv ? (
+				<RdvList rdvs={oldRdvs} />
+			) : (
+				<RdvList
+					rdvs={rdvsAvenir}
+					onDelete={(rdv: Rdv) => {
+						setShowDeleteModal(true)
+						setSelectedRdv(rdv)
+					}}
+				/>
 			)}
-
-			<RdvList
-				rdvs={rdvsAvenir}
-				onDelete={(rdv: Rdv) => {
-					setShowDeleteModal(true)
-					setSelectedRdv(rdv)
-				}}
-			/>
-
-			<h2 className='h3-semi text-bleu_nuit mb-[20px]'>
-				Historique de mes rendez-vous
-			</h2>
-
-			{oldRdvs?.length === 0 && (
-				<p className='text-md text-bleu mb-8'>
-					Vous n&rsquo;avez pas de rendez-vous archivés pour le moment
-				</p>
-			)}
-
-			<RdvList rdvs={oldRdvs} />
 
 			<AddRdvModal
 				onClose={() => setShowAddModal(false)}

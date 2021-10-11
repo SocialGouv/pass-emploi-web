@@ -1,9 +1,9 @@
 import { Rdv } from 'interfaces/rdv'
 import { formatDayDate } from 'utils/date'
 
-import CalendarIcon from '../../assets/icons/calendar.svg'
-import TimeIcon from '../../assets/icons/time.svg'
 import DeleteIcon from '../../assets/icons/delete.svg'
+import LocationIcon from '../../assets/icons/location.svg'
+import NoteIcon from '../../assets/icons/note.svg'
 
 type RdvListProps = {
 	rdvs: Rdv[]
@@ -16,50 +16,57 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
 	}
 
 	return (
-		<ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
-			{rdvs.map((rdv: Rdv) => (
-				<li
-					key={rdv.id}
-					className='text-bleu_nuit relative p-[15px] border-2 border-bleu_blanc rounded-medium'
-				>
-					<p className='flex flex-wrap justify-between mb-[15px]'>
-						<span className='flex flex-wrap'>
-							<CalendarIcon
-								focusable='false'
-								aria-hidden='true'
-								className='mr-[7px]'
-							/>
-							{formatDayDate(new Date(rdv.date))}
-						</span>
-						<span className='flex flex-wrap'>
-							<TimeIcon
-								focusable='false'
-								aria-hidden='true'
-								className='mr-[7px]'
-							/>
-							{`${new Date(rdv.date).getUTCHours()}:00`}
-							{` - ${rdv.duration}`}
-						</span>
-					</p>
+		<>
+			{rdvs.length === 0 ? (
+				<p className='text-md text-bleu mb-8'>
+					Vous n&apos;avez pas de rendez-vous pour le moment
+				</p>
+			) : (
+				<table role='presentation' className='w-full'>
+					<caption className='hidden'>Liste de mes rendez-vous</caption>
 
-					<p className='text-md-semi mb-[15px]'>{rdv.title} </p>
+					<tbody>
+						{rdvs.map((rdv: Rdv) => (
+							<tr key={rdv.id} className='text-sm text-bleu_nuit'>
+								<td className='p-[16px]'>
+									{`${formatDayDate(new Date(rdv.date))} (${new Date(
+										rdv.date
+									).getUTCHours()}:00 - ${rdv.duration})`}
+								</td>
 
-					<p className='text-xs text-bleu_gris mb-[15px]'>{rdv.modality}</p>
-					{rdv.comment && (
-						<p className='text-xs text-bleu_gris'>Notes: {rdv.comment}</p>
-					)}
+								<td className='p-[16px]'>{rdv.title}</td>
 
-					{onDelete && (
-						<button
-							onClick={() => handleDeleteClick(rdv)}
-							className='mt-[15px] absolute bottom-3 right-3'
-						>
-							<DeleteIcon aria-hidden='true' focusable='false' />
-						</button>
-					)}
-				</li>
-			))}
-		</ul>
+								<td className='p-[16px] '>
+									<LocationIcon
+										focusable='false'
+										aria-hidden='true'
+										className='mr-[7px] inline'
+									/>
+									{rdv.modality}
+								</td>
+
+								<td className='p-[16px] '>
+									<NoteIcon
+										focusable='false'
+										aria-hidden='true'
+										className='mr-[7px] inline'
+									/>
+									{rdv.comment}
+								</td>
+
+								{onDelete && (
+									<td className='p-[16px]'>
+										<button onClick={() => handleDeleteClick(rdv)} className=''>
+											<DeleteIcon aria-hidden='true' focusable='false' />
+										</button>
+									</td>
+								)}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)}
+		</>
 	)
 }
 
