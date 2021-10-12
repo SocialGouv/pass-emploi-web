@@ -1,8 +1,6 @@
-import type { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import { useState } from 'react'
 
-import { formatDayDate } from 'utils/date'
 import withSession, { ServerSideHandler } from 'utils/session'
 
 import AddRdvModal from 'components/rdv/AddRdvModal'
@@ -10,14 +8,12 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import Button from 'components/Button'
 
 import AddIcon from '../assets/icons/add.svg'
-import CalendarIcon from '../assets/icons/calendar.svg'
-import TimeIcon from '../assets/icons/time.svg'
-import DeleteIcon from '../assets/icons/delete.svg'
 
 import { Rdv } from 'interfaces/rdv'
 import { RdvJson } from 'interfaces/json/rdv'
 import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
+import RdvList from 'components/rdv/RdvList'
 
 type HomeProps = {
 	rdvs: Rdv[]
@@ -37,115 +33,54 @@ const defaultRdv = {
 const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 	const [showAddModal, setShowAddModal] = useState(false)
 	const [showDeleteModal, setShowDeleteModal] = useState(false)
+	const [displayOldRdv, setDisplayOldRdv] = useState(false)
 	const [selectedRdv, setSelectedRdv] = useState(defaultRdv)
 	const [rdvsAvenir, setRdvsAvenir] = useState(rdvs)
 
 	return (
 		<>
 			<span className='flex flex-wrap justify-between mb-[20px]'>
-				<h1 className='h2-semi text-bleu_nuit'>Mes rendez-vous à venir</h1>
+				<h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
 				<Button onClick={() => setShowAddModal(true)}>
 					<AddIcon focusable='false' aria-hidden='true' />
 					Fixer un rendez-vous
 				</Button>
 			</span>
 
-			{rdvsAvenir?.length === 0 && (
-				<p className='text-md text-bleu mb-8'>
-					Vous n&rsquo;avez pas de rendez-vous à venir pour le moment
-				</p>
+			<div className='flex mb-[40px]'>
+				<Button
+					type='button'
+					className='mr-[8px]'
+					style={displayOldRdv ? 'white' : 'blue'}
+					onClick={() => {
+						setDisplayOldRdv(!displayOldRdv)
+					}}
+				>
+					Prochains rendez-vous
+				</Button>
+
+				<Button
+					type='button'
+					style={displayOldRdv ? 'blue' : 'white'}
+					onClick={() => {
+						setDisplayOldRdv(!displayOldRdv)
+					}}
+				>
+					Rendez-vous passés
+				</Button>
+			</div>
+
+			{displayOldRdv ? (
+				<RdvList rdvs={oldRdvs} />
+			) : (
+				<RdvList
+					rdvs={rdvsAvenir}
+					onDelete={(rdv: Rdv) => {
+						setShowDeleteModal(true)
+						setSelectedRdv(rdv)
+					}}
+				/>
 			)}
-
-			<ul className='grid grid-cols-2 gap-5 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 mb-[50px]'>
-				{rdvsAvenir.map((rdv: Rdv) => (
-					<li
-						key={rdv.id}
-						className='text-bleu_nuit p-[15px] rounded-medium border-2 border-bleu_blanc relative'
-					>
-						<p className='flex justify-between mb-[15px]'>
-							<span className='flex'>
-								<CalendarIcon
-									focusable='false'
-									aria-hidden='true'
-									className='mr-[7px]'
-								/>
-								{formatDayDate(new Date(rdv.date))}
-							</span>
-							<span className='flex flex-wrap'>
-								<TimeIcon
-									focusable='false'
-									aria-hidden='true'
-									className='mr-[7px]'
-								/>
-								{`${new Date(rdv.date).getUTCHours()}:00`}
-								{` - ${rdv.duration}`}
-							</span>
-						</p>
-
-						<p className='text-md-semi mb-[15px]'>{rdv.title} </p>
-						<p className='text-xs text-bleu_gris mb-[15px]'>{rdv.modality}</p>
-						{rdv.comment && (
-							<p className='text-xs text-bleu_gris'>Notes: {rdv.comment}</p>
-						)}
-
-						<button
-							onClick={() => {
-								setShowDeleteModal(true)
-								setSelectedRdv(rdv)
-							}}
-							className='mt-[15px] absolute bottom-3 right-3'
-						>
-							<DeleteIcon aria-hidden='true' focusable='false' />
-						</button>
-					</li>
-				))}
-			</ul>
-
-			<h2 className='h3-semi text-bleu_nuit mb-[20px]'>
-				Historique de mes rendez-vous
-			</h2>
-
-			{oldRdvs?.length === 0 && (
-				<p className='text-md text-bleu mb-8'>
-					Vous n&rsquo;avez pas de rendez-vous archivés pour le moment
-				</p>
-			)}
-
-			<ul className='grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3 mb-[50px]'>
-				{oldRdvs.map((rdv: Rdv) => (
-					<li
-						key={rdv.id}
-						className='text-bleu_nuit p-[15px] border-2 border-bleu_blanc rounded-medium'
-					>
-						<p className='flex flex-wrap justify-between mb-[15px]'>
-							<span className='flex flex-wrap'>
-								<CalendarIcon
-									focusable='false'
-									aria-hidden='true'
-									className='mr-[7px]'
-								/>
-								{formatDayDate(new Date(rdv.date))}
-							</span>
-							<span className='flex flex-wrap'>
-								<TimeIcon
-									focusable='false'
-									aria-hidden='true'
-									className='mr-[7px]'
-								/>
-								{`${new Date(rdv.date).getUTCHours()}:00`}
-								{` - ${rdv.duration}`}
-							</span>
-						</p>
-
-						<p className='text-md-semi mb-[15px]'>{rdv.title} </p>
-
-						<p className='text-xs text-bleu_gris mb-[15px]'>{rdv.modality}</p>
-						{rdv.comment && (
-							<p className='text-xs text-bleu_gris'>Notes: {rdv.comment}</p>
-						)}
-					</li>
-				))}
-			</ul>
 
 			<AddRdvModal
 				onClose={() => setShowAddModal(false)}
