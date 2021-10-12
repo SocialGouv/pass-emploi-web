@@ -1,14 +1,12 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Configuration
 
-Create a new file on the root of the project and name it `.env.local`. Then, copy the content of `.env.example.local` file and past it in your new one.
+Créer un nouveau fichier à la racine du projet et nommer le `.env.local`. Copier ensuite le contenu du fichier `.env.example.local` et coller le dans votre nouveau fichier.
 
-Add the environnement variables according to your needs. For Firebase information, retrieve required values in project's 
-Firebase console, under `Paramètres du projet > Paramètres généraux > Applications Web`
-## Getting Started
+Allez sur l'application scalingo et choississez `pa-front-staging > Environment > switch to bulk edit`. Copiez tout le contenu pour le mettre dans le fichier `.env.local`
 
-First, install the dependencies:
+## Lancement
+
+Installer d'abord les dépendances:
 
 ```bash
 npm install
@@ -16,7 +14,7 @@ npm install
 yarn install
 ```
 
-then, run the development server:
+Ensuite, lancer le serveur de dev:
 
 ```bash
 npm run dev
@@ -24,10 +22,31 @@ npm run dev
 yarn dev
 ```
 
-Enjoy! Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Voilà! Ouvrer [http://localhost:3000](http://localhost:3000) sur votre navigateur.
 
-## Deploy on Vercel
+## Déploiement
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Nous utilisons actuellement Scalingo comme hébergeur sur l'application Web. Il existe deux environnements : Staging & Prod
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Environnement de staging
+
+L'environnement de staging front correspond à l'application scalingo front `pa-front-staging`.
+
+Cette application est branchée sur la branche `develop` du repo.
+À chaque nouveau commit sur cette branche, un déploiement automatique sera lancé sur l'application.
+
+Il est également possible de déployer manuellement en allant sur `pa-front-staging > Deploy > Manual deployments > Trigger deployment`
+
+Les review apps sont activés sur cet environnement. Donc, à chaque nouvelle PR sur develop, une application temporaire au nom `pa-front-staging-pr[numéro de la PR sur github]` sera automatiquement créée. Cette application sera automatiquement détruite au merge de la PR.
+Pour plus d'informations sur les review apps, vous pouver voir [la doc scalingo](https://doc.scalingo.com/platform/app/review-apps)
+
+### Environnement de prod
+
+L'environnement de prod front correspond à l'application scalingo front `pa-front-prod`.
+
+Cette application est branchée sur la branche `master` du repo.
+À chaque nouveau commit sur cette branche, un déploiement automatique sera lancé sur l'application.
+
+Il est également possible de déployer manuellement en allant sur `pa-front-prod > Deploy > Manual deployments > Trigger deployment`
+
+Les review apps ne sont pas activés sur la prod.
