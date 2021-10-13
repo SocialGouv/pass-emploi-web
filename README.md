@@ -1,12 +1,12 @@
 ## Configuration
 
-Créer un nouveau fichier à la racine du projet et nommer le `.env.local`. Copier ensuite le contenu du fichier `.env.example.local` et coller le dans votre nouveau fichier.
+Créez un nouveau fichier à la racine du projet et nommez le `.env.local`. Copiez ensuite le contenu du fichier `.env.example.local` et collez le dans votre nouveau fichier.
 
 Allez sur l'application scalingo et choississez `pa-front-staging > Environment > switch to bulk edit`. Copiez tout le contenu pour le mettre dans le fichier `.env.local`
 
 ## Lancement
 
-Installer d'abord les dépendances:
+Installez d'abord les dépendances:
 
 ```bash
 npm install
@@ -14,7 +14,7 @@ npm install
 yarn install
 ```
 
-Ensuite, lancer le serveur de dev:
+Ensuite, lancez le serveur de dev:
 
 ```bash
 npm run dev
@@ -22,7 +22,7 @@ npm run dev
 yarn dev
 ```
 
-Voilà! Ouvrer [http://localhost:3000](http://localhost:3000) sur votre navigateur.
+Voilà! Ouvrez [http://localhost:3000](http://localhost:3000) sur votre navigateur.
 
 ## Déploiement
 
@@ -38,7 +38,7 @@ Cette application est branchée sur la branche `develop` du repo.
 Il est également possible de déployer manuellement en allant sur `pa-front-staging > Deploy > Manual deployments > Trigger deployment`
 
 Les review apps sont activés sur cet environnement. Donc, à chaque nouvelle PR sur develop, une application temporaire au nom `pa-front-staging-pr[numéro de la PR sur github]` sera automatiquement créée. Cette application sera automatiquement détruite au merge de la PR.
-Pour plus d'informations sur les review apps, vous pouver voir [la doc scalingo](https://doc.scalingo.com/platform/app/review-apps)
+Pour plus d'informations sur les review apps, vous pouvez voir [la doc scalingo](https://doc.scalingo.com/platform/app/review-apps)
 
 ### Environnement de prod
 
