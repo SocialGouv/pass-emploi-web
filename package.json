@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@types/gtag.js": "^0.0.7",
     "@types/react": "17.0.17",
     "autoprefixer": "^10.3.1",
     "babel-plugin-inline-react-svg": "^2.0.1",
