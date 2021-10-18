@@ -7,7 +7,6 @@ import fetchJson from 'utils/fetchJson'
 import Button from 'components/Button'
 
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
-import { Conseiller } from 'interfaces'
 
 const Login = () => {
 	const [userId, setUserId] = useState('')
