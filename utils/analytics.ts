@@ -1,8 +1,8 @@
-const analyticsID:string = process.env.FIREBASE_MEASUREMENT_ID || ''
+export const GA_TRACKING_ID:string = process.env.FIREBASE_MEASUREMENT_ID || ''
 
 // log the pageview with their URL
 export const pageview = (url: URL) => {
-  window.gtag("config", analyticsID, {
+  window.gtag("config", GA_TRACKING_ID, {
     page_path: url
   });
 };
