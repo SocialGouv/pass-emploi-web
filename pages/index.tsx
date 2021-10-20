@@ -1,19 +1,19 @@
 import Router from 'next/router'
 import { useState } from 'react'
 
-import withSession, { ServerSideHandler } from 'utils/session'
-
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import Button from 'components/Button'
+import RdvList from 'components/rdv/RdvList'
+
+import withSession, { ServerSideHandler } from 'utils/session'
+import fetchJson from 'utils/fetchJson'
 
 import AddIcon from '../assets/icons/add.svg'
 
 import { Rdv } from 'interfaces/rdv'
 import { RdvJson } from 'interfaces/json/rdv'
 import { durees } from 'referentiel/rdv'
-import fetchJson from 'utils/fetchJson'
-import RdvList from 'components/rdv/RdvList'
 
 type HomeProps = {
 	rdvs: Rdv[]
@@ -41,14 +41,18 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 		<>
 			<span className='flex flex-wrap justify-between mb-[20px]'>
 				<h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-				<Button onClick={() => setShowAddModal(true)}>
+				<Button
+					onClick={() => setShowAddModal(true)}
+					label='Fixer un rendez-vous'
+				>
 					<AddIcon focusable='false' aria-hidden='true' />
 					Fixer un rendez-vous
 				</Button>
 			</span>
 
-			<div className='flex mb-[40px]'>
+			<div role='tablist' className='flex mb-[40px]'>
 				<Button
+					role='tab'
 					type='button'
 					className='mr-[8px]'
 					style={displayOldRdv ? 'white' : 'blue'}
@@ -60,6 +64,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 				</Button>
 
 				<Button
+					role='tab'
 					type='button'
 					style={displayOldRdv ? 'blue' : 'white'}
 					onClick={() => {
@@ -82,27 +87,31 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 				/>
 			)}
 
-			<AddRdvModal
-				onClose={() => setShowAddModal(false)}
-				onAdd={() => {
-					Router.reload()
-				}}
-				show={showAddModal}
-			/>
+			{showAddModal && (
+				<AddRdvModal
+					onClose={() => setShowAddModal(false)}
+					onAdd={() => {
+						Router.reload()
+					}}
+					show={showAddModal}
+				/>
+			)}
 
-			<DeleteRdvModal
-				onClose={() => setShowDeleteModal(false)}
-				onDelete={() => {
-					const index = rdvsAvenir.indexOf(selectedRdv)
-					const newArray = [
-						...rdvsAvenir.slice(0, index),
-						...rdvsAvenir.slice(index + 1, rdvsAvenir.length),
-					]
-					setRdvsAvenir(newArray)
-				}}
-				show={showDeleteModal}
-				rdv={selectedRdv}
-			/>
+			{showDeleteModal && (
+				<DeleteRdvModal
+					onClose={() => setShowDeleteModal(false)}
+					onDelete={() => {
+						const index = rdvsAvenir.indexOf(selectedRdv)
+						const newArray = [
+							...rdvsAvenir.slice(0, index),
+							...rdvsAvenir.slice(index + 1, rdvsAvenir.length),
+						]
+						setRdvsAvenir(newArray)
+					}}
+					show={showDeleteModal}
+					rdv={selectedRdv}
+				/>
+			)}
 		</>
 	)
 }
