@@ -1,0 +1,73 @@
+import { Rdv } from 'interfaces/rdv'
+import { formatDayDate } from 'utils/date'
+
+import DeleteIcon from '../../assets/icons/delete.svg'
+import LocationIcon from '../../assets/icons/location.svg'
+import NoteIcon from '../../assets/icons/note.svg'
+
+type RdvListProps = {
+	rdvs: Rdv[]
+	onDelete?: any
+}
+
+const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
+	const handleDeleteClick = (rdv: Rdv) => {
+		onDelete(rdv)
+	}
+
+	return (
+		<>
+			{rdvs.length === 0 ? (
+				<p className='text-md text-bleu mb-8'>
+					Vous n&apos;avez pas de rendez-vous pour le moment
+				</p>
+			) : (
+				<table role='presentation' className='w-full'>
+					<caption className='hidden'>Liste de mes rendez-vous</caption>
+
+					<tbody>
+						{rdvs.map((rdv: Rdv) => (
+							<tr key={rdv.id} className='text-sm text-bleu_nuit'>
+								<td className='p-[16px]'>
+									{`${formatDayDate(new Date(rdv.date))} (${new Date(
+										rdv.date
+									).getUTCHours()}:00 - ${rdv.duration})`}
+								</td>
+
+								<td className='p-[16px]'>{rdv.title}</td>
+
+								<td className='p-[16px] '>
+									<LocationIcon
+										focusable='false'
+										aria-hidden='true'
+										className='mr-[7px] inline'
+									/>
+									{rdv.modality}
+								</td>
+
+								<td className='p-[16px] '>
+									<NoteIcon
+										focusable='false'
+										aria-hidden='true'
+										className='mr-[7px] inline'
+									/>
+									{rdv.comment}
+								</td>
+
+								{onDelete && (
+									<td className='p-[16px]'>
+										<button onClick={() => handleDeleteClick(rdv)} className=''>
+											<DeleteIcon aria-hidden='true' focusable='false' />
+										</button>
+									</td>
+								)}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)}
+		</>
+	)
+}
+
+export default RdvList

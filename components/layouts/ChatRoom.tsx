@@ -6,12 +6,12 @@ import 'firebase/firestore'
 import Conversation from 'components/layouts/Conversation'
 import { Jeune, JeuneChat } from 'interfaces'
 import { formatDayAndHourDate } from 'utils/date'
-import EmptyMessagesImage from '../../assets/icons/empty_messages.svg'
 
 import styles from 'styles/components/Layouts.module.css'
 
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
+import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import fetchJson from 'utils/fetchJson'
 
 const defaultJeune: JeuneChat = {
@@ -140,15 +140,17 @@ export default function ChatBox({ db }: ChatBoxProps) {
 						Ma messagerie
 					</h2>
 					{!jeunesChat?.length && (
-						<div className={styles.conversations}>
-							<EmptyMessagesImage
-								focusable='false'
-								aria-hidden='true'
-								className='m-auto mt-[50px] mb-[50px]'
-							/>
-							<p className='text-md-semi text-bleu_nuit text-center ml-[50px] mr-[50px]'>
-								Vous devriez avoir des jeunes inscrits pour discuter avec eux{' '}
-							</p>
+						<div className={`${styles.conversations} relative`}>
+							<div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
+								<EmptyMessagesImage
+									className='mb-[16px]'
+									focusable='false'
+									aria-hidden='true'
+								/>
+								<p className='text-md-semi text-bleu_nuit text-center'>
+									Vous devriez avoir des jeunes inscrits pour discuter avec eux
+								</p>
+							</div>
 						</div>
 					)}
 

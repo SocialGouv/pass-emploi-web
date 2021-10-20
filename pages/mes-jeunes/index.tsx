@@ -1,14 +1,45 @@
+import React, { useState } from 'react'
+
+import AddJeuneModal from 'components/jeune/AddJeuneModal'
+import Button from 'components/Button'
+
 import { Jeune } from 'interfaces'
+
 import withSession, { ServerSideHandler } from 'utils/session'
 
+import AddIcon from '../../assets/icons/add_person.svg'
+import fetchJson from 'utils/fetchJson'
+
 type MesJeunesProps = {
-	jeunes: Jeune[]
+	conseillerId: string
+	conseillerJeunes: Jeune[]
 }
 
-function MesJeunes({ jeunes }: MesJeunesProps) {
+function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
+	const [showModal, setShowModal] = useState(false)
+	const [jeunes, setJeunes] = useState<Jeune[]>(conseillerJeunes)
+
+	const handleAddJeune = async () => {
+		await fetchJson('/api/login', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId: conseillerId,
+			}),
+		}).then(function (response) {
+			setJeunes(response.jeunes)
+		})
+	}
+
 	return (
 		<>
-			<h1 className='h2 text-bleu_nuit mb-[50px]'> Mes Jeunes</h1>
+			<span className='flex flex-wrap justify-between mb-[50px]'>
+				<h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
+				<Button onClick={() => setShowModal(true)}>
+					<AddIcon focusable='false' aria-hidden='true' className='mr-[8px]' />
+					Ajouter un jeune
+				</Button>
+			</span>
 
 			<table role='presentation'>
 				<caption className='hidden'>Liste de mes bénéficiaires</caption>
@@ -35,6 +66,12 @@ function MesJeunes({ jeunes }: MesJeunesProps) {
 					))}
 				</tbody>
 			</table>
+
+			<AddJeuneModal
+				onClose={() => setShowModal(false)}
+				onAdd={() => handleAddJeune()}
+				show={showModal}
+			/>
 		</>
 	)
 }
@@ -54,7 +91,8 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
 		return {
 			props: {
-				jeunes: user.jeunes,
+				conseillerId: user.id,
+				conseillerJeunes: user.jeunes,
 			},
 		}
 	}
