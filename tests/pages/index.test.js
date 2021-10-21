@@ -1,61 +1,13 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import Home from 'pages/index'
+import { rdvs } from '../dommies/rdvs'
+
+const oldRdvs = rdvs.slice(2)
 
 describe('Home with rdvs', () => {
-	const rdvs = [
-		{
-			comment: '',
-			date: 'Thu, 21 Oct 2021 10:00:00 GMT',
-			duration: '15min',
-			id: '172',
-			modality: 'En agence',
-			title: 'Gabriel Adgeg ',
-		},
-		{
-			comment: 'test fix',
-			date: 'Thu, 21 Oct 2021 11:00:00 GMT',
-			duration: '45min',
-			id: '162',
-			modality: 'En agence',
-			title: 'Gabriel Adgeg ',
-		},
-		{
-			comment: 'Hey',
-			date: 'Mon, 25 Oct 2021 12:00:00 GMT',
-			duration: '30min',
-			id: '166',
-			modality: 'Par téléphone',
-			title: 'RémiDormoy',
-		},
-		{
-			comment: 'Test id',
-			date: 'Wed, 27 Oct 2021 12:00:00 GMT',
-			duration: '1h',
-			id: '173',
-			modality: 'Par téléphone',
-			title: 'JuGa',
-		},
-		{
-			comment: 'Test test',
-			date: 'Sun, 31 Oct 2021 13:00:00 GMT',
-			duration: '1h',
-			id: '174',
-			modality: 'En agence',
-			title: 'RémiDormoy',
-		},
-		{
-			comment: '',
-			date: 'Mon, 16 May 2022 09:00:00 GMT',
-			duration: '30min',
-			id: '175',
-			modality: 'Par téléphone',
-			title: 'ElisabethJohnson',
-		},
-	]
-
 	beforeEach(() => {
-		render(<Home rdvs={rdvs} oldRdvs={rdvs} />)
+		render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
 	})
 
 	it('SHOULD have a level1 heading WHEN rendered', () => {
@@ -127,5 +79,41 @@ describe('Home without rdvs', () => {
 
 	it('SHOULD NOT have a list of rdvs WHEN rds is empty', () => {
 		expect(() => screen.getByRole('presentation')).toThrow()
+	})
+})
+
+describe('Home Buttons tab', () => {
+	beforeEach(() => {
+		render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
+	})
+
+	it('SHOULD have two buttons tab WHEN rendered', () => {
+		const rdvsButton = screen.getByRole('tab', {
+			name: 'Prochains rendez-vous',
+		})
+
+		const oldRdvsButton = screen.getByRole('tab', {
+			name: 'Rendez-vous passés',
+		})
+
+		expect(rdvsButton).toBeInTheDocument()
+		expect(oldRdvsButton).toBeInTheDocument()
+	})
+
+	it('SHOULD display old rdvs WHEN old button clicked', async () => {
+		const oldRdvsButton = screen.getByRole('tab', {
+			name: 'Rendez-vous passés',
+		})
+
+		await fireEvent.click(oldRdvsButton)
+
+		const table = screen.getByRole('presentation')
+
+		const rows = screen.getAllByRole('row')
+		const cells = screen.getAllByRole('cell')
+
+		expect(table).toBeInTheDocument()
+		expect(rows.length).toBe(oldRdvs.length)
+		expect(cells.length).toBe(4 * oldRdvs.length)
 	})
 })
