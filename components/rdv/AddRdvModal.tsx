@@ -1,4 +1,4 @@
-import { creneaux, durees, modalites } from 'referentiel/rdv'
+import { modalites } from 'referentiel/rdv'
 
 import Modal from 'components/Modal'
 import Button from 'components/Button'
@@ -43,9 +43,12 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 		})
 	}, [])
 
+	const creneauIsValid = () =>
+		creneau !== '' && creneau.match(/[0-9][0-9]:[0-9][0-9]/gm)
+
 	const FormIsValid = () =>
 		duree !== '' &&
-		creneau !== '' &&
+		creneauIsValid() &&
 		modalite !== '' &&
 		jeune !== '' &&
 		date !== ''
@@ -54,7 +57,9 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 		event.preventDefault()
 		const rdvDate = new Date(date)
 		const hours: number = Number(creneau.substring(0, 2))
+		const minutes: number = Number(creneau.substring(3, 5))
 		rdvDate.setUTCHours(hours)
+		rdvDate.setUTCMinutes(minutes)
 
 		const newRdv: RdvJson = {
 			id: '',
@@ -62,7 +67,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 			subtitle: 'sous-titre',
 			jeuneId: jeune,
 			date: rdvDate.toUTCString(),
-			duration: duree,
+			duration: `00:${duree}:00`,
 			modality: modalite,
 			comment: notes,
 		}
@@ -87,7 +92,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 					<div className='pr-[20px]' style={{ flexBasis: '50%' }}>
 						<label
 							htmlFor='beneficiaire'
-							className='text-lg text-bleu_nuit mb-[20px] block'
+							className='text-sm-semi text-bleu_nuit mb-[20px] block'
 						>
 							Choisir un bénéficiaire <span aria-hidden='true'>*</span>
 						</label>
@@ -108,7 +113,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 
 						<label
 							htmlFor='date'
-							className='text-lg text-bleu_nuit mb-[20px] block'
+							className='text-sm-semi text-bleu_nuit mb-[20px] block'
 						>
 							Choisir une date <span aria-hidden='true'>*</span>
 						</label>
@@ -126,49 +131,41 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 					<div className='pl-[20px]' style={{ flexBasis: '50%' }}>
 						<label
 							htmlFor='creneaux'
-							className='text-lg text-bleu_nuit mb-[20px] block'
+							className='text-sm-semi text-bleu_nuit mb-[20px] block'
 						>
-							Créneaux disponibles <span aria-hidden='true'>*</span>
+							Heure du rendez-vous (hh:mm) <span aria-hidden='true'>*</span>
 						</label>
-						<select
-							id='duree'
-							name='duree'
+						<input
+							type='text'
+							id='creneau'
+							name='creneau'
 							value={creneau}
+							placeholder='par exemple: 15:00'
 							onChange={(e) => selectCreneau(e.target.value)}
 							required
-							className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] cursor-pointer border border-bleu_nuit rounded-medium'
-						>
-							{creneaux.map((cr) => (
-								<option key={cr} value={cr}>
-									{cr}
-								</option>
-							))}
-						</select>
+							className='text-md text-bleu_nuit w-full p-[12px] mb-[20px] placeholder-bleu_nuit placeholder-opacity-50 border border-bleu_nuit rounded-medium'
+						/>
 
 						<label
 							htmlFor='duree'
-							className='text-lg text-bleu_nuit mb-[20px] block'
+							className='text-sm-semi text-bleu_nuit mb-[20px] block'
 						>
-							Durée du RDV <span aria-hidden='true'>*</span>
+							Durée du RDV (en minutes) <span aria-hidden='true'>*</span>
 						</label>
-						<select
+						<input
+							type='number'
 							id='duree'
 							name='duree'
 							value={duree}
+							placeholder='Saisir la durée en minutes'
 							onChange={(e) => selectDuree(e.target.value)}
 							required
-							className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] cursor-pointer border border-bleu_nuit rounded-medium'
-						>
-							{durees.map((dr) => (
-								<option key={dr.value} value={dr.value}>
-									{dr.text}
-								</option>
-							))}
-						</select>
+							className='text-md text-bleu_nuit w-full p-[12px] mb-[20px] placeholder-bleu_nuit placeholder-opacity-50 border border-bleu_nuit rounded-medium'
+						/>
 
 						<label
 							htmlFor='modalite'
-							className='text-lg text-bleu_nuit mb-[20px] block'
+							className='text-sm-semi text-bleu_nuit mb-[20px] block'
 						>
 							Modalité de contact <span aria-hidden='true'>*</span>
 						</label>
@@ -191,7 +188,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 
 				<label
 					htmlFor='notes'
-					className='text-lg text-bleu_nuit mb-[20px] block'
+					className='text-sm-semi text-bleu_nuit mb-[20px] block'
 				>
 					Notes
 				</label>
@@ -200,7 +197,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 					name='notes'
 					value={notes}
 					onChange={(e) => selectNotes(e.target.value)}
-					className='w-full min-h-[60px] p-[10px] mb-[10px] resize-none border border-bleu_nuit rounded-medium'
+					className='text-md text-bleu_nuit w-full min-h-[60px] p-[10px] mb-[10px] placeholder-bleu_nuit placeholder-opacity-50 resize-none border border-bleu_nuit rounded-medium'
 					placeholder='Écrire ici...'
 				/>
 

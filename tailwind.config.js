@@ -39,6 +39,8 @@ module.exports = {
 			...theme('colors'),
 		}),
 
+		placeholderColor: (theme) => theme('colors'),
+
 		borderRadius: {
 			none: '0',
 			x_small: '2px',
