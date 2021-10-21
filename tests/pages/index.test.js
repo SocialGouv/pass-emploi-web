@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Home from 'pages/index'
-import { rdvs } from '../dommies/rdvs'
+import { rdvs } from '../dummies/rdvs'
 
 const oldRdvs = rdvs.slice(2)
 
