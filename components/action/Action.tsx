@@ -64,6 +64,7 @@ const Action = ({ action }: ActionProps) => {
 						Créé par {action.creator}
 					</p>
 				)}
+
 				<div className='w-full flex justify-between  '>
 					<span style={{ flex: '0 0 75%' }}>
 						<p className='text-md text-bleu_nuit break-all mb-[8px]'>

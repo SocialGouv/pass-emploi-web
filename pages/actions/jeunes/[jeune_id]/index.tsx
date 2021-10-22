@@ -33,33 +33,6 @@ const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
 		: 1
 
 function Action({ jeune, actions_en_cours }: Props) {
-	const addToActionEnCours = (action: UserAction) => {
-		setActionsEnCours([action, ...actionsEnCours])
-	}
-
-	const deleteFromActionEnCours = (action: UserAction) => {
-		const indexAction = actionsEnCours.indexOf(action)
-		actionsEnCours.splice(indexAction, 1)
-		setActionsEnCours([...actionsEnCours])
-	}
-
-	// const toggleStatusAction = (action: UserAction) => {
-	// 	action.isDone = !action.isDone
-
-	// 	patchActionStatus(action)
-	// 		.then(function () {
-	// 			if (action.isDone) {
-	// 				deleteFromActionEnCours(action)
-	// 			} else {
-	// 				addToActionEnCours(action)
-	// 			}
-	// 		})
-	// 		.catch(function (error) {
-	// 			console.error(error.message)
-	// 			action.isDone = !action.isDone
-	// 		})
-	// }
-
 	const [showModal, setShowModal] = useState(false)
 	const [actionsEnCours, setActionsEnCours] = useState(actions_en_cours)
 
@@ -78,7 +51,7 @@ function Action({ jeune, actions_en_cours }: Props) {
 
 				<div className={styles.titleIntroContainer}>
 					<h1 className={`h2 text-bleu_nuit ${styles.title}`}>
-						Les actions de {`${jeune.firstName} ${jeune.lastName}`}{' '}
+						Les actions de {`${jeune.firstName} ${jeune.lastName}`}
 					</h1>
 					<p className='text-md text-bleu'>
 						Retrouvez le détail des actions de votre bénéficiaire
@@ -122,18 +95,6 @@ function Action({ jeune, actions_en_cours }: Props) {
 		</>
 	)
 }
-
-// const patchActionStatus = async (action: UserAction) => {
-// 	const endpoint = process.env.API_ENDPOINT
-
-// 	const response = fetch(`${endpoint}/actions/${action.id}`, {
-// 		method: 'PATCH',
-// 		headers: { 'content-type': 'application/json' },
-// 		body: JSON.stringify({ isDone: action.isDone }),
-// 	})
-
-// 	return response
-// }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 	const res = await fetch(

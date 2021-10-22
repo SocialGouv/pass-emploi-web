@@ -55,13 +55,12 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 		}
 
 		const newAction = {
-			id: Date.now().toString(),
 			content: newContent,
 			comment: newComment,
 		}
 
 		fetch(
-			`${process.env.API_ENDPOINT} /conseillers/${conseillerId}/jeunes/${router.query.jeune_id}/action`,
+			`${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${router.query.jeune_id}/action`,
 			{
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
