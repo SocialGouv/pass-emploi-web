@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import router from 'next/router'
 
-import { UserAction } from 'interfaces'
+import { UserAction } from 'interfaces/action'
 import { actionsPredefinies } from 'referentiel/action'
 
 import Modal from 'components/Modal'

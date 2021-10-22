@@ -1,4 +1,4 @@
-import { UserAction } from "interfaces"
+import { UserAction } from 'interfaces/action'
 
 const now = new Date()
 
