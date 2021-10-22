@@ -21,8 +21,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 	const [newComment, setNewComment] = useState('')
 	const [isCommentMode, setIsCommentMode] = useState(false)
 	const [isCustomMode, setIsCustomMode] = useState(false)
-
-	let conseillerId = '1'
+	const [conseillerId, setConseillerId] = useState('')
 
 	useEffect(() => {
 		async function fetchConseillerId(): Promise<string> {
@@ -31,7 +30,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 		}
 
 		fetchConseillerId().then((data) => {
-			conseillerId = data
+			setConseillerId(data)
 		})
 	}, [])
 

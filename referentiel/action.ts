@@ -1,4 +1,4 @@
-import { UserAction } from 'interfaces/action'
+import { ActionStatus, UserAction } from 'interfaces/action'
 
 const now = new Date()
 
@@ -10,6 +10,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: 'no-com-2',
@@ -18,6 +20,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: 'no-com-3',
@@ -26,6 +30,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: 'no-com-4',
@@ -34,6 +40,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '1',
@@ -42,6 +50,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '2',
@@ -50,6 +60,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '3',
@@ -58,6 +70,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '4',
@@ -66,6 +80,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '5',
@@ -74,6 +90,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '6',
@@ -82,6 +100,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '7',
@@ -90,6 +110,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '8',
@@ -98,6 +120,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '9',
@@ -106,6 +130,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '10',
@@ -114,6 +140,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '11',
@@ -122,6 +150,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '12',
@@ -130,6 +160,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '13',
@@ -138,6 +170,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '14',
@@ -146,6 +180,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '15',
@@ -154,6 +190,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
   {
     id: '16',
@@ -162,6 +200,8 @@ const actionsPredefinies : UserAction[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
+    creator:'',
+    status: ActionStatus.NotStarted
   },
 ]
 
