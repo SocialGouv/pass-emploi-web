@@ -1,55 +1,97 @@
-import { UserAction } from 'interfaces'
+import { UserAction, ActionStatus } from 'interfaces/action'
 
-import UncheckedIcon from '../../assets/icons/checkbox_unchecked.svg'
-import CheckedIcon from '../../assets/icons/checkbox_checked.svg'
+import NoteIcon from '../../assets/icons/note_outline.svg'
+import ChevronIcon from '../../assets/icons/chevron_right.svg'
 
 type ActionProps = {
 	action: UserAction
-	toggleStatus?: any
 }
 
-const Action = ({ action, toggleStatus }: ActionProps) => {
+function NotStarted() {
+	return (
+		<p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-rose rounded-x_large'>
+			À faire
+		</p>
+	)
+}
+
+function InProgress() {
+	return (
+		<p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-violet rounded-x_large'>
+			Commencée
+		</p>
+	)
+}
+
+function Done() {
+	return (
+		<p className='text-xs-semi text-bleu_nuit px-[16px] py-[2px] bg-bleu_gris rounded-x_large'>
+			Terminée
+		</p>
+	)
+}
+
+function Status(props: any) {
+	switch (props.status) {
+		case ActionStatus.InProgress:
+			return <InProgress />
+
+		case ActionStatus.Done:
+			return <Done />
+
+		case ActionStatus.NotStarted:
+		default:
+			return <NotStarted />
+	}
+}
+
+const Action = ({ action }: ActionProps) => {
 	const handleCheckChange = () => {
-		toggleStatus(action)
+		/**
+		 * TODO: remove this and transform Button to Link ( Détail de l'action)
+		 */
+		console.log('Clicked')
 	}
 
 	return (
 		<>
-			{!action.isDone && (
-				<button
-					className='w-full flex px-[16px] py-[16px] mb-[8px] text-left border border-bleu_blanc rounded-medium'
-					onClick={handleCheckChange}
-				>
-					<UncheckedIcon
-						focusable='false'
-						aria-hidden='true'
-						className='mr-[9px]'
-					/>
-					<span style={{ flex: '0 0 95%' }}>
-						<p className='text-sm text-bleu_nuit break-all'>{action.content}</p>
-						<p className='text-sm text-bleu break-all'>{action.comment}</p>
-					</span>
-				</button>
-			)}
+			<button
+				className='w-full  px-[16px] py-[16px] text-left border-x border-bleu_blanc '
+				onClick={handleCheckChange}
+			>
+				{action.creator && (
+					<p className='text-sm text-bleu_nuit mb-[8px]'>
+						Créé par {action.creator}
+					</p>
+				)}
 
-			{action.isDone && (
-				<button
-					className='w-full flex px-[16px] py-[16px] mb-[8px] text-left bg-bleu_nuit border border-bleu_nuit rounded-medium'
-					onClick={handleCheckChange}
-				>
-					<CheckedIcon
-						focusable='false'
-						aria-hidden='true'
-						className='mr-[9px]'
-					/>
-					<span style={{ flex: '0 0 95%' }}>
-						<p className='text-sm text-blanc break-all'>{action.content}</p>
-						<p className='text-sm text-bleu_clair break-all'>
-							{action.comment}
+				<div className='w-full flex justify-between  '>
+					<span style={{ flex: '0 0 75%' }}>
+						<p className='text-md text-bleu_nuit break-all mb-[8px]'>
+							{action.content}
+						</p>
+						<p className='text-sm text-bleu_nuit break-all'>
+							<NoteIcon
+								focusable='false'
+								aria-hidden='true'
+								className='mr-[7px] inline'
+							/>
+							{action.comment || '--'}
 						</p>
 					</span>
-				</button>
-			)}
+					<span>
+						<Status status={action.status} />
+					</span>
+					<span className='text-sm text-bleu_nuit '>
+						Détail de l action
+						<ChevronIcon
+							focusable='false'
+							aria-hidden='true'
+							className='ml-[7px] inline'
+						/>
+					</span>
+				</div>
+			</button>
 		</>
 	)
 }

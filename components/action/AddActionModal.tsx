@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import router from 'next/router'
 
-import { UserAction } from 'interfaces'
+import { UserAction } from 'interfaces/action'
 import { actionsPredefinies } from 'referentiel/action'
 
 import Modal from 'components/Modal'
 import Button from 'components/Button'
+import fetchJson from 'utils/fetchJson'
 
 const INPUT_MAX_LENGTH = 250
 
@@ -20,6 +21,18 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 	const [newComment, setNewComment] = useState('')
 	const [isCommentMode, setIsCommentMode] = useState(false)
 	const [isCustomMode, setIsCustomMode] = useState(false)
+	const [conseillerId, setConseillerId] = useState('')
+
+	useEffect(() => {
+		async function fetchConseillerId(): Promise<string> {
+			const currentUser = await fetchJson('/api/user')
+			return currentUser?.id || ''
+		}
+
+		fetchConseillerId().then((data) => {
+			setConseillerId(data)
+		})
+	}, [])
 
 	const noSelectedAction = () => Boolean(newContent === '')
 
@@ -41,19 +54,13 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 			return
 		}
 
-		const now = new Date()
-
-		const newAction: UserAction = {
-			id: Date.now().toString(),
-			isDone: false,
-			lastUpdate: now,
-			creationDate: now,
+		const newAction = {
 			content: newContent,
 			comment: newComment,
 		}
 
 		fetch(
-			`${process.env.API_ENDPOINT}/jeunes/${router.query.jeune_id}/action`,
+			`${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${router.query.jeune_id}/action`,
 			{
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },

@@ -4,14 +4,7 @@
 import firebase from "firebase/app";
 import { datesAreOnSameDay } from "utils/date";
 
-export type UserAction = {
-  id: string
-  content: string
-  comment: string
-  isDone: boolean
-  creationDate: Date
-  lastUpdate: Date
-}
+
 
 export type Conseiller = {
   isLoggedIn?: boolean

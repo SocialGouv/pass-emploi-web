@@ -1,4 +1,3 @@
-import type { GetServerSideProps } from 'next'
 import Link from 'next/link'
 
 import { JeuneActionJson } from 'interfaces/json/action'
