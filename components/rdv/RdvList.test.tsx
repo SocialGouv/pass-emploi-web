@@ -3,27 +3,7 @@ import {render} from "@testing-library/react";
 import RdvList from "./RdvList";
 import {Rdv} from "../../interfaces/rdv";
 import { screen } from "@testing-library/dom";
-
-const uneListeDeRdv = (overrides: Rdv[] = []): Rdv[] => [
-    {
-        id: "1",
-        title: "Rama",
-        subtitle: "",
-        comment: "Rendez-vous avec Rama",
-        date: "Thu, 21 Oct 2021 10:00:00 GMT",
-        duration: "30 min",
-        modality: "Par téléphone",
-    },   {
-        id: "2",
-        title: "Sixtine",
-        subtitle: "",
-        comment: "Mon premier rendez-vous",
-        date: "Mon, 25 Oct 2021 12:00:00 GMT",
-        duration: "25 min",
-        modality: "En agence",
-    },
-    ...overrides
-] as Rdv[];
+import {uneListeDeRdv} from "../../tests/fixtures/rendez-vous";
 
 describe("<RdvList>", () => {
     let listeRdv: Rdv[];

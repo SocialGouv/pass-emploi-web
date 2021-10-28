@@ -83,7 +83,7 @@ const Action = ({ action }: ActionProps) => {
 						<Status status={action.status} />
 					</span>
 					<span className='text-sm text-bleu_nuit '>
-						Détail de l action
+						Détail de l&apos;action
 						<ChevronIcon
 							focusable='false'
 							aria-hidden='true'
