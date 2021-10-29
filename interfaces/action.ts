@@ -6,7 +6,7 @@ export type JeuneActions = {
   nbActionsTerminees: number,
 }
 
-export type UserAction = {
+export interface UserAction  {
   id: string
   content: string
   comment: string
