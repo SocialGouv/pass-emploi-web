@@ -23,13 +23,14 @@ export default withSession(async (req: NextIronRequest, res: NextApiResponse<Dat
     // we check that the user exists on GitHub and store some data in session
     const data = await fetchJson(url);
 
-    const user = { isLoggedIn: true, jeunes: data.jeunes, ...data.conseiller };
+    const user = { isLoggedIn: true, ...data.conseiller };
 
     req.session.set("user", user);
     await req.session.save();
     res.json(user);
 
-  } catch (error) {
-    res.status(500) // TODO ?
+  } catch (error: any) {
+    const { response: fetchResponse } = error;
+    res.status(fetchResponse?.status || 500).json(error.data);
   }
 });

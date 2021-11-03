@@ -27,9 +27,10 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 
 	useEffect(() => {
 		async function fetchJeunes(): Promise<Jeune[]> {
-			const currentUser = await fetchJson('/api/user')
-			conseiller_id = currentUser?.id
-			return currentUser?.jeunes || []
+			const { id } = await fetchJson('/api/user')
+			const data = await fetchJson(`${process.env.API_ENDPOINT}/conseillers/${id}/login`)
+
+			return data?.jeunes || []
 		}
 
 		fetchJeunes().then((data) => {
