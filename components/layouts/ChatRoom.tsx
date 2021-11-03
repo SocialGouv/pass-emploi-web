@@ -42,9 +42,10 @@ export default function ChatBox({ db }: ChatBoxProps) {
 
 	useEffect(() => {
 		async function fetchJeunes(): Promise<Jeune[]> {
-			const currentUser = await fetchJson('/api/user')
+			const { id } = await fetchJson('/api/user')
+			const data = await fetchJson(`${process.env.API_ENDPOINT}/conseillers/${id}/login`)
 
-			return currentUser?.jeunes || []
+			return data?.jeunes || []
 		}
 
 		fetchJeunes().then((data) => {
