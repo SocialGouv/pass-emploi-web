@@ -31,7 +31,6 @@ export default withSession(async (req: NextIronRequest, res: NextApiResponse<Dat
 
   } catch (error: any) {
     const { response: fetchResponse } = error;
-    console.log("login.ts", error)
     res.status(fetchResponse?.status || 500).json(error.data);
   }
 });
