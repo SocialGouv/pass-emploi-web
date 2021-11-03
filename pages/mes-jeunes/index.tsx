@@ -79,6 +79,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 export const getServerSideProps = withSession<ServerSideHandler>(
 	async ({ req, res }) => {
 		const user = req.session.get('user')
+		const userId = user.id
 
 		if (user === undefined) {
 			res.setHeader('location', '/login')
@@ -89,10 +90,14 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 			}
 		}
 
+		const data = await fetchJson(
+			`${process.env.API_ENDPOINT}/conseillers/${userId}/login`
+		)
+		
 		return {
 			props: {
-				conseillerId: user.id,
-				conseillerJeunes: user.jeunes,
+				conseillerId: userId,
+				conseillerJeunes: data?.jeunes || [],
 			},
 		}
 	}
