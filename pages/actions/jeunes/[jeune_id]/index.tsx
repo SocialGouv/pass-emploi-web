@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 
 import { Jeune } from 'interfaces'
 import { ActionStatus, UserAction } from 'interfaces/action'
@@ -32,19 +32,21 @@ const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
 		? -1
 		: 1
 
-function Action({ jeune, actions_en_cours }: Props) {
+function Actions({ jeune, actions_en_cours }: Props) {
 	const [showModal, setShowModal] = useState(false)
 	const [actionsEnCours, setActionsEnCours] = useState(actions_en_cours)
+	const { query } = useRouter()
+	const jeuneId = query.jeune_id || ''
 
 	return (
 		<>
 			<div className={styles.backIntroContainer}>
 				<Link href='/actions' passHref>
-					<a className={styles.backLink}>
+					<a className={`${styles.backLink} mr-[24px]`}>
 						<BackIcon
 							role='img'
 							focusable='false'
-							aria-label="Retour sur la page d'acceuil"
+							aria-label='Retour sur la liste de tous les jeunes'
 						/>
 					</a>
 				</Link>
@@ -88,7 +90,7 @@ function Action({ jeune, actions_en_cours }: Props) {
 			<ul>
 				{actionsEnCours.map((action: UserAction) => (
 					<li key={action.id} className={styles.listItem}>
-						<ActionComp action={action} />
+						<ActionComp action={action} jeuneId={jeuneId} />
 					</li>
 				))}
 			</ul>
@@ -127,4 +129,4 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 	}
 }
 
-export default Action
+export default Actions

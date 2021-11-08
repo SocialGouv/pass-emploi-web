@@ -2,9 +2,12 @@ import { UserAction, ActionStatus } from 'interfaces/action'
 
 import NoteIcon from '../../assets/icons/note_outline.svg'
 import ChevronIcon from '../../assets/icons/chevron_right.svg'
+import React from 'react'
+import Link from 'next/link'
 
 type ActionProps = {
 	action: UserAction
+	jeuneId: string | string[]
 }
 
 function NotStarted() {
@@ -45,20 +48,10 @@ function Status(props: any) {
 	}
 }
 
-const Action = ({ action }: ActionProps) => {
-	const handleCheckChange = () => {
-		/**
-		 * TODO: remove this and transform Button to Link ( Détail de l'action)
-		 */
-		console.log('Clicked')
-	}
-
+const Action = ({ action, jeuneId }: ActionProps) => {
 	return (
-		<>
-			<button
-				className='w-full  px-[16px] py-[16px] text-left border-x border-bleu_blanc '
-				onClick={handleCheckChange}
-			>
+		<Link href={`/actions/jeunes/${jeuneId}/${action.id}`}>
+			<a className='w-full  px-[16px] py-[16px] text-left border-x border-bleu_blanc '>
 				{action.creator && (
 					<p className='text-sm text-bleu_nuit mb-[8px]'>
 						Créé par {action.creator}
@@ -66,7 +59,7 @@ const Action = ({ action }: ActionProps) => {
 				)}
 
 				<div className='w-full flex justify-between  '>
-					<span style={{ flex: '0 0 75%' }}>
+					<span style={{ flex: '0 0 70%' }}>
 						<p className='text-md text-bleu_nuit break-all mb-[8px]'>
 							{action.content}
 						</p>
@@ -91,8 +84,8 @@ const Action = ({ action }: ActionProps) => {
 						/>
 					</span>
 				</div>
-			</button>
-		</>
+			</a>
+		</Link>
 	)
 }
 
