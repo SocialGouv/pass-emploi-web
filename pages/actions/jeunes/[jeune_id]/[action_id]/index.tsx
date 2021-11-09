@@ -19,18 +19,17 @@ function Action({ action }: Props) {
 		<>
 			<div className='flex items-center mb-[63px]'>
 				<Link href={`/actions/jeunes/${query.jeune_id}`} passHref>
-					<a className='mr-[24px]'>
-						<BackIcon
-							role='img'
-							focusable='false'
-							aria-label="Retour sur la liste d'action du jeune"
-						/>
+					<a
+						className='mr-[24px]'
+						aria-label="Retour sur la liste d'action du jeune"
+					>
+						<BackIcon role='img' focusable='false' />
 					</a>
 				</Link>
-				<h1 className='h4-semi text-bleu_nuit'> Actions de Kenji Girac</h1>
+				<p className='h4-semi text-bleu_nuit'> Actions de Kenji Girac</p>
 			</div>
 
-			<p className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</p>
+			<h1 className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</h1>
 
 			<p className='text-sm text-bleu mb-[24px]'>{action.comment}</p>
 
