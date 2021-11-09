@@ -34,14 +34,13 @@ function Action({ action }: Props) {
 			<p className='text-sm text-bleu mb-[24px]'>{action.comment}</p>
 
 			<div className='border-t-2 border-b-2 border-bleu_blanc flex justify-between py-[14px]'>
-				<div className='py-[26px]'>
-					<p className='text-sm'>
-						<span className='text-bleu mr-[25px]'>Date </span>
-						<span className='text-bleu_nuit'>
+				<dl className='flex py-[26px]'>
+						<dt className='text-bleu text-sm mr-[25px]'>Date </dt>
+						<dd className='text-bleu_nuit text-sm'>
 							{formatDayDate(new Date(action.creationDate))}
-						</span>
-					</p>
-				</div>
+						</dd>
+
+				</dl>
 
 				<div className='border-r-2 border-bleu_blanc '></div>
 
