@@ -35,11 +35,10 @@ function Action({ action }: Props) {
 
 			<div className='border-t-2 border-b-2 border-bleu_blanc flex justify-between py-[14px]'>
 				<dl className='flex py-[26px]'>
-						<dt className='text-bleu text-sm mr-[25px]'>Date </dt>
-						<dd className='text-bleu_nuit text-sm'>
-							{formatDayDate(new Date(action.creationDate))}
-						</dd>
-
+					<dt className='text-bleu text-sm mr-[25px]'>Date </dt>
+					<dd className='text-bleu_nuit text-sm'>
+						{formatDayDate(new Date(action.creationDate))}
+					</dd>
 				</dl>
 
 				<div className='border-r-2 border-bleu_blanc '></div>
@@ -83,14 +82,12 @@ function Action({ action }: Props) {
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 	const res = await fetchJson(
-		`${process.env.API_ENDPOINT}/conseiller/jeunes/${query.jeune_id}/actions`
+		`${process.env.API_ENDPOINT}/actions/${query.action_id}`
 	)
-
-	const mockAction: UserAction = res.actions[0]
 
 	return {
 		props: {
-			action: mockAction,
+			action: res,
 		},
 	}
 }
