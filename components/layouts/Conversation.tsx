@@ -17,6 +17,8 @@ import styles from 'styles/components/Layouts.module.css'
 import SendIcon from '../../assets/icons/send.svg'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import fetchJson from 'utils/fetchJson'
+import firestore = firebase.firestore;
+import QuerySnapshot = firebase.firestore.QuerySnapshot;
 
 const collection = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -108,12 +110,29 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
 		db.collection(collection).doc(jeune.chatId).update({
 			seenByConseiller: true,
+			lastConseillerReading: firebase.firestore.FieldValue.serverTimestamp()
 		})
 
 		return () => {
 			unsubscribe()
 		}
 	}, [db, jeune.chatId])
+
+	useEffect(() => {
+		const unsubscribe = db
+			.collection(collection)
+			.doc(jeune.chatId)
+			.onSnapshot((querySnapShot: any) => {
+				// get all documents from collection with id
+				const data = querySnapShot.doc.data.value
+
+				console.log("lala", data)
+				console.log("query", querySnapShot)
+
+			})
+		return () => { unsubscribe()};
+
+	})
 
 	useEffect(() => {
 		async function fetchConseiller(): Promise<Conseiller> {
@@ -167,6 +186,11 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 												}`}
 											>
 												à {formatHourMinuteDate(message.creationDate.toDate())}
+												{
+													message.creationDate <
+
+												<span>lu</span>
+												}
 											</p>
 
 											{dailyIndex === dailyMessages.length - 1 &&
