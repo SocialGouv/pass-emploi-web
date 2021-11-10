@@ -7,12 +7,14 @@ import { formatDayDate } from 'utils/date'
 import fetchJson from 'utils/fetchJson'
 
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
+import {Jeune} from "interfaces";
 
 type Props = {
 	action: UserAction
+	jeune: Jeune
 }
 
-function Action({ action }: Props) {
+function Action({ action, jeune }: Props) {
 	const { query } = useRouter()
 
 	return (
@@ -26,7 +28,7 @@ function Action({ action }: Props) {
 						<BackIcon role='img' focusable='false' />
 					</a>
 				</Link>
-				<p className='h4-semi text-bleu_nuit'> Actions de Kenji Girac</p>
+				<p className='h4-semi text-bleu_nuit'> Actions de {jeune.firstName} {jeune.lastName}</p>
 			</div>
 
 			<h1 className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</h1>
@@ -88,6 +90,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 	return {
 		props: {
 			action: res,
+			jeune: res.jeune
 		},
 	}
 }
