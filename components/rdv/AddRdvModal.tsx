@@ -4,7 +4,7 @@ import Modal from 'components/Modal'
 import Button from 'components/Button'
 import { useEffect, useState } from 'react'
 import { Jeune } from 'interfaces'
-import { RdvJson } from 'interfaces/json/rdv'
+import {RdvFormData, RdvJson} from 'interfaces/json/rdv'
 import fetchJson from 'utils/fetchJson'
 
 type RdvModalProps = {
@@ -13,7 +13,7 @@ type RdvModalProps = {
 	onAdd: any
 }
 
-let conseiller_id = 0
+let conseiller_id = 1
 
 const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 	const [jeunes, setJeunes] = useState<Jeune[]>([])
@@ -62,13 +62,13 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 		rdvDate.setUTCHours(hours)
 		rdvDate.setUTCMinutes(minutes)
 
-		const newRdv: RdvJson = {
+		const newRdv: RdvFormData = {
 			id: '',
 			title: 'titre',
 			subtitle: 'sous-titre',
 			jeuneId: jeune,
 			date: rdvDate.toUTCString(),
-			duration: `00:${duree}:00`,
+			duration: parseInt(duree),
 			modality: modalite,
 			comment: notes,
 		}
