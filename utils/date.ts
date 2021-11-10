@@ -1,7 +1,7 @@
 const datesAreOnSameDay = (firstDate: Date, secondDate: Date) =>
     firstDate.getFullYear() === secondDate.getFullYear() &&
     firstDate.getMonth() === secondDate.getMonth() &&
-    firstDate.getDate() === secondDate.getDate();
+    firstDate.getDate() === secondDate.getDate()
 
 const dateIsToday = (dateToCheck: Date) => datesAreOnSameDay(new Date(), dateToCheck)
 
@@ -16,22 +16,22 @@ const formatDayDate = (date: Date) =>
 
 const formatHourMinuteDate = (date: Date) =>
 {
-  let hours = date.getHours().toString();
-  hours = ("0" + hours).slice(-2);
+  let hours = date.getHours().toString()
+  hours = ('0' + hours).slice(-2)
 
-  let minutes = date.getMinutes().toString();
-  minutes = ("0" + minutes).slice(-2);
+  let minutes = date.getMinutes().toString()
+  minutes = ('0' + minutes).slice(-2)
 
   return `${hours}:${minutes}`
 }
 
 const formatHourMinuteDateUTC = (date: Date) =>
 {
-  let hours = date.getUTCHours().toString();
-  hours = ("0" + hours).slice(-2);
+  let hours = date.getUTCHours().toString()
+  hours = ('0' + hours).slice(-2)
 
-  let minutes = date.getUTCMinutes().toString();
-  minutes = ("0" + minutes).slice(-2);
+  let minutes = date.getUTCMinutes().toString()
+  minutes = ('0' + minutes).slice(-2)
 
   return `${hours}:${minutes}`
 }
