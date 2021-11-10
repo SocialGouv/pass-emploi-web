@@ -55,7 +55,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 						</th>
 					</tr>
 
-					{jeunes.map((jeune: Jeune) => (
+					{jeunes?.map((jeune: Jeune) => (
 						<tr key={jeune.id} className='text-sm text-bleu_nuit'>
 							<td className='p-[16px]'>
 								{jeune.firstName} {jeune.lastName}
@@ -93,7 +93,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 		const data = await fetchJson(
 			`${process.env.API_ENDPOINT}/conseillers/${userId}/login`
 		)
-		
+
 		return {
 			props: {
 				conseillerId: userId,

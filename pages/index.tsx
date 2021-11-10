@@ -140,7 +140,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 				...rdvData,
 				duration:
 					durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-					`${rdvData.duration.substring(2, 4)} min`,
+					`${rdvData.duration} min`,
 			}
 
 			serializedRdvs.push(newrdv)
