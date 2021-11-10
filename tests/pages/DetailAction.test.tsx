@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import Action from 'pages/actions/jeunes/[jeune_id]/[action_id]/index'
 import { uneAction } from 'fixtures/action'
+import { unJeune } from 'fixtures/jeune'
 
 jest.mock('next/router', () => ({
 	useRouter: () => ({
@@ -11,9 +12,10 @@ jest.mock('next/router', () => ({
 
 describe("Page Détail d'une action d'un jeune", () => {
 	const action = uneAction()
+	const jeune = unJeune()
 
 	it("Devrait afficher les information d'une action", () => {
-		render(<Action action={action} />)
+		render(<Action action={action} jeune={jeune} />)
 
 		expect(
 			screen.getByRole('heading', {
@@ -28,7 +30,7 @@ describe("Page Détail d'une action d'un jeune", () => {
 	})
 
 	it('Devrait avoir un lien pour revenir sur la page précédente', () => {
-		render(<Action action={action} />)
+		render(<Action action={action} jeune={jeune} />)
 
 		const backLink = screen.getByLabelText(
 			"Retour sur la liste d'action du jeune"
