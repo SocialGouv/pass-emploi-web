@@ -33,7 +33,7 @@ describe("Page Détail d'une action d'un jeune", () => {
 		render(<Action action={action} jeune={jeune} />)
 
 		const backLink = screen.getByLabelText(
-			"Retour sur la liste d'action du jeune"
+			"Retour sur la liste d'actions du jeune"
 		)
 
 		expect(backLink).toBeInTheDocument()
