@@ -31,7 +31,7 @@ const todayOrDate = (date: Date) =>
 type ConversationProps = {
 	db: firebase.firestore.Firestore
 	jeune: Jeune
-	onBack: any
+	onBack: () => void
 }
 
 let conseillerId = '0'
@@ -39,9 +39,9 @@ let conseillerId = '0'
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 	const [newMessage, setNewMessage] = useState('')
 	const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
+	const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
 
 	const dummySpace = useRef<HTMLLIElement>(null)
-	const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
 
 	const updateConseillerReadingStatus = useCallback(() => {
 		db.collection(collection).doc(jeune.chatId).update({
@@ -50,7 +50,6 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 		})
 	}, [db, jeune.chatId])
 
-	// when form is submitted
 	const handleSubmit = (e: any) => {
 		e.preventDefault()
 
@@ -97,7 +96,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 	useEffect(() => {
 		let currentMessages: Message[]
 
-		const messagesChangedEvent = db
+		const messagesUpdatedEvent = db
 			.collection(collection)
 			.doc(jeune.chatId)
 			.collection('messages')
@@ -125,7 +124,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
 		return () => {
 			// unsubscribe
-			messagesChangedEvent()
+			messagesUpdatedEvent()
 		}
 	}, [db, jeune.chatId, updateConseillerReadingStatus])
 
