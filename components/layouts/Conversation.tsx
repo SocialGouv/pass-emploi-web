@@ -186,18 +186,23 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 												{message.content}
 											</p>
 											<p
-												className={`text-xs text-bleu_nuit ${
+												className={`text-xs text-bleu_gris ${
 													message.sentBy === 'conseiller'
 														? 'text-right'
 														: 'text-left'
 												}`}
 											>
-												à {formatHourMinuteDate(message.creationDate.toDate())}
-												{isDateOlder(
-													message.creationDate.toDate(),
-													lastSeenByJeune
-												) &&
-													message.sentBy === 'conseiller' && <span>lu</span>}
+												{formatHourMinuteDate(message.creationDate.toDate())}
+												{message.sentBy === 'conseiller' && (
+													<span>
+														{isDateOlder(
+															message.creationDate.toDate(),
+															lastSeenByJeune
+														)
+															? ' · Lu'
+															: ' · Envoyé'}
+													</span>
+												)}
 											</p>
 
 											{dailyIndex === dailyMessages.length - 1 &&
