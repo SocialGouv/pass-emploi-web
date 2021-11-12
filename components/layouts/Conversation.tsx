@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import firebase from 'firebase/app'
 import 'firebase/firestore'
@@ -10,15 +10,18 @@ import {
 	ListDailyMessages,
 	Conseiller,
 } from 'interfaces'
-import { dateIsToday, formatDayDate, formatHourMinuteDate } from 'utils/date'
+import {
+	dateIsToday,
+	formatDayDate,
+	formatHourMinuteDate,
+	isDateOlder,
+} from 'utils/date'
 
 import styles from 'styles/components/Layouts.module.css'
 
 import SendIcon from '../../assets/icons/send.svg'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import fetchJson from 'utils/fetchJson'
-import firestore = firebase.firestore;
-import QuerySnapshot = firebase.firestore.QuerySnapshot;
 
 const collection = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -38,6 +41,14 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 	const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
 
 	const dummySpace = useRef<HTMLLIElement>(null)
+	const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
+
+	const updateConseillerReadingStatus = useCallback(() => {
+		db.collection(collection).doc(jeune.chatId).update({
+			seenByConseiller: true,
+			lastConseillerReading: firebase.firestore.FieldValue.serverTimestamp(),
+		})
+	}, [db, jeune.chatId])
 
 	// when form is submitted
 	const handleSubmit = (e: any) => {
@@ -60,6 +71,8 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 				lastMessageSentAt: firestoreNow,
 				lastMessageSentBy: 'conseiller',
 			})
+
+		updateConseillerReadingStatus()
 
 		/**
 		 * Route send from web to notify mobile, no need to await for response
@@ -84,7 +97,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 	useEffect(() => {
 		let currentMessages: Message[]
 
-		const unsubscribe = db
+		const messagesChangedEvent = db
 			.collection(collection)
 			.doc(jeune.chatId)
 			.collection('messages')
@@ -108,31 +121,25 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 				setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
 			})
 
-		db.collection(collection).doc(jeune.chatId).update({
-			seenByConseiller: true,
-			lastConseillerReading: firebase.firestore.FieldValue.serverTimestamp()
-		})
+		updateConseillerReadingStatus()
 
 		return () => {
-			unsubscribe()
+			// unsubscribe
+			messagesChangedEvent()
 		}
-	}, [db, jeune.chatId])
+	}, [db, jeune.chatId, updateConseillerReadingStatus])
 
 	useEffect(() => {
-		const unsubscribe = db
-			.collection(collection)
-			.doc(jeune.chatId)
-			.onSnapshot((querySnapShot: any) => {
-				// get all documents from collection with id
-				const data = querySnapShot.doc.data.value
+		async function updateReadingStatus() {
+			db.collection(collection)
+				.doc(jeune.chatId)
+				.onSnapshot((docSnapshot) => {
+					setLastSeenByJeune(docSnapshot.data()?.lastJeuneReading.toDate())
+				})
+		}
 
-				console.log("lala", data)
-				console.log("query", querySnapShot)
-
-			})
-		return () => { unsubscribe()};
-
-	})
+		updateReadingStatus()
+	}, [db, jeune.chatId])
 
 	useEffect(() => {
 		async function fetchConseiller(): Promise<Conseiller> {
@@ -186,11 +193,11 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 												}`}
 											>
 												à {formatHourMinuteDate(message.creationDate.toDate())}
-												{
-													message.creationDate <
-
-												<span>lu</span>
-												}
+												{isDateOlder(
+													message.creationDate.toDate(),
+													lastSeenByJeune
+												) &&
+													message.sentBy === 'conseiller' && <span>lu</span>}
 											</p>
 
 											{dailyIndex === dailyMessages.length - 1 &&
