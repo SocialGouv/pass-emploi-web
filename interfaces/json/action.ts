@@ -6,6 +6,7 @@ export type JeuneActionJson = {
   jeuneLastName: string,
   todoActionsCount: number,
   doneActionsCount: number,
+  inProgressActionsCount: number
 }
 
 export type UserActionJson = {
