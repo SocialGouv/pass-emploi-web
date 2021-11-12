@@ -4,6 +4,7 @@ export type JeuneActions = {
   jeune: Jeune,
   nbActionsEnCours: number
   nbActionsTerminees: number,
+  nbActionsAFaire: number
 }
 
 export interface UserAction  {
