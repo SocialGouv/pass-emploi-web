@@ -1,0 +1,43 @@
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import Action from 'pages/actions/jeunes/[jeune_id]/[action_id]/index'
+import { uneAction } from 'fixtures/action'
+import { unJeune } from 'fixtures/jeune'
+
+jest.mock('next/router', () => ({
+	useRouter: () => ({
+		query: { jeune_id: '1' },
+	}),
+}))
+
+describe("Page Détail d'une action d'un jeune", () => {
+	const action = uneAction()
+	const jeune = unJeune()
+
+	it("Devrait afficher les information d'une action", () => {
+		render(<Action action={action} jeune={jeune} />)
+
+		expect(
+			screen.getByRole('heading', {
+				level: 1,
+				name: action.content,
+			})
+		).toBeInTheDocument()
+
+		expect(screen.getByText(action.comment)).toBeInTheDocument()
+
+		expect(screen.getByText('21/10/2021')).toBeInTheDocument()
+	})
+
+	it('Devrait avoir un lien pour revenir sur la page précédente', () => {
+		render(<Action action={action} jeune={jeune} />)
+
+		const backLink = screen.getByLabelText(
+			"Retour sur la liste d'actions du jeune"
+		)
+
+		expect(backLink).toBeInTheDocument()
+
+		expect(backLink).toHaveAttribute('href', '/actions/jeunes/1')
+	})
+})

@@ -1,4 +1,4 @@
-import {Rdv} from "../../interfaces/rdv";
+import {Rdv} from "interfaces/rdv";
 
 export const uneListeDeRdv = (overrides: Partial<Rdv[]> = []): Rdv[] => [
     {
