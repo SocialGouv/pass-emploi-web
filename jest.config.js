@@ -17,6 +17,7 @@ module.exports = {
 		'^utils/(.*)$': '<rootDir>/utils/$1',
 		'^referentiel/(.*)$': '<rootDir>/referentiel/$1',
 		'^interfaces/(.*)$': '<rootDir>/interfaces/$1',
+		'^fixtures/(.*)$': '<rootDir>/fixtures/$1',
 	},
 	testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
 	testEnvironment: 'jsdom',

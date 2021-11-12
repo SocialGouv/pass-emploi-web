@@ -1,3 +1,9 @@
+/**
+ * TODO:
+ * - Déplacer au même niveau que le fichier
+ * - Renommer en .tsx
+ * - Traduire en français
+ */
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Home from 'pages/index'
