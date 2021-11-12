@@ -21,6 +21,6 @@ const durees = [{
     text:'2h'
 }]
 
-const modalites: string[]= ['', 'Présentiel : Pôle emploi', 'Présentiel : Pôle emploi / Permanence', 'Présentiel : Mission locale', 'Présentiel : Misson locale / Permanence', 'Téléphonique', 'Visio']
+const modalites: string[]= ['', 'en présentiel : Pôle emploi', 'en présentiel : Pôle emploi / Permanence', 'en présentiel : Mission locale', 'en présentiel : Misson locale / Permanence', 'par téléphone', 'par visio']
 
 export {durees, modalites}
