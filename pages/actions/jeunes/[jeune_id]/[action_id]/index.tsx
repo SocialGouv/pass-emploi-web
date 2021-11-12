@@ -2,7 +2,7 @@ import { ActionStatus, UserAction } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, {useState} from 'react'
 import { formatDayDate } from 'utils/date'
 import fetchJson from 'utils/fetchJson'
 
@@ -16,6 +16,7 @@ type Props = {
 
 function Action({ action, jeune }: Props) {
 	const { query } = useRouter()
+	const [statutChoisi, setStatutChoisi] = useState<ActionStatus | null>(null)
 
 	return (
 		<>
@@ -49,36 +50,59 @@ function Action({ action, jeune }: Props) {
 				<div className='border-r-2 border-bleu_blanc '></div>
 
 				<div className='py-[26px]'>
-					<p className='text-sm'>
-						<span className='text-bleu mr-[25px]'>Statut </span>
-						<span
+					<fieldset className='text-sm'>
+						<legend className='text-bleu mr-[25px]'>Statut </legend>
+						<label
 							className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] ${
 								action.status === ActionStatus.NotStarted
 									? 'border-bleu_nuit'
 									: 'border-bleu_blanc'
-							}`}
-						>
-							À réaliser
-						</span>
-						<span
-							className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] ${
-								action.status === ActionStatus.InProgress
-									? 'border-bleu_nuit'
-									: 'border-bleu_blanc'
-							}`}
-						>
-							En cours
-						</span>
-						<span
-							className={`text-bleu_nuit border-2 rounded-x_large p-[16px] ${
-								action.status === ActionStatus.Done
-									? 'border-bleu_nuit'
-									: 'border-bleu_blanc'
-							}`}
-						>
-							Terminée
-						</span>
-					</p>
+							}`}>
+
+							<input
+								type="radio"
+								id="option-statut--not_started"
+								name="option-statut--not_started"
+								checked={statutChoisi === "not_started"}
+								onChange={() => setStatutChoisi("not_started")}
+								required
+							/>
+							<span>À réaliser</span>
+						</label>
+
+						<label 	className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] ${
+							action.status === ActionStatus.InProgress
+								? 'border-bleu_nuit'
+								: 'border-bleu_blanc'
+						}`}>
+							<input
+								type="radio"
+								id="option-statut--in_progress"
+								name="option-statut--in_progress"
+								checked={statutChoisi === "in_progress"}
+								onChange={() => setStatutChoisi("in_progress")}
+								required
+							/>
+							<span>En cours</span>
+						</label>
+
+						<label 	className={`text-bleu_nuit border-2 rounded-x_large p-[16px] ${
+							action.status === ActionStatus.Done
+								? 'border-bleu_nuit'
+								: 'border-bleu_blanc'
+						}`} >
+							<input
+								type="radio"
+								id="option-statut--done"
+								name="option-statut--done"
+								checked={statutChoisi === "done"}
+								onChange={() => setStatutChoisi("done")}
+								required
+							/>
+							<span>Terminée</span>
+						</label>
+
+					</fieldset>
 				</div>
 			</div>
 		</>
