@@ -38,4 +38,8 @@ const formatHourMinuteDateUTC = (date: Date) =>
 
 const formatDayAndHourDate = (date:Date) => `le ${formatDayDate(date)} à ${formatHourMinuteDate(date)}`
 
-export {datesAreOnSameDay, dateIsToday, formatDayDate, formatHourMinuteDate, formatHourMinuteDateUTC, formatDayAndHourDate}
+const isDateOlder = (date1: Date, date2: Date) => {
+  return date1.getTime() < date2.getTime()
+}
+
+export {datesAreOnSameDay, dateIsToday, formatDayDate, formatHourMinuteDate, formatHourMinuteDateUTC, formatDayAndHourDate, isDateOlder}

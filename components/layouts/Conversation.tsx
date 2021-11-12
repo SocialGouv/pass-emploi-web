@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import firebase from 'firebase/app'
 import 'firebase/firestore'
@@ -10,7 +10,12 @@ import {
 	ListDailyMessages,
 	Conseiller,
 } from 'interfaces'
-import { dateIsToday, formatDayDate, formatHourMinuteDate } from 'utils/date'
+import {
+	dateIsToday,
+	formatDayDate,
+	formatHourMinuteDate,
+	isDateOlder,
+} from 'utils/date'
 
 import styles from 'styles/components/Layouts.module.css'
 
@@ -26,7 +31,7 @@ const todayOrDate = (date: Date) =>
 type ConversationProps = {
 	db: firebase.firestore.Firestore
 	jeune: Jeune
-	onBack: any
+	onBack: () => void
 }
 
 let conseillerId = '0'
@@ -34,10 +39,17 @@ let conseillerId = '0'
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 	const [newMessage, setNewMessage] = useState('')
 	const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
+	const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
 
 	const dummySpace = useRef<HTMLLIElement>(null)
 
-	// when form is submitted
+	const updateConseillerReadingStatus = useCallback(() => {
+		db.collection(collection).doc(jeune.chatId).update({
+			seenByConseiller: true,
+			lastConseillerReading: firebase.firestore.FieldValue.serverTimestamp(),
+		})
+	}, [db, jeune.chatId])
+
 	const handleSubmit = (e: any) => {
 		e.preventDefault()
 
@@ -58,6 +70,8 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 				lastMessageSentAt: firestoreNow,
 				lastMessageSentBy: 'conseiller',
 			})
+
+		updateConseillerReadingStatus()
 
 		/**
 		 * Route send from web to notify mobile, no need to await for response
@@ -82,7 +96,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 	useEffect(() => {
 		let currentMessages: Message[]
 
-		const unsubscribe = db
+		const messagesUpdatedEvent = db
 			.collection(collection)
 			.doc(jeune.chatId)
 			.collection('messages')
@@ -106,13 +120,24 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 				setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
 			})
 
-		db.collection(collection).doc(jeune.chatId).update({
-			seenByConseiller: true,
-		})
+		updateConseillerReadingStatus()
 
 		return () => {
-			unsubscribe()
+			// unsubscribe
+			messagesUpdatedEvent()
 		}
+	}, [db, jeune.chatId, updateConseillerReadingStatus])
+
+	useEffect(() => {
+		async function updateReadingStatus() {
+			db.collection(collection)
+				.doc(jeune.chatId)
+				.onSnapshot((docSnapshot) => {
+					setLastSeenByJeune(docSnapshot.data()?.lastJeuneReading.toDate())
+				})
+		}
+
+		updateReadingStatus()
 	}, [db, jeune.chatId])
 
 	useEffect(() => {
@@ -160,13 +185,23 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 												{message.content}
 											</p>
 											<p
-												className={`text-xs text-bleu_nuit ${
+												className={`text-xs text-bleu_gris ${
 													message.sentBy === 'conseiller'
 														? 'text-right'
 														: 'text-left'
 												}`}
 											>
-												à {formatHourMinuteDate(message.creationDate.toDate())}
+												{formatHourMinuteDate(message.creationDate.toDate())}
+												{message.sentBy === 'conseiller' && (
+													<span>
+														{isDateOlder(
+															message.creationDate.toDate(),
+															lastSeenByJeune
+														)
+															? ' · Lu'
+															: ' · Envoyé'}
+													</span>
+												)}
 											</p>
 
 											{dailyIndex === dailyMessages.length - 1 &&
