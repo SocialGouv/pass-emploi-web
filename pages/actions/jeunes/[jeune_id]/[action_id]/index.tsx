@@ -1,13 +1,15 @@
-import { ActionStatus, UserAction } from 'interfaces/action'
-import { GetServerSideProps } from 'next'
+import {RadioButtonStatus} from 'components/action/RadioButtonStatus'
+
+import {Jeune} from 'interfaces'
+import {ActionStatus, UserAction} from 'interfaces/action'
+import {GetServerSideProps} from 'next'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React from 'react'
-import { formatDayDate } from 'utils/date'
+import {useRouter} from 'next/router'
+import React, {useState} from 'react'
+import {formatDayDate} from 'utils/date'
 import fetchJson from 'utils/fetchJson'
 
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
-import { Jeune } from 'interfaces'
 
 type Props = {
 	action: UserAction
@@ -16,6 +18,19 @@ type Props = {
 
 function Action({ action, jeune }: Props) {
 	const { query } = useRouter()
+	const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
+
+	const updateStatutChoisi = (statutChoisi: ActionStatus) => {
+		fetch(`${process.env.API_ENDPOINT}/v1/actions/${action.id}`, {
+			method: 'PUT',
+			headers: {
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify({ status: statutChoisi }),
+		}).then((response) => {
+			setStatutChoisi(statutChoisi)
+		})
+	}
 
 	return (
 		<>
@@ -29,7 +44,6 @@ function Action({ action, jeune }: Props) {
 					</a>
 				</Link>
 				<p className='h4-semi text-bleu_nuit'>
-					{' '}
 					Actions de {jeune.firstName} {jeune.lastName}
 				</p>
 			</div>
@@ -38,9 +52,9 @@ function Action({ action, jeune }: Props) {
 
 			<p className='text-sm text-bleu mb-[24px]'>{action.comment}</p>
 
-			<div className='border-t-2 border-b-2 border-bleu_blanc flex justify-between py-[14px]'>
+			<div className='border-t-2 border-b-2 border-bleu_blanc flex justify-between items-center py-[14px]'>
 				<dl className='flex py-[26px]'>
-					<dt className='text-bleu text-sm mr-[25px]'>Date </dt>
+					<dt className='text-bleu text-sm mr-[25px]'>Date</dt>
 					<dd className='text-bleu_nuit text-sm'>
 						{formatDayDate(new Date(action.creationDate))}
 					</dd>
@@ -48,38 +62,28 @@ function Action({ action, jeune }: Props) {
 
 				<div className='border-r-2 border-bleu_blanc '></div>
 
-				<div className='py-[26px]'>
-					<p className='text-sm'>
-						<span className='text-bleu mr-[25px]'>Statut </span>
-						<span
-							className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] ${
-								action.status === ActionStatus.NotStarted
-									? 'border-bleu_nuit'
-									: 'border-bleu_blanc'
-							}`}
-						>
-							À réaliser
+				<form onSubmit={(e) => e.preventDefault()}>
+					<fieldset>
+						<span className='flex items-center text-sm'>
+							<legend className='text-bleu inline mr-[25px]'>Statut</legend>
+							<RadioButtonStatus
+								status='À réaliser'
+								isSelected={statutChoisi === ActionStatus.NotStarted}
+								onChange={() => updateStatutChoisi(ActionStatus.NotStarted)}
+							/>
+							<RadioButtonStatus
+								status='En cours'
+								isSelected={statutChoisi === ActionStatus.InProgress}
+								onChange={() => updateStatutChoisi(ActionStatus.InProgress)}
+							/>
+							<RadioButtonStatus
+								status='Terminée'
+								isSelected={statutChoisi === ActionStatus.Done}
+								onChange={() => updateStatutChoisi(ActionStatus.Done)}
+							/>
 						</span>
-						<span
-							className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] ${
-								action.status === ActionStatus.InProgress
-									? 'border-bleu_nuit'
-									: 'border-bleu_blanc'
-							}`}
-						>
-							En cours
-						</span>
-						<span
-							className={`text-bleu_nuit border-2 rounded-x_large p-[16px] ${
-								action.status === ActionStatus.Done
-									? 'border-bleu_nuit'
-									: 'border-bleu_blanc'
-							}`}
-						>
-							Terminée
-						</span>
-					</p>
-				</div>
+					</fieldset>
+				</form>
 			</div>
 		</>
 	)
