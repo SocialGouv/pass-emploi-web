@@ -13,7 +13,7 @@ type ActionProps = {
 function NotStarted() {
 	return (
 		<p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-rose rounded-x_large'>
-			À faire
+			À réaliser
 		</p>
 	)
 }
@@ -59,7 +59,7 @@ const Action = ({ action, jeuneId }: ActionProps) => {
 				)}
 
 				<div className='w-full flex justify-between  '>
-					<span style={{ flex: '0 0 70%' }}>
+					<span style={{ flex: '0 0 65%' }}>
 						<p className='text-md text-bleu_nuit break-all mb-[8px]'>
 							{action.content}
 						</p>

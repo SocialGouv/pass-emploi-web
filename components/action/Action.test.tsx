@@ -14,7 +14,7 @@ describe('<Action/>', () => {
 			screen.getByText('Identifier ses atouts et ses compétences')
 		).toBeInTheDocument()
 		expect(screen.getByText('Je suis un beau commentaire')).toBeInTheDocument()
-		expect(screen.getByText('À faire')).toBeInTheDocument()
+		expect(screen.getByText('À réaliser')).toBeInTheDocument()
 		expect(screen.getByText("Détail de l'action")).toBeInTheDocument()
 	})
 

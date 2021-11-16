@@ -44,6 +44,15 @@ select svg {
 	z-index: 50;
 }
 
+.visually-hidden {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
 @font-face {
 	font-family: 'Rubik', sans-serif;
 	src: url('/fonts/Rubik/static/Rubik-Regular.ttf');
