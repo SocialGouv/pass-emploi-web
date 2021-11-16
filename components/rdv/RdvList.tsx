@@ -1,5 +1,5 @@
 import { Rdv } from 'interfaces/rdv'
-import { formatDayDate } from 'utils/date'
+import {formatDayDate, formatHourMinuteDateUTC} from 'utils/date'
 
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
@@ -13,6 +13,12 @@ type RdvListProps = {
 const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
 	const handleDeleteClick = (rdv: Rdv) => {
 		onDelete(rdv)
+	}
+
+	const dayHourCells = (rdvDate: Date, duration: string) => {
+		return `${formatDayDate(
+			rdvDate
+		)} (${formatHourMinuteDateUTC(rdvDate)} - ${duration})`
 	}
 
 	return (
@@ -29,9 +35,7 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
 						{rdvs.map((rdv: Rdv) => (
 							<tr key={rdv.id} className='text-sm text-bleu_nuit'>
 								<td className='p-[16px]'>
-									{`${formatDayDate(new Date(rdv.date))} (${new Date(
-										rdv.date
-									).getUTCHours()}:00 - ${rdv.duration})`}
+									{dayHourCells(new Date(rdv.date), rdv.duration)}
 								</td>
 
 								<td className='p-[16px]'>{rdv.title}</td>
@@ -51,7 +55,7 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
 										aria-hidden='true'
 										className='mr-[7px] inline'
 									/>
-									{rdv.comment}
+									{rdv.comment || '--'}
 								</td>
 
 								{onDelete && (

@@ -1,5 +1,3 @@
-const creneaux: string[]= ['','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00']
-
 const durees = [{ 
     value:'',
     text:'',
@@ -23,6 +21,6 @@ const durees = [{
     text:'2h'
 }]
 
-const modalites: string[]= ['','En agence', 'Par téléphone']
+const modalites: string[]= ['', 'en présentiel : Pôle emploi', 'en présentiel : Pôle emploi / Permanence', 'en présentiel : Mission locale', 'en présentiel : Misson locale / Permanence', 'par téléphone', 'par visio']
 
-export {creneaux, durees, modalites}
+export {durees, modalites}

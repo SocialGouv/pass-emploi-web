@@ -1,4 +1,3 @@
-import type { GetServerSideProps } from 'next'
 import Link from 'next/link'
 
 import { JeuneActionJson } from 'interfaces/json/action'
@@ -46,12 +45,18 @@ function Home({ jeuneActionsList }: HomeProps) {
 						</h2>
 
 						<p className='text-xs text-bleu_gris flex mb-[25px]'>
-							{jeuneActions.nbActionsEnCours !== 0
+							{jeuneActions.nbActionsAFaire !== 0
 								? `${jeuneActions.jeune.firstName} a ${
-										jeuneActions.nbActionsEnCours
+										jeuneActions.nbActionsAFaire
 								  } ${
-										jeuneActions.nbActionsEnCours === 1 ? 'action' : 'actions'
-								  } en cours`
+										jeuneActions.nbActionsAFaire === 1 ? 'action' : 'actions'
+								  } à faire`
+								: `${jeuneActions.jeune.firstName} n'a pas d'actions à faire pour le moment`}
+						</p>
+
+						<p className='text-xs text-bleu_gris flex mb-[25px]'>
+							{jeuneActions.nbActionsEnCours !== 0
+								? `${jeuneActions.jeune.firstName} a ${jeuneActions.nbActionsEnCours} en cours`
 								: `${jeuneActions.jeune.firstName} n'a pas d'actions en cours pour le moment`}
 						</p>
 
@@ -113,8 +118,9 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
 			const newJeuneAction: JeuneActions = {
 				jeune: newJeune,
-				nbActionsEnCours: jeuneActionJson.todoActionsCount,
+				nbActionsEnCours: jeuneActionJson.inProgressActionsCount,
 				nbActionsTerminees: jeuneActionJson.doneActionsCount,
+				nbActionsAFaire: jeuneActionJson.todoActionsCount,
 			}
 
 			jeunesActions.push(newJeuneAction)

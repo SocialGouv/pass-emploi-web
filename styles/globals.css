@@ -29,7 +29,7 @@ select {
 	-moz-appearance: none;
 	appearance: none;
 	background: url(assets/icons/expand_more.svg) 96% / 5% no-repeat
-		theme('colors.bleu_blanc');
+		theme('colors.blanc');
 }
 
 select svg {
@@ -42,6 +42,15 @@ select svg {
 
 .bar-of-progress {
 	z-index: 50;
+}
+
+.visually-hidden {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
 }
 
 @font-face {
