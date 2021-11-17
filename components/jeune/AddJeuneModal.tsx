@@ -9,14 +9,13 @@ import fetchJson from 'utils/fetchJson'
 type AddJeuneModalProps = {
 	show: boolean
 	onClose: () => void
-	onAdd: () => void
+	onAdd: (jeune: Jeune) => void
 }
 
 const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
 	const [firstName, setFirstName] = useState('')
 	const [lastName, setLastName] = useState('')
 	const [conseillerId, setConseillerId] = useState<String>('')
-	// const [isSuccess, setIsSuccess] = useState(false)
 	const [newJeune, setNewJeune] = useState<Jeune | null>(null)
 
 	useEffect(() => {
@@ -51,7 +50,7 @@ const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
 		})
 			.then(async function (response) {
 				const jeune = await response.json()
-				onAdd()
+				onAdd(jeune)
 				setNewJeune(jeune)
 			})
 			.catch(function (error) {

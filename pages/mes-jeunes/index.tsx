@@ -19,16 +19,8 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 	const [showModal, setShowModal] = useState(false)
 	const [jeunes, setJeunes] = useState<Jeune[]>(conseillerJeunes)
 
-	const handleAddJeune = async () => {
-		await fetchJson('/api/login', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				userId: conseillerId,
-			}),
-		}).then(function (response) {
-			setJeunes(response.jeunes)
-		})
+	const handleAddJeune = async (newJeune: Jeune) => {
+		setJeunes([newJeune, ...jeunes])
 	}
 
 	return (
@@ -69,7 +61,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 
 			<AddJeuneModal
 				onClose={() => setShowModal(false)}
-				onAdd={() => handleAddJeune()}
+				onAdd={(newJeune: Jeune) => handleAddJeune(newJeune)}
 				show={showModal}
 			/>
 		</>
