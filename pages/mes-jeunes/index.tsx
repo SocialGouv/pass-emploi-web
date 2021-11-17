@@ -34,7 +34,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 				</Button>
 			</span>
 
-			<table role='presentation'>
+			<table role='presentation' className='w-full'>
 				<caption className='hidden'>Liste de mes bénéficiaires</caption>
 
 				<tbody>
@@ -50,13 +50,16 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 
 					{jeunes?.map((jeune: Jeune) => (
 						<Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
-						<tr key={jeune.id} className='text-sm text-bleu_nuit'>
-							<td className='p-[16px]'>
-								{jeune.firstName} {jeune.lastName}
-							</td>
+							<tr
+								key={jeune.id}
+								className='text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
+							>
+								<td className='p-[16px]'>
+									{jeune.firstName} {jeune.lastName}
+								</td>
 
-							<td className='p-[16px]'>{jeune.id}</td>
-						</tr>
+								<td className='p-[16px]'>{jeune.id}</td>
+							</tr>
 						</Link>
 					))}
 				</tbody>
