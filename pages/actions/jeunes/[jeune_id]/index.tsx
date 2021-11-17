@@ -99,13 +99,14 @@ function Actions({ jeune, actions_en_cours }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-	const res = await fetch(
-		`${process.env.API_ENDPOINT}/conseiller/jeunes/${query.jeune_id}/actions`
-	)
+	const [resDetailsJeune, resActionsJeune] = await Promise.all([
+		fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}`), 
+		fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/actions`)
+	])
 
-	const data = await res.json()
+	const [dataDetailsJeune, dataActionsJeune] = await Promise.all([resDetailsJeune.json(), resActionsJeune.json()])
 
-	if (!data) {
+	if (!dataDetailsJeune || !dataActionsJeune) {
 		return {
 			notFound: true,
 		}
@@ -113,7 +114,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
 	let userActions: UserAction[] = []
 
-	data.actions.map((userActionJson: UserActionJson) => {
+	dataActionsJeune.map((userActionJson: UserActionJson) => {
 		const newAction: UserAction = {
 			...userActionJson,
 			status: userActionJson.status || ActionStatus.NotStarted,
@@ -123,7 +124,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
 	return {
 		props: {
-			jeune: data.jeune,
+			jeune: dataDetailsJeune,
 			actions_en_cours: userActions.sort(sortLastUpdate),
 		},
 	}
