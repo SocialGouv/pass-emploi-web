@@ -1,4 +1,4 @@
-import { ActionStatus } from "interfaces/action"
+import { ActionStatus } from 'interfaces/action'
 
 export type JeuneActionJson = {
   jeuneId: string,

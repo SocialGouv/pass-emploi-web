@@ -1,4 +1,3 @@
-
 interface RadioButtonStatusProps {
 	status: string
 	isSelected: boolean
@@ -13,7 +12,9 @@ export const RadioButtonStatus = ({
 	return (
 		<span
 			className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] hover:cursor-pointer ${
-				isSelected ? 'text-sm-semi border-bleu_nuit bg-bleu_blanc' : 'border-bleu_blanc text-sm'
+				isSelected
+					? 'text-sm-semi border-bleu_nuit bg-bleu_blanc'
+					: 'border-bleu_blanc text-sm'
 			}`}
 			onClick={onChange}
 		>

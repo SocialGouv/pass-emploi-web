@@ -1,4 +1,4 @@
-import { Jeune } from "interfaces";
+import { Jeune } from 'interfaces'
 
 export type JeuneActions = {
   jeune: Jeune,
