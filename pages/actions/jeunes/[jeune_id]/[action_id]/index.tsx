@@ -22,7 +22,7 @@ function Action({ action, jeune }: Props) {
 
 	const updateStatutChoisi = (statutChoisi: ActionStatus) => {
 		fetch(`${process.env.API_ENDPOINT}/actions/${action.id}`, {
-			method: 'PATCH',
+			method: 'PUT',
 			headers: {
 				'content-type': 'application/json',
 			},
