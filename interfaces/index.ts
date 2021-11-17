@@ -1,8 +1,8 @@
 
 // TODO create JsonModel
 
-import firebase from "firebase/app";
-import { datesAreOnSameDay } from "utils/date";
+import firebase from 'firebase/app'
+import { datesAreOnSameDay } from 'utils/date'
 
 
 
@@ -67,7 +67,7 @@ export class ListDailyMessages{
         tmpDateMessagesIndex++
         tmpDateMessages.push(new DailyMessages(tmpdate,[message]))
       }
-    });
+    })
     this.dailyMessages = tmpDateMessages
   }
 }

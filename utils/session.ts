@@ -1,6 +1,6 @@
 // this file is a wrapper with defaults to be used in both API routes and `getServerSideProps` functions
-import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
-import { Session, withIronSession } from "next-iron-session";
+import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next'
+import { Session, withIronSession } from 'next-iron-session'
 
 type NextIronRequest = NextApiRequest & { session: Session };
 type ServerSideContext = GetServerSidePropsContext & {req: NextIronRequest};
@@ -25,8 +25,8 @@ const withSession = <T extends ApiHandler | ServerSideHandler >(handler: T) =>
     cookieOptions: {
       // the next line allows to use the session in non-https environments like
       // Next.js dev mode (http://localhost:3000)
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === 'production',
     },
-  });
+  })
 
-export default withSession;
+export default withSession

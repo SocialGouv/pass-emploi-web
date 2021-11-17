@@ -4,7 +4,7 @@ import Modal from 'components/Modal'
 import Button from 'components/Button'
 import { useEffect, useState } from 'react'
 import { Jeune } from 'interfaces'
-import {RdvFormData, RdvJson} from 'interfaces/json/rdv'
+import { RdvFormData } from 'interfaces/json/rdv'
 import fetchJson from 'utils/fetchJson'
 
 type RdvModalProps = {
@@ -28,7 +28,9 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 	useEffect(() => {
 		async function fetchJeunes(): Promise<Jeune[]> {
 			const { id } = await fetchJson('/api/user')
-			const data = await fetchJson(`${process.env.API_ENDPOINT}/conseillers/${id}/login`)
+			const data = await fetchJson(
+				`${process.env.API_ENDPOINT}/conseillers/${id}/login`
+			)
 
 			return data?.jeunes || []
 		}

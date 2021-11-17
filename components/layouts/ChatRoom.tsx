@@ -43,7 +43,9 @@ export default function ChatBox({ db }: ChatBoxProps) {
 	useEffect(() => {
 		async function fetchJeunes(): Promise<Jeune[]> {
 			const { id } = await fetchJson('/api/user')
-			const data = await fetchJson(`${process.env.API_ENDPOINT}/conseillers/${id}/login`)
+			const data = await fetchJson(
+				`${process.env.API_ENDPOINT}/conseillers/${id}/login`
+			)
 
 			return data?.jeunes || []
 		}
@@ -92,9 +94,7 @@ export default function ChatBox({ db }: ChatBoxProps) {
 									updateJeunesChat(newJeuneChat)
 								})
 							},
-							() => {
-								console.log('hi')
-							}
+							() => {}
 						)
 
 					resolve(newJeuneChat)
