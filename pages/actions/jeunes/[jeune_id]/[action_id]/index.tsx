@@ -21,7 +21,7 @@ function Action({ action, jeune }: Props) {
 	const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
 
 	const updateStatutChoisi = (statutChoisi: ActionStatus) => {
-		fetch(`${process.env.API_ENDPOINT}/v1/actions/${action.id}`, {
+		fetch(`${process.env.API_ENDPOINT}/actions/${action.id}`, {
 			method: 'PUT',
 			headers: {
 				'content-type': 'application/json',
