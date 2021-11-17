@@ -31,9 +31,11 @@ const SuccessAddJeuneModal = ({
 						Identifiant de {jeune.firstName} {jeune.lastName}
 					</p>
 
-					<p className='h2-semi text-bleu_nuit bg-bleu_blanc w-[129px] p-[16px] m-auto mb-[30px] rounded-medium'>
-						{jeune.id}
-					</p>
+					<div className="flex mb-[30px]">
+						<p className='h2-semi text-bleu_nuit bg-bleu_blanc p-[16px] m-auto rounded-medium'>
+							{jeune.id}
+						</p>
+					</div>
 
 					<p className='text-md text-bleu_nui mb-[48px]'>
 						Cet identifiant va permettre au jeune de s’enregistrer sur
