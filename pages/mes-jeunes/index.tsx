@@ -9,6 +9,7 @@ import withSession, { ServerSideHandler } from 'utils/session'
 
 import AddIcon from '../../assets/icons/add_person.svg'
 import fetchJson from 'utils/fetchJson'
+import Link from 'next/link'
 
 type MesJeunesProps = {
 	conseillerId: string
@@ -48,6 +49,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 					</tr>
 
 					{jeunes?.map((jeune: Jeune) => (
+						<Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
 						<tr key={jeune.id} className='text-sm text-bleu_nuit'>
 							<td className='p-[16px]'>
 								{jeune.firstName} {jeune.lastName}
@@ -55,6 +57,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 
 							<td className='p-[16px]'>{jeune.id}</td>
 						</tr>
+						</Link>
 					))}
 				</tbody>
 			</table>
