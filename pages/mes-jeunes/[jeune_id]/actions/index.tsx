@@ -35,8 +35,7 @@ const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
 function Actions({ jeune, actions_en_cours }: Props) {
   const [showModal, setShowModal] = useState(false)
   const [actionsEnCours] = useState(actions_en_cours)
-  const { query } = useRouter()
-  const jeuneId = query.jeune_id || ''
+  const jeuneId = jeune.id
 
   return (
     <>

@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 type ActionProps = {
   action: UserAction
-  jeuneId: string | string[]
+  jeuneId: string
 }
 
 function NotStarted() {
@@ -50,7 +50,7 @@ function Status(props: any) {
 
 const Action = ({ action, jeuneId }: ActionProps) => {
   return (
-    <Link href={`/actions/jeunes/${jeuneId}/${action.id}`}>
+    <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
       <a className='w-full  px-[16px] py-[16px] text-left border-x border-bleu_blanc '>
         {action.creator && (
           <p className='text-sm text-bleu_nuit mb-[8px]'>

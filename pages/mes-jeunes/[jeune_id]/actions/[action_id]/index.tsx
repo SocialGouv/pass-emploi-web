@@ -4,7 +4,6 @@ import { Jeune } from 'interfaces'
 import { ActionStatus, UserAction } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { formatDayDate } from 'utils/date'
 import fetchJson from 'utils/fetchJson'
@@ -17,7 +16,6 @@ type Props = {
 }
 
 function Action({ action, jeune }: Props) {
-  const { query } = useRouter()
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
 
   const updateStatutChoisi = (statutChoisi: ActionStatus) => {
@@ -35,7 +33,7 @@ function Action({ action, jeune }: Props) {
   return (
     <>
       <div className='flex items-center mb-[63px]'>
-        <Link href={`/actions/jeunes/${query.jeune_id}`} passHref>
+        <Link href={`/mes-jeunes/${jeune.id}/actions`} passHref>
           <a
             className='mr-[24px]'
             aria-label="Retour sur la liste d'actions du jeune"
@@ -60,7 +58,7 @@ function Action({ action, jeune }: Props) {
           </dd>
         </dl>
 
-        <div className='border-r-2 border-bleu_blanc ' />
+        <div className='border-r-2 border-bleu_blanc' />
 
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset>

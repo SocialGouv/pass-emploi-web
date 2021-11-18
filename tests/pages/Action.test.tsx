@@ -1,14 +1,8 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import Action from 'pages/actions/jeunes/[jeune_id]/[action_id]/index'
+import Action from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
 import { uneAction } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
-
-jest.mock('next/router', () => ({
-	useRouter: () => ({
-		query: { jeune_id: '1' },
-	}),
-}))
 
 describe("Page Détail d'une action d'un jeune", () => {
 	const action = uneAction()
@@ -38,6 +32,6 @@ describe("Page Détail d'une action d'un jeune", () => {
 
 		expect(backLink).toBeInTheDocument()
 
-		expect(backLink).toHaveAttribute('href', '/actions/jeunes/1')
+		expect(backLink).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions')
 	})
 })

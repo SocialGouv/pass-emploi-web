@@ -72,7 +72,7 @@ function Home({ jeuneActionsList }: HomeProps) {
                 : `${jeuneActions.jeune.firstName} n'a pas d'actions terminées pour le moment`}
             </p>
 
-            <Link href={`/actions/jeunes/${jeuneActions.jeune.id}`} passHref>
+            <Link href={`/mes-jeunes/${jeuneActions.jeune.id}/actions`} passHref>
               <a className={`text-xs float-right ${linkStyles.buttonBlue}`}>
                 VOIR LES ACTIONS
               </a>
