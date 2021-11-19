@@ -1,4 +1,5 @@
 import ProgressBar from '@badrap/bar-of-progress'
+import { SessionProvider } from 'next-auth/react'
 
 import Router, { useRouter } from 'next/router'
 import type { AppProps } from 'next/app'
@@ -25,7 +26,7 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: {session, ...pageProps} }: AppProps) {
 	const router = useRouter()
 	const isLoginPage = router.pathname === '/login'
 
@@ -35,6 +36,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 	return (
 		<>
+			<SessionProvider session={session}>
 			{isLoginPage ? (
 				<Component {...pageProps} />
 			) : (
@@ -42,6 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					<Component {...pageProps} />
 				</Layout>
 			)}
+			</SessionProvider>
 		</>
 	)
 }

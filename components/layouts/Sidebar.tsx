@@ -1,3 +1,4 @@
+import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -36,8 +37,7 @@ export default function Sidebar({}: SidebarProps) {
 
 	async function handleLogout(event: any) {
 		event.preventDefault()
-		mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
-		router.push('/login')
+		signOut()
 	}
 
 	return (
@@ -106,15 +106,13 @@ export default function Sidebar({}: SidebarProps) {
 			<div className='flex justify-between'>
 				<p className='text-lg-semi text-bleu_nuit'>{conseillerName}</p>
 
-				<Link href='/api/logout'>
-					<a onClick={handleLogout} className='mr-[8px]'>
+					<a onClick={() => signOut()} className='mr-[8px]'>
 						<LogoutIcon
 							role='img'
 							focusable='false'
 							aria-label='Se déconnecter'
 						/>
 					</a>
-				</Link>
 			</div>
 		</div>
 	)

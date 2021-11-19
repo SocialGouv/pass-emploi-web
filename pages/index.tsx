@@ -1,3 +1,4 @@
+import { getSession, signIn } from 'next-auth/react'
 import Router from 'next/router'
 import { useState } from 'react'
 
@@ -14,6 +15,7 @@ import AddIcon from '../assets/icons/add.svg'
 import { Rdv } from 'interfaces/rdv'
 import { RdvJson } from 'interfaces/json/rdv'
 import { durees } from 'referentiel/rdv'
+import { UserSession } from '../interfaces/user'
 
 type HomeProps = {
 	rdvs: Rdv[]
@@ -36,7 +38,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 	const [displayOldRdv, setDisplayOldRdv] = useState(false)
 	const [selectedRdv, setSelectedRdv] = useState(defaultRdv)
 	const [rdvsAvenir, setRdvsAvenir] = useState(rdvs)
-
+  
 	return (
 		<>
 			<span className='flex flex-wrap justify-between mb-[20px]'>
@@ -118,9 +120,10 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 
 export const getServerSideProps = withSession<ServerSideHandler>(
 	async ({ req, res }) => {
-		const user = req.session.get('user')
-
-		if (user === undefined) {
+		// ######################################
+		// SECU
+    const session = await getSession({ req })
+		if (!session) {
 			res.setHeader('location', '/login')
 			res.statusCode = 302
 			res.end()
@@ -128,7 +131,8 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 				props: {},
 			}
 		}
-
+		console.log(session)
+    const user = session!.user as UserSession
 		const data = await fetchJson(
 			`${process.env.API_ENDPOINT}/conseillers/${user.id}/rendezvous`
 		)
