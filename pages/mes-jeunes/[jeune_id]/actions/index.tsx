@@ -2,8 +2,8 @@ import Action from 'components/action/Action'
 import AddActionModal from 'components/action/AddActionModal'
 import Button from 'components/Button'
 import { Jeune } from 'interfaces'
-import { ActionStatus, UserAction } from 'interfaces/action'
-import { UserActionJson } from 'interfaces/json/action'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { ActionJeuneJson } from 'interfaces/json/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
@@ -19,10 +19,10 @@ import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
 type Props = {
   jeune: Jeune
-  actions_en_cours: UserAction[]
+  actions_en_cours: ActionJeune[]
 }
 
-const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
+const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
   new Date(action1.lastUpdate).getTime() >
   new Date(action2.lastUpdate).getTime()
     ? -1
@@ -36,12 +36,12 @@ function Actions ({ jeune, actions_en_cours }: Props) {
   return (
     <>
       <div className={styles.backIntroContainer}>
-        <Link href="/actions" passHref>
+        <Link href={'/actions'} passHref>
           <a className={`${styles.backLink} mr-[24px]`}>
             <BackIcon
-              role="img"
-              focusable="false"
-              aria-label="Retour sur la liste de tous les jeunes"
+              role='img'
+              focusable='false'
+              aria-label='Retour sur la liste de tous les jeunes'
             />
           </a>
         </Link>
@@ -50,15 +50,15 @@ function Actions ({ jeune, actions_en_cours }: Props) {
           <h1 className={`h2 text-bleu_nuit ${styles.title}`}>
             Les actions de {`${jeune.firstName} ${jeune.lastName}`}
           </h1>
-          <p className="text-md text-bleu">
+          <p className='text-md text-bleu'>
             Retrouvez le détail des actions de votre bénéficiaire
           </p>
         </div>
 
         <Button onClick={() => setShowModal(true)}>
           <AddIcon
-            focusable="false"
-            aria-hidden="true"
+            focusable='false'
+            aria-hidden='true'
             className={styles.addIcon}
           />
           Créer une nouvelle action
@@ -75,7 +75,7 @@ function Actions ({ jeune, actions_en_cours }: Props) {
       />
 
       {actionsEnCours.length === 0 && (
-        <p className="text-md text-bleu mb-8">
+        <p className='text-md text-bleu mb-8'>
           {' '}
           {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le
           moment
@@ -83,7 +83,7 @@ function Actions ({ jeune, actions_en_cours }: Props) {
       )}
 
       <ul>
-        {actionsEnCours.map((action: UserAction) => (
+        {actionsEnCours.map((action: ActionJeune) => (
           <li key={action.id} className={styles.listItem}>
             <Action action={action} jeuneId={jeuneId}/>
           </li>
@@ -110,10 +110,10 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     }
   }
 
-  let userActions: UserAction[] = []
+  let userActions: ActionJeune[] = []
 
-  dataActionsJeune.map((userActionJson: UserActionJson) => {
-    const newAction: UserAction = {
+  dataActionsJeune.map((userActionJson: ActionJeuneJson) => {
+    const newAction: ActionJeune = {
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted
     }

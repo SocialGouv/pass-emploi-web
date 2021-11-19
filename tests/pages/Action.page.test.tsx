@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import Action from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
+import PageAction from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
 import { uneAction } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 
@@ -9,7 +9,7 @@ describe("Page Détail d'une action d'un jeune", () => {
 	const jeune = unJeune()
 
 	it("Devrait afficher les information d'une action", () => {
-		render(<Action action={action} jeune={jeune} />)
+		render(<PageAction action={action} jeune={jeune} />)
 
 		expect(
 			screen.getByRole('heading', {
@@ -24,7 +24,7 @@ describe("Page Détail d'une action d'un jeune", () => {
 	})
 
 	it('Devrait avoir un lien pour revenir sur la page précédente', () => {
-		render(<Action action={action} jeune={jeune} />)
+		render(<PageAction action={action} jeune={jeune} />)
 
 		const backLink = screen.getByLabelText(
 			"Retour sur la liste d'actions du jeune"

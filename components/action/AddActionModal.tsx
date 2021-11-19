@@ -2,7 +2,7 @@ import Button, { ButtonColorStyle } from 'components/Button'
 
 import Modal from 'components/Modal'
 
-import { UserAction } from 'interfaces/action'
+import { ActionJeune } from 'interfaces/action'
 import router from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
@@ -114,7 +114,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
         {!isCustomMode && (
           <div className='h-[425px] overflow-scroll mb-[40px]'>
-            {actionsPredefinies.map((action: UserAction) => (
+            {actionsPredefinies.map((action: ActionJeune) => (
               <button
                 key={action.id}
                 type='button'

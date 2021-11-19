@@ -7,13 +7,14 @@ export type JeuneActions = {
   nbActionsAFaire: number
 }
 
-export interface UserAction  {
+export interface ActionJeune {
   id: string
   content: string
   comment: string
   creationDate: Date
   lastUpdate: Date
-  creator:string
+  creator: string
+  creatorType: string
   isDone?: boolean
   status: ActionStatus
 }

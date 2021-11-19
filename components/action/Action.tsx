@@ -1,4 +1,4 @@
-import { UserAction, ActionStatus } from 'interfaces/action'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
 
 import NoteIcon from '../../assets/icons/note_outline.svg'
 import ChevronIcon from '../../assets/icons/chevron_right.svg'
@@ -6,7 +6,7 @@ import React from 'react'
 import Link from 'next/link'
 
 type ActionProps = {
-  action: UserAction
+  action: ActionJeune
   jeuneId: string
 }
 

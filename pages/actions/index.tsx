@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { JeuneActionJson } from 'interfaces/json/action'
+import { JeuneActionsJson } from 'interfaces/json/action'
 import { JeuneActions } from 'interfaces/action'
 import { Jeune } from 'interfaces'
 
@@ -109,7 +109,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
     let jeunesActions: JeuneActions[] = []
 
-    data.map((jeuneActionJson: JeuneActionJson) => {
+    data.map((jeuneActionJson: JeuneActionsJson) => {
       const newJeune: Jeune = {
         id: jeuneActionJson.jeuneId,
         firstName: jeuneActionJson.jeuneFirstName,

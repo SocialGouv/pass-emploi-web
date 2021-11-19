@@ -1,6 +1,6 @@
 import { ActionStatus } from 'interfaces/action'
 
-export type JeuneActionJson = {
+export type JeuneActionsJson = {
   jeuneId: string,
   jeuneFirstName: string,
   jeuneLastName: string,
@@ -9,7 +9,7 @@ export type JeuneActionJson = {
   inProgressActionsCount: number
 }
 
-export type UserActionJson = {
+export type ActionJeuneJson = {
   id: string
   content: string
   comment: string
@@ -17,5 +17,6 @@ export type UserActionJson = {
   lastUpdate: Date
   isDone?: boolean
   status?: ActionStatus
-  creator:string
+  creator: string
+  creatorType: string
 }
