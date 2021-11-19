@@ -50,7 +50,10 @@ module.exports = {
 			large: '16px',
 			x_large: '24px',
 		},
-
+		gridTemplateColumns: {
+			// Complex site-specific column configuration
+			'table': '1fr 2fr',
+		},
 		extend: {
 			fontFamily: {
 				sans: ['Rubik'],

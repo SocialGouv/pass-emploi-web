@@ -9,6 +9,8 @@ import withSession, { ServerSideHandler } from 'utils/session'
 
 import AddIcon from '../../assets/icons/add_person.svg'
 import fetchJson from 'utils/fetchJson'
+import Link from 'next/link'
+import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type MesJeunesProps = {
 	conseillerId: string
@@ -25,36 +27,46 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 
 	return (
 		<>
-			<span className='flex flex-wrap justify-between mb-[50px]'>
+			<span className='flex flex-wrap justify-between mb-12'>
 				<h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
 				<Button onClick={() => setShowModal(true)}>
-					<AddIcon focusable='false' aria-hidden='true' className='mr-[8px]' />
+					<AddIcon focusable='false' aria-hidden='true' className='mr-2' />
 					Ajouter un jeune
 				</Button>
 			</span>
 
-			<table role='presentation'>
+			<table role='presentation' className='w-full'>
 				<caption className='hidden'>Liste de mes bénéficiaires</caption>
-
-				<tbody>
-					<tr>
-						<th scope='col' className='text-sm text-bleu text-left p-[16px]'>
+				<thead>
+					<tr className={'grid grid-cols-table'}>
+						<th scope='col' className='text-sm text-bleu text-left p-4'>
 							Nom du jeune
 						</th>
 
-						<th scope='col' className='text-sm text-bleu text-left p-[16px]'>
+						<th scope='col' className='text-sm text-bleu text-left pb-4 pt-4'>
 							Identifiant
 						</th>
 					</tr>
+				</thead>
+
+				<tbody>
 
 					{jeunes?.map((jeune: Jeune) => (
-						<tr key={jeune.id} className='text-sm text-bleu_nuit'>
-							<td className='p-[16px]'>
-								{jeune.firstName} {jeune.lastName}
-							</td>
+						<Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
+							<tr
+								key={jeune.id}
+								className='grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
+							>
+								<td className='p-[16px]'>
+									{jeune.firstName} {jeune.lastName}
+								</td>
 
-							<td className='p-[16px]'>{jeune.id}</td>
-						</tr>
+								<td className='p-4'>{jeune.id}</td>
+								<span  className='p-4 col-end-6'>
+								<ChevronRight />
+								</span>
+							</tr>
+						</Link>
 					))}
 				</tbody>
 			</table>
