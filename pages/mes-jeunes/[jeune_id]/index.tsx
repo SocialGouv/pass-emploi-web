@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { Jeune } from 'interfaces'
-import { DetailsJeune } from 'components/jeune/FicheJeune'
+import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { GetServerSideProps } from 'next'
 import fetchJson from 'utils/fetchJson'
 
@@ -28,28 +28,25 @@ const FicheJeune = ({ jeune }: FicheJeuneProps) => {
 					<p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
 
 				</div>
-
-				<div className=''>
-					<DetailsJeune id={jeune.id} firstName={jeune.firstName} lastName={jeune.lastName} />
-				</div>
+				<DetailsJeune id={jeune.id} firstName={jeune.firstName} lastName={jeune.lastName} />
 			</div>
 
 	)
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-    const data = await fetchJson(
+    const dataJeune = await fetchJson(
         `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`
     )
 
-    if (!data) {
+    if (!dataJeune) {
         return {
             notFound: true,
         }
     }
     return {
         props: {
-            jeune: data
+            jeune: dataJeune
         },
     }
 }

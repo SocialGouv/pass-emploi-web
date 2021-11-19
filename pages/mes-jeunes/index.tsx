@@ -10,7 +10,7 @@ import withSession, { ServerSideHandler } from 'utils/session'
 import AddIcon from '../../assets/icons/add_person.svg'
 import fetchJson from 'utils/fetchJson'
 import Link from 'next/link'
-import ChevronRight from "../../assets/icons/chevron_right.svg";
+import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type MesJeunesProps = {
 	conseillerId: string

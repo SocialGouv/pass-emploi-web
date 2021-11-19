@@ -1,9 +1,9 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
-import {Jeune} from "interfaces";
-import {unJeune} from "fixtures/jeune";
-import {DetailsJeune} from "./FicheJeune";
+import { Jeune } from 'interfaces'
+import { unJeune } from 'fixtures/jeune'
+import { DetailsJeune } from './DetailsJeune'
 
 describe('<DetailsJeune>', () => {
     let jeune: Jeune
