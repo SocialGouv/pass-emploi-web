@@ -1,19 +1,15 @@
-import Router from 'next/router'
-import { useState } from 'react'
-
+import Button, { ButtonColorStyle } from 'components/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import Button from 'components/Button'
 import RdvList from 'components/rdv/RdvList'
-
-import withSession, { ServerSideHandler } from 'utils/session'
-import fetchJson from 'utils/fetchJson'
-
-import AddIcon from '../assets/icons/add.svg'
-
-import { Rdv } from 'interfaces/rdv'
 import { RdvJson } from 'interfaces/json/rdv'
+import { Rdv } from 'interfaces/rdv'
+import Router from 'next/router'
+import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
+import fetchJson from 'utils/fetchJson'
+import withSession, { ServerSideHandler } from 'utils/session'
+import AddIcon from '../assets/icons/add.svg'
 
 type HomeProps = {
   rdvs: Rdv[]
@@ -27,7 +23,7 @@ const defaultRdv = {
   comment: 'string',
   date: 'string',
   duration: 'string',
-  modality: 'string',
+  modality: 'string'
 }
 
 const Home = ({ rdvs, oldRdvs }: HomeProps) => {
@@ -39,23 +35,23 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 
   return (
     <>
-      <span className='flex flex-wrap justify-between mb-[20px]'>
-        <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
+      <span className="flex flex-wrap justify-between mb-[20px]">
+        <h1 className="h2-semi text-bleu_nuit">Rendez-vous</h1>
         <Button
           onClick={() => setShowAddModal(true)}
-          label='Fixer un rendez-vous'
+          label="Fixer un rendez-vous"
         >
-          <AddIcon focusable='false' aria-hidden='true' />
+          <AddIcon focusable="false" aria-hidden="true"/>
           Fixer un rendez-vous
         </Button>
       </span>
 
-      <div role='tablist' className='flex mb-[40px]'>
+      <div role="tablist" className="flex mb-[40px]">
         <Button
-          role='tab'
-          type='button'
-          className='mr-[8px]'
-          style={displayOldRdv ? 'white' : 'blue'}
+          role="tab"
+          type="button"
+          className="mr-[8px]"
+          style={displayOldRdv ? ButtonColorStyle.WHITE : ButtonColorStyle.BLUE}
           onClick={() => {
             setDisplayOldRdv(!displayOldRdv)
           }}
@@ -64,9 +60,9 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
         </Button>
 
         <Button
-          role='tab'
-          type='button'
-          style={displayOldRdv ? 'blue' : 'white'}
+          role="tab"
+          type="button"
+          style={displayOldRdv ? ButtonColorStyle.BLUE : ButtonColorStyle.WHITE}
           onClick={() => {
             setDisplayOldRdv(!displayOldRdv)
           }}
@@ -76,7 +72,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
       </div>
 
       {displayOldRdv ? (
-        <RdvList rdvs={oldRdvs} />
+        <RdvList rdvs={oldRdvs}/>
       ) : (
         <RdvList
           rdvs={rdvsAvenir}
@@ -104,7 +100,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
             const index = rdvsAvenir.indexOf(selectedRdv)
             const newArray = [
               ...rdvsAvenir.slice(0, index),
-              ...rdvsAvenir.slice(index + 1, rdvsAvenir.length),
+              ...rdvsAvenir.slice(index + 1, rdvsAvenir.length)
             ]
             setRdvsAvenir(newArray)
           }}
@@ -125,7 +121,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
       res.statusCode = 302
       res.end()
       return {
-        props: {},
+        props: {}
       }
     }
 
@@ -140,7 +136,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
         ...rdvData,
         duration:
           durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-          `${rdvData.duration} min`,
+          `${rdvData.duration} min`
       }
 
       serializedRdvs.push(newrdv)
@@ -148,7 +144,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
     if (!data) {
       return {
-        notFound: true,
+        notFound: true
       }
     }
 
@@ -157,8 +153,8 @@ export const getServerSideProps = withSession<ServerSideHandler>(
     return {
       props: {
         rdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) >= today),
-        oldRdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) < today),
-      },
+        oldRdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) < today)
+      }
     }
   }
 )
