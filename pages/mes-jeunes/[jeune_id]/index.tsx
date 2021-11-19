@@ -6,35 +6,40 @@ import { DetailsJeune } from 'components/jeune/FicheJeune'
 import { GetServerSideProps } from 'next'
 import fetchJson from 'utils/fetchJson'
 
+
 interface FicheJeuneProps {
 	jeune: Jeune
 }
 
 const FicheJeune = ({ jeune }: FicheJeuneProps) => {
 	return (
-		<>
-			<div className='flex'>
-				<Link href='/mes-jeunes' passHref>
-					<a className='mr-[24px]'>
-						<BackIcon
-							role='img'
-							focusable='false'
-							aria-label='Retour sur la liste de tous les jeunes'
-						/>
-					</a>
-				</Link>
-				<div className=''>
+			<div className={'flex flex-col'}>
+				<div className={'flex items-center mb-8'}>
+					<Link href='/mes-jeunes' passHref>
+						<a className='mr-6'>
+							<BackIcon
+								role='img'
+								focusable='false'
+								aria-label='Retour sur la liste de tous les jeunes'
+							/>
+
+						</a>
+					</Link>
 					<p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
-					<DetailsJeune id={'HBDD'} firstName={'Lala'} lastName={'MIA'} />
+
+				</div>
+
+				<div className=''>
+					<DetailsJeune id={jeune.id} firstName={jeune.firstName} lastName={jeune.lastName} />
 				</div>
 			</div>
-		</>
+
 	)
 }
 
-/*export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     const data = await fetchJson(
-        `${process.env.API_ENDPOINT}/conseiller/jeunes/${query.jeune_id}`
+        `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`
     )
 
     if (!data) {
@@ -42,12 +47,11 @@ const FicheJeune = ({ jeune }: FicheJeuneProps) => {
             notFound: true,
         }
     }
-
     return {
         props: {
-            jeune: data.jeune,
+            jeune: data
         },
     }
-}*/
+}
 
 export default FicheJeune
