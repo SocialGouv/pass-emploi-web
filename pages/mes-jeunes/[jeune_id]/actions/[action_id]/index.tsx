@@ -1,5 +1,4 @@
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
-
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
@@ -8,9 +7,10 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { formatDayDate } from 'utils/date'
 import fetchJson from 'utils/fetchJson'
-
+import { useDIContext } from 'utils/injectionDependances'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 import Button, { ButtonColorStyle } from '../../../../../components/Button'
+import { ActionsService } from '../../../../../services/actions.service'
 
 type Props = {
   action: ActionJeune
@@ -20,23 +20,16 @@ type Props = {
 function PageAction ({ action, jeune }: Props) {
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const router = useRouter()
+  const actionsService: ActionsService = useDIContext().get('ActionsService')
 
-  const updateStatutChoisi = (statutChoisi: ActionStatus) => {
-    fetch(`${process.env.API_ENDPOINT}/actions/${action.id}`, {
-      method: 'PUT',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({ status: statutChoisi })
-    }).then(() => {
-      setStatutChoisi(statutChoisi)
-    })
+  async function updateAction (statutChoisi: ActionStatus): Promise<void> {
+    const nouveauStatut = await actionsService.updateAction(action.id, statutChoisi)
+    setStatutChoisi(nouveauStatut)
   }
 
-  function deleteAction () {
-    fetch(`${process.env.API_ENDPOINT}/actions/${action.id}`, {
-      method: 'DELETE'
-    }).then(() => router.push(`/mes-jeunes/${jeune.id}/actions`))
+  async function deleteAction (): Promise<void> {
+    await actionsService.deleteAction(action.id)
+    router.push(`/mes-jeunes/${jeune.id}/actions`)
   }
 
   return (
@@ -91,17 +84,17 @@ function PageAction ({ action, jeune }: Props) {
               <RadioButtonStatus
                 status='À réaliser'
                 isSelected={statutChoisi === ActionStatus.NotStarted}
-                onChange={() => updateStatutChoisi(ActionStatus.NotStarted)}
+                onChange={() => updateAction(ActionStatus.NotStarted)}
               />
               <RadioButtonStatus
                 status='En cours'
                 isSelected={statutChoisi === ActionStatus.InProgress}
-                onChange={() => updateStatutChoisi(ActionStatus.InProgress)}
+                onChange={() => updateAction(ActionStatus.InProgress)}
               />
               <RadioButtonStatus
                 status='Terminée'
                 isSelected={statutChoisi === ActionStatus.Done}
-                onChange={() => updateStatutChoisi(ActionStatus.Done)}
+                onChange={() => updateAction(ActionStatus.Done)}
               />
             </span>
           </fieldset>
