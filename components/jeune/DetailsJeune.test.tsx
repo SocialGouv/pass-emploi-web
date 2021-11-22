@@ -4,8 +4,8 @@ import { screen } from '@testing-library/dom'
 import { Jeune } from 'interfaces'
 import { unJeune } from 'fixtures/jeune'
 import { DetailsJeune } from './DetailsJeune'
-import {Rdv, RdvJeune} from 'interfaces/rdv'
-import { uneListeDeRdv } from 'fixtures/rendez-vous';
+import { RdvJeune } from 'interfaces/rdv'
+import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
 
 describe('<DetailsJeune>', () => {
   let jeune: Jeune
@@ -13,7 +13,7 @@ describe('<DetailsJeune>', () => {
 
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     jeune = unJeune()
-    rdv = uneListeDeRdv()
+    rdv = uneListeDeRdvJeune()
         render(<DetailsJeune jeune={jeune} rdv={rdv}/>)
         expect(
             screen.getByRole('heading', {

@@ -7,12 +7,12 @@ import {GetServerSideProps} from 'next'
 import fetchJson from 'utils/fetchJson'
 import {RdvJeune} from 'interfaces/rdv'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import {RdvJeune} from 'interfaces/rdv'
 
 interface FicheJeuneProps {
   jeune: Jeune,
     rdvs: RdvJeune[]
 }
+
 
 const defaultRdv = {
     id: 'string',
@@ -23,6 +23,22 @@ const defaultRdv = {
     duration: 'string',
     modality: 'string',
 }
+
+const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
+    const [selectedRdv, setSelectedRdv] = useState<RdvJeune>(defaultRdv)
+
+    function deleteRdv() {
+        return () => {
+            const index = rdvsAVenir.indexOf(selectedRdv)
+            const nouvelleListeRdvs = [
+                ...rdvsAVenir.slice(0, index),
+                ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
+            ]
+            setRdvsAVenir(nouvelleListeRdvs)
+        }
+    }
 
 const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -61,6 +77,37 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
                 setShowDeleteModal(true)
                 setSelectedRdv(rdv)
             }}/>
+    return (
+        <div className={'flex flex-col'}>
+            <div className={'flex items-center mb-8'}>
+                <Link href='/mes-jeunes' passHref>
+                    <a className='mr-6'>
+                        <BackIcon
+                            role='img'
+                            focusable='false'
+                            aria-label='Retour sur la liste de tous les jeunes'
+                        />
+
+                    </a>
+                </Link>
+                <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+
+            </div>
+            <DetailsJeune jeune={jeune} rdv={rdvsAVenir} onDelete={(rdv: RdvJeune
+            ) => {
+                setShowDeleteModal(true)
+                setSelectedRdv(rdv)
+            }}/>
+
+            {showDeleteModal && (
+                <DeleteRdvModal
+                    onClose={() => setShowDeleteModal(false)}
+                    onDelete={deleteRdv()}
+                    show={showDeleteModal}
+                    rdv={selectedRdv}
+                />
+            )}
+        /></div>
 
             {showDeleteModal && (
                 <DeleteRdvModal

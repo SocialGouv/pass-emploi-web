@@ -4,7 +4,7 @@ import {formatDayDate, formatHourMinuteDateUTC} from 'utils/date'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
-import ChevronRight from '../../assets/icons/chevron_right.svg'
+import ChevronRight from '../../assets/icons/chevron_right.svg';
 
 type RdvListProps = {
     rdvs: RdvJeune[]
