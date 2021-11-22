@@ -73,22 +73,22 @@
 
 /* Conversation */
 
-.conversationConainer {
+.conversationContainer {
 	position: relative;
 	height: 100%;
 }
 
-.conversationTitleConainer {
+.conversationTitleContainer {
 	display: flex;
 	align-items: baseline;
 }
 
-.conversationTitleConainer button {
+.conversationTitleContainer button {
 	margin-left: 46px;
 	margin-right: 30px;
 }
 
-.conversationTitleConainer h2 {
+.conversationTitleContainer h2 {
 	color: theme('colors.bleu_nuit');
 	margin-bottom: 30px;
 }
