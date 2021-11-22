@@ -3,7 +3,7 @@ import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
 
-import { Rdv } from 'interfaces/rdv'
+import { Rdv, RdvJeune } from 'interfaces/rdv'
 import { useState } from 'react'
 
 import { formatDayDate } from 'utils/date'
@@ -11,8 +11,8 @@ import { formatDayDate } from 'utils/date'
 type RdvModalProps = {
   show: boolean
   onClose: any
-  onDelete: any
-  rdv: Rdv
+  onDelete: () => Promise<void>
+  rdv: Rdv | RdvJeune
 }
 
 const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {

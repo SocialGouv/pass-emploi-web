@@ -6,10 +6,11 @@ import RdvListJeune from './RdvListJeune'
 interface DetailsJeuneProps  {
 	jeune: Jeune,
 	rdv: RdvJeune[]
+	onDelete?: () => Promise<void>
 
 }
 
-export const DetailsJeune = ({ jeune, rdv }: DetailsJeuneProps) => {
+export const DetailsJeune = ({ jeune, rdv, onDelete }: DetailsJeuneProps) => {
   return (
     <>
       <h1 className='h2-semi text-bleu_nuit pb-6'>
@@ -20,8 +21,8 @@ export const DetailsJeune = ({ jeune, rdv }: DetailsJeuneProps) => {
         <dd>{jeune.id}</dd>
       </dl>
 			<div className='mt-8'>
-				<h2 className='h4-semi text-bleu_nuit mb-4'>Rendez-vous ({rdv.length})</h2>
-			{rdv && (<RdvListJeune rdvs={rdv}/>)}
+				<h2 className='h4-semi text-bleu_nuit mb-4'>Rendez-vous ({rdv?.length})</h2>
+			{rdv && (<RdvListJeune rdvs={rdv} onDelete={onDelete}/>)}
 			</div>
     </>
   )

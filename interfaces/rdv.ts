@@ -10,6 +10,7 @@ export type Rdv = {
 
 export type RdvJeune = {
   id: string
+  title?: string
   subtitle: string
   comment: string
   date: string

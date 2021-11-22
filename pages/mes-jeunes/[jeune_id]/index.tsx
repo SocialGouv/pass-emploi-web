@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Link from 'next/link'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import {Jeune} from 'interfaces'
@@ -6,13 +6,39 @@ import {DetailsJeune} from 'components/jeune/DetailsJeune'
 import {GetServerSideProps} from 'next'
 import fetchJson from 'utils/fetchJson'
 import {RdvJeune} from 'interfaces/rdv'
+import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 
 interface FicheJeuneProps {
     jeune: Jeune,
-    rdv: RdvJeune[]
+    rdvs: RdvJeune[]
 }
 
-const FicheJeune = ({jeune, rdv}: FicheJeuneProps) => {
+const defaultRdv = {
+    id: 'string',
+    title: 'string',
+    subtitle: 'string',
+    comment: 'string',
+    date: 'string',
+    duration: 'string',
+    modality: 'string',
+}
+
+const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
+    const [selectedRdv, setSelectedRdv] = useState<RdvJeune>(defaultRdv)
+
+    function deleteRdv() {
+        return () => {
+            const index = rdvsAVenir.indexOf(selectedRdv)
+            const nouvelleListeRdvs = [
+                ...rdvsAVenir.slice(0, index),
+                ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
+            ]
+            setRdvsAVenir(nouvelleListeRdvs)
+        }
+    }
+
     return (
         <div className={'flex flex-col'}>
             <div className={'flex items-center mb-8'}>
@@ -29,7 +55,20 @@ const FicheJeune = ({jeune, rdv}: FicheJeuneProps) => {
                 <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
 
             </div>
-            <DetailsJeune jeune={jeune} rdv={rdv}
+            <DetailsJeune jeune={jeune} rdv={rdvsAVenir} onDelete={(rdv: RdvJeune
+            ) => {
+                setShowDeleteModal(true)
+                setSelectedRdv(rdv)
+            }}/>
+
+            {showDeleteModal && (
+                <DeleteRdvModal
+                    onClose={() => setShowDeleteModal(false)}
+                    onDelete={deleteRdv()}
+                    show={showDeleteModal}
+                    rdv={selectedRdv}
+                />
+            )}
         /></div>
 
     )
@@ -50,10 +89,12 @@ export const getServerSideProps: GetServerSideProps = async ({query}) => {
             notFound: true,
         }
     }
+    const today = new Date()
     return {
         props: {
             jeune: resInfoJeune,
-            rdv: resRdvJeune
+            rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) >= today),
+
         },
     }
 }
