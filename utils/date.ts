@@ -1,7 +1,7 @@
 const datesAreOnSameDay = (firstDate: Date, secondDate: Date) =>
-    firstDate.getFullYear() === secondDate.getFullYear() &&
-    firstDate.getMonth() === secondDate.getMonth() &&
-    firstDate.getDate() === secondDate.getDate()
+  firstDate.getFullYear() === secondDate.getFullYear() &&
+  firstDate.getMonth() === secondDate.getMonth() &&
+  firstDate.getDate() === secondDate.getDate()
 
 const dateIsToday = (dateToCheck: Date) => datesAreOnSameDay(new Date(), dateToCheck)
 

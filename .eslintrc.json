@@ -1,7 +1,7 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "indent": "off",
+    "indent": ["error", 2],
     "semi": [2, "never"],
     "quotes": [2, "single", { "avoidEscape": true }]
   }

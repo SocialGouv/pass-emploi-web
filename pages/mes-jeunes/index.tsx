@@ -18,93 +18,93 @@ type MesJeunesProps = {
 }
 
 function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
-	const [showModal, setShowModal] = useState(false)
-	const [jeunes, setJeunes] = useState<Jeune[]>(conseillerJeunes)
+  const [showModal, setShowModal] = useState(false)
+  const [jeunes, setJeunes] = useState<Jeune[]>(conseillerJeunes)
 
-	const handleAddJeune = async (newJeune: Jeune) => {
-		setJeunes([newJeune, ...jeunes])
-	}
+  const handleAddJeune = async (newJeune: Jeune) => {
+    setJeunes([newJeune, ...jeunes])
+  }
 
-	return (
-		<>
-			<span className='flex flex-wrap justify-between mb-12'>
-				<h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
-				<Button onClick={() => setShowModal(true)}>
-					<AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+  return (
+    <>
+      <span className='flex flex-wrap justify-between mb-12'>
+        <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
+        <Button onClick={() => setShowModal(true)}>
+          <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
 					Ajouter un jeune
-				</Button>
-			</span>
+        </Button>
+      </span>
 
-			<table role='presentation' className='w-full'>
-				<caption className='hidden'>Liste de mes bénéficiaires</caption>
-				<thead>
-					<tr className={'grid grid-cols-table'}>
-						<th scope='col' className='text-sm text-bleu text-left p-4'>
+      <table role='presentation' className='w-full'>
+        <caption className='hidden'>Liste de mes bénéficiaires</caption>
+        <thead>
+          <tr className={'grid grid-cols-table'}>
+            <th scope='col' className='text-sm text-bleu text-left p-4'>
 							Nom du jeune
-						</th>
+            </th>
 
-						<th scope='col' className='text-sm text-bleu text-left pb-4 pt-4'>
+            <th scope='col' className='text-sm text-bleu text-left pb-4 pt-4'>
 							Identifiant
-						</th>
-					</tr>
-				</thead>
+            </th>
+          </tr>
+        </thead>
 
-				<tbody>
+        <tbody>
 
-					{jeunes?.map((jeune: Jeune) => (
-						<Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
-							<tr
-								key={jeune.id}
-								className='grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
-							>
-								<td className='p-[16px]'>
-									{jeune.firstName} {jeune.lastName}
-								</td>
+          {jeunes?.map((jeune: Jeune) => (
+            <Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
+              <tr
+                key={jeune.id}
+                className='grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
+              >
+                <td className='p-[16px]'>
+                  {jeune.firstName} {jeune.lastName}
+                </td>
 
-								<td className='p-4'>{jeune.id}</td>
-								<span  className='p-4 col-end-6'>
-								<ChevronRight />
-								</span>
-							</tr>
-						</Link>
-					))}
-				</tbody>
-			</table>
+                <td className='p-4'>{jeune.id}</td>
+                <span  className='p-4 col-end-6'>
+                  <ChevronRight />
+                </span>
+              </tr>
+            </Link>
+          ))}
+        </tbody>
+      </table>
 
-			<AddJeuneModal
-				onClose={() => setShowModal(false)}
-				onAdd={(newJeune: Jeune) => handleAddJeune(newJeune)}
-				show={showModal}
-			/>
-		</>
-	)
+      <AddJeuneModal
+        onClose={() => setShowModal(false)}
+        onAdd={(newJeune: Jeune) => handleAddJeune(newJeune)}
+        show={showModal}
+      />
+    </>
+  )
 }
 
 export const getServerSideProps = withSession<ServerSideHandler>(
-	async ({ req, res }) => {
-		const user = req.session.get('user')
-		const userId = user.id
+  async ({ req, res }) => {
+    const user = req.session.get('user')
+    const userId = user.id
 
-		if (user === undefined) {
-			res.setHeader('location', '/login')
-			res.statusCode = 302
-			res.end()
-			return {
-				props: {},
-			}
-		}
+    if (user === undefined) {
+      res.setHeader('location', '/login')
+      res.statusCode = 302
+      res.end()
+      return {
+        props: {},
+      }
+    }
 
-		const data = await fetchJson(
-			`${process.env.API_ENDPOINT}/conseillers/${userId}/login`
-		)
+    const data = await fetchJson(
+      `${process.env.API_ENDPOINT}/conseillers/${userId}/login`
+    )
 
-		return {
-			props: {
-				conseillerId: userId,
-				conseillerJeunes: data?.jeunes || [],
-			},
-		}
-	}
+    return {
+      props: {
+        conseillerId: userId,
+        conseillerJeunes: data?.jeunes || [],
+      },
+    }
+  }
 )
 
 export default MesJeunes

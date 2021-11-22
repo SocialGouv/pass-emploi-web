@@ -11,82 +11,82 @@ type ActionProps = {
 }
 
 function NotStarted() {
-	return (
-		<p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-rose rounded-x_large'>
+  return (
+    <p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-rose rounded-x_large'>
 			À réaliser
-		</p>
-	)
+    </p>
+  )
 }
 
 function InProgress() {
-	return (
-		<p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-violet rounded-x_large'>
+  return (
+    <p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-violet rounded-x_large'>
 			Commencée
-		</p>
-	)
+    </p>
+  )
 }
 
 function Done() {
-	return (
-		<p className='text-xs-semi text-bleu_nuit px-[16px] py-[2px] bg-bleu_gris rounded-x_large'>
+  return (
+    <p className='text-xs-semi text-bleu_nuit px-[16px] py-[2px] bg-bleu_gris rounded-x_large'>
 			Terminée
-		</p>
-	)
+    </p>
+  )
 }
 
 function Status(props: any) {
-	switch (props.status) {
-		case ActionStatus.InProgress:
-			return <InProgress />
+  switch (props.status) {
+  case ActionStatus.InProgress:
+    return <InProgress />
 
-		case ActionStatus.Done:
-			return <Done />
+  case ActionStatus.Done:
+    return <Done />
 
-		case ActionStatus.NotStarted:
-		default:
-			return <NotStarted />
-	}
+  case ActionStatus.NotStarted:
+  default:
+    return <NotStarted />
+  }
 }
 
 const Action = ({ action, jeuneId }: ActionProps) => {
-	return (
-		<Link href={`/actions/jeunes/${jeuneId}/${action.id}`}>
-			<a className='w-full  px-[16px] py-[16px] text-left border-x border-bleu_blanc '>
-				{action.creator && (
-					<p className='text-sm text-bleu_nuit mb-[8px]'>
+  return (
+    <Link href={`/actions/jeunes/${jeuneId}/${action.id}`}>
+      <a className='w-full  px-[16px] py-[16px] text-left border-x border-bleu_blanc '>
+        {action.creator && (
+          <p className='text-sm text-bleu_nuit mb-[8px]'>
 						Créé par {action.creator}
-					</p>
-				)}
+          </p>
+        )}
 
-				<div className='w-full flex justify-between  '>
-					<span style={{ flex: '0 0 65%' }}>
-						<p className='text-md text-bleu_nuit break-all mb-[8px]'>
-							{action.content}
-						</p>
-						<p className='text-sm text-bleu_nuit break-all'>
-							<NoteIcon
-								focusable='false'
-								aria-hidden='true'
-								className='mr-[7px] inline'
-							/>
-							{action.comment || '--'}
-						</p>
-					</span>
-					<span>
-						<Status status={action.status} />
-					</span>
-					<span className='text-sm text-bleu_nuit '>
+        <div className='w-full flex justify-between  '>
+          <span style={{ flex: '0 0 65%' }}>
+            <p className='text-md text-bleu_nuit break-all mb-[8px]'>
+              {action.content}
+            </p>
+            <p className='text-sm text-bleu_nuit break-all'>
+              <NoteIcon
+                focusable='false'
+                aria-hidden='true'
+                className='mr-[7px] inline'
+              />
+              {action.comment || '--'}
+            </p>
+          </span>
+          <span>
+            <Status status={action.status} />
+          </span>
+          <span className='text-sm text-bleu_nuit '>
 						Détail de l&apos;action
-						<ChevronIcon
-							focusable='false'
-							aria-hidden='true'
-							className='ml-[7px] inline'
-						/>
-					</span>
-				</div>
-			</a>
-		</Link>
-	)
+            <ChevronIcon
+              focusable='false'
+              aria-hidden='true'
+              className='ml-[7px] inline'
+            />
+          </span>
+        </div>
+      </a>
+    </Link>
+  )
 }
 
 export default Action

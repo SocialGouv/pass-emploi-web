@@ -185,13 +185,13 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
                         {formatHourMinuteDate(message.creationDate.toDate())}
                         {message.sentBy === 'conseiller' && (
                           <span>
-														{isDateOlder(
+                            {isDateOlder(
                               message.creationDate.toDate(),
                               lastSeenByJeune
                             )
                               ? ' · Lu'
                               : ' · Envoyé'}
-													</span>
+                          </span>
                         )}
                       </p>
 

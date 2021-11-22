@@ -15,10 +15,10 @@ import 'styles/globals.css'
 import 'styles/typography.css'
 
 const progress = new ProgressBar({
-	size: 5,
-	color: '#9196C0',
-	className: 'bar-of-progress',
-	delay: 100,
+  size: 5,
+  color: '#9196C0',
+  className: 'bar-of-progress',
+  delay: 100,
 })
 
 Router.events.on('routeChangeStart', progress.start)
@@ -26,23 +26,23 @@ Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
 function MyApp({ Component, pageProps }: AppProps) {
-	const router = useRouter()
-	const isLoginPage = router.pathname === '/login'
+  const router = useRouter()
+  const isLoginPage = router.pathname === '/login'
 
-	useEffect(() => {
-		init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
-	}, [])
+  useEffect(() => {
+    init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
+  }, [])
 
-	return (
-		<>
-			{isLoginPage ? (
-				<Component {...pageProps} />
-			) : (
-				<Layout>
-					<Component {...pageProps} />
-				</Layout>
-			)}
-		</>
-	)
+  return (
+    <>
+      {isLoginPage ? (
+        <Component {...pageProps} />
+      ) : (
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      )}
+    </>
+  )
 }
 export default MyApp

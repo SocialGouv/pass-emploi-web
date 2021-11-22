@@ -56,30 +56,30 @@ export default function ChatBox ({ db }: ChatBoxProps) {
   useEffect(() => {
     async function fetchFirebaseData (): Promise<JeuneChat[]> {
       const chats: Array<JeuneChat | undefined> = await Promise.all(jeunes.map((jeune: Jeune) =>
-          getDocs(query<JeuneChat>(
+        getDocs(query<JeuneChat>(
             collection(db, collectionName) as CollectionReference<JeuneChat>,
             where('jeuneId', '==', jeune.id)))
-            .then((querySnapshot) => {
-              if (querySnapshot.empty) return
+          .then((querySnapshot) => {
+            if (querySnapshot.empty) return
 
-              const doc = querySnapshot.docs[0]
-              const data = doc.data()
-              const newJeuneChat: JeuneChat = {
-                ...jeune,
-                chatId: doc.id,
-                seenByConseiller: data.seenByConseiller ?? true,
-                newConseillerMessageCount: data.newConseillerMessageCount,
-                lastMessageContent: data.lastMessageContent || defaultChat.lastMessageContent,
-                lastMessageSentAt: data.lastMessageSentAt || defaultChat.lastMessageSentAt,
-                lastMessageSentBy: data.lastMessageSentBy || defaultChat.lastMessageSentBy,
-                lastConseillerReading: data.lastConseillerReading || defaultChat.lastConseillerReading,
-                lastJeuneReading: data.lastJeuneReading || defaultChat.lastJeuneReading
-              }
+            const doc = querySnapshot.docs[0]
+            const data = doc.data()
+            const newJeuneChat: JeuneChat = {
+              ...jeune,
+              chatId: doc.id,
+              seenByConseiller: data.seenByConseiller ?? true,
+              newConseillerMessageCount: data.newConseillerMessageCount,
+              lastMessageContent: data.lastMessageContent || defaultChat.lastMessageContent,
+              lastMessageSentAt: data.lastMessageSentAt || defaultChat.lastMessageSentAt,
+              lastMessageSentBy: data.lastMessageSentBy || defaultChat.lastMessageSentBy,
+              lastConseillerReading: data.lastConseillerReading || defaultChat.lastConseillerReading,
+              lastJeuneReading: data.lastJeuneReading || defaultChat.lastJeuneReading
+            }
 
-              updateJeunesChat(newJeuneChat)
-              return newJeuneChat
-            })
-        )
+            updateJeunesChat(newJeuneChat)
+            return newJeuneChat
+          })
+      )
       )
 
       return chats.filter(exists)
@@ -142,28 +142,28 @@ export default function ChatBox ({ db }: ChatBoxProps) {
                 jeune.chatId && (
                   <li key={`chat-${jeune.id}`}>
                     <button onClick={() => setSelectedChat(jeune)}>
-											<span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
-												{jeune.firstName} {jeune.lastName}
+                      <span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
+                        {jeune.firstName} {jeune.lastName}
                         {!jeune.seenByConseiller && (
                           <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
 														Nouveau message
-													</span>
+                          </span>
                         )}
-											</span>
+                      </span>
                       <span className='text-sm text-bleu_gris mb-[8px]'>
-												{' '}
+                        {' '}
                         {jeune.lastMessageSentBy === 'conseiller'
                           ? 'Vous'
                           : jeune.firstName}{' '}
                         : {jeune.lastMessageContent}
-											</span>
+                      </span>
                       <span className='text-xxs-italic text-bleu_nuit self-end flex'>
-												{jeune.lastMessageContent && (
+                        {jeune.lastMessageContent && (
                           <span className='mr-[7px]'>
-														{formatDayAndHourDate(
+                            {formatDayAndHourDate(
                               jeune.lastMessageSentAt.toDate()
                             )}{' '}
-													</span>
+                          </span>
                         )}
                         {jeune.seenByConseiller ? (
                           <FbCheckIcon focusable='false' aria-hidden='true'/>
@@ -173,7 +173,7 @@ export default function ChatBox ({ db }: ChatBoxProps) {
                             aria-hidden='true'
                           />
                         )}
-											</span>
+                      </span>
                     </button>
                   </li>
                 )
