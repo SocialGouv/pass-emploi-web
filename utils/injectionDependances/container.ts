@@ -1,22 +1,25 @@
-import { ActionsService } from '../../services/actions.service'
+import { ActionsService } from 'services/actions.service'
 
-interface Dependances {
-  ActionsService: ActionsService
+export interface Dependances {
+  actionsService: ActionsService
 }
 
 export class Container {
-  get<Dependance extends Dependances[keyof Dependances]> (nom: keyof Dependances): Dependance {
-    const dependance: Dependance = this.dependances[nom] as Dependance
-    if (dependance !== undefined) return dependance
-    throw new Error(`La dépendance ${nom} n'est pas définie`)
+  private static diContainer: Container | undefined
+
+  private constructor (readonly dependances: Dependances) {
   }
 
-  private constructor (private readonly dependances: Dependances) {
+  static getDIContainer (): Container {
+    if (!Container.diContainer) {
+      Container.diContainer = Container.buildDIContainer()
+    }
+    return Container.diContainer
   }
 
-  static buildDIContainer () {
+  private static buildDIContainer () {
     return new Container({
-      ActionsService: new ActionsService()
+      actionsService: new ActionsService()
     })
   }
 }

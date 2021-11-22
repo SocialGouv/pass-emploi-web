@@ -1,4 +1,4 @@
 import { Container } from './container'
-import useDIContext, { DIContext } from './diContext'
+import useDIContext, { DIProvider } from './diContext'
 
-export { Container, DIContext, useDIContext }
+export { Container, DIProvider, useDIContext }

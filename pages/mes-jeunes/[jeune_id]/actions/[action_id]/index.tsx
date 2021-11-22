@@ -1,4 +1,5 @@
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
+import Button, { ButtonColorStyle } from 'components/Button'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
@@ -6,21 +7,18 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { formatDayDate } from 'utils/date'
-import fetchJson from 'utils/fetchJson'
-import { useDIContext } from 'utils/injectionDependances'
+import { Container, useDIContext } from 'utils/injectionDependances'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
-import Button, { ButtonColorStyle } from '../../../../../components/Button'
-import { ActionsService } from '../../../../../services/actions.service'
 
 type Props = {
   action: ActionJeune
-  jeune: Jeune
+  jeune: Jeune,
 }
 
 function PageAction ({ action, jeune }: Props) {
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const router = useRouter()
-  const actionsService: ActionsService = useDIContext().get('ActionsService')
+  const { actionsService } = useDIContext()
 
   async function updateAction (statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(action.id, statutChoisi)
@@ -39,7 +37,7 @@ function PageAction ({ action, jeune }: Props) {
           <Link href={`/mes-jeunes/${jeune.id}/actions`} passHref>
             <a
               className='mr-[24px]'
-              aria-label="Retour sur la liste d'actions du jeune"
+              aria-label='Retour sur la liste d&apos;actions du jeune'
             >
               <BackIcon role='img' focusable='false'/>
             </a>
@@ -52,7 +50,7 @@ function PageAction ({ action, jeune }: Props) {
         {
           action.creatorType === 'conseiller' && (
             <Button
-              label="Supprimer l'action"
+              label='Supprimer l&apos;action'
               onClick={() => deleteAction()}
               style={ButtonColorStyle.RED}
               className='px-[36px] py-[16px]'
@@ -105,9 +103,8 @@ function PageAction ({ action, jeune }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  const res = await fetchJson(
-    `${process.env.API_ENDPOINT}/actions/${query.action_id}`
-  )
+  const { actionsService } = Container.getDIContainer().dependances
+  const res = await actionsService.getAction(query.action_id as string)
 
   return {
     props: {

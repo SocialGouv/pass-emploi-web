@@ -1,10 +1,18 @@
-import { ActionStatus } from '../interfaces/action'
+import { Jeune } from 'interfaces'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
+import fetchJson from '../utils/fetchJson'
 
 export class ActionsService {
   private readonly apiPrefix?: string
 
   constructor () {
     this.apiPrefix = process.env.API_ENDPOINT
+  }
+
+  async getAction (idAction: string): Promise<ActionJeune & { jeune: Jeune }> {
+    return fetchJson(
+      `${process.env.API_ENDPOINT}/actions/${idAction}`
+    )
   }
 
   async updateAction (idAction: string, nouveauStatut: ActionStatus): Promise<ActionStatus> {
