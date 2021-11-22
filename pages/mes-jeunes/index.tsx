@@ -13,8 +13,8 @@ import Link from 'next/link'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type MesJeunesProps = {
-	conseillerId: string
-	conseillerJeunes: Jeune[]
+  conseillerId: string
+  conseillerJeunes: Jeune[]
 }
 
 function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
@@ -31,7 +31,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
         <Button onClick={() => setShowModal(true)}>
           <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
-					Ajouter un jeune
+          Ajouter un jeune
         </Button>
       </span>
 
@@ -40,17 +40,16 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
         <thead>
           <tr className={'grid grid-cols-table'}>
             <th scope='col' className='text-sm text-bleu text-left p-4'>
-							Nom du jeune
+              Nom du jeune
             </th>
 
             <th scope='col' className='text-sm text-bleu text-left pb-4 pt-4'>
-							Identifiant
+              Identifiant
             </th>
           </tr>
         </thead>
 
         <tbody>
-
           {jeunes?.map((jeune: Jeune) => (
             <Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
               <tr
@@ -62,7 +61,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
                 </td>
 
                 <td className='p-4'>{jeune.id}</td>
-                <span  className='p-4 col-end-6'>
+                <span className='p-4 col-end-6'>
                   <ChevronRight />
                 </span>
               </tr>
