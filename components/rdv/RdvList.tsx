@@ -1,5 +1,5 @@
-import { Rdv } from 'interfaces/rdv'
-import { formatDayDate, formatHourMinuteDateUTC } from 'utils/date'
+import {Rdv} from 'interfaces/rdv'
+import {formatDayDate, formatHourMinuteDateUTC} from 'utils/date'
 
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
