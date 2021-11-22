@@ -4,7 +4,7 @@ import Modal from 'components/Modal'
 import Button from 'components/Button'
 import { useEffect, useState } from 'react'
 import { Jeune } from 'interfaces'
-import {RdvFormData, RdvJson} from 'interfaces/json/rdv'
+import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import fetchJson from 'utils/fetchJson'
 
 type RdvModalProps = {
@@ -12,8 +12,6 @@ type RdvModalProps = {
 	onClose: any
 	onAdd: any
 }
-
-let conseiller_id = 1
 
 const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 	const [jeunes, setJeunes] = useState<Jeune[]>([])
@@ -24,12 +22,19 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 	const [modalite, selectModalite] = useState('')
 	const [date, selectDate] = useState('')
 	const [notes, selectNotes] = useState('')
+	const [conseillerId, setConseillerId] = useState<number | undefined>(
+		undefined
+	)
 
 	useEffect(() => {
 		async function fetchJeunes(): Promise<Jeune[]> {
 			const { id } = await fetchJson('/api/user')
-			const data = await fetchJson(`${process.env.API_ENDPOINT}/conseillers/${id}/login`)
 
+			const data = await fetchJson(
+				`${process.env.API_ENDPOINT}/conseillers/${id}/login`
+			)
+
+			setConseillerId(id)
 			return data?.jeunes || []
 		}
 
@@ -73,8 +78,12 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 			comment: notes,
 		}
 
+		if (!conseillerId) {
+			throw new Error(`AddRdvModal: L'Id du conseiller est manquant`)
+		}
+
 		fetch(
-			`${process.env.API_ENDPOINT}/conseillers/${conseiller_id}/rendezvous`,
+			`${process.env.API_ENDPOINT}/conseillers/${conseillerId}/rendezvous`,
 			{
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
