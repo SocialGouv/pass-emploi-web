@@ -1,6 +1,6 @@
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
-import fetchJson from '../utils/fetchJson'
+import fetchJson from 'utils/fetchJson'
 
 export class ActionsService {
   private readonly apiPrefix?: string
@@ -11,12 +11,12 @@ export class ActionsService {
 
   async getAction (idAction: string): Promise<ActionJeune & { jeune: Jeune }> {
     return fetchJson(
-      `${process.env.API_ENDPOINT}/actions/${idAction}`
+      `${this.apiPrefix}/actions/${idAction}`
     )
   }
 
   async updateAction (idAction: string, nouveauStatut: ActionStatus): Promise<ActionStatus> {
-    await fetch(`${process.env.API_ENDPOINT}/actions/${idAction}`, {
+    await fetch(`${this.apiPrefix}/actions/${idAction}`, {
       method: 'PUT',
       headers: {
         'content-type': 'application/json'
@@ -27,7 +27,7 @@ export class ActionsService {
   }
 
   deleteAction (idAction: string): Promise<Response> {
-    return fetch(`${process.env.API_ENDPOINT}/actions/${idAction}`, {
+    return fetch(`${this.apiPrefix}/actions/${idAction}`, {
       method: 'DELETE'
     })
   }

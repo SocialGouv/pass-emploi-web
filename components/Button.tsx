@@ -42,12 +42,12 @@ const Button = ({
 	)
 }
 
-function getColorStyleClassName (style: ButtonColorStyle | undefined): string {
+const getColorStyleClassName = (style: ButtonColorStyle | undefined): string => {
 	switch (style) {
 		case ButtonColorStyle.WHITE:
 			return styles.buttonWhite
 		case ButtonColorStyle.RED:
-			return  styles.buttonRed
+			return styles.buttonRed
 		case ButtonColorStyle.BLUE:
 		default:
 			return styles.buttonBlue

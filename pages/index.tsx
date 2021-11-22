@@ -35,22 +35,22 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
 
   return (
     <>
-      <span className="flex flex-wrap justify-between mb-[20px]">
-        <h1 className="h2-semi text-bleu_nuit">Rendez-vous</h1>
+      <span className='flex flex-wrap justify-between mb-[20px]'>
+        <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
         <Button
           onClick={() => setShowAddModal(true)}
-          label="Fixer un rendez-vous"
+          label='Fixer un rendez-vous'
         >
-          <AddIcon focusable="false" aria-hidden="true"/>
+          <AddIcon focusable='false' aria-hidden='true'/>
           Fixer un rendez-vous
         </Button>
       </span>
 
-      <div role="tablist" className="flex mb-[40px]">
+      <div role='tablist' className='flex mb-[40px]'>
         <Button
-          role="tab"
-          type="button"
-          className="mr-[8px]"
+          role='tab'
+          type='button'
+          className='mr-[8px]'
           style={displayOldRdv ? ButtonColorStyle.WHITE : ButtonColorStyle.BLUE}
           onClick={() => {
             setDisplayOldRdv(!displayOldRdv)
@@ -60,8 +60,8 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
         </Button>
 
         <Button
-          role="tab"
-          type="button"
+          role='tab'
+          type='button'
           style={displayOldRdv ? ButtonColorStyle.BLUE : ButtonColorStyle.WHITE}
           onClick={() => {
             setDisplayOldRdv(!displayOldRdv)
