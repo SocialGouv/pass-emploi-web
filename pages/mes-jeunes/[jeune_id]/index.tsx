@@ -7,6 +7,7 @@ import {GetServerSideProps} from 'next'
 import fetchJson from 'utils/fetchJson'
 import {RdvJeune} from 'interfaces/rdv'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import {RdvJeune} from 'interfaces/rdv'
 
 interface FicheJeuneProps {
   jeune: Jeune,
