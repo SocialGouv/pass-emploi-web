@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import CloseIcon from '../assets/icons/close_modal.svg'
+import CloseIcon from '../assets/icons/close.svg'
 
 type EchecMessageProps = {
   shouldDisplay: boolean
@@ -16,8 +16,8 @@ const EchecMessage = ({ shouldDisplay, label }: EchecMessageProps) => {
   return (
     <>
       {displayEchecMessage && (
-        <div className='flex justify-between items-center bg-bleu_blanc mb-2'>
-          <p className='text-sm-semi ml-4'>{label}</p>
+        <div className='p-4 flex justify-between items-center bg-rouge_france_5 mb-2 border-t-2 border-rouge_france'>
+          <p className='text-sm-semi text-rouge_france ml-4'>{label}</p>
 
           <button aria-label="J'ai compris" onClick={handleCloseMessage}>
             <CloseIcon focusable='false' aria-hidden='true' />
