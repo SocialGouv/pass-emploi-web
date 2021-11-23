@@ -9,7 +9,7 @@ import {RdvJeune} from 'interfaces/rdv'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 
 interface FicheJeuneProps {
-    jeune: Jeune,
+  jeune: Jeune,
     rdvs: RdvJeune[]
 }
 
@@ -39,23 +39,23 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
         }
     }
 
-    return (
-        <div className={'flex flex-col'}>
-            <div className={'flex items-center mb-8'}>
-                <Link href='/mes-jeunes' passHref>
-                    <a className='mr-6'>
-                        <BackIcon
-                            role='img'
-                            focusable='false'
-                            aria-label='Retour sur la liste de tous les jeunes'
-                        />
 
-                    </a>
-                </Link>
-                <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
-
-            </div>
-            <DetailsJeune jeune={jeune} rdv={rdvsAVenir} onDelete={(rdv: RdvJeune
+  return (
+    <div className={'flex flex-col'}>
+      <div className={'flex items-center mb-8'}>
+        <Link href='/mes-jeunes' passHref>
+          <a className='mr-6'>
+            <BackIcon
+              role='img'
+              focusable='false'
+              aria-label='Retour sur la liste de tous les jeunes'
+            />
+          </a>
+        </Link>
+        <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+      </div>
+      <DetailsJeune
+        jeune={jeune} rdv={rdvsAVenir} onDelete={(rdv: RdvJeune
             ) => {
                 setShowDeleteModal(true)
                 setSelectedRdv(rdv)
@@ -69,18 +69,17 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
                     rdv={selectedRdv}
                 />
             )}
-        /></div>
+        </div>
 
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({query}) => {
-    const [resInfoJeune, resRdvJeune] = await Promise.all([
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const [resInfoJeune, resRdvJeune] = await Promise.all([
         fetchJson(
             `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`
-        ),
-        fetchJson(
-            `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/rendezvous`
+        ),fetchJson(
+    `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/rendezvous`
         ),
   ])
 
