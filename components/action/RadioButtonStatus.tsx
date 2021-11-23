@@ -14,7 +14,9 @@ export const RadioButtonStatus = ({
   const onClickSpan = (e: MouseEvent) => {
     e.preventDefault()
     onChange()
-  }return (
+  }
+
+  return (
     <span
       className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] hover:cursor-pointer ${
         isSelected

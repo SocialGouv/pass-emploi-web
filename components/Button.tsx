@@ -32,7 +32,7 @@ const Button = ({
       onClick={onClick}
       className={`${className ? className : ''} text-sm ${
         styles.button
-        } ${getColorStyleClassName(style)}  `}
+      } ${getColorStyleClassName(style)}`}
       role={role || undefined}
       type={type || undefined}
       aria-label={label || undefined}
