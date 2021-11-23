@@ -73,7 +73,7 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
       />
 
       <SuccessMessage
-        deleteSuccess={deleteSuccess}
+        isSuccess={deleteSuccess}
         redirectionUrl={`/mes-jeunes/${jeune.id}/actions`}
         label={"L'action a bien été supprimée"}
       />

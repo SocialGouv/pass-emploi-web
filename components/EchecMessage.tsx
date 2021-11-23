@@ -2,21 +2,20 @@ import { useState } from 'react'
 import CloseIcon from '../assets/icons/close_modal.svg'
 
 type EchecMessageProps = {
-  deleteEchec: boolean
+  isEchec: boolean
   label: string
 }
 
-const EchecMessage = ({ deleteEchec, label }: EchecMessageProps) => {
-  const [displayDeleteEchecMessage, setDisplayDeleteEchecMessage] =
-    useState(deleteEchec)
+const EchecMessage = ({ isEchec, label }: EchecMessageProps) => {
+  const [displayEchecMessage, setDisplayEchecMessage] = useState(isEchec)
 
   const handleCloseMessage = () => {
-    setDisplayDeleteEchecMessage(false)
+    setDisplayEchecMessage(false)
   }
 
   return (
     <>
-      {displayDeleteEchecMessage && (
+      {displayEchecMessage && (
         <div className='flex justify-between items-center bg-bleu_blanc mb-2'>
           <p className='text-sm-semi ml-4'>{label}</p>
 

@@ -82,7 +82,7 @@ function PageAction({ action, jeune }: Props) {
       </div>
 
       <EchecMessage
-        deleteEchec={deleteEchec}
+        isEchec={deleteEchec}
         label={
           "Une erreur a été produite lors de la suppression de l'action, veuillez essayer ultérieurement"
         }

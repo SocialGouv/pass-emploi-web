@@ -3,22 +3,21 @@ import { useState } from 'react'
 import CloseIcon from '../assets/icons/close_modal.svg'
 
 type SuccessMessageProps = {
-  deleteSuccess: boolean
+  isSuccess: boolean
   redirectionUrl: string
   label: string
 }
 
 const SuccessMessage = ({
-  deleteSuccess,
+  isSuccess,
   redirectionUrl,
   label,
 }: SuccessMessageProps) => {
   const router = useRouter()
-  const [displayDeleteSuccessMessage, setDisplayDeleteSuccessMessage] =
-    useState(deleteSuccess)
+  const [displaySuccessMessage, setDisplaySuccessMessage] = useState(isSuccess)
 
   const handleCloseMessage = () => {
-    setDisplayDeleteSuccessMessage(false)
+    setDisplaySuccessMessage(false)
     router.push(
       {
         pathname: redirectionUrl,
@@ -30,7 +29,7 @@ const SuccessMessage = ({
 
   return (
     <>
-      {displayDeleteSuccessMessage && (
+      {displaySuccessMessage && (
         <div className='flex justify-between items-center bg-bleu_blanc mb-2'>
           <p className='text-sm-semi ml-4'>{label}</p>
           <button aria-label="J'ai compris" onClick={handleCloseMessage}>
