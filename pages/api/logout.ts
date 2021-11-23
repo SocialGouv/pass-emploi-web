@@ -1,4 +1,3 @@
-
 import withSession from 'utils/session'
 
 export default withSession(async (req, res) => {

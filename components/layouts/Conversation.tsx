@@ -3,20 +3,34 @@ import {
   collection,
   CollectionReference,
   doc,
-  DocumentReference, DocumentSnapshot,
+  DocumentReference,
+  DocumentSnapshot,
   Firestore,
   increment,
   onSnapshot,
   orderBy,
   query,
   QuerySnapshot,
-  serverTimestamp, Timestamp,
-  updateDoc
+  serverTimestamp,
+  Timestamp,
+  updateDoc,
 } from 'firebase/firestore'
-import { Conseiller, DailyMessages, Jeune, JeuneChat, ListDailyMessages, Message } from 'interfaces'
+import {
+  Conseiller,
+  DailyMessages,
+  Jeune,
+  JeuneChat,
+  ListDailyMessages,
+  Message,
+} from 'interfaces'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
-import { dateIsToday, formatDayDate, formatHourMinuteDate, isDateOlder } from 'utils/date'
+import {
+  dateIsToday,
+  formatDayDate,
+  formatHourMinuteDate,
+  isDateOlder,
+} from 'utils/date'
 import fetchJson from 'utils/fetchJson'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
@@ -24,7 +38,7 @@ import SendIcon from '../../assets/icons/send.svg'
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
 const todayOrDate = (date: Date) =>
-  dateIsToday(date) ? 'Aujourd\'hui' : `Le ${formatDayDate(date)}`
+  dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 type ConversationProps = {
   db: Firestore
@@ -34,7 +48,7 @@ type ConversationProps = {
 
 let conseillerId = '0'
 
-export default function Conversation ({ db, jeune, onBack }: ConversationProps) {
+export default function Conversation({ db, jeune, onBack }: ConversationProps) {
   const [newMessage, setNewMessage] = useState('')
   const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
@@ -44,7 +58,7 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
   const setReadByConseiller = useCallback(() => {
     updateDoc<JeuneChat>(getChatReference(db, jeune), {
       seenByConseiller: true,
-      lastConseillerReading: serverTimestamp()
+      lastConseillerReading: serverTimestamp(),
     })
   }, [db, jeune.chatId])
 
@@ -57,7 +71,7 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
     addDoc(collection(chatRef, 'messages'), {
       content: newMessage,
       creationDate: firestoreNow,
-      sentBy: 'conseiller'
+      sentBy: 'conseiller',
     })
 
     updateDoc(chatRef, {
@@ -65,7 +79,7 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
       newConseillerMessageCount: increment(1),
       lastMessageContent: newMessage,
       lastMessageSentAt: firestoreNow,
-      lastMessageSentBy: 'conseiller'
+      lastMessageSentBy: 'conseiller',
     })
 
     setReadByConseiller()
@@ -76,7 +90,7 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
     fetch(
       `${process.env.API_ENDPOINT}/conseillers/${jeune}/jeunes/${jeune.id}/notify-message`,
       {
-        method: 'POST'
+        method: 'POST',
       }
     ).catch(function (error) {
       console.error('Conversation: Error while fetching /notify-message', error)
@@ -92,12 +106,13 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
   // automatically check db for new messages
   useEffect(() => {
     const messagesChatRef = collection(getChatReference(db, jeune), 'messages')
-    const messagesUpdatedEvent = onSnapshot(query(messagesChatRef, orderBy('creationDate')),
+    const messagesUpdatedEvent = onSnapshot(
+      query(messagesChatRef, orderBy('creationDate')),
       (querySnapshot: QuerySnapshot) => {
         // get all documents from collection with id
         const currentMessages = querySnapshot.docs.map((doc: any) => ({
           ...doc.data(),
-          id: doc.id
+          id: doc.id,
         }))
 
         if (
@@ -108,7 +123,8 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
         }
 
         setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
-      })
+      }
+    )
 
     setReadByConseiller()
 
@@ -119,20 +135,24 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
   }, [db, jeune.chatId, setReadByConseiller])
 
   useEffect(() => {
-    async function updateReadingDate () {
-      onSnapshot(getChatReference(db, jeune), (docSnapshot: DocumentSnapshot<JeuneChat>) => {
-        const lastJeuneReadingDate: Timestamp | undefined = docSnapshot.data()?.lastJeuneReading
-        if (lastJeuneReadingDate) {
-          setLastSeenByJeune(lastJeuneReadingDate?.toDate())
+    async function updateReadingDate() {
+      onSnapshot(
+        getChatReference(db, jeune),
+        (docSnapshot: DocumentSnapshot<JeuneChat>) => {
+          const lastJeuneReadingDate: Timestamp | undefined =
+            docSnapshot.data()?.lastJeuneReading
+          if (lastJeuneReadingDate) {
+            setLastSeenByJeune(lastJeuneReadingDate?.toDate())
+          }
         }
-      })
+      )
     }
 
     updateReadingDate()
   }, [db, jeune.chatId])
 
   useEffect(() => {
-    async function fetchConseiller (): Promise<Conseiller> {
+    async function fetchConseiller(): Promise<Conseiller> {
       return await fetchJson('/api/user')
     }
 
@@ -146,12 +166,12 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
       <div className={styles.conversationTitleContainer}>
         <button onClick={onBack}>
           <ChevronLeftIcon
-            role="img"
-            focusable="false"
-            aria-label="Retour sur ma messagerie"
+            role='img'
+            focusable='false'
+            aria-label='Retour sur ma messagerie'
           />
         </button>
-        <h2 className="h2-semi">Discuter avec {jeune.firstName}</h2>
+        <h2 className='h2-semi'>Discuter avec {jeune.firstName}</h2>
       </div>
 
       <ul className={styles.messages}>
@@ -185,20 +205,20 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
                         {formatHourMinuteDate(message.creationDate.toDate())}
                         {message.sentBy === 'conseiller' && (
                           <span>
-														{isDateOlder(
+                            {isDateOlder(
                               message.creationDate.toDate(),
                               lastSeenByJeune
                             )
                               ? ' · Lu'
                               : ' · Envoyé'}
-													</span>
+                          </span>
                         )}
                       </p>
 
                       {dailyIndex === dailyMessages.length - 1 &&
-                      index === dailyMessage.messages.length - 1 && (
-                        <section aria-hidden="true" ref={dummySpace}/>
-                      )}
+                        index === dailyMessage.messages.length - 1 && (
+                          <section aria-hidden='true' ref={dummySpace} />
+                        )}
                     </li>
                   )
                 )}
@@ -210,27 +230,31 @@ export default function Conversation ({ db, jeune, onBack }: ConversationProps) 
 
       <form onSubmit={sendNouveauMessage} className={styles.form}>
         <input
-          type="text"
+          type='text'
           value={newMessage}
-          className="text-md text-bleu_nuit"
+          className='text-md text-bleu_nuit'
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Écrivez votre message ici..."
+          placeholder='Écrivez votre message ici...'
         />
 
         <button
-          type="submit"
+          type='submit'
           disabled={!newMessage}
-          className="bg-bleu_nuit w-[48px] p-[17px] rounded rounded-x_large"
+          className='bg-bleu_nuit w-[48px] p-[17px] rounded rounded-x_large'
         >
-          <SendIcon aria-hidden="true" focusable="false"/>
+          <SendIcon aria-hidden='true' focusable='false' />
         </button>
       </form>
     </div>
   )
 }
 
-function getChatReference (db: Firestore, jeune: Jeune): DocumentReference<JeuneChat> {
+function getChatReference(
+  db: Firestore,
+  jeune: Jeune
+): DocumentReference<JeuneChat> {
   return doc<JeuneChat>(
-    collection(db, collectionName) as CollectionReference<JeuneChat>, jeune.chatId
+    collection(db, collectionName) as CollectionReference<JeuneChat>,
+    jeune.chatId
   )
 }

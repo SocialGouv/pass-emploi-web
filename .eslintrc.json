@@ -1,8 +1,6 @@
 {
-  "extends": "next/core-web-vitals",
-  "rules": {
-    "indent": "off",
-    "semi": [2, "never"],
-    "quotes": [2, "single", { "avoidEscape": true }]
-  }
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:prettier/recommended"
+  ]
 }

@@ -1,5 +1,13 @@
 import Conversation from 'components/layouts/Conversation'
-import { collection, CollectionReference, Firestore, getDocs, query, Timestamp, where } from 'firebase/firestore'
+import {
+  collection,
+  CollectionReference,
+  Firestore,
+  getDocs,
+  query,
+  Timestamp,
+  where,
+} from 'firebase/firestore'
 import { Jeune, JeuneChat } from 'interfaces'
 import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
@@ -19,7 +27,7 @@ const defaultChat: JeuneChat = {
   lastMessageSentBy: 'conseiller',
   lastMessageSentAt: new Timestamp(1562524200, 0),
   lastConseillerReading: new Timestamp(1562524200, 0),
-  lastJeuneReading: new Timestamp(1562524200, 0)
+  lastJeuneReading: new Timestamp(1562524200, 0),
 }
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
@@ -30,7 +38,7 @@ type ChatBoxProps = {
   db: Firestore
 }
 
-export default function ChatBox ({ db }: ChatBoxProps) {
+export default function ChatBox({ db }: ChatBoxProps) {
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
   const [selectedChat, setSelectedChat] = useState<JeuneChat>(defaultChat)
@@ -38,7 +46,7 @@ export default function ChatBox ({ db }: ChatBoxProps) {
   const isInChatRoom = () => Boolean(selectedChat === defaultChat)
 
   useEffect(() => {
-    async function fetchJeunes (): Promise<Jeune[]> {
+    async function fetchJeunes(): Promise<Jeune[]> {
       const { id } = await fetchJson('/api/user')
       const data = await fetchJson(
         `${process.env.API_ENDPOINT}/conseillers/${id}/login`
@@ -54,31 +62,39 @@ export default function ChatBox ({ db }: ChatBoxProps) {
   }, [])
 
   useEffect(() => {
-    async function fetchFirebaseData (): Promise<JeuneChat[]> {
-      const chats: Array<JeuneChat | undefined> = await Promise.all(jeunes.map((jeune: Jeune) =>
-          getDocs(query<JeuneChat>(
-            collection(db, collectionName) as CollectionReference<JeuneChat>,
-            where('jeuneId', '==', jeune.id)))
-            .then((querySnapshot) => {
-              if (querySnapshot.empty) return
+    async function fetchFirebaseData(): Promise<JeuneChat[]> {
+      const chats: Array<JeuneChat | undefined> = await Promise.all(
+        jeunes.map((jeune: Jeune) =>
+          getDocs(
+            query<JeuneChat>(
+              collection(db, collectionName) as CollectionReference<JeuneChat>,
+              where('jeuneId', '==', jeune.id)
+            )
+          ).then((querySnapshot) => {
+            if (querySnapshot.empty) return
 
-              const doc = querySnapshot.docs[0]
-              const data = doc.data()
-              const newJeuneChat: JeuneChat = {
-                ...jeune,
-                chatId: doc.id,
-                seenByConseiller: data.seenByConseiller ?? true,
-                newConseillerMessageCount: data.newConseillerMessageCount,
-                lastMessageContent: data.lastMessageContent || defaultChat.lastMessageContent,
-                lastMessageSentAt: data.lastMessageSentAt || defaultChat.lastMessageSentAt,
-                lastMessageSentBy: data.lastMessageSentBy || defaultChat.lastMessageSentBy,
-                lastConseillerReading: data.lastConseillerReading || defaultChat.lastConseillerReading,
-                lastJeuneReading: data.lastJeuneReading || defaultChat.lastJeuneReading
-              }
+            const doc = querySnapshot.docs[0]
+            const data = doc.data()
+            const newJeuneChat: JeuneChat = {
+              ...jeune,
+              chatId: doc.id,
+              seenByConseiller: data.seenByConseiller ?? true,
+              newConseillerMessageCount: data.newConseillerMessageCount,
+              lastMessageContent:
+                data.lastMessageContent || defaultChat.lastMessageContent,
+              lastMessageSentAt:
+                data.lastMessageSentAt || defaultChat.lastMessageSentAt,
+              lastMessageSentBy:
+                data.lastMessageSentBy || defaultChat.lastMessageSentBy,
+              lastConseillerReading:
+                data.lastConseillerReading || defaultChat.lastConseillerReading,
+              lastJeuneReading:
+                data.lastJeuneReading || defaultChat.lastJeuneReading,
+            }
 
-              updateJeunesChat(newJeuneChat)
-              return newJeuneChat
-            })
+            updateJeunesChat(newJeuneChat)
+            return newJeuneChat
+          })
         )
       )
 
@@ -88,7 +104,7 @@ export default function ChatBox ({ db }: ChatBoxProps) {
     fetchFirebaseData()
   }, [db, jeunes])
 
-  function updateJeunesChat (newJeuneChat: JeuneChat) {
+  function updateJeunesChat(newJeuneChat: JeuneChat) {
     const idxOfJeune = currentJeunesChat.findIndex(
       (j) => j.chatId === newJeuneChat.chatId
     )
@@ -102,7 +118,7 @@ export default function ChatBox ({ db }: ChatBoxProps) {
     setJeunesChats([...currentJeunesChat])
   }
 
-  function exists (chat: JeuneChat | undefined): chat is JeuneChat {
+  function exists(chat: JeuneChat | undefined): chat is JeuneChat {
     return chat !== undefined
   }
 
@@ -142,38 +158,38 @@ export default function ChatBox ({ db }: ChatBoxProps) {
                 jeune.chatId && (
                   <li key={`chat-${jeune.id}`}>
                     <button onClick={() => setSelectedChat(jeune)}>
-											<span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
-												{jeune.firstName} {jeune.lastName}
+                      <span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
+                        {jeune.firstName} {jeune.lastName}
                         {!jeune.seenByConseiller && (
                           <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
-														Nouveau message
-													</span>
+                            Nouveau message
+                          </span>
                         )}
-											</span>
+                      </span>
                       <span className='text-sm text-bleu_gris mb-[8px]'>
-												{' '}
+                        {' '}
                         {jeune.lastMessageSentBy === 'conseiller'
                           ? 'Vous'
                           : jeune.firstName}{' '}
                         : {jeune.lastMessageContent}
-											</span>
+                      </span>
                       <span className='text-xxs-italic text-bleu_nuit self-end flex'>
-												{jeune.lastMessageContent && (
+                        {jeune.lastMessageContent && (
                           <span className='mr-[7px]'>
-														{formatDayAndHourDate(
+                            {formatDayAndHourDate(
                               jeune.lastMessageSentAt.toDate()
                             )}{' '}
-													</span>
+                          </span>
                         )}
                         {jeune.seenByConseiller ? (
-                          <FbCheckIcon focusable='false' aria-hidden='true'/>
+                          <FbCheckIcon focusable='false' aria-hidden='true' />
                         ) : (
                           <FbCheckFillIcon
                             focusable='false'
                             aria-hidden='true'
                           />
                         )}
-											</span>
+                      </span>
                     </button>
                   </li>
                 )
