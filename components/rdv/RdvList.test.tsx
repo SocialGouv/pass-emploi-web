@@ -27,6 +27,6 @@ describe('<RdvList>', () => {
   })
 
   it('ne devrait pas afficher un tableau de rdvs quand rdvs est vide', () => {
-    expect(() => screen.getByRole('presentation')).toThrow()
+    expect(() => screen.getByRole('table')).toThrow()
   })
 })

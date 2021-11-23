@@ -72,13 +72,11 @@ describe('Accueil - Boutons', () => {
 
     await fireEvent.click(oldRdvsButton)
 
-    const table = screen.getByRole('presentation')
+    const table = screen.getByRole('table')
 
     const rows = screen.getAllByRole('row')
-    const cells = screen.getAllByRole('cell')
 
     expect(table).toBeInTheDocument()
-    expect(rows.length).toBe(oldRdvs.length)
-    expect(cells.length).toBe(4 * oldRdvs.length)
+    expect(rows.length - 1).toBe(oldRdvs.length)
   })
 })
