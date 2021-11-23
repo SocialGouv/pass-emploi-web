@@ -7,6 +7,7 @@ import { GetServerSideProps } from 'next'
 import fetchJson from 'utils/fetchJson'
 import { RdvJeune } from 'interfaces/rdv'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import RdvListJeune from '../../../components/jeune/RdvListJeune'
 
 interface FicheJeuneProps {
   jeune: Jeune
@@ -53,12 +54,11 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
         </Link>
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
-      <DetailsJeune
-        jeune={jeune}
-        rdv={rdvsAVenir}
+      <DetailsJeune jeune={jeune} rdv={rdvsAVenir} />
+      <RdvListJeune
+        rdvs={rdvsAVenir}
         onDelete={(rdv: RdvJeune) => {
-          setShowDeleteModal(true)
-          setSelectedRdv(rdv)
+          setShowDeleteModal(true), setSelectedRdv(rdv)
         }}
       />
 

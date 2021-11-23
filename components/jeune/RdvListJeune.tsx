@@ -8,12 +8,14 @@ import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type RdvListProps = {
   rdvs: RdvJeune[]
-  onDelete?: any
+  onDelete?: (rdv: RdvJeune) => void
 }
 
 const RdvListJeune = ({ rdvs, onDelete }: RdvListProps) => {
   const handleDeleteClick = (rdv: RdvJeune) => {
-    onDelete(rdv)
+    if (onDelete) {
+      onDelete(rdv)
+    }
   }
 
   const dayHourCells = (rdvDate: Date, duration: string) => {

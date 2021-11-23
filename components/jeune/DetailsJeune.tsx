@@ -1,15 +1,13 @@
 import React from 'react'
 import { Jeune } from 'interfaces'
 import { RdvJeune } from 'interfaces/rdv'
-import RdvListJeune from './RdvListJeune'
 
 interface DetailsJeuneProps {
   jeune: Jeune
   rdv: RdvJeune[]
-  onDelete?: () => void
 }
 
-export const DetailsJeune = ({ jeune, rdv, onDelete }: DetailsJeuneProps) => {
+export const DetailsJeune = ({ jeune, rdv }: DetailsJeuneProps) => {
   return (
     <>
       <h1 className='h2-semi text-bleu_nuit pb-6'>
@@ -23,7 +21,6 @@ export const DetailsJeune = ({ jeune, rdv, onDelete }: DetailsJeuneProps) => {
         <h2 className='h4-semi text-bleu_nuit mb-4'>
           Rendez-vous ({rdv?.length})
         </h2>
-        {rdv && <RdvListJeune rdvs={rdv} onDelete={onDelete} />}
       </div>
     </>
   )

@@ -11,76 +11,74 @@ import { rdvs } from '../dummies/rdvs'
 const oldRdvs = rdvs.slice(2)
 
 describe('Home with rdvs', () => {
-	beforeEach(() => {
-		render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
-	})
+  beforeEach(() => {
+    render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
+  })
 
-	it('devrait avoir un titre de niveau 1', () => {
-		const heading = screen.getByRole('heading', {
-			level: 1,
-			name: 'Rendez-vous',
-		})
+  it('devrait avoir un titre de niveau 1', () => {
+    const heading = screen.getByRole('heading', {
+      level: 1,
+      name: 'Rendez-vous',
+    })
 
-		expect(heading).toBeInTheDocument()
-	})
+    expect(heading).toBeInTheDocument()
+  })
 
-	it('devrait avoir un bouton fixer un rendez-vous', () => {
-		const button = screen.getByRole('button', {
-			name: 'Fixer un rendez-vous',
-		})
+  it('devrait avoir un bouton fixer un rendez-vous', () => {
+    const button = screen.getByRole('button', {
+      name: 'Fixer un rendez-vous',
+    })
 
-		expect(button).toBeInTheDocument()
-	})
+    expect(button).toBeInTheDocument()
+  })
 })
 
 describe('Accueil sans rendez-vous', () => {
+  beforeEach(() => {
+    render(<Home rdvs={rdvs} oldRdvs={rdvs} />)
+  })
 
-	beforeEach(() => {
-		render(<Home rdvs={rdvs} oldRdvs={rdvs} />)
-	})
+  it('devrait avoir un bouton Fixer un rendez-vous', () => {
+    const button = screen.getByRole('button', {
+      name: 'Fixer un rendez-vous',
+    })
 
-	it('devrait avoir un bouton Fixer un rendez-vous', () => {
-		const button = screen.getByRole('button', {
-			name: 'Fixer un rendez-vous',
-		})
-
-		expect(button).toBeInTheDocument()
-	})
+    expect(button).toBeInTheDocument()
+  })
 })
 
 describe('Accueil - Boutons', () => {
+  beforeEach(() => {
+    render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
+  })
 
-	beforeEach(() => {
-		render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
-	})
+  it('devrait avoir deux boutons', () => {
+    const rdvsButton = screen.getByRole('tab', {
+      name: 'Prochains rendez-vous',
+    })
 
-	it('devrait avoir deux boutons', () => {
-		const rdvsButton = screen.getByRole('tab', {
-			name: 'Prochains rendez-vous',
-		})
+    const oldRdvsButton = screen.getByRole('tab', {
+      name: 'Rendez-vous passés',
+    })
 
-		const oldRdvsButton = screen.getByRole('tab', {
-			name: 'Rendez-vous passés',
-		})
+    expect(rdvsButton).toBeInTheDocument()
+    expect(oldRdvsButton).toBeInTheDocument()
+  })
 
-		expect(rdvsButton).toBeInTheDocument()
-		expect(oldRdvsButton).toBeInTheDocument()
-	})
+  it('devrait afficher les anciens rdvs quand on clique sur le bouton rendez-vous passés', async () => {
+    const oldRdvsButton = screen.getByRole('tab', {
+      name: 'Rendez-vous passés',
+    })
 
-	it('devrait afficher les anciens rdvs quand on clique sur le bouton rendez-vous passés', async () => {
-		const oldRdvsButton = screen.getByRole('tab', {
-			name: 'Rendez-vous passés',
-		})
+    await fireEvent.click(oldRdvsButton)
 
-		await fireEvent.click(oldRdvsButton)
+    const table = screen.getByRole('presentation')
 
-		const table = screen.getByRole('presentation')
+    const rows = screen.getAllByRole('row')
+    const cells = screen.getAllByRole('cell')
 
-		const rows = screen.getAllByRole('row')
-		const cells = screen.getAllByRole('cell')
-
-		expect(table).toBeInTheDocument()
-		expect(rows.length).toBe(oldRdvs.length)
-		expect(cells.length).toBe(4 * oldRdvs.length)
-	})
+    expect(table).toBeInTheDocument()
+    expect(rows.length).toBe(oldRdvs.length)
+    expect(cells.length).toBe(4 * oldRdvs.length)
+  })
 })
