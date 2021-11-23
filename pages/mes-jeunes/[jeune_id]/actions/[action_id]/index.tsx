@@ -31,8 +31,17 @@ function PageAction({ action, jeune }: Props) {
 
   async function deleteAction(): Promise<void> {
     setDeleteDeactive(true)
-    await actionsService.deleteAction(action.id)
-    router.push(`/mes-jeunes/${jeune.id}/actions`)
+    actionsService
+      .deleteAction(action.id)
+      .then(() => {
+        router.push({
+          pathname: `/mes-jeunes/${jeune.id}/actions`,
+          query: { deleteSuccess: true },
+        })
+      })
+      .catch(() => {
+        console.log('Error dddd')
+      })
   }
 
   return (
