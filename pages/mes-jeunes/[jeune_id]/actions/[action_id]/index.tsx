@@ -21,7 +21,7 @@ function PageAction({ action, jeune }: Props) {
   const router = useRouter()
   const { actionsService } = useDIContext()
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
-  const [deleteEchec, setDeleteEchec] = useState<boolean>(false)
+  const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
@@ -42,7 +42,7 @@ function PageAction({ action, jeune }: Props) {
         })
       })
       .catch((error: Error) => {
-        setDeleteEchec(true)
+        setShowEchecMessage(true)
         console.log('Erreur lors de la suppression de l action', error)
       })
       .finally(() => {
@@ -80,17 +80,17 @@ function PageAction({ action, jeune }: Props) {
         )}
       </div>
 
-      <EchecMessage
-        shouldDisplay={deleteEchec}
-        label={
-          "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
-        }
-      />
+      {showEchecMessage && (
+        <EchecMessage
+          label={
+            "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
+          }
+          onAcknowledge={() => setShowEchecMessage(false)}
+        />
+      )}
 
       <h1 className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</h1>
-
       <p className='text-sm text-bleu mb-[24px]'>{action.comment}</p>
-
       <div className='border-t-2 border-b-2 border-bleu_blanc flex justify-between items-center py-[14px]'>
         <dl className='flex py-[26px]'>
           <dt className='text-bleu text-sm mr-[25px]'>Date</dt>

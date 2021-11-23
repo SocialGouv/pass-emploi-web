@@ -32,11 +32,13 @@ const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
 
 function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
   const [showModal, setShowModal] = useState(false)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
   const [actionsEnCours] = useState(actions_en_cours)
   const jeuneId = jeune.id
   const router = useRouter()
 
-  const removeSuccessQueryParam = () => {
+  const closeSuccessMessage = () => {
+    setShowSuccessMessage(false)
     router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}/actions`,
@@ -83,11 +85,12 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
         show={showModal}
       />
 
-      <SuccessMessage
-        shouldDisplay={deleteSuccess}
-        onAcknowledge={() => removeSuccessQueryParam()}
-        label={"L'action a bien été supprimée"}
-      />
+      {showSuccessMessage && (
+        <SuccessMessage
+          onAcknowledge={() => closeSuccessMessage()}
+          label={"L'action a bien été supprimée"}
+        />
+      )}
 
       {actionsEnCours.length === 0 && (
         <p className='text-md text-bleu mb-8'>

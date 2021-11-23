@@ -1,8 +1,8 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
-import Action from './Action'
-import { ActionStatus } from '../../interfaces/action'
+import Action from 'components/action/Action'
+import { ActionStatus } from 'interfaces/action'
 import { uneAction } from 'fixtures/action'
 
 describe('<Action/>', () => {
