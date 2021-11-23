@@ -1,61 +1,43 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import {Jeune} from 'interfaces'
-import {DetailsJeune} from 'components/jeune/DetailsJeune'
-import {GetServerSideProps} from 'next'
+import { Jeune } from 'interfaces'
+import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import { GetServerSideProps } from 'next'
 import fetchJson from 'utils/fetchJson'
-import {RdvJeune} from 'interfaces/rdv'
+import { RdvJeune } from 'interfaces/rdv'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 
 interface FicheJeuneProps {
-  jeune: Jeune,
-    rdvs: RdvJeune[]
+  jeune: Jeune
+  rdvs: RdvJeune[]
 }
-
 
 const defaultRdv = {
-    id: 'string',
-    title: 'string',
-    subtitle: 'string',
-    comment: 'string',
-    date: 'string',
-    duration: 'string',
-    modality: 'string',
+  id: 'string',
+  title: 'string',
+  subtitle: 'string',
+  comment: 'string',
+  date: 'string',
+  duration: 'string',
+  modality: 'string',
 }
 
 const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
-    const [showDeleteModal, setShowDeleteModal] = useState(false)
-    const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
-    const [selectedRdv, setSelectedRdv] = useState<RdvJeune>(defaultRdv)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
+  const [selectedRdv, setSelectedRdv] = useState<RdvJeune>(defaultRdv)
 
-    function deleteRdv() {
-        return () => {
-            const index = rdvsAVenir.indexOf(selectedRdv)
-            const nouvelleListeRdvs = [
-                ...rdvsAVenir.slice(0, index),
-                ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
-            ]
-            setRdvsAVenir(nouvelleListeRdvs)
-        }
+  function deleteRdv() {
+    return () => {
+      const index = rdvsAVenir.indexOf(selectedRdv)
+      const nouvelleListeRdvs = [
+        ...rdvsAVenir.slice(0, index),
+        ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
+      ]
+      setRdvsAVenir(nouvelleListeRdvs)
     }
-
-const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
-    const [showDeleteModal, setShowDeleteModal] = useState(false)
-    const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
-    const [selectedRdv, setSelectedRdv] = useState<RdvJeune>(defaultRdv)
-
-    function deleteRdv() {
-        return () => {
-            const index = rdvsAVenir.indexOf(selectedRdv)
-            const nouvelleListeRdvs = [
-                ...rdvsAVenir.slice(0, index),
-                ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
-            ]
-            setRdvsAVenir(nouvelleListeRdvs)
-        }
-    }
-
+  }
 
   return (
     <div className={'flex flex-col'}>
@@ -72,78 +54,46 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
       <DetailsJeune
-        jeune={jeune} rdv={rdvsAVenir} onDelete={(rdv: RdvJeune
-            ) => {
-                setShowDeleteModal(true)
-                setSelectedRdv(rdv)
-            }}/>
-    return (
-        <div className={'flex flex-col'}>
-            <div className={'flex items-center mb-8'}>
-                <Link href='/mes-jeunes' passHref>
-                    <a className='mr-6'>
-                        <BackIcon
-                            role='img'
-                            focusable='false'
-                            aria-label='Retour sur la liste de tous les jeunes'
-                        />
+        jeune={jeune}
+        rdv={rdvsAVenir}
+        onDelete={(rdv: RdvJeune) => {
+          setShowDeleteModal(true)
+          setSelectedRdv(rdv)
+        }}
+      />
 
-                    </a>
-                </Link>
-                <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
-
-            </div>
-            <DetailsJeune jeune={jeune} rdv={rdvsAVenir} onDelete={(rdv: RdvJeune
-            ) => {
-                setShowDeleteModal(true)
-                setSelectedRdv(rdv)
-            }}/>
-
-            {showDeleteModal && (
-                <DeleteRdvModal
-                    onClose={() => setShowDeleteModal(false)}
-                    onDelete={deleteRdv()}
-                    show={showDeleteModal}
-                    rdv={selectedRdv}
-                />
-            )}
-        /></div>
-
-            {showDeleteModal && (
-                <DeleteRdvModal
-                    onClose={() => setShowDeleteModal(false)}
-                    onDelete={deleteRdv()}
-                    show={showDeleteModal}
-                    rdv={selectedRdv}
-                />
-            )}
-        </div>
-
-    )
+      {showDeleteModal && (
+        <DeleteRdvModal
+          onClose={() => setShowDeleteModal(false)}
+          onDelete={deleteRdv()}
+          show={showDeleteModal}
+          rdv={selectedRdv}
+        />
+      )}
+    </div>
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const [resInfoJeune, resRdvJeune] = await Promise.all([
-        fetchJson(
-            `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`
-        ),fetchJson(
-    `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/rendezvous`
-        ),
+    fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`),
+    fetchJson(
+      `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/rendezvous`
+    ),
   ])
 
-    if (!resInfoJeune || !resRdvJeune) {
-        return {
-            notFound: true,
-        }
-    }
-    const today = new Date()
+  if (!resInfoJeune || !resRdvJeune) {
     return {
-        props: {
-            jeune: resInfoJeune,
-            rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) >= today),
-
-        },
+      notFound: true,
     }
+  }
+  const today = new Date()
+  return {
+    props: {
+      jeune: resInfoJeune,
+      rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) >= today),
+    },
+  }
 }
 
 export default FicheJeune

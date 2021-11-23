@@ -14,37 +14,17 @@ describe('<DetailsJeune>', () => {
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     jeune = unJeune()
     rdv = uneListeDeRdvJeune()
-        render(<DetailsJeune jeune={jeune} rdv={rdv}/>)
-        expect(
-            screen.getByRole('heading', {
-                level: 1,
-                name: `${jeune.firstName} ${jeune.lastName}`,
-            })
-        ).toBeInTheDocument()
-        expect(screen.getByText('jeune-1')).toBeInTheDocument()
-        expect(screen.getByText('Rendez-vous (2)')).toBeInTheDocument()
-        expect(screen.getByText('21/10/2021 (10:00 - 30 min)')).toBeInTheDocument()
-        expect(screen.getByText('Par téléphone')).toBeInTheDocument()
-        expect(screen.getByText('Rendez-vous avec Rama')).toBeInTheDocument()
-    })
-    it("devrait afficher les informations de la fiche d'une jeune", () => {
-        jeune = unJeune()
-        rdv = uneListeDeRdvJeune()
-        render(
-            <DetailsJeune
-                jeune={jeune} rdv={rdv}
-            />
-        )
-        expect(
-            screen.getByRole('heading', {
-                level: 1,
-                name: `${jeune.firstName} ${jeune.lastName}`,
-            })
-        ).toBeInTheDocument()
-        expect(screen.getByText('jeune-1')).toBeInTheDocument()
-        expect(screen.getByText('Rendez-vous (2)')).toBeInTheDocument()
-        expect(screen.getByText('21/10/2021 (10:00 - 30 min)')).toBeInTheDocument()
-        expect(screen.getByText('Par téléphone')).toBeInTheDocument()
-        expect(screen.getByText('Rendez-vous avec Rama')).toBeInTheDocument()
-    })
+    render(<DetailsJeune jeune={jeune} rdv={rdv} />)
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: `${jeune.firstName} ${jeune.lastName}`,
+      })
+    ).toBeInTheDocument()
+    expect(screen.getByText('jeune-1')).toBeInTheDocument()
+    expect(screen.getByText('Rendez-vous (2)')).toBeInTheDocument()
+    expect(screen.getByText('21/10/2021 (10:00 - 30 min)')).toBeInTheDocument()
+    expect(screen.getByText('Par téléphone')).toBeInTheDocument()
+    expect(screen.getByText('Rendez-vous avec Rama')).toBeInTheDocument()
+  })
 })

@@ -11,7 +11,7 @@ import { formatDayDate } from 'utils/date'
 type RdvModalProps = {
   show: boolean
   onClose: any
-  onDelete: () => Promise<void>
+  onDelete: () => void
   rdv: Rdv | RdvJeune
 }
 

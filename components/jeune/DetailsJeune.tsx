@@ -3,11 +3,10 @@ import { Jeune } from 'interfaces'
 import { RdvJeune } from 'interfaces/rdv'
 import RdvListJeune from './RdvListJeune'
 
-interface DetailsJeuneProps  {
-	jeune: Jeune,
-	rdv: RdvJeune[]
-	onDelete?: () => Promise<void>
-
+interface DetailsJeuneProps {
+  jeune: Jeune
+  rdv: RdvJeune[]
+  onDelete?: () => void
 }
 
 export const DetailsJeune = ({ jeune, rdv, onDelete }: DetailsJeuneProps) => {
@@ -20,10 +19,12 @@ export const DetailsJeune = ({ jeune, rdv, onDelete }: DetailsJeuneProps) => {
         <dt className='mr-[1rem]'>Identifiant :</dt>
         <dd>{jeune.id}</dd>
       </dl>
-			<div className='mt-8'>
-				<h2 className='h4-semi text-bleu_nuit mb-4'>Rendez-vous ({rdv?.length})</h2>
-			{rdv && (<RdvListJeune rdvs={rdv} onDelete={onDelete}/>)}
-			</div>
+      <div className='mt-8'>
+        <h2 className='h4-semi text-bleu_nuit mb-4'>
+          Rendez-vous ({rdv?.length})
+        </h2>
+        {rdv && <RdvListJeune rdvs={rdv} onDelete={onDelete} />}
+      </div>
     </>
   )
 }
