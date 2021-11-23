@@ -1,6 +1,6 @@
 import { Rdv, RdvJeune } from 'interfaces/rdv'
 
-export const uneListeDeRdv = (overrides: Partial<Rdv[]>
+export const uneListeDeRdv = (overrides: Rdv[] = []
 ): Rdv[] => [
     {
         id: '1',
@@ -23,7 +23,7 @@ export const uneListeDeRdv = (overrides: Partial<Rdv[]>
     ...overrides,
 ] as Rdv[]
 
-export const uneListeDeRdvJeune = (overrides: Partial<RdvJeune[]>): RdvJeune[] => [
+export const uneListeDeRdvJeune = (overrides: RdvJeune[] = []): RdvJeune[] => [
     {
         id: '1',
         subtitle: '',

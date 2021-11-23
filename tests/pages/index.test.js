@@ -2,7 +2,6 @@
  * TODO:
  * - Déplacer au même niveau que le fichier
  * - Renommer en .tsx
- * - Traduire en français
  */
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
@@ -16,7 +15,7 @@ describe('Home with rdvs', () => {
 		render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
 	})
 
-	it('SHOULD have a level1 heading WHEN rendered', () => {
+	it('devrait avoir un titre de niveau 1', () => {
 		const heading = screen.getByRole('heading', {
 			level: 1,
 			name: 'Rendez-vous',
@@ -25,75 +24,37 @@ describe('Home with rdvs', () => {
 		expect(heading).toBeInTheDocument()
 	})
 
-	it('SHOULD NOT display placeholder no rdvs WHEN rdvs is not empty', () => {
-		expect(() =>
-			screen.getByText("Vous n'avez pas de rendez-vous pour le moment")
-		).toThrow()
-	})
-
-	it('SHOULD have a button add rdv WHEN rendered', () => {
+	it('devrait avoir un bouton fixer un rendez-vous', () => {
 		const button = screen.getByRole('button', {
 			name: 'Fixer un rendez-vous',
 		})
 
 		expect(button).toBeInTheDocument()
 	})
-
-	it('SHOULD have a list of rdvs WHEN rendered', () => {
-		const table = screen.getByRole('presentation')
-
-		const rows = screen.getAllByRole('row')
-		const cells = screen.getAllByRole('cell')
-
-		expect(table).toBeInTheDocument()
-		expect(rows.length).toBe(rdvs.length)
-		expect(cells.length).toBe(5 * rdvs.length)
-	})
 })
 
-describe('Home without rdvs', () => {
-	const rdvs = []
+describe('Accueil sans rendez-vous', () => {
 
 	beforeEach(() => {
 		render(<Home rdvs={rdvs} oldRdvs={rdvs} />)
 	})
 
-	it('SHOULD have a level1 heading WHEN rendered', () => {
-		const heading = screen.getByRole('heading', {
-			level: 1,
-			name: 'Rendez-vous',
-		})
-
-		expect(heading).toBeInTheDocument()
-	})
-
-	it('SHOULD display placeholder no rdvs WHEN rdvs is empty', () => {
-		const placeholder = screen.getByText(
-			/Vous n'avez pas de rendez-vous pour le moment/i
-		)
-
-		expect(placeholder).toBeInTheDocument()
-	})
-
-	it('SHOULD have a button add rdv WHEN rendered', () => {
+	it('devrait avoir un bouton Fixer un rendez-vous', () => {
 		const button = screen.getByRole('button', {
 			name: 'Fixer un rendez-vous',
 		})
 
 		expect(button).toBeInTheDocument()
 	})
-
-	it('SHOULD NOT have a list of rdvs WHEN rds is empty', () => {
-		expect(() => screen.getByRole('presentation')).toThrow()
-	})
 })
 
-describe('Home Buttons tab', () => {
+describe('Accueil - Boutons', () => {
+
 	beforeEach(() => {
 		render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
 	})
 
-	it('SHOULD have two buttons tab WHEN rendered', () => {
+	it('devrait avoir deux boutons', () => {
 		const rdvsButton = screen.getByRole('tab', {
 			name: 'Prochains rendez-vous',
 		})
@@ -106,7 +67,7 @@ describe('Home Buttons tab', () => {
 		expect(oldRdvsButton).toBeInTheDocument()
 	})
 
-	it('SHOULD display old rdvs WHEN old button clicked', async () => {
+	it('devrait afficher les anciens rdvs quand on clique sur le bouton rendez-vous passés', async () => {
 		const oldRdvsButton = screen.getByRole('tab', {
 			name: 'Rendez-vous passés',
 		})

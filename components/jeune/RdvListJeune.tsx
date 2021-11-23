@@ -4,7 +4,7 @@ import {formatDayDate, formatHourMinuteDateUTC} from 'utils/date'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
-import ChevronRight from '../../assets/icons/chevron_right.svg';
+import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type RdvListProps = {
     rdvs: RdvJeune[]
@@ -42,12 +42,12 @@ const RdvListJeune = ({rdvs, onDelete}: RdvListProps) => {
 
                     <tbody>
                     {rdvs.map((rdv: RdvJeune) => (
-                        <tr key={rdv.id} className='grid grid-cols-table_large gap-x-6 items-center text-sm text-bleu_nuit'>
-                            <td className='align-text-top'>
+                        <tr key={rdv.id} className='grid grid-cols-table_large items-baseline text-sm text-bleu_nuit'>
+                            <td className='p-4'>
                                 {dayHourCells(new Date(rdv.date), rdv.duration)}
                             </td>
 
-                            <td className={'flex'}>
+                            <td className={'flex p-4'}>
                                 <span>
                                 <LocationIcon
                                     focusable='false'
@@ -58,19 +58,18 @@ const RdvListJeune = ({rdvs, onDelete}: RdvListProps) => {
                                 {rdv.modality}
                             </td>
 
-                            <td className='align-text-top'>
+                            <td className='flex p-4'>
                                 <span>
                                     <NoteIcon
                                         focusable='false'
                                         aria-hidden='true'
                                         className='mr-[7px] inline'/>
                                 </span>
-
                                 {rdv.comment || '--'}
                             </td>
 
                             {onDelete && (
-                                <td>
+                                <td className='p-4'>
                                     <button onClick={() => handleDeleteClick(rdv)}
                                             aria-label={`Supprimer le rendez-vous du ${rdv.date}`}>
                                         <DeleteIcon aria-hidden='true' focusable='false'/>
@@ -78,8 +77,10 @@ const RdvListJeune = ({rdvs, onDelete}: RdvListProps) => {
                                 </td>
                             )}
 
-                            <td className='p-4'>
-                                <ChevronRight aria-hidden='true'/>
+                            <td className='p-5'>
+                                <span>
+                                <ChevronRight aria-hidden='true' focusable='false'/>
+                                </span>
                             </td>
                         </tr>
                     ))}

@@ -25,4 +25,8 @@ describe('<RdvList>', () => {
     expect(screen.getByText('Par téléphone')).toBeInTheDocument()
     expect(screen.getByText('Rendez-vous avec Rama')).toBeInTheDocument()
   })
+
+	it('ne devrait pas afficher un tableau de rdvs quand rdvs est vide', () => {
+		expect(() => screen.getByRole('presentation')).toThrow()
+	})
 })
