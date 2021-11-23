@@ -1,5 +1,6 @@
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import Button, { ButtonColorStyle } from 'components/Button'
+import EchecMessage from 'components/EchecMessage'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
@@ -19,7 +20,8 @@ function PageAction({ action, jeune }: Props) {
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const router = useRouter()
   const { actionsService } = useDIContext()
-  const [deleteDeactive, setDeleteDeactive] = useState<boolean>(false)
+  const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
+  const [deleteEchec, setDeleteEchec] = useState<boolean>(false)
 
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
@@ -30,17 +32,22 @@ function PageAction({ action, jeune }: Props) {
   }
 
   async function deleteAction(): Promise<void> {
-    setDeleteDeactive(true)
+    setDeleteDisabled(true)
     actionsService
       .deleteAction(action.id)
       .then(() => {
+        setDeleteEchec(false)
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,
           query: { deleteSuccess: true },
         })
       })
-      .catch(() => {
-        console.log('Error dddd')
+      .catch((error: Error) => {
+        setDeleteEchec(true)
+        console.log('Erreur lors de la suppression de l action', error)
+      })
+      .finally(() => {
+        setDeleteDisabled(false)
       })
   }
 
@@ -67,12 +74,19 @@ function PageAction({ action, jeune }: Props) {
             onClick={() => deleteAction()}
             style={ButtonColorStyle.RED}
             className='px-[36px] py-[16px]'
-            disabled={deleteDeactive}
+            disabled={deleteDisabled}
           >
             Supprimer l&apos;action
           </Button>
         )}
       </div>
+
+      <EchecMessage
+        deleteEchec={deleteEchec}
+        label={
+          "Une erreur a été produite lors de la suppression de l'action, veuillez essayer ultérieurement"
+        }
+      />
 
       <h1 className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</h1>
 
