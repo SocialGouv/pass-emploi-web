@@ -7,7 +7,7 @@ import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { ActionJeuneJson } from 'interfaces/json/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
 
@@ -34,6 +34,17 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
   const [showModal, setShowModal] = useState(false)
   const [actionsEnCours] = useState(actions_en_cours)
   const jeuneId = jeune.id
+  const router = useRouter()
+
+  const removeSuccessQueryParam = () => {
+    router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}/actions`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
 
   return (
     <>
@@ -73,8 +84,8 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
       />
 
       <SuccessMessage
-        isSuccess={deleteSuccess}
-        redirectionUrl={`/mes-jeunes/${jeune.id}/actions`}
+        shouldDisplay={deleteSuccess}
+        onAcknowledge={() => removeSuccessQueryParam()}
         label={"L'action a bien été supprimée"}
       />
 

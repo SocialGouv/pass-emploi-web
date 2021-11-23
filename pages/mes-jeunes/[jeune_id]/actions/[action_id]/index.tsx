@@ -36,7 +36,6 @@ function PageAction({ action, jeune }: Props) {
     actionsService
       .deleteAction(action.id)
       .then(() => {
-        setDeleteEchec(false)
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,
           query: { deleteSuccess: true },
@@ -82,7 +81,7 @@ function PageAction({ action, jeune }: Props) {
       </div>
 
       <EchecMessage
-        isEchec={deleteEchec}
+        shouldDisplay={deleteEchec}
         label={
           "Une erreur a été produite lors de la suppression de l'action, veuillez essayer ultérieurement"
         }

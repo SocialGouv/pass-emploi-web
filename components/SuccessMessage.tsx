@@ -1,30 +1,23 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import CloseIcon from '../assets/icons/close_modal.svg'
 
 type SuccessMessageProps = {
-  isSuccess: boolean
-  redirectionUrl: string
+  shouldDisplay: boolean
   label: string
+  onAcknowledge: () => void
 }
 
 const SuccessMessage = ({
-  isSuccess,
-  redirectionUrl,
+  shouldDisplay,
   label,
+  onAcknowledge,
 }: SuccessMessageProps) => {
-  const router = useRouter()
-  const [displaySuccessMessage, setDisplaySuccessMessage] = useState(isSuccess)
+  const [displaySuccessMessage, setDisplaySuccessMessage] =
+    useState(shouldDisplay)
 
   const handleCloseMessage = () => {
     setDisplaySuccessMessage(false)
-    router.push(
-      {
-        pathname: redirectionUrl,
-      },
-      undefined,
-      { shallow: true }
-    )
+    onAcknowledge()
   }
 
   return (

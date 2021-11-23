@@ -2,12 +2,12 @@ import { useState } from 'react'
 import CloseIcon from '../assets/icons/close_modal.svg'
 
 type EchecMessageProps = {
-  isEchec: boolean
+  shouldDisplay: boolean
   label: string
 }
 
-const EchecMessage = ({ isEchec, label }: EchecMessageProps) => {
-  const [displayEchecMessage, setDisplayEchecMessage] = useState(isEchec)
+const EchecMessage = ({ shouldDisplay, label }: EchecMessageProps) => {
+  const [displayEchecMessage, setDisplayEchecMessage] = useState(shouldDisplay)
 
   const handleCloseMessage = () => {
     setDisplayEchecMessage(false)
