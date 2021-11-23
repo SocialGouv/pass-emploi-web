@@ -88,7 +88,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
      * Route send from web to notify mobile, no need to await for response
      */
     fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${jeune}/jeunes/${jeune.id}/notify-message`,
+      `${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${jeune.id}/notify-message`,
       {
         method: 'POST',
       }
