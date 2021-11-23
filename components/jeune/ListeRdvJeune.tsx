@@ -1,20 +1,17 @@
-import { Rdv } from 'interfaces/rdv'
+import { RdvJeune } from 'interfaces/rdv'
 import { formatDayDate, formatHourMinuteDateUTC } from 'utils/date'
 
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
+import ChevronRight from '../../assets/icons/chevron_right.svg'
 
-type RdvListProps = {
-  rdvs: Rdv[]
-  onDelete?: any
+type ListeRdvJeuneProps = {
+  rdvs: RdvJeune[]
+  onDelete?: (rdv: RdvJeune) => void
 }
 
-const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
-  const handleDeleteClick = (rdv: Rdv) => {
-    onDelete(rdv)
-  }
-
+const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
   const dayHourCells = (rdvDate: Date, duration: string) => {
     return `${formatDayDate(rdvDate)} (${formatHourMinuteDateUTC(
       rdvDate
@@ -24,15 +21,12 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
   return (
     <>
       {rdvs.length === 0 ? (
-        <p className='text-md text-bleu mb-8'>
-          Vous n&apos;avez pas de rendez-vous pour le moment
-        </p>
+        <p className='text-md text-bleu mb-8'>Pas de rendez-vous planifiés</p>
       ) : (
         <table className='w-full'>
           <caption className='visually-hidden'>
             Liste de mes rendez-vous
           </caption>
-
           <thead className='visually-hidden'>
             <tr>
               <th scope='col'>Date et heure du rendez-vous</th>
@@ -43,42 +37,53 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
           </thead>
 
           <tbody>
-            {rdvs.map((rdv: Rdv) => (
-              <tr key={rdv.id} className='text-sm text-bleu_nuit'>
-                <td className='p-[16px]'>
+            {rdvs.map((rdv: RdvJeune) => (
+              <tr
+                key={rdv.id}
+                className='grid grid-cols-table_large items-baseline text-sm text-bleu_nuit'
+              >
+                <td className='p-4'>
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>
 
-                <td className='p-[16px]'>{rdv.title}</td>
-
-                <td className='p-[16px] '>
-                  <LocationIcon
-                    focusable='false'
-                    aria-hidden='true'
-                    className='mr-[7px] inline'
-                  />
+                <td className={'flex p-4'}>
+                  <span>
+                    <LocationIcon
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-[7px] inline'
+                    />
+                  </span>
                   {rdv.modality}
                 </td>
 
-                <td className='p-[16px] '>
-                  <NoteIcon
-                    focusable='false'
-                    aria-hidden='true'
-                    className='mr-[7px] inline'
-                  />
+                <td className='flex p-4'>
+                  <span>
+                    <NoteIcon
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-[7px] inline'
+                    />
+                  </span>
                   {rdv.comment || '--'}
                 </td>
 
                 {onDelete && (
-                  <td className='p-[16px]'>
+                  <td className='p-4'>
                     <button
-                      onClick={() => handleDeleteClick(rdv)}
+                      onClick={() => onDelete(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
                     >
                       <DeleteIcon aria-hidden='true' focusable='false' />
                     </button>
                   </td>
                 )}
+
+                <td className='p-5'>
+                  <span>
+                    <ChevronRight aria-hidden='true' focusable='false' />
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -88,4 +93,4 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
   )
 }
 
-export default RdvList
+export default ListeRdvJeune

@@ -4,19 +4,17 @@ import { screen } from '@testing-library/dom'
 import { Jeune } from 'interfaces'
 import { unJeune } from 'fixtures/jeune'
 import { DetailsJeune } from './DetailsJeune'
+import { RdvJeune } from 'interfaces/rdv'
+import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
 
 describe('<DetailsJeune>', () => {
   let jeune: Jeune
+  let rdv: RdvJeune[]
 
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     jeune = unJeune()
-    render(
-      <DetailsJeune
-        id={jeune.id}
-        firstName={jeune.firstName}
-        lastName={jeune.lastName}
-      />
-    )
+    rdv = uneListeDeRdvJeune()
+    render(<DetailsJeune jeune={jeune} rdv={rdv} />)
     expect(
       screen.getByRole('heading', {
         level: 1,
@@ -24,5 +22,6 @@ describe('<DetailsJeune>', () => {
       })
     ).toBeInTheDocument()
     expect(screen.getByText('jeune-1')).toBeInTheDocument()
+    expect(screen.getByText(`Rendez-vous (${rdv.length})`)).toBeInTheDocument()
   })
 })

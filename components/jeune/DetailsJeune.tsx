@@ -1,16 +1,27 @@
 import React from 'react'
 import { Jeune } from 'interfaces'
+import { RdvJeune } from 'interfaces/rdv'
 
-export const DetailsJeune = ({ firstName, lastName, id }: Jeune) => {
+interface DetailsJeuneProps {
+  jeune: Jeune
+  rdv: RdvJeune[]
+}
+
+export const DetailsJeune = ({ jeune, rdv }: DetailsJeuneProps) => {
   return (
     <>
       <h1 className='h2-semi text-bleu_nuit pb-6'>
-        {firstName} {lastName}
+        {jeune.firstName} {jeune.lastName}
       </h1>
       <dl className='flex text-sm-semi text-bleu_nuit'>
-        <dt className='mr-[1rem]'>Identifiant:</dt>
-        <dd>{id}</dd>
+        <dt className='mr-[1rem]'>Identifiant :</dt>
+        <dd>{jeune.id}</dd>
       </dl>
+      <div className='mt-8'>
+        <h2 className='h4-semi text-bleu_nuit mb-4'>
+          Rendez-vous ({rdv?.length})
+        </h2>
+      </div>
     </>
   )
 }
