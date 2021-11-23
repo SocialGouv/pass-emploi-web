@@ -70,7 +70,7 @@
 .buttonRed {
 	background-color: theme('colors.rouge_france_5');
 	color: theme('colors.rouge_france');
-	border: none;
+	border: unset;
 }
 
 .buttonRed:hover {
@@ -80,4 +80,15 @@
 
 .buttonRed:hover svg path {
 	fill: theme('colors.rouge_france');
+}
+
+.buttonRed[disabled] {
+	cursor: not-allowed;
+	border: unset;
+}
+
+.buttonRed[disabled]:hover {
+	background-color: theme('colors.rouge_france_5');
+	color: theme('colors.rouge_france');
+	border: unset;
 }

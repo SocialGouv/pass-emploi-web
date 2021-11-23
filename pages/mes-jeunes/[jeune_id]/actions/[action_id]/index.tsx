@@ -19,6 +19,7 @@ function PageAction ({ action, jeune }: Props) {
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const router = useRouter()
   const { actionsService } = useDIContext()
+  const [deleteDeactive, setDeleteDeactive] = useState<boolean>(false)
 
   async function updateAction (statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(action.id, statutChoisi)
@@ -26,6 +27,7 @@ function PageAction ({ action, jeune }: Props) {
   }
 
   async function deleteAction (): Promise<void> {
+    setDeleteDeactive(true)
     await actionsService.deleteAction(action.id)
     router.push(`/mes-jeunes/${jeune.id}/actions`)
   }
@@ -54,6 +56,7 @@ function PageAction ({ action, jeune }: Props) {
               onClick={() => deleteAction()}
               style={ButtonColorStyle.RED}
               className='px-[36px] py-[16px]'
+              disabled={deleteDeactive}
             >
               Supprimer l&apos;action
             </Button>
