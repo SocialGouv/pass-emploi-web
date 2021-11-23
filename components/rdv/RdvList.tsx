@@ -6,8 +6,8 @@ import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
 
 type RdvListProps = {
-	rdvs: Rdv[]
-	onDelete?: any
+  rdvs: Rdv[]
+  onDelete?: any
 }
 
 const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
@@ -25,7 +25,7 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
     <>
       {rdvs.length === 0 ? (
         <p className='text-md text-bleu mb-8'>
-					Vous n&apos;avez pas de rendez-vous pour le moment
+          Vous n&apos;avez pas de rendez-vous pour le moment
         </p>
       ) : (
         <table role='presentation' className='w-full'>

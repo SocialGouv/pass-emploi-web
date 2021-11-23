@@ -7,13 +7,13 @@ import BackIcon from '../assets/icons/back_modale.svg'
 import styles from 'styles/components/Modal.module.css'
 
 type ModalProps = {
-	title: string
-	show: boolean
-	onClose: any
-	children: any
-	onBack?: any
-	customHeight?: string
-	customWidth?: string
+  title: string
+  show: boolean
+  onClose: any
+  children: any
+  onBack?: any
+  customHeight?: string
+  customWidth?: string
 }
 
 const Modal = ({

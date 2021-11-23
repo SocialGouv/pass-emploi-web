@@ -2,9 +2,9 @@ import Modal from 'components/Modal'
 import Button from 'components/Button'
 
 type EchecModalProps = {
-	show: boolean
-	onClose: any
-	message: string
+  show: boolean
+  onClose: any
+  message: string
 }
 
 const EchecModal = ({ show, onClose, message }: EchecModalProps) => {

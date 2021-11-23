@@ -7,9 +7,9 @@ import { Conseiller, Jeune } from 'interfaces'
 import fetchJson from 'utils/fetchJson'
 
 type AddJeuneModalProps = {
-	show: boolean
-	onClose: () => void
-	onAdd: (jeune: Jeune) => void
+  show: boolean
+  onClose: () => void
+  onAdd: (jeune: Jeune) => void
 }
 
 const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
@@ -83,7 +83,7 @@ const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
                 htmlFor='date'
                 className='text-lg text-bleu_nuit mb-[20px] block'
               >
-								Nom <span aria-hidden='true'>*</span>
+                Nom <span aria-hidden='true'>*</span>
               </label>
               <input
                 type='lastname'
@@ -100,7 +100,7 @@ const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
                 htmlFor='firstname'
                 className='text-lg text-bleu_nuit mb-[20px] block'
               >
-								Prénom <span aria-hidden='true'>*</span>
+                Prénom <span aria-hidden='true'>*</span>
               </label>
               <input
                 type='firstname'
@@ -118,7 +118,7 @@ const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
               className='text-xs text-bleu_nuit mb-[10px]'
               aria-hidden='true'
             >
-							* : champs obligatoires
+              * : champs obligatoires
             </span>
 
             <Button type='submit' disabled={!FormIsValid()} className='m-auto'>

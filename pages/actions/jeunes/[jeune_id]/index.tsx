@@ -22,19 +22,19 @@ import BackIcon from '../../../../assets/icons/arrow_back.svg'
 import { UserActionJson } from 'interfaces/json/action'
 
 type Props = {
-	jeune: Jeune
-	actions_en_cours: UserAction[]
+  jeune: Jeune
+  actions_en_cours: UserAction[]
 }
 
 const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
   new Date(action1.lastUpdate).getTime() >
-	new Date(action2.lastUpdate).getTime()
+  new Date(action2.lastUpdate).getTime()
     ? -1
     : 1
 
 function Actions({ jeune, actions_en_cours }: Props) {
   const [showModal, setShowModal] = useState(false)
-  const [actionsEnCours, setActionsEnCours] = useState(actions_en_cours)
+  const [actionsEnCours] = useState(actions_en_cours)
   const { query } = useRouter()
   const jeuneId = query.jeune_id || ''
 
@@ -53,10 +53,10 @@ function Actions({ jeune, actions_en_cours }: Props) {
 
         <div className={styles.titleIntroContainer}>
           <h1 className={`h2 text-bleu_nuit ${styles.title}`}>
-						Les actions de {`${jeune.firstName} ${jeune.lastName}`}
+            Les actions de {`${jeune.firstName} ${jeune.lastName}`}
           </h1>
           <p className='text-md text-bleu'>
-						Retrouvez le détail des actions de votre bénéficiaire
+            Retrouvez le détail des actions de votre bénéficiaire
           </p>
         </div>
 
@@ -66,13 +66,13 @@ function Actions({ jeune, actions_en_cours }: Props) {
             aria-hidden='true'
             className={styles.addIcon}
           />
-					Créer une nouvelle action
+          Créer une nouvelle action
         </Button>
       </div>
 
       <AddActionModal
         onClose={() => setShowModal(false)}
-        onAdd={(newAction: UserAction) => {
+        onAdd={() => {
           // addToActionEnCours(newAction) uncomment when be sends id
           Router.reload()
         }} //reload, since we dont have the id after add
@@ -83,7 +83,7 @@ function Actions({ jeune, actions_en_cours }: Props) {
         <p className='text-md text-bleu mb-8'>
           {' '}
           {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le
-					moment
+          moment
         </p>
       )}
 
@@ -100,11 +100,14 @@ function Actions({ jeune, actions_en_cours }: Props) {
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const [resDetailsJeune, resActionsJeune] = await Promise.all([
-    fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}`), 
-    fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/actions`)
+    fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}`),
+    fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/actions`),
   ])
 
-  const [dataDetailsJeune, dataActionsJeune] = await Promise.all([resDetailsJeune.json(), resActionsJeune.json()])
+  const [dataDetailsJeune, dataActionsJeune] = await Promise.all([
+    resDetailsJeune.json(),
+    resActionsJeune.json(),
+  ])
 
   if (!dataDetailsJeune || !dataActionsJeune) {
     return {

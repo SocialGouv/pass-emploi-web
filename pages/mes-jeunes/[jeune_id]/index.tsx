@@ -6,9 +6,8 @@ import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { GetServerSideProps } from 'next'
 import fetchJson from 'utils/fetchJson'
 
-
 interface FicheJeuneProps {
-	jeune: Jeune
+  jeune: Jeune
 }
 
 const FicheJeune = ({ jeune }: FicheJeuneProps) => {
@@ -22,15 +21,16 @@ const FicheJeune = ({ jeune }: FicheJeuneProps) => {
               focusable='false'
               aria-label='Retour sur la liste de tous les jeunes'
             />
-
           </a>
         </Link>
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
-
       </div>
-      <DetailsJeune id={jeune.id} firstName={jeune.firstName} lastName={jeune.lastName} />
+      <DetailsJeune
+        id={jeune.id}
+        firstName={jeune.firstName}
+        lastName={jeune.lastName}
+      />
     </div>
-
   )
 }
 
@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   }
   return {
     props: {
-      jeune: dataJeune
+      jeune: dataJeune,
     },
   }
 }

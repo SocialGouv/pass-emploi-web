@@ -8,9 +8,9 @@ import { RdvFormData } from 'interfaces/json/rdv'
 import fetchJson from 'utils/fetchJson'
 
 type RdvModalProps = {
-	show: boolean
-	onClose: any
-	onAdd: any
+  show: boolean
+  onClose: any
+  onAdd: any
 }
 
 const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
@@ -54,10 +54,10 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
 
   const FormIsValid = () =>
     duree !== '' &&
-		creneauIsValid() &&
-		modalite !== '' &&
-		jeune !== '' &&
-		date !== ''
+    creneauIsValid() &&
+    modalite !== '' &&
+    jeune !== '' &&
+    date !== ''
 
   const handleAddClick = (event: any) => {
     event.preventDefault()
@@ -89,7 +89,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(newRdv),
       }
-    ).then(function (response) {
+    ).then(function () {
       onClose()
       onAdd()
     })
@@ -104,7 +104,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
               htmlFor='beneficiaire'
               className='text-sm-semi text-bleu_nuit mb-[20px] block'
             >
-							Choisir un bénéficiaire <span aria-hidden='true'>*</span>
+              Choisir un bénéficiaire <span aria-hidden='true'>*</span>
             </label>
             <select
               id='beneficiaire'
@@ -125,7 +125,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
               htmlFor='date'
               className='text-sm-semi text-bleu_nuit mb-[20px] block'
             >
-							Choisir une date <span aria-hidden='true'>*</span>
+              Choisir une date <span aria-hidden='true'>*</span>
             </label>
             <input
               type='date'
@@ -143,7 +143,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
               htmlFor='creneaux'
               className='text-sm-semi text-bleu_nuit mb-[20px] block'
             >
-							Heure du rendez-vous (hh:mm) <span aria-hidden='true'>*</span>
+              Heure du rendez-vous (hh:mm) <span aria-hidden='true'>*</span>
             </label>
             <input
               type='text'
@@ -160,7 +160,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
               htmlFor='duree'
               className='text-sm-semi text-bleu_nuit mb-[20px] block'
             >
-							Durée du RDV (en minutes) <span aria-hidden='true'>*</span>
+              Durée du RDV (en minutes) <span aria-hidden='true'>*</span>
             </label>
             <input
               type='number'
@@ -177,7 +177,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
               htmlFor='modalite'
               className='text-sm-semi text-bleu_nuit mb-[20px] block'
             >
-							Modalité de contact <span aria-hidden='true'>*</span>
+              Modalité de contact <span aria-hidden='true'>*</span>
             </label>
             <select
               id='modalite'
@@ -200,7 +200,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
           htmlFor='notes'
           className='text-sm-semi text-bleu_nuit mb-[20px] block'
         >
-					Notes
+          Notes
         </label>
         <textarea
           id='notes'
@@ -212,7 +212,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
         />
 
         <span className='text-xs text-bleu_nuit mb-[10px]' aria-hidden='true'>
-					* : champs obligatoires
+          * : champs obligatoires
         </span>
 
         <Button type='submit' disabled={!FormIsValid()} className='m-auto'>

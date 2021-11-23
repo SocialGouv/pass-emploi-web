@@ -1,11 +1,6 @@
 {
-  "rules": {
-    "indent": ["error", 2],
-    "semi": [2, "never"],
-    "quotes": [2, "single", { "avoidEscape": true }]
-  },
   "extends": [
     "next/core-web-vitals",
-    "prettier" // Add "prettier" last. This will turn off eslint rules conflicting with prettier. This is not what will format our code.
+    "plugin:prettier/recommended"
   ]
 }

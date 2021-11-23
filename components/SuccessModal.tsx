@@ -4,9 +4,9 @@ import Button from 'components/Button'
 import CheckIcon from '../assets/icons/check.svg'
 
 type SuccessModalProps = {
-	show: boolean
-	onClose: any
-	message: string
+  show: boolean
+  onClose: any
+  message: string
 }
 
 const SuccessModal = ({ show, onClose, message }: SuccessModalProps) => {

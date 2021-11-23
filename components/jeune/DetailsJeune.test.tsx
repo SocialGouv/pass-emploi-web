@@ -10,11 +10,17 @@ describe('<DetailsJeune>', () => {
 
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     jeune = unJeune()
-    render(<DetailsJeune id={jeune.id} firstName={jeune.firstName} lastName={jeune.lastName} />)
+    render(
+      <DetailsJeune
+        id={jeune.id}
+        firstName={jeune.firstName}
+        lastName={jeune.lastName}
+      />
+    )
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: `${jeune.firstName} ${jeune.lastName}`
+        name: `${jeune.firstName} ${jeune.lastName}`,
       })
     ).toBeInTheDocument()
     expect(screen.getByText('jeune-1')).toBeInTheDocument()

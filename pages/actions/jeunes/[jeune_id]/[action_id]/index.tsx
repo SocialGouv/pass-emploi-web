@@ -12,8 +12,8 @@ import fetchJson from 'utils/fetchJson'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
 type Props = {
-	action: UserAction
-	jeune: Jeune
+  action: UserAction
+  jeune: Jeune
 }
 
 function Action({ action, jeune }: Props) {
@@ -27,7 +27,7 @@ function Action({ action, jeune }: Props) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({ status: statutChoisi }),
-    }).then((response) => {
+    }).then(() => {
       setStatutChoisi(statutChoisi)
     })
   }
@@ -44,7 +44,7 @@ function Action({ action, jeune }: Props) {
           </a>
         </Link>
         <p className='h4-semi text-bleu_nuit'>
-					Actions de {jeune.firstName} {jeune.lastName}
+          Actions de {jeune.firstName} {jeune.lastName}
         </p>
       </div>
 
@@ -60,7 +60,7 @@ function Action({ action, jeune }: Props) {
           </dd>
         </dl>
 
-        <div className='border-r-2 border-bleu_blanc '></div>
+        <div className='border-r-2 border-bleu_blanc ' />
 
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset>

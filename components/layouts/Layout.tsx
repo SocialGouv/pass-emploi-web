@@ -12,7 +12,7 @@ import ChatBox from './ChatRoom'
 import styles from 'styles/components/Layouts.module.css'
 
 type LayoutProps = {
-	children: any
+  children: any
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -40,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
         </main>
         <ChatBox db={db} />
       </div>
-      <div id='modal-root'></div>
+      <div id='modal-root' />
     </>
   )
 }

@@ -9,10 +9,10 @@ import { Rdv } from 'interfaces/rdv'
 import { useState } from 'react'
 
 type RdvModalProps = {
-	show: boolean
-	onClose: any
-	onDelete: any
-	rdv: Rdv
+  show: boolean
+  onClose: any
+  onDelete: any
+  rdv: Rdv
 }
 
 const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
@@ -25,7 +25,7 @@ const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({}),
     })
-      .then(function (response) {
+      .then(function () {
         setIsSuccess(true)
         onDelete()
       })
@@ -52,8 +52,8 @@ const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
           customWidth='800px'
         >
           <p className='text-md text-bleu_nuit mb-[48px]'>
-						Souhaitez-vous vraiment supprimer votre rendez-vous avec {rdv.title}{' '}
-						le {formatDayDate(new Date(rdv.date))}?
+            Souhaitez-vous vraiment supprimer votre rendez-vous avec {rdv.title}{' '}
+            le {formatDayDate(new Date(rdv.date))}?
           </p>
 
           <div className='flex'>

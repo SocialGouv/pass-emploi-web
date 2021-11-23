@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import Router from 'next/router'
-
-import useUser from 'utils/useUser'
-import fetchJson from 'utils/fetchJson'
-
 import Button from 'components/Button'
-
+import React, { useState } from 'react'
+import fetchJson from 'utils/fetchJson'
+import useUser from 'utils/useUser'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 const Login = () => {
@@ -54,13 +50,13 @@ const Login = () => {
 
         <div className='bg-blanc px-[122px] py-[48px] rounded-x_large'>
           <h1 className='text-lg-semi text-bleu_nuit text-center mb-[48px]'>
-						Connectez-vous à l&apos;espace conseiller
+            Connectez-vous à l&apos;espace conseiller
           </h1>
 
           <form onSubmit={handleSubmit}>
             <label className='flex flex-col w-[465px] mb-[48px]'>
               <span className='text-sm-semi text-bleu_nuit mb-[16px]'>
-								Votre identifiant
+                Votre identifiant
               </span>
               <input
                 type='text'

@@ -1,20 +1,19 @@
+import { Conseiller } from 'interfaces'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { useEffect, useState } from 'react'
 
-import fetchJson from 'utils/fetchJson'
+import styles from 'styles/components/Layouts.module.css'
 
-import { Conseiller } from 'interfaces'
+import fetchJson from 'utils/fetchJson'
+import useUser from 'utils/useUser'
+import DashboardIcon from '../../assets/icons/dashboard.svg'
 
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
-import DashboardIcon from '../../assets/icons/dashboard.svg'
-import ViewlistIcon from '../../assets/icons/view_list.svg'
-import PersonIcon from '../../assets/icons/person.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
-
-import styles from 'styles/components/Layouts.module.css'
-import useUser from 'utils/useUser'
+import PersonIcon from '../../assets/icons/person.svg'
+import ViewlistIcon from '../../assets/icons/view_list.svg'
 
 type SidebarProps = {}
 
@@ -22,7 +21,7 @@ export default function Sidebar({}: SidebarProps) {
   const router = useRouter()
 
   const [conseillerName, setConseillerName] = useState<String>('')
-  const { user, mutateUser } = useUser()
+  const { mutateUser } = useUser()
 
   useEffect(() => {
     async function fetchConseiller(): Promise<Conseiller> {
@@ -60,7 +59,7 @@ export default function Sidebar({}: SidebarProps) {
                 className='mr-[8px]'
               />
               <span className='text-xs-semi text-bleu_nuit'>
-								Tableau de bord
+                Tableau de bord
               </span>
             </a>
           </Link>
@@ -78,7 +77,7 @@ export default function Sidebar({}: SidebarProps) {
                 className='mr-[8px]'
               />
               <span className='text-xs-semi text-bleu_nuit text-center'>
-								Actions
+                Actions
               </span>
             </a>
           </Link>
@@ -96,7 +95,7 @@ export default function Sidebar({}: SidebarProps) {
                 className='mr-[8px]'
               />
               <span className='text-xs-semi text-bleu_nuit text-center'>
-								Mes jeunes
+                Mes jeunes
               </span>
             </a>
           </Link>

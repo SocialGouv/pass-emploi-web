@@ -11,9 +11,9 @@ import fetchJson from 'utils/fetchJson'
 const INPUT_MAX_LENGTH = 250
 
 type ActionModalProps = {
-	show: boolean
-	onClose: any
-	onAdd: any
+  show: boolean
+  onClose: any
+  onAdd: any
 }
 
 const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
@@ -66,7 +66,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(newAction),
       }
-    ).then(function (response) {
+    ).then(function () {
       setNewContent('')
       onAdd(newContent)
       onClose()
@@ -96,7 +96,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
             style={isCustomMode ? 'white' : 'blue'}
             onClick={toggleCustomMode}
           >
-						Actions prédéfinies
+            Actions prédéfinies
           </Button>
 
           <Button
@@ -104,7 +104,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
             style={isCustomMode ? 'blue' : 'white'}
             onClick={toggleCustomMode}
           >
-						Action personnalisée
+            Action personnalisée
           </Button>
         </div>
 
@@ -130,7 +130,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
                 htmlFor='customContent'
                 className='text-sm text-bleu_nuit block mb-[20px]'
               >
-								Intitulé de l&apos;action (obligatoire)
+                Intitulé de l&apos;action (obligatoire)
               </label>
 
               <input
@@ -141,13 +141,13 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
                 onChange={(e) => setNewContent(e.target.value)}
                 className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
                 placeholder='Ajouter un contenu...'
-              ></input>
+              />
 
               <label
                 htmlFor='cutomComment'
                 className='text-sm text-bleu_nuit block mb-[20px]'
               >
-								Commentaire de l&apos;action
+                Commentaire de l&apos;action
               </label>
 
               <textarea
@@ -160,7 +160,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
                 onChange={(e) => setNewComment(e.target.value)}
                 className='w-full text-sm text-bleu_nuit p-[16px] mb-[60px] border border-bleu_blanc rounded-medium'
                 placeholder='Ajouter un commentaire...'
-              ></textarea>
+              />
 
               <Button
                 type='submit'
@@ -190,7 +190,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
             htmlFor='comment'
             className='text-sm text-bleu_nuit block mb-[20px]'
           >
-						Ajouter un commentaire à votre action
+            Ajouter un commentaire à votre action
           </label>
 
           <textarea
@@ -203,7 +203,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
             onChange={(e) => setNewComment(e.target.value)}
             className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
             placeholder='Ajouter un commentaire...'
-          ></textarea>
+          />
 
           <Button
             type='submit'

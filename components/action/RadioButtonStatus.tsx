@@ -1,7 +1,7 @@
 interface RadioButtonStatusProps {
-	status: string
-	isSelected: boolean
-	onChange: () => void
+  status: string
+  isSelected: boolean
+  onChange: () => void
 }
 
 export const RadioButtonStatus = ({

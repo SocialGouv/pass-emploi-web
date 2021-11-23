@@ -1,14 +1,14 @@
 import styles from 'styles/components/Button.module.css'
 
 type ButtonProps = {
-	onClick?: React.MouseEventHandler<HTMLButtonElement>
-	children?: React.ReactNode
-	role?: string
-	type?: any
-	label?: string
-	disabled?: boolean
-	style?: string
-	className?: any
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+  children?: React.ReactNode
+  role?: string
+  type?: any
+  label?: string
+  disabled?: boolean
+  style?: string
+  className?: any
 }
 
 const Button = ({

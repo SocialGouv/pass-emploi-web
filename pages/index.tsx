@@ -16,8 +16,8 @@ import { RdvJson } from 'interfaces/json/rdv'
 import { durees } from 'referentiel/rdv'
 
 type HomeProps = {
-	rdvs: Rdv[]
-	oldRdvs: Rdv[]
+  rdvs: Rdv[]
+  oldRdvs: Rdv[]
 }
 
 const defaultRdv = {
@@ -46,7 +46,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
           label='Fixer un rendez-vous'
         >
           <AddIcon focusable='false' aria-hidden='true' />
-					Fixer un rendez-vous
+          Fixer un rendez-vous
         </Button>
       </span>
 
@@ -60,7 +60,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
             setDisplayOldRdv(!displayOldRdv)
           }}
         >
-					Prochains rendez-vous
+          Prochains rendez-vous
         </Button>
 
         <Button
@@ -71,7 +71,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
             setDisplayOldRdv(!displayOldRdv)
           }}
         >
-					Rendez-vous passés
+          Rendez-vous passés
         </Button>
       </div>
 
@@ -139,8 +139,8 @@ export const getServerSideProps = withSession<ServerSideHandler>(
       const newrdv: Rdv = {
         ...rdvData,
         duration:
-					durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-					`${rdvData.duration} min`,
+          durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+          `${rdvData.duration} min`,
       }
 
       serializedRdvs.push(newrdv)
