@@ -23,7 +23,7 @@ const defaultRdv = {
   comment: 'string',
   date: 'string',
   duration: 'string',
-  modality: 'string'
+  modality: 'string',
 }
 
 const Home = ({ rdvs, oldRdvs }: HomeProps) => {
@@ -41,7 +41,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
           onClick={() => setShowAddModal(true)}
           label='Fixer un rendez-vous'
         >
-          <AddIcon focusable='false' aria-hidden='true'/>
+          <AddIcon focusable='false' aria-hidden='true' />
           Fixer un rendez-vous
         </Button>
       </span>
@@ -72,7 +72,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
       </div>
 
       {displayOldRdv ? (
-        <RdvList rdvs={oldRdvs}/>
+        <RdvList rdvs={oldRdvs} />
       ) : (
         <RdvList
           rdvs={rdvsAvenir}
@@ -100,7 +100,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
             const index = rdvsAvenir.indexOf(selectedRdv)
             const newArray = [
               ...rdvsAvenir.slice(0, index),
-              ...rdvsAvenir.slice(index + 1, rdvsAvenir.length)
+              ...rdvsAvenir.slice(index + 1, rdvsAvenir.length),
             ]
             setRdvsAvenir(newArray)
           }}
@@ -121,7 +121,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
       res.statusCode = 302
       res.end()
       return {
-        props: {}
+        props: {},
       }
     }
 
@@ -136,7 +136,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
         ...rdvData,
         duration:
           durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-          `${rdvData.duration} min`
+          `${rdvData.duration} min`,
       }
 
       serializedRdvs.push(newrdv)
@@ -144,7 +144,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
     if (!data) {
       return {
-        notFound: true
+        notFound: true,
       }
     }
 
@@ -153,8 +153,8 @@ export const getServerSideProps = withSession<ServerSideHandler>(
     return {
       props: {
         rdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) >= today),
-        oldRdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) < today)
-      }
+        oldRdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) < today),
+      },
     }
   }
 )

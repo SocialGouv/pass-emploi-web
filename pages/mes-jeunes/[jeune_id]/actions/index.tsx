@@ -28,7 +28,7 @@ const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
     ? -1
     : 1
 
-function Actions ({ jeune, actions_en_cours }: Props) {
+function Actions({ jeune, actions_en_cours }: Props) {
   const [showModal, setShowModal] = useState(false)
   const [actionsEnCours] = useState(actions_en_cours)
   const jeuneId = jeune.id
@@ -85,7 +85,7 @@ function Actions ({ jeune, actions_en_cours }: Props) {
       <ul>
         {actionsEnCours.map((action: ActionJeune) => (
           <li key={action.id} className={styles.listItem}>
-            <Action action={action} jeuneId={jeuneId}/>
+            <Action action={action} jeuneId={jeuneId} />
           </li>
         ))}
       </ul>
@@ -106,7 +106,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   if (!dataDetailsJeune || !dataActionsJeune) {
     return {
-      notFound: true
+      notFound: true,
     }
   }
 
@@ -115,7 +115,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   dataActionsJeune.map((userActionJson: ActionJeuneJson) => {
     const newAction: ActionJeune = {
       ...userActionJson,
-      status: userActionJson.status || ActionStatus.NotStarted
+      status: userActionJson.status || ActionStatus.NotStarted,
     }
     userActions.push(newAction)
   })
@@ -123,8 +123,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   return {
     props: {
       jeune: dataDetailsJeune,
-      actions_en_cours: userActions.sort(sortLastUpdate)
-    }
+      actions_en_cours: userActions.sort(sortLastUpdate),
+    },
   }
 }
 

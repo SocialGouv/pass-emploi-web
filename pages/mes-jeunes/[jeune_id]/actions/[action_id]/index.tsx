@@ -12,21 +12,24 @@ import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
 type Props = {
   action: ActionJeune
-  jeune: Jeune,
+  jeune: Jeune
 }
 
-function PageAction ({ action, jeune }: Props) {
+function PageAction({ action, jeune }: Props) {
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const router = useRouter()
   const { actionsService } = useDIContext()
   const [deleteDeactive, setDeleteDeactive] = useState<boolean>(false)
 
-  async function updateAction (statutChoisi: ActionStatus): Promise<void> {
-    const nouveauStatut = await actionsService.updateAction(action.id, statutChoisi)
+  async function updateAction(statutChoisi: ActionStatus): Promise<void> {
+    const nouveauStatut = await actionsService.updateAction(
+      action.id,
+      statutChoisi
+    )
     setStatutChoisi(nouveauStatut)
   }
 
-  async function deleteAction (): Promise<void> {
+  async function deleteAction(): Promise<void> {
     setDeleteDeactive(true)
     await actionsService.deleteAction(action.id)
     router.push(`/mes-jeunes/${jeune.id}/actions`)
@@ -39,9 +42,9 @@ function PageAction ({ action, jeune }: Props) {
           <Link href={`/mes-jeunes/${jeune.id}/actions`} passHref>
             <a
               className='mr-[24px]'
-              aria-label='Retour sur la liste d&apos;actions du jeune'
+              aria-label="Retour sur la liste d'actions du jeune"
             >
-              <BackIcon role='img' focusable='false'/>
+              <BackIcon role='img' focusable='false' />
             </a>
           </Link>
           <p className='h4-semi text-bleu_nuit'>
@@ -49,19 +52,17 @@ function PageAction ({ action, jeune }: Props) {
           </p>
         </div>
 
-        {
-          action.creatorType === 'conseiller' && (
-            <Button
-              label='Supprimer l&apos;action'
-              onClick={() => deleteAction()}
-              style={ButtonColorStyle.RED}
-              className='px-[36px] py-[16px]'
-              disabled={deleteDeactive}
-            >
-              Supprimer l&apos;action
-            </Button>
-          )
-        }
+        {action.creatorType === 'conseiller' && (
+          <Button
+            label="Supprimer l'action"
+            onClick={() => deleteAction()}
+            style={ButtonColorStyle.RED}
+            className='px-[36px] py-[16px]'
+            disabled={deleteDeactive}
+          >
+            Supprimer l&apos;action
+          </Button>
+        )}
       </div>
 
       <h1 className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</h1>
@@ -105,15 +106,17 @@ function PageAction ({ action, jeune }: Props) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  query,
+}) => {
   const { actionsService } = Container.getDIContainer().dependances
   const res = await actionsService.getAction(query.action_id as string)
 
   return {
     props: {
       action: res,
-      jeune: res.jeune
-    }
+      jeune: res.jeune,
+    },
   }
 }
 

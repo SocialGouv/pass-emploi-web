@@ -6,24 +6,27 @@ interface RadioButtonStatusProps {
   onChange: () => void
 }
 
-export const RadioButtonStatus =
-  ({ status, isSelected, onChange }: RadioButtonStatusProps) => {
-    const onClickSpan = (e: MouseEvent) => {
-      e.preventDefault()
-      onChange()
-    }
+export const RadioButtonStatus = ({
+  status,
+  isSelected,
+  onChange,
+}: RadioButtonStatusProps) => {
+  const onClickSpan = (e: MouseEvent) => {
+    e.preventDefault()
+    onChange()
+  }
 
-    return (
-      <span
-        className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] hover:cursor-pointer ${
-          isSelected
-            ? 'text-sm-semi border-bleu_nuit bg-bleu_blanc'
-            : 'border-bleu_blanc text-sm'
-        }`}
-        onClick={onClickSpan}
-      >
-			<label htmlFor={`option-statut--${status}`}>{status}</label>
-			<input
+  return (
+    <span
+      className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] hover:cursor-pointer ${
+        isSelected
+          ? 'text-sm-semi border-bleu_nuit bg-bleu_blanc'
+          : 'border-bleu_blanc text-sm'
+      }`}
+      onClick={onClickSpan}
+    >
+      <label htmlFor={`option-statut--${status}`}>{status}</label>
+      <input
         className='visually-hidden'
         type='radio'
         id={`option-statut--${status}`}
@@ -32,6 +35,6 @@ export const RadioButtonStatus =
         onChange={() => {}}
         required
       />
-		</span>
-    )
-  }
+    </span>
+  )
+}

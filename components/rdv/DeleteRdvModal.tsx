@@ -66,7 +66,11 @@ const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
               <span className='px-[40px]'> Supprimer </span>
             </Button>
 
-            <Button type='button' style={ButtonColorStyle.WHITE} onClick={handleCloseModal}>
+            <Button
+              type='button'
+              style={ButtonColorStyle.WHITE}
+              onClick={handleCloseModal}
+            >
               <span className='px-[40px]'> Annuler </span>
             </Button>
           </div>

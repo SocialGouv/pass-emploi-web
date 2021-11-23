@@ -85,7 +85,9 @@ export default function Sidebar({}: SidebarProps) {
           <Link href='/mes-jeunes'>
             <a
               className={
-                router.pathname.startsWith('/mes-jeunes') ? styles.activeLink : ''
+                router.pathname.startsWith('/mes-jeunes')
+                  ? styles.activeLink
+                  : ''
               }
             >
               <PersonIcon
