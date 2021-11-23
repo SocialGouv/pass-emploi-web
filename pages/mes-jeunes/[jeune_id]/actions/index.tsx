@@ -1,14 +1,15 @@
 import Action from 'components/action/Action'
 import AddActionModal from 'components/action/AddActionModal'
 import Button from 'components/Button'
+import SuccessMessage from 'components/SuccessMessage'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { ActionJeuneJson } from 'interfaces/json/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import styles from 'styles/JeuneActions.module.css'
+import fetchJson from 'utils/fetchJson'
 
 /**
  * relative path since babel doesn't support alliases, see https://github.com/airbnb/babel-plugin-inline-react-svg/pull/17
@@ -20,6 +21,7 @@ import BackIcon from '../../../../assets/icons/arrow_back.svg'
 type Props = {
   jeune: Jeune
   actions_en_cours: ActionJeune[]
+  deleteSuccess: boolean
 }
 
 const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
@@ -28,16 +30,29 @@ const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
     ? -1
     : 1
 
-function Actions({ jeune, actions_en_cours }: Props) {
+function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
   const [showModal, setShowModal] = useState(false)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
   const [actionsEnCours] = useState(actions_en_cours)
   const jeuneId = jeune.id
+  const router = useRouter()
+
+  const closeSuccessMessage = () => {
+    setShowSuccessMessage(false)
+    router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}/actions`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
 
   return (
     <>
-      <div className={styles.backIntroContainer}>
+      <div className='flex justify-between flex-wrap w-full mb-[45px]'>
         <Link href={'/actions'} passHref>
-          <a className={`${styles.backLink} mr-[24px]`}>
+          <a className='p-1 mr-[24px]'>
             <BackIcon
               role='img'
               focusable='false'
@@ -46,8 +61,8 @@ function Actions({ jeune, actions_en_cours }: Props) {
           </a>
         </Link>
 
-        <div className={styles.titleIntroContainer}>
-          <h1 className={`h2 text-bleu_nuit ${styles.title}`}>
+        <div className='mb-4 flex-auto'>
+          <h1 className='h2 text-bleu_nuit mb-5'>
             Les actions de {`${jeune.firstName} ${jeune.lastName}`}
           </h1>
           <p className='text-md text-bleu'>
@@ -56,11 +71,7 @@ function Actions({ jeune, actions_en_cours }: Props) {
         </div>
 
         <Button onClick={() => setShowModal(true)}>
-          <AddIcon
-            focusable='false'
-            aria-hidden='true'
-            className={styles.addIcon}
-          />
+          <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
           Créer une nouvelle action
         </Button>
       </div>
@@ -74,9 +85,15 @@ function Actions({ jeune, actions_en_cours }: Props) {
         show={showModal}
       />
 
+      {showSuccessMessage && (
+        <SuccessMessage
+          onAcknowledge={() => closeSuccessMessage()}
+          label={"L'action a bien été supprimée"}
+        />
+      )}
+
       {actionsEnCours.length === 0 && (
         <p className='text-md text-bleu mb-8'>
-          {' '}
           {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le
           moment
         </p>
@@ -84,7 +101,7 @@ function Actions({ jeune, actions_en_cours }: Props) {
 
       <ul>
         {actionsEnCours.map((action: ActionJeune) => (
-          <li key={action.id} className={styles.listItem}>
+          <li key={action.id}>
             <Action action={action} jeuneId={jeuneId} />
           </li>
         ))}
@@ -94,14 +111,9 @@ function Actions({ jeune, actions_en_cours }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const [resDetailsJeune, resActionsJeune] = await Promise.all([
-    fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}`),
-    fetch(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/actions`),
-  ])
-
   const [dataDetailsJeune, dataActionsJeune] = await Promise.all([
-    resDetailsJeune.json(),
-    resActionsJeune.json(),
+    fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}`),
+    fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/actions`),
   ])
 
   if (!dataDetailsJeune || !dataActionsJeune) {
@@ -124,6 +136,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     props: {
       jeune: dataDetailsJeune,
       actions_en_cours: userActions.sort(sortLastUpdate),
+      deleteSuccess: Boolean(query.deleteSuccess),
     },
   }
 }

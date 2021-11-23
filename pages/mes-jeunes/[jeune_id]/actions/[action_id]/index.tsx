@@ -1,5 +1,6 @@
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import Button, { ButtonColorStyle } from 'components/Button'
+import EchecMessage from 'components/EchecMessage'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
@@ -19,7 +20,8 @@ function PageAction({ action, jeune }: Props) {
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const router = useRouter()
   const { actionsService } = useDIContext()
-  const [deleteDeactive, setDeleteDeactive] = useState<boolean>(false)
+  const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
+  const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
@@ -30,9 +32,22 @@ function PageAction({ action, jeune }: Props) {
   }
 
   async function deleteAction(): Promise<void> {
-    setDeleteDeactive(true)
-    await actionsService.deleteAction(action.id)
-    router.push(`/mes-jeunes/${jeune.id}/actions`)
+    setDeleteDisabled(true)
+    actionsService
+      .deleteAction(action.id)
+      .then(() => {
+        router.push({
+          pathname: `/mes-jeunes/${jeune.id}/actions`,
+          query: { deleteSuccess: true },
+        })
+      })
+      .catch((error: Error) => {
+        setShowEchecMessage(true)
+        console.log('Erreur lors de la suppression de l action', error)
+      })
+      .finally(() => {
+        setDeleteDisabled(false)
+      })
   }
 
   return (
@@ -58,17 +73,24 @@ function PageAction({ action, jeune }: Props) {
             onClick={() => deleteAction()}
             style={ButtonColorStyle.RED}
             className='px-[36px] py-[16px]'
-            disabled={deleteDeactive}
+            disabled={deleteDisabled}
           >
             Supprimer l&apos;action
           </Button>
         )}
       </div>
 
+      {showEchecMessage && (
+        <EchecMessage
+          label={
+            "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
+          }
+          onAcknowledge={() => setShowEchecMessage(false)}
+        />
+      )}
+
       <h1 className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</h1>
-
       <p className='text-sm text-bleu mb-[24px]'>{action.comment}</p>
-
       <div className='border-t-2 border-b-2 border-bleu_blanc flex justify-between items-center py-[14px]'>
         <dl className='flex py-[26px]'>
           <dt className='text-bleu text-sm mr-[25px]'>Date</dt>
