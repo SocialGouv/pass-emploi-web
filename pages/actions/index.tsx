@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { JeuneActionJson } from 'interfaces/json/action'
+import { JeuneActionsJson } from 'interfaces/json/action'
 import { JeuneActions } from 'interfaces/action'
 import { Jeune } from 'interfaces'
 
@@ -72,7 +72,10 @@ function Home({ jeuneActionsList }: HomeProps) {
                 : `${jeuneActions.jeune.firstName} n'a pas d'actions terminées pour le moment`}
             </p>
 
-            <Link href={`/actions/jeunes/${jeuneActions.jeune.id}`} passHref>
+            <Link
+              href={`/mes-jeunes/${jeuneActions.jeune.id}/actions`}
+              passHref
+            >
               <a className={`text-xs float-right ${linkStyles.buttonBlue}`}>
                 VOIR LES ACTIONS
               </a>
@@ -109,7 +112,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
     let jeunesActions: JeuneActions[] = []
 
-    data.map((jeuneActionJson: JeuneActionJson) => {
+    data.map((jeuneActionJson: JeuneActionsJson) => {
       const newJeune: Jeune = {
         id: jeuneActionJson.jeuneId,
         firstName: jeuneActionJson.jeuneFirstName,

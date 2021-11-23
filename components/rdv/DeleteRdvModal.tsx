@@ -1,12 +1,12 @@
+import Button, { ButtonColorStyle } from 'components/Button'
+import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
-import EchecModal from 'components/EchecModal'
-import Button from 'components/Button'
-
-import { formatDayDate } from 'utils/date'
 
 import { Rdv } from 'interfaces/rdv'
 import { useState } from 'react'
+
+import { formatDayDate } from 'utils/date'
 
 type RdvModalProps = {
   show: boolean
@@ -60,13 +60,17 @@ const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
             <Button
               type='button'
               className='mr-[16px]'
-              style={'red'}
+              style={ButtonColorStyle.RED}
               onClick={handleDeleteRdv}
             >
               <span className='px-[40px]'> Supprimer </span>
             </Button>
 
-            <Button type='button' style={'white'} onClick={handleCloseModal}>
+            <Button
+              type='button'
+              style={ButtonColorStyle.WHITE}
+              onClick={handleCloseModal}
+            >
               <span className='px-[40px]'> Annuler </span>
             </Button>
           </div>

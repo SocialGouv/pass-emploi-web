@@ -61,9 +61,9 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
                 </td>
 
                 <td className='p-4'>{jeune.id}</td>
-                <span className='p-4 col-end-6'>
+                <td className='p-4 col-end-6'>
                   <ChevronRight />
-                </span>
+                </td>
               </tr>
             </Link>
           ))}

@@ -1,4 +1,4 @@
-import { UserAction, ActionStatus } from 'interfaces/action'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
 
 import NoteIcon from '../../assets/icons/note_outline.svg'
 import ChevronIcon from '../../assets/icons/chevron_right.svg'
@@ -6,8 +6,8 @@ import React from 'react'
 import Link from 'next/link'
 
 type ActionProps = {
-  action: UserAction
-  jeuneId: string | string[]
+  action: ActionJeune
+  jeuneId: string
 }
 
 function NotStarted() {
@@ -50,7 +50,7 @@ function Status(props: any) {
 
 const Action = ({ action, jeuneId }: ActionProps) => {
   return (
-    <Link href={`/actions/jeunes/${jeuneId}/${action.id}`}>
+    <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
       <a className='w-full  px-[16px] py-[16px] text-left border-x border-bleu_blanc '>
         {action.creator && (
           <p className='text-sm text-bleu_nuit mb-[8px]'>

@@ -1,6 +1,6 @@
-import {ActionStatus, UserAction} from 'interfaces/action'
+import {ActionStatus, ActionJeune} from 'interfaces/action'
 
-export const uneAction = (overrides: Partial<UserAction> = {}): UserAction => ({
+export const uneAction = (overrides: Partial<ActionJeune> = {}): ActionJeune => ({
     id: 'no-com-1',
     content: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
@@ -11,4 +11,4 @@ export const uneAction = (overrides: Partial<UserAction> = {}): UserAction => ({
     status: ActionStatus.NotStarted,
     ...overrides
 
-} as UserAction)
+} as ActionJeune)

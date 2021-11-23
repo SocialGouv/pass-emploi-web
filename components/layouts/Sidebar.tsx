@@ -67,7 +67,7 @@ export default function Sidebar({}: SidebarProps) {
           <Link href='/actions'>
             <a
               className={
-                router.pathname.includes('/actions') ? styles.activeLink : ''
+                router.pathname.startsWith('/actions') ? styles.activeLink : ''
               }
             >
               <ViewlistIcon
@@ -85,7 +85,9 @@ export default function Sidebar({}: SidebarProps) {
           <Link href='/mes-jeunes'>
             <a
               className={
-                router.pathname.includes('/mes-jeunes') ? styles.activeLink : ''
+                router.pathname.startsWith('/mes-jeunes')
+                  ? styles.activeLink
+                  : ''
               }
             >
               <PersonIcon

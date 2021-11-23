@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import router from 'next/router'
-
-import { UserAction } from 'interfaces/action'
-import { actionsPredefinies } from 'referentiel/action'
+import Button, { ButtonColorStyle } from 'components/Button'
 
 import Modal from 'components/Modal'
-import Button from 'components/Button'
+
+import { ActionJeune } from 'interfaces/action'
+import router from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { actionsPredefinies } from 'referentiel/action'
 import fetchJson from 'utils/fetchJson'
 
 const INPUT_MAX_LENGTH = 250
@@ -66,7 +66,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(newAction),
       }
-    ).then(function () {
+    ).then(() => {
       setNewContent('')
       onAdd(newContent)
       onClose()
@@ -93,7 +93,9 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
           <Button
             type='button'
             className='mr-[8px]'
-            style={isCustomMode ? 'white' : 'blue'}
+            style={
+              isCustomMode ? ButtonColorStyle.WHITE : ButtonColorStyle.BLUE
+            }
             onClick={toggleCustomMode}
           >
             Actions prédéfinies
@@ -101,7 +103,9 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
           <Button
             type='button'
-            style={isCustomMode ? 'blue' : 'white'}
+            style={
+              isCustomMode ? ButtonColorStyle.BLUE : ButtonColorStyle.WHITE
+            }
             onClick={toggleCustomMode}
           >
             Action personnalisée
@@ -110,7 +114,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
         {!isCustomMode && (
           <div className='h-[425px] overflow-scroll mb-[40px]'>
-            {actionsPredefinies.map((action: UserAction) => (
+            {actionsPredefinies.map((action: ActionJeune) => (
               <button
                 key={action.id}
                 type='button'

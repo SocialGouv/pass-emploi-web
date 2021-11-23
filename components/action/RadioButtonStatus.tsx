@@ -1,3 +1,5 @@
+import { MouseEvent } from 'react'
+
 interface RadioButtonStatusProps {
   status: string
   isSelected: boolean
@@ -9,6 +11,11 @@ export const RadioButtonStatus = ({
   isSelected,
   onChange,
 }: RadioButtonStatusProps) => {
+  const onClickSpan = (e: MouseEvent) => {
+    e.preventDefault()
+    onChange()
+  }
+
   return (
     <span
       className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] hover:cursor-pointer ${
@@ -16,7 +23,7 @@ export const RadioButtonStatus = ({
           ? 'text-sm-semi border-bleu_nuit bg-bleu_blanc'
           : 'border-bleu_blanc text-sm'
       }`}
-      onClick={onChange}
+      onClick={onClickSpan}
     >
       <label htmlFor={`option-statut--${status}`}>{status}</label>
       <input
@@ -25,7 +32,7 @@ export const RadioButtonStatus = ({
         id={`option-statut--${status}`}
         name='option-statut'
         checked={isSelected}
-        onChange={onChange}
+        onChange={() => {}}
         required
       />
     </span>

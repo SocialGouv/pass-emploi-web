@@ -1,19 +1,15 @@
-import Router from 'next/router'
-import { useState } from 'react'
-
+import Button, { ButtonColorStyle } from 'components/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import Button from 'components/Button'
 import RdvList from 'components/rdv/RdvList'
-
-import withSession, { ServerSideHandler } from 'utils/session'
-import fetchJson from 'utils/fetchJson'
-
-import AddIcon from '../assets/icons/add.svg'
-
-import { Rdv } from 'interfaces/rdv'
 import { RdvJson } from 'interfaces/json/rdv'
+import { Rdv } from 'interfaces/rdv'
+import Router from 'next/router'
+import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
+import fetchJson from 'utils/fetchJson'
+import withSession, { ServerSideHandler } from 'utils/session'
+import AddIcon from '../assets/icons/add.svg'
 
 type HomeProps = {
   rdvs: Rdv[]
@@ -55,7 +51,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
           role='tab'
           type='button'
           className='mr-[8px]'
-          style={displayOldRdv ? 'white' : 'blue'}
+          style={displayOldRdv ? ButtonColorStyle.WHITE : ButtonColorStyle.BLUE}
           onClick={() => {
             setDisplayOldRdv(!displayOldRdv)
           }}
@@ -66,7 +62,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
         <Button
           role='tab'
           type='button'
-          style={displayOldRdv ? 'blue' : 'white'}
+          style={displayOldRdv ? ButtonColorStyle.BLUE : ButtonColorStyle.WHITE}
           onClick={() => {
             setDisplayOldRdv(!displayOldRdv)
           }}

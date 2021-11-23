@@ -1,16 +1,13 @@
-import React, { useState } from 'react'
-
+import Action from 'components/action/Action'
+import AddActionModal from 'components/action/AddActionModal'
+import Button from 'components/Button'
+import { Jeune } from 'interfaces'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { ActionJeuneJson } from 'interfaces/json/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
-
-import { Jeune } from 'interfaces'
-import { ActionStatus, UserAction } from 'interfaces/action'
-
-import AddActionModal from 'components/action/AddActionModal'
-import ActionComp from 'components/action/Action'
-import Button from 'components/Button'
-
+import Router from 'next/router'
+import React, { useState } from 'react'
 import styles from 'styles/JeuneActions.module.css'
 
 /**
@@ -19,14 +16,13 @@ import styles from 'styles/JeuneActions.module.css'
  */
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
-import { UserActionJson } from 'interfaces/json/action'
 
 type Props = {
   jeune: Jeune
-  actions_en_cours: UserAction[]
+  actions_en_cours: ActionJeune[]
 }
 
-const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
+const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
   new Date(action1.lastUpdate).getTime() >
   new Date(action2.lastUpdate).getTime()
     ? -1
@@ -35,13 +31,12 @@ const sortLastUpdate = (action1: UserAction, action2: UserAction) =>
 function Actions({ jeune, actions_en_cours }: Props) {
   const [showModal, setShowModal] = useState(false)
   const [actionsEnCours] = useState(actions_en_cours)
-  const { query } = useRouter()
-  const jeuneId = query.jeune_id || ''
+  const jeuneId = jeune.id
 
   return (
     <>
       <div className={styles.backIntroContainer}>
-        <Link href='/actions' passHref>
+        <Link href={'/actions'} passHref>
           <a className={`${styles.backLink} mr-[24px]`}>
             <BackIcon
               role='img'
@@ -88,9 +83,9 @@ function Actions({ jeune, actions_en_cours }: Props) {
       )}
 
       <ul>
-        {actionsEnCours.map((action: UserAction) => (
+        {actionsEnCours.map((action: ActionJeune) => (
           <li key={action.id} className={styles.listItem}>
-            <ActionComp action={action} jeuneId={jeuneId} />
+            <Action action={action} jeuneId={jeuneId} />
           </li>
         ))}
       </ul>
@@ -115,10 +110,10 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     }
   }
 
-  let userActions: UserAction[] = []
+  let userActions: ActionJeune[] = []
 
-  dataActionsJeune.map((userActionJson: UserActionJson) => {
-    const newAction: UserAction = {
+  dataActionsJeune.map((userActionJson: ActionJeuneJson) => {
+    const newAction: ActionJeune = {
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
     }

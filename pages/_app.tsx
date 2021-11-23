@@ -1,18 +1,15 @@
 import ProgressBar from '@badrap/bar-of-progress'
-
-import Router, { useRouter } from 'next/router'
-import type { AppProps } from 'next/app'
-import { useEffect } from 'react'
-
+import init from '@socialgouv/matomo-next'
 import Layout from 'components/layouts/Layout'
-
-import { init } from '@socialgouv/matomo-next'
+import { AppProps } from 'next/app'
+import Router, { useRouter } from 'next/router'
+import React, { ReactNode, useEffect } from 'react'
+import 'styles/globals.css'
+import 'styles/typography.css'
+import { DIProvider } from 'utils/injectionDependances'
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
 const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
-
-import 'styles/globals.css'
-import 'styles/typography.css'
 
 const progress = new ProgressBar({
   size: 5,
@@ -25,7 +22,7 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps): ReactNode {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
 
@@ -34,7 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
-    <>
+    <DIProvider>
       {isLoginPage ? (
         <Component {...pageProps} />
       ) : (
@@ -42,7 +39,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </Layout>
       )}
-    </>
+    </DIProvider>
   )
 }
+
 export default MyApp

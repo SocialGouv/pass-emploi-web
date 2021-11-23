@@ -7,8 +7,14 @@ type ButtonProps = {
   type?: any
   label?: string
   disabled?: boolean
-  style?: string
+  style?: ButtonColorStyle
   className?: any
+}
+
+export enum ButtonColorStyle {
+  BLUE = 'blue',
+  WHITE = 'white',
+  RED = 'red',
 }
 
 const Button = ({
@@ -18,15 +24,15 @@ const Button = ({
   type,
   disabled = false,
   label,
-  style = 'blue',
+  style = ButtonColorStyle.BLUE,
   className,
 }: ButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`text-sm ${styles.button} ${
-        style === 'white' ? styles.buttonWhite : styles.buttonBlue
-      } ${className ? className : ''}  `}
+      className={`${className ? className : ''} text-sm ${
+        styles.button
+      } ${getColorStyleClassName(style)}`}
       role={role || undefined}
       type={type || undefined}
       aria-label={label || undefined}
@@ -36,6 +42,20 @@ const Button = ({
       {children}
     </button>
   )
+}
+
+const getColorStyleClassName = (
+  style: ButtonColorStyle | undefined
+): string => {
+  switch (style) {
+    case ButtonColorStyle.WHITE:
+      return styles.buttonWhite
+    case ButtonColorStyle.RED:
+      return styles.buttonRed
+    case ButtonColorStyle.BLUE:
+    default:
+      return styles.buttonBlue
+  }
 }
 
 export default Button

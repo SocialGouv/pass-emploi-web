@@ -1,5 +1,5 @@
 .button {
-	padding: 11px 14px;
+	padding: 16px 24px;
 	border: 0.1rem solid transparent;
 	border-radius: 74px;
 	transition: border-color, color 0.2s, background-color 0.2s;
@@ -61,4 +61,34 @@
 
 .buttonWhite:hover svg path {
 	fill: theme('colors.bleu_nuit');
+}
+
+/**
+* Button red
+*/
+
+.buttonRed {
+	background-color: theme('colors.rouge_france_5');
+	color: theme('colors.rouge_france');
+	border: unset;
+}
+
+.buttonRed:hover {
+	background-color: theme('colors.rouge_france');
+	color: theme('colors.blanc');
+}
+
+.buttonRed:hover svg path {
+	fill: theme('colors.rouge_france');
+}
+
+.buttonRed[disabled] {
+	cursor: not-allowed;
+	border: unset;
+}
+
+.buttonRed[disabled]:hover {
+	background-color: theme('colors.rouge_france_5');
+	color: theme('colors.rouge_france');
+	border: unset;
 }
