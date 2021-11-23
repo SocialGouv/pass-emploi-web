@@ -8,14 +8,19 @@ import { useState } from 'react'
 
 import { formatDayDate } from 'utils/date'
 
-type RdvModalProps = {
+type DeleteRdvModalProps = {
   show: boolean
   onClose: any
   onDelete: () => void
   rdv: Rdv | RdvJeune
 }
 
-const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
+const DeleteRdvModal = ({
+  show,
+  onClose,
+  onDelete,
+  rdv,
+}: DeleteRdvModalProps) => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
 
@@ -31,7 +36,7 @@ const DeleteRdvModal = ({ show, onClose, onDelete, rdv }: RdvModalProps) => {
       })
       .catch(function (error) {
         setIsEchec(true)
-        console.error('Conversation: Error while deleting rdv', error)
+        console.error('Erreur lors de la suppression du rendez-vous', error)
       })
   }
 

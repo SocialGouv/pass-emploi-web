@@ -22,5 +22,6 @@ describe('<DetailsJeune>', () => {
       })
     ).toBeInTheDocument()
     expect(screen.getByText('jeune-1')).toBeInTheDocument()
+    expect(screen.getByText(`Rendez-vous (${rdv.length})`)).toBeInTheDocument()
   })
 })

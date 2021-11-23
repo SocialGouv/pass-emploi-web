@@ -35,8 +35,10 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
         </Button>
       </span>
 
-      <table role='presentation' className='w-full'>
-        <caption className='hidden'>Liste de mes bénéficiaires</caption>
+      <table className='w-full'>
+        <caption className='visually-hidden'>
+          Liste de mes bénéficiaires
+        </caption>
         <thead>
           <tr className={'grid grid-cols-table'}>
             <th scope='col' className='text-sm text-bleu text-left p-4'>

@@ -6,18 +6,12 @@ import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
-type RdvListProps = {
+type ListeRdvJeuneProps = {
   rdvs: RdvJeune[]
   onDelete?: (rdv: RdvJeune) => void
 }
 
-const RdvListJeune = ({ rdvs, onDelete }: RdvListProps) => {
-  const handleDeleteClick = (rdv: RdvJeune) => {
-    if (onDelete) {
-      onDelete(rdv)
-    }
-  }
-
+const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
   const dayHourCells = (rdvDate: Date, duration: string) => {
     return `${formatDayDate(rdvDate)} (${formatHourMinuteDateUTC(
       rdvDate
@@ -29,8 +23,10 @@ const RdvListJeune = ({ rdvs, onDelete }: RdvListProps) => {
       {rdvs.length === 0 ? (
         <p className='text-md text-bleu mb-8'>Pas de rendez-vous planifiés</p>
       ) : (
-        <table role='presentation' className='w-full'>
-          <caption className='hidden'>Liste de mes rendez-vous</caption>
+        <table className='w-full'>
+          <caption className='visually-hidden'>
+            Liste de mes rendez-vous
+          </caption>
           <thead className='visually-hidden'>
             <tr>
               <th scope='col'>Date et heure du rendez-vous</th>
@@ -75,7 +71,7 @@ const RdvListJeune = ({ rdvs, onDelete }: RdvListProps) => {
                 {onDelete && (
                   <td className='p-4'>
                     <button
-                      onClick={() => handleDeleteClick(rdv)}
+                      onClick={() => onDelete(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
                     >
                       <DeleteIcon aria-hidden='true' focusable='false' />
@@ -97,4 +93,4 @@ const RdvListJeune = ({ rdvs, onDelete }: RdvListProps) => {
   )
 }
 
-export default RdvListJeune
+export default ListeRdvJeune

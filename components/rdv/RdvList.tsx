@@ -28,8 +28,10 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
           Vous n&apos;avez pas de rendez-vous pour le moment
         </p>
       ) : (
-        <table role='presentation' className='w-full'>
-          <caption className='hidden'>Liste de mes rendez-vous</caption>
+        <table className='w-full'>
+          <caption className='visually-hidden'>
+            Liste de mes rendez-vous
+          </caption>
 
           <thead className='visually-hidden'>
             <tr>

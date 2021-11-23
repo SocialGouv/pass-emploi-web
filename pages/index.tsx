@@ -31,16 +31,16 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState(defaultRdv)
-  const [rdvsAvenir, setRdvsAvenir] = useState(rdvs)
+  const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
 
   function deleteRdv() {
     return () => {
-      const index = rdvsAvenir.indexOf(selectedRdv)
+      const index = rdvsAVenir.indexOf(selectedRdv)
       const newArray = [
-        ...rdvsAvenir.slice(0, index),
-        ...rdvsAvenir.slice(index + 1, rdvsAvenir.length),
+        ...rdvsAVenir.slice(0, index),
+        ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
       ]
-      setRdvsAvenir(newArray)
+      setRdvsAVenir(newArray)
     }
   }
 
@@ -86,7 +86,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
         <RdvList rdvs={oldRdvs} />
       ) : (
         <RdvList
-          rdvs={rdvsAvenir}
+          rdvs={rdvsAVenir}
           onDelete={(rdv: Rdv) => {
             setShowDeleteModal(true)
             setSelectedRdv(rdv)
