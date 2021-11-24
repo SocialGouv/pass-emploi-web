@@ -3,9 +3,9 @@ import {
   collection,
   CollectionReference,
   Firestore,
-  getDocs,
+  onSnapshot,
   query,
-  Timestamp,
+  QuerySnapshot,
   where,
 } from 'firebase/firestore'
 import { Jeune, JeuneChat } from 'interfaces'
@@ -16,19 +16,6 @@ import fetchJson from 'utils/fetchJson'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
-
-const defaultChat: JeuneChat = {
-  id: 'default',
-  firstName: '',
-  lastName: '',
-  seenByConseiller: true,
-  newConseillerMessageCount: 0,
-  lastMessageContent: '',
-  lastMessageSentBy: 'conseiller',
-  lastMessageSentAt: new Timestamp(1562524200, 0),
-  lastConseillerReading: new Timestamp(1562524200, 0),
-  lastJeuneReading: new Timestamp(1562524200, 0),
-}
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -41,9 +28,11 @@ type ChatBoxProps = {
 export default function ChatBox({ db }: ChatBoxProps) {
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
-  const [selectedChat, setSelectedChat] = useState<JeuneChat>(defaultChat)
+  const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
+    undefined
+  )
 
-  const isInChatRoom = () => Boolean(selectedChat === defaultChat)
+  const isInConversation = () => Boolean(selectedChat !== undefined)
 
   useEffect(() => {
     async function fetchJeunes(): Promise<Jeune[]> {
@@ -62,15 +51,14 @@ export default function ChatBox({ db }: ChatBoxProps) {
   }, [])
 
   useEffect(() => {
-    async function fetchFirebaseData(): Promise<JeuneChat[]> {
-      const chats: Array<JeuneChat | undefined> = await Promise.all(
-        jeunes.map((jeune: Jeune) =>
-          getDocs(
-            query<JeuneChat>(
-              collection(db, collectionName) as CollectionReference<JeuneChat>,
-              where('jeuneId', '==', jeune.id)
-            )
-          ).then((querySnapshot) => {
+    async function observeJeuneChats(): Promise<void> {
+      jeunes.forEach((jeune: Jeune) =>
+        onSnapshot(
+          query<JeuneChat>(
+            collection(db, collectionName) as CollectionReference<JeuneChat>,
+            where('jeuneId', '==', jeune.id)
+          ),
+          (querySnapshot: QuerySnapshot<JeuneChat>) => {
             if (querySnapshot.empty) return
 
             const doc = querySnapshot.docs[0]
@@ -80,28 +68,20 @@ export default function ChatBox({ db }: ChatBoxProps) {
               chatId: doc.id,
               seenByConseiller: data.seenByConseiller ?? true,
               newConseillerMessageCount: data.newConseillerMessageCount,
-              lastMessageContent:
-                data.lastMessageContent || defaultChat.lastMessageContent,
-              lastMessageSentAt:
-                data.lastMessageSentAt || defaultChat.lastMessageSentAt,
-              lastMessageSentBy:
-                data.lastMessageSentBy || defaultChat.lastMessageSentBy,
-              lastConseillerReading:
-                data.lastConseillerReading || defaultChat.lastConseillerReading,
-              lastJeuneReading:
-                data.lastJeuneReading || defaultChat.lastJeuneReading,
+              lastMessageContent: data.lastMessageContent,
+              lastMessageSentAt: data.lastMessageSentAt,
+              lastMessageSentBy: data.lastMessageSentBy,
+              lastConseillerReading: data.lastConseillerReading,
+              lastJeuneReading: data.lastJeuneReading,
             }
 
             updateJeunesChat(newJeuneChat)
-            return newJeuneChat
-          })
+          }
         )
       )
-
-      return chats.filter(exists)
     }
 
-    fetchFirebaseData()
+    observeJeuneChats()
   }, [db, jeunes])
 
   function updateJeunesChat(newJeuneChat: JeuneChat) {
@@ -118,21 +98,17 @@ export default function ChatBox({ db }: ChatBoxProps) {
     setJeunesChats([...currentJeunesChat])
   }
 
-  function exists(chat: JeuneChat | undefined): chat is JeuneChat {
-    return chat !== undefined
-  }
-
   return (
     <article className={styles.chatRoom}>
-      {!isInChatRoom() && (
+      {isInConversation() && (
         <Conversation
-          onBack={() => setSelectedChat(defaultChat)}
+          onBack={() => setSelectedChat(undefined)}
           db={db}
-          jeune={selectedChat}
+          jeune={selectedChat!}
         />
       )}
 
-      {isInChatRoom() && (
+      {!isInConversation() && (
         <>
           <h2 className={`h2-semi text-bleu_nuit ${styles.chatroomTitle}`}>
             Ma messagerie
@@ -154,13 +130,13 @@ export default function ChatBox({ db }: ChatBoxProps) {
 
           <ul className={styles.conversations}>
             {jeunesChats.map(
-              (jeune: JeuneChat) =>
-                jeune.chatId && (
-                  <li key={`chat-${jeune.id}`}>
-                    <button onClick={() => setSelectedChat(jeune)}>
+              (jeuneChat: JeuneChat) =>
+                jeuneChat.chatId && (
+                  <li key={`chat-${jeuneChat.id}`}>
+                    <button onClick={() => setSelectedChat(jeuneChat)}>
                       <span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
-                        {jeune.firstName} {jeune.lastName}
-                        {!jeune.seenByConseiller && (
+                        {jeuneChat.firstName} {jeuneChat.lastName}
+                        {!jeuneChat.seenByConseiller && (
                           <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
                             Nouveau message
                           </span>
@@ -168,20 +144,20 @@ export default function ChatBox({ db }: ChatBoxProps) {
                       </span>
                       <span className='text-sm text-bleu_gris mb-[8px]'>
                         {' '}
-                        {jeune.lastMessageSentBy === 'conseiller'
+                        {jeuneChat.lastMessageSentBy === 'conseiller'
                           ? 'Vous'
-                          : jeune.firstName}{' '}
-                        : {jeune.lastMessageContent}
+                          : jeuneChat.firstName}{' '}
+                        : {jeuneChat.lastMessageContent}
                       </span>
                       <span className='text-xxs-italic text-bleu_nuit self-end flex'>
-                        {jeune.lastMessageContent && (
+                        {jeuneChat.lastMessageContent && (
                           <span className='mr-[7px]'>
                             {formatDayAndHourDate(
-                              jeune.lastMessageSentAt.toDate()
+                              jeuneChat.lastMessageSentAt!.toDate()
                             )}{' '}
                           </span>
                         )}
-                        {jeune.seenByConseiller ? (
+                        {jeuneChat.seenByConseiller ? (
                           <FbCheckIcon focusable='false' aria-hidden='true' />
                         ) : (
                           <FbCheckFillIcon
