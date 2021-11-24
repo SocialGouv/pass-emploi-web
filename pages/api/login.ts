@@ -9,7 +9,6 @@ type Data = {
   firstName: ''
   lastName: ''
   id: ''
-  jeunes: []
 }
 
 type ApiError = {
@@ -19,13 +18,13 @@ type ApiError = {
 export default withSession(
   async (req: NextIronRequest, res: NextApiResponse<Data | ApiError>) => {
     const { userId } = await req.body
-    const url = `${process.env.API_ENDPOINT}/conseillers/${userId}/login`
+    const url = `${process.env.API_ENDPOINT}/conseillers/${userId}`
 
     try {
       // we check that the user exists on GitHub and store some data in session
       const data = await fetchJson(url)
 
-      const user = { isLoggedIn: true, ...data.conseiller }
+      const user = { isLoggedIn: true, ...data }
 
       req.session.set('user', user)
       await req.session.save()

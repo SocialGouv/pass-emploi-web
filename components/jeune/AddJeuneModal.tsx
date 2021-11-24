@@ -9,10 +9,9 @@ import fetchJson from 'utils/fetchJson'
 type AddJeuneModalProps = {
   show: boolean
   onClose: () => void
-  onAdd: (jeune: Jeune) => void
 }
 
-const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
+const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [conseillerId, setConseillerId] = useState<String>('')
@@ -50,7 +49,6 @@ const AddJeuneModal = ({ show, onClose, onAdd }: AddJeuneModalProps) => {
     })
       .then(async function (response) {
         const jeune = await response.json()
-        onAdd(jeune)
         setNewJeune(jeune)
       })
       .catch(function (error) {
