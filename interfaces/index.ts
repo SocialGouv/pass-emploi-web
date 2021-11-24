@@ -19,13 +19,13 @@ export type Jeune = {
 }
 
 export interface JeuneChat extends Jeune {
-  seenByConseiller: boolean,
-  newConseillerMessageCount: number,
-  lastMessageContent: string,
-  lastMessageSentAt: Timestamp,
-  lastMessageSentBy: string,
-  lastConseillerReading: Timestamp,
-  lastJeuneReading: Timestamp
+  seenByConseiller: boolean
+  newConseillerMessageCount: number
+  lastMessageContent: string | undefined
+  lastMessageSentAt: Timestamp | undefined
+  lastMessageSentBy: string | undefined
+  lastConseillerReading: Timestamp | undefined
+  lastJeuneReading: Timestamp | undefined
 }
 
 /**
@@ -35,14 +35,14 @@ export type Message = {
   id: string
   content: string
   creationDate: Timestamp
-  sentBy: string,
+  sentBy: string
 }
 
 export class DailyMessages {
   date: Date
   messages: Message[]
 
-  constructor (date: Date, messages: Message[]) {
+  constructor(date: Date, messages: Message[]) {
     this.date = date
     this.messages = messages
   }
@@ -51,7 +51,7 @@ export class DailyMessages {
 export class ListDailyMessages {
   dailyMessages: DailyMessages[]
 
-  constructor (messages: Message[]) {
+  constructor(messages: Message[]) {
     let currentMessages: Message[] = [...messages]
 
     let tmpdate: Date = currentMessages[0].creationDate.toDate()

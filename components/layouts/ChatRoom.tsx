@@ -6,7 +6,6 @@ import {
   onSnapshot,
   query,
   QuerySnapshot,
-  Timestamp,
   where,
 } from 'firebase/firestore'
 import { Jeune, JeuneChat } from 'interfaces'
@@ -17,20 +16,6 @@ import fetchJson from 'utils/fetchJson'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
-
-// TODO : supprimer ?
-const defaultChat: JeuneChat = {
-  id: 'default',
-  firstName: '',
-  lastName: '',
-  seenByConseiller: true,
-  newConseillerMessageCount: 0,
-  lastMessageContent: '',
-  lastMessageSentBy: 'conseiller',
-  lastMessageSentAt: new Timestamp(1562524200, 0),
-  lastConseillerReading: new Timestamp(1562524200, 0),
-  lastJeuneReading: new Timestamp(1562524200, 0),
-}
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -43,9 +28,11 @@ type ChatBoxProps = {
 export default function ChatBox({ db }: ChatBoxProps) {
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
-  const [selectedChat, setSelectedChat] = useState<JeuneChat>(defaultChat)
+  const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
+    undefined
+  )
 
-  const isInChatRoom = () => Boolean(selectedChat === defaultChat)
+  const isInConversation = () => Boolean(selectedChat !== undefined)
 
   useEffect(() => {
     async function fetchJeunes(): Promise<Jeune[]> {
@@ -81,16 +68,11 @@ export default function ChatBox({ db }: ChatBoxProps) {
               chatId: doc.id,
               seenByConseiller: data.seenByConseiller ?? true,
               newConseillerMessageCount: data.newConseillerMessageCount,
-              lastMessageContent:
-                data.lastMessageContent || defaultChat.lastMessageContent,
-              lastMessageSentAt:
-                data.lastMessageSentAt || defaultChat.lastMessageSentAt,
-              lastMessageSentBy:
-                data.lastMessageSentBy || defaultChat.lastMessageSentBy,
-              lastConseillerReading:
-                data.lastConseillerReading || defaultChat.lastConseillerReading,
-              lastJeuneReading:
-                data.lastJeuneReading || defaultChat.lastJeuneReading,
+              lastMessageContent: data.lastMessageContent,
+              lastMessageSentAt: data.lastMessageSentAt,
+              lastMessageSentBy: data.lastMessageSentBy,
+              lastConseillerReading: data.lastConseillerReading,
+              lastJeuneReading: data.lastJeuneReading,
             }
 
             updateJeunesChat(newJeuneChat)
@@ -118,15 +100,15 @@ export default function ChatBox({ db }: ChatBoxProps) {
 
   return (
     <article className={styles.chatRoom}>
-      {!isInChatRoom() && (
+      {isInConversation() && (
         <Conversation
-          onBack={() => setSelectedChat(defaultChat)}
+          onBack={() => setSelectedChat(undefined)}
           db={db}
-          jeune={selectedChat}
+          jeune={selectedChat!}
         />
       )}
 
-      {isInChatRoom() && (
+      {!isInConversation() && (
         <>
           <h2 className={`h2-semi text-bleu_nuit ${styles.chatroomTitle}`}>
             Ma messagerie
@@ -171,7 +153,7 @@ export default function ChatBox({ db }: ChatBoxProps) {
                         {jeuneChat.lastMessageContent && (
                           <span className='mr-[7px]'>
                             {formatDayAndHourDate(
-                              jeuneChat.lastMessageSentAt.toDate()
+                              jeuneChat.lastMessageSentAt!.toDate()
                             )}{' '}
                           </span>
                         )}
