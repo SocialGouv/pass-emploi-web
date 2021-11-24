@@ -21,7 +21,7 @@ function NotStarted() {
 function InProgress() {
   return (
     <p className='text-xs-semi text-blanc px-[16px] py-[2px] bg-violet rounded-x_large'>
-      Commencée
+      En cours
     </p>
   )
 }

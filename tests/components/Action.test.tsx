@@ -18,10 +18,10 @@ describe('<Action/>', () => {
     expect(screen.getByText("Détail de l'action")).toBeInTheDocument()
   })
 
-  it("devrait afficher un badge 'Commencée' quand l'action a été commencée", () => {
+  it("devrait afficher un badge 'En cours' quand l'action a été commencée", () => {
     const actionCommencee = uneAction({ status: ActionStatus.InProgress })
     render(<Action action={actionCommencee} jeuneId={'1'} />)
-    expect(screen.getByText('Commencée')).toBeInTheDocument()
+    expect(screen.getByText('En cours')).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'Terminée' quand l'action est terminée", () => {
