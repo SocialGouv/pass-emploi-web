@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
+import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { unJeune } from 'fixtures/jeune'
 import React from 'react'
-import { DetailsJeune } from '../../components/jeune/DetailsJeune'
 
 describe('<DetailsJeune>', () => {
   it("devrait afficher les informations de la fiche d'une jeune", () => {

@@ -15,7 +15,6 @@ type MesJeunesProps = {
 
 function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   const [showModal, setShowModal] = useState(false)
-  const [jeunes] = useState<Jeune[]>(conseillerJeunes)
 
   const handleCloseModal = () => {
     setShowModal(false)
@@ -35,49 +34,57 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
       <div
         role='table'
         className='table w-full'
-        aria-label='Liste de mes jeunes'
+        aria-label='jeunes'
+        aria-describedby='table-caption'
       >
-        <div role='row' className='table-row grid grid-cols-table'>
-          <span
-            role='columnheader'
-            className='table-cell text-sm text-bleu text-left p-4'
-          >
-            Nom du jeune
-          </span>
+        <div id='table-caption' className='visually-hidden'>
+          Liste de mes jeunes
+        </div>
+        <div role='rowgroup'>
+          <div role='row' className='table-row grid grid-cols-table'>
+            <span
+              role='columnheader'
+              className='table-cell text-sm text-bleu text-left p-4'
+            >
+              Nom du jeune
+            </span>
 
-          <span
-            role='columnheader'
-            className='table-cell text-sm text-bleu text-left pb-4 pt-4'
-          >
-            Identifiant
-          </span>
+            <span
+              role='columnheader'
+              className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+            >
+              Identifiant
+            </span>
+          </div>
         </div>
 
-        {jeunes?.map((jeune: Jeune) => (
-          <Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
-            <a
-              key={jeune.id}
-              role='row'
-              aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, identifiant ${jeune.id}`}
-              className='table-row grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
-            >
-              <span role='cell' className='table-cell p-[16px]' aria-hidden>
-                {jeune.firstName} {jeune.lastName}
-              </span>
-
-              <span role='cell' className='table-cell p-4' aria-hidden>
-                {jeune.id}
-              </span>
-              <span
-                role='cell'
-                className='table-cell p-4 col-end-6'
-                aria-hidden
+        <div role='rowgroup'>
+          {conseillerJeunes?.map((jeune: Jeune) => (
+            <Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
+              <a
+                key={jeune.id}
+                role='row'
+                aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, identifiant ${jeune.id}`}
+                className='table-row grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
               >
-                <ChevronRight aria-hidden='true' focusable='false' />
-              </span>
-            </a>
-          </Link>
-        ))}
+                <span role='cell' className='table-cell p-4' aria-hidden='true'>
+                  {jeune.firstName} {jeune.lastName}
+                </span>
+
+                <span role='cell' className='table-cell p-4' aria-hidden='true'>
+                  {jeune.id}
+                </span>
+                <span
+                  role='cell'
+                  className='table-cell p-4 col-end-6'
+                  aria-hidden='true'
+                >
+                  <ChevronRight aria-hidden='true' focusable='false' />
+                </span>
+              </a>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <AddJeuneModal onClose={handleCloseModal} show={showModal} />
@@ -87,9 +94,8 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
 
 export const getServerSideProps = withSession<ServerSideHandler>(
   async ({ req, res }) => {
-    const user: any = req.session.get('user')
-
-    const userId = user.id
+    const user: { id: string } | undefined =
+      req.session.get<{ id: string }>('user')
 
     if (user === undefined) {
       res.setHeader('location', '/login')
@@ -101,7 +107,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
     }
 
     const jeunes = await fetchJson(
-      `${process.env.API_ENDPOINT}/conseillers/${userId}/jeunes`
+      `${process.env.API_ENDPOINT}/conseillers/${user.id}/jeunes`
     )
 
     return {
