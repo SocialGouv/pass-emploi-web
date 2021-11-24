@@ -25,17 +25,24 @@ export const uneListeDeRdvJeune = (overrides: RdvJeune[] = []): RdvJeune[] =>
   [
     {
       id: '1',
-      comment: 'Rendez-vous avec Rama',
-      date: 'Thu, 21 Oct 2021 10:00:00 GMT',
-      duration: '30 min',
-      modality: 'Par téléphone',
+      comment: 'Mon premier rendez-vous',
+      date: 'Mon, 25 Oct 2021 07:00:00 GMT',
+      duration: '25',
+      modality: 'En agence',
     },
     {
       id: '2',
-      comment: 'Mon premier rendez-vous',
-      date: 'Mon, 25 Oct 2021 12:00:00 GMT',
-      duration: '25 min',
-      modality: 'En agence',
+      comment: 'Rendez-vous avec Rama',
+      date: 'Thu, 21 Oct 2021 07:00:00 GMT',
+      duration: '30',
+      modality: 'Par téléphone',
+    },
+    {
+      id: '3',
+      comment: 'Rendez-vous dans 10 ans',
+      date: 'Thu, 21 Oct 2021 12:00:00 GMT',
+      duration: '30',
+      modality: 'Par téléphone',
     },
     ...overrides,
   ] as RdvJeune[]
