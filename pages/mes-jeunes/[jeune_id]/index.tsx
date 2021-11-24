@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import Link from 'next/link'
-import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { Jeune } from 'interfaces'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { GetServerSideProps } from 'next'
-import fetchJson from 'utils/fetchJson'
-import { RdvJeune } from 'interfaces/rdv'
-import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
+import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import { Jeune } from 'interfaces'
+import { RdvJeune } from 'interfaces/rdv'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import React, { useState } from 'react'
+import fetchJson from 'utils/fetchJson'
+import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
   jeune: Jeune
@@ -46,13 +47,27 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
         </Link>
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
-      <DetailsJeune jeune={jeune} rdv={rdvsAVenir} />
-      <ListeRdvJeune
-        rdvs={rdvsAVenir}
-        onDelete={(rdv: RdvJeune) => {
-          setShowDeleteModal(true), setSelectedRdv(rdv)
-        }}
-      />
+
+      <DetailsJeune jeune={jeune} />
+
+      <div className='mt-8 border-b border-bleu_blanc'>
+        <h2 className='h4-semi text-bleu_nuit mb-4'>
+          Rendez-vous ({rdvs?.length})
+        </h2>
+
+        <ListeRdvJeune
+          rdvs={rdvsAVenir}
+          onDelete={(rdv: RdvJeune) => {
+            setShowDeleteModal(true), setSelectedRdv(rdv)
+          }}
+        />
+      </div>
+
+      <div className='mt-8 border-b border-bleu_blanc pb-8'>
+        <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
+
+        <ListeActionsJeune idJeune={jeune.id} />
+      </div>
 
       {showDeleteModal && selectedRdv && (
         <DeleteRdvModal
