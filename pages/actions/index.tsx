@@ -50,8 +50,8 @@ function Home({ jeuneActionsList }: HomeProps) {
                     jeuneActions.nbActionsAFaire
                   } ${
                     jeuneActions.nbActionsAFaire === 1 ? 'action' : 'actions'
-                  } à faire`
-                : `${jeuneActions.jeune.firstName} n'a pas d'actions à faire pour le moment`}
+                  } à réaliser`
+                : `${jeuneActions.jeune.firstName} n'a pas d'actions à réaliser pour le moment`}
             </p>
 
             <p className='text-xs text-bleu_gris flex mb-[25px]'>
