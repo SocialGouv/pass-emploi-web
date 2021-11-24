@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Router from 'next/router'
 
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import Button from 'components/Button'
@@ -13,16 +14,16 @@ import Link from 'next/link'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type MesJeunesProps = {
-  conseillerId: string
   conseillerJeunes: Jeune[]
 }
 
-function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
+function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   const [showModal, setShowModal] = useState(false)
   const [jeunes, setJeunes] = useState<Jeune[]>(conseillerJeunes)
 
-  const handleAddJeune = async (newJeune: Jeune) => {
-    setJeunes([newJeune, ...jeunes])
+  const handleCloseModal = () => {
+    setShowModal(false)
+    Router.reload()
   }
 
   return (
@@ -72,11 +73,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
         </tbody>
       </table>
 
-      <AddJeuneModal
-        onClose={() => setShowModal(false)}
-        onAdd={(newJeune: Jeune) => handleAddJeune(newJeune)}
-        show={showModal}
-      />
+      <AddJeuneModal onClose={handleCloseModal} show={showModal} />
     </>
   )
 }
@@ -84,6 +81,7 @@ function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
 export const getServerSideProps = withSession<ServerSideHandler>(
   async ({ req, res }) => {
     const user = req.session.get('user')
+
     const userId = user.id
 
     if (user === undefined) {
@@ -95,14 +93,13 @@ export const getServerSideProps = withSession<ServerSideHandler>(
       }
     }
 
-    const data = await fetchJson(
-      `${process.env.API_ENDPOINT}/conseillers/${userId}/login`
+    const jeunes = await fetchJson(
+      `${process.env.API_ENDPOINT}/conseillers/${userId}/jeunes`
     )
 
     return {
       props: {
-        conseillerId: userId,
-        conseillerJeunes: data?.jeunes || [],
+        conseillerJeunes: jeunes || [],
       },
     }
   }

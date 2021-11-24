@@ -30,12 +30,12 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
     async function fetchJeunes(): Promise<Jeune[]> {
       const { id } = await fetchJson('/api/user')
 
-      const data = await fetchJson(
-        `${process.env.API_ENDPOINT}/conseillers/${id}/login`
+      const jeunes = await fetchJson(
+        `${process.env.API_ENDPOINT}/conseillers/${id}/jeunes`
       )
 
       setConseillerId(id)
-      return data?.jeunes || []
+      return jeunes || []
     }
 
     fetchJeunes().then((data) => {
