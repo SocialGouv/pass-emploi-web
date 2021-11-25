@@ -5,7 +5,6 @@ import { formatDayDate, formatHourMinuteDateUTC } from 'utils/date'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
-import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type ListeRdvJeuneProps = {
   rdvs: RdvJeune[]
@@ -43,11 +42,11 @@ const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
                 key={rdv.id}
                 className='grid grid-cols-table_large items-baseline text-sm text-bleu_nuit'
               >
-                <td className='p-4'>
-                  {dayHourCells(new Date(rdv.date), rdv.duration)}
+                <td className='py-4 px-2'>
+                  {dayHourCells(new Date(rdv.date), `${rdv.duration} min`)}
                 </td>
 
-                <td className={'flex p-4'}>
+                <td className={'flex py-4 px-2'}>
                   <span>
                     <LocationIcon
                       focusable='false'
@@ -58,7 +57,7 @@ const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
                   {rdv.modality}
                 </td>
 
-                <td className='flex p-4'>
+                <td className='flex py-4 px-2'>
                   <span>
                     <NoteIcon
                       focusable='false'
@@ -70,7 +69,7 @@ const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
                 </td>
 
                 {onDelete && (
-                  <td className='p-4'>
+                  <td className='py-4 px-2'>
                     <button
                       onClick={() => onDelete(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
@@ -79,12 +78,6 @@ const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
                     </button>
                   </td>
                 )}
-
-                <td className='p-5'>
-                  <span>
-                    <ChevronRight aria-hidden='true' focusable='false' />
-                  </span>
-                </td>
               </tr>
             ))}
           </tbody>

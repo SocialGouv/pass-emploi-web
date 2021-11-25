@@ -55,7 +55,7 @@ module.exports = {
     gridTemplateColumns: {
       // Complex site-specific column configuration
       table: '1fr 2fr',
-      table_large: '3fr 2fr 3fr auto auto',
+      table_large: '28% 2fr 3fr auto',
     },
     extend: {
       fontFamily: {
