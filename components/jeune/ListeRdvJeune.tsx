@@ -1,4 +1,5 @@
 import { RdvJeune } from 'interfaces/rdv'
+import React from 'react'
 import { formatDayDate, formatHourMinuteDateUTC } from 'utils/date'
 
 import DeleteIcon from '../../assets/icons/delete.svg'

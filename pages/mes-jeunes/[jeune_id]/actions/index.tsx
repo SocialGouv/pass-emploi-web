@@ -34,7 +34,6 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
   const [showModal, setShowModal] = useState(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
   const [actionsEnCours] = useState(actions_en_cours)
-  const jeuneId = jeune.id
   const router = useRouter()
 
   const closeSuccessMessage = () => {
@@ -51,12 +50,12 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
   return (
     <>
       <div className='flex justify-between flex-wrap w-full mb-[45px]'>
-        <Link href={'/actions'} passHref>
+        <Link href={`/mes-jeunes/${jeune.id}`} passHref>
           <a className='p-1 mr-[24px]'>
             <BackIcon
               role='img'
               focusable='false'
-              aria-label='Retour sur la liste de tous les jeunes'
+              aria-label='Retour sur la fiche du jeune'
             />
           </a>
         </Link>
@@ -102,7 +101,7 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
       <ul>
         {actionsEnCours.map((action: ActionJeune) => (
           <li key={action.id}>
-            <Action action={action} jeuneId={jeuneId} />
+            <Action action={action} jeuneId={jeune.id} />
           </li>
         ))}
       </ul>

@@ -1,19 +1,14 @@
 import { Conseiller } from 'interfaces'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-
 import { useEffect, useState } from 'react'
-
 import styles from 'styles/components/Layouts.module.css'
-
 import fetchJson from 'utils/fetchJson'
 import useUser from 'utils/useUser'
 import DashboardIcon from '../../assets/icons/dashboard.svg'
-
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PersonIcon from '../../assets/icons/person.svg'
-import ViewlistIcon from '../../assets/icons/view_list.svg'
 
 type SidebarProps = {}
 
@@ -64,25 +59,7 @@ export default function Sidebar({}: SidebarProps) {
             </a>
           </Link>
 
-          <Link href='/actions'>
-            <a
-              className={
-                router.pathname.startsWith('/actions') ? styles.activeLink : ''
-              }
-            >
-              <ViewlistIcon
-                role='img'
-                focusable='false'
-                aria-label='Aller sur la liste des actions'
-                className='mr-[8px]'
-              />
-              <span className='text-xs-semi text-bleu_nuit text-center'>
-                Actions
-              </span>
-            </a>
-          </Link>
-
-          <Link href='/mes-jeunes'>
+          <Link href={'/mes-jeunes'}>
             <a
               className={
                 router.pathname.startsWith('/mes-jeunes')
@@ -107,7 +84,7 @@ export default function Sidebar({}: SidebarProps) {
       <div className='flex justify-between'>
         <p className='text-lg-semi text-bleu_nuit'>{conseillerName}</p>
 
-        <Link href='/api/logout'>
+        <Link href={'/api/logout'}>
           <a onClick={handleLogout} className='mr-[8px]'>
             <LogoutIcon
               role='img'

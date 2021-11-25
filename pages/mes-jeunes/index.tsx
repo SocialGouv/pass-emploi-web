@@ -1,16 +1,12 @@
-import React, { useState } from 'react'
-import Router from 'next/router'
-
-import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import Button from 'components/Button'
-
+import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import { Jeune } from 'interfaces'
-
-import withSession, { ServerSideHandler } from 'utils/session'
-
-import AddIcon from '../../assets/icons/add_person.svg'
-import fetchJson from 'utils/fetchJson'
 import Link from 'next/link'
+import Router from 'next/router'
+import React, { useState } from 'react'
+import fetchJson from 'utils/fetchJson'
+import withSession, { ServerSideHandler } from 'utils/session'
+import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type MesJeunesProps = {
@@ -19,7 +15,6 @@ type MesJeunesProps = {
 
 function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   const [showModal, setShowModal] = useState(false)
-  const [jeunes, setJeunes] = useState<Jeune[]>(conseillerJeunes)
 
   const handleCloseModal = () => {
     setShowModal(false)
@@ -36,42 +31,61 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
         </Button>
       </span>
 
-      <table className='w-full'>
-        <caption className='visually-hidden'>
-          Liste de mes bénéficiaires
-        </caption>
-        <thead>
-          <tr className={'grid grid-cols-table'}>
-            <th scope='col' className='text-sm text-bleu text-left p-4'>
+      <div
+        role='table'
+        className='table w-full'
+        aria-label='jeunes'
+        aria-describedby='table-caption'
+      >
+        <div id='table-caption' className='visually-hidden'>
+          Liste de mes jeunes
+        </div>
+        <div role='rowgroup'>
+          <div role='row' className='table-row grid grid-cols-table'>
+            <span
+              role='columnheader'
+              className='table-cell text-sm text-bleu text-left p-4'
+            >
               Nom du jeune
-            </th>
+            </span>
 
-            <th scope='col' className='text-sm text-bleu text-left pb-4 pt-4'>
+            <span
+              role='columnheader'
+              className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+            >
               Identifiant
-            </th>
-          </tr>
-        </thead>
+            </span>
+          </div>
+        </div>
 
-        <tbody>
-          {jeunes?.map((jeune: Jeune) => (
+        <div role='rowgroup'>
+          {conseillerJeunes?.map((jeune: Jeune) => (
             <Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
-              <tr
+              <a
                 key={jeune.id}
-                className='grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
+                role='row'
+                aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, identifiant ${jeune.id}`}
+                className='table-row grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
               >
-                <td className='p-[16px]'>
+                <span role='cell' className='table-cell p-4' aria-hidden='true'>
                   {jeune.firstName} {jeune.lastName}
-                </td>
+                </span>
 
-                <td className='p-4'>{jeune.id}</td>
-                <td className='p-4 col-end-6'>
+                <span role='cell' className='table-cell p-4' aria-hidden='true'>
+                  {jeune.id}
+                </span>
+                <span
+                  role='cell'
+                  className='table-cell p-4 col-end-6'
+                  aria-hidden='true'
+                >
                   <ChevronRight aria-hidden='true' focusable='false' />
-                </td>
-              </tr>
+                </span>
+              </a>
             </Link>
           ))}
-        </tbody>
-      </table>
+        </div>
+      </div>
 
       <AddJeuneModal onClose={handleCloseModal} show={showModal} />
     </>
@@ -80,9 +94,8 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
 
 export const getServerSideProps = withSession<ServerSideHandler>(
   async ({ req, res }) => {
-    const user = req.session.get('user')
-
-    const userId = user.id
+    const user: { id: string } | undefined =
+      req.session.get<{ id: string }>('user')
 
     if (user === undefined) {
       res.setHeader('location', '/login')
@@ -94,7 +107,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
     }
 
     const jeunes = await fetchJson(
-      `${process.env.API_ENDPOINT}/conseillers/${userId}/jeunes`
+      `${process.env.API_ENDPOINT}/conseillers/${user.id}/jeunes`
     )
 
     return {
