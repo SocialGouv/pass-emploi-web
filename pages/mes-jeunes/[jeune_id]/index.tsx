@@ -98,7 +98,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   const rdvsTriesParLePlusProche = resRdvJeune.sort(
     (rdv1: RdvJeune, rdv2: RdvJeune) =>
-      new Date(rdv1.date) - new Date(rdv2.date)
+      new Date(rdv1.date).getTime() - new Date(rdv2.date).getTime()
   )
 
   return {

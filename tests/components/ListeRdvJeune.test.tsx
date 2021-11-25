@@ -18,27 +18,12 @@ describe('<ListeRdvJeune', () => {
     listeRdv = uneListeDeRdvJeune()
     render(<ListeRdvJeune rdvs={listeRdv} />)
 
-    expect(screen.getByText('21/10/2021 (10:00 - 30 min)')).toBeInTheDocument()
-    expect(screen.getByText('Par téléphone')).toBeInTheDocument()
+    expect(screen.getByText('21/10/2021 (07:00 - 30 min)')).toBeInTheDocument()
+    expect(screen.getAllByText('En agence')[0]).toBeInTheDocument()
     expect(screen.getByText('Rendez-vous avec Rama')).toBeInTheDocument()
   })
 
   it('ne devrait pas afficher un tableau de rdvs quand rdvs est vide', () => {
     expect(() => screen.getByRole('table')).toThrow()
-  })
-  it('devrait afficher les rdvs à venir du plus proche au plus lointain', () => {
-    listeRdv = uneListeDeRdvJeune()
-    const rdvsTriesParLePlusProche = listeRdv.sort(
-      (rdv1, rdv2) => new Date(rdv1.date) - new Date(rdv2.date)
-    )
-    expect(rdvsTriesParLePlusProche[0].date).toBe(
-      'Thu, 21 Oct 2021 07:00:00 GMT'
-    )
-    expect(rdvsTriesParLePlusProche[1].date).toBe(
-      'Thu, 21 Oct 2021 12:00:00 GMT'
-    )
-    expect(rdvsTriesParLePlusProche[2].date).toBe(
-      'Mon, 25 Oct 2021 07:00:00 GMT'
-    )
   })
 })
