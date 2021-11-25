@@ -87,10 +87,7 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
       {showAddModal && (
         <AddRdvModal
           onClose={() => setShowAddModal(false)}
-          onAdd={() => {
-            Router.reload()
-          }}
-          show={showAddModal}
+          onAdd={Router.reload}
         />
       )}
 

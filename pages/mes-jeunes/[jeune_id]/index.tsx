@@ -1,11 +1,14 @@
+import Button, { ButtonColorStyle } from 'components/Button'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
+import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { Jeune } from 'interfaces'
 import { RdvJeune } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
+import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
@@ -16,6 +19,7 @@ interface FicheJeuneProps {
 }
 
 const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
+  const [showAddRdvModal, setShowAddRdvModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
   const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
@@ -35,17 +39,27 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
 
   return (
     <div className={'flex flex-col'}>
-      <div className={'flex items-center mb-8'}>
-        <Link href='/mes-jeunes' passHref>
-          <a className='mr-6'>
-            <BackIcon
-              role='img'
-              focusable='false'
-              aria-label='Retour sur la liste de tous les jeunes'
-            />
-          </a>
-        </Link>
-        <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+      <div className={'flex items-center justify-between mb-8'}>
+        <div className={'flex items-center'}>
+          <Link href={'/mes-jeunes'} passHref>
+            <a className='mr-6'>
+              <BackIcon
+                role='img'
+                focusable='false'
+                aria-label='Retour sur la liste de tous les jeunes'
+              />
+            </a>
+          </Link>
+          <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+        </div>
+
+        <Button
+          onClick={() => setShowAddRdvModal(true)}
+          label='Fixer un rendez-vous'
+          style={ButtonColorStyle.WHITE}
+        >
+          Fixer un rendez-vous
+        </Button>
       </div>
 
       <DetailsJeune jeune={jeune} />
@@ -58,7 +72,8 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
         <ListeRdvJeune
           rdvs={rdvsAVenir}
           onDelete={(rdv: RdvJeune) => {
-            setShowDeleteModal(true), setSelectedRdv(rdv)
+            setSelectedRdv(rdv)
+            setShowDeleteModal(true)
           }}
         />
       </div>
@@ -68,6 +83,14 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
 
         <ListeActionsJeune idJeune={jeune.id} />
       </div>
+
+      {showAddRdvModal && (
+        <AddRdvModal
+          onClose={() => setShowAddRdvModal(false)}
+          onAdd={Router.reload}
+          jeune={jeune}
+        />
+      )}
 
       {showDeleteModal && selectedRdv && (
         <DeleteRdvModal
