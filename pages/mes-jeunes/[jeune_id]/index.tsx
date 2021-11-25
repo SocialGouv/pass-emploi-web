@@ -96,17 +96,10 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   }
   const today = new Date()
 
-  const rdvsTriesParLePlusProche = resRdvJeune.sort(
-    (rdv1: RdvJeune, rdv2: RdvJeune) =>
-      new Date(rdv1.date).getTime() - new Date(rdv2.date).getTime()
-  )
-
   return {
     props: {
       jeune: resInfoJeune,
-      rdvs: rdvsTriesParLePlusProche.filter(
-        (rdv: RdvJeune) => new Date(rdv.date) > today
-      ),
+      rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
     },
   }
 }
