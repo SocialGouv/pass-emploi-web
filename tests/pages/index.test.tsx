@@ -1,18 +1,19 @@
-/**
- * TODO:
- * - Déplacer au même niveau que le fichier
- * - Renommer en .tsx
- */
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Home from 'pages/index'
-import { rdvs } from '../dummies/rdvs'
+import { uneListeDeRdv } from '../../fixtures/rendez-vous'
 
-const oldRdvs = rdvs.slice(2)
+const rendezVousPasses = uneListeDeRdv()
+const rendezVousFuturs = uneListeDeRdv()
 
 describe('Home with rdvs', () => {
   beforeEach(() => {
-    render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
+    render(
+      <Home
+        rendezVousFuturs={rendezVousFuturs}
+        rendezVousPasses={rendezVousPasses}
+      />
+    )
   })
 
   it('devrait avoir un titre de niveau 1', () => {
@@ -35,7 +36,12 @@ describe('Home with rdvs', () => {
 
 describe('Accueil sans rendez-vous', () => {
   beforeEach(() => {
-    render(<Home rdvs={rdvs} oldRdvs={rdvs} />)
+    render(
+      <Home
+        rendezVousFuturs={rendezVousFuturs}
+        rendezVousPasses={rendezVousPasses}
+      />
+    )
   })
 
   it('devrait avoir un bouton Fixer un rendez-vous', () => {
@@ -49,7 +55,12 @@ describe('Accueil sans rendez-vous', () => {
 
 describe('Accueil - Boutons', () => {
   beforeEach(() => {
-    render(<Home rdvs={rdvs} oldRdvs={oldRdvs} />)
+    render(
+      <Home
+        rendezVousFuturs={rendezVousFuturs}
+        rendezVousPasses={rendezVousPasses}
+      />
+    )
   })
 
   it('devrait avoir deux boutons', () => {
@@ -77,6 +88,6 @@ describe('Accueil - Boutons', () => {
     const rows = screen.getAllByRole('row')
 
     expect(table).toBeInTheDocument()
-    expect(rows.length - 1).toBe(oldRdvs.length)
+    expect(rows.length - 1).toBe(rendezVousPasses.length)
   })
 })

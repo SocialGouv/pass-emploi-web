@@ -12,30 +12,20 @@ import withSession, { ServerSideHandler } from 'utils/session'
 import AddIcon from '../assets/icons/add.svg'
 
 type HomeProps = {
-  rdvs: Rdv[]
-  oldRdvs: Rdv[]
+  rendezVousFuturs: Rdv[]
+  rendezVousPasses: Rdv[]
 }
 
-const defaultRdv = {
-  id: 'string',
-  title: 'string',
-  subtitle: 'string',
-  comment: 'string',
-  date: 'string',
-  duration: 'string',
-  modality: 'string',
-}
-
-const Home = ({ rdvs, oldRdvs }: HomeProps) => {
+const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
-  const [selectedRdv, setSelectedRdv] = useState(defaultRdv)
-  const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
+  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
+  const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
 
   function deleteRdv() {
     return () => {
-      const index = rdvsAVenir.indexOf(selectedRdv)
+      const index = rdvsAVenir.indexOf(selectedRdv!)
       const newArray = [
         ...rdvsAVenir.slice(0, index),
         ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
@@ -83,7 +73,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
       </div>
 
       {displayOldRdv ? (
-        <RdvList rdvs={oldRdvs} />
+        <RdvList rdvs={rendezVousPasses} />
       ) : (
         <RdvList
           rdvs={rdvsAVenir}
@@ -109,7 +99,7 @@ const Home = ({ rdvs, oldRdvs }: HomeProps) => {
           onClose={() => setShowDeleteModal(false)}
           onDelete={deleteRdv()}
           show={showDeleteModal}
-          rdv={selectedRdv}
+          rdv={selectedRdv!}
         />
       )}
     </>
@@ -133,17 +123,22 @@ export const getServerSideProps = withSession<ServerSideHandler>(
       `${process.env.API_ENDPOINT}/conseillers/${user.id}/rendezvous`
     )
 
-    let serializedRdvs: Rdv[] = []
-
-    data.map((rdvData: RdvJson) => {
-      const newrdv: Rdv = {
+    const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
+      return {
         ...rdvData,
         duration:
           durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
           `${rdvData.duration} min`,
       }
+    })
 
-      serializedRdvs.push(newrdv)
+    const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => {
+      return {
+        ...rdvData,
+        duration:
+          durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+          `${rdvData.duration} min`,
+      }
     })
 
     if (!data) {
@@ -152,12 +147,10 @@ export const getServerSideProps = withSession<ServerSideHandler>(
       }
     }
 
-    const today = new Date()
-
     return {
       props: {
-        rdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) >= today),
-        oldRdvs: serializedRdvs.filter((rdv) => new Date(rdv.date) < today),
+        rendezVousFuturs: rendezVousFuturs,
+        rendezVousPasses: rendezVousPasses,
       },
     }
   }
