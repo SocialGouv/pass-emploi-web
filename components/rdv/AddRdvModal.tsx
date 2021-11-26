@@ -1,23 +1,21 @@
-import { modalites } from 'referentiel/rdv'
-
-import Modal from 'components/Modal'
 import Button from 'components/Button'
-import { useEffect, useState } from 'react'
+import Modal from 'components/Modal'
 import { Jeune } from 'interfaces'
 import { RdvFormData } from 'interfaces/json/rdv'
-import fetchJson from 'utils/fetchJson'
+import { useEffect, useState } from 'react'
+import { modalites } from 'referentiel/rdv'
 
 interface RdvModalProps {
-  jeune?: Jeune
+  fetchJeunes: () => Promise<Jeune[]>
   onClose: () => void
   onAdd: () => void
 }
 
-const AddRdvModal = ({ jeune, onClose, onAdd }: RdvModalProps) => {
+const AddRdvModal = ({ fetchJeunes, onClose, onAdd }: RdvModalProps) => {
   const [jeunes, setJeunes] = useState<Jeune[]>([])
 
   const [idJeuneSelectionne, selectIdJeune] = useState<string | undefined>(
-    jeune?.id
+    undefined
   )
   const [creneau, selectCreneau] = useState('')
   const [duree, selectDuree] = useState('')
@@ -29,22 +27,17 @@ const AddRdvModal = ({ jeune, onClose, onAdd }: RdvModalProps) => {
   )
 
   useEffect(() => {
-    async function fetchJeunes(): Promise<Jeune[]> {
-      const { id } = await fetchJson('/api/user')
-      setConseillerId(id)
-
-      if (jeune) return [jeune]
-
-      const jeunes = await fetchJson(
-        `${process.env.API_ENDPOINT}/conseillers/${id}/jeunes`
-      )
-      return jeunes || []
-    }
-
-    fetchJeunes().then((data) => {
-      setJeunes(data)
+    fetchJeunes().then((jeunes: Jeune[]) => {
+      setJeunes(jeunes)
+      if (jeunes.length === 1) {
+        selectIdJeune(jeunes[0].id)
+      }
     })
-  }, [jeune])
+  }, [fetchJeunes])
+
+  const plusieursJeunes = (): boolean => {
+    return jeunes.length > 1
+  }
 
   const creneauIsValid = () =>
     creneau !== '' && creneau.match(/[0-9][0-9]:[0-9][0-9]/gm)
@@ -65,7 +58,7 @@ const AddRdvModal = ({ jeune, onClose, onAdd }: RdvModalProps) => {
     rdvDate.setUTCMinutes(minutes)
 
     const newRdv: RdvFormData = {
-      jeuneId: jeune?.id ?? idJeuneSelectionne!,
+      jeuneId: idJeuneSelectionne!,
       date: rdvDate.toUTCString(),
       duration: parseInt(duree),
       modality: modalite,
@@ -107,11 +100,13 @@ const AddRdvModal = ({ jeune, onClose, onAdd }: RdvModalProps) => {
               onChange={(e) => selectIdJeune(e.target.value)}
               required
               className={`text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium ${
-                jeune !== undefined ? 'cursor-not-allowed' : 'cursor-pointer'
+                !plusieursJeunes() ? 'cursor-not-allowed' : 'cursor-pointer'
               }`}
-              disabled={jeune !== undefined}
+              disabled={!plusieursJeunes()}
             >
-              <option aria-hidden hidden disabled selected />
+              {plusieursJeunes() && (
+                <option aria-hidden hidden disabled selected />
+              )}
               {jeunes.map((j) => (
                 <option key={j.id} value={j.id}>
                   {j.firstName} {j.lastName}

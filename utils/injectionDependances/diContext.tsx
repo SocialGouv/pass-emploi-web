@@ -6,19 +6,17 @@ import { Container, Dependances } from './container'
 const dependances = Container.getDIContainer().dependances
 
 const DIContext = React.createContext<Dependances>(dependances)
-export const DIProvider = (props: Partial<Dependances> & { children: React.ReactNode }) => {
+export const DIProvider = (
+  props: Partial<Dependances> & { children: React.ReactNode }
+) => {
   const { children, ...dependancesSurchargees } = props
   const value: Dependances = {
     ...dependances,
-    ...dependancesSurchargees
+    ...dependancesSurchargees,
   }
-  return (
-    <DIContext.Provider value={value}>
-      {props.children}
-    </DIContext.Provider>
-  )
+  return <DIContext.Provider value={value}>{props.children}</DIContext.Provider>
 }
 
-export default function useDIContext (): Dependances {
+export default function useDIContext(): Dependances {
   return React.useContext<Dependances>(DIContext)
 }

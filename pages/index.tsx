@@ -4,19 +4,27 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import { RdvJson } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
+import { GetServerSidePropsResult } from 'next'
 import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
 import withSession, { ServerSideHandler } from 'utils/session'
 import AddIcon from '../assets/icons/add.svg'
+import { useDIContext } from '../utils/injectionDependances'
 
 type HomeProps = {
+  idConseiller: string
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
 }
 
-const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
+const Home = ({
+  idConseiller,
+  rendezVousFuturs,
+  rendezVousPasses,
+}: HomeProps) => {
+  const { jeunesService } = useDIContext()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
@@ -86,6 +94,7 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
 
       {showAddModal && (
         <AddRdvModal
+          fetchJeunes={() => jeunesService.getJeunesDuConseiller(idConseiller)}
           onClose={() => setShowAddModal(false)}
           onAdd={Router.reload}
         />
@@ -103,16 +112,16 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   )
 }
 
-export const getServerSideProps = withSession<ServerSideHandler>(
-  async ({ req, res }) => {
+export const getServerSideProps = withSession<ServerSideHandler<HomeProps>>(
+  async ({ req, res }): Promise<GetServerSidePropsResult<HomeProps>> => {
     const user = req.session.get('user')
 
     if (user === undefined) {
-      res.setHeader('location', '/login')
-      res.statusCode = 302
-      res.end()
       return {
-        props: {},
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
       }
     }
 
@@ -146,6 +155,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
     return {
       props: {
+        idConseiller: user.id,
         rendezVousFuturs: rendezVousFuturs,
         rendezVousPasses: rendezVousPasses,
       },

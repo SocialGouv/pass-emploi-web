@@ -1,25 +1,27 @@
 import { ActionsService } from 'services/actions.service'
+import { JeunesService } from '../../services/jeunes.service'
 
 export interface Dependances {
   actionsService: ActionsService
+  jeunesService: JeunesService
 }
 
 export class Container {
   private static diContainer: Container | undefined
 
-  private constructor (readonly dependances: Dependances) {
-  }
+  private constructor(readonly dependances: Dependances) {}
 
-  static getDIContainer (): Container {
+  static getDIContainer(): Container {
     if (!Container.diContainer) {
       Container.diContainer = Container.buildDIContainer()
     }
     return Container.diContainer
   }
 
-  private static buildDIContainer () {
+  private static buildDIContainer() {
     return new Container({
-      actionsService: new ActionsService()
+      actionsService: new ActionsService(),
+      jeunesService: new JeunesService(),
     })
   }
 }

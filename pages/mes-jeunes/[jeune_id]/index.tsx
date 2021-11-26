@@ -86,9 +86,9 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
 
       {showAddRdvModal && (
         <AddRdvModal
+          fetchJeunes={() => Promise.resolve([jeune])}
           onClose={() => setShowAddRdvModal(false)}
           onAdd={Router.reload}
-          jeune={jeune}
         />
       )}
 
