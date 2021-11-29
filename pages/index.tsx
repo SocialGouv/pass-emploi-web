@@ -9,7 +9,10 @@ import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
-import withSession, { ServerSideHandler } from 'utils/session'
+import withSession, {
+  getConseillerFromSession,
+  ServerSideHandler,
+} from 'utils/session'
 import AddIcon from '../assets/icons/add.svg'
 import { useDIContext } from '../utils/injectionDependances'
 
@@ -116,20 +119,15 @@ const Home = ({
 }
 
 export const getServerSideProps = withSession<ServerSideHandler<HomeProps>>(
-  async ({ req, res }): Promise<GetServerSidePropsResult<HomeProps>> => {
-    const user = req.session.get('user')
-
-    if (user === undefined) {
-      return {
-        redirect: {
-          destination: '/login',
-          permanent: false,
-        },
-      }
+  async ({ req }): Promise<GetServerSidePropsResult<HomeProps>> => {
+    const conseillerOuRedirect = getConseillerFromSession(req)
+    if (!conseillerOuRedirect.hasConseiller) {
+      return { redirect: conseillerOuRedirect.redirect }
     }
 
+    const { conseiller } = conseillerOuRedirect
     const data = await fetchJson(
-      `${process.env.API_ENDPOINT}/conseillers/${user.id}/rendezvous`
+      `${process.env.API_ENDPOINT}/conseillers/${conseiller.id}/rendezvous`
     )
 
     const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
@@ -158,7 +156,7 @@ export const getServerSideProps = withSession<ServerSideHandler<HomeProps>>(
 
     return {
       props: {
-        idConseiller: user.id,
+        idConseiller: conseiller.id,
         rendezVousFuturs: rendezVousFuturs,
         rendezVousPasses: rendezVousPasses,
       },

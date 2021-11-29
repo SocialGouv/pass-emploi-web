@@ -4,8 +4,10 @@ import {
   GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
+  Redirect,
 } from 'next'
 import { Session, withIronSession } from 'next-iron-session'
+import { Conseiller } from '../interfaces'
 
 type NextIronRequest = NextApiRequest & { session: Session }
 type ServerSideContext = GetServerSidePropsContext & { req: NextIronRequest }
@@ -37,3 +39,22 @@ const withSession = <T extends ApiHandler | ServerSideHandler<any>>(
   })
 
 export default withSession
+
+export function getConseillerFromSession(
+  req: NextIronRequest
+):
+  | { conseiller: Conseiller; hasConseiller: true }
+  | { redirect: Redirect; hasConseiller: false } {
+  const conseiller = req.session.get<Conseiller>('user')
+  if (conseiller === undefined) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+      hasConseiller: false,
+    }
+  }
+
+  return { conseiller, hasConseiller: true }
+}

@@ -12,7 +12,10 @@ import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { useDIContext } from '../../../utils/injectionDependances'
-import withSession, { ServerSideHandler } from '../../../utils/session'
+import withSession, {
+  getConseillerFromSession,
+  ServerSideHandler,
+} from '../../../utils/session'
 
 interface FicheJeuneProps {
   conseiller: Conseiller
@@ -113,8 +116,12 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
 export const getServerSideProps = withSession<
   ServerSideHandler<FicheJeuneProps>
 >(async ({ req, query }) => {
-  const conseiller = req.session.get('user')
+  const conseillerOuRedirect = getConseillerFromSession(req)
+  if (!conseillerOuRedirect.hasConseiller) {
+    return { redirect: conseillerOuRedirect.redirect }
+  }
 
+  const { conseiller } = conseillerOuRedirect
   const [resInfoJeune, resRdvJeune] = await Promise.all([
     fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`),
     fetchJson(
