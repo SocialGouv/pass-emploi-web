@@ -2,37 +2,60 @@ import Button, { ButtonColorStyle } from 'components/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
-import { RdvJson } from 'interfaces/json/rdv'
+import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
+import { GetServerSidePropsResult } from 'next'
 import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
-import withSession, { ServerSideHandler } from 'utils/session'
+import { useDIContext } from 'utils/injectionDependances'
+import withSession, {
+  getConseillerFromSession,
+  ServerSideHandler,
+} from 'utils/session'
 import AddIcon from '../assets/icons/add.svg'
 import { AppHead } from 'components/AppHead'
 
 type HomeProps = {
+  idConseiller: string
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
 }
 
-const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
+const Home = ({
+  idConseiller,
+  rendezVousFuturs,
+  rendezVousPasses,
+}: HomeProps) => {
+  const { jeunesService, rendezVousService } = useDIContext()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
 
+  function openAddModal(): void {
+    setShowAddModal(true)
+  }
+
+  function closeAddModal(): void {
+    setShowAddModal(false)
+  }
+
+  async function addNewRDV(newRDV: RdvFormData): Promise<void> {
+    await rendezVousService.postNewRendezVous(idConseiller, newRDV)
+    closeAddModal()
+    Router.reload()
+  }
+
   function deleteRdv() {
-    return () => {
-      const index = rdvsAVenir.indexOf(selectedRdv!)
-      const newArray = [
-        ...rdvsAVenir.slice(0, index),
-        ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
-      ]
-      setRdvsAVenir(newArray)
-    }
+    const index = rdvsAVenir.indexOf(selectedRdv!)
+    const newArray = [
+      ...rdvsAVenir.slice(0, index),
+      ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
+    ]
+    setRdvsAVenir(newArray)
   }
 
   return (
@@ -40,10 +63,7 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
       <AppHead titre='Espace conseiller Pass Emploi - Tableau de bord - Mes rendez-vous' />
       <span className='flex flex-wrap justify-between mb-[20px]'>
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <Button
-          onClick={() => setShowAddModal(true)}
-          label='Fixer un rendez-vous'
-        >
+        <Button onClick={openAddModal} label='Fixer un rendez-vous'>
           <AddIcon focusable='false' aria-hidden='true' />
           Fixer un rendez-vous
         </Button>
@@ -88,18 +108,16 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
 
       {showAddModal && (
         <AddRdvModal
-          onClose={() => setShowAddModal(false)}
-          onAdd={() => {
-            Router.reload()
-          }}
-          show={showAddModal}
+          fetchJeunes={() => jeunesService.getJeunesDuConseiller(idConseiller)}
+          addNewRDV={addNewRDV}
+          onClose={closeAddModal}
         />
       )}
 
       {showDeleteModal && (
         <DeleteRdvModal
           onClose={() => setShowDeleteModal(false)}
-          onDelete={deleteRdv()}
+          onDelete={deleteRdv}
           show={showDeleteModal}
           rdv={selectedRdv!}
         />
@@ -108,21 +126,16 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   )
 }
 
-export const getServerSideProps = withSession<ServerSideHandler>(
-  async ({ req, res }) => {
-    const user = req.session.get('user')
-
-    if (user === undefined) {
-      res.setHeader('location', '/login')
-      res.statusCode = 302
-      res.end()
-      return {
-        props: {},
-      }
+export const getServerSideProps = withSession<ServerSideHandler<HomeProps>>(
+  async ({ req }): Promise<GetServerSidePropsResult<HomeProps>> => {
+    const conseillerOuRedirect = getConseillerFromSession(req)
+    if (!conseillerOuRedirect.hasConseiller) {
+      return { redirect: conseillerOuRedirect.redirect }
     }
 
+    const { conseiller } = conseillerOuRedirect
     const data = await fetchJson(
-      `${process.env.API_ENDPOINT}/conseillers/${user.id}/rendezvous`
+      `${process.env.API_ENDPOINT}/conseillers/${conseiller.id}/rendezvous`
     )
 
     const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
@@ -151,6 +164,7 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 
     return {
       props: {
+        idConseiller: conseiller.id,
         rendezVousFuturs: rendezVousFuturs,
         rendezVousPasses: rendezVousPasses,
       },

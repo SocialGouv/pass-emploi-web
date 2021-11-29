@@ -1,53 +1,42 @@
-import { modalites } from 'referentiel/rdv'
-
-import Modal from 'components/Modal'
 import Button from 'components/Button'
-import { useEffect, useState } from 'react'
+import Modal from 'components/Modal'
 import { Jeune } from 'interfaces'
 import { RdvFormData } from 'interfaces/json/rdv'
-import fetchJson from 'utils/fetchJson'
+import { useEffect, useState } from 'react'
+import { modalites } from 'referentiel/rdv'
 
-type RdvModalProps = {
-  show: boolean
-  onClose: any
-  onAdd: any
+interface RdvModalProps {
+  fetchJeunes: () => Promise<Jeune[]>
+  jeuneInitial?: Jeune
+  addNewRDV: (newRDV: RdvFormData) => Promise<void>
+  onClose: () => void
 }
 
-const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
+const AddRdvModal = ({
+  fetchJeunes,
+  jeuneInitial,
+  addNewRDV,
+  onClose,
+}: RdvModalProps) => {
   const [jeunes, setJeunes] = useState<Jeune[]>([])
 
-  const [jeune, selectJeune] = useState('')
+  const [idJeuneSelectionne, selectIdJeune] = useState<string | undefined>(
+    undefined
+  )
   const [creneau, selectCreneau] = useState('')
   const [duree, selectDuree] = useState('')
   const [modalite, selectModalite] = useState('')
   const [date, selectDate] = useState('')
   const [notes, selectNotes] = useState('')
-  const [conseillerId, setConseillerId] = useState<number | undefined>(
-    undefined
-  )
 
   useEffect(() => {
-    async function fetchJeunes(): Promise<Jeune[]> {
-      const { id } = await fetchJson('/api/user')
-
-      const jeunes = await fetchJson(
-        `${process.env.API_ENDPOINT}/conseillers/${id}/jeunes`
-      )
-
-      setConseillerId(id)
-      return jeunes || []
-    }
-
-    fetchJeunes().then((data) => {
-      const defaultJeune: Jeune = {
-        id: '',
-        firstName: '',
-        lastName: '',
+    fetchJeunes().then((jeunes: Jeune[]) => {
+      setJeunes(jeunes)
+      if (jeuneInitial) {
+        selectIdJeune(jeuneInitial.id)
       }
-
-      setJeunes([defaultJeune, ...data])
     })
-  }, [])
+  }, [fetchJeunes, jeuneInitial])
 
   const creneauIsValid = () =>
     creneau !== '' && creneau.match(/[0-9][0-9]:[0-9][0-9]/gm)
@@ -56,7 +45,7 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
     duree !== '' &&
     creneauIsValid() &&
     modalite !== '' &&
-    jeune !== '' &&
+    idJeuneSelectionne !== undefined &&
     date !== ''
 
   const handleAddClick = (event: any) => {
@@ -68,35 +57,18 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
     rdvDate.setUTCMinutes(minutes)
 
     const newRdv: RdvFormData = {
-      id: '',
-      title: 'titre',
-      subtitle: 'sous-titre',
-      jeuneId: jeune,
+      jeuneId: idJeuneSelectionne!,
       date: rdvDate.toUTCString(),
       duration: parseInt(duree),
       modality: modalite,
       comment: notes,
     }
 
-    if (!conseillerId) {
-      throw new Error("AddRdvModal: L'Id du conseiller est manquant")
-    }
-
-    fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${conseillerId}/rendezvous`,
-      {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(newRdv),
-      }
-    ).then(function () {
-      onClose()
-      onAdd()
-    })
+    addNewRDV(newRdv)
   }
 
   return (
-    <Modal title='Créer un nouveau RDV' onClose={() => onClose()} show={show}>
+    <Modal title='Créer un nouveau RDV' onClose={() => onClose()} show={true}>
       <form method='POST' role='form' onSubmit={handleAddClick}>
         <div className='flex'>
           <div className='pr-[20px]' style={{ flexBasis: '50%' }}>
@@ -109,11 +81,12 @@ const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
             <select
               id='beneficiaire'
               name='beneficiaire'
-              value={jeune}
-              onChange={(e) => selectJeune(e.target.value)}
+              value={idJeuneSelectionne}
+              onChange={(e) => selectIdJeune(e.target.value)}
+              className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium cursor-pointer'
               required
-              className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] cursor-pointer border border-bleu_nuit rounded-medium'
             >
+              <option aria-hidden hidden disabled selected />
               {jeunes.map((j) => (
                 <option key={j.id} value={j.id}>
                   {j.firstName} {j.lastName}
