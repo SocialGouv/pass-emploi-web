@@ -9,6 +9,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
+import { AppHead } from 'components/AppHead'
 
 interface FicheJeuneProps {
   jeune: Jeune
@@ -34,50 +35,55 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
   }
 
   return (
-    <div className={'flex flex-col'}>
-      <div className={'flex items-center mb-8'}>
-        <Link href='/mes-jeunes' passHref>
-          <a className='mr-6'>
-            <BackIcon
-              role='img'
-              focusable='false'
-              aria-label='Retour sur la liste de tous les jeunes'
-            />
-          </a>
-        </Link>
-        <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+    <>
+      <AppHead
+        titre={`Espace conseiller Pass Emploi - Mes jeunes - ${jeune.firstName} ${jeune.lastName}`}
+      />
+      <div className={'flex flex-col'}>
+        <div className={'flex items-center mb-8'}>
+          <Link href='/mes-jeunes' passHref>
+            <a className='mr-6'>
+              <BackIcon
+                role='img'
+                focusable='false'
+                aria-label='Retour sur la liste de tous les jeunes'
+              />
+            </a>
+          </Link>
+          <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+        </div>
+
+        <DetailsJeune jeune={jeune} />
+
+        <div className='mt-8 border-b border-bleu_blanc'>
+          <h2 className='h4-semi text-bleu_nuit mb-4'>
+            Rendez-vous ({rdvs?.length})
+          </h2>
+
+          <ListeRdvJeune
+            rdvs={rdvsAVenir}
+            onDelete={(rdv: RdvJeune) => {
+              setShowDeleteModal(true), setSelectedRdv(rdv)
+            }}
+          />
+        </div>
+
+        <div className='mt-8 border-b border-bleu_blanc pb-8'>
+          <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
+
+          <ListeActionsJeune idJeune={jeune.id} />
+        </div>
+
+        {showDeleteModal && selectedRdv && (
+          <DeleteRdvModal
+            onClose={() => setShowDeleteModal(false)}
+            onDelete={deleteRdv}
+            show={showDeleteModal}
+            rdv={selectedRdv}
+          />
+        )}
       </div>
-
-      <DetailsJeune jeune={jeune} />
-
-      <div className='mt-8 border-b border-bleu_blanc'>
-        <h2 className='h4-semi text-bleu_nuit mb-4'>
-          Rendez-vous ({rdvs?.length})
-        </h2>
-
-        <ListeRdvJeune
-          rdvs={rdvsAVenir}
-          onDelete={(rdv: RdvJeune) => {
-            setShowDeleteModal(true), setSelectedRdv(rdv)
-          }}
-        />
-      </div>
-
-      <div className='mt-8 border-b border-bleu_blanc pb-8'>
-        <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
-
-        <ListeActionsJeune idJeune={jeune.id} />
-      </div>
-
-      {showDeleteModal && selectedRdv && (
-        <DeleteRdvModal
-          onClose={() => setShowDeleteModal(false)}
-          onDelete={deleteRdv}
-          show={showDeleteModal}
-          rdv={selectedRdv}
-        />
-      )}
-    </div>
+    </>
   )
 }
 

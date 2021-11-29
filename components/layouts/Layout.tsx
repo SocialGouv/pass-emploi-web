@@ -4,8 +4,6 @@
 
 import { db } from 'utils/firebase'
 
-import Head from 'next/head'
-
 import Sidebar from './Sidebar'
 import ChatBox from './ChatRoom'
 
@@ -18,21 +16,6 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   return (
     <>
-      <Head>
-        <title>Espace conseiller Pass Emploi</title>
-        <meta
-          name='description'
-          content="Espace conseiller de l'outil pass emploi"
-        />
-        <link rel='icon' href='/favicon.png' />
-        {/* TODO: what s going on with Font?
-          <link
-           rel="preload"
-           href='/fonts/Rubik/static/Rubik-Regular.ttf'
-           as="font"
-           crossOrigin=""
-         /> */}
-      </Head>
       <div className={styles.container}>
         <Sidebar />
         <main className={styles.page} role='main'>

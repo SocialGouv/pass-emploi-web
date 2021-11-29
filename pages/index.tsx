@@ -10,6 +10,7 @@ import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
 import withSession, { ServerSideHandler } from 'utils/session'
 import AddIcon from '../assets/icons/add.svg'
+import { AppHead } from 'components/AppHead'
 
 type HomeProps = {
   rendezVousFuturs: Rdv[]
@@ -36,6 +37,7 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
 
   return (
     <>
+      <AppHead titre='Espace conseiller Pass Emploi - Tableau de bord - Mes rendez-vous' />
       <span className='flex flex-wrap justify-between mb-[20px]'>
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
         <Button
