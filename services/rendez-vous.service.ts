@@ -1,4 +1,4 @@
-import { RdvFormData } from '../interfaces/json/rdv'
+import { RdvFormData } from 'interfaces/json/rdv'
 
 export class RendezVousService {
   private readonly apiPrefix?: string
@@ -11,13 +11,10 @@ export class RendezVousService {
     idConseiller: string,
     newRDV: RdvFormData
   ): Promise<Response> {
-    return fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${idConseiller}/rendezvous`,
-      {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(newRDV),
-      }
-    )
+    return fetch(`${this.apiPrefix}/conseillers/${idConseiller}/rendezvous`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(newRDV),
+    })
   }
 }

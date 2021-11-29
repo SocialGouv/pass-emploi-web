@@ -7,7 +7,7 @@ import {
   Redirect,
 } from 'next'
 import { Session, withIronSession } from 'next-iron-session'
-import { Conseiller } from '../interfaces'
+import { Conseiller } from 'interfaces'
 
 type NextIronRequest = NextApiRequest & { session: Session }
 type ServerSideContext = GetServerSidePropsContext & { req: NextIronRequest }

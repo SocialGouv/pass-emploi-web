@@ -7,17 +7,11 @@ import { modalites } from 'referentiel/rdv'
 
 interface RdvModalProps {
   fetchJeunes: () => Promise<Jeune[]>
-  saveNewRDV: (newRDV: RdvFormData) => Promise<Response>
+  addNewRDV: (newRDV: RdvFormData) => Promise<void>
   onClose: () => void
-  onAdd: () => void
 }
 
-const AddRdvModal = ({
-  fetchJeunes,
-  saveNewRDV,
-  onClose,
-  onAdd,
-}: RdvModalProps) => {
+const AddRdvModal = ({ fetchJeunes, addNewRDV, onClose }: RdvModalProps) => {
   const [jeunes, setJeunes] = useState<Jeune[]>([])
 
   const [idJeuneSelectionne, selectIdJeune] = useState<string | undefined>(
@@ -68,10 +62,7 @@ const AddRdvModal = ({
       comment: notes,
     }
 
-    saveNewRDV(newRdv).then(function () {
-      onClose()
-      onAdd()
-    })
+    addNewRDV(newRdv)
   }
 
   return (

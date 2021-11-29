@@ -1,8 +1,8 @@
 import { ActionsService } from 'services/actions.service'
-import { JeunesService } from '../../services/jeunes.service'
-import { RendezVousService } from '../../services/rendez-vous.service'
+import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
 
-export interface Dependances {
+export interface Dependencies {
   actionsService: ActionsService
   jeunesService: JeunesService
   rendezVousService: RendezVousService
@@ -11,7 +11,7 @@ export interface Dependances {
 export class Container {
   private static diContainer: Container | undefined
 
-  private constructor(readonly dependances: Dependances) {}
+  private constructor(readonly dependances: Dependencies) {}
 
   static getDIContainer(): Container {
     if (!Container.diContainer) {

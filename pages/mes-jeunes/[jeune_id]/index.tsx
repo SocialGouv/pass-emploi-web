@@ -5,17 +5,18 @@ import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { Conseiller, Jeune } from 'interfaces'
+import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
-import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { useDIContext } from '../../../utils/injectionDependances'
+import { useDIContext } from 'utils/injectionDependances'
 import withSession, {
   getConseillerFromSession,
   ServerSideHandler,
-} from '../../../utils/session'
+} from 'utils/session'
+import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
   conseiller: Conseiller
@@ -32,6 +33,20 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
     undefined
   )
 
+  function openAddRdvModal(): void {
+    setShowAddRdvModal(true)
+  }
+
+  function closeAddRdvModal(): void {
+    setShowAddRdvModal(false)
+  }
+
+  async function addNewRDV(newRDV: RdvFormData): Promise<void> {
+    await rendezVousService.postNewRendezVous(conseiller.id, newRDV)
+    closeAddRdvModal()
+    Router.reload()
+  }
+
   function deleteRdv() {
     if (selectedRdv) {
       const index = rdvsAVenir.indexOf(selectedRdv)
@@ -44,9 +59,9 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
   }
 
   return (
-    <div className={'flex flex-col'}>
-      <div className={'flex items-center justify-between mb-8'}>
-        <div className={'flex items-center'}>
+    <div className='flex flex-col'>
+      <div className='flex items-center justify-between mb-8'>
+        <div className='flex items-center'>
           <Link href={'/mes-jeunes'} passHref>
             <a className='mr-6'>
               <BackIcon
@@ -60,8 +75,8 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
         </div>
 
         <Button
-          onClick={() => setShowAddRdvModal(true)}
-          label='Fixer un rendez-vous'
+          onClick={openAddRdvModal}
+          label='Créer un rendez-vous'
           style={ButtonColorStyle.WHITE}
         >
           Fixer un rendez-vous
@@ -93,11 +108,8 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
       {showAddRdvModal && (
         <AddRdvModal
           fetchJeunes={() => Promise.resolve([jeune])}
-          saveNewRDV={(newRDV) =>
-            rendezVousService.postNewRendezVous(conseiller.id, newRDV)
-          }
-          onClose={() => setShowAddRdvModal(false)}
-          onAdd={Router.reload}
+          addNewRDV={addNewRDV}
+          onClose={closeAddRdvModal}
         />
       )}
 

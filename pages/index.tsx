@@ -2,19 +2,19 @@ import Button, { ButtonColorStyle } from 'components/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
-import { RdvJson } from 'interfaces/json/rdv'
+import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSidePropsResult } from 'next'
 import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
+import { useDIContext } from 'utils/injectionDependances'
 import withSession, {
   getConseillerFromSession,
   ServerSideHandler,
 } from 'utils/session'
 import AddIcon from '../assets/icons/add.svg'
-import { useDIContext } from '../utils/injectionDependances'
 
 type HomeProps = {
   idConseiller: string
@@ -34,25 +34,34 @@ const Home = ({
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
 
+  function openAddModal(): void {
+    setShowAddModal(true)
+  }
+
+  function closeAddModal(): void {
+    setShowAddModal(false)
+  }
+
+  async function addNewRDV(newRDV: RdvFormData): Promise<void> {
+    await rendezVousService.postNewRendezVous(idConseiller, newRDV)
+    closeAddModal()
+    Router.reload()
+  }
+
   function deleteRdv() {
-    return () => {
-      const index = rdvsAVenir.indexOf(selectedRdv!)
-      const newArray = [
-        ...rdvsAVenir.slice(0, index),
-        ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
-      ]
-      setRdvsAVenir(newArray)
-    }
+    const index = rdvsAVenir.indexOf(selectedRdv!)
+    const newArray = [
+      ...rdvsAVenir.slice(0, index),
+      ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
+    ]
+    setRdvsAVenir(newArray)
   }
 
   return (
     <>
       <span className='flex flex-wrap justify-between mb-[20px]'>
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <Button
-          onClick={() => setShowAddModal(true)}
-          label='Fixer un rendez-vous'
-        >
+        <Button onClick={openAddModal} label='Fixer un rendez-vous'>
           <AddIcon focusable='false' aria-hidden='true' />
           Fixer un rendez-vous
         </Button>
@@ -98,18 +107,15 @@ const Home = ({
       {showAddModal && (
         <AddRdvModal
           fetchJeunes={() => jeunesService.getJeunesDuConseiller(idConseiller)}
-          saveNewRDV={(newRDV) =>
-            rendezVousService.postNewRendezVous(idConseiller, newRDV)
-          }
-          onClose={() => setShowAddModal(false)}
-          onAdd={Router.reload}
+          addNewRDV={addNewRDV}
+          onClose={closeAddModal}
         />
       )}
 
       {showDeleteModal && (
         <DeleteRdvModal
           onClose={() => setShowDeleteModal(false)}
-          onDelete={deleteRdv()}
+          onDelete={deleteRdv}
           show={showDeleteModal}
           rdv={selectedRdv!}
         />
