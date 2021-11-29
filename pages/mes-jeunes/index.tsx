@@ -11,6 +11,7 @@ import withSession, {
 } from 'utils/session'
 import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
+import { AppHead } from 'components/AppHead'
 
 type MesJeunesProps = {
   conseillerJeunes: Jeune[]
@@ -26,6 +27,7 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
 
   return (
     <>
+      <AppHead titre='Mes jeunes' />
       <span className='flex flex-wrap justify-between mb-12'>
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
         <Button onClick={() => setShowModal(true)}>
