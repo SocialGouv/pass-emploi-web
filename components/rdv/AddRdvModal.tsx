@@ -7,11 +7,17 @@ import { modalites } from 'referentiel/rdv'
 
 interface RdvModalProps {
   fetchJeunes: () => Promise<Jeune[]>
+  jeuneInitial?: Jeune
   addNewRDV: (newRDV: RdvFormData) => Promise<void>
   onClose: () => void
 }
 
-const AddRdvModal = ({ fetchJeunes, addNewRDV, onClose }: RdvModalProps) => {
+const AddRdvModal = ({
+  fetchJeunes,
+  jeuneInitial,
+  addNewRDV,
+  onClose,
+}: RdvModalProps) => {
   const [jeunes, setJeunes] = useState<Jeune[]>([])
 
   const [idJeuneSelectionne, selectIdJeune] = useState<string | undefined>(
@@ -26,15 +32,11 @@ const AddRdvModal = ({ fetchJeunes, addNewRDV, onClose }: RdvModalProps) => {
   useEffect(() => {
     fetchJeunes().then((jeunes: Jeune[]) => {
       setJeunes(jeunes)
-      if (jeunes.length === 1) {
-        selectIdJeune(jeunes[0].id)
+      if (jeuneInitial) {
+        selectIdJeune(jeuneInitial.id)
       }
     })
-  }, [fetchJeunes])
-
-  const plusieursJeunes = (): boolean => {
-    return jeunes.length > 1
-  }
+  }, [fetchJeunes, jeuneInitial])
 
   const creneauIsValid = () =>
     creneau !== '' && creneau.match(/[0-9][0-9]:[0-9][0-9]/gm)
@@ -81,15 +83,10 @@ const AddRdvModal = ({ fetchJeunes, addNewRDV, onClose }: RdvModalProps) => {
               name='beneficiaire'
               value={idJeuneSelectionne}
               onChange={(e) => selectIdJeune(e.target.value)}
+              className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium cursor-pointer'
               required
-              className={`text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium ${
-                !plusieursJeunes() ? 'cursor-not-allowed' : 'cursor-pointer'
-              }`}
-              disabled={!plusieursJeunes()}
             >
-              {plusieursJeunes() && (
-                <option aria-hidden hidden disabled selected />
-              )}
+              <option aria-hidden hidden disabled selected />
               {jeunes.map((j) => (
                 <option key={j.id} value={j.id}>
                   {j.firstName} {j.lastName}

@@ -25,7 +25,7 @@ interface FicheJeuneProps {
 }
 
 const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
-  const { rendezVousService } = useDIContext()
+  const { jeunesService, rendezVousService } = useDIContext()
   const [showAddRdvModal, setShowAddRdvModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
@@ -107,7 +107,8 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
 
       {showAddRdvModal && (
         <AddRdvModal
-          fetchJeunes={() => Promise.resolve([jeune])}
+          fetchJeunes={() => jeunesService.getJeunesDuConseiller(conseiller.id)}
+          jeuneInitial={jeune}
           addNewRDV={addNewRDV}
           onClose={closeAddRdvModal}
         />
