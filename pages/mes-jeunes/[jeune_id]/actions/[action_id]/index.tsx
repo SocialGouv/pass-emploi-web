@@ -10,6 +10,7 @@ import React, { useState } from 'react'
 import { formatDayDate } from 'utils/date'
 import { Container, useDIContext } from 'utils/injectionDependances'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
+import { AppHead } from 'components/AppHead'
 
 type Props = {
   action: ActionJeune
@@ -52,6 +53,9 @@ function PageAction({ action, jeune }: Props) {
 
   return (
     <>
+      <AppHead
+        titre={`Espace conseiller Pass Emploi - Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content} `}
+      />
       <div className='flex justify-between mb-[63px]'>
         <div className='flex items-center'>
           <Link href={`/mes-jeunes/${jeune.id}/actions`} passHref>

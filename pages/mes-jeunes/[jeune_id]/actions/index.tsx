@@ -17,6 +17,7 @@ import fetchJson from 'utils/fetchJson'
  */
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
+import { AppHead } from 'components/AppHead'
 
 type Props = {
   jeune: Jeune
@@ -49,6 +50,9 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
 
   return (
     <>
+      <AppHead
+        titre={`Espace conseiller Pass Emploi - Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`}
+      />
       <div className='flex justify-between flex-wrap w-full mb-[45px]'>
         <Link href={`/mes-jeunes/${jeune.id}`} passHref>
           <a className='p-1 mr-[24px]'>
