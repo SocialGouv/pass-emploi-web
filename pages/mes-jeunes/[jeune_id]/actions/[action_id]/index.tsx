@@ -54,7 +54,7 @@ function PageAction({ action, jeune }: Props) {
   return (
     <>
       <AppHead
-        titre={`Espace conseiller Pass Emploi - Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content} `}
+        titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content} `}
       />
       <div className='flex justify-between mb-[63px]'>
         <div className='flex items-center'>

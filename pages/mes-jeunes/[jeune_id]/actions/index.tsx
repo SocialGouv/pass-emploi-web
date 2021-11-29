@@ -51,7 +51,7 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
   return (
     <>
       <AppHead
-        titre={`Espace conseiller Pass Emploi - Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`}
+        titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`}
       />
       <div className='flex justify-between flex-wrap w-full mb-[45px]'>
         <Link href={`/mes-jeunes/${jeune.id}`} passHref>

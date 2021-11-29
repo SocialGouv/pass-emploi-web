@@ -27,7 +27,7 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
 
   return (
     <>
-      <AppHead titre='Espace conseiller Pass Emploi - Mes jeunes' />
+      <AppHead titre='Mes jeunes' />
       <span className='flex flex-wrap justify-between mb-12'>
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
         <Button onClick={() => setShowModal(true)}>

@@ -60,7 +60,7 @@ const Home = ({
 
   return (
     <>
-      <AppHead titre='Espace conseiller Pass Emploi - Tableau de bord - Mes rendez-vous' />
+      <AppHead titre='Tableau de bord - Mes rendez-vous' />
       <span className='flex flex-wrap justify-between mb-[20px]'>
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
         <Button onClick={openAddModal} label='Fixer un rendez-vous'>

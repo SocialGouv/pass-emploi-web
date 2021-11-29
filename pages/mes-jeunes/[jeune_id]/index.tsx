@@ -61,9 +61,7 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
 
   return (
     <>
-      <AppHead
-        titre={`Espace conseiller Pass Emploi - Mes jeunes - ${jeune.firstName} ${jeune.lastName}`}
-      />
+      <AppHead titre={`Mes jeunes - ${jeune.firstName} ${jeune.lastName}`} />
       <div className='flex flex-col'>
         <div className='flex items-center justify-between mb-8'>
           <div className='flex items-center'>

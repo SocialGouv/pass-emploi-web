@@ -7,7 +7,7 @@ interface AppHeadProps {
 export const AppHead: React.FC<AppHeadProps> = ({ titre }) => {
   return (
     <Head>
-      <title>{titre}</title>
+      <title>Espace conseiller Pass Emploi - {titre}</title>
       <meta
         name='description'
         content="Espace conseiller de l'outil pass emploi"
