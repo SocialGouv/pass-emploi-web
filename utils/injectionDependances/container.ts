@@ -1,9 +1,11 @@
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from '../../services/jeunes.service'
+import { RendezVousService } from '../../services/rendez-vous.service'
 
 export interface Dependances {
   actionsService: ActionsService
   jeunesService: JeunesService
+  rendezVousService: RendezVousService
 }
 
 export class Container {
@@ -22,6 +24,7 @@ export class Container {
     return new Container({
       actionsService: new ActionsService(),
       jeunesService: new JeunesService(),
+      rendezVousService: new RendezVousService(),
     })
   }
 }

@@ -4,21 +4,24 @@ import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import { Jeune } from 'interfaces'
+import { Conseiller, Jeune } from 'interfaces'
 import { RdvJeune } from 'interfaces/rdv'
-import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
+import { useDIContext } from '../../../utils/injectionDependances'
+import withSession, { ServerSideHandler } from '../../../utils/session'
 
 interface FicheJeuneProps {
+  conseiller: Conseiller
   jeune: Jeune
   rdvs: RdvJeune[]
 }
 
-const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
+const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
+  const { rendezVousService } = useDIContext()
   const [showAddRdvModal, setShowAddRdvModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
@@ -87,6 +90,9 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
       {showAddRdvModal && (
         <AddRdvModal
           fetchJeunes={() => Promise.resolve([jeune])}
+          saveNewRDV={(newRDV) =>
+            rendezVousService.postNewRendezVous(conseiller.id, newRDV)
+          }
           onClose={() => setShowAddRdvModal(false)}
           onAdd={Router.reload}
         />
@@ -104,7 +110,11 @@ const FicheJeune = ({ jeune, rdvs }: FicheJeuneProps) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps = withSession<
+  ServerSideHandler<FicheJeuneProps>
+>(async ({ req, query }) => {
+  const conseiller = req.session.get('user')
+
   const [resInfoJeune, resRdvJeune] = await Promise.all([
     fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`),
     fetchJson(
@@ -117,14 +127,14 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       notFound: true,
     }
   }
-  const today = new Date()
 
+  const today = new Date()
   return {
     props: {
+      conseiller,
       jeune: resInfoJeune,
       rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
     },
   }
-}
-
+})
 export default FicheJeune

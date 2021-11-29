@@ -7,11 +7,17 @@ import { modalites } from 'referentiel/rdv'
 
 interface RdvModalProps {
   fetchJeunes: () => Promise<Jeune[]>
+  saveNewRDV: (newRDV: RdvFormData) => Promise<Response>
   onClose: () => void
   onAdd: () => void
 }
 
-const AddRdvModal = ({ fetchJeunes, onClose, onAdd }: RdvModalProps) => {
+const AddRdvModal = ({
+  fetchJeunes,
+  saveNewRDV,
+  onClose,
+  onAdd,
+}: RdvModalProps) => {
   const [jeunes, setJeunes] = useState<Jeune[]>([])
 
   const [idJeuneSelectionne, selectIdJeune] = useState<string | undefined>(
@@ -22,9 +28,6 @@ const AddRdvModal = ({ fetchJeunes, onClose, onAdd }: RdvModalProps) => {
   const [modalite, selectModalite] = useState('')
   const [date, selectDate] = useState('')
   const [notes, selectNotes] = useState('')
-  const [conseillerId, setConseillerId] = useState<number | undefined>(
-    undefined
-  )
 
   useEffect(() => {
     fetchJeunes().then((jeunes: Jeune[]) => {
@@ -65,18 +68,7 @@ const AddRdvModal = ({ fetchJeunes, onClose, onAdd }: RdvModalProps) => {
       comment: notes,
     }
 
-    if (!conseillerId) {
-      throw new Error("AddRdvModal: L'Id du conseiller est manquant")
-    }
-
-    fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${conseillerId}/rendezvous`,
-      {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(newRdv),
-      }
-    ).then(function () {
+    saveNewRDV(newRdv).then(function () {
       onClose()
       onAdd()
     })

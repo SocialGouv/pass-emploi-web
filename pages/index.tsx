@@ -24,7 +24,7 @@ const Home = ({
   rendezVousFuturs,
   rendezVousPasses,
 }: HomeProps) => {
-  const { jeunesService } = useDIContext()
+  const { jeunesService, rendezVousService } = useDIContext()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
@@ -95,6 +95,9 @@ const Home = ({
       {showAddModal && (
         <AddRdvModal
           fetchJeunes={() => jeunesService.getJeunesDuConseiller(idConseiller)}
+          saveNewRDV={(newRDV) =>
+            rendezVousService.postNewRendezVous(idConseiller, newRDV)
+          }
           onClose={() => setShowAddModal(false)}
           onAdd={Router.reload}
         />
