@@ -128,33 +128,33 @@ const Home = ({
 
 export const getServerSideProps = withSession<ServerSideHandler<HomeProps>>(
   async ({ req }): Promise<GetServerSidePropsResult<HomeProps>> => {
-    const conseillerOuRedirect = getConseillerFromSession(req)
-    if (!conseillerOuRedirect.hasConseiller) {
-      return { redirect: conseillerOuRedirect.redirect }
-    }
+    // const conseillerOuRedirect = getConseillerFromSession(req)
+    // if (!conseillerOuRedirect.hasConseiller) {
+    //   return { redirect: conseillerOuRedirect.redirect }
+    // }
 
-    const { conseiller } = conseillerOuRedirect
+    // const { conseiller } = conseillerOuRedirect
     const data = await fetchJson(
-      `${process.env.API_ENDPOINT}/conseillers/${conseiller.id}/rendezvous`
+      `${process.env.API_ENDPOINT}/conseillers/${1}/rendezvous`
     )
 
-    const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
-      return {
-        ...rdvData,
-        duration:
-          durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-          `${rdvData.duration} min`,
-      }
-    })
+    // const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
+    //   return {
+    //     ...rdvData,
+    //     duration:
+    //       durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+    //       `${rdvData.duration} min`,
+    //   }
+    // })
 
-    const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => {
-      return {
-        ...rdvData,
-        duration:
-          durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-          `${rdvData.duration} min`,
-      }
-    })
+    // const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => {
+    //   return {
+    //     ...rdvData,
+    //     duration:
+    //       durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+    //       `${rdvData.duration} min`,
+    //   }
+    // })
 
     if (!data) {
       return {
@@ -164,9 +164,9 @@ export const getServerSideProps = withSession<ServerSideHandler<HomeProps>>(
 
     return {
       props: {
-        idConseiller: conseiller.id,
-        rendezVousFuturs: rendezVousFuturs,
-        rendezVousPasses: rendezVousPasses,
+        idConseiller: '1',
+        rendezVousFuturs: [],
+        rendezVousPasses: [],
       },
     }
   }

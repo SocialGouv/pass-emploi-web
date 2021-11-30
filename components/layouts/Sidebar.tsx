@@ -88,9 +88,7 @@ export default function Sidebar({}: SidebarProps) {
 
       <div className='flex justify-between'>
         {session && (
-          <p className='text-lg-semi text-bleu_nuit'>
-            {session?.user?.firstName}
-          </p>
+          <p className='text-lg-semi text-bleu_nuit'>{session?.user?.name}</p>
         )}
 
         <Link href={'/api/logout'}>
