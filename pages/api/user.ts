@@ -1,17 +1,17 @@
-import withSession from "utils/session";
+import withSession, { getConseillerFromSession } from 'utils/session'
 
 export default withSession(async (req, res) => {
-  const user = req.session.get("user");
+  const conseillerOuRedirect = getConseillerFromSession(req)
 
-  if (user) {
+  if (conseillerOuRedirect.hasConseiller) {
     // check if user is already loggedIn before sending to DB
     res.json({
       isLoggedIn: true,
-      ...user,
-    });
+      ...conseillerOuRedirect.conseiller,
+    })
   } else {
     res.json({
       isLoggedIn: false,
-    });
+    })
   }
-});
+})
