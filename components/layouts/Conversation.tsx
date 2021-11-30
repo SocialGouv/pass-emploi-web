@@ -16,7 +16,6 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import {
-  Conseiller,
   DailyMessages,
   Jeune,
   JeuneChat,
@@ -31,9 +30,9 @@ import {
   formatHourMinuteDate,
   isDateOlder,
 } from 'utils/date'
-import fetchJson from 'utils/fetchJson'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
+import { useDIContext } from '../../utils/injectionDependances'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -46,12 +45,14 @@ type ConversationProps = {
   onBack: () => void
 }
 
-let conseillerId = '0'
-
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
+  const { conseillerService } = useDIContext()
   const [newMessage, setNewMessage] = useState('')
   const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
+  const [idConseiller, setIdConseiller] = useState<string | undefined>(
+    undefined
+  )
 
   const dummySpace = useRef<HTMLLIElement>(null)
 
@@ -88,7 +89,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
      * Route send from web to notify mobile, no need to await for response
      */
     fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${jeune.id}/notify-message`,
+      `${process.env.API_ENDPOINT}/conseillers/${idConseiller}/jeunes/${jeune.id}/notify-message`,
       {
         method: 'POST',
       }
@@ -152,12 +153,8 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
   }, [db, jeune.chatId])
 
   useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
-
-    fetchConseiller().then((conseiller) => {
-      conseillerId = conseiller.id
+    conseillerService.getConseillerConnecte().then((conseiller) => {
+      setIdConseiller(conseiller?.id)
     })
   }, [])
 

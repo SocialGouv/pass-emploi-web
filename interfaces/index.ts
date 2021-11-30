@@ -4,7 +4,6 @@ import { Timestamp } from 'firebase/firestore'
 import { datesAreOnSameDay } from 'utils/date'
 
 export type Conseiller = {
-  isLoggedIn?: boolean
   id: string
   firstName: string
   lastName: string

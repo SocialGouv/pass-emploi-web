@@ -5,10 +5,8 @@ import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
-import withSession, {
-  getConseillerFromSession,
-  ServerSideHandler,
-} from 'utils/session'
+import getConseillerOuRedirect from 'utils/getConseillerOuRedirect'
+import withSession, { ServerSideHandler } from 'utils/session'
 import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 import { AppHead } from 'components/AppHead'
@@ -100,7 +98,7 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
 export const getServerSideProps = withSession<
   ServerSideHandler<MesJeunesProps>
 >(async ({ req }) => {
-  const conseillerOuRedirect = getConseillerFromSession(req)
+  const conseillerOuRedirect = getConseillerOuRedirect(req)
   if (!conseillerOuRedirect.hasConseiller)
     return { redirect: conseillerOuRedirect.redirect }
 

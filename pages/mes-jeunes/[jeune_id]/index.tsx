@@ -11,11 +11,9 @@ import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
+import getConseillerOuRedirect from 'utils/getConseillerOuRedirect'
 import { useDIContext } from 'utils/injectionDependances'
-import withSession, {
-  getConseillerFromSession,
-  ServerSideHandler,
-} from 'utils/session'
+import withSession, { ServerSideHandler } from 'utils/session'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
 
@@ -82,7 +80,7 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
             label='Créer un rendez-vous'
             style={ButtonColorStyle.WHITE}
           >
-            Fixer un rendez-vous
+            Créer un rendez-vous
           </Button>
         </div>
 
@@ -135,7 +133,7 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
 export const getServerSideProps = withSession<
   ServerSideHandler<FicheJeuneProps>
 >(async ({ req, query }) => {
-  const conseillerOuRedirect = getConseillerFromSession(req)
+  const conseillerOuRedirect = getConseillerOuRedirect(req)
   if (!conseillerOuRedirect.hasConseiller) {
     return { redirect: conseillerOuRedirect.redirect }
   }

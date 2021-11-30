@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
-
-import Modal from 'components/Modal'
 import Button from 'components/Button'
 import SuccessAddJeuneModal from 'components/jeune/SuccessAddJeuneModal'
-import { Conseiller, Jeune } from 'interfaces'
-import fetchJson from 'utils/fetchJson'
+
+import Modal from 'components/Modal'
+import { Jeune } from 'interfaces'
+import { useEffect, useState } from 'react'
+import { useDIContext } from 'utils/injectionDependances'
 
 type AddJeuneModalProps = {
   show: boolean
@@ -12,25 +12,24 @@ type AddJeuneModalProps = {
 }
 
 const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
+  const { conseillerService } = useDIContext()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [conseillerId, setConseillerId] = useState<String>('')
-  const [newJeune, setNewJeune] = useState<Jeune | null>(null)
+  const [conseillerId, setConseillerId] = useState<String | undefined>(
+    undefined
+  )
+  const [newJeune, setNewJeune] = useState<Jeune | undefined>(undefined)
 
   useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
-
-    fetchConseiller().then((conseiller) => {
-      setConseillerId(conseiller.id)
+    conseillerService.getConseillerConnecte().then((conseiller) => {
+      setConseillerId(conseiller?.id)
     })
   }, [])
 
   const FormIsValid = () => firstName !== '' && lastName !== ''
 
   const handleCloseModal = () => {
-    setNewJeune(null)
+    setNewJeune(undefined)
     onClose()
   }
 

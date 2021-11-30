@@ -1,7 +1,8 @@
+import { Conseiller } from 'interfaces'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Session } from 'next-iron-session'
 import fetchJson from 'utils/fetchJson'
-import withSession from 'utils/session'
+import withSession, { SESSION_KEYS } from 'utils/session'
 
 type NextIronRequest = NextApiRequest & { session: Session }
 
@@ -23,12 +24,9 @@ export default withSession(
     try {
       // we check that the user exists on GitHub and store some data in session
       const data = await fetchJson(url)
-
-      const user = { isLoggedIn: true, ...data }
-
-      req.session.set('user', user)
+      req.session.set<Conseiller>(SESSION_KEYS.USER, data)
       await req.session.save()
-      res.json(user)
+      res.json(data)
     } catch (error: any) {
       const { response: fetchResponse } = error
       res.status(fetchResponse?.status || 500).json(error.data)

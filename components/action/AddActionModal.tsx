@@ -1,12 +1,10 @@
 import Button, { ButtonColorStyle } from 'components/Button'
-
 import Modal from 'components/Modal'
-
 import { ActionJeune } from 'interfaces/action'
 import router from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
-import fetchJson from 'utils/fetchJson'
+import { useDIContext } from 'utils/injectionDependances'
 
 const INPUT_MAX_LENGTH = 250
 
@@ -17,20 +15,16 @@ type ActionModalProps = {
 }
 
 const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
+  const { conseillerService } = useDIContext()
   const [newContent, setNewContent] = useState('')
   const [newComment, setNewComment] = useState('')
   const [isCommentMode, setIsCommentMode] = useState(false)
   const [isCustomMode, setIsCustomMode] = useState(false)
-  const [conseillerId, setConseillerId] = useState('')
+  const [conseillerId, setConseillerId] = useState<string | undefined>()
 
   useEffect(() => {
-    async function fetchConseillerId(): Promise<string> {
-      const currentUser = await fetchJson('/api/user')
-      return currentUser?.id || ''
-    }
-
-    fetchConseillerId().then((data) => {
-      setConseillerId(data)
+    conseillerService.getConseillerConnecte().then((conseiller) => {
+      setConseillerId(conseiller?.id)
     })
   }, [])
 

@@ -1,4 +1,3 @@
-import { Conseiller } from 'interfaces'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -9,22 +8,22 @@ import DashboardIcon from '../../assets/icons/dashboard.svg'
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PersonIcon from '../../assets/icons/person.svg'
+import { useDIContext } from '../../utils/injectionDependances'
 
 type SidebarProps = {}
 
 export default function Sidebar({}: SidebarProps) {
   const router = useRouter()
 
-  const [conseillerName, setConseillerName] = useState<String>('')
+  const { conseillerService } = useDIContext()
+  const [conseillerName, setConseillerName] = useState<string | undefined>(
+    undefined
+  )
   const { mutateUser } = useUser()
 
   useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
-
-    fetchConseiller().then((conseiller) => {
-      setConseillerName(conseiller.firstName)
+    conseillerService.getConseillerConnecte().then((conseiller) => {
+      setConseillerName(conseiller?.firstName)
     })
   }, [])
 

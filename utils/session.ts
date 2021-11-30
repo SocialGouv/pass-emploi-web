@@ -1,15 +1,14 @@
 // this file is a wrapper with defaults to be used in both API routes and `getServerSideProps` functions
+import { Conseiller } from 'interfaces'
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
-  Redirect,
 } from 'next'
 import { Session, withIronSession } from 'next-iron-session'
-import { Conseiller } from 'interfaces'
 
-type NextIronRequest = NextApiRequest & { session: Session }
+export type NextIronRequest = NextApiRequest & { session: Session }
 type ServerSideContext = GetServerSidePropsContext & { req: NextIronRequest }
 
 /**
@@ -24,6 +23,8 @@ export type ApiHandler = (
 export type ServerSideHandler<P extends { [key: string]: any }> = (
   context: ServerSideContext
 ) => ReturnType<GetServerSideProps<P>>
+
+export const SESSION_KEYS = { USER: 'user' }
 
 const withSession = <T extends ApiHandler | ServerSideHandler<any>>(
   handler: T
@@ -42,19 +43,6 @@ export default withSession
 
 export function getConseillerFromSession(
   req: NextIronRequest
-):
-  | { conseiller: Conseiller; hasConseiller: true }
-  | { redirect: Redirect; hasConseiller: false } {
-  const conseiller = req.session.get<Conseiller>('user')
-  if (conseiller === undefined) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-      hasConseiller: false,
-    }
-  }
-
-  return { conseiller, hasConseiller: true }
+): Conseiller | undefined {
+  return req.session.get<Conseiller>(SESSION_KEYS.USER)
 }

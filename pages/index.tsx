@@ -9,11 +9,9 @@ import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
+import getConseillerOuRedirect from 'utils/getConseillerOuRedirect'
 import { useDIContext } from 'utils/injectionDependances'
-import withSession, {
-  getConseillerFromSession,
-  ServerSideHandler,
-} from 'utils/session'
+import withSession, { ServerSideHandler } from 'utils/session'
 import AddIcon from '../assets/icons/add.svg'
 import { AppHead } from 'components/AppHead'
 
@@ -128,7 +126,7 @@ const Home = ({
 
 export const getServerSideProps = withSession<ServerSideHandler<HomeProps>>(
   async ({ req }): Promise<GetServerSidePropsResult<HomeProps>> => {
-    const conseillerOuRedirect = getConseillerFromSession(req)
+    const conseillerOuRedirect = getConseillerOuRedirect(req)
     if (!conseillerOuRedirect.hasConseiller) {
       return { redirect: conseillerOuRedirect.redirect }
     }

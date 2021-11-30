@@ -16,6 +16,7 @@ import fetchJson from 'utils/fetchJson'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
+import { useDIContext } from '../../utils/injectionDependances'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -26,6 +27,7 @@ type ChatBoxProps = {
 }
 
 export default function ChatBox({ db }: ChatBoxProps) {
+  const { conseillerService } = useDIContext()
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
   const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
@@ -36,9 +38,9 @@ export default function ChatBox({ db }: ChatBoxProps) {
 
   useEffect(() => {
     async function fetchJeunes(): Promise<Jeune[]> {
-      const { id } = await fetchJson('/api/user')
+      const conseiller = await conseillerService.getConseillerConnecte()
       const jeunes = await fetchJson(
-        `${process.env.API_ENDPOINT}/conseillers/${id}/jeunes`
+        `${process.env.API_ENDPOINT}/conseillers/${conseiller?.id}/jeunes`
       )
 
       return jeunes || []
