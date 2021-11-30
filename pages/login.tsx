@@ -1,17 +1,12 @@
 import Button from 'components/Button'
 import React, { useState } from 'react'
-import fetchJson from 'utils/fetchJson'
-import useUser from 'utils/useUser'
+
+import { signIn } from 'next-auth/react'
+
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 const Login = () => {
   const [userId, setUserId] = useState('')
-
-  // here we just check if user is already logged in and redirect to profile
-  const { mutateUser } = useUser({
-    redirectTo: '/',
-    redirectIfFound: true,
-  })
 
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -23,13 +18,14 @@ const Login = () => {
     }
 
     try {
-      mutateUser(
-        await fetchJson('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        })
-      )
+      signIn()
+      // mutateUser(
+      //   await fetchJson('/api/login', {
+      //     method: 'POST',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify(body),
+      //   })
+      // )
     } catch (error) {
       console.error(error)
       setErrorMsg("une erreur est survenue lors de l'authentification")
@@ -54,6 +50,12 @@ const Login = () => {
           </h1>
 
           <form onSubmit={handleSubmit}>
+            <Button type='submit' className='m-auto'>
+              <span className='px-[42px]'>Connexion</span>
+            </Button>
+          </form>
+
+          {/* <form onSubmit={handleSubmit}>
             <label className='flex flex-col w-[465px] mb-[48px]'>
               <span className='text-sm-semi text-bleu_nuit mb-[16px]'>
                 Votre identifiant
@@ -68,12 +70,12 @@ const Login = () => {
               />
             </label>
 
-            <Button type='submit' className='m-auto' disabled={!userId}>
+            <Button type='submit' className='m-auto'>
               <span className='px-[42px]'>Connexion</span>
             </Button>
 
             {errorMsg && <p className='error'>{errorMsg}</p>}
-          </form>
+          </form> */}
         </div>
       </div>
     </div>
