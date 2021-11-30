@@ -1,8 +1,9 @@
-import { ActionStatus, UserAction } from 'interfaces/action'
+import { ActionStatus, ActionJeune } from 'interfaces/action'
 
 const now = new Date()
 
-const actionsPredefinies : UserAction[] = [
+// FIXME introduire un autre type, ici on a juste besoin de `content` et `comment`
+const actionsPredefinies : ActionJeune[] = [
   {
     id: 'no-com-1',
     content: 'Identifier ses atouts et ses compétences',
@@ -11,6 +12,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -21,6 +23,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -31,6 +34,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -41,6 +45,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -51,6 +56,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -61,6 +67,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -71,6 +78,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -81,6 +89,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -91,6 +100,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -101,6 +111,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -111,6 +122,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -121,6 +133,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -131,6 +144,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -141,6 +155,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -151,6 +166,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -161,6 +177,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -171,6 +188,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -181,6 +199,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -191,6 +210,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
   {
@@ -201,6 +221,7 @@ const actionsPredefinies : UserAction[] = [
     creationDate: now,
     lastUpdate: now,
     creator:'',
+    creatorType: 'conseiller',
     status: ActionStatus.NotStarted
   },
 ]

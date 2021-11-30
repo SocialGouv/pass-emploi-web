@@ -1,10 +1,7 @@
-
 // TODO create JsonModel
 
-import firebase from "firebase/app";
-import { datesAreOnSameDay } from "utils/date";
-
-
+import { Timestamp } from 'firebase/firestore'
+import { datesAreOnSameDay } from 'utils/date'
 
 export type Conseiller = {
   isLoggedIn?: boolean
@@ -21,12 +18,14 @@ export type Jeune = {
   chatId?: string
 }
 
-export interface JeuneChat extends Jeune{
-  seenByConseiller: boolean,
-  newConseillerMessageCount: number,
-  lastMessageContent: string,
-  lastMessageSentAt: firebase.firestore.Timestamp,
-  lastMessageSentBy: string
+export interface JeuneChat extends Jeune {
+  seenByConseiller: boolean
+  newConseillerMessageCount: number
+  lastMessageContent: string | undefined
+  lastMessageSentAt: Timestamp | undefined
+  lastMessageSentBy: string | undefined
+  lastConseillerReading: Timestamp | undefined
+  lastJeuneReading: Timestamp | undefined
 }
 
 /**
@@ -35,13 +34,13 @@ export interface JeuneChat extends Jeune{
 export type Message = {
   id: string
   content: string
-  creationDate: firebase.firestore.Timestamp
-  sentBy: string,
+  creationDate: Timestamp
+  sentBy: string
 }
 
-export class DailyMessages{
-  date: Date;
-  messages: Message[];
+export class DailyMessages {
+  date: Date
+  messages: Message[]
 
   constructor(date: Date, messages: Message[]) {
     this.date = date
@@ -49,25 +48,25 @@ export class DailyMessages{
   }
 }
 
-export class ListDailyMessages{
-  dailyMessages: DailyMessages[];
+export class ListDailyMessages {
+  dailyMessages: DailyMessages[]
 
   constructor(messages: Message[]) {
     let currentMessages: Message[] = [...messages]
 
-    let tmpdate:Date = currentMessages[0].creationDate.toDate()
-    let tmpDateMessages: DailyMessages[] = [new DailyMessages(tmpdate,[])]
+    let tmpdate: Date = currentMessages[0].creationDate.toDate()
+    let tmpDateMessages: DailyMessages[] = [new DailyMessages(tmpdate, [])]
     let tmpDateMessagesIndex = 0
 
     currentMessages.forEach((message: Message) => {
-      if(datesAreOnSameDay(tmpdate, message.creationDate.toDate())){
+      if (datesAreOnSameDay(tmpdate, message.creationDate.toDate())) {
         tmpDateMessages[tmpDateMessagesIndex].messages.push(message)
-      }else{
+      } else {
         tmpdate = message.creationDate.toDate()
         tmpDateMessagesIndex++
-        tmpDateMessages.push(new DailyMessages(tmpdate,[message]))
+        tmpDateMessages.push(new DailyMessages(tmpdate, [message]))
       }
-    });
+    })
     this.dailyMessages = tmpDateMessages
   }
 }

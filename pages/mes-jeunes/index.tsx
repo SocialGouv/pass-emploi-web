@@ -1,106 +1,119 @@
-import React, { useState } from 'react'
-
-import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import Button from 'components/Button'
-
+import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import { Jeune } from 'interfaces'
-
-import withSession, { ServerSideHandler } from 'utils/session'
-
-import AddIcon from '../../assets/icons/add_person.svg'
+import Link from 'next/link'
+import Router from 'next/router'
+import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
+import withSession, {
+  getConseillerFromSession,
+  ServerSideHandler,
+} from 'utils/session'
+import AddIcon from '../../assets/icons/add_person.svg'
+import ChevronRight from '../../assets/icons/chevron_right.svg'
+import { AppHead } from 'components/AppHead'
 
 type MesJeunesProps = {
-	conseillerId: string
-	conseillerJeunes: Jeune[]
+  conseillerJeunes: Jeune[]
 }
 
-function MesJeunes({ conseillerId, conseillerJeunes }: MesJeunesProps) {
-	const [showModal, setShowModal] = useState(false)
-	const [jeunes, setJeunes] = useState<Jeune[]>(conseillerJeunes)
+function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
+  const [showModal, setShowModal] = useState(false)
 
-	const handleAddJeune = async () => {
-		await fetchJson('/api/login', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				userId: conseillerId,
-			}),
-		}).then(function (response) {
-			setJeunes(response.jeunes)
-		})
-	}
+  const handleCloseModal = () => {
+    setShowModal(false)
+    Router.reload()
+  }
 
-	return (
-		<>
-			<span className='flex flex-wrap justify-between mb-[50px]'>
-				<h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
-				<Button onClick={() => setShowModal(true)}>
-					<AddIcon focusable='false' aria-hidden='true' className='mr-[8px]' />
-					Ajouter un jeune
-				</Button>
-			</span>
+  return (
+    <>
+      <AppHead titre='Mes jeunes' />
+      <span className='flex flex-wrap justify-between mb-12'>
+        <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
+        <Button onClick={() => setShowModal(true)}>
+          <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+          Ajouter un jeune
+        </Button>
+      </span>
 
-			<table role='presentation'>
-				<caption className='hidden'>Liste de mes bénéficiaires</caption>
+      <div
+        role='table'
+        className='table w-full'
+        aria-label='jeunes'
+        aria-describedby='table-caption'
+      >
+        <div id='table-caption' className='visually-hidden'>
+          Liste de mes jeunes
+        </div>
+        <div role='rowgroup'>
+          <div role='row' className='table-row grid grid-cols-table'>
+            <span
+              role='columnheader'
+              className='table-cell text-sm text-bleu text-left p-4'
+            >
+              Nom du jeune
+            </span>
 
-				<tbody>
-					<tr>
-						<th scope='col' className='text-sm text-bleu text-left p-[16px]'>
-							Nom du jeune
-						</th>
+            <span
+              role='columnheader'
+              className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+            >
+              Identifiant
+            </span>
+          </div>
+        </div>
 
-						<th scope='col' className='text-sm text-bleu text-left p-[16px]'>
-							Identifiant
-						</th>
-					</tr>
+        <div role='rowgroup'>
+          {conseillerJeunes?.map((jeune: Jeune) => (
+            <Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
+              <a
+                key={jeune.id}
+                role='row'
+                aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, identifiant ${jeune.id}`}
+                className='table-row grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
+              >
+                <span role='cell' className='table-cell p-4' aria-hidden='true'>
+                  {jeune.firstName} {jeune.lastName}
+                </span>
 
-					{jeunes?.map((jeune: Jeune) => (
-						<tr key={jeune.id} className='text-sm text-bleu_nuit'>
-							<td className='p-[16px]'>
-								{jeune.firstName} {jeune.lastName}
-							</td>
+                <span role='cell' className='table-cell p-4' aria-hidden='true'>
+                  {jeune.id}
+                </span>
+                <span
+                  role='cell'
+                  className='table-cell p-4 col-end-6'
+                  aria-hidden='true'
+                >
+                  <ChevronRight aria-hidden='true' focusable='false' />
+                </span>
+              </a>
+            </Link>
+          ))}
+        </div>
+      </div>
 
-							<td className='p-[16px]'>{jeune.id}</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
-
-			<AddJeuneModal
-				onClose={() => setShowModal(false)}
-				onAdd={() => handleAddJeune()}
-				show={showModal}
-			/>
-		</>
-	)
+      <AddJeuneModal onClose={handleCloseModal} show={showModal} />
+    </>
+  )
 }
 
-export const getServerSideProps = withSession<ServerSideHandler>(
-	async ({ req, res }) => {
-		const user = req.session.get('user')
-		const userId = user.id
+export const getServerSideProps = withSession<
+  ServerSideHandler<MesJeunesProps>
+>(async ({ req }) => {
+  const conseillerOuRedirect = getConseillerFromSession(req)
+  if (!conseillerOuRedirect.hasConseiller)
+    return { redirect: conseillerOuRedirect.redirect }
 
-		if (user === undefined) {
-			res.setHeader('location', '/login')
-			res.statusCode = 302
-			res.end()
-			return {
-				props: {},
-			}
-		}
+  const { conseiller } = conseillerOuRedirect
+  const jeunes = await fetchJson(
+    `${process.env.API_ENDPOINT}/conseillers/${conseiller.id}/jeunes`
+  )
 
-		const data = await fetchJson(
-			`${process.env.API_ENDPOINT}/conseillers/${userId}/login`
-		)
-
-		return {
-			props: {
-				conseillerId: userId,
-				conseillerJeunes: data?.jeunes || [],
-			},
-		}
-	}
-)
+  return {
+    props: {
+      conseillerJeunes: jeunes || [],
+    },
+  }
+})
 
 export default MesJeunes

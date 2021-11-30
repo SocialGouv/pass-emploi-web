@@ -6,19 +6,22 @@ Allez sur l'application scalingo et choississez `pa-front-staging > Environment 
 
 ## Lancement
 
-Installez d'abord les dépendances:
+Installez et utilisez la bonne version de node et de yarn
 
 ```bash
-npm install
-# or
-yarn install
+nvm install
+npm install --global yarn
 ```
 
-Ensuite, lancez le serveur de dev:
+Installez ensuite les dépendances:
 
 ```bash
-npm run dev
-# or
+yarn
+```
+
+Enfin, lancez le serveur de dev:
+
+```bash
 yarn dev
 ```
 

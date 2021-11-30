@@ -1,226 +1,199 @@
+import Button from 'components/Button'
+import Modal from 'components/Modal'
+import { Jeune } from 'interfaces'
+import { RdvFormData } from 'interfaces/json/rdv'
+import { useEffect, useState } from 'react'
 import { modalites } from 'referentiel/rdv'
 
-import Modal from 'components/Modal'
-import Button from 'components/Button'
-import { useEffect, useState } from 'react'
-import { Jeune } from 'interfaces'
-import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
-import fetchJson from 'utils/fetchJson'
-
-type RdvModalProps = {
-	show: boolean
-	onClose: any
-	onAdd: any
+interface RdvModalProps {
+  fetchJeunes: () => Promise<Jeune[]>
+  jeuneInitial?: Jeune
+  addNewRDV: (newRDV: RdvFormData) => Promise<void>
+  onClose: () => void
 }
 
-const AddRdvModal = ({ show, onClose, onAdd }: RdvModalProps) => {
-	const [jeunes, setJeunes] = useState<Jeune[]>([])
+const AddRdvModal = ({
+  fetchJeunes,
+  jeuneInitial,
+  addNewRDV,
+  onClose,
+}: RdvModalProps) => {
+  const [jeunes, setJeunes] = useState<Jeune[]>([])
 
-	const [jeune, selectJeune] = useState('')
-	const [creneau, selectCreneau] = useState('')
-	const [duree, selectDuree] = useState('')
-	const [modalite, selectModalite] = useState('')
-	const [date, selectDate] = useState('')
-	const [notes, selectNotes] = useState('')
-	const [conseillerId, setConseillerId] = useState<number | undefined>(
-		undefined
-	)
+  const [idJeuneSelectionne, selectIdJeune] = useState<string | undefined>(
+    undefined
+  )
+  const [creneau, selectCreneau] = useState('')
+  const [duree, selectDuree] = useState('')
+  const [modalite, selectModalite] = useState('')
+  const [date, selectDate] = useState('')
+  const [notes, selectNotes] = useState('')
 
-	useEffect(() => {
-		async function fetchJeunes(): Promise<Jeune[]> {
-			const { id } = await fetchJson('/api/user')
+  useEffect(() => {
+    fetchJeunes().then((jeunes: Jeune[]) => {
+      setJeunes(jeunes)
+      if (jeuneInitial) {
+        selectIdJeune(jeuneInitial.id)
+      }
+    })
+  }, [fetchJeunes, jeuneInitial])
 
-			const data = await fetchJson(
-				`${process.env.API_ENDPOINT}/conseillers/${id}/login`
-			)
+  const creneauIsValid = () =>
+    creneau !== '' && creneau.match(/[0-9][0-9]:[0-9][0-9]/gm)
 
-			setConseillerId(id)
-			return data?.jeunes || []
-		}
+  const FormIsValid = () =>
+    duree !== '' &&
+    creneauIsValid() &&
+    modalite !== '' &&
+    idJeuneSelectionne !== undefined &&
+    date !== ''
 
-		fetchJeunes().then((data) => {
-			const defaultJeune: Jeune = {
-				id: '',
-				firstName: '',
-				lastName: '',
-			}
+  const handleAddClick = (event: any) => {
+    event.preventDefault()
+    const rdvDate = new Date(date)
+    const hours: number = Number(creneau.substring(0, 2))
+    const minutes: number = Number(creneau.substring(3, 5))
+    rdvDate.setUTCHours(hours)
+    rdvDate.setUTCMinutes(minutes)
 
-			setJeunes([defaultJeune, ...data])
-		})
-	}, [])
+    const newRdv: RdvFormData = {
+      jeuneId: idJeuneSelectionne!,
+      date: rdvDate.toUTCString(),
+      duration: parseInt(duree),
+      modality: modalite,
+      comment: notes,
+    }
 
-	const creneauIsValid = () =>
-		creneau !== '' && creneau.match(/[0-9][0-9]:[0-9][0-9]/gm)
+    addNewRDV(newRdv)
+  }
 
-	const FormIsValid = () =>
-		duree !== '' &&
-		creneauIsValid() &&
-		modalite !== '' &&
-		jeune !== '' &&
-		date !== ''
+  return (
+    <Modal title='Créer un nouveau RDV' onClose={() => onClose()} show={true}>
+      <form method='POST' role='form' onSubmit={handleAddClick}>
+        <div className='flex'>
+          <div className='pr-[20px]' style={{ flexBasis: '50%' }}>
+            <label
+              htmlFor='beneficiaire'
+              className='text-sm-semi text-bleu_nuit mb-[20px] block'
+            >
+              Choisir un bénéficiaire <span aria-hidden='true'>*</span>
+            </label>
+            <select
+              id='beneficiaire'
+              name='beneficiaire'
+              value={idJeuneSelectionne}
+              onChange={(e) => selectIdJeune(e.target.value)}
+              className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium cursor-pointer'
+              required
+            >
+              <option aria-hidden hidden disabled selected />
+              {jeunes.map((j) => (
+                <option key={j.id} value={j.id}>
+                  {j.firstName} {j.lastName}
+                </option>
+              ))}
+            </select>
 
-	const handleAddClick = (event: any) => {
-		event.preventDefault()
-		const rdvDate = new Date(date)
-		const hours: number = Number(creneau.substring(0, 2))
-		const minutes: number = Number(creneau.substring(3, 5))
-		rdvDate.setUTCHours(hours)
-		rdvDate.setUTCMinutes(minutes)
+            <label
+              htmlFor='date'
+              className='text-sm-semi text-bleu_nuit mb-[20px] block'
+            >
+              Choisir une date <span aria-hidden='true'>*</span>
+            </label>
+            <input
+              type='date'
+              id='date'
+              name='rdv-date'
+              value={date}
+              onChange={(e) => selectDate(e.target.value)}
+              required
+              className='text-md text-bleu_nuit w-full p-[7px] mb-[20px] border border-bleu_nuit rounded-medium'
+            />
+          </div>
 
-		const newRdv: RdvFormData = {
-			id: '',
-			title: 'titre',
-			subtitle: 'sous-titre',
-			jeuneId: jeune,
-			date: rdvDate.toUTCString(),
-			duration: parseInt(duree),
-			modality: modalite,
-			comment: notes,
-		}
+          <div className='pl-[20px]' style={{ flexBasis: '50%' }}>
+            <label
+              htmlFor='creneaux'
+              className='text-sm-semi text-bleu_nuit mb-[20px] block'
+            >
+              Heure du rendez-vous (hh:mm) <span aria-hidden='true'>*</span>
+            </label>
+            <input
+              type='text'
+              id='creneau'
+              name='creneau'
+              value={creneau}
+              placeholder='par exemple: 15:00'
+              onChange={(e) => selectCreneau(e.target.value)}
+              required
+              className='text-md text-bleu_nuit w-full p-[12px] mb-[20px] placeholder-bleu_nuit placeholder-opacity-50 border border-bleu_nuit rounded-medium'
+            />
 
-		if (!conseillerId) {
-			throw new Error(`AddRdvModal: L'Id du conseiller est manquant`)
-		}
+            <label
+              htmlFor='duree'
+              className='text-sm-semi text-bleu_nuit mb-[20px] block'
+            >
+              Durée du RDV (en minutes) <span aria-hidden='true'>*</span>
+            </label>
+            <input
+              type='number'
+              id='duree'
+              name='duree'
+              value={duree}
+              placeholder='Saisir la durée en minutes'
+              onChange={(e) => selectDuree(e.target.value)}
+              required
+              className='text-md text-bleu_nuit w-full p-[12px] mb-[20px] placeholder-bleu_nuit placeholder-opacity-50 border border-bleu_nuit rounded-medium'
+            />
 
-		fetch(
-			`${process.env.API_ENDPOINT}/conseillers/${conseillerId}/rendezvous`,
-			{
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify(newRdv),
-			}
-		).then(function (response) {
-			onClose()
-			onAdd()
-		})
-	}
+            <label
+              htmlFor='modalite'
+              className='text-sm-semi text-bleu_nuit mb-[20px] block'
+            >
+              Modalité de contact <span aria-hidden='true'>*</span>
+            </label>
+            <select
+              id='modalite'
+              name='modalite'
+              value={modalite}
+              onChange={(e) => selectModalite(e.target.value)}
+              required
+              className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] cursor-pointer border border-bleu_nuit rounded-medium'
+            >
+              {modalites.map((md) => (
+                <option key={md} value={md}>
+                  {md}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-	return (
-		<Modal title='Créer un nouveau RDV' onClose={() => onClose()} show={show}>
-			<form method='POST' role='form' onSubmit={handleAddClick}>
-				<div className='flex'>
-					<div className='pr-[20px]' style={{ flexBasis: '50%' }}>
-						<label
-							htmlFor='beneficiaire'
-							className='text-sm-semi text-bleu_nuit mb-[20px] block'
-						>
-							Choisir un bénéficiaire <span aria-hidden='true'>*</span>
-						</label>
-						<select
-							id='beneficiaire'
-							name='beneficiaire'
-							value={jeune}
-							onChange={(e) => selectJeune(e.target.value)}
-							required
-							className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] cursor-pointer border border-bleu_nuit rounded-medium'
-						>
-							{jeunes.map((j) => (
-								<option key={j.id} value={j.id}>
-									{j.firstName} {j.lastName}
-								</option>
-							))}
-						</select>
+        <label
+          htmlFor='notes'
+          className='text-sm-semi text-bleu_nuit mb-[20px] block'
+        >
+          Notes
+        </label>
+        <textarea
+          id='notes'
+          name='notes'
+          value={notes}
+          onChange={(e) => selectNotes(e.target.value)}
+          className='text-md text-bleu_nuit w-full min-h-[60px] p-[10px] mb-[10px] placeholder-bleu_nuit placeholder-opacity-50 resize-none border border-bleu_nuit rounded-medium'
+          placeholder='Écrire ici...'
+        />
 
-						<label
-							htmlFor='date'
-							className='text-sm-semi text-bleu_nuit mb-[20px] block'
-						>
-							Choisir une date <span aria-hidden='true'>*</span>
-						</label>
-						<input
-							type='date'
-							id='date'
-							name='rdv-date'
-							value={date}
-							onChange={(e) => selectDate(e.target.value)}
-							required
-							className='text-md text-bleu_nuit w-full p-[7px] mb-[20px] border border-bleu_nuit rounded-medium'
-						/>
-					</div>
+        <span className='text-xs text-bleu_nuit mb-[10px]' aria-hidden='true'>
+          * : champs obligatoires
+        </span>
 
-					<div className='pl-[20px]' style={{ flexBasis: '50%' }}>
-						<label
-							htmlFor='creneaux'
-							className='text-sm-semi text-bleu_nuit mb-[20px] block'
-						>
-							Heure du rendez-vous (hh:mm) <span aria-hidden='true'>*</span>
-						</label>
-						<input
-							type='text'
-							id='creneau'
-							name='creneau'
-							value={creneau}
-							placeholder='par exemple: 15:00'
-							onChange={(e) => selectCreneau(e.target.value)}
-							required
-							className='text-md text-bleu_nuit w-full p-[12px] mb-[20px] placeholder-bleu_nuit placeholder-opacity-50 border border-bleu_nuit rounded-medium'
-						/>
-
-						<label
-							htmlFor='duree'
-							className='text-sm-semi text-bleu_nuit mb-[20px] block'
-						>
-							Durée du RDV (en minutes) <span aria-hidden='true'>*</span>
-						</label>
-						<input
-							type='number'
-							id='duree'
-							name='duree'
-							value={duree}
-							placeholder='Saisir la durée en minutes'
-							onChange={(e) => selectDuree(e.target.value)}
-							required
-							className='text-md text-bleu_nuit w-full p-[12px] mb-[20px] placeholder-bleu_nuit placeholder-opacity-50 border border-bleu_nuit rounded-medium'
-						/>
-
-						<label
-							htmlFor='modalite'
-							className='text-sm-semi text-bleu_nuit mb-[20px] block'
-						>
-							Modalité de contact <span aria-hidden='true'>*</span>
-						</label>
-						<select
-							id='modalite'
-							name='modalite'
-							value={modalite}
-							onChange={(e) => selectModalite(e.target.value)}
-							required
-							className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] cursor-pointer border border-bleu_nuit rounded-medium'
-						>
-							{modalites.map((md) => (
-								<option key={md} value={md}>
-									{md}
-								</option>
-							))}
-						</select>
-					</div>
-				</div>
-
-				<label
-					htmlFor='notes'
-					className='text-sm-semi text-bleu_nuit mb-[20px] block'
-				>
-					Notes
-				</label>
-				<textarea
-					id='notes'
-					name='notes'
-					value={notes}
-					onChange={(e) => selectNotes(e.target.value)}
-					className='text-md text-bleu_nuit w-full min-h-[60px] p-[10px] mb-[10px] placeholder-bleu_nuit placeholder-opacity-50 resize-none border border-bleu_nuit rounded-medium'
-					placeholder='Écrire ici...'
-				/>
-
-				<span className='text-xs text-bleu_nuit mb-[10px]' aria-hidden='true'>
-					* : champs obligatoires
-				</span>
-
-				<Button type='submit' disabled={!FormIsValid()} className='m-auto'>
-					<span className='px-[48px] py-[11px]'>INVITER</span>
-				</Button>
-			</form>
-		</Modal>
-	)
+        <Button type='submit' disabled={!FormIsValid()} className='m-auto'>
+          <span className='px-[48px] py-[11px]'>INVITER</span>
+        </Button>
+      </form>
+    </Modal>
+  )
 }
 
 export default AddRdvModal
