@@ -131,7 +131,6 @@ export const getServerSideProps = withSession<ServerSideHandler>(
 				props: {},
 			}
 		}
-		console.log(session)
     const user = session!.user as UserSession
 		const data = await fetchJson(
 			`${process.env.API_ENDPOINT}/conseillers/${user.id}/rendezvous`

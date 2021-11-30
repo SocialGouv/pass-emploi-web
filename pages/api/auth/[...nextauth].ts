@@ -6,15 +6,18 @@ export default NextAuth({
   // Configure one or more authentication providers
   providers: [
     KeycloakProvider({
-      clientId: "pass-emploi-web-staging",
+      clientId: "pass-emploi-web",
       clientSecret: "b208225f-addd-4600-8ae5-de6e19234551",
-      issuer: "https://pa-auth-staging.osc-fr1.scalingo.io/auth/realms/pass-emploi",
+      issuer: "http://localhost:8082/auth/realms/pass-emploi",
     })
   ],
   callbacks: {
     async session({ session, user, token }) {
+      console.log(token.accessToken)
       // @ts-ignore
       const accessToken = JWT.decode(token.accessToken)
+      // console.log(token.accessToken)
+      // console.log(accessToken)
       session.user={
         ...session.user,
         // @ts-ignore

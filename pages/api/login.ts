@@ -16,7 +16,7 @@ type ApiError = {
 }
 
 export default withSession(async (req: NextIronRequest, res: NextApiResponse<Data | ApiError>) => {
-  const { userId } = await req.body
+    const { userId } = await req.body
   const url = `${process.env.API_ENDPOINT}/conseillers/${userId}/login`
 
   try {
