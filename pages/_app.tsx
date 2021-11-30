@@ -1,6 +1,5 @@
 import ProgressBar from '@badrap/bar-of-progress'
-import init from '@socialgouv/matomo-next'
-
+import init from 'utils/matomo'
 import Layout from 'components/layouts/Layout'
 import { SessionProvider } from 'next-auth/react'
 
