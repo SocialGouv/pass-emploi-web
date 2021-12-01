@@ -1,14 +1,7 @@
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-
 import styles from 'styles/components/Layouts.module.css'
-
-import { Conseiller } from 'interfaces'
-import fetchJson from 'utils/fetchJson'
-
-import { useSession, signOut } from 'next-auth/react'
-
 import DashboardIcon from '../../assets/icons/dashboard.svg'
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
@@ -23,8 +16,7 @@ export default function Sidebar({}: SidebarProps) {
 
   async function handleLogout(event: any) {
     event.preventDefault()
-    signOut()
-    router.push('/login')
+    window.location.href = '/api/auth/federated-logout'
   }
 
   return (

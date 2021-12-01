@@ -18,7 +18,7 @@ const Login = () => {
     }
 
     try {
-      signIn()
+      signIn('keycloak')
       // mutateUser(
       //   await fetchJson('/api/login', {
       //     method: 'POST',
