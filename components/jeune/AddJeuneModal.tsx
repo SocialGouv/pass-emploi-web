@@ -18,13 +18,9 @@ const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
   const [newJeune, setNewJeune] = useState<Jeune | null>(null)
 
   useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
+    //TODO: get from session
 
-    fetchConseiller().then((conseiller) => {
-      setConseillerId(conseiller.id)
-    })
+    setConseillerId('1')
   }, [])
 
   const FormIsValid = () => firstName !== '' && lastName !== ''

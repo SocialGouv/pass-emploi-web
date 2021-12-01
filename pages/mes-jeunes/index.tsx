@@ -1,17 +1,14 @@
 import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
+import { AppHead } from 'components/AppHead'
 import { Jeune } from 'interfaces'
+import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
-import withSession, {
-  getConseillerFromSession,
-  ServerSideHandler,
-} from 'utils/session'
 import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
-import { AppHead } from 'components/AppHead'
 
 type MesJeunesProps = {
   conseillerJeunes: Jeune[]
@@ -97,16 +94,12 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   )
 }
 
-export const getServerSideProps = withSession<
-  ServerSideHandler<MesJeunesProps>
->(async ({ req }) => {
-  const conseillerOuRedirect = getConseillerFromSession(req)
-  if (!conseillerOuRedirect.hasConseiller)
-    return { redirect: conseillerOuRedirect.redirect }
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  //TODO: get from session
+  const conseillerID = 1
 
-  const { conseiller } = conseillerOuRedirect
   const jeunes = await fetchJson(
-    `${process.env.API_ENDPOINT}/conseillers/${conseiller.id}/jeunes`
+    `${process.env.API_ENDPOINT}/conseillers/${conseillerID}/jeunes`
   )
 
   return {
@@ -114,6 +107,6 @@ export const getServerSideProps = withSession<
       conseillerJeunes: jeunes || [],
     },
   }
-})
+}
 
 export default MesJeunes

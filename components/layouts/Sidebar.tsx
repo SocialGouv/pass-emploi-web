@@ -6,7 +6,7 @@ import styles from 'styles/components/Layouts.module.css'
 
 import { Conseiller } from 'interfaces'
 import fetchJson from 'utils/fetchJson'
-// import useUser from 'utils/useUser'
+
 import { useSession, signOut } from 'next-auth/react'
 
 import DashboardIcon from '../../assets/icons/dashboard.svg'
@@ -19,19 +19,7 @@ type SidebarProps = {}
 export default function Sidebar({}: SidebarProps) {
   const router = useRouter()
 
-  // const [conseillerName, setConseillerName] = useState<String>('')
-
   const { data: session } = useSession()
-
-  // useEffect(() => {
-  //   async function fetchConseiller(): Promise<Conseiller> {
-  //     return await fetchJson('/api/user')
-  //   }
-
-  //   fetchConseiller().then((conseiller) => {
-  //     setConseillerName(conseiller.firstName)
-  //   })
-  // }, [])
 
   async function handleLogout(event: any) {
     event.preventDefault()

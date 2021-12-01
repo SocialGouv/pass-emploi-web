@@ -35,19 +35,9 @@ export default function ChatBox({ db }: ChatBoxProps) {
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
   useEffect(() => {
-    async function fetchJeunes(): Promise<Jeune[]> {
-      const { id } = await fetchJson('/api/user')
-      const jeunes = await fetchJson(
-        `${process.env.API_ENDPOINT}/conseillers/${id}/jeunes`
-      )
+    //TODO: get from session
 
-      return jeunes || []
-    }
-
-    fetchJeunes().then((data) => {
-      setJeunes(data)
-      currentJeunesChat = []
-    })
+    setJeunes([])
   }, [])
 
   useEffect(() => {

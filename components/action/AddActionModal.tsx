@@ -24,14 +24,9 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [conseillerId, setConseillerId] = useState('')
 
   useEffect(() => {
-    async function fetchConseillerId(): Promise<string> {
-      const currentUser = await fetchJson('/api/user')
-      return currentUser?.id || ''
-    }
+    //TODO: get from session
 
-    fetchConseillerId().then((data) => {
-      setConseillerId(data)
-    })
+    setConseillerId('1')
   }, [])
 
   const noSelectedAction = () => Boolean(newContent === '')

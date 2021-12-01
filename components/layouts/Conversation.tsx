@@ -152,13 +152,8 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
   }, [db, jeune.chatId])
 
   useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
-
-    fetchConseiller().then((conseiller) => {
-      conseillerId = conseiller.id
-    })
+    //TODO: get from session
+    conseillerId = '1'
   }, [])
 
   return (

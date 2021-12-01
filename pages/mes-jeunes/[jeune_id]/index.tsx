@@ -4,20 +4,17 @@ import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import { AppHead } from 'components/AppHead'
 import { Conseiller, Jeune } from 'interfaces'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
+import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
 import { useDIContext } from 'utils/injectionDependances'
-import withSession, {
-  getConseillerFromSession,
-  ServerSideHandler,
-} from 'utils/session'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { AppHead } from 'components/AppHead'
 
 interface FicheJeuneProps {
   conseiller: Conseiller
@@ -132,15 +129,17 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
   )
 }
 
-export const getServerSideProps = withSession<
-  ServerSideHandler<FicheJeuneProps>
->(async ({ req, query }) => {
-  const conseillerOuRedirect = getConseillerFromSession(req)
-  if (!conseillerOuRedirect.hasConseiller) {
-    return { redirect: conseillerOuRedirect.redirect }
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  //TODO: get from session
+  const conseillerID = '1'
+  const conseiller: Conseiller = {
+    id: conseillerID,
+    firstName: 'fake',
+    lastName: 'fake',
+    jeunes: [],
   }
+  //
 
-  const { conseiller } = conseillerOuRedirect
   const [resInfoJeune, resRdvJeune] = await Promise.all([
     fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`),
     fetchJson(
@@ -162,5 +161,6 @@ export const getServerSideProps = withSession<
       rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
     },
   }
-})
+}
+
 export default FicheJeune
