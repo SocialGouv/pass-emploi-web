@@ -123,7 +123,7 @@ const Home = ({
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  //TODO: get from session
+  // TODO: get from session
   const conseillerID = '1'
 
   const data = await fetchJson(

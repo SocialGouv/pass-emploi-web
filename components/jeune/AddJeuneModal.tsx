@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
-
-import Modal from 'components/Modal'
 import Button from 'components/Button'
 import SuccessAddJeuneModal from 'components/jeune/SuccessAddJeuneModal'
-import { Conseiller, Jeune } from 'interfaces'
-import fetchJson from 'utils/fetchJson'
+import Modal from 'components/Modal'
+import { Jeune } from 'interfaces'
+import { useEffect, useState } from 'react'
 
 type AddJeuneModalProps = {
   show: boolean
@@ -18,7 +16,7 @@ const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
   const [newJeune, setNewJeune] = useState<Jeune | null>(null)
 
   useEffect(() => {
-    //TODO: get from session
+    // TODO: get from session
 
     setConseillerId('1')
   }, [])

@@ -130,7 +130,7 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  //TODO: get from session
+  // TODO: get from session
   const conseillerID = '1'
   const conseiller: Conseiller = {
     id: conseillerID,

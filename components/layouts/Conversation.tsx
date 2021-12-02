@@ -16,7 +16,6 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import {
-  Conseiller,
   DailyMessages,
   Jeune,
   JeuneChat,
@@ -31,7 +30,6 @@ import {
   formatHourMinuteDate,
   isDateOlder,
 } from 'utils/date'
-import fetchJson from 'utils/fetchJson'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
 
@@ -152,7 +150,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
   }, [db, jeune.chatId])
 
   useEffect(() => {
-    //TODO: get from session
+    // TODO: get from session
     conseillerId = '1'
   }, [])
 

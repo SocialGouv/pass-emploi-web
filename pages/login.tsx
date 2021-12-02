@@ -6,26 +6,13 @@ import { signIn } from 'next-auth/react'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 const Login = () => {
-  const [userId, setUserId] = useState('')
-
   const [errorMsg, setErrorMsg] = useState('')
 
   async function handleSubmit(event: any) {
     event.preventDefault()
 
-    const body = {
-      userId: userId,
-    }
-
     try {
-      signIn('keycloak')
-      // mutateUser(
-      //   await fetchJson('/api/login', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(body),
-      //   })
-      // )
+      signIn('keycloak', { callbackUrl: '/' })
     } catch (error) {
       console.error(error)
       setErrorMsg("une erreur est survenue lors de l'authentification")
@@ -55,27 +42,7 @@ const Login = () => {
             </Button>
           </form>
 
-          {/* <form onSubmit={handleSubmit}>
-            <label className='flex flex-col w-[465px] mb-[48px]'>
-              <span className='text-sm-semi text-bleu_nuit mb-[16px]'>
-                Votre identifiant
-              </span>
-              <input
-                type='text'
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder='Identifiant de connexion'
-                className='w-full text-sm text-bleu_nuit bg-bleu_blanc rounded-large px-[24px] py-[16px]'
-                required
-              />
-            </label>
-
-            <Button type='submit' className='m-auto'>
-              <span className='px-[42px]'>Connexion</span>
-            </Button>
-
-            {errorMsg && <p className='error'>{errorMsg}</p>}
-          </form> */}
+          {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
       </div>
     </div>

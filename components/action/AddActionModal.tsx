@@ -6,7 +6,6 @@ import { ActionJeune } from 'interfaces/action'
 import router from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
-import fetchJson from 'utils/fetchJson'
 
 const INPUT_MAX_LENGTH = 250
 
@@ -24,7 +23,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [conseillerId, setConseillerId] = useState('')
 
   useEffect(() => {
-    //TODO: get from session
+    // TODO: get from session
 
     setConseillerId('1')
   }, [])

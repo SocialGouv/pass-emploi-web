@@ -1,6 +1,6 @@
+import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
-import { AppHead } from 'components/AppHead'
 import { Jeune } from 'interfaces'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
@@ -94,8 +94,8 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  //TODO: get from session
+export const getServerSideProps: GetServerSideProps = async () => {
+  // TODO: get from session
   const conseillerID = 1
 
   const jeunes = await fetchJson(

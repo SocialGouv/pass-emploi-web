@@ -1,4 +1,7 @@
-export default async function fetchJson(reqInfo: RequestInfo, reqInit?: RequestInit) {
+export default async function fetchJson(
+  reqInfo: RequestInfo,
+  reqInit?: RequestInit
+) {
   try {
     const response = await fetch(reqInfo, reqInit)
 
@@ -8,9 +11,9 @@ export default async function fetchJson(reqInfo: RequestInfo, reqInit?: RequestI
       return data
     }
 
-    const error = new Error(response.statusText)
-    throw error
+    throw new Error(response.statusText)
   } catch (error) {
-      console.error('fetchJson', error)
+    console.error('fetchJson', error)
+    throw error
   }
 }
