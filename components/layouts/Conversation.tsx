@@ -22,6 +22,7 @@ import {
   ListDailyMessages,
   Message,
 } from 'interfaces'
+import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import {
@@ -44,9 +45,9 @@ type ConversationProps = {
   onBack: () => void
 }
 
-let conseillerId = '0'
-
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
+  const { data: session } = useSession()
+
   const [newMessage, setNewMessage] = useState('')
   const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
@@ -86,7 +87,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
      * Route send from web to notify mobile, no need to await for response
      */
     fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${jeune.id}/notify-message`,
+      `${process.env.API_ENDPOINT}/conseillers/${session?.user.id}/jeunes/${jeune.id}/notify-message`,
       {
         method: 'POST',
       }
@@ -148,11 +149,6 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
     updateReadingDate()
   }, [db, jeune.chatId])
-
-  useEffect(() => {
-    // TODO: get from session
-    conseillerId = '1'
-  }, [])
 
   return (
     <div className={styles.conversationContainer}>

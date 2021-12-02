@@ -42,8 +42,10 @@ export default NextAuth({
       issuer: process.env.KEYCLOAK_ISSUER,
     }),
   ],
-  secret: process.env.KEYCLOAK_SECRET,
+  secret: process.env.AUTH_SECRET,
   session: { strategy: 'jwt' },
+  jwt: { secret: process.env.AUTH_SECRET },
+
   callbacks: {
     async jwt({ token, account, user }) {
       const isFirstSignin = Boolean(account && user)
@@ -61,6 +63,11 @@ export default NextAuth({
         return refreshAccessToken(token)
       }
       return token
+    },
+
+    async session({ session }) {
+      session.user.id = '1'
+      return session
     },
   },
 })

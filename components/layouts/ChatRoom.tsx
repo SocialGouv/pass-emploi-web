@@ -9,9 +9,11 @@ import {
   where,
 } from 'firebase/firestore'
 import { Jeune, JeuneChat } from 'interfaces'
+import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import { formatDayAndHourDate } from 'utils/date'
+import fetchJson from 'utils/fetchJson'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
@@ -25,6 +27,7 @@ type ChatBoxProps = {
 }
 
 export default function ChatBox({ db }: ChatBoxProps) {
+  const { data: session } = useSession()
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
   const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
@@ -34,10 +37,19 @@ export default function ChatBox({ db }: ChatBoxProps) {
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
   useEffect(() => {
-    // TODO: get from session
+    async function fetchJeunes(): Promise<Jeune[]> {
+      const jeunes = await fetchJson(
+        `${process.env.API_ENDPOINT}/conseillers/${session?.user.id}/jeunes`
+      )
 
-    setJeunes([])
-  }, [])
+      return jeunes || []
+    }
+
+    fetchJeunes().then((data) => {
+      setJeunes(data)
+      currentJeunesChat = []
+    })
+  }, [session])
 
   useEffect(() => {
     async function observeJeuneChats(): Promise<void> {

@@ -3,6 +3,7 @@ import Button, { ButtonColorStyle } from 'components/Button'
 import Modal from 'components/Modal'
 
 import { ActionJeune } from 'interfaces/action'
+import { useSession } from 'next-auth/react'
 import router from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
@@ -20,13 +21,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [newComment, setNewComment] = useState('')
   const [isCommentMode, setIsCommentMode] = useState(false)
   const [isCustomMode, setIsCustomMode] = useState(false)
-  const [conseillerId, setConseillerId] = useState('')
-
-  useEffect(() => {
-    // TODO: get from session
-
-    setConseillerId('1')
-  }, [])
+  const { data: session } = useSession()
 
   const noSelectedAction = () => Boolean(newContent === '')
 
@@ -54,7 +49,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
     }
 
     fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${router.query.jeune_id}/action`,
+      `${process.env.API_ENDPOINT}/conseillers/${session?.user.id}/jeunes/${router.query.jeune_id}/action`,
       {
         method: 'POST',
         headers: { 'content-type': 'application/json' },

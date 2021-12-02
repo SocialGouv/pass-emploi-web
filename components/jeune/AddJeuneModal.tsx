@@ -2,6 +2,7 @@ import Button from 'components/Button'
 import SuccessAddJeuneModal from 'components/jeune/SuccessAddJeuneModal'
 import Modal from 'components/Modal'
 import { Jeune } from 'interfaces'
+import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 
 type AddJeuneModalProps = {
@@ -10,16 +11,11 @@ type AddJeuneModalProps = {
 }
 
 const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
+  const { data: session } = useSession()
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [conseillerId, setConseillerId] = useState<String>('')
   const [newJeune, setNewJeune] = useState<Jeune | null>(null)
-
-  useEffect(() => {
-    // TODO: get from session
-
-    setConseillerId('1')
-  }, [])
 
   const FormIsValid = () => firstName !== '' && lastName !== ''
 
@@ -36,7 +32,7 @@ const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
       lastName: lastName,
     }
 
-    fetch(`${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeune`, {
+    fetch(`${process.env.API_ENDPOINT}/conseillers/${session?.user.id}/jeune`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(newJeune),

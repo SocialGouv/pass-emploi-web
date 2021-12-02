@@ -3,6 +3,7 @@ import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import { Jeune } from 'interfaces'
 import { GetServerSideProps } from 'next'
+import { getSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
@@ -94,12 +95,13 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  // TODO: get from session
-  const conseillerID = 1
+export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
+  context
+) => {
+  const { user } = (await getSession(context))!
 
   const jeunes = await fetchJson(
-    `${process.env.API_ENDPOINT}/conseillers/${conseillerID}/jeunes`
+    `${process.env.API_ENDPOINT}/conseillers/${user.id}/jeunes`
   )
 
   return {

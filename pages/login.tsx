@@ -4,15 +4,18 @@ import React, { useState } from 'react'
 import { signIn } from 'next-auth/react'
 
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
+import { useRouter } from 'next/router'
 
 const Login = () => {
   const [errorMsg, setErrorMsg] = useState('')
+  const router = useRouter()
 
   async function handleSubmit(event: any) {
     event.preventDefault()
 
     try {
-      signIn('keycloak', { callbackUrl: '/' })
+      const { redirectUrl } = router.query
+      signIn('keycloak', { callbackUrl: redirectUrl as string })
     } catch (error) {
       console.error(error)
       setErrorMsg("une erreur est survenue lors de l'authentification")

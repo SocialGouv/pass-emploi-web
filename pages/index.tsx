@@ -2,9 +2,9 @@ import Button, { ButtonColorStyle } from 'components/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
-import { RdvFormData } from 'interfaces/json/rdv'
+import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
-import { GetServerSideProps } from 'next'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Router from 'next/router'
 import { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
@@ -12,6 +12,8 @@ import { useDIContext } from 'utils/injectionDependances'
 
 import AddIcon from '../assets/icons/add.svg'
 import { AppHead } from 'components/AppHead'
+import { getSession } from 'next-auth/react'
+import { durees } from 'referentiel/rdv'
 
 type HomeProps = {
   idConseiller: string
@@ -122,31 +124,32 @@ const Home = ({
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  // TODO: get from session
-  const conseillerID = '1'
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { user } = (await getSession(context))!
 
   const data = await fetchJson(
-    `${process.env.API_ENDPOINT}/conseillers/${conseillerID}/rendezvous`
+    `${process.env.API_ENDPOINT}/conseillers/${user.id}/rendezvous`
   )
 
-  // const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
-  //   return {
-  //     ...rdvData,
-  //     duration:
-  //       durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-  //       `${rdvData.duration} min`,
-  //   }
-  // })
+  const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
+    return {
+      ...rdvData,
+      duration:
+        durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+        `${rdvData.duration} min`,
+    }
+  })
 
-  // const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => {
-  //   return {
-  //     ...rdvData,
-  //     duration:
-  //       durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-  //       `${rdvData.duration} min`,
-  //   }
-  // })
+  const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => {
+    return {
+      ...rdvData,
+      duration:
+        durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+        `${rdvData.duration} min`,
+    }
+  })
 
   if (!data) {
     return {
@@ -156,9 +159,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   return {
     props: {
-      idConseiller: conseillerID,
-      rendezVousFuturs: [],
-      rendezVousPasses: [],
+      idConseiller: user.id,
+      rendezVousFuturs,
+      rendezVousPasses,
     },
   }
 }
