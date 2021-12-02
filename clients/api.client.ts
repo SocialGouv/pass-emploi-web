@@ -7,8 +7,9 @@ export class ApiClient {
     this.apiPrefix = process.env.API_ENDPOINT
   }
 
-  get(path: string) {
-    const token = 'token' // TODO recuperer le token
+  async get(path: string) {
+    const token = await fetch('http://localhost:3000/api/auth/token')
+    console.log('hey token', token)
     const headers = new Headers({
       authorization: `bearer ${token}`,
     })
