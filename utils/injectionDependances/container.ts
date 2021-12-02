@@ -1,6 +1,7 @@
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import { ApiClient } from '../../clients/api.client'
 
 export interface Dependencies {
   actionsService: ActionsService
@@ -21,8 +22,10 @@ export class Container {
   }
 
   private static buildDIContainer() {
+    const apiClient = new ApiClient()
+
     return new Container({
-      actionsService: new ActionsService(),
+      actionsService: new ActionsService(apiClient),
       jeunesService: new JeunesService(),
       rendezVousService: new RendezVousService(),
     })

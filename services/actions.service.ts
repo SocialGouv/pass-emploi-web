@@ -1,16 +1,15 @@
+import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
-import fetchJson from 'utils/fetchJson'
 
 export class ActionsService {
   private readonly apiPrefix?: string
-
-  constructor() {
+  constructor(private readonly apiClient: ApiClient) {
     this.apiPrefix = process.env.API_ENDPOINT
   }
 
   async getAction(idAction: string): Promise<ActionJeune & { jeune: Jeune }> {
-    return fetchJson(`${this.apiPrefix}/actions/${idAction}`)
+    return this.apiClient.get(`/actions/${idAction}`)
   }
 
   async updateAction(
