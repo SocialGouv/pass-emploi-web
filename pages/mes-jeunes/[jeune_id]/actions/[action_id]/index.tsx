@@ -1,18 +1,17 @@
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
+import { AppHead } from 'components/AppHead'
 import Button, { ButtonColorStyle } from 'components/Button'
 import EchecMessage from 'components/EchecMessage'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
+import { getSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { formatDayDate } from 'utils/date'
 import { Container, useDIContext } from 'utils/injectionDependances'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
-import { AppHead } from 'components/AppHead'
-import { getToken } from 'next-auth/jwt'
-import fetchJson from 'utils/fetchJson'
 
 type Props = {
   action: ActionJeune
@@ -134,14 +133,15 @@ function PageAction({ action, jeune }: Props) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  req,
-  query,
-}) => {
-  const token = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/token`)
-  console.log('token', token)
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const { accessToken } = (await getSession(context))!
   const { actionsService } = Container.getDIContainer().dependances
-  const res = await actionsService.getAction(query.action_id as string)
+  const res = await actionsService.getAction(
+    context.query.action_id as string,
+    accessToken
+  )
 
   return {
     props: {

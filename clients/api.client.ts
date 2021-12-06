@@ -7,11 +7,9 @@ export class ApiClient {
     this.apiPrefix = process.env.API_ENDPOINT
   }
 
-  async get(path: string) {
-    const token = 'todo'
-
+  async get(path: string, accessToken: string) {
     const headers = new Headers({
-      authorization: `bearer ${token}`,
+      authorization: `bearer ${accessToken}`,
     })
 
     return fetchJson(`${this.apiPrefix}${path}`, { headers })

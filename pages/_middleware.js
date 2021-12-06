@@ -11,8 +11,8 @@ export async function middleware(req) {
     !pathname.includes('/api') &&
     !fileWithExtension.test(pathname)
   ) {
-    const session = await getToken({ req, secret: process.env.AUTH_SECRET })
-    if (!session) {
+    const jwtToken = await getToken({ req, secret: process.env.AUTH_SECRET })
+    if (!jwtToken) {
       const redirectQueryParam =
         pathname !== '/'
           ? `?${new URLSearchParams({ redirectUrl: pathname })}`

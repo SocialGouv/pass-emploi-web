@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import { DefaultJWT } from 'next-auth/jwt/types'
 
 declare module 'next-auth' {
   /**
@@ -9,5 +9,14 @@ declare module 'next-auth' {
       id: string
       name: string
     }
+    accessToken: string
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT extends Record<string, unknown>, DefaultJWT {
+    accessToken?: string
+    refreshToken?: string
+    expiresAt?: Date
   }
 }

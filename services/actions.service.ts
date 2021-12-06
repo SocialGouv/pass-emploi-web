@@ -8,8 +8,11 @@ export class ActionsService {
     this.apiPrefix = process.env.API_ENDPOINT
   }
 
-  async getAction(idAction: string): Promise<ActionJeune & { jeune: Jeune }> {
-    return this.apiClient.get(`/actions/${idAction}`)
+  async getAction(
+    idAction: string,
+    accessToken: string
+  ): Promise<ActionJeune & { jeune: Jeune }> {
+    return this.apiClient.get(`/actions/${idAction}`, accessToken)
   }
 
   async updateAction(
