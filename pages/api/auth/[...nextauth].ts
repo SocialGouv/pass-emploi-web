@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import KeycloakProvider from 'next-auth/providers/keycloak'
-import Authenticator from 'utils/auth/authenticator'
+import authenticator from 'utils/auth/authenticator'
 
 export default NextAuth({
   providers: [
@@ -16,7 +16,7 @@ export default NextAuth({
 
   callbacks: {
     async jwt({ token: jwt, account }) {
-      return Authenticator.handleJWTAndRefresh({ jwt, account })
+      return authenticator.handleJWTAndRefresh({ jwt, account })
     },
 
     async session({ session, token }) {

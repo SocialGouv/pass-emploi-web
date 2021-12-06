@@ -17,6 +17,6 @@ declare module 'next-auth/jwt' {
   interface JWT extends Record<string, unknown>, DefaultJWT {
     accessToken?: string
     refreshToken?: string
-    expiresAt?: Date
+    expiresAtTimestamp?: number
   }
 }
