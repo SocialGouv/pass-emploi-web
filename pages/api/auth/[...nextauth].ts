@@ -49,7 +49,7 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, account, user }) {
       const isFirstSignin = Boolean(account && user)
-      console.log('jwt nextauth', token)
+
       if (isFirstSignin) {
         token.accessToken = account!.access_token
         token.refreshToken = account!.refresh_token

@@ -11,6 +11,8 @@ import { formatDayDate } from 'utils/date'
 import { Container, useDIContext } from 'utils/injectionDependances'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
+import { getToken } from 'next-auth/jwt'
+import fetchJson from 'utils/fetchJson'
 
 type Props = {
   action: ActionJeune
@@ -133,8 +135,11 @@ function PageAction({ action, jeune }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
+  req,
   query,
 }) => {
+  const token = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/token`)
+  console.log('token', token)
   const { actionsService } = Container.getDIContainer().dependances
   const res = await actionsService.getAction(query.action_id as string)
 

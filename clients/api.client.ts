@@ -8,8 +8,8 @@ export class ApiClient {
   }
 
   async get(path: string) {
-    const token = await fetch('http://localhost:3000/api/auth/token')
-    console.log('hey token', token)
+    const token = 'todo'
+
     const headers = new Headers({
       authorization: `bearer ${token}`,
     })
