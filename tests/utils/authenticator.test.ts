@@ -3,6 +3,8 @@ import { JWT } from 'next-auth/jwt'
 import { AuthService } from 'services/auth.service'
 import { Authenticator } from 'utils/auth/authenticator'
 
+const now = 163887007214
+
 describe('Authenticator', () => {
   let authenticator: Authenticator
   let authService: AuthService
@@ -11,10 +13,16 @@ describe('Authenticator', () => {
     authService = {
       updateToken: jest.fn(),
     }
+
     authenticator = new Authenticator(authService)
+
+    jest.spyOn(Date, 'now').mockReturnValue(now)
   })
 
   describe('handleJWTAndRefresh', () => {
+    const cinqMnEnS = 300
+    const cinqMnEnMs = 300000
+
     describe("Quand c'est la 1ere connexion", () => {
       it("enrichit le JWT avec l'accessToken, sa date d'expiration et le refreshToken", async () => {
         // Given
@@ -60,32 +68,67 @@ describe('Authenticator', () => {
       describe("Quand l'accessToken est expiré", () => {
         it('utilise le refresh token pour récupérer un nouvel access token', async () => {
           // Given
-          const now = Date.now()
           const jwt = {
             ...jwtFixture(),
             accessToken: 'accessToken',
             refreshToken: 'refreshToken',
-            expiresAtTimestamp: now - 300000,
+            expiresAtTimestamp: now - cinqMnEnMs,
           }
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
           authService.updateToken = jest.fn().mockResolvedValueOnce({
             access_token: nouvelAccessToken,
             refresh_token: nouveauRefreshToken,
+            expires_in: cinqMnEnS,
           })
 
           // When
-          const jwtMisAjour = {
-            ...jwt,
-            accessToken: nouvelAccessToken,
-            refreshToken: nouveauRefreshToken,
-            expiresAtTimestamp: now + 300000,
-          }
           const actual = await authenticator.handleJWTAndRefresh({
             jwt,
           })
 
           // Then
+          const jwtMisAjour = {
+            ...jwt,
+            accessToken: nouvelAccessToken,
+            refreshToken: nouveauRefreshToken,
+            expiresAtTimestamp: now + cinqMnEnMs,
+          }
+          expect(actual).toEqual(jwtMisAjour)
+        })
+      })
+
+      describe("si l'access token expire dans moins de 15 secondes", () => {
+        it('utilise le refresh token pour récupérer un nouvel access token', async () => {
+          const treizeSenMs = 13000
+          // Given
+          const jwt = {
+            ...jwtFixture(),
+            accessToken: 'accessToken',
+            refreshToken: 'refreshToken',
+            expiresAtTimestamp: now + treizeSenMs,
+          }
+
+          const nouvelAccessToken = 'nouvelAccessToken'
+          const nouveauRefreshToken = 'nouveauRefreshToken'
+          authService.updateToken = jest.fn().mockResolvedValueOnce({
+            access_token: nouvelAccessToken,
+            refresh_token: nouveauRefreshToken,
+            expires_in: cinqMnEnS,
+          })
+
+          // When
+          const actual = await authenticator.handleJWTAndRefresh({
+            jwt,
+          })
+
+          // Then
+          const jwtMisAjour = {
+            ...jwt,
+            accessToken: nouvelAccessToken,
+            refreshToken: nouveauRefreshToken,
+            expiresAtTimestamp: now + cinqMnEnMs,
+          }
           expect(actual).toEqual(jwtMisAjour)
         })
       })

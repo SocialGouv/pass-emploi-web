@@ -17,13 +17,12 @@ export class Authenticator {
       jwt.expiresAtTimestamp = account!.expires_at
         ? secondsToTimestamp(account!.expires_at)
         : undefined
-      console.log('account expires at', account!.expires_at)
       return jwt
     }
 
     const safetyRefreshBuffer: number = 15
     const tokenIsExpired = jwt.expiresAtTimestamp
-      ? Date.now() > jwt.expiresAtTimestamp - safetyRefreshBuffer
+      ? Date.now() > jwt.expiresAtTimestamp - safetyRefreshBuffer * 1000
       : false
     console.log('tokenIsExpired', tokenIsExpired)
 
@@ -43,6 +42,9 @@ export class Authenticator {
         ...jwt,
         accessToken: refreshedTokens.access_token,
         refreshToken: refreshedTokens.refresh_token ?? jwt.refreshToken, // Garde l'ancien refresh_token
+        expiresAtTimestamp: refreshedTokens.expires_in
+          ? Date.now() + refreshedTokens.expires_in * 1000
+          : jwt.expiresAtTimestamp,
       }
     } catch (error) {
       return {
