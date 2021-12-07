@@ -13,8 +13,7 @@ import { getSession, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
-import fetchJson from 'utils/fetchJson'
-import { useDIContext } from 'utils/injectionDependances'
+import { Container, useDIContext } from 'utils/injectionDependances'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
@@ -141,12 +140,19 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
 export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   context
 ) => {
-  const { user } = (await getSession(context))!
+  const { user, accessToken } = (await getSession(context))!
+
+  const { jeunesService, rendezVousService } =
+    Container.getDIContainer().dependances
 
   const [resInfoJeune, resRdvJeune] = await Promise.all([
-    fetchJson(`${process.env.API_ENDPOINT}/jeunes/${context.query.jeune_id}/`),
-    fetchJson(
-      `${process.env.API_ENDPOINT}/jeunes/${context.query.jeune_id}/rendezvous`
+    jeunesService.getJeuneDetails(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    rendezVousService.getRendezVousJeune(
+      context.query.jeune_id as string,
+      accessToken
     ),
   ])
 

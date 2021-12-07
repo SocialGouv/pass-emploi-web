@@ -1,4 +1,5 @@
-import { RdvFormData } from 'interfaces/json/rdv'
+import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
+import { RdvJeune } from 'interfaces/rdv'
 import { ApiClient } from '../clients/api.client'
 
 export class RendezVousService {
@@ -14,5 +15,29 @@ export class RendezVousService {
       newRDV,
       accessToken
     )
+  }
+
+  getRendezVousConseiller(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<{ passes: RdvJson[]; futurs: RdvJson[] }> {
+    return this.apiClient.get(
+      `/conseillers/${idConseiller}/rendezvous`,
+      accessToken
+    )
+  }
+
+  getRendezVousJeune(
+    idJeune: string,
+    accessToken: string
+  ): Promise<RdvJeune[]> {
+    return this.apiClient.get(`/jeunes/${idJeune}/rendezvous`, accessToken)
+  }
+
+  async deleteRendezVous(
+    idRendezVous: string,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.delete(`/rendezvous/${idRendezVous}`, accessToken)
   }
 }

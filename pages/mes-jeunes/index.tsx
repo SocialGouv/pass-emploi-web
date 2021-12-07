@@ -8,6 +8,7 @@ import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
+import { Container } from 'utils/injectionDependances'
 import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
@@ -98,11 +99,11 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
 export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   context
 ) => {
-  const { user } = (await getSession(context))!
+  const { user, accessToken } = (await getSession(context))!
 
-  const jeunes = await fetchJson(
-    `${process.env.API_ENDPOINT}/conseillers/${user.id}/jeunes`
-  )
+  const { jeunesService } = Container.getDIContainer().dependances
+
+  const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
   return {
     props: {

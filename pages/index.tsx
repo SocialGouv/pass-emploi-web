@@ -11,7 +11,7 @@ import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
-import { useDIContext } from 'utils/injectionDependances'
+import { Container, useDIContext } from 'utils/injectionDependances'
 
 import AddIcon from '../assets/icons/add.svg'
 
@@ -132,10 +132,13 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (
   context
 ): Promise<GetServerSidePropsResult<HomeProps>> => {
-  const { user } = (await getSession(context))!
+  const { user, accessToken } = (await getSession(context))!
 
-  const data = await fetchJson(
-    `${process.env.API_ENDPOINT}/conseillers/${user.id}/rendezvous`
+  const { rendezVousService } = Container.getDIContainer().dependances
+
+  const data = await rendezVousService.getRendezVousConseiller(
+    user.id,
+    accessToken
   )
 
   const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {

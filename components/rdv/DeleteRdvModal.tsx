@@ -4,9 +4,11 @@ import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
 
 import { Rdv, RdvJeune } from 'interfaces/rdv'
+import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 
 import { formatDayDate } from 'utils/date'
+import { useDIContext } from 'utils/injectionDependances'
 
 type DeleteRdvModalProps = {
   show: boolean
@@ -23,13 +25,12 @@ const DeleteRdvModal = ({
 }: DeleteRdvModalProps) => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
+  const { rendezVousService } = useDIContext()
+  const { data: session } = useSession<true>()
 
   const handleDeleteRdv = () => {
-    fetch(`${process.env.API_ENDPOINT}/rendezvous/${rdv.id}`, {
-      method: 'DELETE',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({}),
-    })
+    rendezVousService
+      .deleteRendezVous(rdv.id, session?.accessToken ?? '')
       .then(function () {
         setIsSuccess(true)
         onDelete()
