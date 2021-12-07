@@ -33,6 +33,7 @@ import {
 } from 'utils/date'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
+import { useDIContext } from '../../utils/injectionDependances'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -47,6 +48,7 @@ type ConversationProps = {
 
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
   const { data: session } = useSession()
+  const { messagesService } = useDIContext()
 
   const [newMessage, setNewMessage] = useState('')
   const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
@@ -86,14 +88,18 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
     /**
      * Route send from web to notify mobile, no need to await for response
      */
-    fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${session?.user.id}/jeunes/${jeune.id}/notify-message`,
-      {
-        method: 'POST',
-      }
-    ).catch(function (error) {
-      console.error('Conversation: Error while fetching /notify-message', error)
-    })
+    messagesService
+      .notifierNouveauMessage(
+        session?.user.id ?? '',
+        jeune.id,
+        session?.accessToken ?? ''
+      )
+      .catch(function (error) {
+        console.error(
+          'Conversation: Error while fetching /notify-message',
+          error
+        )
+      })
 
     setNewMessage('')
 

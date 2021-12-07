@@ -15,9 +15,9 @@ export class ApiClient {
     return fetchJson(`${this.apiPrefix}${path}`, { headers })
   }
 
-  async post<T>(
+  async post<T = void>(
     path: string,
-    payload: { [key: string]: any },
+    payload: { [key: string]: any } | undefined,
     accessToken: string
   ): Promise<T> {
     const headers = new Headers({
@@ -25,11 +25,13 @@ export class ApiClient {
       'content-type': 'application/json',
     })
 
-    return fetchJson(`${this.apiPrefix}${path}`, {
+    const reqInit: RequestInit = {
       method: 'POST',
       headers,
-      body: JSON.stringify(payload),
-    })
+    }
+    if (payload) reqInit.body = JSON.stringify(payload)
+
+    return fetchJson(`${this.apiPrefix}${path}`, reqInit)
   }
 
   async put(
