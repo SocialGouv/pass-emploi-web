@@ -9,7 +9,6 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import fetchJson from 'utils/fetchJson'
 
 /**
  * relative path since babel doesn't support alliases, see https://github.com/airbnb/babel-plugin-inline-react-svg/pull/17
@@ -18,6 +17,8 @@ import fetchJson from 'utils/fetchJson'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
+import { Container } from 'utils/injectionDependances'
+import { getSession } from 'next-auth/react'
 
 type Props = {
   jeune: Jeune
@@ -113,10 +114,20 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { accessToken } = (await getSession(context))!
+  const { actionsService, jeunesService } =
+    Container.getDIContainer().dependances
+
   const [dataDetailsJeune, dataActionsJeune] = await Promise.all([
-    fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}`),
-    fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/actions`),
+    jeunesService.getJeuneDetails(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    actionsService.getActionsJeune(
+      context.query.jeune_id as string,
+      accessToken
+    ),
   ])
 
   if (!dataDetailsJeune || !dataActionsJeune) {
@@ -139,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     props: {
       jeune: dataDetailsJeune,
       actions_en_cours: userActions.sort(sortLastUpdate),
-      deleteSuccess: Boolean(query.deleteSuccess),
+      deleteSuccess: Boolean(context.query.deleteSuccess),
     },
   }
 }

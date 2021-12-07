@@ -3,7 +3,8 @@ import SuccessAddJeuneModal from 'components/jeune/SuccessAddJeuneModal'
 import Modal from 'components/Modal'
 import { Jeune } from 'interfaces'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useDIContext } from 'utils/injectionDependances'
 
 type AddJeuneModalProps = {
   show: boolean
@@ -12,6 +13,7 @@ type AddJeuneModalProps = {
 
 const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
   const { data: session } = useSession()
+  const { jeunesService } = useDIContext()
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -32,13 +34,14 @@ const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
       lastName: lastName,
     }
 
-    fetch(`${process.env.API_ENDPOINT}/conseillers/${session?.user.id}/jeune`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(newJeune),
-    })
+    jeunesService
+      .createJeuneDuConseiller(
+        newJeune,
+        session?.user.id ?? '',
+        session?.accessToken ?? ''
+      )
       .then(async function (response) {
-        const jeune = await response.json()
+        const jeune = await response
         setNewJeune(jeune)
       })
       .catch(function (error) {

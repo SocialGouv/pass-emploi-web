@@ -1,12 +1,11 @@
 import Button, { ButtonColorStyle } from 'components/Button'
-
 import Modal from 'components/Modal'
-
 import { ActionJeune } from 'interfaces/action'
 import { useSession } from 'next-auth/react'
 import router from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
+import { useDIContext } from 'utils/injectionDependances'
 
 const INPUT_MAX_LENGTH = 250
 
@@ -21,6 +20,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [newComment, setNewComment] = useState('')
   const [isCommentMode, setIsCommentMode] = useState(false)
   const [isCustomMode, setIsCustomMode] = useState(false)
+  const { actionsService } = useDIContext()
   const { data: session } = useSession()
 
   const noSelectedAction = () => Boolean(newContent === '')
@@ -48,18 +48,18 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
       comment: newComment,
     }
 
-    fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${session?.user.id}/jeunes/${router.query.jeune_id}/action`,
-      {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(newAction),
-      }
-    ).then(() => {
-      setNewContent('')
-      onAdd(newContent)
-      onClose()
-    })
+    actionsService
+      .createAction(
+        newAction,
+        session?.user.id ?? '',
+        router.query.jeune_id as string,
+        session?.accessToken ?? ''
+      )
+      .then(() => {
+        setNewContent('')
+        onAdd(newContent)
+        onClose()
+      })
   }
 
   const handleCloseModal = () => {

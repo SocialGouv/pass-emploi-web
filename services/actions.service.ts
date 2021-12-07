@@ -8,6 +8,15 @@ export interface ActionsService {
     accessToken: string
   ): Promise<ActionJeune & { jeune: Jeune }>
 
+  getActionsJeune(idJeune: string, accessToken: string): Promise<ActionJeune[]>
+
+  createAction(
+    newAction: { content: string; comment: string },
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<void>
+
   updateAction(
     idAction: string,
     nouveauStatut: ActionStatus,
@@ -20,11 +29,32 @@ export interface ActionsService {
 export class ActionsApiService implements ActionsService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getAction(
+  getAction(
     idAction: string,
     accessToken: string
   ): Promise<ActionJeune & { jeune: Jeune }> {
     return this.apiClient.get(`/actions/${idAction}`, accessToken)
+  }
+
+  getActionsJeune(
+    idJeune: string,
+    accessToken: string
+  ): Promise<ActionJeune[]> {
+    return this.apiClient.get(`/jeunes/${idJeune}/actions`, accessToken)
+  }
+
+  async createAction(
+    newAction: { content: string; comment: string },
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/conseillers/${idConseiller}/jeunes/${idJeune}/action`,
+      newAction,
+      accessToken
+    )
+    return
   }
 
   async updateAction(

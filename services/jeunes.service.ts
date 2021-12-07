@@ -13,4 +13,20 @@ export class JeunesService {
       accessToken
     )
   }
+
+  getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune> {
+    return this.apiClient.get(`/jeunes/${idJeune}`, accessToken)
+  }
+
+  createJeuneDuConseiller(
+    newJeune: { firstName: string; lastName: string },
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Jeune> {
+    return this.apiClient.post<Jeune>(
+      `/conseillers/${idConseiller}/jeune`,
+      newJeune,
+      accessToken
+    )
+  }
 }

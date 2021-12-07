@@ -15,17 +15,17 @@ export class ApiClient {
     return fetchJson(`${this.apiPrefix}${path}`, { headers })
   }
 
-  async post(
+  async post<T>(
     path: string,
     payload: { [key: string]: any },
     accessToken: string
-  ): Promise<Response> {
+  ): Promise<T> {
     const headers = new Headers({
       authorization: `bearer ${accessToken}`,
       'content-type': 'application/json',
     })
 
-    return fetch(`${this.apiPrefix}${path}`, {
+    return fetchJson(`${this.apiPrefix}${path}`, {
       method: 'POST',
       headers,
       body: JSON.stringify(payload),
