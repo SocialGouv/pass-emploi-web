@@ -12,7 +12,9 @@ export default NextAuth({
   ],
   secret: process.env.AUTH_SECRET,
   session: { strategy: 'jwt' },
-  jwt: { secret: process.env.AUTH_SECRET },
+  jwt: {
+    secret: process.env.AUTH_SECRET,
+  },
 
   callbacks: {
     async jwt({ token: jwt, account }) {
@@ -20,7 +22,7 @@ export default NextAuth({
     },
 
     async session({ session, token }) {
-      session.user.id = '1'
+      session.user.id = token.idConseiller ?? ''
       session.accessToken = token.accessToken ?? ''
       return session
     },

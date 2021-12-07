@@ -11,7 +11,7 @@ describe('Authenticator', () => {
 
   beforeEach(() => {
     authService = {
-      updateToken: jest.fn(),
+      fetchRefreshedTokens: jest.fn(),
     }
 
     authenticator = new Authenticator(authService)
@@ -56,9 +56,13 @@ describe('Authenticator', () => {
     describe("Quand ce n'est pas la première connexion", () => {
       it('renvoie le JWT', () => {
         // When
-        const jwt = jwtFixture()
+        const vingtSEnMs = 20000
+        const jwt = {
+          ...jwtFixture(),
+          expiresAtTimestamp: now + vingtSEnMs,
+        }
         const actual = authenticator.handleJWTAndRefresh({
-          jwt: jwtFixture(),
+          jwt,
           account: undefined,
         })
         // Then
@@ -76,7 +80,7 @@ describe('Authenticator', () => {
           }
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
-          authService.updateToken = jest.fn().mockResolvedValueOnce({
+          authService.fetchRefreshedTokens = jest.fn().mockResolvedValueOnce({
             access_token: nouvelAccessToken,
             refresh_token: nouveauRefreshToken,
             expires_in: cinqMnEnS,
@@ -111,7 +115,7 @@ describe('Authenticator', () => {
 
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
-          authService.updateToken = jest.fn().mockResolvedValueOnce({
+          authService.fetchRefreshedTokens = jest.fn().mockResolvedValueOnce({
             access_token: nouvelAccessToken,
             refresh_token: nouveauRefreshToken,
             expires_in: cinqMnEnS,

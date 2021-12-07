@@ -1,7 +1,7 @@
 import { Account, User } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import { AuthService } from 'services/auth.service'
-import fetchJson from 'utils/fetchJson'
+import { decode, JwtPayload } from 'jsonwebtoken'
 
 function secondsToTimestamp(seconds: number): number {
   return seconds * 1000
@@ -12,8 +12,11 @@ export class Authenticator {
   handleJWTAndRefresh({ jwt, account }: { jwt: JWT; account?: Account }) {
     const isFirstSignin = Boolean(account)
     if (isFirstSignin) {
-      jwt.accessToken = account!.access_token as string
-      jwt.refreshToken = account!.refresh_token as string
+      jwt.accessToken = account!.access_token
+      jwt.refreshToken = account!.refresh_token
+      jwt.idConseiller = account!.access_token
+        ? (decode(account!.access_token) as JwtPayload).userId
+        : undefined
       jwt.expiresAtTimestamp = account!.expires_at
         ? secondsToTimestamp(account!.expires_at)
         : undefined
@@ -24,7 +27,6 @@ export class Authenticator {
     const tokenIsExpired = jwt.expiresAtTimestamp
       ? Date.now() > jwt.expiresAtTimestamp - safetyRefreshBuffer * 1000
       : false
-    console.log('tokenIsExpired', tokenIsExpired)
 
     if (tokenIsExpired) {
       return this.refreshAccessToken(jwt)
@@ -34,7 +36,7 @@ export class Authenticator {
 
   private async refreshAccessToken(jwt: JWT) {
     try {
-      const refreshedTokens = await this.authService.updateToken(
+      const refreshedTokens = await this.authService.fetchRefreshedTokens(
         jwt.refreshToken
       )
 
