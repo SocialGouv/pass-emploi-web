@@ -2,11 +2,23 @@ import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 
-export class ActionsService {
-  private readonly apiPrefix?: string
-  constructor(private readonly apiClient: ApiClient) {
-    this.apiPrefix = process.env.API_ENDPOINT
-  }
+export interface ActionsService {
+  getAction(
+    idAction: string,
+    accessToken: string
+  ): Promise<ActionJeune & { jeune: Jeune }>
+
+  updateAction(
+    idAction: string,
+    nouveauStatut: ActionStatus,
+    accessToken: string
+  ): Promise<ActionStatus>
+
+  deleteAction(idAction: string, accessToken: string): Promise<void>
+}
+
+export class ActionsApiService implements ActionsService {
+  constructor(private readonly apiClient: ApiClient) {}
 
   async getAction(
     idAction: string,
@@ -17,21 +29,19 @@ export class ActionsService {
 
   async updateAction(
     idAction: string,
-    nouveauStatut: ActionStatus
+    nouveauStatut: ActionStatus,
+    accessToken: string
   ): Promise<ActionStatus> {
-    await fetch(`${this.apiPrefix}/actions/${idAction}`, {
-      method: 'PUT',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ status: nouveauStatut }),
-    })
+    await this.apiClient.put(
+      `/actions/${idAction}`,
+      { status: nouveauStatut },
+      accessToken
+    )
     return nouveauStatut
   }
 
-  deleteAction(idAction: string): Promise<Response> {
-    return fetch(`${this.apiPrefix}/actions/${idAction}`, {
-      method: 'DELETE',
-    })
+  async deleteAction(idAction: string, accessToken: string): Promise<void> {
+    await this.apiClient.delete(`/actions/${idAction}`, accessToken)
+    return
   }
 }

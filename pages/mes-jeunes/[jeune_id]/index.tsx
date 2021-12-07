@@ -1,25 +1,21 @@
+import { AppHead } from 'components/AppHead'
 import Button, { ButtonColorStyle } from 'components/Button'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import { AppHead } from 'components/AppHead'
-import { Conseiller, Jeune } from 'interfaces'
+import { Jeune } from 'interfaces'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-} from 'next'
+import { GetServerSideProps } from 'next'
+import { getSession, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import fetchJson from 'utils/fetchJson'
 import { useDIContext } from 'utils/injectionDependances'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { getSession } from 'next-auth/react'
 
 interface FicheJeuneProps {
   idConseiller: string
@@ -29,6 +25,7 @@ interface FicheJeuneProps {
 
 const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   const { jeunesService, rendezVousService } = useDIContext()
+  const { data: session } = useSession<true>()
   const [showAddRdvModal, setShowAddRdvModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
@@ -45,7 +42,11 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   }
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService.postNewRendezVous(idConseiller, newRDV)
+    await rendezVousService.postNewRendezVous(
+      idConseiller,
+      newRDV,
+      session?.accessToken ?? ''
+    )
     closeAddRdvModal()
     Router.reload()
   }
@@ -113,7 +114,10 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
         {showAddRdvModal && (
           <AddRdvModal
             fetchJeunes={() =>
-              jeunesService.getJeunesDuConseiller(idConseiller)
+              jeunesService.getJeunesDuConseiller(
+                idConseiller,
+                session?.accessToken ?? ''
+              )
             }
             jeuneInitial={jeune}
             addNewRDV={addNewRDV}

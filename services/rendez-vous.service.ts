@@ -1,20 +1,18 @@
 import { RdvFormData } from 'interfaces/json/rdv'
+import { ApiClient } from '../clients/api.client'
 
 export class RendezVousService {
-  private readonly apiPrefix?: string
-
-  constructor() {
-    this.apiPrefix = process.env.API_ENDPOINT
-  }
+  constructor(private readonly apiClient: ApiClient) {}
 
   postNewRendezVous(
     idConseiller: string,
-    newRDV: RdvFormData
+    newRDV: RdvFormData,
+    accessToken: string
   ): Promise<Response> {
-    return fetch(`${this.apiPrefix}/conseillers/${idConseiller}/rendezvous`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(newRDV),
-    })
+    return this.apiClient.post(
+      `/conseillers/${idConseiller}/rendezvous`,
+      newRDV,
+      accessToken
+    )
   }
 }

@@ -5,7 +5,7 @@ import EchecMessage from 'components/EchecMessage'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
-import { getSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
@@ -19,16 +19,18 @@ type Props = {
 }
 
 function PageAction({ action, jeune }: Props) {
-  const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
-  const router = useRouter()
   const { actionsService } = useDIContext()
+  const { data: session } = useSession<true>()
+  const router = useRouter()
+  const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
       action.id,
-      statutChoisi
+      statutChoisi,
+      session?.accessToken ?? ''
     )
     setStatutChoisi(nouveauStatut)
   }
@@ -36,7 +38,7 @@ function PageAction({ action, jeune }: Props) {
   async function deleteAction(): Promise<void> {
     setDeleteDisabled(true)
     actionsService
-      .deleteAction(action.id)
+      .deleteAction(action.id, session?.accessToken ?? '')
       .then(() => {
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,

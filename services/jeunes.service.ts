@@ -1,14 +1,16 @@
+import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces'
-import fetchJson from 'utils/fetchJson'
 
 export class JeunesService {
-  private readonly apiPrefix?: string
+  constructor(private readonly apiClient: ApiClient) {}
 
-  constructor() {
-    this.apiPrefix = process.env.API_ENDPOINT
-  }
-
-  getJeunesDuConseiller(idConseiller: string): Promise<Jeune[]> {
-    return fetchJson(`${this.apiPrefix}/conseillers/${idConseiller}/jeunes`)
+  getJeunesDuConseiller(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Jeune[]> {
+    return this.apiClient.get(
+      `/conseillers/${idConseiller}/jeunes`,
+      accessToken
+    )
   }
 }

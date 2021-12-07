@@ -1,32 +1,28 @@
+import { AppHead } from 'components/AppHead'
 import Button, { ButtonColorStyle } from 'components/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
-import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import { getSession, useSession } from 'next-auth/react'
 import Router from 'next/router'
 import { useState } from 'react'
+import { durees } from 'referentiel/rdv'
 import fetchJson from 'utils/fetchJson'
 import { useDIContext } from 'utils/injectionDependances'
 
 import AddIcon from '../assets/icons/add.svg'
-import { AppHead } from 'components/AppHead'
-import { getSession } from 'next-auth/react'
-import { durees } from 'referentiel/rdv'
 
 type HomeProps = {
-  idConseiller: string
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
 }
 
-const Home = ({
-  idConseiller,
-  rendezVousFuturs,
-  rendezVousPasses,
-}: HomeProps) => {
+const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   const { jeunesService, rendezVousService } = useDIContext()
+  const { data: session } = useSession<true>()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
@@ -42,7 +38,11 @@ const Home = ({
   }
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService.postNewRendezVous(idConseiller, newRDV)
+    await rendezVousService.postNewRendezVous(
+      session?.user.id ?? '',
+      newRDV,
+      session?.accessToken ?? ''
+    )
     closeAddModal()
     Router.reload()
   }
@@ -106,7 +106,12 @@ const Home = ({
 
       {showAddModal && (
         <AddRdvModal
-          fetchJeunes={() => jeunesService.getJeunesDuConseiller(idConseiller)}
+          fetchJeunes={() =>
+            jeunesService.getJeunesDuConseiller(
+              session?.user.id ?? '',
+              session?.accessToken ?? ''
+            )
+          }
           addNewRDV={addNewRDV}
           onClose={closeAddModal}
         />
@@ -124,9 +129,9 @@ const Home = ({
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (
+  context
+): Promise<GetServerSidePropsResult<HomeProps>> => {
   const { user } = (await getSession(context))!
 
   const data = await fetchJson(
@@ -159,7 +164,6 @@ export const getServerSideProps: GetServerSideProps = async (
 
   return {
     props: {
-      idConseiller: user.id,
       rendezVousFuturs,
       rendezVousPasses,
     },

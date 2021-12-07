@@ -1,4 +1,4 @@
-import { ActionsService } from 'services/actions.service'
+import { ActionsApiService, ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { ApiClient } from '../../clients/api.client'
@@ -25,9 +25,9 @@ export class Container {
     const apiClient = new ApiClient()
 
     return new Container({
-      actionsService: new ActionsService(apiClient),
-      jeunesService: new JeunesService(),
-      rendezVousService: new RendezVousService(),
+      actionsService: new ActionsApiService(apiClient),
+      jeunesService: new JeunesService(apiClient),
+      rendezVousService: new RendezVousService(apiClient),
     })
   }
 }
