@@ -7,7 +7,6 @@ function Logout() {
 
   useEffect(() => {
     try {
-      // router.push('/login')
       signOut({ redirect: false }).then(() => {
         router.push('/login')
       })
