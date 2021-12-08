@@ -27,7 +27,7 @@ type ChatBoxProps = {
 }
 
 export default function ChatBox({ db }: ChatBoxProps) {
-  const { data: session } = useSession()
+  const { data: session, status: statusSession } = useSession()
   const { jeunesService } = useDIContext()
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
@@ -39,13 +39,17 @@ export default function ChatBox({ db }: ChatBoxProps) {
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
   useEffect(() => {
+    if (statusSession !== 'authenticated') {
+      return
+    }
+
     jeunesService
       .getJeunesDuConseiller(session?.user.id ?? '', session?.accessToken ?? '')
       .then((data) => {
         setJeunes(data)
         currentJeunesChat = []
       })
-  }, [session])
+  }, [jeunesService, session, statusSession])
 
   useEffect(() => {
     async function observeJeuneChats(): Promise<void> {
