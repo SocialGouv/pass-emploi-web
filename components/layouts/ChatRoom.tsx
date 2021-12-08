@@ -16,7 +16,7 @@ import { formatDayAndHourDate } from 'utils/date'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
-import { useDIContext } from '../../utils/injectionDependances'
+import { useDIContext } from 'utils/injectionDependances'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 

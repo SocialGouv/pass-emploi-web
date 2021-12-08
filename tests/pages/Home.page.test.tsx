@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react'
 import Home from 'pages/index'
 import React from 'react'
-import { uneListeDeRdv } from '../../fixtures/rendez-vous'
+import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import renderWithSession from '../renderWithSession'
 
 describe('Home', () => {

@@ -1,6 +1,6 @@
 import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
-import { ApiClient } from '../clients/api.client'
+import { ApiClient } from 'clients/api.client'
 
 export class RendezVousService {
   constructor(private readonly apiClient: ApiClient) {}
