@@ -1,9 +1,8 @@
 import ProgressBar from '@badrap/bar-of-progress'
 import init from '@socialgouv/matomo-next'
-import { SessionProvider } from 'next-auth/react'
 
 import Layout from 'components/layouts/Layout'
-import { DIProvider } from 'utils/injectionDependances'
+import { SessionProvider } from 'next-auth/react'
 
 import { AppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
@@ -11,6 +10,7 @@ import React, { ReactNode, useEffect } from 'react'
 
 import 'styles/globals.css'
 import 'styles/typography.css'
+import { DIProvider } from 'utils/injectionDependances'
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
 const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''

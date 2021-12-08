@@ -21,7 +21,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [isCommentMode, setIsCommentMode] = useState(false)
   const [isCustomMode, setIsCustomMode] = useState(false)
   const { actionsService } = useDIContext()
-  const { data: session } = useSession()
+  const { data: session } = useSession({ required: true })
 
   const noSelectedAction = () => Boolean(newContent === '')
 
@@ -51,9 +51,9 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
     actionsService
       .createAction(
         newAction,
-        session?.user.id ?? '',
+        session!.user.id,
         router.query.jeune_id as string,
-        session?.accessToken ?? ''
+        session!.accessToken
       )
       .then(() => {
         setNewContent('')

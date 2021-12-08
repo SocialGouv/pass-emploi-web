@@ -1,5 +1,6 @@
 import Action from 'components/action/Action'
 import AddActionModal from 'components/action/AddActionModal'
+import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import SuccessMessage from 'components/SuccessMessage'
 import { Jeune } from 'interfaces'
@@ -9,6 +10,8 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import { Container } from 'utils/injectionDependances'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 
 /**
  * relative path since babel doesn't support alliases, see https://github.com/airbnb/babel-plugin-inline-react-svg/pull/17
@@ -16,9 +19,6 @@ import React, { useState } from 'react'
  */
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
-import { AppHead } from 'components/AppHead'
-import { Container } from 'utils/injectionDependances'
-import { getSession } from 'next-auth/react'
 
 type Props = {
   jeune: Jeune
@@ -115,9 +115,16 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { accessToken } = (await getSession(context))!
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
+
   const { actionsService, jeunesService } =
     Container.getDIContainer().dependances
+  const {
+    session: { accessToken },
+  } = sessionOrRedirect
 
   const [dataDetailsJeune, dataActionsJeune] = await Promise.all([
     jeunesService.getJeuneDetails(

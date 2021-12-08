@@ -6,12 +6,12 @@ import RdvList from 'components/rdv/RdvList'
 import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { getSession, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import { Container, useDIContext } from 'utils/injectionDependances'
-
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../assets/icons/add.svg'
 
 type HomeProps = {
@@ -20,8 +20,8 @@ type HomeProps = {
 }
 
 const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
+  const { data: session } = useSession({ required: true })
   const { jeunesService, rendezVousService } = useDIContext()
-  const { data: session } = useSession<true>()
   const [showAddModal, setShowAddModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
@@ -38,9 +38,9 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
     await rendezVousService.postNewRendezVous(
-      session?.user.id ?? '',
+      session!.user.id,
       newRDV,
-      session?.accessToken ?? ''
+      session!.accessToken
     )
     closeAddModal()
     Router.reload()
@@ -103,12 +103,12 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
         />
       )}
 
-      {showAddModal && (
+      {showAddModal && session && (
         <AddRdvModal
           fetchJeunes={() =>
             jeunesService.getJeunesDuConseiller(
-              session?.user.id ?? '',
-              session?.accessToken ?? ''
+              session.user.id,
+              session.accessToken
             )
           }
           addNewRDV={addNewRDV}
@@ -131,38 +131,37 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (
   context
 ): Promise<GetServerSidePropsResult<HomeProps>> => {
-  const { user, accessToken } = (await getSession(context))!
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
 
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
   const { rendezVousService } = Container.getDIContainer().dependances
-
   const data = await rendezVousService.getRendezVousConseiller(
     user.id,
     accessToken
   )
-
-  const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => {
-    return {
-      ...rdvData,
-      duration:
-        durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-        `${rdvData.duration} min`,
-    }
-  })
-
-  const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => {
-    return {
-      ...rdvData,
-      duration:
-        durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-        `${rdvData.duration} min`,
-    }
-  })
-
   if (!data) {
     return {
       notFound: true,
     }
   }
+
+  const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => ({
+    ...rdvData,
+    duration:
+      durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+      `${rdvData.duration} min`,
+  }))
+  const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => ({
+    ...rdvData,
+    duration:
+      durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+      `${rdvData.duration} min`,
+  }))
 
   return {
     props: {

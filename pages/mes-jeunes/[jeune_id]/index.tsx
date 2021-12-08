@@ -9,11 +9,12 @@ import { Jeune } from 'interfaces'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
-import { getSession, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import { Container, useDIContext } from 'utils/injectionDependances'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
@@ -24,7 +25,7 @@ interface FicheJeuneProps {
 
 const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   const { jeunesService, rendezVousService } = useDIContext()
-  const { data: session } = useSession<true>()
+  const { data: session } = useSession({ required: true })
   const [showAddRdvModal, setShowAddRdvModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
@@ -44,7 +45,7 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
     await rendezVousService.postNewRendezVous(
       idConseiller,
       newRDV,
-      session?.accessToken ?? ''
+      session!.accessToken
     )
     closeAddRdvModal()
     Router.reload()
@@ -110,12 +111,12 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
           <ListeActionsJeune idJeune={jeune.id} />
         </div>
 
-        {showAddRdvModal && (
+        {showAddRdvModal && session && (
           <AddRdvModal
             fetchJeunes={() =>
               jeunesService.getJeunesDuConseiller(
                 idConseiller,
-                session?.accessToken ?? ''
+                session.accessToken
               )
             }
             jeuneInitial={jeune}
@@ -140,11 +141,16 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
 export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   context
 ) => {
-  const { user, accessToken } = (await getSession(context))!
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
 
   const { jeunesService, rendezVousService } =
     Container.getDIContainer().dependances
-
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
   const [resInfoJeune, resRdvJeune] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,

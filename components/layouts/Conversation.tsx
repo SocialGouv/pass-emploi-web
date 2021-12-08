@@ -31,9 +31,9 @@ import {
   formatHourMinuteDate,
   isDateOlder,
 } from 'utils/date'
+import { useDIContext } from 'utils/injectionDependances'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
-import { useDIContext } from '../../utils/injectionDependances'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -47,7 +47,7 @@ type ConversationProps = {
 }
 
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
-  const { data: session } = useSession()
+  const { data: session } = useSession({ required: true })
   const { messagesService } = useDIContext()
 
   const [newMessage, setNewMessage] = useState('')
@@ -89,11 +89,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
      * Route send from web to notify mobile, no need to await for response
      */
     messagesService
-      .notifierNouveauMessage(
-        session?.user.id ?? '',
-        jeune.id,
-        session?.accessToken ?? ''
-      )
+      .notifierNouveauMessage(session!.user.id, jeune.id, session!.accessToken)
       .catch(function (error) {
         console.error(
           'Conversation: Error while fetching /notify-message',

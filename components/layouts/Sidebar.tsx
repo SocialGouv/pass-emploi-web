@@ -11,8 +11,7 @@ type SidebarProps = {}
 
 export default function Sidebar({}: SidebarProps) {
   const router = useRouter()
-
-  const { data: session } = useSession()
+  const { data: session } = useSession({ required: true })
 
   async function handleLogout(event: any) {
     event.preventDefault()
@@ -68,7 +67,7 @@ export default function Sidebar({}: SidebarProps) {
 
       <div className='flex justify-between'>
         {session && (
-          <p className='text-lg-semi text-bleu_nuit'>{session?.user?.name}</p>
+          <p className='text-lg-semi text-bleu_nuit'>{session!.user.name}</p>
         )}
 
         <Link href={'/api/logout'}>

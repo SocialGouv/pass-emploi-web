@@ -26,11 +26,11 @@ const DeleteRdvModal = ({
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
   const { rendezVousService } = useDIContext()
-  const { data: session } = useSession<true>()
+  const { data: session } = useSession({ required: true })
 
   const handleDeleteRdv = () => {
     rendezVousService
-      .deleteRendezVous(rdv.id, session?.accessToken ?? '')
+      .deleteRendezVous(rdv.id, session!.accessToken)
       .then(function () {
         setIsSuccess(true)
         onDelete()

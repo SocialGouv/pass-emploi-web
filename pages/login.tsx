@@ -1,10 +1,9 @@
 import Button from 'components/Button'
-import React, { useState } from 'react'
-
-import { signIn } from 'next-auth/react'
-
-import Logo from '../assets/icons/logo_PassEmploiBig.svg'
+import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 const Login = () => {
   const [errorMsg, setErrorMsg] = useState('')
@@ -14,7 +13,7 @@ const Login = () => {
     event.preventDefault()
 
     try {
-      const { redirectUrl } = router.query
+      const redirectUrl = (router.query.redirectUrl as string) ?? '/'
       signIn('keycloak', { callbackUrl: redirectUrl as string })
     } catch (error) {
       console.error(error)
@@ -50,6 +49,23 @@ const Login = () => {
       </div>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<{}> = async (
+  context
+): Promise<GetServerSidePropsResult<{}>> => {
+  const session = await getSession({ req: context.req })
+  if (session) {
+    const redirectUrl: string = (context.query.redirectUrl as string) ?? '/'
+    return {
+      redirect: {
+        destination: redirectUrl,
+        permanent: false,
+      },
+    }
+  }
+
+  return { props: {} }
 }
 
 export default Login

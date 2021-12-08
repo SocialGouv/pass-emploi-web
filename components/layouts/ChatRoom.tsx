@@ -13,10 +13,10 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import { formatDayAndHourDate } from 'utils/date'
+import { useDIContext } from 'utils/injectionDependances'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
-import { useDIContext } from 'utils/injectionDependances'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
@@ -27,7 +27,7 @@ type ChatBoxProps = {
 }
 
 export default function ChatBox({ db }: ChatBoxProps) {
-  const { data: session, status: statusSession } = useSession()
+  const { data: session } = useSession({ required: true })
   const { jeunesService } = useDIContext()
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
@@ -39,17 +39,17 @@ export default function ChatBox({ db }: ChatBoxProps) {
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
   useEffect(() => {
-    if (statusSession !== 'authenticated') {
+    if (!session) {
       return
     }
 
     jeunesService
-      .getJeunesDuConseiller(session?.user.id ?? '', session?.accessToken ?? '')
+      .getJeunesDuConseiller(session!.user.id, session!.accessToken)
       .then((data) => {
         setJeunes(data)
         currentJeunesChat = []
       })
-  }, [jeunesService, session, statusSession])
+  }, [session, jeunesService])
 
   useEffect(() => {
     async function observeJeuneChats(): Promise<void> {

@@ -5,12 +5,13 @@ import EchecMessage from 'components/EchecMessage'
 import { Jeune } from 'interfaces'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { GetServerSideProps } from 'next'
-import { getSession, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { formatDayDate } from 'utils/date'
 import { Container, useDIContext } from 'utils/injectionDependances'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
 type Props = {
@@ -20,7 +21,7 @@ type Props = {
 
 function PageAction({ action, jeune }: Props) {
   const { actionsService } = useDIContext()
-  const { data: session } = useSession<true>()
+  const { data: session } = useSession({ required: true })
   const router = useRouter()
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
@@ -30,7 +31,7 @@ function PageAction({ action, jeune }: Props) {
     const nouveauStatut = await actionsService.updateAction(
       action.id,
       statutChoisi,
-      session?.accessToken ?? ''
+      session!.accessToken
     )
     setStatutChoisi(nouveauStatut)
   }
@@ -38,7 +39,7 @@ function PageAction({ action, jeune }: Props) {
   async function deleteAction(): Promise<void> {
     setDeleteDisabled(true)
     actionsService
-      .deleteAction(action.id, session?.accessToken ?? '')
+      .deleteAction(action.id, session!.accessToken)
       .then(() => {
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,
@@ -138,7 +139,14 @@ function PageAction({ action, jeune }: Props) {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const { accessToken } = (await getSession(context))!
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
+
+  const {
+    session: { accessToken },
+  } = sessionOrRedirect
   const { actionsService } = Container.getDIContainer().dependances
   const res = await actionsService.getAction(
     context.query.action_id as string,

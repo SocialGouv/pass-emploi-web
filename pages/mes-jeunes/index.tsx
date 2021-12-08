@@ -3,11 +3,11 @@ import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import { Jeune } from 'interfaces'
 import { GetServerSideProps } from 'next'
-import { getSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import { Container } from 'utils/injectionDependances'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
@@ -98,10 +98,15 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
 export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   context
 ) => {
-  const { user, accessToken } = (await getSession(context))!
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
 
   const { jeunesService } = Container.getDIContainer().dependances
-
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
   return {

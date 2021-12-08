@@ -12,7 +12,7 @@ type AddJeuneModalProps = {
 }
 
 const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
-  const { data: session } = useSession()
+  const { data: session } = useSession({ required: true })
   const { jeunesService } = useDIContext()
 
   const [firstName, setFirstName] = useState('')
@@ -35,11 +35,7 @@ const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
     }
 
     jeunesService
-      .createJeuneDuConseiller(
-        newJeune,
-        session?.user.id ?? '',
-        session?.accessToken ?? ''
-      )
+      .createJeuneDuConseiller(newJeune, session!.user.id, session!.accessToken)
       .then(async function (response) {
         const jeune = await response
         setNewJeune(jeune)
