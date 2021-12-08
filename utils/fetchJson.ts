@@ -1,14 +1,12 @@
-export default async function fetchJson(
+export default async function fetchJson<T>(
   reqInfo: RequestInfo,
   reqInit?: RequestInit
-) {
+): Promise<T> {
   try {
     const response = await fetch(reqInfo, reqInit)
 
-    const data = await response.json()
-
     if (response.ok) {
-      return data
+      return response.json()
     }
 
     throw new Error(response.statusText)

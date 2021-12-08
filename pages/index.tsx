@@ -10,7 +10,6 @@ import { getSession, useSession } from 'next-auth/react'
 import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
-import fetchJson from 'utils/fetchJson'
 import { Container, useDIContext } from 'utils/injectionDependances'
 
 import AddIcon from '../assets/icons/add.svg'

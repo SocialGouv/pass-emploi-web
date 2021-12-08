@@ -54,7 +54,6 @@ export class ActionsApiService implements ActionsService {
       newAction,
       accessToken
     )
-    return
   }
 
   async updateAction(
@@ -72,6 +71,5 @@ export class ActionsApiService implements ActionsService {
 
   async deleteAction(idAction: string, accessToken: string): Promise<void> {
     await this.apiClient.delete(`/actions/${idAction}`, accessToken)
-    return
   }
 }
