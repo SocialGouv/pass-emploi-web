@@ -1,17 +1,15 @@
+import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import { Jeune } from 'interfaces'
+import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
-import fetchJson from 'utils/fetchJson'
-import withSession, {
-  getConseillerFromSession,
-  ServerSideHandler,
-} from 'utils/session'
+import { Container } from 'utils/injectionDependances'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
-import { AppHead } from 'components/AppHead'
 
 type MesJeunesProps = {
   conseillerJeunes: Jeune[]
@@ -97,23 +95,25 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   )
 }
 
-export const getServerSideProps = withSession<
-  ServerSideHandler<MesJeunesProps>
->(async ({ req }) => {
-  const conseillerOuRedirect = getConseillerFromSession(req)
-  if (!conseillerOuRedirect.hasConseiller)
-    return { redirect: conseillerOuRedirect.redirect }
+export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
+  context
+) => {
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
 
-  const { conseiller } = conseillerOuRedirect
-  const jeunes = await fetchJson(
-    `${process.env.API_ENDPOINT}/conseillers/${conseiller.id}/jeunes`
-  )
+  const { jeunesService } = Container.getDIContainer().dependances
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
+  const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
   return {
     props: {
       conseillerJeunes: jeunes || [],
     },
   }
-})
+}
 
 export default MesJeunes

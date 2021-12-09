@@ -1,16 +1,17 @@
-export default async function fetchJson(reqInfo: RequestInfo, reqInit?: RequestInit) {
+export default async function fetchJson<T>(
+  reqInfo: RequestInfo,
+  reqInit?: RequestInit
+): Promise<T> {
   try {
     const response = await fetch(reqInfo, reqInit)
 
-    const data = await response.json()
-
     if (response.ok) {
-      return data
+      return response.json()
     }
 
-    const error = new Error(response.statusText)
-    throw error
+    throw new Error(response.statusText)
   } catch (error) {
-      console.error('fetchJson', error)
+    console.error('fetchJson', error)
+    throw error
   }
 }

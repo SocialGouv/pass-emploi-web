@@ -1,10 +1,7 @@
-import { Conseiller } from 'interfaces'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
-import fetchJson from 'utils/fetchJson'
-import useUser from 'utils/useUser'
 import DashboardIcon from '../../assets/icons/dashboard.svg'
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
@@ -14,24 +11,11 @@ type SidebarProps = {}
 
 export default function Sidebar({}: SidebarProps) {
   const router = useRouter()
-
-  const [conseillerName, setConseillerName] = useState<String>('')
-  const { mutateUser } = useUser()
-
-  useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
-
-    fetchConseiller().then((conseiller) => {
-      setConseillerName(conseiller.firstName)
-    })
-  }, [])
+  const { data: session } = useSession({ required: true })
 
   async function handleLogout(event: any) {
     event.preventDefault()
-    mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
-    router.push('/login')
+    window.location.href = '/api/auth/federated-logout'
   }
 
   return (
@@ -82,7 +66,9 @@ export default function Sidebar({}: SidebarProps) {
       </div>
 
       <div className='flex justify-between'>
-        <p className='text-lg-semi text-bleu_nuit'>{conseillerName}</p>
+        {session && (
+          <p className='text-lg-semi text-bleu_nuit'>{session!.user.name}</p>
+        )}
 
         <Link href={'/api/logout'}>
           <a onClick={handleLogout} className='mr-[8px]'>

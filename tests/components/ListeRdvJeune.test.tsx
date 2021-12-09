@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import { RdvJeune } from '../../interfaces/rdv'
+import { RdvJeune } from 'interfaces/rdv'
 import { screen } from '@testing-library/dom'
 import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'

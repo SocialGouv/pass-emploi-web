@@ -1,32 +1,31 @@
+import { AppHead } from 'components/AppHead'
 import Button, { ButtonColorStyle } from 'components/Button'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import { Conseiller, Jeune } from 'interfaces'
+import { Jeune } from 'interfaces'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
+import { GetServerSideProps } from 'next'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
-import fetchJson from 'utils/fetchJson'
-import { useDIContext } from 'utils/injectionDependances'
-import withSession, {
-  getConseillerFromSession,
-  ServerSideHandler,
-} from 'utils/session'
+import { Container, useDIContext } from 'utils/injectionDependances'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { AppHead } from 'components/AppHead'
 
 interface FicheJeuneProps {
-  conseiller: Conseiller
+  idConseiller: string
   jeune: Jeune
   rdvs: RdvJeune[]
 }
 
-const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
+const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   const { jeunesService, rendezVousService } = useDIContext()
+  const { data: session } = useSession({ required: true })
   const [showAddRdvModal, setShowAddRdvModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
@@ -43,7 +42,11 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
   }
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService.postNewRendezVous(conseiller.id, newRDV)
+    await rendezVousService.postNewRendezVous(
+      idConseiller,
+      newRDV,
+      session!.accessToken
+    )
     closeAddRdvModal()
     Router.reload()
   }
@@ -108,10 +111,13 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
           <ListeActionsJeune idJeune={jeune.id} />
         </div>
 
-        {showAddRdvModal && (
+        {showAddRdvModal && session && (
           <AddRdvModal
             fetchJeunes={() =>
-              jeunesService.getJeunesDuConseiller(conseiller.id)
+              jeunesService.getJeunesDuConseiller(
+                idConseiller,
+                session.accessToken
+              )
             }
             jeuneInitial={jeune}
             addNewRDV={addNewRDV}
@@ -132,19 +138,27 @@ const FicheJeune = ({ conseiller, jeune, rdvs }: FicheJeuneProps) => {
   )
 }
 
-export const getServerSideProps = withSession<
-  ServerSideHandler<FicheJeuneProps>
->(async ({ req, query }) => {
-  const conseillerOuRedirect = getConseillerFromSession(req)
-  if (!conseillerOuRedirect.hasConseiller) {
-    return { redirect: conseillerOuRedirect.redirect }
+export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
+  context
+) => {
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { conseiller } = conseillerOuRedirect
+  const { jeunesService, rendezVousService } =
+    Container.getDIContainer().dependances
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
   const [resInfoJeune, resRdvJeune] = await Promise.all([
-    fetchJson(`${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/`),
-    fetchJson(
-      `${process.env.API_ENDPOINT}/jeunes/${query.jeune_id}/rendezvous`
+    jeunesService.getJeuneDetails(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    rendezVousService.getRendezVousJeune(
+      context.query.jeune_id as string,
+      accessToken
     ),
   ])
 
@@ -157,10 +171,11 @@ export const getServerSideProps = withSession<
   const today = new Date()
   return {
     props: {
-      conseiller,
+      idConseiller: user.id,
       jeune: resInfoJeune,
       rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
     },
   }
-})
+}
+
 export default FicheJeune

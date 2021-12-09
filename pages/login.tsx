@@ -1,35 +1,20 @@
 import Button from 'components/Button'
+import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import { getSession, signIn } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import fetchJson from 'utils/fetchJson'
-import useUser from 'utils/useUser'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 const Login = () => {
-  const [userId, setUserId] = useState('')
-
-  // here we just check if user is already logged in and redirect to profile
-  const { mutateUser } = useUser({
-    redirectTo: '/',
-    redirectIfFound: true,
-  })
-
   const [errorMsg, setErrorMsg] = useState('')
+  const router = useRouter()
 
   async function handleSubmit(event: any) {
     event.preventDefault()
 
-    const body = {
-      userId: userId,
-    }
-
     try {
-      mutateUser(
-        await fetchJson('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        })
-      )
+      const redirectUrl = (router.query.redirectUrl as string) ?? '/'
+      signIn('keycloak', { callbackUrl: redirectUrl as string })
     } catch (error) {
       console.error(error)
       setErrorMsg("une erreur est survenue lors de l'authentification")
@@ -54,30 +39,33 @@ const Login = () => {
           </h1>
 
           <form onSubmit={handleSubmit}>
-            <label className='flex flex-col w-[465px] mb-[48px]'>
-              <span className='text-sm-semi text-bleu_nuit mb-[16px]'>
-                Votre identifiant
-              </span>
-              <input
-                type='text'
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder='Identifiant de connexion'
-                className='w-full text-sm text-bleu_nuit bg-bleu_blanc rounded-large px-[24px] py-[16px]'
-                required
-              />
-            </label>
-
-            <Button type='submit' className='m-auto' disabled={!userId}>
+            <Button type='submit' className='m-auto'>
               <span className='px-[42px]'>Connexion</span>
             </Button>
-
-            {errorMsg && <p className='error'>{errorMsg}</p>}
           </form>
+
+          {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
       </div>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<{}> = async (
+  context
+): Promise<GetServerSidePropsResult<{}>> => {
+  const session = await getSession({ req: context.req })
+  if (session) {
+    const redirectUrl: string = (context.query.redirectUrl as string) ?? '/'
+    return {
+      redirect: {
+        destination: redirectUrl,
+        permanent: false,
+      },
+    }
+  }
+
+  return { props: {} }
 }
 
 export default Login

@@ -2,12 +2,11 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
+import styles from 'styles/components/Layouts.module.css'
 import { db } from 'utils/firebase'
-
-import Sidebar from './Sidebar'
 import ChatBox from './ChatRoom'
 
-import styles from 'styles/components/Layouts.module.css'
+import Sidebar from './Sidebar'
 
 type LayoutProps = {
   children: any

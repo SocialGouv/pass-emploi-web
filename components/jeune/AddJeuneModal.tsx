@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
-
-import Modal from 'components/Modal'
 import Button from 'components/Button'
 import SuccessAddJeuneModal from 'components/jeune/SuccessAddJeuneModal'
-import { Conseiller, Jeune } from 'interfaces'
-import fetchJson from 'utils/fetchJson'
+import Modal from 'components/Modal'
+import { Jeune } from 'interfaces'
+import { useSession } from 'next-auth/react'
+import { useState } from 'react'
+import { useDIContext } from 'utils/injectionDependances'
 
 type AddJeuneModalProps = {
   show: boolean
@@ -12,20 +12,12 @@ type AddJeuneModalProps = {
 }
 
 const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
+  const { data: session } = useSession({ required: true })
+  const { jeunesService } = useDIContext()
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [conseillerId, setConseillerId] = useState<String>('')
   const [newJeune, setNewJeune] = useState<Jeune | null>(null)
-
-  useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
-
-    fetchConseiller().then((conseiller) => {
-      setConseillerId(conseiller.id)
-    })
-  }, [])
 
   const FormIsValid = () => firstName !== '' && lastName !== ''
 
@@ -42,13 +34,10 @@ const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
       lastName: lastName,
     }
 
-    fetch(`${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeune`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(newJeune),
-    })
+    jeunesService
+      .createJeuneDuConseiller(newJeune, session!.user.id, session!.accessToken)
       .then(async function (response) {
-        const jeune = await response.json()
+        const jeune = await response
         setNewJeune(jeune)
       })
       .catch(function (error) {

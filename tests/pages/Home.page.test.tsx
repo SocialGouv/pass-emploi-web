@@ -1,14 +1,15 @@
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import Home from 'pages/index'
-import { uneListeDeRdv } from '../../fixtures/rendez-vous'
+import React from 'react'
+import { uneListeDeRdv } from 'fixtures/rendez-vous'
+import renderWithSession from '../renderWithSession'
 
-const rendezVousPasses = uneListeDeRdv()
-const rendezVousFuturs = uneListeDeRdv()
+describe('Home', () => {
+  const rendezVousPasses = uneListeDeRdv()
+  const rendezVousFuturs = uneListeDeRdv()
 
-describe('Home with rdvs', () => {
   beforeEach(() => {
-    render(
+    renderWithSession(
       <Home
         rendezVousFuturs={rendezVousFuturs}
         rendezVousPasses={rendezVousPasses}
@@ -31,36 +32,6 @@ describe('Home with rdvs', () => {
     })
 
     expect(button).toBeInTheDocument()
-  })
-})
-
-describe('Accueil sans rendez-vous', () => {
-  beforeEach(() => {
-    render(
-      <Home
-        rendezVousFuturs={rendezVousFuturs}
-        rendezVousPasses={rendezVousPasses}
-      />
-    )
-  })
-
-  it('devrait avoir un bouton Fixer un rendez-vous', () => {
-    const button = screen.getByRole('button', {
-      name: 'Fixer un rendez-vous',
-    })
-
-    expect(button).toBeInTheDocument()
-  })
-})
-
-describe('Accueil - Boutons', () => {
-  beforeEach(() => {
-    render(
-      <Home
-        rendezVousFuturs={rendezVousFuturs}
-        rendezVousPasses={rendezVousPasses}
-      />
-    )
   })
 
   it('devrait avoir deux boutons', () => {

@@ -16,13 +16,13 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import {
-  Conseiller,
   DailyMessages,
   Jeune,
   JeuneChat,
   ListDailyMessages,
   Message,
 } from 'interfaces'
+import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import {
@@ -31,7 +31,7 @@ import {
   formatHourMinuteDate,
   isDateOlder,
 } from 'utils/date'
-import fetchJson from 'utils/fetchJson'
+import { useDIContext } from 'utils/injectionDependances'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
 
@@ -46,9 +46,10 @@ type ConversationProps = {
   onBack: () => void
 }
 
-let conseillerId = '0'
-
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
+  const { data: session } = useSession({ required: true })
+  const { messagesService } = useDIContext()
+
   const [newMessage, setNewMessage] = useState('')
   const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
@@ -87,14 +88,14 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
     /**
      * Route send from web to notify mobile, no need to await for response
      */
-    fetch(
-      `${process.env.API_ENDPOINT}/conseillers/${conseillerId}/jeunes/${jeune.id}/notify-message`,
-      {
-        method: 'POST',
-      }
-    ).catch(function (error) {
-      console.error('Conversation: Error while fetching /notify-message', error)
-    })
+    messagesService
+      .notifierNouveauMessage(session!.user.id, jeune.id, session!.accessToken)
+      .catch(function (error) {
+        console.error(
+          'Conversation: Error while fetching /notify-message',
+          error
+        )
+      })
 
     setNewMessage('')
 
@@ -150,16 +151,6 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
     updateReadingDate()
   }, [db, jeune.chatId])
-
-  useEffect(() => {
-    async function fetchConseiller(): Promise<Conseiller> {
-      return await fetchJson('/api/user')
-    }
-
-    fetchConseiller().then((conseiller) => {
-      conseillerId = conseiller.id
-    })
-  }, [])
 
   return (
     <div className={styles.conversationContainer}>

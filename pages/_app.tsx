@@ -1,9 +1,13 @@
 import ProgressBar from '@badrap/bar-of-progress'
 import init from '@socialgouv/matomo-next'
+
 import Layout from 'components/layouts/Layout'
+import { SessionProvider } from 'next-auth/react'
+
 import { AppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { ReactNode, useEffect } from 'react'
+
 import 'styles/globals.css'
 import 'styles/typography.css'
 import { DIProvider } from 'utils/injectionDependances'
@@ -22,7 +26,10 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-function MyApp({ Component, pageProps }: AppProps): ReactNode {
+function MyApp({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps): ReactNode {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
 
@@ -31,15 +38,17 @@ function MyApp({ Component, pageProps }: AppProps): ReactNode {
   }, [])
 
   return (
-    <DIProvider>
-      {isLoginPage ? (
-        <Component {...pageProps} />
-      ) : (
-        <Layout>
+    <SessionProvider session={session}>
+      <DIProvider>
+        {isLoginPage ? (
           <Component {...pageProps} />
-        </Layout>
-      )}
-    </DIProvider>
+        ) : (
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        )}
+      </DIProvider>
+    </SessionProvider>
   )
 }
 

@@ -1,14 +1,32 @@
+import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces'
-import fetchJson from 'utils/fetchJson'
 
 export class JeunesService {
-  private readonly apiPrefix?: string
+  constructor(private readonly apiClient: ApiClient) {}
 
-  constructor() {
-    this.apiPrefix = process.env.API_ENDPOINT
+  getJeunesDuConseiller(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Jeune[]> {
+    return this.apiClient.get(
+      `/conseillers/${idConseiller}/jeunes`,
+      accessToken
+    )
   }
 
-  getJeunesDuConseiller(idConseiller: string): Promise<Jeune[]> {
-    return fetchJson(`${this.apiPrefix}/conseillers/${idConseiller}/jeunes`)
+  getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune> {
+    return this.apiClient.get(`/jeunes/${idJeune}`, accessToken)
+  }
+
+  createJeuneDuConseiller(
+    newJeune: { firstName: string; lastName: string },
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Jeune> {
+    return this.apiClient.post<Jeune>(
+      `/conseillers/${idConseiller}/jeune`,
+      newJeune,
+      accessToken
+    )
   }
 }
