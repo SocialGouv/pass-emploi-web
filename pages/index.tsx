@@ -10,6 +10,7 @@ import { useSession } from 'next-auth/react'
 import Router from 'next/router'
 import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
+import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDIContext } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../assets/icons/add.svg'
@@ -27,6 +28,8 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
+
+  useMatomo('test')
 
   function openAddModal(): void {
     setShowAddModal(true)

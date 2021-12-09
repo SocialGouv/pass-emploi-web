@@ -13,6 +13,7 @@ const isExcludedUrl = (url: string, patterns: RegExp[]): boolean => {
 interface InitSettings {
   url: string
   siteId: string
+  customTitle?: string
   jsTrackerFile?: string
   phpTrackerFile?: string
   excludeUrlsPatterns?: RegExp[]
@@ -34,6 +35,7 @@ const startsWith = (str: string, needle: string) => {
 export function init({
   url,
   siteId,
+  customTitle,
   jsTrackerFile = 'matomo.js',
   phpTrackerFile = 'matomo.php',
   excludeUrlsPatterns = [],
@@ -97,7 +99,7 @@ export function init({
         push(['setReferrerUrl', `${previousPath}`])
       }
       push(['setCustomUrl', pathname])
-      push(['setDocumentTitle', 'TEST: ceci est un test'])
+      push(['setDocumentTitle', customTitle || document.title])
       push(['deleteCustomVariables', 'page'])
       if (
         startsWith(pathname, '/recherche') ||
