@@ -9,7 +9,7 @@ export class ApiClient {
 
   async get<T>(path: string, accessToken: string): Promise<T> {
     const headers = new Headers({
-      authorization: `bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
     })
 
     return fetchJson<T>(`${this.apiPrefix}${path}`, { headers })
@@ -21,7 +21,7 @@ export class ApiClient {
     accessToken: string
   ): Promise<T> {
     const headers = new Headers({
-      authorization: `bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
     })
 
@@ -40,7 +40,7 @@ export class ApiClient {
     accessToken: string
   ): Promise<Response> {
     const headers = new Headers({
-      authorization: `bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
     })
 
@@ -53,7 +53,7 @@ export class ApiClient {
 
   async delete(path: string, accessToken: string): Promise<Response> {
     const headers = new Headers({
-      authorization: `bearer ${accessToken}`,
+      Authorization: `bearer ${accessToken}`,
     })
 
     return fetch(`${this.apiPrefix}${path}`, {
