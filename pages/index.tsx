@@ -8,7 +8,7 @@ import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useSession } from 'next-auth/react'
 import Router from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { durees } from 'referentiel/rdv'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDIContext } from 'utils/injectionDependances'
@@ -23,13 +23,13 @@ type HomeProps = {
 const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   const { data: session } = useSession({ required: true })
   const { jeunesService, rendezVousService } = useDIContext()
-  const [showAddModal, setShowAddModal] = useState(false)
+  const [showAddModal, setShowAddModal] = useState<boolean | undefined>(
+    undefined
+  )
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
-
-  useMatomo('test')
 
   function openAddModal(): void {
     setShowAddModal(true)
@@ -57,6 +57,16 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
     ]
     setRdvsAVenir(newArray)
   }
+
+  useMatomo(displayOldRdv ? 'Mes rendez-vous passés' : 'Mes rendez-vous')
+
+  useMatomo(
+    showAddModal
+      ? 'Mes rendez-vous - Modale création rdv'
+      : showAddModal === undefined
+      ? undefined
+      : 'Mes rendez-vous'
+  )
 
   return (
     <>

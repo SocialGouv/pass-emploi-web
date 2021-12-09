@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import router from 'next/router'
 import React, { useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
+import useMatomo from 'utils/analytics/useMatomo'
 import { useDIContext } from 'utils/injectionDependances'
 
 const INPUT_MAX_LENGTH = 250
@@ -20,6 +21,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [newComment, setNewComment] = useState('')
   const [isCommentMode, setIsCommentMode] = useState(false)
   const [isCustomMode, setIsCustomMode] = useState(false)
+  const [isBackClicked, setIsBackClicked] = useState(false)
   const { actionsService } = useDIContext()
   const { data: session } = useSession({ required: true })
 
@@ -28,6 +30,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const handleSelectedAction = (selectedActionContent: string) => {
     setNewContent(selectedActionContent)
     setIsCommentMode(true)
+    setIsBackClicked(false)
   }
 
   const toggleCustomMode = () => {
@@ -68,6 +71,23 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
     setNewComment('')
     onClose()
   }
+  useMatomo(
+    isCustomMode
+      ? 'Actions jeune - Modale création action personnalisée'
+      : 'Actions jeune - Modale création action prédéfinie'
+  )
+
+  useMatomo(
+    isCommentMode
+      ? 'Actions jeune - Modale création action commentaire'
+      : undefined
+  )
+
+  useMatomo(
+    isBackClicked
+      ? 'Actions jeune - Modale création action prédéfinie'
+      : undefined
+  )
 
   return (
     <>
@@ -172,6 +192,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         onClose={handleCloseModal}
         onBack={() => {
           setIsCommentMode(false)
+          setIsBackClicked(true)
           setNewComment('')
         }}
         show={isCommentMode && show}

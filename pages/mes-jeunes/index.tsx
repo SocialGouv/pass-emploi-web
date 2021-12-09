@@ -6,6 +6,7 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../assets/icons/add_person.svg'
@@ -22,6 +23,8 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
     setShowModal(false)
     Router.reload()
   }
+
+  useMatomo(showModal ? 'Mes jeunes - Modale création jeune' : 'Mes jeunes')
 
   return (
     <>

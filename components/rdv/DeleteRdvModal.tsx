@@ -6,6 +6,7 @@ import SuccessModal from 'components/SuccessModal'
 import { Rdv, RdvJeune } from 'interfaces/rdv'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 
 import { formatDayDate } from 'utils/date'
 import { useDIContext } from 'utils/injectionDependances'
@@ -46,6 +47,10 @@ const DeleteRdvModal = ({
     setIsEchec(false)
     onClose()
   }
+
+  useMatomo(isSuccess ? 'Succès modale suppression rdv' : undefined)
+
+  useMatomo(isEchec ? 'Echec modale suppression rdv' : undefined)
 
   return (
     <>

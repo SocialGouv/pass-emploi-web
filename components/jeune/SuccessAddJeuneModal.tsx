@@ -1,6 +1,7 @@
 import Modal from 'components/Modal'
 import Button from 'components/Button'
 import { Jeune } from 'interfaces'
+import useMatomo from 'utils/analytics/useMatomo'
 
 type SuccessAddJeuneModalProps = {
   show: boolean
@@ -16,6 +17,8 @@ const SuccessAddJeuneModal = ({
   const handleCloseModal = () => {
     onClose()
   }
+
+  useMatomo('Mes jeunes - Succès modale - création jeune')
 
   return (
     <>
