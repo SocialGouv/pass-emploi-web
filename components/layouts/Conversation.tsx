@@ -121,10 +121,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
         setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
 
-        if (
-          currentMessages[currentMessages.length - 1].sentBy === 'conseiller' &&
-          dummySpace?.current
-        ) {
+        if (dummySpace?.current) {
           dummySpace.current.scrollIntoView({ behavior: 'smooth' })
         }
       }
