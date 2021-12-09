@@ -32,6 +32,7 @@ function MyApp({
 }: AppProps): ReactNode {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
+  const isLogoutPage = router.pathname === '/logout'
 
   useEffect(() => {
     init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
@@ -40,7 +41,7 @@ function MyApp({
   return (
     <SessionProvider session={session}>
       <DIProvider>
-        {isLoginPage ? (
+        {isLoginPage || isLogoutPage ? (
           <Component {...pageProps} />
         ) : (
           <Layout>
