@@ -86,7 +86,6 @@ const AddRdvModal = ({
               className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium cursor-pointer'
               required
             >
-              <option aria-hidden hidden disabled selected />
               {jeunes.map((j) => (
                 <option key={j.id} value={j.id}>
                   {j.firstName} {j.lastName}

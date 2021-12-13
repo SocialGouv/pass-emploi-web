@@ -10,6 +10,7 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 
@@ -33,7 +34,7 @@ const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
     : 1
 
 function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
   const [actionsEnCours] = useState(actions_en_cours)
   const router = useRouter()
@@ -48,6 +49,14 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
       { shallow: true }
     )
   }
+
+  useMatomo(
+    showSuccessMessage
+      ? 'Actions jeune - Succès - Suppression Action'
+      : 'Actions jeune'
+  )
+
+  useMatomo(showModal === false ? 'Actions jeune' : undefined)
 
   return (
     <>
@@ -80,14 +89,16 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
         </Button>
       </div>
 
-      <AddActionModal
-        onClose={() => setShowModal(false)}
-        onAdd={() => {
-          // addToActionEnCours(newAction) uncomment when be sends id
-          Router.reload()
-        }} //reload, since we dont have the id after add
-        show={showModal}
-      />
+      {showModal && (
+        <AddActionModal
+          onClose={() => setShowModal(false)}
+          onAdd={() => {
+            // addToActionEnCours(newAction) uncomment when be sends id
+            Router.reload()
+          }} //reload, since we dont have the id after add
+          show={showModal}
+        />
+      )}
 
       {showSuccessMessage && (
         <SuccessMessage

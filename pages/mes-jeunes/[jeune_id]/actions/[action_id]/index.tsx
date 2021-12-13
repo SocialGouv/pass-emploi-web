@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 import { formatDayDate } from 'utils/date'
 import { Container, useDIContext } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -54,6 +55,8 @@ function PageAction({ action, jeune }: Props) {
         setDeleteDisabled(false)
       })
   }
+
+  useMatomo('Détail action')
 
   return (
     <>

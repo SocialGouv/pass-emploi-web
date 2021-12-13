@@ -6,17 +6,23 @@ import DashboardIcon from '../../assets/icons/dashboard.svg'
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PersonIcon from '../../assets/icons/person.svg'
+import useMatomo from 'utils/analytics/useMatomo'
+import { useState } from 'react'
 
 type SidebarProps = {}
 
 export default function Sidebar({}: SidebarProps) {
   const router = useRouter()
+  const [isLoggedOut, setIsLoggedOut] = useState(false)
   const { data: session } = useSession({ required: true })
 
   async function handleLogout(event: any) {
     event.preventDefault()
+    setIsLoggedOut(true)
     window.location.href = '/api/auth/federated-logout'
   }
+
+  useMatomo(isLoggedOut ? 'Clic déconnexion' : undefined)
 
   return (
     <div className={styles.sidebar}>

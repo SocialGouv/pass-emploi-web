@@ -13,6 +13,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDIContext } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
@@ -26,8 +27,12 @@ interface FicheJeuneProps {
 const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   const { jeunesService, rendezVousService } = useDIContext()
   const { data: session } = useSession({ required: true })
-  const [showAddRdvModal, setShowAddRdvModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showAddRdvModal, setShowAddRdvModal] = useState<boolean | undefined>(
+    undefined
+  )
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean | undefined>(
+    undefined
+  )
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
   const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
     undefined
@@ -61,6 +66,18 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
       setRdvsAVenir(nouvelleListeRdvs)
     }
   }
+
+  useMatomo(
+    showAddRdvModal ? 'Détail jeune - Modale création rdv' : 'Détail jeune'
+  )
+
+  useMatomo(
+    showDeleteModal
+      ? 'Détail jeune - Modale suppression rdv'
+      : showDeleteModal === undefined
+      ? undefined
+      : 'Détail jeune'
+  )
 
   return (
     <>
