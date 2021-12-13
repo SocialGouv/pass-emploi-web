@@ -98,10 +98,6 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
       })
 
     setNewMessage('')
-
-    if (dummySpace && dummySpace.current) {
-      dummySpace.current.scrollIntoView({ block: 'end', inline: 'nearest' })
-    }
   }
 
   // automatically check db for new messages
@@ -124,6 +120,10 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
         }
 
         setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
+
+        if (dummySpace?.current) {
+          dummySpace.current.scrollIntoView({ behavior: 'smooth' })
+        }
       }
     )
 

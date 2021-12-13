@@ -75,12 +75,15 @@
 
 .conversationContainer {
 	position: relative;
+	display: flex;
+	flex-direction: column;
 	height: 100%;
 }
 
 .conversationTitleContainer {
 	display: flex;
 	align-items: baseline;
+	flex-grow: 0;
 }
 
 .conversationTitleContainer button {
@@ -94,13 +97,10 @@
 }
 
 .messages {
-	position: absolute;
-	right: 0;
-	left: 0;
-	overflow: scroll;
 	padding: 16px 16px;
-	padding-bottom: 200px;
 	height: 100%;
+	flex-grow: 1;
+	overflow-y: scroll;
 }
 
 .messages li {
@@ -137,8 +137,7 @@
 }
 
 .form {
-	position: absolute;
-	bottom: 0;
+	flex-grow: 0;
 	width: 100%;
 	background-color: theme('colors.blanc');
 	padding: 11px;
