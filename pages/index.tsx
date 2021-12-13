@@ -26,7 +26,9 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   const [showAddModal, setShowAddModal] = useState<boolean | undefined>(
     undefined
   )
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean | undefined>(
+    undefined
+  )
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
@@ -59,6 +61,13 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   }
 
   useMatomo(displayOldRdv ? 'Mes rendez-vous passés' : 'Mes rendez-vous')
+  useMatomo(
+    showDeleteModal
+      ? 'Mes rendez-vous - Modale suppression rdv'
+      : showDeleteModal === undefined
+      ? undefined
+      : 'Mes rendez-vous'
+  )
 
   useMatomo(
     showAddModal
