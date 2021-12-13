@@ -50,7 +50,7 @@ const DeleteRdvModal = ({
 
   useMatomo(isSuccess ? 'Succès modale suppression rdv' : undefined)
 
-  useMatomo(isEchec ? 'Echec modale suppression rdv' : undefined)
+  useMatomo(isEchec ? 'Échec modale suppression rdv' : undefined)
 
   return (
     <>

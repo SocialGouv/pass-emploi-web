@@ -1,5 +1,3 @@
-import { default as Router } from 'next/router'
-
 interface InitSettings {
   url: string
   siteId: string
@@ -33,18 +31,9 @@ function init({
     return
   }
 
-  // push(['trackPageView'])
-
   push(['enableLinkTracking'])
   push(['setTrackerUrl', `${url}/${phpTrackerFile}`])
   push(['setSiteId', siteId])
-
-  /**
-   * for initial loading we use the location.pathname
-   * as the first url visited.
-   * Once user navigate across the site,
-   * we rely on Router.pathname
-   */
 
   const scriptElement = document.createElement('script')
   const refElement = document.getElementsByTagName('script')[0]
