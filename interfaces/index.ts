@@ -1,4 +1,5 @@
 // TODO create JsonModel
+// TODO: ranger par type
 
 import { Timestamp } from 'firebase/firestore'
 import { datesAreOnSameDay } from 'utils/date'
@@ -9,6 +10,7 @@ export type Conseiller = {
   firstName: string
   lastName: string
   jeunes: Jeune[]
+  userStructure?: UserStructure
 }
 
 export type Jeune = {
@@ -69,4 +71,10 @@ export class ListDailyMessages {
     })
     this.dailyMessages = tmpDateMessages
   }
+}
+
+export enum UserStructure {
+  MILO = 'MILO',
+  POLE_EMPLOI = 'POLE EMPLOI',
+  PASS_EMPLOI = 'PASS EMPLOI',
 }

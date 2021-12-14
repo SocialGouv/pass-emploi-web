@@ -19,5 +19,6 @@ declare module 'next-auth/jwt' {
     refreshToken?: string
     expiresAtTimestamp?: number
     idConseiller?: string
+    structureConseiller?: string
   }
 }

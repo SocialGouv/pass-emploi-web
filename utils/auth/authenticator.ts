@@ -1,4 +1,4 @@
-import { Account, User } from 'next-auth'
+import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import { AuthService } from 'services/auth.service'
 import { decode, JwtPayload } from 'jsonwebtoken'
@@ -12,11 +12,13 @@ export class Authenticator {
   handleJWTAndRefresh({ jwt, account }: { jwt: JWT; account?: Account }) {
     const isFirstSignin = Boolean(account)
     if (isFirstSignin) {
+      const { userId, userStructure } = decode(
+        <string>account!.access_token
+      ) as JwtPayload
       jwt.accessToken = account!.access_token
       jwt.refreshToken = account!.refresh_token
-      jwt.idConseiller = account!.access_token
-        ? (decode(account!.access_token) as JwtPayload).userId
-        : undefined
+      jwt.idConseiller = userId
+      jwt.structureConseiller = userStructure
       jwt.expiresAtTimestamp = account!.expires_at
         ? secondsToTimestamp(account!.expires_at)
         : undefined
