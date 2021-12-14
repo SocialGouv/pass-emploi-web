@@ -33,7 +33,7 @@ describe('Mes Jeunes', () => {
     expect(routerSpy).toHaveBeenCalledWith('/mes-jeunes/milo-creation-jeune')
   })
 
-  it('devrait rediriger vers la page de creation jeune milo lorsque conseiller est MILO', () => {
+  it('devrait rediriger vers la page de création jeune MILO lorsque le conseiller est MILO', () => {
     //GIVEN
     const jeune = unJeune()
 

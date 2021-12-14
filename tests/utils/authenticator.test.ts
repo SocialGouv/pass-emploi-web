@@ -2,7 +2,7 @@ import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import { AuthService } from 'services/auth.service'
 import { Authenticator } from 'utils/auth/authenticator'
-import { UserStructure } from '../../interfaces'
+import { UserStructure } from 'interfaces/conseiller'
 
 const now = 163887007214
 
