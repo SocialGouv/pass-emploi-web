@@ -1,6 +1,6 @@
 import Modal from 'components/Modal'
 import Button from 'components/Button'
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 
 type SuccessAddJeuneModalProps = {

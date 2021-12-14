@@ -1,7 +1,8 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
+import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
@@ -13,15 +14,29 @@ import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type MesJeunesProps = {
+  structureConseiller: string
   conseillerJeunes: Jeune[]
 }
 
-function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
+function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
   const [showModal, setShowModal] = useState(false)
 
   const handleCloseModal = () => {
     setShowModal(false)
     Router.reload()
+  }
+
+  const handleAddJeune = () => {
+    Router.push(
+      structureConseiller === UserStructure.MILO
+        ? '/mes-jeunes/milo-creation-jeune'
+        : '/'
+    )
+
+    /**
+     * À décommenter lors de l'activation de la modale de création jeune pour Pôle emploi
+     */
+    //setShowModal(true)
   }
 
   useMatomo(showModal ? 'Mes jeunes - Modale création jeune' : 'Mes jeunes')
@@ -31,7 +46,7 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
       <AppHead titre='Mes jeunes' />
       <span className='flex flex-wrap justify-between mb-12'>
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
-        <Button onClick={() => setShowModal(true)}>
+        <Button onClick={handleAddJeune}>
           <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
           Ajouter un jeune
         </Button>
@@ -93,7 +108,9 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
         </div>
       </div>
 
-      <AddJeuneModal onClose={handleCloseModal} show={showModal} />
+      {showModal && (
+        <AddJeuneModal onClose={handleCloseModal} show={showModal} />
+      )}
     </>
   )
 }
@@ -114,6 +131,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
 
   return {
     props: {
+      structureConseiller: user.structure,
       conseillerJeunes: jeunes || [],
     },
   }

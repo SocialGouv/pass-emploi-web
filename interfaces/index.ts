@@ -1,34 +1,8 @@
 // TODO create JsonModel
 // TODO: ranger par type
 
-import { Timestamp } from 'firebase/firestore'
 import { datesAreOnSameDay } from 'utils/date'
-
-export type Conseiller = {
-  isLoggedIn?: boolean
-  id: string
-  firstName: string
-  lastName: string
-  jeunes: Jeune[]
-  userStructure?: UserStructure
-}
-
-export type Jeune = {
-  id: string
-  firstName: string
-  lastName: string
-  chatId?: string
-}
-
-export interface JeuneChat extends Jeune {
-  seenByConseiller: boolean
-  newConseillerMessageCount: number
-  lastMessageContent: string | undefined
-  lastMessageSentAt: Timestamp | undefined
-  lastMessageSentBy: string | undefined
-  lastConseillerReading: Timestamp | undefined
-  lastJeuneReading: Timestamp | undefined
-}
+import { Timestamp } from 'firebase/firestore'
 
 /**
  * Firebase Models. TODO: replace in another file?
@@ -71,10 +45,4 @@ export class ListDailyMessages {
     })
     this.dailyMessages = tmpDateMessages
   }
-}
-
-export enum UserStructure {
-  MILO = 'MILO',
-  POLE_EMPLOI = 'POLE EMPLOI',
-  PASS_EMPLOI = 'PASS EMPLOI',
 }

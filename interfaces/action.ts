@@ -1,9 +1,9 @@
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
 
 export type JeuneActions = {
-  jeune: Jeune,
+  jeune: Jeune
   nbActionsEnCours: number
-  nbActionsTerminees: number,
+  nbActionsTerminees: number
   nbActionsAFaire: number
 }
 

@@ -15,13 +15,8 @@ import {
   Timestamp,
   updateDoc,
 } from 'firebase/firestore'
-import {
-  DailyMessages,
-  Jeune,
-  JeuneChat,
-  ListDailyMessages,
-  Message,
-} from 'interfaces'
+import { DailyMessages, ListDailyMessages, Message } from 'interfaces'
+import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'

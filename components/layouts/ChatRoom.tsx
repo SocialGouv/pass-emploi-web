@@ -8,7 +8,7 @@ import {
   QuerySnapshot,
   where,
 } from 'firebase/firestore'
-import { Jeune, JeuneChat } from 'interfaces'
+import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'

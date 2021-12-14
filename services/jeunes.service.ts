@@ -1,5 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
 
 export class JeunesService {
   constructor(private readonly apiClient: ApiClient) {}
