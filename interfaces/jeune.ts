@@ -17,7 +17,7 @@ export interface JeuneChat extends Jeune {
   lastJeuneReading: Timestamp | undefined
 }
 
-export interface Dossier {
+export interface DossierMilo {
   id: string
   prenom: string
   nom: string

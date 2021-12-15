@@ -1,22 +1,36 @@
 import { GetServerSideProps } from 'next'
 import Button from 'components/Button'
-import { FormEvent, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 import Link from 'next/link'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { CreationEtape } from 'components/jeune/CreationEtape'
-import { useRouter } from 'next/router'
+import Router from 'next/router'
+import { ErrorMessage } from 'components/ErrorMessage'
+import useMatomo from 'utils/analytics/useMatomo'
 
 type MiloCreationJeuneProps = {}
 
 function MiloCreationJeune({}: MiloCreationJeuneProps) {
   const [numeroDossier, setNumeroDossier] = useState<string | undefined>('')
-  const router = useRouter()
+  const [messageErreur, setMessageErreur] = useState<string>('')
+
+  const validate = () => {
+    if (numeroDossier === '') {
+      //TODO: implémenter avec erreur PoleEmploi API
+      setMessageErreur('Veuillez remplir le champ')
+    }
+    return messageErreur
+  }
 
   function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    //url à valider
-    router.push(`/mes-jeunes/milo-creation-jeune/${numeroDossier}`)
+    const isValid = validate()
+    if (isValid) {
+      Router.push(`/mes-jeunes/milo-creation-jeune/${numeroDossier}`)
+    }
   }
+
+  useMatomo('Création jeune SIMILO – Etape 1 - récuperation du dossier jeune')
 
   return (
     <>
@@ -54,9 +68,9 @@ function MiloCreationJeune({}: MiloCreationJeuneProps) {
             name='recherche-numero'
             value={numeroDossier}
             onChange={(e) => setNumeroDossier(e.target.value)}
-            required
-            className='mt-4 mb-16 p-3 w-8/12 border border-bleu_nuit rounded-medium'
+            className='mt-4 mb-4 p-3 w-8/12 border border-bleu_nuit rounded-medium'
           />
+          {messageErreur && <ErrorMessage>{messageErreur}</ErrorMessage>}
           <Button type='submit'>Valider le numéro</Button>
         </form>
       </div>

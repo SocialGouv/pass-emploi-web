@@ -1,5 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import { Dossier } from 'interfaces/jeune'
+import { DossierMilo } from 'interfaces/jeune'
 
 //TODO: A voir si on met côté jeune.service?
 export class ConseillerService {
@@ -8,7 +8,7 @@ export class ConseillerService {
   getDossierJeune(
     idDossier: string,
     accessToken: string
-  ): Promise<Dossier | undefined> {
+  ): Promise<DossierMilo | undefined> {
     return this.apiClient.get(
       `/conseillers/milo/dossiers/${idDossier}`,
       accessToken

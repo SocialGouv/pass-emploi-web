@@ -32,6 +32,7 @@ module.exports = {
       rose: '#EF5DA8',
       rouge_france: '#E1000F',
       rouge_france_5: '#E1000F0D',
+      warning: '#FF3F15',
     },
 
     backgroundColor: (theme) => ({

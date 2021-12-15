@@ -1,11 +1,11 @@
 import React from 'react'
 import { GetServerSideProps } from 'next'
-import { Dossier } from 'interfaces/jeune'
+import { DossierMilo } from 'interfaces/jeune'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 
 interface DossierJeuneProps {
-  dossier: Dossier
+  dossier: DossierMilo
 }
 
 function DossierJeune({ dossier }: DossierJeuneProps) {
@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   } = sessionOrRedirect
 
   const dataDossierJeune = await conseillerService.getDossierJeune(
-    context.query.id_dossier as string,
+    context.query.dossier_id as string,
     accessToken
   )
 
