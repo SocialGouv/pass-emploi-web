@@ -1,5 +1,5 @@
 import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, signInWithCustomToken, signOut } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 // initialization
@@ -20,5 +20,7 @@ if (!getApps().length) {
 
 const auth = getAuth()
 const db = getFirestore(firebaseApp)
+const signInChat = (token: string) => signInWithCustomToken(auth, token)
+const signOutChat = () => signOut(auth)
 
-export { auth, db }
+export { db, signInChat, signOutChat }
