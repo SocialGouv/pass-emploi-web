@@ -16,3 +16,12 @@ export interface JeuneChat extends Jeune {
   lastConseillerReading: Timestamp | undefined
   lastJeuneReading: Timestamp | undefined
 }
+
+export interface Dossier {
+  id: string
+  prenom: string
+  nom: string
+  dateDeNaissance: string
+  codePostal: string
+  email?: string
+}

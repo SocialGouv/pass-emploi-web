@@ -1,16 +1,21 @@
 import { GetServerSideProps } from 'next'
 import Button from 'components/Button'
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 import Link from 'next/link'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { CreationEtape } from 'components/jeune/CreationEtape'
+import { useRouter } from 'next/router'
 
 type MiloCreationJeuneProps = {}
 
 function MiloCreationJeune({}: MiloCreationJeuneProps) {
+  const [numeroDossier, setNumeroDossier] = useState<string | undefined>('')
+  const router = useRouter()
+
   function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    alert('hyyyyyy')
+    //url à valider
+    router.push(`/mes-jeunes/milo-creation-jeune/${numeroDossier}`)
   }
 
   return (
@@ -47,6 +52,8 @@ function MiloCreationJeune({}: MiloCreationJeuneProps) {
             type='text'
             id='recherche-numero'
             name='recherche-numero'
+            value={numeroDossier}
+            onChange={(e) => setNumeroDossier(e.target.value)}
             required
             className='mt-4 mb-16 p-3 w-8/12 border border-bleu_nuit rounded-medium'
           />

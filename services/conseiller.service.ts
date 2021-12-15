@@ -1,22 +1,16 @@
 import { ApiClient } from 'clients/api.client'
+import { Dossier } from 'interfaces/jeune'
 
-interface Dossier {
-  id: string
-  prenom: string
-  nom: string
-  dateDeNaissance: string
-  email?: string
-}
-
-export class MiloService {
+//TODO: A voir si on met côté jeune.service?
+export class ConseillerService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  getDossier(
+  getDossierJeune(
     idDossier: string,
     accessToken: string
   ): Promise<Dossier | undefined> {
     return this.apiClient.get(
-      `conseillers/milo/dossiers/${idDossier}`,
+      `/conseillers/milo/dossiers/${idDossier}`,
       accessToken
     )
   }
