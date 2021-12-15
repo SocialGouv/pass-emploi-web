@@ -2,23 +2,42 @@ import Button from 'components/Button'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 const Login = () => {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
-  async function handleSubmit(event: any) {
-    event.preventDefault()
+  const signin = useCallback(
+    (provider?: string) => {
+      try {
+        const redirectUrl = (router.query.redirectUrl as string) ?? '/'
+        signIn(
+          'keycloak',
+          { callbackUrl: redirectUrl },
+          { kc_idp_hint: provider ?? '' }
+        )
+      } catch (error) {
+        console.error(error)
+        setErrorMsg("une erreur est survenue lors de l'authentification")
+      }
+    },
+    [router]
+  )
 
-    try {
-      const redirectUrl = (router.query.redirectUrl as string) ?? '/'
-      signIn('keycloak', { callbackUrl: redirectUrl as string })
-    } catch (error) {
-      console.error(error)
-      setErrorMsg("une erreur est survenue lors de l'authentification")
+  useEffect(() => {
+    const provider = router.query.provider
+    switch (provider) {
+      case 'pe':
+      case 'similo':
+        signin(`${provider}-conseiller`)
     }
+  }, [router, signin])
+
+  async function handleSubmit(event: any, provider?: string) {
+    event.preventDefault()
+    signin(provider)
   }
 
   return (
@@ -39,8 +58,26 @@ const Login = () => {
           </h1>
 
           <form onSubmit={handleSubmit}>
-            <Button type='submit' className='m-auto'>
-              <span className='px-[42px]'>Connexion</span>
+            <Button type='submit' className='w-full'>
+              <span className='w-full'>Connexion</span>
+            </Button>
+          </form>
+
+          <form
+            onSubmit={(event) => handleSubmit(event, 'similo-conseiller')}
+            className='pt-4'
+          >
+            <Button type='submit' className='w-full'>
+              <span className='w-full'>Connexion avec Mission locale</span>
+            </Button>
+          </form>
+
+          <form
+            onSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
+            className='pt-4'
+          >
+            <Button type='submit' className='w-full'>
+              <span className='w-full'>Connexion avec Pôle emploi</span>
             </Button>
           </form>
 
