@@ -27,7 +27,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
   }
 
   const handleAddJeune = () => {
-    Router.push('/mes-jeunes/milo-creation-jeune')
+    Router.push('/mes-jeunes/milo/creation-jeune')
 
     /**
      * À décommenter lors de l'activation de la modale de création jeune pour Pôle emploi

@@ -73,7 +73,6 @@ function track({ customTitle }: TrackSettings): void {
     push(['trackPageView'])
 
     previousPath = pathname
-    console.log('title', customTitle)
   }, 0)
 }
 

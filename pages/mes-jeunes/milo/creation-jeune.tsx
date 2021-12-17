@@ -21,7 +21,11 @@ function MiloCreationJeune({
   dossier,
   errMessage,
 }: MiloCreationJeuneProps) {
-  useMatomo('Création jeune SIMILO – Etape 1 - récuperation du dossier jeune')
+  useMatomo(
+    errMessage
+      ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
+      : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune'
+  )
 
   return (
     <>
@@ -108,10 +112,3 @@ export const getServerSideProps: GetServerSideProps<
 }
 
 export default MiloCreationJeune
-
-// Error du Back
-
-// - 400 validation donnée entrée
-// - 403 dossier non justifié
-// - 404 NOT FOUND
-// - 500
