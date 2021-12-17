@@ -1,32 +1,8 @@
 // TODO create JsonModel
+// TODO: ranger par type
 
-import { Timestamp } from 'firebase/firestore'
 import { datesAreOnSameDay } from 'utils/date'
-
-export type Conseiller = {
-  isLoggedIn?: boolean
-  id: string
-  firstName: string
-  lastName: string
-  jeunes: Jeune[]
-}
-
-export type Jeune = {
-  id: string
-  firstName: string
-  lastName: string
-  chatId?: string
-}
-
-export interface JeuneChat extends Jeune {
-  seenByConseiller: boolean
-  newConseillerMessageCount: number
-  lastMessageContent: string | undefined
-  lastMessageSentAt: Timestamp | undefined
-  lastMessageSentBy: string | undefined
-  lastConseillerReading: Timestamp | undefined
-  lastJeuneReading: Timestamp | undefined
-}
+import { Timestamp } from 'firebase/firestore'
 
 /**
  * Firebase Models. TODO: replace in another file?

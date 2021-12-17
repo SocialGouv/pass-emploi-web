@@ -23,6 +23,7 @@ export default NextAuth({
 
     async session({ session, token }) {
       session.user.id = token.idConseiller ?? ''
+      session.user.structure = token.structureConseiller ?? ''
       session.accessToken = token.accessToken ?? ''
       return session
     },

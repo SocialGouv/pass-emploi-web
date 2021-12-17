@@ -1,7 +1,7 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
@@ -24,6 +24,15 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
     Router.reload()
   }
 
+  const handleAddJeune = () => {
+    Router.push('/mes-jeunes/milo/creation-jeune')
+
+    /**
+     * À décommenter lors de l'activation de la modale de création jeune pour Pôle emploi
+     */
+    //setShowModal(true)
+  }
+
   useMatomo(showModal ? 'Mes jeunes - Modale création jeune' : 'Mes jeunes')
 
   return (
@@ -31,7 +40,7 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
       <AppHead titre='Mes jeunes' />
       <span className='flex flex-wrap justify-between mb-12'>
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
-        <Button onClick={() => setShowModal(true)}>
+        <Button onClick={handleAddJeune}>
           <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
           Ajouter un jeune
         </Button>
@@ -93,7 +102,9 @@ function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
         </div>
       </div>
 
-      <AddJeuneModal onClose={handleCloseModal} show={showModal} />
+      {showModal && (
+        <AddJeuneModal onClose={handleCloseModal} show={showModal} />
+      )}
     </>
   )
 }

@@ -1,7 +1,7 @@
 import Button from 'components/Button'
 import SuccessAddJeuneModal from 'components/jeune/SuccessAddJeuneModal'
 import Modal from 'components/Modal'
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { useDIContext } from 'utils/injectionDependances'

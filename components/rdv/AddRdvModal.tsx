@@ -1,6 +1,6 @@
 import Button from 'components/Button'
 import Modal from 'components/Modal'
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { useEffect, useState } from 'react'
 import { modalites } from 'referentiel/rdv'

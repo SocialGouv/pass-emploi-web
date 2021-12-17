@@ -8,6 +8,7 @@ declare module 'next-auth' {
     user: {
       id: string
       name: string
+      structure: string
     }
     accessToken: string
   }
@@ -19,5 +20,6 @@ declare module 'next-auth/jwt' {
     refreshToken?: string
     expiresAtTimestamp?: number
     idConseiller?: string
+    structureConseiller?: string
   }
 }

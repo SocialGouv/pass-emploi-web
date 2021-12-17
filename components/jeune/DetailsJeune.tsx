@@ -1,4 +1,4 @@
-import { Jeune } from 'interfaces'
+import { Jeune } from 'interfaces/jeune'
 import React from 'react'
 
 interface DetailsJeuneProps {

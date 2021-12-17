@@ -1,9 +1,9 @@
-import { Jeune} from 'interfaces/index'
+import { Jeune } from 'interfaces/jeune'
 
-export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => ({
+export const unJeune = (overrides: Partial<Jeune> = {}): Jeune =>
+  ({
     id: 'jeune-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
-    ...overrides
-
-} as Jeune)
+    ...overrides,
+  } as Jeune)
