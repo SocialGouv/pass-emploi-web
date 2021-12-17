@@ -7,22 +7,33 @@ import { CreationEtape } from 'components/jeune/CreationEtape'
 import Router from 'next/router'
 import { ErrorMessage } from 'components/ErrorMessage'
 import useMatomo from 'utils/analytics/useMatomo'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
+import { UserStructure } from 'interfaces/conseiller'
+import {
+  MessageErreurDossierContext,
+  useMessageErreurDossierContext,
+} from 'context/hooks'
 
 type MiloCreationJeuneProps = {}
 
 function MiloCreationJeune({}: MiloCreationJeuneProps) {
-  const [numeroDossier, setNumeroDossier] = useState<string | undefined>('')
+  const errorMessage = useMessageErreurDossierContext()
+
+  console.log('errorMessage', errorMessage)
+
+  const [numeroDossier, setNumeroDossier] = useState<string>('')
   const [messageErreur, setMessageErreur] = useState<string>('')
 
   const validate = () => {
     if (numeroDossier === '') {
       //TODO: implémenter avec erreur PoleEmploi API
       setMessageErreur('Veuillez remplir le champ')
+      return false
     }
-    return messageErreur
+    return true
   }
 
-  function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
+  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const isValid = validate()
     if (isValid) {
@@ -30,10 +41,14 @@ function MiloCreationJeune({}: MiloCreationJeuneProps) {
     }
   }
 
+  const handleSearchInputChanges = (value: string) => {
+    setNumeroDossier(value)
+  }
+
   useMatomo('Création jeune SIMILO – Etape 1 - récuperation du dossier jeune')
 
   return (
-    <>
+    <MessageErreurDossierContext.Provider value={errorMessage || null}>
       <div className='flex items-center'>
         <Link href={'/mes-jeunes'} passHref>
           <a className='mr-6'>
@@ -67,23 +82,54 @@ function MiloCreationJeune({}: MiloCreationJeuneProps) {
             id='recherche-numero'
             name='recherche-numero'
             value={numeroDossier}
-            onChange={(e) => setNumeroDossier(e.target.value)}
+            onChange={(e) => handleSearchInputChanges(e.target.value)}
             className='mt-4 mb-4 p-3 w-8/12 border border-bleu_nuit rounded-medium'
           />
-          {messageErreur && <ErrorMessage>{messageErreur}</ErrorMessage>}
+
+          {messageErreur && <ErrorMessage>{errorMessage}</ErrorMessage>}
+
+          {/* {errorNotFound && (
+            <ErrorMessage>
+              Dossier non trouvé. Vérifiez le numéro de dossier et saisissez-le
+              de nouveau.
+            </ErrorMessage>
+          )} */}
+
           <Button type='submit'>Valider le numéro</Button>
         </form>
       </div>
-    </>
+    </MessageErreurDossierContext.Provider>
   )
 }
 
 export const getServerSideProps: GetServerSideProps<
   MiloCreationJeuneProps
-> = async ({}) => {
+> = async (context) => {
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+
+  if (!sessionOrRedirect.hasSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
+
+  if (sessionOrRedirect.session.user.structure !== UserStructure.MILO) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
   return {
     props: {},
   }
 }
 
 export default MiloCreationJeune
+
+// Error du Back
+
+// - 400 validation donnée entrée
+// - 403 dossier non justifié
+// - 404 NOT FOUND
+// - 500
