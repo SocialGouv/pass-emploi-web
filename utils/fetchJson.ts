@@ -9,7 +9,8 @@ export default async function fetchJson<T>(
       return response.json()
     }
 
-    throw new Error(response.statusText)
+    const message = (await response.json())?.message
+    throw new Error(message || response.statusText)
   } catch (error) {
     console.error('fetchJson', error)
     throw error
