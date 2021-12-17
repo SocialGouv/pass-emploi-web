@@ -1,14 +1,16 @@
 import { GetServerSideProps } from 'next'
 import React from 'react'
 import Link from 'next/link'
-import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { CreationEtape } from 'components/jeune/CreationEtape'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { UserStructure } from 'interfaces/conseiller'
 import { Container } from 'utils/injectionDependances'
+import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
+import { CreationEtape } from 'components/jeune/CreationEtape'
 import InputRechercheDossier from 'components/jeune/InputRechercheDossier'
+import DossierJeuneMilo from 'components/jeune/DossierMilo'
+
+import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 type MiloCreationJeuneProps = {
   dossierId: string
@@ -50,7 +52,7 @@ function MiloCreationJeune({
 
         {dossierId && (
           <>
-            {dossier && <p>{dossier?.nom}</p>}
+            {dossier && <DossierJeuneMilo dossier={dossier} />}
             {errMessage && (
               <InputRechercheDossier
                 dossierId={dossierId}
