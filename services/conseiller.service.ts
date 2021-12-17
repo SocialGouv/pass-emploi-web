@@ -1,7 +1,6 @@
 import { ApiClient } from 'clients/api.client'
 import { DossierMilo } from 'interfaces/jeune'
 
-//TODO: A voir si on met côté jeune.service?
 export class ConseillerService {
   constructor(private readonly apiClient: ApiClient) {}
 

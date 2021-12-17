@@ -1,55 +1,58 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import renderWithSession from '../renderWithSession'
-import Router from 'next/router'
-import MiloCreationJeune from 'pages/mes-jeunes/milo-creation-jeune'
-import userEvent from '@testing-library/user-event'
+import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 
 jest.mock('next/router')
 
 describe('MiloCreationJeune', () => {
-  describe('devrait rediriger', () => {
-    it('devrait rediriger vers la page des informations du dossier jeune lorsque le numéro dossier est valide', () => {
-      //GIVEN
-      renderWithSession(<MiloCreationJeune />)
+  describe("quand le dossier n'a pas encore été saisi", () => {
+    beforeEach(() => {
+      renderWithSession(
+        <MiloCreationJeune dossierId='' dossier={null} errMessage='' />
+      )
+    })
 
+    it('devrait afficher le champ de recherche de dossier', () => {
+      //THEN
+      expect(screen.getByText("Création d'un compte jeune")).toBeInTheDocument
+      expect(
+        screen.getByText(
+          'Saisissez le numéro de dossier du jeune pour lequel vous voulez créer un compte'
+        )
+      ).toBeInTheDocument
+      expect(screen.getByLabelText('Numéro de dossier')).toBeInTheDocument
+    })
+
+    it("quand on soumet la recherche avec une valeur vide, affiche un message d'erreur", () => {
+      //GIVEN
       const submitButton = screen.getByRole('button', {
         name: 'Valider le numéro',
       })
-
-      const routerSpy = jest.spyOn(Router, 'push')
+      const inputSearch = screen.getByLabelText('Numéro de dossier')
+      fireEvent.change(inputSearch, { target: { value: '' } })
 
       //WHEN
       fireEvent.click(submitButton)
 
       //THEN
-      expect(routerSpy).toHaveBeenCalledWith(
-        '/mes-jeunes/milo-creation-jeune/1'
-      )
+      expect(screen.getByText('Veuillez remplir le champ')).toBeInTheDocument
     })
   })
-  describe('devrait être invalide', () => {
-    it('quand le compte existe déjà', async () => {
+
+  describe('quand le dossier a été saisi', () => {
+    it("quand le dossier est invalide avec un message d'erreur", () => {
       //GIVEN
-      const submitButton = () =>
-        screen.getByRole('button', {
-          name: 'Valider le numéro',
-        })
-
-      const messageErreur = screen.getByText(
-        'Un compte existe déjà avec ce numéro'
+      const messageErreur = "un message d'erreur"
+      renderWithSession(
+        <MiloCreationJeune
+          dossierId='1'
+          dossier={null}
+          errMessage={messageErreur}
+        />
       )
-
-      //WHEN
-      userEvent.type(
-        screen.getByLabelText('Numéro dossier'),
-        '{selectAll}{backspace}1'
-      )
-      await act(async () => {
-        userEvent.click(submitButton())
-      })
 
       //THEN
-      expect(messageErreur).toBeInTheDocument()
+      expect(screen.getByText(messageErreur)).toBeInTheDocument
     })
   })
 })

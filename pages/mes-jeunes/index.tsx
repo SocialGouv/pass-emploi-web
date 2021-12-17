@@ -2,7 +2,6 @@ import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import { Jeune } from 'interfaces/jeune'
-import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
@@ -14,11 +13,10 @@ import AddIcon from '../../assets/icons/add_person.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 type MesJeunesProps = {
-  structureConseiller: string
   conseillerJeunes: Jeune[]
 }
 
-function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
+function MesJeunes({ conseillerJeunes }: MesJeunesProps) {
   const [showModal, setShowModal] = useState(false)
 
   const handleCloseModal = () => {
@@ -127,7 +125,6 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
 
   return {
     props: {
-      structureConseiller: user.structure,
       conseillerJeunes: jeunes || [],
     },
   }
