@@ -38,6 +38,7 @@ function InputRechercheDossier({
 
   const handleSearchInputChanges = (value: string) => {
     setNumeroDossier(value)
+    errMessage = ''
     setMessageErreur('')
   }
 
@@ -61,7 +62,11 @@ function InputRechercheDossier({
           name='recherche-numero'
           value={numeroDossier}
           onChange={(e) => handleSearchInputChanges(e.target.value)}
-          className='mt-4 mb-4 p-3 w-8/12 border border-bleu_nuit rounded-medium'
+          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
+            messageErreur
+              ? 'border-warning text-warning'
+              : 'border-bleu_nuit text-bleu_nuit'
+          }`}
         />
 
         {messageErreur && <ErrorMessage>{messageErreur}</ErrorMessage>}
