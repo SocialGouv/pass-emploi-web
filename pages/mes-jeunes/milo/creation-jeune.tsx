@@ -51,7 +51,11 @@ function MiloCreationJeune({
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
       <div className='mt-20 pl-32'>
-        {!dossierId ? <CreationEtape etape={1} /> : <CreationEtape etape={2} />}
+        {!dossierId ? (
+          <CreationEtape etape={'1'} />
+        ) : (
+          <CreationEtape etape={'2'} />
+        )}
         <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>
           Création d&apos;un compte jeune
         </h1>
