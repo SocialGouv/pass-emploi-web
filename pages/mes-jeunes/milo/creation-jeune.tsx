@@ -1,5 +1,5 @@
-import { GetServerSideProps } from 'next'
-import React from 'react'
+import next, { GetServerSideProps } from 'next'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -11,6 +11,7 @@ import InputRechercheDossier from 'components/jeune/InputRechercheDossier'
 import DossierJeuneMilo from 'components/jeune/DossierMilo'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
+import { AppHead } from 'components/AppHead'
 
 type MiloCreationJeuneProps = {
   dossierId: string
@@ -23,6 +24,8 @@ function MiloCreationJeune({
   dossier,
   errMessage,
 }: MiloCreationJeuneProps) {
+  //TODO: stepper à faire
+  const [etape, setEtape] = useState(1)
   useMatomo(
     errMessage
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
@@ -31,6 +34,10 @@ function MiloCreationJeune({
 
   return (
     <>
+      <AppHead
+        titre={`Mes jeunes - Création d'un compte jeune Étape ${etape}`}
+      />
+
       <div className='flex items-center'>
         <Link href={'/mes-jeunes'} passHref>
           <a className='mr-6'>
@@ -44,7 +51,7 @@ function MiloCreationJeune({
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
       <div className='mt-20 pl-32'>
-        <CreationEtape />
+        {!dossierId ? <CreationEtape etape={1} /> : <CreationEtape etape={2} />}
         <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>
           Création d&apos;un compte jeune
         </h1>

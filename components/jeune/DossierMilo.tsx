@@ -49,7 +49,12 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
             <dd className='text-sm-medium'> {dossier.codePostal}</dd>
           </div>
           <div className='flex items-center mb-3'>
-            <dt className='mr-1 text-sm' aria-label='E-mail'>
+            <dt
+              className={` ${
+                dossier.email ? 'text-sm' : 'text-sm-medium text-warning'
+              }`}
+              aria-label='E-mail'
+            >
               E-mail :
             </dt>
             {dossier.email ? (
@@ -59,7 +64,7 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
             )}
           </div>
           {!dossier.email && (
-            <div>
+            <>
               <p className='text-sm-medium text-warning mb-2'>
                 L&apos;email du jeune n&apos;est peut-être pas renseigné
               </p>
@@ -72,7 +77,7 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
                   numéro de dossier du jeune pour créer le compte Pass emploi
                 </li>
               </ol>
-            </div>
+            </>
           )}
         </dl>
       </div>
@@ -93,7 +98,11 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
           <Button>Créer le compte</Button>
         ) : (
           <Button type='button' onClick={() => Router.reload()}>
-            <RefreshIcon className='mr-2.5' role='img' focusable='false' />
+            <RefreshIcon
+              className='mr-2.5'
+              aria-hidden={true}
+              focusable={false}
+            />
             Rafraîchir le compte
           </Button>
         )}
