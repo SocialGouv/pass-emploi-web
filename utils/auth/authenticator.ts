@@ -51,6 +51,8 @@ export class Authenticator {
           : jwt.expiresAtTimestamp,
       }
     } catch (error) {
+      console.log('Error in refreshAccessToken ', error)
+      await fetch(`${process.env.NEXTAUTH_URL}/api/auth/federated-logout`)
       return {
         ...jwt,
         error: 'RefreshAccessTokenError',
