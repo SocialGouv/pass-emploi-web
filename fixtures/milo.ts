@@ -10,4 +10,5 @@ export const unDossierMilo = (
     email: 'kenji-faux-mail@mail.com',
     codePostal: '13000',
     dateDeNaissance: '1997-12-17',
+    ...overrides,
   } as DossierMilo)
