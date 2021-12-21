@@ -25,7 +25,6 @@ export async function withMandatorySessionOrRedirect(
     }
   }
   if (session.error === 'RefreshAccessTokenError') {
-    console.log('COUCOUUUUU TTOOOOO')
     return {
       redirect: {
         destination: `/api/auth/federated-logout`,
