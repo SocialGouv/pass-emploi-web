@@ -1,5 +1,5 @@
 import next, { GetServerSideProps } from 'next'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -9,6 +9,7 @@ import { DossierMilo } from 'interfaces/jeune'
 import { CreationEtape } from 'components/jeune/CreationEtape'
 import InputRechercheDossier from 'components/jeune/InputRechercheDossier'
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
@@ -24,13 +25,27 @@ function MiloCreationJeune({
   dossier,
   errMessage,
 }: MiloCreationJeuneProps) {
-  //TODO: stepper à faire
   const [etape, setEtape] = useState(1)
+  const [createdSucess, setCreatedSucess] = useState<boolean>(false)
   useMatomo(
     errMessage
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
       : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune'
   )
+
+  useEffect(() => {
+    if (!dossierId) {
+      setEtape(1)
+    }
+
+    if (dossierId && !errMessage) {
+      setEtape(2)
+    }
+
+    if (createdSucess) {
+      setEtape(3)
+    }
+  }, [dossierId, errMessage, createdSucess])
 
   return (
     <>
@@ -48,33 +63,61 @@ function MiloCreationJeune({
             />
           </a>
         </Link>
+
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
+
       <div className='mt-20 pl-32'>
-        {!dossierId ? (
-          <CreationEtape etape={'1'} />
-        ) : (
-          <CreationEtape etape={'2'} />
-        )}
+        <CreationEtape etape={etape} />
+
         <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>
           Création d&apos;un compte jeune
         </h1>
-        {!dossierId && <InputRechercheDossier />}
-
-        {dossierId && (
-          <>
-            {dossier && <DossierJeuneMilo dossier={dossier} />}
-            {errMessage && (
-              <InputRechercheDossier
-                dossierId={dossierId}
-                errMessage={errMessage}
-              />
-            )}
-          </>
-        )}
+        {switchSteps()}
       </div>
     </>
   )
+
+  function switchSteps() {
+    switch (etape) {
+      case 1:
+        return step1()
+      case 2:
+        return step2()
+      case 3:
+        return step3()
+      default:
+        break
+    }
+  }
+
+  function step1(): React.ReactNode {
+    return <InputRechercheDossier />
+  }
+
+  function step3(): React.ReactNode {
+    return <SuccessAddJeuneMilo />
+  }
+
+  function step2(): React.ReactNode {
+    return (
+      <>
+        {dossier && (
+          <DossierJeuneMilo
+            dossier={dossier}
+            onCreatedSuccess={() => setCreatedSucess(true)}
+          />
+        )}
+
+        {errMessage && (
+          <InputRechercheDossier
+            dossierId={dossierId}
+            errMessage={errMessage}
+          />
+        )}
+      </>
+    )
+  }
 }
 
 export const getServerSideProps: GetServerSideProps<

@@ -8,13 +8,16 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useDIContext } from 'utils/injectionDependances'
 import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
-import { SuccessAddJeuneMilo } from './SuccessAddJeuneMilo'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
+  onCreatedSuccess: () => void
 }
 
-const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
+const DossierJeuneMilo = ({
+  dossier,
+  onCreatedSuccess,
+}: DossierJeuneMiloProps) => {
   const [newJeune, setNewJeune] = useState(undefined)
   const { data: session } = useSession({ required: true })
 
@@ -33,7 +36,7 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
       newJeune,
       session!.accessToken
     )
-    Router.push('/mes-jeunes')
+    onCreatedSuccess()
   }
   useMatomo(
     dossier.email
@@ -81,11 +84,8 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
             >
               E-mail :
             </dt>
-            {dossier.email ? (
-              <dd className='text-sm-medium'> {dossier.email}</dd>
-            ) : (
-              <dd></dd>
-            )}
+
+            <dd className='text-sm-medium'> {dossier.email || ''}</dd>
           </div>
           {!dossier.email && (
             <>
@@ -132,7 +132,6 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
             Rafraîchir le compte
           </Button>
         )}
-        <SuccessAddJeuneMilo />
       </div>
     </>
   )
