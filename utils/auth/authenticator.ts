@@ -51,7 +51,6 @@ export class Authenticator {
           : jwt.expiresAtTimestamp,
       }
     } catch (error) {
-      console.log('Error in refreshAccessToken ', error)
       return {
         ...jwt,
         error: 'RefreshAccessTokenError',
