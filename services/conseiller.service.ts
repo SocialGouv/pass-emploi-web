@@ -15,7 +15,6 @@ export class ConseillerService {
   }
 
   createCompteJeuneMilo(
-    idDossier: string,
     newJeune: {
       idDossier: string
       nom: string
@@ -26,7 +25,7 @@ export class ConseillerService {
     accessToken: string
   ) {
     return this.apiClient.post(
-      `/conseillers/milo/jeunes/${idDossier}`,
+      `/conseillers/milo/jeunes`,
       newJeune,
       accessToken
     )

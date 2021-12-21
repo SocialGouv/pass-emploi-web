@@ -1,4 +1,5 @@
 import Button from 'components/Button'
+import { ErrorMessage } from 'components/ErrorMessage'
 import { DossierMilo } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -12,13 +13,16 @@ import RefreshIcon from '../../assets/icons/refresh.svg'
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
   onCreatedSuccess: () => void
+  onCreatedError: (erreurMessage: string) => void
+  erreurMessage: string
 }
 
 const DossierJeuneMilo = ({
   dossier,
   onCreatedSuccess,
+  onCreatedError,
+  erreurMessage,
 }: DossierJeuneMiloProps) => {
-  const [newJeune, setNewJeune] = useState(undefined)
   const { data: session } = useSession({ required: true })
 
   const { conseillerService } = useDIContext()
@@ -31,17 +35,24 @@ const DossierJeuneMilo = ({
       email: dossier.email ?? undefined,
       idConseiller: session!.user.id,
     }
-    await conseillerService.createCompteJeuneMilo(
-      dossier.id,
-      newJeune,
-      session!.accessToken
-    )
-    onCreatedSuccess()
+    conseillerService
+      .createCompteJeuneMilo(newJeune, session!.accessToken)
+      .then(() => {
+        onCreatedSuccess()
+      })
+      .catch((error: Error) => {
+        onCreatedError(error.message)
+      })
   }
   useMatomo(
     dossier.email
       ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
       : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
+  )
+
+  useMatomo(
+    erreurMessage &&
+      'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
   )
 
   return (
@@ -105,6 +116,11 @@ const DossierJeuneMilo = ({
           )}
         </dl>
       </div>
+
+      {erreurMessage && (
+        <ErrorMessage className='mt-8'>{erreurMessage}</ErrorMessage>
+      )}
+
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'} passHref>
           <a className='flex items-center text-sm-medium text-bleu_nuit mr-6'>
@@ -118,22 +134,22 @@ const DossierJeuneMilo = ({
           </a>
         </Link>
 
-        {dossier.email ? (
-          <Button type='button' onClick={addJeune}>
-            Créer le compte
-          </Button>
-        ) : (
-          <Button type='button' onClick={() => Router.reload()}>
-            <RefreshIcon
-              className='mr-2.5'
-              aria-hidden={true}
-              focusable={false}
-            />
-            Rafraîchir le compte
-          </Button>
-        )}
+        {!erreurMessage && actionButtons(dossier, addJeune)}
       </div>
     </>
+  )
+}
+
+function actionButtons(dossier: DossierMilo, addJeune: () => Promise<void>) {
+  return dossier.email ? (
+    <Button type='button' onClick={addJeune}>
+      Créer le compte
+    </Button>
+  ) : (
+    <Button type='button' onClick={() => Router.reload()}>
+      <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
+      Rafraîchir le compte
+    </Button>
   )
 }
 

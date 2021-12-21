@@ -1,10 +1,17 @@
 import Button from 'components/Button'
 import router from 'next/router'
+import useMatomo from 'utils/analytics/useMatomo'
 import CheckSuccessIcon from '../../assets/icons/check_success.svg'
 
-export const SuccessAddJeuneMilo = () => {
+interface SuccessAddJeuneMiloProps {
+  idJeune: string
+}
+
+export const SuccessAddJeuneMilo = ({ idJeune }: SuccessAddJeuneMiloProps) => {
+  useMatomo('Création jeune SIMILO – Etape 3 - Compte créé')
+
   return (
-    <div className='flex flex-col items-center p-6 p-12 border border-bleu_blanc rounded-large text-center'>
+    <div className='flex flex-col items-center mt-11 p-6 p-12 border border-bleu_blanc rounded-large text-center'>
       <CheckSuccessIcon
         role='img'
         focusable='false'

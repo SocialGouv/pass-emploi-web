@@ -13,6 +13,8 @@ import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
+import { useSession } from 'next-auth/react'
+import { ErrorMessage } from 'components/ErrorMessage'
 
 type MiloCreationJeuneProps = {
   dossierId: string
@@ -27,6 +29,8 @@ function MiloCreationJeune({
 }: MiloCreationJeuneProps) {
   const [etape, setEtape] = useState(1)
   const [createdSucess, setCreatedSucess] = useState<boolean>(false)
+  const [erreurMessage, setErreurMessage] = useState<string>(errMessage)
+
   useMatomo(
     errMessage
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
@@ -40,6 +44,7 @@ function MiloCreationJeune({
 
     if (dossierId && !errMessage) {
       setEtape(2)
+      setErreurMessage('')
     }
 
     if (createdSucess) {
@@ -106,6 +111,8 @@ function MiloCreationJeune({
           <DossierJeuneMilo
             dossier={dossier}
             onCreatedSuccess={() => setCreatedSucess(true)}
+            onCreatedError={(message) => setErreurMessage(message)}
+            erreurMessage={erreurMessage || ''}
           />
         )}
 
