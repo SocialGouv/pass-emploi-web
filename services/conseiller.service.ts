@@ -13,4 +13,22 @@ export class ConseillerService {
       accessToken
     )
   }
+
+  createCompteJeuneMilo(
+    idDossier: string,
+    newJeune: {
+      idDossier: string
+      nom: string
+      prenom: string
+      email: string | undefined
+      idConseiller: string
+    },
+    accessToken: string
+  ) {
+    return this.apiClient.post(
+      `/conseillers/milo/jeunes/${idDossier}`,
+      newJeune,
+      accessToken
+    )
+  }
 }

@@ -8,7 +8,7 @@ import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { CreationEtape } from 'components/jeune/CreationEtape'
 import InputRechercheDossier from 'components/jeune/InputRechercheDossier'
-import DossierJeuneMilo from 'components/jeune/DossierMilo'
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'

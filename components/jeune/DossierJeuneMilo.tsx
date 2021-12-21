@@ -1,16 +1,40 @@
 import Button from 'components/Button'
 import { DossierMilo } from 'interfaces/jeune'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
+import { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useDIContext } from 'utils/injectionDependances'
 import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
+import { SuccessAddJeuneMilo } from './SuccessAddJeuneMilo'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
 }
 
 const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
+  const [newJeune, setNewJeune] = useState(undefined)
+  const { data: session } = useSession({ required: true })
+
+  const { conseillerService } = useDIContext()
+
+  const addJeune = async () => {
+    const newJeune = {
+      idDossier: dossier.id,
+      nom: dossier.nom,
+      prenom: dossier.prenom,
+      email: dossier.email ?? undefined,
+      idConseiller: session!.user.id,
+    }
+    await conseillerService.createCompteJeuneMilo(
+      dossier.id,
+      newJeune,
+      session!.accessToken
+    )
+    Router.push('/mes-jeunes')
+  }
   useMatomo(
     dossier.email
       ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
@@ -95,7 +119,9 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
         </Link>
 
         {dossier.email ? (
-          <Button>Créer le compte</Button>
+          <Button type='button' onClick={addJeune}>
+            Créer le compte
+          </Button>
         ) : (
           <Button type='button' onClick={() => Router.reload()}>
             <RefreshIcon
@@ -106,6 +132,7 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
             Rafraîchir le compte
           </Button>
         )}
+        <SuccessAddJeuneMilo />
       </div>
     </>
   )
