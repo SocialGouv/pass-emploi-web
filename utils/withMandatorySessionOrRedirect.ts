@@ -24,5 +24,14 @@ export async function withMandatorySessionOrRedirect(
       hasSession: false,
     }
   }
+  if (session.error === 'RefreshAccessTokenError') {
+    return {
+      redirect: {
+        destination: `/api/auth/federated-logout`,
+        permanent: false,
+      },
+      hasSession: false,
+    }
+  }
   return { session, hasSession: true }
 }
