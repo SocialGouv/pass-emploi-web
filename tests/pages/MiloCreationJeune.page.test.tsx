@@ -111,7 +111,7 @@ describe('MiloCreationJeune', () => {
 
       expect(
         screen.getByText(
-          "Vous pouvez désormais le retrouver dans l'onglet mes jeunes"
+          'Vous pouvez désormais le retrouver dans l\'onglet "Mes jeunes"'
         )
       ).toBeInTheDocument()
 

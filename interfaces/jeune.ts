@@ -5,6 +5,7 @@ export type Jeune = {
   firstName: string
   lastName: string
   chatId?: string
+  isActivated?: boolean
 }
 
 export interface JeuneChat extends Jeune {
