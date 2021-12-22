@@ -1,11 +1,14 @@
 import { Jeune } from 'interfaces/jeune'
 import React from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 
 interface DetailsJeuneProps {
   jeune: Jeune
 }
 
 export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
+  useMatomo(jeune.isActivated ? undefined : 'Détail jeune - Non Activé')
+
   return (
     <>
       <div className='flex justify-between pb-6'>
@@ -15,7 +18,7 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
 
         {!jeune.isActivated && (
           <span className='bg-gris_blanc py-4 px-7 rounded-medium'>
-            <p className='text-sm-semi text-bleu_nuit'>
+            <p className='text-sm-medium text-bleu_nuit'>
               Profil en cours d&apos;activation
             </p>
           </span>
