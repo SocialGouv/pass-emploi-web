@@ -13,14 +13,14 @@ interface DossierJeuneMiloProps {
   dossier: DossierMilo
   onCreatedSuccess: (idJeune: string) => void
   onCreatedError: (erreurMessage: string) => void
-  erreurMessage: string
+  erreurMessageHttpPassEmploi: string
 }
 
 const DossierJeuneMilo = ({
   dossier,
   onCreatedSuccess,
   onCreatedError,
-  erreurMessage,
+  erreurMessageHttpPassEmploi,
 }: DossierJeuneMiloProps) => {
   const { data: session } = useSession({ required: true })
 
@@ -50,7 +50,7 @@ const DossierJeuneMilo = ({
   )
 
   useMatomo(
-    erreurMessage &&
+    erreurMessageHttpPassEmploi &&
       'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
   )
 
@@ -116,8 +116,10 @@ const DossierJeuneMilo = ({
         </dl>
       </div>
 
-      {erreurMessage && (
-        <ErrorMessage className='mt-8'>{erreurMessage}</ErrorMessage>
+      {erreurMessageHttpPassEmploi && (
+        <ErrorMessage className='mt-8'>
+          {erreurMessageHttpPassEmploi}
+        </ErrorMessage>
       )}
 
       <div className='flex items-center mt-14'>
@@ -133,7 +135,7 @@ const DossierJeuneMilo = ({
           </a>
         </Link>
 
-        {!erreurMessage && actionButtons(dossier, addJeune)}
+        {!erreurMessageHttpPassEmploi && actionButtons(dossier, addJeune)}
       </div>
     </>
   )

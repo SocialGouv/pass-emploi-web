@@ -19,7 +19,7 @@ describe('<DossierMilo', () => {
           dossier={dossier}
           onCreatedSuccess={jest.fn()}
           onCreatedError={jest.fn()}
-          erreurMessage=''
+          erreurMessageHttpPassEmploi=''
         />
       )
 
@@ -46,7 +46,7 @@ describe('<DossierMilo', () => {
           dossier={dossier}
           onCreatedSuccess={jest.fn()}
           onCreatedError={jest.fn()}
-          erreurMessage=''
+          erreurMessageHttpPassEmploi=''
         />
       )
 
@@ -64,7 +64,7 @@ describe('<DossierMilo', () => {
           dossier={dossier}
           onCreatedSuccess={jest.fn()}
           onCreatedError={jest.fn()}
-          erreurMessage=''
+          erreurMessageHttpPassEmploi=''
         />
       )
 

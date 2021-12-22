@@ -17,7 +17,11 @@ describe('MiloCreationJeune', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
     beforeEach(() => {
       renderWithSession(
-        <MiloCreationJeune dossierId='' dossier={null} errMessage='' />
+        <MiloCreationJeune
+          dossierId=''
+          dossier={null}
+          erreurMessageHttpMilo=''
+        />
       )
     })
 
@@ -56,7 +60,7 @@ describe('MiloCreationJeune', () => {
         <MiloCreationJeune
           dossierId='1'
           dossier={null}
-          errMessage={messageErreur}
+          erreurMessageHttpMilo={messageErreur}
         />
       )
 
@@ -67,20 +71,22 @@ describe('MiloCreationJeune', () => {
   describe('quand on clique sur le bouton créer un compte', () => {
     let page: RenderResult
     let conseillerService: ConseillerService
-
-    beforeEach(() => {
+    it("devrait afficher les informations de succès de création d'un compte", async () => {
+      //GIVEN
       conseillerService = {
         getDossierJeune: jest.fn(),
         createCompteJeuneMilo: jest.fn((_) => Promise.resolve({ id: 'un-id' })),
       }
-    })
-    it("devrait afficher les informations de succès de création d'un compte", async () => {
-      //GIVEN
+
       const dossier = unDossierMilo()
 
       page = renderWithSession(
         <DIProvider conseillerService={conseillerService}>
-          <MiloCreationJeune dossierId='1' dossier={dossier} errMessage={''} />
+          <MiloCreationJeune
+            dossierId='1'
+            dossier={dossier}
+            erreurMessageHttpMilo={''}
+          />
         </DIProvider>
       )
 
@@ -95,7 +101,61 @@ describe('MiloCreationJeune', () => {
       await waitFor(() => {
         expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
       })
-      expect(screen.getByText('Le compte jeune a été créé avec succès.'))
+
+      expect(
+        screen.getByRole('heading', {
+          level: 2,
+          name: 'Le compte jeune a été créé avec succès.',
+        })
+      ).toBeInTheDocument()
+
+      expect(
+        screen.getByText(
+          "Vous pouvez désormais le retrouver dans l'onglet mes jeunes"
+        )
+      ).toBeInTheDocument()
+
+      expect(
+        screen.getByRole('link', {
+          name: 'Accéder à la fiche du jeune',
+        })
+      ).toBeInTheDocument()
+    })
+
+    it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
+      //GIVEN
+      conseillerService = {
+        getDossierJeune: jest.fn(),
+        createCompteJeuneMilo: jest.fn((_) =>
+          Promise.reject({ message: "un message d'erreur" })
+        ),
+      }
+
+      const dossier = unDossierMilo({ email: 'incorrectemail' })
+
+      page = renderWithSession(
+        <DIProvider conseillerService={conseillerService}>
+          <MiloCreationJeune
+            dossierId='1'
+            dossier={dossier}
+            erreurMessageHttpMilo={''}
+          />
+        </DIProvider>
+      )
+
+      //WHEN
+      const createCompteButton = screen.getByRole('button', {
+        name: 'Créer le compte',
+      })
+
+      fireEvent.click(createCompteButton)
+
+      //THEN
+      await waitFor(() => {
+        expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
+      })
+
+      expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
   })
 })
