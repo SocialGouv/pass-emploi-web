@@ -1,7 +1,24 @@
 import { ApiClient } from 'clients/api.client'
 import { DossierMilo } from 'interfaces/jeune'
 
-export class ConseillerService {
+export interface ConseillerService {
+  getDossierJeune(
+    idDossier: string,
+    accessToken: string
+  ): Promise<DossierMilo | undefined>
+
+  createCompteJeuneMilo(
+    newJeune: {
+      idDossier: string
+      nom: string
+      prenom: string
+      email: string | undefined
+      idConseiller: string
+    },
+    accessToken: string
+  ): Promise<{ id: string }>
+}
+export class ConseillerApiService implements ConseillerService {
   constructor(private readonly apiClient: ApiClient) {}
 
   getDossierJeune(

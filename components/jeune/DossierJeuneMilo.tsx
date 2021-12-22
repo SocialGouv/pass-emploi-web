@@ -95,7 +95,7 @@ const DossierJeuneMilo = ({
               E-mail :
             </dt>
 
-            <dd className='text-sm-medium'> {dossier.email || ''}</dd>
+            <dd className='text-sm-medium'>{dossier.email || ''}</dd>
           </div>
           {!dossier.email && (
             <>

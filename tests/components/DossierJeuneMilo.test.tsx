@@ -1,9 +1,10 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import { DossierMilo } from 'interfaces/jeune'
 import { unDossierMilo } from 'fixtures/milo'
-import DossierJeuneMilo from 'components/jeune/DossierMilo'
 import getByDefinitionTerm from '../querySelector'
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import renderWithSession from '../renderWithSession'
 
 describe('<DossierMilo', () => {
   let dossier: DossierMilo
@@ -13,7 +14,14 @@ describe('<DossierMilo', () => {
       dossier = unDossierMilo()
 
       //WHEN
-      render(<DossierJeuneMilo dossier={dossier} />)
+      renderWithSession(
+        <DossierJeuneMilo
+          dossier={dossier}
+          onCreatedSuccess={jest.fn()}
+          onCreatedError={jest.fn()}
+          erreurMessage=''
+        />
+      )
 
       //THEN
       expect(getByDefinitionTerm('Prénom')).toHaveTextContent('Kenji')
@@ -30,10 +38,17 @@ describe('<DossierMilo', () => {
   describe("quand l'e-mail du jeune n'est pas renseigné", () => {
     it('le champ e-mail doit être vide', () => {
       //GIVEN
-      dossier = unDossierMilo({ email: '' })
+      dossier = unDossierMilo({ email: undefined })
 
       //WHEN
-      render(<DossierJeuneMilo dossier={dossier} />)
+      renderWithSession(
+        <DossierJeuneMilo
+          dossier={dossier}
+          onCreatedSuccess={jest.fn()}
+          onCreatedError={jest.fn()}
+          erreurMessage=''
+        />
+      )
 
       //THEN
       expect(getByDefinitionTerm('E-mail')).toBeEmptyDOMElement()
@@ -44,7 +59,14 @@ describe('<DossierMilo', () => {
       dossier = unDossierMilo({ email: '' })
 
       //WHEN
-      render(<DossierJeuneMilo dossier={dossier} />)
+      renderWithSession(
+        <DossierJeuneMilo
+          dossier={dossier}
+          onCreatedSuccess={jest.fn()}
+          onCreatedError={jest.fn()}
+          erreurMessage=''
+        />
+      )
 
       //THEN
       expect(
