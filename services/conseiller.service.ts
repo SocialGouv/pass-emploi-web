@@ -23,7 +23,7 @@ export class ConseillerService {
       idConseiller: string
     },
     accessToken: string
-  ) {
+  ): Promise<{ id: string }> {
     return this.apiClient.post(
       `/conseillers/milo/jeunes`,
       newJeune,

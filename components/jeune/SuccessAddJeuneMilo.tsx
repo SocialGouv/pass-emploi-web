@@ -1,7 +1,7 @@
-import Button from 'components/Button'
-import router from 'next/router'
+import Link from 'next/link'
 import useMatomo from 'utils/analytics/useMatomo'
 import CheckSuccessIcon from '../../assets/icons/check_success.svg'
+import linkStyle from 'styles/components/Link.module.css'
 
 interface SuccessAddJeuneMiloProps {
   idJeune: string
@@ -25,9 +25,9 @@ export const SuccessAddJeuneMilo = ({ idJeune }: SuccessAddJeuneMiloProps) => {
           Vous pouvez désormais le retrouver dans l&apos;onglet mes jeunes
         </h3>
       </div>
-      <Button type='button' onClick={() => router.push('/')}>
-        Accéder à la fiche du jeune
-      </Button>
+      <Link href={`/mes-jeunes/${idJeune}`} passHref>
+        <a className={linkStyle.linkButtonBlue}>Accéder à la fiche du jeune</a>
+      </Link>
     </div>
   )
 }

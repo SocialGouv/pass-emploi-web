@@ -4,7 +4,6 @@ import { DossierMilo } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
-import { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDIContext } from 'utils/injectionDependances'
 import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
@@ -12,7 +11,7 @@ import RefreshIcon from '../../assets/icons/refresh.svg'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
-  onCreatedSuccess: () => void
+  onCreatedSuccess: (idJeune: string) => void
   onCreatedError: (erreurMessage: string) => void
   erreurMessage: string
 }
@@ -37,8 +36,8 @@ const DossierJeuneMilo = ({
     }
     conseillerService
       .createCompteJeuneMilo(newJeune, session!.accessToken)
-      .then(() => {
-        onCreatedSuccess()
+      .then(({ id }) => {
+        onCreatedSuccess(id)
       })
       .catch((error: Error) => {
         onCreatedError(error.message)

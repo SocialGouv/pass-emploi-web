@@ -1,4 +1,4 @@
-import next, { GetServerSideProps } from 'next'
+import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -13,8 +13,6 @@ import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
-import { useSession } from 'next-auth/react'
-import { ErrorMessage } from 'components/ErrorMessage'
 
 type MiloCreationJeuneProps = {
   dossierId: string
@@ -28,7 +26,7 @@ function MiloCreationJeune({
   errMessage,
 }: MiloCreationJeuneProps) {
   const [etape, setEtape] = useState(1)
-  const [createdSucess, setCreatedSucess] = useState<boolean>(false)
+  const [createdSucessId, setCreatedSucessId] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string>(errMessage)
 
   useMatomo(
@@ -47,10 +45,10 @@ function MiloCreationJeune({
       setErreurMessage('')
     }
 
-    if (createdSucess) {
+    if (createdSucessId) {
       setEtape(3)
     }
-  }, [dossierId, errMessage, createdSucess])
+  }, [dossierId, errMessage, createdSucessId])
 
   return (
     <>
@@ -101,7 +99,7 @@ function MiloCreationJeune({
   }
 
   function step3(): React.ReactNode {
-    return <SuccessAddJeuneMilo />
+    return <SuccessAddJeuneMilo idJeune={createdSucessId} />
   }
 
   function step2(): React.ReactNode {
@@ -110,7 +108,7 @@ function MiloCreationJeune({
         {dossier && (
           <DossierJeuneMilo
             dossier={dossier}
-            onCreatedSuccess={() => setCreatedSucess(true)}
+            onCreatedSuccess={(id) => setCreatedSucessId(id)}
             onCreatedError={(message) => setErreurMessage(message)}
             erreurMessage={erreurMessage || ''}
           />
