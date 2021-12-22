@@ -13,14 +13,14 @@ interface DossierJeuneMiloProps {
   dossier: DossierMilo
   onCreatedSuccess: (idJeune: string) => void
   onCreatedError: (erreurMessage: string) => void
-  erreurMessage: string
+  erreurMessageHttpPassEmploi: string
 }
 
 const DossierJeuneMilo = ({
   dossier,
   onCreatedSuccess,
   onCreatedError,
-  erreurMessage,
+  erreurMessageHttpPassEmploi,
 }: DossierJeuneMiloProps) => {
   const { data: session } = useSession({ required: true })
 
@@ -50,7 +50,7 @@ const DossierJeuneMilo = ({
   )
 
   useMatomo(
-    erreurMessage &&
+    erreurMessageHttpPassEmploi &&
       'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
   )
 
@@ -88,7 +88,7 @@ const DossierJeuneMilo = ({
           <div className='flex items-center mb-3'>
             <dt
               className={` ${
-                dossier.email ? 'text-sm' : 'text-sm-medium text-warning'
+                dossier.email ? 'text-sm mr-1' : 'text-sm-medium text-warning'
               }`}
               aria-label='E-mail'
             >
@@ -100,11 +100,11 @@ const DossierJeuneMilo = ({
           {!dossier.email && (
             <>
               <p className='text-sm-medium text-warning mb-2'>
-                L&apos;email du jeune n&apos;est peut-être pas renseigné
+                L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
               </p>
               <ol className='text-sm text-warning'>
                 <li className='mb-3.5'>
-                  1. Renseignez l&apos;email du jeune sur son profil i-Milo
+                  1. Renseignez l&apos;e-mail du jeune sur son profil i-Milo
                 </li>
                 <li className='mb-3.5'>
                   2. Rafraîchissez ensuite cette page ou saisissez à nouveau le
@@ -116,8 +116,10 @@ const DossierJeuneMilo = ({
         </dl>
       </div>
 
-      {erreurMessage && (
-        <ErrorMessage className='mt-8'>{erreurMessage}</ErrorMessage>
+      {erreurMessageHttpPassEmploi && (
+        <ErrorMessage className='mt-8'>
+          {erreurMessageHttpPassEmploi}
+        </ErrorMessage>
       )}
 
       <div className='flex items-center mt-14'>
@@ -133,7 +135,7 @@ const DossierJeuneMilo = ({
           </a>
         </Link>
 
-        {!erreurMessage && actionButtons(dossier, addJeune)}
+        {!erreurMessageHttpPassEmploi && actionButtons(dossier, addJeune)}
       </div>
     </>
   )

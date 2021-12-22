@@ -7,7 +7,7 @@ import { Container } from 'utils/injectionDependances'
 import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { CreationEtape } from 'components/jeune/CreationEtape'
-import InputRechercheDossier from 'components/jeune/InputRechercheDossier'
+import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 
@@ -17,20 +17,22 @@ import { AppHead } from 'components/AppHead'
 type MiloCreationJeuneProps = {
   dossierId: string
   dossier: DossierMilo | null
-  errMessage: string
+  erreurMessageHttpMilo: string
 }
 
 function MiloCreationJeune({
   dossierId,
   dossier,
-  errMessage,
+  erreurMessageHttpMilo,
 }: MiloCreationJeuneProps) {
   const [etape, setEtape] = useState(1)
   const [createdSucessId, setCreatedSucessId] = useState<string>('')
-  const [erreurMessage, setErreurMessage] = useState<string>(errMessage)
+  const [erreurMessage, setErreurMessage] = useState<string>(
+    erreurMessageHttpMilo
+  )
 
   useMatomo(
-    errMessage
+    erreurMessageHttpMilo
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
       : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune'
   )
@@ -40,7 +42,7 @@ function MiloCreationJeune({
       setEtape(1)
     }
 
-    if (dossierId && !errMessage) {
+    if (dossierId && !erreurMessageHttpMilo) {
       setEtape(2)
       setErreurMessage('')
     }
@@ -48,7 +50,7 @@ function MiloCreationJeune({
     if (createdSucessId) {
       setEtape(3)
     }
-  }, [dossierId, errMessage, createdSucessId])
+  }, [dossierId, erreurMessageHttpMilo, createdSucessId])
 
   return (
     <>
@@ -84,25 +86,30 @@ function MiloCreationJeune({
   function switchSteps() {
     switch (etape) {
       case 1:
-        return step1()
+        return etape1()
       case 2:
-        return step2()
+        return etape2()
       case 3:
-        return step3()
+        return etape3()
       default:
         break
     }
   }
 
-  function step1(): React.ReactNode {
-    return <InputRechercheDossier />
+  function etape1(): React.ReactNode {
+    return (
+      <FormulaireRechercheDossier
+        dossierId={dossierId}
+        errMessage={erreurMessageHttpMilo}
+      />
+    )
   }
 
-  function step3(): React.ReactNode {
+  function etape3(): React.ReactNode {
     return <SuccessAddJeuneMilo idJeune={createdSucessId} />
   }
 
-  function step2(): React.ReactNode {
+  function etape2(): React.ReactNode {
     return (
       <>
         {dossier && (
@@ -110,14 +117,14 @@ function MiloCreationJeune({
             dossier={dossier}
             onCreatedSuccess={(id) => setCreatedSucessId(id)}
             onCreatedError={(message) => setErreurMessage(message)}
-            erreurMessage={erreurMessage || ''}
+            erreurMessageHttpPassEmploi={erreurMessage || ''}
           />
         )}
 
-        {errMessage && (
-          <InputRechercheDossier
+        {erreurMessageHttpMilo && (
+          <FormulaireRechercheDossier
             dossierId={dossierId}
-            errMessage={errMessage}
+            errMessage={erreurMessageHttpMilo}
           />
         )}
       </>
@@ -144,7 +151,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   let dossier: DossierMilo | null = null
-  let errMessage: string = ''
+  let erreurMessageHttpMilo: string = ''
 
   const dossierId = context.query.dossierId as string
 
@@ -157,7 +164,7 @@ export const getServerSideProps: GetServerSideProps<
           sessionOrRedirect.session.accessToken
         )) || null
     } catch (err) {
-      errMessage =
+      erreurMessageHttpMilo =
         (err as Error).message || "Une erreur inconnue s'est produite"
       console.log('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
     }
@@ -167,7 +174,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       dossierId: dossierId || '',
       dossier,
-      errMessage,
+      erreurMessageHttpMilo,
     },
   }
 }

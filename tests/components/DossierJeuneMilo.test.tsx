@@ -19,7 +19,7 @@ describe('<DossierMilo', () => {
           dossier={dossier}
           onCreatedSuccess={jest.fn()}
           onCreatedError={jest.fn()}
-          erreurMessage=''
+          erreurMessageHttpPassEmploi=''
         />
       )
 
@@ -46,7 +46,7 @@ describe('<DossierMilo', () => {
           dossier={dossier}
           onCreatedSuccess={jest.fn()}
           onCreatedError={jest.fn()}
-          erreurMessage=''
+          erreurMessageHttpPassEmploi=''
         />
       )
 
@@ -64,16 +64,18 @@ describe('<DossierMilo', () => {
           dossier={dossier}
           onCreatedSuccess={jest.fn()}
           onCreatedError={jest.fn()}
-          erreurMessage=''
+          erreurMessageHttpPassEmploi=''
         />
       )
 
       //THEN
       expect(
-        screen.getByText("L'email du jeune n'est peut-être pas renseigné")
+        screen.getByText("L'e-mail du jeune n'est peut-être pas renseigné")
       ).toBeInTheDocument()
       expect(
-        screen.getByText("1. Renseignez l'email du jeune sur son profil i-Milo")
+        screen.getByText(
+          "1. Renseignez l'e-mail du jeune sur son profil i-Milo"
+        )
       ).toBeInTheDocument()
       expect(
         screen.getByText(
