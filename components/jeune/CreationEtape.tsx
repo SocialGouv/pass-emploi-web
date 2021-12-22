@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface CreationEtapeProps {
-  etape: string
+  etape: number
 }
 
 export const CreationEtape = ({ etape }: CreationEtapeProps) => (

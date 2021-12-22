@@ -3,15 +3,15 @@ import { ErrorMessage } from 'components/ErrorMessage'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
 
-type InputRechercheDossierProps = {
+type FormulaireRechercheDossierProps = {
   dossierId?: string
   errMessage?: string
 }
 
-function InputRechercheDossier({
+function FormulaireRechercheDossier({
   dossierId,
   errMessage,
-}: InputRechercheDossierProps) {
+}: FormulaireRechercheDossierProps) {
   const router = useRouter()
   const [numeroDossier, setNumeroDossier] = useState<string>(dossierId || '')
   const [messageErreur, setMessageErreur] = useState<string>(errMessage || '')
@@ -77,4 +77,4 @@ function InputRechercheDossier({
   )
 }
 
-export default InputRechercheDossier
+export default FormulaireRechercheDossier

@@ -1,5 +1,5 @@
-import next, { GetServerSideProps } from 'next'
-import React, { useState } from 'react'
+import { GetServerSideProps } from 'next'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -7,8 +7,9 @@ import { Container } from 'utils/injectionDependances'
 import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { CreationEtape } from 'components/jeune/CreationEtape'
-import InputRechercheDossier from 'components/jeune/InputRechercheDossier'
-import DossierJeuneMilo from 'components/jeune/DossierMilo'
+import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
@@ -16,21 +17,40 @@ import { AppHead } from 'components/AppHead'
 type MiloCreationJeuneProps = {
   dossierId: string
   dossier: DossierMilo | null
-  errMessage: string
+  erreurMessageHttpMilo: string
 }
 
 function MiloCreationJeune({
   dossierId,
   dossier,
-  errMessage,
+  erreurMessageHttpMilo,
 }: MiloCreationJeuneProps) {
-  //TODO: stepper à faire
   const [etape, setEtape] = useState(1)
+  const [createdSucessId, setCreatedSucessId] = useState<string>('')
+  const [erreurMessage, setErreurMessage] = useState<string>(
+    erreurMessageHttpMilo
+  )
+
   useMatomo(
-    errMessage
+    erreurMessageHttpMilo
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
       : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune'
   )
+
+  useEffect(() => {
+    if (!dossierId) {
+      setEtape(1)
+    }
+
+    if (dossierId && !erreurMessageHttpMilo) {
+      setEtape(2)
+      setErreurMessage('')
+    }
+
+    if (createdSucessId) {
+      setEtape(3)
+    }
+  }, [dossierId, erreurMessageHttpMilo, createdSucessId])
 
   return (
     <>
@@ -48,33 +68,68 @@ function MiloCreationJeune({
             />
           </a>
         </Link>
+
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
+
       <div className='mt-20 pl-32'>
-        {!dossierId ? (
-          <CreationEtape etape={'1'} />
-        ) : (
-          <CreationEtape etape={'2'} />
-        )}
+        <CreationEtape etape={etape} />
+
         <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>
           Création d&apos;un compte jeune
         </h1>
-        {!dossierId && <InputRechercheDossier />}
-
-        {dossierId && (
-          <>
-            {dossier && <DossierJeuneMilo dossier={dossier} />}
-            {errMessage && (
-              <InputRechercheDossier
-                dossierId={dossierId}
-                errMessage={errMessage}
-              />
-            )}
-          </>
-        )}
+        {switchSteps()}
       </div>
     </>
   )
+
+  function switchSteps() {
+    switch (etape) {
+      case 1:
+        return etape1()
+      case 2:
+        return etape2()
+      case 3:
+        return etape3()
+      default:
+        break
+    }
+  }
+
+  function etape1(): React.ReactNode {
+    return (
+      <FormulaireRechercheDossier
+        dossierId={dossierId}
+        errMessage={erreurMessageHttpMilo}
+      />
+    )
+  }
+
+  function etape3(): React.ReactNode {
+    return <SuccessAddJeuneMilo idJeune={createdSucessId} />
+  }
+
+  function etape2(): React.ReactNode {
+    return (
+      <>
+        {dossier && (
+          <DossierJeuneMilo
+            dossier={dossier}
+            onCreatedSuccess={(id) => setCreatedSucessId(id)}
+            onCreatedError={(message) => setErreurMessage(message)}
+            erreurMessageHttpPassEmploi={erreurMessage || ''}
+          />
+        )}
+
+        {erreurMessageHttpMilo && (
+          <FormulaireRechercheDossier
+            dossierId={dossierId}
+            errMessage={erreurMessageHttpMilo}
+          />
+        )}
+      </>
+    )
+  }
 }
 
 export const getServerSideProps: GetServerSideProps<
@@ -96,7 +151,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   let dossier: DossierMilo | null = null
-  let errMessage: string = ''
+  let erreurMessageHttpMilo: string = ''
 
   const dossierId = context.query.dossierId as string
 
@@ -109,7 +164,7 @@ export const getServerSideProps: GetServerSideProps<
           sessionOrRedirect.session.accessToken
         )) || null
     } catch (err) {
-      errMessage =
+      erreurMessageHttpMilo =
         (err as Error).message || "Une erreur inconnue s'est produite"
       console.log('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
     }
@@ -119,7 +174,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       dossierId: dossierId || '',
       dossier,
-      errMessage,
+      erreurMessageHttpMilo,
     },
   }
 }

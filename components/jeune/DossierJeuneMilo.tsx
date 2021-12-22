@@ -1,20 +1,57 @@
 import Button from 'components/Button'
+import { ErrorMessage } from 'components/ErrorMessage'
 import { DossierMilo } from 'interfaces/jeune'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useDIContext } from 'utils/injectionDependances'
 import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
+  onCreatedSuccess: (idJeune: string) => void
+  onCreatedError: (erreurMessage: string) => void
+  erreurMessageHttpPassEmploi: string
 }
 
-const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
+const DossierJeuneMilo = ({
+  dossier,
+  onCreatedSuccess,
+  onCreatedError,
+  erreurMessageHttpPassEmploi,
+}: DossierJeuneMiloProps) => {
+  const { data: session } = useSession({ required: true })
+
+  const { conseillerService } = useDIContext()
+
+  const addJeune = async () => {
+    const newJeune = {
+      idDossier: dossier.id,
+      nom: dossier.nom,
+      prenom: dossier.prenom,
+      email: dossier.email ?? undefined,
+      idConseiller: session!.user.id,
+    }
+    conseillerService
+      .createCompteJeuneMilo(newJeune, session!.accessToken)
+      .then(({ id }) => {
+        onCreatedSuccess(id)
+      })
+      .catch((error: Error) => {
+        onCreatedError(error.message)
+      })
+  }
   useMatomo(
     dossier.email
       ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
       : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
+  )
+
+  useMatomo(
+    erreurMessageHttpPassEmploi &&
+      'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
   )
 
   return (
@@ -51,26 +88,23 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
           <div className='flex items-center mb-3'>
             <dt
               className={` ${
-                dossier.email ? 'text-sm' : 'text-sm-medium text-warning'
+                dossier.email ? 'text-sm mr-1' : 'text-sm-medium text-warning'
               }`}
               aria-label='E-mail'
             >
               E-mail :
             </dt>
-            {dossier.email ? (
-              <dd className='text-sm-medium'> {dossier.email}</dd>
-            ) : (
-              <dd></dd>
-            )}
+
+            <dd className='text-sm-medium'>{dossier.email || ''}</dd>
           </div>
           {!dossier.email && (
             <>
               <p className='text-sm-medium text-warning mb-2'>
-                L&apos;email du jeune n&apos;est peut-être pas renseigné
+                L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
               </p>
               <ol className='text-sm text-warning'>
                 <li className='mb-3.5'>
-                  1. Renseignez l&apos;email du jeune sur son profil i-Milo
+                  1. Renseignez l&apos;e-mail du jeune sur son profil i-Milo
                 </li>
                 <li className='mb-3.5'>
                   2. Rafraîchissez ensuite cette page ou saisissez à nouveau le
@@ -81,6 +115,13 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
           )}
         </dl>
       </div>
+
+      {erreurMessageHttpPassEmploi && (
+        <ErrorMessage className='mt-8'>
+          {erreurMessageHttpPassEmploi}
+        </ErrorMessage>
+      )}
+
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'} passHref>
           <a className='flex items-center text-sm-medium text-bleu_nuit mr-6'>
@@ -94,20 +135,22 @@ const DossierJeuneMilo = ({ dossier }: DossierJeuneMiloProps) => {
           </a>
         </Link>
 
-        {dossier.email ? (
-          <Button>Créer le compte</Button>
-        ) : (
-          <Button type='button' onClick={() => Router.reload()}>
-            <RefreshIcon
-              className='mr-2.5'
-              aria-hidden={true}
-              focusable={false}
-            />
-            Rafraîchir le compte
-          </Button>
-        )}
+        {!erreurMessageHttpPassEmploi && actionButtons(dossier, addJeune)}
       </div>
     </>
+  )
+}
+
+function actionButtons(dossier: DossierMilo, addJeune: () => Promise<void>) {
+  return dossier.email ? (
+    <Button type='button' onClick={addJeune}>
+      Créer le compte
+    </Button>
+  ) : (
+    <Button type='button' onClick={() => Router.reload()}>
+      <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
+      Rafraîchir le compte
+    </Button>
   )
 }
 
