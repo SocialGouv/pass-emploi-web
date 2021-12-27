@@ -7,14 +7,13 @@ function Logout() {
   const router = useRouter()
 
   useEffect(() => {
-    try {
-      signOut({ redirect: false }).then(async () => {
-        await signOutChat()
-        router.push('/login')
-      })
-    } catch (error) {
-      console.error(error)
+    async function logout() {
+      await signOutChat()
+      await signOut({ redirect: false, callbackUrl: '/login' })
+      router.push('/login')
     }
+
+    logout()
   }, [router])
 
   return <div>LOGOUT</div>
