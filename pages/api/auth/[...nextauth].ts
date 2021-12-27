@@ -22,11 +22,16 @@ export default NextAuth({
     },
 
     async session({ session, token }) {
+      if (!session.firebaseToken) {
+        session.firebaseToken = await authenticator.handleFirebaseToken(
+          token.accessToken as string
+        )
+      }
+
       session.user.id = token.idConseiller ?? ''
       session.user.structure = token.structureConseiller ?? ''
       session.accessToken = token.accessToken ?? ''
       session.error = (token.error as string) ?? ''
-
       return session
     },
   },

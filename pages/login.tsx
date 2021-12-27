@@ -4,7 +4,6 @@ import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
-import { signInChat } from '../utils/firebase'
 
 const Login = () => {
   const [errorMsg, setErrorMsg] = useState('')
@@ -14,13 +13,11 @@ const Login = () => {
     async (provider?: string) => {
       try {
         const redirectUrl = (router.query.redirectUrl as string) ?? '/'
-        await signIn(
+        signIn(
           'keycloak',
-          { redirect: false },
+          { callbackUrl: redirectUrl },
           { kc_idp_hint: provider ?? '' }
         )
-        await signInChat('token')
-        router.push(redirectUrl)
       } catch (error) {
         console.error(error)
         setErrorMsg("une erreur est survenue lors de l'authentification")

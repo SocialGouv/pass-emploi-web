@@ -23,4 +23,6 @@ const db = getFirestore(firebaseApp)
 const signInChat = (token: string) => signInWithCustomToken(auth, token)
 const signOutChat = () => signOut(auth)
 
-export { db, signInChat, signOutChat }
+const firebaseIsSignedIn = () => Boolean(auth.currentUser)
+
+export { db, signInChat, signOutChat, firebaseIsSignedIn }

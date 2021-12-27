@@ -1,10 +1,13 @@
+import { ApiClient } from 'clients/api.client'
 import fetchJson from 'utils/fetchJson'
 
 export class AuthService {
   private readonly issuerPrefix?: string
+  private readonly apiClient: ApiClient
 
   constructor() {
     this.issuerPrefix = process.env.KEYCLOAK_ISSUER
+    this.apiClient = new ApiClient()
   }
 
   fetchRefreshedTokens(refreshToken?: string): Promise<{
@@ -27,5 +30,14 @@ export class AuthService {
       method: 'POST',
       body,
     })
+  }
+
+  //TODO: remplacer le POST par un GET ?
+  async getFirebaseToken(accessToken: string): Promise<{ token: string }> {
+    return this.apiClient.post<{ token: string }>(
+      '/auth/firebase/token',
+      {},
+      accessToken
+    )
   }
 }
