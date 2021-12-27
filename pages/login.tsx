@@ -10,7 +10,7 @@ const Login = () => {
   const router = useRouter()
 
   const signin = useCallback(
-    async (provider?: string) => {
+    (provider?: string) => {
       try {
         const redirectUrl = (router.query.redirectUrl as string) ?? '/'
         signIn(
