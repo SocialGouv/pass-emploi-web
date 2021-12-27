@@ -3,7 +3,7 @@ import fetchJson from 'utils/fetchJson'
 
 export class AuthService {
   private readonly issuerPrefix?: string
-  private readonly apiClient: ApiClient
+  private readonly apiClient?: ApiClient
 
   constructor() {
     this.issuerPrefix = process.env.KEYCLOAK_ISSUER
@@ -34,7 +34,7 @@ export class AuthService {
 
   //TODO: remplacer le POST par un GET ?
   async getFirebaseToken(accessToken: string): Promise<{ token: string }> {
-    return this.apiClient.post<{ token: string }>(
+    return this.apiClient!.post<{ token: string }>(
       '/auth/firebase/token',
       {},
       accessToken

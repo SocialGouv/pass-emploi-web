@@ -22,7 +22,7 @@ export default NextAuth({
     },
 
     async session({ session, token }) {
-      if (!session.firebaseToken) {
+      if (token.accessToken && !session.firebaseToken) {
         session.firebaseToken = await authenticator.handleFirebaseToken(
           token.accessToken as string
         )

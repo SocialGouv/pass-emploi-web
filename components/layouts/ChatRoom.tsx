@@ -54,7 +54,7 @@ export default function ChatBox({ db }: ChatBoxProps) {
 
   useEffect(() => {
     async function signInFirebase() {
-      if (!firebaseIsSignedIn() && session && session.firebaseToken) {
+      if (!firebaseIsSignedIn() && session?.firebaseToken) {
         await signInChat(session.firebaseToken)
       }
     }

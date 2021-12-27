@@ -1,7 +1,7 @@
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import { signOutChat } from '../utils/firebase'
+import { signOutChat } from 'utils/firebase'
 
 function Logout() {
   const router = useRouter()
