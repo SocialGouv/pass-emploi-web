@@ -20,6 +20,7 @@ module.exports = {
     KEYCLOAK_ID: process.env.KEYCLOAK_ID,
     KEYCLOAK_SECRET: process.env.KEYCLOAK_SECRET,
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER,
+    FAQ_EXTERNAL_LINK: process.env.FAQ_EXTERNAL_LINK,
   },
 
   i18n: {
