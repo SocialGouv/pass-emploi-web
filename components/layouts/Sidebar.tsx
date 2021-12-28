@@ -2,10 +2,11 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styles from 'styles/components/Layouts.module.css'
-import DashboardIcon from '../../assets/icons/dashboard.svg'
+import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
-import PersonIcon from '../../assets/icons/person.svg'
+import PeopleIcon from '../../assets/icons/people.svg'
+import AideIcon from '../../assets/icons/aide.svg'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useState } from 'react'
 
@@ -37,15 +38,13 @@ export default function Sidebar({}: SidebarProps) {
         <nav role='navigation' aria-label='Menu principal'>
           <Link href='/'>
             <a className={router.pathname === '/' ? styles.activeLink : ''}>
-              <DashboardIcon
+              <RendezvousIcon
                 role='img'
                 focusable='false'
                 aria-label="Aller sur la page d'accueil"
-                className='mr-[8px]'
+                className='mr-2'
               />
-              <span className='text-xs-semi text-bleu_nuit'>
-                Tableau de bord
-              </span>
+              <span className='text-md text-bleu_nuit'>Rendez-vous</span>
             </a>
           </Link>
 
@@ -57,17 +56,33 @@ export default function Sidebar({}: SidebarProps) {
                   : ''
               }
             >
-              <PersonIcon
+              <PeopleIcon
                 role='img'
                 focusable='false'
                 aria-label='Aller sur la liste de mes bénéficiaires'
-                className='mr-[8px]'
+                className='mr-2'
               />
-              <span className='text-xs-semi text-bleu_nuit text-center'>
+              <span className='text-md text-bleu_nuit text-center'>
                 Mes jeunes
               </span>
             </a>
           </Link>
+
+          <a
+            href={process.env.FAQ_EXTERNAL_LINK}
+            target='_blank'
+            rel='noreferrer'
+          >
+            <AideIcon
+              role='img'
+              focusable='false'
+              aria-label='Aller sur la page FAQ conseiller - nouvel onglet'
+              className='mr-2'
+            />
+            <span className='text-md text-bleu_nuit text-center'>
+              FAQ Conseiller
+            </span>
+          </a>
         </nav>
       </div>
 
@@ -77,7 +92,11 @@ export default function Sidebar({}: SidebarProps) {
         )}
 
         <Link href={'/api/logout'}>
-          <a onClick={handleLogout} className='mr-[8px]'>
+          <a
+            onClick={handleLogout}
+            className='mr-2'
+            aria-label='Se déconnecter'
+          >
             <LogoutIcon
               role='img'
               focusable='false'
