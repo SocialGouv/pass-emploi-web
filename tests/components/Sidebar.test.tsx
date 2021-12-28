@@ -43,7 +43,7 @@ describe('<Sidebar/>', () => {
     expect(screen.getByRole('navigation')).toBeInTheDocument()
     expect(screen.getByText('Rendez-vous')).toBeInTheDocument()
     expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
-    expect(screen.getByText('FAQ Conseiller')).toBeInTheDocument()
+    expect(screen.getByText('Aide')).toBeInTheDocument()
   })
 
   it('devrait afficher le lien de déconnexion', () => {

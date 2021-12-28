@@ -76,12 +76,10 @@ export default function Sidebar({}: SidebarProps) {
             <AideIcon
               role='img'
               focusable='false'
-              aria-label='Aller sur la page FAQ conseiller - nouvel onglet'
+              aria-label='Aller sur la page Aide - nouvel onglet'
               className='mr-2'
             />
-            <span className='text-md text-bleu_nuit text-center'>
-              FAQ Conseiller
-            </span>
+            <span className='text-md text-bleu_nuit text-center'>Aide</span>
           </a>
         </nav>
       </div>
