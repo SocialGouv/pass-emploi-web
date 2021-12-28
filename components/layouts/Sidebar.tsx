@@ -92,7 +92,11 @@ export default function Sidebar({}: SidebarProps) {
         )}
 
         <Link href={'/api/logout'}>
-          <a onClick={handleLogout} className='mr-2'>
+          <a
+            onClick={handleLogout}
+            className='mr-2'
+            aria-label='Se déconnecter'
+          >
             <LogoutIcon
               role='img'
               focusable='false'
