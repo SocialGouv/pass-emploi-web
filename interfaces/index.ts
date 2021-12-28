@@ -12,6 +12,7 @@ export type Message = {
   content: string
   creationDate: Timestamp
   sentBy: string
+  iv: string | undefined
 }
 
 export class DailyMessages {

@@ -12,6 +12,7 @@ import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayAndHourDate } from 'utils/date'
 import { firebaseIsSignedIn, signInChat } from 'utils/firebase'
 import { useDIContext } from 'utils/injectionDependances'
@@ -36,6 +37,8 @@ export default function ChatBox({ db }: ChatBoxProps) {
   const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
     undefined
   )
+
+  let encodage: ChatCrypto = new ChatCrypto('INSERT KEY HERE')
 
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
@@ -77,11 +80,17 @@ export default function ChatBox({ db }: ChatBoxProps) {
               chatId: doc.id,
               seenByConseiller: data.seenByConseiller ?? true,
               newConseillerMessageCount: data.newConseillerMessageCount,
-              lastMessageContent: data.lastMessageContent,
+              lastMessageContent: data.lastMessageIv
+                ? encodage.decrypt({
+                    encryptedText: data.lastMessageContent || '',
+                    iv: data.lastMessageIv || '',
+                  })
+                : data.lastMessageContent,
               lastMessageSentAt: data.lastMessageSentAt,
               lastMessageSentBy: data.lastMessageSentBy,
               lastConseillerReading: data.lastConseillerReading,
               lastJeuneReading: data.lastJeuneReading,
+              lastMessageIv: data.lastMessageIv,
             }
 
             updateJeunesChat(newJeuneChat)

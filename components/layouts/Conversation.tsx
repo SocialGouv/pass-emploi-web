@@ -20,6 +20,7 @@ import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 import {
   dateIsToday,
   formatDayDate,
@@ -50,6 +51,13 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
 
   const dummySpace = useRef<HTMLLIElement>(null)
+  let encodage: ChatCrypto = new ChatCrypto('INSERT KEY HERE')
+
+  function decryptMessage(message: Message) {
+    return message.iv
+      ? encodage.decrypt({ encryptedText: message.content, iv: message.iv })
+      : message.content
+  }
 
   const setReadByConseiller = useCallback(() => {
     updateDoc<JeuneChat>(getChatReference(db, jeune), {
@@ -64,18 +72,22 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
     const firestoreNow = serverTimestamp()
 
     const chatRef: DocumentReference = getChatReference(db, jeune)
+    const encryptedData = encodage.encrypt(newMessage)
+
     addDoc(collection(chatRef, 'messages'), {
-      content: newMessage,
+      content: encryptedData.encryptedText,
       creationDate: firestoreNow,
       sentBy: 'conseiller',
+      iv: encryptedData.iv,
     })
 
     updateDoc(chatRef, {
       seenByConseiller: true,
       newConseillerMessageCount: increment(1),
-      lastMessageContent: newMessage,
+      lastMessageContent: encryptedData.encryptedText,
       lastMessageSentAt: firestoreNow,
       lastMessageSentBy: 'conseiller',
+      lastMessageIv: encryptedData.iv,
     })
 
     setReadByConseiller()
@@ -179,7 +191,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
                             : styles.receivedMessage
                         }`}
                       >
-                        {message.content}
+                        {decryptMessage(message)}
                       </p>
                       <p
                         className={`text-xs text-bleu_gris ${

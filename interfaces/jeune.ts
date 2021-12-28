@@ -16,6 +16,7 @@ export interface JeuneChat extends Jeune {
   lastMessageSentBy: string | undefined
   lastConseillerReading: Timestamp | undefined
   lastJeuneReading: Timestamp | undefined
+  lastMessageIv: string | undefined
 }
 
 export interface DossierMilo {
