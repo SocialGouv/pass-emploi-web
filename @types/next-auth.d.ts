@@ -11,6 +11,7 @@ declare module 'next-auth' {
       structure: string
     }
     accessToken: string
+    firebaseToken: string
     error?: string
   }
 }

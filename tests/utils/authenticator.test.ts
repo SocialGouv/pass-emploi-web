@@ -15,6 +15,7 @@ describe('Authenticator', () => {
   beforeEach(() => {
     authService = {
       fetchRefreshedTokens: jest.fn(),
+      getFirebaseToken: jest.fn(),
     }
 
     authenticator = new Authenticator(authService)
@@ -57,7 +58,6 @@ describe('Authenticator', () => {
         })
       })
     })
-
     describe("Quand ce n'est pas la première connexion", () => {
       it('renvoie le JWT', () => {
         // When
@@ -163,6 +163,22 @@ describe('Authenticator', () => {
         // Then
         expect(actual.structureConseiller).toEqual(UserStructure.MILO)
       })
+    })
+  })
+
+  describe('handleFirebaseToken', () => {
+    it('devrait retourner le token firebase', async () => {
+      //GIVEN
+      const expectedResult = accessToken
+      authService.getFirebaseToken = jest.fn().mockResolvedValueOnce({
+        token: accessToken,
+      })
+
+      //WHEN
+      const result = await authenticator.handleFirebaseToken(accessToken)
+
+      //THEN
+      expect(result).toEqual(expectedResult)
     })
   })
 })

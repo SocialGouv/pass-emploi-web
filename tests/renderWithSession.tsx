@@ -12,6 +12,7 @@ export default function renderWithSession(children: JSX.Element): RenderResult {
       structure: UserStructure.MILO,
     },
     accessToken: 'accessToken',
+    firebaseToken: 'firebaseToken',
     expires: new Date(Date.now() + 300000).toISOString(),
   }
 

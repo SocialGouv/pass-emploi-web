@@ -57,6 +57,11 @@ export class Authenticator {
       }
     }
   }
+
+  async handleFirebaseToken(accessToken: string) {
+    const { token } = await this.authService.getFirebaseToken(accessToken)
+    return token
+  }
 }
 
 const authenticator = new Authenticator(new AuthService())

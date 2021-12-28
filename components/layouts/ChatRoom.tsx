@@ -13,6 +13,7 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import { formatDayAndHourDate } from 'utils/date'
+import { firebaseIsSignedIn, signInChat } from 'utils/firebase'
 import { useDIContext } from 'utils/injectionDependances'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
@@ -52,11 +53,18 @@ export default function ChatBox({ db }: ChatBoxProps) {
   }, [session, jeunesService])
 
   useEffect(() => {
+    async function signInFirebase() {
+      if (!firebaseIsSignedIn() && session?.firebaseToken) {
+        await signInChat(session.firebaseToken)
+      }
+    }
+
     async function observeJeuneChats(): Promise<void> {
       jeunes.forEach((jeune: Jeune) =>
         onSnapshot(
           query<JeuneChat>(
             collection(db, collectionName) as CollectionReference<JeuneChat>,
+            where('conseillerId', '==', session!.user.id),
             where('jeuneId', '==', jeune.id)
           ),
           (querySnapshot: QuerySnapshot<JeuneChat>) => {
@@ -82,8 +90,10 @@ export default function ChatBox({ db }: ChatBoxProps) {
       )
     }
 
-    observeJeuneChats()
-  }, [db, jeunes])
+    signInFirebase().then(() => {
+      observeJeuneChats()
+    })
+  }, [db, jeunes, session])
 
   function updateJeunesChat(newJeuneChat: JeuneChat) {
     const idxOfJeune = currentJeunesChat.findIndex(
