@@ -9,6 +9,7 @@ import PeopleIcon from '../../assets/icons/people.svg'
 import AideIcon from '../../assets/icons/aide.svg'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useState } from 'react'
+import { UserStructure } from 'interfaces/conseiller'
 
 type SidebarProps = {}
 
@@ -69,7 +70,11 @@ export default function Sidebar({}: SidebarProps) {
           </Link>
 
           <a
-            href={process.env.FAQ_EXTERNAL_LINK}
+            href={
+              session?.user.structure === UserStructure.MILO
+                ? process.env.FAQ_MILO_EXTERNAL_LINK
+                : process.env.FAQ_PE_EXTERNAL_LINK
+            }
             target='_blank'
             rel='noreferrer'
           >
