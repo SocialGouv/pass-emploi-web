@@ -5,6 +5,7 @@
 import styles from 'styles/components/Layouts.module.css'
 import { db } from 'utils/firebase'
 import ChatBox from './ChatRoom'
+import ChatBoxTruc from './ChatRoomTruc'
 
 import Sidebar from './Sidebar'
 
@@ -21,6 +22,7 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </main>
         <ChatBox db={db} />
+        <ChatBoxTruc db={db} />
       </div>
       <div id='modal-root' />
     </>
