@@ -1,12 +1,13 @@
 import { ApiClient } from 'clients/api.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
-import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
+import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
+import { RendezVousService } from 'services/rendez-vous.service'
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 
 export interface Dependencies {
   actionsService: ActionsService
@@ -14,20 +15,13 @@ export interface Dependencies {
   jeunesService: JeunesService
   messagesService: MessagesService
   rendezVousService: RendezVousService
+  chatCrypto: ChatCrypto
 }
 
 export class Container {
   private static diContainer: Container | undefined
 
-  private constructor(
-    readonly dependances: {
-      actionsService: ActionsApiService
-      conseillerService: ConseillerService
-      jeunesService: JeunesService
-      messagesService: MessagesService
-      rendezVousService: RendezVousService
-    }
-  ) {}
+  private constructor(readonly dependances: Dependencies) {}
 
   static getDIContainer(): Container {
     if (!Container.diContainer) {
@@ -45,6 +39,7 @@ export class Container {
       jeunesService: new JeunesService(apiClient),
       messagesService: new MessagesService(apiClient),
       rendezVousService: new RendezVousService(apiClient),
+      chatCrypto: new ChatCrypto(),
     })
   }
 }
