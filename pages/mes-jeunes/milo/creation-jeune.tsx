@@ -55,7 +55,7 @@ function MiloCreationJeune({
   return (
     <>
       <AppHead
-        titre={`Mes jeunes - Création d'un compte jeune Étape ${etape}`}
+        titre={`Mes jeunes - Création d'un compte jeune - Étape ${etape}`}
       />
 
       <div className='flex items-center'>
@@ -144,7 +144,7 @@ export const getServerSideProps: GetServerSideProps<
   if (sessionOrRedirect.session.user.structure !== UserStructure.MILO) {
     return {
       redirect: {
-        destination: '/',
+        destination: '/mes-jeunes',
         permanent: false,
       },
     }

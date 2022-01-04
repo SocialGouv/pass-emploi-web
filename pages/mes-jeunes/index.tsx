@@ -27,10 +27,16 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
   }
 
   const handleAddJeune = () => {
-    if (structureConseiller === UserStructure.MILO) {
-      Router.push('/mes-jeunes/milo/creation-jeune')
-    } else {
-      setShowModal(true)
+    switch (structureConseiller) {
+      case UserStructure.MILO:
+        Router.push('/mes-jeunes/milo/creation-jeune')
+        break
+      case UserStructure.POLE_EMPLOI:
+        Router.push('/mes-jeunes/pole-emploi/creation-jeune')
+        break
+      default:
+        setShowModal(true)
+        break
     }
   }
 
@@ -41,7 +47,8 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
       <AppHead titre='Mes jeunes' />
       <span className='flex flex-wrap justify-between mb-12'>
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
-        {structureConseiller === UserStructure.MILO && (
+        {(structureConseiller === UserStructure.MILO ||
+          structureConseiller === UserStructure.POLE_EMPLOI) && (
           <Button onClick={handleAddJeune}>
             <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
             Ajouter un jeune

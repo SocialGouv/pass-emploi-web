@@ -1,7 +1,28 @@
 import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces/jeune'
 
-export class JeunesService {
+export interface JeunesService {
+  getJeunesDuConseiller(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Jeune[]>
+
+  getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune>
+
+  createCompteJeunePassEmploi(
+    newJeune: { firstName: string; lastName: string },
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Jeune>
+
+  createCompteJeunePoleEmploi(
+    newJeune: { firstName: string; lastName: string; email: string },
+    _idConseiller: string,
+    _accessToken: string
+  ): Promise<string>
+}
+
+export class JeunesApiService implements JeunesService {
   constructor(private readonly apiClient: ApiClient) {}
 
   getJeunesDuConseiller(
@@ -18,7 +39,7 @@ export class JeunesService {
     return this.apiClient.get(`/jeunes/${idJeune}`, accessToken)
   }
 
-  createJeuneDuConseiller(
+  createCompteJeunePassEmploi(
     newJeune: { firstName: string; lastName: string },
     idConseiller: string,
     accessToken: string
@@ -28,5 +49,13 @@ export class JeunesService {
       newJeune,
       accessToken
     )
+  }
+
+  createCompteJeunePoleEmploi(
+    newJeune: { firstName: string; lastName: string; email: string },
+    _idConseiller: string,
+    _accessToken: string
+  ): Promise<string> {
+    return Promise.resolve('id-new-jeune')
   }
 }

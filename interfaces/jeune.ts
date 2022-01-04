@@ -27,3 +27,9 @@ export interface DossierMilo {
   codePostal: string
   email?: string
 }
+
+export interface JeunePoleEmploiFormData {
+  prenom: string
+  nom: string
+  email: string
+}

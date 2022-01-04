@@ -35,7 +35,7 @@ const AddJeuneModal = ({ show, onClose }: AddJeuneModalProps) => {
     }
 
     jeunesService
-      .createJeuneDuConseiller(newJeune, session!.user.id, session!.accessToken)
+      .createCompteJeunePassEmploi(newJeune, session!.user.id, session!.accessToken)
       .then(async function (response) {
         const jeune = await response
         setNewJeune(jeune)
