@@ -10,7 +10,7 @@ import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { useDIContext } from '../../../utils/injectionDependances'
+import { useDIContext } from 'utils/injectionDependances'
 
 function PoleEmploiCreationJeune() {
   const { jeunesService } = useDIContext()
@@ -24,7 +24,7 @@ function PoleEmploiCreationJeune() {
     if (!session) return Promise.resolve()
 
     try {
-      const idJeune = await jeunesService.createCompteJeunePoleEmploi(
+      const jeune = await jeunesService.createCompteJeunePoleEmploi(
         {
           firstName: newJeune.prenom,
           lastName: newJeune.nom,
@@ -33,7 +33,7 @@ function PoleEmploiCreationJeune() {
         session.user.id,
         session.accessToken
       )
-      setCreatedSuccessId(idJeune)
+      setCreatedSuccessId(jeune.id)
     } catch (error) {
       setCreationError(
         (error as Error).message || "Une erreur inconnue s'est produite"
@@ -41,11 +41,7 @@ function PoleEmploiCreationJeune() {
     }
   }
 
-  useMatomo(
-    creationError
-      ? 'Création jeune Pole Emploi en erreur'
-      : 'Création jeune Pole Emploi'
-  )
+  useMatomo(creationError ? 'Création jeune PE en erreur' : 'Création jeune PE')
 
   return (
     <>

@@ -20,7 +20,6 @@ describe('MiloCreationJeune', () => {
     jeunesService = {
       getJeunesDuConseiller: jest.fn(),
       getJeuneDetails: jest.fn(),
-      createCompteJeunePassEmploi: jest.fn(),
       createCompteJeunePoleEmploi: jest.fn(),
     }
 
@@ -71,9 +70,7 @@ describe('MiloCreationJeune', () => {
         fireEvent.click(submitButton)
 
         // Then
-        expect(
-          screen.getByText('Veuillez remplir le champ')
-        ).toBeInTheDocument()
+        expect(screen.getByText('Ce champ est obligatoire')).toBeInTheDocument()
         await waitFor(() => {
           expect(
             jeunesService.createCompteJeunePoleEmploi
@@ -90,9 +87,7 @@ describe('MiloCreationJeune', () => {
         fireEvent.click(submitButton)
 
         // Then
-        expect(
-          screen.getByText('Veuillez remplir le champ')
-        ).toBeInTheDocument()
+        expect(screen.getByText('Ce champ est obligatoire')).toBeInTheDocument()
         await waitFor(() => {
           expect(
             jeunesService.createCompteJeunePoleEmploi
@@ -109,9 +104,7 @@ describe('MiloCreationJeune', () => {
         fireEvent.click(submitButton)
 
         // Then
-        expect(
-          screen.getByText('Veuillez remplir le champ')
-        ).toBeInTheDocument()
+        expect(screen.getByText('Ce champ est obligatoire')).toBeInTheDocument()
         await waitFor(() => {
           expect(
             jeunesService.createCompteJeunePoleEmploi
@@ -204,5 +197,22 @@ describe('MiloCreationJeune', () => {
       })
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
+  })
+
+  it("devrait afficher un message d'erreur en cas de format incorrect de l'email", async () => {
+    // Given
+    const inputEmail = screen.getByLabelText(emailLabel)
+    fireEvent.change(inputEmail, { target: { value: 'email@' } })
+
+    // When
+    fireEvent.click(submitButton)
+
+    // Then
+    await waitFor(() => {
+      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
+    })
+    expect(
+      screen.getByText('L’e-mail renseigné n’est pas au bon format')
+    ).toBeInTheDocument()
   })
 })

@@ -25,21 +25,22 @@ function FormulaireJeunePoleEmploi({
   const validate = () => {
     let isValid = true
     if (!Boolean(prenom.value)) {
-      setPrenom({ value: prenom.value, error: 'Veuillez remplir le champ' })
+      setPrenom({ value: prenom.value, error: 'Ce champ est obligatoire' })
       isValid = false
     }
     if (!Boolean(nom.value)) {
-      setNom({ value: nom.value, error: 'Veuillez remplir le champ' })
+      setNom({ value: nom.value, error: 'Ce champ est obligatoire' })
       isValid = false
     }
     if (!Boolean(email.value)) {
-      setEmail({ value: email.value, error: 'Veuillez remplir le champ' })
+      setEmail({ value: email.value, error: 'Ce champ est obligatoire' })
       isValid = false
     }
-    if (!isEmailValid(email.value)) {
-      setEmail({ value: email.value, error: 'Email invalide' })
+    if (!Boolean(email.value)) {
+      setEmail({ value: email.value, error: 'Ce champ est obligatoire' })
       isValid = false
     }
+
     return isValid
   }
 
@@ -69,7 +70,7 @@ function FormulaireJeunePoleEmploi({
     if (isEmailValid(value)) {
       setEmail({ value, error: '' })
     } else {
-      setEmail({ value, error: 'Email invalide' })
+      setEmail({ value, error: 'L’e-mail renseigné n’est pas au bon format' })
     }
   }
 
@@ -132,7 +133,7 @@ function FormulaireJeunePoleEmploi({
         {nom.error && <ErrorMessage>{nom.error}</ErrorMessage>}
 
         <label
-          className='block text-md-semi text-bleu_nuit'
+          className='block mb-4 text-md-semi text-bleu_nuit'
           htmlFor='jeune-email'
         >
           *E-mail{' '}

@@ -9,17 +9,11 @@ export interface JeunesService {
 
   getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune>
 
-  createCompteJeunePassEmploi(
-    newJeune: { firstName: string; lastName: string },
+  createCompteJeunePoleEmploi(
+    newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune>
-
-  createCompteJeunePoleEmploi(
-    newJeune: { firstName: string; lastName: string; email: string },
-    _idConseiller: string,
-    _accessToken: string
-  ): Promise<string>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -39,23 +33,15 @@ export class JeunesApiService implements JeunesService {
     return this.apiClient.get(`/jeunes/${idJeune}`, accessToken)
   }
 
-  createCompteJeunePassEmploi(
-    newJeune: { firstName: string; lastName: string },
+  createCompteJeunePoleEmploi(
+    newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune> {
     return this.apiClient.post<Jeune>(
-      `/conseillers/${idConseiller}/jeune`,
-      newJeune,
+      `/conseillers/pole-emploi/jeunes`,
+      { ...newJeune, idConseiller: idConseiller },
       accessToken
     )
-  }
-
-  createCompteJeunePoleEmploi(
-    newJeune: { firstName: string; lastName: string; email: string },
-    _idConseiller: string,
-    _accessToken: string
-  ): Promise<string> {
-    return Promise.resolve('id-new-jeune')
   }
 }

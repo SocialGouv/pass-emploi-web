@@ -4,6 +4,7 @@ export type Jeune = {
   id: string
   firstName: string
   lastName: string
+  email?: string
   chatId?: string
   isActivated?: boolean
 }
