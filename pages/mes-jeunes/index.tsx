@@ -1,6 +1,5 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
-import AddJeuneModal from 'components/jeune/AddJeuneModal'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
@@ -19,13 +18,6 @@ type MesJeunesProps = {
 }
 
 function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
-  const [showModal, setShowModal] = useState(false)
-
-  const handleCloseModal = () => {
-    setShowModal(false)
-    Router.reload()
-  }
-
   const handleAddJeune = () => {
     switch (structureConseiller) {
       case UserStructure.MILO:
@@ -35,12 +27,11 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
         Router.push('/mes-jeunes/pole-emploi/creation-jeune')
         break
       default:
-        setShowModal(true)
         break
     }
   }
 
-  useMatomo(showModal ? 'Mes jeunes - Modale création jeune' : 'Mes jeunes')
+  useMatomo('Mes jeunes')
 
   return (
     <>
@@ -111,10 +102,6 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
           ))}
         </div>
       </div>
-
-      {showModal && (
-        <AddJeuneModal onClose={handleCloseModal} show={showModal} />
-      )}
     </>
   )
 }
