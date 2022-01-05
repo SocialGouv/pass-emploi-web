@@ -36,6 +36,10 @@ function FormulaireJeunePoleEmploi({
       setEmail({ value: email.value, error: 'Veuillez remplir le champ' })
       isValid = false
     }
+    if (!isEmailValid(email.value)) {
+      setEmail({ value: email.value, error: 'Email invalide' })
+      isValid = false
+    }
     return isValid
   }
 
@@ -62,7 +66,17 @@ function FormulaireJeunePoleEmploi({
   }
 
   const handleEmailChanges = (value: string) => {
-    setEmail({ value, error: '' })
+    if (isEmailValid(value)) {
+      setEmail({ value, error: '' })
+    } else {
+      setEmail({ value, error: 'Email invalide' })
+    }
+  }
+
+  function isEmailValid(email: string) {
+    const mailRegExp =
+      /[-A-Za-z0-9~!$%^&_=+}{'?]+(\.[-A-Za-z0-9~!$%^&_=+}{'?]+)*@[A-Za-z0-9_][-A-za-z0-9_]+(\.[A-Za-z]{2,6}){1,2}/
+    return mailRegExp.test(email)
   }
 
   return (
@@ -73,6 +87,10 @@ function FormulaireJeunePoleEmploi({
       </p>
 
       <form method='POST' onSubmit={handleJeuneSubmit}>
+        <div className='text-sm-regular text-bleu_nuit mb-8'>
+          Les champs marqués d&apos;une * sont obligatoires.
+        </div>
+
         <label
           className='block text-md-semi text-bleu_nuit'
           htmlFor='jeune-prenom'
@@ -117,11 +135,10 @@ function FormulaireJeunePoleEmploi({
           className='block text-md-semi text-bleu_nuit'
           htmlFor='jeune-email'
         >
-          *E-mail
-          {/*{' '}
+          *E-mail{' '}
           <span className='text-sm-regular text-bleu_nuit'>
             (ex : monemail@exemple.com)
-          </span>*/}
+          </span>
         </label>
         <span className='text-sm-regular text-bleu_nuit'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
@@ -142,9 +159,6 @@ function FormulaireJeunePoleEmploi({
         {email.error && <ErrorMessage>{email.error}</ErrorMessage>}
         {creationError && <ErrorMessage>{creationError}</ErrorMessage>}
 
-        <div className='text-sm-regular text-bleu_nuit mb-8'>
-          Les champs marqués d&apos;une * sont obligatoires.
-        </div>
         <Button type='submit'>Créer le compte</Button>
       </form>
     </>

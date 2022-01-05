@@ -15,6 +15,7 @@ describe('MiloCreationJeune', () => {
   let jeunesService: JeunesService
   let page: RenderResult
   let submitButton: HTMLElement
+  const emailLabel: string = '*E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = {
       getJeunesDuConseiller: jest.fn(),
@@ -45,7 +46,7 @@ describe('MiloCreationJeune', () => {
       ).toBeInTheDocument()
       expect(screen.getByLabelText('*Prénom')).toBeInTheDocument()
       expect(screen.getByLabelText('*Nom')).toBeInTheDocument()
-      expect(screen.getByLabelText('*E-mail')).toBeInTheDocument()
+      expect(screen.getByLabelText(emailLabel)).toBeInTheDocument()
     })
 
     describe('quand on soumet le formulaire avec un champ vide', () => {
@@ -55,7 +56,7 @@ describe('MiloCreationJeune', () => {
         fireEvent.change(inputFirstname, { target: { value: 'Nadia' } })
         const inputName = screen.getByLabelText('*Nom')
         fireEvent.change(inputName, { target: { value: 'Sanfamiye' } })
-        const inputEmail = screen.getByLabelText('*E-mail')
+        const inputEmail = screen.getByLabelText(emailLabel)
         fireEvent.change(inputEmail, {
           target: { value: 'nadia.sanfamiye@poleemploi.fr' },
         })
@@ -101,7 +102,7 @@ describe('MiloCreationJeune', () => {
 
       it("demande le remplissage de l'email", async () => {
         // Given
-        const inputEmail = screen.getByLabelText('*E-mail')
+        const inputEmail = screen.getByLabelText(emailLabel)
         fireEvent.change(inputEmail, { target: { value: '' } })
 
         // When
@@ -127,7 +128,7 @@ describe('MiloCreationJeune', () => {
       fireEvent.change(inputFirstname, { target: { value: 'Nadia' } })
       const inputName = screen.getByLabelText('*Nom')
       fireEvent.change(inputName, { target: { value: 'Sanfamiye' } })
-      const inputEmail = screen.getByLabelText('*E-mail')
+      const inputEmail = screen.getByLabelText(emailLabel)
       fireEvent.change(inputEmail, {
         target: { value: 'nadia.sanfamiye@poleemploi.fr' },
       })
