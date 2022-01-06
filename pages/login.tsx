@@ -1,4 +1,5 @@
 import Button from 'components/Button'
+import { FormButton } from 'components/FormButton'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
@@ -57,29 +58,22 @@ const Login = () => {
             Connectez-vous à l&apos;espace conseiller
           </h1>
 
-          <form onSubmit={handleSubmit}>
-            <Button type='submit' className='w-full'>
-              <span className='w-full'>Connexion</span>
-            </Button>
-          </form>
+          <FormButton
+            label='Connexion'
+            handleSubmit={(event) => handleSubmit(event)}
+          />
 
-          <form
-            onSubmit={(event) => handleSubmit(event, 'similo-conseiller')}
+          <FormButton
+            label='Connexion avec Mission locale'
             className='pt-4'
-          >
-            <Button type='submit' className='w-full'>
-              <span className='w-full'>Connexion avec Mission locale</span>
-            </Button>
-          </form>
+            handleSubmit={(event) => handleSubmit(event, 'similo-conseiller')}
+          />
 
-          <form
-            onSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
+          <FormButton
+            label='Connexion avec Pôle emploi'
             className='pt-4'
-          >
-            <Button type='submit' className='w-full'>
-              <span className='w-full'>Connexion avec Pôle emploi</span>
-            </Button>
-          </form>
+            handleSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
+          />
 
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>

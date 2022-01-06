@@ -23,6 +23,8 @@ module.exports = {
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER,
     FAQ_MILO_EXTERNAL_LINK: process.env.FAQ_MILO_EXTERNAL_LINK,
     FAQ_PE_EXTERNAL_LINK: process.env.FAQ_PE_EXTERNAL_LINK,
+    UNABLE_POLE_EMPLOI_SSO:
+      process.env.UNABLE_POLE_EMPLOI_SSO === 'false' ? false : true,
   },
 
   i18n: {
