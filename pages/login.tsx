@@ -6,10 +6,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 interface LoginProps {
-  estPoleEmploiDesactive: boolean
+  ssoPoleEmploiEstActive: boolean
 }
 
-const Login = ({ estPoleEmploiDesactive }: LoginProps) => {
+const Login = ({ ssoPoleEmploiEstActive }: LoginProps) => {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -61,7 +61,7 @@ const Login = ({ estPoleEmploiDesactive }: LoginProps) => {
             Connectez-vous à l&apos;espace conseiller
           </h1>
 
-          {!estPoleEmploiDesactive && (
+          {ssoPoleEmploiEstActive && (
             <FormButton
               label='Authentification pass emploi'
               handleSubmit={(event) => handleSubmit(event)}
@@ -77,9 +77,9 @@ const Login = ({ estPoleEmploiDesactive }: LoginProps) => {
             label='Connexion conseiller Pôle emploi'
             className='pt-4'
             handleSubmit={(event) => {
-              estPoleEmploiDesactive
-                ? handleSubmit(event)
-                : handleSubmit(event, 'pe-conseiller')
+              ssoPoleEmploiEstActive
+                ? handleSubmit(event, 'pe-conseiller')
+                : handleSubmit(event)
             }}
           />
 
@@ -106,7 +106,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 
   return {
     props: {
-      estPoleEmploiDesactive: process.env.UNABLE_POLE_EMPLOI_SSO,
+      ssoPoleEmploiEstActive: process.env.ENABLE_POLE_EMPLOI_SSO,
     },
   }
 }

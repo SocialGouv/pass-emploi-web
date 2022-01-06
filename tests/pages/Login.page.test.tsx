@@ -5,7 +5,7 @@ import React from 'react'
 describe('Login', () => {
   afterEach(() => cleanup)
   it('devrait afficher un titre de niveau 1', () => {
-    render(<Login estPoleEmploiDesactive={false} />)
+    render(<Login ssoPoleEmploiEstActive={true} />)
 
     //GIVEN
     const heading = screen.getByRole('heading', {
@@ -16,9 +16,9 @@ describe('Login', () => {
     //THEN
     expect(heading).toBeInTheDocument()
   })
-  it("devrait trois boutons si Pole emploi n'est pas désactivé", () => {
+  it('devrait avoir trois boutons si Pole emploi est active', () => {
     //GIVEN
-    render(<Login estPoleEmploiDesactive={false} />)
+    render(<Login ssoPoleEmploiEstActive={true} />)
 
     const passEButton = screen.getByRole('button', {
       name: 'Authentification pass emploi',
@@ -41,9 +41,9 @@ describe('Login', () => {
     expect(buttonsNb.length).toEqual(3)
   })
 
-  it('devrait deux boutons si Pole emploi est désactivé', () => {
+  it("devrait avoir deux boutons si Pole emploi n'est pas active", () => {
     //GIVEN
-    render(<Login estPoleEmploiDesactive={true} />)
+    render(<Login ssoPoleEmploiEstActive={false} />)
 
     const miloButton = screen.getByRole('button', {
       name: 'Connexion conseiller Mission Locale',
