@@ -76,7 +76,7 @@ export default function Sidebar({}: SidebarProps) {
                 : process.env.FAQ_PE_EXTERNAL_LINK
             }
             target='_blank'
-            rel='noreferrer'
+            rel='noreferrer noopener'
           >
             <AideIcon
               role='img'

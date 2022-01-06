@@ -1,15 +1,14 @@
 import {
-  act,
   fireEvent,
   RenderResult,
   screen,
   waitFor,
 } from '@testing-library/react'
-import renderWithSession from '../renderWithSession'
-import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { unDossierMilo } from 'fixtures/milo'
+import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { DIProvider } from 'utils/injectionDependances'
+import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
 
@@ -27,13 +26,13 @@ describe('MiloCreationJeune', () => {
 
     it('devrait afficher le champ de recherche de dossier', () => {
       //THEN
-      expect(screen.getByText("Création d'un compte jeune")).toBeInTheDocument
+      expect(screen.getByText("Création d'un compte jeune")).toBeInTheDocument()
       expect(
         screen.getByText(
           'Saisissez le numéro de dossier du jeune pour lequel vous voulez créer un compte'
         )
-      ).toBeInTheDocument
-      expect(screen.getByLabelText('Numéro de dossier')).toBeInTheDocument
+      ).toBeInTheDocument()
+      expect(screen.getByLabelText('Numéro de dossier')).toBeInTheDocument()
     })
 
     it("quand on soumet la recherche avec une valeur vide, affiche un message d'erreur", () => {
@@ -48,7 +47,7 @@ describe('MiloCreationJeune', () => {
       fireEvent.click(submitButton)
 
       //THEN
-      expect(screen.getByText('Veuillez remplir le champ')).toBeInTheDocument
+      expect(screen.getByText('Veuillez remplir le champ')).toBeInTheDocument()
     })
   })
 

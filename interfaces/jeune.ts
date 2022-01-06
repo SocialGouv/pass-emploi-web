@@ -4,6 +4,7 @@ export type Jeune = {
   id: string
   firstName: string
   lastName: string
+  email?: string
   chatId?: string
   isActivated?: boolean
 }
@@ -26,4 +27,10 @@ export interface DossierMilo {
   dateDeNaissance: string
   codePostal: string
   email?: string
+}
+
+export interface JeunePoleEmploiFormData {
+  prenom: string
+  nom: string
+  email: string
 }
