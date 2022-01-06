@@ -1,11 +1,15 @@
-import Button from 'components/Button'
+import { FormButton } from 'components/FormButton'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
-const Login = () => {
+interface LoginProps {
+  ssoPoleEmploiEstActive: boolean
+}
+
+const Login = ({ ssoPoleEmploiEstActive }: LoginProps) => {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -27,7 +31,7 @@ const Login = () => {
   )
 
   useEffect(() => {
-    const provider = router.query.provider
+    const provider = router?.query.provider
     switch (provider) {
       case 'pe':
       case 'similo':
@@ -57,29 +61,27 @@ const Login = () => {
             Connectez-vous à l&apos;espace conseiller
           </h1>
 
-          <form onSubmit={handleSubmit}>
-            <Button type='submit' className='w-full'>
-              <span className='w-full'>Connexion</span>
-            </Button>
-          </form>
+          {ssoPoleEmploiEstActive && (
+            <FormButton
+              label='Authentification pass emploi'
+              handleSubmit={(event) => handleSubmit(event)}
+            />
+          )}
 
-          <form
-            onSubmit={(event) => handleSubmit(event, 'similo-conseiller')}
+          <FormButton
+            label='Connexion conseiller Mission Locale'
             className='pt-4'
-          >
-            <Button type='submit' className='w-full'>
-              <span className='w-full'>Connexion avec Mission locale</span>
-            </Button>
-          </form>
-
-          <form
-            onSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
+            handleSubmit={(event) => handleSubmit(event, 'similo-conseiller')}
+          />
+          <FormButton
+            label='Connexion conseiller Pôle emploi'
             className='pt-4'
-          >
-            <Button type='submit' className='w-full'>
-              <span className='w-full'>Connexion avec Pôle emploi</span>
-            </Button>
-          </form>
+            handleSubmit={(event) => {
+              ssoPoleEmploiEstActive
+                ? handleSubmit(event, 'pe-conseiller')
+                : handleSubmit(event)
+            }}
+          />
 
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
@@ -102,7 +104,11 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
     }
   }
 
-  return { props: {} }
+  return {
+    props: {
+      ssoPoleEmploiEstActive: process.env.ENABLE_POLE_EMPLOI_SSO,
+    },
+  }
 }
 
 export default Login
