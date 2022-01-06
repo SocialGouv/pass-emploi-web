@@ -15,7 +15,7 @@ import {
   Timestamp,
   updateDoc,
 } from 'firebase/firestore'
-import { DailyMessages, ListDailyMessages, Message } from 'interfaces'
+import { Message, MessagesOfADay } from 'interfaces'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -43,13 +43,32 @@ type ConversationProps = {
 
 export default function Conversation({ db, jeune, onBack }: ConversationProps) {
   const { data: session } = useSession({ required: true })
-  const { messagesService } = useDIContext()
+  const { messagesService, chatCrypto } = useDIContext()
 
   const [newMessage, setNewMessage] = useState('')
-  const [dailyMessages, setDailyMessages] = useState<DailyMessages[]>([])
+  const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
 
   const dummySpace = useRef<HTMLLIElement>(null)
+
+  function groupMessagesByDay(messages: Message[]): MessagesOfADay[] {
+    const messagesByDay: { [day: string]: MessagesOfADay } = {}
+
+    messages.forEach((message: Message) => {
+      message.content = message.iv
+        ? chatCrypto.decrypt({ encryptedText: message.content, iv: message.iv })
+        : message.content
+      const day = formatDayDate(message.creationDate.toDate())
+      const messagesOfDay = messagesByDay[day] ?? {
+        date: message.creationDate.toDate(),
+        messages: [],
+      }
+      messagesOfDay.messages.push(message)
+      messagesByDay[day] = messagesOfDay
+    })
+
+    return Object.values(messagesByDay)
+  }
 
   const setReadByConseiller = useCallback(() => {
     updateDoc<JeuneChat>(getChatReference(db, jeune), {
@@ -64,18 +83,22 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
     const firestoreNow = serverTimestamp()
 
     const chatRef: DocumentReference = getChatReference(db, jeune)
+    const { encryptedText, iv } = chatCrypto.encrypt(newMessage)
+
     addDoc(collection(chatRef, 'messages'), {
-      content: newMessage,
+      content: encryptedText,
       creationDate: firestoreNow,
       sentBy: 'conseiller',
+      iv,
     })
 
     updateDoc(chatRef, {
       seenByConseiller: true,
       newConseillerMessageCount: increment(1),
-      lastMessageContent: newMessage,
+      lastMessageContent: encryptedText,
       lastMessageSentAt: firestoreNow,
       lastMessageSentBy: 'conseiller',
+      lastMessageIv: iv,
     })
 
     setReadByConseiller()
@@ -114,7 +137,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
           return
         }
 
-        setDailyMessages(new ListDailyMessages(currentMessages).dailyMessages)
+        setMessagesByDay(groupMessagesByDay(currentMessages))
 
         if (dummySpace?.current) {
           dummySpace.current.scrollIntoView({ behavior: 'smooth' })
@@ -161,15 +184,15 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
       </div>
 
       <ul className={styles.messages}>
-        {dailyMessages.map(
-          (dailyMessage: DailyMessages, dailyIndex: number) => (
-            <li key={dailyMessage.date.getTime()}>
+        {messagesByDay.map(
+          (messagesOfADay: MessagesOfADay, dailyIndex: number) => (
+            <li key={messagesOfADay.date.getTime()}>
               <div className={`text-md text-bleu ${styles.day}`}>
-                <span>{todayOrDate(dailyMessage.date)}</span>
+                <span>{todayOrDate(messagesOfADay.date)}</span>
               </div>
 
               <ul>
-                {dailyMessage.messages.map(
+                {messagesOfADay.messages.map(
                   (message: Message, index: number) => (
                     <li key={message.id}>
                       <p
@@ -201,8 +224,8 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
                         )}
                       </p>
 
-                      {dailyIndex === dailyMessages.length - 1 &&
-                        index === dailyMessage.messages.length - 1 && (
+                      {dailyIndex === messagesByDay.length - 1 &&
+                        index === messagesOfADay.messages.length - 1 && (
                           <section aria-hidden='true' ref={dummySpace} />
                         )}
                     </li>

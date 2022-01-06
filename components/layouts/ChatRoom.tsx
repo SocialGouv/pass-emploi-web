@@ -29,7 +29,7 @@ type ChatBoxProps = {
 
 export default function ChatBox({ db }: ChatBoxProps) {
   const { data: session } = useSession({ required: true })
-  const { jeunesService } = useDIContext()
+  const { jeunesService, chatCrypto } = useDIContext()
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
@@ -77,11 +77,17 @@ export default function ChatBox({ db }: ChatBoxProps) {
               chatId: doc.id,
               seenByConseiller: data.seenByConseiller ?? true,
               newConseillerMessageCount: data.newConseillerMessageCount,
-              lastMessageContent: data.lastMessageContent,
+              lastMessageContent: data.lastMessageIv
+                ? chatCrypto.decrypt({
+                    encryptedText: data.lastMessageContent ?? '',
+                    iv: data.lastMessageIv,
+                  })
+                : data.lastMessageContent,
               lastMessageSentAt: data.lastMessageSentAt,
               lastMessageSentBy: data.lastMessageSentBy,
               lastConseillerReading: data.lastConseillerReading,
               lastJeuneReading: data.lastJeuneReading,
+              lastMessageIv: data.lastMessageIv,
             }
 
             updateJeunesChat(newJeuneChat)
