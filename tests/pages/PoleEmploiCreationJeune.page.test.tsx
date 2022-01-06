@@ -11,7 +11,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 
-describe('MiloCreationJeune', () => {
+describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
   let page: RenderResult
   let submitButton: HTMLElement
@@ -34,7 +34,7 @@ describe('MiloCreationJeune', () => {
     })
   })
 
-  describe("quand le formulaire n'a pas encore été saisi", () => {
+  describe("quand le formulaire n'a pas encore été soumis", () => {
     it('devrait afficher les champ de création de compte', () => {
       // Then
       expect(screen.getByText("Création d'un compte jeune")).toBeInTheDocument()
@@ -48,7 +48,7 @@ describe('MiloCreationJeune', () => {
       expect(screen.getByLabelText(emailLabel)).toBeInTheDocument()
     })
 
-    describe('quand on soumet le formulaire avec un champ vide', () => {
+    describe('quand on soumet le formulaire avec un champ incorrect', () => {
       beforeEach(async () => {
         // Given
         const inputFirstname = screen.getByLabelText('*Prénom')
@@ -111,10 +111,29 @@ describe('MiloCreationJeune', () => {
           ).toHaveBeenCalledTimes(0)
         })
       })
+
+      it('demande un email avec un format correct', async () => {
+        // Given
+        const inputEmail = screen.getByLabelText(emailLabel)
+        fireEvent.change(inputEmail, { target: { value: 'email@' } })
+
+        // When
+        fireEvent.click(submitButton)
+
+        // Then
+        expect(
+          screen.getByText('L’e-mail renseigné n’est pas au bon format')
+        ).toBeInTheDocument()
+        await waitFor(() => {
+          expect(
+            jeunesService.createCompteJeunePoleEmploi
+          ).toHaveBeenCalledTimes(0)
+        })
+      })
     })
   })
 
-  describe('quand le formulaire a été saisi', () => {
+  describe('quand le formulaire a été soumis', () => {
     beforeEach(() => {
       // Given
       const inputFirstname = screen.getByLabelText('*Prénom')
@@ -131,7 +150,11 @@ describe('MiloCreationJeune', () => {
       // Given
       ;(
         jeunesService.createCompteJeunePoleEmploi as Mock<any>
-      ).mockResolvedValue('id-new-jeune')
+      ).mockResolvedValue({
+        id: 'id-nadia-sanfamiye',
+        firstName: 'Nadia',
+        lastName: 'Sanfamiye',
+      })
 
       // When
       fireEvent.click(submitButton)
@@ -175,7 +198,7 @@ describe('MiloCreationJeune', () => {
         screen.getByRole('link', {
           name: 'Accéder à la fiche du jeune',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/id-new-jeune')
+      ).toHaveAttribute('href', '/mes-jeunes/id-nadia-sanfamiye')
     })
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
@@ -197,22 +220,5 @@ describe('MiloCreationJeune', () => {
       })
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
-  })
-
-  it("devrait afficher un message d'erreur en cas de format incorrect de l'email", async () => {
-    // Given
-    const inputEmail = screen.getByLabelText(emailLabel)
-    fireEvent.change(inputEmail, { target: { value: 'email@' } })
-
-    // When
-    fireEvent.click(submitButton)
-
-    // Then
-    await waitFor(() => {
-      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
-    })
-    expect(
-      screen.getByText('L’e-mail renseigné n’est pas au bon format')
-    ).toBeInTheDocument()
   })
 })

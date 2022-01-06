@@ -35,9 +35,11 @@ function FormulaireJeunePoleEmploi({
     if (!Boolean(email.value)) {
       setEmail({ value: email.value, error: 'Ce champ est obligatoire' })
       isValid = false
-    }
-    if (!Boolean(email.value)) {
-      setEmail({ value: email.value, error: 'Ce champ est obligatoire' })
+    } else if (!isEmailValid(email.value)) {
+      setEmail({
+        value: email.value,
+        error: 'L’e-mail renseigné n’est pas au bon format',
+      })
       isValid = false
     }
 
@@ -67,11 +69,7 @@ function FormulaireJeunePoleEmploi({
   }
 
   const handleEmailChanges = (value: string) => {
-    if (isEmailValid(value)) {
-      setEmail({ value, error: '' })
-    } else {
-      setEmail({ value, error: 'L’e-mail renseigné n’est pas au bon format' })
-    }
+    setEmail({ value, error: '' })
   }
 
   function isEmailValid(email: string) {
