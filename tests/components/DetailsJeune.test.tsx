@@ -16,5 +16,16 @@ describe('<DetailsJeune>', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('jeune-1')).toBeInTheDocument()
     expect(screen.getByText("Profil en cours d'activation")).toBeInTheDocument()
+    expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
+    expect(screen.getByTitle('e-mail')).toBeInTheDocument()
+  })
+
+  it("n'affiche pas le mail si le jeune n'en a pas", () => {
+    const jeune = unJeune()
+    delete jeune.email
+
+    render(<DetailsJeune jeune={jeune} />)
+
+    expect(screen.queryByTitle('e-mail')).toBeNull()
   })
 })

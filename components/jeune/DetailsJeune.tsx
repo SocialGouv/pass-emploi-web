@@ -1,6 +1,7 @@
 import { Jeune } from 'interfaces/jeune'
 import React from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
+import EmailIcon from '../../assets/icons/email.svg'
 
 interface DetailsJeuneProps {
   jeune: Jeune
@@ -26,9 +27,18 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
       </div>
 
       <dl className='flex text-sm-semi text-bleu_nuit'>
-        <dt className='mr-[1rem]'>Identifiant :</dt>
+        <dt className='mr-2'>Identifiant :</dt>
         <dd>{jeune.id}</dd>
       </dl>
+
+      {jeune.email && (
+        <dl className='flex text-sm-semi text-bleu_nuit'>
+          <dt className='mr-2'>
+            <EmailIcon focusable='false' role='img' title='e-mail' />
+          </dt>
+          <dd>{jeune.email}</dd>
+        </dl>
+      )}
     </>
   )
 }
