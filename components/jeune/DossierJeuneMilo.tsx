@@ -4,6 +4,7 @@ import { DossierMilo } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
+import { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDIContext } from 'utils/injectionDependances'
 import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
@@ -23,25 +24,30 @@ const DossierJeuneMilo = ({
   erreurMessageHttpPassEmploi,
 }: DossierJeuneMiloProps) => {
   const { data: session } = useSession({ required: true })
+  const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
   const { conseillerService } = useDIContext()
 
   const addJeune = async () => {
-    const newJeune = {
-      idDossier: dossier.id,
-      nom: dossier.nom,
-      prenom: dossier.prenom,
-      email: dossier.email ?? undefined,
-      idConseiller: session!.user.id,
+    if (!creationEnCours) {
+      const newJeune = {
+        idDossier: dossier.id,
+        nom: dossier.nom,
+        prenom: dossier.prenom,
+        email: dossier.email ?? undefined,
+        idConseiller: session!.user.id,
+      }
+      setCreationEnCours(true)
+      conseillerService
+        .createCompteJeuneMilo(newJeune, session!.accessToken)
+        .then(({ id }) => {
+          onCreatedSuccess(id)
+        })
+        .catch((error: Error) => {
+          onCreatedError(error.message)
+        })
+        .finally(() => setCreationEnCours(false))
     }
-    conseillerService
-      .createCompteJeuneMilo(newJeune, session!.accessToken)
-      .then(({ id }) => {
-        onCreatedSuccess(id)
-      })
-      .catch((error: Error) => {
-        onCreatedError(error.message)
-      })
   }
   useMatomo(
     dossier.email
@@ -135,16 +141,21 @@ const DossierJeuneMilo = ({
           </a>
         </Link>
 
-        {!erreurMessageHttpPassEmploi && actionButtons(dossier, addJeune)}
+        {!erreurMessageHttpPassEmploi &&
+          actionButtons(dossier, addJeune, creationEnCours)}
       </div>
     </>
   )
 }
 
-function actionButtons(dossier: DossierMilo, addJeune: () => Promise<void>) {
+function actionButtons(
+  dossier: DossierMilo,
+  addJeune: () => Promise<void>,
+  creationEnCours: boolean
+) {
   return dossier.email ? (
-    <Button type='button' onClick={addJeune}>
-      Créer le compte
+    <Button type='button' onClick={addJeune} disabled={creationEnCours}>
+      {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
     </Button>
   ) : (
     <Button type='button' onClick={() => Router.reload()}>

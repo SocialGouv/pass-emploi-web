@@ -6,11 +6,13 @@ import { JeunePoleEmploiFormData } from '../../interfaces/jeune'
 type FormulaireJeunePoleEmploiProps = {
   creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => Promise<void>
   creationError: string
+  creationEnCours: boolean
 }
 
 function FormulaireJeunePoleEmploi({
   creerJeunePoleEmploi,
   creationError,
+  creationEnCours,
 }: FormulaireJeunePoleEmploiProps) {
   const [prenom, setPrenom] = useState<{ value: string; error?: string }>({
     value: '',
@@ -54,7 +56,7 @@ function FormulaireJeunePoleEmploi({
   const handleJeuneSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const isValid = validate()
-    if (isValid) {
+    if (isValid && !creationEnCours) {
       const newJeune: JeunePoleEmploiFormData = {
         prenom: prenom.value,
         nom: nom.value,
@@ -166,7 +168,9 @@ function FormulaireJeunePoleEmploi({
         {email.error && <ErrorMessage>{email.error}</ErrorMessage>}
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        <Button type='submit'>Créer le compte</Button>
+        <Button type='submit' disabled={creationEnCours}>
+          {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
+        </Button>
       </form>
     </>
   )
