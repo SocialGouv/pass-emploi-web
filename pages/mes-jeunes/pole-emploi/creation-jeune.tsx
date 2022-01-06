@@ -8,15 +8,16 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useDIContext } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { useDIContext } from 'utils/injectionDependances'
 
 function PoleEmploiCreationJeune() {
   const { jeunesService } = useDIContext()
   const { data: session } = useSession({ required: true })
   const [createdSuccessId, setCreatedSuccessId] = useState<string>('')
   const [creationError, setCreationError] = useState<string>('')
+  const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
   async function creerJeunePoleEmploi(
     newJeune: JeunePoleEmploiFormData
@@ -24,6 +25,7 @@ function PoleEmploiCreationJeune() {
     if (!session) return Promise.resolve()
 
     setCreationError('')
+    setCreationEnCours(true)
     try {
       const jeune = await jeunesService.createCompteJeunePoleEmploi(
         {
@@ -39,6 +41,8 @@ function PoleEmploiCreationJeune() {
       setCreationError(
         (error as Error).message || "Une erreur inconnue s'est produite"
       )
+    } finally {
+      setCreationEnCours(false)
     }
   }
 
@@ -71,6 +75,7 @@ function PoleEmploiCreationJeune() {
           <FormulaireJeunePoleEmploi
             creerJeunePoleEmploi={creerJeunePoleEmploi}
             creationError={creationError}
+            creationEnCours={creationEnCours}
           />
         )}
 
