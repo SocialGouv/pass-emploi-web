@@ -1,4 +1,3 @@
-import Button from 'components/Button'
 import { FormButton } from 'components/FormButton'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
@@ -6,7 +5,11 @@ import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
-const Login = () => {
+interface LoginProps {
+  estPoleEmploiDesactive: boolean
+}
+
+const Login = ({ estPoleEmploiDesactive }: LoginProps) => {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -28,7 +31,7 @@ const Login = () => {
   )
 
   useEffect(() => {
-    const provider = router.query.provider
+    const provider = router?.query.provider
     switch (provider) {
       case 'pe':
       case 'similo':
@@ -58,21 +61,26 @@ const Login = () => {
             Connectez-vous à l&apos;espace conseiller
           </h1>
 
-          <FormButton
-            label='Connexion'
-            handleSubmit={(event) => handleSubmit(event)}
-          />
+          {!estPoleEmploiDesactive && (
+            <FormButton
+              label='Authentification pass emploi'
+              handleSubmit={(event) => handleSubmit(event)}
+            />
+          )}
 
           <FormButton
-            label='Connexion avec Mission locale'
+            label='Connexion conseiller Mission Locale'
             className='pt-4'
             handleSubmit={(event) => handleSubmit(event, 'similo-conseiller')}
           />
-
           <FormButton
-            label='Connexion avec Pôle emploi'
+            label='Connexion conseiller Pôle emploi'
             className='pt-4'
-            handleSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
+            handleSubmit={(event) => {
+              estPoleEmploiDesactive
+                ? handleSubmit(event)
+                : handleSubmit(event, 'pe-conseiller')
+            }}
           />
 
           {errorMsg && <p className='error'>{errorMsg}</p>}
@@ -96,7 +104,11 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
     }
   }
 
-  return { props: {} }
+  return {
+    props: {
+      estPoleEmploiDesactive: process.env.UNABLE_POLE_EMPLOI_SSO,
+    },
+  }
 }
 
 export default Login
