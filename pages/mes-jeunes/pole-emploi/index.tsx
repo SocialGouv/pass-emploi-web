@@ -1,4 +1,4 @@
-function Milo() {
+function PoleEmploi() {
   return <></>
 }
 
@@ -11,4 +11,4 @@ export const getServerSideProps = () => {
   }
 }
 
-export default Milo
+export default PoleEmploi

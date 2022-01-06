@@ -23,6 +23,7 @@ function PoleEmploiCreationJeune() {
   ): Promise<void> {
     if (!session) return Promise.resolve()
 
+    setCreationError('')
     try {
       const jeune = await jeunesService.createCompteJeunePoleEmploi(
         {

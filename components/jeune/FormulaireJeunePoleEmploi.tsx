@@ -1,6 +1,6 @@
 import Button from 'components/Button'
 import { ErrorMessage } from 'components/ErrorMessage'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { JeunePoleEmploiFormData } from '../../interfaces/jeune'
 
 type FormulaireJeunePoleEmploiProps = {
@@ -21,6 +21,11 @@ function FormulaireJeunePoleEmploi({
   const [email, setEmail] = useState<{ value: string; error?: string }>({
     value: '',
   })
+  const [error, setError] = useState<string>(creationError)
+
+  useEffect(() => {
+    setError(creationError)
+  }, [creationError])
 
   const validate = () => {
     let isValid = true
@@ -62,14 +67,17 @@ function FormulaireJeunePoleEmploi({
 
   const handleNomChanges = (value: string) => {
     setPrenom({ value, error: '' })
+    setError('')
   }
 
   const handlePrenomChanges = (value: string) => {
     setNom({ value, error: '' })
+    setError('')
   }
 
   const handleEmailChanges = (value: string) => {
     setEmail({ value, error: '' })
+    setError('')
   }
 
   function isEmailValid(email: string) {
@@ -150,13 +158,13 @@ function FormulaireJeunePoleEmploi({
           value={email.value}
           onChange={(e) => handleEmailChanges(e.target.value)}
           className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
-            email.error || creationError
+            email.error || error
               ? 'border-warning text-warning'
               : 'border-bleu_nuit text-bleu_nuit'
           }`}
         />
         {email.error && <ErrorMessage>{email.error}</ErrorMessage>}
-        {creationError && <ErrorMessage>{creationError}</ErrorMessage>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
         <Button type='submit'>Créer le compte</Button>
       </form>
