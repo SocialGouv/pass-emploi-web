@@ -115,6 +115,16 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
         )
       })
 
+    messagesService
+      .evenementNouveauMessage(
+        session!.user.structure,
+        session!.user.id,
+        session!.accessToken
+      )
+      .catch(function (error) {
+        console.error('Conversation: Error while fetching /evenement', error)
+      })
+
     setNewMessage('')
   }
 
