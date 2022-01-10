@@ -32,12 +32,11 @@ const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 type ConversationProps = {
-  db: Firestore
   jeune: Jeune
   onBack: () => void
 }
 
-export default function Conversation({ db, jeune, onBack }: ConversationProps) {
+export default function Conversation({ jeune, onBack }: ConversationProps) {
   const { data: session } = useSession({ required: true })
   const { messagesService, chatCrypto } = useDIContext()
 
@@ -94,7 +93,10 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
   // automatically check db for new messages
   useEffect(() => {
-    const messagesChatRef = collection(getChatReference(db, jeune), 'messages')
+    const messagesChatRef = collection(
+      getChatReference(messagesService.getDb(), jeune),
+      'messages'
+    )
     const messagesUpdatedEvent = onSnapshot(
       query(messagesChatRef, orderBy('creationDate')),
       (querySnapshot: QuerySnapshot) => {
@@ -125,12 +127,12 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
       // unsubscribe
       messagesUpdatedEvent()
     }
-  }, [db, groupMessagesByDay, jeune, setReadByConseiller])
+  }, [groupMessagesByDay, jeune, setReadByConseiller])
 
   useEffect(() => {
     async function updateReadingDate() {
       onSnapshot(
-        getChatReference(db, jeune),
+        getChatReference(messagesService.getDb(), jeune),
         (docSnapshot: DocumentSnapshot<JeuneChat>) => {
           const lastJeuneReadingDate: Timestamp | undefined =
             docSnapshot.data()?.lastJeuneReading
@@ -142,7 +144,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
     }
 
     updateReadingDate()
-  }, [db, jeune])
+  }, [jeune])
 
   return (
     <div className={styles.conversationContainer}>

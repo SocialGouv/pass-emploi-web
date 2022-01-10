@@ -3,7 +3,6 @@ import { RenderResult } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
 import Sidebar from 'components/layouts/Sidebar'
 import renderWithSession from '../renderWithSession'
-import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -31,11 +30,7 @@ describe('<Sidebar/>', () => {
 
   it('devrait afficher les liens de la barre de navigation', () => {
     // GIVEN
-    component = renderWithSession(
-      <DIProvider>
-        <Sidebar />
-      </DIProvider>
-    )
+    component = renderWithSession(<Sidebar />)
 
     // WHEN
 
@@ -48,11 +43,7 @@ describe('<Sidebar/>', () => {
 
   it('devrait afficher le lien de déconnexion', () => {
     // GIVEN
-    component = renderWithSession(
-      <DIProvider>
-        <Sidebar />
-      </DIProvider>
-    )
+    component = renderWithSession(<Sidebar />)
 
     // WHEN
 

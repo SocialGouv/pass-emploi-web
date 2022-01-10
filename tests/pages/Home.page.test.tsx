@@ -3,17 +3,30 @@ import Home from 'pages/index'
 import React from 'react'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import renderWithSession from '../renderWithSession'
+import { DIProvider } from 'utils/injectionDependances'
+import { MessagesService } from 'services/messages.service'
 
 describe('Home', () => {
   const rendezVousPasses = uneListeDeRdv()
   const rendezVousFuturs = uneListeDeRdv()
+  let messagesService: MessagesService
 
   beforeEach(() => {
+    messagesService = {
+      signIn: jest.fn(),
+      signOut: jest.fn(),
+      getDb: jest.fn(),
+      sendNouveauMessage: jest.fn(),
+      setReadByConseiller: jest.fn(),
+    }
+
     renderWithSession(
-      <Home
-        rendezVousFuturs={rendezVousFuturs}
-        rendezVousPasses={rendezVousPasses}
-      />
+      <DIProvider messagesService={messagesService}>
+        <Home
+          rendezVousFuturs={rendezVousFuturs}
+          rendezVousPasses={rendezVousPasses}
+        />
+      </DIProvider>
     )
   })
 

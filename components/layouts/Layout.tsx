@@ -3,7 +3,6 @@
  */
 
 import styles from 'styles/components/Layouts.module.css'
-import { db } from 'utils/firebase'
 import ChatBox from './ChatRoom'
 
 import Sidebar from './Sidebar'
@@ -20,7 +19,7 @@ export default function Layout({ children }: LayoutProps) {
         <main className={styles.page} role='main'>
           {children}
         </main>
-        <ChatBox db={db} />
+        <ChatBox />
       </div>
       <div id='modal-root' />
     </>

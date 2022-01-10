@@ -12,15 +12,48 @@ import {
 } from 'firebase/firestore'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
+import { FirebaseClient } from 'utils/firebaseClient'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
+export interface MessagesService {
+  signIn(token: string): Promise<void>
 
-export class MessagesService {
+  signOut(): Promise<void>
+
+  getDb(): Firestore
+
+  sendNouveauMessage(
+    conseiller: { id: string; structure: string },
+    jeune: Jeune,
+    newMessage: string,
+    accessToken: string
+  ): void
+
+  setReadByConseiller(jeune: Jeune): void
+}
+
+export class MessagesFirebaseAndApiService implements MessagesService {
+  private firebaseClient!: FirebaseClient
   constructor(
     private readonly apiClient: ApiClient,
-    private readonly db: Firestore,
     private readonly chatCrypto: ChatCrypto
-  ) {}
+  ) {
+    this.firebaseClient = new FirebaseClient()
+  }
+
+  async signOut(): Promise<void> {
+    this.firebaseClient.signOut()
+  }
+
+  async signIn(token: string): Promise<void> {
+    if (!this.firebaseClient.firebaseIsSignedIn()) {
+      this.firebaseClient.signIn(token)
+    }
+  }
+
+  getDb(): Firestore {
+    return this.firebaseClient.getDb()
+  }
 
   async sendNouveauMessage(
     conseiller: { id: string; structure: string },
@@ -60,6 +93,13 @@ export class MessagesService {
     )
   }
 
+  setReadByConseiller(jeune: Jeune) {
+    updateDoc<JeuneChat>(this.getChatReference(jeune), {
+      seenByConseiller: true,
+      lastConseillerReading: serverTimestamp(),
+    })
+  }
+
   private async notifierNouveauMessage(
     idConseiller: string,
     idJeune: string,
@@ -91,16 +131,12 @@ export class MessagesService {
     )
   }
 
-  setReadByConseiller(jeune: Jeune) {
-    updateDoc<JeuneChat>(this.getChatReference(jeune), {
-      seenByConseiller: true,
-      lastConseillerReading: serverTimestamp(),
-    })
-  }
-
   private getChatReference(jeune: Jeune): DocumentReference<JeuneChat> {
     return doc<JeuneChat>(
-      collection(this.db, collectionName) as CollectionReference<JeuneChat>,
+      collection(
+        this.firebaseClient.getDb(),
+        collectionName
+      ) as CollectionReference<JeuneChat>,
       jeune.chatId
     )
   }

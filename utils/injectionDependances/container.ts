@@ -5,10 +5,13 @@ import {
   ConseillerService,
 } from 'services/conseiller.service'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
+import {
+  MessagesFirebaseAndApiService,
+  MessagesService,
+} from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
-import { db } from 'utils/firebase'
+import { FirebaseClient } from 'utils/firebaseClient'
 
 export interface Dependencies {
   actionsService: ActionsService
@@ -39,7 +42,7 @@ export class Container {
       actionsService: new ActionsApiService(apiClient),
       conseillerService: new ConseillerApiService(apiClient),
       jeunesService: new JeunesApiService(apiClient),
-      messagesService: new MessagesService(apiClient, db, chatCrypto),
+      messagesService: new MessagesFirebaseAndApiService(apiClient, chatCrypto),
       rendezVousService: new RendezVousService(apiClient),
       chatCrypto,
     })
