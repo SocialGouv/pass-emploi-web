@@ -8,6 +8,7 @@ import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
+import { db } from 'utils/firebase'
 
 export interface Dependencies {
   actionsService: ActionsService
@@ -32,14 +33,15 @@ export class Container {
 
   private static buildDIContainer() {
     const apiClient = new ApiClient()
+    const chatCrypto = new ChatCrypto()
 
     return new Container({
       actionsService: new ActionsApiService(apiClient),
       conseillerService: new ConseillerApiService(apiClient),
       jeunesService: new JeunesApiService(apiClient),
-      messagesService: new MessagesService(apiClient),
+      messagesService: new MessagesService(apiClient, db, chatCrypto),
       rendezVousService: new RendezVousService(apiClient),
-      chatCrypto: new ChatCrypto(),
+      chatCrypto,
     })
   }
 }

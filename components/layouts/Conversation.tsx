@@ -1,19 +1,15 @@
 import {
-  addDoc,
   collection,
   CollectionReference,
   doc,
   DocumentReference,
   DocumentSnapshot,
   Firestore,
-  increment,
   onSnapshot,
   orderBy,
   query,
   QuerySnapshot,
-  serverTimestamp,
   Timestamp,
-  updateDoc,
 } from 'firebase/firestore'
 import { Message, MessagesOfADay } from 'interfaces'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
@@ -70,60 +66,18 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
     return Object.values(messagesByDay)
   }
 
-  const setReadByConseiller = useCallback(() => {
-    updateDoc<JeuneChat>(getChatReference(db, jeune), {
-      seenByConseiller: true,
-      lastConseillerReading: serverTimestamp(),
-    })
-  }, [db, jeune.chatId])
-
   const sendNouveauMessage = (event: any) => {
     event.preventDefault()
 
-    const firestoreNow = serverTimestamp()
-
-    const chatRef: DocumentReference = getChatReference(db, jeune)
-    const { encryptedText, iv } = chatCrypto.encrypt(newMessage)
-
-    addDoc(collection(chatRef, 'messages'), {
-      content: encryptedText,
-      creationDate: firestoreNow,
-      sentBy: 'conseiller',
-      iv,
-    })
-
-    updateDoc(chatRef, {
-      seenByConseiller: true,
-      newConseillerMessageCount: increment(1),
-      lastMessageContent: encryptedText,
-      lastMessageSentAt: firestoreNow,
-      lastMessageSentBy: 'conseiller',
-      lastMessageIv: iv,
-    })
-
-    setReadByConseiller()
-
-    /**
-     * Route send from web to notify mobile, no need to await for response
-     */
-    messagesService
-      .notifierNouveauMessage(session!.user.id, jeune.id, session!.accessToken)
-      .catch(function (error) {
-        console.error(
-          'Conversation: Error while fetching /notify-message',
-          error
-        )
-      })
-
-    messagesService
-      .evenementNouveauMessage(
-        session!.user.structure,
-        session!.user.id,
-        session!.accessToken
-      )
-      .catch(function (error) {
-        console.error('Conversation: Error while fetching /evenement', error)
-      })
+    messagesService.sendNouveauMessage(
+      {
+        id: session!.user.id,
+        structure: session!.user.structure,
+      },
+      jeune,
+      newMessage,
+      session!.accessToken
+    )
 
     setNewMessage('')
   }
@@ -155,13 +109,13 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
       }
     )
 
-    setReadByConseiller()
+    messagesService.setReadByConseiller(jeune)
 
     return () => {
       // unsubscribe
       messagesUpdatedEvent()
     }
-  }, [db, jeune.chatId, setReadByConseiller])
+  }, [db, jeune])
 
   useEffect(() => {
     async function updateReadingDate() {
@@ -178,7 +132,7 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
     }
 
     updateReadingDate()
-  }, [db, jeune.chatId])
+  }, [db, jeune])
 
   return (
     <div className={styles.conversationContainer}>
