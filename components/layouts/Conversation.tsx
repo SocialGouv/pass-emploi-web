@@ -47,25 +47,6 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
   const dummySpace = useRef<HTMLLIElement>(null)
 
-  function groupMessagesByDay(messages: Message[]): MessagesOfADay[] {
-    const messagesByDay: { [day: string]: MessagesOfADay } = {}
-
-    messages.forEach((message: Message) => {
-      message.content = message.iv
-        ? chatCrypto.decrypt({ encryptedText: message.content, iv: message.iv })
-        : message.content
-      const day = formatDayDate(message.creationDate.toDate())
-      const messagesOfDay = messagesByDay[day] ?? {
-        date: message.creationDate.toDate(),
-        messages: [],
-      }
-      messagesOfDay.messages.push(message)
-      messagesByDay[day] = messagesOfDay
-    })
-
-    return Object.values(messagesByDay)
-  }
-
   const sendNouveauMessage = (event: any) => {
     event.preventDefault()
 
@@ -81,6 +62,35 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
 
     setNewMessage('')
   }
+
+  const setReadByConseiller = useCallback(() => {
+    messagesService.setReadByConseiller(jeune)
+  }, [messagesService, jeune])
+
+  const groupMessagesByDay = useCallback(
+    (messages: Message[]) => {
+      const messagesByDay: { [day: string]: MessagesOfADay } = {}
+
+      messages.forEach((message: Message) => {
+        message.content = message.iv
+          ? chatCrypto.decrypt({
+              encryptedText: message.content,
+              iv: message.iv,
+            })
+          : message.content
+        const day = formatDayDate(message.creationDate.toDate())
+        const messagesOfDay = messagesByDay[day] ?? {
+          date: message.creationDate.toDate(),
+          messages: [],
+        }
+        messagesOfDay.messages.push(message)
+        messagesByDay[day] = messagesOfDay
+      })
+
+      return Object.values(messagesByDay)
+    },
+    [chatCrypto]
+  )
 
   // automatically check db for new messages
   useEffect(() => {
@@ -109,13 +119,13 @@ export default function Conversation({ db, jeune, onBack }: ConversationProps) {
       }
     )
 
-    messagesService.setReadByConseiller(jeune)
+    setReadByConseiller()
 
     return () => {
       // unsubscribe
       messagesUpdatedEvent()
     }
-  }, [db, jeune])
+  }, [db, groupMessagesByDay, jeune, setReadByConseiller])
 
   useEffect(() => {
     async function updateReadingDate() {
