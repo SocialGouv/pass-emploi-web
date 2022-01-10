@@ -47,7 +47,9 @@ describe('MiloCreationJeune', () => {
       fireEvent.click(submitButton)
 
       //THEN
-      expect(screen.getByText('Veuillez remplir le champ')).toBeInTheDocument()
+      expect(
+        screen.getByText('Veuillez renseigner un numéro de dossier')
+      ).toBeInTheDocument()
     })
   })
 

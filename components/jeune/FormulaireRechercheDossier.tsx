@@ -22,7 +22,7 @@ function FormulaireRechercheDossier({
 
   const validate = () => {
     if (numeroDossier === '') {
-      setMessageErreur('Veuillez remplir le champ')
+      setMessageErreur('Veuillez renseigner un numéro de dossier')
       return false
     }
     return true
