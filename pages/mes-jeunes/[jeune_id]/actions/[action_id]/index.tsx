@@ -29,7 +29,7 @@ function PageAction({ action, jeune }: Props) {
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
-    const nouveauStatut = await actionsService.updateAction(
+    const nouveauStatut = await actionsService!.updateAction(
       action.id,
       statutChoisi,
       session!.accessToken
@@ -39,7 +39,7 @@ function PageAction({ action, jeune }: Props) {
 
   async function deleteAction(): Promise<void> {
     setDeleteDisabled(true)
-    actionsService
+    actionsService!
       .deleteAction(action.id, session!.accessToken)
       .then(() => {
         router.push({

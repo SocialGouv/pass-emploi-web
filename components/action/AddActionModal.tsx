@@ -51,7 +51,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
       comment: newComment,
     }
 
-    actionsService
+    actionsService!
       .createAction(
         newAction,
         session!.user.id,

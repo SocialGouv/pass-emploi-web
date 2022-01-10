@@ -40,7 +40,7 @@ export default function ChatBox({}: ChatBoxProps) {
       return
     }
 
-    jeunesService
+    jeunesService!
       .getJeunesDuConseiller(session!.user.id, session!.accessToken)
       .then((data) => {
         setJeunes(data)
@@ -51,7 +51,7 @@ export default function ChatBox({}: ChatBoxProps) {
   useEffect(() => {
     async function signInFirebase() {
       if (session?.firebaseToken) {
-        await messagesService.signIn(session.firebaseToken)
+        await messagesService!.signIn(session.firebaseToken)
       }
     }
 
@@ -60,7 +60,7 @@ export default function ChatBox({}: ChatBoxProps) {
         onSnapshot(
           query<JeuneChat>(
             collection(
-              messagesService.getDb(),
+              messagesService!.getDb(),
               collectionName
             ) as CollectionReference<JeuneChat>,
             where('conseillerId', '==', session!.user.id),
@@ -77,7 +77,7 @@ export default function ChatBox({}: ChatBoxProps) {
               seenByConseiller: data.seenByConseiller ?? true,
               newConseillerMessageCount: data.newConseillerMessageCount,
               lastMessageContent: data.lastMessageIv
-                ? chatCrypto.decrypt({
+                ? chatCrypto!.decrypt({
                     encryptedText: data.lastMessageContent ?? '',
                     iv: data.lastMessageIv,
                   })

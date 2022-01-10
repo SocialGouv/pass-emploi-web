@@ -27,7 +27,7 @@ function PoleEmploiCreationJeune() {
     setCreationError('')
     setCreationEnCours(true)
     try {
-      const jeune = await jeunesService.createCompteJeunePoleEmploi(
+      const jeune = await jeunesService!.createCompteJeunePoleEmploi(
         {
           firstName: newJeune.prenom,
           lastName: newJeune.nom,

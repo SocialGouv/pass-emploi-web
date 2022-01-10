@@ -21,7 +21,7 @@ describe('Home', () => {
     }
 
     renderWithSession(
-      <DIProvider messagesService={messagesService}>
+      <DIProvider dependances={{ messagesService }}>
         <Home
           rendezVousFuturs={rendezVousFuturs}
           rendezVousPasses={rendezVousPasses}

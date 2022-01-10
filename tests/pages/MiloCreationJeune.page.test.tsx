@@ -69,6 +69,7 @@ describe('MiloCreationJeune', () => {
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
     })
   })
+
   describe('quand on clique sur le bouton créer un compte', () => {
     let page: RenderResult
     let conseillerService: ConseillerService
@@ -82,7 +83,7 @@ describe('MiloCreationJeune', () => {
       const dossier = unDossierMilo()
 
       page = renderWithSession(
-        <DIProvider conseillerService={conseillerService}>
+        <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'
             dossier={dossier}
@@ -141,7 +142,7 @@ describe('MiloCreationJeune', () => {
       const dossier = unDossierMilo({ email: 'incorrectemail' })
 
       page = renderWithSession(
-        <DIProvider conseillerService={conseillerService}>
+        <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'
             dossier={dossier}

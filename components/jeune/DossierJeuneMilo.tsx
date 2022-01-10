@@ -38,7 +38,7 @@ const DossierJeuneMilo = ({
         idConseiller: session!.user.id,
       }
       setCreationEnCours(true)
-      conseillerService
+      conseillerService!
         .createCompteJeuneMilo(newJeune, session!.accessToken)
         .then(({ id }) => {
           onCreatedSuccess(id)

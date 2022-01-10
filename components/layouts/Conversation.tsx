@@ -49,7 +49,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   const sendNouveauMessage = (event: any) => {
     event.preventDefault()
 
-    messagesService.sendNouveauMessage(
+    messagesService!.sendNouveauMessage(
       {
         id: session!.user.id,
         structure: session!.user.structure,
@@ -63,7 +63,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   }
 
   const setReadByConseiller = useCallback(() => {
-    messagesService.setReadByConseiller(jeune)
+    messagesService!.setReadByConseiller(jeune)
   }, [messagesService, jeune])
 
   const groupMessagesByDay = useCallback(
@@ -72,7 +72,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
 
       messages.forEach((message: Message) => {
         message.content = message.iv
-          ? chatCrypto.decrypt({
+          ? chatCrypto!.decrypt({
               encryptedText: message.content,
               iv: message.iv,
             })
@@ -94,7 +94,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   // automatically check db for new messages
   useEffect(() => {
     const messagesChatRef = collection(
-      getChatReference(messagesService.getDb(), jeune),
+      getChatReference(messagesService!.getDb(), jeune),
       'messages'
     )
     const messagesUpdatedEvent = onSnapshot(
@@ -132,7 +132,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   useEffect(() => {
     async function updateReadingDate() {
       onSnapshot(
-        getChatReference(messagesService.getDb(), jeune),
+        getChatReference(messagesService!.getDb(), jeune),
         (docSnapshot: DocumentSnapshot<JeuneChat>) => {
           const lastJeuneReadingDate: Timestamp | undefined =
             docSnapshot.data()?.lastJeuneReading

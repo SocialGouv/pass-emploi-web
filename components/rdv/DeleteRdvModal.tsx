@@ -30,7 +30,7 @@ const DeleteRdvModal = ({
   const { data: session } = useSession({ required: true })
 
   const handleDeleteRdv = () => {
-    rendezVousService
+    rendezVousService!
       .deleteRendezVous(rdv.id, session!.accessToken)
       .then(function () {
         setIsSuccess(true)

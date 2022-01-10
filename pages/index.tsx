@@ -42,7 +42,7 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   }
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService.postNewRendezVous(
+    await rendezVousService!.postNewRendezVous(
       session!.user.id,
       newRDV,
       session!.accessToken
@@ -128,7 +128,7 @@ const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
       {showAddModal && session && (
         <AddRdvModal
           fetchJeunes={() =>
-            jeunesService.getJeunesDuConseiller(
+            jeunesService!.getJeunesDuConseiller(
               session.user.id,
               session.accessToken
             )
