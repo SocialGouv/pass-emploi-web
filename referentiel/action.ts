@@ -3,7 +3,7 @@ import { ActionStatus, ActionJeune } from 'interfaces/action'
 const now = new Date()
 
 // FIXME introduire un autre type, ici on a juste besoin de `content` et `comment`
-const actionsPredefinies : ActionJeune[] = [
+const actionsPredefinies: ActionJeune[] = [
   {
     id: 'no-com-1',
     content: 'Identifier ses atouts et ses compétences',
@@ -11,9 +11,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: 'no-com-2',
@@ -22,9 +22,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: 'no-com-3',
@@ -33,20 +33,21 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: 'no-com-4',
-    content: "Contacter un employeur pour effectuer une période d'immersion en entreprise",
+    content:
+      "Contacter un employeur pour effectuer une période d'immersion en entreprise",
     comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '1',
@@ -55,20 +56,20 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '2',
-    content: 'Participer à un salon/ un forum',
+    content: 'Participer à un salon / un forum',
     comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '3',
@@ -77,9 +78,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '4',
@@ -88,9 +89,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '5',
@@ -99,9 +100,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '6',
@@ -110,9 +111,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '7',
@@ -121,9 +122,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '8',
@@ -132,9 +133,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '9',
@@ -143,9 +144,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '10',
@@ -154,9 +155,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '11',
@@ -165,9 +166,9 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '12',
@@ -176,20 +177,21 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '13',
-    content: 'Rechercher des informations pour créer ou reprendre une entreprise',
+    content:
+      'Rechercher des informations pour créer ou reprendre une entreprise',
     comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '14',
@@ -198,20 +200,21 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '15',
-    content: 'Contacter un organisme de prestations sociales (ex CAF, CPAM, MSA)',
+    content:
+      'Contacter un organisme de prestations sociales (ex CAF, CPAM, MSA)',
     comment: '',
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
   {
     id: '16',
@@ -220,10 +223,10 @@ const actionsPredefinies : ActionJeune[] = [
     isDone: false,
     creationDate: now,
     lastUpdate: now,
-    creator:'',
+    creator: '',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted
+    status: ActionStatus.NotStarted,
   },
 ]
 
-export {actionsPredefinies}
+export { actionsPredefinies }
