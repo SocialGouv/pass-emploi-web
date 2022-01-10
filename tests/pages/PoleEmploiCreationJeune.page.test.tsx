@@ -70,7 +70,9 @@ describe('PoleEmploiCreationJeune', () => {
         fireEvent.click(submitButton)
 
         // Then
-        expect(screen.getByText('Ce champ est obligatoire')).toBeInTheDocument()
+        expect(
+          screen.getByText('Veuillez renseigner le prénom du jeune')
+        ).toBeInTheDocument()
         await waitFor(() => {
           expect(
             jeunesService.createCompteJeunePoleEmploi
@@ -87,7 +89,9 @@ describe('PoleEmploiCreationJeune', () => {
         fireEvent.click(submitButton)
 
         // Then
-        expect(screen.getByText('Ce champ est obligatoire')).toBeInTheDocument()
+        expect(
+          screen.getByText('Veuillez renseigner le nom du jeune')
+        ).toBeInTheDocument()
         await waitFor(() => {
           expect(
             jeunesService.createCompteJeunePoleEmploi
@@ -104,7 +108,9 @@ describe('PoleEmploiCreationJeune', () => {
         fireEvent.click(submitButton)
 
         // Then
-        expect(screen.getByText('Ce champ est obligatoire')).toBeInTheDocument()
+        expect(
+          screen.getByText("Veuillez renseigner l'e-mail du jeune")
+        ).toBeInTheDocument()
         await waitFor(() => {
           expect(
             jeunesService.createCompteJeunePoleEmploi

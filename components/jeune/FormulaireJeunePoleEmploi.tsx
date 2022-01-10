@@ -32,15 +32,24 @@ function FormulaireJeunePoleEmploi({
   const validate = () => {
     let isValid = true
     if (!Boolean(prenom.value)) {
-      setPrenom({ value: prenom.value, error: 'Ce champ est obligatoire' })
+      setPrenom({
+        value: prenom.value,
+        error: 'Veuillez renseigner le prénom du jeune',
+      })
       isValid = false
     }
     if (!Boolean(nom.value)) {
-      setNom({ value: nom.value, error: 'Ce champ est obligatoire' })
+      setNom({
+        value: nom.value,
+        error: 'Veuillez renseigner le nom du jeune',
+      })
       isValid = false
     }
     if (!Boolean(email.value)) {
-      setEmail({ value: email.value, error: 'Ce champ est obligatoire' })
+      setEmail({
+        value: email.value,
+        error: "Veuillez renseigner l'e-mail du jeune",
+      })
       isValid = false
     } else if (!isEmailValid(email.value)) {
       setEmail({
