@@ -24,7 +24,7 @@ describe('PoleEmploiCreationJeune', () => {
     }
 
     page = renderWithSession(
-      <DIProvider jeunesService={jeunesService}>
+      <DIProvider dependances={{ jeunesService }}>
         <PoleEmploiCreationJeune />
       </DIProvider>
     )

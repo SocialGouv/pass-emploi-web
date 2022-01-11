@@ -2,16 +2,17 @@ import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import { AppHead } from 'components/AppHead'
 import Button, { ButtonColorStyle } from 'components/Button'
 import EchecMessage from 'components/EchecMessage'
-import { Jeune } from 'interfaces/jeune'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { formatDayDate } from 'utils/date'
-import { Container, useDIContext } from 'utils/injectionDependances'
+import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
@@ -21,7 +22,7 @@ type Props = {
 }
 
 function PageAction({ action, jeune }: Props) {
-  const { actionsService } = useDIContext()
+  const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession({ required: true })
   const router = useRouter()
   const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)

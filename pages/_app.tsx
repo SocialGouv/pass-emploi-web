@@ -1,16 +1,13 @@
 import ProgressBar from '@badrap/bar-of-progress'
-
 import Layout from 'components/layouts/Layout'
 import { SessionProvider } from 'next-auth/react'
-
 import { AppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { ReactNode, useEffect } from 'react'
-
 import 'styles/globals.css'
 import 'styles/typography.css'
 import { init } from 'utils/analytics/matomo'
-import { DIProvider } from 'utils/injectionDependances'
+import { Container, DIProvider } from 'utils/injectionDependances'
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
 const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
@@ -40,7 +37,7 @@ function MyApp({
 
   return (
     <SessionProvider session={session}>
-      <DIProvider>
+      <DIProvider dependances={Container.getDIContainer().dependances}>
         {isLoginPage || isLogoutPage ? (
           <Component {...pageProps} />
         ) : (

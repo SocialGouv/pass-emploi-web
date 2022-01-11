@@ -5,8 +5,9 @@ import { useSession } from 'next-auth/react'
 import router from 'next/router'
 import React, { useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
+import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useDIContext } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
 
 const INPUT_MAX_LENGTH = 250
 
@@ -22,7 +23,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [isCommentMode, setIsCommentMode] = useState(false)
   const [isCustomMode, setIsCustomMode] = useState(false)
   const [isBackClicked, setIsBackClicked] = useState(false)
-  const { actionsService } = useDIContext()
+  const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession({ required: true })
 
   const noSelectedAction = () => Boolean(newContent === '')

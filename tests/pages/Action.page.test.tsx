@@ -23,7 +23,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       deleteAction: jest.fn(),
     }
     page = renderWithSession(
-      <DIProvider actionsService={actionsService}>
+      <DIProvider dependances={{ actionsService }}>
         <PageAction action={action} jeune={jeune} />
       </DIProvider>
     )

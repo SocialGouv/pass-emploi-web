@@ -8,10 +8,12 @@ import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useSession } from 'next-auth/react'
 import Router from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { durees } from 'referentiel/rdv'
+import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container, useDIContext } from 'utils/injectionDependances'
+import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../assets/icons/add.svg'
 
@@ -22,7 +24,9 @@ type HomeProps = {
 
 const Home = ({ rendezVousFuturs, rendezVousPasses }: HomeProps) => {
   const { data: session } = useSession({ required: true })
-  const { jeunesService, rendezVousService } = useDIContext()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+  const rendezVousService =
+    useDependance<RendezVousService>('rendezVousService')
   const [showAddModal, setShowAddModal] = useState<boolean | undefined>(
     undefined
   )

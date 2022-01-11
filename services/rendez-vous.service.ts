@@ -2,7 +2,23 @@ import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
 import { ApiClient } from 'clients/api.client'
 
-export class RendezVousService {
+export interface RendezVousService {
+  postNewRendezVous(
+    idConseiller: string,
+    newRDV: RdvFormData,
+    accessToken: string
+  ): Promise<Response>
+
+  getRendezVousConseiller(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<{ passes: RdvJson[]; futurs: RdvJson[] }>
+
+  getRendezVousJeune(idJeune: string, accessToken: string): Promise<RdvJeune[]>
+
+  deleteRendezVous(idRendezVous: string, accessToken: string): Promise<void>
+}
+export class RendezVousApiService implements RendezVousService {
   constructor(private readonly apiClient: ApiClient) {}
 
   postNewRendezVous(

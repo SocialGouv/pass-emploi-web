@@ -2,7 +2,6 @@ import Conversation from 'components/layouts/Conversation'
 import {
   collection,
   CollectionReference,
-  Firestore,
   onSnapshot,
   query,
   QuerySnapshot,
@@ -11,10 +10,12 @@ import {
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayAndHourDate } from 'utils/date'
-import { firebaseIsSignedIn, signInChat } from 'utils/firebase'
-import { useDIContext } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
@@ -23,13 +24,13 @@ const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
-type ChatBoxProps = {
-  db: Firestore
-}
+type ChatBoxProps = {}
 
-export default function ChatBox({ db }: ChatBoxProps) {
+export default function ChatBox({}: ChatBoxProps) {
   const { data: session } = useSession({ required: true })
-  const { jeunesService, chatCrypto } = useDIContext()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+  const chatCrypto = useDependance<ChatCrypto>('chatCrypto')
+  const messagesService = useDependance<MessagesService>('messagesService')
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
@@ -54,8 +55,8 @@ export default function ChatBox({ db }: ChatBoxProps) {
 
   useEffect(() => {
     async function signInFirebase() {
-      if (!firebaseIsSignedIn() && session?.firebaseToken) {
-        await signInChat(session.firebaseToken)
+      if (session?.firebaseToken) {
+        await messagesService.signIn(session.firebaseToken)
       }
     }
 
@@ -63,7 +64,10 @@ export default function ChatBox({ db }: ChatBoxProps) {
       jeunes.forEach((jeune: Jeune) =>
         onSnapshot(
           query<JeuneChat>(
-            collection(db, collectionName) as CollectionReference<JeuneChat>,
+            collection(
+              messagesService.getDb(),
+              collectionName
+            ) as CollectionReference<JeuneChat>,
             where('conseillerId', '==', session!.user.id),
             where('jeuneId', '==', jeune.id)
           ),
@@ -99,7 +103,7 @@ export default function ChatBox({ db }: ChatBoxProps) {
     signInFirebase().then(() => {
       observeJeuneChats()
     })
-  }, [db, jeunes, session])
+  }, [chatCrypto, jeunes, session])
 
   function updateJeunesChat(newJeuneChat: JeuneChat) {
     const idxOfJeune = currentJeunesChat.findIndex(
@@ -120,7 +124,6 @@ export default function ChatBox({ db }: ChatBoxProps) {
       {isInConversation() && (
         <Conversation
           onBack={() => setSelectedChat(undefined)}
-          db={db}
           jeune={selectedChat!}
         />
       )}

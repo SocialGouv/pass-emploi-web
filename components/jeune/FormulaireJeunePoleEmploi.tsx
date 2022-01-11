@@ -1,7 +1,7 @@
 import Button from 'components/Button'
 import { ErrorMessage } from 'components/ErrorMessage'
+import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { FormEvent, useEffect, useState } from 'react'
-import { JeunePoleEmploiFormData } from '../../interfaces/jeune'
 
 type FormulaireJeunePoleEmploiProps = {
   creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => Promise<void>
