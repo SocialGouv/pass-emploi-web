@@ -1,8 +1,9 @@
+const parseUrl = require('next-auth')
 /** @type {import('next').NextConfig} */
 
 module.exports = {
   reactStrictMode: true,
-
+  basePath: parseUrl(deduireNextAuthUrlDepuisLenvironnement()).basePath,
   env: {
     API_ENDPOINT: process.env.API_ENDPOINT,
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -25,10 +26,20 @@ module.exports = {
     FAQ_PE_EXTERNAL_LINK: process.env.FAQ_PE_EXTERNAL_LINK,
     ENABLE_POLE_EMPLOI_SSO:
       process.env.ENABLE_POLE_EMPLOI_SSO === 'true' ? true : false,
+    NEXTAUTH_URL: deduireNextAuthUrlDepuisLenvironnement(),
   },
 
   i18n: {
     locales: ['fr-FR'],
     defaultLocale: 'fr-FR',
   },
+}
+
+function deduireNextAuthUrlDepuisLenvironnement() {
+  const scalingoApp = process.env.APP
+  if (scalingoApp && scalingoApp.startsWith('pa-front-staging-pr')) {
+    return `https://${scalingoApp}.osc-fr1.scalingo.io`
+  } else {
+    return process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  }
 }
