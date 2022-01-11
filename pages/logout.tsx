@@ -1,15 +1,16 @@
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import { useDIContext } from 'utils/injectionDependances'
+import { MessagesService } from 'services/messages.service'
+import { useDependance } from 'utils/injectionDependances'
 
 function Logout() {
   const router = useRouter()
-  const { messagesService } = useDIContext()
+  const messagesService = useDependance<MessagesService>('messagesService')
 
   useEffect(() => {
     async function logout() {
-      await messagesService!.signOut()
+      await messagesService.signOut()
       await signOut({ redirect: false, callbackUrl: '/login' })
       router.push('/login')
     }

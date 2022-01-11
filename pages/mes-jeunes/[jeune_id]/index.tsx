@@ -13,8 +13,10 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
+import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container, useDIContext } from 'utils/injectionDependances'
+import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
@@ -25,7 +27,9 @@ interface FicheJeuneProps {
 }
 
 const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
-  const { jeunesService, rendezVousService } = useDIContext()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+  const rendezVousService =
+    useDependance<RendezVousService>('rendezVousService')
   const { data: session } = useSession({ required: true })
   const [showAddRdvModal, setShowAddRdvModal] = useState<boolean | undefined>(
     undefined
@@ -47,7 +51,7 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   }
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService!.postNewRendezVous(
+    await rendezVousService.postNewRendezVous(
       idConseiller,
       newRDV,
       session!.accessToken
@@ -131,7 +135,7 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
         {showAddRdvModal && session && (
           <AddRdvModal
             fetchJeunes={() =>
-              jeunesService!.getJeunesDuConseiller(
+              jeunesService.getJeunesDuConseiller(
                 idConseiller,
                 session.accessToken
               )

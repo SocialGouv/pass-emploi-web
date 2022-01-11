@@ -5,8 +5,9 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
+import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useDIContext } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
 import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
 
@@ -26,7 +27,8 @@ const DossierJeuneMilo = ({
   const { data: session } = useSession({ required: true })
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
-  const { conseillerService } = useDIContext()
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
 
   const addJeune = async () => {
     if (!creationEnCours) {
@@ -38,15 +40,16 @@ const DossierJeuneMilo = ({
         idConseiller: session!.user.id,
       }
       setCreationEnCours(true)
-      conseillerService!
+      conseillerService
         .createCompteJeuneMilo(newJeune, session!.accessToken)
         .then(({ id }) => {
+          setCreationEnCours(false)
           onCreatedSuccess(id)
         })
         .catch((error: Error) => {
+          setCreationEnCours(false)
           onCreatedError(error.message)
         })
-        .finally(() => setCreationEnCours(false))
     }
   }
   useMatomo(

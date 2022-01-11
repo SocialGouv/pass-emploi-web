@@ -7,13 +7,14 @@ import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useState } from 'react'
+import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useDIContext } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 function PoleEmploiCreationJeune() {
-  const { jeunesService } = useDIContext()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
   const { data: session } = useSession({ required: true })
   const [createdSuccessId, setCreatedSuccessId] = useState<string>('')
   const [creationError, setCreationError] = useState<string>('')
@@ -27,7 +28,7 @@ function PoleEmploiCreationJeune() {
     setCreationError('')
     setCreationEnCours(true)
     try {
-      const jeune = await jeunesService!.createCompteJeunePoleEmploi(
+      const jeune = await jeunesService.createCompteJeunePoleEmploi(
         {
           firstName: newJeune.prenom,
           lastName: newJeune.nom,

@@ -2,14 +2,13 @@ import Button, { ButtonColorStyle } from 'components/Button'
 import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
-
 import { Rdv, RdvJeune } from 'interfaces/rdv'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
+import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
-
 import { formatDayDate } from 'utils/date'
-import { useDIContext } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
 
 type DeleteRdvModalProps = {
   show: boolean
@@ -26,11 +25,12 @@ const DeleteRdvModal = ({
 }: DeleteRdvModalProps) => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
-  const { rendezVousService } = useDIContext()
+  const rendezVousService =
+    useDependance<RendezVousService>('rendezVousService')
   const { data: session } = useSession({ required: true })
 
   const handleDeleteRdv = () => {
-    rendezVousService!
+    rendezVousService
       .deleteRendezVous(rdv.id, session!.accessToken)
       .then(function () {
         setIsSuccess(true)

@@ -15,14 +15,16 @@ import { Message, MessagesOfADay } from 'interfaces'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 import {
   dateIsToday,
   formatDayDate,
   formatHourMinuteDate,
   isDateOlder,
 } from 'utils/date'
-import { useDIContext } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
 
@@ -38,7 +40,8 @@ type ConversationProps = {
 
 export default function Conversation({ jeune, onBack }: ConversationProps) {
   const { data: session } = useSession({ required: true })
-  const { messagesService, chatCrypto } = useDIContext()
+  const messagesService = useDependance<MessagesService>('messagesService')
+  const chatCrypto = useDependance<ChatCrypto>('chatCrypto')
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
@@ -49,7 +52,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   const sendNouveauMessage = (event: any) => {
     event.preventDefault()
 
-    messagesService!.sendNouveauMessage(
+    messagesService.sendNouveauMessage(
       {
         id: session!.user.id,
         structure: session!.user.structure,
@@ -63,7 +66,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   }
 
   const setReadByConseiller = useCallback(() => {
-    messagesService!.setReadByConseiller(jeune)
+    messagesService.setReadByConseiller(jeune)
   }, [messagesService, jeune])
 
   const groupMessagesByDay = useCallback(
@@ -72,7 +75,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
 
       messages.forEach((message: Message) => {
         message.content = message.iv
-          ? chatCrypto!.decrypt({
+          ? chatCrypto.decrypt({
               encryptedText: message.content,
               iv: message.iv,
             })
@@ -94,7 +97,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   // automatically check db for new messages
   useEffect(() => {
     const messagesChatRef = collection(
-      getChatReference(messagesService!.getDb(), jeune),
+      getChatReference(messagesService.getDb(), jeune),
       'messages'
     )
     const messagesUpdatedEvent = onSnapshot(
@@ -132,7 +135,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   useEffect(() => {
     async function updateReadingDate() {
       onSnapshot(
-        getChatReference(messagesService!.getDb(), jeune),
+        getChatReference(messagesService.getDb(), jeune),
         (docSnapshot: DocumentSnapshot<JeuneChat>) => {
           const lastJeuneReadingDate: Timestamp | undefined =
             docSnapshot.data()?.lastJeuneReading

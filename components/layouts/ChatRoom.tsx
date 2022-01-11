@@ -10,9 +10,12 @@ import {
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayAndHourDate } from 'utils/date'
-import { useDIContext } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
@@ -25,7 +28,9 @@ type ChatBoxProps = {}
 
 export default function ChatBox({}: ChatBoxProps) {
   const { data: session } = useSession({ required: true })
-  const { jeunesService, chatCrypto, messagesService } = useDIContext()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+  const chatCrypto = useDependance<ChatCrypto>('chatCrypto')
+  const messagesService = useDependance<MessagesService>('messagesService')
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
   const [jeunes, setJeunes] = useState<Jeune[]>([])
@@ -40,7 +45,7 @@ export default function ChatBox({}: ChatBoxProps) {
       return
     }
 
-    jeunesService!
+    jeunesService
       .getJeunesDuConseiller(session!.user.id, session!.accessToken)
       .then((data) => {
         setJeunes(data)
@@ -51,7 +56,7 @@ export default function ChatBox({}: ChatBoxProps) {
   useEffect(() => {
     async function signInFirebase() {
       if (session?.firebaseToken) {
-        await messagesService!.signIn(session.firebaseToken)
+        await messagesService.signIn(session.firebaseToken)
       }
     }
 
@@ -60,7 +65,7 @@ export default function ChatBox({}: ChatBoxProps) {
         onSnapshot(
           query<JeuneChat>(
             collection(
-              messagesService!.getDb(),
+              messagesService.getDb(),
               collectionName
             ) as CollectionReference<JeuneChat>,
             where('conseillerId', '==', session!.user.id),
@@ -77,7 +82,7 @@ export default function ChatBox({}: ChatBoxProps) {
               seenByConseiller: data.seenByConseiller ?? true,
               newConseillerMessageCount: data.newConseillerMessageCount,
               lastMessageContent: data.lastMessageIv
-                ? chatCrypto!.decrypt({
+                ? chatCrypto.decrypt({
                     encryptedText: data.lastMessageContent ?? '',
                     iv: data.lastMessageIv,
                   })

@@ -1,27 +1,30 @@
 import { fireEvent, screen } from '@testing-library/react'
+import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import Home from 'pages/index'
 import React from 'react'
-import { uneListeDeRdv } from 'fixtures/rendez-vous'
-import renderWithSession from '../renderWithSession'
+import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
 import { DIProvider } from 'utils/injectionDependances'
-import { MessagesService } from 'services/messages.service'
+import renderWithSession from '../renderWithSession'
 
 describe('Home', () => {
   const rendezVousPasses = uneListeDeRdv()
   const rendezVousFuturs = uneListeDeRdv()
-  let messagesService: MessagesService
+  const jeunesService: JeunesService = {
+    createCompteJeunePoleEmploi: jest.fn(),
+    getJeuneDetails: jest.fn(),
+    getJeunesDuConseiller: jest.fn(),
+  }
+  const rendezVousService: RendezVousService = {
+    deleteRendezVous: jest.fn(),
+    getRendezVousConseiller: jest.fn(),
+    getRendezVousJeune: jest.fn(),
+    postNewRendezVous: jest.fn(),
+  }
 
   beforeEach(() => {
-    messagesService = {
-      signIn: jest.fn(),
-      signOut: jest.fn(),
-      getDb: jest.fn(),
-      sendNouveauMessage: jest.fn(),
-      setReadByConseiller: jest.fn(),
-    }
-
     renderWithSession(
-      <DIProvider dependances={{ messagesService }}>
+      <DIProvider dependances={{ jeunesService, rendezVousService }}>
         <Home
           rendezVousFuturs={rendezVousFuturs}
           rendezVousPasses={rendezVousPasses}

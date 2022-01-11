@@ -13,6 +13,13 @@ export const DIProvider = ({
   return <DIContext.Provider value={dependances}>{children}</DIContext.Provider>
 }
 
-export default function useDIContext(): Partial<Dependencies> {
-  return React.useContext<Partial<Dependencies>>(DIContext)
+export function useDependance<
+  TypeDependance extends Dependencies[keyof Dependencies]
+>(nom: keyof Dependencies): TypeDependance {
+  const dependances = React.useContext<Partial<Dependencies>>(DIContext)
+  const dependance: TypeDependance = dependances[nom] as TypeDependance
+  if (dependance !== undefined) {
+    return dependance
+  }
+  throw Error(`Dépendance ${nom} non instanciée`)
 }
