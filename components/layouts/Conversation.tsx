@@ -1,23 +1,9 @@
-import {
-  collection,
-  CollectionReference,
-  doc,
-  DocumentReference,
-  DocumentSnapshot,
-  Firestore,
-  onSnapshot,
-  orderBy,
-  query,
-  QuerySnapshot,
-  Timestamp,
-} from 'firebase/firestore'
 import { Message, MessagesOfADay } from 'interfaces'
-import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { Jeune } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
-import { ChatCrypto } from 'utils/chat/chatCrypto'
 import {
   dateIsToday,
   formatDayDate,
@@ -27,8 +13,6 @@ import {
 import { useDependance } from 'utils/injectionDependances'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
-
-const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
 const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
@@ -41,7 +25,6 @@ type ConversationProps = {
 export default function Conversation({ jeune, onBack }: ConversationProps) {
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
-  const chatCrypto = useDependance<ChatCrypto>('chatCrypto')
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
@@ -65,89 +48,47 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
     setNewMessage('')
   }
 
-  const setReadByConseiller = useCallback(() => {
-    messagesService.setReadByConseiller(jeune)
-  }, [messagesService, jeune])
-
-  const groupMessagesByDay = useCallback(
-    (messages: Message[]) => {
-      const messagesByDay: { [day: string]: MessagesOfADay } = {}
-
-      messages.forEach((message: Message) => {
-        message.content = message.iv
-          ? chatCrypto.decrypt({
-              encryptedText: message.content,
-              iv: message.iv,
-            })
-          : message.content
-        const day = formatDayDate(message.creationDate.toDate())
-        const messagesOfDay = messagesByDay[day] ?? {
-          date: message.creationDate.toDate(),
-          messages: [],
-        }
-        messagesOfDay.messages.push(message)
-        messagesByDay[day] = messagesOfDay
-      })
-
-      return Object.values(messagesByDay)
+  const setReadByConseiller = useCallback(
+    (jeune: Jeune) => {
+      messagesService.setReadByConseiller(jeune)
     },
-    [chatCrypto]
+    [messagesService]
   )
 
-  // automatically check db for new messages
-  useEffect(() => {
-    const messagesChatRef = collection(
-      getChatReference(messagesService.getDb(), jeune),
-      'messages'
-    )
-    const messagesUpdatedEvent = onSnapshot(
-      query(messagesChatRef, orderBy('creationDate')),
-      (querySnapshot: QuerySnapshot) => {
-        // get all documents from collection with id
-        const currentMessages = querySnapshot.docs.map((doc: any) => ({
-          ...doc.data(),
-          id: doc.id,
-        }))
+  const observerMessages = useCallback(
+    (jeune: Jeune) => {
+      return messagesService.observeMessages(
+        jeune,
+        (messagesGroupesParJour: MessagesOfADay[]) => {
+          setMessagesByDay(messagesGroupesParJour)
 
-        if (
-          !currentMessages ||
-          !currentMessages[currentMessages.length - 1]?.creationDate
-        ) {
-          return
-        }
-
-        setMessagesByDay(groupMessagesByDay(currentMessages))
-
-        if (dummySpace?.current) {
-          dummySpace.current.scrollIntoView({ behavior: 'smooth' })
-        }
-      }
-    )
-
-    setReadByConseiller()
-
-    return () => {
-      // unsubscribe
-      messagesUpdatedEvent()
-    }
-  }, [groupMessagesByDay, jeune, setReadByConseiller])
-
-  useEffect(() => {
-    async function updateReadingDate() {
-      onSnapshot(
-        getChatReference(messagesService.getDb(), jeune),
-        (docSnapshot: DocumentSnapshot<JeuneChat>) => {
-          const lastJeuneReadingDate: Timestamp | undefined =
-            docSnapshot.data()?.lastJeuneReading
-          if (lastJeuneReadingDate) {
-            setLastSeenByJeune(lastJeuneReadingDate?.toDate())
+          if (dummySpace?.current) {
+            dummySpace.current.scrollIntoView({ behavior: 'smooth' })
           }
         }
       )
-    }
+    },
+    [messagesService]
+  )
 
-    updateReadingDate()
-  }, [jeune])
+  const observerLastJeuneReadingDate = useCallback(
+    (jeune: Jeune) => {
+      return messagesService.observeJeuneReadingDate(jeune, setLastSeenByJeune)
+    },
+    [messagesService]
+  )
+
+  useEffect(() => {
+    const unsubscribe = observerMessages(jeune)
+    setReadByConseiller(jeune)
+
+    return () => unsubscribe()
+  }, [jeune, observerMessages, setReadByConseiller])
+
+  useEffect(() => {
+    const unsubscribe = observerLastJeuneReadingDate(jeune)
+    return () => unsubscribe()
+  }, [jeune, observerLastJeuneReadingDate])
 
   return (
     <div className={styles.conversationContainer}>
@@ -234,15 +175,5 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
         </button>
       </form>
     </div>
-  )
-}
-
-function getChatReference(
-  db: Firestore,
-  jeune: Jeune
-): DocumentReference<JeuneChat> {
-  return doc<JeuneChat>(
-    collection(db, collectionName) as CollectionReference<JeuneChat>,
-    jeune.chatId
   )
 }

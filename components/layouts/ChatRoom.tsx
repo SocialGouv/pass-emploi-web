@@ -1,26 +1,15 @@
 import Conversation from 'components/layouts/Conversation'
-import {
-  collection,
-  CollectionReference,
-  onSnapshot,
-  query,
-  QuerySnapshot,
-  where,
-} from 'firebase/firestore'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
-import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayAndHourDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
-
-const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
@@ -29,7 +18,6 @@ type ChatBoxProps = {}
 export default function ChatBox({}: ChatBoxProps) {
   const { data: session } = useSession({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const chatCrypto = useDependance<ChatCrypto>('chatCrypto')
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
@@ -39,6 +27,23 @@ export default function ChatBox({}: ChatBoxProps) {
   )
 
   const isInConversation = () => Boolean(selectedChat !== undefined)
+
+  const signInFirebase = useCallback(
+    async (firebaseToken) => {
+      await messagesService.signIn(firebaseToken)
+    },
+    [messagesService]
+  )
+
+  const observeJeuneChats = useCallback(
+    (idConseiller: string, jeunes: Jeune[]) => {
+      const unsubscribes = jeunes.map((jeune: Jeune) =>
+        messagesService.observeChat(idConseiller, jeune, updateJeunesChat)
+      )
+      return () => unsubscribes.forEach((unsubscribe) => unsubscribe())
+    },
+    [messagesService]
+  )
 
   useEffect(() => {
     if (!session) {
@@ -54,58 +59,14 @@ export default function ChatBox({}: ChatBoxProps) {
   }, [session, jeunesService])
 
   useEffect(() => {
-    async function signInFirebase() {
-      if (session?.firebaseToken) {
-        await messagesService.signIn(session.firebaseToken)
-      }
+    if (session?.firebaseToken) {
+      signInFirebase(session.firebaseToken).then(() => {
+        observeJeuneChats(session!.user.id, jeunes)
+      })
     }
+  }, [session, jeunes, signInFirebase, observeJeuneChats])
 
-    async function observeJeuneChats(): Promise<void> {
-      jeunes.forEach((jeune: Jeune) =>
-        onSnapshot(
-          query<JeuneChat>(
-            collection(
-              messagesService.getDb(),
-              collectionName
-            ) as CollectionReference<JeuneChat>,
-            where('conseillerId', '==', session!.user.id),
-            where('jeuneId', '==', jeune.id)
-          ),
-          (querySnapshot: QuerySnapshot<JeuneChat>) => {
-            if (querySnapshot.empty) return
-
-            const doc = querySnapshot.docs[0]
-            const data = doc.data()
-            const newJeuneChat: JeuneChat = {
-              ...jeune,
-              chatId: doc.id,
-              seenByConseiller: data.seenByConseiller ?? true,
-              newConseillerMessageCount: data.newConseillerMessageCount,
-              lastMessageContent: data.lastMessageIv
-                ? chatCrypto.decrypt({
-                    encryptedText: data.lastMessageContent ?? '',
-                    iv: data.lastMessageIv,
-                  })
-                : data.lastMessageContent,
-              lastMessageSentAt: data.lastMessageSentAt,
-              lastMessageSentBy: data.lastMessageSentBy,
-              lastConseillerReading: data.lastConseillerReading,
-              lastJeuneReading: data.lastJeuneReading,
-              lastMessageIv: data.lastMessageIv,
-            }
-
-            updateJeunesChat(newJeuneChat)
-          }
-        )
-      )
-    }
-
-    signInFirebase().then(() => {
-      observeJeuneChats()
-    })
-  }, [chatCrypto, jeunes, session])
-
-  function updateJeunesChat(newJeuneChat: JeuneChat) {
+  function updateJeunesChat(newJeuneChat: JeuneChat): void {
     const idxOfJeune = currentJeunesChat.findIndex(
       (j) => j.chatId === newJeuneChat.chatId
     )
