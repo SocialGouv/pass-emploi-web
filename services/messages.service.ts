@@ -79,39 +79,39 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     accessToken: string
   ) {
     const firestoreNow = serverTimestamp()
-
     const chatRef: DocumentReference = this.getChatReference(jeune)
     const { encryptedText, iv } = this.chatCrypto.encrypt(newMessage)
 
-    addDoc(collection(chatRef, 'messages'), {
-      content: encryptedText,
-      creationDate: firestoreNow,
-      sentBy: 'conseiller',
-      iv,
-    })
+    await Promise.all([
+      addDoc(collection(chatRef, 'messages'), {
+        content: encryptedText,
+        creationDate: firestoreNow,
+        sentBy: 'conseiller',
+        iv,
+      }),
+      updateDoc(chatRef, {
+        newConseillerMessageCount: increment(1),
+        lastMessageContent: encryptedText,
+        lastMessageIv: iv,
+        lastMessageSentAt: firestoreNow,
+        lastMessageSentBy: 'conseiller',
+        seenByConseiller: true,
+        lastConseillerReading: serverTimestamp(),
+      }),
+    ])
 
-    updateDoc(chatRef, {
-      seenByConseiller: true,
-      newConseillerMessageCount: increment(1),
-      lastMessageContent: encryptedText,
-      lastMessageSentAt: firestoreNow,
-      lastMessageSentBy: 'conseiller',
-      lastMessageIv: iv,
-    })
-
-    this.setReadByConseiller(jeune)
-
-    this.notifierNouveauMessage(conseiller.id, jeune.id, accessToken)
-
-    this.evenementNouveauMessage(
-      conseiller.structure,
-      conseiller.id,
-      accessToken
-    )
+    await Promise.all([
+      this.notifierNouveauMessage(conseiller.id, jeune.id, accessToken),
+      this.evenementNouveauMessage(
+        conseiller.structure,
+        conseiller.id,
+        accessToken
+      ),
+    ])
   }
 
-  setReadByConseiller(jeune: Jeune) {
-    updateDoc<JeuneChat>(this.getChatReference(jeune), {
+  async setReadByConseiller(jeune: Jeune): Promise<void> {
+    await updateDoc<JeuneChat>(this.getChatReference(jeune), {
       seenByConseiller: true,
       lastConseillerReading: serverTimestamp(),
     })
