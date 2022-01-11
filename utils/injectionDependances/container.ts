@@ -13,7 +13,6 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
-import { ChatCrypto } from 'utils/chat/chatCrypto'
 
 export interface Dependencies {
   actionsService: ActionsService
@@ -21,7 +20,6 @@ export interface Dependencies {
   jeunesService: JeunesService
   messagesService: MessagesService
   rendezVousService: RendezVousService
-  chatCrypto: ChatCrypto
 }
 
 export class Container {
@@ -38,15 +36,12 @@ export class Container {
 
   private static buildDIContainer() {
     const apiClient = new ApiClient()
-    const chatCrypto = new ChatCrypto()
-
     return new Container({
       actionsService: new ActionsApiService(apiClient),
       conseillerService: new ConseillerApiService(apiClient),
       jeunesService: new JeunesApiService(apiClient),
-      messagesService: new MessagesFirebaseAndApiService(apiClient, chatCrypto),
+      messagesService: new MessagesFirebaseAndApiService(apiClient),
       rendezVousService: new RendezVousApiService(apiClient),
-      chatCrypto,
     })
   }
 }

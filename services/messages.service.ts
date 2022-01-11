@@ -5,13 +5,21 @@ import {
   CollectionReference,
   doc,
   DocumentReference,
-  Firestore,
+  DocumentSnapshot,
   increment,
+  onSnapshot,
+  orderBy,
+  query,
+  QuerySnapshot,
   serverTimestamp,
+  Timestamp,
   updateDoc,
+  where,
 } from 'firebase/firestore'
+import { Message, MessagesOfADay } from 'interfaces'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
+import { formatDayDate } from 'utils/date'
 import { FirebaseClient } from 'utils/firebaseClient'
 
 const collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
@@ -19,8 +27,6 @@ export interface MessagesService {
   signIn(token: string): Promise<void>
 
   signOut(): Promise<void>
-
-  getDb(): Firestore
 
   sendNouveauMessage(
     conseiller: { id: string; structure: string },
@@ -30,29 +36,40 @@ export interface MessagesService {
   ): void
 
   setReadByConseiller(jeune: Jeune): void
+
+  observeChat(
+    idConseiller: string,
+    jeune: Jeune,
+    updateChat: (chat: JeuneChat) => void
+  ): () => void
+
+  observeMessages(
+    jeune: Jeune,
+    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
+  ): () => void
+
+  observeJeuneReadingDate(
+    jeune: Jeune,
+    onJeuneReadingDate: (date: Date) => void
+  ): () => void
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
-  private firebaseClient!: FirebaseClient
-  constructor(
-    private readonly apiClient: ApiClient,
-    private readonly chatCrypto: ChatCrypto
-  ) {
+  private readonly firebaseClient: FirebaseClient
+  private readonly chatCrypto: ChatCrypto
+  constructor(private readonly apiClient: ApiClient) {
     this.firebaseClient = new FirebaseClient()
+    this.chatCrypto = new ChatCrypto()
   }
 
   async signOut(): Promise<void> {
-    this.firebaseClient.signOut()
+    await this.firebaseClient.signOut()
   }
 
   async signIn(token: string): Promise<void> {
     if (!this.firebaseClient.firebaseIsSignedIn()) {
-      this.firebaseClient.signIn(token)
+      await this.firebaseClient.signIn(token)
     }
-  }
-
-  getDb(): Firestore {
-    return this.firebaseClient.getDb()
   }
 
   async sendNouveauMessage(
@@ -100,6 +117,94 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     })
   }
 
+  observeChat(
+    idConseiller: string,
+    jeune: Jeune,
+    updateChat: (chat: JeuneChat) => void
+  ): () => void {
+    return onSnapshot(
+      query<JeuneChat>(
+        collection(
+          this.firebaseClient.getDb(),
+          collectionName
+        ) as CollectionReference<JeuneChat>,
+        where('conseillerId', '==', idConseiller),
+        where('jeuneId', '==', jeune.id)
+      ),
+      (querySnapshot: QuerySnapshot<JeuneChat>) => {
+        if (querySnapshot.empty) return
+
+        const doc = querySnapshot.docs[0]
+        const data = doc.data()
+        const newJeuneChat: JeuneChat = {
+          ...jeune,
+          chatId: doc.id,
+          seenByConseiller: data.seenByConseiller ?? true,
+          newConseillerMessageCount: data.newConseillerMessageCount,
+          lastMessageContent: data.lastMessageIv
+            ? this.chatCrypto.decrypt({
+                encryptedText: data.lastMessageContent ?? '',
+                iv: data.lastMessageIv,
+              })
+            : data.lastMessageContent,
+          lastMessageSentAt: data.lastMessageSentAt,
+          lastMessageSentBy: data.lastMessageSentBy,
+          lastConseillerReading: data.lastConseillerReading,
+          lastJeuneReading: data.lastJeuneReading,
+          lastMessageIv: data.lastMessageIv,
+        }
+
+        updateChat(newJeuneChat)
+      }
+    )
+  }
+
+  observeMessages(
+    jeune: Jeune,
+    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
+  ): () => void {
+    return onSnapshot(
+      query(
+        collection(this.getChatReference(jeune), 'messages'),
+        orderBy('creationDate')
+      ),
+      (querySnapshot: QuerySnapshot) => {
+        // get all documents from collection with id
+        const currentMessages = querySnapshot.docs.map((doc: any) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+
+        if (
+          !currentMessages ||
+          !currentMessages[currentMessages.length - 1]?.creationDate
+        ) {
+          return
+        }
+
+        const messagesGroupesParJour: MessagesOfADay[] =
+          this.grouperMessagesParJour(currentMessages)
+        onMessagesGroupesParJour(messagesGroupesParJour)
+      }
+    )
+  }
+
+  observeJeuneReadingDate(
+    jeune: Jeune,
+    onJeuneReadingDate: (date: Date) => void
+  ): () => void {
+    return onSnapshot(
+      this.getChatReference(jeune),
+      (docSnapshot: DocumentSnapshot<JeuneChat>) => {
+        const lastJeuneReadingDate: Timestamp | undefined =
+          docSnapshot.data()?.lastJeuneReading
+        if (lastJeuneReadingDate) {
+          onJeuneReadingDate(lastJeuneReadingDate!.toDate())
+        }
+      }
+    )
+  }
+
   private async notifierNouveauMessage(
     idConseiller: string,
     idJeune: string,
@@ -129,6 +234,28 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       },
       accessToken
     )
+  }
+
+  private grouperMessagesParJour(messages: Message[]) {
+    const messagesByDay: { [day: string]: MessagesOfADay } = {}
+
+    messages.forEach((message: Message) => {
+      message.content = message.iv
+        ? this.chatCrypto.decrypt({
+            encryptedText: message.content,
+            iv: message.iv,
+          })
+        : message.content
+      const day = formatDayDate(message.creationDate.toDate())
+      const messagesOfDay = messagesByDay[day] ?? {
+        date: message.creationDate.toDate(),
+        messages: [],
+      }
+      messagesOfDay.messages.push(message)
+      messagesByDay[day] = messagesOfDay
+    })
+
+    return Object.values(messagesByDay)
   }
 
   private getChatReference(jeune: Jeune): DocumentReference<JeuneChat> {
