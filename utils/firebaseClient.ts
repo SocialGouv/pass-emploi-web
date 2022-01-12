@@ -1,11 +1,5 @@
 import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app'
-import {
-  Auth,
-  getAuth,
-  signInWithCustomToken,
-  signOut,
-  UserCredential,
-} from 'firebase/auth'
+import { Auth, getAuth, signInWithCustomToken, signOut } from 'firebase/auth'
 import {
   addDoc,
   collection,
@@ -37,6 +31,107 @@ class FirebaseClient {
     this.collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
   }
 
+  async signIn(token: string): Promise<void> {
+    if (!this.auth.currentUser) {
+      await signInWithCustomToken(this.auth, token)
+    }
+  }
+
+  async signOut(): Promise<void> {
+    await signOut(this.auth)
+  }
+
+  async addMessage(
+    idChat: string,
+    message: { encryptedText: string; iv: string },
+    date: Date
+  ): Promise<void> {
+    const { encryptedText: content, iv } = message
+    await addDoc<FirebaseMessage>(
+      collection(
+        this.getChatReference(idChat),
+        'messages'
+      ) as CollectionReference<FirebaseMessage>,
+      {
+        content,
+        iv,
+        sentBy: 'conseiller',
+        creationDate: Timestamp.fromDate(date),
+      }
+    )
+  }
+
+  async updateChat(idChat: string, toUpdate: Partial<Chat>): Promise<void> {
+    await updateDoc<FirebaseChat>(
+      this.getChatReference(idChat),
+      chatToFirebase(toUpdate)
+    )
+  }
+
+  findChatDuJeune(
+    idConseiller: string,
+    idJeune: string,
+    onChatFound: (id: string, chat: Chat) => void
+  ): () => void {
+    return onSnapshot<FirebaseChat>(
+      query<FirebaseChat>(
+        collection(
+          this.getDb(),
+          this.collectionName
+        ) as CollectionReference<FirebaseChat>,
+        where('conseillerId', '==', idConseiller),
+        where('jeuneId', '==', idJeune)
+      ),
+      (querySnapshot: QuerySnapshot<FirebaseChat>) => {
+        if (querySnapshot.empty) return
+        const doc = querySnapshot.docs[0]
+        onChatFound(doc.id, chatFromFirebase(doc.data()))
+      }
+    )
+  }
+
+  observeChat(idChat: string, onChat: (chat: Chat) => void): () => void {
+    return onSnapshot(
+      this.getChatReference(idChat),
+      (docSnapshot: DocumentSnapshot<FirebaseChat>) => {
+        const data = docSnapshot.data()
+        if (!data) return
+        onChat(chatFromFirebase(data))
+      }
+    )
+  }
+
+  observeMessagesDuChat(
+    idChat: string,
+    onMessages: (messages: Message[]) => void
+  ): () => void {
+    return onSnapshot<FirebaseMessage>(
+      query<FirebaseMessage>(
+        collection(
+          this.getChatReference(idChat),
+          'messages'
+        ) as CollectionReference<FirebaseMessage>,
+        orderBy('creationDate')
+      ),
+      (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
+        const messages: Message[] = querySnapshot.docs.map((doc) => {
+          const firebaseMessage: FirebaseMessage = doc.data()
+          return {
+            ...firebaseMessage,
+            creationDate: firebaseMessage.creationDate.toDate(),
+            id: doc.id,
+          }
+        })
+
+        if (!messages || !messages[messages.length - 1]?.creationDate) {
+          return
+        }
+
+        onMessages(messages)
+      }
+    )
+  }
+
   private static retrieveApp() {
     if (!getApps().length) {
       return initializeApp({
@@ -53,106 +148,86 @@ class FirebaseClient {
     }
   }
 
-  getDb(): Firestore {
+  private getDb(): Firestore {
     return getFirestore(this.firebaseApp)
   }
 
-  signIn(token: string): Promise<UserCredential> {
-    return signInWithCustomToken(this.auth, token)
-  }
-
-  signOut(): Promise<void> {
-    return signOut(this.auth)
-  }
-
-  firebaseIsSignedIn(): boolean {
-    return Boolean(this.auth.currentUser)
-  }
-
-  async addMessage(
-    idChat: string,
-    message: { encryptedText: string; iv: string },
-    date: Date
-  ): Promise<void> {
-    const { encryptedText: content, iv } = message
-    await addDoc(collection(this.getChatReference(idChat), 'messages'), {
-      content,
-      iv,
-      sentBy: 'conseiller',
-      creationDate: Timestamp.fromDate(date),
-    })
-  }
-
-  async updateChat(idChat: string, toUpdate: Partial<Chat>): Promise<void> {
-    await updateDoc<Chat>(this.getChatReference(idChat), toUpdate)
-  }
-
-  findChatDuJeune(
-    idConseiller: string,
-    idJeune: string,
-    onChatFound: (id: string, chat: Chat) => void
-  ): () => void {
-    return onSnapshot(
-      query<Chat>(
-        collection(
-          this.getDb(),
-          this.collectionName
-        ) as CollectionReference<Chat>,
-        where('conseillerId', '==', idConseiller),
-        where('jeuneId', '==', idJeune)
-      ),
-      (querySnapshot: QuerySnapshot<Chat>) => {
-        if (querySnapshot.empty) return
-        const doc = querySnapshot.docs[0]
-        onChatFound(doc.id, doc.data())
-      }
-    )
-  }
-
-  observeChat(idChat: string, onChat: (chat: Chat) => void): () => void {
-    return onSnapshot(
-      this.getChatReference(idChat),
-      (docSnapshot: DocumentSnapshot<Chat>) => {
-        const data = docSnapshot.data()
-        if (!data) return
-        onChat(data)
-      }
-    )
-  }
-
-  observeMessagesDuChat(
-    idChat: string,
-    onMessages: (messages: Message[]) => void
-  ): () => void {
-    return onSnapshot(
-      query(
-        collection(this.getChatReference(idChat), 'messages'),
-        orderBy('creationDate')
-      ),
-      (querySnapshot: QuerySnapshot) => {
-        const messages = querySnapshot.docs.map((doc: any) => ({
-          ...doc.data(),
-          id: doc.id,
-        }))
-
-        if (!messages || !messages[messages.length - 1]?.creationDate) {
-          return
-        }
-
-        onMessages(messages)
-      }
-    )
-  }
-
-  private getChatReference(idChat: string): DocumentReference<Chat> {
-    return doc<Chat>(
+  private getChatReference(idChat: string): DocumentReference<FirebaseChat> {
+    return doc<FirebaseChat>(
       collection(
         this.getDb(),
         this.collectionName
-      ) as CollectionReference<Chat>,
+      ) as CollectionReference<FirebaseChat>,
       idChat
     )
   }
+}
+
+interface FirebaseChat {
+  seenByConseiller: boolean
+  newConseillerMessageCount: number
+  lastMessageContent: string | undefined
+  lastMessageSentAt: Timestamp | undefined
+  lastMessageSentBy: string | undefined
+  lastConseillerReading: Timestamp | undefined
+  lastJeuneReading: Timestamp | undefined
+  lastMessageIv: string | undefined
+}
+
+function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
+  const firebaseChatToUpdate: Partial<FirebaseChat> = {}
+  if (chat.seenByConseiller) {
+    firebaseChatToUpdate.seenByConseiller = chat.seenByConseiller
+  }
+  if (chat.newConseillerMessageCount) {
+    firebaseChatToUpdate.newConseillerMessageCount =
+      chat.newConseillerMessageCount
+  }
+  if (chat.lastMessageContent) {
+    firebaseChatToUpdate.lastMessageContent = chat.lastMessageContent
+  }
+  if (chat.lastMessageSentAt) {
+    firebaseChatToUpdate.lastMessageSentAt = Timestamp.fromDate(
+      chat.lastMessageSentAt
+    )
+  }
+  if (chat.lastMessageSentBy) {
+    firebaseChatToUpdate.lastMessageSentBy = chat.lastMessageSentBy
+  }
+  if (chat.lastConseillerReading) {
+    firebaseChatToUpdate.lastConseillerReading = Timestamp.fromDate(
+      chat.lastConseillerReading
+    )
+  }
+  if (chat.lastJeuneReading) {
+    firebaseChatToUpdate.lastJeuneReading = Timestamp.fromDate(
+      chat.lastJeuneReading
+    )
+  }
+  if (chat.lastMessageIv) {
+    firebaseChatToUpdate.lastMessageIv = chat.lastMessageIv
+  }
+  return firebaseChatToUpdate
+}
+
+function chatFromFirebase(firebaseChat: FirebaseChat): Chat {
+  return {
+    seenByConseiller: firebaseChat.seenByConseiller,
+    newConseillerMessageCount: firebaseChat.newConseillerMessageCount,
+    lastMessageContent: firebaseChat.lastMessageContent,
+    lastMessageSentAt: firebaseChat.lastMessageSentAt?.toDate(),
+    lastMessageSentBy: firebaseChat.lastMessageSentBy,
+    lastConseillerReading: firebaseChat.lastConseillerReading?.toDate(),
+    lastJeuneReading: firebaseChat.lastJeuneReading?.toDate(),
+    lastMessageIv: firebaseChat.lastMessageIv,
+  }
+}
+
+interface FirebaseMessage {
+  content: string
+  creationDate: Timestamp
+  sentBy: string
+  iv: string | undefined
 }
 
 export { FirebaseClient }

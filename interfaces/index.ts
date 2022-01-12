@@ -1,15 +1,7 @@
-// TODO create JsonModel
-// TODO: ranger par type
-
-import { Timestamp } from 'firebase/firestore'
-
-/**
- * Firebase Models. TODO: replace in another file?
- */
 export interface Message {
   id: string
   content: string
-  creationDate: Timestamp
+  creationDate: Date
   sentBy: string
   iv: string | undefined
 }

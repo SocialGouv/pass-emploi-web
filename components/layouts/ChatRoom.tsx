@@ -136,9 +136,7 @@ export default function ChatRoom({}: ChatRoomProps) {
                       <span className='text-xxs-italic text-bleu_nuit self-end flex'>
                         {jeuneChat.lastMessageContent && (
                           <span className='mr-[7px]'>
-                            {formatDayAndHourDate(
-                              jeuneChat.lastMessageSentAt!.toDate()
-                            )}{' '}
+                            {formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}
                           </span>
                         )}
                         {jeuneChat.seenByConseiller ? (

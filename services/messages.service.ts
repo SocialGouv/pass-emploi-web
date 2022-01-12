@@ -1,5 +1,4 @@
 import { ApiClient } from 'clients/api.client'
-import { Timestamp } from 'firebase/firestore'
 import { Message, MessagesOfADay } from 'interfaces'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
@@ -51,9 +50,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async signIn(token: string): Promise<void> {
-    if (!this.firebaseClient.firebaseIsSignedIn()) {
-      await this.firebaseClient.signIn(token)
-    }
+    await this.firebaseClient.signIn(token)
   }
 
   async sendNouveauMessage(
@@ -70,11 +67,11 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       this.firebaseClient.updateChat(jeuneChat.chatId, {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,
-        lastMessageSentAt: Timestamp.fromDate(now),
+        lastMessageSentAt: now,
         lastMessageSentBy: 'conseiller',
         newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
         seenByConseiller: true,
-        lastConseillerReading: Timestamp.fromDate(now),
+        lastConseillerReading: now,
       }),
     ])
 
@@ -92,7 +89,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const now = new Date()
     await this.firebaseClient.updateChat(jeuneChat.chatId, {
       seenByConseiller: true,
-      lastConseillerReading: Timestamp.fromDate(now),
+      lastConseillerReading: now,
     })
   }
 
@@ -149,7 +146,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     return this.firebaseClient.observeChat(jeuneChat.chatId, (chat: Chat) => {
       const lastJeuneReadingDate = chat.lastJeuneReading
       if (lastJeuneReadingDate) {
-        onJeuneReadingDate(lastJeuneReadingDate!.toDate())
+        onJeuneReadingDate(lastJeuneReadingDate)
       }
     })
   }
@@ -195,9 +192,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
             iv: message.iv,
           })
         : message.content
-      const day = formatDayDate(message.creationDate.toDate())
+      const day = formatDayDate(message.creationDate)
       const messagesOfDay = messagesByDay[day] ?? {
-        date: message.creationDate.toDate(),
+        date: message.creationDate,
         messages: [],
       }
       messagesOfDay.messages.push(message)

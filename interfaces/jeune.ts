@@ -1,5 +1,3 @@
-import { Timestamp } from 'firebase/firestore'
-
 export type Jeune = {
   id: string
   firstName: string
@@ -13,10 +11,10 @@ export interface Chat {
   seenByConseiller: boolean
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
-  lastMessageSentAt: Timestamp | undefined
+  lastMessageSentAt: Date | undefined
   lastMessageSentBy: string | undefined
-  lastConseillerReading: Timestamp | undefined
-  lastJeuneReading: Timestamp | undefined
+  lastConseillerReading: Date | undefined
+  lastJeuneReading: Date | undefined
   lastMessageIv: string | undefined
 }
 

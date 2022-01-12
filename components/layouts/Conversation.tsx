@@ -134,13 +134,10 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
                             : 'text-left'
                         }`}
                       >
-                        {formatHourMinuteDate(message.creationDate.toDate())}
+                        {formatHourMinuteDate(message.creationDate)}
                         {message.sentBy === 'conseiller' && (
                           <span>
-                            {isDateOlder(
-                              message.creationDate.toDate(),
-                              lastSeenByJeune
-                            )
+                            {isDateOlder(message.creationDate, lastSeenByJeune)
                               ? ' · Lu'
                               : ' · Envoyé'}
                           </span>
