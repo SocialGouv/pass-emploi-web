@@ -40,20 +40,6 @@ export default function Sidebar({}: SidebarProps) {
         />
 
         <nav role='navigation' aria-label='Menu principal'>
-          {!isPoleEmploi && (
-            <Link href='/'>
-              <a className={router.pathname === '/' ? styles.activeLink : ''}>
-                <RendezvousIcon
-                  role='img'
-                  focusable='false'
-                  aria-label="Aller sur la page d'accueil"
-                  className='mr-2'
-                />
-                <span className='text-md text-bleu_nuit'>Rendez-vous</span>
-              </a>
-            </Link>
-          )}
-
           <Link href={'/mes-jeunes'}>
             <a
               className={
@@ -73,6 +59,26 @@ export default function Sidebar({}: SidebarProps) {
               </span>
             </a>
           </Link>
+
+          {!isPoleEmploi && (
+            <Link href={'/mes-rendezvous'}>
+              <a
+                className={
+                  router.pathname.startsWith('/mes-rendezvous')
+                    ? styles.activeLink
+                    : ''
+                }
+              >
+                <RendezvousIcon
+                  role='img'
+                  focusable='false'
+                  aria-label='Aller sur la liste de mes rendez-vous'
+                  className='mr-2'
+                />
+                <span className='text-md text-bleu_nuit'>Rendez-vous</span>
+              </a>
+            </Link>
+          )}
 
           <a
             href={
