@@ -13,9 +13,9 @@ import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
-type ChatBoxProps = {}
+type ChatRoomProps = {}
 
-export default function ChatBox({}: ChatBoxProps) {
+export default function ChatRoom({}: ChatRoomProps) {
   const { data: session } = useSession({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -85,7 +85,7 @@ export default function ChatBox({}: ChatBoxProps) {
       {isInConversation() && (
         <Conversation
           onBack={() => setSelectedChat(undefined)}
-          jeune={selectedChat!}
+          jeuneChat={selectedChat!}
         />
       )}
 

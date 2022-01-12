@@ -6,11 +6,10 @@ export type Jeune = {
   lastName: string
   creationDate: string
   email?: string
-  chatId?: string
   isActivated?: boolean
 }
 
-export interface JeuneChat extends Jeune {
+export interface Chat {
   seenByConseiller: boolean
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
@@ -19,6 +18,10 @@ export interface JeuneChat extends Jeune {
   lastConseillerReading: Timestamp | undefined
   lastJeuneReading: Timestamp | undefined
   lastMessageIv: string | undefined
+}
+
+export interface JeuneChat extends Jeune, Chat {
+  chatId: string
 }
 
 export interface DossierMilo {

@@ -1,5 +1,5 @@
 import { Message, MessagesOfADay } from 'interfaces'
-import { Jeune } from 'interfaces/jeune'
+import { JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MessagesService } from 'services/messages.service'
@@ -18,11 +18,11 @@ const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 type ConversationProps = {
-  jeune: Jeune
+  jeuneChat: JeuneChat
   onBack: () => void
 }
 
-export default function Conversation({ jeune, onBack }: ConversationProps) {
+export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -40,7 +40,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
         id: session!.user.id,
         structure: session!.user.structure,
       },
-      jeune,
+      jeuneChat,
       newMessage,
       session!.accessToken
     )
@@ -49,16 +49,16 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   }
 
   const setReadByConseiller = useCallback(
-    (jeune: Jeune) => {
-      messagesService.setReadByConseiller(jeune)
+    (jeuneChat: JeuneChat) => {
+      messagesService.setReadByConseiller(jeuneChat)
     },
     [messagesService]
   )
 
   const observerMessages = useCallback(
-    (jeune: Jeune) => {
+    (jeuneChat: JeuneChat) => {
       return messagesService.observeMessages(
-        jeune,
+        jeuneChat,
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
@@ -72,23 +72,26 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
   )
 
   const observerLastJeuneReadingDate = useCallback(
-    (jeune: Jeune) => {
-      return messagesService.observeJeuneReadingDate(jeune, setLastSeenByJeune)
+    (jeuneChat: JeuneChat) => {
+      return messagesService.observeJeuneReadingDate(
+        jeuneChat,
+        setLastSeenByJeune
+      )
     },
     [messagesService]
   )
 
   useEffect(() => {
-    const unsubscribe = observerMessages(jeune)
-    setReadByConseiller(jeune)
+    const unsubscribe = observerMessages(jeuneChat)
+    setReadByConseiller(jeuneChat)
 
     return () => unsubscribe()
-  }, [jeune, observerMessages, setReadByConseiller])
+  }, [jeuneChat, observerMessages, setReadByConseiller])
 
   useEffect(() => {
-    const unsubscribe = observerLastJeuneReadingDate(jeune)
+    const unsubscribe = observerLastJeuneReadingDate(jeuneChat)
     return () => unsubscribe()
-  }, [jeune, observerLastJeuneReadingDate])
+  }, [jeuneChat, observerLastJeuneReadingDate])
 
   return (
     <div className={styles.conversationContainer}>
@@ -100,7 +103,7 @@ export default function Conversation({ jeune, onBack }: ConversationProps) {
             aria-label='Retour sur ma messagerie'
           />
         </button>
-        <h2 className='h2-semi'>Discuter avec {jeune.firstName}</h2>
+        <h2 className='h2-semi'>Discuter avec {jeuneChat.firstName}</h2>
       </div>
 
       <ul className={styles.messages}>
