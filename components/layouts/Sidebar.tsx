@@ -19,6 +19,7 @@ export default function Sidebar({}: SidebarProps) {
   const { data: session } = useSession({ required: true })
 
   const isMilo = session?.user.structure === UserStructure.MILO
+  const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
   async function handleLogout(event: any) {
     event.preventDefault()
@@ -39,7 +40,7 @@ export default function Sidebar({}: SidebarProps) {
         />
 
         <nav role='navigation' aria-label='Menu principal'>
-          {isMilo && (
+          {!isPoleEmploi && (
             <Link href='/'>
               <a className={router.pathname === '/' ? styles.activeLink : ''}>
                 <RendezvousIcon
