@@ -18,6 +18,8 @@ export default function Sidebar({}: SidebarProps) {
   const [isLoggedOut, setIsLoggedOut] = useState(false)
   const { data: session } = useSession({ required: true })
 
+  const isMilo = session?.user.structure === UserStructure.MILO
+
   async function handleLogout(event: any) {
     event.preventDefault()
     setIsLoggedOut(true)
@@ -37,17 +39,19 @@ export default function Sidebar({}: SidebarProps) {
         />
 
         <nav role='navigation' aria-label='Menu principal'>
-          <Link href='/'>
-            <a className={router.pathname === '/' ? styles.activeLink : ''}>
-              <RendezvousIcon
-                role='img'
-                focusable='false'
-                aria-label="Aller sur la page d'accueil"
-                className='mr-2'
-              />
-              <span className='text-md text-bleu_nuit'>Rendez-vous</span>
-            </a>
-          </Link>
+          {isMilo && (
+            <Link href='/'>
+              <a className={router.pathname === '/' ? styles.activeLink : ''}>
+                <RendezvousIcon
+                  role='img'
+                  focusable='false'
+                  aria-label="Aller sur la page d'accueil"
+                  className='mr-2'
+                />
+                <span className='text-md text-bleu_nuit'>Rendez-vous</span>
+              </a>
+            </Link>
+          )}
 
           <Link href={'/mes-jeunes'}>
             <a
@@ -71,7 +75,7 @@ export default function Sidebar({}: SidebarProps) {
 
           <a
             href={
-              session?.user.structure === UserStructure.MILO
+              isMilo
                 ? process.env.FAQ_MILO_EXTERNAL_LINK
                 : process.env.FAQ_PE_EXTERNAL_LINK
             }
