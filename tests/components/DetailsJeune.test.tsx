@@ -29,13 +29,4 @@ describe('<DetailsJeune>', () => {
 
     expect(screen.queryByTitle('e-mail')).toBeNull()
   })
-
-  it("n'affiche pas la date si le jeune n'en a pas", () => {
-    const jeune = unJeune()
-    delete jeune.creationDate
-
-    render(<DetailsJeune jeune={jeune} />)
-
-    expect(() => screen.getByText('07/12/2021')).toThrow()
-  })
 })

@@ -32,12 +32,10 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
         <dd>{jeune.id}</dd>
       </dl>
 
-      {jeune.creationDate && (
-        <dl className='flex text-sm-semi text-bleu_nuit mb-2'>
-          <dt className='mr-2'>Ajouté le :</dt>
-          <dd>{formatDayDate(new Date(jeune.creationDate))}</dd>
-        </dl>
-      )}
+      <dl className='flex text-sm-semi text-bleu_nuit mb-2'>
+        <dt className='mr-2'>Ajouté le :</dt>
+        <dd>{formatDayDate(new Date(jeune.creationDate))}</dd>
+      </dl>
 
       {jeune.email && (
         <dl className='flex text-sm-semi text-bleu_nuit'>
