@@ -63,6 +63,11 @@ describe('Fiche Jeune', () => {
         screen.getByRole('link', { name: 'Voir la liste des actions du jeune' })
       ).toHaveAttribute('href', `/mes-jeunes/${jeune.id}/actions`)
     })
+
+    it('permet la prise de rendez-vous', async () => {
+      // Then
+      expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()
+    })
   })
 
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
@@ -94,6 +99,11 @@ describe('Fiche Jeune', () => {
       expect(() =>
         screen.getByRole('link', { name: 'Voir la liste des actions du jeune' })
       ).toThrow()
+    })
+
+    it('ne permet pas la prise de rendez-vous', async () => {
+      // Then
+      expect(() => screen.getByText('Fixer un rendez-vous')).toThrow()
     })
   })
 })

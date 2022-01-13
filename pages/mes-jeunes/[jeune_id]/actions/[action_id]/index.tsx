@@ -3,6 +3,7 @@ import { AppHead } from 'components/AppHead'
 import Button, { ButtonColorStyle } from 'components/Button'
 import EchecMessage from 'components/EchecMessage'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
@@ -149,8 +150,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   }
 
   const {
-    session: { accessToken },
+    session: { user, accessToken },
   } = sessionOrRedirect
+  if (user.structure === UserStructure.POLE_EMPLOI) {
+    return { notFound: true }
+  }
+
   const { actionsService } = Container.getDIContainer().dependances
   const res = await actionsService.getAction(
     context.query.action_id as string,

@@ -105,13 +105,15 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
             <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
           </div>
 
-          <Button
-            onClick={openAddRdvModal}
-            label='Créer un rendez-vous'
-            style={ButtonColorStyle.WHITE}
-          >
-            Fixer un rendez-vous
-          </Button>
+          {!isPoleEmploi && (
+            <Button
+              onClick={openAddRdvModal}
+              label='Fixer un rendez-vous'
+              style={ButtonColorStyle.WHITE}
+            >
+              Fixer un rendez-vous
+            </Button>
+          )}
         </div>
 
         <DetailsJeune jeune={jeune} />

@@ -12,53 +12,61 @@ describe('Mes Jeunes', () => {
     jest.clearAllMocks()
   })
 
-  it('devrait rediriger vers la page de création jeune quand le conseiller est MILO', () => {
-    //GIVEN
-    const jeune = unJeune()
+  describe('quand le conseiller est MILO', () => {
+    beforeEach(async () => {
+      //GIVEN
+      const jeune = unJeune()
 
-    renderWithSession(
-      <MesJeunes
-        structureConseiller={UserStructure.MILO}
-        conseillerJeunes={[jeune]}
-      />
-    )
-
-    const addButton = screen.getByRole('button', {
-      name: 'Ajouter un jeune',
+      renderWithSession(
+        <MesJeunes
+          structureConseiller={UserStructure.MILO}
+          conseillerJeunes={[jeune]}
+        />
+      )
     })
 
-    const routerSpy = jest.spyOn(Router, 'push')
+    it('redirige vers la page de création jeune MILO', () => {
+      // GIVEN
+      const addButton = screen.getByRole('button', {
+        name: 'Ajouter un jeune',
+      })
+      const routerSpy = jest.spyOn(Router, 'push')
 
-    //WHEN
-    fireEvent.click(addButton)
+      //WHEN
+      fireEvent.click(addButton)
 
-    //THEN
-    expect(routerSpy).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
+      //THEN
+      expect(routerSpy).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
+    })
   })
 
-  it('devrait rediriger vers la page de création jeune quand le conseiller est MILO', () => {
-    //GIVEN
-    const jeune = unJeune()
+  describe('quand le conseiller est Pole emploi', () => {
+    beforeEach(async () => {
+      //GIVEN
+      const jeune = unJeune()
 
-    renderWithSession(
-      <MesJeunes
-        structureConseiller={UserStructure.POLE_EMPLOI}
-        conseillerJeunes={[jeune]}
-      />
-    )
-
-    const addButton = screen.getByRole('button', {
-      name: 'Ajouter un jeune',
+      renderWithSession(
+        <MesJeunes
+          structureConseiller={UserStructure.POLE_EMPLOI}
+          conseillerJeunes={[jeune]}
+        />
+      )
     })
 
-    const routerSpy = jest.spyOn(Router, 'push')
+    it('devrait rediriger vers la page de création jeune PE', () => {
+      // GIVEN
+      const addButton = screen.getByRole('button', {
+        name: 'Ajouter un jeune',
+      })
+      const routerSpy = jest.spyOn(Router, 'push')
 
-    //WHEN
-    fireEvent.click(addButton)
+      //WHEN
+      fireEvent.click(addButton)
 
-    //THEN
-    expect(routerSpy).toHaveBeenCalledWith(
-      '/mes-jeunes/pole-emploi/creation-jeune'
-    )
+      //THEN
+      expect(routerSpy).toHaveBeenCalledWith(
+        '/mes-jeunes/pole-emploi/creation-jeune'
+      )
+    })
   })
 })

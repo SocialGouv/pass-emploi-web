@@ -19,7 +19,7 @@ export const IntegrationPoleEmploi = ({
         Cette fonctionnalité n&apos;est pas encore disponible sur pass emploi.
       </p>
       <p className='text-sm-regular'>
-        Gérer les {label} de ce jeune depuis vos outils Pôle emploi.
+        Gérez les {label} de ce jeune depuis vos outils Pôle emploi.
       </p>
     </div>
   </div>
