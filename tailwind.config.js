@@ -5,9 +5,10 @@
  */
 
 module.exports = {
-  mode: 'jit', // Just in Time mode, see: https://tailwindcss.com/docs/just-in-time-mode
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     screens: {
       sm: '480px',
@@ -69,9 +70,6 @@ module.exports = {
         sans: ['Rubik'],
       },
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [],
 }
