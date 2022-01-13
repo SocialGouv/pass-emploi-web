@@ -58,7 +58,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   const observerMessages = useCallback(
     (jeuneChat: JeuneChat) => {
       return messagesService.observeMessages(
-        jeuneChat,
+        jeuneChat.chatId,
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
@@ -74,7 +74,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   const observerLastJeuneReadingDate = useCallback(
     (jeuneChat: JeuneChat) => {
       return messagesService.observeJeuneReadingDate(
-        jeuneChat,
+        jeuneChat.chatId,
         setLastSeenByJeune
       )
     },

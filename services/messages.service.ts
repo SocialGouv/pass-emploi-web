@@ -3,7 +3,8 @@ import { Message, MessagesOfADay } from 'interfaces'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
-import { FirebaseClient } from 'utils/firebaseClient'
+import { FirebaseClient } from 'clients/firebase.client'
+import { UserStructure } from '../interfaces/conseiller'
 
 export interface MessagesService {
   signIn(token: string): Promise<void>
@@ -19,42 +20,40 @@ export interface MessagesService {
 
   setReadByConseiller(jeuneChat: JeuneChat): void
 
-  observeChat(
+  observeJeuneChat(
     idConseiller: string,
     jeune: Jeune,
     updateChat: (chat: JeuneChat) => void
   ): () => void
 
   observeMessages(
-    jeuneChat: JeuneChat,
+    idChat: string,
     onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
   ): () => void
 
   observeJeuneReadingDate(
-    jeuneChat: JeuneChat,
+    idChat: string,
     onJeuneReadingDate: (date: Date) => void
   ): () => void
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
-  private readonly firebaseClient: FirebaseClient
-  private readonly chatCrypto: ChatCrypto
+  constructor(
+    private readonly firebaseClient: FirebaseClient,
+    private readonly chatCrypto: ChatCrypto,
+    private readonly apiClient: ApiClient
+  ) {}
 
-  constructor(private readonly apiClient: ApiClient) {
-    this.firebaseClient = new FirebaseClient()
-    this.chatCrypto = new ChatCrypto()
+  async signIn(token: string): Promise<void> {
+    await this.firebaseClient.signIn(token)
   }
 
   async signOut(): Promise<void> {
     await this.firebaseClient.signOut()
   }
 
-  async signIn(token: string): Promise<void> {
-    await this.firebaseClient.signIn(token)
-  }
-
   async sendNouveauMessage(
-    conseiller: { id: string; structure: string },
+    conseiller: { id: string; structure: UserStructure },
     jeuneChat: JeuneChat,
     newMessage: string,
     accessToken: string
@@ -93,10 +92,10 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     })
   }
 
-  observeChat(
+  observeJeuneChat(
     idConseiller: string,
     jeune: Jeune,
-    updateChat: (chat: JeuneChat) => void
+    onJeuneChat: (chat: JeuneChat) => void
   ): () => void {
     return this.firebaseClient.findChatDuJeune(
       idConseiller,
@@ -120,17 +119,17 @@ export class MessagesFirebaseAndApiService implements MessagesService {
           lastMessageIv: chat.lastMessageIv,
         }
 
-        updateChat(newJeuneChat)
+        onJeuneChat(newJeuneChat)
       }
     )
   }
 
   observeMessages(
-    jeuneChat: JeuneChat,
+    idChat: string,
     onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
   ): () => void {
     return this.firebaseClient.observeMessagesDuChat(
-      jeuneChat.chatId,
+      idChat,
       (messages: Message[]) => {
         const messagesGroupesParJour: MessagesOfADay[] =
           this.grouperMessagesParJour(messages)
@@ -140,10 +139,10 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   observeJeuneReadingDate(
-    jeuneChat: JeuneChat,
+    idChat: string,
     onJeuneReadingDate: (date: Date) => void
   ): () => void {
-    return this.firebaseClient.observeChat(jeuneChat.chatId, (chat: Chat) => {
+    return this.firebaseClient.observeChat(idChat, (chat: Chat) => {
       const lastJeuneReadingDate = chat.lastJeuneReading
       if (lastJeuneReadingDate) {
         onJeuneReadingDate(lastJeuneReadingDate)
@@ -182,7 +181,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     )
   }
 
-  private grouperMessagesParJour(messages: Message[]) {
+  private grouperMessagesParJour(messages: Message[]): MessagesOfADay[] {
     const messagesByDay: { [day: string]: MessagesOfADay } = {}
 
     messages.forEach((message: Message) => {

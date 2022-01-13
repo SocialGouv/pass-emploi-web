@@ -38,7 +38,7 @@ export default function ChatRoom({}: ChatRoomProps) {
   const observeJeuneChats = useCallback(
     (idConseiller: string, jeunes: Jeune[]) => {
       const unsubscribes = jeunes.map((jeune: Jeune) =>
-        messagesService.observeChat(idConseiller, jeune, updateJeunesChat)
+        messagesService.observeJeuneChat(idConseiller, jeune, updateJeunesChat)
       )
       return () => unsubscribes.forEach((unsubscribe) => unsubscribe())
     },
