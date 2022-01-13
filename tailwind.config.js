@@ -33,7 +33,13 @@ module.exports = {
       rouge_france: '#E1000F',
       rouge_france_5: '#E1000F0D',
       warning: '#FF3F15',
+      primary: '#3B69D1',
+      primary_lighten: '#EEF1F8',
     },
+
+    fill: (theme) => ({
+      ...theme('colors'),
+    }),
 
     backgroundColor: (theme) => ({
       ...theme('colors'),

@@ -4,8 +4,11 @@ import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import React from 'react'
 
-export default function renderWithSession(children: JSX.Element): RenderResult {
-  const session: Session = {
+export default function renderWithSession(
+  children: JSX.Element,
+  customSession?: Partial<Session>
+): RenderResult {
+  const defaultSession: Session = {
     user: {
       id: '1',
       name: 'Nils Tavernier',
@@ -15,6 +18,8 @@ export default function renderWithSession(children: JSX.Element): RenderResult {
     firebaseToken: 'firebaseToken',
     expires: new Date(Date.now() + 300000).toISOString(),
   }
+
+  const session = { ...defaultSession, ...customSession }
 
   return render(<SessionProvider session={session}>{children}</SessionProvider>)
 }
