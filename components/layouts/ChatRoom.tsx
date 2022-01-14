@@ -114,7 +114,10 @@ export default function ChatBox({}: ChatBoxProps) {
               (jeuneChat: JeuneChat) =>
                 jeuneChat.chatId && (
                   <li key={`chat-${jeuneChat.id}`}>
-                    <button onClick={() => setSelectedChat(jeuneChat)}>
+                    <button
+                      className='border-none'
+                      onClick={() => setSelectedChat(jeuneChat)}
+                    >
                       <span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
                         {jeuneChat.firstName} {jeuneChat.lastName}
                         {!jeuneChat.seenByConseiller && (
