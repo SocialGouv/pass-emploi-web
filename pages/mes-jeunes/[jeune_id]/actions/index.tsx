@@ -3,8 +3,9 @@ import AddActionModal from 'components/action/AddActionModal'
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import SuccessMessage from 'components/SuccessMessage'
-import { Jeune } from 'interfaces/jeune'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { UserStructure } from 'interfaces/conseiller'
+import { Jeune } from 'interfaces/jeune'
 import { ActionJeuneJson } from 'interfaces/json/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
@@ -23,7 +24,7 @@ import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
 type Props = {
   jeune: Jeune
-  actions_en_cours: ActionJeune[]
+  actionsEnCours: ActionJeune[]
   deleteSuccess: boolean
 }
 
@@ -33,10 +34,9 @@ const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
     ? -1
     : 1
 
-function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
+function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
   const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
-  const [actionsEnCours] = useState(actions_en_cours)
   const router = useRouter()
 
   const closeSuccessMessage = () => {
@@ -131,12 +131,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
+  if (user.structure === UserStructure.POLE_EMPLOI) {
+    return { notFound: true }
+  }
+
   const { actionsService, jeunesService } =
     Container.getDIContainer().dependances
-  const {
-    session: { accessToken },
-  } = sessionOrRedirect
-
   const [dataDetailsJeune, dataActionsJeune] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,
@@ -167,7 +170,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       jeune: dataDetailsJeune,
-      actions_en_cours: userActions.sort(sortLastUpdate),
+      actionsEnCours: userActions.sort(sortLastUpdate),
       deleteSuccess: Boolean(context.query.deleteSuccess),
     },
   }
