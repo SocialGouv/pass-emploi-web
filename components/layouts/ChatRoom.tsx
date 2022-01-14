@@ -28,9 +28,9 @@ export default function ChatRoom({}: ChatRoomProps) {
 
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
-  const signInFirebase = useCallback(
-    async (firebaseToken) => {
-      await messagesService.signIn(firebaseToken)
+  const signInChat = useCallback(
+    async (chatToken) => {
+      await messagesService.signIn(chatToken)
     },
     [messagesService]
   )
@@ -60,11 +60,11 @@ export default function ChatRoom({}: ChatRoomProps) {
 
   useEffect(() => {
     if (session?.firebaseToken) {
-      signInFirebase(session.firebaseToken).then(() => {
+      signInChat(session.firebaseToken).then(() => {
         observeJeuneChats(session!.user.id, jeunes)
       })
     }
-  }, [session, jeunes, signInFirebase, observeJeuneChats])
+  }, [session, jeunes, signInChat, observeJeuneChats])
 
   function updateJeunesChat(newJeuneChat: JeuneChat): void {
     const idxOfJeune = currentJeunesChat.findIndex(
