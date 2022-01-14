@@ -116,7 +116,7 @@ function Actions({ jeune, actions_en_cours, deleteSuccess }: Props) {
 
       <ul>
         {actionsEnCours.map((action: ActionJeune) => (
-          <li key={action.id}>
+          <li key={action.id} className='border-b-2 border-bleu_blanc'>
             <Action action={action} jeuneId={jeune.id} />
           </li>
         ))}
