@@ -1,14 +1,19 @@
-import { ActionStatus, ActionJeune } from 'interfaces/action'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
 
-export const uneAction = (overrides: Partial<ActionJeune> = {}): ActionJeune =>
-  ({
+export const uneAction = (
+  overrides: Partial<ActionJeune> = {}
+): ActionJeune => {
+  const defaults: ActionJeune = {
     id: 'no-com-1',
     content: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
-    creationDate: 'Thu, 21 Oct 2021 10:00:00 GMT',
-    lastUpdate: '',
+    creationDate: new Date(2021, 9, 21, 10),
+    lastUpdate: new Date(2021, 9, 21, 10),
     creator: 'Nils',
+    creatorType: 'conseiller',
     isDone: false,
     status: ActionStatus.NotStarted,
-    ...overrides,
-  } as ActionJeune)
+  }
+
+  return { ...defaults, ...overrides }
+}
