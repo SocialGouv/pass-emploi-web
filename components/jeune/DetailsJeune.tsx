@@ -1,6 +1,7 @@
 import { Jeune } from 'interfaces/jeune'
 import React from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
+import { formatDayDate } from 'utils/date'
 import EmailIcon from '../../assets/icons/email.svg'
 
 interface DetailsJeuneProps {
@@ -26,9 +27,14 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
         )}
       </div>
 
-      <dl className='flex text-sm-semi text-bleu_nuit'>
+      <dl className='flex text-sm-semi text-bleu_nuit mb-2'>
         <dt className='mr-2'>Identifiant :</dt>
         <dd>{jeune.id}</dd>
+      </dl>
+
+      <dl className='flex text-sm-semi text-bleu_nuit mb-2'>
+        <dt className='mr-2'>Ajouté le :</dt>
+        <dd>{formatDayDate(new Date(jeune.creationDate))}</dd>
       </dl>
 
       {jeune.email && (
