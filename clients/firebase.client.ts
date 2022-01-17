@@ -133,7 +133,8 @@ class FirebaseClient {
   }
 
   private static retrieveApp() {
-    if (!getApps().length) {
+    const appAlreadyInitialized: number = getApps().length
+    if (!appAlreadyInitialized) {
       return initializeApp({
         apiKey: process.env.FIREBASE_API_KEY,
         authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -144,7 +145,7 @@ class FirebaseClient {
         measurementId: process.env.FIREBASE_MEASUREMENT_ID,
       })
     } else {
-      return getApp() // if already initialized, use that one
+      return getApp()
     }
   }
 
