@@ -1,4 +1,6 @@
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { ApiClient } from 'clients/api.client'
+import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
 import {
   ConseillerApiService,
@@ -40,7 +42,11 @@ export class Container {
       actionsService: new ActionsApiService(apiClient),
       conseillerService: new ConseillerApiService(apiClient),
       jeunesService: new JeunesApiService(apiClient),
-      messagesService: new MessagesFirebaseAndApiService(apiClient),
+      messagesService: new MessagesFirebaseAndApiService(
+        new FirebaseClient(),
+        new ChatCrypto(),
+        apiClient
+      ),
       rendezVousService: new RendezVousApiService(apiClient),
     })
   }

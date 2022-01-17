@@ -1,24 +1,25 @@
-import { Timestamp } from 'firebase/firestore'
-
 export type Jeune = {
   id: string
   firstName: string
   lastName: string
   creationDate: string
   email?: string
-  chatId?: string
   isActivated?: boolean
 }
 
-export interface JeuneChat extends Jeune {
+export interface Chat {
   seenByConseiller: boolean
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
-  lastMessageSentAt: Timestamp | undefined
+  lastMessageSentAt: Date | undefined
   lastMessageSentBy: string | undefined
-  lastConseillerReading: Timestamp | undefined
-  lastJeuneReading: Timestamp | undefined
+  lastConseillerReading: Date | undefined
+  lastJeuneReading: Date | undefined
   lastMessageIv: string | undefined
+}
+
+export interface JeuneChat extends Jeune, Chat {
+  chatId: string
 }
 
 export interface DossierMilo {

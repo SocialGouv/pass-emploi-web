@@ -3,7 +3,7 @@ import Base64 from 'crypto-js/enc-base64'
 import Utf8 from 'crypto-js/enc-utf8'
 import WordArray from 'crypto-js/lib-typedarrays'
 
-interface encryptedTextWithInitializationVector {
+export interface EncryptedTextWithInitializationVector {
   encryptedText: string
   iv: string
 }
@@ -14,7 +14,7 @@ export class ChatCrypto {
     this.key = Utf8.parse(process.env.FIREBASE_CRYPT_KEY ?? '')
   }
 
-  encrypt(message: string): encryptedTextWithInitializationVector {
+  encrypt(message: string): EncryptedTextWithInitializationVector {
     const iv = WordArray.random(16)
     const encrypted = AES.encrypt(message, this.key, { iv })
 
@@ -24,7 +24,7 @@ export class ChatCrypto {
     }
   }
 
-  decrypt(encryptedText: encryptedTextWithInitializationVector): string {
+  decrypt(encryptedText: EncryptedTextWithInitializationVector): string {
     return AES.decrypt(encryptedText.encryptedText, this.key, {
       iv: Base64.parse(encryptedText.iv),
     }).toString(Utf8)
