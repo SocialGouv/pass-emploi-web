@@ -50,7 +50,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
 
   const setReadByConseiller = useCallback(
     (jeuneChat: JeuneChat) => {
-      messagesService.setReadByConseiller(jeuneChat)
+      messagesService.setReadByConseiller(jeuneChat.chatId)
     },
     [messagesService]
   )
@@ -157,7 +157,11 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
         )}
       </ul>
 
-      <form onSubmit={sendNouveauMessage} className={styles.form}>
+      <form
+        data-testid='newMessageForm'
+        onSubmit={sendNouveauMessage}
+        className={styles.form}
+      >
         <input
           type='text'
           value={newMessage}

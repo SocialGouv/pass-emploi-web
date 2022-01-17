@@ -18,7 +18,7 @@ export interface MessagesService {
     accessToken: string
   ): void
 
-  setReadByConseiller(jeuneChat: JeuneChat): void
+  setReadByConseiller(idChat: string): void
 
   observeJeuneChat(
     idConseiller: string,
@@ -84,9 +84,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     ])
   }
 
-  async setReadByConseiller(jeuneChat: JeuneChat): Promise<void> {
+  async setReadByConseiller(idChat: string): Promise<void> {
     const now = new Date()
-    await this.firebaseClient.updateChat(jeuneChat.chatId, {
+    await this.firebaseClient.updateChat(idChat, {
       seenByConseiller: true,
       lastConseillerReading: now,
     })

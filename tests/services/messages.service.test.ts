@@ -1,7 +1,7 @@
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
-import { desMessages, unMessage } from 'fixtures/message'
+import { desMessages, desMessagesParJour } from 'fixtures/message'
 import { Message, MessagesOfADay } from 'interfaces'
 import { UserStructure } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
@@ -140,7 +140,7 @@ describe('MessagesFirebaseAndApiService', () => {
       const jeuneChat = unJeuneChat()
 
       // When
-      await messagesService.setReadByConseiller(jeuneChat)
+      await messagesService.setReadByConseiller(jeuneChat.chatId)
 
       // Then
       expect(firebaseClient.updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
@@ -209,39 +209,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('calls provided callback with decrypted messages grouped by day', async () => {
       // Then
-      expect(onMessages).toHaveBeenCalledWith([
-        {
-          date: new Date(2021, 11, 22),
-          messages: [
-            unMessage({
-              content: 'Decrypted: Message du 22/12/2021',
-              creationDate: new Date(2021, 11, 22),
-            }),
-          ],
-        },
-        {
-          date: new Date(2022, 0, 10),
-          messages: [
-            unMessage({
-              content: 'Decrypted: Message du 10/1/2022',
-              creationDate: new Date(2022, 0, 10),
-            }),
-          ],
-        },
-        {
-          date: new Date(2022, 0, 13, 9),
-          messages: [
-            unMessage({
-              content: 'Decrypted: Message du 13/1/2022 9h',
-              creationDate: new Date(2022, 0, 13, 9),
-            }),
-            unMessage({
-              content: 'Decrypted: Message du 13/1/2022 10h',
-              creationDate: new Date(2022, 0, 13, 10),
-            }),
-          ],
-        },
-      ])
+      expect(onMessages).toHaveBeenCalledWith(desMessagesParJour())
     })
   })
 
