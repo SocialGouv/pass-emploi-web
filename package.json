@@ -42,7 +42,7 @@
     "eslint-plugin-prettier": "4.0.0",
     "jest": "^27.3.1",
     "node-mocks-http": "^1.11.0",
-    "postcss": "^8.3.11",
+    "postcss": "^8.4.4",
     "prettier": "^2.4.1",
     "tailwindcss": "^3.0.13",
     "ts-jest": "^27.0.7",

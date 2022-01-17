@@ -73,6 +73,7 @@ const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
                     <button
                       onClick={() => onDelete(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+                      className='border-none'
                     >
                       <DeleteIcon aria-hidden='true' focusable='false' />
                     </button>
