@@ -115,7 +115,7 @@ function PageAction({ action, jeune }: Props) {
         <div className='border-r-2 border-bleu_blanc' />
 
         <form onSubmit={(e) => e.preventDefault()}>
-          <fieldset>
+          <fieldset className='border-none'>
             <span className='flex items-center text-sm'>
               <legend className='text-bleu inline mr-[25px]'>Statut</legend>
               <RadioButtonStatus
