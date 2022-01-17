@@ -72,7 +72,7 @@ function MiloCreationJeune({
         <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
 
-      <div className='mt-20 pl-32'>
+      <div className='mt-20 pl-28'>
         <CreationEtape etape={etape} />
 
         <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>
