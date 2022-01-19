@@ -1,11 +1,8 @@
+import { decode, JwtPayload } from 'jsonwebtoken'
 import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import { AuthService } from 'services/auth.service'
-import { decode, JwtPayload } from 'jsonwebtoken'
 
-function secondsToTimestamp(seconds: number): number {
-  return seconds * 1000
-}
 export class Authenticator {
   constructor(private readonly authService: AuthService) {}
 
@@ -58,11 +55,12 @@ export class Authenticator {
     }
   }
 
-  async handleFirebaseToken(accessToken: string) {
+  async getFirebaseToken(accessToken: string) {
     const { token } = await this.authService.getFirebaseToken(accessToken)
     return token
   }
 }
 
-const authenticator = new Authenticator(new AuthService())
-export default authenticator
+function secondsToTimestamp(seconds: number): number {
+  return seconds * 1000
+}
