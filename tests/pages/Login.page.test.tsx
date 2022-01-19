@@ -68,7 +68,10 @@ describe('Login', () => {
       fireEvent.submit(peButton)
 
       // Then
-      expect(authService.signIn).toHaveBeenCalledWith('redirectUrl', undefined)
+      expect(authService.signIn).toHaveBeenCalledWith(
+        'redirectUrl',
+        'pe-conseiller'
+      )
     })
 
     it("permet de s'identifier en tant que conseiller MiLo", async () => {

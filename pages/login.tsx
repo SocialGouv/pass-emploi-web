@@ -73,11 +73,7 @@ const Login = ({ ssoPassEmploiEstActive }: LoginProps) => {
           <FormButton
             label='Connexion conseiller Pôle emploi'
             className='pt-4'
-            handleSubmit={(event) => {
-              ssoPassEmploiEstActive
-                ? handleSubmit(event, 'pe-conseiller')
-                : handleSubmit(event)
-            }}
+            handleSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
           />
 
           {errorMsg && <p className='error'>{errorMsg}</p>}
