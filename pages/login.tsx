@@ -1,10 +1,8 @@
 import { FormButton } from 'components/FormButton'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { getSession } from 'next-auth/react'
+import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { AuthService } from 'services/auth.service'
-import { useDependance } from 'utils/injectionDependances'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 interface LoginProps {
@@ -14,17 +12,22 @@ interface LoginProps {
 const Login = ({ ssoPassEmploiEstActive }: LoginProps) => {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
-  const authService = useDependance<AuthService>('authService')
 
   const signin = useCallback(
     (provider?: string) => {
+      const redirectUrl: string = router.query.redirectUrl as string
       try {
-        authService.signIn(router.query.redirectUrl as string, provider)
+        signIn(
+          'keycloak',
+          { callbackUrl: redirectUrl ?? '/' },
+          { kc_idp_hint: provider ?? '' }
+        )
       } catch (error) {
+        console.error(error)
         setErrorMsg("une erreur est survenue lors de l'authentification")
       }
     },
-    [authService, router]
+    [router]
   )
 
   useEffect(() => {

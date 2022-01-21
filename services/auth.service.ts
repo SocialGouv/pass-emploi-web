@@ -1,5 +1,4 @@
 import { ApiClient } from 'clients/api.client'
-import { signIn } from 'next-auth/react'
 import fetchJson from 'utils/fetchJson'
 
 interface RefreshedTokens {
@@ -8,34 +7,13 @@ interface RefreshedTokens {
   expires_in: number | undefined
 }
 
-export interface AuthService {
-  signIn(redirectUrl?: string, idProvider?: string): Promise<void>
-
-  fetchRefreshedTokens(refreshToken?: string): Promise<RefreshedTokens>
-  getFirebaseToken(accesssToken: string): Promise<{ token: string }>
-}
-
-export class NextAuthService implements AuthService {
+export class AuthService {
+  private readonly apiClient: ApiClient
   private readonly issuerPrefix?: string
 
-  constructor(private readonly apiClient: ApiClient) {
+  constructor() {
+    this.apiClient = new ApiClient()
     this.issuerPrefix = process.env.KEYCLOAK_ISSUER
-  }
-
-  async signIn(
-    redirectUrl: string = '/',
-    idProvider: string = ''
-  ): Promise<void> {
-    try {
-      await signIn(
-        'keycloak',
-        { callbackUrl: redirectUrl },
-        { kc_idp_hint: idProvider }
-      )
-    } catch (error) {
-      console.error(error)
-      throw error
-    }
   }
 
   fetchRefreshedTokens(refreshToken?: string): Promise<RefreshedTokens> {

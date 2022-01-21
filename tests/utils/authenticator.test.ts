@@ -175,7 +175,7 @@ describe('Authenticator', () => {
       })
 
       //WHEN
-      const result = await authenticator.getFirebaseToken(accessToken)
+      const result = await authenticator.handleFirebaseToken(accessToken)
 
       //THEN
       expect(result).toEqual(expectedResult)

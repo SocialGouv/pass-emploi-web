@@ -1,8 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { signIn } from 'next-auth/react'
 import Login from 'pages/login'
 import React from 'react'
-import { AuthService } from 'services/auth.service'
-import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -11,13 +10,10 @@ jest.mock('next/router', () => ({
     }
   },
 }))
+jest.mock('next-auth/react', () => ({
+  signIn: jest.fn(),
+}))
 describe('Login', () => {
-  const authService: AuthService = {
-    fetchRefreshedTokens: jest.fn(),
-    getFirebaseToken: jest.fn(),
-    signIn: jest.fn(),
-  }
-
   afterEach(() => {
     jest.resetAllMocks()
     return cleanup
@@ -25,11 +21,7 @@ describe('Login', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      render(
-        <DIProvider dependances={{ authService }}>
-          <Login />
-        </DIProvider>
-      )
+      render(<Login />)
     })
 
     it('devrait afficher un titre de niveau 1', () => {
@@ -68,9 +60,10 @@ describe('Login', () => {
       fireEvent.submit(peButton)
 
       // Then
-      expect(authService.signIn).toHaveBeenCalledWith(
-        'redirectUrl',
-        'pe-conseiller'
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: 'redirectUrl' },
+        { kc_idp_hint: 'pe-conseiller' }
       )
     })
 
@@ -84,39 +77,57 @@ describe('Login', () => {
       fireEvent.submit(miloButton)
 
       // Then
-      expect(authService.signIn).toHaveBeenCalledWith(
-        'redirectUrl',
-        'similo-conseiller'
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: 'redirectUrl' },
+        { kc_idp_hint: 'similo-conseiller' }
       )
     })
   })
 
-  it('devrait avoir trois boutons si la connexion pass emploi est activé', () => {
-    //GIVEN
-    render(
-      <DIProvider dependances={{ authService }}>
-        <Login ssoPassEmploiEstActive={true} />
-      </DIProvider>
-    )
-
-    const passEButton = screen.getByRole('button', {
-      name: 'Authentification pass emploi',
+  describe('quand la connexion pass emploi est activée', () => {
+    beforeEach(async () => {
+      render(<Login ssoPassEmploiEstActive={true} />)
     })
 
-    const miloButton = screen.getByRole('button', {
-      name: 'Connexion conseiller Mission Locale',
+    it('devrait avoir trois boutons', () => {
+      //GIVEN
+      const passEButton = screen.getByRole('button', {
+        name: 'Authentification pass emploi',
+      })
+
+      const miloButton = screen.getByRole('button', {
+        name: 'Connexion conseiller Mission Locale',
+      })
+
+      const poleEButton = screen.getByRole('button', {
+        name: 'Connexion conseiller Pôle emploi',
+      })
+
+      const buttonsNb = screen.getAllByRole('button')
+
+      //THEN
+      expect(passEButton).toBeInTheDocument()
+      expect(miloButton).toBeInTheDocument()
+      expect(poleEButton).toBeInTheDocument()
+      expect(buttonsNb.length).toEqual(3)
     })
 
-    const poleEButton = screen.getByRole('button', {
-      name: 'Connexion conseiller Pôle emploi',
+    it("permet de s'identifier en tant que conseiller Pass emploi", async () => {
+      // Given
+      const peButton = screen.getByRole('button', {
+        name: 'Authentification pass emploi',
+      })
+
+      // When
+      fireEvent.submit(peButton)
+
+      // Then
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: 'redirectUrl' },
+        { kc_idp_hint: '' }
+      )
     })
-
-    const buttonsNb = screen.getAllByRole('button')
-
-    //THEN
-    expect(passEButton).toBeInTheDocument()
-    expect(miloButton).toBeInTheDocument()
-    expect(poleEButton).toBeInTheDocument()
-    expect(buttonsNb.length).toEqual(3)
   })
 })

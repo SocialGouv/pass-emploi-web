@@ -1,8 +1,6 @@
 import NextAuth from 'next-auth'
 import KeycloakProvider from 'next-auth/providers/keycloak'
-import { Container } from 'utils/injectionDependances'
-
-const { authenticator } = Container.getDIContainer().dependances
+import authenticator from 'utils/auth/authenticator'
 
 export default NextAuth({
   providers: [
@@ -25,7 +23,7 @@ export default NextAuth({
 
     async session({ session, token }) {
       if (token.accessToken && !session.firebaseToken) {
-        session.firebaseToken = await authenticator.getFirebaseToken(
+        session.firebaseToken = await authenticator.handleFirebaseToken(
           token.accessToken as string
         )
       }
