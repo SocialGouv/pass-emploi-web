@@ -1,4 +1,3 @@
-import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
@@ -15,6 +14,7 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
+import { ChatCrypto } from 'utils/chat/chatCrypto'
 
 export interface Dependencies {
   actionsService: ActionsService
