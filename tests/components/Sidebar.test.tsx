@@ -3,6 +3,7 @@ import { RenderResult } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
 import Sidebar from 'components/layouts/Sidebar'
 import renderWithSession from '../renderWithSession'
+import { UserStructure } from 'interfaces/conseiller'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -53,5 +54,24 @@ describe('<Sidebar/>', () => {
         name: 'Se déconnecter',
       })
     ).toBeInTheDocument()
+  })
+
+  it("ne devrait pas afficher le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
+    // GIVEN
+    component = renderWithSession(<Sidebar />, {
+      user: {
+        id: '1',
+        name: 'Nils Tavernier',
+        structure: UserStructure.POLE_EMPLOI,
+      },
+    })
+
+    // WHEN
+
+    // THEN
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
+    expect(() => screen.getByText('Rendez-vous')).toThrow()
+    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
+    expect(screen.getByText('Aide')).toBeInTheDocument()
   })
 })

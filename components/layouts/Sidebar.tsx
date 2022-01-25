@@ -18,6 +18,9 @@ export default function Sidebar({}: SidebarProps) {
   const [isLoggedOut, setIsLoggedOut] = useState(false)
   const { data: session } = useSession({ required: true })
 
+  const isMilo = session?.user.structure === UserStructure.MILO
+  const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
+
   async function handleLogout(event: any) {
     event.preventDefault()
     setIsLoggedOut(true)
@@ -37,18 +40,6 @@ export default function Sidebar({}: SidebarProps) {
         />
 
         <nav role='navigation' aria-label='Menu principal'>
-          <Link href='/'>
-            <a className={router.pathname === '/' ? styles.activeLink : ''}>
-              <RendezvousIcon
-                role='img'
-                focusable='false'
-                aria-label="Aller sur la page d'accueil"
-                className='mr-2'
-              />
-              <span className='text-md text-bleu_nuit'>Rendez-vous</span>
-            </a>
-          </Link>
-
           <Link href={'/mes-jeunes'}>
             <a
               className={
@@ -69,9 +60,29 @@ export default function Sidebar({}: SidebarProps) {
             </a>
           </Link>
 
+          {!isPoleEmploi && (
+            <Link href={'/mes-rendezvous'}>
+              <a
+                className={
+                  router.pathname.startsWith('/mes-rendezvous')
+                    ? styles.activeLink
+                    : ''
+                }
+              >
+                <RendezvousIcon
+                  role='img'
+                  focusable='false'
+                  aria-label='Aller sur la liste de mes rendez-vous'
+                  className='mr-2'
+                />
+                <span className='text-md text-bleu_nuit'>Rendez-vous</span>
+              </a>
+            </Link>
+          )}
+
           <a
             href={
-              session?.user.structure === UserStructure.MILO
+              isMilo
                 ? process.env.FAQ_MILO_EXTERNAL_LINK
                 : process.env.FAQ_PE_EXTERNAL_LINK
             }

@@ -1,10 +1,12 @@
 import { AppHead } from 'components/AppHead'
 import Button, { ButtonColorStyle } from 'components/Button'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
@@ -41,6 +43,8 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
     undefined
   )
+
+  const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
   function openAddRdvModal(): void {
     setShowAddRdvModal(true)
@@ -101,35 +105,45 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
             <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
           </div>
 
-          <Button
-            onClick={openAddRdvModal}
-            label='Créer un rendez-vous'
-            style={ButtonColorStyle.WHITE}
-          >
-            Fixer un rendez-vous
-          </Button>
+          {!isPoleEmploi && (
+            <Button
+              onClick={openAddRdvModal}
+              label='Fixer un rendez-vous'
+              style={ButtonColorStyle.WHITE}
+            >
+              Fixer un rendez-vous
+            </Button>
+          )}
         </div>
 
         <DetailsJeune jeune={jeune} />
 
         <div className='mt-8 border-b border-bleu_blanc'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>
-            Rendez-vous ({rdvs?.length})
+            Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
           </h2>
 
-          <ListeRdvJeune
-            rdvs={rdvsAVenir}
-            onDelete={(rdv: RdvJeune) => {
-              setSelectedRdv(rdv)
-              setShowDeleteModal(true)
-            }}
-          />
+          {!isPoleEmploi ? (
+            <ListeRdvJeune
+              rdvs={rdvsAVenir}
+              onDelete={(rdv: RdvJeune) => {
+                setSelectedRdv(rdv)
+                setShowDeleteModal(true)
+              }}
+            />
+          ) : (
+            <IntegrationPoleEmploi label='convocations' />
+          )}
         </div>
 
         <div className='mt-8 border-b border-bleu_blanc pb-8'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
 
-          <ListeActionsJeune idJeune={jeune.id} />
+          {!isPoleEmploi ? (
+            <ListeActionsJeune idJeune={jeune.id} />
+          ) : (
+            <IntegrationPoleEmploi label='actions et démarches' />
+          )}
         </div>
 
         {showAddRdvModal && session && (

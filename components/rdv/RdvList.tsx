@@ -74,6 +74,7 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
                     <button
                       onClick={() => handleDeleteClick(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+                      className='border-none'
                     >
                       <DeleteIcon aria-hidden='true' focusable='false' />
                     </button>

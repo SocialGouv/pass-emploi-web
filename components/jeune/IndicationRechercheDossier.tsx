@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 import Indication1 from '../../assets/images/indication-dossier-milo-1.svg'
 import Indication2 from '../../assets/images/indication-dossier-milo-2.svg'
 import Indication3 from '../../assets/images/indication-dossier-milo-3.svg'

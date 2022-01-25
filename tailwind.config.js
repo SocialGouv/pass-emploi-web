@@ -5,9 +5,10 @@
  */
 
 module.exports = {
-  mode: 'jit', // Just in Time mode, see: https://tailwindcss.com/docs/just-in-time-mode
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     screens: {
       sm: '480px',
@@ -33,7 +34,13 @@ module.exports = {
       rouge_france: '#E1000F',
       rouge_france_5: '#E1000F0D',
       warning: '#FF3F15',
+      primary: '#3B69D1',
+      primary_lighten: '#EEF1F8',
     },
+
+    fill: (theme) => ({
+      ...theme('colors'),
+    }),
 
     backgroundColor: (theme) => ({
       ...theme('colors'),
@@ -63,9 +70,6 @@ module.exports = {
         sans: ['Rubik'],
       },
     },
-  },
-  variants: {
-    extend: {},
   },
   plugins: [],
 }

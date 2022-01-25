@@ -6,20 +6,20 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Logo from '../assets/icons/logo_PassEmploiBig.svg'
 
 interface LoginProps {
-  ssoPoleEmploiEstActive: boolean
+  ssoPassEmploiEstActive?: boolean
 }
 
-const Login = ({ ssoPoleEmploiEstActive }: LoginProps) => {
+const Login = ({ ssoPassEmploiEstActive }: LoginProps) => {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
   const signin = useCallback(
     (provider?: string) => {
+      const redirectUrl: string = router.query.redirectUrl as string
       try {
-        const redirectUrl = (router.query.redirectUrl as string) ?? '/'
         signIn(
           'keycloak',
-          { callbackUrl: redirectUrl },
+          { callbackUrl: redirectUrl ?? '/' },
           { kc_idp_hint: provider ?? '' }
         )
       } catch (error) {
@@ -61,7 +61,7 @@ const Login = ({ ssoPoleEmploiEstActive }: LoginProps) => {
             Connectez-vous à l&apos;espace conseiller
           </h1>
 
-          {ssoPoleEmploiEstActive && (
+          {ssoPassEmploiEstActive && (
             <FormButton
               label='Authentification pass emploi'
               handleSubmit={(event) => handleSubmit(event)}
@@ -76,11 +76,7 @@ const Login = ({ ssoPoleEmploiEstActive }: LoginProps) => {
           <FormButton
             label='Connexion conseiller Pôle emploi'
             className='pt-4'
-            handleSubmit={(event) => {
-              ssoPoleEmploiEstActive
-                ? handleSubmit(event, 'pe-conseiller')
-                : handleSubmit(event)
-            }}
+            handleSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
           />
 
           {errorMsg && <p className='error'>{errorMsg}</p>}
@@ -106,7 +102,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 
   return {
     props: {
-      ssoPoleEmploiEstActive: process.env.ENABLE_POLE_EMPLOI_SSO,
+      ssoPassEmploiEstActive: process.env.ENABLE_PASS_EMPLOI_SSO,
     },
   }
 }
