@@ -82,7 +82,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
               role='columnheader'
               className='table-cell text-sm text-bleu text-left p-4'
             >
-              Nom du jeune
+              Nom Prénom :
             </span>
 
             <span
@@ -104,7 +104,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
                 className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
               >
                 <span role='cell' className='table-cell p-4' aria-hidden='true'>
-                  {jeune.firstName} {jeune.lastName}
+                  {jeune.lastName} {jeune.firstName}
                 </span>
 
                 <span role='cell' className='table-cell p-4' aria-hidden='true'>
@@ -145,7 +145,10 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes: jeunes || [],
+      conseillerJeunes:
+        [...jeunes].sort((jeune1: Jeune, jeune2: Jeune) =>
+          jeune1.lastName.localeCompare(jeune2.lastName)
+        ) || [],
     },
   }
 }
