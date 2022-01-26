@@ -3,6 +3,7 @@ export type Jeune = {
   firstName: string
   lastName: string
   creationDate: string
+  lastActivity: string
   email?: string
   isActivated?: boolean
 }

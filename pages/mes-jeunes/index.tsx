@@ -5,8 +5,14 @@ import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router from 'next/router'
-import React, { useState } from 'react'
+import React from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
+import {
+  dateIsToday,
+  dateIsYesterday,
+  formatDayDate,
+  formatHourMinuteDate,
+} from 'utils/date'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../assets/icons/add_person.svg'
@@ -15,6 +21,20 @@ import ChevronRight from '../../assets/icons/chevron_right.svg'
 type MesJeunesProps = {
   structureConseiller: string
   conseillerJeunes: Jeune[]
+}
+
+function todayOrDate(date: Date): string {
+  let dateString = ''
+
+  if (dateIsToday(date)) {
+    dateString = "aujourd'hui"
+  } else if (dateIsYesterday(date)) {
+    dateString = 'hier'
+  } else {
+    dateString = `Le ${formatDayDate(date)}`
+  }
+
+  return `${dateString} à ${formatHourMinuteDate(date)}`
 }
 
 function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
@@ -73,13 +93,18 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
               <a
                 key={jeune.id}
                 role='row'
-                aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, identifiant ${jeune.id}`}
-                className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
+                aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}`}
+                className='table-row grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
               >
                 <span role='cell' className='table-cell p-4' aria-hidden='true'>
                   {jeune.firstName} {jeune.lastName}
                 </span>
 
+                <span role='cell' className='table-cell p-4' aria-hidden='true'>
+                  {jeune.lastActivity
+                    ? todayOrDate(new Date(jeune.lastActivity))
+                    : ''}
+                </span>
                 <span
                   role='cell'
                   className='table-cell p-4 col-end-6'
