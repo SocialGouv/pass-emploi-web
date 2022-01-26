@@ -1,15 +1,16 @@
+import { UserStructure } from 'interfaces/conseiller'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
-import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
+import useMatomo from 'utils/analytics/useMatomo'
+import AideIcon from '../../assets/icons/aide.svg'
+import SupervisionIcon from '../../assets/icons/arrow-right.svg'
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
-import AideIcon from '../../assets/icons/aide.svg'
-import useMatomo from 'utils/analytics/useMatomo'
-import { useState } from 'react'
-import { UserStructure } from 'interfaces/conseiller'
+import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
 
 type SidebarProps = {}
 
@@ -20,6 +21,7 @@ export default function Sidebar({}: SidebarProps) {
 
   const isMilo = session?.user.structure === UserStructure.MILO
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
+  const isSuperviseur = session?.user.estSuperviseur
 
   async function handleLogout(event: any) {
     event.preventDefault()
@@ -76,6 +78,26 @@ export default function Sidebar({}: SidebarProps) {
                   className='mr-2'
                 />
                 <span className='text-md text-bleu_nuit'>Rendez-vous</span>
+              </a>
+            </Link>
+          )}
+
+          {isSuperviseur && (
+            <Link href={'/supervision'}>
+              <a
+                className={
+                  router.pathname.startsWith('/supervision')
+                    ? styles.activeLink
+                    : ''
+                }
+              >
+                <SupervisionIcon
+                  role='img'
+                  focusable='false'
+                  aria-label='Aller sur la page de supervision - nouvel onglet'
+                  className='mr-2'
+                />
+                <span className='text-md text-bleu_nuit'>Supervision</span>
               </a>
             </Link>
           )}

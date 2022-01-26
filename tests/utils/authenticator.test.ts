@@ -22,7 +22,7 @@ describe('Authenticator', () => {
 
     jest.spyOn(Date, 'now').mockReturnValue(now)
     accessToken =
-      'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJnMG4zdi1lV2pLZVdjSXdSTlljQ2dSaHJTVkdBSXdpLWYxRnlOOVk1R1ZZIn0.eyJleHAiOjE2Mzk0OTE3NzQsImlhdCI6MTYzOTQ5MTQ3NCwiYXV0aF90aW1lIjoxNjM5NDkwODUxLCJqdGkiOiI4ZTRkYjcyMi1iOWVjLTQ1NGQtODA3Yi1kMDdkMzNiOGUxODgiLCJpc3MiOiJodHRwczovL3BhLWF1dGgtc3RhZ2luZy5vc2Mtc2VjbnVtLWZyMS5zY2FsaW5nby5pby9hdXRoL3JlYWxtcy9wYXNzLWVtcGxvaSIsInN1YiI6IjQ2YmYxYTBhLWVjYzItNGI1OS05Y2UzLWNjYTBlZmEzYjdmNSIsInR5cCI6IkJlYXJlciIsImF6cCI6InBhc3MtZW1wbG9pLXdlYiIsInNlc3Npb25fc3RhdGUiOiJhODAxYTg1Ny1mMTk1LTQ4NmEtOTk4ZC1kNzA4ZTcyZDUzY2UiLCJhY3IiOiIxIiwic2NvcGUiOiJvcGVuaWQgcGFzcy1lbXBsb2ktdXNlciBlbWFpbCBwcm9maWxlIiwic2lkIjoiYTgwMWE4NTctZjE5NS00ODZhLTk5OGQtZDcwOGU3MmQ1M2NlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJ1c2VyU3RydWN0dXJlIjoiTUlMTyIsIm5hbWUiOiJBbGJlcnQgRHVyYW50IiwidXNlclR5cGUiOiJDT05TRUlMTEVSIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYS5kdXJhbnQiLCJnaXZlbl9uYW1lIjoiQWxiZXJ0IiwiZmFtaWx5X25hbWUiOiJEdXJhbnQiLCJ1c2VySWQiOiJiY2Q2MDQwMy01ZjEwLTRhMTYtYTY2MC0yMDk5ZDc5ZWJkNjYiLCJlbWFpbCI6ImNvbnNlaWxsZXIubWlsby5wYXNzZW1wbG9pQGdtYWlsLmNvbSJ9.HKXwXzwHx2ldiOkhjQVBeiGA1vhuDellqHQLz54dGKzj45mCMPIIms5rbyL9q08zGxJr2dDpN5qFGzTUkf4CPku_yV5p2K30MZPaPeTUvZSrLzYbcsklnorMbbN99Q9NEeUF4Q-33lX5VNd56lyYCusxbz5nIVHb8KoiSnh_ikqjEWZfrFIphpUdXCUyOpi2Oh9D9v4930IKjL8b9TvgsLUtdRRIaWXtq08F_wsXQ_d9r-afWtoLWfMiQTnHGMu4OetizlMcRZBtAR255qqP3Ckoiw19Znb_BhnevIwtS9iHXQBcR0hu8F3wNtB4JLIP1n9qoZ_auPe4UdB8Lun0Xg'
+      'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJnMG4zdi1lV2pLZVdjSXdSTlljQ2dSaHJTVkdBSXdpLWYxRnlOOVk1R1ZZIn0.eyJleHAiOjE2NDMyMjEwMTksImlhdCI6MTY0MzIxOTIxOSwiYXV0aF90aW1lIjoxNjQzMjE5MjE5LCJqdGkiOiJkOGU3NmZhYS1jNjlmLTQ4NDItOWY0OS1kOGNiODcwY2YxYWQiLCJpc3MiOiJodHRwczovL2lkLnBhc3MtZW1wbG9pLmluY3ViYXRldXIubmV0L2F1dGgvcmVhbG1zL3Bhc3MtZW1wbG9pIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImJiOWQ0NGJiLTUyYWItNDE0Yy04OTYzLWJhZDFmYTcyZTA1YSIsInR5cCI6IkJlYXJlciIsImF6cCI6InBhc3MtZW1wbG9pLXdlYiIsInNlc3Npb25fc3RhdGUiOiJjODgyMTM4Yi0xY2Y0LTQ4NmQtYjcyMS1mODQwMzEzZmRiNzkiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtcGFzcy1lbXBsb2kiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiY29uc2VpbGxlcl9zdXBlcnZpc2V1ciJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHBhc3MtZW1wbG9pLXVzZXIgZW1haWwgcHJvZmlsZSIsInNpZCI6ImM4ODIxMzhiLTFjZjQtNDg2ZC1iNzIxLWY4NDAzMTNmZGI3OSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwidXNlclN0cnVjdHVyZSI6IlBBU1NfRU1QTE9JIiwibmFtZSI6Ik1BTEVLIE1BTEVLIiwidXNlclR5cGUiOiJDT05TRUlMTEVSIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiNDEiLCJnaXZlbl9uYW1lIjoiTUFMRUsiLCJmYW1pbHlfbmFtZSI6Ik1BTEVLIiwidXNlcklkIjoiNDEiLCJlbWFpbCI6Im1haWxAbWFpbC5jb20ifQ.ADy401VOJn-HTuQvdY1d8WOj7K6CVXjl5apEAtnPeKcDXyvdGf1NfxEvnGr6YM8XIHfkEXVqnQCvdfLGbs6x8w0Bm8GujrukzfAPkCDrni1QufB-nhTkWQJvTApzbuQa9PwaVybKIqBV5jI5aU6AM80y-BdVon3XFXyxkKTaB2SQya8jIIFM9fjuZRJnHyoNxeNQdysSgqx5WXtrTUADgGW8nkScAO6-gxPtZF723hkFifnSt88ny7-BaVUy1IU6Gx7XBE8x_MOKzo5rgEctedg3g-MOWCl4l38BR8SZn5U_owygezO8pwBryxoal5wOrHVJkWwV1ZmMyyndl9GV8w'
     refreshToken =
       'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1N2Q0M2NmNy02YjRiLTRlZTItODNkYi0xOTRjYWUwYjZkMGUifQ.eyJleHAiOjE2Mzg0MzYyMzcsImlhdCI6MTYzODQzNDQzNywianRpIjoiYzRmODI0ZjUtNDhlNS00ZDkwLTkwNWQtNmYxZDhlOGJmYTkxIiwiaXNzIjoiaHR0cHM6Ly9wYS1hdXRoLXN0YWdpbmcub3NjLXNlY251bS1mcjEuc2NhbGluZ28uaW8vYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL3BhLWF1dGgtc3RhZ2luZy5vc2Mtc2VjbnVtLWZyMS5zY2FsaW5nby5pby9hdXRoL3JlYWxtcy9wYXNzLWVtcGxvaSIsInN1YiI6IjQ0ODA5MmRhLTRhZDctNGZjZi04ZmY1LWEzMDNmMzBlYTEwOSIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTBiNDliM2QtNjU3Ny00MWNkLWI5NzAtNTQwNDk5NWI4MmEzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsInNpZCI6ImEwYjQ5YjNkLTY1NzctNDFjZC1iOTcwLTU0MDQ5OTViODJhMyJ9.u9FW5_DfCAbWHff8K3ZazNOea7uoe_Bb2onJ_cVpmFs'
   })
@@ -34,8 +34,6 @@ describe('Authenticator', () => {
     describe("Quand c'est la 1ere connexion", () => {
       it("enrichit le JWT avec l'accessToken, sa date d'expiration et le refreshToken", async () => {
         // Given
-        accessToken
-        refreshToken
         const expiresAtInSeconds: number = 1638434737
 
         // When
@@ -55,6 +53,8 @@ describe('Authenticator', () => {
           accessToken,
           refreshToken,
           expiresAtTimestamp: expiresAtInSeconds * 1000,
+          idConseiller: '41',
+          estSuperviseur: true,
         })
       })
     })
@@ -142,7 +142,7 @@ describe('Authenticator', () => {
         })
       })
     })
-    describe('Quand un conseiller SIMILO se connecte', () => {
+    describe('Quand un conseiller Pass emploi se connecte', () => {
       it("renvoie la structure d'origine du conseiller", async () => {
         // Given
         accessToken
@@ -161,7 +161,7 @@ describe('Authenticator', () => {
         })
 
         // Then
-        expect(actual.structureConseiller).toEqual(UserStructure.MILO)
+        expect(actual.structureConseiller).toEqual(UserStructure.PASS_EMPLOI)
       })
     })
   })

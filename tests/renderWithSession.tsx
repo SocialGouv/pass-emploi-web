@@ -13,6 +13,7 @@ export default function renderWithSession(
       id: '1',
       name: 'Nils Tavernier',
       structure: UserStructure.MILO,
+      estSuperviseur: false,
     },
     accessToken: 'accessToken',
     firebaseToken: 'firebaseToken',
