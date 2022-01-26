@@ -84,6 +84,13 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
             >
               Nom du jeune
             </span>
+
+            <span
+              role='columnheader'
+              className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+            >
+              Dernière activité
+            </span>
           </div>
         </div>
 
@@ -94,7 +101,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
                 key={jeune.id}
                 role='row'
                 aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}`}
-                className='table-row grid grid-cols-table text-sm text-bleu_nuit cursor-pointer hover:bg-gris_blanc'
+                className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
               >
                 <span role='cell' className='table-cell p-4' aria-hidden='true'>
                   {jeune.firstName} {jeune.lastName}
