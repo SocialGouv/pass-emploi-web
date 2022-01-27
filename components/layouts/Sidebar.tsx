@@ -51,9 +51,8 @@ export default function Sidebar({}: SidebarProps) {
               }
             >
               <PeopleIcon
-                role='img'
                 focusable='false'
-                aria-label='Aller sur la liste de mes bénéficiaires'
+                aria-hidden='true'
                 className='mr-2'
               />
               <span className='text-md text-bleu_nuit text-center'>
@@ -72,9 +71,8 @@ export default function Sidebar({}: SidebarProps) {
                 }
               >
                 <RendezvousIcon
-                  role='img'
                   focusable='false'
-                  aria-label='Aller sur la liste de mes rendez-vous'
+                  aria-hidden='true'
                   className='mr-2'
                 />
                 <span className='text-md text-bleu_nuit'>Rendez-vous</span>
@@ -92,9 +90,8 @@ export default function Sidebar({}: SidebarProps) {
                 }
               >
                 <SupervisionIcon
-                  role='img'
                   focusable='false'
-                  aria-label='Aller sur la page de supervision - nouvel onglet'
+                  aria-hidden='true'
                   className='mr-2'
                 />
                 <span className='text-md text-bleu_nuit'>Supervision</span>
@@ -103,6 +100,7 @@ export default function Sidebar({}: SidebarProps) {
           )}
 
           <a
+            aria-label='Aide (nouvel onglet)'
             href={
               isMilo
                 ? process.env.FAQ_MILO_EXTERNAL_LINK
@@ -111,12 +109,7 @@ export default function Sidebar({}: SidebarProps) {
             target='_blank'
             rel='noreferrer noopener'
           >
-            <AideIcon
-              role='img'
-              focusable='false'
-              aria-label='Aller sur la page Aide - nouvel onglet'
-              className='mr-2'
-            />
+            <AideIcon aria-hidden='true' focusable='false' className='mr-2' />
             <span className='text-md text-bleu_nuit text-center'>Aide</span>
           </a>
         </nav>
@@ -133,11 +126,7 @@ export default function Sidebar({}: SidebarProps) {
             className='mr-2'
             aria-label='Se déconnecter'
           >
-            <LogoutIcon
-              role='img'
-              focusable='false'
-              aria-label='Se déconnecter'
-            />
+            <LogoutIcon aria-hidden='true' focusable='false' />
           </a>
         </Link>
       </div>

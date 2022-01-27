@@ -13,7 +13,7 @@ type LayoutProps = {
 }
 
 export default function Layout({ pathname, children }: LayoutProps) {
-  const displaysChat = pathname !== '/supervision'
+  const displayChat = pathname !== '/supervision'
 
   return (
     <>
@@ -22,7 +22,7 @@ export default function Layout({ pathname, children }: LayoutProps) {
         <main className={styles.page} role='main'>
           {children}
         </main>
-        {displaysChat && <ChatRoom />}
+        {displayChat && <ChatRoom />}
       </div>
       <div id='modal-root' />
     </>
