@@ -7,8 +7,7 @@ const dateIsToday = (dateToCheck: Date): boolean =>
   datesAreOnSameDay(new Date(), dateToCheck)
 
 const dateIsYesterday = (dateToCheck: Date): boolean => {
-  const today = new Date()
-  const yesterday = new Date(today)
+  const yesterday = new Date()
 
   yesterday.setDate(yesterday.getDate() - 1)
 

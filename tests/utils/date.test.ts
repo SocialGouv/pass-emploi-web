@@ -1,5 +1,6 @@
-import { onAfterEach, onBeforeEach } from '../jestDateMock'
 import { dateIsToday, dateIsYesterday, isDateOlder } from 'utils/date'
+
+jest.useFakeTimers()
 
 describe('dateUtils', () => {
   describe('isDateOlder', () => {
@@ -14,24 +15,28 @@ describe('dateUtils', () => {
   })
 
   describe('dateIsToday', () => {
-    beforeEach(onBeforeEach)
-    afterEach(onAfterEach)
-
     it("dateIsToday renvoie true si la date correspond à la date d'aujourd'hui", () => {
+      //GIVEN
+      jest.setSystemTime(new Date('2018-12-31T23:59:59.000Z'))
+
+      //WHEN
       const isToday = dateIsToday(new Date('2018-12-31T23:59:59.000Z'))
 
+      //THEN
       expect(isToday).toBeTruthy()
     })
   })
 
   describe('dateIsYesterday', () => {
-    beforeEach(onBeforeEach)
-    afterEach(onAfterEach)
-
     it("dateIsYesterday renvoie true si la date correspond à la date d'hier", () => {
-      const isToday = dateIsYesterday(new Date('2018-12-30T23:59:59.000Z'))
+      //GIVEN
+      jest.setSystemTime(new Date('2018-12-31T23:59:59.000Z'))
 
-      expect(isToday).toBeTruthy()
+      //WHEN
+      const isYesterday = dateIsYesterday(new Date('2018-12-30T23:59:59.000Z'))
+
+      //THEN
+      expect(isYesterday).toBeTruthy()
     })
   })
 })
