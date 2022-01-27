@@ -69,4 +69,36 @@ describe('Mes Jeunes', () => {
       )
     })
   })
+
+  describe('Contenu de page', () => {
+    const jeune1 = unJeune()
+    const jeune2 = unJeune()
+    const jeune3 = unJeune()
+
+    const jeunes = [jeune1, jeune2, jeune3]
+    beforeEach(async () => {
+      //GIVEN
+      renderWithSession(
+        <MesJeunes
+          structureConseiller={UserStructure.MILO}
+          conseillerJeunes={jeunes}
+        />
+      )
+    })
+
+    it('devrait avoir un titre de niveau 1', () => {
+      const heading = screen.getByRole('heading', {
+        level: 1,
+        name: 'Mes Jeunes',
+      })
+
+      expect(heading).toBeInTheDocument()
+    })
+
+    it('devrait afficher la liste des jeunes', () => {
+      const rows = screen.getAllByRole('row')
+
+      expect(rows.length - 1).toBe(jeunes.length)
+    })
+  })
 })
