@@ -35,11 +35,18 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
   }
 
   const onSearch = (query: string) => {
+    const querySplit = query.toLowerCase().split(/-|\s/)
+
     setQueryJeune(query)
     if (query !== '') {
-      const result = conseillerJeunes.filter((jeune) =>
-        jeune.lastName.toLowerCase().includes(query.toLowerCase())
-      )
+      const result = conseillerJeunes.filter((jeune) => {
+        for (let i = 0; i < querySplit.length; i++) {
+          if (jeune.lastName.toLowerCase().includes(querySplit[i])) {
+            return true
+          }
+          return false
+        }
+      })
       setListJeunesFiltres(result)
     } else {
       setListJeunesFiltres(conseillerJeunes)

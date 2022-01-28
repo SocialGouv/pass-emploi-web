@@ -2,7 +2,7 @@ import { FormEvent, useRef, useState } from 'react'
 import SearchIcon from '../../assets/icons/search.svg'
 
 interface RechercheJeuneProps {
-  rechercheJeune?: string | null
+  rechercheJeune?: string
   onSearchFilterBy: (query: string) => void
 }
 
