@@ -3,41 +3,24 @@ import Button from 'components/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import Router from 'next/router'
-import React from 'react'
+import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
-import {
-  dateIsToday,
-  dateIsYesterday,
-  formatDayDate,
-  formatHourMinuteDate,
-} from 'utils/date'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../assets/icons/add_person.svg'
-import ChevronRight from '../../assets/icons/chevron_right.svg'
+import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import { TableauJeunes } from 'components/jeune/TableauJeunes'
 
 type MesJeunesProps = {
   structureConseiller: string
   conseillerJeunes: Jeune[]
 }
 
-function todayOrDate(date: Date): string {
-  let dateString = ''
-
-  if (dateIsToday(date)) {
-    dateString = "Aujourd'hui"
-  } else if (dateIsYesterday(date)) {
-    dateString = 'Hier'
-  } else {
-    dateString = `Le ${formatDayDate(date)}`
-  }
-
-  return `${dateString} à ${formatHourMinuteDate(date)}`
-}
-
 function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
+  const [queryJeune, setQueryJeune] = useState('')
+  const [listeJeunesFiltres, setListJeunesFiltres] = useState<Jeune[]>([])
+
   const handleAddJeune = () => {
     switch (structureConseiller) {
       case UserStructure.MILO:
@@ -51,7 +34,24 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
     }
   }
 
+  const onSearch = (query: string) => {
+    setQueryJeune(query)
+    if (query !== '') {
+      const result = conseillerJeunes.filter((jeune) =>
+        jeune.lastName.toLowerCase().includes(query.toLowerCase())
+      )
+      setListJeunesFiltres(result)
+    } else {
+      setListJeunesFiltres(conseillerJeunes)
+    }
+  }
+
   useMatomo('Mes jeunes')
+  useMatomo(
+    listeJeunesFiltres.length === 1
+      ? 'Clic sur Rechercher - Recherche avec résultats'
+      : 'Clic sur Rechercher - Recherche sans résultats'
+  )
 
   return (
     <>
@@ -67,63 +67,13 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
         )}
       </span>
 
-      <div
-        role='table'
-        className='table w-full'
-        aria-label='jeunes'
-        aria-describedby='table-caption'
-      >
-        <div id='table-caption' className='visually-hidden'>
-          Liste de mes jeunes
-        </div>
-        <div role='rowgroup'>
-          <div role='row' className='table-row grid grid-cols-table'>
-            <span
-              role='columnheader'
-              className='table-cell text-sm text-bleu text-left p-4'
-            >
-              Nom Prénom :
-            </span>
+      <RechercheJeune onSearchFilterBy={onSearch} />
 
-            <span
-              role='columnheader'
-              className='table-cell text-sm text-bleu text-left pb-4 pt-4'
-            >
-              Dernière activité
-            </span>
-          </div>
-        </div>
-
-        <div role='rowgroup'>
-          {conseillerJeunes?.map((jeune: Jeune) => (
-            <Link href={`mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
-              <a
-                key={jeune.id}
-                role='row'
-                aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}`}
-                className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
-              >
-                <span role='cell' className='table-cell p-4' aria-hidden='true'>
-                  {jeune.lastName} {jeune.firstName}
-                </span>
-
-                <span role='cell' className='table-cell p-4' aria-hidden='true'>
-                  {jeune.lastActivity
-                    ? todayOrDate(new Date(jeune.lastActivity))
-                    : ''}
-                </span>
-                <span
-                  role='cell'
-                  className='table-cell p-4 col-end-6'
-                  aria-hidden='true'
-                >
-                  <ChevronRight aria-hidden='true' focusable='false' />
-                </span>
-              </a>
-            </Link>
-          ))}
-        </div>
-      </div>
+      {queryJeune?.length > 0 ? (
+        <TableauJeunes jeunes={listeJeunesFiltres} />
+      ) : (
+        <TableauJeunes jeunes={conseillerJeunes} />
+      )}
     </>
   )
 }

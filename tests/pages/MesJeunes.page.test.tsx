@@ -1,8 +1,12 @@
 import React from 'react'
 import Router from 'next/router'
 import { fireEvent, screen } from '@testing-library/react'
-import { unJeune } from 'fixtures/jeune'
+import { expect } from '@jest/globals'
+import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom/extend-expect'
+import '@testing-library/jest-dom'
 import MesJeunes from 'pages/mes-jeunes/index'
+import { desJeunes, unJeune } from 'fixtures/jeune'
 import renderWithSession from '../renderWithSession'
 import { UserStructure } from 'interfaces/conseiller'
 
@@ -10,6 +14,59 @@ jest.mock('next/router')
 describe('Mes Jeunes', () => {
   afterEach(() => {
     jest.clearAllMocks()
+  })
+  describe('Recherche', () => {
+    beforeEach(async () => {
+      //GIVEN
+      const jeunes = desJeunes()
+
+      renderWithSession(
+        <MesJeunes
+          structureConseiller={UserStructure.MILO}
+          conseillerJeunes={jeunes}
+        />
+      )
+    })
+
+    it('devrait afficher un formulaire de recherche', () => {
+      //GIVEN
+      const searchForm = screen.getByRole('search') as HTMLFormElement
+      const inputSearch = screen.getByLabelText(
+        'Rechercher un jeune par son nom'
+      )
+      const submitButton = screen.getByRole('button', {
+        name: 'Rechercher',
+      })
+
+      //THEN
+      expect(searchForm).toBeInTheDocument()
+      expect(inputSearch).toBeInTheDocument()
+      expect(submitButton).toBeInTheDocument()
+    })
+
+    describe('devrait afficher le résultat de la recherche', () => {
+      it('quand on recherche un nom avec des caractères spéciaux', async () => {
+        const inputSearch = screen.getByLabelText(
+          'Rechercher un jeune par son nom'
+        )
+        const submitButton = screen.getByRole('button', {
+          name: 'Rechercher',
+        })
+
+        userEvent.type(inputSearch, 'Muñoz')
+
+        //WHEN
+        fireEvent.click(submitButton)
+
+        const result = screen.getByRole('row', {
+          name: /muñoz/i,
+        })
+
+        //THEN
+        expect(result).toBeInTheDocument()
+      })
+      it('quand on recherche un nom cas espace, tiret...oublié', () => {})
+    })
   })
 
   describe('quand le conseiller est MILO', () => {
@@ -69,7 +126,6 @@ describe('Mes Jeunes', () => {
       )
     })
   })
-
   describe('Contenu de page', () => {
     const jeune1 = unJeune({ id: 'jeune-1' })
     const jeune2 = unJeune({ id: 'jeune-2' })

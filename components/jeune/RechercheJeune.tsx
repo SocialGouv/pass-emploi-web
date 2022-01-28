@@ -43,7 +43,9 @@ export const RechercheJeune = ({
         </>
 
         <button
-          className={'flex p-3 items-center text-base-medium text-bleu_nuit'}
+          className={
+            'flex p-3 items-center text-base-medium text-bleu_nuit border-l-2 border-content_color'
+          }
           type='submit'
         >
           <SearchIcon focusable='false' aria-hidden={true} />

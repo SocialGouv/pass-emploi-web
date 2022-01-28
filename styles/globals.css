@@ -6,7 +6,7 @@ html {
 	min-height: 100%;
 	padding: 0;
 	margin: 0;
-	font-family: 'Rubik', sans-serif;
+	font-family: 'Marianne', sans-serif;
 }
 
 body {
@@ -44,6 +44,14 @@ select svg {
 	z-index: 50;
 }
 
+.close-button {
+	background-repeat: no-repeat;
+	background-size: 1.2rem;
+	background-position: calc(4.4rem / 2 - 1.2rem / 2);
+	background-image: url('../assets/icons/close.svg')
+}
+
+
 .visually-hidden {
 	position: absolute;
 	left: -10000px;
@@ -54,8 +62,8 @@ select svg {
 }
 
 @font-face {
-	font-family: 'Rubik', sans-serif;
-	src: url('/fonts/Rubik/static/Rubik-Regular.ttf');
+	font-family: 'Marianne', sans-serif;
+	src: url('/fonts/Marianne/static/Marianne-Regular.otf');
 	font-style: normal;
 	font-weight: 500;
 	font-display: swap;
