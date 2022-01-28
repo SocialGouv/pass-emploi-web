@@ -29,7 +29,7 @@ describe('<Sidebar/>', () => {
     jest.clearAllMocks()
   })
 
-  it('devrait afficher les liens de la barre de navigation', () => {
+  it('affiche les liens de la barre de navigation', () => {
     // GIVEN
     component = renderWithSession(<Sidebar />)
 
@@ -40,9 +40,10 @@ describe('<Sidebar/>', () => {
     expect(screen.getByText('Rendez-vous')).toBeInTheDocument()
     expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
     expect(screen.getByText('Aide')).toBeInTheDocument()
+    expect(() => screen.getByText('Supervision')).toThrow()
   })
 
-  it('devrait afficher le lien de déconnexion', () => {
+  it('affiche le lien de déconnexion', () => {
     // GIVEN
     component = renderWithSession(<Sidebar />)
 
@@ -56,13 +57,14 @@ describe('<Sidebar/>', () => {
     ).toBeInTheDocument()
   })
 
-  it("ne devrait pas afficher le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
+  it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
     // GIVEN
     component = renderWithSession(<Sidebar />, {
       user: {
         id: '1',
         name: 'Nils Tavernier',
         structure: UserStructure.POLE_EMPLOI,
+        estSuperviseur: false,
       },
     })
 
@@ -73,5 +75,26 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Rendez-vous')).toThrow()
     expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
     expect(screen.getByText('Aide')).toBeInTheDocument()
+  })
+
+  it('affiche le lien de supervision lorsque le conseiller est superviseur', () => {
+    // GIVEN
+    component = renderWithSession(<Sidebar />, {
+      user: {
+        id: '1',
+        name: 'Nils Tavernier',
+        structure: UserStructure.MILO,
+        estSuperviseur: true,
+      },
+    })
+
+    // WHEN
+
+    // THEN
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
+    expect(screen.getByText('Rendez-vous')).toBeInTheDocument()
+    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
+    expect(screen.getByText('Aide')).toBeInTheDocument()
+    expect(screen.getByText('Supervision')).toBeInTheDocument()
   })
 })

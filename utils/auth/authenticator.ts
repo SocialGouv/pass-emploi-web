@@ -12,13 +12,16 @@ export class Authenticator {
   handleJWTAndRefresh({ jwt, account }: { jwt: JWT; account?: Account }) {
     const isFirstSignin = Boolean(account)
     if (isFirstSignin) {
-      const { userId, userStructure } = decode(
-        <string>account!.access_token
-      ) as JwtPayload
+      const {
+        realm_access: { roles },
+        userId,
+        userStructure,
+      } = decode(<string>account!.access_token) as JwtPayload
       jwt.accessToken = account!.access_token
       jwt.refreshToken = account!.refresh_token
       jwt.idConseiller = userId
       jwt.structureConseiller = userStructure
+      jwt.estSuperviseur = roles.includes('conseiller_superviseur')
       jwt.expiresAtTimestamp = account!.expires_at
         ? secondsToTimestamp(account!.expires_at)
         : undefined

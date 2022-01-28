@@ -9,6 +9,7 @@ declare module 'next-auth' {
       id: string
       name: string
       structure: string
+      estSuperviseur: boolean
     }
     accessToken: string
     firebaseToken: string
@@ -23,5 +24,6 @@ declare module 'next-auth/jwt' {
     expiresAtTimestamp?: number
     idConseiller?: string
     structureConseiller?: string
+    estSuperviseur?: boolean
   }
 }

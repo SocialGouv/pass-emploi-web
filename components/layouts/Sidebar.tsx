@@ -1,15 +1,16 @@
+import { UserStructure } from 'interfaces/conseiller'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
-import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
+import useMatomo from 'utils/analytics/useMatomo'
+import AideIcon from '../../assets/icons/aide.svg'
+import SupervisionIcon from '../../assets/icons/arrow-right.svg'
 import Logo from '../../assets/icons/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
-import AideIcon from '../../assets/icons/aide.svg'
-import useMatomo from 'utils/analytics/useMatomo'
-import { useState } from 'react'
-import { UserStructure } from 'interfaces/conseiller'
+import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
 
 type SidebarProps = {}
 
@@ -20,6 +21,7 @@ export default function Sidebar({}: SidebarProps) {
 
   const isMilo = session?.user.structure === UserStructure.MILO
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
+  const isSuperviseur = session?.user.estSuperviseur
 
   async function handleLogout(event: any) {
     event.preventDefault()
@@ -49,9 +51,8 @@ export default function Sidebar({}: SidebarProps) {
               }
             >
               <PeopleIcon
-                role='img'
                 focusable='false'
-                aria-label='Aller sur la liste de mes bénéficiaires'
+                aria-hidden='true'
                 className='mr-2'
               />
               <span className='text-md text-bleu_nuit text-center'>
@@ -70,9 +71,8 @@ export default function Sidebar({}: SidebarProps) {
                 }
               >
                 <RendezvousIcon
-                  role='img'
                   focusable='false'
-                  aria-label='Aller sur la liste de mes rendez-vous'
+                  aria-hidden='true'
                   className='mr-2'
                 />
                 <span className='text-md text-bleu_nuit'>Rendez-vous</span>
@@ -80,7 +80,27 @@ export default function Sidebar({}: SidebarProps) {
             </Link>
           )}
 
+          {isSuperviseur && (
+            <Link href={'/supervision'}>
+              <a
+                className={
+                  router.pathname.startsWith('/supervision')
+                    ? styles.activeLink
+                    : ''
+                }
+              >
+                <SupervisionIcon
+                  focusable='false'
+                  aria-hidden='true'
+                  className='mr-2'
+                />
+                <span className='text-md text-bleu_nuit'>Supervision</span>
+              </a>
+            </Link>
+          )}
+
           <a
+            aria-label='Aide (nouvel onglet)'
             href={
               isMilo
                 ? process.env.FAQ_MILO_EXTERNAL_LINK
@@ -89,12 +109,7 @@ export default function Sidebar({}: SidebarProps) {
             target='_blank'
             rel='noreferrer noopener'
           >
-            <AideIcon
-              role='img'
-              focusable='false'
-              aria-label='Aller sur la page Aide - nouvel onglet'
-              className='mr-2'
-            />
+            <AideIcon aria-hidden='true' focusable='false' className='mr-2' />
             <span className='text-md text-bleu_nuit text-center'>Aide</span>
           </a>
         </nav>
@@ -111,11 +126,7 @@ export default function Sidebar({}: SidebarProps) {
             className='mr-2'
             aria-label='Se déconnecter'
           >
-            <LogoutIcon
-              role='img'
-              focusable='false'
-              aria-label='Se déconnecter'
-            />
+            <LogoutIcon aria-hidden='true' focusable='false' />
           </a>
         </Link>
       </div>

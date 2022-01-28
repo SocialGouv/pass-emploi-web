@@ -41,7 +41,7 @@ function MyApp({
         {isLoginPage || isLogoutPage ? (
           <Component {...pageProps} />
         ) : (
-          <Layout>
+          <Layout pathname={router.pathname}>
             <Component {...pageProps} />
           </Layout>
         )}
