@@ -4,6 +4,7 @@ import { unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { MessagesOfADay } from 'interfaces'
 import { JeuneChat } from 'interfaces/jeune'
+import { Session } from 'next-auth'
 import React from 'react'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
@@ -15,7 +16,7 @@ describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
-  let conseiller: { id: string; name: string; structure: string }
+  let conseiller: Session.User
   let accessToken: string
   let tokenChat: string
   const messagesParJour = desMessagesParJour()
@@ -45,6 +46,7 @@ describe('<Conversation />', () => {
       id: 'idConseiller',
       name: 'Taverner',
       structure: UserStructure.POLE_EMPLOI,
+      estSuperviseur: false
     }
     accessToken = 'accessToken'
     tokenChat = 'tokenChat'

@@ -71,9 +71,9 @@ describe('Mes Jeunes', () => {
   })
 
   describe('Contenu de page', () => {
-    const jeune1 = unJeune()
-    const jeune2 = unJeune()
-    const jeune3 = unJeune()
+    const jeune1 = unJeune({ id: 'jeune-1' })
+    const jeune2 = unJeune({ id: 'jeune-2' })
+    const jeune3 = unJeune({ id: 'jeune-3' })
 
     const jeunes = [jeune1, jeune2, jeune3]
     beforeEach(async () => {

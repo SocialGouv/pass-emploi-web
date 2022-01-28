@@ -4,6 +4,7 @@ import Conversation from 'components/layouts/Conversation'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { Session } from 'next-auth'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -21,7 +22,7 @@ describe('<ChatRoom />', () => {
   const jeunes: Jeune[] = desJeunes()
   let jeunesService: JeunesService
   let messagesService: MessagesService
-  let conseiller: { id: string; name: string; structure: string }
+  let conseiller: Session.User
   let accessToken: string
   let tokenChat: string
   beforeEach(async () => {
@@ -48,6 +49,7 @@ describe('<ChatRoom />', () => {
       id: 'idConseiller',
       name: 'Taverner',
       structure: UserStructure.POLE_EMPLOI,
+      estSuperviseur: false
     }
     accessToken = 'accessToken'
     tokenChat = 'tokenChat'
