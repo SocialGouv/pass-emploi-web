@@ -27,9 +27,9 @@ function todayOrDate(date: Date): string {
   let dateString = ''
 
   if (dateIsToday(date)) {
-    dateString = "aujourd'hui"
+    dateString = "Aujourd'hui"
   } else if (dateIsYesterday(date)) {
-    dateString = 'hier'
+    dateString = 'Hier'
   } else {
     dateString = `Le ${formatDayDate(date)}`
   }
