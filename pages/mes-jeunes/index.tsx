@@ -76,11 +76,9 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
 
       <RechercheJeune onSearchFilterBy={onSearch} />
 
-      {queryJeune?.length > 0 ? (
-        <TableauJeunes jeunes={listeJeunesFiltres} />
-      ) : (
-        <TableauJeunes jeunes={conseillerJeunes} />
-      )}
+      <TableauJeunes
+        jeunes={queryJeune?.length > 0 ? listeJeunesFiltres : conseillerJeunes}
+      />
     </>
   )
 }

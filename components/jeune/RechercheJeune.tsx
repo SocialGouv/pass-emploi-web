@@ -15,6 +15,12 @@ export const RechercheJeune = ({
 
   const ref = useRef<HTMLFormElement>(null)
 
+  const onReset = (e: FormEvent) => {
+    e.preventDefault()
+    setQuery('')
+    onSearchFilterBy('')
+  }
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
     onSearchFilterBy(query)
@@ -22,17 +28,13 @@ export const RechercheJeune = ({
 
   return (
     <form role='search' ref={ref} onSubmit={onSubmit}>
-      <label htmlFor='rechercher-jeunes' className={'text-base-medium'}>
+      <label htmlFor='rechercher-jeunes' className='text-base-medium'>
         Rechercher un jeune par son nom
       </label>
-      <div
-        className={
-          'flex mt-3.5 mb-8 w-9/12 rounded-medium border border-content_color'
-        }
-      >
+      <div className='flex mt-3.5 mb-8 w-9/12 rounded-medium border border-content_color'>
         <>
           <input
-            type='search'
+            type='text'
             id='rechercher-jeunes'
             name='rechercher-jeunes'
             value={query}
@@ -42,11 +44,11 @@ export const RechercheJeune = ({
           <button
             type='reset'
             title='Effacer'
-            className={'w-8 text-bleu_nuit'}
-            onClick={() => setQuery('')}
+            className='w-8 text-bleu_nuit'
+            onClick={onReset}
           >
             <CloseIcon
-              className={'text-bleu_nuit'}
+              className='text-bleu_nuit'
               focusable={false}
               aria-hidden={true}
             />
@@ -55,13 +57,11 @@ export const RechercheJeune = ({
         </>
 
         <button
-          className={
-            'flex p-3 items-center text-base-medium text-bleu_nuit border-l border-content_color rounded-r-medium hover:bg-primary_lighten'
-          }
+          className='flex p-3 items-center text-base-medium text-bleu_nuit border-l border-content_color rounded-r-medium hover:bg-primary_lighten'
           type='submit'
         >
           <SearchIcon focusable='false' aria-hidden={true} />
-          <span className={'ml-1'}>Rechercher</span>
+          <span className='ml-1'>Rechercher</span>
         </button>
       </div>
     </form>

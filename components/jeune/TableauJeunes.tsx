@@ -1,5 +1,5 @@
 import React from 'react'
-import { Jeune } from '../../interfaces/jeune'
+import { Jeune } from 'interfaces/jeune'
 import Link from 'next/link'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
 import {
@@ -7,7 +7,7 @@ import {
   dateIsYesterday,
   formatDayDate,
   formatHourMinuteDate,
-} from '../../utils/date'
+} from 'utils/date'
 
 interface TableauJeunesProps {
   jeunes: Jeune[]
@@ -17,9 +17,9 @@ function todayOrDate(date: Date): string {
   let dateString = ''
 
   if (dateIsToday(date)) {
-    dateString = "aujourd'hui"
+    dateString = "Aujourd'hui"
   } else if (dateIsYesterday(date)) {
-    dateString = 'hier'
+    dateString = 'Hier'
   } else {
     dateString = `Le ${formatDayDate(date)}`
   }
@@ -38,7 +38,6 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
         <div
           role='table'
           className='table w-full'
-          aria-label='jeunes'
           aria-describedby='table-caption'
         >
           <div id='table-caption' className='visually-hidden'>
