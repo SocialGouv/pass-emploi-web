@@ -44,14 +44,6 @@ select svg {
 	z-index: 50;
 }
 
-.close-button {
-	background-repeat: no-repeat;
-	background-size: 1.2rem;
-	background-position: calc(4.4rem / 2 - 1.2rem / 2);
-	background-image: url('../assets/icons/close.svg')
-}
-
-
 .visually-hidden {
 	position: absolute;
 	left: -10000px;

@@ -39,7 +39,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
 
     setQueryJeune(query)
     if (query !== '') {
-      const result = conseillerJeunes.filter((jeune) => {
+      const jeunesFiltresResult = conseillerJeunes.filter((jeune) => {
         for (let i = 0; i < querySplit.length; i++) {
           if (jeune.lastName.toLowerCase().includes(querySplit[i])) {
             return true
@@ -47,7 +47,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
           return false
         }
       })
-      setListJeunesFiltres(result)
+      setListJeunesFiltres(jeunesFiltresResult)
     } else {
       setListJeunesFiltres(conseillerJeunes)
     }

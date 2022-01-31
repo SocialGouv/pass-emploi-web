@@ -41,7 +41,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
         <div role='row' className='table-row grid grid-cols-table'>
           <span
             role='columnheader'
-            className='table-cell text-sm text-grey_3 text-left p-4'
+            className='table-cell text-sm text-bleu text-left p-4'
           >
             Nom du jeune
           </span>

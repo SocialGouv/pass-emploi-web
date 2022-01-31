@@ -1,5 +1,6 @@
 import { FormEvent, useRef, useState } from 'react'
 import SearchIcon from '../../assets/icons/search.svg'
+import CloseIcon from '../../assets/icons/close.svg'
 
 interface RechercheJeuneProps {
   rechercheJeune?: string
@@ -18,11 +19,12 @@ export const RechercheJeune = ({
     e.preventDefault()
     onSearchFilterBy(query)
   }
-  //TODO: Ajouter button reset ou natif avec attribute search? + background-image
 
   return (
     <form role='search' ref={ref} onSubmit={onSubmit}>
-      <label htmlFor='rechercher-jeunes'>Rechercher un jeune par son nom</label>
+      <label htmlFor='rechercher-jeunes' className={'text-base-medium'}>
+        Rechercher un jeune par son nom
+      </label>
       <div
         className={
           'flex mt-3.5 mb-8 w-9/12 rounded-medium border border-content_color'
@@ -37,14 +39,23 @@ export const RechercheJeune = ({
             onChange={(e) => setQuery(e.target.value)}
             className={`flex-1 p-3 w-8/12 rounded-medium text-sm`}
           />
-          <button type='reset' className={'w-8'}>
-            <span className='visually-hidden'>Effacer le champ de saisie</span>X
+          <button
+            type='reset'
+            className={'w-8 text-bleu_nuit'}
+            onClick={() => setQuery('')}
+          >
+            <CloseIcon
+              className={'text-bleu_nuit'}
+              focusable={false}
+              aria-hidden={true}
+            />
+            <span className='visually-hidden'>Effacer le champ de saisie</span>
           </button>
         </>
 
         <button
           className={
-            'flex p-3 items-center text-base-medium text-bleu_nuit border-l-2 border-content_color'
+            'flex p-3 items-center text-base-medium text-bleu_nuit border-l border-content_color rounded-r-medium hover:bg-primary_lighten'
           }
           type='submit'
         >
