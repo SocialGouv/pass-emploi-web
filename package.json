@@ -17,10 +17,10 @@
   "dependencies": {
     "@badrap/bar-of-progress": "0.1.2",
     "crypto-js": "4.1.1",
-    "firebase": "9.6.2",
+    "firebase": "9.6.5",
     "jsonwebtoken": "8.5.1",
-    "next": "12.0.8",
-    "next-auth": "4.1.0",
+    "next": "12.0.9",
+    "next-auth": "4.1.2",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
@@ -39,7 +39,7 @@
     "eslint": "^8.6.0",
     "eslint-config-next": "^12.0.4",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.3.1",
     "node-mocks-http": "^1.11.0",
     "postcss": "^8.4.4",
