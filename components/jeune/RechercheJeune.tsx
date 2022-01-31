@@ -41,6 +41,7 @@ export const RechercheJeune = ({
           />
           <button
             type='reset'
+            title='Effacer'
             className={'w-8 text-bleu_nuit'}
             onClick={() => setQuery('')}
           >
