@@ -34,14 +34,14 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
     }
   }
 
-  const onSearch = (query: string) => {
-    const querySplit = query.toLowerCase().split(/-|\s/)
+  const onSearch = (query: string | undefined) => {
+    const querySplit = query?.toLowerCase().split(/-|\s/)
 
-    setQueryJeune(query)
+    setQueryJeune(query!)
     if (query !== '') {
       const jeunesFiltresResult = conseillerJeunes.filter((jeune) => {
-        for (let i = 0; i < querySplit.length; i++) {
-          if (jeune.lastName.toLowerCase().includes(querySplit[i])) {
+        for (let i = 0; i < querySplit!.length; i++) {
+          if (jeune.lastName.toLowerCase().includes(querySplit![i])) {
             return true
           }
           return false

@@ -4,14 +4,14 @@ import CloseIcon from '../../assets/icons/close.svg'
 
 interface RechercheJeuneProps {
   rechercheJeune?: string
-  onSearchFilterBy: (query: string) => void
+  onSearchFilterBy: (query: string | undefined) => void
 }
 
 export const RechercheJeune = ({
   rechercheJeune,
   onSearchFilterBy,
 }: RechercheJeuneProps) => {
-  const [query, setQuery] = useState<string | null>(rechercheJeune ?? '')
+  const [query, setQuery] = useState<string | undefined>(rechercheJeune ?? '')
 
   const ref = useRef<HTMLFormElement>(null)
 
