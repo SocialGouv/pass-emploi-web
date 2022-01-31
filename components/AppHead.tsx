@@ -13,13 +13,12 @@ export const AppHead: React.FC<AppHeadProps> = ({ titre }) => {
         content="Espace conseiller de l'outil pass emploi"
       />
       <link rel='icon' href='/favicon.png' />
-      {/* TODO: what s going on with Font?
-          <link
-           rel="preload"
-           href='/fonts/Rubik/static/Rubik-Regular.ttf'
-           as="font"
-           crossOrigin=""
-         /> */}
+      <link
+        rel='preload'
+        href='/fonts/Marianne/static/Marianne-Regular.otf'
+        as='font'
+        crossOrigin=''
+      />
     </Head>
   )
 }

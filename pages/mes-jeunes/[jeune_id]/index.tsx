@@ -183,9 +183,11 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const { jeunesService, rendezVousService } =
     Container.getDIContainer().dependances
+
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
+
   const [resInfoJeune, resRdvJeune] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,

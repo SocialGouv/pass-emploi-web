@@ -22,6 +22,7 @@ module.exports = {
      * - HTML: <p className="text-violet" >
      */
     colors: {
+      content_color: '#646464',
       bleu_nuit: '#333866',
       bleu: '#767BA8',
       blanc: '#FFFFFF',
@@ -36,6 +37,7 @@ module.exports = {
       warning: '#FF3F15',
       primary: '#3B69D1',
       primary_lighten: '#EEF1F8',
+      grey_3: '#646667',
     },
 
     fill: (theme) => ({
@@ -67,7 +69,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ['Rubik'],
+        sans: ['Marianne'],
       },
     },
   },

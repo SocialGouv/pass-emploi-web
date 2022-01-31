@@ -6,7 +6,7 @@ html {
 	min-height: 100%;
 	padding: 0;
 	margin: 0;
-	font-family: 'Rubik', sans-serif;
+	font-family: 'Marianne', sans-serif;
 }
 
 body {
@@ -54,8 +54,8 @@ select svg {
 }
 
 @font-face {
-	font-family: 'Rubik', sans-serif;
-	src: url('/fonts/Rubik/static/Rubik-Regular.ttf');
+	font-family: 'Marianne', sans-serif;
+	src: url('/fonts/Marianne/static/Marianne-Regular.otf');
 	font-style: normal;
 	font-weight: 500;
 	font-display: swap;

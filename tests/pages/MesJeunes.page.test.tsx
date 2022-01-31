@@ -1,8 +1,10 @@
 import React from 'react'
 import Router from 'next/router'
 import { fireEvent, screen } from '@testing-library/react'
-import { unJeune } from 'fixtures/jeune'
+import '@testing-library/jest-dom/extend-expect'
+import '@testing-library/jest-dom'
 import MesJeunes from 'pages/mes-jeunes/index'
+import { unJeune } from 'fixtures/jeune'
 import renderWithSession from '../renderWithSession'
 import { UserStructure } from 'interfaces/conseiller'
 
@@ -69,7 +71,6 @@ describe('Mes Jeunes', () => {
       )
     })
   })
-
   describe('Contenu de page', () => {
     const jeune1 = unJeune({ id: 'jeune-1' })
     const jeune2 = unJeune({ id: 'jeune-2' })
