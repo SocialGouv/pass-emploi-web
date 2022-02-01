@@ -52,25 +52,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   const isName = currentColumnSort === ColumunSortType.NOM
   const isDate = currentColumnSort === ColumunSortType.DERNIERE_ACTIVITE
 
-  function sortByLastName(jeune1: Jeune, jeune2: Jeune) {
-    console.log('hey lastname')
-    if (
-      (isDesc && jeune1.lastName < jeune2.lastName) ||
-      (isAsc && jeune1.lastName > jeune2.lastName)
-    ) {
-      return -1
-    }
-    if (
-      (isDesc && jeune1.lastName > jeune2.lastName) ||
-      (isAsc && jeune1.lastName < jeune2.lastName)
-    ) {
-      return 1
-    }
-    return 0
-  }
-
-  function sortByLastActivityDate(jeune1: Jeune, jeune2: Jeune) {
-    console.log('hey date')
+  function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
     const date1 = jeune1.lastActivity
       ? new Date(jeune1.lastActivity)
       : new Date()
@@ -79,14 +61,18 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
       : new Date()
 
     if (
-      (isDesc && isDateOlder(date2, date1)) ||
-      (isAsc && isDateOlder(date1, date2))
+      (isName && isDesc && jeune1.lastName < jeune2.lastName) ||
+      (isName && isAsc && jeune1.lastName > jeune2.lastName) ||
+      (isDate && isDesc && isDateOlder(date2, date1)) ||
+      (isDate && isAsc && isDateOlder(date1, date2))
     ) {
       return -1
     }
     if (
-      (isDesc && isDateOlder(date1, date2)) ||
-      (isAsc && isDateOlder(date2, date1))
+      (isName && isDesc && jeune1.lastName > jeune2.lastName) ||
+      (isName && isAsc && jeune1.lastName < jeune2.lastName) ||
+      (isDate && isDesc && isDateOlder(date1, date2)) ||
+      (isDate && isAsc && isDateOlder(date2, date1))
     ) {
       return 1
     }
@@ -96,9 +82,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   const sortJeunes = (type: ColumunSortType) => {
     if (currentColumnSort !== type) {
-      console.log('before', type, currentColumnSort)
       setCurrentColumnSort(type)
-      console.log('after', type, currentColumnSort)
       setCurrentSortType(SortType.ASC)
     } else {
       if (isAsc) setCurrentSortType(SortType.DESC)
@@ -106,13 +90,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
     }
 
     console.log('isName', isName)
-    if (isName) {
-      console.log('hello amelle name')
-      setSortedJeunes(jeunes.sort(sortByLastName))
-    } else if (isDate) {
-      console.log('hello amelle date')
-      setSortedJeunes(jeunes.sort(sortByLastActivityDate))
-    }
+    setSortedJeunes(jeunes.sort(compareJeunes))
   }
 
   return (
