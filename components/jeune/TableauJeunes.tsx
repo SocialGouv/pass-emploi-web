@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Jeune } from 'interfaces/jeune'
 import Link from 'next/link'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
@@ -12,12 +12,12 @@ import {
   isDateOlder,
 } from 'utils/date'
 
-enum ColumunSortType {
+enum SortColumn {
   NOM = 'NOM',
   DERNIERE_ACTIVITE = 'DERNIERE_ACTIVITE',
 }
 
-enum SortType {
+enum SortDirection {
   ASC = 'ASC',
   DESC = 'DESC',
 }
@@ -42,56 +42,63 @@ function todayOrDate(date: Date): string {
 
 export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   const [sortedJeunes, setSortedJeunes] = useState<Jeune[]>(jeunes)
-  const [currentColumnSort, setCurrentColumnSort] = useState<ColumunSortType>(
-    ColumunSortType.NOM
+  const [currentSortColumn, setCurrentSortColumn] = useState<SortColumn>(
+    SortColumn.NOM
   )
-  const [currentSortType, setCurrentSortType] = useState<SortType>(SortType.ASC)
+  const [currentSortDirection, setCurrentSortDirection] =
+    useState<SortDirection>(SortDirection.ASC)
 
-  const isAsc = currentSortType === SortType.ASC
-  const isDesc = currentSortType === SortType.DESC
-  const isName = currentColumnSort === ColumunSortType.NOM
-  const isDate = currentColumnSort === ColumunSortType.DERNIERE_ACTIVITE
+  const isAsc = currentSortDirection === SortDirection.ASC
+  const isDesc = currentSortDirection === SortDirection.DESC
+  const isName = currentSortColumn === SortColumn.NOM
+  const isDate = currentSortColumn === SortColumn.DERNIERE_ACTIVITE
 
-  function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
-    const date1 = jeune1.lastActivity
-      ? new Date(jeune1.lastActivity)
-      : new Date()
-    const date2 = jeune2.lastActivity
-      ? new Date(jeune2.lastActivity)
-      : new Date()
-
-    if (
-      (isName && isDesc && jeune1.lastName < jeune2.lastName) ||
-      (isName && isAsc && jeune1.lastName > jeune2.lastName) ||
-      (isDate && isDesc && isDateOlder(date2, date1)) ||
-      (isDate && isAsc && isDateOlder(date1, date2))
-    ) {
-      return -1
-    }
-    if (
-      (isName && isDesc && jeune1.lastName > jeune2.lastName) ||
-      (isName && isAsc && jeune1.lastName < jeune2.lastName) ||
-      (isDate && isDesc && isDateOlder(date1, date2)) ||
-      (isDate && isAsc && isDateOlder(date2, date1))
-    ) {
-      return 1
-    }
-
-    return 0
-  }
-
-  const sortJeunes = (type: ColumunSortType) => {
-    if (currentColumnSort !== type) {
-      setCurrentColumnSort(type)
-      setCurrentSortType(SortType.ASC)
+  const sortJeunes = (type: SortColumn) => {
+    if (currentSortColumn !== type) {
+      console.log('before:', currentSortColumn)
+      setCurrentSortColumn(type)
+      console.log('after:', currentSortColumn)
+      setCurrentSortDirection(SortDirection.ASC)
     } else {
-      if (isAsc) setCurrentSortType(SortType.DESC)
-      if (isDesc) setCurrentSortType(SortType.ASC)
+      if (isAsc) setCurrentSortDirection(SortDirection.DESC)
+      if (isDesc) setCurrentSortDirection(SortDirection.ASC)
     }
-
-    console.log('isName', isName)
-    setSortedJeunes(jeunes.sort(compareJeunes))
   }
+
+  useEffect(() => {
+    function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
+      const date1 = jeune1.lastActivity
+        ? new Date(jeune1.lastActivity)
+        : new Date()
+      const date2 = jeune2.lastActivity
+        ? new Date(jeune2.lastActivity)
+        : new Date()
+
+      if (
+        (isName && isDesc && jeune1.lastName < jeune2.lastName) ||
+        (isName && isAsc && jeune1.lastName > jeune2.lastName) ||
+        (isDate && isDesc && isDateOlder(date2, date1)) ||
+        (isDate && isAsc && isDateOlder(date1, date2))
+      ) {
+        return -1
+      }
+      if (
+        (isName && isDesc && jeune1.lastName > jeune2.lastName) ||
+        (isName && isAsc && jeune1.lastName < jeune2.lastName) ||
+        (isDate && isDesc && isDateOlder(date1, date2)) ||
+        (isDate && isAsc && isDateOlder(date2, date1))
+      ) {
+        return 1
+      }
+
+      return 0
+    }
+    console.log('hello')
+    console.log('after after:', currentSortColumn)
+    console.log('after after:', currentSortDirection)
+
+    setSortedJeunes(jeunes.sort(compareJeunes))
+  }, [currentSortColumn, isAsc, isDate, isDesc, isName, jeunes])
 
   return (
     <>
@@ -117,7 +124,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
               >
                 <button
                   className='flex'
-                  onClick={() => sortJeunes(ColumunSortType.NOM)}
+                  onClick={() => sortJeunes(SortColumn.NOM)}
                 >
                   <span className='mr-1'>Nom du jeune</span>
                   {isName ? (
@@ -138,7 +145,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
               >
                 <button
                   className='flex'
-                  onClick={() => sortJeunes(ColumunSortType.DERNIERE_ACTIVITE)}
+                  onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
                 >
                   <span className='mr-1'>Dernière activité</span>
                   {isDate ? (
