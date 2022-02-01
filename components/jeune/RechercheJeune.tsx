@@ -31,7 +31,8 @@ export const RechercheJeune = ({
       <label htmlFor='rechercher-jeunes' className='text-base-medium'>
         Rechercher un jeune par son nom
       </label>
-      <div className='flex mt-3.5 mb-8 w-9/12 rounded-medium border border-content_color'>
+      <div className='flex mt-3.5 mb-8 w-9/12'>
+        {/*<div className='flex mt-3.5 mb-8 w-9/12 border border-content_color rounded-medium'>*/}
         <>
           <input
             type='text'
@@ -39,25 +40,30 @@ export const RechercheJeune = ({
             name='rechercher-jeunes'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className={`flex-1 p-3 w-8/12 rounded-medium text-sm`}
+            className={`flex-1 p-3 w-8/12 border-t border-b border-l border-r-none border-content_color rounded-l-medium text-sm`}
           />
-          <button
-            type='reset'
-            title='Effacer'
-            className='w-8 text-bleu_nuit'
-            onClick={onReset}
-          >
-            <CloseIcon
-              className='text-bleu_nuit'
-              focusable={false}
-              aria-hidden={true}
-            />
-            <span className='visually-hidden'>Effacer le champ de saisie</span>
-          </button>
+          <span className='flex border-t border-b border-content_color'>
+            <button
+              type='reset'
+              title='Effacer'
+              className='border-none w-8 text-bleu_nuit'
+              onClick={onReset}
+            >
+              <CloseIcon
+                className='text-bleu_nuit'
+                focusable={false}
+                aria-hidden={true}
+              />
+              <span className='visually-hidden'>
+                Effacer le champ de saisie
+              </span>
+            </button>
+          </span>
         </>
 
         <button
-          className='flex p-3 items-center text-base-medium text-bleu_nuit border-l border-content_color rounded-r-medium hover:bg-primary_lighten'
+          // className='flex p-3 items-center text-base-medium text-bleu_nuit border-l border-content_color rounded-r-medium hover:bg-primary_lighten'
+          className='flex p-3 items-center text-base-medium text-bleu_nuit border border-bleu_nuit rounded-r-medium hover:bg-primary_lighten'
           type='submit'
         >
           <SearchIcon focusable='false' aria-hidden={true} />
