@@ -1,13 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Jeune } from 'interfaces/jeune'
 import Link from 'next/link'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
+import ArrowDouble from '../../assets/icons/arrow_double.svg'
+import ArrowDown from '../../assets/icons/arrow_down.svg'
 import {
   dateIsToday,
   dateIsYesterday,
   formatDayDate,
   formatHourMinuteDate,
+  isDateOlder,
 } from 'utils/date'
+
+enum ColumunSortType {
+  NOM = 'NOM',
+  DERNIERE_ACTIVITE = 'DERNIERE_ACTIVITE',
+}
+
+enum SortType {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}
 
 interface TableauJeunesProps {
   jeunes: Jeune[]
@@ -28,9 +41,83 @@ function todayOrDate(date: Date): string {
 }
 
 export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
+  const [sortedJeunes, setSortedJeunes] = useState<Jeune[]>(jeunes)
+  const [currentColumnSort, setCurrentColumnSort] = useState<ColumunSortType>(
+    ColumunSortType.NOM
+  )
+  const [currentSortType, setCurrentSortType] = useState<SortType>(SortType.ASC)
+
+  const isAsc = currentSortType === SortType.ASC
+  const isDesc = currentSortType === SortType.DESC
+  const isName = currentColumnSort === ColumunSortType.NOM
+  const isDate = currentColumnSort === ColumunSortType.DERNIERE_ACTIVITE
+
+  function sortByLastName(jeune1: Jeune, jeune2: Jeune) {
+    console.log('hey lastname')
+    if (
+      (isDesc && jeune1.lastName < jeune2.lastName) ||
+      (isAsc && jeune1.lastName > jeune2.lastName)
+    ) {
+      return -1
+    }
+    if (
+      (isDesc && jeune1.lastName > jeune2.lastName) ||
+      (isAsc && jeune1.lastName < jeune2.lastName)
+    ) {
+      return 1
+    }
+    return 0
+  }
+
+  function sortByLastActivityDate(jeune1: Jeune, jeune2: Jeune) {
+    console.log('hey date')
+    const date1 = jeune1.lastActivity
+      ? new Date(jeune1.lastActivity)
+      : new Date()
+    const date2 = jeune2.lastActivity
+      ? new Date(jeune2.lastActivity)
+      : new Date()
+
+    if (
+      (isDesc && isDateOlder(date2, date1)) ||
+      (isAsc && isDateOlder(date1, date2))
+    ) {
+      return -1
+    }
+    if (
+      (isDesc && isDateOlder(date1, date2)) ||
+      (isAsc && isDateOlder(date2, date1))
+    ) {
+      return 1
+    }
+
+    return 0
+  }
+
+  const sortJeunes = (type: ColumunSortType) => {
+    if (currentColumnSort !== type) {
+      console.log('before', type, currentColumnSort)
+      setCurrentColumnSort(type)
+      console.log('after', type, currentColumnSort)
+      setCurrentSortType(SortType.ASC)
+    } else {
+      if (isAsc) setCurrentSortType(SortType.DESC)
+      if (isDesc) setCurrentSortType(SortType.ASC)
+    }
+
+    console.log('isName', isName)
+    if (isName) {
+      console.log('hello amelle name')
+      setSortedJeunes(jeunes.sort(sortByLastName))
+    } else if (isDate) {
+      console.log('hello amelle date')
+      setSortedJeunes(jeunes.sort(sortByLastActivityDate))
+    }
+  }
+
   return (
     <>
-      {jeunes.length === 0 ? (
+      {sortedJeunes.length === 0 ? (
         <p className='mt-32 text-base-medium text-center text-bleu_nuit'>
           Aucun jeune trouvé
         </p>
@@ -43,26 +130,55 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           <div id='table-caption' className='visually-hidden'>
             Liste de mes jeunes
           </div>
+
           <div role='rowgroup'>
             <div role='row' className='table-row grid grid-cols-table'>
               <span
                 role='columnheader'
                 className='table-cell text-sm text-bleu text-left p-4'
               >
-                Nom du jeune
+                <button
+                  className='flex'
+                  onClick={() => sortJeunes(ColumunSortType.NOM)}
+                >
+                  <span className='mr-1'>Nom du jeune</span>
+                  {isName ? (
+                    <ArrowDown
+                      focusable='false'
+                      aria-hidden='true'
+                      className={isDesc ? 'rotate-180' : ''}
+                    />
+                  ) : (
+                    <ArrowDouble focusable='false' aria-hidden='true' />
+                  )}
+                </button>
               </span>
 
               <span
                 role='columnheader'
                 className='table-cell text-sm text-bleu text-left pb-4 pt-4'
               >
-                Dernière activité
+                <button
+                  className='flex'
+                  onClick={() => sortJeunes(ColumunSortType.DERNIERE_ACTIVITE)}
+                >
+                  <span className='mr-1'>Dernière activité</span>
+                  {isDate ? (
+                    <ArrowDown
+                      focusable='false'
+                      aria-hidden='true'
+                      className={isDesc ? 'rotate-180' : ''}
+                    />
+                  ) : (
+                    <ArrowDouble focusable='false' aria-hidden='true' />
+                  )}
+                </button>
               </span>
             </div>
           </div>
 
           <div role='rowgroup'>
-            {jeunes?.map((jeune: Jeune) => (
+            {sortedJeunes?.map((jeune: Jeune) => (
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
                 <a
                   key={jeune.id}
