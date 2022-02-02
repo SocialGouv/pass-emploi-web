@@ -55,9 +55,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   const sortJeunes = (type: SortColumn) => {
     if (currentSortColumn !== type) {
-      console.log('before:', currentSortColumn)
       setCurrentSortColumn(type)
-      console.log('after:', currentSortColumn)
       setCurrentSortDirection(SortDirection.ASC)
     } else {
       if (isAsc) setCurrentSortDirection(SortDirection.DESC)
@@ -69,36 +67,40 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
     function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
       const date1 = jeune1.lastActivity
         ? new Date(jeune1.lastActivity)
-        : new Date()
+        : new Date('1995-12-17T03:24:00')
       const date2 = jeune2.lastActivity
         ? new Date(jeune2.lastActivity)
-        : new Date()
+        : new Date('1995-12-17T03:24:00')
 
       if (
-        (isName && isDesc && jeune1.lastName < jeune2.lastName) ||
-        (isName && isAsc && jeune1.lastName > jeune2.lastName) ||
-        (isDate && isDesc && isDateOlder(date2, date1)) ||
-        (isDate && isAsc && isDateOlder(date1, date2))
+        (isName && isAsc && jeune1.lastName < jeune2.lastName) ||
+        (isName && isDesc && jeune1.lastName > jeune2.lastName) ||
+        (isDate && isAsc && isDateOlder(date2, date1)) ||
+        (isDate && isDesc && isDateOlder(date1, date2))
       ) {
         return -1
       }
       if (
-        (isName && isDesc && jeune1.lastName > jeune2.lastName) ||
-        (isName && isAsc && jeune1.lastName < jeune2.lastName) ||
-        (isDate && isDesc && isDateOlder(date1, date2)) ||
-        (isDate && isAsc && isDateOlder(date2, date1))
+        (isName && isAsc && jeune1.lastName > jeune2.lastName) ||
+        (isName && isDesc && jeune1.lastName < jeune2.lastName) ||
+        (isDate && isAsc && isDateOlder(date1, date2)) ||
+        (isDate && isDesc && isDateOlder(date2, date1))
       ) {
         return 1
       }
 
       return 0
     }
-    console.log('hello')
-    console.log('after after:', currentSortColumn)
-    console.log('after after:', currentSortDirection)
-
-    setSortedJeunes(jeunes.sort(compareJeunes))
-  }, [currentSortColumn, isAsc, isDate, isDesc, isName, jeunes])
+    setSortedJeunes([...jeunes.sort(compareJeunes)])
+  }, [
+    currentSortColumn,
+    currentSortDirection,
+    isAsc,
+    isDate,
+    isDesc,
+    isName,
+    jeunes,
+  ])
 
   return (
     <>
