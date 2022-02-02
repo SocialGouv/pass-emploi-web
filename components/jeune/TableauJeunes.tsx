@@ -11,6 +11,7 @@ import {
   formatHourMinuteDate,
   isDateOlder,
 } from 'utils/date'
+import useMatomo from 'utils/analytics/useMatomo'
 
 enum SortColumn {
   NOM = 'NOM',
@@ -101,6 +102,17 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
     isName,
     jeunes,
   ])
+
+  const matomoTitle = () => {
+    if (isDate && isAsc)
+      return 'Mes jeunes - Dernière activité - Ordre chronologique'
+    if (isDate && isDesc)
+      return 'Mes jeunes - Dernière activité - Ordre antéchronologique'
+    if (isName && isAsc) return 'Mes jeunes - Nom - Ordre alphabétique'
+    if (isName && isDesc) return 'Mes jeunes - Nom - Ordre alphabétique inversé'
+  }
+
+  useMatomo(matomoTitle())
 
   return (
     <>

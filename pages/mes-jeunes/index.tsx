@@ -55,9 +55,11 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
 
   useMatomo('Mes jeunes')
   useMatomo(
-    listeJeunesFiltres.length === 1
-      ? 'Clic sur Rechercher - Recherche avec résultats'
-      : 'Clic sur Rechercher - Recherche sans résultats'
+    queryJeune?.length
+      ? listeJeunesFiltres.length > 0
+        ? 'Clic sur Rechercher - Recherche avec résultats'
+        : 'Clic sur Rechercher - Recherche sans résultats'
+      : undefined
   )
 
   return (
