@@ -39,12 +39,12 @@ export const RechercheJeune = ({
             name='rechercher-jeunes'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className={`flex-1 p-3 w-8/12 border-t border-b border-l border-r-0 border-content_color rounded-l-medium text-sm`}
+            className={`flex-1 p-3 w-8/12 border border-r-0 border-content_color rounded-l-medium text-sm`}
           />
           <button
             type='reset'
             title='Effacer'
-            className='border-t border-b border-r-0 border-l-0 border-content_color w-8 text-bleu_nuit'
+            className='border border-r-0 border-l-0 border-content_color w-8 text-bleu_nuit'
             onClick={onReset}
           >
             <CloseIcon
