@@ -14,7 +14,7 @@ afterAll(() => {
 
 describe('Supervision', () => {
   describe('quand le conseiller est superviseur', () => {
-    it('affiche le titre de la page', () => {
+    beforeEach(async () => {
       // When
       renderWithSession(<Supervision />, {
         user: {
@@ -24,12 +24,21 @@ describe('Supervision', () => {
           estSuperviseur: true,
         },
       })
+    })
 
+    it('affiche le titre de la page', () => {
       //THEN
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
         'Transfert de portefeuille'
       )
+    })
+
+    it("affiche un champ de recherche des jeunes d'un conseiller", async () => {
+      // THEN
+      expect(
+        screen.getByLabelText('E-mail conseiller actuel')
+      ).toBeInTheDocument()
     })
   })
 

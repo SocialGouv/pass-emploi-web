@@ -24,6 +24,7 @@ module.exports = {
     colors: {
       content_color: '#646464',
       bleu_nuit: '#333866',
+      primary_primary: '#333866',
       bleu: '#767BA8',
       blanc: '#FFFFFF',
       bleu_gris: '#9196C0',
@@ -38,6 +39,8 @@ module.exports = {
       primary: '#3B69D1',
       primary_lighten: '#EEF1F8',
       grey_3: '#646667',
+      neutral_content: '#161616',
+      neutral_grey: '#878787',
     },
 
     fill: (theme) => ({
