@@ -75,5 +75,20 @@ describe('Recherche', () => {
         expect(result).toBeInTheDocument()
       })
     })
+    it("quand on recherche un nom composé d'une apostrophe", async () => {
+      const result = screen.getByRole('row', {
+        name: /D'Aböville-Muñoz François/i,
+      })
+
+      userEvent.type(inputSearch, 'D aböville-Muñoz')
+
+      //WHEN
+      fireEvent.click(submitButton)
+
+      //THEN
+      await waitFor(() => {
+        expect(result).toBeInTheDocument()
+      })
+    })
   })
 })
