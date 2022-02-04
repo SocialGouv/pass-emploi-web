@@ -1,30 +1,42 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import { GetServerSideProps } from 'next'
+import { useSession } from 'next-auth/react'
 import React, { FormEvent, useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import ArrowIcon from '../../assets/icons/arrow-right.svg'
 import CloseIcon from '../../assets/icons/close.svg'
 import SearchIcon from '../../assets/icons/search.svg'
+import { Jeune } from '../../interfaces/jeune'
+import { JeunesService } from '../../services/jeunes.service'
+import { useDependance } from '../../utils/injectionDependances'
 
 type SupervisionProps = {}
 
 function Supervision({}: SupervisionProps) {
-  useMatomo('Supervision')
+  const { data: session } = useSession({ required: true })
+  const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const [emailConseillerActuel, setEmailConseillerActuel] = useState<string>('')
+  const [jeunes, setJeunes] = useState<Jeune[]>([])
   const areSomeJeunesSelected = false
 
-  function fetchListeJeunes(e: FormEvent) {
+  async function fetchListeJeunes(e: FormEvent) {
     e.preventDefault()
-    console.log({ emailConseillerActuel })
+    const jeunes: Jeune[] = await jeunesService.getJeunesDuConseillerParEmail(
+      emailConseillerActuel,
+      session!.accessToken
+    )
+    setJeunes(jeunes)
   }
 
   function resetEmailConseillerActuel(e: FormEvent) {
     e.preventDefault()
     console.log('RESET')
   }
+
+  useMatomo('Supervision')
 
   return (
     <>
@@ -60,7 +72,7 @@ function Supervision({}: SupervisionProps) {
           <div className='flex mt-3.5'>
             <>
               <input
-                type='text'
+                type='email'
                 id='email-conseiller-actuel'
                 name='email-conseiller-actuel'
                 onChange={(e) => setEmailConseillerActuel(e.target.value)}
@@ -85,7 +97,8 @@ function Supervision({}: SupervisionProps) {
             <button
               className='flex p-3 items-center text-base-medium text-primary_primary border border-primary_primary rounded-r-medium hover:bg-primary_lighten'
               type='submit'
-              aria-label='Rechercher'
+              title='Rechercher'
+              aria-label='Rechercher conseiller actuel'
             >
               <SearchIcon role='img' focusable='false' aria-hidden={true} />
             </button>
@@ -102,9 +115,10 @@ function Supervision({}: SupervisionProps) {
             E-mail conseiller de destination
           </label>
           <div className='flex mt-3.5'>
+            6
             <>
               <input
-                type='text'
+                type='email'
                 id='email-conseiller-destination'
                 name='email-conseiller-destination'
                 onChange={() => {}}
