@@ -81,8 +81,6 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
         )}
       </span>
 
-      <RechercheJeune onSearchFilterBy={onSearch} />
-
       {listeJeunesFiltres.length === 0 && conseillerJeunes.length === 0 ? (
         <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
           <AddJeuneImage
@@ -99,11 +97,14 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
           </Button>
         </div>
       ) : (
-        <TableauJeunes
-          jeunes={
-            queryJeune?.length > 0 ? listeJeunesFiltres : conseillerJeunes
-          }
-        />
+        <>
+          <RechercheJeune onSearchFilterBy={onSearch} />
+          <TableauJeunes
+            jeunes={
+              queryJeune?.length > 0 ? listeJeunesFiltres : conseillerJeunes
+            }
+          />
+        </>
       )}
     </div>
   )
