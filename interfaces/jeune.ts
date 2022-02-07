@@ -1,5 +1,3 @@
-import { Conseiller } from './conseiller'
-
 export type Jeune = {
   id: string
   firstName: string
@@ -43,4 +41,10 @@ export interface JeunePoleEmploiFormData {
   prenom: string
   nom: string
   email: string
+}
+
+export function sortJeunesByLastName(jeune1: Jeune, jeune2: Jeune): number {
+  return `${jeune1.lastName}${jeune1.firstName}`.localeCompare(
+    `${jeune2.lastName}${jeune2.firstName}`
+  )
 }

@@ -1,6 +1,6 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
-import { Jeune } from 'interfaces/jeune'
+import { Jeune, sortJeunesByLastName } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import React, { FormEvent, useState } from 'react'
@@ -44,7 +44,7 @@ function Supervision({}: SupervisionProps) {
         emailConseillerActuel.value,
         session!.accessToken
       )
-      setJeunes(jeunes)
+      setJeunes(jeunes.sort(sortJeunesByLastName))
       setRechecheSubmitted(true)
     } catch (err) {
       let erreur: string
@@ -236,11 +236,11 @@ function Supervision({}: SupervisionProps) {
                     <input type='checkbox' disabled={true} />
                   </td>
                   <td className='pt-6 pb-6 pl-4 pr-4 text-md-semi'>
-                    {jeune.firstName} {jeune.lastName}
+                    {jeune.lastName} {jeune.firstName}
                   </td>
                   <td className='pt-6 pb-6 pl-4 pr-4'>
                     {jeune.conseillerPrecedent
-                      ? `${jeune.conseillerPrecedent.prenom} ${jeune.conseillerPrecedent.nom}`
+                      ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
                       : '-'}
                   </td>
                   <td className='pt-6 pb-6 pl-4 pr-6'>

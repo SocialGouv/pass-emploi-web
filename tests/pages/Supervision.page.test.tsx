@@ -121,7 +121,7 @@ describe('Supervision', () => {
         // THEN
         for (const jeune of jeunes) {
           expect(
-            screen.getByText(`${jeunes[0].firstName} ${jeunes[0].lastName}`)
+            screen.getByText(`${jeunes[0].lastName} ${jeunes[0].firstName}`)
           ).toBeInTheDocument()
         }
       })
