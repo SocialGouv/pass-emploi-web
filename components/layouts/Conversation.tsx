@@ -96,14 +96,16 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   return (
     <div className={styles.conversationContainer}>
       <div className={styles.conversationTitleContainer}>
-        <button onClick={onBack}>
+        <button className='border-none' onClick={onBack}>
           <ChevronLeftIcon
             role='img'
             focusable='false'
             aria-label='Retour sur ma messagerie'
           />
         </button>
-        <h2 className='h2-semi'>Discuter avec {jeuneChat.firstName}</h2>
+        <h2 className='h2-semi'>
+          Discuter avec {jeuneChat.firstName} {jeuneChat.lastName}
+        </h2>
       </div>
 
       <ul className={styles.messages}>
