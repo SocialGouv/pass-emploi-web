@@ -11,8 +11,8 @@ import isEmailValid from 'utils/isEmailValid'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import ArrowIcon from '../../assets/icons/arrow-right.svg'
 import CloseIcon from '../../assets/icons/close.svg'
-import SearchIcon from '../../assets/icons/search.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
+import SearchIcon from '../../assets/icons/search.svg'
 
 type SupervisionProps = {}
 
@@ -44,8 +44,15 @@ function Supervision({}: SupervisionProps) {
         emailConseillerActuel.value,
         session!.accessToken
       )
-      setJeunes(jeunes.sort(sortJeunesByLastName))
-      setRechecheSubmitted(true)
+      if (jeunes.length > 0) {
+        setJeunes(jeunes.sort(sortJeunesByLastName))
+        setRechecheSubmitted(true)
+      } else {
+        setEmailConseillerActuel({
+          ...emailConseillerActuel,
+          error: 'Aucun jeune trouvé pour ce conseiller',
+        })
+      }
     } catch (err) {
       let erreur: string
       if ((err as Error).message) erreur = 'Aucun conseiller ne correspond'
@@ -59,7 +66,13 @@ function Supervision({}: SupervisionProps) {
     editEmailConseillerActuel('')
   }
 
-  useMatomo('Supervision')
+  useMatomo(
+    !isRechercheSubmitted
+      ? 'Réaffectation jeunes - Etape 1 - remplissage mail conseiller initial'
+      : Boolean(emailConseillerActuel.error)
+      ? 'Réaffectation jeunes - Etape 1 - remplissage mail conseiller initial en erreur'
+      : 'Réaffectation jeunes - Etape 2 - réaffectation jeunes  vers conseiller de destination'
+  )
 
   return (
     <>
