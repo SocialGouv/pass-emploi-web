@@ -137,7 +137,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 className='table-cell text-sm text-bleu text-left p-4'
               >
                 <button
-                  className='flex hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.NOM)}
                   aria-label={`Afficher la liste des jeunes triée par noms par ordre alphabétique ${
                     isName && isAsc ? 'inversé' : ''
@@ -164,7 +164,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 className='table-cell text-sm text-bleu text-left pb-4 pt-4'
               >
                 <button
-                  className='flex hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
                   aria-label={`Afficher la liste des jeunes triée par dates de dernière activité par ordre ${
                     isDate && isAsc ? 'antéchronologique' : 'chronologique'
