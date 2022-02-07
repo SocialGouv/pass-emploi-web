@@ -43,24 +43,24 @@ function todayOrDate(date: Date): string {
 
 export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   const [sortedJeunes, setSortedJeunes] = useState<Jeune[]>(jeunes)
-  const [currentSortColumn, setCurrentSortColumn] = useState<SortColumn>(
+  const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
     SortColumn.NOM
   )
-  const [currentSortDirection, setCurrentSortDirection] =
+  const [currentSortedDirection, setCurrentSortedDirection] =
     useState<SortDirection>(SortDirection.ASC)
 
-  const isAsc = currentSortDirection === SortDirection.ASC
-  const isDesc = currentSortDirection === SortDirection.DESC
-  const isName = currentSortColumn === SortColumn.NOM
-  const isDate = currentSortColumn === SortColumn.DERNIERE_ACTIVITE
+  const isAsc = currentSortedDirection === SortDirection.ASC
+  const isDesc = currentSortedDirection === SortDirection.DESC
+  const isName = currentSortedColumn === SortColumn.NOM
+  const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
 
-  const sortJeunes = (type: SortColumn) => {
-    if (currentSortColumn !== type) {
-      setCurrentSortColumn(type)
-      setCurrentSortDirection(SortDirection.ASC)
+  const sortJeunes = (newSortColumn: SortColumn) => {
+    if (currentSortedColumn !== newSortColumn) {
+      setCurrentSortedColumn(newSortColumn)
+      setCurrentSortedDirection(SortDirection.ASC)
     } else {
-      if (isAsc) setCurrentSortDirection(SortDirection.DESC)
-      if (isDesc) setCurrentSortDirection(SortDirection.ASC)
+      if (isAsc) setCurrentSortedDirection(SortDirection.DESC)
+      if (isDesc) setCurrentSortedDirection(SortDirection.ASC)
     }
   }
 
@@ -94,8 +94,8 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
     }
     setSortedJeunes([...jeunes.sort(compareJeunes)])
   }, [
-    currentSortColumn,
-    currentSortDirection,
+    currentSortedColumn,
+    currentSortedDirection,
     isAsc,
     isDate,
     isDesc,
@@ -137,9 +137,9 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 className='table-cell text-sm text-bleu text-left p-4'
               >
                 <button
-                  className='flex'
+                  className='flex hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.NOM)}
-                  aria-label={`Afficher la liste des jeunes triée par noms par ordre alphabétique ${
+                  title={`Afficher la liste des jeunes triée par noms par ordre alphabétique ${
                     isName && isAsc ? 'inversé' : ''
                   }`}
                 >
@@ -161,9 +161,9 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 className='table-cell text-sm text-bleu text-left pb-4 pt-4'
               >
                 <button
-                  className='flex'
+                  className='flex hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
-                  aria-label={`Afficher la liste des jeunes triée par dates de dernière activité par ordre ${
+                  title={`Afficher la liste des jeunes triée par dates de dernière activité par ordre ${
                     isDate && isAsc ? 'antichronologique' : 'chronologique'
                   }`}
                 >
