@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen } from '@testing-library/react'
 import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSidePropsContext } from 'next/types'
 import Supervision, { getServerSideProps } from 'pages/supervision'
@@ -90,8 +90,8 @@ describe('Supervision', () => {
 
     describe('au clique pour rechercher le conseiller actuel', () => {
       const emailConseillerActuel = 'conseiller@email.com'
-      let submitRecherche: any
-      let emailInput: any
+      let submitRecherche: HTMLBaseElement
+      let emailInput: HTMLInputElement
       const jeunes = desJeunes()
       beforeEach(async () => {
         // GIVEN
@@ -105,7 +105,9 @@ describe('Supervision', () => {
         })
 
         // WHEN
-        submitRecherche.click()
+        await act(async () => {
+          submitRecherche.click()
+        })
       })
 
       it('récupère les jeunes du conseiller', async () => {
@@ -117,8 +119,28 @@ describe('Supervision', () => {
 
       it('affiche les jeunes du conseiller', async () => {
         // THEN
-        jeunes.forEach((jeune) => {
-          expect(screen.getByText(jeune.firstName)).toBeInTheDocument()
+        for (const jeune of jeunes) {
+          expect(
+            screen.getByText(`${jeunes[0].firstName} ${jeunes[0].lastName}`)
+          ).toBeInTheDocument()
+        }
+      })
+
+      describe('à la modification du mail du conseiller actuel', () => {
+        it('reset la recherche', async () => {
+          // WHEN
+          await act(async () => {
+            fireEvent.change(emailInput, {
+              target: { value: 'whatever' },
+            })
+          })
+
+          // THEN
+          for (const jeune of jeunes) {
+            expect(() =>
+              screen.getByText(`${jeune.firstName} ${jeune.lastName}`)
+            ).toThrow()
+          }
         })
       })
     })

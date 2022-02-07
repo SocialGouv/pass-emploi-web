@@ -1,3 +1,5 @@
+import { Conseiller } from './conseiller'
+
 export type Jeune = {
   id: string
   firstName: string
@@ -6,6 +8,11 @@ export type Jeune = {
   lastActivity: string
   email?: string
   isActivated?: boolean
+  conseillerPrecedent?: {
+    nom: string
+    prenom: string
+    email?: string
+  }
 }
 
 export interface Chat {

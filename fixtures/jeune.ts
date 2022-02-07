@@ -9,6 +9,11 @@ export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
     isActivated: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     lastActivity: '2021-12-07T17:30:07.756Z',
+    conseillerPrecedent: {
+      prenom: 'Nils',
+      nom: 'Tavernier',
+      email: 'conseiller@email.com',
+    },
   }
   return { ...defaults, ...overrides }
 }

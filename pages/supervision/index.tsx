@@ -11,6 +11,7 @@ import SearchIcon from '../../assets/icons/search.svg'
 import { Jeune } from '../../interfaces/jeune'
 import { JeunesService } from '../../services/jeunes.service'
 import { useDependance } from '../../utils/injectionDependances'
+import isEmailValid from '../../utils/isEmailValid'
 
 type SupervisionProps = {}
 
@@ -19,8 +20,15 @@ function Supervision({}: SupervisionProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const [emailConseillerActuel, setEmailConseillerActuel] = useState<string>('')
+  const [isRechercheSubmitted, setRechecheSubmitted] = useState<boolean>(false)
   const [jeunes, setJeunes] = useState<Jeune[]>([])
   const areSomeJeunesSelected = false
+
+  function editEmailConseillerActuel(value: string) {
+    setEmailConseillerActuel(value)
+    setRechecheSubmitted(false)
+    setJeunes([])
+  }
 
   async function fetchListeJeunes(e: FormEvent) {
     e.preventDefault()
@@ -29,11 +37,18 @@ function Supervision({}: SupervisionProps) {
       session!.accessToken
     )
     setJeunes(jeunes)
+    setRechecheSubmitted(true)
   }
 
   function resetEmailConseillerActuel(e: FormEvent) {
     e.preventDefault()
-    console.log('RESET')
+    setEmailConseillerActuel('')
+    setRechecheSubmitted(false)
+    setJeunes([])
+  }
+
+  function isEmailConseillerActuelValid(): boolean {
+    return Boolean(emailConseillerActuel) && isEmailValid(emailConseillerActuel)
   }
 
   useMatomo('Supervision')
@@ -75,7 +90,8 @@ function Supervision({}: SupervisionProps) {
                 type='email'
                 id='email-conseiller-actuel'
                 name='email-conseiller-actuel'
-                onChange={(e) => setEmailConseillerActuel(e.target.value)}
+                value={emailConseillerActuel}
+                onChange={(e) => editEmailConseillerActuel(e.target.value)}
                 className={`flex-1 p-3 w-8/12 border border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary`}
               />
               <button
@@ -95,12 +111,24 @@ function Supervision({}: SupervisionProps) {
             </>
 
             <button
-              className='flex p-3 items-center text-base-medium text-primary_primary border border-primary_primary rounded-r-medium hover:bg-primary_lighten'
+              className={`flex p-3 items-center text-base-medium text-primary_primary border border-primary_primary rounded-r-medium ${
+                isEmailConseillerActuelValid()
+                  ? 'hover:bg-primary_lighten'
+                  : 'border-[#999BB3]'
+              }`}
               type='submit'
               title='Rechercher'
               aria-label='Rechercher conseiller actuel'
+              disabled={!isEmailConseillerActuelValid()}
             >
-              <SearchIcon role='img' focusable='false' aria-hidden={true} />
+              <SearchIcon
+                role='img'
+                focusable='false'
+                aria-hidden={true}
+                className={
+                  isEmailConseillerActuelValid() ? '' : 'fill-[#999BB3]'
+                }
+              />
             </button>
           </div>
         </form>
@@ -115,7 +143,6 @@ function Supervision({}: SupervisionProps) {
             E-mail conseiller de destination
           </label>
           <div className='flex mt-3.5'>
-            6
             <>
               <input
                 type='email'
@@ -164,6 +191,48 @@ function Supervision({}: SupervisionProps) {
           Réaffecter les jeunes
         </Button>
       </div>
+
+      {isRechercheSubmitted && (
+        <div className='mt-6 ml-5'>
+          <span className='text-m-medium'>
+            Jeunes de {emailConseillerActuel}
+          </span>
+          <table className='w-full mt-8'>
+            <thead>
+              <tr>
+                <th className='pb-2' />
+                <th className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'>
+                  Nom et prénom
+                </th>
+                <th className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'>
+                  Conseiller précédent
+                </th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {jeunes.map((jeune: Jeune) => (
+                <tr key={jeune.id}>
+                  <td className='pt-6 pb-6 pl-4 w-0'>
+                    <input type='checkbox' disabled={true} />
+                  </td>
+                  <td className='pt-6 pb-6 pl-4 pr-4 text-md-semi'>
+                    {jeune.firstName} {jeune.lastName}
+                  </td>
+                  <td className='pt-6 pb-6 pl-4 pr-4'>
+                    {jeune.conseillerPrecedent
+                      ? `${jeune.conseillerPrecedent.prenom} ${jeune.conseillerPrecedent.nom}`
+                      : '-'}
+                  </td>
+                  <td className='pt-6 pb-6 pl-4 pr-6'>
+                    {jeune.conseillerPrecedent?.email ?? '-'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </>
   )
 }
