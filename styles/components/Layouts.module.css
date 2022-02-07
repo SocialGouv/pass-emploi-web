@@ -40,7 +40,7 @@
 .chatRoom {
   position: fixed;
   right: 0;
-  z-index: 5;
+  overflow: scroll;
   height: 100%;
   width: 450px;
   margin-left: auto;
