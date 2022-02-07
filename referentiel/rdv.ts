@@ -31,8 +31,6 @@ const durees = [
 
 const modalites: string[] = [
   '',
-  'en présentiel : Pôle emploi',
-  'en présentiel : Pôle emploi / Permanence',
   'en présentiel : Mission locale',
   'en présentiel : Misson locale / Permanence',
   'par téléphone',
