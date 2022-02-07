@@ -77,7 +77,8 @@ describe('Mes Jeunes', () => {
     const jeune3 = unJeune({ id: 'jeune-3' })
 
     const jeunes = [jeune1, jeune2, jeune3]
-    beforeEach(async () => {
+
+    it('devrait avoir un titre de niveau 1', () => {
       //GIVEN
       renderWithSession(
         <MesJeunes
@@ -85,21 +86,53 @@ describe('Mes Jeunes', () => {
           conseillerJeunes={jeunes}
         />
       )
-    })
 
-    it('devrait avoir un titre de niveau 1', () => {
+      //WHEN
       const heading = screen.getByRole('heading', {
         level: 1,
         name: 'Mes Jeunes',
       })
 
+      //THEN
       expect(heading).toBeInTheDocument()
     })
 
-    it('devrait afficher la liste des jeunes', () => {
+    it("devrait afficher la liste des jeunes s'il en a", () => {
+      //GIVEN
+      renderWithSession(
+        <MesJeunes
+          structureConseiller={UserStructure.MILO}
+          conseillerJeunes={jeunes}
+        />
+      )
+
+      //WHEN
       const rows = screen.getAllByRole('row')
 
+      //THEN
       expect(rows.length - 1).toBe(jeunes.length)
+      expect(() =>
+        screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+      ).toThrow()
+    })
+
+    it("devrait afficher un message invitant à ajouter des jeunes s'il n’en a pas", () => {
+      //GIVEN
+      renderWithSession(
+        <MesJeunes
+          structureConseiller={UserStructure.MILO}
+          conseillerJeunes={[]}
+        />
+      )
+
+      //WHEN
+      const addJeuneText = screen.getByText(
+        "Vous n'avez pas encore intégré de jeunes."
+      )
+
+      //THEN
+      expect(addJeuneText).toBeInTheDocument()
+      expect(() => screen.getAllByRole('row')).toThrow()
     })
   })
 })

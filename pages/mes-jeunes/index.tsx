@@ -8,9 +8,10 @@ import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import AddIcon from '../../assets/icons/add_person.svg'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
+import AddIcon from '../../assets/icons/add_person.svg'
+import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
 type MesJeunesProps = {
   structureConseiller: string
@@ -53,7 +54,11 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
     }
   }
 
-  useMatomo('Mes jeunes')
+  useMatomo(
+    listeJeunesFiltres.length === 0 && conseillerJeunes.length === 0
+      ? 'Mes jeunes - Aucun jeune'
+      : 'Mes jeunes'
+  )
   useMatomo(
     queryJeune?.length
       ? listeJeunesFiltres.length > 0
@@ -63,7 +68,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
   )
 
   return (
-    <>
+    <div className='w-full h-screen relative'>
       <AppHead titre='Mes jeunes' />
       <span className='flex flex-wrap justify-between mb-12'>
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
@@ -78,10 +83,29 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
 
       <RechercheJeune onSearchFilterBy={onSearch} />
 
-      <TableauJeunes
-        jeunes={queryJeune?.length > 0 ? listeJeunesFiltres : conseillerJeunes}
-      />
-    </>
+      {listeJeunesFiltres.length === 0 && conseillerJeunes.length === 0 ? (
+        <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
+          <AddJeuneImage
+            aria-hidden='true'
+            focusable='false'
+            className='mb-16'
+          />
+          <p className='text-bleu_nuit text-base-medium mb-12'>
+            Vous n&apos;avez pas encore intégré de jeunes.
+          </p>
+          <Button onClick={handleAddJeune} className='m-auto'>
+            <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+            Ajouter un jeune
+          </Button>
+        </div>
+      ) : (
+        <TableauJeunes
+          jeunes={
+            queryJeune?.length > 0 ? listeJeunesFiltres : conseillerJeunes
+          }
+        />
+      )}
+    </div>
   )
 }
 
