@@ -10,14 +10,14 @@ html {
 }
 
 body {
-	height: 100%;
+	height: 100vh;
 	padding: 0;
 	margin: 0;
 }
 
 a {
 	color: inherit;
-	text-decoration: none;
+	/*text-decoration: none;*/
 }
 
 textarea {

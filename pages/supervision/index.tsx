@@ -244,7 +244,7 @@ function Supervision({}: SupervisionProps) {
 
         <label
           htmlFor='email-conseiller-destination'
-          className={`text-base-medium col-start-2 row-start-1 ${
+          className={`text-base-medium whitespace-nowrap col-start-2 row-start-1 ${
             isRechercheJeunesSubmitted && jeunes.length > 0
               ? 'text-neutral_content'
               : 'text-[#999BB3]'

@@ -6,6 +6,8 @@ import styles from 'styles/components/Layouts.module.css'
 import ChatRoom from './ChatRoom'
 
 import Sidebar from './Sidebar'
+import { Footer } from '../Footer'
+import React from 'react'
 
 type LayoutProps = {
   pathname: string
@@ -22,6 +24,7 @@ export default function Layout({ pathname, children }: LayoutProps) {
         <main className={styles.page} role='main'>
           {children}
         </main>
+        <Footer />
         {displayChat && <ChatRoom />}
       </div>
       <div id='modal-root' />
