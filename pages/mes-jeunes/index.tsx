@@ -1,7 +1,7 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import { UserStructure } from 'interfaces/conseiller'
-import { Jeune, sortJeunesByLastName } from 'interfaces/jeune'
+import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useState } from 'react'
@@ -127,7 +127,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes: [...jeunes].sort(sortJeunesByLastName) || [],
+      conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
     },
   }
 }

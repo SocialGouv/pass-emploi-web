@@ -44,6 +44,10 @@
 	border: unset;
 }
 
+.buttonBlue:hover svg path {
+	fill: theme('colors.blanc');
+}
+
 /**
 * Button white
 */

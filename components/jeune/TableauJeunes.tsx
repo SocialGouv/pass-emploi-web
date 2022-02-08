@@ -1,4 +1,4 @@
-import { Jeune, sortJeunesByLastName } from 'interfaces/jeune'
+import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -7,7 +7,7 @@ import {
   dateIsYesterday,
   formatDayDate,
   formatHourMinuteDate,
-  sortDates,
+  compareDates,
 } from 'utils/date'
 import ArrowDouble from '../../assets/icons/arrow_double.svg'
 import ArrowDown from '../../assets/icons/arrow_down.svg'
@@ -73,10 +73,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
         ? new Date(jeune2.lastActivity)
         : new Date('1995-12-17T03:24:00')
 
-      if (isName && isAsc) return sortJeunesByLastName(jeune1, jeune2)
-      if (isName && isDesc) return sortJeunesByLastName(jeune2, jeune1)
-      if (isDate && isAsc) return sortDates(date2, date1)
-      if (isDate && isDesc) return sortDates(date1, date2)
+      if (isName && isAsc) return compareJeunesByLastName(jeune1, jeune2)
+      if (isName && isDesc) return compareJeunesByLastName(jeune2, jeune1)
+      if (isDate && isAsc) return compareDates(date2, date1)
+      if (isDate && isDesc) return compareDates(date1, date2)
       return 0
     }
     setSortedJeunes([...jeunes.sort(compareJeunes)])

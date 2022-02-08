@@ -1,6 +1,7 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
-import { Jeune, sortJeunesByLastName } from 'interfaces/jeune'
+import ResettableTextInput from 'components/ResettableTextInput'
+import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import React, { FormEvent, useState } from 'react'
@@ -10,7 +11,6 @@ import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import ArrowIcon from '../../assets/icons/arrow-right.svg'
-import CloseIcon from '../../assets/icons/close.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 
@@ -20,18 +20,18 @@ function Supervision({}: SupervisionProps) {
   const { data: session } = useSession({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
-  const [emailConseillerActuel, setEmailConseillerActuel] = useState<{
+  const [emailConseillerInitial, setEmailConseillerInitial] = useState<{
     value: string
     error?: string
   }>({ value: '' })
   const [isRechercheEnabled, setRecherchedEnabled] = useState<boolean>(false)
-  const [isRechercheSubmitted, setRechecheSubmitted] = useState<boolean>(false)
+  const [isRechercheSubmitted, setRechercheSubmitted] = useState<boolean>(false)
   const [jeunes, setJeunes] = useState<Jeune[]>([])
   const areSomeJeunesSelected = false
 
-  function editEmailConseillerActuel(value: string) {
-    setEmailConseillerActuel({ value })
-    setRechecheSubmitted(false)
+  function editEmailConseillerInitial(value: string) {
+    setEmailConseillerInitial({ value })
+    setRechercheSubmitted(false)
     setJeunes([])
     setRecherchedEnabled(Boolean(value) && isEmailValid(value))
   }
@@ -41,15 +41,15 @@ function Supervision({}: SupervisionProps) {
     setRecherchedEnabled(false)
     try {
       const jeunes: Jeune[] = await jeunesService.getJeunesDuConseillerParEmail(
-        emailConseillerActuel.value,
+        emailConseillerInitial.value,
         session!.accessToken
       )
       if (jeunes.length > 0) {
-        setJeunes(jeunes.sort(sortJeunesByLastName))
-        setRechecheSubmitted(true)
+        setJeunes(jeunes.sort(compareJeunesByLastName))
+        setRechercheSubmitted(true)
       } else {
-        setEmailConseillerActuel({
-          ...emailConseillerActuel,
+        setEmailConseillerInitial({
+          ...emailConseillerInitial,
           error: 'Aucun jeune trouvé pour ce conseiller',
         })
       }
@@ -57,19 +57,18 @@ function Supervision({}: SupervisionProps) {
       let erreur: string
       if ((err as Error).message) erreur = 'Aucun conseiller ne correspond'
       else erreur = "Une erreur inconnue s'est produite"
-      setEmailConseillerActuel({ ...emailConseillerActuel, error: erreur })
+      setEmailConseillerInitial({ ...emailConseillerInitial, error: erreur })
     }
   }
 
-  function resetEmailConseillerActuel(e: FormEvent) {
-    e.preventDefault()
-    editEmailConseillerActuel('')
+  function resetEmailConseillerInitial() {
+    editEmailConseillerInitial('')
   }
 
   useMatomo(
     !isRechercheSubmitted
       ? 'Réaffectation jeunes - Etape 1 - remplissage mail conseiller initial'
-      : Boolean(emailConseillerActuel.error)
+      : Boolean(emailConseillerInitial.error)
       ? 'Réaffectation jeunes - Etape 1 - remplissage mail conseiller initial en erreur'
       : 'Réaffectation jeunes - Etape 2 - réaffectation jeunes  vers conseiller de destination'
   )
@@ -77,17 +76,17 @@ function Supervision({}: SupervisionProps) {
   return (
     <>
       <AppHead titre='Supervision' />
-      <span className='flex flex-wrap justify-between mb-12'>
+      <span className='flex flex-wrap justify-between ml-[-2.5rem] pl-10 w-3/4 pb-9 border-b-4 border-b-primary_lighten mb-10'>
         <h1 className='h2-semi text-primary_primary'>
           Réaffectation des jeunes
         </h1>
       </span>
 
       <div className='mb-10 bg-gris_blanc rounded-medium p-6 text-primary_primary'>
-        <span className='text-base-medium mb-4'>
+        <p className='text-base-medium mb-4'>
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
-        </span>
+        </p>
         <ol className='flex text-sm-medium'>
           <li className='mr-8'>
             1. Renseigner l’adresse e-mail du conseiller initial
@@ -97,69 +96,47 @@ function Supervision({}: SupervisionProps) {
         </ol>
       </div>
 
-      <div className='flex w-full'>
+      <div className='flex w-full items-end'>
         <form role='search' onSubmit={fetchListeJeunes} className='grow mr-12'>
           <label
-            htmlFor='email-conseiller-actuel'
+            htmlFor='email-conseiller-initial'
             className='text-base-medium text-neutral_content'
           >
-            E-mail conseiller actuel
+            E-mail conseiller initial
           </label>
           <div className='flex mt-3.5'>
-            <>
-              <input
-                type='email'
-                id='email-conseiller-actuel'
-                name='email-conseiller-actuel'
-                value={emailConseillerActuel.value}
-                onChange={(e) => editEmailConseillerActuel(e.target.value)}
-                className={`flex-1 p-3 w-8/12 border border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary`}
-              />
-              <button
-                type='reset'
-                title='Effacer'
-                aria-label='Effacer le champ de saisie'
-                className='border border-r-0 border-l-0 border-content_color w-8 text-primary_primary'
-                onClick={resetEmailConseillerActuel}
-              >
-                <CloseIcon
-                  role='img'
-                  className='text-primary_primary'
-                  focusable={false}
-                  aria-hidden={true}
-                />
-              </button>
-            </>
-
+            <ResettableTextInput
+              id={'email-conseiller-initial'}
+              onChange={editEmailConseillerInitial}
+              onReset={resetEmailConseillerInitial}
+              type={'email'}
+              roundedRight={false}
+            />
             <button
               className={`flex p-3 items-center text-base-medium text-primary_primary border border-primary_primary rounded-r-medium ${
-                isRechercheEnabled
-                  ? 'hover:bg-primary_lighten'
-                  : 'border-[#999BB3]'
-              }`}
+                isRechercheEnabled ? 'hover:bg-primary_lighten' : ''
+              } disabled:cursor-not-allowed disabled:border-[#999BB3]`}
               type='submit'
               title='Rechercher'
-              aria-label='Rechercher conseiller actuel'
+              aria-label='Rechercher conseiller initial'
               disabled={!isRechercheEnabled}
             >
               <SearchIcon
-                role='img'
                 focusable='false'
                 aria-hidden={true}
                 className={isRechercheEnabled ? '' : 'fill-[#999BB3]'}
               />
             </button>
           </div>
-          {Boolean(emailConseillerActuel.error) && (
+          {Boolean(emailConseillerInitial.error) && (
             <div className='flex mt-4'>
               <ImportantIcon
-                role='img'
                 focusable={false}
                 aria-hidden={true}
                 className='fill-status_warning w-6 h-6 mr-2'
               />
-              <span className=' text-status_warning'>
-                {emailConseillerActuel.error}
+              <span className='text-status_warning'>
+                {emailConseillerInitial.error}
               </span>
             </div>
           )}
@@ -175,33 +152,13 @@ function Supervision({}: SupervisionProps) {
             E-mail conseiller de destination
           </label>
           <div className='flex mt-3.5'>
-            <>
-              <input
-                type='email'
-                id='email-conseiller-destination'
-                name='email-conseiller-destination'
-                onChange={() => {}}
-                className='flex-1 p-3 w-8/12 border border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary disabled:border-[#999BB3]'
-                disabled={!areSomeJeunesSelected}
-              />
-              <button
-                type='reset'
-                title='Effacer'
-                aria-label='Effacer le champ de saisie'
-                className='border border border-l-0 border-content_color rounded-r-medium w-8 text-primary_primary disabled:border-[#999BB3]'
-                onClick={() => {}}
-                disabled={!areSomeJeunesSelected}
-              >
-                <CloseIcon
-                  role='img'
-                  className={`text-primary_primary ${
-                    !areSomeJeunesSelected ? 'fill-[#999BB3]' : ''
-                  }`}
-                  focusable={false}
-                  aria-hidden={true}
-                />
-              </button>
-            </>
+            <ResettableTextInput
+              id={'email-conseiller-destination'}
+              onChange={() => {}}
+              onReset={() => {}}
+              disabled={!areSomeJeunesSelected}
+              type={'email'}
+            />
           </div>
         </form>
 
@@ -209,12 +166,10 @@ function Supervision({}: SupervisionProps) {
           form='affecter-jeunes'
           label='Réaffecter les jeunes'
           type='submit'
-          className='mt-9'
           disabled={!areSomeJeunesSelected}
         >
           <ArrowIcon
             className='fill-blanc mr-2'
-            role='img'
             focusable='false'
             aria-hidden={true}
             width='16px'
@@ -226,20 +181,30 @@ function Supervision({}: SupervisionProps) {
 
       {isRechercheSubmitted && (
         <div className='mt-6 ml-5'>
-          <span className='text-m-medium'>
-            Jeunes de {emailConseillerActuel.value}
-          </span>
-          <table className='w-full mt-8'>
+          <table className='w-full'>
+            <caption className='text-m-medium mb-8'>
+              Jeunes de {emailConseillerInitial.value}
+            </caption>
             <thead>
               <tr>
-                <th className='pb-2' />
-                <th className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'>
+                <th
+                  scope='col'
+                  className='pb-2'
+                  aria-label='Cocher/Décocher les jeunes'
+                />
+                <th
+                  scope='col'
+                  className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'
+                >
                   Nom et prénom
                 </th>
-                <th className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'>
+                <th
+                  scope='col'
+                  className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'
+                >
                   Conseiller précédent
                 </th>
-                <th />
+                <th scope='col' aria-label='Email conseiller précédent' />
               </tr>
             </thead>
             <tbody>

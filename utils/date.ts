@@ -50,7 +50,7 @@ const isDateOlder = (date1: Date, date2: Date): boolean => {
   return date1.getTime() < date2.getTime()
 }
 
-function sortDates(date1: Date, date2: Date): number {
+function compareDates(date1: Date, date2: Date): number {
   return date1.getTime() - date2.getTime()
 }
 
@@ -63,5 +63,5 @@ export {
   formatHourMinuteDateUTC,
   formatDayAndHourDate,
   isDateOlder,
-  sortDates,
+  compareDates,
 }

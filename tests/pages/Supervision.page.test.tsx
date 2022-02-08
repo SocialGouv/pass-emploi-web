@@ -54,7 +54,7 @@ describe('Supervision', () => {
     it("affiche un champ de recherche d'un conseiller", async () => {
       // THEN
       expect(
-        screen.getByLabelText('E-mail conseiller actuel')
+        screen.getByLabelText('E-mail conseiller initial')
       ).toBeInTheDocument()
     })
 
@@ -84,24 +84,24 @@ describe('Supervision', () => {
     it("affiche un champ de recherche des jeunes d'un conseiller", async () => {
       // THEN
       expect(
-        screen.getByLabelText('E-mail conseiller actuel')
+        screen.getByLabelText('E-mail conseiller initial')
       ).toBeInTheDocument()
     })
 
-    describe('au clique pour rechercher le conseiller actuel', () => {
-      const emailConseillerActuel = 'conseiller@email.com'
+    describe('au clique pour rechercher le conseiller initial', () => {
+      const emailConseillerInitial = 'conseiller@email.com'
       let submitRecherche: HTMLBaseElement
       let emailInput: HTMLInputElement
       const jeunes = desJeunes()
       beforeEach(async () => {
         // GIVEN
-        emailInput = screen.getByLabelText('E-mail conseiller actuel')
+        emailInput = screen.getByLabelText('E-mail conseiller initial')
         submitRecherche = screen.getByTitle('Rechercher')
         ;(
           jeunesService.getJeunesDuConseillerParEmail as jest.Mock
         ).mockResolvedValue(jeunes)
         fireEvent.input(emailInput, {
-          target: { value: emailConseillerActuel },
+          target: { value: emailConseillerInitial },
         })
 
         // WHEN
@@ -114,7 +114,7 @@ describe('Supervision', () => {
         // THEN
         expect(
           jeunesService.getJeunesDuConseillerParEmail
-        ).toHaveBeenCalledWith(emailConseillerActuel, 'accessToken')
+        ).toHaveBeenCalledWith(emailConseillerInitial, 'accessToken')
       })
 
       it('affiche les jeunes du conseiller', async () => {
@@ -126,7 +126,7 @@ describe('Supervision', () => {
         }
       })
 
-      describe('à la modification du mail du conseiller actuel', () => {
+      describe('à la modification du mail du conseiller initial', () => {
         it('reset la recherche', async () => {
           // WHEN
           await act(async () => {
