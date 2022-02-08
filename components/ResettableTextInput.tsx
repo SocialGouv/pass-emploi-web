@@ -36,13 +36,13 @@ function ResettableTextInput({
         id={id}
         name={id}
         onChange={applyChange}
-        className={`flex-1 p-3 w-8/12 border border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary disabled:cursor-not-allowed disabled:border-[#999BB3] bg-blanc`}
+        className={`flex-1 p-3 w-8/12 border border-solid border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary disabled:cursor-not-allowed disabled:border-[#999BB3] bg-blanc`}
         disabled={disabled}
       />
       <button
         type='reset'
         title='Effacer'
-        className={`border ${
+        className={`border border-solid ${
           roundedRight ? 'rounded-r-medium' : 'border-r-0'
         } border-l-0 border-neutral_grey w-8 text-primary_primary disabled:border-[#999BB3] disabled:cursor-not-allowed`}
         onClick={applyReset}

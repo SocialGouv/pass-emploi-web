@@ -77,11 +77,9 @@ function Supervision({}: SupervisionProps) {
     <>
       <AppHead titre='Supervision' />
 
-      <span className='flex flex-wrap justify-between ml-[-2.5rem] pl-10 w-3/4 pb-9 border-b-4 border-b-primary_lighten mb-10'>
-        <h1 className='h2-semi text-primary_primary'>
-          Réaffectation des jeunes
-        </h1>
-      </span>
+      <h1 className='h2-semi text-primary_primary ml-[-2.5rem] pl-10 w-3/4 pb-9 border-solid border-0 border-b-4 border-b-primary_lighten mb-10'>
+        Réaffectation des jeunes
+      </h1>
 
       <div className='mb-10 bg-gris_blanc rounded-medium p-6 text-primary_primary'>
         <p className='text-base-medium mb-4'>
@@ -119,7 +117,7 @@ function Supervision({}: SupervisionProps) {
               roundedRight={false}
             />
             <button
-              className={`flex p-3 items-center text-base-medium text-primary_primary border border-primary_primary rounded-r-medium ${
+              className={`flex p-3 items-center text-base-medium text-primary_primary border border-solid border-primary_primary rounded-r-medium ${
                 isRechercheEnabled ? 'hover:bg-primary_lighten' : ''
               } disabled:cursor-not-allowed disabled:border-[#999BB3]`}
               type='submit'
