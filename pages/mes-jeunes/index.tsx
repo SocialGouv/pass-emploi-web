@@ -1,7 +1,7 @@
 import { AppHead } from 'components/AppHead'
 import Button from 'components/Button'
 import { UserStructure } from 'interfaces/conseiller'
-import { Jeune } from 'interfaces/jeune'
+import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useState } from 'react'
@@ -45,8 +45,8 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
           if (jeuneLastName.toLowerCase().includes(querySplit![i])) {
             return true
           }
-          return false
         }
+        return false
       })
       setListJeunesFiltres(jeunesFiltresResult)
     } else {
@@ -127,10 +127,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes:
-        [...jeunes].sort((jeune1: Jeune, jeune2: Jeune) =>
-          jeune1.lastName.localeCompare(jeune2.lastName)
-        ) || [],
+      conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
     },
   }
 }

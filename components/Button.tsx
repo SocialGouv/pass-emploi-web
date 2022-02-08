@@ -9,6 +9,7 @@ type ButtonProps = {
   disabled?: boolean
   style?: ButtonColorStyle
   className?: any
+  form?: string
 }
 
 export enum ButtonColorStyle {
@@ -26,6 +27,7 @@ const Button = ({
   label,
   style = ButtonColorStyle.BLUE,
   className,
+  form,
 }: ButtonProps) => {
   return (
     <button
@@ -33,9 +35,10 @@ const Button = ({
       className={`${className ? className : ''} text-sm ${
         styles.button
       } ${getColorStyleClassName(style)}`}
-      role={role || undefined}
-      type={type || undefined}
-      aria-label={label || undefined}
+      form={form ?? undefined}
+      role={role ?? undefined}
+      type={type ?? undefined}
+      aria-label={label ?? undefined}
       disabled={disabled}
       aria-disabled={disabled}
     >

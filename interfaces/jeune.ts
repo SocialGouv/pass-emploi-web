@@ -6,6 +6,11 @@ export type Jeune = {
   lastActivity: string
   email?: string
   isActivated?: boolean
+  conseillerPrecedent?: {
+    nom: string
+    prenom: string
+    email?: string
+  }
 }
 
 export interface Chat {
@@ -36,4 +41,10 @@ export interface JeunePoleEmploiFormData {
   prenom: string
   nom: string
   email: string
+}
+
+export function compareJeunesByLastName(jeune1: Jeune, jeune2: Jeune): number {
+  return `${jeune1.lastName}${jeune1.firstName}`.localeCompare(
+    `${jeune2.lastName}${jeune2.firstName}`
+  )
 }

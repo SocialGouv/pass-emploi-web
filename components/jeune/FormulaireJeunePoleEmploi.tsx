@@ -2,6 +2,7 @@ import Button from 'components/Button'
 import { ErrorMessage } from 'components/ErrorMessage'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { FormEvent, useEffect, useState } from 'react'
+import isEmailValid from 'utils/isEmailValid'
 
 type FormulaireJeunePoleEmploiProps = {
   creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => Promise<void>
@@ -89,12 +90,6 @@ function FormulaireJeunePoleEmploi({
   const handleEmailChanges = (value: string) => {
     setEmail({ value, error: '' })
     setError('')
-  }
-
-  function isEmailValid(email: string) {
-    const mailRegExp =
-      /[-A-Za-z0-9~!$%^&_=+}{'?]+(\.[-A-Za-z0-9~!$%^&_=+}{'?]+)*@[A-Za-z0-9_][-A-za-z0-9_]+(\.[A-Za-z]{2,6}){1,2}/
-    return mailRegExp.test(email)
   }
 
   return (

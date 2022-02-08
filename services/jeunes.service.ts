@@ -1,9 +1,15 @@
 import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces/jeune'
+import { Conseiller } from '../interfaces/conseiller'
 
 export interface JeunesService {
   getJeunesDuConseiller(
     idConseiller: string,
+    accessToken: string
+  ): Promise<Jeune[]>
+
+  getJeunesDuConseillerParEmail(
+    emailConseiller: string,
     accessToken: string
   ): Promise<Jeune[]>
 
@@ -43,5 +49,16 @@ export class JeunesApiService implements JeunesService {
       { ...newJeune, idConseiller: idConseiller },
       accessToken
     )
+  }
+
+  async getJeunesDuConseillerParEmail(
+    emailConseiller: string,
+    accessToken: string
+  ): Promise<Jeune[]> {
+    const conseiller = await this.apiClient.get<Conseiller>(
+      `/conseillers?email=${emailConseiller}`,
+      accessToken
+    )
+    return this.getJeunesDuConseiller(conseiller.id, accessToken)
   }
 }

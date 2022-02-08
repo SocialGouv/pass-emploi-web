@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { Jeune } from 'interfaces/jeune'
+import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
 import Link from 'next/link'
-import ChevronRight from '../../assets/icons/chevron_right.svg'
-import ArrowDouble from '../../assets/icons/arrow_double.svg'
-import ArrowDown from '../../assets/icons/arrow_down.svg'
+import React, { useEffect, useState } from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 import {
   dateIsToday,
   dateIsYesterday,
   formatDayDate,
   formatHourMinuteDate,
-  isDateOlder,
+  compareDates,
 } from 'utils/date'
-import useMatomo from 'utils/analytics/useMatomo'
+import ArrowDouble from '../../assets/icons/arrow_double.svg'
+import ArrowDown from '../../assets/icons/arrow_down.svg'
+import ChevronRight from '../../assets/icons/chevron_right.svg'
 
 enum SortColumn {
   NOM = 'NOM',
@@ -28,7 +28,7 @@ interface TableauJeunesProps {
 }
 
 function todayOrDate(date: Date): string {
-  let dateString = ''
+  let dateString: string
 
   if (dateIsToday(date)) {
     dateString = "Aujourd'hui"
@@ -73,23 +73,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
         ? new Date(jeune2.lastActivity)
         : new Date('1995-12-17T03:24:00')
 
-      if (
-        (isName && isAsc && jeune1.lastName < jeune2.lastName) ||
-        (isName && isDesc && jeune1.lastName > jeune2.lastName) ||
-        (isDate && isAsc && isDateOlder(date2, date1)) ||
-        (isDate && isDesc && isDateOlder(date1, date2))
-      ) {
-        return -1
-      }
-      if (
-        (isName && isAsc && jeune1.lastName > jeune2.lastName) ||
-        (isName && isDesc && jeune1.lastName < jeune2.lastName) ||
-        (isDate && isAsc && isDateOlder(date1, date2)) ||
-        (isDate && isDesc && isDateOlder(date2, date1))
-      ) {
-        return 1
-      }
-
+      if (isName && isAsc) return compareJeunesByLastName(jeune1, jeune2)
+      if (isName && isDesc) return compareJeunesByLastName(jeune2, jeune1)
+      if (isDate && isAsc) return compareDates(date2, date1)
+      if (isDate && isDesc) return compareDates(date1, date2)
       return 0
     }
     setSortedJeunes([...jeunes.sort(compareJeunes)])
