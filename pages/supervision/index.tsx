@@ -67,10 +67,10 @@ function Supervision({}: SupervisionProps) {
 
   useMatomo(
     !isRechercheSubmitted
-      ? 'Réaffectation jeunes - Etape 1 - remplissage mail conseiller initial'
+      ? 'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
       : Boolean(emailConseillerInitial.error)
-      ? 'Réaffectation jeunes - Etape 1 - remplissage mail conseiller initial en erreur'
-      : 'Réaffectation jeunes - Etape 2 - réaffectation jeunes  vers conseiller de destination'
+      ? 'Réaffectation jeunes – Etape 1 – Erreur'
+      : 'Réaffectation jeunes – Etape 2 – Réaff. jeunes vers cons. dest.'
   )
 
   return (
