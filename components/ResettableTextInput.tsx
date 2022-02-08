@@ -41,13 +41,13 @@ function ResettableTextInput({
       <button
         type='reset'
         title='Effacer'
-        aria-label='Effacer le champ de saisie'
         className={`border ${
           roundedRight ? 'rounded-r-medium' : 'border-r-0'
         } border-l-0 border-neutral_grey w-8 text-primary_primary disabled:border-[#999BB3] disabled:cursor-not-allowed`}
         onClick={applyReset}
         disabled={disabled}
       >
+        <span className='visually-hidden'>Effacer le champ de saisie</span>
         <CloseIcon
           className={`text-primary_primary ${disabled ? 'fill-[#999BB3]' : ''}`}
           focusable={false}

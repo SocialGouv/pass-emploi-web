@@ -124,9 +124,11 @@ function Supervision({}: SupervisionProps) {
               } disabled:cursor-not-allowed disabled:border-[#999BB3]`}
               type='submit'
               title='Rechercher'
-              aria-label='Rechercher conseiller initial'
               disabled={!isRechercheEnabled}
             >
+              <span className='visually-hidden'>
+                Rechercher conseiller initial
+              </span>
               <SearchIcon
                 focusable='false'
                 aria-hidden={true}
@@ -200,11 +202,9 @@ function Supervision({}: SupervisionProps) {
             </caption>
             <thead>
               <tr>
-                <th
-                  scope='col'
-                  className='pb-2'
-                  aria-label='Cocher/Décocher les jeunes'
-                />
+                <th scope='col' className='visually-hidden pb-2'>
+                  Cocher/Décocher les jeunes
+                </th>
                 <th
                   scope='col'
                   className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'
@@ -217,7 +217,9 @@ function Supervision({}: SupervisionProps) {
                 >
                   Conseiller précédent
                 </th>
-                <th scope='col' aria-label='Email conseiller précédent' />
+                <th scope='col' className='visually-hidden'>
+                  Email conseiller précédent
+                </th>
               </tr>
             </thead>
             <tbody>
