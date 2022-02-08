@@ -76,6 +76,7 @@ function Supervision({}: SupervisionProps) {
   return (
     <>
       <AppHead titre='Supervision' />
+
       <span className='flex flex-wrap justify-between ml-[-2.5rem] pl-10 w-3/4 pb-9 border-b-4 border-b-primary_lighten mb-10'>
         <h1 className='h2-semi text-primary_primary'>
           Réaffectation des jeunes
@@ -96,15 +97,20 @@ function Supervision({}: SupervisionProps) {
         </ol>
       </div>
 
-      <div className='flex w-full items-end'>
-        <form role='search' onSubmit={fetchListeJeunes} className='grow mr-12'>
-          <label
-            htmlFor='email-conseiller-initial'
-            className='text-base-medium text-neutral_content'
-          >
-            E-mail conseiller initial
-          </label>
-          <div className='flex mt-3.5'>
+      <div className='grid w-full grid-cols-[1fr_1fr_auto] items-end gap-x-12 gap-y-4'>
+        <label
+          htmlFor='email-conseiller-initial'
+          className='text-base-medium text-neutral_content row-start-1 row-start-1'
+        >
+          E-mail conseiller initial
+        </label>
+
+        <form
+          role='search'
+          onSubmit={fetchListeJeunes}
+          className='grow col-start-1 row-start-2'
+        >
+          <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-initial'}
               onChange={editEmailConseillerInitial}
@@ -128,30 +134,36 @@ function Supervision({}: SupervisionProps) {
               />
             </button>
           </div>
-          {Boolean(emailConseillerInitial.error) && (
-            <div className='flex mt-4'>
-              <ImportantIcon
-                focusable={false}
-                aria-hidden={true}
-                className='fill-status_warning w-6 h-6 mr-2'
-              />
-              <span className='text-status_warning'>
-                {emailConseillerInitial.error}
-              </span>
-            </div>
-          )}
         </form>
 
-        <form id='affecter-jeunes' onSubmit={() => {}} className='grow mr-16'>
-          <label
-            htmlFor='email-conseiller-destination'
-            className={`text-base-medium ${
-              areSomeJeunesSelected ? 'text-neutral_content' : 'text-[#999BB3]'
-            }`}
-          >
-            E-mail conseiller de destination
-          </label>
-          <div className='flex mt-3.5'>
+        {Boolean(emailConseillerInitial.error) && (
+          <div className='flex col-start-1 row-start-3'>
+            <ImportantIcon
+              focusable={false}
+              aria-hidden={true}
+              className='fill-status_warning w-6 h-6 mr-2'
+            />
+            <p className='text-status_warning'>
+              {emailConseillerInitial.error}
+            </p>
+          </div>
+        )}
+
+        <label
+          htmlFor='email-conseiller-destination'
+          className={`text-base-medium col-start-2 row-start-1 ${
+            areSomeJeunesSelected ? 'text-neutral_content' : 'text-[#999BB3]'
+          }`}
+        >
+          E-mail conseiller de destination
+        </label>
+
+        <form
+          id='affecter-jeunes'
+          onSubmit={() => {}}
+          className='grow col-start-2 row-start-2'
+        >
+          <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-destination'}
               onChange={() => {}}
@@ -166,6 +178,7 @@ function Supervision({}: SupervisionProps) {
           form='affecter-jeunes'
           label='Réaffecter les jeunes'
           type='submit'
+          className='row-start-2 col-start-3'
           disabled={!areSomeJeunesSelected}
         >
           <ArrowIcon
@@ -180,7 +193,7 @@ function Supervision({}: SupervisionProps) {
       </div>
 
       {isRechercheSubmitted && (
-        <div className='mt-6 ml-5'>
+        <div className='mt-16 ml-5'>
           <table className='w-full'>
             <caption className='text-m-medium mb-8'>
               Jeunes de {emailConseillerInitial.value}
