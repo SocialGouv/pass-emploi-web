@@ -111,6 +111,7 @@ function Supervision({}: SupervisionProps) {
           <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-initial'}
+              value={emailConseillerInitial.value}
               onChange={editEmailConseillerInitial}
               onReset={resetEmailConseillerInitial}
               type={'email'}
@@ -166,6 +167,7 @@ function Supervision({}: SupervisionProps) {
           <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-destination'}
+              value=''
               onChange={() => {}}
               onReset={() => {}}
               disabled={!areSomeJeunesSelected}

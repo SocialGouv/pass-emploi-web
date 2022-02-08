@@ -10,6 +10,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
   const [query, setQuery] = useState<string>('')
 
   const onReset = () => {
+    setQuery('')
     onSearchFilterBy('')
   }
 
@@ -29,6 +30,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
       <div className='flex mt-3.5 mb-8 w-9/12'>
         <ResettableTextInput
           id={'rechercher-jeunes'}
+          value={query}
           onChange={setQuery}
           onReset={onReset}
           roundedRight={false}
