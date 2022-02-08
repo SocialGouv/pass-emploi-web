@@ -34,8 +34,9 @@ function ResettableTextInput({
       <input
         type={type}
         id={id}
+        name={id}
         onChange={applyChange}
-        className={`flex-1 p-3 w-8/12 border border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary disabled:cursor-not-allowed`}
+        className={`flex-1 p-3 w-8/12 border border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary disabled:cursor-not-allowed disabled:border-[#999BB3] bg-blanc`}
         disabled={disabled}
       />
       <button
