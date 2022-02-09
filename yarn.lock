@@ -3947,7 +3947,7 @@ next-auth@4.1.2:
     preact-render-to-string "^5.1.19"
     uuid "^8.3.2"
 
-next-logger@^3.0.0:
+next-logger@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/next-logger/-/next-logger-3.0.0.tgz#b4037e7a206ba34ed6112ae5f2609128a5676ff0"
   integrity sha512-Irfw0qDbx9y+QXu/n69/qXC9oseFD0AUvuTBa9YWvrKmNxqy1K9mRd5EkWUkGJMxeOvZO5rEFG0FuTHl3DYxcQ==
@@ -4291,7 +4291,7 @@ pino-std-serializers@^4.0.0:
   resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-4.0.0.tgz#1791ccd2539c091ae49ce9993205e2cd5dbba1e2"
   integrity sha512-cK0pekc1Kjy5w9V2/n+8MkZwusa6EyyxfeQCB799CQRhRt/CqYKiWs5adeu8Shve2ZNffvfC/7J64A2PJo1W/Q==
 
-pino@^7.0.2, pino@^7.6.5:
+pino@7.6.5, pino@^7.0.2:
   version "7.6.5"
   resolved "https://registry.yarnpkg.com/pino/-/pino-7.6.5.tgz#a8bf9bfacbbcb78b4fe34f9378c29ef229b07b5d"
   integrity sha512-38tAwlJ7HevMENHD5FZE+yxSlAH5Wg3FoOjbB3MX2j3/kgpOEkmDHhTVKkecR57qxD5doHo2yi9nac94gqqbiQ==
