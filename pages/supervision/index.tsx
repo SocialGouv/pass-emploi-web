@@ -13,6 +13,7 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
 import ArrowIcon from '../../assets/icons/arrow-right.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
 import SearchIcon from '../../assets/icons/search.svg'
+import SuccessIcon from '../../assets/icons/done.svg'
 
 type SupervisionProps = {}
 
@@ -20,36 +21,77 @@ function Supervision({}: SupervisionProps) {
   const { data: session } = useSession({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
-  const [emailConseillerInitial, setEmailConseillerInitial] = useState<{
+  const [conseillerInitial, setConseillerInitial] = useState<{
+    email: string
+    id?: string
+    error?: string
+  }>({ email: '' })
+  const [isRechercheJeunesEnabled, setRechercheJeunesEnabled] =
+    useState<boolean>(false)
+  const [isRechercheJeunesSubmitted, setRechercheJeunesSubmitted] =
+    useState<boolean>(false)
+  const [jeunes, setJeunes] = useState<Jeune[]>([])
+  const [idsJeunesSelected, setIdsJeunesSelected] = useState<string[]>([])
+  const [emailConseillerDestination, setEmailConseillerDestination] = useState<{
     value: string
     error?: string
   }>({ value: '' })
-  const [isRechercheEnabled, setRechercheEnabled] = useState<boolean>(false)
-  const [isRechercheSubmitted, setRechercheSubmitted] = useState<boolean>(false)
-  const [jeunes, setJeunes] = useState<Jeune[]>([])
-  const areSomeJeunesSelected = false
+  const [isReaffectationEnCours, setReaffectationEnCours] =
+    useState<boolean>(false)
+  const [isReaffectationSuccess, setReaffectationSuccess] =
+    useState<boolean>(false)
+  const [erreurReaffectation, setErreurReaffectation] = useState<
+    string | undefined
+  >(undefined)
 
   function editEmailConseillerInitial(value: string) {
-    setEmailConseillerInitial({ value })
-    setRechercheSubmitted(false)
+    setConseillerInitial({ email: value })
+    setRechercheJeunesSubmitted(false)
     setJeunes([])
-    setRechercheEnabled(Boolean(value) && isEmailValid(value))
+    setRechercheJeunesEnabled(isEmailValid(value))
+    setIdsJeunesSelected([])
+    setReaffectationSuccess(false)
+  }
+
+  function editEmailConseillerDestination(value: string) {
+    setEmailConseillerDestination({ value })
+    setErreurReaffectation(undefined)
+  }
+
+  function resetAll() {
+    setEmailConseillerDestination({ value: '' })
+    editEmailConseillerInitial('')
+  }
+
+  function toggleJeune(e: FormEvent, jeune: Jeune) {
+    if (idsJeunesSelected.includes(jeune.id)) {
+      setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
+    } else {
+      setIdsJeunesSelected(idsJeunesSelected.concat(jeune.id))
+    }
   }
 
   async function fetchListeJeunes(e: FormEvent) {
     e.preventDefault()
-    setRechercheEnabled(false)
+    if (!isRechercheJeunesEnabled) return
+
+    setRechercheJeunesEnabled(false)
     try {
-      const jeunes: Jeune[] = await jeunesService.getJeunesDuConseillerParEmail(
-        emailConseillerInitial.value,
-        session!.accessToken
-      )
-      setRechercheSubmitted(true)
+      const { idConseiller, jeunes } =
+        await jeunesService.getJeunesDuConseillerParEmail(
+          conseillerInitial.email,
+          session!.accessToken
+        )
+      setRechercheJeunesSubmitted(true)
       if (jeunes.length > 0) {
         setJeunes(jeunes.sort(compareJeunesByLastName))
+        setConseillerInitial({
+          ...conseillerInitial,
+          id: idConseiller,
+        })
       } else {
-        setEmailConseillerInitial({
-          ...emailConseillerInitial,
+        setConseillerInitial({
+          ...conseillerInitial,
           error: 'Aucun jeune trouvé pour ce conseiller',
         })
       }
@@ -57,29 +99,81 @@ function Supervision({}: SupervisionProps) {
       let erreur: string
       if ((err as Error).message) erreur = 'Aucun conseiller ne correspond'
       else erreur = "Une erreur inconnue s'est produite"
-      setEmailConseillerInitial({ ...emailConseillerInitial, error: erreur })
+      setConseillerInitial({ ...conseillerInitial, error: erreur })
     }
   }
 
-  function resetEmailConseillerInitial() {
-    editEmailConseillerInitial('')
+  async function reaffecterJeunes(e: FormEvent) {
+    e.preventDefault()
+    if (
+      !conseillerInitial.id ||
+      !isEmailValid(emailConseillerDestination.value) ||
+      idsJeunesSelected.length === 0 ||
+      isReaffectationEnCours
+    ) {
+      return
+    }
+
+    setReaffectationEnCours(true)
+    try {
+      await jeunesService.reaffecter(
+        conseillerInitial.id,
+        emailConseillerDestination.value,
+        idsJeunesSelected,
+        session!.accessToken
+      )
+      resetAll()
+      setReaffectationSuccess(true)
+    } catch (err) {
+      const erreur = err as Error
+      if (erreur.message?.startsWith('Conseiller')) {
+        setEmailConseillerDestination({
+          ...emailConseillerDestination,
+          error: 'Aucun conseiller ne correspond',
+        })
+      } else {
+        setErreurReaffectation(
+          'Suite à un problème inconnu la réaffectation a échoué. Vous pouvez réessayer.'
+        )
+      }
+      setReaffectationEnCours(false)
+    }
   }
 
   useMatomo(
-    !isRechercheSubmitted
+    !isRechercheJeunesSubmitted
       ? 'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
-      : Boolean(emailConseillerInitial.error)
+      : Boolean(conseillerInitial.error)
       ? 'Réaffectation jeunes – Etape 1 – Erreur'
-      : 'Réaffectation jeunes – Etape 2 – Réaff. jeunes vers cons. dest.'
+      : Boolean(isReaffectationSuccess)
+      ? 'Réaffectation jeunes – Etape 1 – Succès réaff.'
+      : !emailConseillerDestination.error && !erreurReaffectation
+      ? 'Réaffectation jeunes – Etape 2 – Réaff. jeunes vers cons. dest.'
+      : 'Réaffectation jeunes – Etape 2 – Erreur'
   )
 
   return (
     <>
       <AppHead titre='Supervision' />
 
-      <h1 className='h2-semi text-primary_primary ml-[-2.5rem] pl-10 w-3/4 pb-9 border-solid border-0 border-b-4 border-b-primary_lighten mb-10'>
+      <h1
+        className={`h2-semi text-primary_primary ml-[-2.5rem] pl-10 w-3/4 pb-9 border-solid border-0 border-b-4 border-b-primary_lighten ${
+          isReaffectationSuccess ? 'mb-8' : 'mb-10'
+        }`}
+      >
         Réaffectation des jeunes
       </h1>
+
+      {isReaffectationSuccess && (
+        <div className='text-status_success bg-status_success_lighten p-6 flex items-center rounded-medium mb-8'>
+          <SuccessIcon
+            aria-hidden={true}
+            focusable={false}
+            className='w-6 h-6 mr-2'
+          />
+          <p>Les jeunes ont été réaffectés avec succès</p>
+        </div>
+      )}
 
       <div className='mb-10 bg-gris_blanc rounded-medium p-6 text-primary_primary'>
         <p className='text-base-medium mb-4'>
@@ -95,7 +189,7 @@ function Supervision({}: SupervisionProps) {
         </ol>
       </div>
 
-      <div className='grid w-full grid-cols-[1fr_1fr_auto] items-end gap-x-12 gap-y-4'>
+      <div className='grid w-full grid-cols-[2fr_2fr_1fr] items-end gap-x-12 gap-y-4'>
         <label
           htmlFor='email-conseiller-initial'
           className='text-base-medium text-neutral_content row-start-1 row-start-1'
@@ -111,19 +205,19 @@ function Supervision({}: SupervisionProps) {
           <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-initial'}
-              value={emailConseillerInitial.value}
+              value={conseillerInitial.email}
               onChange={editEmailConseillerInitial}
-              onReset={resetEmailConseillerInitial}
+              onReset={resetAll}
               type={'email'}
               roundedRight={false}
             />
             <button
               className={`flex p-3 items-center text-base-medium text-primary_primary border border-solid border-primary_primary rounded-r-medium ${
-                isRechercheEnabled ? 'hover:bg-primary_lighten' : ''
+                isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
               } disabled:cursor-not-allowed disabled:border-[#999BB3]`}
               type='submit'
               title='Rechercher'
-              disabled={!isRechercheEnabled}
+              disabled={!isRechercheJeunesEnabled}
             >
               <span className='visually-hidden'>
                 Rechercher conseiller initial
@@ -131,29 +225,29 @@ function Supervision({}: SupervisionProps) {
               <SearchIcon
                 focusable='false'
                 aria-hidden={true}
-                className={isRechercheEnabled ? '' : 'fill-[#999BB3]'}
+                className={isRechercheJeunesEnabled ? '' : 'fill-[#999BB3]'}
               />
             </button>
           </div>
         </form>
 
-        {Boolean(emailConseillerInitial.error) && (
+        {Boolean(conseillerInitial.error) && (
           <div className='flex col-start-1 row-start-3'>
             <ImportantIcon
               focusable={false}
               aria-hidden={true}
               className='fill-status_warning w-6 h-6 mr-2'
             />
-            <p className='text-status_warning'>
-              {emailConseillerInitial.error}
-            </p>
+            <p className='text-status_warning'>{conseillerInitial.error}</p>
           </div>
         )}
 
         <label
           htmlFor='email-conseiller-destination'
           className={`text-base-medium col-start-2 row-start-1 ${
-            areSomeJeunesSelected ? 'text-neutral_content' : 'text-[#999BB3]'
+            isRechercheJeunesSubmitted && jeunes.length > 0
+              ? 'text-neutral_content'
+              : 'text-[#999BB3]'
           }`}
         >
           E-mail conseiller de destination
@@ -161,27 +255,44 @@ function Supervision({}: SupervisionProps) {
 
         <form
           id='affecter-jeunes'
-          onSubmit={() => {}}
+          onSubmit={reaffecterJeunes}
           className='grow col-start-2 row-start-2'
         >
           <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-destination'}
-              value=''
-              onChange={() => {}}
-              onReset={() => {}}
-              disabled={!areSomeJeunesSelected}
+              value={emailConseillerDestination.value}
+              onChange={editEmailConseillerDestination}
+              onReset={() => editEmailConseillerDestination('')}
+              disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
               type={'email'}
             />
           </div>
         </form>
+
+        {Boolean(emailConseillerDestination.error) && (
+          <div className='flex col-start-2 row-start-3'>
+            <ImportantIcon
+              focusable={false}
+              aria-hidden={true}
+              className='fill-status_warning w-6 h-6 mr-2'
+            />
+            <p className='text-status_warning'>
+              {emailConseillerDestination.error}
+            </p>
+          </div>
+        )}
 
         <Button
           form='affecter-jeunes'
           label='Réaffecter les jeunes'
           type='submit'
           className='row-start-2 col-start-3'
-          disabled={!areSomeJeunesSelected}
+          disabled={
+            idsJeunesSelected.length === 0 ||
+            !isEmailValid(emailConseillerDestination.value) ||
+            isReaffectationEnCours
+          }
         >
           <ArrowIcon
             className='fill-blanc mr-2'
@@ -192,13 +303,36 @@ function Supervision({}: SupervisionProps) {
           />
           Réaffecter les jeunes
         </Button>
+
+        {idsJeunesSelected.length > 0 && (
+          <div className='relative row-start-3 col-start-3'>
+            <p className='text-base-medium text-center'>
+              {idsJeunesSelected.length} jeunes sélectionnés
+            </p>
+
+            {Boolean(erreurReaffectation) && (
+              <div className='absolute flex mt-3'>
+                <ImportantIcon
+                  focusable={false}
+                  aria-hidden={true}
+                  className='fill-status_warning w-6 h-6 mr-2 flex-shrink-0'
+                />
+                <p className='text-status_warning'>{erreurReaffectation}</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {isRechercheSubmitted && jeunes.length > 0 && (
-        <div className='mt-16 ml-5'>
+      {isRechercheJeunesSubmitted && jeunes.length > 0 && (
+        <div
+          className={`${
+            idsJeunesSelected.length === 0 ? 'mt-16' : 'mt-7'
+          } ml-5`}
+        >
           <table className='w-full'>
             <caption className='text-m-medium mb-8'>
-              Jeunes de {emailConseillerInitial.value}
+              Jeunes de {conseillerInitial.email}
             </caption>
             <thead>
               <tr>
@@ -224,9 +358,17 @@ function Supervision({}: SupervisionProps) {
             </thead>
             <tbody>
               {jeunes.map((jeune: Jeune) => (
-                <tr key={jeune.id}>
+                <tr
+                  key={jeune.id}
+                  onClick={(e) => toggleJeune(e, jeune)}
+                  className='hover:bg-primary_lighten cursor-pointer'
+                >
                   <td className='pt-6 pb-6 pl-4 w-0'>
-                    <input type='checkbox' disabled={true} />
+                    <input
+                      type='checkbox'
+                      checked={idsJeunesSelected.includes(jeune.id)}
+                      readOnly={true}
+                    />
                   </td>
                   <td className='pt-6 pb-6 pl-4 pr-4 text-md-semi'>
                     {jeune.lastName} {jeune.firstName}

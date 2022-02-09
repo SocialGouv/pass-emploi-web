@@ -11,7 +11,7 @@ export interface JeunesService {
   getJeunesDuConseillerParEmail(
     emailConseiller: string,
     accessToken: string
-  ): Promise<Jeune[]>
+  ): Promise<{ idConseiller: string; jeunes: Jeune[] }>
 
   getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune>
 
@@ -20,6 +20,13 @@ export interface JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune>
+
+  reaffecter(
+    idConseillerInitial: string,
+    emailConseillerDestination: string,
+    idsJeunes: string[],
+    accessToken: string
+  ): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -44,7 +51,7 @@ export class JeunesApiService implements JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune> {
-    return this.apiClient.post<Jeune>(
+    return this.apiClient.post(
       `/conseillers/pole-emploi/jeunes`,
       { ...newJeune, idConseiller: idConseiller },
       accessToken
@@ -54,11 +61,37 @@ export class JeunesApiService implements JeunesService {
   async getJeunesDuConseillerParEmail(
     emailConseiller: string,
     accessToken: string
-  ): Promise<Jeune[]> {
-    const conseiller = await this.apiClient.get<Conseiller>(
+  ): Promise<{ idConseiller: string; jeunes: Jeune[] }> {
+    const conseiller: Conseiller = await this.apiClient.get(
       `/conseillers?email=${emailConseiller}`,
       accessToken
     )
-    return this.getJeunesDuConseiller(conseiller.id, accessToken)
+    const jeunesDuConseiller = await this.getJeunesDuConseiller(
+      conseiller.id,
+      accessToken
+    )
+    return { idConseiller: conseiller.id, jeunes: jeunesDuConseiller }
+  }
+
+  async reaffecter(
+    idConseillerInitial: string,
+    emailConseillerDestination: string,
+    idsJeunes: string[],
+    accessToken: string
+  ): Promise<void> {
+    const conseillerDestination: Conseiller = await this.apiClient.get(
+      `/conseillers?email=${emailConseillerDestination}`,
+      accessToken
+    )
+
+    return this.apiClient.post(
+      '/jeunes/transferer',
+      {
+        idConseillerSource: idConseillerInitial,
+        idConseillerCible: conseillerDestination.id,
+        idsJeune: idsJeunes,
+      },
+      accessToken
+    )
   }
 }

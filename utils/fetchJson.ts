@@ -1,12 +1,18 @@
-export default async function fetchJson<T>(
+export default async function fetchJson(
   reqInfo: RequestInfo,
   reqInit?: RequestInit
-): Promise<T> {
+): Promise<any> {
   try {
     const response = await fetch(reqInfo, reqInit)
 
     if (response.ok) {
-      return response.json()
+      if (
+        !response.headers.has('content-length') ||
+        parseInt(response.headers.get('content-length')!, 10) > 0
+      ) {
+        return response.json()
+      }
+      return
     }
 
     if (response.status === 401) {

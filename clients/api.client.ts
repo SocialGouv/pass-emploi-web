@@ -7,19 +7,19 @@ export class ApiClient {
     this.apiPrefix = process.env.API_ENDPOINT
   }
 
-  async get<T>(path: string, accessToken: string): Promise<T> {
+  async get(path: string, accessToken: string): Promise<any> {
     const headers = new Headers({
       Authorization: `Bearer ${accessToken}`,
     })
 
-    return fetchJson<T>(`${this.apiPrefix}${path}`, { headers })
+    return fetchJson(`${this.apiPrefix}${path}`, { headers })
   }
 
-  async post<T = void>(
+  async post(
     path: string,
     payload: { [key: string]: any } | undefined,
     accessToken: string
-  ): Promise<T> {
+  ): Promise<any> {
     const headers = new Headers({
       Authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
@@ -31,7 +31,7 @@ export class ApiClient {
     }
     if (payload) reqInit.body = JSON.stringify(payload)
 
-    return fetchJson<T>(`${this.apiPrefix}${path}`, reqInit)
+    return fetchJson(`${this.apiPrefix}${path}`, reqInit)
   }
 
   async put(

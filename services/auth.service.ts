@@ -36,10 +36,6 @@ export class AuthService {
 
   //TODO: remplacer le POST par un GET ?
   async getFirebaseToken(accessToken: string): Promise<{ token: string }> {
-    return this.apiClient!.post<{ token: string }>(
-      '/auth/firebase/token',
-      {},
-      accessToken
-    )
+    return this.apiClient!.post('/auth/firebase/token', {}, accessToken)
   }
 }
