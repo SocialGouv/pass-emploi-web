@@ -40,7 +40,6 @@
 .chatRoom {
   position: fixed;
   right: 0;
-  overflow: scroll;
   height: 100%;
   width: 450px;
   margin-left: auto;
@@ -54,7 +53,7 @@
 }
 
 .conversations {
-  height: 100%;
+  height: calc(100% - 68px);
   overflow: scroll;
   background-color: theme('colors.bleu_blanc');
 }
