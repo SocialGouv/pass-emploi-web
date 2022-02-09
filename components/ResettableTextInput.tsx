@@ -3,6 +3,7 @@ import CloseIcon from '../assets/icons/close.svg'
 
 interface ResettableTextInputProps {
   id: string
+  value: string
   onChange: (value: string) => void
   onReset: () => void
   disabled?: boolean
@@ -11,9 +12,10 @@ interface ResettableTextInputProps {
 }
 
 function ResettableTextInput({
-  onReset,
-  onChange,
   id,
+  value,
+  onChange,
+  onReset,
   disabled = false,
   type = 'text',
   roundedRight = true,
@@ -35,6 +37,7 @@ function ResettableTextInput({
         type={type}
         id={id}
         name={id}
+        value={value}
         onChange={applyChange}
         className={`flex-1 p-3 w-8/12 border border-solid border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary disabled:cursor-not-allowed disabled:border-[#999BB3] bg-blanc`}
         disabled={disabled}
