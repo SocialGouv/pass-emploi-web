@@ -39,7 +39,7 @@ const AddRdvModal = ({
   }, [fetchJeunes, jeuneInitial])
 
   const creneauIsValid = () =>
-    creneau !== '' && creneau.match(/^[0-9][0-9]:[0-9][0-9]$/gm)
+    creneau !== '' && creneau.match(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/gm)
 
   const FormIsValid = () =>
     duree !== '' &&
@@ -51,6 +51,9 @@ const AddRdvModal = ({
   const handleAddClick = (event: any) => {
     event.preventDefault()
     const rdvDate = new Date(date)
+    const hours: number = Number(creneau.substring(0, 2))
+    const minutes: number = Number(creneau.substring(3, 5))
+    rdvDate.setHours(hours, minutes)
 
     const newRdv: RdvFormData = {
       jeuneId: idJeuneSelectionne!,
