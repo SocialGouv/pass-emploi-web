@@ -24,7 +24,7 @@ function Supervision({}: SupervisionProps) {
     value: string
     error?: string
   }>({ value: '' })
-  const [isRechercheEnabled, setRecherchedEnabled] = useState<boolean>(false)
+  const [isRechercheEnabled, setRechercheEnabled] = useState<boolean>(false)
   const [isRechercheSubmitted, setRechercheSubmitted] = useState<boolean>(false)
   const [jeunes, setJeunes] = useState<Jeune[]>([])
   const areSomeJeunesSelected = false
@@ -33,20 +33,20 @@ function Supervision({}: SupervisionProps) {
     setEmailConseillerInitial({ value })
     setRechercheSubmitted(false)
     setJeunes([])
-    setRecherchedEnabled(Boolean(value) && isEmailValid(value))
+    setRechercheEnabled(Boolean(value) && isEmailValid(value))
   }
 
   async function fetchListeJeunes(e: FormEvent) {
     e.preventDefault()
-    setRecherchedEnabled(false)
+    setRechercheEnabled(false)
     try {
       const jeunes: Jeune[] = await jeunesService.getJeunesDuConseillerParEmail(
         emailConseillerInitial.value,
         session!.accessToken
       )
+      setRechercheSubmitted(true)
       if (jeunes.length > 0) {
         setJeunes(jeunes.sort(compareJeunesByLastName))
-        setRechercheSubmitted(true)
       } else {
         setEmailConseillerInitial({
           ...emailConseillerInitial,
@@ -194,7 +194,7 @@ function Supervision({}: SupervisionProps) {
         </Button>
       </div>
 
-      {isRechercheSubmitted && (
+      {isRechercheSubmitted && jeunes.length > 0 && (
         <div className='mt-16 ml-5'>
           <table className='w-full'>
             <caption className='text-m-medium mb-8'>
