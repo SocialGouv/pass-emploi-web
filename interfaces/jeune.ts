@@ -1,3 +1,12 @@
+/**
+ * TODO: utiliser cette interface en classe mère pour Jeune lorsque la traduction sera faite
+ */
+export interface BaseJeune {
+  id: string
+  prenom: string
+  nom: string
+}
+
 export type Jeune = {
   id: string
   firstName: string

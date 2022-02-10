@@ -1,11 +1,11 @@
 import { ActionStatus } from 'interfaces/action'
 
 export type JeuneActionsJson = {
-  jeuneId: string,
-  jeuneFirstName: string,
-  jeuneLastName: string,
-  todoActionsCount: number,
-  doneActionsCount: number,
+  jeuneId: string
+  jeuneFirstName: string
+  jeuneLastName: string
+  todoActionsCount: number
+  doneActionsCount: number
   inProgressActionsCount: number
 }
 
