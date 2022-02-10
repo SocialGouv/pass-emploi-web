@@ -36,14 +36,14 @@ export class JeunesApiService implements JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune[]> {
-    return this.apiClient.get(
+    return this.apiClient.get<Jeune[]>(
       `/conseillers/${idConseiller}/jeunes`,
       accessToken
     )
   }
 
   getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune> {
-    return this.apiClient.get(`/jeunes/${idJeune}`, accessToken)
+    return this.apiClient.get<Jeune>(`/jeunes/${idJeune}`, accessToken)
   }
 
   createCompteJeunePoleEmploi(
@@ -51,7 +51,7 @@ export class JeunesApiService implements JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune> {
-    return this.apiClient.post(
+    return this.apiClient.post<Jeune>(
       `/conseillers/pole-emploi/jeunes`,
       { ...newJeune, idConseiller: idConseiller },
       accessToken
@@ -62,7 +62,7 @@ export class JeunesApiService implements JeunesService {
     emailConseiller: string,
     accessToken: string
   ): Promise<{ idConseiller: string; jeunes: Jeune[] }> {
-    const conseiller: Conseiller = await this.apiClient.get(
+    const conseiller = await this.apiClient.get<Conseiller>(
       `/conseillers?email=${emailConseiller}`,
       accessToken
     )
@@ -79,7 +79,7 @@ export class JeunesApiService implements JeunesService {
     idsJeunes: string[],
     accessToken: string
   ): Promise<void> {
-    const conseillerDestination: Conseiller = await this.apiClient.get(
+    const conseillerDestination = await this.apiClient.get<Conseiller>(
       `/conseillers?email=${emailConseillerDestination}`,
       accessToken
     )

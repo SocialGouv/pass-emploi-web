@@ -7,7 +7,7 @@ export interface RendezVousService {
     idConseiller: string,
     newRDV: RdvFormData,
     accessToken: string
-  ): Promise<Response>
+  ): Promise<void>
 
   getRendezVousConseiller(
     idConseiller: string,
@@ -25,7 +25,7 @@ export class RendezVousApiService implements RendezVousService {
     idConseiller: string,
     newRDV: RdvFormData,
     accessToken: string
-  ): Promise<Response> {
+  ): Promise<void> {
     return this.apiClient.post(
       `/conseillers/${idConseiller}/rendezvous`,
       newRDV,
@@ -37,7 +37,7 @@ export class RendezVousApiService implements RendezVousService {
     idConseiller: string,
     accessToken: string
   ): Promise<{ passes: RdvJson[]; futurs: RdvJson[] }> {
-    return this.apiClient.get(
+    return this.apiClient.get<{ passes: RdvJson[]; futurs: RdvJson[] }>(
       `/conseillers/${idConseiller}/rendezvous`,
       accessToken
     )
@@ -47,7 +47,10 @@ export class RendezVousApiService implements RendezVousService {
     idJeune: string,
     accessToken: string
   ): Promise<RdvJeune[]> {
-    return this.apiClient.get(`/jeunes/${idJeune}/rendezvous`, accessToken)
+    return this.apiClient.get<RdvJeune[]>(
+      `/jeunes/${idJeune}/rendezvous`,
+      accessToken
+    )
   }
 
   async deleteRendezVous(

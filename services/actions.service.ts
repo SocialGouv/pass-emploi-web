@@ -37,14 +37,20 @@ export class ActionsApiService implements ActionsService {
     idAction: string,
     accessToken: string
   ): Promise<ActionJeune & { jeune: Jeune }> {
-    return this.apiClient.get(`/actions/${idAction}`, accessToken)
+    return this.apiClient.get<ActionJeune & { jeune: Jeune }>(
+      `/actions/${idAction}`,
+      accessToken
+    )
   }
 
   getActionsJeune(
     idJeune: string,
     accessToken: string
   ): Promise<ActionJeuneJson[]> {
-    return this.apiClient.get(`/jeunes/${idJeune}/actions`, accessToken)
+    return this.apiClient.get<ActionJeuneJson[]>(
+      `/jeunes/${idJeune}/actions`,
+      accessToken
+    )
   }
 
   async createAction(

@@ -27,7 +27,7 @@ export class ConseillerApiService implements ConseillerService {
     idDossier: string,
     accessToken: string
   ): Promise<DossierMilo | undefined> {
-    return this.apiClient.get(
+    return this.apiClient.get<DossierMilo | undefined>(
       `/conseillers/milo/dossiers/${idDossier}`,
       accessToken
     )
@@ -43,7 +43,7 @@ export class ConseillerApiService implements ConseillerService {
     },
     accessToken: string
   ): Promise<{ id: string }> {
-    return this.apiClient.post(
+    return this.apiClient.post<{ id: string }>(
       `/conseillers/milo/jeunes`,
       newJeune,
       accessToken
