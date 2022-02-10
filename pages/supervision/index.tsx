@@ -43,6 +43,9 @@ function Supervision({}: SupervisionProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >(undefined)
+  const [trackingTitle, setTrackingTitle] = useState<string>(
+    'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
+  )
 
   function editEmailConseillerInitial(value: string) {
     setConseillerInitial({ email: value })
@@ -89,6 +92,9 @@ function Supervision({}: SupervisionProps) {
           ...conseillerInitial,
           id: idConseiller,
         })
+        setTrackingTitle(
+          'Réaffectation jeunes – Etape 2 – Réaff. jeunes vers cons. dest.'
+        )
       } else {
         setConseillerInitial({
           ...conseillerInitial,
@@ -100,6 +106,7 @@ function Supervision({}: SupervisionProps) {
       if ((err as Error).message) erreur = 'Aucun conseiller ne correspond'
       else erreur = "Une erreur inconnue s'est produite"
       setConseillerInitial({ ...conseillerInitial, error: erreur })
+      setTrackingTitle('Réaffectation jeunes – Etape 1 – Erreur')
     }
   }
 
@@ -124,6 +131,7 @@ function Supervision({}: SupervisionProps) {
       )
       resetAll()
       setReaffectationSuccess(true)
+      setTrackingTitle('Réaffectation jeunes – Etape 1 – Succès réaff.')
     } catch (err) {
       const erreur = err as Error
       if (erreur.message?.startsWith('Conseiller')) {
@@ -136,21 +144,13 @@ function Supervision({}: SupervisionProps) {
           'Suite à un problème inconnu la réaffectation a échoué. Vous pouvez réessayer.'
         )
       }
+      setTrackingTitle('Réaffectation jeunes – Etape 2 – Erreur')
+    } finally {
       setReaffectationEnCours(false)
     }
   }
 
-  useMatomo(
-    !isRechercheJeunesSubmitted
-      ? 'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
-      : Boolean(conseillerInitial.error)
-      ? 'Réaffectation jeunes – Etape 1 – Erreur'
-      : Boolean(isReaffectationSuccess)
-      ? 'Réaffectation jeunes – Etape 1 – Succès réaff.'
-      : !emailConseillerDestination.error && !erreurReaffectation
-      ? 'Réaffectation jeunes – Etape 2 – Réaff. jeunes vers cons. dest.'
-      : 'Réaffectation jeunes – Etape 2 – Erreur'
-  )
+  useMatomo(trackingTitle)
 
   return (
     <>
@@ -307,7 +307,9 @@ function Supervision({}: SupervisionProps) {
         {idsJeunesSelected.length > 0 && (
           <div className='relative row-start-3 col-start-3'>
             <p className='text-base-medium text-center'>
-              {idsJeunesSelected.length} jeunes sélectionnés
+              {idsJeunesSelected.length} jeune
+              {idsJeunesSelected.length > 1 ? 's' : ''} sélectionné
+              {idsJeunesSelected.length > 1 ? 's' : ''}
             </p>
 
             {Boolean(erreurReaffectation) && (
