@@ -1,5 +1,5 @@
 import { AppHead } from 'components/AppHead'
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'

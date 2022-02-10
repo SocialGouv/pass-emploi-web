@@ -1,5 +1,5 @@
-import Button from 'components/Button'
-import { ErrorMessage } from 'components/ErrorMessage'
+import Button from 'components/ui/Button'
+import { ErrorMessage } from 'components/ui/ErrorMessage'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { FormEvent, useEffect, useState } from 'react'
 import isEmailValid from 'utils/isEmailValid'

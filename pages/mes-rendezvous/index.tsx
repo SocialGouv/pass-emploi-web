@@ -1,5 +1,5 @@
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonColorStyle } from 'components/Button'
+import Button, { ButtonColorStyle } from 'components/ui/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'

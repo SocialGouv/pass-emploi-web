@@ -1,5 +1,5 @@
 import Modal from 'components/Modal'
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 
 type EchecModalProps = {
   show: boolean

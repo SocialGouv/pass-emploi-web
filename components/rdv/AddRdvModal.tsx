@@ -1,4 +1,4 @@
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 import Modal from 'components/Modal'
 import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'

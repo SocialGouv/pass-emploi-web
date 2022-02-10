@@ -1,5 +1,5 @@
-import Button from 'components/Button'
-import { ErrorMessage } from 'components/ErrorMessage'
+import Button from 'components/ui/Button'
+import { ErrorMessage } from 'components/ui/ErrorMessage'
 import { DossierMilo } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'

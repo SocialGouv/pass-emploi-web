@@ -1,7 +1,7 @@
 import Action from 'components/action/Action'
 import AddActionModal from 'components/action/AddActionModal'
 import { AppHead } from 'components/AppHead'
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 import SuccessMessage from 'components/SuccessMessage'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'

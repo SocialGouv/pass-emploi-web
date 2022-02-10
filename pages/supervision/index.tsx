@@ -1,5 +1,5 @@
 import { AppHead } from 'components/AppHead'
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 import ResettableTextInput from 'components/ResettableTextInput'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
