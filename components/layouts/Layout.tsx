@@ -6,7 +6,7 @@ import styles from 'styles/components/Layouts.module.css'
 import ChatRoom from './ChatRoom'
 
 import Sidebar from './Sidebar'
-import { Footer } from '../Footer'
+import { Footer } from 'components/Footer'
 import React from 'react'
 
 type LayoutProps = {

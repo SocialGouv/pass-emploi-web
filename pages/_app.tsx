@@ -40,10 +40,10 @@ function MyApp({
     <SessionProvider session={session}>
       <DIProvider dependances={Container.getDIContainer().dependances}>
         {isLoginPage || isLogoutPage ? (
-          <>
+          <div className='flex flex-col justify-center h-screen'>
             <Component {...pageProps} />
             {isLoginPage && <Footer />}
-          </>
+          </div>
         ) : (
           <>
             <Layout pathname={router.pathname}>

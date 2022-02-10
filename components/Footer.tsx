@@ -1,27 +1,9 @@
 import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import styles from 'styles/components/Layouts.module.css'
-import LaunchIcon from '../assets/icons/launch.svg'
+import { ExternalLink } from './ui/ExternalLink'
+import { liens } from 'referentiel/liens'
 
-//TODO: modifier les urls
-const liens = [
-  {
-    url: 'https://www.numerique.gouv.fr/publications/rgaa-accessibilite/obligations/',
-    label: "Niveau d'accessibilité: non conforme",
-  },
-  {
-    url: 'https://beta.gouv.fr/startups/pass-emploi.html',
-    label: "Conditions Générales d'Utilisation",
-  },
-  {
-    url: '/',
-    label: 'Mentions légales',
-  },
-  {
-    url: 'https://www.cnil.fr/fr/rgpd-par-ou-commencer',
-    label: 'Politique de confidentialité',
-  },
-]
 export const Footer = () => {
   const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
 
@@ -29,25 +11,14 @@ export const Footer = () => {
 
   return (
     <footer role='contentinfo' className={styles.footer}>
-      <ul className='flex'>
+      <ul className='flex px-4'>
         {liens.map(({ url, label }) => (
-          <li key={url} className='pr-[1px] mr-4'>
-            <a
-              href={url}
-              target='_blank'
-              rel='noreferrer noopener'
-              className='flex items-center text-sm-regular text-bleu_nuit whitespace-nowrap underline'
-              aria-label={`${label} (nouvelle fenêtre)`}
-              onClick={() => setLabelMatomo(label)}
-            >
-              {label}
-              <LaunchIcon
-                className='ml-[6px]'
-                focusable='false'
-                aria-hidden={true}
-              />
-            </a>
-          </li>
+          <ExternalLink
+            key={url}
+            href={url}
+            label={label}
+            onClick={() => setLabelMatomo(label)}
+          />
         ))}
       </ul>
     </footer>
