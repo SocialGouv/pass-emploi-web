@@ -145,8 +145,6 @@ describe('Authenticator', () => {
     describe('Quand un conseiller Pass emploi se connecte', () => {
       it("renvoie la structure d'origine du conseiller", async () => {
         // Given
-        accessToken
-        refreshToken
         const expiresAtInSeconds: number = 1638434737
 
         // When

@@ -157,15 +157,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  let userActions: ActionJeune[] = []
-
-  dataActionsJeune.map((userActionJson: ActionJeuneJson) => {
-    const newAction: ActionJeune = {
+  const userActions: ActionJeune[] = dataActionsJeune.map(
+    (userActionJson: ActionJeuneJson) => ({
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
-    }
-    userActions.push(newAction)
-  })
+    })
+  )
 
   return {
     props: {

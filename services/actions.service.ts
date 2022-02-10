@@ -1,6 +1,7 @@
 import { ApiClient } from 'clients/api.client'
-import { Jeune } from 'interfaces/jeune'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { Jeune } from 'interfaces/jeune'
+import { ActionJeuneJson } from 'interfaces/json/action'
 
 export interface ActionsService {
   getAction(
@@ -8,7 +9,10 @@ export interface ActionsService {
     accessToken: string
   ): Promise<ActionJeune & { jeune: Jeune }>
 
-  getActionsJeune(idJeune: string, accessToken: string): Promise<ActionJeune[]>
+  getActionsJeune(
+    idJeune: string,
+    accessToken: string
+  ): Promise<ActionJeuneJson[]>
 
   createAction(
     newAction: { content: string; comment: string },
@@ -39,7 +43,7 @@ export class ActionsApiService implements ActionsService {
   getActionsJeune(
     idJeune: string,
     accessToken: string
-  ): Promise<ActionJeune[]> {
+  ): Promise<ActionJeuneJson[]> {
     return this.apiClient.get(`/jeunes/${idJeune}/actions`, accessToken)
   }
 
