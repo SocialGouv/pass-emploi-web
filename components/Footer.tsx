@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
-import styles from 'styles/components/Layouts.module.css'
+import styles from 'styles/components/Footer.module.css'
 import LaunchIcon from '../assets/icons/launch.svg'
 
 //TODO: modifier les urls

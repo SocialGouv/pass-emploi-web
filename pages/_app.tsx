@@ -42,7 +42,7 @@ function MyApp({
         {isLoginPage || isLogoutPage ? (
           <>
             <Component {...pageProps} />
-            <Footer />
+            {isLoginPage && <Footer />}
           </>
         ) : (
           <>

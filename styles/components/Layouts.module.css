@@ -4,7 +4,7 @@
   grid-template-areas:
           "sidebar main chat"
           "sidebar footer chat";
-  grid-template-columns: 200px 1fr 370px;
+  grid-template-columns: minmax(200px, auto) 1fr 370px;
   grid-template-rows: 100% auto;
 }
 
@@ -22,8 +22,6 @@
   grid-area: main;
   min-height: 100vh;
   padding: 48px;
-  left: 170px;
-  right: 450px;
 }
 
 .sidebar {
@@ -33,9 +31,8 @@
   justify-content: space-between;
   position: fixed;
   height: 100%;
-  width: 200px;
   overflow-x: hidden; /* Disable horizontal scroll */
-  padding: 20px 16px 16px;
+  padding: 20px 19px 16px;
   text-align: center;
   border-right: 1px solid theme('colors.primary_lighten');
 }
@@ -171,29 +168,6 @@
   margin-right: 24px;
 }
 
-/*Footer*/
-
-.footer {
-  grid-area: footer;
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-  border-top: 2px solid theme('colors.primary_lighten');
-}
-
-.footer a {
-  text-decoration: underline;
-  white-space: nowrap;
-}
-
-.footer li:hover a  {
-  color: theme('colors.primary');
-}
-
-.footer a > svg:hover path {
-  fill: theme('colors.primary');
-
-}
 
 
 
