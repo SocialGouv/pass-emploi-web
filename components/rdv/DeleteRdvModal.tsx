@@ -63,8 +63,9 @@ const DeleteRdvModal = ({
           customWidth='800px'
         >
           <p className='text-md text-bleu_nuit mb-[48px]'>
-            Souhaitez-vous vraiment supprimer votre rendez-vous avec {rdv.title}{' '}
-            le {formatDayDate(new Date(rdv.date))}?
+            Souhaitez-vous vraiment supprimer votre rendez-vous avec{' '}
+            {rdv.jeune.prenom} {rdv.jeune.nom} le
+            {formatDayDate(new Date(rdv.date))}?
           </p>
 
           <div className='flex'>

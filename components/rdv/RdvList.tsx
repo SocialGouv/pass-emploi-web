@@ -49,7 +49,9 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>
 
-                <td className='p-[16px]'>{rdv.title}</td>
+                <td className='p-[16px]'>
+                  {rdv.jeune.prenom} {rdv.jeune.nom}
+                </td>
 
                 <td className='p-[16px] '>
                   <LocationIcon
