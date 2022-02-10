@@ -50,7 +50,7 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
                 </td>
 
                 <td className='p-[16px]'>
-                  {rdv.jeune.prenom} {rdv.jeune.prenom}
+                  {rdv.jeune.prenom} {rdv.jeune.nom}
                 </td>
 
                 <td className='p-[16px] '>

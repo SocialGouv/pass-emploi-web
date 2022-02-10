@@ -21,8 +21,8 @@ export const uneListeDeRdv = (overrides: Partial<Rdv[]> = []): Rdv[] =>
       duration: '25 min',
       modality: 'En agence',
       jeune: {
-        id: '1',
-        prenom: 'kenji',
+        id: '2',
+        prenom: 'Raja',
         nom: 'Jirac',
       },
     },
