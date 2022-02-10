@@ -19,7 +19,11 @@ export default function Layout({ pathname, children }: LayoutProps) {
 
   return (
     <>
-      <div className={styles.container}>
+      <div
+        className={
+          displayChat ? styles.container : styles.container_without_chat
+        }
+      >
         <Sidebar />
         <main className={styles.page} role='main'>
           {children}
