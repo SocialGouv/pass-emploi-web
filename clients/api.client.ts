@@ -12,7 +12,8 @@ export class ApiClient {
       Authorization: `Bearer ${accessToken}`,
     })
 
-    return fetchJson<T>(`${this.apiPrefix}${path}`, { headers })
+    const json = await fetchJson(`${this.apiPrefix}${path}`, { headers })
+    return json as T
   }
 
   async post<T = void>(
@@ -31,7 +32,8 @@ export class ApiClient {
     }
     if (payload) reqInit.body = JSON.stringify(payload)
 
-    return fetchJson<T>(`${this.apiPrefix}${path}`, reqInit)
+    const json = await fetchJson(`${this.apiPrefix}${path}`, reqInit)
+    return json as T
   }
 
   async put(

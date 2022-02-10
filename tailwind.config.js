@@ -42,6 +42,8 @@ module.exports = {
       neutral_content: '#161616',
       neutral_grey: '#878787',
       status_warning: '#D33211',
+      status_success: '#0D7F50',
+      status_success_lighten: '#E5F6EF',
     },
 
     fill: (theme) => ({

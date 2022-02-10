@@ -43,7 +43,7 @@ describe('JeunesApiService', () => {
     const accessToken = 'accessToken'
     const conseiller = unConseiller()
     const jeunes = desJeunes()
-    let actual: Jeune[]
+    let actual: { idConseiller: string; jeunes: Jeune[] }
     beforeEach(async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockImplementation((url) => {
@@ -72,7 +72,41 @@ describe('JeunesApiService', () => {
         `/conseillers/${conseiller.id}/jeunes`,
         accessToken
       )
-      expect(actual).toEqual(jeunes)
+      expect(actual).toEqual({ idConseiller: conseiller.id, jeunes })
+    })
+  })
+
+  describe('.reaffecter', () => {
+    it('reaffecte les jeunes', async () => {
+      // Given
+      const idConseillerInitial = 'idConseillerInitial'
+      const emailConseillerDestination = 'conseiller@email.com'
+      const idConseillerDestination = 'idConseillerDestination'
+      const idsJeunes = ['id-jeune-1', 'id-jeune-2']
+      ;(apiClient.get as jest.Mock).mockImplementation((url) => {
+        if (url === `/conseillers?email=${emailConseillerDestination}`)
+          return unConseiller({ id: idConseillerDestination })
+      })
+      const accessToken = 'accessToken'
+
+      // WHEN
+      await jeunesService.reaffecter(
+        idConseillerInitial,
+        emailConseillerDestination,
+        idsJeunes,
+        accessToken
+      )
+
+      // THEN
+      expect(apiClient.post).toHaveBeenCalledWith(
+        `/jeunes/transferer`,
+        {
+          idConseillerSource: idConseillerInitial,
+          idConseillerCible: idConseillerDestination,
+          idsJeune: idsJeunes,
+        },
+        accessToken
+      )
     })
   })
 })

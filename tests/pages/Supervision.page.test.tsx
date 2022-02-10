@@ -25,6 +25,7 @@ describe('Supervision', () => {
         getJeunesDuConseillerParEmail: jest.fn(),
         getJeuneDetails: jest.fn(),
         createCompteJeunePoleEmploi: jest.fn(),
+        reaffecter: jest.fn(),
       }
 
       // When
@@ -90,16 +91,16 @@ describe('Supervision', () => {
 
     describe('au clique pour rechercher le conseiller initial', () => {
       const emailConseillerInitial = 'conseiller@email.com'
-      let submitRecherche: HTMLBaseElement
+      const idConseillerInitial = 'id-conseiller-initial'
       let emailInput: HTMLInputElement
       const jeunes = desJeunes()
       beforeEach(async () => {
         // GIVEN
         emailInput = screen.getByLabelText('E-mail conseiller initial')
-        submitRecherche = screen.getByTitle('Rechercher')
+        const submitRecherche = screen.getByTitle('Rechercher')
         ;(
           jeunesService.getJeunesDuConseillerParEmail as jest.Mock
-        ).mockResolvedValue(jeunes)
+        ).mockResolvedValue({ idConseiller: idConseillerInitial, jeunes })
         fireEvent.input(emailInput, {
           target: { value: emailConseillerInitial },
         })
@@ -141,6 +142,33 @@ describe('Supervision', () => {
               screen.getByText(`${jeune.firstName} ${jeune.lastName}`)
             ).toThrow()
           }
+        })
+      })
+
+      describe('au clique pour reaffecter les jeunes', () => {
+        it('réaffecte les jeunes', async () => {
+          // GIVEN
+          const emailConseillerDestination = 'destination@email.com'
+          const destinationInput = screen.getByLabelText(
+            'E-mail conseiller de destination'
+          )
+          const submitReaffecter = screen.getByText('Réaffecter les jeunes')
+
+          // WHEN
+          fireEvent.input(destinationInput, {
+            target: { value: emailConseillerDestination },
+          })
+          screen.getByText(jeunes[0].firstName, { exact: false }).click()
+          screen.getByText(jeunes[2].firstName, { exact: false }).click()
+          await act(async () => submitReaffecter.click())
+
+          // THEN
+          expect(jeunesService.reaffecter).toHaveBeenCalledWith(
+            idConseillerInitial,
+            emailConseillerDestination,
+            [jeunes[0].id, jeunes[2].id],
+            'accessToken'
+          )
         })
       })
     })
