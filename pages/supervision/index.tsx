@@ -80,14 +80,14 @@ function Supervision({}: SupervisionProps) {
 
     setRechercheJeunesEnabled(false)
     try {
-      const { idConseiller, jeunes } =
+      const { idConseiller, jeunes: jeunesDuConseiller } =
         await jeunesService.getJeunesDuConseillerParEmail(
           conseillerInitial.email,
           session!.accessToken
         )
       setRechercheJeunesSubmitted(true)
-      if (jeunes.length > 0) {
-        setJeunes(jeunes.sort(compareJeunesByLastName))
+      if (jeunesDuConseiller.length > 0) {
+        setJeunes(jeunesDuConseiller.sort(compareJeunesByLastName))
         setConseillerInitial({
           ...conseillerInitial,
           id: idConseiller,
