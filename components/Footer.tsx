@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
-import styles from 'styles/components/Footer.module.css'
+import styles from 'styles/components/Layouts.module.css'
 import LaunchIcon from '../assets/icons/launch.svg'
 
 //TODO: modifier les urls
@@ -36,7 +36,7 @@ export const Footer = () => {
               href={url}
               target='_blank'
               rel='noreferrer noopener'
-              className='flex items-center text-sm-regular text-bleu_nuit'
+              className='flex items-center text-sm-regular text-bleu_nuit whitespace-nowrap underline'
               aria-label={`${label} (nouvelle fenêtre)`}
               onClick={() => setLabelMatomo(label)}
             >
