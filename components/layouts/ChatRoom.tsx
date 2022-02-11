@@ -86,15 +86,15 @@ export default function ChatRoom({}: ChatRoomProps) {
   }
 
   function sortListJeunesChatNotReadFirstThenAlphabeticalByFirstName(
-    currentJeunesChat: JeuneChat[]
+    listJeunesChats: JeuneChat[]
   ) {
-    return currentJeunesChat.sort(function (a, b) {
-      const sortNotRead =
-        a.seenByConseiller === b.seenByConseiller
-          ? 0
-          : !a.seenByConseiller
-          ? -1
-          : 1
+    return listJeunesChats.sort(function (a, b) {
+      var sortNotRead
+      if (a.seenByConseiller === b.seenByConseiller) {
+        sortNotRead = 0
+      } else {
+        sortNotRead = !a.seenByConseiller ? -1 : 1
+      }
       const sortAlphabeticalByFirstName = a.firstName.localeCompare(b.firstName)
       return sortNotRead || sortAlphabeticalByFirstName
     })
