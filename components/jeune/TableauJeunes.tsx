@@ -80,7 +80,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
       if (isDate && isDesc) return compareDates(date1, date2)
       return 0
     }
-    setSortedJeunes([...jeunes.sort(compareJeunes)])
+    setSortedJeunes([...jeunes].sort(compareJeunes))
   }, [
     currentSortedColumn,
     currentSortedDirection,

@@ -87,7 +87,7 @@ function Supervision({}: SupervisionProps) {
         )
       setRechercheJeunesSubmitted(true)
       if (jeunesDuConseiller.length > 0) {
-        setJeunes(jeunesDuConseiller.sort(compareJeunesByLastName))
+        setJeunes([...jeunesDuConseiller].sort(compareJeunesByLastName))
         setConseillerInitial({
           ...conseillerInitial,
           id: idConseiller,

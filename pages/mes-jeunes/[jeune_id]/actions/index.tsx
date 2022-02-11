@@ -157,17 +157,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  const userActions: ActionJeune[] = dataActionsJeune.map(
-    (userActionJson: ActionJeuneJson) => ({
+  const userActions: ActionJeune[] = dataActionsJeune
+    .map((userActionJson: ActionJeuneJson) => ({
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
-    })
-  )
+    }))
+    .sort(sortLastUpdate)
 
   return {
     props: {
       jeune: dataDetailsJeune,
-      actionsEnCours: userActions.sort(sortLastUpdate),
+      actionsEnCours: userActions,
       deleteSuccess: Boolean(context.query.deleteSuccess),
     },
   }
