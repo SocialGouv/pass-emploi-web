@@ -30,8 +30,8 @@ const AddRdvModal = ({
   const [notes, selectNotes] = useState('')
 
   useEffect(() => {
-    fetchJeunes().then((jeunes: Jeune[]) => {
-      setJeunes(jeunes)
+    fetchJeunes().then((fetchedJeunes: Jeune[]) => {
+      setJeunes(fetchedJeunes)
       if (jeuneInitial) {
         selectIdJeune(jeuneInitial.id)
       }

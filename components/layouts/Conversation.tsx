@@ -49,16 +49,16 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   }
 
   const setReadByConseiller = useCallback(
-    (jeuneChat: JeuneChat) => {
-      messagesService.setReadByConseiller(jeuneChat.chatId)
+    (jeuneChatToUpdate: JeuneChat) => {
+      messagesService.setReadByConseiller(jeuneChatToUpdate.chatId)
     },
     [messagesService]
   )
 
   const observerMessages = useCallback(
-    (jeuneChat: JeuneChat) => {
+    (jeuneChatToObserve: JeuneChat) => {
       return messagesService.observeMessages(
-        jeuneChat.chatId,
+        jeuneChatToObserve.chatId,
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
@@ -72,9 +72,9 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   )
 
   const observerLastJeuneReadingDate = useCallback(
-    (jeuneChat: JeuneChat) => {
+    (jeuneChatToObserve: JeuneChat) => {
       return messagesService.observeJeuneReadingDate(
-        jeuneChat.chatId,
+        jeuneChatToObserve.chatId,
         setLastSeenByJeune
       )
     },
