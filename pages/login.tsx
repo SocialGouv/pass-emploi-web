@@ -14,10 +14,10 @@ const Login = ({ ssoPassEmploiEstActive }: LoginProps) => {
   const router = useRouter()
 
   const signin = useCallback(
-    (provider?: string) => {
+    async (provider?: string) => {
       const redirectUrl: string = router.query.redirectUrl as string
       try {
-        signIn(
+        await signIn(
           'keycloak',
           { callbackUrl: redirectUrl ?? '/' },
           { kc_idp_hint: provider ?? '' }
