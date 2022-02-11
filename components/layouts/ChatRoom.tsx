@@ -77,7 +77,27 @@ export default function ChatRoom({}: ChatRoomProps) {
       currentJeunesChat.push(newJeuneChat)
     }
 
+    currentJeunesChat =
+      sortListJeunesChatNotReadFirstThenAlphabeticalByFirstName(
+        currentJeunesChat
+      )
+
     setJeunesChats([...currentJeunesChat])
+  }
+
+  function sortListJeunesChatNotReadFirstThenAlphabeticalByFirstName(
+    currentJeunesChat: JeuneChat[]
+  ) {
+    return currentJeunesChat.sort(function (a, b) {
+      const sortNotRead =
+        !a.seenByConseiller === !b.seenByConseiller
+          ? 0
+          : !a.seenByConseiller
+          ? -1
+          : 1
+      const sortAlphabeticalByFirstName = a.firstName.localeCompare(b.firstName)
+      return sortNotRead || sortAlphabeticalByFirstName
+    })
   }
 
   return (
