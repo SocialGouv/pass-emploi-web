@@ -90,7 +90,7 @@ export default function ChatRoom({}: ChatRoomProps) {
   ) {
     return currentJeunesChat.sort(function (a, b) {
       const sortNotRead =
-        !a.seenByConseiller === !b.seenByConseiller
+        a.seenByConseiller === b.seenByConseiller
           ? 0
           : !a.seenByConseiller
           ? -1
