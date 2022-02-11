@@ -82,8 +82,6 @@ export default function ChatRoom({}: ChatRoomProps) {
     setJeunesChats([...currentJeunesChat])
   }
 
-
-
   return (
     <article className={styles.chatRoom}>
       {isInConversation() && (
