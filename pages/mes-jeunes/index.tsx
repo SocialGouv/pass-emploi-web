@@ -1,5 +1,5 @@
 import { AppHead } from 'components/AppHead'
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
@@ -68,7 +68,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
   )
 
   return (
-    <div className='w-full h-screen relative'>
+    <div className='w-full flex flex-col'>
       <AppHead titre='Mes jeunes' />
       <span className='flex flex-wrap justify-between mb-12'>
         <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
@@ -82,7 +82,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
       </span>
 
       {listeJeunesFiltres.length === 0 && conseillerJeunes.length === 0 ? (
-        <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
+        <div className='mx-auto my-0'>
           <AddJeuneImage
             aria-hidden='true'
             focusable='false'

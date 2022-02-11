@@ -1,6 +1,6 @@
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonColorStyle } from 'components/Button'
+import Button, { ButtonColorStyle } from 'components/ui/Button'
 import EchecMessage from 'components/EchecMessage'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'

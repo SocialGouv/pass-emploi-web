@@ -1,5 +1,5 @@
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonColorStyle } from 'components/Button'
+import Button, { ButtonColorStyle } from 'components/ui/Button'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeActionsJeune from 'components/jeune/ListeActionsJeune'

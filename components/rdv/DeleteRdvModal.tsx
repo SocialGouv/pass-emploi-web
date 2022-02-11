@@ -1,4 +1,4 @@
-import Button, { ButtonColorStyle } from 'components/Button'
+import Button, { ButtonColorStyle } from 'components/ui/Button'
 import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'

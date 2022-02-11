@@ -1,4 +1,4 @@
-import { FormButton } from 'components/FormButton'
+import { FormButton } from 'components/ui/FormButton'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'

@@ -115,7 +115,7 @@ export default function Sidebar({}: SidebarProps) {
         </nav>
       </div>
 
-      <div className='flex justify-between'>
+      <div className='flex justify-between items-center'>
         {session && (
           <p className='text-lg-semi text-bleu_nuit'>{session!.user.name}</p>
         )}

@@ -1,5 +1,5 @@
 import Modal from 'components/Modal'
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 
 import CheckIcon from '../assets/icons/check.svg'
 

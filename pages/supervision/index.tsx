@@ -1,5 +1,5 @@
 import { AppHead } from 'components/AppHead'
-import Button from 'components/Button'
+import Button from 'components/ui/Button'
 import ResettableTextInput from 'components/ResettableTextInput'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
@@ -244,7 +244,7 @@ function Supervision({}: SupervisionProps) {
 
         <label
           htmlFor='email-conseiller-destination'
-          className={`text-base-medium col-start-2 row-start-1 ${
+          className={`text-base-medium whitespace-nowrap col-start-2 row-start-1 ${
             isRechercheJeunesSubmitted && jeunes.length > 0
               ? 'text-neutral_content'
               : 'text-[#999BB3]'

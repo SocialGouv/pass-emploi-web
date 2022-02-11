@@ -1,5 +1,5 @@
 import React from 'react'
-import Exclamation from '../assets/icons/exclamation.svg'
+import Exclamation from '../../assets/icons/exclamation.svg'
 
 interface ErrorMessageProps {
   children: React.ReactNode

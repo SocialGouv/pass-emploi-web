@@ -1,4 +1,4 @@
-import Button, { ButtonColorStyle } from 'components/Button'
+import Button, { ButtonColorStyle } from 'components/ui/Button'
 import Modal from 'components/Modal'
 import { ActionJeune } from 'interfaces/action'
 import { useSession } from 'next-auth/react'
