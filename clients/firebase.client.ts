@@ -84,8 +84,8 @@ class FirebaseClient {
       ),
       (querySnapshot: QuerySnapshot<FirebaseChat>) => {
         if (querySnapshot.empty) return
-        const doc = querySnapshot.docs[0]
-        onChatFound(doc.id, chatFromFirebase(doc.data()))
+        const docSnapshot = querySnapshot.docs[0]
+        onChatFound(docSnapshot.id, chatFromFirebase(docSnapshot.data()))
       }
     )
   }
@@ -114,12 +114,12 @@ class FirebaseClient {
         orderBy('creationDate')
       ),
       (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
-        const messages: Message[] = querySnapshot.docs.map((doc) => {
-          const firebaseMessage: FirebaseMessage = doc.data()
+        const messages: Message[] = querySnapshot.docs.map((docSnapshot) => {
+          const firebaseMessage: FirebaseMessage = docSnapshot.data()
           return {
             ...firebaseMessage,
             creationDate: firebaseMessage.creationDate.toDate(),
-            id: doc.id,
+            id: docSnapshot.id,
           }
         })
 

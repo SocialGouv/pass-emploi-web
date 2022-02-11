@@ -74,8 +74,9 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
         : new Date('1995-12-17T03:24:00')
 
       if (isName && isAsc) return compareJeunesByLastName(jeune1, jeune2)
-      if (isName && isDesc) return compareJeunesByLastName(jeune2, jeune1)
-      if (isDate && isAsc) return compareDates(date2, date1)
+      if (isName && isDesc)
+        return compareJeunesByLastName(jeune1, jeune2, 'desc')
+      if (isDate && isAsc) return compareDates(date1, date2, 'desc')
       if (isDate && isDesc) return compareDates(date1, date2)
       return 0
     }

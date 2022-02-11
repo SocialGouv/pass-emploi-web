@@ -52,8 +52,13 @@ export interface JeunePoleEmploiFormData {
   email: string
 }
 
-export function compareJeunesByLastName(jeune1: Jeune, jeune2: Jeune): number {
-  return `${jeune1.lastName}${jeune1.firstName}`.localeCompare(
+export function compareJeunesByLastName(
+  jeune1: Jeune,
+  jeune2: Jeune,
+  order: 'asc' | 'desc' = 'asc'
+): number {
+  const compare: number = `${jeune1.lastName}${jeune1.firstName}`.localeCompare(
     `${jeune2.lastName}${jeune2.firstName}`
   )
+  return order === 'asc' ? compare : -compare
 }

@@ -50,8 +50,13 @@ const isDateOlder = (date1: Date, date2: Date): boolean => {
   return date1.getTime() < date2.getTime()
 }
 
-function compareDates(date1: Date, date2: Date): number {
-  return date1.getTime() - date2.getTime()
+function compareDates(
+  date1: Date,
+  date2: Date,
+  order: 'asc' | 'desc' = 'asc'
+): number {
+  const compare: number = date1.getTime() - date2.getTime()
+  return order === 'asc' ? compare : -compare
 }
 
 export {
