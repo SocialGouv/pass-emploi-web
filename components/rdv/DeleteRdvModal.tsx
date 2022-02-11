@@ -64,7 +64,7 @@ const DeleteRdvModal = ({
         >
           <p className='text-md text-bleu_nuit mb-[48px]'>
             Souhaitez-vous vraiment supprimer votre rendez-vous avec{' '}
-            {rdv.jeune.prenom} {rdv.jeune.nom} le
+            {rdv.jeune.prenom} {rdv.jeune.nom} le{' '}
             {formatDayDate(new Date(rdv.date))}?
           </p>
 
