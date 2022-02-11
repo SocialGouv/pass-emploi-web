@@ -118,7 +118,7 @@ describe('<ChatRoom />', () => {
         ).toBeInTheDocument()
       })
 
-      it('affiche les jeunes dans le bonne ordre', () => {
+      it('affiche les jeunes dans le bon ordre', () => {
         expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
           "Maria D'Aböville-Muñoz François"
         )

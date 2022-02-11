@@ -57,3 +57,15 @@ export function compareJeunesByLastName(jeune1: Jeune, jeune2: Jeune): number {
     `${jeune2.lastName}${jeune2.firstName}`
   )
 }
+
+export function compareJeunesByFirstname(jeune1: Jeune, jeune2: Jeune): number {
+  return `${jeune1.firstName}${jeune1.lastName}`.localeCompare(
+      `${jeune2.firstName}${jeune2.lastName}`
+  )
+}
+
+export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {
+  if (a.seenByConseiller !== b.seenByConseiller)
+    return a.seenByConseiller ? 1 : -1
+  return compareJeunesByFirstname(a, b)
+}

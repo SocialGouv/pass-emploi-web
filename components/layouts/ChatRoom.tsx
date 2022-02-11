@@ -1,5 +1,5 @@
 import Conversation from 'components/layouts/Conversation'
-import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { Jeune, JeuneChat, compareJeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
@@ -77,28 +77,12 @@ export default function ChatRoom({}: ChatRoomProps) {
       currentJeunesChat.push(newJeuneChat)
     }
 
-    currentJeunesChat =
-      sortListJeunesChatNotReadFirstThenAlphabeticalByFirstName(
-        currentJeunesChat
-      )
+    currentJeunesChat.sort(compareJeuneChat)
 
     setJeunesChats([...currentJeunesChat])
   }
 
-  function sortListJeunesChatNotReadFirstThenAlphabeticalByFirstName(
-    listJeunesChats: JeuneChat[]
-  ) {
-    return listJeunesChats.sort(function (a, b) {
-      var sortNotRead
-      if (a.seenByConseiller === b.seenByConseiller) {
-        sortNotRead = 0
-      } else {
-        sortNotRead = !a.seenByConseiller ? -1 : 1
-      }
-      const sortAlphabeticalByFirstName = a.firstName.localeCompare(b.firstName)
-      return sortNotRead || sortAlphabeticalByFirstName
-    })
-  }
+
 
   return (
     <article className={styles.chatRoom}>
