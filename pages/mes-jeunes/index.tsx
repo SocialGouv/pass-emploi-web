@@ -42,9 +42,12 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
     const querySplit = query.toLowerCase().split(/-|\s/)
     if (query) {
       const jeunesFiltresResult = conseillerJeunes.filter((jeune) => {
-        for (let i = 0; i < querySplit.length; i++) {
-          const jeuneLastName = jeune.lastName.replace(/’/i, "'")
-          if (jeuneLastName.toLowerCase().includes(querySplit[i])) {
+        const jeuneLastName = jeune.lastName
+          .replace(/’/i, "'")
+          .toLocaleLowerCase()
+        for (const item of querySplit) {
+          console.log({ item })
+          if (jeuneLastName.includes(item)) {
             return true
           }
         }
