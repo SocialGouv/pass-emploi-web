@@ -3,7 +3,7 @@ import SearchIcon from '../../assets/icons/search.svg'
 import ResettableTextInput from '../ResettableTextInput'
 
 interface RechercheJeuneProps {
-  onSearchFilterBy: (query: string | undefined) => void
+  onSearchFilterBy: (query: string) => void
 }
 
 export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {

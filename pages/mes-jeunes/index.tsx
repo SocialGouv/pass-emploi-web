@@ -1,15 +1,15 @@
 import { AppHead } from 'components/AppHead'
+import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import Button from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
-import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
+import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { RechercheJeune } from 'components/jeune/RechercheJeune'
-import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import AddIcon from '../../assets/icons/add_person.svg'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
@@ -19,8 +19,11 @@ type MesJeunesProps = {
 }
 
 function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
-  const [queryJeune, setQueryJeune] = useState('')
-  const [listeJeunesFiltres, setListJeunesFiltres] = useState<Jeune[]>([])
+  const [listeJeunesFiltres, setListJeunesFiltres] =
+    useState<Jeune[]>(conseillerJeunes)
+  const initialTracking =
+    conseillerJeunes.length === 0 ? 'Mes jeunes - Aucun jeune' : 'Mes jeunes'
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = () => {
     switch (structureConseiller) {
@@ -35,37 +38,31 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
     }
   }
 
-  const onSearch = (query: string | undefined) => {
-    const querySplit = query?.toLowerCase().split(/-|\s/)
-    setQueryJeune(query!)
-    if (query !== '') {
+  const onSearch = (query: string) => {
+    const querySplit = query.toLowerCase().split(/-|\s/)
+    if (query) {
       const jeunesFiltresResult = conseillerJeunes.filter((jeune) => {
-        for (let i = 0; i < querySplit!.length; i++) {
+        for (let i = 0; i < querySplit.length; i++) {
           const jeuneLastName = jeune.lastName.replace(/’/i, "'")
-          if (jeuneLastName.toLowerCase().includes(querySplit![i])) {
+          if (jeuneLastName.toLowerCase().includes(querySplit[i])) {
             return true
           }
         }
         return false
       })
       setListJeunesFiltres(jeunesFiltresResult)
+      if (jeunesFiltresResult.length > 0) {
+        setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
+      } else {
+        setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
+      }
     } else {
       setListJeunesFiltres(conseillerJeunes)
+      setTrackingTitle(initialTracking)
     }
   }
 
-  useMatomo(
-    listeJeunesFiltres.length === 0 && conseillerJeunes.length === 0
-      ? 'Mes jeunes - Aucun jeune'
-      : 'Mes jeunes'
-  )
-  useMatomo(
-    queryJeune?.length
-      ? listeJeunesFiltres.length > 0
-        ? 'Clic sur Rechercher - Recherche avec résultats'
-        : 'Clic sur Rechercher - Recherche sans résultats'
-      : undefined
-  )
+  useMatomo(trackingTitle)
 
   return (
     <div className='w-full flex flex-col'>
@@ -81,7 +78,7 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
         )}
       </span>
 
-      {listeJeunesFiltres.length === 0 && conseillerJeunes.length === 0 ? (
+      {conseillerJeunes.length === 0 && (
         <div className='mx-auto my-0'>
           <AddJeuneImage
             aria-hidden='true'
@@ -96,14 +93,12 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
             Ajouter un jeune
           </Button>
         </div>
-      ) : (
+      )}
+
+      {conseillerJeunes.length > 0 && (
         <>
           <RechercheJeune onSearchFilterBy={onSearch} />
-          <TableauJeunes
-            jeunes={
-              queryJeune?.length > 0 ? listeJeunesFiltres : conseillerJeunes
-            }
-          />
+          <TableauJeunes jeunes={listeJeunesFiltres} />
         </>
       )}
     </div>

@@ -1,22 +1,21 @@
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonColorStyle } from 'components/ui/Button'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
-import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
+import Button, { ButtonColorStyle } from 'components/ui/Button'
+import { UserStructure } from 'interfaces/conseiller'
+import { jsonToRdv, RdvFormData } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useSession } from 'next-auth/react'
 import Router from 'next/router'
 import { useState } from 'react'
-import { durees } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../assets/icons/add.svg'
-import { UserStructure } from '../../interfaces/conseiller'
 
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
@@ -31,22 +30,22 @@ const MesRendezvous = ({
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
-  const [showAddModal, setShowAddModal] = useState<boolean | undefined>(
-    undefined
-  )
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean | undefined>(
-    undefined
-  )
+  const [showAddModal, setShowAddModal] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
+  const initialTracking = 'Mes rendez-vous'
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function openAddModal(): void {
     setShowAddModal(true)
+    setTrackingTitle('Mes rendez-vous - Modale création rdv')
   }
 
   function closeAddModal(): void {
     setShowAddModal(false)
+    setTrackingTitle(initialTracking)
   }
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
@@ -68,22 +67,27 @@ const MesRendezvous = ({
     setRdvsAVenir(newArray)
   }
 
-  useMatomo(displayOldRdv ? 'Mes rendez-vous passés' : 'Mes rendez-vous')
-  useMatomo(
-    showDeleteModal
-      ? 'Mes rendez-vous - Modale suppression rdv'
-      : showDeleteModal === undefined
-      ? undefined
-      : 'Mes rendez-vous'
-  )
+  function toggleDisplayOldRdv(): void {
+    setDisplayOldRdv(!displayOldRdv)
+    if (displayOldRdv) {
+      setTrackingTitle('Mes rendez-vous passés')
+    } else {
+      setTrackingTitle(initialTracking)
+    }
+  }
 
-  useMatomo(
-    showAddModal
-      ? 'Mes rendez-vous - Modale création rdv'
-      : showAddModal === undefined
-      ? undefined
-      : 'Mes rendez-vous'
-  )
+  function openDeleteRdvModal(rdv: Rdv) {
+    setSelectedRdv(rdv)
+    setShowDeleteModal(true)
+    setTrackingTitle('Mes rendez-vous - Modale suppression rdv')
+  }
+
+  function closeDeleteRdvModal() {
+    setShowDeleteModal(false)
+    setTrackingTitle(initialTracking)
+  }
+
+  useMatomo(trackingTitle)
 
   return (
     <>
@@ -102,9 +106,7 @@ const MesRendezvous = ({
           type='button'
           className='mr-[8px]'
           style={displayOldRdv ? ButtonColorStyle.WHITE : ButtonColorStyle.BLUE}
-          onClick={() => {
-            setDisplayOldRdv(!displayOldRdv)
-          }}
+          onClick={toggleDisplayOldRdv}
         >
           Prochains rendez-vous
         </Button>
@@ -113,9 +115,7 @@ const MesRendezvous = ({
           role='tab'
           type='button'
           style={displayOldRdv ? ButtonColorStyle.BLUE : ButtonColorStyle.WHITE}
-          onClick={() => {
-            setDisplayOldRdv(!displayOldRdv)
-          }}
+          onClick={toggleDisplayOldRdv}
         >
           Rendez-vous passés
         </Button>
@@ -124,13 +124,7 @@ const MesRendezvous = ({
       {displayOldRdv ? (
         <RdvList rdvs={rendezVousPasses} />
       ) : (
-        <RdvList
-          rdvs={rdvsAVenir}
-          onDelete={(rdv: Rdv) => {
-            setShowDeleteModal(true)
-            setSelectedRdv(rdv)
-          }}
-        />
+        <RdvList rdvs={rdvsAVenir} onDelete={openDeleteRdvModal} />
       )}
 
       {showAddModal && session && (
@@ -148,7 +142,7 @@ const MesRendezvous = ({
 
       {showDeleteModal && (
         <DeleteRdvModal
-          onClose={() => setShowDeleteModal(false)}
+          onClose={closeDeleteRdvModal}
           onDelete={deleteRdv}
           show={showDeleteModal}
           rdv={selectedRdv!}
@@ -182,18 +176,8 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true }
   }
 
-  const rendezVousPasses: Rdv[] = data.passes.map((rdvData: RdvJson) => ({
-    ...rdvData,
-    duration:
-      durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-      `${rdvData.duration} min`,
-  }))
-  const rendezVousFuturs: Rdv[] = data.futurs.map((rdvData: RdvJson) => ({
-    ...rdvData,
-    duration:
-      durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-      `${rdvData.duration} min`,
-  }))
+  const rendezVousPasses: Rdv[] = data.passes.map(jsonToRdv)
+  const rendezVousFuturs: Rdv[] = data.futurs.map(jsonToRdv)
 
   return {
     props: {
