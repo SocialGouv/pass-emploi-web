@@ -51,12 +51,17 @@ const isDateOlder = (date1: Date, date2: Date): boolean => {
 }
 
 function compareDates(
-  date1: Date,
-  date2: Date,
-  order: 'asc' | 'desc' = 'asc'
+  date1: Date | undefined,
+  date2: Date | undefined,
+  sortDesc: boolean = false
 ): number {
-  const compare: number = date1.getTime() - date2.getTime()
-  return order === 'asc' ? compare : -compare
+  if (!date1 && !date2) return 0
+
+  let compare: number
+  if (!date1) compare = -1
+  else if (!date2) compare = 1
+  else compare = date1.getTime() - date2.getTime()
+  return sortDesc ? -compare : compare
 }
 
 export {

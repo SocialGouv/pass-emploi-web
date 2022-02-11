@@ -18,11 +18,6 @@ enum SortColumn {
   DERNIERE_ACTIVITE = 'DERNIERE_ACTIVITE',
 }
 
-enum SortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
-
 interface TableauJeunesProps {
   jeunes: Jeune[]
 }
@@ -46,58 +41,48 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
     SortColumn.NOM
   )
-  const [currentSortedDirection, setCurrentSortedDirection] =
-    useState<SortDirection>(SortDirection.ASC)
+  const [sortDesc, setSortDesc] = useState<boolean>(false)
 
-  const isAsc = currentSortedDirection === SortDirection.ASC
-  const isDesc = currentSortedDirection === SortDirection.DESC
   const isName = currentSortedColumn === SortColumn.NOM
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
 
   const sortJeunes = (newSortColumn: SortColumn) => {
     if (currentSortedColumn !== newSortColumn) {
       setCurrentSortedColumn(newSortColumn)
-      setCurrentSortedDirection(SortDirection.ASC)
+      setSortDesc(false)
     } else {
-      if (isAsc) setCurrentSortedDirection(SortDirection.DESC)
-      if (isDesc) setCurrentSortedDirection(SortDirection.ASC)
+      setSortDesc(!sortDesc)
     }
   }
 
   useEffect(() => {
     function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
-      const date1 = jeune1.lastActivity
-        ? new Date(jeune1.lastActivity)
-        : new Date('1995-12-17T03:24:00')
-      const date2 = jeune2.lastActivity
-        ? new Date(jeune2.lastActivity)
-        : new Date('1995-12-17T03:24:00')
+      if (isName) return compareJeunesByLastName(jeune1, jeune2, sortDesc)
 
-      if (isName && isAsc) return compareJeunesByLastName(jeune1, jeune2)
-      if (isName && isDesc)
-        return compareJeunesByLastName(jeune1, jeune2, 'desc')
-      if (isDate && isAsc) return compareDates(date1, date2, 'desc')
-      if (isDate && isDesc) return compareDates(date1, date2)
+      if (isDate) {
+        const date1 = jeune1.lastActivity
+          ? new Date(jeune1.lastActivity)
+          : undefined
+        const date2 = jeune2.lastActivity
+          ? new Date(jeune2.lastActivity)
+          : undefined
+        return compareDates(date1, date2, !sortDesc)
+      }
+
       return 0
     }
+
     setSortedJeunes([...jeunes].sort(compareJeunes))
-  }, [
-    currentSortedColumn,
-    currentSortedDirection,
-    isAsc,
-    isDate,
-    isDesc,
-    isName,
-    jeunes,
-  ])
+  }, [currentSortedColumn, isDate, isName, sortDesc, jeunes])
 
   const matomoTitle = () => {
-    if (isDate && isAsc)
-      return 'Mes jeunes - Dernière activité - Ordre chronologique'
-    if (isDate && isDesc)
+    if (isDate && !sortDesc)
+      return `Mes jeunes - Dernière activité - Ordre chronologique`
+    if (isDate && sortDesc)
       return 'Mes jeunes - Dernière activité - Ordre antéchronologique'
-    if (isName && isAsc) return 'Mes jeunes - Nom - Ordre alphabétique'
-    if (isName && isDesc) return 'Mes jeunes - Nom - Ordre alphabétique inversé'
+    if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
+    if (isName && sortDesc)
+      return 'Mes jeunes - Nom - Ordre alphabétique inversé'
   }
 
   useMatomo(matomoTitle())
@@ -128,10 +113,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.NOM)}
                   aria-label={`Afficher la liste des jeunes triée par noms par ordre alphabétique ${
-                    isName && isAsc ? 'inversé' : ''
+                    isName && !sortDesc ? 'inversé' : ''
                   }`}
                   title={`Afficher la liste des jeunes triée par noms par ordre alphabétique ${
-                    isName && isAsc ? 'inversé' : ''
+                    isName && !sortDesc ? 'inversé' : ''
                   }`}
                 >
                   <span className='mr-1'>Nom du jeune</span>
@@ -139,7 +124,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
-                      className={isDesc ? 'rotate-180' : ''}
+                      className={sortDesc ? 'rotate-180' : ''}
                     />
                   ) : (
                     <ArrowDouble focusable='false' aria-hidden='true' />
@@ -155,10 +140,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
                   aria-label={`Afficher la liste des jeunes triée par dates de dernière activité par ordre ${
-                    isDate && isAsc ? 'antéchronologique' : 'chronologique'
+                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
                   }`}
                   title={`Afficher la liste des jeunes triée par dates de dernière activité par ordre ${
-                    isDate && isAsc ? 'antéchronologique' : 'chronologique'
+                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
                   }`}
                 >
                   <span className='mr-1'>Dernière activité</span>
@@ -166,7 +151,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
-                      className={isDesc ? 'rotate-180' : ''}
+                      className={sortDesc ? 'rotate-180' : ''}
                     />
                   ) : (
                     <ArrowDouble focusable='false' aria-hidden='true' />
