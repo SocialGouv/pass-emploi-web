@@ -32,8 +32,8 @@ export const RadioButtonStatus = ({
         id={`option-statut--${status}`}
         name='option-statut'
         checked={isSelected}
-        onChange={() => {}}
-        required
+        readOnly={true}
+        required={true}
       />
     </span>
   )

@@ -26,7 +26,7 @@ function PageAction({ action, jeune }: Props) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession({ required: true })
   const router = useRouter()
-  const [statutChoisi, setStatutChoisi] = useState<ActionStatus>(action.status)
+  const [statut, setStatut] = useState<ActionStatus>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
@@ -36,7 +36,7 @@ function PageAction({ action, jeune }: Props) {
       statutChoisi,
       session!.accessToken
     )
-    setStatutChoisi(nouveauStatut)
+    setStatut(nouveauStatut)
   }
 
   async function deleteAction(): Promise<void> {
@@ -120,17 +120,17 @@ function PageAction({ action, jeune }: Props) {
               <legend className='text-bleu inline mr-[25px]'>Statut</legend>
               <RadioButtonStatus
                 status='À réaliser'
-                isSelected={statutChoisi === ActionStatus.NotStarted}
+                isSelected={statut === ActionStatus.NotStarted}
                 onChange={() => updateAction(ActionStatus.NotStarted)}
               />
               <RadioButtonStatus
                 status='En cours'
-                isSelected={statutChoisi === ActionStatus.InProgress}
+                isSelected={statut === ActionStatus.InProgress}
                 onChange={() => updateAction(ActionStatus.InProgress)}
               />
               <RadioButtonStatus
                 status='Terminée'
-                isSelected={statutChoisi === ActionStatus.Done}
+                isSelected={statut === ActionStatus.Done}
                 onChange={() => updateAction(ActionStatus.Done)}
               />
             </span>

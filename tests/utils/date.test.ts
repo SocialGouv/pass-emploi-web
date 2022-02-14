@@ -1,4 +1,9 @@
-import { dateIsToday, dateIsYesterday, isDateOlder } from 'utils/date'
+import {
+  compareDates,
+  dateIsToday,
+  dateIsYesterday,
+  isDateOlder,
+} from 'utils/date'
 
 jest.useFakeTimers()
 
@@ -37,6 +42,49 @@ describe('dateUtils', () => {
 
       //THEN
       expect(isYesterday).toBeTruthy()
+    })
+  })
+
+  describe('compareDates', () => {
+    const now = new Date()
+    const earlyDate = new Date(now.getTime() - 100000)
+    const earliestDate = new Date(now.getTime() - 999999)
+    const lateDate = new Date(now.getTime() + 100000)
+    const latestDate = new Date(now.getTime() + 999999)
+    const dates = [now, earlyDate, latestDate, earliestDate, now, lateDate]
+
+    describe('when comparing asc', () => {
+      it('orders date by chronological order', async () => {
+        // WHEN
+        const actual = [...dates].sort(compareDates)
+
+        // THEN
+        expect(actual).toStrictEqual([
+          earliestDate,
+          earlyDate,
+          now,
+          now,
+          lateDate,
+          latestDate,
+        ])
+      })
+    })
+
+    describe('when comparing desc', () => {
+      it('orders date by antechronological order', async () => {
+        // WHEN
+        const actual = [...dates].sort((d1, d2) => compareDates(d1, d2, true))
+
+        // THEN
+        expect(actual).toStrictEqual([
+          latestDate,
+          lateDate,
+          now,
+          now,
+          earlyDate,
+          earliestDate,
+        ])
+      })
     })
   })
 })

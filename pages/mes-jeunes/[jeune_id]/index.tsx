@@ -1,11 +1,11 @@
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonColorStyle } from 'components/ui/Button'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import Button, { ButtonColorStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
@@ -33,25 +33,26 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const { data: session } = useSession({ required: true })
-  const [showAddRdvModal, setShowAddRdvModal] = useState<boolean | undefined>(
-    undefined
-  )
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean | undefined>(
-    undefined
-  )
+
+  const [showAddRdvModal, setShowAddRdvModal] = useState<boolean>(false)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
   const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
     undefined
   )
+  const initialTracking: any = 'Détail jeune'
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
   function openAddRdvModal(): void {
     setShowAddRdvModal(true)
+    setTrackingLabel('Détail jeune - Modale création rdv')
   }
 
   function closeAddRdvModal(): void {
     setShowAddRdvModal(false)
+    setTrackingLabel(initialTracking)
   }
 
   async function addNewRDV(newRDV: RdvFormData): Promise<void> {
@@ -75,17 +76,18 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
     }
   }
 
-  useMatomo(
-    showAddRdvModal ? 'Détail jeune - Modale création rdv' : 'Détail jeune'
-  )
+  function openDeleteRdvModal(rdv: RdvJeune) {
+    setSelectedRdv(rdv)
+    setShowDeleteModal(true)
+    setTrackingLabel('Détail jeune - Modale suppression rdv')
+  }
 
-  useMatomo(
-    showDeleteModal
-      ? 'Détail jeune - Modale suppression rdv'
-      : showDeleteModal === undefined
-      ? undefined
-      : 'Détail jeune'
-  )
+  function closeDeleteRdvModal() {
+    setShowDeleteModal(false)
+    setTrackingLabel(initialTracking)
+  }
+
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -124,13 +126,7 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
           </h2>
 
           {!isPoleEmploi ? (
-            <ListeRdvJeune
-              rdvs={rdvsAVenir}
-              onDelete={(rdv: RdvJeune) => {
-                setSelectedRdv(rdv)
-                setShowDeleteModal(true)
-              }}
-            />
+            <ListeRdvJeune rdvs={rdvsAVenir} onDelete={openDeleteRdvModal} />
           ) : (
             <IntegrationPoleEmploi label='convocations' />
           )}
@@ -162,7 +158,7 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
 
         {showDeleteModal && selectedRdv && (
           <DeleteRdvModal
-            onClose={() => setShowDeleteModal(false)}
+            onClose={closeDeleteRdvModal}
             onDelete={deleteRdv}
             show={showDeleteModal}
             rdv={selectedRdv}

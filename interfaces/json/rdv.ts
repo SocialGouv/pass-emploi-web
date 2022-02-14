@@ -1,4 +1,6 @@
 import { BaseJeune } from 'interfaces/jeune'
+import { durees } from 'referentiel/rdv'
+import { Rdv } from '../rdv'
 
 export type RdvJson = {
   id: string
@@ -17,4 +19,13 @@ export interface RdvFormData {
   duration: number
   jeuneId: string
   modality: string
+}
+
+export function jsonToRdv(rdvData: RdvJson): Rdv {
+  return {
+    ...rdvData,
+    duration:
+      durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
+      `${rdvData.duration} min`,
+  }
 }
