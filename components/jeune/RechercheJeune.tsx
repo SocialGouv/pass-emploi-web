@@ -25,7 +25,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
         htmlFor='rechercher-jeunes'
         className='text-base-medium text-content_color'
       >
-        Rechercher un jeune par son nom
+        Rechercher un jeune par son nom de famille
       </label>
       <div className='flex mt-3.5 mb-8 w-9/12'>
         <ResettableTextInput
