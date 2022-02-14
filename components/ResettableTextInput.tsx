@@ -39,7 +39,7 @@ function ResettableTextInput({
         name={id}
         value={value}
         onChange={applyChange}
-        className={`flex-1 p-3 w-8/12 border border-solid border-r-0 border-neutral_grey rounded-l-medium text-base-medium text-primary_primary bg-blanc disabled:cursor-not-allowed disabled:border-[#999BB3] disabled:text-[#999BB3]`}
+        className={`flex-1 p-3 w-8/12 border border-solid border-r-0 border-grey_700 rounded-l-medium text-base-medium text-bleu_nuit bg-blanc disabled:cursor-not-allowed disabled:border-disabled disabled:text-disabled`}
         disabled={disabled}
       />
       <button
@@ -47,13 +47,13 @@ function ResettableTextInput({
         title='Effacer'
         className={`border border-solid ${
           roundedRight ? 'rounded-r-medium' : 'border-r-0'
-        } border-l-0 border-neutral_grey w-8 text-primary_primary disabled:border-[#999BB3] disabled:cursor-not-allowed`}
+        } border-l-0 border-grey_700 w-8 text-bleu_nuit disabled:border-disabled disabled:cursor-not-allowed`}
         onClick={applyReset}
         disabled={disabled}
       >
         <span className='visually-hidden'>Effacer le champ de saisie</span>
         <CloseIcon
-          className={`text-primary_primary ${disabled ? 'fill-[#999BB3]' : ''}`}
+          className={`text-bleu_nuit ${disabled ? 'fill-disabled' : ''}`}
           focusable={false}
           aria-hidden={true}
         />

@@ -157,7 +157,7 @@ function Supervision({}: SupervisionProps) {
       <AppHead titre='Supervision' />
 
       <h1
-        className={`h2-semi text-primary_primary ml-[-2.5rem] pl-10 w-3/4 pb-9 border-solid border-0 border-b-4 border-b-primary_lighten ${
+        className={`h2-semi text-bleu_nuit ml-[-2.5rem] pl-10 w-3/4 pb-9 border-solid border-0 border-b-4 border-b-primary_lighten ${
           isReaffectationSuccess ? 'mb-8' : 'mb-10'
         }`}
       >
@@ -165,7 +165,7 @@ function Supervision({}: SupervisionProps) {
       </h1>
 
       {isReaffectationSuccess && (
-        <div className='text-status_success bg-status_success_lighten p-6 flex items-center rounded-medium mb-8'>
+        <div className='text-success bg-success_lighten p-6 flex items-center rounded-medium mb-8'>
           <SuccessIcon
             aria-hidden={true}
             focusable={false}
@@ -175,7 +175,7 @@ function Supervision({}: SupervisionProps) {
         </div>
       )}
 
-      <div className='mb-10 bg-gris_blanc rounded-medium p-6 text-primary_primary'>
+      <div className='mb-10 bg-gris_blanc rounded-medium p-6 text-bleu_nuit'>
         <p className='text-base-medium mb-4'>
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
@@ -192,7 +192,7 @@ function Supervision({}: SupervisionProps) {
       <div className='grid w-full grid-cols-[2fr_2fr_1fr] items-end gap-x-12 gap-y-4'>
         <label
           htmlFor='email-conseiller-initial'
-          className='text-base-medium text-neutral_content row-start-1 row-start-1'
+          className='text-base-medium text-content_color row-start-1 row-start-1'
         >
           E-mail conseiller initial
         </label>
@@ -212,9 +212,9 @@ function Supervision({}: SupervisionProps) {
               roundedRight={false}
             />
             <button
-              className={`flex p-3 items-center text-base-medium text-primary_primary border border-solid border-primary_primary rounded-r-medium ${
+              className={`flex p-3 items-center text-base-medium text-bleu_nuit border border-solid border-bleu_nuit rounded-r-medium ${
                 isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
-              } disabled:cursor-not-allowed disabled:border-[#999BB3]`}
+              } disabled:cursor-not-allowed disabled:border-disabled`}
               type='submit'
               title='Rechercher'
               disabled={!isRechercheJeunesEnabled}
@@ -225,7 +225,7 @@ function Supervision({}: SupervisionProps) {
               <SearchIcon
                 focusable='false'
                 aria-hidden={true}
-                className={isRechercheJeunesEnabled ? '' : 'fill-[#999BB3]'}
+                className={isRechercheJeunesEnabled ? '' : 'fill-disabled'}
               />
             </button>
           </div>
@@ -236,9 +236,9 @@ function Supervision({}: SupervisionProps) {
             <ImportantIcon
               focusable={false}
               aria-hidden={true}
-              className='fill-status_warning w-6 h-6 mr-2'
+              className='fill-warning w-6 h-6 mr-2'
             />
-            <p className='text-status_warning'>{conseillerInitial.error}</p>
+            <p className='text-warning'>{conseillerInitial.error}</p>
           </div>
         )}
 
@@ -246,8 +246,8 @@ function Supervision({}: SupervisionProps) {
           htmlFor='email-conseiller-destination'
           className={`text-base-medium whitespace-nowrap col-start-2 row-start-1 ${
             isRechercheJeunesSubmitted && jeunes.length > 0
-              ? 'text-neutral_content'
-              : 'text-[#999BB3]'
+              ? 'text-content_color'
+              : 'text-disabled'
           }`}
         >
           E-mail conseiller de destination
@@ -275,11 +275,9 @@ function Supervision({}: SupervisionProps) {
             <ImportantIcon
               focusable={false}
               aria-hidden={true}
-              className='fill-status_warning w-6 h-6 mr-2'
+              className='fill-warning w-6 h-6 mr-2'
             />
-            <p className='text-status_warning'>
-              {emailConseillerDestination.error}
-            </p>
+            <p className='text-warning'>{emailConseillerDestination.error}</p>
           </div>
         )}
 
@@ -317,9 +315,9 @@ function Supervision({}: SupervisionProps) {
                 <ImportantIcon
                   focusable={false}
                   aria-hidden={true}
-                  className='fill-status_warning w-6 h-6 mr-2 flex-shrink-0'
+                  className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
                 />
-                <p className='text-status_warning'>{erreurReaffectation}</p>
+                <p className='text-warning'>{erreurReaffectation}</p>
               </div>
             )}
           </div>
@@ -343,13 +341,13 @@ function Supervision({}: SupervisionProps) {
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'
+                  className='pb-2 pl-4 pr-4 text-sm-regular text-content_color'
                 >
                   Nom et prénom
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-sm-regular text-neutral_content'
+                  className='pb-2 pl-4 pr-4 text-sm-regular text-content_color'
                 >
                   Conseiller précédent
                 </th>

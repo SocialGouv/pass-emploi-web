@@ -97,7 +97,9 @@ const DossierJeuneMilo = ({
           <div className='flex items-center mb-3'>
             <dt
               className={` ${
-                dossier.email ? 'text-sm mr-1' : 'text-sm-medium text-warning'
+                dossier.email
+                  ? 'text-sm mr-1'
+                  : 'text-sm-medium text-deprecated_warning'
               }`}
               aria-label='E-mail'
             >
@@ -108,10 +110,10 @@ const DossierJeuneMilo = ({
           </div>
           {!dossier.email && (
             <>
-              <p className='text-sm-medium text-warning mb-2'>
+              <p className='text-sm-medium text-deprecated_warning mb-2'>
                 L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
               </p>
-              <ol className='text-sm text-warning'>
+              <ol className='text-sm text-deprecated_warning'>
                 <li className='mb-3.5'>
                   1. Renseignez l&apos;e-mail du jeune sur son profil i-Milo
                 </li>
