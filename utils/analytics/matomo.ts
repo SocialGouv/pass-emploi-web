@@ -7,6 +7,7 @@ interface InitSettings {
 }
 
 interface TrackSettings {
+  structure: string
   customTitle?: string
 }
 
@@ -46,7 +47,7 @@ function init({
   }
 }
 
-function track({ customTitle }: TrackSettings): void {
+function track({ structure, customTitle }: TrackSettings): void {
   window._paq = window._paq !== null ? window._paq : []
 
   let previousPath = ''
@@ -66,6 +67,8 @@ function track({ customTitle }: TrackSettings): void {
       push(['setReferrerUrl', `${previousPath}`])
     }
     push(['setCustomUrl', pathname])
+    push(['setCustomDimension', 1, 'conseiller'])
+    push(['setCustomDimension', 2, structure])
 
     push(['setDocumentTitle', customTitle || document.title])
     push(['deleteCustomVariables', 'page'])
