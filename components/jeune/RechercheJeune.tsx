@@ -23,7 +23,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
     <form role='search' onSubmit={onSubmit}>
       <label
         htmlFor='rechercher-jeunes'
-        className='text-base-medium text-neutral_content'
+        className='text-base-medium text-content_color'
       >
         Rechercher un jeune par son nom
       </label>

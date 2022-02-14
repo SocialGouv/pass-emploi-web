@@ -13,6 +13,6 @@ export const ErrorMessage = ({ children, className }: ErrorMessageProps) => (
       focusable='false'
       aria-hidden='true'
     />
-    <p className='text-sm-medium text-warning'>{children}</p>
+    <p className='text-sm-medium text-deprecated_warning'>{children}</p>
   </div>
 )
