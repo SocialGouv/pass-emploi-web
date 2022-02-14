@@ -34,7 +34,23 @@ describe('<ChatRoom />', () => {
     messagesService = {
       observeJeuneChat: jest.fn(
         (idConseiller: string, jeune: Jeune, fn: (chat: JeuneChat) => void) => {
-          fn(unJeuneChat({ ...jeune, chatId: `chat-${jeune.id}` }))
+          if (jeune.id === 'jeune-3') {
+            fn(
+              unJeuneChat({
+                ...jeune,
+                chatId: `chat-${jeune.id}`,
+                seenByConseiller: false,
+              })
+            )
+          } else {
+            fn(
+              unJeuneChat({
+                ...jeune,
+                chatId: `chat-${jeune.id}`,
+                seenByConseiller: true,
+              })
+            )
+          }
           return () => {}
         }
       ),
@@ -49,7 +65,7 @@ describe('<ChatRoom />', () => {
       id: 'idConseiller',
       name: 'Taverner',
       structure: UserStructure.POLE_EMPLOI,
-      estSuperviseur: false
+      estSuperviseur: false,
     }
     accessToken = 'accessToken'
     tokenChat = 'tokenChat'
@@ -100,6 +116,18 @@ describe('<ChatRoom />', () => {
         expect(
           screen.getByText(`${jeune.firstName} ${jeune.lastName}`)
         ).toBeInTheDocument()
+      })
+
+      it('affiche les jeunes dans le bon ordre', () => {
+        expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
+          "Maria D'Aböville-Muñoz François"
+        )
+        expect(screen.getAllByRole('listitem')[1]).toHaveTextContent(
+          'Kenji Jirac'
+        )
+        expect(screen.getAllByRole('listitem')[2]).toHaveTextContent(
+          'Nadia Sanfamiye'
+        )
       })
     })
 

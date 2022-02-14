@@ -1,5 +1,5 @@
 import Conversation from 'components/layouts/Conversation'
-import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { Jeune, JeuneChat, compareJeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
@@ -76,6 +76,8 @@ export default function ChatRoom({}: ChatRoomProps) {
     } else {
       currentJeunesChat.push(newJeuneChat)
     }
+
+    currentJeunesChat.sort(compareJeuneChat)
 
     setJeunesChats([...currentJeunesChat])
   }
