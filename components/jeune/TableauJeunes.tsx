@@ -77,9 +77,9 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   const matomoTitle = () => {
     if (isDate && !sortDesc)
-      return `Mes jeunes - Dernière action - Ordre chronologique`
+      return `Mes jeunes - Dernière activité - Ordre chronologique`
     if (isDate && sortDesc)
-      return 'Mes jeunes - Dernière action - Ordre antéchronologique'
+      return 'Mes jeunes - Dernière activité - Ordre antéchronologique'
     if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
     if (isName && sortDesc)
       return 'Mes jeunes - Nom - Ordre alphabétique inversé'
