@@ -14,7 +14,9 @@ describe('<DetailsJeune>', () => {
         name: `${jeune.firstName} ${jeune.lastName}`,
       })
     ).toBeInTheDocument()
-    expect(screen.getByText("Profil en cours d'activation")).toBeInTheDocument()
+    expect(
+      screen.getByText("Ce jeune ne s'est pas encore connecté à l'application.")
+    ).toBeInTheDocument()
     expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
     expect(screen.getByTitle('e-mail')).toBeInTheDocument()
     expect(screen.getByText('07/12/2021')).toBeInTheDocument()

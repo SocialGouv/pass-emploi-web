@@ -35,6 +35,7 @@ module.exports = {
       rose: '#EF5DA8',
       rouge_france: '#E1000F',
       rouge_france_5: '#E1000F0D',
+      warning_lighten: '#FFF1ED',
       warning: '#FF3F15',
       primary: '#3B69D1',
       primary_lighten: '#EEF1F8',

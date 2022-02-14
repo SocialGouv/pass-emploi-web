@@ -13,19 +13,18 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
 
   return (
     <>
-      <div className='flex justify-between pb-6'>
-        <h1 className='h2-semi text-bleu_nuit'>
-          {jeune.firstName} {jeune.lastName}
-        </h1>
+      <h1 className='h2-semi text-bleu_nuit mb-3'>
+        {jeune.firstName} {jeune.lastName}
+      </h1>
 
-        {!jeune.isActivated && (
-          <span className='bg-gris_blanc py-4 px-7 rounded-medium'>
-            <p className='text-sm-medium text-bleu_nuit'>
-              Profil en cours d&apos;activation
-            </p>
+      {!jeune.isActivated && (
+        <p className='mb-3 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
+          <span className='text-sm-medium text-warning'>
+            Ce jeune ne s&apos;est pas encore connect&eacute; &agrave;
+            l&apos;application.
           </span>
-        )}
-      </div>
+        </p>
+      )}
 
       <dl className='flex text-sm-semi text-bleu_nuit mb-2'>
         <dt className='mr-2'>Ajouté le :</dt>
