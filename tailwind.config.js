@@ -47,6 +47,7 @@ module.exports = {
       accent_1: '#950EFF',
       accent_1_lighten: '#F4E5FF',
       accent_2: '#4A526D',
+      accent_2_lighten: '#F6F6F6',
       accent_3: '#0C7A81',
       accent_3_lighten: '#DFFDFF',
       content_color: '#161616',
