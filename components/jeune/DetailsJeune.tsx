@@ -13,12 +13,12 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
 
   return (
     <>
-      <h1 className='h2-semi text-bleu_nuit'>
+      <h1 className='h2-semi text-bleu_nuit mb-3'>
         {jeune.firstName} {jeune.lastName}
       </h1>
 
       {!jeune.isActivated && (
-        <p className=' mb-3 mt-3 bg-warning_background py-4 px-7 rounded-medium max-w-md text-center'>
+        <p className='mb-3 bg-warning_background py-4 px-7 rounded-medium max-w-md text-center'>
           <span className='text-sm-medium text-warning'>
             Ce jeune ne s&apos;est pas encore connect&eacute; &agrave;
             l&apos;application.
