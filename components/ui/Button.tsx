@@ -7,15 +7,15 @@ type ButtonProps = {
   type?: any
   label?: string
   disabled?: boolean
-  style?: ButtonColorStyle
+  style?: ButtonStyle
   className?: any
   form?: string
 }
 
-export enum ButtonColorStyle {
-  BLUE = 'blue',
-  WHITE = 'white',
-  RED = 'red',
+export enum ButtonStyle {
+  PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
+  WARNING = 'WARNING',
 }
 
 const Button = ({
@@ -25,7 +25,7 @@ const Button = ({
   type,
   disabled = false,
   label,
-  style = ButtonColorStyle.BLUE,
+  style = ButtonStyle.PRIMARY,
   className,
   form,
 }: ButtonProps) => {
@@ -47,17 +47,15 @@ const Button = ({
   )
 }
 
-const getColorStyleClassName = (
-  style: ButtonColorStyle | undefined
-): string => {
+const getColorStyleClassName = (style: ButtonStyle | undefined): string => {
   switch (style) {
-    case ButtonColorStyle.WHITE:
-      return styles.buttonWhite
-    case ButtonColorStyle.RED:
-      return styles.buttonRed
-    case ButtonColorStyle.BLUE:
+    case ButtonStyle.SECONDARY:
+      return styles.buttonSecondary
+    case ButtonStyle.WARNING:
+      return styles.buttonWarning
+    case ButtonStyle.PRIMARY:
     default:
-      return styles.buttonBlue
+      return styles.buttonPrimary
   }
 }
 

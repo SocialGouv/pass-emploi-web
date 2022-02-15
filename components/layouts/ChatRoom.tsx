@@ -7,7 +7,7 @@ import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import { formatDayAndHourDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
-import EmptyMessagesImage from '../../assets/icons/empty_message.svg'
+import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 

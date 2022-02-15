@@ -1,4 +1,4 @@
-import Button, { ButtonColorStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
@@ -72,7 +72,7 @@ const DeleteRdvModal = ({
             <Button
               type='button'
               className='mr-[16px]'
-              style={ButtonColorStyle.RED}
+              style={ButtonStyle.WARNING}
               onClick={handleDeleteRdv}
             >
               <span className='px-[40px]'> Supprimer </span>
@@ -80,7 +80,7 @@ const DeleteRdvModal = ({
 
             <Button
               type='button'
-              style={ButtonColorStyle.WHITE}
+              style={ButtonStyle.SECONDARY}
               onClick={handleCloseModal}
             >
               <span className='px-[40px]'> Annuler </span>

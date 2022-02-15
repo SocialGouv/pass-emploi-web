@@ -1,94 +1,96 @@
 .button {
-	padding: 16px 24px;
-	border: 0.1rem solid transparent;
-	border-radius: 74px;
-	transition: border-color, color 0.2s, background-color 0.2s;
-	display: flex;
-	align-items: center;
-	height: 46px;
+  padding: 16px 24px;
+  border-radius: 74px;
+  transition: border-color, color 0.2s, background-color 0.2s;
+  display: flex;
+  align-items: center;
+  height: 46px;
 }
 
 /**
-* Button Blue (default)
+* Button Primary (default)
 */
 
-.buttonBlue {
-	background-color: theme('colors.bleu_nuit');
-	color: theme('colors.blanc');
+.buttonPrimary {
+  background-color: theme('colors.bleu_nuit');
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
 }
 
-.buttonBlue:hover {
-	background-color: theme('colors.blanc');
-	color: theme('colors.bleu_nuit');
-	border: 0.1rem solid theme('colors.bleu_nuit');
+.buttonPrimary:hover,
+.buttonPrimary:active {
+  background-color: theme('colors.blanc');
+  color: theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
 }
 
-.buttonBlue:hover svg path {
-	fill: theme('colors.bleu_nuit');
+.buttonPrimary:hover svg,
+.buttonPrimary:active svg {
+  fill: theme('colors.bleu_nuit');
 }
 
-.buttonBlue:active {
-	background-color: theme('colors.blanc');
-	color: theme('colors.bleu_nuit');
-	border: 0.1rem solid theme('colors.bleu_nuit');
+.buttonPrimary[disabled] {
+  background-color: theme('colors.bleu_gris');
+  cursor: not-allowed;
+  border: 1px solid transparent;
 }
 
-.buttonBlue[disabled] {
-	background-color: theme('colors.bleu_gris');
-	cursor: not-allowed;
-	border: unset;
+.buttonPrimary[disabled]:hover {
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
 }
 
-.buttonBlue[disabled]:hover {
-	color: theme('colors.blanc');
-	border: unset;
+.buttonPrimary[disabled]:hover svg {
+  fill: theme('colors.blanc');
 }
 
 /**
-* Button white
+* Button Secondary
 */
 
-.buttonWhite {
-	background-color: theme('colors.blanc');
-	color: theme('colors.bleu_nuit');
-	border: 0.1rem solid theme('colors.bleu_nuit');
+.buttonSecondary {
+  background-color: theme('colors.blanc');
+  color: theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
 }
 
-.buttonWhite:hover {
-	background-color: theme('colors.bleu_nuit');
-	color: theme('colors.blanc');
+.buttonSecondary:hover {
+  background-color: theme('colors.bleu_nuit');
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
 }
 
-.buttonWhite:hover svg path {
-	fill: theme('colors.bleu_nuit');
+.buttonSecondary:hover svg {
+  fill: theme('colors.blanc');
 }
 
 /**
-* Button red
+* Button Warning
 */
 
-.buttonRed {
-	background-color: theme('colors.rouge_france_5');
-	color: theme('colors.rouge_france');
-	border: unset;
+.buttonWarning {
+  background-color: theme('colors.rouge_france_5');
+  color: theme('colors.rouge_france');
+  border: 1px solid transparent;
 }
 
-.buttonRed:hover {
-	background-color: theme('colors.rouge_france');
-	color: theme('colors.blanc');
+.buttonWarning:hover {
+  background-color: theme('colors.rouge_france');
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
 }
 
-.buttonRed:hover svg path {
-	fill: theme('colors.rouge_france');
+.buttonWarning:hover svg {
+  fill: theme('colors.blanc');
 }
 
-.buttonRed[disabled] {
-	cursor: not-allowed;
-	border: unset;
+.buttonWarning[disabled] {
+  cursor: not-allowed;
+  border: 1px solid transparent;
 }
 
-.buttonRed[disabled]:hover {
-	background-color: theme('colors.rouge_france_5');
-	color: theme('colors.rouge_france');
-	border: unset;
+.buttonWarning[disabled]:hover {
+  background-color: theme('colors.rouge_france_5');
+  color: theme('colors.rouge_france');
+  border: 1px solid transparent;
 }

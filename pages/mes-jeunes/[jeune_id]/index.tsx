@@ -5,7 +5,7 @@ import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import Button, { ButtonColorStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
@@ -111,7 +111,7 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
             <Button
               onClick={openAddRdvModal}
               label='Fixer un rendez-vous'
-              style={ButtonColorStyle.WHITE}
+              style={ButtonStyle.SECONDARY}
             >
               Fixer un rendez-vous
             </Button>

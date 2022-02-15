@@ -2,7 +2,7 @@ import { AppHead } from 'components/AppHead'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
-import Button, { ButtonColorStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { jsonToRdv, RdvFormData } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
@@ -105,7 +105,7 @@ const MesRendezvous = ({
           role='tab'
           type='button'
           className='mr-[8px]'
-          style={displayOldRdv ? ButtonColorStyle.WHITE : ButtonColorStyle.BLUE}
+          style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
           onClick={toggleDisplayOldRdv}
         >
           Prochains rendez-vous
@@ -114,7 +114,7 @@ const MesRendezvous = ({
         <Button
           role='tab'
           type='button'
-          style={displayOldRdv ? ButtonColorStyle.BLUE : ButtonColorStyle.WHITE}
+          style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
           onClick={toggleDisplayOldRdv}
         >
           Rendez-vous passés
