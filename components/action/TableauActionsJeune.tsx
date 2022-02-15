@@ -27,7 +27,7 @@ export const TableauActionsJeune = ({
             role='columnheader'
             className='table-cell pl-4 py-4 border-b-2 border-grey_700'
           >
-            Intitulé de l'action
+            Intitulé de l&apos;action
           </span>
           <span
             role='columnheader'

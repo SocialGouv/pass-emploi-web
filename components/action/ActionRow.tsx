@@ -43,7 +43,7 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
         <span role='cell' className='table-cell border-b-2 border-grey_700'>
           <Status status={action.status} />
         </span>
-        <span role='cell' className='table-cell border-b-2 border-grey_700'>
+        <span className='table-cell border-b-2 border-grey_700'>
           <ChevronIcon focusable='false' aria-hidden='true' />
         </span>
       </a>

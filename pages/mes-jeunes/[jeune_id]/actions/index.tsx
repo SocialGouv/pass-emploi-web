@@ -29,9 +29,9 @@ type Props = {
   deleteSuccess: boolean
 }
 
-const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
-  new Date(action1.lastUpdate).getTime() >
-  new Date(action2.lastUpdate).getTime()
+const sortByCreationDate = (action1: ActionJeune, action2: ActionJeune) =>
+  new Date(action1.creationDate).getTime() >
+  new Date(action2.creationDate).getTime()
     ? -1
     : 1
 
@@ -164,7 +164,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
     }))
-    .sort(sortLastUpdate)
+    .sort(sortByCreationDate)
 
   return {
     props: {
