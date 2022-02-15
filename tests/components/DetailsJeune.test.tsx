@@ -3,11 +3,12 @@ import { render } from '@testing-library/react'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { unJeune } from 'fixtures/jeune'
 import React from 'react'
+import renderWithSession from '../renderWithSession'
 
 describe('<DetailsJeune>', () => {
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     const jeune = unJeune()
-    render(<DetailsJeune jeune={jeune} />)
+    renderWithSession(<DetailsJeune jeune={jeune} />)
     expect(
       screen.getByRole('heading', {
         level: 1,
@@ -26,7 +27,7 @@ describe('<DetailsJeune>', () => {
     const jeune = unJeune()
     delete jeune.email
 
-    render(<DetailsJeune jeune={jeune} />)
+    renderWithSession(<DetailsJeune jeune={jeune} />)
 
     expect(screen.queryByTitle('e-mail')).toBeNull()
   })
