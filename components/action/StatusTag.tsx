@@ -1,34 +1,51 @@
 import { ActionStatus } from 'interfaces/action'
 import React from 'react'
 
-const NotStarted = () => (
-  <span className='table-cell text-xs-medium text-accent_1 px-4 py-[2px] bg-accent_1_lighten rounded-x_large'>
-    À réaliser
-  </span>
-)
+interface TagProps {
+  status: ActionStatus
+}
 
-const InProgress = () => (
-  <span className='table-cell text-xs-medium text-accent_3 px-4 py-[2px] bg-accent_3_lighten rounded-x_large'>
-    En cours
-  </span>
-)
+const mappedStatus: {
+  [key: string]: { label: string; textColor: string; backgroundColor: string }
+} = {
+  not_started: {
+    label: 'À réaliser',
+    textColor: 'accent_1',
+    backgroundColor: 'accent_1_lighten',
+  },
+  in_progress: {
+    label: 'En cours',
+    textColor: 'accent_3',
+    backgroundColor: 'accent_3_lighten',
+  },
+  done: {
+    label: 'Terminée',
+    textColor: 'accent_2',
+    backgroundColor: 'accent_2_lighten',
+  },
+}
 
-const Done = () => (
-  <span className='table-cell text-xs-medium text-accent_2 px-4 py-[2px] bg-accent_2_lighten rounded-x_large'>
-    Terminée
-  </span>
-)
+const Tag = ({ status }: TagProps) => {
+  const { label, textColor, backgroundColor } = mappedStatus[status]
+  return (
+    <span
+      className={`table-cell text-xs-medium text-${textColor} px-4 py-[2px] bg-${backgroundColor} rounded-x_large`}
+    >
+      {label}
+    </span>
+  )
+}
 
-export const Status = (props: any) => {
+export const StatusTag = (props: any) => {
   switch (props.status) {
     case ActionStatus.InProgress:
-      return <InProgress />
+      return <Tag status={ActionStatus.InProgress} />
 
     case ActionStatus.Done:
-      return <Done />
+      return <Tag status={ActionStatus.Done} />
 
     case ActionStatus.NotStarted:
     default:
-      return <NotStarted />
+      return <Tag status={ActionStatus.NotStarted} />
   }
 }

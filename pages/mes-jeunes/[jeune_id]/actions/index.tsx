@@ -29,7 +29,7 @@ type Props = {
   deleteSuccess: boolean
 }
 
-const sortByCreationDate = (action1: ActionJeune, action2: ActionJeune) =>
+const compareByCreationDate = (action1: ActionJeune, action2: ActionJeune) =>
   new Date(action1.creationDate).getTime() >
   new Date(action2.creationDate).getTime()
     ? -1
@@ -118,9 +118,8 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
         <TableauActionsJeune
           prenom={jeune.firstName}
           nom={jeune.lastName}
-          elements={actionsEnCours.map((action: ActionJeune) => (
-            <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
-          ))}
+          jeuneId={jeune.id}
+          actions={actionsEnCours}
         />
       )}
     </>
@@ -164,7 +163,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
     }))
-    .sort(sortByCreationDate)
+    .sort(compareByCreationDate)
 
   return {
     props: {

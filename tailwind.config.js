@@ -9,6 +9,11 @@ module.exports = {
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
+  safelist: [
+    { pattern: /^bg-/ },
+    { pattern: /^text-/ },
+    { pattern: /^border-/ },
+  ], // Retain all classes starting with...
   theme: {
     screens: {
       sm: '480px',

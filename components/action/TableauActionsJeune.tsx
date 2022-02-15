@@ -1,53 +1,49 @@
 import React from 'react'
+import { ActionJeune } from 'interfaces/action'
+import ActionRow from './ActionRow'
 
 interface TableauActionsJeuneProps {
   prenom: string
   nom: string
-  elements: JSX.Element[]
+  jeuneId: string
+  actions: ActionJeune[]
 }
 
 export const TableauActionsJeune = ({
   prenom,
   nom,
-  elements,
+  jeuneId,
+  actions,
 }: TableauActionsJeuneProps) => {
+  const styles = 'border-solid border-0 border-b-2 border-b-grey_700'
+
   return (
-    <div
-      role='table'
-      className='table w-full'
-      aria-label='Actions jeunes'
-      aria-describedby='liste_jeunes_actions_table_desc'
-    >
-      <div id='liste_jeunes_actions_table_desc' className='visually-hidden'>
+    <table className='w-full'>
+      <caption className='visually-hidden'>
         Liste des actions de {prenom} {nom}
-      </div>
-      <div role='rowgroup' className='table-header-group'>
-        <div role='row' className='table-row text-xs-medium text-grey_800'>
-          <span
-            role='columnheader'
-            className='table-cell pl-4 py-4 border-b-2 border-grey_700'
+      </caption>
+      <thead>
+        <tr className='text-xs-medium text-grey_800'>
+          <th
+            scope='col'
+            className=' pl-4 py-4 border-solid border-0 border-b-2 border-b-grey_700'
           >
             Intitulé de l&apos;action
-          </span>
-          <span
-            role='columnheader'
-            className='table-cell border-b-2 border-grey_700'
-          >
+          </th>
+          <th scope='col' className={styles}>
             Créée le
-          </span>
-          <span
-            role='columnheader'
-            className='table-cell border-b-2 border-grey_700'
-          >
+          </th>
+          <th scope='col' className={styles}>
             Statut
-          </span>
-          <span className='table-cell border-b-2 border-grey_700'></span>
-        </div>
-      </div>
+          </th>
+        </tr>
+      </thead>
 
-      <div role='rowgroup' className='table-row-group'>
-        {elements}
-      </div>
-    </div>
+      <tbody>
+        {actions.map((action: ActionJeune) => (
+          <ActionRow key={action.id} action={action} jeuneId={jeuneId} />
+        ))}
+      </tbody>
+    </table>
   )
 }
