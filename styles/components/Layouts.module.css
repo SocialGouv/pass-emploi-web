@@ -2,8 +2,8 @@
   display: grid;
   min-height: 100%;
   grid-template-areas:
-          "sidebar main chat"
-          "sidebar footer chat";
+    'sidebar main chat'
+    'sidebar footer chat';
   grid-template-columns: minmax(217px, auto) 1fr 370px;
   grid-template-rows: 100% auto;
 }
@@ -12,8 +12,8 @@
   display: grid;
   min-height: 100%;
   grid-template-areas:
-          "sidebar main ."
-          "sidebar footer footer";
+    'sidebar main .'
+    'sidebar footer footer';
   grid-template-columns: minmax(217px, auto) auto 1fr;
   grid-template-rows: 100% auto;
 }
@@ -21,7 +21,22 @@
 .page {
   grid-area: main;
   min-height: 100vh;
-  padding: 48px;
+  display: grid;
+  grid-template-areas:
+    'page-title'
+    'page-content';
+  grid-template-rows: auto 100%;
+}
+
+.page_title {
+  grid-area: page-title;
+  padding: 40px 48px;
+  border-bottom: 1px solid theme('colors.primary_lighten');
+}
+
+.page_content {
+  grid-area: page-content;
+  padding: 40px 48px;
 }
 
 .sidebar {
@@ -179,11 +194,10 @@
   border-top: 2px solid theme('colors.primary_lighten');
 }
 
-.footer li:hover a  {
+.footer li:hover a {
   color: theme('colors.primary');
 }
 
-.footer li:hover svg  {
+.footer li:hover svg {
   fill: theme('colors.primary');
 }
-

@@ -1,7 +1,8 @@
+import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonStyle } from 'components/ui/Button'
 import EchecMessage from 'components/EchecMessage'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -11,6 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { ActionsService } from 'services/actions.service'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { formatDayDate } from 'utils/date'
 import { Container, useDependance } from 'utils/injectionDependances'
@@ -65,7 +67,7 @@ function PageAction({ action, jeune }: Props) {
       <AppHead
         titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content} `}
       />
-      <div className='flex justify-between mb-[63px]'>
+      <div className={`flex justify-between ${styles.page_title}`}>
         <div className='flex items-center'>
           <Link href={`/mes-jeunes/${jeune.id}/actions`} passHref>
             <a
@@ -76,7 +78,7 @@ function PageAction({ action, jeune }: Props) {
             </a>
           </Link>
           <p className='h4-semi text-bleu_nuit'>
-            Actions de {jeune.firstName} {jeune.lastName}
+            Action de {jeune.firstName} {jeune.lastName}
           </p>
         </div>
 
@@ -93,49 +95,62 @@ function PageAction({ action, jeune }: Props) {
         )}
       </div>
 
-      {showEchecMessage && (
-        <EchecMessage
-          label={
-            "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
-          }
-          onAcknowledge={() => setShowEchecMessage(false)}
-        />
-      )}
+      <div className={styles.page_content}>
+        {showEchecMessage && (
+          <EchecMessage
+            label={
+              "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
+            }
+            onAcknowledge={() => setShowEchecMessage(false)}
+          />
+        )}
 
-      <h1 className='h3-semi text-bleu_nuit mb-[24px]'>{action.content}</h1>
-      <p className='text-sm text-bleu mb-[24px]'>{action.comment}</p>
-      <div className='border-t-2 border-b-2 border-bleu_blanc flex justify-between items-center py-[14px]'>
-        <dl className='flex py-[26px]'>
-          <dt className='text-bleu text-sm mr-[25px]'>Date</dt>
-          <dd className='text-bleu_nuit text-sm'>
-            {formatDayDate(new Date(action.creationDate))}
+        <dl>
+          <dt className='text-bleu text-sm-semi'>Intitulé de l&apos;action</dt>
+          <dd className='mt-4 text-bleu_nuit text-md-semi'>{action.content}</dd>
+
+          {action.comment && (
+            <>
+              <dt className='mt-8 text-bleu text-sm-semi'>Commentaire</dt>
+              <dd className='mt-4 text-bleu_nuit text-base-regular'>
+                {action.comment}
+              </dd>
+            </>
+          )}
+
+          <dt className='mt-8 text-bleu text-sm-semi'>Informations</dt>
+          <dd>
+            <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+              <InfoAction label='Statut'>
+                <RadioButtonStatus
+                  status={ActionStatus.NotStarted}
+                  isSelected={statut === ActionStatus.NotStarted}
+                  onChange={updateAction}
+                />
+                <RadioButtonStatus
+                  status={ActionStatus.InProgress}
+                  isSelected={statut === ActionStatus.InProgress}
+                  onChange={updateAction}
+                />
+                <RadioButtonStatus
+                  status={ActionStatus.Done}
+                  isSelected={statut === ActionStatus.Done}
+                  onChange={updateAction}
+                />
+              </InfoAction>
+
+              <InfoAction label="Date d'actualisation">
+                {formatDayDate(new Date(action.lastUpdate))}
+              </InfoAction>
+
+              <InfoAction label='Date de création'>
+                {formatDayDate(new Date(action.creationDate))}
+              </InfoAction>
+
+              <InfoAction label='Créateur'>{action.creator}</InfoAction>
+            </dl>
           </dd>
         </dl>
-
-        <div className='border-r-2 border-bleu_blanc' />
-
-        <form onSubmit={(e) => e.preventDefault()}>
-          <fieldset className='border-none'>
-            <span className='flex items-center text-sm'>
-              <legend className='text-bleu inline mr-[25px]'>Statut</legend>
-              <RadioButtonStatus
-                status='À réaliser'
-                isSelected={statut === ActionStatus.NotStarted}
-                onChange={() => updateAction(ActionStatus.NotStarted)}
-              />
-              <RadioButtonStatus
-                status='En cours'
-                isSelected={statut === ActionStatus.InProgress}
-                onChange={() => updateAction(ActionStatus.InProgress)}
-              />
-              <RadioButtonStatus
-                status='Terminée'
-                isSelected={statut === ActionStatus.Done}
-                onChange={() => updateAction(ActionStatus.Done)}
-              />
-            </span>
-          </fieldset>
-        </form>
       </div>
     </>
   )

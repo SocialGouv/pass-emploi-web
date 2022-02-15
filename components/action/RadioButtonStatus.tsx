@@ -1,9 +1,26 @@
+import { ActionStatus } from 'interfaces/action'
 import { MouseEvent } from 'react'
+import DoneIcon from '../../assets/icons/simple_done.svg'
 
 interface RadioButtonStatusProps {
-  status: string
+  status: ActionStatus
   isSelected: boolean
-  onChange: () => void
+  onChange: (statutChoisi: ActionStatus) => void
+}
+
+const mappedStatus: { [key: string]: { label: string; color: string } } = {
+  not_started: {
+    label: 'À réaliser',
+    color: 'accent_1',
+  },
+  in_progress: {
+    label: 'Commencée',
+    color: 'accent_3',
+  },
+  done: {
+    label: 'Terminée',
+    color: 'accent_2',
+  },
 }
 
 export const RadioButtonStatus = ({
@@ -11,30 +28,41 @@ export const RadioButtonStatus = ({
   isSelected,
   onChange,
 }: RadioButtonStatusProps) => {
-  const onClickSpan = (e: MouseEvent) => {
+  const onClick = (e: MouseEvent) => {
     e.preventDefault()
-    onChange()
+    onChange(status)
   }
 
+  const { label, color } = mappedStatus[status]
+  const id = `option-statut--${label.toLowerCase()}`
+  const selectedStyle = `border-${color} bg-${color}_lighten text-${color}`
+
   return (
-    <span
-      className={`text-bleu_nuit border-2 rounded-x_large p-[16px] mr-[8px] hover:cursor-pointer ${
-        isSelected
-          ? 'text-sm-semi border-bleu_nuit bg-bleu_blanc'
-          : 'border-bleu_blanc text-sm'
+    <div
+      className={`flex items-center px-4 py-3 border border-solid rounded-full text-sm-semi mr-4 cursor-pointer ${
+        isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
       }`}
-      onClick={onClickSpan}
+      onClick={onClick}
     >
-      <label htmlFor={`option-statut--${status}`}>{status}</label>
+      {isSelected && (
+        <DoneIcon
+          focusable={false}
+          aria-hidden={true}
+          className={`fill-${color} mr-2`}
+        />
+      )}
+      <label htmlFor={id} className='cursor-pointer'>
+        {label}
+      </label>
       <input
         className='sr-only'
         type='radio'
-        id={`option-statut--${status}`}
+        id={id}
         name='option-statut'
         checked={isSelected}
         readOnly={true}
         required={true}
       />
-    </span>
+    </div>
   )
 }

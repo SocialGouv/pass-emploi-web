@@ -11,14 +11,15 @@ export interface ActionJeune {
   id: string
   content: string
   comment: string
-  creationDate: Date
-  lastUpdate: Date
+  creationDate: string
+  lastUpdate: string
   creator: string
   creatorType: string
   isDone?: boolean
   status: ActionStatus
 }
 
+// FIXME : bonne pratique des enum > clé === valeur
 export enum ActionStatus {
   NotStarted = 'not_started',
   InProgress = 'in_progress',
