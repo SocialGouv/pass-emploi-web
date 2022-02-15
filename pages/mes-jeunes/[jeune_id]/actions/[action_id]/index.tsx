@@ -1,6 +1,6 @@
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonColorStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import EchecMessage from 'components/EchecMessage'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
@@ -84,7 +84,7 @@ function PageAction({ action, jeune }: Props) {
           <Button
             label="Supprimer l'action"
             onClick={() => deleteAction()}
-            style={ButtonColorStyle.RED}
+            style={ButtonStyle.WARNING}
             className='px-[36px] py-[16px]'
             disabled={deleteDisabled}
           >

@@ -3,7 +3,7 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
-import Logo from '../assets/icons/logo_PassEmploiBig.svg'
+import Logo from '../assets/images/logo_PassEmploiBig.svg'
 
 interface LoginProps {
   ssoPassEmploiEstActive?: boolean

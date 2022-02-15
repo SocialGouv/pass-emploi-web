@@ -16,7 +16,7 @@
 	border: 0.1rem solid theme('colors.bleu_nuit');
 }
 
-.linkButtonBlue:hover svg path {
+.linkButtonBlue:hover svg {
 	fill: theme('colors.bleu_nuit');
 }
 
