@@ -1,4 +1,4 @@
-import Button, { ButtonColorStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import Modal from 'components/Modal'
 import { ActionJeune } from 'interfaces/action'
 import { useSession } from 'next-auth/react'
@@ -103,9 +103,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
           <Button
             type='button'
             className='mr-[8px]'
-            style={
-              isCustomMode ? ButtonColorStyle.WHITE : ButtonColorStyle.BLUE
-            }
+            style={isCustomMode ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
             onClick={toggleCustomMode}
           >
             Actions prédéfinies
@@ -113,9 +111,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
           <Button
             type='button'
-            style={
-              isCustomMode ? ButtonColorStyle.BLUE : ButtonColorStyle.WHITE
-            }
+            style={isCustomMode ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
             onClick={toggleCustomMode}
           >
             Action personnalisée
