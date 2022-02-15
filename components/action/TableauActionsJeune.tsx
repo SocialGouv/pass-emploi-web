@@ -1,28 +1,27 @@
 import React from 'react'
 import { ActionJeune } from 'interfaces/action'
 import ActionRow from './ActionRow'
+import { Jeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
-  prenom: string
-  nom: string
-  jeuneId: string
+  jeune: Jeune
   actions: ActionJeune[]
+  hideTableHead?: boolean
 }
 
 export const TableauActionsJeune = ({
-  prenom,
-  nom,
-  jeuneId,
+  jeune,
   actions,
+  hideTableHead = false,
 }: TableauActionsJeuneProps) => {
   const styles = 'border-solid border-0 border-b-2 border-b-grey_700'
 
   return (
     <table className='w-full'>
       <caption className='sr-only'>
-        Liste des actions de {prenom} {nom}
+        Liste des actions de {jeune.firstName} {jeune.lastName}
       </caption>
-      <thead>
+      <thead className={hideTableHead ? 'sr-only' : ''}>
         <tr className='text-xs-medium text-grey_800'>
           <th
             scope='col'
@@ -41,7 +40,7 @@ export const TableauActionsJeune = ({
 
       <tbody>
         {actions.map((action: ActionJeune) => (
-          <ActionRow key={action.id} action={action} jeuneId={jeuneId} />
+          <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
         ))}
       </tbody>
     </table>

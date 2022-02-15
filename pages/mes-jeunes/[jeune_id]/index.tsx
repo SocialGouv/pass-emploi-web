@@ -1,13 +1,15 @@
+import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
-import ListeActionsJeune from 'components/jeune/ListeActionsJeune'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
+import { ActionJeuneJson } from 'interfaces/json/action'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
@@ -26,9 +28,21 @@ interface FicheJeuneProps {
   idConseiller: string
   jeune: Jeune
   rdvs: RdvJeune[]
+  actions: ActionJeune[]
 }
 
-const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
+const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
+  new Date(action1.lastUpdate).getTime() >
+  new Date(action2.lastUpdate).getTime()
+    ? -1
+    : 1
+
+const FicheJeune = ({
+  idConseiller,
+  jeune,
+  rdvs,
+  actions,
+}: FicheJeuneProps) => {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
@@ -136,7 +150,30 @@ const FicheJeune = ({ idConseiller, jeune, rdvs }: FicheJeuneProps) => {
           <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
 
           {!isPoleEmploi ? (
-            <ListeActionsJeune idJeune={jeune.id} />
+            <>
+              {actions.length ? (
+                <>
+                  <TableauActionsJeune
+                    jeune={jeune}
+                    actions={actions}
+                    hideTableHead={true}
+                  />
+                  <div className='flex justify-center mt-8'>
+                    <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+                      <a className='text-sm text-bleu_nuit underline'>
+                        Voir la liste des actions du jeune
+                      </a>
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+                  <a className='text-sm text-bleu_nuit underline'>
+                    Accédez à cette page pour créer une action
+                  </a>
+                </Link>
+              )}
+            </>
           ) : (
             <IntegrationPoleEmploi label='actions et démarches' />
           )}
@@ -177,14 +214,14 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService, rendezVousService } =
+  const { jeunesService, rendezVousService, actionsService } =
     Container.getDIContainer().dependances
 
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
 
-  const [resInfoJeune, resRdvJeune] = await Promise.all([
+  const [resInfoJeune, resRdvJeune, resActionsJeune] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,
       accessToken
@@ -193,7 +230,18 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       context.query.jeune_id as string,
       accessToken
     ),
+    actionsService.getActionsJeune(
+      context.query.jeune_id as string,
+      accessToken
+    ),
   ])
+
+  const userActions: ActionJeune[] = resActionsJeune
+    .map((userActionJson: ActionJeuneJson) => ({
+      ...userActionJson,
+      status: userActionJson.status || ActionStatus.NotStarted,
+    }))
+    .sort(sortLastUpdate)
 
   if (!resInfoJeune || !resRdvJeune) {
     return {
@@ -207,6 +255,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       idConseiller: user.id,
       jeune: resInfoJeune,
       rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
+      actions: userActions.slice(0, 3),
     },
   }
 }
