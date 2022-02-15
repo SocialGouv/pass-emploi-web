@@ -112,10 +112,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.NOM)}
-                  aria-label={`Afficher la liste des jeunes triée par noms par ordre alphabétique ${
+                  aria-label={`Afficher la liste des jeunes triée par noms de famille par ordre alphabétique ${
                     isName && !sortDesc ? 'inversé' : ''
                   }`}
-                  title={`Afficher la liste des jeunes triée par noms par ordre alphabétique ${
+                  title={`Afficher la liste des jeunes triée par noms de famille par ordre alphabétique ${
                     isName && !sortDesc ? 'inversé' : ''
                   }`}
                 >
@@ -139,14 +139,14 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
-                  aria-label={`Afficher la liste des jeunes triée par dates de dernière activité par ordre ${
+                  aria-label={`Afficher la liste des jeunes triée par dates de dernière action du jeune par ordre ${
                     isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
                   }`}
-                  title={`Afficher la liste des jeunes triée par dates de dernière activité par ordre ${
+                  title={`Afficher la liste des jeunes triée par dates de dernière action du jeune par ordre ${
                     isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
                   }`}
                 >
-                  <span className='mr-1'>Dernière activité</span>
+                  <span className='mr-1'>Dernière action du jeune</span>
                   {isDate ? (
                     <ArrowDown
                       focusable='false'

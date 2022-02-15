@@ -22,7 +22,7 @@ describe('Recherche', () => {
   it('devrait afficher un formulaire de recherche', () => {
     //GIVEN
     const searchForm = screen.getByRole('search') as HTMLFormElement
-    const inputSearch = screen.getByLabelText('Rechercher un jeune par son nom')
+    const inputSearch = screen.getByLabelText('Rechercher un jeune par son nom de famille')
     const submitButton = screen.getByRole('button', {
       name: 'Rechercher',
     })
@@ -40,7 +40,7 @@ describe('Recherche', () => {
 
     beforeEach(() => {
       searchForm = screen.getByRole('search') as HTMLFormElement
-      inputSearch = screen.getByLabelText('Rechercher un jeune par son nom')
+      inputSearch = screen.getByLabelText('Rechercher un jeune par son nom de famille')
       submitButton = screen.getByRole('button', {
         name: 'Rechercher',
       })
