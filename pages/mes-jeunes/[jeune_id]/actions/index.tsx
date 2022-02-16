@@ -19,13 +19,27 @@ import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
 type Props = {
   jeune: Jeune
-  actionsEnCours: ActionJeune[]
+  actions: ActionJeune[]
+  actionsARealiser: ActionJeune[]
+  actionsCommencees: ActionJeune[]
+  actionsTerminees: ActionJeune[]
   deleteSuccess: boolean
 }
 
-function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
+function Actions({
+  jeune,
+  actions,
+  actionsARealiser,
+  actionsCommencees,
+  actionsTerminees,
+  deleteSuccess,
+}: Props) {
   const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
+  const [actionsFiltrees, setActionsFiltrees] = useState(actions)
+  const [currentFilter, setCurrentFilter] = useState<ActionStatus | 'Toutes'>(
+    'Toutes'
+  )
   const router = useRouter()
 
   const closeSuccessMessage = () => {
@@ -93,59 +107,63 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
             label={"L'action a bien été supprimée"}
           />
         )}
-
-        {actionsEnCours.length === 0 && (
-          <p className='text-md text-bleu'>
-            {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le
-            moment
-          </p>
-        )}
-        {actionsEnCours.length != 0 && (
-          <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
-        )}
       </div>
 
-      <ul role='tablist'>
-        <li
+      <div role='tablist' className='flex'>
+        <Button
           role='tab'
           id='onglet-1'
-          tabIndex='-1'
-          aria-selected='false'
+          tabIndex={currentFilter === 'Toutes' ? 0 : -1}
+          selected={currentFilter === 'Toutes'}
           aria-controls='panneau-1'
+          className='mr-4'
+          style={ButtonStyle.SECONDARY}
+          onClick={() => setCurrentFilter('Toutes')}
         >
-          Onglet 1
-        </li>
-        <li
+          Toutes ({actions.length})
+        </Button>
+        <Button
           role='tab'
           id='onglet-2'
-          tabIndex='0'
-          aria-selected='true'
+          tabIndex={currentFilter === ActionStatus.NotStarted ? 0 : -1}
+          selected={currentFilter === ActionStatus.NotStarted}
           aria-controls='panneau-2'
+          className='mr-4'
+          style={ButtonStyle.SECONDARY}
+          onClick={() => setCurrentFilter(ActionStatus.NotStarted)}
         >
-          Onglet 2
-        </li>
-        <li
+          À réaliser ({actionsARealiser.length})
+        </Button>
+
+        <Button
           role='tab'
           id='onglet-3'
-          tabIndex='-1'
-          aria-selected='false'
+          tabIndex={currentFilter === ActionStatus.InProgress ? 0 : -1}
+          selected={currentFilter === ActionStatus.InProgress}
           aria-controls='panneau-3'
+          className='mr-4'
+          style={ButtonStyle.SECONDARY}
+          onClick={() => setCurrentFilter(ActionStatus.InProgress)}
         >
-          Onglet 3
-        </li>
-        <li
+          Commencées ({actionsCommencees.length})
+        </Button>
+
+        <Button
           role='tab'
           id='onglet-4'
-          tabIndex='-1'
-          aria-selected='false'
+          tabIndex={currentFilter === ActionStatus.Done ? 0 : -1}
+          selected={currentFilter === ActionStatus.Done}
           aria-controls='panneau-4'
+          className='mr-4'
+          style={ButtonStyle.SECONDARY}
+          onClick={() => setCurrentFilter(ActionStatus.Done)}
         >
-          Onglet 4
-        </li>
-      </ul>
+          Terminées ({actionsTerminees.length})
+        </Button>
+      </div>
 
-      {actionsEnCours.length != 0 && (
-        <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
+      {actions.length != 0 && (
+        <TableauActionsJeune jeune={jeune} actions={actions} />
       )}
     </>
   )
@@ -183,10 +201,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  const sortedActions = [...dataActionsJeune].sort(compareActionsDatesDesc)
+
   return {
     props: {
       jeune: dataDetailsJeune,
-      actionsEnCours: [...dataActionsJeune].sort(compareActionsDatesDesc),
+      actions: sortedActions,
+      actionsARealiser: sortedActions.filter(
+        (action) => action.status === ActionStatus.NotStarted
+      ),
+      actionsCommencees: sortedActions.filter(
+        (action) => action.status === ActionStatus.InProgress
+      ),
+      actionsTerminees: sortedActions.filter(
+        (action) => action.status === ActionStatus.Done
+      ),
       deleteSuccess: Boolean(context.query.deleteSuccess),
     },
   }
