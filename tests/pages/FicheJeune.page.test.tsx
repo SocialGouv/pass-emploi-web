@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import { uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 import { UserStructure } from 'interfaces/conseiller'
 import React from 'react'
@@ -13,6 +14,7 @@ describe('Fiche Jeune', () => {
   const idConseiller = 'idConseiller'
   const jeune = unJeune({ firstName: 'Nadia', lastName: 'Sanfamiye' })
   const rdvs = uneListeDeRdvJeune()
+  const actions = uneListeDActions()
   let jeunesService: JeunesService
   let rendezVousService: RendezVousService
   beforeEach(async () => {
@@ -20,6 +22,8 @@ describe('Fiche Jeune', () => {
       createCompteJeunePoleEmploi: jest.fn(),
       getJeuneDetails: jest.fn(),
       getJeunesDuConseiller: jest.fn(),
+      getJeunesDuConseillerParEmail: jest.fn(),
+      reaffecter: jest.fn(),
     }
     rendezVousService = {
       deleteRendezVous: jest.fn(),
@@ -34,7 +38,12 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune idConseiller={idConseiller} jeune={jeune} rdvs={rdvs} />
+          <FicheJeune
+            idConseiller={idConseiller}
+            jeune={jeune}
+            rdvs={rdvs}
+            actions={actions}
+          />
         </DIProvider>
       )
     })
@@ -75,13 +84,19 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune idConseiller={idConseiller} jeune={jeune} rdvs={[]} />
+          <FicheJeune
+            idConseiller={idConseiller}
+            jeune={jeune}
+            rdvs={[]}
+            actions={actions}
+          />
         </DIProvider>,
         {
           user: {
             id: 'idConseiller',
             name: 'Tavernier',
             structure: UserStructure.POLE_EMPLOI,
+            estSuperviseur: false,
           },
         }
       )
