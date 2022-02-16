@@ -1,19 +1,18 @@
-//TODO: modifier les urls
 const liens = [
   {
-    url: 'https://www.numerique.gouv.fr/publications/rgaa-accessibilite/obligations/',
+    url: 'https://doc.pass-emploi.beta.gouv.fr/legal/web_accessibilite/',
     label: "Niveau d'accessibilité: non conforme",
   },
   {
-    url: 'https://beta.gouv.fr/startups/pass-emploi.html',
+    url: 'https://doc.pass-emploi.beta.gouv.fr/legal/web_conditions_generales',
     label: "Conditions Générales d'Utilisation",
   },
   {
-    url: '/',
+    url: 'https://doc.pass-emploi.beta.gouv.fr/legal/web_mentions_legales',
     label: 'Mentions légales',
   },
   {
-    url: 'https://www.cnil.fr/fr/rgpd-par-ou-commencer',
+    url: 'https://doc.pass-emploi.beta.gouv.fr/legal/web_politique_de_confidentialite',
     label: 'Politique de confidentialité',
   },
 ]
