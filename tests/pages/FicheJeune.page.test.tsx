@@ -73,6 +73,30 @@ describe('Fiche Jeune', () => {
       ).toHaveAttribute('href', `/mes-jeunes/${jeune.id}/actions`)
     })
 
+    it('affiche les actions du jeune', async () => {
+      actions.forEach((action) => {
+        expect(screen.getByText(action.content)).toBeInTheDocument()
+      })
+    })
+
+    it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <FicheJeune
+            idConseiller={idConseiller}
+            jeune={jeune}
+            rdvs={rdvs}
+            actions={[]}
+          />
+        </DIProvider>
+      )
+      expect(
+        screen.getByRole('link', {
+          name: 'Accédez à cette page pour créer une action',
+        })
+      ).toBeInTheDocument()
+    })
+
     it('permet la prise de rendez-vous', async () => {
       // Then
       expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()

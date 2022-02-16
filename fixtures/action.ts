@@ -35,7 +35,7 @@ export const uneListeDActions = (
     },
     {
       id: 'no-com-2',
-      content: 'Identifier ses atouts et ses compétences',
+      content: 'Compléter son cv',
       comment: 'Je suis un beau commentaire',
       creationDate: new Date(2021, 9, 21, 10),
       lastUpdate: new Date(2021, 9, 21, 10),
@@ -46,7 +46,7 @@ export const uneListeDActions = (
     },
     {
       id: 'no-com-3',
-      content: 'Identifier ses atouts et ses compétences',
+      content: 'Chercher une formation',
       comment: 'Je suis un beau commentaire',
       creationDate: new Date(2021, 9, 21, 10),
       lastUpdate: new Date(2021, 9, 21, 10),
