@@ -20,15 +20,15 @@ export default function Layout({ pathname, children }: LayoutProps) {
   return (
     <>
       <div
-        className={
-          displayChat ? styles.container : styles.container_without_chat
-        }
+        className={`${styles.container} ${
+          displayChat ? styles.container_with_chat : ''
+        }`}
       >
         <Sidebar />
         <main className={styles.page} role='main'>
           {children}
+          <Footer />
         </main>
-        <Footer />
         {displayChat && <ChatRoom />}
       </div>
       <div id='modal-root' />

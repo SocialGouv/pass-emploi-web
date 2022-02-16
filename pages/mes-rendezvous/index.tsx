@@ -12,6 +12,7 @@ import Router from 'next/router'
 import { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -92,7 +93,7 @@ const MesRendezvous = ({
   return (
     <>
       <AppHead titre='Tableau de bord - Mes rendez-vous' />
-      <span className='flex flex-wrap justify-between mb-[20px]'>
+      <span className={`flex flex-wrap justify-between ${styles.header}`}>
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
         <Button onClick={openAddModal} label='Fixer un rendez-vous'>
           <AddIcon focusable='false' aria-hidden='true' />
@@ -100,54 +101,56 @@ const MesRendezvous = ({
         </Button>
       </span>
 
-      <div role='tablist' className='flex mb-[40px]'>
-        <Button
-          role='tab'
-          type='button'
-          className='mr-[8px]'
-          style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
-          onClick={toggleDisplayOldRdv}
-        >
-          Prochains rendez-vous
-        </Button>
+      <div className={styles.content}>
+        <div role='tablist' className='flex mb-[40px]'>
+          <Button
+            role='tab'
+            type='button'
+            className='mr-[8px]'
+            style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
+            onClick={toggleDisplayOldRdv}
+          >
+            Prochains rendez-vous
+          </Button>
 
-        <Button
-          role='tab'
-          type='button'
-          style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
-          onClick={toggleDisplayOldRdv}
-        >
-          Rendez-vous passés
-        </Button>
+          <Button
+            role='tab'
+            type='button'
+            style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
+            onClick={toggleDisplayOldRdv}
+          >
+            Rendez-vous passés
+          </Button>
+        </div>
+
+        {displayOldRdv ? (
+          <RdvList rdvs={rendezVousPasses} />
+        ) : (
+          <RdvList rdvs={rdvsAVenir} onDelete={openDeleteRdvModal} />
+        )}
+
+        {showAddModal && session && (
+          <AddRdvModal
+            fetchJeunes={() =>
+              jeunesService.getJeunesDuConseiller(
+                session.user.id,
+                session.accessToken
+              )
+            }
+            addNewRDV={addNewRDV}
+            onClose={closeAddModal}
+          />
+        )}
+
+        {showDeleteModal && (
+          <DeleteRdvModal
+            onClose={closeDeleteRdvModal}
+            onDelete={deleteRdv}
+            show={showDeleteModal}
+            rdv={selectedRdv!}
+          />
+        )}
       </div>
-
-      {displayOldRdv ? (
-        <RdvList rdvs={rendezVousPasses} />
-      ) : (
-        <RdvList rdvs={rdvsAVenir} onDelete={openDeleteRdvModal} />
-      )}
-
-      {showAddModal && session && (
-        <AddRdvModal
-          fetchJeunes={() =>
-            jeunesService.getJeunesDuConseiller(
-              session.user.id,
-              session.accessToken
-            )
-          }
-          addNewRDV={addNewRDV}
-          onClose={closeAddModal}
-        />
-      )}
-
-      {showDeleteModal && (
-        <DeleteRdvModal
-          onClose={closeDeleteRdvModal}
-          onDelete={deleteRdv}
-          show={showDeleteModal}
-          rdv={selectedRdv!}
-        />
-      )}
     </>
   )
 }

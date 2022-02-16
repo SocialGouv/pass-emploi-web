@@ -167,7 +167,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
         <input
           type='text'
           value={newMessage}
-          className='text-md text-bleu_nuit border-none'
+          className='border-0 text-md text-bleu_nuit border-none'
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder='Écrivez votre message ici...'
         />

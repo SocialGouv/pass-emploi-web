@@ -1,7 +1,8 @@
 import AddActionModal from 'components/action/AddActionModal'
+import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
-import Button from 'components/ui/Button'
 import SuccessMessage from 'components/SuccessMessage'
+import Button from 'components/ui/Button'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -10,17 +11,12 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-
-/**
- * relative path since babel doesn't support alliases, see https://github.com/airbnb/babel-plugin-inline-react-svg/pull/17
- * TODO: workaround for path
- */
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
-import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 
 type Props = {
   jeune: Jeune
@@ -63,8 +59,8 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
       <AppHead
         titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`}
       />
-      <div className='flex justify-between flex-wrap w-full mb-[45px]'>
-        <Link href={`/mes-jeunes/${jeune.id}`} passHref>
+      <div className={`flex justify-between flex-wrap w-full ${styles.header}`}>
+        <Link href={`/mes-jeunes/${jeune.id}`}>
           <a className='p-1 mr-[24px]'>
             <BackIcon
               role='img'
@@ -74,7 +70,7 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
           </a>
         </Link>
 
-        <div className='mb-4 flex-auto'>
+        <div className='flex-auto'>
           <h1 className='h2 text-bleu_nuit mb-5'>
             Les actions de {`${jeune.firstName} ${jeune.lastName}`}
           </h1>
@@ -89,33 +85,35 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
         </Button>
       </div>
 
-      {showModal && (
-        <AddActionModal
-          onClose={() => setShowModal(false)}
-          onAdd={() => {
-            // addToActionEnCours(newAction) uncomment when be sends id
-            Router.reload()
-          }} //reload, since we dont have the id after add
-          show={showModal}
-        />
-      )}
+      <div className={styles.content}>
+        {showModal && (
+          <AddActionModal
+            onClose={() => setShowModal(false)}
+            onAdd={() => {
+              // addToActionEnCours(newAction) uncomment when be sends id
+              Router.reload()
+            }} //reload, since we dont have the id after add
+            show={showModal}
+          />
+        )}
 
-      {showSuccessMessage && (
-        <SuccessMessage
-          onAcknowledge={() => closeSuccessMessage()}
-          label={"L'action a bien été supprimée"}
-        />
-      )}
+        {showSuccessMessage && (
+          <SuccessMessage
+            onAcknowledge={() => closeSuccessMessage()}
+            label={"L'action a bien été supprimée"}
+          />
+        )}
 
-      {actionsEnCours.length === 0 && (
-        <p className='text-md text-bleu mb-8'>
-          {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le
-          moment
-        </p>
-      )}
-      {actionsEnCours.length != 0 && (
-        <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
-      )}
+        {actionsEnCours.length === 0 && (
+          <p className='text-md text-bleu'>
+            {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le
+            moment
+          </p>
+        )}
+        {actionsEnCours.length != 0 && (
+          <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
+        )}
+      </div>
     </>
   )
 }

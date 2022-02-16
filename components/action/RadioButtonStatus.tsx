@@ -51,7 +51,7 @@ export const RadioButtonStatus = ({
           className={`fill-${color} mr-2`}
         />
       )}
-      <label htmlFor={id} className='cursor-pointer'>
+      <label htmlFor={id} className='whitespace-nowrap cursor-pointer'>
         {label}
       </label>
       <input

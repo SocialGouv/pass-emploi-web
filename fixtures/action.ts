@@ -7,11 +7,10 @@ export const uneAction = (
     id: 'no-com-1',
     content: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
-    creationDate: new Date(2021, 9, 21, 10),
-    lastUpdate: new Date(2021, 9, 21, 10),
+    creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
+    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
     creator: 'Nils',
     creatorType: 'conseiller',
-    isDone: false,
     status: ActionStatus.NotStarted,
   }
 

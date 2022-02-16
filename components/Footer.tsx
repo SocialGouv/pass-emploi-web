@@ -11,7 +11,7 @@ export const Footer = () => {
 
   return (
     <footer role='contentinfo' className={styles.footer}>
-      <ul className='flex px-4'>
+      <ul className='flex px-4 flex-wrap'>
         {liens.map(({ url, label }) => (
           <ExternalLink
             key={url}

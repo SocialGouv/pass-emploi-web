@@ -43,34 +43,34 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
           <tbody>
             {rdvs.map((rdv: Rdv) => (
               <tr key={rdv.id} className='text-sm text-bleu_nuit'>
-                <td className='p-[16px]'>
+                <td className='p-4'>
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>
 
-                <td className='p-[16px]'>
+                <td className='p-4'>
                   {rdv.jeune.prenom} {rdv.jeune.nom}
                 </td>
 
-                <td className='p-[16px] '>
+                <td className='p-4 '>
                   <LocationIcon
                     focusable='false'
                     aria-hidden='true'
-                    className='mr-[7px] inline'
+                    className='mr-2 inline'
                   />
                   {rdv.modality}
                 </td>
 
-                <td className='p-[16px] '>
+                <td className='p-4 [overflow-wrap:anywhere]'>
                   <NoteIcon
                     focusable='false'
                     aria-hidden='true'
-                    className='mr-[7px] inline'
+                    className='mr-2 inline'
                   />
                   {rdv.comment || '--'}
                 </td>
 
                 {onDelete && (
-                  <td className='p-[16px]'>
+                  <td className='p-4'>
                     <button
                       onClick={() => handleDeleteClick(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}

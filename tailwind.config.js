@@ -14,6 +14,8 @@ module.exports = {
     { pattern: /^text-/ },
     { pattern: /^border-/ },
     { pattern: /^fill-/ },
+    { pattern: /^w-/ },
+    { pattern: /^h-/ },
   ], // Retain all classes starting with...
   theme: {
     screens: {

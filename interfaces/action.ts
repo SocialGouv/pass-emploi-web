@@ -1,12 +1,3 @@
-import { Jeune } from 'interfaces/jeune'
-
-export type JeuneActions = {
-  jeune: Jeune
-  nbActionsEnCours: number
-  nbActionsTerminees: number
-  nbActionsAFaire: number
-}
-
 export interface ActionJeune {
   id: string
   content: string
@@ -15,7 +6,6 @@ export interface ActionJeune {
   lastUpdate: string
   creator: string
   creatorType: string
-  isDone?: boolean
   status: ActionStatus
 }
 

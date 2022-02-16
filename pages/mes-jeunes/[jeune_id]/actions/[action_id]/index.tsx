@@ -67,20 +67,15 @@ function PageAction({ action, jeune }: Props) {
       <AppHead
         titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content} `}
       />
-      <div className={`flex justify-between ${styles.page_title}`}>
-        <div className='flex items-center'>
-          <Link href={`/mes-jeunes/${jeune.id}/actions`} passHref>
-            <a
-              className='mr-[24px]'
-              aria-label="Retour sur la liste d'actions du jeune"
-            >
-              <BackIcon role='img' focusable='false' />
-            </a>
-          </Link>
-          <p className='h4-semi text-bleu_nuit'>
-            Action de {jeune.firstName} {jeune.lastName}
-          </p>
-        </div>
+      <div className={`flex justify-between ${styles.header}`}>
+        <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+          <a className='flex items-center'>
+            <BackIcon focusable='false' aria-hidden={true} />
+            <p className='ml-6 h4-semi text-bleu_nuit'>
+              Actions de {jeune.firstName} {jeune.lastName}
+            </p>
+          </a>
+        </Link>
 
         {action.creatorType === 'conseiller' && (
           <Button
@@ -95,7 +90,7 @@ function PageAction({ action, jeune }: Props) {
         )}
       </div>
 
-      <div className={styles.page_content}>
+      <div className={styles.content}>
         {showEchecMessage && (
           <EchecMessage
             label={

@@ -1,41 +1,39 @@
 .container {
+  --sidebar-w: 15vw;
+  --page-w: 85vw;
+  --page-w-with-chat: 60vw;
+  --chat-w: 25vw;
+
   display: grid;
-  min-height: 100%;
-  grid-template-areas:
-    'sidebar main chat'
-    'sidebar footer chat';
-  grid-template-columns: minmax(217px, auto) 1fr 370px;
-  grid-template-rows: 100% auto;
+  grid-template-areas: 'sidebar page';
+  grid-template-columns: var(--sidebar-w) var(--page-w);
+  grid-template-rows: 100vh;
 }
 
-.container_without_chat {
-  display: grid;
-  min-height: 100%;
-  grid-template-areas:
-    'sidebar main .'
-    'sidebar footer footer';
-  grid-template-columns: minmax(217px, auto) auto 1fr;
-  grid-template-rows: 100% auto;
+.container.container_with_chat {
+  grid-template-areas: 'sidebar page chat';
+  grid-template-columns: var(--sidebar-w) var(--page-w-with-chat) var(--chat-w);
 }
 
 .page {
-  grid-area: main;
-  min-height: 100vh;
+  grid-area: page;
   display: grid;
   grid-template-areas:
-    'page-title'
-    'page-content';
-  grid-template-rows: auto 100%;
+    'header'
+    'content'
+    'footer';
+  grid-template-rows: auto 1fr auto;
+  overflow: auto;
 }
 
-.page_title {
-  grid-area: page-title;
+.header {
+  grid-area: header;
   padding: 40px 48px;
   border-bottom: 1px solid theme('colors.primary_lighten');
 }
 
-.page_content {
-  grid-area: page-content;
+.content {
+  grid-area: content;
   padding: 40px 48px;
 }
 
@@ -44,9 +42,6 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: fixed;
-  width: 217px;
-  height: 100%;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding: 20px 19px 16px;
   text-align: center;
@@ -71,10 +66,6 @@
   grid-area: chat;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  right: 0;
-  height: 100%;
-  width: 370px;
   padding-top: 44px;
   border-left: 2px solid theme('colors.bleu_blanc');
 }
@@ -86,7 +77,7 @@
 
 .conversations {
   height: calc(100% - 68px);
-  overflow: scroll;
+  overflow-y: scroll;
   background-color: theme('colors.bleu_blanc');
 }
 
