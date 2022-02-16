@@ -31,7 +31,10 @@ interface FicheJeuneProps {
   actions: ActionJeune[]
 }
 
-const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
+const compareLastUpdate = (
+  action1: ActionJeuneJson,
+  action2: ActionJeuneJson
+) =>
   new Date(action1.lastUpdate).getTime() >
   new Date(action2.lastUpdate).getTime()
     ? -1
@@ -149,33 +152,33 @@ const FicheJeune = ({
         <div className='mt-8 border-b border-bleu_blanc pb-8'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
 
-          {!isPoleEmploi ? (
+          {isPoleEmploi && (
+            <IntegrationPoleEmploi label='actions et démarches' />
+          )}
+
+          {!isPoleEmploi && actions.length !== 0 && (
             <>
-              {actions.length ? (
-                <>
-                  <TableauActionsJeune
-                    jeune={jeune}
-                    actions={actions}
-                    hideTableHead={true}
-                  />
-                  <div className='flex justify-center mt-8'>
-                    <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                      <a className='text-sm text-bleu_nuit underline'>
-                        Voir la liste des actions du jeune
-                      </a>
-                    </Link>
-                  </div>
-                </>
-              ) : (
+              <TableauActionsJeune
+                jeune={jeune}
+                actions={actions}
+                hideTableHead={true}
+              />
+              <div className='flex justify-center mt-8'>
                 <Link href={`/mes-jeunes/${jeune.id}/actions`}>
                   <a className='text-sm text-bleu_nuit underline'>
-                    Accédez à cette page pour créer une action
+                    Voir la liste des actions du jeune
                   </a>
                 </Link>
-              )}
+              </div>
             </>
-          ) : (
-            <IntegrationPoleEmploi label='actions et démarches' />
+          )}
+
+          {!isPoleEmploi && actions.length === 0 && (
+            <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+              <a className='text-sm text-bleu_nuit underline'>
+                Accédez à cette page pour créer une action
+              </a>
+            </Link>
           )}
         </div>
 
@@ -237,11 +240,12 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   ])
 
   const userActions: ActionJeune[] = resActionsJeune
+    .sort(compareLastUpdate)
+    .slice(0, 3)
     .map((userActionJson: ActionJeuneJson) => ({
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
     }))
-    .sort(sortLastUpdate)
 
   if (!resInfoJeune || !resRdvJeune) {
     return {
@@ -255,7 +259,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       idConseiller: user.id,
       jeune: resInfoJeune,
       rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
-      actions: userActions.slice(0, 3),
+      actions: userActions,
     },
   }
 }
