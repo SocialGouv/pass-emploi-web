@@ -175,7 +175,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
         <button
           type='submit'
           disabled={!newMessage}
-          className='bg-bleu_nuit w-12 h-12 rounded-[50%]'
+          className='bg-bleu_nuit w-12 h-12 border-none rounded-[50%]'
         >
           <SendIcon aria-hidden='true' focusable='false' className='m-auto' />
         </button>
