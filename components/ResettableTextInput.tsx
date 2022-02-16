@@ -51,7 +51,7 @@ function ResettableTextInput({
         onClick={applyReset}
         disabled={disabled}
       >
-        <span className='visually-hidden'>Effacer le champ de saisie</span>
+        <span className='sr-only'>Effacer le champ de saisie</span>
         <CloseIcon
           className={`text-bleu_nuit ${disabled ? 'fill-disabled' : ''}`}
           focusable={false}

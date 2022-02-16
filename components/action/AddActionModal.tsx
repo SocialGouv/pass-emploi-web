@@ -99,10 +99,10 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         customHeight='636px'
         customWidth='939px'
       >
-        <div className='flex mb-[40px]'>
+        <div className='flex mb-10'>
           <Button
             type='button'
-            className='mr-[8px]'
+            className='mr-2'
             style={isCustomMode ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
             onClick={toggleCustomMode}
           >
@@ -119,12 +119,12 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         </div>
 
         {!isCustomMode && (
-          <div className='h-[425px] overflow-scroll mb-[40px]'>
+          <div className='h-[425px] overflow-scroll mb-10'>
             {actionsPredefinies.map((action: ActionJeune) => (
               <button
                 key={action.id}
                 type='button'
-                className='w-full px-[24px] py-[16px] mb-[8px] text-left border border-bleu_blanc rounded-medium'
+                className='w-full px-6 py-4 mb-2 text-left border border-solid border-bleu_blanc rounded-medium'
                 onClick={() => handleSelectedAction(action.content)}
               >
                 <p className='text-sm text-bleu_nuit'>{action.content}</p>
@@ -134,11 +134,11 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         )}
 
         {isCustomMode && (
-          <div className='h-[425px] mb-[40px]'>
+          <div className='h-[425px] mb-10'>
             <form onSubmit={handleAddClick}>
               <label
                 htmlFor='customContent'
-                className='text-sm text-bleu_nuit block mb-[20px]'
+                className='text-sm text-bleu_nuit block mb-5'
               >
                 Intitulé de l&apos;action (obligatoire)
               </label>
@@ -149,13 +149,13 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
                 maxLength={INPUT_MAX_LENGTH}
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
-                className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
+                className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-solid border-bleu_blanc rounded-medium'
                 placeholder='Ajouter un contenu...'
               />
 
               <label
                 htmlFor='cutomComment'
-                className='text-sm text-bleu_nuit block mb-[20px]'
+                className='text-sm text-bleu_nuit block mb-5'
               >
                 Commentaire de l&apos;action
               </label>
@@ -168,7 +168,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
                 cols={5}
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                className='w-full text-sm text-bleu_nuit p-[16px] mb-[60px] border border-bleu_blanc rounded-medium'
+                className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-bleu_blanc rounded-medium'
                 placeholder='Ajouter un commentaire...'
               />
 
@@ -199,7 +199,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
         <form onSubmit={handleAddClick}>
           <label
             htmlFor='comment'
-            className='text-sm text-bleu_nuit block mb-[20px]'
+            className='text-sm text-bleu_nuit block mb-5'
           >
             Ajouter un commentaire à votre action
           </label>
@@ -212,7 +212,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
             value={newComment}
             maxLength={INPUT_MAX_LENGTH}
             onChange={(e) => setNewComment(e.target.value)}
-            className='w-full text-sm text-bleu_nuit p-[16px] mb-[30px] border border-bleu_blanc rounded-medium'
+            className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-bleu_blanc rounded-medium'
             placeholder='Ajouter un commentaire...'
           />
 

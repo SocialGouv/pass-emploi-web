@@ -219,9 +219,7 @@ function Supervision({}: SupervisionProps) {
               title='Rechercher'
               disabled={!isRechercheJeunesEnabled}
             >
-              <span className='visually-hidden'>
-                Rechercher conseiller initial
-              </span>
+              <span className='sr-only'>Rechercher conseiller initial</span>
               <SearchIcon
                 focusable='false'
                 aria-hidden={true}
@@ -336,7 +334,7 @@ function Supervision({}: SupervisionProps) {
             </caption>
             <thead>
               <tr>
-                <th scope='col' className='visually-hidden pb-2'>
+                <th scope='col' className='sr-only pb-2'>
                   Cocher/Décocher les jeunes
                 </th>
                 <th
@@ -351,7 +349,7 @@ function Supervision({}: SupervisionProps) {
                 >
                   Conseiller précédent
                 </th>
-                <th scope='col' className='visually-hidden'>
+                <th scope='col' className='sr-only'>
                   Email conseiller précédent
                 </th>
               </tr>

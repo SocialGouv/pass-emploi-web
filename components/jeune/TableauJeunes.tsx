@@ -99,7 +99,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           className='table w-full'
           aria-describedby='table-caption'
         >
-          <div id='table-caption' className='visually-hidden'>
+          <div id='table-caption' className='sr-only'>
             Liste de mes jeunes
           </div>
 
