@@ -168,7 +168,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
                 cols={5}
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-bleu_blanc rounded-medium'
+                className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-bleu_blanc rounded-medium'
                 placeholder='Ajouter un commentaire...'
               />
 
@@ -212,7 +212,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
             value={newComment}
             maxLength={INPUT_MAX_LENGTH}
             onChange={(e) => setNewComment(e.target.value)}
-            className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-bleu_blanc rounded-medium'
+            className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-solid border-bleu_blanc rounded-medium'
             placeholder='Ajouter un commentaire...'
           />
 
