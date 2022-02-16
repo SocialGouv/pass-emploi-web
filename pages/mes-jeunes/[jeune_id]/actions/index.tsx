@@ -104,6 +104,49 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
           <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
         )}
       </div>
+
+      <ul role='tablist'>
+        <li
+          role='tab'
+          id='onglet-1'
+          tabIndex='-1'
+          aria-selected='false'
+          aria-controls='panneau-1'
+        >
+          Onglet 1
+        </li>
+        <li
+          role='tab'
+          id='onglet-2'
+          tabIndex='0'
+          aria-selected='true'
+          aria-controls='panneau-2'
+        >
+          Onglet 2
+        </li>
+        <li
+          role='tab'
+          id='onglet-3'
+          tabIndex='-1'
+          aria-selected='false'
+          aria-controls='panneau-3'
+        >
+          Onglet 3
+        </li>
+        <li
+          role='tab'
+          id='onglet-4'
+          tabIndex='-1'
+          aria-selected='false'
+          aria-controls='panneau-4'
+        >
+          Onglet 4
+        </li>
+      </ul>
+
+      {actionsEnCours.length != 0 && (
+        <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
+      )}
     </>
   )
 }
