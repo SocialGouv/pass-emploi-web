@@ -174,10 +174,10 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
               <Button
                 type='submit'
-                className='px-[48px] py-[11px] m-auto'
+                className='px-12 py-2.5 m-auto'
                 disabled={noSelectedAction()}
               >
-                <span className='px-[51px]'>Envoyer l&apos;action</span>
+                <span className='px-12'>Envoyer l&apos;action</span>
               </Button>
             </form>
           </div>
@@ -218,10 +218,10 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
           <Button
             type='submit'
-            className='px-[48px] py-[11px] m-auto'
+            className='px-12 py-2.5 m-auto'
             disabled={noSelectedAction()}
           >
-            <span className='px-[51px]'>Envoyer l&apos;action</span>
+            <span className='px-12'>Envoyer l&apos;action</span>
           </Button>
         </form>
       </Modal>
