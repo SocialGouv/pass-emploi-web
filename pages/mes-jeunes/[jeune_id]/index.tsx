@@ -239,7 +239,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     ),
   ])
 
-  const userActions: ActionJeune[] = resActionsJeune
+  const userActions: ActionJeune[] = [...resActionsJeune]
     .sort(compareLastUpdate)
     .slice(0, 3)
     .map((userActionJson: ActionJeuneJson) => ({
