@@ -1,4 +1,4 @@
-import Action from 'components/action/Action'
+import ActionRow from 'components/action/ActionRow'
 import AddActionModal from 'components/action/AddActionModal'
 import { AppHead } from 'components/AppHead'
 import Button from 'components/ui/Button'
@@ -21,6 +21,7 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
  */
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
+import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 
 type Props = {
   jeune: Jeune
@@ -28,9 +29,9 @@ type Props = {
   deleteSuccess: boolean
 }
 
-const sortLastUpdate = (action1: ActionJeune, action2: ActionJeune) =>
-  new Date(action1.lastUpdate).getTime() >
-  new Date(action2.lastUpdate).getTime()
+const compareByCreationDate = (action1: ActionJeune, action2: ActionJeune) =>
+  new Date(action1.creationDate).getTime() >
+  new Date(action2.creationDate).getTime()
     ? -1
     : 1
 
@@ -113,14 +114,14 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
           moment
         </p>
       )}
-
-      <ul>
-        {actionsEnCours.map((action: ActionJeune) => (
-          <li key={action.id} className='border-b-2 border-bleu_blanc'>
-            <Action action={action} jeuneId={jeune.id} />
-          </li>
-        ))}
-      </ul>
+      {actionsEnCours.length != 0 && (
+        <TableauActionsJeune
+          prenom={jeune.firstName}
+          nom={jeune.lastName}
+          jeuneId={jeune.id}
+          actions={actionsEnCours}
+        />
+      )}
     </>
   )
 }
@@ -162,7 +163,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
     }))
-    .sort(sortLastUpdate)
+    .sort(compareByCreationDate)
 
   return {
     props: {
