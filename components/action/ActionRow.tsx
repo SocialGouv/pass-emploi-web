@@ -19,10 +19,15 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
 
   return (
     <Link href={url}>
-      <tr className='hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten focus:primary_lighten'>
-        <td className='relative  pl-4 py-4 border-solid border-0 border-b-2 border-b-grey_700'>
+      <tr className='hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'>
+        <td className='relative pl-4 py-4 border-solid border-0 border-b-2 border-b-grey_700'>
           <span className='flex items-center'>
             {action.content}
+            <a
+              aria-label={`Détail de l'action ${action.content}`}
+              href={url}
+              className={rowLink}
+            ></a>
             {action.comment && (
               <NoteIcon
                 role='img'
@@ -31,11 +36,6 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
                 className='ml-2'
               />
             )}
-            <a
-              aria-label={`Détail de l'action ${action.content} ${action.id}`}
-              href={url}
-              className={rowLink}
-            ></a>
           </span>
         </td>
         <td className='relative text-bleu_nuit border-solid border-0 border-b-2 border-b-grey_700'>
@@ -55,7 +55,6 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
               focusable='false'
               aria-hidden='true'
             />
-            <a href={url} tabIndex={-1} className={rowLink}></a>
           </span>
         </td>
       </tr>

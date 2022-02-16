@@ -5,15 +5,15 @@ import ActionRow from 'components/action/ActionRow'
 import { ActionStatus } from 'interfaces/action'
 import { uneAction } from 'fixtures/action'
 
-describe('<Action/>', () => {
+describe('<ActionRow/>', () => {
   it("devrait afficher les informations des actions d'un jeune", () => {
     const action = uneAction()
     render(<ActionRow action={action} jeuneId={'1'} />)
     expect(
       screen.getByText('Identifier ses atouts et ses compétences')
     ).toBeInTheDocument()
+    expect(screen.getByText('21/10/2021')).toBeInTheDocument()
     expect(screen.getByText('À réaliser')).toBeInTheDocument()
-    expect(screen.getByLabelText("Détail de l'action")).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'En cours' quand l'action a été commencée", () => {

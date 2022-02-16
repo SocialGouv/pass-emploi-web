@@ -19,7 +19,7 @@ export const TableauActionsJeune = ({
 
   return (
     <table className='w-full'>
-      <caption className='visually-hidden'>
+      <caption className='sr-only'>
         Liste des actions de {prenom} {nom}
       </caption>
       <thead>

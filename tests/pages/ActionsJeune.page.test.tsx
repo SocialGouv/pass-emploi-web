@@ -35,7 +35,11 @@ describe("Page Liste des actions d'un jeune", () => {
       ).toBeInTheDocument()
       actions.forEach((action) => {
         expect(screen.getByText(action.content)).toBeInTheDocument()
-        expect(screen.getByText(action.content).closest('a')).toHaveAttribute(
+        const lien = screen.getByLabelText(
+          `Détail de l'action ${action.content}`
+        ) as HTMLAnchorElement
+        expect(lien).toBeInTheDocument()
+        expect(lien).toHaveAttribute(
           'href',
           `/mes-jeunes/${jeune.id}/actions/${action.id}`
         )
