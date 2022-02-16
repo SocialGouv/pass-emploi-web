@@ -18,7 +18,7 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
   const url = `/mes-jeunes/${jeuneId}/actions/${action.id}`
 
   return (
-    <Link href={url}>
+    <Link href={url} passHref>
       <tr className='hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'>
         <td className='relative pl-4 py-4 border-solid border-0 border-b-2 border-b-grey_700'>
           <span className='flex items-center'>

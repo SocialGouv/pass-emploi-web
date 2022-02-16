@@ -114,12 +114,7 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
         </p>
       )}
       {actionsEnCours.length != 0 && (
-        <TableauActionsJeune
-          prenom={jeune.firstName}
-          nom={jeune.lastName}
-          jeuneId={jeune.id}
-          actions={actionsEnCours}
-        />
+        <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
       )}
     </>
   )

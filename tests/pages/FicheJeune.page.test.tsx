@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import { uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 import { UserStructure } from 'interfaces/conseiller'
 import React from 'react'
@@ -13,6 +14,7 @@ describe('Fiche Jeune', () => {
   const idConseiller = 'idConseiller'
   const jeune = unJeune({ firstName: 'Nadia', lastName: 'Sanfamiye' })
   const rdvs = uneListeDeRdvJeune()
+  const actions = uneListeDActions()
   let jeunesService: JeunesService
   let rendezVousService: RendezVousService
   beforeEach(async () => {
@@ -20,6 +22,8 @@ describe('Fiche Jeune', () => {
       createCompteJeunePoleEmploi: jest.fn(),
       getJeuneDetails: jest.fn(),
       getJeunesDuConseiller: jest.fn(),
+      getJeunesDuConseillerParEmail: jest.fn(),
+      reaffecter: jest.fn(),
     }
     rendezVousService = {
       deleteRendezVous: jest.fn(),
@@ -34,7 +38,12 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune idConseiller={idConseiller} jeune={jeune} rdvs={rdvs} />
+          <FicheJeune
+            idConseiller={idConseiller}
+            jeune={jeune}
+            rdvs={rdvs}
+            actions={actions}
+          />
         </DIProvider>
       )
     })
@@ -64,6 +73,30 @@ describe('Fiche Jeune', () => {
       ).toHaveAttribute('href', `/mes-jeunes/${jeune.id}/actions`)
     })
 
+    it('affiche les actions du jeune', async () => {
+      actions.forEach((action) => {
+        expect(screen.getByText(action.content)).toBeInTheDocument()
+      })
+    })
+
+    it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <FicheJeune
+            idConseiller={idConseiller}
+            jeune={jeune}
+            rdvs={rdvs}
+            actions={[]}
+          />
+        </DIProvider>
+      )
+      expect(
+        screen.getByRole('link', {
+          name: 'Accédez à cette page pour créer une action',
+        })
+      ).toBeInTheDocument()
+    })
+
     it('permet la prise de rendez-vous', async () => {
       // Then
       expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()
@@ -75,13 +108,19 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune idConseiller={idConseiller} jeune={jeune} rdvs={[]} />
+          <FicheJeune
+            idConseiller={idConseiller}
+            jeune={jeune}
+            rdvs={[]}
+            actions={actions}
+          />
         </DIProvider>,
         {
           user: {
             id: 'idConseiller',
             name: 'Tavernier',
             structure: UserStructure.POLE_EMPLOI,
+            estSuperviseur: false,
           },
         }
       )
