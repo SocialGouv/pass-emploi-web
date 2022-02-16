@@ -46,7 +46,6 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
           .replace(/’/i, "'")
           .toLocaleLowerCase()
         for (const item of querySplit) {
-          console.log({ item })
           if (jeuneLastName.includes(item)) {
             return true
           }

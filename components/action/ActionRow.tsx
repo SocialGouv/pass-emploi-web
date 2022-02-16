@@ -22,7 +22,9 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
       <tr className='hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'>
         <td className='relative pl-4 py-4 border-solid border-0 border-b-2 border-b-grey_700'>
           <span className='flex items-center'>
-            {action.content}
+            <span className='text-ellipsis overflow-hidden max-w-[50%] whitespace-nowrap'>
+              {action.content}
+            </span>
             <a
               aria-label={`Détail de l'action ${action.content}`}
               href={url}
