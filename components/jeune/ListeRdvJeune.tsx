@@ -24,10 +24,8 @@ const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
         <p className='text-md text-bleu mb-8'>Pas de rendez-vous planifiés</p>
       ) : (
         <table className='w-full'>
-          <caption className='visually-hidden'>
-            Liste de mes rendez-vous
-          </caption>
-          <thead className='visually-hidden'>
+          <caption className='sr-only'>Liste de mes rendez-vous</caption>
+          <thead className='sr-only'>
             <tr>
               <th scope='col'>Date et heure du rendez-vous</th>
               <th scope='col'>Lieu et modalité du rendez-vous</th>

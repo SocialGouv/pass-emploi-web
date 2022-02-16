@@ -167,7 +167,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
         <input
           type='text'
           value={newMessage}
-          className='text-md text-bleu_nuit'
+          className='text-md text-bleu_nuit border-none'
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder='Écrivez votre message ici...'
         />
@@ -175,9 +175,9 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
         <button
           type='submit'
           disabled={!newMessage}
-          className='bg-bleu_nuit w-[48px] p-[17px] rounded rounded-x_large'
+          className='bg-bleu_nuit w-12 h-12 border-none rounded-[50%]'
         >
-          <SendIcon aria-hidden='true' focusable='false' />
+          <SendIcon aria-hidden='true' focusable='false' className='m-auto' />
         </button>
       </form>
     </div>

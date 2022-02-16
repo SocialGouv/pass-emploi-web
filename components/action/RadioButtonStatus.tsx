@@ -27,7 +27,7 @@ export const RadioButtonStatus = ({
     >
       <label htmlFor={`option-statut--${status}`}>{status}</label>
       <input
-        className='visually-hidden'
+        className='sr-only'
         type='radio'
         id={`option-statut--${status}`}
         name='option-statut'

@@ -29,11 +29,9 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
         </p>
       ) : (
         <table className='w-full'>
-          <caption className='visually-hidden'>
-            Liste de mes rendez-vous
-          </caption>
+          <caption className='sr-only'>Liste de mes rendez-vous</caption>
 
-          <thead className='visually-hidden'>
+          <thead className='sr-only'>
             <tr>
               <th scope='col'>Date et heure du rendez-vous</th>
               <th scope='col'>Lieu et modalité du rendez-vous</th>
