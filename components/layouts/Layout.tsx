@@ -25,10 +25,10 @@ export default function Layout({ pathname, children }: LayoutProps) {
         }`}
       >
         <Sidebar />
-        <main className={styles.page} role='main'>
-          {children}
+        <div className={styles.page}>
+          <main role='main'>{children}</main>
           <Footer />
-        </main>
+        </div>
         {displayChat && <ChatRoom />}
       </div>
       <div id='modal-root' />
