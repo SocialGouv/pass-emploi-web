@@ -114,16 +114,14 @@ const FicheJeune = ({
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
             <BackIcon aria-hidden={true} focusable='false' />
-            <p className='ml-6 h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+            <span className='ml-6 h4-semi text-bleu_nuit'>
+              Liste de mes jeunes
+            </span>
           </a>
         </Link>
 
         {!isPoleEmploi && (
-          <Button
-            onClick={openAddRdvModal}
-            label='Fixer un rendez-vous'
-            style={ButtonStyle.SECONDARY}
-          >
+          <Button onClick={openAddRdvModal} style={ButtonStyle.SECONDARY}>
             Fixer un rendez-vous
           </Button>
         )}

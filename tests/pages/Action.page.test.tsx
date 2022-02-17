@@ -42,6 +42,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       expect(screen.getByText(action.comment)).toBeInTheDocument()
       expect(screen.getByText('15/02/2022')).toBeInTheDocument()
       expect(screen.getByText('16/02/2022')).toBeInTheDocument()
+      expect(screen.getByText(action.creator)).toBeInTheDocument()
     })
 
     it('Devrait avoir un lien pour revenir sur la page précédente', () => {

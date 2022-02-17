@@ -1,8 +1,8 @@
-import React from 'react'
+import { ReactNode } from 'react'
 
 interface InfoActionProps {
   label: string
-  children: any
+  children: ReactNode
 }
 
 function InfoAction({ label, children }: InfoActionProps) {

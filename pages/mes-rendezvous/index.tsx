@@ -106,6 +106,7 @@ const MesRendezvous = ({
           <Button
             role='tab'
             type='button'
+            controls='rendez-vous-futurs'
             className='mr-[8px]'
             style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
             onClick={toggleDisplayOldRdv}
@@ -116,6 +117,7 @@ const MesRendezvous = ({
           <Button
             role='tab'
             type='button'
+            controls='rendez-vous-passes'
             style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
             onClick={toggleDisplayOldRdv}
           >
@@ -124,9 +126,13 @@ const MesRendezvous = ({
         </div>
 
         {displayOldRdv ? (
-          <RdvList rdvs={rendezVousPasses} />
+          <RdvList id='rendez-vous-passes' rdvs={rendezVousPasses} />
         ) : (
-          <RdvList rdvs={rdvsAVenir} onDelete={openDeleteRdvModal} />
+          <RdvList
+            id='rendez-vous-futurs'
+            rdvs={rdvsAVenir}
+            onDelete={openDeleteRdvModal}
+          />
         )}
 
         {showAddModal && session && (

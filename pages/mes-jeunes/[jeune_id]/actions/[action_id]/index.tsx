@@ -71,9 +71,9 @@ function PageAction({ action, jeune }: Props) {
         <Link href={`/mes-jeunes/${jeune.id}/actions`}>
           <a className='flex items-center'>
             <BackIcon focusable='false' aria-hidden={true} />
-            <p className='ml-6 h4-semi text-bleu_nuit'>
+            <span className='ml-6 h4-semi text-bleu_nuit'>
               Actions de {jeune.firstName} {jeune.lastName}
-            </p>
+            </span>
           </a>
         </Link>
 

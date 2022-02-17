@@ -63,7 +63,9 @@ function MiloCreationJeune({
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
             <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <p className='ml-6 h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
+            <span className='ml-6 h4-semi text-bleu_nuit'>
+              Liste de mes jeunes
+            </span>
           </a>
         </Link>
       </div>

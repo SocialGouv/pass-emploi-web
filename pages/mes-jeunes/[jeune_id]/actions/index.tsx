@@ -89,10 +89,7 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
         {showModal && (
           <AddActionModal
             onClose={() => setShowModal(false)}
-            onAdd={() => {
-              // addToActionEnCours(newAction) uncomment when be sends id
-              Router.reload()
-            }} //reload, since we dont have the id after add
+            onAdd={Router.reload}
             show={showModal}
           />
         )}

@@ -119,9 +119,9 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
         {!isCustomMode && (
           <div className='h-[425px] overflow-scroll mb-10'>
-            {actionsPredefinies.map((content, index) => (
+            {actionsPredefinies.map(({ id, content }) => (
               <button
-                key={`action-predefinie-${index}`}
+                key={id}
                 type='button'
                 className='w-full px-6 py-4 mb-2 text-left border border-solid border-bleu_blanc rounded-medium'
                 onClick={() => handleSelectedAction(content)}
