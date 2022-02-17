@@ -116,7 +116,7 @@ function PageAction({ action, jeune }: Props) {
           <dt className='mt-8 text-bleu text-sm-semi'>Informations</dt>
           <dd>
             <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-              <InfoAction label='Statut'>
+              <InfoAction label='Statut' isForm={true}>
                 <RadioButtonStatus
                   status={ActionStatus.NotStarted}
                   isSelected={statut === ActionStatus.NotStarted}
