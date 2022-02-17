@@ -118,7 +118,10 @@ function Actions({
           aria-controls='panneau-1'
           className='mr-4'
           style={ButtonStyle.SECONDARY}
-          onClick={() => setCurrentFilter('Toutes')}
+          onClick={() => {
+            setCurrentFilter('Toutes')
+            setActionsFiltrees(actions)
+          }}
         >
           Toutes ({actions.length})
         </Button>
@@ -130,7 +133,10 @@ function Actions({
           aria-controls='panneau-2'
           className='mr-4'
           style={ButtonStyle.SECONDARY}
-          onClick={() => setCurrentFilter(ActionStatus.NotStarted)}
+          onClick={() => {
+            setCurrentFilter(ActionStatus.NotStarted)
+            setActionsFiltrees(actionsARealiser)
+          }}
         >
           À réaliser ({actionsARealiser.length})
         </Button>
@@ -143,7 +149,10 @@ function Actions({
           aria-controls='panneau-3'
           className='mr-4'
           style={ButtonStyle.SECONDARY}
-          onClick={() => setCurrentFilter(ActionStatus.InProgress)}
+          onClick={() => {
+            setCurrentFilter(ActionStatus.InProgress)
+            setActionsFiltrees(actionsCommencees)
+          }}
         >
           Commencées ({actionsCommencees.length})
         </Button>
@@ -156,14 +165,17 @@ function Actions({
           aria-controls='panneau-4'
           className='mr-4'
           style={ButtonStyle.SECONDARY}
-          onClick={() => setCurrentFilter(ActionStatus.Done)}
+          onClick={() => {
+            setCurrentFilter(ActionStatus.Done)
+            setActionsFiltrees(actionsTerminees)
+          }}
         >
           Terminées ({actionsTerminees.length})
         </Button>
       </div>
 
-      {actions.length != 0 && (
-        <TableauActionsJeune jeune={jeune} actions={actions} />
+      {actionsFiltrees.length != 0 && (
+        <TableauActionsJeune jeune={jeune} actions={actionsFiltrees} />
       )}
     </>
   )
