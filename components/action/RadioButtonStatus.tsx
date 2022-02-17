@@ -8,16 +8,18 @@ interface RadioButtonStatusProps {
   onChange: (statutChoisi: ActionStatus) => void
 }
 
-const mappedStatus: { [key: string]: { label: string; color: string } } = {
-  not_started: {
+const mappedStatus: {
+  [key in ActionStatus]: { label: string; color: string }
+} = {
+  [ActionStatus.NotStarted]: {
     label: 'À réaliser',
     color: 'accent_1',
   },
-  in_progress: {
+  [ActionStatus.InProgress]: {
     label: 'Commencée',
     color: 'accent_3',
   },
-  done: {
+  [ActionStatus.Done]: {
     label: 'Terminée',
     color: 'accent_2',
   },
