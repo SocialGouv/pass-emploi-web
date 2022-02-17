@@ -6,30 +6,30 @@ interface TagProps {
 }
 
 const mappedStatus: {
-  [key: string]: { label: string; textColor: string; backgroundColor: string }
+  [key: string]: { label: string; color: string; colorLighten: string }
 } = {
   not_started: {
     label: 'À réaliser',
-    textColor: 'accent_1',
-    backgroundColor: 'accent_1_lighten',
+    color: 'accent_1',
+    colorLighten: 'accent_1_lighten',
   },
   in_progress: {
     label: 'En cours',
-    textColor: 'accent_3',
-    backgroundColor: 'accent_3_lighten',
+    color: 'accent_3',
+    colorLighten: 'accent_3_lighten',
   },
   done: {
     label: 'Terminée',
-    textColor: 'accent_2',
-    backgroundColor: 'accent_2_lighten',
+    color: 'accent_2',
+    colorLighten: 'accent_2_lighten',
   },
 }
 
 const Tag = ({ status }: TagProps) => {
-  const { label, textColor, backgroundColor } = mappedStatus[status]
+  const { label, color, colorLighten } = mappedStatus[status]
   return (
     <span
-      className={`table-cell text-xs-medium text-${textColor} px-4 py-[2px] bg-${backgroundColor} rounded-x_large`}
+      className={`table-cell text-xs-medium border border-solid border-${color} text-${color} px-4 py-[2px] bg-${colorLighten} rounded-x_large`}
     >
       {label}
     </span>
