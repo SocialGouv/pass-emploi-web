@@ -16,7 +16,7 @@ export const IntegrationPoleEmploi = ({
     />
     <div>
       <p className='text-sm-medium'>
-        Cette fonctionnalité n&apos;est pas encore disponible sur pass emploi.
+        Cette fonctionnalité n&apos;est pas encore disponible.
       </p>
       <p className='text-sm-regular'>
         Gérez les {label} de ce jeune depuis vos outils Pôle emploi.

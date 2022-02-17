@@ -3,7 +3,7 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
-import Logo from '../assets/images/logo_PassEmploiBig.svg'
+import Logo from '../assets/images/logo_258.svg'
 
 interface LoginProps {
   ssoPassEmploiEstActive?: boolean
@@ -47,14 +47,7 @@ const Login = ({ ssoPassEmploiEstActive }: LoginProps) => {
   return (
     <div className='bg-bleu_blanc w-full h-screen relative'>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <div className='mb-[104px]'>
-          <Logo
-            role='img'
-            focusable='false'
-            aria-label='Logo de Pass Emploi'
-            className='m-auto'
-          />
-        </div>
+        <Logo focusable='false' aria-hidden={true} className='m-auto' />
 
         <div className='bg-blanc px-[122px] py-[48px] rounded-x_large'>
           <h1 className='text-lg-semi text-bleu_nuit text-center mb-[48px]'>
