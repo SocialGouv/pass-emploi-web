@@ -91,7 +91,7 @@ describe('<DossierMilo', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByText(
-          '2. Rafraîchissez ensuite cette page ou saisissez à nouveau le numéro de dossier du jeune pour créer le compte Pass emploi'
+          '2. Rafraîchissez ensuite cette page ou saisissez à nouveau le numéro de dossier du jeune pour créer le compte application CEJ'
         )
       ).toBeInTheDocument()
     })

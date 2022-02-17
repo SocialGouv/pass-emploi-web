@@ -7,10 +7,10 @@ import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import AideIcon from '../../assets/icons/aide.svg'
 import SupervisionIcon from '../../assets/icons/arrow-right.svg'
-import Logo from '../../assets/images/logo_PassEmploi.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
 import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
+import Logo from '../../assets/images/logo_110.svg'
 
 type SidebarProps = {}
 
@@ -34,12 +34,7 @@ export default function Sidebar({}: SidebarProps) {
   return (
     <div className={styles.sidebar}>
       <div>
-        <Logo
-          role='img'
-          focusable='false'
-          className='mb-[30px] mx-auto'
-          aria-label='Logo de Pass Emploi'
-        />
+        <Logo focusable='false' aria-hidden={true} className='mb-8 mx-auto' />
 
         <nav role='navigation' aria-label='Menu principal'>
           <Link href={'/mes-jeunes'}>
