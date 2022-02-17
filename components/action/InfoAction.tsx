@@ -11,7 +11,11 @@ function InfoAction({ label, children, isForm = false }: InfoActionProps) {
     'py-4 border-0 border-b border-solid border-b-primary_lighten text-bleu text-sm-regular'
   return (
     <>
-      <dt className={`${styles} ${isForm ? 'my-auto' : ''} whitespace-nowrap`}>
+      <dt
+        className={`${styles} ${
+          isForm ? 'flex items-center' : ''
+        } whitespace-nowrap`}
+      >
         {label}
       </dt>
       <dd className={`${styles} pl-6`}>
