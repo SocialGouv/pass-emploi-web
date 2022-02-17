@@ -6,14 +6,9 @@ import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import {
-  ActionJeune,
-  ActionStatus,
-  compareActionsDatesDesc,
-} from 'interfaces/action'
+import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { ActionJeuneJson } from 'interfaces/json/action'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
@@ -235,10 +230,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const userActions: ActionJeune[] = [...resActionsJeune]
     .sort(compareActionsDatesDesc)
     .slice(0, 3)
-    .map((userActionJson: ActionJeuneJson) => ({
-      ...userActionJson,
-      status: userActionJson.status || ActionStatus.NotStarted,
-    }))
 
   if (!resInfoJeune || !resRdvJeune) {
     return {

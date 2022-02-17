@@ -1,13 +1,18 @@
-import { Jeune, compareJeunesByLastName } from 'interfaces/jeune'
+import {
+  compareJeunesByLastName,
+  compareJeunesByLastNameDesc,
+  Jeune,
+} from 'interfaces/jeune'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
+  compareDates,
+  compareDatesDesc,
   dateIsToday,
   dateIsYesterday,
   formatDayDate,
   formatHourMinuteDate,
-  compareDates,
 } from 'utils/date'
 import ArrowDouble from '../../assets/icons/arrow_double.svg'
 import ArrowDown from '../../assets/icons/arrow_down.svg'
@@ -57,7 +62,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   useEffect(() => {
     function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
-      if (isName) return compareJeunesByLastName(jeune1, jeune2, sortDesc)
+      if (isName)
+        return sortDesc
+          ? compareJeunesByLastNameDesc(jeune1, jeune2)
+          : compareJeunesByLastName(jeune1, jeune2)
 
       if (isDate) {
         const date1 = jeune1.lastActivity
@@ -66,7 +74,9 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
         const date2 = jeune2.lastActivity
           ? new Date(jeune2.lastActivity)
           : undefined
-        return compareDates(date1, date2, !sortDesc)
+        return sortDesc
+          ? compareDates(date1, date2)
+          : compareDatesDesc(date1, date2)
       }
 
       return 0
