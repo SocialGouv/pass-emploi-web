@@ -167,11 +167,16 @@ const FicheJeune = ({
           )}
 
           {!isPoleEmploi && actions.length === 0 && (
-            <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-              <a className='text-sm text-bleu_nuit underline'>
-                Accédez à cette page pour créer une action
-              </a>
-            </Link>
+            <>
+              <p className='text-md text-bleu mb-2'>
+                {jeune.firstName} n&apos;a pas encore d&apos;action
+              </p>
+              <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+                <a className='text-sm text-bleu_nuit underline'>
+                  Accédez à cette page pour créer une action
+                </a>
+              </Link>
+            </>
           )}
         </div>
 
