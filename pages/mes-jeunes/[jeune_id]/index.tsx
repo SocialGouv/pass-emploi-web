@@ -19,6 +19,7 @@ import Router from 'next/router'
 import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -109,32 +110,24 @@ const FicheJeune = ({
   return (
     <>
       <AppHead titre={`Mes jeunes - ${jeune.firstName} ${jeune.lastName}`} />
-      <div className='flex flex-col'>
-        <div className='flex items-center justify-between mb-8'>
-          <div className='flex items-center'>
-            <Link href={'/mes-jeunes'} passHref>
-              <a className='mr-6'>
-                <BackIcon
-                  role='img'
-                  focusable='false'
-                  aria-label='Retour sur la liste de tous les jeunes'
-                />
-              </a>
-            </Link>
-            <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
-          </div>
+      <div className={`flex items-center justify-between ${styles.header}`}>
+        <Link href={'/mes-jeunes'}>
+          <a className='flex items-center'>
+            <BackIcon aria-hidden={true} focusable='false' />
+            <span className='ml-6 h4-semi text-bleu_nuit'>
+              Liste de mes jeunes
+            </span>
+          </a>
+        </Link>
 
-          {!isPoleEmploi && (
-            <Button
-              onClick={openAddRdvModal}
-              label='Fixer un rendez-vous'
-              style={ButtonStyle.SECONDARY}
-            >
-              Fixer un rendez-vous
-            </Button>
-          )}
-        </div>
+        {!isPoleEmploi && (
+          <Button onClick={openAddRdvModal} style={ButtonStyle.SECONDARY}>
+            Fixer un rendez-vous
+          </Button>
+        )}
+      </div>
 
+      <div className={`flex flex-col ${styles.content}`}>
         <DetailsJeune jeune={jeune} />
 
         <div className='mt-8 border-b border-bleu_blanc'>

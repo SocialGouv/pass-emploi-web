@@ -7,6 +7,7 @@ import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useState } from 'react'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -67,43 +68,46 @@ function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
   useMatomo(trackingTitle)
 
   return (
-    <div className='w-full flex flex-col'>
+    <>
       <AppHead titre='Mes jeunes' />
-      <span className='flex flex-wrap justify-between mb-12'>
-        <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
-        {(structureConseiller === UserStructure.MILO ||
-          structureConseiller === UserStructure.POLE_EMPLOI) && (
-          <Button onClick={handleAddJeune}>
-            <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
-            Ajouter un jeune
-          </Button>
-        )}
-      </span>
-
-      {conseillerJeunes.length === 0 && (
-        <div className='mx-auto my-0'>
-          <AddJeuneImage
-            aria-hidden='true'
-            focusable='false'
-            className='mb-16'
-          />
-          <p className='text-bleu_nuit text-base-medium mb-12'>
-            Vous n&apos;avez pas encore intégré de jeunes.
-          </p>
-          <Button onClick={handleAddJeune} className='m-auto'>
-            <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
-            Ajouter un jeune
-          </Button>
+      <div className={styles.header}>
+        <div className={`flex flex-wrap justify-between mb-6`}>
+          <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
+          {(structureConseiller === UserStructure.MILO ||
+            structureConseiller === UserStructure.POLE_EMPLOI) && (
+            <Button onClick={handleAddJeune}>
+              <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+              Ajouter un jeune
+            </Button>
+          )}
         </div>
-      )}
 
-      {conseillerJeunes.length > 0 && (
-        <>
-          <RechercheJeune onSearchFilterBy={onSearch} />
+        <RechercheJeune onSearchFilterBy={onSearch} />
+      </div>
+
+      <div className={`w-full flex flex-col ${styles.content}`}>
+        {conseillerJeunes.length === 0 && (
+          <div className='mx-auto my-0'>
+            <AddJeuneImage
+              aria-hidden='true'
+              focusable='false'
+              className='mb-16'
+            />
+            <p className='text-bleu_nuit text-base-medium mb-12'>
+              Vous n&apos;avez pas encore intégré de jeunes.
+            </p>
+            <Button onClick={handleAddJeune} className='m-auto'>
+              <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+              Ajouter un jeune
+            </Button>
+          </div>
+        )}
+
+        {conseillerJeunes.length > 0 && (
           <TableauJeunes jeunes={listeJeunesFiltres} />
-        </>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   )
 }
 

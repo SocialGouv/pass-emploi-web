@@ -29,7 +29,7 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
               aria-label={`Détail de l'action ${action.content}`}
               href={url}
               className={rowLink}
-            ></a>
+            />
             {action.comment && (
               <NoteIcon
                 role='img'
@@ -46,12 +46,12 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
             href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}
             tabIndex={-1}
             className={rowLink}
-          ></a>
+          />
         </td>
         <td className={styles}>
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
-            <a href={url} tabIndex={-1} className={rowLink}></a>
+            <a href={url} tabIndex={-1} className={rowLink} />
             <ChevronIcon
               className='mr-1'
               focusable='false'

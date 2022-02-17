@@ -1,6 +1,5 @@
-import Button, { ButtonStyle } from 'components/ui/Button'
 import Modal from 'components/Modal'
-import { ActionJeune } from 'interfaces/action'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { useSession } from 'next-auth/react'
 import router from 'next/router'
 import React, { useState } from 'react'
@@ -120,14 +119,14 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
         {!isCustomMode && (
           <div className='h-[425px] overflow-scroll mb-10'>
-            {actionsPredefinies.map((action: ActionJeune) => (
+            {actionsPredefinies.map(({ id, content }) => (
               <button
-                key={action.id}
+                key={id}
                 type='button'
                 className='w-full px-6 py-4 mb-2 text-left border border-solid border-bleu_blanc rounded-medium'
-                onClick={() => handleSelectedAction(action.content)}
+                onClick={() => handleSelectedAction(content)}
               >
-                <p className='text-sm text-bleu_nuit'>{action.content}</p>
+                <p className='text-sm text-bleu_nuit'>{content}</p>
               </button>
             ))}
           </div>

@@ -28,7 +28,7 @@ export const SuccessAddJeunePoleEmploi = ({
           jeunes&quot;
         </p>
       </div>
-      <Link href={`/mes-jeunes/${idJeune}`} passHref>
+      <Link href={`/mes-jeunes/${idJeune}`}>
         <a className={linkStyle.linkButtonBlue}>Accéder à la fiche du jeune</a>
       </Link>
     </div>

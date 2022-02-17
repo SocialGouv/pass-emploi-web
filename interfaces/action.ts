@@ -1,24 +1,15 @@
-import { Jeune } from 'interfaces/jeune'
-
-export type JeuneActions = {
-  jeune: Jeune
-  nbActionsEnCours: number
-  nbActionsTerminees: number
-  nbActionsAFaire: number
-}
-
 export interface ActionJeune {
   id: string
   content: string
   comment: string
-  creationDate: Date
-  lastUpdate: Date
+  creationDate: string
+  lastUpdate: string
   creator: string
   creatorType: string
-  isDone?: boolean
   status: ActionStatus
 }
 
+// FIXME : bonne pratique des enum > clé === valeur
 export enum ActionStatus {
   NotStarted = 'not_started',
   InProgress = 'in_progress',

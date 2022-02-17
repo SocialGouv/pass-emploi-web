@@ -7,10 +7,11 @@ import NoteIcon from '../../assets/icons/note.svg'
 
 type RdvListProps = {
   rdvs: Rdv[]
+  id?: string
   onDelete?: any
 }
 
-const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
+const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
   const handleDeleteClick = (rdv: Rdv) => {
     onDelete(rdv)
   }
@@ -23,12 +24,14 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
 
   return (
     <>
-      {rdvs.length === 0 ? (
-        <p className='text-md text-bleu mb-8'>
+      {rdvs.length === 0 && (
+        <p id={id} className='text-md text-bleu mb-8'>
           Vous n&apos;avez pas de rendez-vous pour le moment
         </p>
-      ) : (
-        <table className='w-full'>
+      )}
+
+      {rdvs.length > 0 && (
+        <table id={id} className='w-full'>
           <caption className='sr-only'>Liste de mes rendez-vous</caption>
 
           <thead className='sr-only'>
@@ -43,34 +46,34 @@ const RdvList = ({ rdvs, onDelete }: RdvListProps) => {
           <tbody>
             {rdvs.map((rdv: Rdv) => (
               <tr key={rdv.id} className='text-sm text-bleu_nuit'>
-                <td className='p-[16px]'>
+                <td className='p-4'>
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>
 
-                <td className='p-[16px]'>
+                <td className='p-4'>
                   {rdv.jeune.prenom} {rdv.jeune.nom}
                 </td>
 
-                <td className='p-[16px] '>
+                <td className='p-4 '>
                   <LocationIcon
                     focusable='false'
                     aria-hidden='true'
-                    className='mr-[7px] inline'
+                    className='mr-2 inline'
                   />
                   {rdv.modality}
                 </td>
 
-                <td className='p-[16px] '>
+                <td className='p-4 [overflow-wrap:anywhere]'>
                   <NoteIcon
                     focusable='false'
                     aria-hidden='true'
-                    className='mr-[7px] inline'
+                    className='mr-2 inline'
                   />
                   {rdv.comment || '--'}
                 </td>
 
                 {onDelete && (
-                  <td className='p-[16px]'>
+                  <td className='p-4'>
                     <button
                       onClick={() => handleDeleteClick(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}

@@ -134,7 +134,7 @@ const DossierJeuneMilo = ({
       )}
 
       <div className='flex items-center mt-14'>
-        <Link href={'/mes-jeunes/milo/creation-jeune'} passHref>
+        <Link href={'/mes-jeunes/milo/creation-jeune'}>
           <a className='flex items-center text-sm-medium text-bleu_nuit mr-6'>
             <ArrowLeftIcon
               className='mr-2.5'

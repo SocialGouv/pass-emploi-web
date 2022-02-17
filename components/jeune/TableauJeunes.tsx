@@ -163,7 +163,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
           <div role='rowgroup'>
             {sortedJeunes?.map((jeune: Jeune) => (
-              <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id} passHref>
+              <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
                   key={jeune.id}
                   role='row'

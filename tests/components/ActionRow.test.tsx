@@ -12,7 +12,7 @@ describe('<ActionRow/>', () => {
     expect(
       screen.getByText('Identifier ses atouts et ses compétences')
     ).toBeInTheDocument()
-    expect(screen.getByText('21/10/2021')).toBeInTheDocument()
+    expect(screen.getByText('15/02/2022')).toBeInTheDocument()
     expect(screen.getByText('À réaliser')).toBeInTheDocument()
   })
 

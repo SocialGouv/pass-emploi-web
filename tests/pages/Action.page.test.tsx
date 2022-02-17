@@ -38,32 +38,26 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     it("Devrait afficher les information d'une action", () => {
-      expect(
-        screen.getByRole('heading', {
-          level: 1,
-          name: action.content,
-        })
-      ).toBeInTheDocument()
-
+      expect(screen.getByText(action.content)).toBeInTheDocument()
       expect(screen.getByText(action.comment)).toBeInTheDocument()
-
-      expect(screen.getByText('21/10/2021')).toBeInTheDocument()
+      expect(screen.getByText('15/02/2022')).toBeInTheDocument()
+      expect(screen.getByText('16/02/2022')).toBeInTheDocument()
+      expect(screen.getByText(action.creator)).toBeInTheDocument()
     })
 
     it('Devrait avoir un lien pour revenir sur la page précédente', () => {
-      const backLink = screen.getByLabelText(
-        "Retour sur la liste d'actions du jeune"
-      )
+      const backLink = screen.getByRole('link', {
+        name: 'Actions de Kenji Jirac',
+      })
 
       expect(backLink).toBeInTheDocument()
-
       expect(backLink).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions')
     })
 
     describe('Au clique sur un statut', () => {
       it("déclenche le changement de statut de l'action", async () => {
         // Given
-        const statutRadio = screen.getByText('En cours')
+        const statutRadio = screen.getByText('Commencée')
 
         // When
         statutRadio.click()

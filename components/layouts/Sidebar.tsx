@@ -45,9 +45,7 @@ export default function Sidebar({}: SidebarProps) {
           <Link href={'/mes-jeunes'}>
             <a
               className={
-                router.pathname.startsWith('/mes-jeunes')
-                  ? styles.activeLink
-                  : ''
+                router.pathname.startsWith('/mes-jeunes') ? 'bg-bleu_blanc' : ''
               }
             >
               <PeopleIcon
@@ -66,7 +64,7 @@ export default function Sidebar({}: SidebarProps) {
               <a
                 className={
                   router.pathname.startsWith('/mes-rendezvous')
-                    ? styles.activeLink
+                    ? 'bg-bleu_blanc'
                     : ''
                 }
               >
@@ -85,7 +83,7 @@ export default function Sidebar({}: SidebarProps) {
               <a
                 className={
                   router.pathname.startsWith('/supervision')
-                    ? styles.activeLink
+                    ? 'bg-bleu_blanc'
                     : ''
                 }
               >

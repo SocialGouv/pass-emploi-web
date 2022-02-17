@@ -1,3 +1,4 @@
+import styles from 'styles/components/Layouts.module.css'
 import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -58,21 +59,18 @@ function MiloCreationJeune({
         titre={`Mes jeunes - Création d'un compte jeune - Étape ${etape}`}
       />
 
-      <div className='flex items-center'>
-        <Link href={'/mes-jeunes'} passHref>
-          <a className='mr-6'>
-            <BackIcon
-              role='img'
-              focusable='false'
-              aria-label='Retour sur la liste de tous les jeunes'
-            />
+      <div className={styles.header}>
+        <Link href={'/mes-jeunes'}>
+          <a className='flex items-center'>
+            <BackIcon role='img' focusable='false' aria-hidden={true} />
+            <span className='ml-6 h4-semi text-bleu_nuit'>
+              Liste de mes jeunes
+            </span>
           </a>
         </Link>
-
-        <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
 
-      <div className='mt-20 pl-28'>
+      <div className={`${styles.content} pl-32`}>
         <CreationEtape etape={etape} />
 
         <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>

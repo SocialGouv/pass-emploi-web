@@ -13,6 +13,9 @@ module.exports = {
     { pattern: /^bg-/ },
     { pattern: /^text-/ },
     { pattern: /^border-/ },
+    { pattern: /^fill-/ },
+    { pattern: /^w-/ },
+    { pattern: /^h-/ },
   ], // Retain all classes starting with...
   theme: {
     screens: {
@@ -84,6 +87,7 @@ module.exports = {
       medium: '8px',
       large: '16px',
       x_large: '24px',
+      full: '9999px',
     },
     gridTemplateColumns: {
       // Complex site-specific column configuration

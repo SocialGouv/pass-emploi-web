@@ -4,7 +4,8 @@ type ButtonProps = {
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   children?: React.ReactNode
   role?: string
-  type?: any
+  type?: 'button' | 'submit' | 'reset'
+  controls?: string
   label?: string
   disabled?: boolean
   style?: ButtonStyle
@@ -23,6 +24,7 @@ const Button = ({
   children,
   role,
   type,
+  controls,
   disabled = false,
   label,
   style = ButtonStyle.PRIMARY,
@@ -38,6 +40,7 @@ const Button = ({
       form={form ?? undefined}
       role={role ?? undefined}
       type={type ?? undefined}
+      aria-controls={controls ?? undefined}
       aria-label={label ?? undefined}
       disabled={disabled}
       aria-disabled={disabled}

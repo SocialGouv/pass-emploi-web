@@ -93,68 +93,64 @@ export default function ChatRoom({}: ChatRoomProps) {
 
       {!isInConversation() && (
         <>
-          <h2 className={`h2-semi text-bleu_nuit ${styles.chatroomTitle}`}>
-            Ma messagerie
-          </h2>
+          <h2 className={`h2-semi text-bleu_nuit ml-9 mb-6`}>Ma messagerie</h2>
           {!jeunesChats?.length && (
-            <div className={`${styles.conversations} relative`}>
-              <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-                <EmptyMessagesImage
-                  className='mb-[16px]'
-                  focusable='false'
-                  aria-hidden='true'
-                />
-                <p className='text-md-semi text-bleu_nuit text-center'>
-                  Vous devriez avoir des jeunes inscrits pour discuter avec eux
-                </p>
-              </div>
+            <div className='h-full overflow-y-auto bg-bleu_blanc flex flex-col justify-center items-center'>
+              <EmptyMessagesImage focusable='false' aria-hidden='true' />
+              <p className='mt-4 text-md-semi text-bleu_nuit w-2/3 text-center'>
+                Vous devriez avoir des jeunes inscrits pour discuter avec eux
+              </p>
             </div>
           )}
 
-          <ul className={styles.conversations}>
-            {jeunesChats.map(
-              (jeuneChat: JeuneChat) =>
-                jeuneChat.chatId && (
-                  <li key={`chat-${jeuneChat.id}`}>
-                    <button
-                      className='border-none'
-                      onClick={() => setSelectedChat(jeuneChat)}
-                    >
-                      <span className='text-lg-semi text-bleu_nuit w-full mb-[7px]'>
-                        {jeuneChat.firstName} {jeuneChat.lastName}
-                        {!jeuneChat.seenByConseiller && (
-                          <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
-                            Nouveau message
-                          </span>
-                        )}
-                      </span>
-                      <span className='text-sm text-bleu_gris mb-[8px]'>
-                        {' '}
-                        {jeuneChat.lastMessageSentBy === 'conseiller'
-                          ? 'Vous'
-                          : jeuneChat.firstName}{' '}
-                        : {jeuneChat.lastMessageContent}
-                      </span>
-                      <span className='text-xxs-italic text-bleu_nuit self-end flex'>
-                        {jeuneChat.lastMessageContent && (
-                          <span className='mr-[7px]'>
-                            {formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}
-                          </span>
-                        )}
-                        {jeuneChat.seenByConseiller ? (
-                          <FbCheckIcon focusable='false' aria-hidden='true' />
-                        ) : (
-                          <FbCheckFillIcon
-                            focusable='false'
-                            aria-hidden='true'
-                          />
-                        )}
-                      </span>
-                    </button>
-                  </li>
-                )
-            )}
-          </ul>
+          {jeunesChats.length > 0 && (
+            <ul className='h-full overflow-y-auto bg-bleu_blanc'>
+              {jeunesChats.map(
+                (jeuneChat: JeuneChat) =>
+                  jeuneChat.chatId && (
+                    <li key={`chat-${jeuneChat.id}`} className='mb-[2px]'>
+                      <button
+                        className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
+                        onClick={() => setSelectedChat(jeuneChat)}
+                      >
+                        <span className='text-lg-semi text-bleu_nuit mb-2'>
+                          {jeuneChat.firstName} {jeuneChat.lastName}
+                          {!jeuneChat.seenByConseiller && (
+                            <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
+                              Nouveau message
+                            </span>
+                          )}
+                        </span>
+                        <span className='text-sm text-bleu_gris mb-[8px]'>
+                          {' '}
+                          {jeuneChat.lastMessageSentBy === 'conseiller'
+                            ? 'Vous'
+                            : jeuneChat.firstName}{' '}
+                          : {jeuneChat.lastMessageContent}
+                        </span>
+                        <span className='text-xxs-italic text-bleu_nuit self-end flex'>
+                          {jeuneChat.lastMessageContent && (
+                            <span className='mr-[7px]'>
+                              {formatDayAndHourDate(
+                                jeuneChat.lastMessageSentAt!
+                              )}{' '}
+                            </span>
+                          )}
+                          {jeuneChat.seenByConseiller ? (
+                            <FbCheckIcon focusable='false' aria-hidden='true' />
+                          ) : (
+                            <FbCheckFillIcon
+                              focusable='false'
+                              aria-hidden='true'
+                            />
+                          )}
+                        </span>
+                      </button>
+                    </li>
+                  )
+              )}
+            </ul>
+          )}
         </>
       )}
     </article>

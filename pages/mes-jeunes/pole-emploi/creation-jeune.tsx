@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -53,21 +54,18 @@ function PoleEmploiCreationJeune() {
     <>
       <AppHead titre={`Mes jeunes – Création d'un compte jeune`} />
 
-      <div className='flex items-center'>
-        <Link href={'/mes-jeunes'} passHref>
-          <a className='mr-6'>
-            <BackIcon
-              role='img'
-              focusable='false'
-              aria-label='Retour sur la liste de tous les jeunes'
-            />
+      <div className={styles.header}>
+        <Link href={'/mes-jeunes'}>
+          <a className='flex items-center'>
+            <BackIcon role='img' focusable='false' aria-hidden={true} />
+            <span className='ml-6 h4-semi text-bleu_nuit'>
+              Liste de mes jeunes
+            </span>
           </a>
         </Link>
-
-        <p className='h4-semi text-bleu_nuit'>Liste de mes jeunes</p>
       </div>
 
-      <div className='mt-20 pl-32'>
+      <div className={`${styles.content} pl-32`}>
         <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>
           Création d&apos;un compte jeune
         </h1>

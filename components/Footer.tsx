@@ -11,14 +11,19 @@ export const Footer = () => {
 
   return (
     <footer role='contentinfo' className={styles.footer}>
-      <ul className='flex px-4'>
+      <ul className='flex px-4 flex-wrap'>
         {liens.map(({ url, label }) => (
-          <ExternalLink
-            key={url}
-            href={url}
-            label={label}
-            onClick={() => setLabelMatomo(label)}
-          />
+          <li
+            key={label.toLowerCase().replace(/\s/, '-')}
+            className={`mr-4 text-bleu_nuit fill-bleu_nuit hover:text-primary hover:fill-primary`}
+          >
+            <ExternalLink
+              key={url}
+              href={url}
+              label={label}
+              onClick={() => setLabelMatomo(label)}
+            />
+          </li>
         ))}
       </ul>
     </footer>
