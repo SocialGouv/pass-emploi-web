@@ -68,6 +68,22 @@
   fill: theme('colors.blanc');
 }
 
+.buttonSecondary[disabled] {
+  background-color: theme('colors.disabled');
+  cursor: not-allowed;
+  border: 1px solid transparent;
+  color: theme('colors.blanc');
+}
+
+.buttonSecondary[disabled]:hover {
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
+}
+
+.buttonSecondary[disabled]:hover svg {
+  fill: theme('colors.blanc');
+}
+
 /**
 * Button Warning
 */

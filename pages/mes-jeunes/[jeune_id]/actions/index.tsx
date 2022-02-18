@@ -16,6 +16,9 @@ import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
+import FiltresActions from 'components/action/FiltresActions'
+
+const TOUTES_LES_ACTIONS_FILTRE_LABEL: string = 'toutes'
 
 type Props = {
   jeune: Jeune
@@ -37,8 +40,8 @@ function Actions({
   const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
   const [actionsFiltrees, setActionsFiltrees] = useState(actions)
-  const [currentFilter, setCurrentFilter] = useState<ActionStatus | 'Toutes'>(
-    'Toutes'
+  const [currentFilter, setCurrentFilter] = useState<ActionStatus | string>(
+    TOUTES_LES_ACTIONS_FILTRE_LABEL
   )
   const router = useRouter()
 
@@ -51,6 +54,17 @@ function Actions({
       undefined,
       { shallow: true }
     )
+  }
+
+  const handleActionsFiltresClicked = (newFilter: ActionStatus | string) => {
+    setCurrentFilter(newFilter)
+    if (newFilter === TOUTES_LES_ACTIONS_FILTRE_LABEL)
+      setActionsFiltrees(actions)
+    else if (newFilter === ActionStatus.NotStarted)
+      setActionsFiltrees(actionsARealiser)
+    else if (newFilter === ActionStatus.InProgress)
+      setActionsFiltrees(actionsCommencees)
+    else setActionsFiltrees(actionsTerminees)
   }
 
   useMatomo(
@@ -107,76 +121,30 @@ function Actions({
             label={"L'action a bien été supprimée"}
           />
         )}
+
+        <FiltresActions
+          currentFilter={currentFilter}
+          actionsLength={actions.length}
+          actionsARealiserLength={actionsARealiser.length}
+          actionsCommenceesLength={actionsCommencees.length}
+          actionsTermineesLength={actionsTerminees.length}
+          filterClicked={(newFilter) => handleActionsFiltresClicked(newFilter)}
+        />
+
+        <div
+          role='tabpanel'
+          aria-labelledby={`actions-${currentFilter}`}
+          id={`panneau-actions-${currentFilter}`}
+        >
+          <TableauActionsJeune jeune={jeune} actions={actionsFiltrees} />
+        </div>
+
+        {actions.length === 0 && (
+          <p className='text-md text-bleu mt-6'>
+            {jeune.firstName} n&apos;a pas encore d&apos;action
+          </p>
+        )}
       </div>
-
-      <div role='tablist' className='flex'>
-        <Button
-          role='tab'
-          id='onglet-1'
-          tabIndex={currentFilter === 'Toutes' ? 0 : -1}
-          selected={currentFilter === 'Toutes'}
-          aria-controls='panneau-1'
-          className='mr-4'
-          style={ButtonStyle.SECONDARY}
-          onClick={() => {
-            setCurrentFilter('Toutes')
-            setActionsFiltrees(actions)
-          }}
-        >
-          Toutes ({actions.length})
-        </Button>
-        <Button
-          role='tab'
-          id='onglet-2'
-          tabIndex={currentFilter === ActionStatus.NotStarted ? 0 : -1}
-          selected={currentFilter === ActionStatus.NotStarted}
-          aria-controls='panneau-2'
-          className='mr-4'
-          style={ButtonStyle.SECONDARY}
-          onClick={() => {
-            setCurrentFilter(ActionStatus.NotStarted)
-            setActionsFiltrees(actionsARealiser)
-          }}
-        >
-          À réaliser ({actionsARealiser.length})
-        </Button>
-
-        <Button
-          role='tab'
-          id='onglet-3'
-          tabIndex={currentFilter === ActionStatus.InProgress ? 0 : -1}
-          selected={currentFilter === ActionStatus.InProgress}
-          aria-controls='panneau-3'
-          className='mr-4'
-          style={ButtonStyle.SECONDARY}
-          onClick={() => {
-            setCurrentFilter(ActionStatus.InProgress)
-            setActionsFiltrees(actionsCommencees)
-          }}
-        >
-          Commencées ({actionsCommencees.length})
-        </Button>
-
-        <Button
-          role='tab'
-          id='onglet-4'
-          tabIndex={currentFilter === ActionStatus.Done ? 0 : -1}
-          selected={currentFilter === ActionStatus.Done}
-          aria-controls='panneau-4'
-          className='mr-4'
-          style={ButtonStyle.SECONDARY}
-          onClick={() => {
-            setCurrentFilter(ActionStatus.Done)
-            setActionsFiltrees(actionsTerminees)
-          }}
-        >
-          Terminées ({actionsTerminees.length})
-        </Button>
-      </div>
-
-      {actionsFiltrees.length != 0 && (
-        <TableauActionsJeune jeune={jeune} actions={actionsFiltrees} />
-      )}
     </>
   )
 }
