@@ -24,7 +24,7 @@ type Props = {
   jeune: Jeune
   actions: ActionJeune[]
   actionsARealiser: ActionJeune[]
-  actionsCommencees: ActionJeune[]
+  actionsEnCours: ActionJeune[]
   actionsTerminees: ActionJeune[]
   deleteSuccess: boolean
 }
@@ -33,7 +33,7 @@ function Actions({
   jeune,
   actions,
   actionsARealiser,
-  actionsCommencees,
+  actionsEnCours,
   actionsTerminees,
   deleteSuccess,
 }: Props) {
@@ -43,6 +43,11 @@ function Actions({
   const [currentFilter, setCurrentFilter] = useState<ActionStatus | string>(
     TOUTES_LES_ACTIONS_FILTRE_LABEL
   )
+  const initialTracking: string = showSuccessMessage
+    ? 'Actions jeune - Succès - Suppression Action'
+    : 'Actions jeune'
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
   const router = useRouter()
 
   const closeSuccessMessage = () => {
@@ -58,22 +63,22 @@ function Actions({
 
   const handleActionsFiltresClicked = (newFilter: ActionStatus | string) => {
     setCurrentFilter(newFilter)
-    if (newFilter === TOUTES_LES_ACTIONS_FILTRE_LABEL)
+    if (newFilter === TOUTES_LES_ACTIONS_FILTRE_LABEL) {
+      setTrackingLabel('Actions jeune')
       setActionsFiltrees(actions)
-    else if (newFilter === ActionStatus.NotStarted)
+    } else if (newFilter === ActionStatus.NotStarted) {
+      setTrackingLabel('Actions jeune - Filtre A réaliser')
       setActionsFiltrees(actionsARealiser)
-    else if (newFilter === ActionStatus.InProgress)
-      setActionsFiltrees(actionsCommencees)
-    else setActionsFiltrees(actionsTerminees)
+    } else if (newFilter === ActionStatus.InProgress) {
+      setTrackingLabel('Actions jeune - Filtre En cours')
+      setActionsFiltrees(actionsEnCours)
+    } else {
+      setTrackingLabel('Actions jeune - Filtre Terminées')
+      setActionsFiltrees(actionsTerminees)
+    }
   }
 
-  useMatomo(
-    showSuccessMessage
-      ? 'Actions jeune - Succès - Suppression Action'
-      : 'Actions jeune'
-  )
-
-  useMatomo(showModal === false ? 'Actions jeune' : undefined)
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -109,7 +114,10 @@ function Actions({
       <div className={styles.content}>
         {showModal && (
           <AddActionModal
-            onClose={() => setShowModal(false)}
+            onClose={() => {
+              setShowModal(false)
+              setTrackingLabel('Actions jeune')
+            }}
             onAdd={Router.reload}
             show={showModal}
           />
@@ -126,7 +134,7 @@ function Actions({
           currentFilter={currentFilter}
           actionsLength={actions.length}
           actionsARealiserLength={actionsARealiser.length}
-          actionsCommenceesLength={actionsCommencees.length}
+          actionsEnCoursLength={actionsEnCours.length}
           actionsTermineesLength={actionsTerminees.length}
           filterClicked={(newFilter) => handleActionsFiltresClicked(newFilter)}
         />
@@ -190,7 +198,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       actionsARealiser: sortedActions.filter(
         (action) => action.status === ActionStatus.NotStarted
       ),
-      actionsCommencees: sortedActions.filter(
+      actionsEnCours: sortedActions.filter(
         (action) => action.status === ActionStatus.InProgress
       ),
       actionsTerminees: sortedActions.filter(
