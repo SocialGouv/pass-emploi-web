@@ -46,13 +46,11 @@ describe('<Conversation />', () => {
       id: 'idConseiller',
       name: 'Taverner',
       structure: UserStructure.POLE_EMPLOI,
-      estSuperviseur: false
+      estSuperviseur: false,
     }
     accessToken = 'accessToken'
     tokenChat = 'tokenChat'
-  })
 
-  beforeEach(async () => {
     await act(async () => {
       await renderWithSession(
         <DIProvider dependances={{ messagesService }}>
@@ -61,6 +59,8 @@ describe('<Conversation />', () => {
         { user: conseiller, firebaseToken: tokenChat }
       )
     })
+    // https://github.com/jsdom/jsdom/issues/1695
+    window.HTMLElement.prototype.scrollIntoView = jest.fn()
   })
 
   it('subscribes to chat messages', async () => {
@@ -71,7 +71,7 @@ describe('<Conversation />', () => {
     )
   })
 
-  it('reads the chat', async () => {
+  it('marks the conversation as read', async () => {
     // Then
     expect(messagesService.setReadByConseiller).toHaveBeenCalledWith(
       jeuneChat.chatId
@@ -102,13 +102,25 @@ describe('<Conversation />', () => {
     })
   })
 
-  describe('on new message', () => {
+  describe('when sending message', () => {
+    let messageInput: HTMLInputElement
+    beforeEach(() => {
+      messageInput = screen.getByPlaceholderText('Écrivez votre message ici...')
+    })
+
+    it('marks the conversation as read', async () => {
+      // When
+      fireEvent.focus(messageInput)
+
+      // Then
+      expect(messagesService.setReadByConseiller).toHaveBeenCalledWith(
+        jeuneChat.chatId
+      )
+    })
+
     it('sends new message', async () => {
       // Given
       const newMessage = 'Ceci est un nouveau message du conseiller'
-      const messageInput = screen.getByPlaceholderText(
-        'Écrivez votre message ici...'
-      )
       const form = screen.getByTestId('newMessageForm')
 
       // When
