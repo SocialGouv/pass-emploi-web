@@ -1,42 +1,50 @@
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { ActionStatus } from 'interfaces/action'
 
-const TOUTES_LES_ACTIONS_FILTRE_LABEL: string = 'toutes'
+const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
 
-interface FiltresActionsProps {
+interface FiltresActionsTabList {
   currentFilter: string
   actionsLength: number
   actionsARealiserLength: number
   actionsEnCoursLength: number
   actionsTermineesLength: number
+  prenomJeune: string
   filterClicked: (filter: ActionStatus | string) => void
 }
 
-function FiltresActions({
+function FiltresActionsTabList({
   currentFilter,
   actionsLength,
   actionsARealiserLength,
   actionsEnCoursLength,
   actionsTermineesLength,
+  prenomJeune,
   filterClicked,
-}: FiltresActionsProps) {
+}: FiltresActionsTabList) {
   return (
-    <div role='tablist' className='flex'>
+    <div
+      role='tablist'
+      className='flex'
+      aria-label={`Filtrer les actions de ${prenomJeune} par statut`}
+    >
       <Button
         role='tab'
         id='actions-toutes'
-        tabIndex={currentFilter === TOUTES_LES_ACTIONS_FILTRE_LABEL ? 0 : -1}
-        selected={currentFilter === TOUTES_LES_ACTIONS_FILTRE_LABEL}
-        aria-controls='panneau-actions-toutes'
+        type='button'
+        tabIndex={currentFilter === TOUTES_LES_ACTIONS_LABEL ? 0 : -1}
+        selected={currentFilter === TOUTES_LES_ACTIONS_LABEL}
+        aria-controls={`panneau-actions-${TOUTES_LES_ACTIONS_LABEL}`}
         className='mr-4'
         style={ButtonStyle.SECONDARY}
-        onClick={() => filterClicked(TOUTES_LES_ACTIONS_FILTRE_LABEL)}
+        onClick={() => filterClicked(TOUTES_LES_ACTIONS_LABEL)}
       >
         Toutes ({actionsLength})
       </Button>
       <Button
         role='tab'
         id={`actions-${ActionStatus.NotStarted}`}
+        type='button'
         tabIndex={currentFilter === ActionStatus.NotStarted ? 0 : -1}
         selected={currentFilter === ActionStatus.NotStarted}
         aria-controls={`panneau-actions-${ActionStatus.NotStarted}`}
@@ -50,6 +58,7 @@ function FiltresActions({
       <Button
         role='tab'
         id={`actions-${ActionStatus.InProgress}`}
+        type='button'
         tabIndex={currentFilter === ActionStatus.InProgress ? 0 : -1}
         selected={currentFilter === ActionStatus.InProgress}
         aria-controls={`panneau-actions-${ActionStatus.InProgress}`}
@@ -63,6 +72,7 @@ function FiltresActions({
       <Button
         role='tab'
         id={`actions-${ActionStatus.Done}`}
+        type='button'
         tabIndex={currentFilter === ActionStatus.Done ? 0 : -1}
         selected={currentFilter === ActionStatus.Done}
         disabled={actionsTermineesLength === 0}
@@ -77,4 +87,4 @@ function FiltresActions({
   )
 }
 
-export default FiltresActions
+export default FiltresActionsTabList

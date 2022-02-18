@@ -16,9 +16,9 @@ import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
-import FiltresActions from 'components/action/FiltresActions'
+import FiltresActionsTabList from 'components/action/FiltresActions'
 
-const TOUTES_LES_ACTIONS_FILTRE_LABEL: string = 'toutes'
+const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
 
 type Props = {
   jeune: Jeune
@@ -41,7 +41,7 @@ function Actions({
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
   const [actionsFiltrees, setActionsFiltrees] = useState(actions)
   const [currentFilter, setCurrentFilter] = useState<ActionStatus | string>(
-    TOUTES_LES_ACTIONS_FILTRE_LABEL
+    TOUTES_LES_ACTIONS_LABEL
   )
   const initialTracking: string = showSuccessMessage
     ? 'Actions jeune - Succès - Suppression Action'
@@ -61,9 +61,9 @@ function Actions({
     )
   }
 
-  const handleActionsFiltresClicked = (newFilter: ActionStatus | string) => {
+  const handleActionsFiltreesClicked = (newFilter: ActionStatus | string) => {
     setCurrentFilter(newFilter)
-    if (newFilter === TOUTES_LES_ACTIONS_FILTRE_LABEL) {
+    if (newFilter === TOUTES_LES_ACTIONS_LABEL) {
       setTrackingLabel('Actions jeune')
       setActionsFiltrees(actions)
     } else if (newFilter === ActionStatus.NotStarted) {
@@ -130,19 +130,22 @@ function Actions({
           />
         )}
 
-        <FiltresActions
+        <FiltresActionsTabList
           currentFilter={currentFilter}
           actionsLength={actions.length}
           actionsARealiserLength={actionsARealiser.length}
           actionsEnCoursLength={actionsEnCours.length}
           actionsTermineesLength={actionsTerminees.length}
-          filterClicked={(newFilter) => handleActionsFiltresClicked(newFilter)}
+          prenomJeune={jeune.firstName}
+          filterClicked={(newFilter) => handleActionsFiltreesClicked(newFilter)}
         />
 
         <div
           role='tabpanel'
           aria-labelledby={`actions-${currentFilter}`}
+          tabIndex={0}
           id={`panneau-actions-${currentFilter}`}
+          className='mt-8'
         >
           <TableauActionsJeune jeune={jeune} actions={actionsFiltrees} />
         </div>
