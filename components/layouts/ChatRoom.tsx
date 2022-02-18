@@ -113,7 +113,7 @@ export default function ChatRoom({}: ChatRoomProps) {
                         className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
                         onClick={() => setSelectedChat(jeuneChat)}
                       >
-                        <span className='text-lg-semi text-bleu_nuit mb-2'>
+                        <span className='text-lg-semi text-bleu_nuit mb-2 w-full flex justify-between'>
                           {jeuneChat.firstName} {jeuneChat.lastName}
                           {!jeuneChat.seenByConseiller && (
                             <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
