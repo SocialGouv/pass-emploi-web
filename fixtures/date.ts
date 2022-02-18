@@ -1,0 +1,5 @@
+export const now = new Date()
+export const earlyDate = new Date(now.getTime() - 100000)
+export const earliestDate = new Date(now.getTime() - 999999)
+export const lateDate = new Date(now.getTime() + 100000)
+export const latestDate = new Date(now.getTime() + 999999)

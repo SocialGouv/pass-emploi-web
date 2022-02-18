@@ -3,7 +3,11 @@ import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
-import { ActionJeune, ActionStatus } from 'interfaces/action'
+import {
+  ActionJeune,
+  ActionStatus,
+  compareActionsDatesDesc,
+} from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { ActionJeuneJson } from 'interfaces/json/action'
@@ -23,12 +27,6 @@ type Props = {
   actionsEnCours: ActionJeune[]
   deleteSuccess: boolean
 }
-
-const compareByCreationDate = (action1: ActionJeune, action2: ActionJeune) =>
-  new Date(action1.creationDate).getTime() >
-  new Date(action2.creationDate).getTime()
-    ? -1
-    : 1
 
 function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
   const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
@@ -152,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       ...userActionJson,
       status: userActionJson.status || ActionStatus.NotStarted,
     }))
-    .sort(compareByCreationDate)
+    .sort(compareActionsDatesDesc)
 
   return {
     props: {

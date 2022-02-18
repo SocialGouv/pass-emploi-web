@@ -1,4 +1,11 @@
 import {
+  earliestDate,
+  earlyDate,
+  lateDate,
+  latestDate,
+  now,
+} from 'fixtures/date'
+import {
   compareDates,
   dateIsToday,
   dateIsYesterday,
@@ -46,11 +53,6 @@ describe('dateUtils', () => {
   })
 
   describe('compareDates', () => {
-    const now = new Date()
-    const earlyDate = new Date(now.getTime() - 100000)
-    const earliestDate = new Date(now.getTime() - 999999)
-    const lateDate = new Date(now.getTime() + 100000)
-    const latestDate = new Date(now.getTime() + 999999)
     const dates = [now, earlyDate, latestDate, earliestDate, now, lateDate]
 
     describe('when comparing asc', () => {
