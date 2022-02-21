@@ -3,7 +3,11 @@ import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
-import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
+import {
+  ActionJeune,
+  ActionStatus,
+  compareActionsDatesDesc,
+} from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
