@@ -28,7 +28,7 @@ type Props = {
   jeune: Jeune
   actions: ActionJeune[]
   actionsARealiser: ActionJeune[]
-  actionsEnCours: ActionJeune[]
+  actionsCommencees: ActionJeune[]
   actionsTerminees: ActionJeune[]
   deleteSuccess: boolean
 }
@@ -37,7 +37,7 @@ function Actions({
   jeune,
   actions,
   actionsARealiser,
-  actionsEnCours,
+  actionsCommencees,
   actionsTerminees,
   deleteSuccess,
 }: Props) {
@@ -74,8 +74,8 @@ function Actions({
       setTrackingLabel('Actions jeune - Filtre A réaliser')
       setActionsFiltrees(actionsARealiser)
     } else if (newFilter === ActionStatus.InProgress) {
-      setTrackingLabel('Actions jeune - Filtre En cours')
-      setActionsFiltrees(actionsEnCours)
+      setTrackingLabel('Actions jeune - Filtre Commencées')
+      setActionsFiltrees(actionsCommencees)
     } else {
       setTrackingLabel('Actions jeune - Filtre Terminées')
       setActionsFiltrees(actionsTerminees)
@@ -138,7 +138,7 @@ function Actions({
           currentFilter={currentFilter}
           actionsLength={actions.length}
           actionsARealiserLength={actionsARealiser.length}
-          actionsEnCoursLength={actionsEnCours.length}
+          actionsCommenceesLength={actionsCommencees.length}
           actionsTermineesLength={actionsTerminees.length}
           prenomJeune={jeune.firstName}
           filterClicked={(newFilter) => handleActionsFiltreesClicked(newFilter)}
@@ -205,7 +205,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       actionsARealiser: sortedActions.filter(
         (action) => action.status === ActionStatus.NotStarted
       ),
-      actionsEnCours: sortedActions.filter(
+      actionsCommencees: sortedActions.filter(
         (action) => action.status === ActionStatus.InProgress
       ),
       actionsTerminees: sortedActions.filter(

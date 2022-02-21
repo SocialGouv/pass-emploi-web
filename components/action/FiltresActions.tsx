@@ -7,7 +7,7 @@ interface FiltresActionsTabList {
   currentFilter: string
   actionsLength: number
   actionsARealiserLength: number
-  actionsEnCoursLength: number
+  actionsCommenceesLength: number
   actionsTermineesLength: number
   prenomJeune: string
   filterClicked: (filter: ActionStatus | string) => void
@@ -17,7 +17,7 @@ function FiltresActionsTabList({
   currentFilter,
   actionsLength,
   actionsARealiserLength,
-  actionsEnCoursLength,
+  actionsCommenceesLength,
   actionsTermineesLength,
   prenomJeune,
   filterClicked,
@@ -62,12 +62,12 @@ function FiltresActionsTabList({
         tabIndex={currentFilter === ActionStatus.InProgress ? 0 : -1}
         selected={currentFilter === ActionStatus.InProgress}
         aria-controls={`panneau-actions-${ActionStatus.InProgress}`}
-        disabled={actionsEnCoursLength === 0}
+        disabled={actionsCommenceesLength === 0}
         className='mr-4'
         style={ButtonStyle.SECONDARY}
         onClick={() => filterClicked(ActionStatus.InProgress)}
       >
-        En Cours ({actionsEnCoursLength})
+        Commencées ({actionsCommenceesLength})
       </Button>
       <Button
         role='tab'
