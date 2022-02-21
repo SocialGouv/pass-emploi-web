@@ -173,12 +173,17 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
       <form
         data-testid='newMessageForm'
         onSubmit={sendNouveauMessage}
-        className='w-full bg-blanc p-3 flex'
+        className='w-full bg-blanc p-3 flex items-end'
       >
-        <input
-          type='text'
+        <label htmlFor='input-new-message' className='sr-only'>
+          Message à envoyer
+        </label>
+        <textarea
+          id='input-new-message'
+          aria-multiline={true}
           value={newMessage}
-          className='flex-grow px-4 py-3 bg-bleu_blanc mr-6 rounded-full border-0 text-md text-bleu_nuit border-none'
+          rows={3}
+          className='flex-grow p-4 bg-bleu_blanc mr-2 rounded-x_large border-0 text-md text-bleu_nuit border-none'
           onFocus={onInputFocused}
           onBlur={() => setInputFocused(false)}
           onChange={(e) => setNewMessage(e.target.value)}
@@ -187,6 +192,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
 
         <button
           type='submit'
+          aria-label='Envoyer le message'
           disabled={!newMessage}
           className='bg-bleu_nuit w-12 h-12 border-none rounded-[50%]'
         >
