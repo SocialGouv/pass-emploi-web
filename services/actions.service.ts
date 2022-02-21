@@ -1,5 +1,10 @@
 import { ApiClient } from 'clients/api.client'
-import { ActionJeune, ActionStatus } from 'interfaces/action'
+import {
+  ActionJeune,
+  ActionStatus,
+  actionStatusToJson,
+  jsonToActionStatus,
+} from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
 import { ActionJeuneJson } from 'interfaces/json/action'
 
@@ -9,10 +14,7 @@ export interface ActionsService {
     accessToken: string
   ): Promise<ActionJeune & { jeune: Jeune }>
 
-  getActionsJeune(
-    idJeune: string,
-    accessToken: string
-  ): Promise<ActionJeuneJson[]>
+  getActionsJeune(idJeune: string, accessToken: string): Promise<ActionJeune[]>
 
   createAction(
     newAction: { content: string; comment: string },
@@ -33,24 +35,28 @@ export interface ActionsService {
 export class ActionsApiService implements ActionsService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  getAction(
+  async getAction(
     idAction: string,
     accessToken: string
   ): Promise<ActionJeune & { jeune: Jeune }> {
-    return this.apiClient.get<ActionJeuneJson & { jeune: Jeune }>(
-      `/actions/${idAction}`,
-      accessToken
-    )
+    const actionJson = await this.apiClient.get<
+      ActionJeuneJson & { jeune: Jeune }
+    >(`/actions/${idAction}`, accessToken)
+    return { ...actionJson, status: jsonToActionStatus(actionJson.status) }
   }
 
-  getActionsJeune(
+  async getActionsJeune(
     idJeune: string,
     accessToken: string
   ): Promise<ActionJeune[]> {
-    return this.apiClient.get<ActionJeuneJson[]>(
+    const actionsJson = await this.apiClient.get<ActionJeuneJson[]>(
       `/jeunes/${idJeune}/actions`,
       accessToken
     )
+    return actionsJson.map((json) => ({
+      ...json,
+      status: jsonToActionStatus(json.status),
+    }))
   }
 
   async createAction(
@@ -73,7 +79,7 @@ export class ActionsApiService implements ActionsService {
   ): Promise<ActionStatus> {
     await this.apiClient.put(
       `/actions/${idAction}`,
-      { status: nouveauStatut },
+      { status: actionStatusToJson(nouveauStatut) },
       accessToken
     )
     return nouveauStatut

@@ -1,4 +1,4 @@
-import { compareDates } from 'utils/date'
+import { compareDatesDesc } from 'utils/date'
 
 export interface ActionJeune {
   id: string
@@ -11,28 +11,49 @@ export interface ActionJeune {
   status: ActionStatus
 }
 
-// FIXME : bonne pratique des enum > clé === valeur
 export enum ActionStatus {
-  NotStarted = 'not_started',
-  InProgress = 'in_progress',
-  Done = 'done',
+  NotStarted = 'NotStarted',
+  InProgress = 'InProgress',
+  Done = 'Done',
+}
+
+export function jsonToActionStatus(jsonStatus: string): ActionStatus {
+  switch (jsonStatus) {
+    case 'in_progress':
+      return ActionStatus.InProgress
+    case 'done':
+      return ActionStatus.Done
+    case 'not_started':
+      return ActionStatus.NotStarted
+    default:
+      console.warn(
+        `Statut d'action ${jsonStatus} incorrect, traité comme NotStarted`
+      )
+      return ActionStatus.NotStarted
+  }
+}
+
+export function actionStatusToJson(status: ActionStatus): string {
+  switch (status) {
+    case ActionStatus.NotStarted:
+      return 'not_started'
+    case ActionStatus.InProgress:
+      return 'in_progress'
+    case ActionStatus.Done:
+      return 'done'
+  }
 }
 
 export function compareActionsDatesDesc(
   action1: ActionJeune,
   action2: ActionJeune
 ): number {
-  const compare = compareDates(
+  const compare = compareDatesDesc(
     new Date(action1.creationDate),
-    new Date(action2.creationDate),
-    true
+    new Date(action2.creationDate)
   )
   return (
     compare ||
-    compareDates(
-      new Date(action1.lastUpdate),
-      new Date(action2.lastUpdate),
-      true
-    )
+    compareDatesDesc(new Date(action1.lastUpdate), new Date(action2.lastUpdate))
   )
 }

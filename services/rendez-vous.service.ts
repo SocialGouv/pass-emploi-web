@@ -1,5 +1,5 @@
-import { RdvFormData, RdvJson } from 'interfaces/json/rdv'
-import { RdvJeune } from 'interfaces/rdv'
+import { jsonToRdv, RdvFormData, RdvJson } from 'interfaces/json/rdv'
+import { Rdv, RdvJeune } from 'interfaces/rdv'
 import { ApiClient } from 'clients/api.client'
 
 export interface RendezVousService {
@@ -12,7 +12,7 @@ export interface RendezVousService {
   getRendezVousConseiller(
     idConseiller: string,
     accessToken: string
-  ): Promise<{ passes: RdvJson[]; futurs: RdvJson[] }>
+  ): Promise<{ passes: Rdv[]; futurs: Rdv[] }>
 
   getRendezVousJeune(idJeune: string, accessToken: string): Promise<RdvJeune[]>
 
@@ -33,14 +33,19 @@ export class RendezVousApiService implements RendezVousService {
     )
   }
 
-  getRendezVousConseiller(
+  async getRendezVousConseiller(
     idConseiller: string,
     accessToken: string
-  ): Promise<{ passes: RdvJson[]; futurs: RdvJson[] }> {
-    return this.apiClient.get<{ passes: RdvJson[]; futurs: RdvJson[] }>(
-      `/conseillers/${idConseiller}/rendezvous`,
-      accessToken
-    )
+  ): Promise<{ passes: Rdv[]; futurs: Rdv[] }> {
+    const { passes: rdvsPassesJson, futurs: rdvsFutursJson } =
+      await this.apiClient.get<{
+        passes: RdvJson[]
+        futurs: RdvJson[]
+      }>(`/conseillers/${idConseiller}/rendezvous`, accessToken)
+    return {
+      passes: rdvsPassesJson.map(jsonToRdv),
+      futurs: rdvsFutursJson.map(jsonToRdv),
+    }
   }
 
   getRendezVousJeune(

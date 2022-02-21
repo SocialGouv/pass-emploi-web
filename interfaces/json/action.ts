@@ -1,12 +1,10 @@
-import { ActionStatus } from 'interfaces/action'
-
 export type ActionJeuneJson = {
   id: string
   content: string
   comment: string
   creationDate: string
   lastUpdate: string
-  status: ActionStatus
+  status: 'not_started' | 'in_progress' | 'done'
   creator: string
   creatorType: string
 }

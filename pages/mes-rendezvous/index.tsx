@@ -4,7 +4,7 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
-import { jsonToRdv, RdvFormData } from 'interfaces/json/rdv'
+import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useSession } from 'next-auth/react'
@@ -177,21 +177,15 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const { rendezVousService } = Container.getDIContainer().dependances
-  const data = await rendezVousService.getRendezVousConseiller(
+  const { passes, futurs } = await rendezVousService.getRendezVousConseiller(
     user.id,
     accessToken
   )
-  if (!data) {
-    return { notFound: true }
-  }
-
-  const rendezVousPasses: Rdv[] = data.passes.map(jsonToRdv)
-  const rendezVousFuturs: Rdv[] = data.futurs.map(jsonToRdv)
 
   return {
     props: {
-      rendezVousFuturs,
-      rendezVousPasses,
+      rendezVousFuturs: futurs,
+      rendezVousPasses: passes,
     },
   }
 }

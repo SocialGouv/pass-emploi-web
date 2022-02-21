@@ -7,6 +7,7 @@ import {
 } from 'fixtures/date'
 import {
   compareDates,
+  compareDatesDesc,
   dateIsToday,
   dateIsYesterday,
   isDateOlder,
@@ -75,7 +76,7 @@ describe('dateUtils', () => {
     describe('when comparing desc', () => {
       it('orders date by antechronological order', async () => {
         // WHEN
-        const actual = [...dates].sort((d1, d2) => compareDates(d1, d2, true))
+        const actual = [...dates].sort((d1, d2) => compareDatesDesc(d1, d2))
 
         // THEN
         expect(actual).toStrictEqual([

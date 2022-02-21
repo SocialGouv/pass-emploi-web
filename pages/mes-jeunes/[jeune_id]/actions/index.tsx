@@ -3,14 +3,9 @@ import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
-import {
-  ActionJeune,
-  ActionStatus,
-  compareActionsDatesDesc,
-} from 'interfaces/action'
+import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { ActionJeuneJson } from 'interfaces/json/action'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
@@ -145,17 +140,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  const userActions: ActionJeune[] = dataActionsJeune
-    .map((userActionJson: ActionJeuneJson) => ({
-      ...userActionJson,
-      status: userActionJson.status || ActionStatus.NotStarted,
-    }))
-    .sort(compareActionsDatesDesc)
-
   return {
     props: {
       jeune: dataDetailsJeune,
-      actionsEnCours: userActions,
+      actionsEnCours: [...dataActionsJeune].sort(compareActionsDatesDesc),
       deleteSuccess: Boolean(context.query.deleteSuccess),
     },
   }
