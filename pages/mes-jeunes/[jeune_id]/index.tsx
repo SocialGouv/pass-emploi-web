@@ -48,7 +48,7 @@ const FicheJeune = ({
   const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
     undefined
   )
-  const initialTracking: any = 'Détail jeune'
+  const initialTracking: string = 'Détail jeune'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI

@@ -8,9 +8,12 @@ type ButtonProps = {
   controls?: string
   label?: string
   disabled?: boolean
+  selected?: boolean
   style?: ButtonStyle
   className?: any
   form?: string
+  id?: string
+  tabIndex?: number
 }
 
 export enum ButtonStyle {
@@ -26,10 +29,13 @@ const Button = ({
   type,
   controls,
   disabled = false,
+  selected = false,
   label,
   style = ButtonStyle.PRIMARY,
   className,
   form,
+  id,
+  tabIndex,
 }: ButtonProps) => {
   return (
     <button
@@ -38,12 +44,15 @@ const Button = ({
         styles.button
       } ${getColorStyleClassName(style)}`}
       form={form ?? undefined}
+      id={id ?? undefined}
+      tabIndex={tabIndex ?? undefined}
       role={role ?? undefined}
       type={type ?? undefined}
       aria-controls={controls ?? undefined}
       aria-label={label ?? undefined}
       disabled={disabled}
       aria-disabled={disabled}
+      aria-selected={selected}
     >
       {children}
     </button>

@@ -54,13 +54,33 @@
   border: 1px solid theme('colors.bleu_nuit');
 }
 
-.buttonSecondary:hover {
+.buttonSecondary:hover,
+.buttonSecondary:active,
+.buttonSecondary[aria-selected='true'] {
   background-color: theme('colors.bleu_nuit');
   color: theme('colors.blanc');
   border: 1px solid transparent;
 }
 
-.buttonSecondary:hover svg {
+.buttonSecondary:hover svg,
+.buttonSecondary:active svg,
+.buttonSecondary[aria-selected='true'] svg {
+  fill: theme('colors.blanc');
+}
+
+.buttonSecondary[disabled] {
+  background-color: theme('colors.disabled');
+  cursor: not-allowed;
+  border: 1px solid transparent;
+  color: theme('colors.blanc');
+}
+
+.buttonSecondary[disabled]:hover {
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
+}
+
+.buttonSecondary[disabled]:hover svg {
   fill: theme('colors.blanc');
 }
 

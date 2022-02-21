@@ -1,6 +1,7 @@
-import { screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import { uneAction } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
+import { ActionStatus } from 'interfaces/action'
 import { GetServerSidePropsContext } from 'next/types'
 import Actions, {
   getServerSideProps,
@@ -20,9 +21,27 @@ describe("Page Liste des actions d'un jeune", () => {
       uneAction({ id: 'action-2', content: 'action 2' }),
     ]
     const jeune = unJeune()
+    const uneActionEnCours = uneAction({
+      id: 'action-en-cours',
+      content: 'action en cours',
+      status: ActionStatus.InProgress,
+    })
+    const uneActionTermine = uneAction({
+      id: 'action-terminee',
+      content: 'action terminee',
+      status: ActionStatus.Done,
+    })
+
     beforeEach(() => {
       renderWithSession(
-        <Actions jeune={jeune} actionsEnCours={actions} deleteSuccess={false} />
+        <Actions
+          jeune={jeune}
+          deleteSuccess={false}
+          actions={[uneActionEnCours, uneActionTermine, ...actions]}
+          actionsEnCours={[uneActionEnCours]}
+          actionsARealiser={[...actions]}
+          actionsTerminees={[uneActionTermine]}
+        />
       )
     })
 
@@ -52,6 +71,38 @@ describe("Page Liste des actions d'un jeune", () => {
         .closest('a')
       expect(backLink).toBeInTheDocument()
       expect(backLink).toHaveAttribute('href', '/mes-jeunes/jeune-1')
+    })
+
+    describe("Filtres de la liste d'actions", () => {
+      it('Affiche les boutons des filtres', () => {
+        expect(screen.getByRole('tab', { selected: true })).toBeInTheDocument()
+        expect(screen.getByRole('tab', { selected: true })).toHaveAttribute(
+          'tabIndex',
+          '0'
+        )
+        expect(screen.getAllByRole('tab', { selected: false }).length).toEqual(
+          3
+        )
+
+        expect(
+          screen.getAllByRole('tab', { selected: false })[0]
+        ).toHaveAttribute('tabIndex', '-1')
+      })
+
+      it("Affiche les actions terminees lorsqu'on clique sur le bouton terminee", async () => {
+        //GIVEN
+        const termineesFilterTab = screen.getByRole('tab', {
+          name: 'Terminées (1)',
+        })
+
+        //WHEN
+        fireEvent.click(termineesFilterTab)
+
+        //THEN
+        expect(screen.getByText(uneActionTermine.content)).toBeInTheDocument()
+        expect(() => screen.getByText(uneActionEnCours.content)).toThrow()
+        expect(() => screen.getByText(actions[0].content)).toThrow()
+      })
     })
   })
 

@@ -3,7 +3,11 @@ import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
-import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
+import {
+  ActionJeune,
+  ActionStatus,
+  compareActionsDatesDesc,
+} from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
@@ -16,16 +20,38 @@ import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
+import FiltresActionsTabList from 'components/action/FiltresActions'
+
+const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
 
 type Props = {
   jeune: Jeune
+  actions: ActionJeune[]
+  actionsARealiser: ActionJeune[]
   actionsEnCours: ActionJeune[]
+  actionsTerminees: ActionJeune[]
   deleteSuccess: boolean
 }
 
-function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
+function Actions({
+  jeune,
+  actions,
+  actionsARealiser,
+  actionsEnCours,
+  actionsTerminees,
+  deleteSuccess,
+}: Props) {
   const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
+  const [actionsFiltrees, setActionsFiltrees] = useState(actions)
+  const [currentFilter, setCurrentFilter] = useState<ActionStatus | string>(
+    TOUTES_LES_ACTIONS_LABEL
+  )
+  const initialTracking: string = showSuccessMessage
+    ? 'Actions jeune - Succès - Suppression Action'
+    : 'Actions jeune'
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
   const router = useRouter()
 
   const closeSuccessMessage = () => {
@@ -39,13 +65,24 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
     )
   }
 
-  useMatomo(
-    showSuccessMessage
-      ? 'Actions jeune - Succès - Suppression Action'
-      : 'Actions jeune'
-  )
+  const handleActionsFiltreesClicked = (newFilter: ActionStatus | string) => {
+    setCurrentFilter(newFilter)
+    if (newFilter === TOUTES_LES_ACTIONS_LABEL) {
+      setTrackingLabel('Actions jeune')
+      setActionsFiltrees(actions)
+    } else if (newFilter === ActionStatus.NotStarted) {
+      setTrackingLabel('Actions jeune - Filtre A réaliser')
+      setActionsFiltrees(actionsARealiser)
+    } else if (newFilter === ActionStatus.InProgress) {
+      setTrackingLabel('Actions jeune - Filtre En cours')
+      setActionsFiltrees(actionsEnCours)
+    } else {
+      setTrackingLabel('Actions jeune - Filtre Terminées')
+      setActionsFiltrees(actionsTerminees)
+    }
+  }
 
-  useMatomo(showModal === false ? 'Actions jeune' : undefined)
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -81,7 +118,10 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
       <div className={styles.content}>
         {showModal && (
           <AddActionModal
-            onClose={() => setShowModal(false)}
+            onClose={() => {
+              setShowModal(false)
+              setTrackingLabel('Actions jeune')
+            }}
             onAdd={Router.reload}
             show={showModal}
           />
@@ -94,14 +134,30 @@ function Actions({ jeune, actionsEnCours, deleteSuccess }: Props) {
           />
         )}
 
-        {actionsEnCours.length === 0 && (
-          <p className='text-md text-bleu'>
-            {jeune.firstName} n&rsquo;a pas d&rsquo;actions en cours pour le
-            moment
+        <FiltresActionsTabList
+          currentFilter={currentFilter}
+          actionsLength={actions.length}
+          actionsARealiserLength={actionsARealiser.length}
+          actionsEnCoursLength={actionsEnCours.length}
+          actionsTermineesLength={actionsTerminees.length}
+          prenomJeune={jeune.firstName}
+          filterClicked={(newFilter) => handleActionsFiltreesClicked(newFilter)}
+        />
+
+        <div
+          role='tabpanel'
+          aria-labelledby={`actions-${currentFilter}`}
+          tabIndex={0}
+          id={`panneau-actions-${currentFilter}`}
+          className='mt-8'
+        >
+          <TableauActionsJeune jeune={jeune} actions={actionsFiltrees} />
+        </div>
+
+        {actions.length === 0 && (
+          <p className='text-md text-bleu mt-6'>
+            {jeune.firstName} n&apos;a pas encore d&apos;action
           </p>
-        )}
-        {actionsEnCours.length != 0 && (
-          <TableauActionsJeune jeune={jeune} actions={actionsEnCours} />
         )}
       </div>
     </>
@@ -140,10 +196,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  const sortedActions = [...dataActionsJeune].sort(compareActionsDatesDesc)
+
   return {
     props: {
       jeune: dataDetailsJeune,
-      actionsEnCours: [...dataActionsJeune].sort(compareActionsDatesDesc),
+      actions: sortedActions,
+      actionsARealiser: sortedActions.filter(
+        (action) => action.status === ActionStatus.NotStarted
+      ),
+      actionsEnCours: sortedActions.filter(
+        (action) => action.status === ActionStatus.InProgress
+      ),
+      actionsTerminees: sortedActions.filter(
+        (action) => action.status === ActionStatus.Done
+      ),
       deleteSuccess: Boolean(context.query.deleteSuccess),
     },
   }
