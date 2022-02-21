@@ -21,9 +21,9 @@ describe("Page Liste des actions d'un jeune", () => {
       uneAction({ id: 'action-2', content: 'action 2' }),
     ]
     const jeune = unJeune()
-    const uneActionEnCours = uneAction({
-      id: 'action-en-cours',
-      content: 'action en cours',
+    const uneActionCommencee = uneAction({
+      id: 'action-commencee',
+      content: 'action commencée',
       status: ActionStatus.InProgress,
     })
     const uneActionTermine = uneAction({
@@ -37,8 +37,8 @@ describe("Page Liste des actions d'un jeune", () => {
         <Actions
           jeune={jeune}
           deleteSuccess={false}
-          actions={[uneActionEnCours, uneActionTermine, ...actions]}
-          actionsEnCours={[uneActionEnCours]}
+          actions={[uneActionCommencee, uneActionTermine, ...actions]}
+          actionsCommencees={[uneActionCommencee]}
           actionsARealiser={[...actions]}
           actionsTerminees={[uneActionTermine]}
         />
@@ -100,7 +100,7 @@ describe("Page Liste des actions d'un jeune", () => {
 
         //THEN
         expect(screen.getByText(uneActionTermine.content)).toBeInTheDocument()
-        expect(() => screen.getByText(uneActionEnCours.content)).toThrow()
+        expect(() => screen.getByText(uneActionCommencee.content)).toThrow()
         expect(() => screen.getByText(actions[0].content)).toThrow()
       })
     })

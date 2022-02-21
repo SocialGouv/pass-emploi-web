@@ -14,7 +14,7 @@ const mappedStatus: {
     colorLighten: 'accent_1_lighten',
   },
   [ActionStatus.InProgress]: {
-    label: 'En cours',
+    label: 'Commencée',
     color: 'accent_3',
     colorLighten: 'accent_3_lighten',
   },

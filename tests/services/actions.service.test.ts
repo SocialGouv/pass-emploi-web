@@ -35,7 +35,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual(action)
     })
 
-    it('renvoie une action en cours', async () => {
+    it('renvoie une action commencée', async () => {
       // GIVEN
       const action = uneAction({ status: ActionStatus.InProgress })
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
@@ -128,7 +128,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual(ActionStatus.NotStarted)
     })
 
-    it('met à jour une action en cours', async () => {
+    it('met à jour une action commencée', async () => {
       // WHEN
       const actual = await actionsService.updateAction(
         'id-action',
