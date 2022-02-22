@@ -14,7 +14,7 @@ export const Footer = () => {
       <ul className='flex px-4 flex-wrap'>
         {liens.map(({ url, label }) => (
           <li
-            key={label.toLowerCase().replace(/\s/, '-')}
+            key={label.toLowerCase().replace(/\s/g, '-')}
             className={`mr-4 text-bleu_nuit fill-bleu_nuit hover:text-primary hover:fill-primary`}
           >
             <ExternalLink
