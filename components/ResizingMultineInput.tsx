@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import styles from 'styles/components/ResizingMultineInput.module.css'
 
 interface ResizingMultineInputProps {
   onChange: ChangeEventHandler<HTMLTextAreaElement>
@@ -34,7 +35,6 @@ export default function ResizingMultineInput({
     minHeight: string
     maxHeight: string
   }>({ minHeight: '0px', maxHeight: '' })
-  const [placeholderStyle, setPlaceholderStyle] = useState<string>('')
 
   function triggerTextAreaChange(e: FormEvent<HTMLSpanElement>): void {
     const value: string = e.currentTarget.innerText
@@ -48,7 +48,6 @@ export default function ResizingMultineInput({
     input.dispatchEvent(new Event('input', { bubbles: true }))
   }
 
-  usePlaceholderWhenEmpty(placeholder)
   useAutoresizingHeight(minRows, maxRows)
   useClearInputOnSubmit()
 
@@ -68,12 +67,13 @@ export default function ResizingMultineInput({
         contentEditable={true}
         suppressContentEditableWarning={true}
         style={heightStyle}
-        className={`${
-          className ?? ''
-        } overflow-y-auto ${placeholderStyle} empty:before:text-bleu`}
+        className={`${className ?? ''} overflow-y-auto ${
+          placeholder ? styles.placeholder : ''
+        }`}
         onFocus={onFocus}
         onBlur={onBlur}
         onInput={triggerTextAreaChange}
+        data-placeholder={placeholder}
       />
     </>
   )
@@ -112,16 +112,5 @@ export default function ResizingMultineInput({
         form.removeEventListener('submit', clearEditableSpan)
       }
     }, [])
-  }
-
-  function usePlaceholderWhenEmpty(value?: string): void {
-    useEffect(() => {
-      if (value) {
-        const placeholderContent = value.replace(/\s/g, '_')
-        setPlaceholderStyle(`empty:before:content-['${placeholderContent}']`)
-      } else {
-        setPlaceholderStyle('')
-      }
-    }, [value])
   }
 }

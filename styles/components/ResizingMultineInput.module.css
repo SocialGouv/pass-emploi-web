@@ -1,0 +1,4 @@
+.placeholder:empty:before {
+  content: attr(data-placeholder);
+  color: theme('colors.bleu');
+}
