@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (
 
   return {
     redirect: {
-      destination: `/mes-jeunes`,
+      destination: `/mes-jeunes${context.query.source && '?source=notif-mail'}`,
       permanent: true,
     },
   }

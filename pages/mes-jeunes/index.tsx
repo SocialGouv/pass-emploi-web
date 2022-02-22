@@ -17,13 +17,21 @@ import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 type MesJeunesProps = {
   structureConseiller: string
   conseillerJeunes: Jeune[]
+  isFromEmail: boolean
 }
 
-function MesJeunes({ structureConseiller, conseillerJeunes }: MesJeunesProps) {
+function MesJeunes({
+  structureConseiller,
+  conseillerJeunes,
+  isFromEmail,
+}: MesJeunesProps) {
   const [listeJeunesFiltres, setListJeunesFiltres] =
     useState<Jeune[]>(conseillerJeunes)
-  const initialTracking =
-    conseillerJeunes.length === 0 ? 'Mes jeunes - Aucun jeune' : 'Mes jeunes'
+
+  const initialTracking = `Mes jeunes${
+    conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
+  }${isFromEmail ? ' - Origine email' : ''}`
+
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = () => {
@@ -129,6 +137,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     props: {
       structureConseiller: user.structure,
       conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
+      isFromEmail: Boolean(context?.query?.source),
     },
   }
 }

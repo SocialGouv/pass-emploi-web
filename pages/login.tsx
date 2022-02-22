@@ -3,13 +3,15 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
+import useMatomo from 'utils/analytics/useMatomo'
 import Logo from '../assets/images/logo_258.svg'
 
 interface LoginProps {
   ssoPassEmploiEstActive?: boolean
+  isFromEmail: boolean
 }
 
-const Login = ({ ssoPassEmploiEstActive }: LoginProps) => {
+const Login = ({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) => {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -43,6 +45,8 @@ const Login = ({ ssoPassEmploiEstActive }: LoginProps) => {
     event.preventDefault()
     signin(provider)
   }
+
+  useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
 
   return (
     <div className='bg-bleu_blanc w-full h-screen relative'>
@@ -83,11 +87,16 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
   context
 ): Promise<GetServerSidePropsResult<{}>> => {
   const session = await getSession({ req: context.req })
+  const isFromEmail: boolean = Boolean(
+    context.query.source ||
+      (context.query.redirectUrl as string)?.includes('notif-mail')
+  )
+
   if (session) {
     const redirectUrl: string = (context.query.redirectUrl as string) ?? '/'
     return {
       redirect: {
-        destination: redirectUrl,
+        destination: redirectUrl.replace('?source=notif-mail', ''),
         permanent: false,
       },
     }
@@ -96,6 +105,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
   return {
     props: {
       ssoPassEmploiEstActive: process.env.ENABLE_PASS_EMPLOI_SSO,
+      isFromEmail: isFromEmail,
     },
   }
 }
