@@ -9,13 +9,18 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (
   context
 ): Promise<GetServerSidePropsResult<HomeProps>> => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+
   if (!sessionOrRedirect.hasSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const sourceQueryParam = context.query.source
+    ? `?source=${context.query.source}`
+    : ''
+
   return {
     redirect: {
-      destination: `/mes-jeunes`,
+      destination: `/mes-jeunes${sourceQueryParam}`,
       permanent: true,
     },
   }

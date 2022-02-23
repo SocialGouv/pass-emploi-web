@@ -10,6 +10,7 @@ jest.mock('next/router', () => ({
     }
   },
 }))
+
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
@@ -21,7 +22,7 @@ describe('Login', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      render(<Login />)
+      render(<Login isFromEmail={false} />)
     })
 
     it('devrait afficher un titre de niveau 1', () => {
@@ -87,7 +88,7 @@ describe('Login', () => {
 
   describe('quand la connexion pass emploi est activée', () => {
     beforeEach(async () => {
-      render(<Login ssoPassEmploiEstActive={true} />)
+      render(<Login ssoPassEmploiEstActive={true} isFromEmail={false} />)
     })
 
     it('devrait avoir trois boutons', () => {
