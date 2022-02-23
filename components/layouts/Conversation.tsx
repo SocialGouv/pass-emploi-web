@@ -12,7 +12,7 @@ import {
 import { useDependance } from 'utils/injectionDependances'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
-import ResizingMultineInput from '../ResizingMultineInput'
+import ResizingMultilineInput from '../ResizingMultilineInput'
 
 const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
@@ -179,7 +179,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
         <label htmlFor='input-new-message' className='sr-only'>
           Message à envoyer
         </label>
-        <ResizingMultineInput
+        <ResizingMultilineInput
           id='input-new-message'
           className='flex-grow p-4 bg-bleu_blanc mr-2 rounded-x_large border-0 text-md text-bleu_nuit border-none'
           onFocus={onInputFocused}

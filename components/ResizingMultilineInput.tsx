@@ -5,9 +5,9 @@ import {
   useRef,
   useState,
 } from 'react'
-import styles from 'styles/components/ResizingMultineInput.module.css'
+import styles from 'styles/components/ResizingMultilineInput.module.css'
 
-interface ResizingMultineInputProps {
+interface ResizingMultilineInputProps {
   onChange: ChangeEventHandler<HTMLTextAreaElement>
   id?: string
   minRows?: number
@@ -18,7 +18,7 @@ interface ResizingMultineInputProps {
   onBlur?: () => void
 }
 
-export default function ResizingMultineInput({
+export default function ResizingMultilineInput({
   onChange,
   id,
   minRows = 1,
@@ -27,7 +27,7 @@ export default function ResizingMultineInput({
   placeholder,
   onFocus,
   onBlur,
-}: ResizingMultineInputProps) {
+}: ResizingMultilineInputProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const spanRef = useRef<HTMLSpanElement>(null)
 
@@ -59,6 +59,8 @@ export default function ResizingMultineInput({
         aria-multiline={true}
         className='sr-only'
         placeholder={placeholder}
+        onFocus={onFocus}
+        onBlur={onBlur}
         onChange={onChange}
       />
       <span
