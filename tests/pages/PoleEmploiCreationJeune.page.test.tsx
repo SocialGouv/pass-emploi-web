@@ -21,6 +21,8 @@ describe('PoleEmploiCreationJeune', () => {
       getJeunesDuConseiller: jest.fn(),
       getJeuneDetails: jest.fn(),
       createCompteJeunePoleEmploi: jest.fn(),
+      getJeunesDuConseillerParEmail: jest.fn(),
+      reaffecter: jest.fn(),
     }
 
     page = renderWithSession(
@@ -180,6 +182,12 @@ describe('PoleEmploiCreationJeune', () => {
           'accessToken'
         )
       })
+
+      expect(
+        screen.getByRole('button', {
+          name: 'Ajouter un jeune',
+        })
+      ).toBeInTheDocument()
 
       expect(
         screen.getByRole('heading', {

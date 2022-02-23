@@ -105,6 +105,12 @@ describe('MiloCreationJeune', () => {
       })
 
       expect(
+        screen.getByRole('button', {
+          name: 'Ajouter un jeune',
+        })
+      ).toBeInTheDocument()
+
+      expect(
         screen.getByRole('heading', {
           level: 2,
           name: 'Le compte jeune a été créé avec succès.',
