@@ -17,6 +17,7 @@ import {
 import ArrowDouble from '../../assets/icons/arrow_double.svg'
 import ArrowDown from '../../assets/icons/arrow_down.svg'
 import ChevronRight from '../../assets/icons/chevron_right.svg'
+import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 enum SortColumn {
   NOM = 'NOM',
@@ -141,7 +142,6 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   )}
                 </button>
               </span>
-
               <span
                 role='columnheader'
                 className='table-cell text-sm text-bleu text-left pb-4 pt-4'
@@ -197,13 +197,21 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
                   </span>
-
                   <span
                     role='cell'
-                    className='table-cell p-4 col-end-6'
+                    className='table-cell p-4'
                     aria-hidden='true'
                   >
-                    <ChevronRight aria-hidden='true' focusable='false' />
+                    <div className='relative'>
+                      <MessageIcon
+                        className='h-6 w-6'
+                        aria-hidden='true'
+                        focusable='false'
+                      />
+                      <div className='absolute top-[-10px] left-[10px] w-4 h-4 bg-warning rounded-full flex justify-center items-center text-center p-2.5 text-blanc text-xs-medium'>
+                        11
+                      </div>
+                    </div>
                   </span>
                 </a>
               </Link>
