@@ -1,17 +1,18 @@
 import {
+  ChangeEvent,
   ChangeEventHandler,
   CSSProperties,
-  FormEvent,
+  MutableRefObject,
   useEffect,
   useRef,
   useState,
 } from 'react'
-import styles from 'styles/components/ResizingMultilineInput.module.css'
 
 interface ResizingMultilineInputProps {
   onChange: ChangeEventHandler<HTMLTextAreaElement>
   id?: string
   name?: string
+  ref?: MutableRefObject<HTMLTextAreaElement>
   minRows?: number
   maxRows?: number
   className?: string
@@ -25,6 +26,7 @@ export default function ResizingMultilineInput({
   onChange,
   id,
   name,
+  ref,
   minRows = 1,
   maxRows,
   className,
@@ -34,97 +36,65 @@ export default function ResizingMultilineInput({
   onBlur,
 }: ResizingMultilineInputProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const spanRef = useRef<HTMLSpanElement>(null)
+  const actualRef = ref ?? inputRef
 
-  const [heightStyle, setHeightStyle] = useState<{
-    minHeight: string
-    maxHeight: string
-  }>({ minHeight: '0px', maxHeight: '' })
+  const [height, setHeight] = useState<number | undefined>(undefined)
+  const [minHeight, setMinHeight] = useState<number>(0)
 
-  function triggerTextAreaChange(e: FormEvent<HTMLSpanElement>): void {
-    const value: string = e.currentTarget.innerText
-    const input: HTMLTextAreaElement = inputRef.current!
+  function computeHeight(e: ChangeEvent<HTMLTextAreaElement>) {
+    function fetchStyleValue(propName: string): number {
+      const match: RegExpMatchArray | null = window
+        .getComputedStyle(e.target, null)
+        .getPropertyValue(propName)
+        .match(/\d+/)
+      return match ? parseInt(match[0], 10) : 0
+    }
 
-    const valueSetter = Object.getOwnPropertyDescriptor(
-      HTMLTextAreaElement.prototype,
-      'value'
-    )!.set!
-    valueSetter.call(inputRef.current, value)
-    input.dispatchEvent(new Event('input', { bubbles: true }))
+    const paddingTop = fetchStyleValue('padding-top')
+    const paddingBottom = fetchStyleValue('padding-bottom')
+    const lineHeight = fetchStyleValue('line-height') || 16
+    const scrollHeight = e.target.scrollHeight
+    const newMinHeight = paddingTop + paddingBottom + minRows * lineHeight
+    const newMaxHeight = maxRows
+      ? paddingTop + paddingBottom + maxRows * lineHeight
+      : scrollHeight
+
+    setHeight(Math.min(Math.max(scrollHeight, newMinHeight), newMaxHeight))
+    setMinHeight(newMinHeight)
   }
 
-  useAutoresizingHeight(minRows, maxRows)
-  useClearInputOnSubmit()
+  useEffect(() => {
+    const clearInput = () => {
+      actualRef.current!.value = ''
+      setHeight(minHeight)
+    }
+
+    const form = actualRef.current!.form
+    if (!form) {
+      console.warn('ResizingMultilineInput should be in a <form>')
+      return
+    }
+
+    if (minHeight > 0) form.addEventListener('submit', clearInput)
+    return () => form.removeEventListener('submit', clearInput)
+  }, [actualRef, minHeight])
 
   return (
-    <>
-      <textarea
-        id={id ?? undefined}
-        name={name ?? undefined}
-        ref={inputRef}
-        aria-multiline={true}
-        className='sr-only'
-        placeholder={placeholder}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onChange={onChange}
-      />
-      <span
-        aria-hidden={true}
-        ref={spanRef}
-        contentEditable={true}
-        suppressContentEditableWarning={true}
-        style={{ ...heightStyle, ...style }}
-        className={`${className ?? ''} overflow-y-auto ${
-          placeholder ? styles.placeholder : ''
-        }`}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onInput={triggerTextAreaChange}
-        data-placeholder={placeholder}
-      />
-    </>
+    <textarea
+      id={id ?? undefined}
+      name={name ?? undefined}
+      ref={actualRef}
+      aria-multiline={true}
+      rows={minRows}
+      className={className ?? undefined}
+      style={{ height, ...style }}
+      placeholder={placeholder}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onChange={(e) => {
+        computeHeight(e)
+        onChange(e)
+      }}
+    />
   )
-
-  function useAutoresizingHeight(min: number, max?: number): void {
-    useEffect(() => {
-      function fetchStyleValue(propName: string): number {
-        const match: RegExpMatchArray | null = window
-          .getComputedStyle(spanRef.current!, null)
-          .getPropertyValue(propName)
-          .match(/\d+/)
-        return match ? parseInt(match[0], 10) : 0
-      }
-
-      const paddingTop = fetchStyleValue('padding-top')
-      const paddingBottom = fetchStyleValue('padding-bottom')
-      const lineHeight = fetchStyleValue('line-height') || 16
-      setHeightStyle({
-        minHeight: `${paddingTop + paddingBottom + min * lineHeight}px`,
-        maxHeight: max
-          ? `${paddingTop + paddingBottom + max * lineHeight}px`
-          : '',
-      })
-    }, [max, min])
-  }
-
-  function useClearInputOnSubmit(): void {
-    useEffect(() => {
-      const clearEditableSpan = () => {
-        spanRef.current!.innerText = ''
-        inputRef.current!.value = ''
-      }
-
-      const form = inputRef.current!.form
-      if (!form) {
-        console.warn('ResizingMultilineInput should be in a <form>')
-        return () => {}
-      }
-
-      form.addEventListener('submit', clearEditableSpan)
-      return () => {
-        form.removeEventListener('submit', clearEditableSpan)
-      }
-    }, [])
-  }
 }

@@ -1,9 +1,9 @@
 import { fireEvent, render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import ResizingMultilineInput from 'components/ResizingMultilineInput'
 
 describe('<ResizingMultilineInput/>', () => {
   let form: HTMLSpanElement
-  let span: HTMLSpanElement
   let textarea: HTMLTextAreaElement
   let handleFocus: jest.Mock
   let handleBlur: jest.Mock
@@ -17,56 +17,24 @@ describe('<ResizingMultilineInput/>', () => {
     const { container } = render(
       <form>
         <ResizingMultilineInput
-          name='multiline'
-          style={{ padding: '10px', lineHeight: '20px' }}
+          style={{ padding: '10px', lineHeight: '20px', width: '1px' }}
           minRows={3}
           maxRows={7}
-          onFocus={() => handleFocus()}
-          onBlur={() => handleBlur()}
-          onChange={() => handleChange()}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChange={handleChange}
         />
       </form>
     )
 
     form = container.querySelector('form')!
-    span = container.querySelector('span')!
     textarea = container.querySelector('textarea')!
   })
 
-  it('contains a aria-hidden contenteditable span', () => {
-    // THEN
-    expect(span).toBeInTheDocument()
-    expect(span).toHaveAttribute('contenteditable', 'true')
-    expect(span).toHaveAttribute('aria-hidden', 'true')
-  })
-
-  it('contains a sr-only multiline textarea', () => {
+  it('contains a multiline textarea', () => {
     // THEN
     expect(textarea).toBeInTheDocument()
     expect(textarea).toHaveAttribute('aria-multiline', 'true')
-    expect(textarea).toHaveClass('sr-only')
-  })
-
-  it('sets min-height', () => {
-    // GIVEN
-    expect(span).toHaveStyle('min-height: 80px')
-  })
-
-  it('sets max-height', () => {
-    // GIVEN
-    expect(span).toHaveStyle('max-height: 160px')
-  })
-
-  it('synchronises span text input to sr-only textarea', () => {
-    // GIVEN
-    expect(textarea).toHaveValue('')
-
-    // WHEN
-    span.innerText = 'new input\nvalue'
-    span.dispatchEvent(new Event('input', { bubbles: true }))
-
-    // THEN
-    expect(textarea).toHaveValue('new input\nvalue')
   })
 
   it('fires onFocus event on textarea', () => {
@@ -77,15 +45,7 @@ describe('<ResizingMultilineInput/>', () => {
     expect(handleFocus).toHaveBeenCalled()
   })
 
-  it('fires onFocus event on span', () => {
-    // WHEN
-    span.focus()
-
-    // THEN
-    expect(handleFocus).toHaveBeenCalled()
-  })
-
-  it('fires onFocus event on textarea', () => {
+  it('fires onBlur event on textarea', () => {
     // GIVEN
     textarea.focus()
 
@@ -96,36 +56,69 @@ describe('<ResizingMultilineInput/>', () => {
     expect(handleBlur).toHaveBeenCalled()
   })
 
-  it('fires onFocus event on span', () => {
-    // GIVEN
-    span.focus()
-
-    // WHEN
-    span.blur()
-
-    // THEN
-    expect(handleBlur).toHaveBeenCalled()
-  })
-
   it('fires onChange event', () => {
     // WHEN
-    span.innerText = 'new input\nvalue'
-    span.dispatchEvent(new Event('input', { bubbles: true }))
+    fireEvent.change(textarea, { target: { value: 'new value' } })
 
     // THEN
     expect(handleChange).toHaveBeenCalled()
   })
 
+  it('resizes depending on content', () => {
+    // GIVEN
+    jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(120)
+
+    // WHEN
+    fireEvent.change(textarea, { target: { value: 'new value' } })
+
+    // THEN
+    expect(textarea).toHaveStyle({ height: '120px' })
+  })
+
+  it('limits size depending on minRows', () => {
+    // GIVEN
+    jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(20)
+
+    // WHEN
+    fireEvent.change(textarea, { target: { value: 'new value' } })
+
+    // THEN
+    expect(textarea).toHaveStyle({ height: '80px' })
+  })
+
+  it('limits size depending on maxRows', () => {
+    // GIVEN
+    jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(200)
+
+    // WHEN
+    fireEvent.change(textarea, { target: { value: 'new value' } })
+
+    // THEN
+    expect(textarea).toHaveStyle({ height: '160px' })
+  })
+
   it('clears input on form submit', () => {
     // GIVEN
-    textarea.value = 'input value'
-    span.innerText = 'input value'
+    userEvent.type(textarea, 'input value')
+    expect(textarea).toHaveValue('input value')
 
     // WHEN
     fireEvent.submit(form)
 
     // THEN
     expect(textarea).toHaveValue('')
-    expect(span.innerText).toEqual('')
+  })
+
+  it('resets height to min height on form submit', () => {
+    // GIVEN
+    jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(200)
+    userEvent.type(textarea, 'input value')
+    expect(textarea).toHaveValue('input value')
+
+    // WHEN
+    fireEvent.submit(form)
+
+    // THEN
+    expect(textarea).toHaveStyle({ height: '80px' })
   })
 })
