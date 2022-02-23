@@ -10,6 +10,10 @@ import { useDependance } from 'utils/injectionDependances'
 import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
+import ForwardIcon from '../../assets/icons/forward_to_inbox.svg'
+import Link from 'next/link'
+
+import linkStyle from 'styles/components/Link.module.css'
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
@@ -104,52 +108,69 @@ export default function ChatRoom({}: ChatRoomProps) {
           )}
 
           {jeunesChats.length > 0 && (
-            <ul className='h-full overflow-y-auto bg-bleu_blanc'>
-              {jeunesChats.map(
-                (jeuneChat: JeuneChat) =>
-                  jeuneChat.chatId && (
-                    <li key={`chat-${jeuneChat.id}`} className='mb-[2px]'>
-                      <button
-                        className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
-                        onClick={() => setSelectedChat(jeuneChat)}
-                      >
-                        <span className='text-lg-semi text-bleu_nuit mb-2 w-full flex justify-between'>
-                          {jeuneChat.firstName} {jeuneChat.lastName}
-                          {!jeuneChat.seenByConseiller && (
-                            <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
-                              Nouveau message
-                            </span>
-                          )}
-                        </span>
-                        <span className='text-sm text-bleu_gris mb-[8px]'>
-                          {' '}
-                          {jeuneChat.lastMessageSentBy === 'conseiller'
-                            ? 'Vous'
-                            : jeuneChat.firstName}{' '}
-                          : {jeuneChat.lastMessageContent}
-                        </span>
-                        <span className='text-xxs-italic text-bleu_nuit self-end flex'>
-                          {jeuneChat.lastMessageContent && (
-                            <span className='mr-[7px]'>
-                              {formatDayAndHourDate(
-                                jeuneChat.lastMessageSentAt!
-                              )}{' '}
-                            </span>
-                          )}
-                          {jeuneChat.seenByConseiller ? (
-                            <FbCheckIcon focusable='false' aria-hidden='true' />
-                          ) : (
-                            <FbCheckFillIcon
-                              focusable='false'
-                              aria-hidden='true'
-                            />
-                          )}
-                        </span>
-                      </button>
-                    </li>
-                  )
-              )}
-            </ul>
+            <>
+              <ul className='h-full overflow-y-auto bg-bleu_blanc pb-24'>
+                {jeunesChats.map(
+                  (jeuneChat: JeuneChat) =>
+                    jeuneChat.chatId && (
+                      <li key={`chat-${jeuneChat.id}`} className='mb-[2px]'>
+                        <button
+                          className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
+                          onClick={() => setSelectedChat(jeuneChat)}
+                        >
+                          <span className='text-lg-semi text-bleu_nuit mb-2 w-full flex justify-between'>
+                            {jeuneChat.firstName} {jeuneChat.lastName}
+                            {!jeuneChat.seenByConseiller && (
+                              <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
+                                Nouveau message
+                              </span>
+                            )}
+                          </span>
+                          <span className='text-sm text-bleu_gris mb-[8px]'>
+                            {' '}
+                            {jeuneChat.lastMessageSentBy === 'conseiller'
+                              ? 'Vous'
+                              : jeuneChat.firstName}{' '}
+                            : {jeuneChat.lastMessageContent}
+                          </span>
+                          <span className='text-xxs-italic text-bleu_nuit self-end flex'>
+                            {jeuneChat.lastMessageContent && (
+                              <span className='mr-[7px]'>
+                                {formatDayAndHourDate(
+                                  jeuneChat.lastMessageSentAt!
+                                )}{' '}
+                              </span>
+                            )}
+                            {jeuneChat.seenByConseiller ? (
+                              <FbCheckIcon
+                                focusable='false'
+                                aria-hidden='true'
+                              />
+                            ) : (
+                              <FbCheckFillIcon
+                                focusable='false'
+                                aria-hidden='true'
+                              />
+                            )}
+                          </span>
+                        </button>
+                      </li>
+                    )
+                )}
+              </ul>
+              <Link href={'/mes-jeunes/envoie-message'}>
+                <a
+                  className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
+                >
+                  <ForwardIcon
+                    aria-hidden='true'
+                    focusable='false'
+                    className='mr-2'
+                  />
+                  Écrire un message à plusieurs jeunes
+                </a>
+              </Link>
+            </>
           )}
         </>
       )}
