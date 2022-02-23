@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { signIn } from 'next-auth/react'
 import Login from 'pages/login'
 import React from 'react'
+import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -21,7 +22,7 @@ describe('Login', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      render(<Login />)
+      render(<Login isFromEmail={false} />)
     })
 
     it('devrait afficher un titre de niveau 1', () => {
@@ -87,10 +88,13 @@ describe('Login', () => {
 
   describe('quand la connexion pass emploi est activée', () => {
     beforeEach(async () => {
-      render(<Login ssoPassEmploiEstActive={true} />)
+      console.log(' ---------------------- before ----------------------')
+      renderWithSession(
+        <Login ssoPassEmploiEstActive={true} isFromEmail={false} />
+      )
     })
 
-    it('devrait avoir trois boutons', () => {
+    it.only('devrait avoir trois boutons', () => {
       //GIVEN
       const passEButton = screen.getByRole('button', {
         name: 'Authentification pass emploi',

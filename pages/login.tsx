@@ -87,20 +87,24 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
   context
 ): Promise<GetServerSidePropsResult<{}>> => {
   const session = await getSession({ req: context.req })
-  const isFromEmail: boolean = Boolean(
-    context.query.source ||
-      (context.query.redirectUrl as string)?.includes('notif-mail')
-  )
+  const querySource = context.query.source && `?source=${context.query.source}`
 
   if (session) {
-    const redirectUrl: string = (context.query.redirectUrl as string) ?? '/'
+    const redirectUrl: string =
+      (context.query.redirectUrl as string) ?? `/${querySource || ''}`
+
     return {
       redirect: {
-        destination: redirectUrl.replace('?source=notif-mail', ''),
+        destination: redirectUrl,
         permanent: false,
       },
     }
   }
+
+  const isFromEmail: boolean = Boolean(
+    context.query.source ||
+      (context.query.redirectUrl as string)?.includes('notif-mail')
+  )
 
   return {
     props: {

@@ -137,7 +137,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     props: {
       structureConseiller: user.structure,
       conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
-      isFromEmail: Boolean(context?.query?.source),
+      isFromEmail: Boolean(context.query?.source),
     },
   }
 }
