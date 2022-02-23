@@ -1,5 +1,6 @@
 import {
   ChangeEventHandler,
+  CSSProperties,
   FormEvent,
   useEffect,
   useRef,
@@ -10,9 +11,11 @@ import styles from 'styles/components/ResizingMultilineInput.module.css'
 interface ResizingMultilineInputProps {
   onChange: ChangeEventHandler<HTMLTextAreaElement>
   id?: string
+  name?: string
   minRows?: number
   maxRows?: number
   className?: string
+  style?: CSSProperties
   placeholder?: string
   onFocus?: () => void
   onBlur?: () => void
@@ -21,9 +24,11 @@ interface ResizingMultilineInputProps {
 export default function ResizingMultilineInput({
   onChange,
   id,
+  name,
   minRows = 1,
   maxRows,
   className,
+  style,
   placeholder,
   onFocus,
   onBlur,
@@ -55,6 +60,7 @@ export default function ResizingMultilineInput({
     <>
       <textarea
         id={id ?? undefined}
+        name={name ?? undefined}
         ref={inputRef}
         aria-multiline={true}
         className='sr-only'
@@ -68,7 +74,7 @@ export default function ResizingMultilineInput({
         ref={spanRef}
         contentEditable={true}
         suppressContentEditableWarning={true}
-        style={heightStyle}
+        style={{ ...heightStyle, ...style }}
         className={`${className ?? ''} overflow-y-auto ${
           placeholder ? styles.placeholder : ''
         }`}
@@ -92,7 +98,7 @@ export default function ResizingMultilineInput({
 
       const paddingTop = fetchStyleValue('padding-top')
       const paddingBottom = fetchStyleValue('padding-bottom')
-      const lineHeight = fetchStyleValue('line-height')
+      const lineHeight = fetchStyleValue('line-height') || 16
       setHeightStyle({
         minHeight: `${paddingTop + paddingBottom + min * lineHeight}px`,
         maxHeight: max
@@ -106,8 +112,14 @@ export default function ResizingMultilineInput({
     useEffect(() => {
       const clearEditableSpan = () => {
         spanRef.current!.innerText = ''
+        inputRef.current!.value = ''
       }
-      const form = inputRef.current!.form!
+
+      const form = inputRef.current!.form
+      if (!form) {
+        console.warn('ResizingMultilineInput should be in a <form>')
+        return () => {}
+      }
 
       form.addEventListener('submit', clearEditableSpan)
       return () => {
