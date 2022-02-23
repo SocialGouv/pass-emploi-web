@@ -32,6 +32,6 @@ module.exports = {
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
-  setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'],
-  coverageReporters: ['lcovonly']
+  setupFilesAfterEnv: ['./setupTests.js'],
+  coverageReporters: ['lcovonly'],
 }
