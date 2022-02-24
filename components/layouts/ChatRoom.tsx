@@ -158,7 +158,7 @@ export default function ChatRoom({}: ChatRoomProps) {
                     )
                 )}
               </ul>
-              <Link href={'/mes-jeunes/envoie-message'}>
+              <Link href={'/mes-jeunes/envoie-message-groupe'}>
                 <a
                   className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
                 >
