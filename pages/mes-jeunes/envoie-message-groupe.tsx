@@ -7,14 +7,14 @@ import styles from 'styles/components/Layouts.module.css'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
+import Etape1Icon from '../../assets/icons/etape_1.svg'
+import Etape2Icon from '../../assets/icons/etape_2.svg'
 
 type EnvoieMessageGroupe = {
   jeunes: Jeune[]
 }
 
 function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
-  const handleSubmit = (event: any) => {}
-
   return (
     <>
       <AppHead titre='Envoie de message à plusieurs jeunes' />
@@ -28,50 +28,81 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
           Envoi d’un message à plusieurs jeunes
         </h1>
       </div>
+      <div className={styles.content}>
+        <form method='POST' role='form' onSubmit={() => {}} onReset={() => {}}>
+          <fieldset>
+            <legend className='flex items-center text-m-medium mb-4'>
+              <Etape1Icon
+                role='img'
+                focusable='false'
+                aria-label='Étape 1'
+                className='mr-2'
+              />
+              Destinataires
+            </legend>
+            <label htmlFor='beneficiaire' className='text-base-regular'>
+              Rechercher et ajouter des jeunes <span aria-hidden='true'>*</span>
+              <span className='block text-bleu_nuit text-sm-regular mb-3'>
+                Nom et prénom
+              </span>
+            </label>
+            <select
+              id='beneficiaire'
+              name='beneficiaire'
+              onChange={(e) => {}}
+              className='text-sm text-bleu_nuit w-full p-3 mb-2 border border-bleu_nuit rounded-medium cursor-pointer'
+              required
+            >
+              <option aria-hidden hidden disabled value={undefined} />
+              {jeunes.map((j) => (
+                <option key={j.id} value={j.id}>
+                  {j.firstName} {j.lastName}
+                </option>
+              ))}
+            </select>
+            <p className='mb-10'>Destinataires({jeunes.length})</p>
+          </fieldset>
 
-      <form method='POST' role='form' onSubmit={handleSubmit}>
-        <fieldset>
-          <legend>Destinataires</legend>
-          <label
-            htmlFor='beneficiaire'
-            className='text-sm-semi text-bleu_nuit mb-[20px] block'
-          >
-            Rechercher et ajouter des jeunes <span aria-hidden='true'>*</span>
-            <span>Nom et prénom</span>
-          </label>
-          <select
-            id='beneficiaire'
-            name='beneficiaire'
-            onChange={(e) => {}}
-            className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium cursor-pointer'
-            required
-          >
-            <option aria-hidden hidden disabled value={undefined} />
-            {jeunes.map((j) => (
-              <option key={j.id} value={j.id}>
-                {j.firstName} {j.lastName}
-              </option>
-            ))}
-          </select>
-          Destinataires({jeunes.length})
-        </fieldset>
+          <fieldset>
+            <legend className='flex items-center text-m-medium mb-4'>
+              <Etape2Icon
+                role='img'
+                focusable='false'
+                aria-label='Étape 2'
+                className='mr-2'
+              />
+              Écrivez votre message
+            </legend>
 
-        <fieldset>
-          <legend>Écrivez votre message</legend>
+            <label htmlFor='message'>
+              Message <span aria-hidden='true'>*</span>
+            </label>
 
-          <label>Message</label>
-          <textarea />
-        </fieldset>
+            <textarea
+              id='message'
+              name='message'
+              rows={10}
+              cols={5}
+              className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-black rounded-medium mt-4'
+              placeholder='Ajouter un message...'
+            ></textarea>
+          </fieldset>
 
-        <div className='flex m-auto'>
-          <Button type='reset' disabled={false} style={ButtonStyle.SECONDARY}>
-            <span className='px-[48px] py-[11px]'>Annuler</span>
-          </Button>
-          <Button type='submit' disabled={true}>
-            <span className='px-[48px] py-[11px]'>Envoyer</span>
-          </Button>
-        </div>
-      </form>
+          <div className='flex justify-center'>
+            <Button
+              type='reset'
+              disabled={false}
+              style={ButtonStyle.SECONDARY}
+              className='mr-3'
+            >
+              <span className='p-2'>Annuler</span>
+            </Button>
+            <Button type='submit' disabled={true}>
+              <span className='p-2'>Envoyer</span>
+            </Button>
+          </div>
+        </form>
+      </div>
     </>
   )
 }

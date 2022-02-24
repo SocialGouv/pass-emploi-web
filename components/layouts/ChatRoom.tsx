@@ -167,7 +167,7 @@ export default function ChatRoom({}: ChatRoomProps) {
                     focusable='false'
                     className='mr-2'
                   />
-                  Écrire un message à plusieurs jeunes
+                  Message multi-destinataires
                 </a>
               </Link>
             </>
