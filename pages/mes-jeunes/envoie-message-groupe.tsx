@@ -5,6 +5,7 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
+import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
@@ -21,6 +22,8 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
   const [message, setMessage] = useState<string>('')
 
   const FormIsValid = () => message !== '' && selectedJeunes.length !== 0
+
+  useMatomo('Message - Rédaction')
 
   return (
     <>

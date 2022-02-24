@@ -158,18 +158,20 @@ export default function ChatRoom({}: ChatRoomProps) {
                     )
                 )}
               </ul>
-              <Link href={'/mes-jeunes/envoie-message-groupe'}>
-                <a
-                  className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
-                >
-                  <ForwardIcon
-                    aria-hidden='true'
-                    focusable='false'
-                    className='mr-2'
-                  />
-                  Message multi-destinataires
-                </a>
-              </Link>
+              {process.env.ENABLE_MULTI_DESTINATAIRES_MESSAGE && (
+                <Link href={'/mes-jeunes/envoie-message-groupe'}>
+                  <a
+                    className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
+                  >
+                    <ForwardIcon
+                      aria-hidden='true'
+                      focusable='false'
+                      className='mr-2'
+                    />
+                    Message multi-destinataires
+                  </a>
+                </Link>
+              )}
             </>
           )}
         </>
