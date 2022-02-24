@@ -14,6 +14,7 @@ import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
+import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 
 type MiloCreationJeuneProps = {
   dossierId: string
@@ -59,7 +60,7 @@ function MiloCreationJeune({
         titre={`Mes jeunes - Création d'un compte jeune - Étape ${etape}`}
       />
 
-      <div className={styles.header}>
+      <div className={`flex justify-between ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
             <BackIcon role='img' focusable='false' aria-hidden={true} />
@@ -68,6 +69,10 @@ function MiloCreationJeune({
             </span>
           </a>
         </Link>
+
+        {createdSucessId && (
+          <AjouterJeuneButton structureConseiller={UserStructure.MILO} />
+        )}
       </div>
 
       <div className={`${styles.content} pl-32`}>

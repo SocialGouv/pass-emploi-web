@@ -1,17 +1,15 @@
 import { AppHead } from 'components/AppHead'
+import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
-import Button from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import Router from 'next/router'
 import React, { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import AddIcon from '../../assets/icons/add_person.svg'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
 type MesJeunesProps = {
@@ -33,19 +31,6 @@ function MesJeunes({
   }${isFromEmail ? ' - Origine email' : ''}`
 
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-
-  const handleAddJeune = () => {
-    switch (structureConseiller) {
-      case UserStructure.MILO:
-        Router.push('/mes-jeunes/milo/creation-jeune')
-        break
-      case UserStructure.POLE_EMPLOI:
-        Router.push('/mes-jeunes/pole-emploi/creation-jeune')
-        break
-      default:
-        break
-    }
-  }
 
   const onSearch = (query: string) => {
     const querySplit = query.toLowerCase().split(/-|\s/)
@@ -83,10 +68,7 @@ function MesJeunes({
           <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
           {(structureConseiller === UserStructure.MILO ||
             structureConseiller === UserStructure.POLE_EMPLOI) && (
-            <Button onClick={handleAddJeune}>
-              <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
-              Ajouter un jeune
-            </Button>
+            <AjouterJeuneButton structureConseiller={structureConseiller} />
           )}
         </div>
 
@@ -104,10 +86,8 @@ function MesJeunes({
             <p className='text-bleu_nuit text-base-medium mb-12'>
               Vous n&apos;avez pas encore intégré de jeunes.
             </p>
-            <Button onClick={handleAddJeune} className='m-auto'>
-              <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
-              Ajouter un jeune
-            </Button>
+
+            <AjouterJeuneButton structureConseiller={structureConseiller} />
           </div>
         )}
 

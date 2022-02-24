@@ -1,4 +1,5 @@
 import { AppHead } from 'components/AppHead'
+import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
 import { SuccessAddJeunePoleEmploi } from 'components/jeune/SuccessAddJeunePoleEmploi'
 import { UserStructure } from 'interfaces/conseiller'
@@ -54,7 +55,7 @@ function PoleEmploiCreationJeune() {
     <>
       <AppHead titre={`Mes jeunes – Création d'un compte jeune`} />
 
-      <div className={styles.header}>
+      <div className={`flex justify-between ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
             <BackIcon role='img' focusable='false' aria-hidden={true} />
@@ -63,6 +64,10 @@ function PoleEmploiCreationJeune() {
             </span>
           </a>
         </Link>
+
+        {createdSuccessId && (
+          <AjouterJeuneButton structureConseiller={UserStructure.POLE_EMPLOI} />
+        )}
       </div>
 
       <div className={`${styles.content} pl-32`}>
