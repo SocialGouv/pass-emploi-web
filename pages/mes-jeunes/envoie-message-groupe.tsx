@@ -3,18 +3,25 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
+import { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
+import SendIcon from '../../assets/icons/send.svg'
 
 type EnvoieMessageGroupe = {
   jeunes: Jeune[]
 }
 
 function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
+  const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([jeunes[0]])
+  const [message, setMessage] = useState<string>('')
+
+  const FormIsValid = () => message !== '' && selectedJeunes.length !== 0
+
   return (
     <>
       <AppHead titre='Envoie de message à plusieurs jeunes' />
@@ -30,6 +37,10 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
       </div>
       <div className={styles.content}>
         <form method='POST' role='form' onSubmit={() => {}} onReset={() => {}}>
+          <div className='text-sm-regular text-bleu_nuit mb-8'>
+            Les champs marqués d&apos;une * sont obligatoires.
+          </div>
+
           <fieldset>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape1Icon
@@ -51,7 +62,9 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
               name='beneficiaire'
               onChange={(e) => {}}
               className='text-sm text-bleu_nuit w-full p-3 mb-2 border border-bleu_nuit rounded-medium cursor-pointer'
+              style={{ background: 'white' }}
               required
+              disabled
             >
               <option aria-hidden hidden disabled value={undefined} />
               {jeunes.map((j) => (
@@ -60,7 +73,7 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
                 </option>
               ))}
             </select>
-            <p className='mb-10'>Destinataires({jeunes.length})</p>
+            <p className='mb-10'>Destinataires({selectedJeunes.length})</p>
           </fieldset>
 
           <fieldset>
@@ -85,20 +98,24 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
               cols={5}
               className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-black rounded-medium mt-4'
               placeholder='Ajouter un message...'
+              onChange={(e) => setMessage(e.target.value)}
+              required
             ></textarea>
           </fieldset>
 
           <div className='flex justify-center'>
-            <Button
-              type='reset'
-              disabled={false}
-              style={ButtonStyle.SECONDARY}
-              className='mr-3'
-            >
+            <Button type='reset' style={ButtonStyle.SECONDARY} className='mr-3'>
               <span className='p-2'>Annuler</span>
             </Button>
-            <Button type='submit' disabled={true}>
-              <span className='p-2'>Envoyer</span>
+            <Button type='submit' disabled={!FormIsValid()}>
+              <span className='flex items-center p-2'>
+                <SendIcon
+                  aria-hidden='true'
+                  focusable='false'
+                  className='mr-2'
+                />
+                Envoyer
+              </span>
             </Button>
           </div>
         </form>
