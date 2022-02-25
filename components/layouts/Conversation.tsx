@@ -40,7 +40,6 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
 
   const sendNouveauMessage = (event: any) => {
     event.preventDefault()
-
     messagesService.sendNouveauMessage(
       {
         id: session!.user.id,

@@ -3,7 +3,7 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import { UserStructure } from 'interfaces/conseiller'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import { compareJeunesByLastName, Jeune, JeuneChat } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useState } from 'react'
@@ -15,7 +15,7 @@ import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
 type MesJeunesProps = {
   structureConseiller: string
-  conseillerJeunes: Jeune[]
+  conseillerJeunes: (Jeune & { messagesNonLus: number })[]
   isFromEmail: boolean
 }
 
@@ -25,12 +25,12 @@ function MesJeunes({
   isFromEmail,
 }: MesJeunesProps) {
   const [listeJeunesFiltres, setListJeunesFiltres] =
-    useState<Jeune[]>(conseillerJeunes)
+    useState<(Jeune & { messagesNonLus: number })[]>(conseillerJeunes)
+
 
   const initialTracking = `Mes jeunes${
     conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
   }${isFromEmail ? ' - Origine email' : ''}`
-
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = () => {
@@ -121,16 +121,32 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService } = Container.getDIContainer().dependances
+  const { jeunesService, messagesService } =
+    Container.getDIContainer().dependances
   const {
-    session: { user, accessToken },
+    session: { user, accessToken, firebaseToken },
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+
+  await messagesService.signIn(firebaseToken)
+
+  const jeunesAvecMessagesNonLus = await Promise.all(
+    jeunes.map(async (jeune) => {
+      const messagesNonLus = await messagesService.countMessagesNotRead(
+        jeune.id
+      )
+      return {
+        ...jeune,
+        messagesNonLus,
+      }
+    })
+  )
 
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
+      conseillerJeunes:
+        [...jeunesAvecMessagesNonLus].sort(compareJeunesByLastName) || [],
       isFromEmail: Boolean(context.query?.source),
     },
   }

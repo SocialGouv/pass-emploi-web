@@ -8,6 +8,7 @@ import {
   DocumentReference,
   DocumentSnapshot,
   Firestore,
+  getDocs,
   getFirestore,
   onSnapshot,
   orderBy,
@@ -68,7 +69,7 @@ class FirebaseClient {
     )
   }
 
-  findChatDuJeune(
+  findAndObserveChatDuJeune(
     idConseiller: string,
     idJeune: string,
     onChatFound: (id: string, chat: Chat) => void
@@ -88,6 +89,20 @@ class FirebaseClient {
         onChatFound(docSnapshot.id, chatFromFirebase(docSnapshot.data()))
       }
     )
+  }
+
+  async getChatDuJeune(idJeune: string): Promise<Chat | undefined> {
+    const q = query<FirebaseChat>(
+      collection(
+        this.getDb(),
+        this.collectionName
+      ) as CollectionReference<FirebaseChat>,
+      where('jeuneId', '==', idJeune)
+    )
+    const querySnapShot = await getDocs(q)
+    if (querySnapShot.empty) return
+
+    return chatFromFirebase(querySnapShot.docs[0].data())
   }
 
   observeChat(idChat: string, onChat: (chat: Chat) => void): () => void {

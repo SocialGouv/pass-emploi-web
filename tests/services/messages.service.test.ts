@@ -167,7 +167,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('finds chat in firebase', async () => {
       // Then
-      expect(firebaseClient.findChatDuJeune).toHaveBeenCalledWith(
+      expect(firebaseClient.findAndObserveChatDuJeune).toHaveBeenCalledWith(
         idConseiller,
         jeune.id,
         expect.any(Function)
@@ -242,6 +242,30 @@ describe('MessagesFirebaseAndApiService', () => {
     it('calls provided callback with chat lastJeuneReadingDate', async () => {
       // Then
       expect(onJeuneReadingDate).toHaveBeenCalledWith(jeuneReadingDate)
+    })
+  })
+  describe('.messagesNotRead', () => {
+    it('retourne nombre de messages nons lus par un jeune', async () => {
+      // Given
+      const jeuneId = 'jeune-2'
+
+      //When
+      const actual = await messagesService.countMessagesNotRead(jeuneId)
+
+      //Then
+      expect(firebaseClient.getChatDuJeune).toHaveBeenCalledWith(jeuneId)
+      expect(actual).toEqual(1)
+    })
+
+    it("quand un jeune n'a pas de chat, retourne 0", async () => {
+      //Given
+      ;(firebaseClient.getChatDuJeune as jest.Mock).mockResolvedValue(undefined)
+
+      //When
+      const actual = await messagesService.countMessagesNotRead('jeune-1')
+
+      //Then
+      expect(actual).toEqual(0)
     })
   })
 })

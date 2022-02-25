@@ -16,7 +16,6 @@ import {
 } from 'utils/date'
 import ArrowDouble from '../../assets/icons/arrow_double.svg'
 import ArrowDown from '../../assets/icons/arrow_down.svg'
-import ChevronRight from '../../assets/icons/chevron_right.svg'
 import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 enum SortColumn {
@@ -25,7 +24,7 @@ enum SortColumn {
 }
 
 interface TableauJeunesProps {
-  jeunes: Jeune[]
+  jeunes: (Jeune & { messagesNonLus: number })[]
 }
 
 function todayOrDate(date: Date): string {
@@ -43,7 +42,8 @@ function todayOrDate(date: Date): string {
 }
 
 export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
-  const [sortedJeunes, setSortedJeunes] = useState<Jeune[]>(jeunes)
+  const [sortedJeunes, setSortedJeunes] =
+    useState<(Jeune & { messagesNonLus: number })[]>(jeunes)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
     SortColumn.NOM
   )
@@ -167,12 +167,38 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                     <ArrowDouble focusable='false' aria-hidden='true' />
                   )}
                 </button>
+              </span>{' '}
+              <span
+                role='columnheader'
+                className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+              >
+                <button
+                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  onClick={() => alert('hey')}
+                  aria-label={`Afficher la liste des messages non lus triés par ordre ${
+                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                  }`}
+                  title={`Afficher la liste des messages non lus triés par ordre ${
+                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                  }`}
+                >
+                  <span className='mr-1'>Messages</span>
+                  {isDate ? (
+                    <ArrowDown
+                      focusable='false'
+                      aria-hidden='true'
+                      className={sortDesc ? 'rotate-180' : ''}
+                    />
+                  ) : (
+                    <ArrowDouble focusable='false' aria-hidden='true' />
+                  )}
+                </button>
               </span>
             </div>
           </div>
 
           <div role='rowgroup'>
-            {sortedJeunes?.map((jeune: Jeune) => (
+            {sortedJeunes?.map((jeune) => (
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
                   key={jeune.id}
@@ -209,7 +235,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                         focusable='false'
                       />
                       <div className='absolute top-[-10px] left-[10px] w-4 h-4 bg-warning rounded-full flex justify-center items-center text-center p-2.5 text-blanc text-xs-medium'>
-                        11
+                        {jeune.messagesNonLus}
                       </div>
                     </div>
                   </span>
