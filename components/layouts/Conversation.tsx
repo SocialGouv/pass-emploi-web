@@ -12,6 +12,7 @@ import {
 import { useDependance } from 'utils/injectionDependances'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
+import ResizingMultilineInput from '../ResizingMultilineInput'
 
 const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
@@ -178,23 +179,22 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
         <label htmlFor='input-new-message' className='sr-only'>
           Message à envoyer
         </label>
-        <textarea
+        <ResizingMultilineInput
           id='input-new-message'
-          aria-multiline={true}
-          value={newMessage}
-          rows={3}
           className='flex-grow p-4 bg-bleu_blanc mr-2 rounded-x_large border-0 text-md text-bleu_nuit border-none'
           onFocus={onInputFocused}
           onBlur={() => setInputFocused(false)}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder='Écrivez votre message ici...'
+          minRows={3}
+          maxRows={7}
         />
 
         <button
           type='submit'
           aria-label='Envoyer le message'
           disabled={!newMessage}
-          className='bg-bleu_nuit w-12 h-12 border-none rounded-[50%]'
+          className='bg-bleu_nuit w-12 h-12 border-none rounded-[50%] shrink-0'
         >
           <SendIcon aria-hidden='true' focusable='false' className='m-auto' />
         </button>
