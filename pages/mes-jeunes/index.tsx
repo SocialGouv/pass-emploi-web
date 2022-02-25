@@ -3,7 +3,7 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import { UserStructure } from 'interfaces/conseiller'
-import { compareJeunesByLastName, Jeune, JeuneChat } from 'interfaces/jeune'
+import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useState } from 'react'
@@ -26,7 +26,6 @@ function MesJeunes({
 }: MesJeunesProps) {
   const [listeJeunesFiltres, setListJeunesFiltres] =
     useState<(Jeune & { messagesNonLus: number })[]>(conseillerJeunes)
-
 
   const initialTracking = `Mes jeunes${
     conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
@@ -132,15 +131,17 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
 
   const jeunesAvecMessagesNonLus = await Promise.all(
     jeunes.map(async (jeune) => {
-      const messagesNonLus = await messagesService.countMessagesNotRead(
-        jeune.id
-      )
       return {
         ...jeune,
-        messagesNonLus,
+        messagesNonLus: await messagesService.countMessagesNotRead(
+          user.id,
+          jeune.id
+        ),
       }
     })
   )
+
+  await messagesService.signOut()
 
   return {
     props: {

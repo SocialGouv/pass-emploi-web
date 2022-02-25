@@ -247,13 +247,20 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.messagesNotRead', () => {
     it('retourne nombre de messages nons lus par un jeune', async () => {
       // Given
+      const idConseiller = 'conseiller-1'
       const jeuneId = 'jeune-2'
 
       //When
-      const actual = await messagesService.countMessagesNotRead(jeuneId)
+      const actual = await messagesService.countMessagesNotRead(
+        idConseiller,
+        jeuneId
+      )
 
       //Then
-      expect(firebaseClient.getChatDuJeune).toHaveBeenCalledWith(jeuneId)
+      expect(firebaseClient.getChatDuJeune).toHaveBeenCalledWith(
+        idConseiller,
+        jeuneId
+      )
       expect(actual).toEqual(1)
     })
 
@@ -262,7 +269,10 @@ describe('MessagesFirebaseAndApiService', () => {
       ;(firebaseClient.getChatDuJeune as jest.Mock).mockResolvedValue(undefined)
 
       //When
-      const actual = await messagesService.countMessagesNotRead('jeune-1')
+      const actual = await messagesService.countMessagesNotRead(
+        'conseiller-1',
+        'jeune-1'
+      )
 
       //Then
       expect(actual).toEqual(0)

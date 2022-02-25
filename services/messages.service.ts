@@ -36,7 +36,7 @@ export interface MessagesService {
     onJeuneReadingDate: (date: Date) => void
   ): () => void
 
-  countMessagesNotRead(idJeune: string): Promise<number>
+  countMessagesNotRead(idConseiller: string, idJeune: string): Promise<number>
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
@@ -152,8 +152,11 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     })
   }
 
-  async countMessagesNotRead(idJeune: string): Promise<number> {
-    const chat = await this.firebaseClient.getChatDuJeune(idJeune)
+  async countMessagesNotRead(
+    idConseiller: string,
+    idJeune: string
+  ): Promise<number> {
+    const chat = await this.firebaseClient.getChatDuJeune(idConseiller, idJeune)
     return chat?.newConseillerMessageCount ?? 0
   }
 

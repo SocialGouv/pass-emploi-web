@@ -91,12 +91,16 @@ class FirebaseClient {
     )
   }
 
-  async getChatDuJeune(idJeune: string): Promise<Chat | undefined> {
+  async getChatDuJeune(
+    idConseiller: string,
+    idJeune: string
+  ): Promise<Chat | undefined> {
     const q = query<FirebaseChat>(
       collection(
         this.getDb(),
         this.collectionName
       ) as CollectionReference<FirebaseChat>,
+      where('conseillerId', '==', idConseiller),
       where('jeuneId', '==', idJeune)
     )
     const querySnapShot = await getDocs(q)
