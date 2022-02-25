@@ -21,6 +21,7 @@ import MessageIcon from '../../assets/icons/note_outline_big.svg'
 enum SortColumn {
   NOM = 'NOM',
   DERNIERE_ACTIVITE = 'DERNIERE_ACTIVITE',
+  MESSAGES = 'MESSAGES',
 }
 
 interface TableauJeunesProps {
@@ -51,6 +52,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   const isName = currentSortedColumn === SortColumn.NOM
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
+  const isMessage = currentSortedColumn === SortColumn.MESSAGES
 
   const sortJeunes = (newSortColumn: SortColumn) => {
     if (currentSortedColumn !== newSortColumn) {
@@ -62,7 +64,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   }
 
   useEffect(() => {
-    function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
+    function compareJeunes(
+      jeune1: Jeune & { messagesNonLus: number },
+      jeune2: Jeune & { messagesNonLus: number }
+    ) {
       if (isName)
         return sortDesc
           ? compareJeunesByLastNameDesc(jeune1, jeune2)
@@ -80,11 +85,17 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           : compareDatesDesc(date1, date2)
       }
 
+      if (isMessage) {
+        return sortDesc
+          ? jeune1.messagesNonLus - jeune2.messagesNonLus
+          : jeune2.messagesNonLus - jeune1.messagesNonLus
+      }
+
       return 0
     }
 
     setSortedJeunes([...jeunes].sort(compareJeunes))
-  }, [currentSortedColumn, isDate, isName, sortDesc, jeunes])
+  }, [currentSortedColumn, isDate, isName, isMessage, sortDesc, jeunes])
 
   const matomoTitle = () => {
     if (isDate && !sortDesc)
@@ -94,6 +105,9 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
     if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
     if (isName && sortDesc)
       return 'Mes jeunes - Nom - Ordre alphabétique inversé'
+    if (isMessage && sortDesc) return 'Mes jeunes - Messages - Ordre croissant'
+    if (isMessage && !sortDesc)
+      return 'Mes jeunes - Messages - Ordre décroissant'
   }
 
   useMatomo(matomoTitle())
@@ -167,23 +181,23 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                     <ArrowDouble focusable='false' aria-hidden='true' />
                   )}
                 </button>
-              </span>{' '}
+              </span>
               <span
                 role='columnheader'
                 className='table-cell text-sm text-bleu text-left pb-4 pt-4'
               >
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
-                  onClick={() => alert('hey')}
-                  aria-label={`Afficher la liste des messages non lus triés par ordre ${
-                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                  onClick={() => sortJeunes(SortColumn.MESSAGES)}
+                  aria-label={`Afficher la liste des messages non lus par ordre ${
+                    isMessage && !sortDesc ? 'croissant' : 'décroissant'
                   }`}
-                  title={`Afficher la liste des messages non lus triés par ordre ${
-                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                  title={`Afficher la liste des messages non lus par ordre ${
+                    isMessage && !sortDesc ? 'croissant' : 'décroissant'
                   }`}
                 >
                   <span className='mr-1'>Messages</span>
-                  {isDate ? (
+                  {isMessage ? (
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
@@ -234,9 +248,11 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                         aria-hidden='true'
                         focusable='false'
                       />
-                      <div className='absolute top-[-10px] left-[10px] w-4 h-4 bg-warning rounded-full flex justify-center items-center text-center p-2.5 text-blanc text-xs-medium'>
-                        {jeune.messagesNonLus}
-                      </div>
+                      {jeune.messagesNonLus > 0 && (
+                        <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
+                          {jeune.messagesNonLus}
+                        </div>
+                      )}
                     </div>
                   </span>
                 </a>

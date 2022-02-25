@@ -6,16 +6,18 @@ import { UserStructure } from 'interfaces/conseiller'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container } from 'utils/injectionDependances'
+import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
+import { useSession } from 'next-auth/react'
+import { MessagesService } from 'services/messages.service'
 
 type MesJeunesProps = {
   structureConseiller: string
-  conseillerJeunes: (Jeune & { messagesNonLus: number })[]
+  conseillerJeunes: Jeune[] | (Jeune & { messagesNonLus: number })[]
   isFromEmail: boolean
 }
 
@@ -24,8 +26,15 @@ function MesJeunes({
   conseillerJeunes,
   isFromEmail,
 }: MesJeunesProps) {
-  const [listeJeunesFiltres, setListJeunesFiltres] =
-    useState<(Jeune & { messagesNonLus: number })[]>(conseillerJeunes)
+  const { data: session } = useSession({ required: true })
+  const messagesService = useDependance<MessagesService>('messagesService')
+
+  const [jeunes, setJeunes] = useState<(Jeune & { messagesNonLus: number })[]>(
+    []
+  )
+  const [listeJeunesFiltres, setListJeunesFiltres] = useState<
+    (Jeune & { messagesNonLus: number })[]
+  >([])
 
   const initialTracking = `Mes jeunes${
     conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
@@ -45,31 +54,58 @@ function MesJeunes({
     }
   }
 
-  const onSearch = (query: string) => {
-    const querySplit = query.toLowerCase().split(/-|\s/)
-    if (query) {
-      const jeunesFiltresResult = conseillerJeunes.filter((jeune) => {
-        const jeuneLastName = jeune.lastName
-          .replace(/’/i, "'")
-          .toLocaleLowerCase()
-        for (const item of querySplit) {
-          if (jeuneLastName.includes(item)) {
-            return true
+  const onSearch = useCallback(
+    (query: string) => {
+      const querySplit = query.toLowerCase().split(/-|\s/)
+      if (query) {
+        const jeunesFiltresResult = jeunes.filter((jeune) => {
+          const jeuneLastName = jeune.lastName
+            .replace(/’/i, "'")
+            .toLocaleLowerCase()
+          for (const item of querySplit) {
+            if (jeuneLastName.includes(item)) {
+              return true
+            }
           }
+          return false
+        })
+        setListJeunesFiltres(jeunesFiltresResult)
+        if (jeunesFiltresResult.length > 0) {
+          setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
+        } else {
+          setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
         }
-        return false
-      })
-      setListJeunesFiltres(jeunesFiltresResult)
-      if (jeunesFiltresResult.length > 0) {
-        setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
       } else {
-        setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
+        setListJeunesFiltres(jeunes)
+        setTrackingTitle(initialTracking)
       }
-    } else {
-      setListJeunesFiltres(conseillerJeunes)
-      setTrackingTitle(initialTracking)
+    },
+    [initialTracking, jeunes]
+  )
+
+  useEffect(() => {
+    if (session?.firebaseToken) {
+      messagesService
+        .signIn(session.firebaseToken)
+        .then(() => {
+          return Promise.all(
+            conseillerJeunes.map(async (jeune) => {
+              return {
+                ...jeune,
+                messagesNonLus: await messagesService.countMessagesNotRead(
+                  session.user.id,
+                  jeune.id
+                ),
+              }
+            })
+          )
+        })
+        .then((jeunesAvecMessagesNonLus) => {
+          setJeunes(jeunesAvecMessagesNonLus)
+          setListJeunesFiltres(jeunesAvecMessagesNonLus)
+        })
     }
-  }
+  }, [conseillerJeunes, messagesService, session])
 
   useMatomo(trackingTitle)
 
@@ -120,34 +156,16 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService, messagesService } =
-    Container.getDIContainer().dependances
+  const { jeunesService } = Container.getDIContainer().dependances
   const {
-    session: { user, accessToken, firebaseToken },
+    session: { user, accessToken },
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
-
-  await messagesService.signIn(firebaseToken)
-
-  const jeunesAvecMessagesNonLus = await Promise.all(
-    jeunes.map(async (jeune) => {
-      return {
-        ...jeune,
-        messagesNonLus: await messagesService.countMessagesNotRead(
-          user.id,
-          jeune.id
-        ),
-      }
-    })
-  )
-
-  await messagesService.signOut()
 
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes:
-        [...jeunesAvecMessagesNonLus].sort(compareJeunesByLastName) || [],
+      conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
       isFromEmail: Boolean(context.query?.source),
     },
   }
