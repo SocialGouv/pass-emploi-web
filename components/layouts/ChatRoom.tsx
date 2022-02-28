@@ -17,9 +17,13 @@ import linkStyle from 'styles/components/Link.module.css'
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
-type ChatRoomProps = {}
+type ChatRoomProps = {
+  enableMultiDestinataireLink?: boolean
+}
 
-export default function ChatRoom({}: ChatRoomProps) {
+export default function ChatRoom({
+  enableMultiDestinataireLink,
+}: ChatRoomProps) {
   const { data: session } = useSession({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -158,7 +162,7 @@ export default function ChatRoom({}: ChatRoomProps) {
                     )
                 )}
               </ul>
-              {process.env.ENABLE_MULTI_DESTINATAIRES_MESSAGE && (
+              {enableMultiDestinataireLink && (
                 <Link href={'/mes-jeunes/envoie-message-groupe'}>
                   <a
                     className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
