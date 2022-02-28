@@ -5,7 +5,6 @@ import {
   waitFor,
 } from '@testing-library/react'
 import { Mock } from 'jest-mock'
-import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'

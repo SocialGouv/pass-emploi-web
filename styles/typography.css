@@ -1,210 +1,218 @@
 /* Regular */
 
 .h1 {
-	font-size: 44px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 55px;
-	letter-spacing: -0.3px;
+  font-size: 44px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 55px;
+  letter-spacing: -0.3px;
 }
 
 .h2 {
-	font-size: 32px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 40px;
-	letter-spacing: -0.3px;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 40px;
+  letter-spacing: -0.3px;
 }
 
 .h3 {
-	font-size: 24px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 30px;
-	letter-spacing: -0.3px;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: -0.3px;
 }
 
 .h4 {
-	font-size: 22px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 28px;
-	letter-spacing: -0.3px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: -0.3px;
 }
 
 .chapo {
-	font-size: 22px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 28px;
-	letter-spacing: -0.3px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: -0.3px;
 }
 
 .text-lg {
-	font-size: 18px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 27px;
-	letter-spacing: -0.3px;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 27px;
+  letter-spacing: -0.3px;
 }
 
 .text-md {
-	font-size: 16px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 24px;
-	letter-spacing: -0.3px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.3px;
 }
 
 .text-sm {
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 21px;
-	letter-spacing: 0px;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 21px;
+  letter-spacing: 0px;
 }
 
 .text-xs {
-	font-size: 12px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 18px;
-	letter-spacing: 0px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0px;
 }
 
 /* Semi Bold */
 
 .h1-semi {
-	font-size: 44px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 55px;
-	letter-spacing: -0.3px;
+  font-size: 44px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 55px;
+  letter-spacing: -0.3px;
 }
 
 .h2-semi {
-	font-size: 32px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 40px;
-	letter-spacing: -0.3px;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 40px;
+  letter-spacing: -0.3px;
 }
 
 .h3-semi {
-	font-size: 24px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 30px;
-	letter-spacing: -0.3px;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30px;
+  letter-spacing: -0.3px;
 }
 
 .h4-semi {
-	font-size: 22px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 28px;
-	letter-spacing: -0.3px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.3px;
 }
 
 .chapo-semi {
-	font-size: 22px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 28px;
-	letter-spacing: -0.3px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: -0.3px;
 }
 
 .text-lg-semi {
-	font-size: 18px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 27px;
-	letter-spacing: -0.3px;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 27px;
+  letter-spacing: -0.3px;
 }
 
 .text-md-semi {
-	font-size: 16px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 24px;
-	letter-spacing: -0.3px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.3px;
 }
 
 .text-sm-semi {
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 21px;
-	letter-spacing: 0px;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 21px;
+  letter-spacing: 0px;
 }
 
 .text-xs-semi {
-	font-size: 12px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 18px;
-	letter-spacing: 0px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0px;
 }
 
 .text-xxs-italic {
-	font-size: 11px;
-	font-style: italic;
-	font-weight: 500;
-	line-height: 13px;
-	letter-spacing: 0em;
-	text-align: right;
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 13px;
+  letter-spacing: 0em;
+  text-align: right;
 }
 /*new à implémenter avec la nouvelle nomenclature et mettre en rem*/
 .text-base-medium {
-	font-size: 16px;
-	font-style: normal;
-	font-weight: bold;
-	line-height: 21px;
-	letter-spacing: 0px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 21px;
+  letter-spacing: 0px;
 }
 
 .text-xs-medium {
-	font-size: 12px;
-	font-style: normal;
-	font-weight: 600;
-	line-height: 21px;
-	letter-spacing: 0px;
-	text-align: left;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 21px;
+  letter-spacing: 0px;
+  text-align: left;
 }
 
 .text-sm-medium {
-	font-size: 14px;
-	font-style: normal;
-	font-weight: bold;
-	line-height: 21px;
-	letter-spacing: 0px;
-	text-align: left;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 21px;
+  letter-spacing: 0px;
+  text-align: left;
 }
 
-
 .text-m-medium {
-	font-size: 20px;
-	font-style: normal;
-	font-weight: bold;
-	line-height: 26px;
-	letter-spacing: 0em;
-	text-align: left;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 26px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.text-l-medium {
+  font-size: 24px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 32px;
+  letter-spacing: 0em;
+  text-align: left;
 }
 
 .text-base-regular {
-	font-size: 16px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 22px;
-	letter-spacing: 0em;
-	text-align: left;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
 }
 
 .text-sm-regular {
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 20px;
-	letter-spacing: 0em;
-	text-align: left;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0em;
+  text-align: left;
 }

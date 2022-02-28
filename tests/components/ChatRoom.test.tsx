@@ -30,6 +30,8 @@ describe('<ChatRoom />', () => {
       createCompteJeunePoleEmploi: jest.fn(),
       getJeuneDetails: jest.fn(),
       getJeunesDuConseiller: jest.fn(),
+      getJeunesDuConseillerParEmail: jest.fn(),
+      reaffecter: jest.fn(),
     }
     messagesService = {
       observeJeuneChat: jest.fn(
@@ -80,7 +82,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService, messagesService }}>
-            <ChatRoom />
+            <ChatRoom enableMultiDestinataireLink={true} />
           </DIProvider>,
           { user: conseiller, firebaseToken: tokenChat }
         )
@@ -98,6 +100,13 @@ describe('<ChatRoom />', () => {
     it('sign into chat', async () => {
       // Then
       expect(messagesService.signIn).toHaveBeenCalled()
+    })
+
+    it('devrait avoir le lien multidestination', () => {
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Message multi-destinataires' })
+      ).toBeInTheDocument()
     })
 
     describe('pour chaque jeune', () => {
