@@ -10,7 +10,7 @@ import { useDependance } from 'utils/injectionDependances'
 import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
-import ForwardIcon from '../../assets/icons/forward_to_inbox.svg'
+import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import Link from 'next/link'
 
 import linkStyle from 'styles/components/Link.module.css'
@@ -163,11 +163,11 @@ export default function ChatRoom({
                 )}
               </ul>
               {enableMultiDestinataireLink && (
-                <Link href={'/mes-jeunes/envoie-message-groupe'}>
+                <Link href={'/mes-jeunes/envoi-message-groupe'}>
                   <a
                     className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
                   >
-                    <ForwardIcon
+                    <MessageGroupeIcon
                       aria-hidden='true'
                       focusable='false'
                       className='mr-2'

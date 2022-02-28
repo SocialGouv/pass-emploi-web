@@ -1,6 +1,6 @@
 import { RenderResult, screen } from '@testing-library/react'
 
-import MultidestinatairePage from 'pages/mes-jeunes/envoie-message-groupe'
+import MultidestinatairePage from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
@@ -36,7 +36,7 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
 
     expect(screen.getByRole('form')).toBeInTheDocument()
     expect(screen.getAllByRole('group').length).toBe(2)
-    expect(screen.getByLabelText('Message *')).toBeInTheDocument()
+    expect(screen.getByLabelText('* Message')).toBeInTheDocument()
     expect(screen.getByRole('combobox')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Envoyer' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Annuler' })).toBeInTheDocument()

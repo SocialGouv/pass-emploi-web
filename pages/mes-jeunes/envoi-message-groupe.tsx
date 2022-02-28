@@ -13,15 +13,15 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
 
-type EnvoieMessageGroupe = {
+interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
 }
 
-function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
+function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([jeunes[0]])
   const [message, setMessage] = useState<string>('')
 
-  const FormIsValid = () => message !== '' && selectedJeunes.length !== 0
+  const formIsValid = () => message !== '' && selectedJeunes.length !== 0
 
   useMatomo('Message - Rédaction')
 
@@ -41,10 +41,10 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
       <div className={styles.content}>
         <form method='POST' role='form' onSubmit={() => {}} onReset={() => {}}>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
-            Les champs marqués d&apos;une * sont obligatoires.
+            Tous les champs sont obligatoires
           </div>
 
-          <fieldset>
+          <fieldset className='border-none'>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape1Icon
                 role='img'
@@ -54,32 +54,31 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
               />
               Destinataires
             </legend>
-            <label htmlFor='beneficiaire' className='text-base-regular'>
-              Rechercher et ajouter des jeunes <span aria-hidden='true'>*</span>
-              <span className='block text-bleu_nuit text-sm-regular mb-3'>
+            <label htmlFor='beneficiaire' className='text-base-medium'>
+              <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
+              <span className='text-bleu_nuit text-sm-regular ml-2'>
                 Nom et prénom
               </span>
             </label>
             <select
               id='beneficiaire'
               name='beneficiaire'
-              onChange={(e) => {}}
-              className='text-sm text-bleu_nuit w-full p-3 mb-2 border border-bleu_nuit rounded-medium cursor-pointer'
+              className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer'
               style={{ background: 'white' }}
               required
               disabled
             >
               <option aria-hidden hidden disabled value={undefined} />
-              {jeunes.map((j) => (
-                <option key={j.id} value={j.id}>
-                  {j.firstName} {j.lastName}
+              {jeunes.map((jeune) => (
+                <option key={jeune.id} value={jeune.id}>
+                  {jeune.firstName} {jeune.lastName}
                 </option>
               ))}
             </select>
-            <p className='mb-10'>Destinataires({selectedJeunes.length})</p>
+            <p className='mb-10'>Destinataires ({selectedJeunes.length})</p>
           </fieldset>
 
-          <fieldset>
+          <fieldset className='border-none'>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape2Icon
                 role='img'
@@ -90,15 +89,14 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
               Écrivez votre message
             </legend>
 
-            <label htmlFor='message'>
-              Message <span aria-hidden='true'>*</span>
+            <label htmlFor='message' className='text-base-medium'>
+              <span aria-hidden='true'>*</span> Message
             </label>
 
             <textarea
               id='message'
               name='message'
               rows={10}
-              cols={5}
               className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-black rounded-medium mt-4'
               placeholder='Ajouter un message...'
               onChange={(e) => setMessage(e.target.value)}
@@ -107,18 +105,20 @@ function EnvoieMessageGroupe({ jeunes }: EnvoieMessageGroupe) {
           </fieldset>
 
           <div className='flex justify-center'>
-            <Button type='reset' style={ButtonStyle.SECONDARY} className='mr-3'>
-              <span className='p-2'>Annuler</span>
+            <Button
+              type='reset'
+              style={ButtonStyle.SECONDARY}
+              className='mr-3 p-2'
+            >
+              Annuler
             </Button>
-            <Button type='submit' disabled={!FormIsValid()}>
-              <span className='flex items-center p-2'>
-                <SendIcon
-                  aria-hidden='true'
-                  focusable='false'
-                  className='mr-2'
-                />
-                Envoyer
-              </span>
+            <Button
+              type='submit'
+              disabled={!formIsValid()}
+              className='flex items-center p-2'
+            >
+              <SendIcon aria-hidden='true' focusable='false' className='mr-2' />
+              Envoyer
             </Button>
           </div>
         </form>
@@ -146,4 +146,4 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   }
 }
 
-export default EnvoieMessageGroupe
+export default EnvoiMessageGroupe
