@@ -15,7 +15,9 @@ type LayoutProps = {
 }
 
 export default function Layout({ pathname, children }: LayoutProps) {
-  const displayChat = pathname !== '/supervision'
+  const displayChat =
+    pathname !== '/supervision' &&
+    pathname !== '/mes-jeunes/envoi-message-groupe'
 
   const enableMultiDestinataireLink: boolean = Boolean(
     process.env.ENABLE_MULTI_DESTINATAIRES_MESSAGE
