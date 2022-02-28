@@ -2,6 +2,7 @@ import {
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
   Jeune,
+  JeunesAvecMessagesNonLus,
 } from 'interfaces/jeune'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -25,7 +26,7 @@ enum SortColumn {
 }
 
 interface TableauJeunesProps {
-  jeunes: (Jeune & { messagesNonLus: number })[]
+  jeunes: JeunesAvecMessagesNonLus
 }
 
 function todayOrDate(date: Date): string {
@@ -44,7 +45,7 @@ function todayOrDate(date: Date): string {
 
 export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   const [sortedJeunes, setSortedJeunes] =
-    useState<(Jeune & { messagesNonLus: number })[]>(jeunes)
+    useState<JeunesAvecMessagesNonLus>(jeunes)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
     SortColumn.NOM
   )
@@ -145,13 +146,14 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   }`}
                 >
                   <span className='mr-1'>Nom du jeune</span>
-                  {isName ? (
+                  {isName && (
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
                       className={sortDesc ? 'rotate-180' : ''}
                     />
-                  ) : (
+                  )}
+                  {!isName && (
                     <ArrowDouble focusable='false' aria-hidden='true' />
                   )}
                 </button>
@@ -171,13 +173,14 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   }`}
                 >
                   <span className='mr-1'>Dernière action du jeune</span>
-                  {isDate ? (
+                  {isDate && (
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
                       className={sortDesc ? 'rotate-180' : ''}
                     />
-                  ) : (
+                  )}
+                  {!isDate && (
                     <ArrowDouble focusable='false' aria-hidden='true' />
                   )}
                 </button>
@@ -189,21 +192,22 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.MESSAGES)}
-                  aria-label={`Afficher la liste des messages non lus par ordre ${
+                  aria-label={`Afficher la liste des messages non lus par nombre ${
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
                   }`}
-                  title={`Afficher la liste des messages non lus par ordre ${
+                  title={`Afficher la liste des messages non lus par nombre ${
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
                   }`}
                 >
                   <span className='mr-1'>Messages</span>
-                  {isMessage ? (
+                  {isMessage && (
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
                       className={sortDesc ? 'rotate-180' : ''}
                     />
-                  ) : (
+                  )}
+                  {!isMessage && (
                     <ArrowDouble focusable='false' aria-hidden='true' />
                   )}
                 </button>

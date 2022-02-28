@@ -3,7 +3,11 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import { UserStructure } from 'interfaces/conseiller'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import {
+  compareJeunesByLastName,
+  Jeune,
+  JeunesAvecMessagesNonLus,
+} from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -17,7 +21,7 @@ import { MessagesService } from 'services/messages.service'
 
 type MesJeunesProps = {
   structureConseiller: string
-  conseillerJeunes: Jeune[] | (Jeune & { messagesNonLus: number })[]
+  conseillerJeunes: Jeune[]
   isFromEmail: boolean
 }
 
@@ -29,12 +33,9 @@ function MesJeunes({
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
-  const [jeunes, setJeunes] = useState<(Jeune & { messagesNonLus: number })[]>(
-    []
-  )
-  const [listeJeunesFiltres, setListJeunesFiltres] = useState<
-    (Jeune & { messagesNonLus: number })[]
-  >([])
+  const [jeunes, setJeunes] = useState<JeunesAvecMessagesNonLus>([])
+  const [listeJeunesFiltres, setListJeunesFiltres] =
+    useState<JeunesAvecMessagesNonLus>([])
 
   const initialTracking = `Mes jeunes${
     conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''

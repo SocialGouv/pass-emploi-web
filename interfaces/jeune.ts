@@ -22,6 +22,8 @@ export type Jeune = {
   }
 }
 
+export type JeunesAvecMessagesNonLus = (Jeune & { messagesNonLus: number })[]
+
 export interface Chat {
   seenByConseiller: boolean
   newConseillerMessageCount: number
