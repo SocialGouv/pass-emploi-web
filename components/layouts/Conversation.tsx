@@ -29,12 +29,12 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
-  const [inputFocused, setInputFocused] = useState<boolean>(false)
+  const inputFocused = useRef<boolean>(false)
 
   const dummySpace = useRef<HTMLElement>(null)
 
   const onInputFocused = () => {
-    setInputFocused(true)
+    inputFocused.current = true
     setReadByConseiller(jeuneChat)
   }
 
@@ -72,13 +72,13 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
             dummySpace.current.scrollIntoView({ behavior: 'smooth' })
           }
 
-          if (inputFocused) {
+          if (inputFocused.current) {
             setReadByConseiller(jeuneChatToObserve)
           }
         }
       )
     },
-    [inputFocused, messagesService, setReadByConseiller]
+    [messagesService, setReadByConseiller]
   )
 
   const observerLastJeuneReadingDate = useCallback(
@@ -183,7 +183,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
           id='input-new-message'
           className='flex-grow p-4 bg-bleu_blanc mr-2 rounded-x_large border-0 text-md text-bleu_nuit border-none'
           onFocus={onInputFocused}
-          onBlur={() => setInputFocused(false)}
+          onBlur={() => (inputFocused.current = false)}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder='Écrivez votre message ici...'
           minRows={3}
