@@ -217,37 +217,21 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 <a
                   key={jeune.id}
                   role='row'
-                  aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}`}
+                  aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
                   className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
                 >
-                  <span
-                    role='cell'
-                    className='table-cell p-4'
-                    aria-hidden='true'
-                  >
+                  <span role='cell' className='table-cell p-4'>
                     {jeune.lastName} {jeune.firstName}
                   </span>
 
-                  <span
-                    role='cell'
-                    className='table-cell p-4'
-                    aria-hidden='true'
-                  >
+                  <span role='cell' className='table-cell p-4'>
                     {jeune.lastActivity
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
                   </span>
-                  <span
-                    role='cell'
-                    className='table-cell p-4'
-                    aria-hidden='true'
-                  >
+                  <span role='cell' className='table-cell p-4'>
                     <div className='relative'>
-                      <MessageIcon
-                        className='h-6 w-6'
-                        aria-hidden='true'
-                        focusable='false'
-                      />
+                      <MessageIcon aria-hidden='true' focusable='false' />
                       {jeune.messagesNonLus > 0 && (
                         <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
                           {jeune.messagesNonLus}
