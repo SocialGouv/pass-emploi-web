@@ -7,6 +7,7 @@ import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import Router from 'next/router'
 import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -66,7 +67,11 @@ function PoleEmploiCreationJeune() {
         </Link>
 
         {createdSuccessId && (
-          <AjouterJeuneButton structureConseiller={UserStructure.POLE_EMPLOI} />
+          <AjouterJeuneButton
+            handleAddJeune={() => {
+              Router.reload()
+            }}
+          />
         )}
       </div>
 

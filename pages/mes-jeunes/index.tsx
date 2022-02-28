@@ -5,6 +5,7 @@ import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import { UserStructure } from 'interfaces/conseiller'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
+import Router from 'next/router'
 import React, { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -31,6 +32,19 @@ function MesJeunes({
   }${isFromEmail ? ' - Origine email' : ''}`
 
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const handleAddJeune = () => {
+    switch (structureConseiller) {
+      case UserStructure.MILO:
+        Router.push('/mes-jeunes/milo/creation-jeune')
+        break
+      case UserStructure.POLE_EMPLOI:
+        Router.push('/mes-jeunes/pole-emploi/creation-jeune')
+        break
+      default:
+        break
+    }
+  }
 
   const onSearch = (query: string) => {
     const querySplit = query.toLowerCase().split(/-|\s/)
@@ -68,7 +82,7 @@ function MesJeunes({
           <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
           {(structureConseiller === UserStructure.MILO ||
             structureConseiller === UserStructure.POLE_EMPLOI) && (
-            <AjouterJeuneButton structureConseiller={structureConseiller} />
+            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
           )}
         </div>
 
@@ -87,7 +101,7 @@ function MesJeunes({
               Vous n&apos;avez pas encore intégré de jeunes.
             </p>
 
-            <AjouterJeuneButton structureConseiller={structureConseiller} />
+            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
           </div>
         )}
 

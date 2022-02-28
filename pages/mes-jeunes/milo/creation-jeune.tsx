@@ -15,6 +15,7 @@ import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
+import Router from 'next/router'
 
 type MiloCreationJeuneProps = {
   dossierId: string
@@ -71,7 +72,11 @@ function MiloCreationJeune({
         </Link>
 
         {createdSucessId && (
-          <AjouterJeuneButton structureConseiller={UserStructure.MILO} />
+          <AjouterJeuneButton
+            handleAddJeune={() => {
+              Router.reload()
+            }}
+          />
         )}
       </div>
 
