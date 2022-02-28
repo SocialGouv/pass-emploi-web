@@ -74,7 +74,10 @@ function MiloCreationJeune({
         {createdSucessId && (
           <AjouterJeuneButton
             handleAddJeune={() => {
-              Router.reload()
+              Router.push('/mes-jeunes/milo/creation-jeune')
+              dossierId = ''
+              setCreatedSucessId('')
+              setEtape(1)
             }}
           />
         )}
