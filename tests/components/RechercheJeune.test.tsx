@@ -2,21 +2,43 @@ import { desJeunes } from 'fixtures/jeune'
 import renderWithSession from '../renderWithSession'
 import MesJeunes from 'pages/mes-jeunes'
 import { UserStructure } from 'interfaces/conseiller'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { DIProvider } from 'utils/injectionDependances'
+import { MessagesService } from 'services/messages.service'
 
 describe('Recherche', () => {
+  let messagesService: MessagesService
+
   beforeEach(async () => {
     //GIVEN
     const jeunes = desJeunes()
 
-    renderWithSession(
-      <MesJeunes
-        structureConseiller={UserStructure.MILO}
-        conseillerJeunes={jeunes}
-      />
-    )
+    messagesService = {
+      observeJeuneChat: jest.fn(),
+      observeJeuneReadingDate: jest.fn(),
+      observeMessages: jest.fn(),
+      sendNouveauMessage: jest.fn(),
+      setReadByConseiller: jest.fn(),
+      signIn: jest.fn(() => Promise.resolve()),
+      signOut: jest.fn(),
+      countMessagesNotRead: jest
+        .fn()
+        .mockImplementation(() => Promise.resolve()),
+    }
+
+    await act(async () => {
+      await renderWithSession(
+        <DIProvider dependances={{ messagesService }}>
+          <MesJeunes
+            structureConseiller={UserStructure.MILO}
+            conseillerJeunes={jeunes}
+            isFromEmail
+          />
+        </DIProvider>
+      )
+    })
   })
 
   it('devrait afficher un formulaire de recherche', () => {

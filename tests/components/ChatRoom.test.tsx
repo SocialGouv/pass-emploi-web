@@ -60,6 +60,7 @@ describe('<ChatRoom />', () => {
       observeMessages: jest.fn(),
       sendNouveauMessage: jest.fn(),
       setReadByConseiller: jest.fn(),
+      countMessagesNotRead: jest.fn(),
       signIn: jest.fn(),
       signOut: jest.fn(),
     }

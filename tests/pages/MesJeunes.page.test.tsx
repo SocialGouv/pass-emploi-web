@@ -1,12 +1,14 @@
 import React from 'react'
 import Router from 'next/router'
-import { fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import '@testing-library/jest-dom'
 import MesJeunes from 'pages/mes-jeunes/index'
 import { unJeune } from 'fixtures/jeune'
 import renderWithSession from '../renderWithSession'
 import { UserStructure } from 'interfaces/conseiller'
+import { DIProvider } from 'utils/injectionDependances'
+import { MessagesService } from 'services/messages.service'
 
 jest.mock('next/router')
 describe('Mes Jeunes', () => {
@@ -15,16 +17,36 @@ describe('Mes Jeunes', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
+    let messagesService: MessagesService
+
     beforeEach(async () => {
       //GIVEN
       const jeune = unJeune()
 
-      renderWithSession(
-        <MesJeunes
-          structureConseiller={UserStructure.MILO}
-          conseillerJeunes={[jeune]}
-        />
-      )
+      messagesService = {
+        observeJeuneChat: jest.fn(),
+        observeJeuneReadingDate: jest.fn(),
+        observeMessages: jest.fn(),
+        sendNouveauMessage: jest.fn(),
+        setReadByConseiller: jest.fn(),
+        signIn: jest.fn(() => Promise.resolve()),
+        signOut: jest.fn(),
+        countMessagesNotRead: jest
+          .fn()
+          .mockImplementation(() => Promise.resolve()),
+      }
+
+      await act(async () => {
+        renderWithSession(
+          <DIProvider dependances={{ messagesService }}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[jeune]}
+              isFromEmail
+            />
+          </DIProvider>
+        )
+      })
     })
 
     it('redirige vers la page de création jeune MILO', () => {
@@ -43,16 +65,36 @@ describe('Mes Jeunes', () => {
   })
 
   describe('quand le conseiller est Pole emploi', () => {
+    let messagesService: MessagesService
+
     beforeEach(async () => {
       //GIVEN
       const jeune = unJeune()
 
-      renderWithSession(
-        <MesJeunes
-          structureConseiller={UserStructure.POLE_EMPLOI}
-          conseillerJeunes={[jeune]}
-        />
-      )
+      messagesService = {
+        observeJeuneChat: jest.fn(),
+        observeJeuneReadingDate: jest.fn(),
+        observeMessages: jest.fn(),
+        sendNouveauMessage: jest.fn(),
+        setReadByConseiller: jest.fn(),
+        signIn: jest.fn(() => Promise.resolve()),
+        signOut: jest.fn(),
+        countMessagesNotRead: jest
+          .fn()
+          .mockImplementation(() => Promise.resolve()),
+      }
+
+      await act(async () => {
+        renderWithSession(
+          <DIProvider dependances={{ messagesService }}>
+            <MesJeunes
+              structureConseiller={UserStructure.POLE_EMPLOI}
+              conseillerJeunes={[jeune]}
+              isFromEmail
+            />
+          </DIProvider>
+        )
+      })
     })
 
     it('devrait rediriger vers la page de création jeune PE', () => {
@@ -72,20 +114,38 @@ describe('Mes Jeunes', () => {
     })
   })
   describe('Contenu de page', () => {
+    let messagesService: MessagesService
+    messagesService = {
+      observeJeuneChat: jest.fn(),
+      observeJeuneReadingDate: jest.fn(),
+      observeMessages: jest.fn(),
+      sendNouveauMessage: jest.fn(),
+      setReadByConseiller: jest.fn(),
+      signIn: jest.fn(() => Promise.resolve()),
+      signOut: jest.fn(),
+      countMessagesNotRead: jest
+        .fn()
+        .mockImplementation(() => Promise.resolve()),
+    }
+
     const jeune1 = unJeune({ id: 'jeune-1' })
     const jeune2 = unJeune({ id: 'jeune-2' })
     const jeune3 = unJeune({ id: 'jeune-3' })
 
     const jeunes = [jeune1, jeune2, jeune3]
 
-    it('devrait avoir un titre de niveau 1', () => {
-      //GIVEN
-      renderWithSession(
-        <MesJeunes
-          structureConseiller={UserStructure.MILO}
-          conseillerJeunes={jeunes}
-        />
-      )
+    it('devrait avoir un titre de niveau 1', async () => {
+      await act(async () => {
+        renderWithSession(
+          <DIProvider dependances={{ messagesService }}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+            />
+          </DIProvider>
+        )
+      })
 
       //WHEN
       const heading = screen.getByRole('heading', {
@@ -97,15 +157,19 @@ describe('Mes Jeunes', () => {
       expect(heading).toBeInTheDocument()
     })
 
-    it("devrait afficher la liste des jeunes s'il en a", () => {
+    it("devrait afficher la liste des jeunes s'il en a", async () => {
       //GIVEN
-      renderWithSession(
-        <MesJeunes
-          structureConseiller={UserStructure.MILO}
-          conseillerJeunes={jeunes}
-        />
-      )
-
+      await act(async () => {
+        renderWithSession(
+          <DIProvider dependances={{ messagesService }}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+            />
+          </DIProvider>
+        )
+      })
       //WHEN
       const rows = screen.getAllByRole('row')
 
@@ -116,14 +180,19 @@ describe('Mes Jeunes', () => {
       ).toThrow()
     })
 
-    it("devrait afficher un message invitant à ajouter des jeunes s'il n’en a pas", () => {
+    it("devrait afficher un message invitant à ajouter des jeunes s'il n’en a pas", async () => {
       //GIVEN
-      renderWithSession(
-        <MesJeunes
-          structureConseiller={UserStructure.MILO}
-          conseillerJeunes={[]}
-        />
-      )
+      await act(async () => {
+        renderWithSession(
+          <DIProvider dependances={{ messagesService }}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[]}
+              isFromEmail
+            />
+          </DIProvider>
+        )
+      })
 
       //WHEN
       const addJeuneText = screen.getByText(
