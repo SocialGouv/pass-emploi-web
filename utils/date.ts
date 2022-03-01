@@ -33,16 +33,6 @@ export const formatHourMinuteDate = (date: Date): string => {
   return `${hours}:${minutes}`
 }
 
-export const formatHourMinuteDateUTC = (date: Date): string => {
-  let hours = date.getUTCHours().toString()
-  hours = ('0' + hours).slice(-2)
-
-  let minutes = date.getUTCMinutes().toString()
-  minutes = ('0' + minutes).slice(-2)
-
-  return `${hours}:${minutes}`
-}
-
 export const formatDayAndHourDate = (date: Date): string =>
   `le ${formatDayDate(date)} à ${formatHourMinuteDate(date)}`
 

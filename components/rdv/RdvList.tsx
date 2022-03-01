@@ -1,5 +1,5 @@
 import { Rdv } from 'interfaces/rdv'
-import { formatDayDate, formatHourMinuteDateUTC } from 'utils/date'
+import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
@@ -17,7 +17,7 @@ const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
   }
 
   const dayHourCells = (rdvDate: Date, duration: string) => {
-    return `${formatDayDate(rdvDate)} (${formatHourMinuteDateUTC(
+    return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
       rdvDate
     )} - ${duration})`
   }

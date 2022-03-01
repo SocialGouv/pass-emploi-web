@@ -20,7 +20,7 @@ describe('<RdvList>', () => {
     listeRdv = uneListeDeRdv()
     render(<RdvList rdvs={listeRdv} />)
 
-    expect(screen.getByText('21/10/2021 (10:00 - 30 min)')).toBeInTheDocument()
+    expect(screen.getByText('21/10/2021 (12:00 - 30 min)')).toBeInTheDocument()
     expect(screen.getByText(listeRdv[0].modality)).toBeInTheDocument()
     expect(
       screen.getByText(`${listeRdv[0].jeune.prenom} ${listeRdv[0].jeune.nom}`)
