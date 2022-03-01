@@ -1,6 +1,6 @@
 import { RdvJeune } from 'interfaces/rdv'
 import React from 'react'
-import { formatDayDate, formatHourMinuteDateUTC } from 'utils/date'
+import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
@@ -13,7 +13,7 @@ type ListeRdvJeuneProps = {
 
 const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
   const dayHourCells = (rdvDate: Date, duration: string) => {
-    return `${formatDayDate(rdvDate)} (${formatHourMinuteDateUTC(
+    return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
       rdvDate
     )} - ${duration})`
   }

@@ -18,7 +18,7 @@ describe('<ListeRdvJeune', () => {
     listeRdv = uneListeDeRdvJeune()
     render(<ListeRdvJeune rdvs={listeRdv} />)
 
-    expect(screen.getByText('21/10/2021 (07:00 - 30 min)')).toBeInTheDocument()
+    expect(screen.getByText('21/10/2021 (09:00 - 30 min)')).toBeInTheDocument()
     expect(screen.getAllByText('En agence')[0]).toBeInTheDocument()
     expect(screen.getByText('Rendez-vous avec Kenji')).toBeInTheDocument()
   })
