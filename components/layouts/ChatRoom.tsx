@@ -166,7 +166,7 @@ export default function ChatRoom({
                 <>
                   <Link href={'/mes-jeunes/envoi-message-groupe'}>
                     <a
-                      className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
+                      className={`absolute bottom-24 self-center ${linkStyle.linkButtonBlue}`}
                     >
                       <MessageGroupeIcon
                         aria-hidden='true'
