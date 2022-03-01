@@ -21,14 +21,19 @@ interface EnvoiMessageGroupeProps {
 function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
-  const emptyOption = useRef<HTMLOptionElement>(null)
+  const inputDestinataires = useRef<HTMLInputElement>(null)
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
 
-  function selectJeune(idJeune: string) {
-    const jeune = jeunes.find((j) => j.id === idJeune)
-    if (jeune) setSelectedJeunes(selectedJeunes.concat(jeune))
-    emptyOption.current!.selected = true
+  function selectJeune(inputValue: string) {
+    console.log(inputValue)
+    const jeune = jeunes
+      .filter(isNotSelected)
+      .find((j) => `${j.lastName} ${j.firstName}` === inputValue)
+    if (jeune) {
+      setSelectedJeunes(selectedJeunes.concat(jeune))
+      inputDestinataires.current!.value = ''
+    }
   }
 
   function unselectJeune(idJeune: string) {
@@ -81,28 +86,26 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
                 Nom et prénom
               </span>
             </label>
-            <select
+            <input
+              type='text'
               id='beneficiaire'
               name='beneficiaire'
-              className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer'
-              style={{ background: 'white' }}
+              ref={inputDestinataires}
+              className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
+              list='beneficiaires'
               onChange={(e) => selectJeune(e.target.value)}
+              multiple={true}
               required={true}
-            >
-              <option
-                aria-hidden
-                hidden
-                disabled
-                selected
-                ref={emptyOption}
-                value={undefined}
-              />
+            />
+            <datalist id='beneficiaires'>
               {jeunes.filter(isNotSelected).map((jeune) => (
-                <option key={jeune.id} value={jeune.id}>
-                  {jeune.lastName} {jeune.firstName}
-                </option>
+                <option
+                  key={jeune.id}
+                  value={`${jeune.lastName} ${jeune.firstName}`}
+                />
               ))}
-            </select>
+            </datalist>
+
             <p
               aria-label={`Destinataires sélectionnés (${selectedJeunes.length})`}
               className='mb-2'
