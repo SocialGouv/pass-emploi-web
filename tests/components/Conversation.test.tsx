@@ -41,6 +41,7 @@ describe('<Conversation />', () => {
       setReadByConseiller: jest.fn(),
       signIn: jest.fn(),
       signOut: jest.fn(),
+      countMessagesNotRead: jest.fn(),
     }
     conseiller = {
       id: 'idConseiller',

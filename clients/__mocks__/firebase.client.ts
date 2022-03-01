@@ -7,7 +7,7 @@ const FirebaseClient = jest.fn(() => ({
   signOut: jest.fn(),
   addMessage: jest.fn(),
   updateChat: jest.fn(),
-  findChatDuJeune: jest.fn(
+  findAndObserveChatDuJeune: jest.fn(
     (
       idConseiller: string,
       idJeune: string,
@@ -20,6 +20,8 @@ const FirebaseClient = jest.fn(() => ({
   observeMessagesDuChat: jest.fn(
     (idChat: string, fn: (messages: Message[]) => void) => fn([])
   ),
+  getChatDuJeune: jest.fn(() => unChat()),
+  countMessagesNotRead: jest.fn(),
 }))
 
 export { FirebaseClient }

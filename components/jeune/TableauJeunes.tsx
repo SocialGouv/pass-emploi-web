@@ -2,6 +2,7 @@ import {
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
   Jeune,
+  JeunesAvecMessagesNonLus,
 } from 'interfaces/jeune'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -16,15 +17,16 @@ import {
 } from 'utils/date'
 import ArrowDouble from '../../assets/icons/arrow_double.svg'
 import ArrowDown from '../../assets/icons/arrow_down.svg'
-import ChevronRight from '../../assets/icons/chevron_right.svg'
+import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 enum SortColumn {
   NOM = 'NOM',
   DERNIERE_ACTIVITE = 'DERNIERE_ACTIVITE',
+  MESSAGES = 'MESSAGES',
 }
 
 interface TableauJeunesProps {
-  jeunes: Jeune[]
+  jeunes: JeunesAvecMessagesNonLus
 }
 
 function todayOrDate(date: Date): string {
@@ -42,7 +44,8 @@ function todayOrDate(date: Date): string {
 }
 
 export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
-  const [sortedJeunes, setSortedJeunes] = useState<Jeune[]>(jeunes)
+  const [sortedJeunes, setSortedJeunes] =
+    useState<JeunesAvecMessagesNonLus>(jeunes)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
     SortColumn.NOM
   )
@@ -50,6 +53,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   const isName = currentSortedColumn === SortColumn.NOM
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
+  const isMessage = currentSortedColumn === SortColumn.MESSAGES
 
   const sortJeunes = (newSortColumn: SortColumn) => {
     if (currentSortedColumn !== newSortColumn) {
@@ -61,7 +65,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   }
 
   useEffect(() => {
-    function compareJeunes(jeune1: Jeune, jeune2: Jeune) {
+    function compareJeunes(
+      jeune1: Jeune & { messagesNonLus: number },
+      jeune2: Jeune & { messagesNonLus: number }
+    ) {
       if (isName)
         return sortDesc
           ? compareJeunesByLastNameDesc(jeune1, jeune2)
@@ -79,11 +86,17 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           : compareDatesDesc(date1, date2)
       }
 
+      if (isMessage) {
+        return sortDesc
+          ? jeune1.messagesNonLus - jeune2.messagesNonLus
+          : jeune2.messagesNonLus - jeune1.messagesNonLus
+      }
+
       return 0
     }
 
     setSortedJeunes([...jeunes].sort(compareJeunes))
-  }, [currentSortedColumn, isDate, isName, sortDesc, jeunes])
+  }, [currentSortedColumn, isDate, isName, isMessage, sortDesc, jeunes])
 
   const matomoTitle = () => {
     if (isDate && !sortDesc)
@@ -93,6 +106,9 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
     if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
     if (isName && sortDesc)
       return 'Mes jeunes - Nom - Ordre alphabétique inversé'
+    if (isMessage && sortDesc) return 'Mes jeunes - Messages - Ordre croissant'
+    if (isMessage && !sortDesc)
+      return 'Mes jeunes - Messages - Ordre décroissant'
   }
 
   useMatomo(matomoTitle())
@@ -130,18 +146,18 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   }`}
                 >
                   <span className='mr-1'>Nom du jeune</span>
-                  {isName ? (
+                  {isName && (
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
                       className={sortDesc ? 'rotate-180' : ''}
                     />
-                  ) : (
+                  )}
+                  {!isName && (
                     <ArrowDouble focusable='false' aria-hidden='true' />
                   )}
                 </button>
               </span>
-
               <span
                 role='columnheader'
                 className='table-cell text-sm text-bleu text-left pb-4 pt-4'
@@ -157,13 +173,41 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   }`}
                 >
                   <span className='mr-1'>Dernière action du jeune</span>
-                  {isDate ? (
+                  {isDate && (
                     <ArrowDown
                       focusable='false'
                       aria-hidden='true'
                       className={sortDesc ? 'rotate-180' : ''}
                     />
-                  ) : (
+                  )}
+                  {!isDate && (
+                    <ArrowDouble focusable='false' aria-hidden='true' />
+                  )}
+                </button>
+              </span>
+              <span
+                role='columnheader'
+                className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+              >
+                <button
+                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  onClick={() => sortJeunes(SortColumn.MESSAGES)}
+                  aria-label={`Afficher la liste des messages non lus par nombre ${
+                    isMessage && !sortDesc ? 'croissant' : 'décroissant'
+                  }`}
+                  title={`Afficher la liste des messages non lus par nombre ${
+                    isMessage && !sortDesc ? 'croissant' : 'décroissant'
+                  }`}
+                >
+                  <span className='mr-1'>Messages</span>
+                  {isMessage && (
+                    <ArrowDown
+                      focusable='false'
+                      aria-hidden='true'
+                      className={sortDesc ? 'rotate-180' : ''}
+                    />
+                  )}
+                  {!isMessage && (
                     <ArrowDouble focusable='false' aria-hidden='true' />
                   )}
                 </button>
@@ -172,38 +216,32 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           </div>
 
           <div role='rowgroup'>
-            {sortedJeunes?.map((jeune: Jeune) => (
+            {sortedJeunes?.map((jeune) => (
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
                   key={jeune.id}
                   role='row'
-                  aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}`}
+                  aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
                   className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
                 >
-                  <span
-                    role='cell'
-                    className='table-cell p-4'
-                    aria-hidden='true'
-                  >
+                  <span role='cell' className='table-cell p-4'>
                     {jeune.lastName} {jeune.firstName}
                   </span>
 
-                  <span
-                    role='cell'
-                    className='table-cell p-4'
-                    aria-hidden='true'
-                  >
+                  <span role='cell' className='table-cell p-4'>
                     {jeune.lastActivity
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
                   </span>
-
-                  <span
-                    role='cell'
-                    className='table-cell p-4 col-end-6'
-                    aria-hidden='true'
-                  >
-                    <ChevronRight aria-hidden='true' focusable='false' />
+                  <span role='cell' className='table-cell p-4'>
+                    <div className='relative'>
+                      <MessageIcon aria-hidden='true' focusable='false' />
+                      {jeune.messagesNonLus > 0 && (
+                        <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
+                          {jeune.messagesNonLus}
+                        </div>
+                      )}
+                    </div>
                   </span>
                 </a>
               </Link>
