@@ -39,7 +39,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
         </h1>
       </div>
       <div className={styles.content}>
-        <form method='POST' role='form' onSubmit={() => {}} onReset={() => {}}>
+        <form method='POST' onSubmit={() => {}} onReset={() => {}}>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs sont obligatoires
           </div>

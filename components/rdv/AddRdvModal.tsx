@@ -67,7 +67,7 @@ const AddRdvModal = ({
 
   return (
     <Modal title='Créer un nouveau RDV' onClose={() => onClose()} show={true}>
-      <form method='POST' role='form' onSubmit={handleAddClick}>
+      <form onSubmit={handleAddClick}>
         <div className='flex'>
           <div className='pr-[20px]' style={{ flexBasis: '50%' }}>
             <label
