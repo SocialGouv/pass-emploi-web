@@ -46,21 +46,22 @@ export default function JeunesMultiselectAutocomplete({
 
   return (
     <>
-      <label htmlFor='beneficiaire' className='text-base-medium'>
+      <label htmlFor='item-input' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
         <p className='text-bleu_nuit text-sm-regular'>Nom et prénom</p>
       </label>
       <input
         type='text'
-        id='beneficiaire'
-        name='beneficiaire'
+        id='item-input'
+        name='item'
         ref={input}
         className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
-        list='beneficiaires'
+        list='items'
         onChange={(e) => selectJeune(e.target.value)}
         multiple={true}
+        aria-controls='selected-items'
       />
-      <datalist id='beneficiaires'>
+      <datalist id='items'>
         {getJeunesNotSelected().map((jeune) => (
           <option key={jeune.id} value={getJeuneFullname(jeune)} />
         ))}
@@ -69,11 +70,19 @@ export default function JeunesMultiselectAutocomplete({
       <p
         aria-label={`${selectedLabel} sélectionnés (${selectedJeunes.length})`}
         className='mb-2'
+        id='selected-label'
       >
         {selectedLabel} ({selectedJeunes.length})
       </p>
       {selectedJeunes.length > 0 && (
-        <ul className='bg-grey_100 rounded-[12px] px-2 py-4'>
+        <ul
+          id='selected-items'
+          role='region'
+          className='bg-grey_100 rounded-[12px] px-2 py-4'
+          aria-labelledby='selected-label'
+          aria-live='polite'
+          aria-relevant='all'
+        >
           {selectedJeunes.map((jeune) => (
             <li
               key={jeune.id}
