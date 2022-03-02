@@ -19,7 +19,6 @@
   "dependencies": {
     "@badrap/bar-of-progress": "0.1.2",
     "crypto-js": "4.1.1",
-    "downshift": "6.1.7",
     "firebase": "9.6.7",
     "jsonwebtoken": "8.5.1",
     "next": "12.1.0",

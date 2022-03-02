@@ -1,9 +1,10 @@
 import { AppHead } from 'components/AppHead'
+import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import React, { useRef, useState } from 'react'
+import { MouseEvent, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
@@ -11,7 +12,6 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
-import RemoveIcon from '../../assets/icons/remove.svg'
 import SendIcon from '../../assets/icons/send.svg'
 
 interface EnvoiMessageGroupeProps {
@@ -21,27 +21,14 @@ interface EnvoiMessageGroupeProps {
 function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
-  const emptyOption = useRef<HTMLOptionElement>(null)
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
 
-  function selectJeune(idJeune: string) {
-    const jeune = jeunes.find((j) => j.id === idJeune)
-    if (jeune) setSelectedJeunes(selectedJeunes.concat(jeune))
-    emptyOption.current!.selected = true
-  }
+  function envoyerMessageGroupe(e: MouseEvent<HTMLButtonElement>): void {
+    e.preventDefault()
+    e.stopPropagation()
 
-  function unselectJeune(idJeune: string) {
-    const indexSelectedJeune = selectedJeunes.findIndex((j) => j.id === idJeune)
-    if (indexSelectedJeune > -1) {
-      const updatedSelectedJeune = [...selectedJeunes]
-      updatedSelectedJeune.splice(indexSelectedJeune, 1)
-      setSelectedJeunes(updatedSelectedJeune)
-    }
-  }
-
-  function isNotSelected(jeune: Jeune): boolean {
-    return selectedJeunes.findIndex((j) => j.id === jeune.id) === -1
+    if (formIsValid()) console.log({ selectedJeunes })
   }
 
   useMatomo('Message - Rédaction')
@@ -75,60 +62,11 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
               />
               Destinataires
             </legend>
-            <label htmlFor='beneficiaire' className='text-base-medium'>
-              <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-              <span className='text-bleu_nuit text-sm-regular ml-2'>
-                Nom et prénom
-              </span>
-            </label>
-            <select
-              id='beneficiaire'
-              name='beneficiaire'
-              className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer'
-              style={{ background: 'white' }}
-              onChange={(e) => selectJeune(e.target.value)}
-              required={true}
-            >
-              <option
-                aria-hidden
-                hidden
-                disabled
-                selected
-                ref={emptyOption}
-                value={undefined}
-              />
-              {jeunes.filter(isNotSelected).map((jeune) => (
-                <option key={jeune.id} value={jeune.id}>
-                  {jeune.lastName} {jeune.firstName}
-                </option>
-              ))}
-            </select>
-            <p
-              aria-label={`Destinataires sélectionnés (${selectedJeunes.length})`}
-              className='mb-2'
-            >
-              Destinataires ({selectedJeunes.length})
-            </p>
-            {selectedJeunes.length > 0 && (
-              <ul className='bg-grey_100 rounded-[12px] px-2 py-4'>
-                {selectedJeunes.map((jeune) => (
-                  <li
-                    key={jeune.id}
-                    className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
-                  >
-                    {jeune.lastName} {jeune.firstName}
-                    <button
-                      type='reset'
-                      title='Enlever'
-                      onClick={() => unselectJeune(jeune.id)}
-                    >
-                      <span className='sr-only'>Enlever le jeune</span>
-                      <RemoveIcon focusable={false} aria-hidden={true} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <JeunesMultiselectAutocomplete
+              jeunes={jeunes}
+              selectedLabel='Destinataires'
+              onUpdate={setSelectedJeunes}
+            />
           </fieldset>
 
           <fieldset className='border-none'>
@@ -169,6 +107,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
               type='submit'
               disabled={!formIsValid()}
               className='flex items-center p-2'
+              onClick={envoyerMessageGroupe}
             >
               <SendIcon aria-hidden='true' focusable='false' className='mr-2' />
               Envoyer

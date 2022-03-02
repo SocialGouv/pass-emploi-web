@@ -163,32 +163,18 @@ export default function ChatRoom({
                 )}
               </ul>
               {enableMultiDestinataireLink && (
-                <>
-                  <Link href={'/mes-jeunes/envoi-message-groupe'}>
-                    <a
-                      className={`absolute bottom-24 self-center ${linkStyle.linkButtonBlue}`}
-                    >
-                      <MessageGroupeIcon
-                        aria-hidden='true'
-                        focusable='false'
-                        className='mr-2'
-                      />
-                      Message multi-destinataires (select)
-                    </a>
-                  </Link>
-                  <Link href={'/mes-jeunes/envoi-message-groupe-2'}>
-                    <a
-                      className={`absolute bottom-16 self-center ${linkStyle.linkButtonBlue}`}
-                    >
-                      <MessageGroupeIcon
-                        aria-hidden='true'
-                        focusable='false'
-                        className='mr-2'
-                      />
-                      Message multi-destinataires (datalist)
-                    </a>
-                  </Link>
-                </>
+                <Link href={'/mes-jeunes/envoi-message-groupe'}>
+                  <a
+                    className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
+                  >
+                    <MessageGroupeIcon
+                      aria-hidden='true'
+                      focusable='false'
+                      className='mr-2'
+                    />
+                    Message multi-destinataires (select)
+                  </a>
+                </Link>
               )}
             </>
           )}
