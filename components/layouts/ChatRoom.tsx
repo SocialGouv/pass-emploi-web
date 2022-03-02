@@ -59,7 +59,7 @@ export default function ChatRoom({
     }
 
     jeunesService
-      .getJeunesDuConseiller(session!.user.id, session!.accessToken)
+      .getJeunesDuConseiller(session.user.id, session.accessToken)
       .then((data) => {
         setJeunes(data)
         currentJeunesChat = []
@@ -69,7 +69,7 @@ export default function ChatRoom({
   useEffect(() => {
     if (session?.firebaseToken) {
       signInChat(session.firebaseToken).then(() => {
-        observeJeuneChats(session!.user.id, jeunes)
+        observeJeuneChats(session.user.id, jeunes)
       })
     }
   }, [session, jeunes, signInChat, observeJeuneChats])
@@ -172,7 +172,7 @@ export default function ChatRoom({
                       focusable='false'
                       className='mr-2'
                     />
-                    Message multi-destinataires (select)
+                    Message multi-destinataires
                   </a>
                 </Link>
               )}

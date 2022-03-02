@@ -43,7 +43,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
           </a>
         </Link>
         <h1 className='text-l-medium text-bleu_nuit'>
-          Envoi d’un message à plusieurs jeunes
+          Envoie d&apos;un message multi-destinataires
         </h1>
       </div>
       <div className={styles.content}>

@@ -1,4 +1,4 @@
-import { Jeune } from 'interfaces/jeune'
+import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 import React, { useRef, useState } from 'react'
 import RemoveIcon from '../../assets/icons/remove.svg'
 
@@ -24,7 +24,7 @@ export default function JeunesMultiselectAutocomplete({
 
   function selectJeune(inputValue: string) {
     const jeune = getJeunesNotSelected().find(
-      (j) => `${j.lastName} ${j.firstName}` === inputValue
+      (j) => getJeuneFullname(j) === inputValue
     )
     if (jeune) {
       const updatedSelectedJeunes = selectedJeunes.concat(jeune)
@@ -48,9 +48,7 @@ export default function JeunesMultiselectAutocomplete({
     <>
       <label htmlFor='beneficiaire' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-        <span className='text-bleu_nuit text-sm-regular ml-2'>
-          Nom et prénom
-        </span>
+        <p className='text-bleu_nuit text-sm-regular'>Nom et prénom</p>
       </label>
       <input
         type='text'
@@ -64,10 +62,7 @@ export default function JeunesMultiselectAutocomplete({
       />
       <datalist id='beneficiaires'>
         {getJeunesNotSelected().map((jeune) => (
-          <option
-            key={jeune.id}
-            value={`${jeune.lastName} ${jeune.firstName}`}
-          />
+          <option key={jeune.id} value={getJeuneFullname(jeune)} />
         ))}
       </datalist>
 
@@ -84,7 +79,7 @@ export default function JeunesMultiselectAutocomplete({
               key={jeune.id}
               className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
             >
-              {jeune.lastName} {jeune.firstName}
+              {getJeuneFullname(jeune)}
               <button
                 type='reset'
                 title='Enlever'

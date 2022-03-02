@@ -1,7 +1,11 @@
 import { AppHead } from 'components/AppHead'
 import ResettableTextInput from 'components/ResettableTextInput'
 import Button from 'components/ui/Button'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import {
+  compareJeunesByLastName,
+  getJeuneFullname,
+  Jeune,
+} from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import React, { FormEvent, useState } from 'react'
@@ -369,7 +373,7 @@ function Supervision({}: SupervisionProps) {
                       />
                     </td>
                     <td className='pt-6 pb-6 pl-4 pr-4 text-md-semi'>
-                      {jeune.lastName} {jeune.firstName}
+                      {getJeuneFullname(jeune)}
                     </td>
                     <td className='pt-6 pb-6 pl-4 pr-4'>
                       {jeune.conseillerPrecedent

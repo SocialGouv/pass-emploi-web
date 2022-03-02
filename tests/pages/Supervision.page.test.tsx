@@ -7,6 +7,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import { desJeunes } from '../../fixtures/jeune'
+import { getJeuneFullname } from '../../interfaces/jeune'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
@@ -122,7 +123,7 @@ describe('Supervision', () => {
         // THEN
         for (const jeune of jeunes) {
           expect(
-            screen.getByText(`${jeunes[0].lastName} ${jeunes[0].firstName}`)
+            screen.getByText(`${jeune.lastName} ${jeune.firstName}`)
           ).toBeInTheDocument()
         }
       })

@@ -1,6 +1,6 @@
 import { RenderResult, screen } from '@testing-library/react'
 
-import MultidestinatairePage from 'pages/mes-jeunes/envoi-message-groupe'
+import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
@@ -20,7 +20,7 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
 
     page = renderWithSession(
       <DIProvider dependances={{ jeunesService }}>
-        <MultidestinatairePage jeunes={[]} />
+        <EnvoiMessageGroupe jeunes={[]} />
       </DIProvider>
     )
   })
@@ -30,7 +30,7 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: 'Envoi d’un message à plusieurs jeunes',
+        name: "Envoie d'un message multi-destinataires",
       })
     ).toBeInTheDocument()
 
