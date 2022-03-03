@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
@@ -117,47 +117,84 @@ describe('EditionRdv', () => {
       expect(link).toHaveAttribute('href', '/mes-rendezvous')
     })
 
-    it('contient une étape bénéficiaires', () => {
-      // Then
-      expect(
-        screen.getByRole('group', { name: 'Étape 1 Bénéficiaires :' })
-      ).toBeInTheDocument()
-    })
-
-    it('contient une liste pour choisir un jeune', () => {
-      // Then
-      const selectJeune = screen.getByRole('combobox', {
-        name: '(obligatoire) Rechercher et ajouter un jeune Nom et prénom',
+    describe('étape 1 bénéficiaires', () => {
+      let etape: HTMLFieldSetElement
+      beforeEach(() => {
+        etape = screen.getByRole('group', { name: 'Étape 1 Bénéficiaires :' })
       })
-      expect(selectJeune).toBeInTheDocument()
-      expect(selectJeune).toHaveAttribute('required', '')
-      for (const jeune of jeunes) {
-        const jeuneOption = screen.getByRole('option', {
-          name: `${jeune.lastName} ${jeune.firstName}`,
+
+      it('contient une liste pour choisir un jeune', () => {
+        // Then
+        const selectJeune = within(etape).getByRole('combobox', {
+          name: 'Rechercher et ajouter un jeune Nom et prénom',
         })
-        expect(jeuneOption).toBeInTheDocument()
-      }
-    })
-
-    it('contient une étape type de rendez-vous', () => {
-      // Then
-      expect(
-        screen.getByRole('group', { name: 'Étape 2 Type de rendez-vous :' })
-      ).toBeInTheDocument()
-    })
-
-    it('contient une liste pour choisir une modalité', () => {
-      // Then
-      const selectModalite = screen.getByRole('combobox', {
-        name: '(obligatoire) Modalité',
+        expect(selectJeune).toBeInTheDocument()
+        expect(selectJeune).toHaveAttribute('required', '')
+        for (const jeune of jeunes) {
+          const jeuneOption = within(etape).getByRole('option', {
+            name: `${jeune.lastName} ${jeune.firstName}`,
+          })
+          expect(jeuneOption).toBeInTheDocument()
+        }
       })
-      expect(selectModalite).toBeInTheDocument()
-      expect(selectModalite).toHaveAttribute('required', '')
-      for (const modalite of modalites) {
-        expect(
-          screen.getByRole('option', { name: modalite })
-        ).toBeInTheDocument()
-      }
+    })
+
+    describe('étape 2 type de rendez-vous', () => {
+      let etape: HTMLFieldSetElement
+      beforeEach(() => {
+        etape = screen.getByRole('group', {
+          name: 'Étape 2 Type de rendez-vous :',
+        })
+      })
+
+      it('contient une liste pour choisir une modalité', () => {
+        // Then
+        const selectModalite = within(etape).getByRole('combobox', {
+          name: 'Modalité',
+        })
+        expect(selectModalite).toBeInTheDocument()
+        expect(selectModalite).toHaveAttribute('required', '')
+        for (const modalite of modalites) {
+          expect(
+            within(etape).getByRole('option', { name: modalite })
+          ).toBeInTheDocument()
+        }
+      })
+    })
+
+    describe('étape 3 lieu et date', () => {
+      let etape: HTMLFieldSetElement
+      beforeEach(() => {
+        etape = screen.getByRole('group', { name: 'Étape 3 Lieu et date :' })
+      })
+
+      it('contient un champ pour choisir la date', () => {
+        // Then
+        const inputDate = within(etape).getByLabelText(
+          '* Date Format : JJ/MM/AAAA'
+        )
+        expect(inputDate).toBeInTheDocument()
+        expect(inputDate).toHaveAttribute('required', '')
+        expect(inputDate).toHaveAttribute('type', 'date')
+      })
+
+      it("contient un champ pour choisir l'horaire", () => {
+        // Then
+        const inputHoraire = within(etape).getByLabelText(
+          '* Heure Format : HH:MM'
+        )
+        expect(inputHoraire).toBeInTheDocument()
+        expect(inputHoraire).toHaveAttribute('required', '')
+        expect(inputHoraire).toHaveAttribute('type', 'text')
+      })
+
+      it('contient un champ pour choisir la durée', () => {
+        // Then
+        const inputDuree = within(etape).getByLabelText('* Durée (en minutes)')
+        expect(inputDuree).toBeInTheDocument()
+        expect(inputDuree).toHaveAttribute('required', '')
+        expect(inputDuree).toHaveAttribute('type', 'number')
+      })
     })
   })
 })

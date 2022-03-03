@@ -10,6 +10,7 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
+import Etape3Icon from '../../assets/icons/etape_3.svg'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -50,8 +51,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
               Bénéficiaires :
             </legend>
             <label htmlFor='beneficiaire' className='text-base-medium'>
-              <span aria-label='(obligatoire)'>*</span> Rechercher et ajouter un
-              jeune
+              <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
               <br />
               <span className='text-bleu_nuit text-sm-regular'>
                 Nom et prénom
@@ -60,7 +60,6 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             <select
               id='beneficiaire'
               name='beneficiaire'
-              className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] border border-bleu_nuit rounded-medium cursor-pointer'
               required={true}
               value={''}
             >
@@ -85,15 +84,9 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             </legend>
 
             <label htmlFor='modalite' className='text-base-medium'>
-              <span aria-label='(obligatoire)'>*</span> Modalité
+              <span aria-hidden={true}>* </span>Modalité
             </label>
-            <select
-              id='modalite'
-              name='modalite'
-              className='text-sm text-bleu_nuit w-full p-[12px] mb-[20px] cursor-pointer border border-bleu_nuit rounded-medium'
-              value={''}
-              required={true}
-            >
+            <select id='modalite' name='modalite' value={''} required={true}>
               <option aria-hidden hidden disabled value={''} />
               {modalites.map((md) => (
                 <option key={md} value={md}>
@@ -101,6 +94,35 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
                 </option>
               ))}
             </select>
+          </fieldset>
+
+          <fieldset className='border-none'>
+            <legend className='flex items-center text-m-medium mb-4'>
+              <Etape3Icon
+                role='img'
+                focusable='false'
+                aria-label='Étape 3'
+                className='mr-2'
+              />
+              Lieu et date :
+            </legend>
+
+            <label htmlFor='date' className='text-base-medium'>
+              <span aria-hidden={true}>* </span>Date
+              <span> Format : JJ/MM/AAAA</span>
+            </label>
+            <input type='date' id='date' name='date' required={true} />
+
+            <label htmlFor='horaire' className='text-base-medium'>
+              <span aria-hidden='true'>* </span>Heure
+              <span> Format : HH:MM</span>
+            </label>
+            <input type='text' id='horaire' name='horaire' required={true} />
+
+            <label htmlFor='duree' className='text-base-medium'>
+              <span aria-hidden='true'>* </span>Durée (en minutes)
+            </label>
+            <input type='number' id='duree' name='duree' required={true} />
           </fieldset>
         </form>
       </div>
