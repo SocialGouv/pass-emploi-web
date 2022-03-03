@@ -1,13 +1,16 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
+import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
+import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
+import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -89,32 +92,38 @@ describe('EditionRdv', () => {
 
   describe('client side', () => {
     let jeunes: Jeune[]
+    let rendezVousService: RendezVousService
     beforeEach(() => {
       // Given
       jeunes = desJeunes()
+      rendezVousService = mockedRendezVousService()
 
       // When
-      render(
-        <EditionRdv
-          jeunes={jeunes}
-          withoutChat={true}
-          from={'/mes-rendezvous'}
-        />
+      renderWithSession(
+        <DIProvider dependances={{ rendezVousService }}>
+          <EditionRdv
+            jeunes={jeunes}
+            withoutChat={true}
+            from={'/mes-rendezvous'}
+          />
+        </DIProvider>
       )
     })
 
-    it('contient un header', () => {
-      // Then
-      expect(
-        screen.getByRole('heading', { level: 1, name: 'Nouveau rendez-vous' })
-      ).toBeInTheDocument()
-    })
+    describe('header', () => {
+      it('contient un titre', () => {
+        // Then
+        expect(
+          screen.getByRole('heading', { level: 1, name: 'Nouveau rendez-vous' })
+        ).toBeInTheDocument()
+      })
 
-    it('permet de revenir à la page précédente', () => {
-      // Then
-      const link = screen.getByRole('link', { name: 'Page précédente' })
-      expect(link).toBeInTheDocument()
-      expect(link).toHaveAttribute('href', '/mes-rendezvous')
+      it('permet de revenir à la page précédente', () => {
+        // Then
+        const link = screen.getByRole('link', { name: 'Page précédente' })
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute('href', '/mes-rendezvous')
+      })
     })
 
     describe('étape 1 bénéficiaires', () => {
@@ -206,11 +215,67 @@ describe('EditionRdv', () => {
       })
 
       it('contient un champ pour saisir des commentaires', () => {
+        // Then
         const inputCommentaires = within(etape).getByRole('textbox', {
           name: 'Notes Commentaire à destination des jeunes',
         })
         expect(inputCommentaires).toBeInTheDocument()
         expect(inputCommentaires).not.toHaveAttribute('required')
+      })
+    })
+
+    describe('validation du formulaire', () => {
+      let selectJeune: HTMLSelectElement
+      let selectModalite: HTMLSelectElement
+      let inputDate: HTMLInputElement
+      let inputHoraire: HTMLInputElement
+      let inputDuree: HTMLInputElement
+      let inputCommentaires: HTMLTextAreaElement
+      let buttonValider: HTMLButtonElement
+      beforeEach(() => {
+        // Given
+        selectJeune = screen.getByRole('combobox', {
+          name: 'Rechercher et ajouter un jeune Nom et prénom',
+        })
+        selectModalite = screen.getByRole('combobox', {
+          name: 'Modalité',
+        })
+        inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
+        inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
+        inputDuree = screen.getByLabelText('* Durée (en minutes)')
+        inputCommentaires = screen.getByRole('textbox', {
+          name: 'Notes Commentaire à destination des jeunes',
+        })
+
+        buttonValider = screen.getByRole('button', { name: 'Envoyer' })
+
+        // Given
+        fireEvent.change(selectJeune, { target: { value: jeunes[0].id } })
+        fireEvent.change(selectModalite, { target: { value: modalites[0] } })
+        fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
+        fireEvent.input(inputHoraire, { target: { value: '10:30' } })
+        fireEvent.input(inputDuree, { target: { value: '180' } })
+        fireEvent.input(inputCommentaires, {
+          target: { value: 'Lorem ipsum dolor sit amet' },
+        })
+      })
+
+      it('crée le rdv', () => {
+        // When
+        buttonValider.click()
+
+        // Then
+        expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+          '1',
+          {
+            jeuneId: jeunes[0].id,
+            modality: modalites[0],
+            date: '2022-03-03T09:30:00.000Z',
+            duration: 180,
+            comment: 'Lorem ipsum dolor sit amet',
+          },
+          'accessToken'
+        )
       })
     })
   })

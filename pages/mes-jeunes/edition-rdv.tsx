@@ -1,10 +1,15 @@
 import { AppHead } from 'components/AppHead'
+import Button from 'components/ui/Button'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { FormEvent, useState } from 'react'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
@@ -20,6 +25,33 @@ interface EditionRdvProps {
 }
 
 function EditionRdv({ jeunes, from }: EditionRdvProps) {
+  const { data: session } = useSession({ required: true })
+  const rendezVousService =
+    useDependance<RendezVousService>('rendezVousService')
+
+  const [jeuneId, setJeuneId] = useState<string>('')
+  const [modalite, setModalite] = useState<string>('')
+  const [date, setDate] = useState<string>('')
+  const [horaire, setHoraire] = useState<string>('')
+  const [duree, setDuree] = useState<string>('')
+  const [commentaire, setCommentaire] = useState<string>('')
+
+  function creerRendezVous(e: FormEvent): Promise<void> {
+    e.preventDefault()
+
+    return rendezVousService.postNewRendezVous(
+      session!.user.id,
+      {
+        jeuneId,
+        modality: modalite,
+        date: new Date(`${date} ${horaire}`).toISOString(),
+        duration: parseInt(duree, 10),
+        comment: commentaire,
+      },
+      session!.accessToken
+    )
+  }
+
   return (
     <>
       <AppHead titre='Nouveau rendez-vous' />
@@ -33,7 +65,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
         <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
       </div>
       <div className={styles.content}>
-        <form>
+        <form onSubmit={creerRendezVous}>
           <div
             className='text-sm-regular text-bleu_nuit mb-8'
             aria-hidden={true}
@@ -61,8 +93,9 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             <select
               id='beneficiaire'
               name='beneficiaire'
-              required={true}
               value={''}
+              required={true}
+              onChange={(e) => setJeuneId(e.target.value)}
             >
               <option aria-hidden hidden disabled value={''} />
               {jeunes.map((j) => (
@@ -87,7 +120,13 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             <label htmlFor='modalite' className='text-base-medium'>
               <span aria-hidden={true}>* </span>Modalité
             </label>
-            <select id='modalite' name='modalite' value={''} required={true}>
+            <select
+              id='modalite'
+              name='modalite'
+              value={''}
+              required={true}
+              onChange={(e) => setModalite(e.target.value)}
+            >
               <option aria-hidden hidden disabled value={''} />
               {modalites.map((md) => (
                 <option key={md} value={md}>
@@ -112,18 +151,36 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
               <span aria-hidden={true}>* </span>Date
               <span> Format : JJ/MM/AAAA</span>
             </label>
-            <input type='date' id='date' name='date' required={true} />
+            <input
+              type='date'
+              id='date'
+              name='date'
+              required={true}
+              onChange={(e) => setDate(e.target.value)}
+            />
 
             <label htmlFor='horaire' className='text-base-medium'>
               <span aria-hidden='true'>* </span>Heure
               <span> Format : HH:MM</span>
             </label>
-            <input type='text' id='horaire' name='horaire' required={true} />
+            <input
+              type='text'
+              id='horaire'
+              name='horaire'
+              required={true}
+              onChange={(e) => setHoraire(e.target.value)}
+            />
 
             <label htmlFor='duree' className='text-base-medium'>
               <span aria-hidden='true'>* </span>Durée (en minutes)
             </label>
-            <input type='number' id='duree' name='duree' required={true} />
+            <input
+              type='number'
+              id='duree'
+              name='duree'
+              required={true}
+              onChange={(e) => setDuree(e.target.value)}
+            />
           </fieldset>
 
           <fieldset className='border-none'>
@@ -141,8 +198,14 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
               <br />
               Commentaire à destination des jeunes
             </label>
-            <textarea id='commentaire' name='commentaire' />
+            <textarea
+              id='commentaire'
+              name='commentaire'
+              onChange={(e) => setCommentaire(e.target.value)}
+            />
           </fieldset>
+
+          <Button type='submit'>Envoyer</Button>
         </form>
       </div>
     </>
