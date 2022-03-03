@@ -1,4 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react'
+import { desJeunes } from 'fixtures/jeune'
 import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSidePropsContext } from 'next/types'
 import Supervision, { getServerSideProps } from 'pages/supervision'
@@ -6,8 +7,6 @@ import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { desJeunes } from '../../fixtures/jeune'
-import { getJeuneFullname } from '../../interfaces/jeune'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
@@ -32,7 +31,7 @@ describe('Supervision', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <Supervision />
+          <Supervision withoutChat={true} />
         </DIProvider>,
         {
           user: {

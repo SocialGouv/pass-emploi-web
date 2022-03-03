@@ -2,32 +2,30 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
+import { Footer } from 'components/Footer'
+import { ReactElement } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import ChatRoom from './ChatRoom'
-
 import Sidebar from './Sidebar'
-import { Footer } from 'components/Footer'
-import React from 'react'
 
 type LayoutProps = {
-  pathname: string
-  children: any
+  children: ReactElement
 }
 
-export default function Layout({ pathname, children }: LayoutProps) {
-  const displayChat =
-    !pathname.includes('supervision') &&
-    !pathname.includes('envoi-message-groupe')
-
+export default function Layout({ children }: LayoutProps) {
   const enableMultiDestinataireLink: boolean = Boolean(
     process.env.ENABLE_MULTI_DESTINATAIRES_MESSAGE
   )
+
+  const {
+    props: { withoutChat },
+  } = children
 
   return (
     <>
       <div
         className={`${styles.container} ${
-          displayChat ? styles.container_with_chat : ''
+          !withoutChat ? styles.container_with_chat : ''
         }`}
       >
         <Sidebar />
@@ -35,7 +33,7 @@ export default function Layout({ pathname, children }: LayoutProps) {
           <main role='main'>{children}</main>
           <Footer />
         </div>
-        {displayChat && (
+        {!withoutChat && (
           <ChatRoom enableMultiDestinataireLink={enableMultiDestinataireLink} />
         )}
       </div>

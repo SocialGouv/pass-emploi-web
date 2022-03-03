@@ -20,9 +20,11 @@ import SuccessIcon from '../../assets/icons/done.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 
-type SupervisionProps = {}
+type SupervisionProps = {
+  withoutChat: true
+}
 
-function Supervision({}: SupervisionProps) {
+function Supervision(_: SupervisionProps) {
   const { data: session } = useSession({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
@@ -410,7 +412,7 @@ export const getServerSideProps: GetServerSideProps<SupervisionProps> = async (
   }
 
   return {
-    props: {},
+    props: { withoutChat: true },
   }
 }
 

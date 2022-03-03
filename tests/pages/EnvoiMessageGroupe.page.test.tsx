@@ -1,5 +1,4 @@
 import { RenderResult, screen } from '@testing-library/react'
-
 import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
@@ -20,7 +19,7 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
 
     page = renderWithSession(
       <DIProvider dependances={{ jeunesService }}>
-        <EnvoiMessageGroupe jeunes={[]} />
+        <EnvoiMessageGroupe jeunes={[]} withoutChat={true} />
       </DIProvider>
     )
   })
@@ -34,7 +33,6 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
       })
     ).toBeInTheDocument()
 
-    expect(screen.getByRole('form')).toBeInTheDocument()
     expect(screen.getAllByRole('group').length).toBe(2)
     expect(screen.getByLabelText('* Message')).toBeInTheDocument()
     expect(screen.getByRole('combobox')).toBeInTheDocument()
