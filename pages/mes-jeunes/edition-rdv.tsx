@@ -35,9 +35,20 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
   const [horaire, setHoraire] = useState<string>('')
   const [duree, setDuree] = useState<string>('')
   const [commentaire, setCommentaire] = useState<string>('')
+  const horairePattern = '^([0-1]\\d|2[0-3]):[0-5]\\d'
+  const regExp: RegExp = new RegExp(horairePattern)
+
+  function formIsValid(): boolean {
+    return (
+      Boolean(jeuneId && modalite && date && horaire && duree) &&
+      regExp.test(horaire)
+    )
+  }
 
   function creerRendezVous(e: FormEvent): Promise<void> {
     e.preventDefault()
+
+    if (!formIsValid()) return Promise.resolve()
 
     return rendezVousService.postNewRendezVous(
       session!.user.id,
@@ -93,7 +104,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             <select
               id='beneficiaire'
               name='beneficiaire'
-              value={''}
+              defaultValue={''}
               required={true}
               onChange={(e) => setJeuneId(e.target.value)}
             >
@@ -123,7 +134,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             <select
               id='modalite'
               name='modalite'
-              value={''}
+              defaultValue={''}
               required={true}
               onChange={(e) => setModalite(e.target.value)}
             >
@@ -168,6 +179,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
               id='horaire'
               name='horaire'
               required={true}
+              pattern={horairePattern}
               onChange={(e) => setHoraire(e.target.value)}
             />
 
@@ -205,7 +217,9 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             />
           </fieldset>
 
-          <Button type='submit'>Envoyer</Button>
+          <Button type='submit' disabled={!formIsValid()}>
+            Envoyer
+          </Button>
         </form>
       </div>
     </>

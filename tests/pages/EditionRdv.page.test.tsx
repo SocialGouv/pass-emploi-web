@@ -277,6 +277,54 @@ describe('EditionRdv', () => {
           'accessToken'
         )
       })
+
+      it("est désactivé quand aucun jeune n'est selectionné", () => {
+        // When
+        fireEvent.change(selectJeune, { target: { value: '' } })
+
+        // Then
+        expect(buttonValider).toHaveAttribute('disabled', '')
+      })
+
+      it("est désactivé quand aucune modalité n'est selectionnée", () => {
+        // When
+        fireEvent.change(selectModalite, { target: { value: '' } })
+
+        // Then
+        expect(buttonValider).toHaveAttribute('disabled', '')
+      })
+
+      it("est désactivé quand aucune date n'est selectionnée", () => {
+        // When
+        fireEvent.change(inputDate, { target: { value: '' } })
+
+        // Then
+        expect(buttonValider).toHaveAttribute('disabled', '')
+      })
+
+      it("est désactivé quand aucune horaire n'est renseignée", () => {
+        // When
+        fireEvent.input(inputHoraire, { target: { value: '' } })
+
+        // Then
+        expect(buttonValider).toHaveAttribute('disabled', '')
+      })
+
+      it("est désactivé quand l'horaire est incorrecte", () => {
+        // When
+        fireEvent.input(inputHoraire, { target: { value: '123:45' } })
+
+        // Then
+        expect(buttonValider).toHaveAttribute('disabled', '')
+      })
+
+      it("est désactivé quand aucune durée n'est renseignée", () => {
+        // When
+        fireEvent.input(inputDuree, { target: { value: '' } })
+
+        // Then
+        expect(buttonValider).toHaveAttribute('disabled', '')
+      })
     })
   })
 })
