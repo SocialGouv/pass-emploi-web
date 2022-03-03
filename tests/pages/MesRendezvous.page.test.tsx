@@ -3,9 +3,6 @@ import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import { GetServerSidePropsContext } from 'next/types'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import React from 'react'
-import { JeunesService } from 'services/jeunes.service'
-import { RendezVousService } from 'services/rendez-vous.service'
-import { DIProvider } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
@@ -16,27 +13,14 @@ afterAll(() => jest.clearAllMocks())
 describe('MesRendezvous', () => {
   const rendezVousPasses = uneListeDeRdv()
   const rendezVousFuturs = uneListeDeRdv()
-  const jeunesService: JeunesService = {
-    createCompteJeunePoleEmploi: jest.fn(),
-    getJeuneDetails: jest.fn(),
-    getJeunesDuConseiller: jest.fn(),
-  }
-  const rendezVousService: RendezVousService = {
-    deleteRendezVous: jest.fn(),
-    getRendezVousConseiller: jest.fn(),
-    getRendezVousJeune: jest.fn(),
-    postNewRendezVous: jest.fn(),
-  }
 
   describe('Pour un conseiller MiLo', () => {
     beforeEach(() => {
       renderWithSession(
-        <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
-          />
-        </DIProvider>
+        <MesRendezvous
+          rendezVousFuturs={rendezVousFuturs}
+          rendezVousPasses={rendezVousPasses}
+        />
       )
     })
 
@@ -49,12 +33,16 @@ describe('MesRendezvous', () => {
       expect(heading).toBeInTheDocument()
     })
 
-    it('devrait avoir un bouton fixer un rendez-vous', () => {
-      const button = screen.getByRole('button', {
+    it('devrait avoir un lien pour fixer un rendez-vous', () => {
+      const addRdv = screen.getByRole('link', {
         name: 'Fixer un rendez-vous',
       })
 
-      expect(button).toBeInTheDocument()
+      expect(addRdv).toBeInTheDocument()
+      expect(addRdv).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?from=/mes-rendezvous'
+      )
     })
 
     it('devrait avoir deux boutons', () => {

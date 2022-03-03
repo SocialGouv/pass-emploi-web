@@ -1,22 +1,18 @@
 import { AppHead } from 'components/AppHead'
-import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
-import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { useSession } from 'next-auth/react'
-import Router from 'next/router'
+import Link from 'next/link'
 import { useState } from 'react'
-import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
+import linkStyle from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container, useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import AddIcon from '../../assets/icons/add.svg'
 
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
@@ -27,37 +23,12 @@ const MesRendezvous = ({
   rendezVousFuturs,
   rendezVousPasses,
 }: MesRendezvousProps) => {
-  const { data: session } = useSession({ required: true })
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const rendezVousService =
-    useDependance<RendezVousService>('rendezVousService')
-  const [showAddModal, setShowAddModal] = useState<boolean>(false)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
   const initialTracking = 'Mes rendez-vous'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-
-  function openAddModal(): void {
-    setShowAddModal(true)
-    setTrackingTitle('Mes rendez-vous - Modale création rdv')
-  }
-
-  function closeAddModal(): void {
-    setShowAddModal(false)
-    setTrackingTitle(initialTracking)
-  }
-
-  async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService.postNewRendezVous(
-      session!.user.id,
-      newRDV,
-      session!.accessToken
-    )
-    closeAddModal()
-    Router.reload()
-  }
 
   function deleteRdv() {
     const index = rdvsAVenir.indexOf(selectedRdv!)
@@ -93,12 +64,15 @@ const MesRendezvous = ({
   return (
     <>
       <AppHead titre='Tableau de bord - Mes rendez-vous' />
-      <span className={`flex flex-wrap justify-between ${styles.header}`}>
+      <span
+        className={`flex flex-wrap justify-between items-center ${styles.header}`}
+      >
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <Button onClick={openAddModal} label='Fixer un rendez-vous'>
-          <AddIcon focusable='false' aria-hidden='true' />
-          Fixer un rendez-vous
-        </Button>
+        <Link href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
+          <a className={`${linkStyle.linkButtonBlue} text-sm`}>
+            Fixer un rendez-vous
+          </a>
+        </Link>
       </span>
 
       <div className={styles.content}>
@@ -135,19 +109,6 @@ const MesRendezvous = ({
           />
         )}
 
-        {showAddModal && session && (
-          <AddRdvModal
-            fetchJeunes={() =>
-              jeunesService.getJeunesDuConseiller(
-                session.user.id,
-                session.accessToken
-              )
-            }
-            addNewRDV={addNewRDV}
-            onClose={closeAddModal}
-          />
-        )}
-
         {showDeleteModal && (
           <DeleteRdvModal
             onClose={closeDeleteRdvModal}
@@ -176,7 +137,8 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true }
   }
 
-  const { rendezVousService } = Container.getDIContainer().dependances
+  const rendezVousService =
+    withDependance<RendezVousService>('rendezVousService')
   const { passes, futurs } = await rendezVousService.getRendezVousConseiller(
     user.id,
     accessToken

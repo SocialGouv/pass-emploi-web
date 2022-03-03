@@ -11,8 +11,19 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      asPath: '/mes-jeunes/jeune-1',
+    }
+  },
+}))
+
 describe('Fiche Jeune', () => {
-  const idConseiller = 'idConseiller'
+  afterAll(() => {
+    jest.clearAllMocks()
+  })
+
   const jeune = unJeune({ firstName: 'Nadia', lastName: 'Sanfamiye' })
   const rdvs = uneListeDeRdvJeune()
   const actions = uneListeDActions()
@@ -33,12 +44,7 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune
-            idConseiller={idConseiller}
-            jeune={jeune}
-            rdvs={rdvs}
-            actions={actions}
-          />
+          <FicheJeune jeune={jeune} rdvs={rdvs} actions={actions} />
         </DIProvider>
       )
     })
@@ -77,12 +83,7 @@ describe('Fiche Jeune', () => {
     it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune
-            idConseiller={idConseiller}
-            jeune={jeune}
-            rdvs={rdvs}
-            actions={[]}
-          />
+          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} />
         </DIProvider>
       )
       expect(
@@ -103,12 +104,7 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune
-            idConseiller={idConseiller}
-            jeune={jeune}
-            rdvs={[]}
-            actions={actions}
-          />
+          <FicheJeune jeune={jeune} rdvs={[]} actions={actions} />
         </DIProvider>,
         {
           user: {

@@ -3,46 +3,33 @@ import { AppHead } from 'components/AppHead'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
-import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
-import Button, { ButtonStyle } from 'components/ui/Button'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { RdvFormData } from 'interfaces/json/rdv'
 import { RdvJeune } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import { JeunesService } from 'services/jeunes.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
+import linkStyle from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container, useDependance } from 'utils/injectionDependances'
+import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
-  idConseiller: string
   jeune: Jeune
   rdvs: RdvJeune[]
   actions: ActionJeune[]
 }
 
-const FicheJeune = ({
-  idConseiller,
-  jeune,
-  rdvs,
-  actions,
-}: FicheJeuneProps) => {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const rendezVousService =
-    useDependance<RendezVousService>('rendezVousService')
+const FicheJeune = ({ jeune, rdvs, actions }: FicheJeuneProps) => {
   const { data: session } = useSession({ required: true })
+  const router = useRouter()
 
-  const [showAddRdvModal, setShowAddRdvModal] = useState<boolean>(false)
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
   const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
@@ -52,26 +39,6 @@ const FicheJeune = ({
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
-
-  function openAddRdvModal(): void {
-    setShowAddRdvModal(true)
-    setTrackingLabel('Détail jeune - Modale création rdv')
-  }
-
-  function closeAddRdvModal(): void {
-    setShowAddRdvModal(false)
-    setTrackingLabel(initialTracking)
-  }
-
-  async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService.postNewRendezVous(
-      idConseiller,
-      newRDV,
-      session!.accessToken
-    )
-    closeAddRdvModal()
-    Router.reload()
-  }
 
   function deleteRdv() {
     if (selectedRdv) {
@@ -111,9 +78,11 @@ const FicheJeune = ({
         </Link>
 
         {!isPoleEmploi && (
-          <Button onClick={openAddRdvModal} style={ButtonStyle.SECONDARY}>
-            Fixer un rendez-vous
-          </Button>
+          <Link href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
+            <a className={`${linkStyle.linkButtonSecondary} text-sm`}>
+              Fixer un rendez-vous
+            </a>
+          </Link>
         )}
       </div>
 
@@ -170,20 +139,6 @@ const FicheJeune = ({
           )}
         </div>
 
-        {showAddRdvModal && session && (
-          <AddRdvModal
-            fetchJeunes={() =>
-              jeunesService.getJeunesDuConseiller(
-                idConseiller,
-                session.accessToken
-              )
-            }
-            jeuneInitial={jeune}
-            addNewRDV={addNewRDV}
-            onClose={closeAddRdvModal}
-          />
-        )}
-
         {showDeleteModal && selectedRdv && (
           <DeleteRdvModal
             onClose={closeDeleteRdvModal}
@@ -209,7 +164,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     Container.getDIContainer().dependances
 
   const {
-    session: { user, accessToken },
+    session: { accessToken },
   } = sessionOrRedirect
 
   const [resInfoJeune, resRdvJeune, resActionsJeune] = await Promise.all([
@@ -240,7 +195,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const today = new Date()
   return {
     props: {
-      idConseiller: user.id,
       jeune: resInfoJeune,
       rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
       actions: userActions,
