@@ -1,4 +1,5 @@
 import { RenderResult, screen } from '@testing-library/react'
+import { mockedJeunesService } from 'fixtures/services'
 import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
@@ -9,14 +10,7 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
   let page: RenderResult
 
   beforeEach(async () => {
-    jeunesService = {
-      getJeunesDuConseiller: jest.fn(),
-      getJeuneDetails: jest.fn(),
-      createCompteJeunePoleEmploi: jest.fn(),
-      getJeunesDuConseillerParEmail: jest.fn(),
-      reaffecter: jest.fn(),
-    }
-
+    jeunesService = mockedJeunesService()
     page = renderWithSession(
       <DIProvider dependances={{ jeunesService }}>
         <EnvoiMessageGroupe jeunes={[]} withoutChat={true} />

@@ -1,13 +1,14 @@
 import { screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
+import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
+import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
+import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import React from 'react'
-import { uneListeDeRdvJeune } from '../../fixtures/rendez-vous'
-import FicheJeune from '../../pages/mes-jeunes/[jeune_id]'
-import { JeunesService } from '../../services/jeunes.service'
-import { RendezVousService } from '../../services/rendez-vous.service'
-import { DIProvider } from '../../utils/injectionDependances'
+import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
+import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 
 describe('Fiche Jeune', () => {
@@ -18,13 +19,7 @@ describe('Fiche Jeune', () => {
   let jeunesService: JeunesService
   let rendezVousService: RendezVousService
   beforeEach(async () => {
-    jeunesService = {
-      createCompteJeunePoleEmploi: jest.fn(),
-      getJeuneDetails: jest.fn(),
-      getJeunesDuConseiller: jest.fn(),
-      getJeunesDuConseillerParEmail: jest.fn(),
-      reaffecter: jest.fn(),
-    }
+    jeunesService = mockedJeunesService()
     rendezVousService = {
       deleteRendezVous: jest.fn(),
       getRendezVousConseiller: jest.fn(),

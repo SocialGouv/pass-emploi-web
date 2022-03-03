@@ -1,5 +1,6 @@
 import { act, fireEvent, screen } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
+import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSidePropsContext } from 'next/types'
 import Supervision, { getServerSideProps } from 'pages/supervision'
@@ -20,14 +21,7 @@ describe('Supervision', () => {
     let jeunesService: JeunesService
     beforeEach(async () => {
       // Given
-      jeunesService = {
-        getJeunesDuConseiller: jest.fn(),
-        getJeunesDuConseillerParEmail: jest.fn(),
-        getJeuneDetails: jest.fn(),
-        createCompteJeunePoleEmploi: jest.fn(),
-        reaffecter: jest.fn(),
-      }
-
+      jeunesService = mockedJeunesService()
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
