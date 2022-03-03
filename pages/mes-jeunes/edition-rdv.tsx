@@ -11,6 +11,7 @@ import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
+import Etape4Icon from '../../assets/icons/etape_4.svg'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -123,6 +124,24 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
               <span aria-hidden='true'>* </span>Durée (en minutes)
             </label>
             <input type='number' id='duree' name='duree' required={true} />
+          </fieldset>
+
+          <fieldset className='border-none'>
+            <legend className='flex items-center text-m-medium mb-4'>
+              <Etape4Icon
+                role='img'
+                focusable='false'
+                aria-label='Étape 4'
+                className='mr-2'
+              />
+              Informations conseiller :
+            </legend>
+            <label htmlFor='commentaire' className='text-base-medium'>
+              Notes
+              <br />
+              Commentaire à destination des jeunes
+            </label>
+            <textarea id='commentaire' name='commentaire' />
           </fieldset>
         </form>
       </div>

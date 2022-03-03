@@ -196,5 +196,22 @@ describe('EditionRdv', () => {
         expect(inputDuree).toHaveAttribute('type', 'number')
       })
     })
+
+    describe('étape 4 informations conseiller', () => {
+      let etape: HTMLFieldSetElement
+      beforeEach(() => {
+        etape = screen.getByRole('group', {
+          name: 'Étape 4 Informations conseiller :',
+        })
+      })
+
+      it('contient un champ pour saisir des commentaires', () => {
+        const inputCommentaires = within(etape).getByRole('textbox', {
+          name: 'Notes Commentaire à destination des jeunes',
+        })
+        expect(inputCommentaires).toBeInTheDocument()
+        expect(inputCommentaires).not.toHaveAttribute('required')
+      })
+    })
   })
 })
