@@ -4,6 +4,7 @@ import { mockedJeunesService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
+import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -116,17 +117,46 @@ describe('EditionRdv', () => {
       expect(link).toHaveAttribute('href', '/mes-rendezvous')
     })
 
-    it('contient une section pour choisir un jeune dans une liste', () => {
+    it('contient une étape bénéficiaires', () => {
       // Then
       expect(
-        screen.getByRole('group', { name: 'Étape 1 Bénéficiaires' })
+        screen.getByRole('group', { name: 'Étape 1 Bénéficiaires :' })
       ).toBeInTheDocument()
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
+    })
+
+    it('contient une liste pour choisir un jeune', () => {
+      // Then
+      const selectJeune = screen.getByRole('combobox', {
+        name: '(obligatoire) Rechercher et ajouter un jeune Nom et prénom',
+      })
+      expect(selectJeune).toBeInTheDocument()
+      expect(selectJeune).toHaveAttribute('required', '')
       for (const jeune of jeunes) {
         const jeuneOption = screen.getByRole('option', {
           name: `${jeune.lastName} ${jeune.firstName}`,
         })
         expect(jeuneOption).toBeInTheDocument()
+      }
+    })
+
+    it('contient une étape type de rendez-vous', () => {
+      // Then
+      expect(
+        screen.getByRole('group', { name: 'Étape 2 Type de rendez-vous :' })
+      ).toBeInTheDocument()
+    })
+
+    it('contient une liste pour choisir une modalité', () => {
+      // Then
+      const selectModalite = screen.getByRole('combobox', {
+        name: '(obligatoire) Modalité',
+      })
+      expect(selectModalite).toBeInTheDocument()
+      expect(selectModalite).toHaveAttribute('required', '')
+      for (const modalite of modalites) {
+        expect(
+          screen.getByRole('option', { name: modalite })
+        ).toBeInTheDocument()
       }
     })
   })
