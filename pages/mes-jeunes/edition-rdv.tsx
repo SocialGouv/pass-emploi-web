@@ -1,19 +1,33 @@
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import { JeunesService } from 'services/jeunes.service'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
+import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
+import { AppHead } from '../../components/AppHead'
 import styles from '../../styles/components/Layouts.module.css'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
+  from: string
   withoutChat: true
 }
 
-function EditionRdv({ jeunes }: EditionRdvProps) {
+function EditionRdv({ jeunes, from }: EditionRdvProps) {
   return (
     <>
+      <AppHead titre='Nouveau rendez-vous' />
+      <div className={`flex items-center ${styles.header}`}>
+        <Link href={from}>
+          <a className='items-center mr-4'>
+            <BackIcon role='img' focusable='false' aria-hidden={true} />
+            <span className='sr-only'>Page précédente</span>
+          </a>
+        </Link>
+        <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
+      </div>
       <div className={styles.content}>
         <form>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
@@ -74,6 +88,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     props: {
       jeunes: jeunes,
       withoutChat: true,
+      from: (context.query.from as string) ?? '/mes-jeunes',
     },
   }
 }

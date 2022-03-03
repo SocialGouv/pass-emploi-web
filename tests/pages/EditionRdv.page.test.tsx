@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
+import { Jeune } from 'interfaces/jeune'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
+import { JeunesService } from 'services/jeunes.service'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 
@@ -13,59 +15,109 @@ describe('EditionRdv', () => {
   describe('server side', () => {
     afterAll(() => jest.clearAllMocks())
 
-    it("vérifie la présence d'une session", async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: false,
-        redirect: { destination: 'whatever' },
+    let jeunesService: JeunesService
+    let jeunes: Jeune[]
+    describe("quand l'utilisateur n'est pas connecté", () => {
+      it('requiert la connexion', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          hasSession: false,
+          redirect: { destination: 'whatever' },
+        })
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ redirect: { destination: 'whatever' } })
       })
-
-      // When
-      const actual = await getServerSideProps({} as GetServerSidePropsContext)
-
-      // Then
-      expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ redirect: { destination: 'whatever' } })
     })
 
-    it('récupère la liste des jeunes du conseiller', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: true,
-        session: {
-          user: { id: 'id-conseiller' },
-          accessToken: 'accessToken',
-        },
-      })
-      const jeunes = desJeunes()
-      const jeunesService = mockedJeunesService({
-        getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
-      })
-      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'jeunesService') return jeunesService
+    describe("quand l'utilisateur est connecté", () => {
+      beforeEach(() => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          hasSession: true,
+          session: {
+            user: { id: 'id-conseiller' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        jeunes = desJeunes()
+        jeunesService = mockedJeunesService({
+          getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+        })
       })
 
-      // When
-      const actual = await getServerSideProps({} as GetServerSidePropsContext)
+      it('récupère la liste des jeunes du conseiller', async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: {},
+        } as GetServerSidePropsContext)
 
-      // Then
-      expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
-        'id-conseiller',
-        'accessToken'
-      )
-      expect(actual).toMatchObject({ props: { jeunes, withoutChat: true } })
+        // Then
+        expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
+          'id-conseiller',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: { jeunes, withoutChat: true, from: '/mes-jeunes' },
+        })
+      })
+
+      it("récupère la page d'origine", async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: { from: '/mes-rendezvous' },
+        } as unknown as GetServerSidePropsContext<{ from: string }>)
+
+        // Then
+        expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
+          'id-conseiller',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({ props: { from: '/mes-rendezvous' } })
+      })
     })
   })
 
   describe('client side', () => {
+    let jeunes: Jeune[]
+    beforeEach(() => {
+      // Given
+      jeunes = desJeunes()
+
+      // When
+      render(
+        <EditionRdv
+          jeunes={jeunes}
+          withoutChat={true}
+          from={'/mes-rendezvous'}
+        />
+      )
+    })
+
+    it('contient un header', () => {
+      // Then
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'Nouveau rendez-vous' })
+      ).toBeInTheDocument()
+    })
+
+    it('permet de revenir à la page précédente', () => {
+      // Then
+      const link = screen.getByRole('link', { name: 'Page précédente' })
+      expect(link).toBeInTheDocument()
+      expect(link).toHaveAttribute('href', '/mes-rendezvous')
+    })
+
     it('contient une section pour choisir un jeune dans une liste', () => {
-      // GIVEN
-      const jeunes = desJeunes()
-
-      // WHEN
-      render(<EditionRdv jeunes={jeunes} withoutChat={true} />)
-
-      // THEN
+      // Then
       expect(
         screen.getByRole('group', { name: 'Étape 1 Bénéficiaires' })
       ).toBeInTheDocument()
