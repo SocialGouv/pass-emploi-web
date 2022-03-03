@@ -11,6 +11,15 @@ export interface ActionJeune {
   status: ActionStatus
 }
 
+export interface ActionsCount {
+  jeuneId: string
+  jeuneFirstName: string
+  jeuneLastName: string
+  todoActionsCount: number
+  doneActionsCount: number
+  inProgressActionsCount: number
+}
+
 export enum ActionStatus {
   NotStarted = 'NotStarted',
   InProgress = 'InProgress',

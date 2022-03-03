@@ -18,6 +18,7 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 import { useSession } from 'next-auth/react'
 import { MessagesService } from 'services/messages.service'
+import { ActionsCount } from 'interfaces/action'
 
 type MesJeunesProps = {
   structureConseiller: string
@@ -157,11 +158,22 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService } = Container.getDIContainer().dependances
+  const { jeunesService, actionsService } =
+    Container.getDIContainer().dependances
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const actions = await actionsService.getActions(user.id, accessToken)
+
+  jeunes.map((jeune) => {
+    const currentJeuneAction = actions.filter(
+      (action: ActionsCount) => action.jeuneId === jeune.id
+    )
+    jeune.nbActionsNonTerminees =
+      currentJeuneAction[0].inProgressActionsCount +
+      currentJeuneAction[0].todoActionsCount
+  })
 
   return {
     props: {

@@ -23,6 +23,7 @@ import MessageIcon from '../../assets/icons/note_outline_big.svg'
 enum SortColumn {
   NOM = 'NOM',
   DERNIERE_ACTIVITE = 'DERNIERE_ACTIVITE',
+  NB_ACTIONS_NON_TERMINEES = 'NB_ACTIONS_NON_TERMINEES',
   MESSAGES = 'MESSAGES',
 }
 
@@ -54,6 +55,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   const isName = currentSortedColumn === SortColumn.NOM
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
+  const isAction = currentSortedColumn === SortColumn.NB_ACTIONS_NON_TERMINEES
   const isMessage = currentSortedColumn === SortColumn.MESSAGES
 
   const sortJeunes = (newSortColumn: SortColumn) => {
@@ -93,11 +95,28 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           : jeune2.messagesNonLus - jeune1.messagesNonLus
       }
 
+      if (isAction) {
+        jeune1.nbActionsNonTerminees = jeune1.nbActionsNonTerminees || 0
+        jeune2.nbActionsNonTerminees = jeune2.nbActionsNonTerminees || 0
+
+        return sortDesc
+          ? jeune1.nbActionsNonTerminees - jeune2.nbActionsNonTerminees
+          : jeune2.nbActionsNonTerminees - jeune1.nbActionsNonTerminees
+      }
+
       return 0
     }
 
     setSortedJeunes([...jeunes].sort(compareJeunes))
-  }, [currentSortedColumn, isDate, isName, isMessage, sortDesc, jeunes])
+  }, [
+    currentSortedColumn,
+    isDate,
+    isName,
+    isMessage,
+    sortDesc,
+    jeunes,
+    isAction,
+  ])
 
   const matomoTitle = () => {
     if (isDate && !sortDesc)
@@ -107,6 +126,8 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
     if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
     if (isName && sortDesc)
       return 'Mes jeunes - Nom - Ordre alphabétique inversé'
+    if (isAction && sortDesc) return 'Mes jeunes - Actions - Ordre croissant'
+    if (isAction && !sortDesc) return 'Mes jeunes - Actions - Ordre décroissant'
     if (isMessage && sortDesc) return 'Mes jeunes - Messages - Ordre croissant'
     if (isMessage && !sortDesc)
       return 'Mes jeunes - Messages - Ordre décroissant'
@@ -134,7 +155,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
             <div role='row' className='table-row grid grid-cols-table'>
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left p-4'
+                className='table-cell text-sm text-bleu text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
@@ -161,7 +182,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
               </span>
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+                className='table-cell text-sm text-bleu text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
@@ -186,9 +207,44 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   )}
                 </button>
               </span>
+
+              {/* hey */}
+
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left pb-4 pt-4'
+                className='table-cell text-sm text-bleu text-left py-4'
+              >
+                <button
+                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  onClick={() =>
+                    sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
+                  }
+                  aria-label={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
+                    isAction && !sortDesc ? 'croissant' : 'décroissant'
+                  }`}
+                  title={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
+                    isAction && !sortDesc ? 'croissant' : 'décroissant'
+                  }`}
+                >
+                  <span className='mr-1'>Actions</span>
+                  {isAction && (
+                    <ArrowDown
+                      focusable='false'
+                      aria-hidden='true'
+                      className={sortDesc ? 'rotate-180' : ''}
+                    />
+                  )}
+                  {!isAction && (
+                    <ArrowDouble focusable='false' aria-hidden='true' />
+                  )}
+                </button>
+              </span>
+
+              {/* hey */}
+
+              <span
+                role='columnheader'
+                className='table-cell text-sm text-bleu text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
@@ -234,6 +290,11 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
                   </span>
+
+                  <span role='cell' className='table-cell p-4'>
+                    {jeune.nbActionsNonTerminees}
+                  </span>
+
                   <span role='cell' className='table-cell p-4'>
                     <div className='relative'>
                       <MessageIcon aria-hidden='true' focusable='false' />

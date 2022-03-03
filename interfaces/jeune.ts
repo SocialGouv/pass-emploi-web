@@ -15,6 +15,7 @@ export type Jeune = {
   lastActivity: string
   email?: string
   isActivated?: boolean
+  nbActionsNonTerminees?: number
   conseillerPrecedent?: {
     nom: string
     prenom: string
