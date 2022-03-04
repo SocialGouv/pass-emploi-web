@@ -14,6 +14,7 @@ export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
       nom: 'Tavernier',
       email: 'conseiller@email.com',
     },
+    nbActionsNonTerminees: 5,
   }
   return { ...defaults, ...overrides }
 }
@@ -27,6 +28,7 @@ export const desJeunes = (): Jeune[] => [
     email: 'nadia.sanfamiye@mail.com',
     creationDate: '2022-01-07T17:30:07.756Z',
     lastActivity: '2022-01-30T17:30:07.756Z',
+    nbActionsNonTerminees: 10,
   }),
   unJeune({
     id: 'jeune-3',
@@ -35,6 +37,7 @@ export const desJeunes = (): Jeune[] => [
     email: 'nadia.sanfamiye@mail.com',
     creationDate: '2021-12-28T17:30:07.756Z',
     lastActivity: '2022-02-07T17:30:07.756Z',
+    nbActionsNonTerminees: 0,
   }),
 ]
 
