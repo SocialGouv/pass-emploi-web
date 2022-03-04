@@ -208,8 +208,6 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 </button>
               </span>
 
-              {/* hey */}
-
               <span
                 role='columnheader'
                 className='table-cell text-sm text-bleu text-left py-4'
@@ -239,8 +237,6 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   )}
                 </button>
               </span>
-
-              {/* hey */}
 
               <span
                 role='columnheader'
@@ -291,8 +287,13 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                       : ''}
                   </span>
 
-                  <span role='cell' className='table-cell p-4'>
-                    {jeune.nbActionsNonTerminees}
+                  <span
+                    role='cell'
+                    className='table-cell text-primary_darken p-4'
+                  >
+                    <span className='w-5 h-5 flex justify-center items-center bg-primary_lighten rounded-full text-center p-3.5'>
+                      {jeune.nbActionsNonTerminees}
+                    </span>
                   </span>
 
                   <span role='cell' className='table-cell p-4'>
