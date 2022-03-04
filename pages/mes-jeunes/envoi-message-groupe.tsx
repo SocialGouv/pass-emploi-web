@@ -88,7 +88,6 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
               name='message'
               rows={10}
               className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-black rounded-medium mt-4'
-              placeholder='Ajouter un message...'
               onChange={(e) => setMessage(e.target.value)}
               required
             />

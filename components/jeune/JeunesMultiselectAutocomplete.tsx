@@ -69,6 +69,7 @@ export default function JeunesMultiselectAutocomplete({
 
       <p
         aria-label={`Destinataires sélectionnés (${selectedJeunes.length})`}
+        id='items-label'
         className='mb-2'
         aria-live='polite'
       >
@@ -76,11 +77,12 @@ export default function JeunesMultiselectAutocomplete({
       </p>
       {selectedJeunes.length > 0 && (
         <ul
+          aria-labelledby='items-label'
           id='selected-items'
           role='region'
-          className='bg-grey_100 rounded-[12px] px-2 py-4'
+          className='bg-grey_100 rounded-[12px] px-2 py-4 max-h-96 overflow-y-auto'
           aria-live='polite'
-          aria-relevant='all'
+          aria-relevant='additions removals'
         >
           {selectedJeunes.map((jeune) => (
             <li
