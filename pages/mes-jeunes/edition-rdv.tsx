@@ -4,6 +4,7 @@ import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
@@ -28,6 +29,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
   const { data: session } = useSession({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
+  const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>('')
   const [modalite, setModalite] = useState<string>('')
@@ -45,12 +47,12 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
     )
   }
 
-  function creerRendezVous(e: FormEvent): Promise<void> {
+  async function creerRendezVous(e: FormEvent): Promise<void> {
     e.preventDefault()
 
     if (!formIsValid()) return Promise.resolve()
 
-    return rendezVousService.postNewRendezVous(
+    await rendezVousService.postNewRendezVous(
       session!.user.id,
       {
         jeuneId,
@@ -61,6 +63,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
       },
       session!.accessToken
     )
+    await router.push(`${from}?creationRdv=succes`)
   }
 
   return (
@@ -96,8 +99,7 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             </legend>
             <label htmlFor='beneficiaire' className='text-base-medium'>
               <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
-              <br />
-              <span className='text-bleu_nuit text-sm-regular'>
+              <span className='text-bleu_nuit text-sm-regular block'>
                 Nom et prénom
               </span>
             </label>
@@ -207,8 +209,9 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             </legend>
             <label htmlFor='commentaire' className='text-base-medium'>
               Notes
-              <br />
-              Commentaire à destination des jeunes
+              <span className='block'>
+                Commentaire à destination des jeunes
+              </span>
             </label>
             <textarea
               id='commentaire'

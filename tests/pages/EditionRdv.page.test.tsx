@@ -2,6 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
@@ -14,11 +15,12 @@ import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('next/router', () => ({ useRouter: jest.fn() }))
+
+afterAll(() => jest.clearAllMocks())
 
 describe('EditionRdv', () => {
   describe('server side', () => {
-    afterAll(() => jest.clearAllMocks())
-
     let jeunesService: JeunesService
     let jeunes: Jeune[]
     describe("quand l'utilisateur n'est pas connecté", () => {
@@ -93,10 +95,13 @@ describe('EditionRdv', () => {
   describe('client side', () => {
     let jeunes: Jeune[]
     let rendezVousService: RendezVousService
+    let push: jest.Mock
     beforeEach(() => {
       // Given
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService()
+      push = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       // When
       renderWithSession(
@@ -260,22 +265,33 @@ describe('EditionRdv', () => {
         })
       })
 
-      it('crée le rdv', () => {
-        // When
-        buttonValider.click()
+      describe('quand le formulaire est valide', () => {
+        beforeEach(() => {
+          // When
+          buttonValider.click()
+        })
 
-        // Then
-        expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
-          '1',
-          {
-            jeuneId: jeunes[0].id,
-            modality: modalites[0],
-            date: '2022-03-03T09:30:00.000Z',
-            duration: 180,
-            comment: 'Lorem ipsum dolor sit amet',
-          },
-          'accessToken'
-        )
+        it('crée le rdv', () => {
+          // Then
+          expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+            '1',
+            {
+              jeuneId: jeunes[0].id,
+              modality: modalites[0],
+              date: '2022-03-03T09:30:00.000Z',
+              duration: 180,
+              comment: 'Lorem ipsum dolor sit amet',
+            },
+            'accessToken'
+          )
+        })
+
+        it('redirige vers la page précedente', () => {
+          // Then
+          expect(push).toHaveBeenCalledWith(
+            '/mes-rendezvous?creationRdv=succes'
+          )
+        })
       })
 
       it("est désactivé quand aucun jeune n'est selectionné", () => {
