@@ -209,7 +209,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 className='table-cell text-sm text-bleu text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium items-center mx-auto'
                   onClick={() =>
                     sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
                   }
@@ -285,7 +285,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
                   <span
                     role='cell'
-                    className='table-cell text-primary_darken p-4'
+                    className='table-cell text-primary_darken p-4 items-center mx-auto'
                   >
                     <span className='w-5 h-5 flex justify-center items-center bg-primary_lighten rounded-full text-center p-3.5'>
                       {jeune.nbActionsNonTerminees}
