@@ -5,8 +5,8 @@ import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import { UserStructure } from 'interfaces/conseiller'
 import {
   compareJeunesByLastName,
-  Jeune,
-  JeunesAvecMessagesNonLus,
+  JeuneAvecInfosComplementaires,
+  JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Router from 'next/router'
@@ -22,7 +22,7 @@ import { ActionsCount } from 'interfaces/action'
 
 type MesJeunesProps = {
   structureConseiller: string
-  conseillerJeunes: Jeune[]
+  conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
 }
 
@@ -34,9 +34,10 @@ function MesJeunes({
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
-  const [jeunes, setJeunes] = useState<JeunesAvecMessagesNonLus>([])
-  const [listeJeunesFiltres, setListJeunesFiltres] =
-    useState<JeunesAvecMessagesNonLus>([])
+  const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
+  const [listeJeunesFiltres, setListJeunesFiltres] = useState<
+    JeuneAvecInfosComplementaires[]
+  >([])
 
   const initialTracking = `Mes jeunes${
     conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
@@ -166,19 +167,33 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
   const actions = await actionsService.getActions(user.id, accessToken)
 
-  jeunes.map((jeune) => {
-    const currentJeuneAction = actions.filter(
+  let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[] = []
+  jeunes.forEach((jeune) => {
+    let nbActionsNonTerminees = 0
+    const currentJeuneAction = actions.find(
       (action: ActionsCount) => action.jeuneId === jeune.id
     )
-    jeune.nbActionsNonTerminees =
-      currentJeuneAction[0].inProgressActionsCount +
-      currentJeuneAction[0].todoActionsCount
+
+    if (currentJeuneAction) {
+      nbActionsNonTerminees =
+        currentJeuneAction.inProgressActionsCount +
+        currentJeuneAction.todoActionsCount
+    }
+
+    const jeuneAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees = {
+      ...jeune,
+      nbActionsNonTerminees,
+    }
+
+    jeunesAvecNbActionsNonTerminees.push(jeuneAvecNbActionsNonTerminees)
   })
 
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
+      conseillerJeunes:
+        [...jeunesAvecNbActionsNonTerminees].sort(compareJeunesByLastName) ||
+        [],
       isFromEmail: Boolean(context.query?.source),
     },
   }

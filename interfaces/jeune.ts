@@ -15,7 +15,6 @@ export type Jeune = {
   lastActivity: string
   email?: string
   isActivated?: boolean
-  nbActionsNonTerminees?: number
   conseillerPrecedent?: {
     nom: string
     prenom: string
@@ -23,7 +22,13 @@ export type Jeune = {
   }
 }
 
-export type JeunesAvecMessagesNonLus = (Jeune & { messagesNonLus: number })[]
+export type JeuneAvecNbActionsNonTerminees = Jeune & {
+  nbActionsNonTerminees: number
+}
+
+export type JeuneAvecInfosComplementaires = JeuneAvecNbActionsNonTerminees & {
+  messagesNonLus: number
+}
 
 export interface Chat {
   seenByConseiller: boolean

@@ -91,7 +91,7 @@ module.exports = {
     },
     gridTemplateColumns: {
       // Complex site-specific column configuration
-      table: '1fr 1fr 1fr 1fr',
+      table: 'repeat(4, 1fr)',
       table_large: '28% 2fr 3fr auto',
     },
     extend: {

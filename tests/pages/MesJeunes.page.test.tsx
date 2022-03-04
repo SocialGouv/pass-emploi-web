@@ -4,7 +4,10 @@ import { act, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import '@testing-library/jest-dom'
 import MesJeunes from 'pages/mes-jeunes/index'
-import { desJeunes, unJeune } from 'fixtures/jeune'
+import {
+  desJeunesAvecActionsNonTerminees,
+  unJeuneAvecActionsNonTerminees,
+} from 'fixtures/jeune'
 import renderWithSession from '../renderWithSession'
 import { UserStructure } from 'interfaces/conseiller'
 import { DIProvider } from 'utils/injectionDependances'
@@ -21,7 +24,7 @@ describe('Mes Jeunes', () => {
 
     beforeEach(async () => {
       //GIVEN
-      const jeune = unJeune()
+      const jeune = unJeuneAvecActionsNonTerminees()
 
       messagesService = {
         observeJeuneChat: jest.fn(),
@@ -69,7 +72,7 @@ describe('Mes Jeunes', () => {
 
     beforeEach(async () => {
       //GIVEN
-      const jeune = unJeune()
+      const jeune = unJeuneAvecActionsNonTerminees()
 
       messagesService = {
         observeJeuneChat: jest.fn(),
@@ -128,7 +131,7 @@ describe('Mes Jeunes', () => {
         .mockImplementation(() => Promise.resolve()),
     }
 
-    const jeunes = desJeunes()
+    const jeunes = desJeunesAvecActionsNonTerminees()
 
     it('devrait avoir un titre de niveau 1', async () => {
       await act(async () => {

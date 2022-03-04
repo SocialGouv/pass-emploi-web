@@ -2,8 +2,7 @@ import {
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
   getJeuneFullname,
-  Jeune,
-  JeunesAvecMessagesNonLus,
+  JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -28,7 +27,7 @@ enum SortColumn {
 }
 
 interface TableauJeunesProps {
-  jeunes: JeunesAvecMessagesNonLus
+  jeunes: JeuneAvecInfosComplementaires[]
 }
 
 function todayOrDate(date: Date): string {
@@ -47,7 +46,7 @@ function todayOrDate(date: Date): string {
 
 export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   const [sortedJeunes, setSortedJeunes] =
-    useState<JeunesAvecMessagesNonLus>(jeunes)
+    useState<JeuneAvecInfosComplementaires[]>(jeunes)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
     SortColumn.NOM
   )
@@ -69,8 +68,8 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   useEffect(() => {
     function compareJeunes(
-      jeune1: Jeune & { messagesNonLus: number },
-      jeune2: Jeune & { messagesNonLus: number }
+      jeune1: JeuneAvecInfosComplementaires & { messagesNonLus: number },
+      jeune2: JeuneAvecInfosComplementaires & { messagesNonLus: number }
     ) {
       if (isName)
         return sortDesc
@@ -96,9 +95,6 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
       }
 
       if (isAction) {
-        jeune1.nbActionsNonTerminees = jeune1.nbActionsNonTerminees || 0
-        jeune2.nbActionsNonTerminees = jeune2.nbActionsNonTerminees || 0
-
         return sortDesc
           ? jeune1.nbActionsNonTerminees - jeune2.nbActionsNonTerminees
           : jeune2.nbActionsNonTerminees - jeune1.nbActionsNonTerminees
@@ -269,7 +265,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           </div>
 
           <div role='rowgroup'>
-            {sortedJeunes?.map((jeune) => (
+            {sortedJeunes?.map((jeune: JeuneAvecInfosComplementaires) => (
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
                   key={jeune.id}
