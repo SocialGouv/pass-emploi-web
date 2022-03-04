@@ -5,13 +5,11 @@ import RemoveIcon from '../../assets/icons/remove.svg'
 interface JeunesMultiselectAutocompleteProps {
   jeunes: Jeune[]
   onUpdate: (selection: Jeune[]) => void
-  selectedLabel: string
 }
 
 export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
-  selectedLabel,
 }: JeunesMultiselectAutocompleteProps) {
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const input = useRef<HTMLInputElement>(null)
@@ -48,7 +46,9 @@ export default function JeunesMultiselectAutocomplete({
     <>
       <label htmlFor='item-input' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-        <p className='text-bleu_nuit text-sm-regular'>Nom et prénom</p>
+        <span className='text-bleu_nuit text-sm-regular block'>
+          Nom et prénom
+        </span>
       </label>
       <input
         type='text'
@@ -68,18 +68,17 @@ export default function JeunesMultiselectAutocomplete({
       </datalist>
 
       <p
-        aria-label={`${selectedLabel} sélectionnés (${selectedJeunes.length})`}
+        aria-label={`Destinataires sélectionnés (${selectedJeunes.length})`}
         className='mb-2'
-        id='selected-label'
+        aria-live='polite'
       >
-        {selectedLabel} ({selectedJeunes.length})
+        Destinataires ({selectedJeunes.length})
       </p>
       {selectedJeunes.length > 0 && (
         <ul
           id='selected-items'
           role='region'
           className='bg-grey_100 rounded-[12px] px-2 py-4'
-          aria-labelledby='selected-label'
           aria-live='polite'
           aria-relevant='all'
         >
@@ -87,6 +86,7 @@ export default function JeunesMultiselectAutocomplete({
             <li
               key={jeune.id}
               className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
+              aria-atomic={true}
             >
               {getJeuneFullname(jeune)}
               <button

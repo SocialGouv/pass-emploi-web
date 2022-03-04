@@ -35,7 +35,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
 
   return (
     <>
-      <AppHead titre='Envoie de message à plusieurs jeunes' />
+      <AppHead titre="Envoie d'un message multi-destinataires" />
       <div className={`flex items-center ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='items-center mr-4'>
@@ -64,7 +64,6 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
             </legend>
             <JeunesMultiselectAutocomplete
               jeunes={jeunes}
-              selectedLabel='Destinataires'
               onUpdate={setSelectedJeunes}
             />
           </fieldset>
