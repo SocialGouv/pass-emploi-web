@@ -1,9 +1,10 @@
 import { AppHead } from 'components/AppHead'
+import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { Jeune } from 'interfaces/jeune'
+import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import { useState } from 'react'
+import { MouseEvent, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
@@ -18,16 +19,23 @@ interface EnvoiMessageGroupeProps {
 }
 
 function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
-  const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([jeunes[0]])
+  const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
+
+  function envoyerMessageGroupe(e: MouseEvent<HTMLButtonElement>): void {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (formIsValid()) console.log({ selectedJeunes })
+  }
 
   useMatomo('Message - Rédaction')
 
   return (
     <>
-      <AppHead titre='Envoie de message à plusieurs jeunes' />
+      <AppHead titre="Envoie d'un message multi-destinataires" />
       <div className={`flex items-center ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='items-center mr-4'>
@@ -35,7 +43,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
           </a>
         </Link>
         <h1 className='text-l-medium text-bleu_nuit'>
-          Envoi d’un message à plusieurs jeunes
+          Envoie d&apos;un message multi-destinataires
         </h1>
       </div>
       <div className={styles.content}>
@@ -44,7 +52,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
             Tous les champs sont obligatoires
           </div>
 
-          <fieldset className='border-none'>
+          <fieldset className='border-none mb-10'>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape1Icon
                 role='img'
@@ -54,28 +62,10 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
               />
               Destinataires
             </legend>
-            <label htmlFor='beneficiaire' className='text-base-medium'>
-              <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-              <span className='text-bleu_nuit text-sm-regular ml-2'>
-                Nom et prénom
-              </span>
-            </label>
-            <select
-              id='beneficiaire'
-              name='beneficiaire'
-              className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer'
-              style={{ background: 'white' }}
-              required
-              disabled
-            >
-              <option aria-hidden hidden disabled value={undefined} />
-              {jeunes.map((jeune) => (
-                <option key={jeune.id} value={jeune.id}>
-                  {jeune.firstName} {jeune.lastName}
-                </option>
-              ))}
-            </select>
-            <p className='mb-10'>Destinataires ({selectedJeunes.length})</p>
+            <JeunesMultiselectAutocomplete
+              jeunes={jeunes}
+              onUpdate={setSelectedJeunes}
+            />
           </fieldset>
 
           <fieldset className='border-none'>
@@ -98,10 +88,9 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
               name='message'
               rows={10}
               className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-black rounded-medium mt-4'
-              placeholder='Ajouter un message...'
               onChange={(e) => setMessage(e.target.value)}
               required
-            ></textarea>
+            />
           </fieldset>
 
           <div className='flex justify-center'>
@@ -116,6 +105,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
               type='submit'
               disabled={!formIsValid()}
               className='flex items-center p-2'
+              onClick={envoyerMessageGroupe}
             >
               <SendIcon aria-hidden='true' focusable='false' className='mr-2' />
               Envoyer
@@ -141,7 +131,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
 
   return {
     props: {
-      jeunes: jeunes,
+      jeunes: [...jeunes].sort(compareJeunesByLastName),
     },
   }
 }

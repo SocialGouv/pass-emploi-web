@@ -78,3 +78,7 @@ export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {
     return a.seenByConseiller ? 1 : -1
   return compareJeunesByFirstname(a, b)
 }
+
+export function getJeuneFullname(j: Jeune): string {
+  return `${j.lastName} ${j.firstName}`
+}

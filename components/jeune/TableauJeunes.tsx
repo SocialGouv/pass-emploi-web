@@ -1,6 +1,7 @@
 import {
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
+  getJeuneFullname,
   Jeune,
   JeunesAvecMessagesNonLus,
 } from 'interfaces/jeune'
@@ -225,7 +226,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
                 >
                   <span role='cell' className='table-cell p-4'>
-                    {jeune.lastName} {jeune.firstName}
+                    {getJeuneFullname(jeune)}
                   </span>
 
                   <span role='cell' className='table-cell p-4'>
