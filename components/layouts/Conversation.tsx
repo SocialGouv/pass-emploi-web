@@ -28,7 +28,9 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
-  const [lastSeenByJeune, setLastSeenByJeune] = useState<Date>(new Date())
+  const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
+    undefined
+  )
   const inputFocused = useRef<boolean>(false)
 
   const dummySpace = useRef<HTMLElement>(null)
@@ -150,7 +152,12 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
                         {formatHourMinuteDate(message.creationDate)}
                         {message.sentBy === 'conseiller' && (
                           <span>
-                            {isDateOlder(message.creationDate, lastSeenByJeune)
+                            {lastSeenByJeune === undefined
+                              ? ' · Envoyé'
+                              : isDateOlder(
+                                  message.creationDate,
+                                  lastSeenByJeune
+                                )
                               ? ' · Lu'
                               : ' · Envoyé'}
                           </span>
