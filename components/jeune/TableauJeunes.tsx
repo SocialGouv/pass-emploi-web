@@ -68,8 +68,8 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
 
   useEffect(() => {
     function compareJeunes(
-      jeune1: JeuneAvecInfosComplementaires & { messagesNonLus: number },
-      jeune2: JeuneAvecInfosComplementaires & { messagesNonLus: number }
+      jeune1: JeuneAvecInfosComplementaires,
+      jeune2: JeuneAvecInfosComplementaires
     ) {
       if (isName)
         return sortDesc
@@ -89,15 +89,14 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
       }
 
       if (isMessage) {
-        return sortDesc
-          ? jeune1.messagesNonLus - jeune2.messagesNonLus
-          : jeune2.messagesNonLus - jeune1.messagesNonLus
+        const sortMessagesNonLus = jeune1.messagesNonLus - jeune2.messagesNonLus
+        return sortDesc ? sortMessagesNonLus : -sortMessagesNonLus
       }
 
       if (isAction) {
-        return sortDesc
-          ? jeune1.nbActionsNonTerminees - jeune2.nbActionsNonTerminees
-          : jeune2.nbActionsNonTerminees - jeune1.nbActionsNonTerminees
+        const sortNbActionsNonTerminees =
+          jeune1.nbActionsNonTerminees - jeune2.nbActionsNonTerminees
+        return sortDesc ? sortNbActionsNonTerminees : -sortNbActionsNonTerminees
       }
 
       return 0

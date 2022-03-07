@@ -2,6 +2,7 @@ import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
+import { ActionsCount } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
   compareJeunesByLastName,
@@ -9,16 +10,15 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
+import { useSession } from 'next-auth/react'
 import Router from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
-import { useSession } from 'next-auth/react'
-import { MessagesService } from 'services/messages.service'
-import { ActionsCount } from 'interfaces/action'
 
 type MesJeunesProps = {
   structureConseiller: string
@@ -167,8 +167,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
   const actions = await actionsService.getActions(user.id, accessToken)
 
-  let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[] = []
-  jeunes.forEach((jeune) => {
+  const jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
     let nbActionsNonTerminees = 0
     const currentJeuneAction = actions.find(
       (action: ActionsCount) => action.jeuneId === jeune.id
@@ -180,20 +179,18 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
         currentJeuneAction.todoActionsCount
     }
 
-    const jeuneAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees = {
+    return {
       ...jeune,
       nbActionsNonTerminees,
     }
-
-    jeunesAvecNbActionsNonTerminees.push(jeuneAvecNbActionsNonTerminees)
   })
 
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes:
-        [...jeunesAvecNbActionsNonTerminees].sort(compareJeunesByLastName) ||
-        [],
+      conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
+        compareJeunesByLastName
+      ),
       isFromEmail: Boolean(context.query?.source),
     },
   }
