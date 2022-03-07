@@ -23,15 +23,16 @@ interface EditionRdvProps {
   jeunes: Jeune[]
   from: string
   withoutChat: true
+  idJeuneFrom?: string
 }
 
-function EditionRdv({ jeunes, from }: EditionRdvProps) {
+function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
   const { data: session } = useSession({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const router = useRouter()
 
-  const [jeuneId, setJeuneId] = useState<string>('')
+  const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
   const [modalite, setModalite] = useState<string>('')
   const [date, setDate] = useState<string>('')
   const [horaire, setHoraire] = useState<string>('')
@@ -79,6 +80,9 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
         <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
       </div>
       <div className={styles.content}>
+        {idJeuneFrom}
+        {jeuneId}
+
         <form onSubmit={creerRendezVous}>
           <div
             className='text-sm-regular text-bleu_nuit mb-8'
@@ -106,8 +110,9 @@ function EditionRdv({ jeunes, from }: EditionRdvProps) {
             <select
               id='beneficiaire'
               name='beneficiaire'
-              defaultValue={''}
+              defaultValue={idJeuneFrom ?? ''}
               required={true}
+              disabled={Boolean(idJeuneFrom)}
               onChange={(e) => setJeuneId(e.target.value)}
             >
               <option aria-hidden hidden disabled value={''} />
@@ -243,13 +248,20 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
-  return {
-    props: {
-      jeunes: jeunes,
-      withoutChat: true,
-      from: (context.query.from as string) ?? '/mes-jeunes',
-    },
+  const from: string | undefined = context.query.from as string
+  const props: EditionRdvProps = {
+    jeunes: jeunes,
+    withoutChat: true,
+    from: from ?? '/mes-jeunes',
   }
+
+  if (from) {
+    const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
+    const match = regex.exec(from)
+    if (match?.groups?.idJeune) props.idJeuneFrom = match.groups.idJeune
+  }
+
+  return { props }
 }
 
 export default EditionRdv
