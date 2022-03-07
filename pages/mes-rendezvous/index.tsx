@@ -35,7 +35,10 @@ const MesRendezvous = ({
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
-  const initialTracking = 'Mes rendez-vous'
+  const pageTracking = `Mes rendez-vous`
+  const initialTracking = `${pageTracking}${
+    succesCreation ? ' - Creation rdv succès' : ''
+  }`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function deleteRdv() {
@@ -52,7 +55,7 @@ const MesRendezvous = ({
     if (displayOldRdv) {
       setTrackingTitle('Mes rendez-vous passés')
     } else {
-      setTrackingTitle(initialTracking)
+      setTrackingTitle(pageTracking)
     }
   }
 
@@ -69,7 +72,7 @@ const MesRendezvous = ({
 
   function closeDeleteRdvModal() {
     setShowDeleteModal(false)
-    setTrackingTitle(initialTracking)
+    setTrackingTitle(pageTracking)
   }
 
   useMatomo(trackingTitle)

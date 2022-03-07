@@ -11,6 +11,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import linkStyles from 'styles/components/Link.module.css'
+import useMatomo from 'utils/analytics/useMatomo'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -67,6 +68,8 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
     )
     await router.push(`${from}?creationRdv=succes`)
   }
+
+  useMatomo(`Création RDV${idJeuneFrom ? ' jeune' : ''}`)
 
   return (
     <>

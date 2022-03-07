@@ -45,7 +45,10 @@ const FicheJeune = ({
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
-  const initialTracking: string = 'Détail jeune'
+  const pageTracking: string = 'Détail jeune'
+  const initialTracking: string = `${pageTracking}${
+    rdvCreationSuccess ? ' - Creation rdv succès' : ''
+  }`
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
@@ -80,7 +83,7 @@ const FicheJeune = ({
 
   function closeDeleteRdvModal() {
     setShowDeleteModal(false)
-    setTrackingLabel(initialTracking)
+    setTrackingLabel(pageTracking)
   }
 
   useMatomo(trackingLabel)
