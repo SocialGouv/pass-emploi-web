@@ -18,6 +18,13 @@ export interface MessagesService {
     accessToken: string
   ): void
 
+  sendNouveauMessageMultiple(
+      conseiller: { id: string; structure: string },
+      destinataires: JeuneChat[],
+      newMessage: string,
+      accessToken: string
+  ): void
+
   setReadByConseiller(idChat: string): void
 
   observeJeuneChat(
@@ -158,6 +165,49 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   ): Promise<number> {
     const chat = await this.firebaseClient.getChatDuJeune(idConseiller, idJeune)
     return chat?.newConseillerMessageCount ?? 0
+  }
+
+  async sendNouveauMessageMultiple(
+      conseiller: { id: string; structure: string },
+      destinataires: JeuneChat[],
+      newMessage: string,
+      accessToken: string
+  ) {
+    const now = new Date()
+    const encryptedMessage = this.chatCrypto.encrypt(newMessage)
+
+    await Promise.all([
+      destinataires.map((destinaire) => {
+        this.firebaseClient.addMessage(
+            destinaire.chatId,
+            encryptedMessage,
+            now
+        ),
+            this.firebaseClient.updateChat(destinaire.chatId, {
+              lastMessageContent: encryptedMessage.encryptedText,
+              lastMessageIv: encryptedMessage.iv,
+              lastMessageSentAt: now,
+              lastMessageSentBy: 'conseiller',
+              newConseillerMessageCount: destinaire.newConseillerMessageCount + 1,
+              seenByConseiller: true,
+              lastConseillerReading: now,
+            })
+      }),
+    ])
+    /*    let destinairesIds = []
+    destinairesIds = destinataires.map((destinataire) => destinataire.id)
+    await Promise.all([
+      this.notifierNouveauMessageMultiple(
+        conseiller.id,
+        destinairesIds,
+        accessToken
+      ),
+      this.evenementNouveauMessage(
+        conseiller.structure,
+        conseiller.id,
+        accessToken
+      ),
+    ])*/
   }
 
   private async notifierNouveauMessage(
