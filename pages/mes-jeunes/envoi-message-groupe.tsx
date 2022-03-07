@@ -35,7 +35,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
 
   return (
     <>
-      <AppHead titre="Envoie d'un message multi-destinataires" />
+      <AppHead titre='Message multi-destinataires' />
       <div className={`flex items-center ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='items-center mr-4'>
@@ -43,7 +43,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
           </a>
         </Link>
         <h1 className='text-l-medium text-bleu_nuit'>
-          Envoie d&apos;un message multi-destinataires
+          Message multi-destinataires
         </h1>
       </div>
       <div className={styles.content}>

@@ -30,7 +30,7 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: "Envoie d'un message multi-destinataires",
+        name: "Message multi-destinataires",
       })
     ).toBeInTheDocument()
 
