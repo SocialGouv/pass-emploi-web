@@ -2,26 +2,27 @@ import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
+import { ActionsCount } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
   compareJeunesByLastName,
-  Jeune,
-  JeunesAvecMessagesNonLus,
+  JeuneAvecInfosComplementaires,
+  JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
+import { useSession } from 'next-auth/react'
 import Router from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
-import { useSession } from 'next-auth/react'
-import { MessagesService } from 'services/messages.service'
 
 type MesJeunesProps = {
   structureConseiller: string
-  conseillerJeunes: Jeune[]
+  conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
 }
 
@@ -33,9 +34,10 @@ function MesJeunes({
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
-  const [jeunes, setJeunes] = useState<JeunesAvecMessagesNonLus>([])
-  const [listeJeunesFiltres, setListJeunesFiltres] =
-    useState<JeunesAvecMessagesNonLus>([])
+  const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
+  const [listeJeunesFiltres, setListJeunesFiltres] = useState<
+    JeuneAvecInfosComplementaires[]
+  >([])
 
   const initialTracking = `Mes jeunes${
     conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
@@ -157,16 +159,38 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService } = Container.getDIContainer().dependances
+  const { jeunesService, actionsService } =
+    Container.getDIContainer().dependances
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const actions = await actionsService.getActions(user.id, accessToken)
+
+  const jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
+    let nbActionsNonTerminees = 0
+    const currentJeuneAction = actions.find(
+      (action: ActionsCount) => action.jeuneId === jeune.id
+    )
+
+    if (currentJeuneAction) {
+      nbActionsNonTerminees =
+        currentJeuneAction.inProgressActionsCount +
+        currentJeuneAction.todoActionsCount
+    }
+
+    return {
+      ...jeune,
+      nbActionsNonTerminees,
+    }
+  })
 
   return {
     props: {
       structureConseiller: user.structure,
-      conseillerJeunes: [...jeunes].sort(compareJeunesByLastName) || [],
+      conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
+        compareJeunesByLastName
+      ),
       isFromEmail: Boolean(context.query?.source),
     },
   }

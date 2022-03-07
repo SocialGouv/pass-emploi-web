@@ -4,7 +4,10 @@ import { act, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import '@testing-library/jest-dom'
 import MesJeunes from 'pages/mes-jeunes/index'
-import { unJeune } from 'fixtures/jeune'
+import {
+  desJeunesAvecActionsNonTerminees,
+  unJeuneAvecActionsNonTerminees,
+} from 'fixtures/jeune'
 import renderWithSession from '../renderWithSession'
 import { UserStructure } from 'interfaces/conseiller'
 import { DIProvider } from 'utils/injectionDependances'
@@ -21,7 +24,7 @@ describe('Mes Jeunes', () => {
 
     beforeEach(async () => {
       //GIVEN
-      const jeune = unJeune()
+      const jeune = unJeuneAvecActionsNonTerminees()
 
       messagesService = {
         observeJeuneChat: jest.fn(),
@@ -69,7 +72,7 @@ describe('Mes Jeunes', () => {
 
     beforeEach(async () => {
       //GIVEN
-      const jeune = unJeune()
+      const jeune = unJeuneAvecActionsNonTerminees()
 
       messagesService = {
         observeJeuneChat: jest.fn(),
@@ -128,11 +131,7 @@ describe('Mes Jeunes', () => {
         .mockImplementation(() => Promise.resolve()),
     }
 
-    const jeune1 = unJeune({ id: 'jeune-1' })
-    const jeune2 = unJeune({ id: 'jeune-2' })
-    const jeune3 = unJeune({ id: 'jeune-3' })
-
-    const jeunes = [jeune1, jeune2, jeune3]
+    const jeunes = desJeunesAvecActionsNonTerminees()
 
     it('devrait avoir un titre de niveau 1', async () => {
       await act(async () => {
@@ -175,6 +174,11 @@ describe('Mes Jeunes', () => {
 
       //THEN
       expect(rows.length - 1).toBe(jeunes.length)
+      jeunes.forEach((jeune) => {
+        expect(
+          screen.getByText(`${jeune.nbActionsNonTerminees}`)
+        ).toBeInTheDocument()
+      })
       expect(() =>
         screen.getByText("Vous n'avez pas encore intégré de jeunes.")
       ).toThrow()
