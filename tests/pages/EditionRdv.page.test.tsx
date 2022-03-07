@@ -252,6 +252,13 @@ describe('EditionRdv', () => {
         })
       })
 
+      it('contient un bouton pour annuler', () => {
+        // Then
+        const link = screen.getByRole('link', { name: 'Annuler' })
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute('href', '/mes-rendezvous')
+      })
+
       describe('validation du formulaire', () => {
         let selectJeune: HTMLSelectElement
         let selectModalite: HTMLSelectElement

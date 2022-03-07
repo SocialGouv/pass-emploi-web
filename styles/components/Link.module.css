@@ -3,8 +3,8 @@
   display: flex;
   align-items: center;
   padding: 0.75rem 2rem;
-  border: 0.1rem solid transparent;
-  border-radius: 74px;
+  border: 1px solid transparent;
+  border-radius: 9999px;
   transition: border-color, color 0.2s, background-color 0.2s;
   background-color: theme('colors.bleu_nuit');
   color: theme('colors.blanc');
@@ -13,7 +13,7 @@
 .linkButtonBlue:hover {
   background-color: theme('colors.blanc');
   color: theme('colors.bleu_nuit');
-  border: 0.1rem solid theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
 }
 
 .linkButtonBlue:hover svg {
@@ -23,7 +23,7 @@
 .linkButtonBlue:active {
   background-color: theme('colors.blanc');
   color: theme('colors.bleu_nuit');
-  border: 0.1rem solid theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
 }
 
 /* Link-Button secondary */
@@ -35,13 +35,13 @@
   transition: border-color, color 0.2s, background-color 0.2s;
   background-color: theme('colors.blanc');
   color: theme('colors.bleu_nuit');
-  border: 0.1rem solid theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
 }
 
 .linkButtonSecondary:hover {
   background-color: theme('colors.bleu_nuit');
   color: theme('colors.blanc');
-  border: 0.1rem solid transparent;
+  border: 1px solid transparent;
 }
 
 .linkButtonSecondary:hover svg {
@@ -51,5 +51,5 @@
 .linkButtonSecondary:active {
   background-color: theme('colors.bleu_nuit');
   color: theme('colors.blanc');
-  border: 0.1rem solid transparent;
+  border: 1px solid transparent;
 }

@@ -10,6 +10,7 @@ import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
+import linkStyles from 'styles/components/Link.module.css'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -39,12 +40,12 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
   const [duree, setDuree] = useState<string>('')
   const [commentaire, setCommentaire] = useState<string>('')
   const horairePattern = '^([0-1]\\d|2[0-3]):[0-5]\\d'
-  const regExp: RegExp = new RegExp(horairePattern)
+  const horaireRegexp: RegExp = new RegExp(horairePattern)
 
   function formIsValid(): boolean {
     return (
       Boolean(jeuneId && modalite && date && horaire && duree) &&
-      regExp.test(horaire)
+      horaireRegexp.test(horaire)
     )
   }
 
@@ -80,9 +81,6 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
         <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
       </div>
       <div className={styles.content}>
-        {idJeuneFrom}
-        {jeuneId}
-
         <form onSubmit={creerRendezVous}>
           <div
             className='text-sm-regular text-bleu_nuit mb-8'
@@ -225,9 +223,17 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
             />
           </fieldset>
 
-          <Button type='submit' disabled={!formIsValid()}>
-            Envoyer
-          </Button>
+          <div>
+            <Link href={from}>
+              <a className={`${linkStyles.linkButtonSecondary} text-sm`}>
+                Annuler
+              </a>
+            </Link>
+
+            <Button type='submit' disabled={!formIsValid()}>
+              Envoyer
+            </Button>
+          </div>
         </form>
       </div>
     </>
