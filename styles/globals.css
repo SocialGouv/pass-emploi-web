@@ -27,12 +27,21 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: url(../assets/icons/expand_more.svg) 96% / 5% no-repeat
+  background: url(../assets/icons/expand_more.svg) center right 1rem no-repeat
     theme('colors.blanc');
+  cursor: pointer;
 }
 
 select svg {
   fill: theme('colors.bleu_nuit');
+}
+
+select:disabled {
+  cursor: not-allowed;
+}
+
+[type='date'] {
+  cursor: pointer;
 }
 
 * {

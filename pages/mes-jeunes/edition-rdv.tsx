@@ -99,6 +99,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               />
               Bénéficiaires :
             </legend>
+
             <label htmlFor='beneficiaire' className='text-base-medium'>
               <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
               <span className='text-bleu_nuit text-sm-regular block'>
@@ -112,6 +113,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               required={true}
               disabled={Boolean(idJeuneFrom)}
               onChange={(e) => setJeuneId(e.target.value)}
+              className={`border border-solid border-primary rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
             >
               <option aria-hidden hidden disabled value={''} />
               {jeunes.map((j) => (
@@ -142,6 +144,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               defaultValue={''}
               required={true}
               onChange={(e) => setModalite(e.target.value)}
+              className={`border border-solid border-primary rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
               {modalites.map((md) => (
@@ -152,7 +155,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
             </select>
           </fieldset>
 
-          <fieldset className='border-none'>
+          <fieldset className='border-none flex flex-col'>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape3Icon
                 role='img'
@@ -165,7 +168,10 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
 
             <label htmlFor='date' className='text-base-medium'>
               <span aria-hidden={true}>* </span>Date
-              <span> Format : JJ/MM/AAAA</span>
+              <span className='ml-8 text-bleu_nuit text-sm-regular'>
+                {' '}
+                Format : JJ/MM/AAAA
+              </span>
             </label>
             <input
               type='date'
@@ -173,11 +179,15 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               name='date'
               required={true}
               onChange={(e) => setDate(e.target.value)}
+              className='border border-solid border-primary rounded-medium w-full px-4 py-3 mb-4'
             />
 
             <label htmlFor='horaire' className='text-base-medium'>
               <span aria-hidden='true'>* </span>Heure
-              <span> Format : HH:MM</span>
+              <span className='ml-8 text-bleu_nuit text-sm-regular'>
+                {' '}
+                Format : HH:MM
+              </span>
             </label>
             <input
               type='text'
@@ -186,10 +196,15 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               required={true}
               pattern={horairePattern}
               onChange={(e) => setHoraire(e.target.value)}
+              className='border border-solid border-primary rounded-medium w-full px-4 py-3 mb-4 bg-clock bg-[center_right_1rem] bg-no-repeat'
             />
 
             <label htmlFor='duree' className='text-base-medium'>
-              <span aria-hidden='true'>* </span>Durée (en minutes)
+              <span aria-hidden='true'>* </span>Durée
+              <span className='ml-8 text-bleu_nuit text-sm-regular'>
+                {' '}
+                (en minutes)
+              </span>
             </label>
             <input
               type='number'
@@ -197,6 +212,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               name='duree'
               required={true}
               onChange={(e) => setDuree(e.target.value)}
+              className='border border-solid border-primary rounded-medium w-full px-4 py-3 mb-8'
             />
           </fieldset>
 
@@ -212,20 +228,22 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
             </legend>
             <label htmlFor='commentaire' className='text-base-medium'>
               Notes
-              <span className='block'>
+              <span className='block text-bleu_nuit text-sm-regular'>
                 Commentaire à destination des jeunes
               </span>
             </label>
             <textarea
               id='commentaire'
               name='commentaire'
+              rows={3}
               onChange={(e) => setCommentaire(e.target.value)}
+              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             />
           </fieldset>
 
-          <div>
+          <div className='flex justify-center'>
             <Link href={from}>
-              <a className={`${linkStyles.linkButtonSecondary} text-sm`}>
+              <a className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}>
                 Annuler
               </a>
             </Link>
