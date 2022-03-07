@@ -1,11 +1,10 @@
 import { AppHead } from 'components/AppHead'
-import Button from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent, KeyboardEvent, useState } from 'react'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -20,6 +19,7 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
+import LeavePageModal from '../../components/LeavePageModal'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -43,11 +43,24 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
   const horairePattern = '^([0-1]\\d|2[0-3]):[0-5]\\d'
   const horaireRegexp: RegExp = new RegExp(horairePattern)
 
+  const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+
+  function formHasChanges(): boolean {
+    return Boolean(modalite || date || horaire || duree || commentaire)
+  }
+
   function formIsValid(): boolean {
     return (
       Boolean(jeuneId && modalite && date && horaire && duree) &&
       horaireRegexp.test(horaire)
     )
+  }
+
+  function goToPreviousPage(): void {
+    if (!formHasChanges()) router.push(from)
+    else {
+      setShowLeavePageModal(true)
+    }
   }
 
   async function creerRendezVous(e: FormEvent): Promise<void> {
@@ -70,17 +83,24 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
   }
 
   useMatomo(`Création RDV${idJeuneFrom ? ' jeune' : ''}`)
+  useMatomo(showLeavePageModal ? 'Création rdv - Modale Annulation' : undefined)
 
   return (
     <>
       <AppHead titre='Nouveau rendez-vous' />
       <div className={`flex items-center ${styles.header}`}>
-        <Link href={from}>
-          <a className='items-center mr-4'>
-            <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <span className='sr-only'>Page précédente</span>
-          </a>
-        </Link>
+        <div
+          role='link'
+          tabIndex={0}
+          className='items-center mr-4 cursor-pointer'
+          onClick={goToPreviousPage}
+          onKeyPress={(e: KeyboardEvent) => {
+            if (e.key === 'Enter') goToPreviousPage()
+          }}
+        >
+          <BackIcon role='img' focusable='false' aria-hidden={true} />
+          <span className='sr-only'>Page précédente</span>
+        </div>
         <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
       </div>
       <div className={styles.content}>
@@ -245,11 +265,16 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
           </fieldset>
 
           <div className='flex justify-center'>
-            <Link href={from}>
-              <a className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}>
-                Annuler
-              </a>
-            </Link>
+            <Button
+              type='button'
+              role='link'
+              tabIndex={0}
+              onClick={goToPreviousPage}
+              style={ButtonStyle.SECONDARY}
+              className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}
+            >
+              Annuler
+            </Button>
 
             <Button type='submit' disabled={!formIsValid()}>
               Envoyer
@@ -257,6 +282,14 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
           </div>
         </form>
       </div>
+      {showLeavePageModal && (
+        <LeavePageModal
+          show={showLeavePageModal}
+          message='Vous allez quitter la création d’un nouveau rendez-vous'
+          onCancel={() => setShowLeavePageModal(false)}
+          onConfirm={() => router.push(from)}
+        />
+      )}
     </>
   )
 }

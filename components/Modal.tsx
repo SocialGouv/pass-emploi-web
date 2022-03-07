@@ -46,8 +46,8 @@ const Modal = ({
       <div
         className='rounded-x_large bg-blanc'
         style={{
-          height: customHeight || '664px',
-          width: customWidth || '791px',
+          height: customHeight,
+          width: customWidth,
         }}
       >
         <div className='text-bleu_nuit flex justify-between items-center p-[40px] pb-[10px]'>
@@ -61,7 +61,7 @@ const Modal = ({
               />
             </a>
           )}
-          {title && <div className='h4-semi flex-auto'>{title}</div>}
+          <div className='h4-semi flex-auto'>{title}</div>
           <a href='#' onClick={handleCloseClick}>
             <CloseIcon
               role='img'

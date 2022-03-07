@@ -145,10 +145,15 @@ describe('EditionRdv', () => {
         })
 
         it('permet de revenir à la page précédente', () => {
-          // Then
+          // Given
           const link = screen.getByRole('link', { name: 'Page précédente' })
           expect(link).toBeInTheDocument()
-          expect(link).toHaveAttribute('href', '/mes-rendezvous')
+
+          // When
+          link.click()
+
+          // Then
+          expect(push).toHaveBeenCalledWith('/mes-rendezvous')
         })
       })
 
@@ -253,13 +258,18 @@ describe('EditionRdv', () => {
       })
 
       it('contient un bouton pour annuler', () => {
-        // Then
+        // Given
         const link = screen.getByRole('link', { name: 'Annuler' })
         expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute('href', '/mes-rendezvous')
+
+        // When
+        link.click()
+
+        // Then
+        expect(push).toHaveBeenCalledWith('/mes-rendezvous')
       })
 
-      describe('validation du formulaire', () => {
+      describe('formulaire rempli', () => {
         let selectJeune: HTMLSelectElement
         let selectModalite: HTMLSelectElement
         let inputDate: HTMLInputElement
@@ -295,7 +305,7 @@ describe('EditionRdv', () => {
           })
         })
 
-        describe('quand le formulaire est valide', () => {
+        describe('quand le formulaire est validé', () => {
           beforeEach(() => {
             // When
             buttonValider.click()
@@ -370,6 +380,21 @@ describe('EditionRdv', () => {
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
+        })
+
+        it('prévient avant de revenir à la page précédente', () => {
+          // Given
+          const link = screen.getByRole('link', { name: 'Page précédente' })
+
+          // When
+          link.click()
+
+          // Then
+          expect(push).not.toHaveBeenCalled()
+          // TODO comment tester la modal ?
+          // const modalRoot: any = screen.getByTestId('modal-root')
+          // const actual: any = within(modalRoot).getByText('Quitter la page ?')
+          // expect(actual).toBeInTheDocument()
         })
       })
     })
