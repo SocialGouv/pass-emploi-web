@@ -1,5 +1,6 @@
 import { AppHead } from 'components/AppHead'
 import ResettableTextInput from 'components/ResettableTextInput'
+import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
 import {
   compareJeunesByLastName,
@@ -16,7 +17,6 @@ import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import ArrowIcon from '../../assets/icons/arrow-right.svg'
-import SuccessIcon from '../../assets/icons/done.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 
@@ -171,14 +171,7 @@ function Supervision(_: SupervisionProps) {
 
       <div className={styles.content}>
         {isReaffectationSuccess && (
-          <div className='text-success bg-success_lighten p-6 flex items-center rounded-medium mb-8'>
-            <SuccessIcon
-              aria-hidden={true}
-              focusable={false}
-              className='w-6 h-6 mr-2'
-            />
-            <p>Les jeunes ont été réaffectés avec succès</p>
-          </div>
+          <SuccessMessage label={'Les jeunes ont été réaffectés avec succès'} />
         )}
 
         <div className='mb-10 bg-gris_blanc rounded-medium p-6 text-bleu_nuit'>

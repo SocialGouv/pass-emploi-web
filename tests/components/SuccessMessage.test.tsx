@@ -1,14 +1,14 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
-import SuccessMessage from 'components/SuccessMessage'
+import OldSuccessMessage from 'components/OldSuccessMessage'
 
 describe('<SuccessMessage>', () => {
   let onAcknowledge: () => void
   beforeEach(async () => {
     onAcknowledge = jest.fn()
     render(
-      <SuccessMessage label={"message d'echec"} onAcknowledge={onAcknowledge} />
+      <OldSuccessMessage label={"message d'echec"} onAcknowledge={onAcknowledge} />
     )
   })
 

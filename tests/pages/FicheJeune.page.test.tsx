@@ -4,19 +4,19 @@ import { unJeune } from 'fixtures/jeune'
 import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
+import { useRouter } from 'next/router'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { DIProvider } from 'utils/injectionDependances'
+import MesRendezvous from '../../pages/mes-rendezvous'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      asPath: '/mes-jeunes/jeune-1',
-    }
-  },
+  useRouter: jest.fn(() => ({
+    asPath: '/mes-jeunes/jeune-1',
+  })),
 }))
 
 describe('Fiche Jeune', () => {
@@ -67,10 +67,14 @@ describe('Fiche Jeune', () => {
     it('affiche un lien vers les actions du jeune', async () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Voir la liste des actions du jeune' })
+        screen.getByRole('link', {
+          name: 'Voir la liste des actions du jeune',
+        })
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('link', { name: 'Voir la liste des actions du jeune' })
+        screen.getByRole('link', {
+          name: 'Voir la liste des actions du jeune',
+        })
       ).toHaveAttribute('href', `/mes-jeunes/${jeune.id}/actions`)
     })
 
@@ -134,6 +138,54 @@ describe('Fiche Jeune', () => {
     it('ne permet pas la prise de rendez-vous', async () => {
       // Then
       expect(() => screen.getByText('Fixer un rendez-vous')).toThrow()
+    })
+  })
+
+  describe('quand la création de rdv est réussie', () => {
+    let replace: jest.Mock
+    beforeEach(() => {
+      // Given
+      replace = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+      // When
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actions={actions}
+            rdvCreationSuccess={true}
+          />
+        </DIProvider>
+      )
+    })
+
+    it('affiche un message de succès', () => {
+      // Then
+      expect(
+        screen.getByText('Le rendez-vous a bien été créé')
+      ).toBeInTheDocument()
+    })
+
+    it('permet de cacher le message de succès', () => {
+      // Given
+      const fermerMessage = screen.getByRole('button', {
+        name: "J'ai compris",
+      })
+
+      // When
+      fermerMessage.click()
+
+      // Then
+      expect(() => screen.getByText('Le rendez-vous a bien été créé')).toThrow()
+      expect(replace).toHaveBeenCalledWith(
+        {
+          pathname: `/mes-jeunes/${jeune.id}`,
+        },
+        undefined,
+        { shallow: true }
+      )
     })
   })
 })

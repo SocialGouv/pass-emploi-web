@@ -1,11 +1,13 @@
 import { AppHead } from 'components/AppHead'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
+import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -17,12 +19,18 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
+  succesCreation?: boolean
 }
 
 const MesRendezvous = ({
   rendezVousFuturs,
   rendezVousPasses,
+  succesCreation,
 }: MesRendezvousProps) => {
+  const router = useRouter()
+  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
+    succesCreation ?? false
+  )
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
@@ -46,6 +54,11 @@ const MesRendezvous = ({
     } else {
       setTrackingTitle(initialTracking)
     }
+  }
+
+  function closeRdvCreationMessage(): void {
+    setShowRdvCreationSuccess(false)
+    router.replace('', undefined, { shallow: true })
   }
 
   function openDeleteRdvModal(rdv: Rdv) {
@@ -76,6 +89,12 @@ const MesRendezvous = ({
       </span>
 
       <div className={styles.content}>
+        {showRdvCreationSuccess && (
+          <SuccessMessage
+            label={'Le rendez-vous a bien été créé'}
+            onAcknowledge={closeRdvCreationMessage}
+          />
+        )}
         <div role='tablist' className='flex mb-[40px]'>
           <Button
             role='tab'
@@ -144,12 +163,13 @@ export const getServerSideProps: GetServerSideProps<
     accessToken
   )
 
-  return {
-    props: {
-      rendezVousFuturs: futurs,
-      rendezVousPasses: passes,
-    },
+  const props: MesRendezvousProps = {
+    rendezVousFuturs: futurs,
+    rendezVousPasses: passes,
   }
+  if (context.query.creationRdv)
+    props.succesCreation = context.query.creationRdv === 'succes'
+  return { props }
 }
 
 export default MesRendezvous

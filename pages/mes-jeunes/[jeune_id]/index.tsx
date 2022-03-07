@@ -4,6 +4,7 @@ import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
+import SuccessMessage from 'components/SuccessMessage'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -24,9 +25,15 @@ interface FicheJeuneProps {
   jeune: Jeune
   rdvs: RdvJeune[]
   actions: ActionJeune[]
+  rdvCreationSuccess?: boolean
 }
 
-const FicheJeune = ({ jeune, rdvs, actions }: FicheJeuneProps) => {
+const FicheJeune = ({
+  jeune,
+  rdvs,
+  actions,
+  rdvCreationSuccess,
+}: FicheJeuneProps) => {
   const { data: session } = useSession({ required: true })
   const router = useRouter()
 
@@ -35,10 +42,24 @@ const FicheJeune = ({ jeune, rdvs, actions }: FicheJeuneProps) => {
   const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
     undefined
   )
+  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
+    rdvCreationSuccess ?? false
+  )
   const initialTracking: string = 'Détail jeune'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
+
+  function closeRdvCreationMessage(): void {
+    setShowRdvCreationSuccess(false)
+    router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
 
   function deleteRdv() {
     if (selectedRdv) {
@@ -87,6 +108,13 @@ const FicheJeune = ({ jeune, rdvs, actions }: FicheJeuneProps) => {
       </div>
 
       <div className={`flex flex-col ${styles.content}`}>
+        {showRdvCreationSuccess && (
+          <SuccessMessage
+            label={'Le rendez-vous a bien été créé'}
+            onAcknowledge={closeRdvCreationMessage}
+          />
+        )}
+
         <DetailsJeune jeune={jeune} />
 
         <div className='mt-8 border-b border-bleu_blanc'>
@@ -193,12 +221,16 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   }
 
   const today = new Date()
+  const props: FicheJeuneProps = {
+    jeune: resInfoJeune,
+    rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
+    actions: userActions,
+  }
+  if (context.query.creationRdv)
+    props.rdvCreationSuccess = context.query.creationRdv === 'succes'
+
   return {
-    props: {
-      jeune: resInfoJeune,
-      rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
-      actions: userActions,
-    },
+    props,
   }
 }
 
