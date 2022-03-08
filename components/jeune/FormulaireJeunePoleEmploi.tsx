@@ -1,5 +1,5 @@
 import Button from 'components/ui/Button'
-import { ErrorMessage } from 'components/ui/ErrorMessage'
+import { OldErrorMessage } from 'components/ui/OldErrorMessage'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { FormEvent, useEffect, useState } from 'react'
 import isEmailValid from 'utils/isEmailValid'
@@ -122,7 +122,7 @@ function FormulaireJeunePoleEmploi({
               : 'border-bleu_nuit text-bleu_nuit'
           }`}
         />
-        {prenom.error && <ErrorMessage>{prenom.error}</ErrorMessage>}
+        {prenom.error && <OldErrorMessage>{prenom.error}</OldErrorMessage>}
 
         <label
           className='block text-md-semi text-bleu_nuit'
@@ -142,7 +142,7 @@ function FormulaireJeunePoleEmploi({
               : 'border-bleu_nuit text-bleu_nuit'
           }`}
         />
-        {nom.error && <ErrorMessage>{nom.error}</ErrorMessage>}
+        {nom.error && <OldErrorMessage>{nom.error}</OldErrorMessage>}
 
         <label
           className='block mb-4 text-md-semi text-bleu_nuit'
@@ -169,8 +169,8 @@ function FormulaireJeunePoleEmploi({
               : 'border-bleu_nuit text-bleu_nuit'
           }`}
         />
-        {email.error && <ErrorMessage>{email.error}</ErrorMessage>}
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {email.error && <OldErrorMessage>{email.error}</OldErrorMessage>}
+        {error && <OldErrorMessage>{error}</OldErrorMessage>}
 
         <Button type='submit' disabled={creationEnCours}>
           {creationEnCours ? 'Création en cours...' : 'Créer le compte'}

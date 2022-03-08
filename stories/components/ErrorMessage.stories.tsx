@@ -1,20 +1,20 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
-import { ErrorMessage } from 'components/ui/ErrorMessage'
+import { OldErrorMessage } from 'components/ui/OldErrorMessage'
 
 export default {
   title: 'Components/Form/ErrorMessage',
-  component: ErrorMessage,
+  component: OldErrorMessage,
   argTypes: {
     children: {
       control: { type: 'text' },
       description: 'Le message contenu',
     },
   },
-} as ComponentMeta<typeof ErrorMessage>
+} as ComponentMeta<typeof OldErrorMessage>
 
-const Template: ComponentStory<typeof ErrorMessage> = (args) => (
-  <ErrorMessage {...args} />
+const Template: ComponentStory<typeof OldErrorMessage> = (args) => (
+  <OldErrorMessage {...args} />
 )
 
 export const Default_with_icon = Template.bind({})

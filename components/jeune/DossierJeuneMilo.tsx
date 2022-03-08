@@ -1,5 +1,5 @@
 import Button from 'components/ui/Button'
-import { ErrorMessage } from 'components/ui/ErrorMessage'
+import { OldErrorMessage } from 'components/ui/OldErrorMessage'
 import { DossierMilo } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -129,9 +129,9 @@ const DossierJeuneMilo = ({
       </div>
 
       {erreurMessageHttpPassEmploi && (
-        <ErrorMessage className='mt-8'>
+        <OldErrorMessage className='mt-8'>
           {erreurMessageHttpPassEmploi}
-        </ErrorMessage>
+        </OldErrorMessage>
       )}
 
       <div className='flex items-center mt-14'>

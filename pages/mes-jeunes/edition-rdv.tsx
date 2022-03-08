@@ -1,5 +1,7 @@
 import { AppHead } from 'components/AppHead'
+import LeavePageModal from 'components/LeavePageModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import { ErrorMessage } from 'components/ui/ErrorMessage'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
@@ -13,13 +15,13 @@ import linkStyles from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import useRegexpState from 'utils/useRegexpState'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import LeavePageModal from '../../components/LeavePageModal'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -36,23 +38,30 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
   const [modalite, setModalite] = useState<string>('')
-  const [date, setDate] = useState<string>('')
-  const [horaire, setHoraire] = useState<string>('')
-  const [duree, setDuree] = useState<string>('')
+  const [date, setDate, dateIsValid, validateDate] = useRegexpState(
+    /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
+  )
+  const [horaire, setHoraire, horaireIsValid, validateHoraire] = useRegexpState(
+    /^([0-1]\d|2[0-3]):[0-5]\d$/
+  )
+  const [duree, setDuree, dureeIsValid, validateDuree] =
+    useRegexpState(/^\d{1,3}$/)
   const [commentaire, setCommentaire] = useState<string>('')
-  const horairePattern = '^([0-1]\\d|2[0-3]):[0-5]\\d'
-  const horaireRegexp: RegExp = new RegExp(horairePattern)
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
   function formHasChanges(): boolean {
-    return Boolean(modalite || date || horaire || duree || commentaire)
+    return Boolean(
+      modalite || date.value || horaire.value || duree.value || commentaire
+    )
   }
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId && modalite && date && horaire && duree) &&
-      horaireRegexp.test(horaire)
+      Boolean(jeuneId && modalite) &&
+      dateIsValid() &&
+      horaireIsValid() &&
+      dureeIsValid()
     )
   }
 
@@ -73,8 +82,8 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
       {
         jeuneId,
         modality: modalite,
-        date: new Date(`${date} ${horaire}`).toISOString(),
-        duration: parseInt(duree, 10),
+        date: new Date(`${date.value} ${horaire.value}`).toISOString(),
+        duration: parseInt(duree.value, 10),
         comment: commentaire,
       },
       session!.accessToken
@@ -201,9 +210,18 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               id='date'
               name='date'
               required={true}
-              onChange={(e) => setDate(e.target.value)}
-              className='border border-solid border-primary rounded-medium w-full px-4 py-3 mb-4'
+              onChange={(e) => setDate({ value: e.target.value })}
+              onBlur={validateDate}
+              aria-invalid={date.error ? true : undefined}
+              className={`border border-solid rounded-medium w-full px-4 py-3 ${
+                date.error
+                  ? 'border-warning text-warning'
+                  : 'border-primary mb-4'
+              }`}
             />
+            {date.error && (
+              <ErrorMessage className='mb-4'>{date.error}</ErrorMessage>
+            )}
 
             <label htmlFor='horaire' className='text-base-medium'>
               <span aria-hidden='true'>* </span>Heure
@@ -217,10 +235,18 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               id='horaire'
               name='horaire'
               required={true}
-              pattern={horairePattern}
-              onChange={(e) => setHoraire(e.target.value)}
-              className='border border-solid border-primary rounded-medium w-full px-4 py-3 mb-4 bg-clock bg-[center_right_1rem] bg-no-repeat'
+              onChange={(e) => setHoraire({ value: e.target.value })}
+              onBlur={validateHoraire}
+              aria-invalid={horaire.error ? true : undefined}
+              className={`border border-solid rounded-medium w-full px-4 py-3 ${
+                horaire.error
+                  ? 'border-warning text-warning'
+                  : 'border-primary mb-4'
+              } bg-clock bg-[center_right_1rem] bg-no-repeat`}
             />
+            {horaire.error && (
+              <ErrorMessage className='mb-4'>{horaire.error}</ErrorMessage>
+            )}
 
             <label htmlFor='duree' className='text-base-medium'>
               <span aria-hidden='true'>* </span>Durée
@@ -234,9 +260,18 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               id='duree'
               name='duree'
               required={true}
-              onChange={(e) => setDuree(e.target.value)}
-              className='border border-solid border-primary rounded-medium w-full px-4 py-3 mb-8'
+              onChange={(e) => setDuree({ value: e.target.value })}
+              onBlur={validateDuree}
+              aria-invalid={duree.error ? true : undefined}
+              className={`border border-solid rounded-medium w-full px-4 py-3 ${
+                duree.error
+                  ? 'border-warning text-warning'
+                  : 'border-primary mb-8'
+              }`}
             />
+            {duree.error && (
+              <ErrorMessage className='mb-8'>{duree.error}</ErrorMessage>
+            )}
           </fieldset>
 
           <fieldset className='border-none'>

@@ -358,6 +358,18 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
         })
 
+        it('est désactivé quand la date est incorrecte', () => {
+          // When
+          fireEvent.input(inputDate, { target: { value: 'yyyy-06-06' } })
+          fireEvent.blur(inputDate)
+
+          // Then
+          expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText('Le format attendu ne correspond pas')
+          ).toBeInTheDocument()
+        })
+
         it("est désactivé quand aucune horaire n'est renseignée", () => {
           // When
           fireEvent.input(inputHoraire, { target: { value: '' } })
@@ -369,9 +381,13 @@ describe('EditionRdv', () => {
         it("est désactivé quand l'horaire est incorrecte", () => {
           // When
           fireEvent.input(inputHoraire, { target: { value: '123:45' } })
+          fireEvent.blur(inputHoraire)
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText('Le format attendu ne correspond pas')
+          ).toBeInTheDocument()
         })
 
         it("est désactivé quand aucune durée n'est renseignée", () => {
@@ -380,6 +396,18 @@ describe('EditionRdv', () => {
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
+        })
+
+        it('est désactivé quand la durée est incorrecte', () => {
+          // When
+          fireEvent.input(inputDuree, { target: { value: '1234' } })
+          fireEvent.blur(inputDuree)
+
+          // Then
+          expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText('Le format attendu ne correspond pas')
+          ).toBeInTheDocument()
         })
 
         it('prévient avant de revenir à la page précédente', () => {

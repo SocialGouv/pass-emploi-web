@@ -1,5 +1,5 @@
 import Button from 'components/ui/Button'
-import { ErrorMessage } from 'components/ui/ErrorMessage'
+import { OldErrorMessage } from 'components/ui/OldErrorMessage'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
 import IndicationRechercheDossier from 'components/jeune/IndicationRechercheDossier'
@@ -72,7 +72,7 @@ function FormulaireRechercheDossier({
           }`}
         />
 
-        {messageErreur && <ErrorMessage>{messageErreur}</ErrorMessage>}
+        {messageErreur && <OldErrorMessage>{messageErreur}</OldErrorMessage>}
 
         <Button type='submit'>Valider le numéro</Button>
       </form>

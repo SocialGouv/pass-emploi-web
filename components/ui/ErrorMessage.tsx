@@ -1,18 +1,14 @@
 import React from 'react'
-import Exclamation from '../../assets/icons/exclamation.svg'
+import ErrorIcon from '../../assets/icons/error_outline.svg'
 
 interface ErrorMessageProps {
-  children: React.ReactNode
+  children: string
   className?: string
 }
 
 export const ErrorMessage = ({ children, className }: ErrorMessageProps) => (
-  <div className={(className || '') + ' flex items-center mb-8'}>
-    <Exclamation
-      className='mr-1 h-4 w-4'
-      focusable='false'
-      aria-hidden='true'
-    />
-    <p className='text-sm-medium text-deprecated_warning'>{children}</p>
+  <div role='alert' className={`${className ?? ''} flex items-center mt-2`}>
+    <ErrorIcon focusable={false} aria-hidden={true} className='mr-1' />
+    <p className='text-warning text-sm-semi'>{children}</p>
   </div>
 )
