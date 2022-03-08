@@ -1,15 +1,15 @@
 import React from 'react'
 import Exclamation from '../../assets/icons/exclamation.svg'
 
-interface OldErrorMessageProps {
+interface DeprecatedErrorMessageProps {
   children: React.ReactNode
   className?: string
 }
 
-export const OldErrorMessage = ({
+export const DeprecatedErrorMessage = ({
   children,
   className,
-}: OldErrorMessageProps) => (
+}: DeprecatedErrorMessageProps) => (
   <div className={(className || '') + ' flex items-center mb-8'}>
     <Exclamation
       className='mr-1 h-4 w-4'

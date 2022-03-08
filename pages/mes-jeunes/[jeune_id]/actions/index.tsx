@@ -1,7 +1,7 @@
 import AddActionModal from 'components/action/AddActionModal'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
-import OldSuccessMessage from 'components/OldSuccessMessage'
+import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import Button from 'components/ui/Button'
 import {
   ActionJeune,
@@ -128,7 +128,7 @@ function Actions({
         )}
 
         {showSuccessMessage && (
-          <OldSuccessMessage
+          <DeprecatedSuccessMessage
             onAcknowledge={() => closeSuccessMessage()}
             label={"L'action a bien été supprimée"}
           />

@@ -2,6 +2,7 @@
 .linkButtonBlue {
   display: flex;
   align-items: center;
+  height: max-content;
   padding: 0.75rem 2rem;
   border: 1px solid transparent;
   border-radius: 9999px;
@@ -30,6 +31,7 @@
 .linkButtonSecondary {
   display: flex;
   align-items: center;
+  height: max-content;
   padding: 0.75rem 2rem;
   border-radius: 9999px;
   transition: border-color, color 0.2s, background-color 0.2s;

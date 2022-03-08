@@ -50,7 +50,7 @@ const Modal = ({
           width: customWidth,
         }}
       >
-        <div className='text-bleu_nuit flex justify-between items-center p-[40px] pb-[10px]'>
+        <div className='text-bleu_nuit flex justify-between items-center p-5'>
           {onBack && (
             <a href='#' onClick={handleBackClick}>
               <BackIcon
@@ -61,7 +61,7 @@ const Modal = ({
               />
             </a>
           )}
-          <div className='h4-semi flex-auto'>{title}</div>
+          <h1 className='h4-semi flex-auto'>{title}</h1>
           <a href='#' onClick={handleCloseClick}>
             <CloseIcon
               role='img'
@@ -70,7 +70,7 @@ const Modal = ({
             />
           </a>
         </div>
-        <div className='p-[40px] pt-0'>{children}</div>
+        <div className='px-5 pt-3 pb-8'>{children}</div>
       </div>
     </div>
   ) : null

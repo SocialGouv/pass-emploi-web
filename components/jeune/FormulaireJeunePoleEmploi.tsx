@@ -1,5 +1,5 @@
 import Button from 'components/ui/Button'
-import { OldErrorMessage } from 'components/ui/OldErrorMessage'
+import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { FormEvent, useEffect, useState } from 'react'
 import isEmailValid from 'utils/isEmailValid'
@@ -122,7 +122,9 @@ function FormulaireJeunePoleEmploi({
               : 'border-bleu_nuit text-bleu_nuit'
           }`}
         />
-        {prenom.error && <OldErrorMessage>{prenom.error}</OldErrorMessage>}
+        {prenom.error && (
+          <DeprecatedErrorMessage>{prenom.error}</DeprecatedErrorMessage>
+        )}
 
         <label
           className='block text-md-semi text-bleu_nuit'
@@ -142,7 +144,9 @@ function FormulaireJeunePoleEmploi({
               : 'border-bleu_nuit text-bleu_nuit'
           }`}
         />
-        {nom.error && <OldErrorMessage>{nom.error}</OldErrorMessage>}
+        {nom.error && (
+          <DeprecatedErrorMessage>{nom.error}</DeprecatedErrorMessage>
+        )}
 
         <label
           className='block mb-4 text-md-semi text-bleu_nuit'
@@ -169,8 +173,10 @@ function FormulaireJeunePoleEmploi({
               : 'border-bleu_nuit text-bleu_nuit'
           }`}
         />
-        {email.error && <OldErrorMessage>{email.error}</OldErrorMessage>}
-        {error && <OldErrorMessage>{error}</OldErrorMessage>}
+        {email.error && (
+          <DeprecatedErrorMessage>{email.error}</DeprecatedErrorMessage>
+        )}
+        {error && <DeprecatedErrorMessage>{error}</DeprecatedErrorMessage>}
 
         <Button type='submit' disabled={creationEnCours}>
           {creationEnCours ? 'Création en cours...' : 'Créer le compte'}

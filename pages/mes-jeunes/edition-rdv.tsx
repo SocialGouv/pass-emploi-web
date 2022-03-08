@@ -1,5 +1,5 @@
 import { AppHead } from 'components/AppHead'
-import LeavePageModal from 'components/LeavePageModal'
+import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { ErrorMessage } from 'components/ui/ErrorMessage'
 import { Jeune } from 'interfaces/jeune'
@@ -15,7 +15,6 @@ import linkStyles from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import useRegexpState from 'utils/useRegexpState'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
@@ -30,6 +29,11 @@ interface EditionRdvProps {
   idJeuneFrom?: string
 }
 
+interface InputValue {
+  value: string
+  error?: string
+}
+
 function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
   const { data: session } = useSession({ required: true })
   const rendezVousService =
@@ -38,14 +42,12 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
   const [modalite, setModalite] = useState<string>('')
-  const [date, setDate, dateIsValid, validateDate] = useRegexpState(
-    /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-  )
-  const [horaire, setHoraire, horaireIsValid, validateHoraire] = useRegexpState(
-    /^([0-1]\d|2[0-3]):[0-5]\d$/
-  )
-  const [duree, setDuree, dureeIsValid, validateDuree] =
-    useRegexpState(/^\d{1,3}$/)
+  const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
+  const [date, setDate] = useState<InputValue>({ value: '' })
+  const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
+  const [horaire, setHoraire] = useState<InputValue>({ value: '' })
+  const regexDuree = /^\d{2}:\d{2}$/
+  const [duree, setDuree] = useState<InputValue>({ value: '' })
   const [commentaire, setCommentaire] = useState<string>('')
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
@@ -54,6 +56,60 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
     return Boolean(
       modalite || date.value || horaire.value || duree.value || commentaire
     )
+  }
+
+  function dateIsValid(): boolean {
+    return regexDate.test(date.value)
+  }
+
+  function validateDate() {
+    if (!dateIsValid()) {
+      setDate({
+        ...date,
+        error:
+          "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA",
+      })
+    }
+  }
+
+  function horaireIsValid() {
+    return regexHoraire.test(horaire.value)
+  }
+
+  function validateHoraire() {
+    if (!horaire.value) {
+      setHoraire({
+        ...horaire,
+        error:
+          "Le champ heure n'est pas renseigné. Veuillez renseigner une heure.",
+      })
+    } else if (!horaireIsValid()) {
+      setHoraire({
+        ...horaire,
+        error:
+          "Le champ heure n'est pas valide. Veuillez respecter le format HH:MM",
+      })
+    }
+  }
+
+  function dureeIsValid() {
+    return regexDuree.test(duree.value)
+  }
+
+  function validateDuree() {
+    if (!duree.value) {
+      setDuree({
+        ...duree,
+        error:
+          "Le champ durée n'est pas renseigné. Veuillez renseigner une durée.",
+      })
+    } else if (!dureeIsValid()) {
+      setDuree({
+        ...duree,
+        error:
+          "Le champ durée n'est pas valide. Veuillez respecter le format HH:MM",
+      })
+    }
   }
 
   function formIsValid(): boolean {
@@ -77,13 +133,14 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
 
     if (!formIsValid()) return Promise.resolve()
 
+    const [dureeHeures, dureeMinutes] = duree.value.split(':')
     await rendezVousService.postNewRendezVous(
       session!.user.id,
       {
         jeuneId,
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
-        duration: parseInt(duree.value, 10),
+        duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
         comment: commentaire,
       },
       session!.accessToken
@@ -114,14 +171,11 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
       </div>
       <div className={styles.content}>
         <form onSubmit={creerRendezVous}>
-          <div
-            className='text-sm-regular text-bleu_nuit mb-8'
-            aria-hidden={true}
-          >
+          <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs avec * sont obligatoires
           </div>
 
-          <fieldset className='border-none'>
+          <fieldset className='border-none flex flex-col'>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape1Icon
                 role='img'
@@ -132,7 +186,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               Bénéficiaires :
             </legend>
 
-            <label htmlFor='beneficiaire' className='text-base-medium'>
+            <label htmlFor='beneficiaire' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
               <span className='text-bleu_nuit text-sm-regular block'>
                 Nom et prénom
@@ -145,7 +199,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               required={true}
               disabled={Boolean(idJeuneFrom)}
               onChange={(e) => setJeuneId(e.target.value)}
-              className={`border border-solid border-primary rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
+              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
             >
               <option aria-hidden hidden disabled value={''} />
               {jeunes.map((j) => (
@@ -156,7 +210,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
             </select>
           </fieldset>
 
-          <fieldset className='border-none'>
+          <fieldset className='border-none flex flex-col'>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape2Icon
                 role='img'
@@ -167,7 +221,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               Type de rendez-vous :
             </legend>
 
-            <label htmlFor='modalite' className='text-base-medium'>
+            <label htmlFor='modalite' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Modalité
             </label>
             <select
@@ -176,7 +230,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               defaultValue={''}
               required={true}
               onChange={(e) => setModalite(e.target.value)}
-              className={`border border-solid border-primary rounded-medium w-full px-4 py-3 mb-8`}
+              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
               {modalites.map((md) => (
@@ -198,13 +252,18 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               Lieu et date :
             </legend>
 
-            <label htmlFor='date' className='text-base-medium'>
+            <label htmlFor='date' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Date
               <span className='ml-8 text-bleu_nuit text-sm-regular'>
                 {' '}
                 Format : JJ/MM/AAAA
               </span>
             </label>
+            {date.error && (
+              <ErrorMessage id='date-error' className='mb-2'>
+                {date.error}
+              </ErrorMessage>
+            )}
             <input
               type='date'
               id='date'
@@ -213,23 +272,26 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               onChange={(e) => setDate({ value: e.target.value })}
               onBlur={validateDate}
               aria-invalid={date.error ? true : undefined}
-              className={`border border-solid rounded-medium w-full px-4 py-3 ${
+              aria-describedby={date.error ? 'date-error' : undefined}
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
                 date.error
                   ? 'border-warning text-warning'
-                  : 'border-primary mb-4'
+                  : 'border-content_color'
               }`}
             />
-            {date.error && (
-              <ErrorMessage className='mb-4'>{date.error}</ErrorMessage>
-            )}
 
-            <label htmlFor='horaire' className='text-base-medium'>
+            <label htmlFor='horaire' className='text-base-medium mb-2'>
               <span aria-hidden='true'>* </span>Heure
               <span className='ml-8 text-bleu_nuit text-sm-regular'>
                 {' '}
                 Format : HH:MM
               </span>
             </label>
+            {horaire.error && (
+              <ErrorMessage id='horaire-error' className='mb-2'>
+                {horaire.error}
+              </ErrorMessage>
+            )}
             <input
               type='text'
               id='horaire'
@@ -238,43 +300,44 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               onChange={(e) => setHoraire({ value: e.target.value })}
               onBlur={validateHoraire}
               aria-invalid={horaire.error ? true : undefined}
-              className={`border border-solid rounded-medium w-full px-4 py-3 ${
+              aria-describedby={horaire.error ? 'horaire-error' : undefined}
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
                 horaire.error
                   ? 'border-warning text-warning'
-                  : 'border-primary mb-4'
+                  : 'border-content_color'
               } bg-clock bg-[center_right_1rem] bg-no-repeat`}
             />
-            {horaire.error && (
-              <ErrorMessage className='mb-4'>{horaire.error}</ErrorMessage>
-            )}
 
-            <label htmlFor='duree' className='text-base-medium'>
+            <label htmlFor='duree' className='text-base-medium mb-2'>
               <span aria-hidden='true'>* </span>Durée
               <span className='ml-8 text-bleu_nuit text-sm-regular'>
                 {' '}
-                (en minutes)
+                Format : HH:MM
               </span>
             </label>
+            {duree.error && (
+              <ErrorMessage id='duree-error' className='mb-2'>
+                {duree.error}
+              </ErrorMessage>
+            )}
             <input
-              type='number'
+              type='text'
               id='duree'
               name='duree'
               required={true}
               onChange={(e) => setDuree({ value: e.target.value })}
               onBlur={validateDuree}
               aria-invalid={duree.error ? true : undefined}
-              className={`border border-solid rounded-medium w-full px-4 py-3 ${
+              aria-describedby={duree.error ? 'duree-error' : undefined}
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-8 ${
                 duree.error
                   ? 'border-warning text-warning'
-                  : 'border-primary mb-8'
+                  : 'border-content_color'
               }`}
             />
-            {duree.error && (
-              <ErrorMessage className='mb-8'>{duree.error}</ErrorMessage>
-            )}
           </fieldset>
 
-          <fieldset className='border-none'>
+          <fieldset className='border-none flex flex-col'>
             <legend className='flex items-center text-m-medium mb-4'>
               <Etape4Icon
                 role='img'
@@ -284,7 +347,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               />
               Informations conseiller :
             </legend>
-            <label htmlFor='commentaire' className='text-base-medium'>
+            <label htmlFor='commentaire' className='text-base-medium mb-2'>
               Notes
               <span className='block text-bleu_nuit text-sm-regular'>
                 Commentaire à destination des jeunes
@@ -303,6 +366,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
             <Button
               type='button'
               role='link'
+              aria-label='Page précédente'
               tabIndex={0}
               onClick={goToPreviousPage}
               style={ButtonStyle.SECONDARY}
@@ -318,7 +382,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
         </form>
       </div>
       {showLeavePageModal && (
-        <LeavePageModal
+        <ExitPageConfirmationModal
           show={showLeavePageModal}
           message='Vous allez quitter la création d’un nouveau rendez-vous'
           onCancel={() => setShowLeavePageModal(false)}

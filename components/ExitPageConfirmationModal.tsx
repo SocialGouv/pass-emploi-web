@@ -9,7 +9,7 @@ interface LeavePageModalProps {
   onConfirm: () => void
 }
 
-export default function LeavePageModal({
+export default function ExitPageConfirmationModal({
   message,
   onCancel,
   onConfirm,
@@ -17,7 +17,7 @@ export default function LeavePageModal({
 }: LeavePageModalProps) {
   return (
     <Modal show={show} title='Quitter la page ?' onClose={onCancel}>
-      <div className='pt-10 text-center'>
+      <div className='px-20 text-center'>
         <WarningIcon focusable={false} aria-hidden={true} className='m-auto' />
         <p className='mt-6 text-base-medium'>{message}</p>
         <p className='mt-6'>Toutes les informations saisies seront perdues</p>

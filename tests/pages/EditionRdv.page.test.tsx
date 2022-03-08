@@ -231,11 +231,11 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la durée', () => {
           // Then
           const inputDuree = within(etape).getByLabelText(
-            '* Durée (en minutes)'
+            '* Durée Format : HH:MM'
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
-          expect(inputDuree).toHaveAttribute('type', 'number')
+          expect(inputDuree).toHaveAttribute('type', 'text')
         })
       })
 
@@ -287,7 +287,7 @@ describe('EditionRdv', () => {
           })
           inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
           inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
-          inputDuree = screen.getByLabelText('* Durée (en minutes)')
+          inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
           inputCommentaires = screen.getByRole('textbox', {
             name: 'Notes Commentaire à destination des jeunes',
           })
@@ -299,7 +299,7 @@ describe('EditionRdv', () => {
           fireEvent.change(selectModalite, { target: { value: modalites[0] } })
           fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
           fireEvent.input(inputHoraire, { target: { value: '10:30' } })
-          fireEvent.input(inputDuree, { target: { value: '180' } })
+          fireEvent.input(inputDuree, { target: { value: '02:37' } })
           fireEvent.input(inputCommentaires, {
             target: { value: 'Lorem ipsum dolor sit amet' },
           })
@@ -319,7 +319,7 @@ describe('EditionRdv', () => {
                 jeuneId: jeunes[0].id,
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
-                duration: 180,
+                duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
               },
               'accessToken'
@@ -400,7 +400,7 @@ describe('EditionRdv', () => {
 
         it('est désactivé quand la durée est incorrecte', () => {
           // When
-          fireEvent.input(inputDuree, { target: { value: '1234' } })
+          fireEvent.input(inputDuree, { target: { value: '123:45' } })
           fireEvent.blur(inputDuree)
 
           // Then
