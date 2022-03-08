@@ -13,10 +13,13 @@ import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Router from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
+import { ActionsService } from 'services/actions.service'
+import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container, useDependance } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
@@ -144,7 +147,10 @@ function MesJeunes({
         )}
 
         {conseillerJeunes.length > 0 && (
-          <TableauJeunes jeunes={listeJeunesFiltres} />
+          <TableauJeunes
+            jeunes={listeJeunesFiltres}
+            withActions={structureConseiller !== UserStructure.POLE_EMPLOI}
+          />
         )}
       </div>
     </>
@@ -159,31 +165,40 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService, actionsService } =
-    Container.getDIContainer().dependances
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+  const actionsService = withDependance<ActionsService>('actionsService')
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
-  const actions = await actionsService.getActions(user.id, accessToken)
 
-  const jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
-    let nbActionsNonTerminees = 0
-    const currentJeuneAction = actions.find(
-      (action: ActionsCount) => action.jeuneId === jeune.id
-    )
-
-    if (currentJeuneAction) {
-      nbActionsNonTerminees =
-        currentJeuneAction.inProgressActionsCount +
-        currentJeuneAction.todoActionsCount
-    }
-
-    return {
+  let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
+  if (user.structure === UserStructure.POLE_EMPLOI) {
+    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
       ...jeune,
-      nbActionsNonTerminees,
-    }
-  })
+      nbActionsNonTerminees: 0,
+    }))
+  } else {
+    const actions = await actionsService.getActions(user.id, accessToken)
+
+    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
+      let nbActionsNonTerminees = 0
+      const currentJeuneAction = actions.find(
+        (action: ActionsCount) => action.jeuneId === jeune.id
+      )
+
+      if (currentJeuneAction) {
+        nbActionsNonTerminees =
+          currentJeuneAction.inProgressActionsCount +
+          currentJeuneAction.todoActionsCount
+      }
+
+      return {
+        ...jeune,
+        nbActionsNonTerminees,
+      }
+    })
+  }
 
   return {
     props: {

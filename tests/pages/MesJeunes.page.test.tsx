@@ -1,19 +1,35 @@
-import React from 'react'
-import Router from 'next/router'
-import { act, fireEvent, screen } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
 import '@testing-library/jest-dom'
-import MesJeunes from 'pages/mes-jeunes/index'
+import '@testing-library/jest-dom/extend-expect'
+import { act, fireEvent, screen } from '@testing-library/react'
 import {
+  desJeunes,
   desJeunesAvecActionsNonTerminees,
   unJeuneAvecActionsNonTerminees,
 } from 'fixtures/jeune'
-import renderWithSession from '../renderWithSession'
+import {
+  mockedActionsService,
+  mockedJeunesService,
+  mockedMessagesService,
+} from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { DIProvider } from 'utils/injectionDependances'
+import Router from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+import { getServerSideProps } from 'pages/mes-jeunes'
+import MesJeunes from 'pages/mes-jeunes/index'
+import React from 'react'
+import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
+import { DIProvider } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
+import { compareJeunesByLastName } from '../../interfaces/jeune'
+import { ActionsService } from '../../services/actions.service'
+import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
+jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/injectionDependances/withDependance')
+
 describe('Mes Jeunes', () => {
   afterEach(() => {
     jest.clearAllMocks()
@@ -26,18 +42,10 @@ describe('Mes Jeunes', () => {
       //GIVEN
       const jeune = unJeuneAvecActionsNonTerminees()
 
-      messagesService = {
-        observeJeuneChat: jest.fn(),
-        observeJeuneReadingDate: jest.fn(),
-        observeMessages: jest.fn(),
-        sendNouveauMessage: jest.fn(),
-        setReadByConseiller: jest.fn(),
+      messagesService = mockedMessagesService({
         signIn: jest.fn(() => Promise.resolve()),
-        signOut: jest.fn(),
-        countMessagesNotRead: jest
-          .fn()
-          .mockImplementation(() => Promise.resolve()),
-      }
+        countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
+      })
 
       await act(async () => {
         renderWithSession(
@@ -64,6 +72,13 @@ describe('Mes Jeunes', () => {
 
       //THEN
       expect(routerSpy).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
+    })
+
+    it("affiche le nombre d'actions des jeunes", () => {
+      // Then
+      expect(
+        screen.getByRole('columnheader', { name: 'Actions' })
+      ).toBeInTheDocument()
     })
   })
 
@@ -115,7 +130,15 @@ describe('Mes Jeunes', () => {
         '/mes-jeunes/pole-emploi/creation-jeune'
       )
     })
+
+    it("n'affiche pas le nombre d'actions des jeunes", () => {
+      // Then
+      expect(() =>
+        screen.getByRole('columnheader', { name: 'Actions' })
+      ).toThrow()
+    })
   })
+
   describe('Contenu de page', () => {
     let messagesService: MessagesService
     messagesService = {
@@ -206,6 +229,140 @@ describe('Mes Jeunes', () => {
       //THEN
       expect(addJeuneText).toBeInTheDocument()
       expect(() => screen.getAllByRole('row')).toThrow()
+    })
+  })
+
+  describe('server side', () => {
+    let jeunesService: JeunesService
+    let actionsService: ActionsService
+    beforeEach(() => {
+      const jeunes = desJeunes()
+      jeunesService = mockedJeunesService({
+        getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
+      })
+      actionsService = mockedActionsService({
+        getActions: jest.fn().mockResolvedValue(
+          jeunes.map((j) => ({
+            jeuneId: j.id,
+            inProgressActionsCount: 2,
+            todoActionsCount: 5,
+          }))
+        ),
+      })
+      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+        if (dependance === 'jeunesService') return jeunesService
+        if (dependance === 'actionsService') return actionsService
+      })
+    })
+
+    it("vérifie qu'il y a un utilisateur connecté", async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        hasSession: false,
+        redirect: { destination: 'whatever' },
+      })
+
+      // When
+      const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+      // Then
+      expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+      expect(actual).toEqual({ redirect: { destination: 'whatever' } })
+    })
+
+    it('récupère la liste des jeunes', async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        hasSession: true,
+        session: {
+          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+          accessToken: 'accessToken',
+        },
+      })
+
+      // When
+      await getServerSideProps({} as GetServerSidePropsContext)
+
+      // Then
+      expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
+        'id-conseiller',
+        'accessToken'
+      )
+    })
+
+    describe('pour un conseiller Pole emploi', () => {
+      let actual: any
+      beforeEach(async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          hasSession: true,
+          session: {
+            user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        // When
+        actual = await getServerSideProps({} as GetServerSidePropsContext)
+      })
+
+      it('ne récupère pas les actions des jeunes', () => {
+        // Then
+        expect(actionsService.getActions).not.toHaveBeenCalled()
+      })
+
+      it("renvoie les jeunes sans leur nombre d'actions", () => {
+        // Then
+        expect(actual).toMatchObject({
+          props: {
+            conseillerJeunes: desJeunes()
+              .map((jeune) => ({
+                ...jeune,
+                nbActionsNonTerminees: 0,
+              }))
+              .sort(compareJeunesByLastName),
+          },
+        })
+      })
+    })
+
+    describe('pour un conseiller pas Pole emploi', () => {
+      let actual: any
+      beforeEach(async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          hasSession: true,
+          session: {
+            user: { id: 'id-conseiller', structure: 'MILO' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        // When
+        actual = await getServerSideProps({} as GetServerSidePropsContext)
+      })
+
+      it('récupère les actions des jeunes', () => {
+        // Then
+        expect(actionsService.getActions).toHaveBeenCalledWith(
+          'id-conseiller',
+          'accessToken'
+        )
+      })
+
+      it("renvoie les jeunes avec leur nombre d'actions", () => {
+        // Then
+        expect(actual).toMatchObject({
+          props: {
+            conseillerJeunes: desJeunes()
+              .map((jeune) => ({
+                ...jeune,
+                nbActionsNonTerminees: 7,
+              }))
+              .sort(compareJeunesByLastName),
+          },
+        })
+      })
     })
   })
 })
