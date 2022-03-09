@@ -28,6 +28,7 @@ enum SortColumn {
 
 interface TableauJeunesProps {
   jeunes: JeuneAvecInfosComplementaires[]
+  withActions: boolean
 }
 
 function todayOrDate(date: Date): string {
@@ -44,7 +45,7 @@ function todayOrDate(date: Date): string {
   return `${dateString} à ${formatHourMinuteDate(date)}`
 }
 
-export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
+export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
   const [sortedJeunes, setSortedJeunes] =
     useState<JeuneAvecInfosComplementaires[]>(jeunes)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
@@ -56,6 +57,10 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
   const isAction = currentSortedColumn === SortColumn.NB_ACTIONS_NON_TERMINEES
   const isMessage = currentSortedColumn === SortColumn.MESSAGES
+
+  const gridColsStyle = withActions
+    ? 'grid-cols-[repeat(4,1fr)]'
+    : 'grid-cols-[repeat(3,1fr)]'
 
   const sortJeunes = (newSortColumn: SortColumn) => {
     if (currentSortedColumn !== newSortColumn) {
@@ -147,7 +152,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
           </div>
 
           <div role='rowgroup'>
-            <div role='row' className='table-row grid grid-cols-table'>
+            <div role='row' className={`table-row grid ${gridColsStyle}`}>
               <span
                 role='columnheader'
                 className='table-cell text-sm text-bleu text-left py-4'
@@ -203,35 +208,37 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                 </button>
               </span>
 
-              <span
-                role='columnheader'
-                className='table-cell text-sm text-bleu text-left py-4'
-              >
-                <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium items-center mx-auto'
-                  onClick={() =>
-                    sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
-                  }
-                  aria-label={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
-                    isAction && !sortDesc ? 'croissant' : 'décroissant'
-                  }`}
-                  title={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
-                    isAction && !sortDesc ? 'croissant' : 'décroissant'
-                  }`}
+              {withActions && (
+                <span
+                  role='columnheader'
+                  className='table-cell text-sm text-bleu text-left py-4'
                 >
-                  <span className='mr-1'>Actions</span>
-                  {isAction && (
-                    <ArrowDown
-                      focusable='false'
-                      aria-hidden='true'
-                      className={sortDesc ? 'rotate-180' : ''}
-                    />
-                  )}
-                  {!isAction && (
-                    <ArrowDouble focusable='false' aria-hidden='true' />
-                  )}
-                </button>
-              </span>
+                  <button
+                    className='flex border-none hover:bg-gris_blanc p-2 rounded-medium items-center mx-auto'
+                    onClick={() =>
+                      sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
+                    }
+                    aria-label={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
+                      isAction && !sortDesc ? 'croissant' : 'décroissant'
+                    }`}
+                    title={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
+                      isAction && !sortDesc ? 'croissant' : 'décroissant'
+                    }`}
+                  >
+                    <span className='mr-1'>Actions</span>
+                    {isAction && (
+                      <ArrowDown
+                        focusable='false'
+                        aria-hidden='true'
+                        className={sortDesc ? 'rotate-180' : ''}
+                      />
+                    )}
+                    {!isAction && (
+                      <ArrowDouble focusable='false' aria-hidden='true' />
+                    )}
+                  </button>
+                </span>
+              )}
 
               <span
                 role='columnheader'
@@ -270,7 +277,7 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                   key={jeune.id}
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className='table-row grid grid-cols-table text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc'
+                  className={`table-row grid ${gridColsStyle} text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc`}
                 >
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}
@@ -282,15 +289,16 @@ export const TableauJeunes = ({ jeunes }: TableauJeunesProps) => {
                       : ''}
                   </span>
 
-                  <span
-                    role='cell'
-                    className='table-cell text-primary_darken p-4 items-center mx-auto'
-                  >
-                    <span className='w-5 h-5 flex justify-center items-center bg-primary_lighten rounded-full text-center p-3.5'>
-                      {jeune.nbActionsNonTerminees}
+                  {withActions && (
+                    <span
+                      role='cell'
+                      className='table-cell text-primary_darken p-4 items-center mx-auto'
+                    >
+                      <span className='w-5 h-5 flex justify-center items-center bg-primary_lighten rounded-full text-center p-3.5'>
+                        {jeune.nbActionsNonTerminees}
+                      </span>
                     </span>
-                  </span>
-
+                  )}
                   <span role='cell' className='table-cell p-4'>
                     <div className='relative'>
                       <MessageIcon aria-hidden='true' focusable='false' />
