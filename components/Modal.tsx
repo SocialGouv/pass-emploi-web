@@ -11,6 +11,7 @@ type ModalProps = {
   show: boolean
   onClose: any
   children: any
+  id?: string
   onBack?: any
   customHeight?: string
   customWidth?: string
@@ -18,6 +19,7 @@ type ModalProps = {
 
 const Modal = ({
   show,
+  id,
   onClose,
   onBack,
   children,
@@ -42,7 +44,7 @@ const Modal = ({
   }
 
   const modalContent = show ? (
-    <div className={styles.modalOverlay}>
+    <div id={id} className={styles.modalOverlay}>
       <div
         className='rounded-x_large bg-blanc'
         style={{

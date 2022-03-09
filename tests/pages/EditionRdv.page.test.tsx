@@ -145,15 +145,11 @@ describe('EditionRdv', () => {
         })
 
         it('permet de revenir à la page précédente', () => {
-          // Given
-          const link = screen.getByRole('link', { name: 'Page précédente' })
-          expect(link).toBeInTheDocument()
-
-          // When
-          link.click()
-
           // Then
-          expect(push).toHaveBeenCalledWith('/mes-rendezvous')
+          const link = screen.getByText('Page précédente')
+          expect(link).toBeInTheDocument()
+          expect(link).toHaveAttribute('class', 'sr-only')
+          expect(link.closest('a')).toHaveAttribute('href', '/mes-rendezvous')
         })
       })
 
@@ -258,15 +254,10 @@ describe('EditionRdv', () => {
       })
 
       it('contient un bouton pour annuler', () => {
-        // Given
-        const link = screen.getByRole('link', { name: 'Annuler' })
-        expect(link).toBeInTheDocument()
-
-        // When
-        link.click()
-
         // Then
-        expect(push).toHaveBeenCalledWith('/mes-rendezvous')
+        const link = screen.getByText('Annuler')
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute('href', '/mes-rendezvous')
       })
 
       describe('formulaire rempli', () => {
@@ -353,9 +344,15 @@ describe('EditionRdv', () => {
         it("est désactivé quand aucune date n'est selectionnée", () => {
           // When
           fireEvent.change(inputDate, { target: { value: '' } })
+          fireEvent.blur(inputDate)
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText(
+              "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA"
+            )
+          ).toBeInTheDocument()
         })
 
         it('est désactivé quand la date est incorrecte', () => {
@@ -366,16 +363,24 @@ describe('EditionRdv', () => {
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
-            screen.getByText('Le format attendu ne correspond pas')
+            screen.getByText(
+              "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA"
+            )
           ).toBeInTheDocument()
         })
 
         it("est désactivé quand aucune horaire n'est renseignée", () => {
           // When
           fireEvent.input(inputHoraire, { target: { value: '' } })
+          fireEvent.blur(inputHoraire)
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText(
+              "Le champ heure n'est pas renseigné. Veuillez renseigner une heure."
+            )
+          ).toBeInTheDocument()
         })
 
         it("est désactivé quand l'horaire est incorrecte", () => {
@@ -386,16 +391,24 @@ describe('EditionRdv', () => {
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
-            screen.getByText('Le format attendu ne correspond pas')
+            screen.getByText(
+              "Le champ heure n'est pas valide. Veuillez respecter le format HH:MM"
+            )
           ).toBeInTheDocument()
         })
 
         it("est désactivé quand aucune durée n'est renseignée", () => {
           // When
           fireEvent.input(inputDuree, { target: { value: '' } })
+          fireEvent.blur(inputDuree)
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText(
+              "Le champ durée n'est pas renseigné. Veuillez renseigner une durée."
+            )
+          ).toBeInTheDocument()
         })
 
         it('est désactivé quand la durée est incorrecte', () => {
@@ -406,18 +419,38 @@ describe('EditionRdv', () => {
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
-            screen.getByText('Le format attendu ne correspond pas')
+            screen.getByText(
+              "Le champ durée n'est pas valide. Veuillez respecter le format HH:MM"
+            )
           ).toBeInTheDocument()
         })
 
         it('prévient avant de revenir à la page précédente', () => {
           // Given
-          const link = screen.getByRole('link', { name: 'Page précédente' })
+          const button = screen.getByText('Quitter la création du rendez-vous')
 
           // When
-          link.click()
+          button.click()
 
           // Then
+          expect(() => screen.getByText('Page précédente')).toThrow()
+          expect(button).not.toHaveAttribute('href')
+          expect(push).not.toHaveBeenCalled()
+          // TODO comment tester la modal ?
+          // const modalRoot: any = screen.getByTestId('modal-root')
+          // const actual: any = within(modalRoot).getByText('Quitter la page ?')
+          // expect(actual).toBeInTheDocument()
+        })
+
+        it("prévient avant d'annuler", () => {
+          // Given
+          const button = screen.getByText('Annuler')
+
+          // When
+          button.click()
+
+          // Then
+          expect(button).not.toHaveAttribute('href')
           expect(push).not.toHaveBeenCalled()
           // TODO comment tester la modal ?
           // const modalRoot: any = screen.getByTestId('modal-root')

@@ -5,8 +5,9 @@ import { ErrorMessage } from 'components/ui/ErrorMessage'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, KeyboardEvent, useState } from 'react'
+import { FormEvent, useState, MouseEvent } from 'react'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -121,11 +122,10 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
     )
   }
 
-  function goToPreviousPage(): void {
-    if (!formHasChanges()) router.push(from)
-    else {
-      setShowLeavePageModal(true)
-    }
+  function openLeavePageModal(e: MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowLeavePageModal(true)
   }
 
   async function creerRendezVous(e: FormEvent): Promise<void> {
@@ -155,18 +155,21 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
     <>
       <AppHead titre='Nouveau rendez-vous' />
       <div className={`flex items-center ${styles.header}`}>
-        <div
-          role='link'
-          tabIndex={0}
-          className='items-center mr-4 cursor-pointer'
-          onClick={goToPreviousPage}
-          onKeyPress={(e: KeyboardEvent) => {
-            if (e.key === 'Enter') goToPreviousPage()
-          }}
-        >
-          <BackIcon role='img' focusable='false' aria-hidden={true} />
-          <span className='sr-only'>Page précédente</span>
-        </div>
+        {!formHasChanges() && (
+          <Link href={from}>
+            <a className='items-center mr-4'>
+              <BackIcon role='img' focusable='false' aria-hidden={true} />
+              <span className='sr-only'>Page précédente</span>
+            </a>
+          </Link>
+        )}
+        {formHasChanges() && (
+          <button className='items-center mr-4' onClick={openLeavePageModal}>
+            <BackIcon role='img' focusable='false' aria-hidden={true} />
+            <span className='sr-only'>Quitter la création du rendez-vous</span>
+          </button>
+        )}
+
         <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
       </div>
       <div className={styles.content}>
@@ -363,17 +366,23 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
           </fieldset>
 
           <div className='flex justify-center'>
-            <Button
-              type='button'
-              role='link'
-              aria-label='Page précédente'
-              tabIndex={0}
-              onClick={goToPreviousPage}
-              style={ButtonStyle.SECONDARY}
-              className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}
-            >
-              Annuler
-            </Button>
+            {!formHasChanges() && (
+              <Link href={from}>
+                <a className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}>
+                  Annuler
+                </a>
+              </Link>
+            )}
+            {formHasChanges() && (
+              <Button
+                aria-label='Quitter la création du rendez-vous'
+                onClick={openLeavePageModal}
+                style={ButtonStyle.SECONDARY}
+                className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}
+              >
+                Annuler
+              </Button>
+            )}
 
             <Button type='submit' disabled={!formIsValid()}>
               Envoyer
@@ -383,10 +392,11 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
       </div>
       {showLeavePageModal && (
         <ExitPageConfirmationModal
+          id='exit-page-confirmation'
           show={showLeavePageModal}
           message='Vous allez quitter la création d’un nouveau rendez-vous'
           onCancel={() => setShowLeavePageModal(false)}
-          onConfirm={() => router.push(from)}
+          href={from}
         />
       )}
     </>
