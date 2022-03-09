@@ -278,4 +278,6 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(actual).toEqual(0)
     })
   })
+
+  describe('.sendNouveauMessageMultiple', () => {})
 })

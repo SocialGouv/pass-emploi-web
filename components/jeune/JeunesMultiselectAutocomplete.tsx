@@ -1,4 +1,4 @@
-import { getJeuneFullname, Jeune } from 'interfaces/jeune'
+import { getJeuneFullname, Jeune, JeuneChat } from 'interfaces/jeune'
 import React, { useRef, useState } from 'react'
 import RemoveIcon from '../../assets/icons/remove.svg'
 

@@ -1,18 +1,21 @@
 import { AppHead } from 'components/AppHead'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import { compareJeunesByLastName, Jeune, JeuneChat } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import { MouseEvent, useState } from 'react'
+import { MouseEvent, useCallback, useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container } from 'utils/injectionDependances'
+import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
+import { MessagesService } from '../../services/messages.service'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
@@ -20,16 +23,32 @@ interface EnvoiMessageGroupeProps {
 }
 
 function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
+  const { data: session } = useSession({ required: true })
+  const messagesService = useDependance<MessagesService>('messagesService')
+
+  const router = useRouter()
+
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
 
-  function envoyerMessageGroupe(e: MouseEvent<HTMLButtonElement>): void {
+  async function envoyerMessageGroupe(
+    e: MouseEvent<HTMLButtonElement>
+  ): Promise<void> {
     e.preventDefault()
     e.stopPropagation()
 
-    if (formIsValid()) console.log({ selectedJeunes })
+    if (formIsValid()) {
+      await messagesService.signIn(session!.firebaseToken)
+      await messagesService.sendNouveauMessageMultiple(
+        { id: session!.user.id, structure: session!.user.structure },
+        selectedJeunes,
+        message,
+        session!.accessToken
+      )
+      router.push('/mes-jeunes')
+    }
   }
 
   useMatomo('Message - Rédaction')

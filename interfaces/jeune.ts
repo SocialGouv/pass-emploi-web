@@ -31,6 +31,7 @@ export type JeuneAvecInfosComplementaires = JeuneAvecNbActionsNonTerminees & {
 }
 
 export interface Chat {
+  chatId: string
   seenByConseiller: boolean
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
@@ -41,9 +42,7 @@ export interface Chat {
   lastMessageIv: string | undefined
 }
 
-export interface JeuneChat extends Jeune, Chat {
-  chatId: string
-}
+export interface JeuneChat extends Jeune, Chat {}
 
 export interface DossierMilo {
   id: string

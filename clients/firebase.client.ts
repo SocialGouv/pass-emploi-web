@@ -86,7 +86,10 @@ class FirebaseClient {
       (querySnapshot: QuerySnapshot<FirebaseChat>) => {
         if (querySnapshot.empty) return
         const docSnapshot = querySnapshot.docs[0]
-        onChatFound(docSnapshot.id, chatFromFirebase(docSnapshot.data()))
+        onChatFound(
+          docSnapshot.id,
+          chatFromFirebase(docSnapshot.id, docSnapshot.data())
+        )
       }
     )
   }
@@ -106,7 +109,24 @@ class FirebaseClient {
     const querySnapShot = await getDocs(q)
     if (querySnapShot.empty) return
 
-    return chatFromFirebase(querySnapShot.docs[0].data())
+    const doc = querySnapShot.docs[0]
+    return chatFromFirebase(doc.id, doc.data())
+  }
+
+  async getChatsDesJeunes(
+    idConseiller: string,
+    idsJeunes: string[]
+  ): Promise<Chat[]> {
+    const q = query<FirebaseChat>(
+      collection(
+        this.getDb(),
+        this.collectionName
+      ) as CollectionReference<FirebaseChat>,
+      where('conseillerId', '==', idConseiller),
+      where('jeuneId', 'in', idsJeunes)
+    )
+    const querySnapShot: QuerySnapshot<FirebaseChat> = await getDocs(q)
+    return querySnapShot.docs.map((doc) => chatFromFirebase(doc.id, doc.data()))
   }
 
   observeChat(idChat: string, onChat: (chat: Chat) => void): () => void {
@@ -115,7 +135,7 @@ class FirebaseClient {
       (docSnapshot: DocumentSnapshot<FirebaseChat>) => {
         const data = docSnapshot.data()
         if (!data) return
-        onChat(chatFromFirebase(data))
+        onChat(chatFromFirebase(docSnapshot.id, data))
       }
     )
   }
@@ -230,8 +250,9 @@ function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
   return firebaseChatToUpdate
 }
 
-function chatFromFirebase(firebaseChat: FirebaseChat): Chat {
+function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
   return {
+    chatId: chatId,
     seenByConseiller: firebaseChat.seenByConseiller,
     newConseillerMessageCount: firebaseChat.newConseillerMessageCount,
     lastMessageContent: firebaseChat.lastMessageContent,

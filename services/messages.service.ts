@@ -19,11 +19,11 @@ export interface MessagesService {
   ): void
 
   sendNouveauMessageMultiple(
-      conseiller: { id: string; structure: string },
-      destinataires: JeuneChat[],
-      newMessage: string,
-      accessToken: string
-  ): void
+    conseiller: { id: string; structure: string },
+    destinataires: Jeune[],
+    newMessage: string,
+    accessToken: string
+  ): Promise<void>
 
   setReadByConseiller(idChat: string): void
 
@@ -168,46 +168,45 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async sendNouveauMessageMultiple(
-      conseiller: { id: string; structure: string },
-      destinataires: JeuneChat[],
-      newMessage: string,
-      accessToken: string
+    conseiller: { id: string; structure: UserStructure },
+    destinataires: Jeune[],
+    newMessage: string,
+    accessToken: string
   ) {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage)
 
+    const idsJeunes = destinataires.map((destinataire) => destinataire.id)
+    const chats = await this.firebaseClient.getChatsDesJeunes(
+      conseiller.id,
+      idsJeunes
+    )
+
     await Promise.all([
-      destinataires.map((destinaire) => {
-        this.firebaseClient.addMessage(
-            destinaire.chatId,
-            encryptedMessage,
-            now
-        ),
-            this.firebaseClient.updateChat(destinaire.chatId, {
-              lastMessageContent: encryptedMessage.encryptedText,
-              lastMessageIv: encryptedMessage.iv,
-              lastMessageSentAt: now,
-              lastMessageSentBy: 'conseiller',
-              newConseillerMessageCount: destinaire.newConseillerMessageCount + 1,
-              seenByConseiller: true,
-              lastConseillerReading: now,
-            })
+      chats.map((chat) => {
+        return Promise.all([
+          this.firebaseClient.addMessage(chat.chatId, encryptedMessage, now),
+          this.firebaseClient.updateChat(chat.chatId, {
+            lastMessageContent: encryptedMessage.encryptedText,
+            lastMessageIv: encryptedMessage.iv,
+            lastMessageSentAt: now,
+            lastMessageSentBy: 'conseiller',
+            newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+            seenByConseiller: true,
+            lastConseillerReading: now,
+          }),
+        ])
       }),
     ])
-    /*    let destinairesIds = []
-    destinairesIds = destinataires.map((destinataire) => destinataire.id)
+
     await Promise.all([
-      this.notifierNouveauMessageMultiple(
-        conseiller.id,
-        destinairesIds,
-        accessToken
-      ),
+      this.notifierNouveauMessageMultiple(conseiller.id, accessToken),
       this.evenementNouveauMessage(
         conseiller.structure,
         conseiller.id,
         accessToken
       ),
-    ])*/
+    ])
   }
 
   private async notifierNouveauMessage(
@@ -218,6 +217,17 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await this.apiClient.post(
       `/conseillers/${idConseiller}/jeunes/${idJeune}/notify-message`,
       undefined,
+      accessToken
+    )
+  }
+
+  private async notifierNouveauMessageMultiple(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/conseillers/${idConseiller}/jeunes/notify-message`,
+      {},
       accessToken
     )
   }

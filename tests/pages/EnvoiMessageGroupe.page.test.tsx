@@ -1,17 +1,17 @@
-import { RenderResult, screen } from '@testing-library/react'
+import { fireEvent, RenderResult, screen } from '@testing-library/react'
 import { mockedJeunesService } from 'fixtures/services'
 import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
-import {MessagesService} from "../../services/messages.service";
-import {Jeune, JeuneChat} from "../../interfaces/jeune";
-import {desJeunes} from "../../fixtures/jeune";
-import {UserStructure} from "../../interfaces/conseiller";
+import { MessagesService } from 'services/messages.service'
+import { unJeune, unJeuneChat } from 'fixtures/jeune'
+import { UserStructure } from 'interfaces/conseiller'
+import { Session } from 'next-auth'
+import { Jeune } from 'interfaces/jeune'
 
 describe("quand le formulaire n'a pas encore été soumis", () => {
-  const jeunes: Jeune[] = desJeunes()
-  let jeunesChat: JeuneChat[]
+  let destinataires: Jeune[]
   let conseiller: Session.User
   let jeunesService: JeunesService
   let messagesService: MessagesService
@@ -21,10 +21,10 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
   let submitButton: HTMLButtonElement
   let accessToken: string
 
-
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
     jeunesChat = [unJeuneChat()]
+    destinataires = [unJeune()]
 
     jeunesService = {
       getJeunesDuConseiller: jest.fn(),
@@ -54,11 +54,14 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
     accessToken = 'accessToken'
 
     page = renderWithSession(
-      <DIProvider dependances={{ jeunesService }}>
-        <EnvoiMessageGroupe jeunes={jeunes} withoutChat={true} />
+      <DIProvider dependances={{ jeunesService, messagesService }}>
+        <EnvoiMessageGroupe jeunes={destinataires} withoutChat={true} />
       </DIProvider>
     )
 
+    inputSearchJeune = screen.getByLabelText(
+      '* Rechercher et ajouter des jeunes'
+    )
     inputMessage = screen.getByLabelText('* Message')
     submitButton = screen.getByRole('button', {
       name: 'Envoyer',
@@ -70,7 +73,7 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: "Message multi-destinataires",
+        name: 'Message multi-destinataires',
       })
     ).toBeInTheDocument()
 
@@ -90,21 +93,23 @@ describe("quand le formulaire n'a pas encore été soumis", () => {
     expect(submitButton).toHaveAttribute('disabled')
   })
 
-  it('envoi un message à plusieurs destinataires', () => {
-    // Given
-    const newMessage = 'Un nouveau message pour plusieurs destinataires'
+  describe('quand on soumet le formulaire', () => {
+    it('envoi un message à plusieurs destinataires', () => {
+      // Given
+      const newMessage = 'Un nouveau message pour plusieurs destinataires'
 
-    // When
-    fireEvent.change(inputSearchJeune, { target: { value: 'kenji' } })
-    fireEvent.change(inputMessage, { target: { value: 'Un message' } })
-    fireEvent.submit(submitButton)
+      // When
+      fireEvent.change(inputSearchJeune, { target: { value: 'Kenji Girac' } })
+      fireEvent.change(inputMessage, { target: { value: 'Un message' } })
+      fireEvent.submit(submitButton)
 
-    // Then
-    expect(messagesService.sendNouveauMessageMultiple).toHaveBeenCalledWith(
+      // Then
+      expect(messagesService.sendNouveauMessageMultiple).toHaveBeenCalledWith(
         { id: conseiller.id, structure: conseiller.structure },
-        jeunesChat,
+        destinataires,
         newMessage,
         accessToken
-    )
+      )
+    })
   })
 })

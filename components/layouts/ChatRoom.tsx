@@ -66,11 +66,13 @@ export default function ChatRoom({
   }, [session, jeunesService])
 
   useEffect(() => {
+    let destructor: () => void = () => {}
     if (session?.firebaseToken) {
       signInChat(session.firebaseToken).then(() => {
-        observeJeuneChats(session.user.id, jeunes)
+        destructor = observeJeuneChats(session.user.id, jeunes)
       })
     }
+    return destructor
   }, [session, jeunes, signInChat, observeJeuneChats])
 
   function updateJeunesChat(newJeuneChat: JeuneChat): void {
