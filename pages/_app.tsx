@@ -24,7 +24,7 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-function MyApp({
+function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps): ReactNode {
@@ -46,7 +46,7 @@ function MyApp({
           </div>
         ) : (
           <>
-            <Layout pathname={router.pathname}>
+            <Layout>
               <Component {...pageProps} />
             </Layout>
           </>
@@ -56,4 +56,4 @@ function MyApp({
   )
 }
 
-export default MyApp
+export default App

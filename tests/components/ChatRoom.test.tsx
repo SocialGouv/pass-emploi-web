@@ -2,6 +2,7 @@ import { act, screen } from '@testing-library/react'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Conversation from 'components/layouts/Conversation'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
+import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { Session } from 'next-auth'
@@ -26,13 +27,7 @@ describe('<ChatRoom />', () => {
   let accessToken: string
   let tokenChat: string
   beforeEach(async () => {
-    jeunesService = {
-      createCompteJeunePoleEmploi: jest.fn(),
-      getJeuneDetails: jest.fn(),
-      getJeunesDuConseiller: jest.fn(),
-      getJeunesDuConseillerParEmail: jest.fn(),
-      reaffecter: jest.fn(),
-    }
+    jeunesService = mockedJeunesService()
     messagesService = {
       observeJeuneChat: jest.fn(
         (idConseiller: string, jeune: Jeune, fn: (chat: JeuneChat) => void) => {

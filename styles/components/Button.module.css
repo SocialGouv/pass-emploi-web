@@ -1,10 +1,10 @@
 .button {
-  padding: 16px 24px;
-  border-radius: 74px;
+  padding: 0.75rem 2rem;
+  height: max-content;
+  border-radius: 9999px;
   transition: border-color, color 0.2s, background-color 0.2s;
   display: flex;
   align-items: center;
-  height: 46px;
 }
 
 /**

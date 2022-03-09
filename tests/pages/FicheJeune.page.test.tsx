@@ -1,30 +1,36 @@
 import { screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
+import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
+import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
+import { useRouter } from 'next/router'
+import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import React from 'react'
-import { uneListeDeRdvJeune } from '../../fixtures/rendez-vous'
-import FicheJeune from '../../pages/mes-jeunes/[jeune_id]'
-import { JeunesService } from '../../services/jeunes.service'
-import { RendezVousService } from '../../services/rendez-vous.service'
-import { DIProvider } from '../../utils/injectionDependances'
+import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
+import { DIProvider } from 'utils/injectionDependances'
+import MesRendezvous from '../../pages/mes-rendezvous'
 import renderWithSession from '../renderWithSession'
 
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(() => ({
+    asPath: '/mes-jeunes/jeune-1',
+  })),
+}))
+
 describe('Fiche Jeune', () => {
-  const idConseiller = 'idConseiller'
+  afterAll(() => {
+    jest.clearAllMocks()
+  })
+
   const jeune = unJeune({ firstName: 'Nadia', lastName: 'Sanfamiye' })
   const rdvs = uneListeDeRdvJeune()
   const actions = uneListeDActions()
   let jeunesService: JeunesService
   let rendezVousService: RendezVousService
   beforeEach(async () => {
-    jeunesService = {
-      createCompteJeunePoleEmploi: jest.fn(),
-      getJeuneDetails: jest.fn(),
-      getJeunesDuConseiller: jest.fn(),
-      getJeunesDuConseillerParEmail: jest.fn(),
-      reaffecter: jest.fn(),
-    }
+    jeunesService = mockedJeunesService()
     rendezVousService = {
       deleteRendezVous: jest.fn(),
       getRendezVousConseiller: jest.fn(),
@@ -38,12 +44,7 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune
-            idConseiller={idConseiller}
-            jeune={jeune}
-            rdvs={rdvs}
-            actions={actions}
-          />
+          <FicheJeune jeune={jeune} rdvs={rdvs} actions={actions} />
         </DIProvider>
       )
     })
@@ -66,10 +67,14 @@ describe('Fiche Jeune', () => {
     it('affiche un lien vers les actions du jeune', async () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Voir la liste des actions du jeune' })
+        screen.getByRole('link', {
+          name: 'Voir la liste des actions du jeune',
+        })
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('link', { name: 'Voir la liste des actions du jeune' })
+        screen.getByRole('link', {
+          name: 'Voir la liste des actions du jeune',
+        })
       ).toHaveAttribute('href', `/mes-jeunes/${jeune.id}/actions`)
     })
 
@@ -82,12 +87,7 @@ describe('Fiche Jeune', () => {
     it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune
-            idConseiller={idConseiller}
-            jeune={jeune}
-            rdvs={rdvs}
-            actions={[]}
-          />
+          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} />
         </DIProvider>
       )
       expect(
@@ -108,12 +108,7 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune
-            idConseiller={idConseiller}
-            jeune={jeune}
-            rdvs={[]}
-            actions={actions}
-          />
+          <FicheJeune jeune={jeune} rdvs={[]} actions={actions} />
         </DIProvider>,
         {
           user: {
@@ -143,6 +138,54 @@ describe('Fiche Jeune', () => {
     it('ne permet pas la prise de rendez-vous', async () => {
       // Then
       expect(() => screen.getByText('Fixer un rendez-vous')).toThrow()
+    })
+  })
+
+  describe('quand la création de rdv est réussie', () => {
+    let replace: jest.Mock
+    beforeEach(() => {
+      // Given
+      replace = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+      // When
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actions={actions}
+            rdvCreationSuccess={true}
+          />
+        </DIProvider>
+      )
+    })
+
+    it('affiche un message de succès', () => {
+      // Then
+      expect(
+        screen.getByText('Le rendez-vous a bien été créé')
+      ).toBeInTheDocument()
+    })
+
+    it('permet de cacher le message de succès', () => {
+      // Given
+      const fermerMessage = screen.getByRole('button', {
+        name: "J'ai compris",
+      })
+
+      // When
+      fermerMessage.click()
+
+      // Then
+      expect(() => screen.getByText('Le rendez-vous a bien été créé')).toThrow()
+      expect(replace).toHaveBeenCalledWith(
+        {
+          pathname: `/mes-jeunes/${jeune.id}`,
+        },
+        undefined,
+        { shallow: true }
+      )
     })
   })
 })

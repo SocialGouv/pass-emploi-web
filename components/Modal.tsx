@@ -11,6 +11,7 @@ type ModalProps = {
   show: boolean
   onClose: any
   children: any
+  id?: string
   onBack?: any
   customHeight?: string
   customWidth?: string
@@ -18,6 +19,7 @@ type ModalProps = {
 
 const Modal = ({
   show,
+  id,
   onClose,
   onBack,
   children,
@@ -42,15 +44,15 @@ const Modal = ({
   }
 
   const modalContent = show ? (
-    <div className={styles.modalOverlay}>
+    <div id={id} className={styles.modalOverlay}>
       <div
         className='rounded-x_large bg-blanc'
         style={{
-          height: customHeight || '664px',
-          width: customWidth || '791px',
+          height: customHeight,
+          width: customWidth,
         }}
       >
-        <div className='text-bleu_nuit flex justify-between items-center p-[40px] pb-[10px]'>
+        <div className='text-bleu_nuit flex justify-between items-center p-5'>
           {onBack && (
             <a href='#' onClick={handleBackClick}>
               <BackIcon
@@ -61,7 +63,7 @@ const Modal = ({
               />
             </a>
           )}
-          {title && <div className='h4-semi flex-auto'>{title}</div>}
+          <h1 className='h4-semi flex-auto'>{title}</h1>
           <a href='#' onClick={handleCloseClick}>
             <CloseIcon
               role='img'
@@ -70,7 +72,7 @@ const Modal = ({
             />
           </a>
         </div>
-        <div className='p-[40px] pt-0'>{children}</div>
+        <div className='px-5 pt-3 pb-8'>{children}</div>
       </div>
     </div>
   ) : null

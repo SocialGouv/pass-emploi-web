@@ -1,63 +1,45 @@
 import { AppHead } from 'components/AppHead'
-import AddRdvModal from 'components/rdv/AddRdvModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
+import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
-import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { useSession } from 'next-auth/react'
-import Router from 'next/router'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
+import linkStyle from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
-import { Container, useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import AddIcon from '../../assets/icons/add.svg'
 
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
+  succesCreation?: boolean
 }
 
 const MesRendezvous = ({
   rendezVousFuturs,
   rendezVousPasses,
+  succesCreation,
 }: MesRendezvousProps) => {
-  const { data: session } = useSession({ required: true })
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const rendezVousService =
-    useDependance<RendezVousService>('rendezVousService')
-  const [showAddModal, setShowAddModal] = useState<boolean>(false)
+  const router = useRouter()
+  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
+    succesCreation ?? false
+  )
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
-  const initialTracking = 'Mes rendez-vous'
+  const pageTracking = `Mes rendez-vous`
+  const initialTracking = `${pageTracking}${
+    succesCreation ? ' - Creation rdv succès' : ''
+  }`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-
-  function openAddModal(): void {
-    setShowAddModal(true)
-    setTrackingTitle('Mes rendez-vous - Modale création rdv')
-  }
-
-  function closeAddModal(): void {
-    setShowAddModal(false)
-    setTrackingTitle(initialTracking)
-  }
-
-  async function addNewRDV(newRDV: RdvFormData): Promise<void> {
-    await rendezVousService.postNewRendezVous(
-      session!.user.id,
-      newRDV,
-      session!.accessToken
-    )
-    closeAddModal()
-    Router.reload()
-  }
 
   function deleteRdv() {
     const index = rdvsAVenir.indexOf(selectedRdv!)
@@ -73,8 +55,13 @@ const MesRendezvous = ({
     if (displayOldRdv) {
       setTrackingTitle('Mes rendez-vous passés')
     } else {
-      setTrackingTitle(initialTracking)
+      setTrackingTitle(pageTracking)
     }
+  }
+
+  function closeRdvCreationMessage(): void {
+    setShowRdvCreationSuccess(false)
+    router.replace('', undefined, { shallow: true })
   }
 
   function openDeleteRdvModal(rdv: Rdv) {
@@ -85,7 +72,7 @@ const MesRendezvous = ({
 
   function closeDeleteRdvModal() {
     setShowDeleteModal(false)
-    setTrackingTitle(initialTracking)
+    setTrackingTitle(pageTracking)
   }
 
   useMatomo(trackingTitle)
@@ -93,15 +80,24 @@ const MesRendezvous = ({
   return (
     <>
       <AppHead titre='Tableau de bord - Mes rendez-vous' />
-      <span className={`flex flex-wrap justify-between ${styles.header}`}>
+      <span
+        className={`flex flex-wrap justify-between items-center ${styles.header}`}
+      >
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <Button onClick={openAddModal} label='Fixer un rendez-vous'>
-          <AddIcon focusable='false' aria-hidden='true' />
-          Fixer un rendez-vous
-        </Button>
+        <Link href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
+          <a className={`${linkStyle.linkButtonBlue} text-sm`}>
+            Fixer un rendez-vous
+          </a>
+        </Link>
       </span>
 
       <div className={styles.content}>
+        {showRdvCreationSuccess && (
+          <SuccessMessage
+            label={'Le rendez-vous a bien été créé'}
+            onAcknowledge={closeRdvCreationMessage}
+          />
+        )}
         <div role='tablist' className='flex mb-[40px]'>
           <Button
             role='tab'
@@ -135,19 +131,6 @@ const MesRendezvous = ({
           />
         )}
 
-        {showAddModal && session && (
-          <AddRdvModal
-            fetchJeunes={() =>
-              jeunesService.getJeunesDuConseiller(
-                session.user.id,
-                session.accessToken
-              )
-            }
-            addNewRDV={addNewRDV}
-            onClose={closeAddModal}
-          />
-        )}
-
         {showDeleteModal && (
           <DeleteRdvModal
             onClose={closeDeleteRdvModal}
@@ -176,18 +159,20 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true }
   }
 
-  const { rendezVousService } = Container.getDIContainer().dependances
+  const rendezVousService =
+    withDependance<RendezVousService>('rendezVousService')
   const { passes, futurs } = await rendezVousService.getRendezVousConseiller(
     user.id,
     accessToken
   )
 
-  return {
-    props: {
-      rendezVousFuturs: futurs,
-      rendezVousPasses: passes,
-    },
+  const props: MesRendezvousProps = {
+    rendezVousFuturs: futurs,
+    rendezVousPasses: passes,
   }
+  if (context.query.creationRdv)
+    props.succesCreation = context.query.creationRdv === 'succes'
+  return { props }
 }
 
 export default MesRendezvous

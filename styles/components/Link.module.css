@@ -1,27 +1,57 @@
+/* Link-Button primary */
 .linkButtonBlue {
-	display: flex;
-	align-items: center;
-	height: 2.8rem;
-	padding: 1rem 1.5rem;
-	border: 0.1rem solid transparent;
-	border-radius: 74px;
-	transition: border-color, color 0.2s, background-color 0.2s;
-	background-color: theme('colors.bleu_nuit');
-	color: theme('colors.blanc');
+  display: flex;
+  align-items: center;
+  height: max-content;
+  padding: 0.75rem 2rem;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  transition: border-color, color 0.2s, background-color 0.2s;
+  background-color: theme('colors.bleu_nuit');
+  color: theme('colors.blanc');
 }
 
 .linkButtonBlue:hover {
-	background-color: theme('colors.blanc');
-	color: theme('colors.bleu_nuit');
-	border: 0.1rem solid theme('colors.bleu_nuit');
+  background-color: theme('colors.blanc');
+  color: theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
 }
 
 .linkButtonBlue:hover svg {
-	fill: theme('colors.bleu_nuit');
+  fill: theme('colors.bleu_nuit');
 }
 
 .linkButtonBlue:active {
-	background-color: theme('colors.blanc');
-	color: theme('colors.bleu_nuit');
-	border: 0.1rem solid theme('colors.bleu_nuit');
+  background-color: theme('colors.blanc');
+  color: theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
+}
+
+/* Link-Button secondary */
+.linkButtonSecondary {
+  display: flex;
+  align-items: center;
+  height: max-content;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  transition: border-color, color 0.2s, background-color 0.2s;
+  background-color: theme('colors.blanc');
+  color: theme('colors.bleu_nuit');
+  border: 1px solid theme('colors.bleu_nuit');
+}
+
+.linkButtonSecondary:hover {
+  background-color: theme('colors.bleu_nuit');
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
+}
+
+.linkButtonSecondary:hover svg {
+  fill: theme('colors.blanc');
+}
+
+.linkButtonSecondary:active {
+  background-color: theme('colors.bleu_nuit');
+  color: theme('colors.blanc');
+  border: 1px solid transparent;
 }

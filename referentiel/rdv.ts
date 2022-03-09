@@ -1,4 +1,4 @@
-const durees = [
+export const durees = [
   {
     value: '',
     text: '',
@@ -29,12 +29,9 @@ const durees = [
   },
 ]
 
-const modalites: string[] = [
-  '',
+export const modalites: string[] = [
   'en présentiel : Mission locale',
   'en présentiel : Misson locale / Permanence',
   'par téléphone',
   'par visio',
 ]
-
-export { durees, modalites }

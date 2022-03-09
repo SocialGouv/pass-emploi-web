@@ -16,6 +16,7 @@ import SendIcon from '../../assets/icons/send.svg'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
+  withoutChat: true
 }
 
 function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
@@ -47,7 +48,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
         </h1>
       </div>
       <div className={styles.content}>
-        <form method='POST' role='form' onSubmit={() => {}} onReset={() => {}}>
+        <form>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs sont obligatoires
           </div>
@@ -132,6 +133,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
+      withoutChat: true,
     },
   }
 }

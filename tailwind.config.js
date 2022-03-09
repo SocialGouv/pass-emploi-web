@@ -97,6 +97,10 @@ module.exports = {
       fontFamily: {
         sans: ['Marianne'],
       },
+      backgroundImage: {
+        // path relative to globals.css
+        clock: "url('../assets/icons/clock.svg')",
+      },
     },
   },
   plugins: [],

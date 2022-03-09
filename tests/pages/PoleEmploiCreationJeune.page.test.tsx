@@ -4,6 +4,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react'
+import { mockedJeunesService } from 'fixtures/services'
 import { Mock } from 'jest-mock'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { JeunesService } from 'services/jeunes.service'
@@ -16,14 +17,7 @@ describe('PoleEmploiCreationJeune', () => {
   let submitButton: HTMLElement
   const emailLabel: string = '*E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
-    jeunesService = {
-      getJeunesDuConseiller: jest.fn(),
-      getJeuneDetails: jest.fn(),
-      createCompteJeunePoleEmploi: jest.fn(),
-      getJeunesDuConseillerParEmail: jest.fn(),
-      reaffecter: jest.fn(),
-    }
-
+    jeunesService = mockedJeunesService()
     page = renderWithSession(
       <DIProvider dependances={{ jeunesService }}>
         <PoleEmploiCreationJeune />
