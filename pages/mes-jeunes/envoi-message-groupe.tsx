@@ -4,7 +4,7 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { compareJeunesByLastName, Jeune, JeuneChat } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import { MouseEvent, useCallback, useEffect, useState } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
@@ -13,8 +13,9 @@ import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
-import { MessagesService } from '../../services/messages.service'
+import { MessagesService } from 'services/messages.service'
 import { useSession } from 'next-auth/react'
+import { ErrorMessage } from 'components/ui/ErrorMessage'
 import { useRouter } from 'next/router'
 
 interface EnvoiMessageGroupeProps {
@@ -30,6 +31,11 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
 
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
+  const [erreurMessage, setErreurMessage] = useState<string>('')
+
+  useEffect(() => {
+    setErreurMessage(erreurMessage)
+  }, [erreurMessage])
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
 
@@ -41,17 +47,27 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
 
     if (formIsValid()) {
       await messagesService.signIn(session!.firebaseToken)
-      await messagesService.sendNouveauMessageMultiple(
-        { id: session!.user.id, structure: session!.user.structure },
-        selectedJeunes,
-        message,
-        session!.accessToken
-      )
-      router.push('/mes-jeunes')
+      await messagesService
+        .sendNouveauMessageMultiple(
+          { id: session!.user.id, structure: session!.user.structure },
+          selectedJeunes,
+          message,
+          session!.accessToken
+        )
+        .then(() => {
+          router.push('/mes-jeunes')
+        })
+        .catch((error) => {
+          setErreurMessage(
+            "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer." ||
+              (error as Error).message
+          )
+        })
     }
   }
 
-  useMatomo('Message - Rédaction')
+  //useMatomo('Message - Rédaction')
+  //useMatomo(erreurMessage ? 'Échec envoi message' : 'Succès envoi message')
 
   return (
     <>
@@ -67,13 +83,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
         </h1>
       </div>
       <div className={`${styles.content} max-w-[500px] m-auto`}>
-        <form
-          data-testid='newMessageMultiple'
-          method='POST'
-          role='form'
-          onSubmit={() => {}}
-          onReset={() => {}}
-        >
+        <form method='POST'>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs sont obligatoires
           </div>
@@ -113,11 +123,16 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
               id='message'
               name='message'
               rows={10}
-              className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-black rounded-medium mt-4'
+              className={`w-full text-sm text-bleu_nuit p-4  border border-solid border-black rounded-medium mt-4 ${
+                erreurMessage ? 'mb-[8px]' : 'mb-14'
+              }`}
               onChange={(e) => setMessage(e.target.value)}
               required
             />
           </fieldset>
+          {erreurMessage && (
+            <ErrorMessage className='mb-12'>{erreurMessage}</ErrorMessage>
+          )}
 
           <div className='flex justify-center'>
             <Button

@@ -177,6 +177,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const encryptedMessage = this.chatCrypto.encrypt(newMessage)
 
     const idsJeunes = destinataires.map((destinataire) => destinataire.id)
+
     const chats = await this.firebaseClient.getChatsDesJeunes(
       conseiller.id,
       idsJeunes
@@ -200,7 +201,11 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     ])
 
     await Promise.all([
-      this.notifierNouveauMessageMultiple(),
+      this.notifierNouveauMessageMultiple(
+        conseiller.id,
+        idsJeunes,
+        accessToken
+      ),
       this.evenementNouveauMessage(
         conseiller.structure,
         conseiller.id,
@@ -221,7 +226,17 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     )
   }
 
-  private async notifierNouveauMessageMultiple() {}
+  private async notifierNouveauMessageMultiple(
+    idConseiller: string,
+    idsJeunes: string[],
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/conseillers/${idConseiller}/jeunes/notify-message`,
+      { idsJeunes: idsJeunes },
+      accessToken
+    )
+  }
 
   private async evenementNouveauMessage(
     structure: string,

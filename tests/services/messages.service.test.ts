@@ -178,7 +178,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(onJeuneChat).toHaveBeenCalledWith({
         ...jeune,
-        chatId: 'idChat',
+        chatId: 'chat-id',
         ...unChat(),
       })
     })
@@ -279,5 +279,42 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
-  describe('.sendNouveauMessageMultiple', () => {})
+  describe('.sendNouveauMessageMultiple', () => {
+    let conseiller: { id: string; structure: UserStructure }
+    let destinataires: Jeune[]
+    let newMessageGroupe: string
+    let accessToken: string
+    const now = new Date()
+
+    beforeEach(async () => {
+      // Given
+      jest.setSystemTime(now)
+      destinataires = [unJeune()]
+      newMessageGroupe = 'nouveau message groupé'
+
+      // When
+      accessToken = 'accessToken'
+      conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
+      await messagesService.sendNouveauMessageMultiple(
+        conseiller,
+        destinataires,
+        newMessageGroupe,
+        accessToken
+      )
+    })
+
+    it('adds a new message to firebase', async () => {
+      // Then
+      destinataires.forEach((destinataire) => {
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith(
+          destinataire.id,
+          {
+            encryptedText: `Encrypted: ${newMessageGroupe}`,
+            iv: `IV: ${newMessageGroupe}`,
+          },
+          now
+        )
+      })
+    })
+  })
 })

@@ -95,6 +95,7 @@ const MesRendezvous = ({
             onAcknowledge={closeRdvCreationMessage}
           />
         )}
+
         <div role='tablist' className='flex mb-[40px]'>
           <Button
             role='tab'

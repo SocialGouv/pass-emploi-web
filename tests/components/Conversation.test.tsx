@@ -8,9 +8,10 @@ import { Session } from 'next-auth'
 import React from 'react'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
-import { UserStructure } from '../../interfaces/conseiller'
-import { formatDayDate } from '../../utils/date'
+import { UserStructure } from 'interfaces/conseiller'
+import { formatDayDate } from 'utils/date'
 import renderWithSession from '../renderWithSession'
+import { mockedMessagesService } from 'fixtures/services'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat

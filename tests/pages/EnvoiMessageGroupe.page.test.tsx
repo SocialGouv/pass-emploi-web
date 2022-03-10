@@ -1,29 +1,26 @@
 import {
-  act,
   fireEvent,
   RenderResult,
   screen,
   waitFor,
 } from '@testing-library/react'
-import { mockedJeunesService } from 'fixtures/services'
 import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 import { MessagesService } from 'services/messages.service'
-import { unJeune } from 'fixtures/jeune'
+import { desJeunes } from 'fixtures/jeune'
 import { UserStructure } from 'interfaces/conseiller'
-import { Session } from 'next-auth'
 import { Jeune } from 'interfaces/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { userEvent } from '@storybook/testing-library'
-import MiloCreationJeune from '../../pages/mes-jeunes/milo/creation-jeune'
+import { Mock } from 'jest-mock'
+import { useRouter } from 'next/router'
 
-jest.mock('next/router')
+jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 
 describe('EnvoiMessageGroupe', () => {
   let destinataires: Jeune[]
-  let conseiller: Session.User
   let jeunesService: JeunesService
   let messagesService: MessagesService
   let page: RenderResult
@@ -33,9 +30,7 @@ describe('EnvoiMessageGroupe', () => {
   let accessToken: string
 
   beforeEach(async () => {
-    jeunesService = mockedJeunesService()
-    jeunesChat = [unJeuneChat()]
-    destinataires = [unJeune()]
+    destinataires = desJeunes()
 
     jeunesService = mockedJeunesService()
 
@@ -45,23 +40,17 @@ describe('EnvoiMessageGroupe', () => {
       }),
     })
 
-    conseiller = {
-      id: 'idConseiller',
-      name: 'Tavernier',
-      structure: UserStructure.POLE_EMPLOI,
-      estSuperviseur: false,
-    }
     accessToken = 'accessToken'
 
-    act(() => {
-      page = renderWithSession(
-        <DIProvider dependances={{ jeunesService, messagesService }}>
-          <EnvoiMessageGroupe jeunes={destinataires} withoutChat={true} />
-        </DIProvider>
-      )
-    })
+    page = renderWithSession(
+      <DIProvider dependances={{ jeunesService, messagesService }}>
+        <EnvoiMessageGroupe jeunes={destinataires} withoutChat={true} />
+      </DIProvider>
+    )
 
-    inputSearchJeune = screen.getByRole('combobox')
+    inputSearchJeune = screen.getByRole('combobox', {
+      name: 'Rechercher et ajouter des jeunes Nom et prénom',
+    })
     inputMessage = screen.getByLabelText('* Message')
     submitButton = screen.getByRole('button', {
       name: 'Envoyer',
@@ -77,7 +66,6 @@ describe('EnvoiMessageGroupe', () => {
           name: 'Message multi-destinataires',
         })
       ).toBeInTheDocument()
-
 
       expect(screen.getAllByRole('group').length).toBe(2)
       expect(screen.getByLabelText('* Message')).toBeInTheDocument()
@@ -102,27 +90,60 @@ describe('EnvoiMessageGroupe', () => {
   })
 
   describe('quand on soumet le formulaire', () => {
+    beforeEach(() => {
+      let push: jest.Mock
+      push = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
+    })
+
     it('envoi un message à plusieurs destinataires', async () => {
       // Given
       const newMessage = 'Un nouveau message pour plusieurs destinataires'
-
+      destinataires = [destinataires[0], destinataires[1]]
       // When
       userEvent.type(inputSearchJeune, 'Jirac Kenji')
+      userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
       fireEvent.change(inputMessage, { target: { value: newMessage } })
       fireEvent.click(submitButton)
 
       // Then
       expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
-      expect(screen.getByText('Destinataires (1)')).toBeInTheDocument()
+      expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
+      expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
 
       await waitFor(() => {
         expect(messagesService.sendNouveauMessageMultiple).toHaveBeenCalledWith(
-          { id: conseiller.id, structure: conseiller.structure },
+          { id: '1', structure: UserStructure.MILO },
           destinataires,
           newMessage,
           accessToken
         )
       })
     })
+
+    it("devrait afficher un message d'erreur en cas d'échec de l'envoi du message", async () => {
+      // Given
+      const messageErreur =
+        "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
+      ;(
+        messagesService.sendNouveauMessageMultiple as Mock<any>
+      ).mockRejectedValue({
+        message: messageErreur,
+      })
+
+      // When
+      userEvent.type(inputSearchJeune, 'Jirac Kenji')
+      fireEvent.change(inputMessage, { target: { value: 'un message' } })
+      fireEvent.click(submitButton)
+
+      // Then
+      await waitFor(() => {
+        expect(
+          messagesService.sendNouveauMessageMultiple
+        ).toHaveBeenCalledTimes(1)
+      })
+      expect(screen.getByText(messageErreur)).toBeInTheDocument()
+    })
+    xit('devrait afficher un message de succès en cas de réussite', () => {})
   })
 })

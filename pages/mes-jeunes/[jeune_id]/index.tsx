@@ -45,6 +45,7 @@ const FicheJeune = ({
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
+
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
