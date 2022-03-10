@@ -5,6 +5,7 @@ import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import SuccessMessage from 'components/SuccessMessage'
+import Button from 'components/ui/Button'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -15,7 +16,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
-import linkStyle from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -45,7 +45,9 @@ const FicheJeune = ({
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
-  const pageTracking: string = 'Détail jeune'
+  const pageTracking: string = jeune.isActivated
+    ? 'Détail jeune'
+    : 'Détail jeune - Non Activé'
   const initialTracking: string = `${pageTracking}${
     rdvCreationSuccess ? ' - Creation rdv succès' : ''
   }`
@@ -102,11 +104,9 @@ const FicheJeune = ({
         </Link>
 
         {!isPoleEmploi && (
-          <Link href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
-            <a className={`${linkStyle.linkButtonSecondary} text-sm`}>
-              Fixer un rendez-vous
-            </a>
-          </Link>
+          <Button href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
+            Fixer un rendez-vous
+          </Button>
         )}
       </div>
 

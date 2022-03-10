@@ -22,6 +22,14 @@ function FiltresActionsTabList({
   prenomJeune,
   filterClicked,
 }: FiltresActionsTabList) {
+  function isSelected(filter: string): boolean {
+    return currentFilter === filter
+  }
+
+  function getTabIndex(filter: string): -1 | 0 {
+    return isSelected(filter) ? -1 : 0
+  }
+
   return (
     <div
       role='tablist'
@@ -32,11 +40,15 @@ function FiltresActionsTabList({
         role='tab'
         id='actions-toutes'
         type='button'
-        tabIndex={currentFilter === TOUTES_LES_ACTIONS_LABEL ? 0 : -1}
-        selected={currentFilter === TOUTES_LES_ACTIONS_LABEL}
+        tabIndex={getTabIndex(TOUTES_LES_ACTIONS_LABEL)}
+        selected={isSelected(TOUTES_LES_ACTIONS_LABEL)}
         aria-controls={`panneau-actions-${TOUTES_LES_ACTIONS_LABEL}`}
         className='mr-4'
-        style={ButtonStyle.SECONDARY}
+        style={
+          isSelected(TOUTES_LES_ACTIONS_LABEL)
+            ? ButtonStyle.PRIMARY
+            : ButtonStyle.SECONDARY
+        }
         onClick={() => filterClicked(TOUTES_LES_ACTIONS_LABEL)}
       >
         Toutes ({actionsLength})
@@ -45,12 +57,16 @@ function FiltresActionsTabList({
         role='tab'
         id={`actions-${ActionStatus.NotStarted}`}
         type='button'
-        tabIndex={currentFilter === ActionStatus.NotStarted ? 0 : -1}
-        selected={currentFilter === ActionStatus.NotStarted}
+        tabIndex={getTabIndex(ActionStatus.NotStarted)}
+        selected={isSelected(ActionStatus.NotStarted)}
         aria-controls={`panneau-actions-${ActionStatus.NotStarted}`}
         disabled={actionsARealiserLength === 0}
         className='mr-4'
-        style={ButtonStyle.SECONDARY}
+        style={
+          isSelected(ActionStatus.NotStarted)
+            ? ButtonStyle.PRIMARY
+            : ButtonStyle.SECONDARY
+        }
         onClick={() => filterClicked(ActionStatus.NotStarted)}
       >
         À réaliser ({actionsARealiserLength})
@@ -59,12 +75,16 @@ function FiltresActionsTabList({
         role='tab'
         id={`actions-${ActionStatus.InProgress}`}
         type='button'
-        tabIndex={currentFilter === ActionStatus.InProgress ? 0 : -1}
-        selected={currentFilter === ActionStatus.InProgress}
+        tabIndex={getTabIndex(ActionStatus.InProgress)}
+        selected={isSelected(ActionStatus.InProgress)}
         aria-controls={`panneau-actions-${ActionStatus.InProgress}`}
         disabled={actionsCommenceesLength === 0}
         className='mr-4'
-        style={ButtonStyle.SECONDARY}
+        style={
+          isSelected(ActionStatus.InProgress)
+            ? ButtonStyle.PRIMARY
+            : ButtonStyle.SECONDARY
+        }
         onClick={() => filterClicked(ActionStatus.InProgress)}
       >
         Commencées ({actionsCommenceesLength})
@@ -73,12 +93,16 @@ function FiltresActionsTabList({
         role='tab'
         id={`actions-${ActionStatus.Done}`}
         type='button'
-        tabIndex={currentFilter === ActionStatus.Done ? 0 : -1}
-        selected={currentFilter === ActionStatus.Done}
+        tabIndex={getTabIndex(ActionStatus.Done)}
+        selected={isSelected(ActionStatus.Done)}
         disabled={actionsTermineesLength === 0}
         aria-controls={`panneau-actions-${ActionStatus.Done}`}
         className='mr-4'
-        style={ButtonStyle.SECONDARY}
+        style={
+          isSelected(ActionStatus.Done)
+            ? ButtonStyle.PRIMARY
+            : ButtonStyle.SECONDARY
+        }
         onClick={() => filterClicked(ActionStatus.Done)}
       >
         Terminées ({actionsTermineesLength})

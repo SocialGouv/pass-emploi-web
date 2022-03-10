@@ -1,20 +1,29 @@
+import Link from 'next/link'
+import { MouseEventHandler, ReactNode } from 'react'
 import styles from 'styles/components/Button.module.css'
+import { UrlObject } from 'url'
 
-type ButtonProps = {
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
-  children?: React.ReactNode
+interface CommonProps {
+  children: ReactNode
+  style?: ButtonStyle
+  className?: any
+}
+interface LinkProps extends CommonProps {
+  href: string | UrlObject
+}
+interface ButtonProps extends CommonProps {
+  onClick?: MouseEventHandler<HTMLButtonElement>
   role?: string
   type?: 'button' | 'submit' | 'reset'
   controls?: string
   label?: string
   disabled?: boolean
   selected?: boolean
-  style?: ButtonStyle
-  className?: any
   form?: string
   id?: string
   tabIndex?: number
 }
+type Props = LinkProps | ButtonProps
 
 export enum ButtonStyle {
   PRIMARY = 'PRIMARY',
@@ -22,44 +31,73 @@ export enum ButtonStyle {
   WARNING = 'WARNING',
 }
 
-const Button = ({
-  onClick,
+export default function Button(props: Props) {
+  return isLink(props) ? buildLink(props) : buildButton(props)
+}
+
+function isLink(props: Props): props is LinkProps {
+  return Object.prototype.hasOwnProperty.call(props, 'href')
+}
+
+function buildLink({
   children,
-  role,
-  type,
-  controls,
-  disabled = false,
-  selected = false,
-  label,
-  style = ButtonStyle.PRIMARY,
+  href,
   className,
-  form,
-  id,
-  tabIndex,
-}: ButtonProps) => {
+  style = ButtonStyle.PRIMARY,
+}: LinkProps): JSX.Element {
   return (
-    <button
-      onClick={onClick}
-      className={`${className ? className : ''} text-sm ${
-        styles.button
-      } ${getColorStyleClassName(style)}`}
-      form={form ?? undefined}
-      id={id ?? undefined}
-      tabIndex={tabIndex ?? undefined}
-      role={role ?? undefined}
-      type={type ?? undefined}
-      aria-controls={controls ?? undefined}
-      aria-label={label ?? undefined}
-      disabled={disabled}
-      aria-disabled={disabled}
-      aria-selected={selected}
-    >
-      {children}
-    </button>
+    <Link href={href}>
+      <a
+        className={`${className ? className : ''} text-sm ${
+          styles.button
+        } ${getColorStyleClassName(style)}`}
+      >
+        {children}
+      </a>
+    </Link>
   )
 }
 
-const getColorStyleClassName = (style: ButtonStyle | undefined): string => {
+function buildButton({
+  children,
+  onClick,
+  className,
+  style = ButtonStyle.PRIMARY,
+  form,
+  id,
+  tabIndex,
+  role,
+  type,
+  controls,
+  label,
+  disabled,
+  selected,
+}: ButtonProps): JSX.Element {
+  return (
+    <>
+      <button
+        onClick={onClick}
+        className={`${className ? className : ''} text-sm ${
+          styles.button
+        } ${getColorStyleClassName(style)}`}
+        form={form ?? undefined}
+        id={id ?? undefined}
+        tabIndex={tabIndex ?? undefined}
+        role={role ?? undefined}
+        type={type ?? undefined}
+        aria-controls={controls ?? undefined}
+        aria-label={label ?? undefined}
+        disabled={disabled}
+        aria-disabled={disabled}
+        aria-selected={selected}
+      >
+        {children}
+      </button>
+    </>
+  )
+}
+
+const getColorStyleClassName = (style: ButtonStyle): string => {
   switch (style) {
     case ButtonStyle.SECONDARY:
       return styles.buttonSecondary
@@ -70,5 +108,3 @@ const getColorStyleClassName = (style: ButtonStyle | undefined): string => {
       return styles.buttonPrimary
   }
 }
-
-export default Button

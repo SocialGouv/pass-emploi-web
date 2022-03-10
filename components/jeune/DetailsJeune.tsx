@@ -1,6 +1,5 @@
 import { Jeune } from 'interfaces/jeune'
 import React from 'react'
-import useMatomo from 'utils/analytics/useMatomo'
 import { formatDayDate } from 'utils/date'
 import EmailIcon from '../../assets/icons/email.svg'
 
@@ -9,8 +8,6 @@ interface DetailsJeuneProps {
 }
 
 export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
-  useMatomo(jeune.isActivated ? undefined : 'Détail jeune - Non Activé')
-
   return (
     <>
       <h1 className='h2-semi text-bleu_nuit mb-3'>

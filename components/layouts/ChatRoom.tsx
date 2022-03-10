@@ -1,19 +1,18 @@
 import Conversation from 'components/layouts/Conversation'
-import { Jeune, JeuneChat, compareJeuneChat } from 'interfaces/jeune'
+import { compareJeuneChat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
+import linkStyle from 'styles/components/Link.module.css'
 import { formatDayAndHourDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
-import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
-import Link from 'next/link'
-
-import linkStyle from 'styles/components/Link.module.css'
+import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
@@ -163,6 +162,7 @@ export default function ChatRoom({
                 )}
               </ul>
               {enableMultiDestinataireLink && (
+                // FIXME : use <Button href={'/mes-jeunes/envoi-message-groupe'}> but causes problem with tailwind and style order
                 <Link href={'/mes-jeunes/envoi-message-groupe'}>
                   <a
                     className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}

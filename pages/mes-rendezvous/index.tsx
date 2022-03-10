@@ -6,12 +6,10 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { UserStructure } from 'interfaces/conseiller'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
-import linkStyle from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -84,11 +82,9 @@ const MesRendezvous = ({
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <Link href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
-          <a className={`${linkStyle.linkButtonBlue} text-sm`}>
-            Fixer un rendez-vous
-          </a>
-        </Link>
+        <Button href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
+          Fixer un rendez-vous
+        </Button>
       </span>
 
       <div className={styles.content}>

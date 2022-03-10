@@ -1,6 +1,4 @@
-import linkStyles from 'styles/components/Link.module.css'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import Link from 'next/link'
 import { UrlObject } from 'url'
 import WarningIcon from '../assets/icons/warning.svg'
 import Modal from './Modal'
@@ -37,9 +35,7 @@ export default function ExitPageConfirmationModal({
         >
           Annuler
         </Button>
-        <Link href={href}>
-          <a className={linkStyles.linkButtonBlue}>Continuer</a>
-        </Link>
+        <Button href={href}>Continuer</Button>
       </div>
     </Modal>
   )
