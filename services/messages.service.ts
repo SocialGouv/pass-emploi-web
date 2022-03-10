@@ -200,7 +200,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     ])
 
     await Promise.all([
-      this.notifierNouveauMessageMultiple(conseiller.id, accessToken),
+      this.notifierNouveauMessageMultiple(),
       this.evenementNouveauMessage(
         conseiller.structure,
         conseiller.id,
@@ -221,16 +221,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     )
   }
 
-  private async notifierNouveauMessageMultiple(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<void> {
-    await this.apiClient.post(
-      `/conseillers/${idConseiller}/jeunes/notify-message`,
-      {},
-      accessToken
-    )
-  }
+  private async notifierNouveauMessageMultiple() {}
 
   private async evenementNouveauMessage(
     structure: string,

@@ -78,6 +78,7 @@ export const desJeunesAvecActionsNonTerminees =
 
 export const unChat = (overrides: Partial<Chat> = {}): Chat => {
   const defaults: Chat = {
+    chatId: 'chat-id',
     seenByConseiller: true,
     newConseillerMessageCount: 1,
     lastMessageContent: 'Test message',

@@ -23,7 +23,7 @@ describe('<Conversation />', () => {
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
     onBack = jest.fn()
-    messagesService = {
+    messagesService = mockedMessagesService({
       observeJeuneChat: jest.fn(),
       observeJeuneReadingDate: jest.fn(
         (idChat: string, fn: (date: Date) => void) => {
@@ -37,12 +37,8 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
-      sendNouveauMessage: jest.fn(),
-      setReadByConseiller: jest.fn(),
-      signIn: jest.fn(),
-      signOut: jest.fn(),
-      countMessagesNotRead: jest.fn(),
-    }
+    })
+
     conseiller = {
       id: 'idConseiller',
       name: 'Taverner',
