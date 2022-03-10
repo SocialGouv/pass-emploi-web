@@ -33,9 +33,7 @@ export default function Layout({ children }: LayoutProps) {
           <main role='main'>{children}</main>
           <Footer />
         </div>
-        {!withoutChat && (
-          <ChatRoom enableMultiDestinataireLink={enableMultiDestinataireLink} />
-        )}
+        {!withoutChat && <ChatRoom />}
       </div>
       <div id='modal-root' />
     </>

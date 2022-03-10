@@ -16,13 +16,7 @@ import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 
 let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
 
-type ChatRoomProps = {
-  enableMultiDestinataireLink?: boolean
-}
-
-export default function ChatRoom({
-  enableMultiDestinataireLink,
-}: ChatRoomProps) {
+export default function ChatRoom() {
   const { data: session } = useSession({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -163,21 +157,19 @@ export default function ChatRoom({
                     )
                 )}
               </ul>
-              {enableMultiDestinataireLink && (
-                // FIXME : use <ButtonLink> but causes problem with tailwind and style order
-                <Link href={'/mes-jeunes/envoi-message-groupe'}>
-                  <a
-                    className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
-                  >
-                    <MessageGroupeIcon
-                      aria-hidden='true'
-                      focusable='false'
-                      className='mr-2'
-                    />
-                    Message multi-destinataires
-                  </a>
-                </Link>
-              )}
+
+              // FIXME : use <ButtonLink> but causes problem with tailwind and style order<Link href={'/mes-jeunes/envoi-message-groupe'}>
+                <a
+                  className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
+                >
+                  <MessageGroupeIcon
+                    aria-hidden='true'
+                    focusable='false'
+                    className='mr-2'
+                  />
+                  Message multi-destinataires
+                </a>
+              </Link>
             </>
           )}
         </>
