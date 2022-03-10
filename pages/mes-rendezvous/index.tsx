@@ -17,17 +17,17 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
-  succesCreation?: boolean
+  creationSuccess?: boolean
 }
 
 const MesRendezvous = ({
   rendezVousFuturs,
   rendezVousPasses,
-  succesCreation,
+  creationSuccess,
 }: MesRendezvousProps) => {
   const router = useRouter()
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
-    succesCreation ?? false
+    creationSuccess ?? false
   )
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
@@ -35,7 +35,7 @@ const MesRendezvous = ({
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
   const pageTracking = `Mes rendez-vous`
   const initialTracking = `${pageTracking}${
-    succesCreation ? ' - Creation rdv succès' : ''
+    creationSuccess ? ' - Creation rdv succès' : ''
   }`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -167,7 +167,7 @@ export const getServerSideProps: GetServerSideProps<
     rendezVousPasses: passes,
   }
   if (context.query.creationRdv)
-    props.succesCreation = context.query.creationRdv === 'succes'
+    props.creationSuccess = context.query.creationRdv === 'succes'
   return { props }
 }
 

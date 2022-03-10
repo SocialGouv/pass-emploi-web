@@ -120,7 +120,7 @@ const FicheJeune = ({
 
         <DetailsJeune jeune={jeune} />
 
-        <div className='mt-8 border-b border-bleu_blanc'>
+        <div className='mt-10 border-b border-bleu_blanc'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>
             Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
           </h2>

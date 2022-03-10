@@ -31,64 +31,117 @@ jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
+  afterAll(() => jest.clearAllMocks())
 
-  describe('quand le conseiller est MILO', () => {
-    let messagesService: MessagesService
+  describe('client side', () => {
+    describe('quand le conseiller est MILO', () => {
+      let messagesService: MessagesService
 
-    beforeEach(async () => {
-      //GIVEN
-      const jeune = unJeuneAvecActionsNonTerminees()
+      beforeEach(async () => {
+        //GIVEN
+        const jeune = unJeuneAvecActionsNonTerminees()
 
-      messagesService = mockedMessagesService({
-        signIn: jest.fn(() => Promise.resolve()),
-        countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
+        messagesService = mockedMessagesService({
+          signIn: jest.fn(() => Promise.resolve()),
+          countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
+        })
+
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={[jeune]}
+                isFromEmail
+              />
+            </DIProvider>
+          )
+        })
       })
 
-      await act(async () => {
-        renderWithSession(
-          <DIProvider dependances={{ messagesService }}>
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={[jeune]}
-              isFromEmail
-            />
-          </DIProvider>
+      it('redirige vers la page de création jeune MILO', () => {
+        // GIVEN
+        const addButton = screen.getByRole('button', {
+          name: 'Ajouter un jeune',
+        })
+        const routerSpy = jest.spyOn(Router, 'push')
+
+        //WHEN
+        fireEvent.click(addButton)
+
+        //THEN
+        expect(routerSpy).toHaveBeenCalledWith(
+          '/mes-jeunes/milo/creation-jeune'
         )
       })
-    })
 
-    it('redirige vers la page de création jeune MILO', () => {
-      // GIVEN
-      const addButton = screen.getByRole('button', {
-        name: 'Ajouter un jeune',
+      it("affiche le nombre d'actions des jeunes", () => {
+        // Then
+        expect(
+          screen.getByRole('columnheader', { name: 'Actions' })
+        ).toBeInTheDocument()
       })
-      const routerSpy = jest.spyOn(Router, 'push')
-
-      //WHEN
-      fireEvent.click(addButton)
-
-      //THEN
-      expect(routerSpy).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
     })
 
-    it("affiche le nombre d'actions des jeunes", () => {
-      // Then
-      expect(
-        screen.getByRole('columnheader', { name: 'Actions' })
-      ).toBeInTheDocument()
+    describe('quand le conseiller est Pole emploi', () => {
+      let messagesService: MessagesService
+
+      beforeEach(async () => {
+        //GIVEN
+        const jeune = unJeuneAvecActionsNonTerminees()
+
+        messagesService = {
+          observeJeuneChat: jest.fn(),
+          observeJeuneReadingDate: jest.fn(),
+          observeMessages: jest.fn(),
+          sendNouveauMessage: jest.fn(),
+          setReadByConseiller: jest.fn(),
+          signIn: jest.fn(() => Promise.resolve()),
+          signOut: jest.fn(),
+          countMessagesNotRead: jest
+            .fn()
+            .mockImplementation(() => Promise.resolve()),
+        }
+
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.POLE_EMPLOI}
+                conseillerJeunes={[jeune]}
+                isFromEmail
+              />
+            </DIProvider>
+          )
+        })
+      })
+
+      it('affiche vers la page de création jeune PE', () => {
+        // GIVEN
+        const addButton = screen.getByRole('button', {
+          name: 'Ajouter un jeune',
+        })
+        const routerSpy = jest.spyOn(Router, 'push')
+
+        //WHEN
+        fireEvent.click(addButton)
+
+        //THEN
+        expect(routerSpy).toHaveBeenCalledWith(
+          '/mes-jeunes/pole-emploi/creation-jeune'
+        )
+      })
+
+      it("n'affiche pas le nombre d'actions des jeunes", () => {
+        // Then
+        expect(() =>
+          screen.getByRole('columnheader', { name: 'Actions' })
+        ).toThrow()
+      })
     })
-  })
 
-  describe('quand le conseiller est Pole emploi', () => {
-    let messagesService: MessagesService
-
-    beforeEach(async () => {
-      //GIVEN
-      const jeune = unJeuneAvecActionsNonTerminees()
-
+    describe('Contenu de page', () => {
+      let messagesService: MessagesService
       messagesService = {
         observeJeuneChat: jest.fn(),
         observeJeuneReadingDate: jest.fn(),
@@ -102,133 +155,103 @@ describe('Mes Jeunes', () => {
           .mockImplementation(() => Promise.resolve()),
       }
 
-      await act(async () => {
-        renderWithSession(
-          <DIProvider dependances={{ messagesService }}>
-            <MesJeunes
-              structureConseiller={UserStructure.POLE_EMPLOI}
-              conseillerJeunes={[jeune]}
-              isFromEmail
-            />
-          </DIProvider>
+      const jeunes = desJeunesAvecActionsNonTerminees()
+
+      it('a un titre de niveau 1', async () => {
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+              />
+            </DIProvider>
+          )
+        })
+
+        //WHEN
+        const heading = screen.getByRole('heading', {
+          level: 1,
+          name: 'Mes Jeunes',
+        })
+
+        //THEN
+        expect(heading).toBeInTheDocument()
+      })
+
+      it("affiche la liste des jeunes s'il en a", async () => {
+        //GIVEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+              />
+            </DIProvider>
+          )
+        })
+        //WHEN
+        const rows = screen.getAllByRole('row')
+
+        //THEN
+        expect(rows.length - 1).toBe(jeunes.length)
+        jeunes.forEach((jeune) => {
+          expect(
+            screen.getByText(`${jeune.nbActionsNonTerminees}`)
+          ).toBeInTheDocument()
+        })
+        expect(() =>
+          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+        ).toThrow()
+      })
+
+      it("affiche un message invitant à ajouter des jeunes s'il n’en a pas", async () => {
+        //GIVEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={[]}
+                isFromEmail
+              />
+            </DIProvider>
+          )
+        })
+
+        //WHEN
+        const addJeuneText = screen.getByText(
+          "Vous n'avez pas encore intégré de jeunes."
         )
-      })
-    })
 
-    it('devrait rediriger vers la page de création jeune PE', () => {
-      // GIVEN
-      const addButton = screen.getByRole('button', {
-        name: 'Ajouter un jeune',
-      })
-      const routerSpy = jest.spyOn(Router, 'push')
-
-      //WHEN
-      fireEvent.click(addButton)
-
-      //THEN
-      expect(routerSpy).toHaveBeenCalledWith(
-        '/mes-jeunes/pole-emploi/creation-jeune'
-      )
-    })
-
-    it("n'affiche pas le nombre d'actions des jeunes", () => {
-      // Then
-      expect(() =>
-        screen.getByRole('columnheader', { name: 'Actions' })
-      ).toThrow()
-    })
-  })
-
-  describe('Contenu de page', () => {
-    let messagesService: MessagesService
-    messagesService = {
-      observeJeuneChat: jest.fn(),
-      observeJeuneReadingDate: jest.fn(),
-      observeMessages: jest.fn(),
-      sendNouveauMessage: jest.fn(),
-      setReadByConseiller: jest.fn(),
-      signIn: jest.fn(() => Promise.resolve()),
-      signOut: jest.fn(),
-      countMessagesNotRead: jest
-        .fn()
-        .mockImplementation(() => Promise.resolve()),
-    }
-
-    const jeunes = desJeunesAvecActionsNonTerminees()
-
-    it('devrait avoir un titre de niveau 1', async () => {
-      await act(async () => {
-        renderWithSession(
-          <DIProvider dependances={{ messagesService }}>
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-            />
-          </DIProvider>
-        )
+        //THEN
+        expect(addJeuneText).toBeInTheDocument()
+        expect(() => screen.getAllByRole('row')).toThrow()
       })
 
-      //WHEN
-      const heading = screen.getByRole('heading', {
-        level: 1,
-        name: 'Mes Jeunes',
-      })
+      it('affiche le message de succès de suppression de jeune', async () => {
+        //WHEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+              />
+            </DIProvider>
+          )
+        })
 
-      //THEN
-      expect(heading).toBeInTheDocument()
-    })
-
-    it("devrait afficher la liste des jeunes s'il en a", async () => {
-      //GIVEN
-      await act(async () => {
-        renderWithSession(
-          <DIProvider dependances={{ messagesService }}>
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-            />
-          </DIProvider>
-        )
-      })
-      //WHEN
-      const rows = screen.getAllByRole('row')
-
-      //THEN
-      expect(rows.length - 1).toBe(jeunes.length)
-      jeunes.forEach((jeune) => {
+        //THEN
         expect(
-          screen.getByText(`${jeune.nbActionsNonTerminees}`)
+          screen.getByText('Le compte du jeune a bien été supprimé.')
         ).toBeInTheDocument()
       })
-      expect(() =>
-        screen.getByText("Vous n'avez pas encore intégré de jeunes.")
-      ).toThrow()
-    })
-
-    it("devrait afficher un message invitant à ajouter des jeunes s'il n’en a pas", async () => {
-      //GIVEN
-      await act(async () => {
-        renderWithSession(
-          <DIProvider dependances={{ messagesService }}>
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={[]}
-              isFromEmail
-            />
-          </DIProvider>
-        )
-      })
-
-      //WHEN
-      const addJeuneText = screen.getByText(
-        "Vous n'avez pas encore intégré de jeunes."
-      )
-
-      //THEN
-      expect(addJeuneText).toBeInTheDocument()
-      expect(() => screen.getAllByRole('row')).toThrow()
     })
   })
 
@@ -263,7 +286,9 @@ describe('Mes Jeunes', () => {
       })
 
       // When
-      const actual = await getServerSideProps({} as GetServerSidePropsContext)
+      const actual = await getServerSideProps({
+        query: {},
+      } as GetServerSidePropsContext)
 
       // Then
       expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
@@ -281,13 +306,36 @@ describe('Mes Jeunes', () => {
       })
 
       // When
-      await getServerSideProps({} as GetServerSidePropsContext)
+      await getServerSideProps({ query: {} } as GetServerSidePropsContext)
 
       // Then
       expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
         'id-conseiller',
         'accessToken'
       )
+    })
+
+    it("traite la réussite d'une suppression de jeune", async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        hasSession: true,
+        session: {
+          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+          accessToken: 'accessToken',
+        },
+      })
+
+      // When
+      const actual = await getServerSideProps({
+        query: { suppression: 'succes' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(actual).toMatchObject({
+        props: {
+          deletionSuccess: true,
+        },
+      })
     })
 
     describe('pour un conseiller Pole emploi', () => {
@@ -303,7 +351,9 @@ describe('Mes Jeunes', () => {
         })
 
         // When
-        actual = await getServerSideProps({} as GetServerSidePropsContext)
+        actual = await getServerSideProps({
+          query: {},
+        } as GetServerSidePropsContext)
       })
 
       it('ne récupère pas les actions des jeunes', () => {
@@ -339,7 +389,9 @@ describe('Mes Jeunes', () => {
         })
 
         // When
-        actual = await getServerSideProps({} as GetServerSidePropsContext)
+        actual = await getServerSideProps({
+          query: {},
+        } as GetServerSidePropsContext)
       })
 
       it('récupère les actions des jeunes', () => {

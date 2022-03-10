@@ -1,18 +1,23 @@
 import CloseIcon from '../assets/icons/close.svg'
-import SuccessIcon from '../assets/icons/done.svg'
+import FailureIcon from '../assets/icons/important_outline.svg'
 
-type SuccessMessageProps = {
+type FailureMessageProps = {
   label: string
+  alert?: boolean
   onAcknowledge?: () => void
 }
 
-export default function SuccessMessage({
+export default function FailureMessage({
   label,
+  alert = true,
   onAcknowledge,
-}: SuccessMessageProps) {
+}: FailureMessageProps) {
   return (
-    <div className='text-success bg-success_lighten p-6 flex items-center rounded-medium mb-8'>
-      <SuccessIcon
+    <div
+      role={`${alert ? 'alert' : 'undefined'}`}
+      className='text-warning bg-warning_lighten p-6 flex items-center rounded-medium mb-8'
+    >
+      <FailureIcon
         aria-hidden={true}
         focusable={false}
         className='w-6 h-6 mr-2'
@@ -27,7 +32,7 @@ export default function SuccessMessage({
           <CloseIcon
             focusable='false'
             aria-hidden='true'
-            className='fill-success'
+            className='fill-warning'
           />
         </button>
       )}

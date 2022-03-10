@@ -53,12 +53,12 @@ export class ApiClient {
     })
   }
 
-  async delete(path: string, accessToken: string): Promise<Response> {
+  async delete(path: string, accessToken: string): Promise<void> {
     const headers = new Headers({
       Authorization: `bearer ${accessToken}`,
     })
 
-    return fetch(`${this.apiPrefix}${path}`, {
+    await fetchJson(`${this.apiPrefix}${path}`, {
       method: 'DELETE',
       headers,
     })

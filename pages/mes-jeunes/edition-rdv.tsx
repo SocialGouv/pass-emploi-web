@@ -1,7 +1,7 @@
 import { AppHead } from 'components/AppHead'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { ErrorMessage } from 'components/ui/ErrorMessage'
+import { InputError } from 'components/ui/InputError'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
@@ -262,9 +262,9 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               </span>
             </label>
             {date.error && (
-              <ErrorMessage id='date-error' className='mb-2'>
+              <InputError id='date-error' className='mb-2'>
                 {date.error}
-              </ErrorMessage>
+              </InputError>
             )}
             <input
               type='date'
@@ -290,9 +290,9 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               </span>
             </label>
             {horaire.error && (
-              <ErrorMessage id='horaire-error' className='mb-2'>
+              <InputError id='horaire-error' className='mb-2'>
                 {horaire.error}
-              </ErrorMessage>
+              </InputError>
             )}
             <input
               type='text'
@@ -318,9 +318,9 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               </span>
             </label>
             {duree.error && (
-              <ErrorMessage id='duree-error' className='mb-2'>
+              <InputError id='duree-error' className='mb-2'>
                 {duree.error}
-              </ErrorMessage>
+              </InputError>
             )}
             <input
               type='text'
