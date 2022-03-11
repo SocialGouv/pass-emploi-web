@@ -13,7 +13,7 @@ export const ErrorMessage = ({
   className,
 }: ErrorMessageProps) => (
   <div id={id} className={`${className ?? ''} flex items-center`}>
-    <ErrorIcon focusable={false} aria-hidden={true} className='mr-1' />
+    <ErrorIcon focusable={false} aria-hidden={true} className='mr-1 shrink-0' />
     <p className='text-warning text-sm-semi'>{children}</p>
   </div>
 )

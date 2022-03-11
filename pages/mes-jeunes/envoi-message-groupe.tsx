@@ -47,7 +47,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
           Message multi-destinataires
         </h1>
       </div>
-      <div className={styles.content}>
+      <div className={`${styles.content} max-w-[500px] m-auto`}>
         <form>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs sont obligatoires

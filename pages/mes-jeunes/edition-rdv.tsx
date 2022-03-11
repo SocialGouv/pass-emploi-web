@@ -172,7 +172,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
 
         <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
       </div>
-      <div className={styles.content}>
+      <div className={`${styles.content} max-w-[500px] m-auto`}>
         <form onSubmit={creerRendezVous}>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs avec * sont obligatoires
