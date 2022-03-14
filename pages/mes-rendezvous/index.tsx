@@ -84,6 +84,11 @@ const MesRendezvous = ({
   }
 
   useMatomo(trackingTitle)
+  useMatomo(
+    showMessageGroupeEnvoiSuccess
+      ? `${pageTracking} - Succès envoi message`
+      : pageTracking
+  )
 
   return (
     <>
@@ -185,6 +190,7 @@ export const getServerSideProps: GetServerSideProps<
   const props: MesRendezvousProps = {
     rendezVousFuturs: futurs,
     rendezVousPasses: passes,
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
   if (context.query.creationRdv)
     props.creationSuccess = context.query.creationRdv === 'succes'

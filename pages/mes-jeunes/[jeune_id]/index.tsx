@@ -106,6 +106,11 @@ const FicheJeune = ({
   }
 
   useMatomo(trackingLabel)
+  useMatomo(
+    showMessageGroupeEnvoiSuccess
+      ? `${pageTracking} - Succès envoi message`
+      : undefined
+  )
 
   return (
     <>
@@ -254,7 +259,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     jeune: resInfoJeune,
     rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
     actions: userActions,
-    messageEnvoiGroupeSuccess: Boolean(context.query.envoiMessage),
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'

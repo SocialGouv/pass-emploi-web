@@ -101,6 +101,11 @@ function Actions({
   }
 
   useMatomo(trackingLabel)
+  useMatomo(
+    showMessageGroupeEnvoiSuccess
+      ? `Actions jeune - Succès envoi message`
+      : 'Actions jeune'
+  )
 
   return (
     <>
@@ -238,7 +243,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       (action) => action.status === ActionStatus.Done
     ),
     deleteSuccess: Boolean(context.query.deleteSuccess),
-    messageEnvoiGroupeSuccess: Boolean(context.query.envoiMessage),
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
 
   return {

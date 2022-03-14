@@ -26,6 +26,7 @@ import Etape4Icon from '../../assets/icons/etape_4.svg'
 interface EditionRdvProps {
   jeunes: Jeune[]
   from: string
+  url?: string
   withoutChat: true
   idJeuneFrom?: string
 }
@@ -35,7 +36,7 @@ interface InputValue {
   error?: string
 }
 
-function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
+function EditionRdv({ jeunes, from, idJeuneFrom, url }: EditionRdvProps) {
   const { data: session } = useSession({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
@@ -145,7 +146,7 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
       },
       session!.accessToken
     )
-    await router.push(`${from}?creationRdv=succes`)
+    await router.push(`${url}?creationRdv=succes`)
   }
 
   useMatomo(`Création RDV${idJeuneFrom ? ' jeune' : ''}`)
@@ -420,16 +421,13 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
   const from: string | undefined = context.query.from as string
+  const url = context.req.headers.referer
+
   const props: EditionRdvProps = {
     jeunes: jeunes,
     withoutChat: true,
     from: from ?? '/mes-jeunes',
-  }
-
-  if (from) {
-    const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
-    const match = regex.exec(from)
-    if (match?.groups?.idJeune) props.idJeuneFrom = match.groups.idJeune
+    url: url ?? undefined,
   }
 
   return { props }

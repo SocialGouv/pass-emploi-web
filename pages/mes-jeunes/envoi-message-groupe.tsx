@@ -16,7 +16,7 @@ import SendIcon from '../../assets/icons/send.svg'
 import { MessagesService } from 'services/messages.service'
 import { useSession } from 'next-auth/react'
 import { ErrorMessage } from 'components/ui/ErrorMessage'
-import Router, { useRouter, withRouter } from 'next/router'
+import { useRouter } from 'next/router'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
@@ -26,13 +26,15 @@ interface EnvoiMessageGroupeProps {
 
 function EnvoiMessageGroupe({ jeunes, url }: EnvoiMessageGroupeProps) {
   const { data: session } = useSession({ required: true })
-  const messagesService = useDependance<MessagesService>('messagesService')
-
   const router = useRouter()
+  const messagesService = useDependance<MessagesService>('messagesService')
 
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string>('')
+  const initialTracking: string = !erreurMessage ? 'Message - Rédaction' : ''
+
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
 
@@ -52,19 +54,21 @@ function EnvoiMessageGroupe({ jeunes, url }: EnvoiMessageGroupeProps) {
           session!.accessToken
         )
         .then(() => {
-          router.push(`${url}?envoiMessage=succes`)
+          if (url) {
+            router.push(`${url}?envoiMessage=succes`)
+          }
         })
         .catch((error) => {
           setErreurMessage(
             "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer." ||
               (error as Error).message
           )
+          setTrackingLabel('Message - Échec envoi message')
         })
     }
   }
 
-  useMatomo('Message - Rédaction')
-  useMatomo(erreurMessage ? 'Échec envoi message' : 'Succès envoi message')
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -173,7 +177,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
-      url: url,
+      url: url ?? undefined,
     },
   }
 }

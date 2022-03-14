@@ -41,6 +41,8 @@ function PageAction({
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
+  const pageTracking: string = 'Détail Action'
+
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
       action.id,
@@ -82,8 +84,8 @@ function PageAction({
 
   useMatomo(
     showMessageGroupeEnvoiSuccess
-      ? 'Détail action - Succès envoi message'
-      : 'Détail action'
+      ? `${pageTracking} - Succès envoi message`
+      : pageTracking
   )
 
   return (
@@ -208,7 +210,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const props: PageActionProps = {
     action: res,
     jeune: res.jeune,
-    messageEnvoiGroupeSuccess: Boolean(context.query.envoiMessage),
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
 
   return {

@@ -139,6 +139,11 @@ function MesJeunes({
   }, [conseillerJeunes, messagesService, session])
 
   useMatomo(trackingTitle)
+  useMatomo(
+    showMessageGroupeEnvoiSuccess
+      ? 'Mes jeunes - Succès envoi message'
+      : 'Mes jeunes'
+  )
 
   return (
     <>
@@ -247,7 +252,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       compareJeunesByLastName
     ),
     isFromEmail: Boolean(context.query?.source),
-    messageEnvoiGroupeSuccess: Boolean(context.query.envoiMessage),
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
 
   if (context.query.suppression)
