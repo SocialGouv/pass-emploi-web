@@ -8,7 +8,7 @@ import { UserStructure } from 'interfaces/conseiller'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -19,17 +19,22 @@ type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
   creationSuccess?: boolean
+  messageEnvoiGroupeSuccess?: boolean
 }
 
 const MesRendezvous = ({
   rendezVousFuturs,
   rendezVousPasses,
   creationSuccess,
+  messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) => {
   const router = useRouter()
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     creationSuccess ?? false
   )
+  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
+    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
@@ -63,6 +68,10 @@ const MesRendezvous = ({
     router.replace('', undefined, { shallow: true })
   }
 
+  function closeMessageGroupeEnvoiMessage(): void {
+    setShowMessageGroupeEnvoiSuccess(false)
+  }
+
   function openDeleteRdvModal(rdv: Rdv) {
     setSelectedRdv(rdv)
     setShowDeleteModal(true)
@@ -93,6 +102,15 @@ const MesRendezvous = ({
           <SuccessMessage
             label={'Le rendez-vous a bien été créé'}
             onAcknowledge={closeRdvCreationMessage}
+          />
+        )}
+
+        {showMessageGroupeEnvoiSuccess && (
+          <SuccessMessage
+            label={
+              'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
+            }
+            onAcknowledge={closeMessageGroupeEnvoiMessage}
           />
         )}
 

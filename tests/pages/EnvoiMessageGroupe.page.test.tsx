@@ -144,6 +144,5 @@ describe('EnvoiMessageGroupe', () => {
       })
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
     })
-    xit('devrait afficher un message de succès en cas de réussite', () => {})
   })
 })

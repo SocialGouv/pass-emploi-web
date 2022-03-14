@@ -26,6 +26,7 @@ interface FicheJeuneProps {
   rdvs: RdvJeune[]
   actions: ActionJeune[]
   rdvCreationSuccess?: boolean
+  messageEnvoiGroupeSuccess?: boolean
 }
 
 const FicheJeune = ({
@@ -33,6 +34,7 @@ const FicheJeune = ({
   rdvs,
   actions,
   rdvCreationSuccess,
+  messageEnvoiGroupeSuccess,
 }: FicheJeuneProps) => {
   const { data: session } = useSession({ required: true })
   const router = useRouter()
@@ -45,6 +47,9 @@ const FicheJeune = ({
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
+
+  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
+    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -89,6 +94,17 @@ const FicheJeune = ({
     setTrackingLabel(pageTracking)
   }
 
+  function closeMessageGroupeEnvoiMessage(): void {
+    setShowMessageGroupeEnvoiSuccess(false)
+    router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
   useMatomo(trackingLabel)
 
   return (
@@ -116,6 +132,15 @@ const FicheJeune = ({
           <SuccessMessage
             label={'Le rendez-vous a bien été créé'}
             onAcknowledge={closeRdvCreationMessage}
+          />
+        )}
+
+        {showMessageGroupeEnvoiSuccess && (
+          <SuccessMessage
+            label={
+              'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
+            }
+            onAcknowledge={closeMessageGroupeEnvoiMessage}
           />
         )}
 
@@ -229,6 +254,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     jeune: resInfoJeune,
     rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
     actions: userActions,
+    messageEnvoiGroupeSuccess: Boolean(context.query.envoiMessage),
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'

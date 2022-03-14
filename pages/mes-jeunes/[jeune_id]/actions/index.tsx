@@ -1,8 +1,10 @@
 import AddActionModal from 'components/action/AddActionModal'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
-import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import Button from 'components/ui/Button'
+import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
+import FiltresActionsTabList from 'components/action/FiltresActions'
+import SuccessMessage from 'components/SuccessMessage'
 import {
   ActionJeune,
   ActionStatus,
@@ -20,17 +22,17 @@ import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
-import FiltresActionsTabList from 'components/action/FiltresActions'
 
 const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
 
-type Props = {
+type ActionsProps = {
   jeune: Jeune
   actions: ActionJeune[]
   actionsARealiser: ActionJeune[]
   actionsCommencees: ActionJeune[]
   actionsTerminees: ActionJeune[]
   deleteSuccess: boolean
+  messageEnvoiGroupeSuccess?: boolean
 }
 
 function Actions({
@@ -40,9 +42,14 @@ function Actions({
   actionsCommencees,
   actionsTerminees,
   deleteSuccess,
-}: Props) {
+  messageEnvoiGroupeSuccess,
+}: ActionsProps) {
   const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
+
+  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
+    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+
   const [actionsFiltrees, setActionsFiltrees] = useState(actions)
   const [currentFilter, setCurrentFilter] = useState<ActionStatus | string>(
     TOUTES_LES_ACTIONS_LABEL
@@ -56,6 +63,17 @@ function Actions({
 
   const closeSuccessMessage = () => {
     setShowSuccessMessage(false)
+    router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}/actions`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  function closeMessageGroupeEnvoiMessage(): void {
+    setShowMessageGroupeEnvoiSuccess(false)
     router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}/actions`,
@@ -134,6 +152,15 @@ function Actions({
           />
         )}
 
+        {showMessageGroupeEnvoiSuccess && (
+          <SuccessMessage
+            label={
+              'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
+            }
+            onAcknowledge={closeMessageGroupeEnvoiMessage}
+          />
+        )}
+
         <FiltresActionsTabList
           currentFilter={currentFilter}
           actionsLength={actions.length}
@@ -198,21 +225,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const sortedActions = [...dataActionsJeune].sort(compareActionsDatesDesc)
 
+  const props: ActionsProps = {
+    jeune: dataDetailsJeune,
+    actions: sortedActions,
+    actionsARealiser: sortedActions.filter(
+      (action) => action.status === ActionStatus.NotStarted
+    ),
+    actionsCommencees: sortedActions.filter(
+      (action) => action.status === ActionStatus.InProgress
+    ),
+    actionsTerminees: sortedActions.filter(
+      (action) => action.status === ActionStatus.Done
+    ),
+    deleteSuccess: Boolean(context.query.deleteSuccess),
+    messageEnvoiGroupeSuccess: Boolean(context.query.envoiMessage),
+  }
+
   return {
-    props: {
-      jeune: dataDetailsJeune,
-      actions: sortedActions,
-      actionsARealiser: sortedActions.filter(
-        (action) => action.status === ActionStatus.NotStarted
-      ),
-      actionsCommencees: sortedActions.filter(
-        (action) => action.status === ActionStatus.InProgress
-      ),
-      actionsTerminees: sortedActions.filter(
-        (action) => action.status === ActionStatus.Done
-      ),
-      deleteSuccess: Boolean(context.query.deleteSuccess),
-    },
+    props,
   }
 }
 

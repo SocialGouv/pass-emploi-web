@@ -1,10 +1,10 @@
 import { AppHead } from 'components/AppHead'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { compareJeunesByLastName, Jeune, JeuneChat } from 'interfaces/jeune'
+import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import { MouseEvent, useEffect, useState } from 'react'
+import { MouseEvent, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
@@ -16,14 +16,15 @@ import SendIcon from '../../assets/icons/send.svg'
 import { MessagesService } from 'services/messages.service'
 import { useSession } from 'next-auth/react'
 import { ErrorMessage } from 'components/ui/ErrorMessage'
-import { useRouter } from 'next/router'
+import Router, { useRouter, withRouter } from 'next/router'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
   withoutChat: true
+  url?: string
 }
 
-function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
+function EnvoiMessageGroupe({ jeunes, url }: EnvoiMessageGroupeProps) {
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -32,10 +33,6 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string>('')
-
-  useEffect(() => {
-    setErreurMessage(erreurMessage)
-  }, [erreurMessage])
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
 
@@ -55,7 +52,7 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
           session!.accessToken
         )
         .then(() => {
-          router.push('/mes-jeunes')
+          router.push(`${url}?envoiMessage=succes`)
         })
         .catch((error) => {
           setErreurMessage(
@@ -66,8 +63,8 @@ function EnvoiMessageGroupe({ jeunes }: EnvoiMessageGroupeProps) {
     }
   }
 
-  //useMatomo('Message - Rédaction')
-  //useMatomo(erreurMessage ? 'Échec envoi message' : 'Succès envoi message')
+  useMatomo('Message - Rédaction')
+  useMatomo(erreurMessage ? 'Échec envoi message' : 'Succès envoi message')
 
   return (
     <>
@@ -168,12 +165,15 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
+
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const url = context.req.headers.referer
 
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
+      url: url,
     },
   }
 }
