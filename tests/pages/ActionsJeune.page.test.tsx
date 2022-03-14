@@ -75,18 +75,15 @@ describe("Page Liste des actions d'un jeune", () => {
 
     describe("Filtres de la liste d'actions", () => {
       it('Affiche les boutons des filtres', () => {
-        expect(screen.getByRole('tab', { selected: true })).toBeInTheDocument()
-        expect(screen.getByRole('tab', { selected: true })).toHaveAttribute(
-          'tabIndex',
-          '0'
-        )
-        expect(screen.getAllByRole('tab', { selected: false }).length).toEqual(
-          3
-        )
+        const selected = screen.getByRole('tab', { selected: true })
+        expect(selected).toBeInTheDocument()
+        expect(selected).toHaveAttribute('tabIndex', '-1')
 
-        expect(
-          screen.getAllByRole('tab', { selected: false })[0]
-        ).toHaveAttribute('tabIndex', '-1')
+        const notSelected = screen.getAllByRole('tab', { selected: false })
+        expect(notSelected.length).toEqual(3)
+        for (const filtre of notSelected) {
+          expect(filtre).toHaveAttribute('tabIndex', '0')
+        }
       })
 
       it("Affiche les actions terminees lorsqu'on clique sur le bouton terminee", async () => {

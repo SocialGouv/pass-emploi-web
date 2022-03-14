@@ -1,16 +1,17 @@
+import { MouseEventHandler, ReactNode } from 'react'
 import styles from 'styles/components/Button.module.css'
 
-type ButtonProps = {
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
-  children?: React.ReactNode
+interface Props {
+  children: ReactNode
+  style?: ButtonStyle
+  className?: any
+  onClick?: MouseEventHandler<HTMLButtonElement>
   role?: string
   type?: 'button' | 'submit' | 'reset'
   controls?: string
   label?: string
   disabled?: boolean
   selected?: boolean
-  style?: ButtonStyle
-  className?: any
   form?: string
   id?: string
   tabIndex?: number
@@ -22,53 +23,52 @@ export enum ButtonStyle {
   WARNING = 'WARNING',
 }
 
-const Button = ({
-  onClick,
+export default function Button({
   children,
-  role,
-  type,
-  controls,
-  disabled = false,
-  selected = false,
-  label,
-  style = ButtonStyle.PRIMARY,
+  onClick,
   className,
+  style = ButtonStyle.PRIMARY,
   form,
   id,
   tabIndex,
-}: ButtonProps) => {
+  role,
+  type,
+  controls,
+  label,
+  disabled,
+  selected,
+}: Props) {
   return (
-    <button
-      onClick={onClick}
-      className={`${className ? className : ''} text-sm ${
-        styles.button
-      } ${getColorStyleClassName(style)}`}
-      form={form ?? undefined}
-      id={id ?? undefined}
-      tabIndex={tabIndex ?? undefined}
-      role={role ?? undefined}
-      type={type ?? undefined}
-      aria-controls={controls ?? undefined}
-      aria-label={label ?? undefined}
-      disabled={disabled}
-      aria-disabled={disabled}
-      aria-selected={selected}
-    >
-      {children}
-    </button>
+    <>
+      <button
+        onClick={onClick}
+        className={`${className ? className : ''} text-sm ${
+          styles.button
+        } ${getColorStyleClassName(style)}`}
+        form={form ?? undefined}
+        id={id ?? undefined}
+        tabIndex={tabIndex ?? undefined}
+        role={role ?? undefined}
+        type={type ?? undefined}
+        aria-controls={controls ?? undefined}
+        aria-label={label ?? undefined}
+        disabled={disabled}
+        aria-disabled={disabled}
+        aria-selected={selected}
+      >
+        {children}
+      </button>
+    </>
   )
 }
 
-const getColorStyleClassName = (style: ButtonStyle | undefined): string => {
+function getColorStyleClassName(style: ButtonStyle): string {
   switch (style) {
     case ButtonStyle.SECONDARY:
       return styles.buttonSecondary
     case ButtonStyle.WARNING:
       return styles.buttonWarning
     case ButtonStyle.PRIMARY:
-    default:
       return styles.buttonPrimary
   }
 }
-
-export default Button

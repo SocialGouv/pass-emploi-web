@@ -1,18 +1,18 @@
 import { AppHead } from 'components/AppHead'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { ErrorMessage } from 'components/ui/ErrorMessage'
+import ButtonLink from 'components/ui/ButtonLink'
+import { InputError } from 'components/ui/InputError'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, useState, MouseEvent } from 'react'
+import { FormEvent, MouseEvent, useState } from 'react'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
-import linkStyles from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -263,9 +263,9 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               </span>
             </label>
             {date.error && (
-              <ErrorMessage id='date-error' className='mb-2'>
+              <InputError id='date-error' className='mb-2'>
                 {date.error}
-              </ErrorMessage>
+              </InputError>
             )}
             <input
               type='date'
@@ -291,9 +291,9 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               </span>
             </label>
             {horaire.error && (
-              <ErrorMessage id='horaire-error' className='mb-2'>
+              <InputError id='horaire-error' className='mb-2'>
                 {horaire.error}
-              </ErrorMessage>
+              </InputError>
             )}
             <input
               type='text'
@@ -319,9 +319,9 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
               </span>
             </label>
             {duree.error && (
-              <ErrorMessage id='duree-error' className='mb-2'>
+              <InputError id='duree-error' className='mb-2'>
                 {duree.error}
-              </ErrorMessage>
+              </InputError>
             )}
             <input
               type='text'
@@ -367,18 +367,20 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
 
           <div className='flex justify-center'>
             {!formHasChanges() && (
-              <Link href={from}>
-                <a className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}>
-                  Annuler
-                </a>
-              </Link>
+              <ButtonLink
+                href={from}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3'
+              >
+                Annuler
+              </ButtonLink>
             )}
             {formHasChanges() && (
               <Button
                 aria-label='Quitter la création du rendez-vous'
                 onClick={openLeavePageModal}
                 style={ButtonStyle.SECONDARY}
-                className={`${linkStyles.linkButtonSecondary} text-sm mr-3`}
+                className='mr-3'
               >
                 Annuler
               </Button>

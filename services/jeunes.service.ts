@@ -27,6 +27,8 @@ export interface JeunesService {
     idsJeunes: string[],
     accessToken: string
   ): Promise<void>
+
+  supprimerJeune(idJeune: string, accessToken: string): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -93,5 +95,9 @@ export class JeunesApiService implements JeunesService {
       },
       accessToken
     )
+  }
+
+  async supprimerJeune(idJeune: string, accessToken: string): Promise<void> {
+    await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
   }
 }

@@ -5,6 +5,7 @@ import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import SuccessMessage from 'components/SuccessMessage'
+import ButtonLink from 'components/ui/ButtonLink'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -15,7 +16,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
-import linkStyle from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -45,7 +45,9 @@ const FicheJeune = ({
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
-  const pageTracking: string = 'Détail jeune'
+  const pageTracking: string = jeune.isActivated
+    ? 'Détail jeune'
+    : 'Détail jeune - Non Activé'
   const initialTracking: string = `${pageTracking}${
     rdvCreationSuccess ? ' - Creation rdv succès' : ''
   }`
@@ -102,15 +104,13 @@ const FicheJeune = ({
         </Link>
 
         {!isPoleEmploi && (
-          <Link href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
-            <a className={`${linkStyle.linkButtonSecondary} text-sm`}>
-              Fixer un rendez-vous
-            </a>
-          </Link>
+          <ButtonLink href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
+            Fixer un rendez-vous
+          </ButtonLink>
         )}
       </div>
 
-      <div className={`flex flex-col ${styles.content}`}>
+      <div className={styles.content}>
         {showRdvCreationSuccess && (
           <SuccessMessage
             label={'Le rendez-vous a bien été créé'}
@@ -120,7 +120,7 @@ const FicheJeune = ({
 
         <DetailsJeune jeune={jeune} />
 
-        <div className='mt-8 border-b border-bleu_blanc'>
+        <div className='mt-10 border-b border-bleu_blanc'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>
             Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
           </h2>

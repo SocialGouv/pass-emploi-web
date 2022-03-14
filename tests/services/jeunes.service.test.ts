@@ -109,4 +109,20 @@ describe('JeunesApiService', () => {
       )
     })
   })
+
+  describe('.supprimerJeune', () => {
+    it('supprime le jeune', async () => {
+      // Given
+      const accessToken = 'accessToken'
+
+      // When
+      await jeunesService.supprimerJeune('id-jeune', accessToken)
+
+      // Then
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        `/jeunes/id-jeune`,
+        accessToken
+      )
+    })
+  })
 })

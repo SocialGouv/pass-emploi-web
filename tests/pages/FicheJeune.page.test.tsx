@@ -10,7 +10,6 @@ import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { DIProvider } from 'utils/injectionDependances'
-import MesRendezvous from '../../pages/mes-rendezvous'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({

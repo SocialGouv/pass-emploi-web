@@ -15,7 +15,7 @@ import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
-jest.mock('next/router', () => ({ useRouter: jest.fn() }))
+jest.mock('next/router')
 
 describe('EditionRdv', () => {
   afterAll(() => jest.clearAllMocks())

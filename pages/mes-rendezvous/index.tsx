@@ -3,15 +3,14 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { UserStructure } from 'interfaces/conseiller'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
-import linkStyle from 'styles/components/Link.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -19,17 +18,17 @@ import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedi
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
-  succesCreation?: boolean
+  creationSuccess?: boolean
 }
 
 const MesRendezvous = ({
   rendezVousFuturs,
   rendezVousPasses,
-  succesCreation,
+  creationSuccess,
 }: MesRendezvousProps) => {
   const router = useRouter()
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
-    succesCreation ?? false
+    creationSuccess ?? false
   )
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
@@ -37,7 +36,7 @@ const MesRendezvous = ({
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
   const pageTracking = `Mes rendez-vous`
   const initialTracking = `${pageTracking}${
-    succesCreation ? ' - Creation rdv succès' : ''
+    creationSuccess ? ' - Creation rdv succès' : ''
   }`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -84,11 +83,9 @@ const MesRendezvous = ({
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <Link href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
-          <a className={`${linkStyle.linkButtonBlue} text-sm`}>
-            Fixer un rendez-vous
-          </a>
-        </Link>
+        <ButtonLink href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
+          Fixer un rendez-vous
+        </ButtonLink>
       </span>
 
       <div className={styles.content}>
@@ -171,7 +168,7 @@ export const getServerSideProps: GetServerSideProps<
     rendezVousPasses: passes,
   }
   if (context.query.creationRdv)
-    props.succesCreation = context.query.creationRdv === 'succes'
+    props.creationSuccess = context.query.creationRdv === 'succes'
   return { props }
 }
 

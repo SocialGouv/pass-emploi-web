@@ -88,7 +88,7 @@ describe('MesRendezvous', () => {
           <MesRendezvous
             rendezVousFuturs={rendezVousFuturs}
             rendezVousPasses={rendezVousPasses}
-            succesCreation={true}
+            creationSuccess={true}
           />
         )
       })

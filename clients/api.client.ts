@@ -1,4 +1,4 @@
-import fetchJson from '../utils/fetchJson'
+import { fetchJson, fetchNoContent } from 'utils/fetchJson'
 
 export class ApiClient {
   private readonly apiPrefix?: string
@@ -40,25 +40,26 @@ export class ApiClient {
     path: string,
     payload: { [key: string]: any },
     accessToken: string
-  ): Promise<Response> {
+  ): Promise<void> {
     const headers = new Headers({
       Authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
     })
 
-    return fetch(`${this.apiPrefix}${path}`, {
+    return fetchNoContent(`${this.apiPrefix}${path}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(payload),
     })
   }
 
-  async delete(path: string, accessToken: string): Promise<Response> {
+  async delete(path: string, accessToken: string): Promise<void> {
     const headers = new Headers({
       Authorization: `bearer ${accessToken}`,
+      'content-type': 'application/json',
     })
 
-    return fetch(`${this.apiPrefix}${path}`, {
+    await fetchNoContent(`${this.apiPrefix}${path}`, {
       method: 'DELETE',
       headers,
     })

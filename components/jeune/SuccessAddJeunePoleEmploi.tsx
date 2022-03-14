@@ -1,7 +1,6 @@
-import Link from 'next/link'
+import ButtonLink from 'components/ui/ButtonLink'
 import useMatomo from 'utils/analytics/useMatomo'
 import CheckSuccessIcon from '../../assets/icons/check_success.svg'
-import linkStyle from 'styles/components/Link.module.css'
 
 interface SuccessAddJeunePoleEmploiProps {
   idJeune: string
@@ -28,9 +27,9 @@ export const SuccessAddJeunePoleEmploi = ({
           jeunes&quot;
         </p>
       </div>
-      <Link href={`/mes-jeunes/${idJeune}`}>
-        <a className={linkStyle.linkButtonBlue}>Accéder à la fiche du jeune</a>
-      </Link>
+      <ButtonLink href={`/mes-jeunes/${idJeune}`}>
+        Accéder à la fiche du jeune
+      </ButtonLink>
     </div>
   )
 }

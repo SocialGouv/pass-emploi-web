@@ -2,6 +2,7 @@ import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
+import SuccessMessage from 'components/SuccessMessage'
 import { ActionsCount } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
@@ -27,12 +28,14 @@ type MesJeunesProps = {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
+  deletionSuccess?: boolean
 }
 
 function MesJeunes({
   structureConseiller,
   conseillerJeunes,
   isFromEmail,
+  deletionSuccess,
 }: MesJeunesProps) {
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -41,23 +44,33 @@ function MesJeunes({
   const [listeJeunesFiltres, setListJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
   >([])
+  const [showDeletionSuccess, setShowDeletionSuccess] = useState<boolean>(
+    deletionSuccess ?? false
+  )
 
   const initialTracking = `Mes jeunes${
     conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
   }${isFromEmail ? ' - Origine email' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  const handleAddJeune = () => {
+  const handleAddJeune = async () => {
     switch (structureConseiller) {
       case UserStructure.MILO:
-        Router.push('/mes-jeunes/milo/creation-jeune')
+        await Router.push('/mes-jeunes/milo/creation-jeune')
         break
       case UserStructure.POLE_EMPLOI:
-        Router.push('/mes-jeunes/pole-emploi/creation-jeune')
+        await Router.push('/mes-jeunes/pole-emploi/creation-jeune')
         break
       default:
         break
     }
+  }
+
+  async function closeDeletionSuccess(): Promise<void> {
+    setShowDeletionSuccess(false)
+    await Router.replace({ pathname: `/mes-jeunes` }, undefined, {
+      shallow: true,
+    })
   }
 
   const onSearch = useCallback(
@@ -131,6 +144,13 @@ function MesJeunes({
       </div>
 
       <div className={`w-full flex flex-col ${styles.content}`}>
+        {showDeletionSuccess && (
+          <SuccessMessage
+            label='Le compte du jeune a bien été supprimé.'
+            onAcknowledge={closeDeletionSuccess}
+          />
+        )}
+
         {conseillerJeunes.length === 0 && (
           <div className='mx-auto my-0'>
             <AddJeuneImage
@@ -200,15 +220,16 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     })
   }
 
-  return {
-    props: {
-      structureConseiller: user.structure,
-      conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
-        compareJeunesByLastName
-      ),
-      isFromEmail: Boolean(context.query?.source),
-    },
+  const props: MesJeunesProps = {
+    structureConseiller: user.structure,
+    conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
+      compareJeunesByLastName
+    ),
+    isFromEmail: Boolean(context.query?.source),
   }
+  if (context.query.suppression)
+    props.deletionSuccess = context.query.suppression === 'succes'
+  return { props }
 }
 
 export default MesJeunes
