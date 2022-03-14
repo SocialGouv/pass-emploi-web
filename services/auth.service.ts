@@ -1,5 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import fetchJson from 'utils/fetchJson'
+import { fetchJson } from 'utils/fetchJson'
 
 interface RefreshedTokens {
   access_token: string | undefined
