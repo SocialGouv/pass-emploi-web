@@ -1,4 +1,5 @@
-import NextAuth from 'next-auth'
+import NextAuth, { Account, Session } from 'next-auth'
+import { HydratedJWT, JWT } from 'next-auth/jwt'
 import KeycloakProvider from 'next-auth/providers/keycloak'
 import authenticator from 'utils/auth/authenticator'
 
@@ -17,17 +18,18 @@ export default NextAuth({
   },
 
   callbacks: {
-    async jwt({ token: jwt, account }) {
+    async jwt({ token: jwt, account }: { token: JWT; account?: Account }) {
       return authenticator.handleJWTAndRefresh({ jwt, account })
     },
 
-    async session({ session, token }) {
-      if (token.accessToken && !session.firebaseToken) {
-        session.firebaseToken = await authenticator.handleFirebaseToken(
-          token.accessToken as string
-        )
-      }
-
+    async session({
+      session,
+      token,
+    }: {
+      session: Session
+      token: HydratedJWT
+    }) {
+      session.firebaseToken = token.firebaseToken ?? ''
       session.user.id = token.idConseiller ?? ''
       session.user.structure = token.structureConseiller ?? ''
       session.user.estSuperviseur = token.estSuperviseur ?? false

@@ -22,9 +22,10 @@ declare module 'next-auth' {
 }
 
 declare module 'next-auth/jwt' {
-  interface JWT extends Record<string, unknown>, DefaultJWT {
+  interface HydratedJWT extends Record<string, unknown>, DefaultJWT {
     accessToken?: string
     refreshToken?: string
+    firebaseToken?: string
     expiresAtTimestamp?: number
     idConseiller?: string
     structureConseiller?: string
