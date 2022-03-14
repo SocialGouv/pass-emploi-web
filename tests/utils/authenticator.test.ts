@@ -32,8 +32,11 @@ describe('Authenticator', () => {
     const cinqMnEnMs = 300000
 
     describe("Quand c'est la 1ere connexion", () => {
-      it("enrichit le JWT avec l'accessToken, sa date d'expiration et le refreshToken", async () => {
+      it('enrichit le JWT avec les infos du token et du conseiller', async () => {
         // Given
+        authService.getFirebaseToken = jest
+          .fn()
+          .mockResolvedValueOnce({ token: 'firebaseToken' })
         const expiresAtInSeconds: number = 1638434737
 
         // When
@@ -55,18 +58,20 @@ describe('Authenticator', () => {
           expiresAtTimestamp: expiresAtInSeconds * 1000,
           idConseiller: '41',
           estSuperviseur: true,
+          firebaseToken: 'firebaseToken',
+          structureConseiller: UserStructure.PASS_EMPLOI,
         })
       })
     })
     describe("Quand ce n'est pas la première connexion", () => {
-      it('renvoie le JWT', () => {
+      it('renvoie le JWT', async () => {
         // When
         const vingtSEnMs = 20000
         const jwt = {
           ...jwtFixture(),
           expiresAtTimestamp: now + vingtSEnMs,
         }
-        const actual = authenticator.handleJWTAndRefresh({
+        const actual = await authenticator.handleJWTAndRefresh({
           jwt,
           account: undefined,
         })
@@ -141,42 +146,6 @@ describe('Authenticator', () => {
           expect(actual).toEqual(jwtMisAjour)
         })
       })
-    })
-    describe('Quand un conseiller Pass emploi se connecte', () => {
-      it("renvoie la structure d'origine du conseiller", async () => {
-        // Given
-        const expiresAtInSeconds: number = 1638434737
-
-        // When
-        const jwt = jwtFixture()
-        const actual = await authenticator.handleJWTAndRefresh({
-          jwt,
-          account: accountFixture({
-            accessToken,
-            refreshToken,
-            expiresAtInSeconds,
-          }),
-        })
-
-        // Then
-        expect(actual.structureConseiller).toEqual(UserStructure.PASS_EMPLOI)
-      })
-    })
-  })
-
-  describe('handleFirebaseToken', () => {
-    it('devrait retourner le token firebase', async () => {
-      //GIVEN
-      const expectedResult = accessToken
-      authService.getFirebaseToken = jest.fn().mockResolvedValueOnce({
-        token: accessToken,
-      })
-
-      //WHEN
-      const result = await authenticator.handleFirebaseToken(accessToken)
-
-      //THEN
-      expect(result).toEqual(expectedResult)
     })
   })
 })
