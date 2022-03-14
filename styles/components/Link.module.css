@@ -26,32 +26,3 @@
   color: theme('colors.bleu_nuit');
   border: 1px solid theme('colors.bleu_nuit');
 }
-
-/* Link-Button secondary */
-.linkButtonSecondary {
-  display: flex;
-  align-items: center;
-  height: max-content;
-  padding: 0.75rem 2rem;
-  border-radius: 9999px;
-  transition: border-color, color 0.2s, background-color 0.2s;
-  background-color: theme('colors.blanc');
-  color: theme('colors.bleu_nuit');
-  border: 1px solid theme('colors.bleu_nuit');
-}
-
-.linkButtonSecondary:hover {
-  background-color: theme('colors.bleu_nuit');
-  color: theme('colors.blanc');
-  border: 1px solid transparent;
-}
-
-.linkButtonSecondary:hover svg {
-  fill: theme('colors.blanc');
-}
-
-.linkButtonSecondary:active {
-  background-color: theme('colors.bleu_nuit');
-  color: theme('colors.blanc');
-  border: 1px solid transparent;
-}

@@ -162,7 +162,7 @@ export default function ChatRoom({
                 )}
               </ul>
               {enableMultiDestinataireLink && (
-                // FIXME : use <Button href={'/mes-jeunes/envoi-message-groupe'}> but causes problem with tailwind and style order
+                // FIXME : use <ButtonLink> but causes problem with tailwind and style order
                 <Link href={'/mes-jeunes/envoi-message-groupe'}>
                   <a
                     className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}

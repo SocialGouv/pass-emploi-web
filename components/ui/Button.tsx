@@ -1,17 +1,10 @@
-import Link from 'next/link'
 import { MouseEventHandler, ReactNode } from 'react'
 import styles from 'styles/components/Button.module.css'
-import { UrlObject } from 'url'
 
-interface CommonProps {
+interface Props {
   children: ReactNode
   style?: ButtonStyle
   className?: any
-}
-interface LinkProps extends CommonProps {
-  href: string | UrlObject
-}
-interface ButtonProps extends CommonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>
   role?: string
   type?: 'button' | 'submit' | 'reset'
@@ -23,7 +16,6 @@ interface ButtonProps extends CommonProps {
   id?: string
   tabIndex?: number
 }
-type Props = LinkProps | ButtonProps
 
 export enum ButtonStyle {
   PRIMARY = 'PRIMARY',
@@ -31,34 +23,7 @@ export enum ButtonStyle {
   WARNING = 'WARNING',
 }
 
-export default function Button(props: Props) {
-  return isLink(props) ? buildLink(props) : buildButton(props)
-}
-
-function isLink(props: Props): props is LinkProps {
-  return Object.prototype.hasOwnProperty.call(props, 'href')
-}
-
-function buildLink({
-  children,
-  href,
-  className,
-  style = ButtonStyle.PRIMARY,
-}: LinkProps): JSX.Element {
-  return (
-    <Link href={href}>
-      <a
-        className={`${className ? className : ''} text-sm ${
-          styles.button
-        } ${getColorStyleClassName(style)}`}
-      >
-        {children}
-      </a>
-    </Link>
-  )
-}
-
-function buildButton({
+export default function Button({
   children,
   onClick,
   className,
@@ -72,7 +37,7 @@ function buildButton({
   label,
   disabled,
   selected,
-}: ButtonProps): JSX.Element {
+}: Props) {
   return (
     <>
       <button
@@ -97,14 +62,13 @@ function buildButton({
   )
 }
 
-const getColorStyleClassName = (style: ButtonStyle): string => {
+function getColorStyleClassName(style: ButtonStyle): string {
   switch (style) {
     case ButtonStyle.SECONDARY:
       return styles.buttonSecondary
     case ButtonStyle.WARNING:
       return styles.buttonWarning
     case ButtonStyle.PRIMARY:
-    default:
       return styles.buttonPrimary
   }
 }

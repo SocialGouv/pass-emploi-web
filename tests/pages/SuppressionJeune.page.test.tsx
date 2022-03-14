@@ -140,7 +140,7 @@ describe('Suppression Jeune', () => {
       ).toBeInTheDocument()
     })
 
-    it('rappel les information du jeune', () => {
+    it('rappelle les information du jeune', () => {
       // Then
       expect(screen.getByText('Ajouté le :')).toBeInTheDocument()
       expect(screen.getByText('07/12/2021')).toBeInTheDocument()

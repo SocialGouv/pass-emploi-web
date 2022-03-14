@@ -1,8 +1,9 @@
+import { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { Jeune } from 'interfaces/jeune'
 import React from 'react'
 import { formatDayDate } from 'utils/date'
 import EmailIcon from '../../assets/icons/email.svg'
-import Button, { ButtonStyle } from '../ui/Button'
 
 interface DetailsJeuneProps {
   jeune: Jeune
@@ -24,13 +25,13 @@ export const DetailsJeune = ({
         </h1>
 
         {!jeune.isActivated && withButtons && (
-          <Button
+          <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
             style={ButtonStyle.WARNING}
             className='ml-8'
           >
-            Supprimer ce jeune
-          </Button>
+            Supprimer ce compte
+          </ButtonLink>
         )}
       </div>
 

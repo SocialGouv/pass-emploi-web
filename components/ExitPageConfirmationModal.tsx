@@ -2,6 +2,7 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { UrlObject } from 'url'
 import WarningIcon from '../assets/icons/warning.svg'
 import Modal from './Modal'
+import ButtonLink from './ui/ButtonLink'
 
 interface LeavePageModalProps {
   show: boolean
@@ -35,7 +36,7 @@ export default function ExitPageConfirmationModal({
         >
           Annuler
         </Button>
-        <Button href={href}>Continuer</Button>
+        <ButtonLink href={href}>Continuer</ButtonLink>
       </div>
     </Modal>
   )

@@ -5,7 +5,7 @@ import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import SuccessMessage from 'components/SuccessMessage'
-import Button from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -104,13 +104,13 @@ const FicheJeune = ({
         </Link>
 
         {!isPoleEmploi && (
-          <Button href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
+          <ButtonLink href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
             Fixer un rendez-vous
-          </Button>
+          </ButtonLink>
         )}
       </div>
 
-      <div className={`flex flex-col ${styles.content}`}>
+      <div className={styles.content}>
         {showRdvCreationSuccess && (
           <SuccessMessage
             label={'Le rendez-vous a bien été créé'}

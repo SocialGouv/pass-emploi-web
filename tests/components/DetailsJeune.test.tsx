@@ -58,7 +58,7 @@ describe('<DetailsJeune>', () => {
 
     it('permet de le supprimer', () => {
       // Then
-      const link = screen.getByText('Supprimer ce jeune')
+      const link = screen.getByText('Supprimer ce compte')
       expect(link).toBeInTheDocument()
       expect(link).toHaveAttribute(
         'href',

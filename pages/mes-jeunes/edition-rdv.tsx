@@ -1,6 +1,7 @@
 import { AppHead } from 'components/AppHead'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { InputError } from 'components/ui/InputError'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
@@ -366,13 +367,13 @@ function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
 
           <div className='flex justify-center'>
             {!formHasChanges() && (
-              <Button
+              <ButtonLink
                 href={from}
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
                 Annuler
-              </Button>
+              </ButtonLink>
             )}
             {formHasChanges() && (
               <Button

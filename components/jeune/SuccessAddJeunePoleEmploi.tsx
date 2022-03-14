@@ -1,4 +1,4 @@
-import Button from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import useMatomo from 'utils/analytics/useMatomo'
 import CheckSuccessIcon from '../../assets/icons/check_success.svg'
 
@@ -27,9 +27,9 @@ export const SuccessAddJeunePoleEmploi = ({
           jeunes&quot;
         </p>
       </div>
-      <Button href={`/mes-jeunes/${idJeune}`}>
+      <ButtonLink href={`/mes-jeunes/${idJeune}`}>
         Accéder à la fiche du jeune
-      </Button>
+      </ButtonLink>
     </div>
   )
 }

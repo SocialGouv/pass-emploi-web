@@ -3,6 +3,7 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { UserStructure } from 'interfaces/conseiller'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
@@ -82,9 +83,9 @@ const MesRendezvous = ({
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <Button href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
+        <ButtonLink href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
           Fixer un rendez-vous
-        </Button>
+        </ButtonLink>
       </span>
 
       <div className={styles.content}>

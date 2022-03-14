@@ -1,3 +1,8 @@
+import { AppHead } from 'components/AppHead'
+import FailureMessage from 'components/FailureMessage'
+import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
@@ -6,16 +11,12 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
+import useMatomo from 'utils/analytics/useMatomo'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import InfoIcon from '../../../assets/icons/information.svg'
-import { AppHead } from '../../../components/AppHead'
-import FailureMessage from '../../../components/FailureMessage'
-import { DetailsJeune } from '../../../components/jeune/DetailsJeune'
-import Button, { ButtonStyle } from '../../../components/ui/Button'
-import useMatomo from '../../../utils/analytics/useMatomo'
-import { useDependance } from '../../../utils/injectionDependances'
 
 interface SuppressionJeuneProps {
   jeune: Jeune
@@ -36,7 +37,10 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
       await jeunesService.supprimerJeune(jeune.id, session!.accessToken)
       await router.push('/mes-jeunes?suppression=succes')
     } catch (e) {
-      setError((e as Error).message ?? "Une erreur inconnue s'est produite")
+      setError(
+        (e as Error).message ??
+          'Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
+      )
       setTracking('Détail jeune - Erreur suppr. compte')
     } finally {
       setLoading(false)
@@ -80,7 +84,7 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
           <p className='h4-semi text-bleu_nuit'>
             Confirmation de suppression du compte jeune
           </p>
-          <p className='mt-4 p-4 bg-primary_lighten rounded-medium text-base-medium text-primary flex items-center'>
+          <p className='mt-6 p-4 bg-primary_lighten rounded-medium text-base-medium text-primary flex items-center'>
             <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
             Une fois confirmée toutes les informations liées à ce jeune seront
             supprimées
@@ -88,12 +92,12 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
 
           <div className='mt-6 flex'>
             {!loading && (
-              <Button
+              <ButtonLink
                 href={`/mes-jeunes/${jeune.id}`}
                 style={ButtonStyle.SECONDARY}
               >
                 Annuler
-              </Button>
+              </ButtonLink>
             )}
             {loading && (
               <Button style={ButtonStyle.SECONDARY} disabled={true}>
