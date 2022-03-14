@@ -1,12 +1,13 @@
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
-import { unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
+import { desJeunes, unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
 import { Message, MessagesOfADay } from 'interfaces'
 import { UserStructure } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
+import { Session } from 'next-auth'
 
 jest.mock('clients/api.client')
 jest.mock('clients/firebase.client')
@@ -24,6 +25,8 @@ describe('MessagesFirebaseAndApiService', () => {
   let firebaseClient: FirebaseClient
   let apiClient: ApiClient
   let messagesService: MessagesFirebaseAndApiService
+  let accessToken: string
+
   beforeEach(async () => {
     // Given
     firebaseClient = new FirebaseClient()
@@ -33,6 +36,7 @@ describe('MessagesFirebaseAndApiService', () => {
       new ChatCrypto(),
       apiClient
     )
+    accessToken = 'accessToken'
   })
 
   describe('.signIn', () => {
@@ -62,7 +66,6 @@ describe('MessagesFirebaseAndApiService', () => {
     let conseiller: { id: string; structure: UserStructure }
     let jeuneChat: JeuneChat
     let newMessage: string
-    let accessToken: string
     const now = new Date()
     beforeEach(async () => {
       // Given
@@ -71,7 +74,6 @@ describe('MessagesFirebaseAndApiService', () => {
       newMessage = 'nouveauMessage'
 
       // When
-      accessToken = 'accessToken'
       conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
       await messagesService.sendNouveauMessage(
         conseiller,
@@ -178,8 +180,8 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(onJeuneChat).toHaveBeenCalledWith({
         ...jeune,
-        chatId: 'chat-id',
         ...unChat(),
+        chatId: 'idChat',
       })
     })
   })
@@ -280,34 +282,50 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.sendNouveauMessageMultiple', () => {
-    let conseiller: { id: string; structure: UserStructure }
     let destinataires: Jeune[]
+    let idsJeunes: string[]
+    let conseiller: Session.User
     let newMessageGroupe: string
-    let accessToken: string
     const now = new Date()
 
     beforeEach(async () => {
       // Given
       jest.setSystemTime(now)
-      destinataires = [unJeune()]
+      conseiller = {
+        id: '1',
+        structure: UserStructure.MILO,
+        estSuperviseur: false,
+        name: 'Tavernier',
+      }
+      destinataires = desJeunes()
+      idsJeunes = [
+        destinataires[0].id,
+        destinataires[1].id,
+        destinataires[2].id,
+      ]
       newMessageGroupe = 'nouveau message groupé'
 
       // When
-      accessToken = 'accessToken'
-      conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
       await messagesService.sendNouveauMessageMultiple(
-        conseiller,
+        { id: conseiller.id, structure: UserStructure.MILO },
         destinataires,
         newMessageGroupe,
         accessToken
       )
     })
 
-    it('adds a new message to firebase', async () => {
+    it('ajoute un nouveau message à firebase pour chaque destinataire', async () => {
+      const chats = await firebaseClient.getChatsDesJeunes('1', idsJeunes)
+
       // Then
-      destinataires.forEach((destinataire) => {
+      expect(firebaseClient.getChatsDesJeunes).toHaveBeenCalledWith(
+        conseiller.id,
+        idsJeunes
+      )
+
+      chats.forEach((chat) => {
         expect(firebaseClient.addMessage).toHaveBeenCalledWith(
-          destinataire.id,
+          chat.chatId,
           {
             encryptedText: `Encrypted: ${newMessageGroupe}`,
             iv: `IV: ${newMessageGroupe}`,
@@ -315,6 +333,52 @@ describe('MessagesFirebaseAndApiService', () => {
           now
         )
       })
+    })
+
+    it('met à jour le chat dans firebase pour chaque destinataire', async () => {
+      const chats = await firebaseClient.getChatsDesJeunes('1', idsJeunes)
+
+      expect(firebaseClient.getChatsDesJeunes).toHaveBeenCalledWith(
+        conseiller.id,
+        idsJeunes
+      )
+      // Then
+      chats.forEach((chat) => {
+        expect(firebaseClient.updateChat).toHaveBeenCalledWith(chat.chatId, {
+          lastMessageContent: `Encrypted: ${newMessageGroupe}`,
+          lastMessageIv: `IV: ${newMessageGroupe}`,
+          lastMessageSentAt: now,
+          lastMessageSentBy: 'conseiller',
+          newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+          seenByConseiller: true,
+          lastConseillerReading: now,
+        })
+      })
+    })
+
+    it('notifie envoi de message pour chaque destinataire', async () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        `/conseillers/${conseiller.id}/jeunes/notify-messages`,
+        { idsJeunes: idsJeunes },
+        accessToken
+      )
+    })
+
+    it('tracks nouveau message groupé', async () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_ENVOYE',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: conseiller.structure,
+            id: conseiller.id,
+          },
+        },
+        accessToken
+      )
     })
   })
 })

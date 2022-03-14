@@ -232,7 +232,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
-      `/conseillers/${idConseiller}/jeunes/notify-message`,
+      `/conseillers/${idConseiller}/jeunes/notify-messages`,
       { idsJeunes: idsJeunes },
       accessToken
     )
