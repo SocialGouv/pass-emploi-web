@@ -155,8 +155,9 @@ export default function ChatRoom() {
                     )
                 )}
               </ul>
+              {/*FIXME : use <ButtonLink/> but causes problem with tailwind and style order*/}
 
-              // FIXME : use <ButtonLink> but causes problem with tailwind and style order<Link href={'/mes-jeunes/envoi-message-groupe'}>
+              <Link href={'/mes-jeunes/envoi-message-groupe'}>
                 <a
                   className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
                 >

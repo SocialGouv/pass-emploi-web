@@ -13,10 +13,6 @@ type LayoutProps = {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const enableMultiDestinataireLink: boolean = Boolean(
-    process.env.ENABLE_MULTI_DESTINATAIRES_MESSAGE
-  )
-
   const {
     props: { withoutChat },
   } = children

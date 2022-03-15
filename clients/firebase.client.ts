@@ -109,8 +109,8 @@ class FirebaseClient {
     const querySnapShot = await getDocs(q)
     if (querySnapShot.empty) return
 
-    const doc = querySnapShot.docs[0]
-    return chatFromFirebase(doc.id, doc.data())
+    const document = querySnapShot.docs[0]
+    return chatFromFirebase(document.id, document.data())
   }
 
   async getChatsDesJeunes(

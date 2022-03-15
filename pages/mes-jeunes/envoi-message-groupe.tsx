@@ -15,8 +15,8 @@ import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
 import { MessagesService } from 'services/messages.service'
 import { useSession } from 'next-auth/react'
-import { ErrorMessage } from 'components/ui/ErrorMessage'
 import { useRouter } from 'next/router'
+import { InputError } from 'components/ui/InputError'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
@@ -74,7 +74,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
     <>
       <AppHead titre='Message multi-destinataires' />
       <div className={`flex items-center ${styles.header}`}>
-        <Link href={'/mes-jeunes'}>
+        <Link href={from}>
           <a className='items-center mr-4'>
             <BackIcon role='img' focusable='false' aria-hidden={true} />
           </a>
@@ -132,7 +132,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
             />
           </fieldset>
           {erreurMessage && (
-            <ErrorMessage className='mb-12'>{erreurMessage}</ErrorMessage>
+            <InputError className='mb-12'>{erreurMessage}</InputError>
           )}
 
           <div className='flex justify-center'>
@@ -177,7 +177,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
-      from: url ?? undefined,
+      from: url ?? '/mes-jeunes',
     },
   }
 }

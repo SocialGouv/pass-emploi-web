@@ -2,7 +2,6 @@ import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
-import SuccessMessage from 'components/SuccessMessage'
 import { ActionsCount } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
