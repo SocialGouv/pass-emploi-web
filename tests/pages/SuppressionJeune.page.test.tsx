@@ -9,6 +9,7 @@ import SuppressionJeune, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
 import { JeunesService } from 'services/jeunes.service'
+import { RequestError, UnexpectedError } from 'utils/fetchJson'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -96,7 +97,7 @@ describe('Suppression Jeune', () => {
           } as unknown as GetServerSidePropsContext)
 
           // Then
-          expect(actual).toEqual({ props: { jeune } })
+          expect(actual).toEqual({ props: { jeune, withoutChat: true } })
         })
       })
     })
@@ -118,7 +119,7 @@ describe('Suppression Jeune', () => {
 
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <SuppressionJeune jeune={jeune} />
+          <SuppressionJeune jeune={jeune} withoutChat={true} />
         </DIProvider>
       )
     })
@@ -131,33 +132,6 @@ describe('Suppression Jeune', () => {
         'href',
         `/mes-jeunes/${jeune.id}`
       )
-    })
-
-    it('titre la page', () => {
-      // Then
-      expect(
-        screen.getByText('Suppression du compte de Nadia Sanfamiye')
-      ).toBeInTheDocument()
-    })
-
-    it('rappelle les information du jeune', () => {
-      // Then
-      expect(screen.getByText('Ajouté le :')).toBeInTheDocument()
-      expect(screen.getByText('07/12/2021')).toBeInTheDocument()
-      expect(screen.getByTitle('e-mail')).toBeInTheDocument()
-      expect(screen.getByText('nadia.sanfamiye@email.fr')).toBeInTheDocument()
-    })
-
-    it("rappel que le jeune ne s'est jamais connecté", () => {
-      expect(
-        screen.getByText('pas encore connecté', { exact: false })
-      ).toBeInTheDocument()
-    })
-
-    it('demande la confirmation de la suppression', () => {
-      expect(
-        screen.getByText('Confirmation', { exact: false })
-      ).toBeInTheDocument()
     })
 
     it('prévient des effets de la suppression', () => {
@@ -176,13 +150,13 @@ describe('Suppression Jeune', () => {
 
     it('permet de confirmer la suppression du jeune', () => {
       // Then
-      expect(screen.getByText('Supprimer le compte')).toBeInTheDocument()
+      expect(screen.getByText('Confirmer')).toBeInTheDocument()
     })
 
     describe('suppression du jeune', () => {
       let button: HTMLButtonElement
       beforeEach(() => {
-        button = screen.getByText('Supprimer le compte')
+        button = screen.getByText('Confirmer')
       })
 
       describe('quand tout se passe bien', () => {
@@ -205,17 +179,33 @@ describe('Suppression Jeune', () => {
       })
 
       describe('quand il y a une erreur', () => {
-        it("affiche l'erreur", async () => {
+        it("affiche le message d'une erreur de requête", async () => {
           // Given
           ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
-            new Error("message d'erreur")
+            new RequestError("Message d'erreur")
           )
 
           // When
           await act(async () => button.click())
 
           // Then
-          expect(screen.getByText("message d'erreur")).toBeInTheDocument()
+          expect(screen.getByText("Message d'erreur")).toBeInTheDocument()
+          expect(push).not.toHaveBeenCalled()
+        })
+
+        it("affiche un message d'erreur générique", async () => {
+          // Given
+          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
+            new UnexpectedError("Message d'erreur")
+          )
+
+          // When
+          await act(async () => button.click())
+
+          // Then
+          expect(
+            screen.getByText('problème inconnu', { exact: false })
+          ).toBeInTheDocument()
           expect(push).not.toHaveBeenCalled()
         })
       })
