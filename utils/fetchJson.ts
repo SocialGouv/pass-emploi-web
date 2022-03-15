@@ -27,8 +27,11 @@ async function callFetch(
   try {
     reponse = await fetch(reqInfo, reqInit)
   } catch (e) {
-    console.error('fetchJson', e)
-    throw e
+    const error: UnexpectedError = new UnexpectedError(
+      (e as Error).message || 'Unexpected error'
+    )
+    console.error('fetchJson', error)
+    throw error
   }
 
   if (!reponse.ok) {
@@ -46,8 +49,24 @@ async function handleError(response: Response): Promise<void> {
     window.location.reload()
   }
 
-  const message = (await response.json())?.message
-  const error = new Error(message || response.statusText)
+  const message = (await response.json())?.message || response.statusText
+  const error =
+    response.status < 500 ? new RequestError(message) : new ServerError(message)
   console.error('fetchJson', error)
   throw error
+}
+
+export class RequestError implements Error {
+  name = 'REQUEST_ERROR'
+  constructor(readonly message: string) {}
+}
+
+export class ServerError implements Error {
+  name = 'SERVER_ERROR'
+  constructor(readonly message: string) {}
+}
+
+export class UnexpectedError implements Error {
+  name = 'UNEXPECTED_ERROR'
+  constructor(readonly message: string) {}
 }

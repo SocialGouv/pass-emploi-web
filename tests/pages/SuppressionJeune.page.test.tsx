@@ -9,6 +9,7 @@ import SuppressionJeune, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
 import { JeunesService } from 'services/jeunes.service'
+import { RequestError, UnexpectedError } from 'utils/fetchJson'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -178,17 +179,33 @@ describe('Suppression Jeune', () => {
       })
 
       describe('quand il y a une erreur', () => {
-        it("affiche l'erreur", async () => {
+        it("affiche le message d'une erreur de requête", async () => {
           // Given
           ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
-            new Error("message d'erreur")
+            new RequestError("Message d'erreur")
           )
 
           // When
           await act(async () => button.click())
 
           // Then
-          expect(screen.getByText("message d'erreur")).toBeInTheDocument()
+          expect(screen.getByText("Message d'erreur")).toBeInTheDocument()
+          expect(push).not.toHaveBeenCalled()
+        })
+
+        it("affiche un message d'erreur générique", async () => {
+          // Given
+          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
+            new UnexpectedError("Message d'erreur")
+          )
+
+          // When
+          await act(async () => button.click())
+
+          // Then
+          expect(
+            screen.getByText('problème inconnu', { exact: false })
+          ).toBeInTheDocument()
           expect(push).not.toHaveBeenCalled()
         })
       })

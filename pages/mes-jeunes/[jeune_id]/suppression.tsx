@@ -11,6 +11,7 @@ import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
@@ -38,8 +39,9 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
       await router.push('/mes-jeunes?suppression=succes')
     } catch (e) {
       setError(
-        (e as Error).message ??
-          'Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
+        e instanceof RequestError
+          ? e.message
+          : 'Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
       )
       setTracking('Détail jeune - Erreur suppr. compte')
     } finally {
