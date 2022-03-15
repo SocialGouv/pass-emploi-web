@@ -49,12 +49,12 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
     }
   }
 
-  useMatomo(tracking)
-
   function clearDeletionError(): void {
     setError(undefined)
     setTracking(initialTracking)
   }
+
+  useMatomo(tracking)
 
   return (
     <>

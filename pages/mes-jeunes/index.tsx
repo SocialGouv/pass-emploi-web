@@ -48,9 +48,10 @@ function MesJeunes({
     deletionSuccess ?? false
   )
 
-  const initialTracking = `Mes jeunes${
-    conseillerJeunes.length === 0 ? ' - Aucun jeune' : ''
-  }${isFromEmail ? ' - Origine email' : ''}`
+  let initialTracking = 'Mes jeunes'
+  if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
+  if (isFromEmail) initialTracking += ' - Origine email'
+  if (showDeletionSuccess) initialTracking += ' - Succès suppr. compte'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = async () => {
