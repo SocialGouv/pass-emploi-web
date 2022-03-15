@@ -96,7 +96,7 @@ describe('Suppression Jeune', () => {
           } as unknown as GetServerSidePropsContext)
 
           // Then
-          expect(actual).toEqual({ props: { jeune } })
+          expect(actual).toEqual({ props: { jeune, withoutChat: true } })
         })
       })
     })
@@ -118,7 +118,7 @@ describe('Suppression Jeune', () => {
 
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <SuppressionJeune jeune={jeune} />
+          <SuppressionJeune jeune={jeune} withoutChat={true} />
         </DIProvider>
       )
     })
@@ -131,33 +131,6 @@ describe('Suppression Jeune', () => {
         'href',
         `/mes-jeunes/${jeune.id}`
       )
-    })
-
-    it('titre la page', () => {
-      // Then
-      expect(
-        screen.getByText('Suppression du compte de Nadia Sanfamiye')
-      ).toBeInTheDocument()
-    })
-
-    it('rappelle les information du jeune', () => {
-      // Then
-      expect(screen.getByText('Ajouté le :')).toBeInTheDocument()
-      expect(screen.getByText('07/12/2021')).toBeInTheDocument()
-      expect(screen.getByTitle('e-mail')).toBeInTheDocument()
-      expect(screen.getByText('nadia.sanfamiye@email.fr')).toBeInTheDocument()
-    })
-
-    it("rappel que le jeune ne s'est jamais connecté", () => {
-      expect(
-        screen.getByText('pas encore connecté', { exact: false })
-      ).toBeInTheDocument()
-    })
-
-    it('demande la confirmation de la suppression', () => {
-      expect(
-        screen.getByText('Confirmation', { exact: false })
-      ).toBeInTheDocument()
     })
 
     it('prévient des effets de la suppression', () => {
@@ -176,13 +149,13 @@ describe('Suppression Jeune', () => {
 
     it('permet de confirmer la suppression du jeune', () => {
       // Then
-      expect(screen.getByText('Supprimer le compte')).toBeInTheDocument()
+      expect(screen.getByText('Confirmer')).toBeInTheDocument()
     })
 
     describe('suppression du jeune', () => {
       let button: HTMLButtonElement
       beforeEach(() => {
-        button = screen.getByText('Supprimer le compte')
+        button = screen.getByText('Confirmer')
       })
 
       describe('quand tout se passe bien', () => {

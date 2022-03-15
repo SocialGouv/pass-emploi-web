@@ -1,6 +1,5 @@
 import { AppHead } from 'components/AppHead'
 import FailureMessage from 'components/FailureMessage'
-import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { Jeune } from 'interfaces/jeune'
@@ -20,6 +19,7 @@ import InfoIcon from '../../../assets/icons/information.svg'
 
 interface SuppressionJeuneProps {
   jeune: Jeune
+  withoutChat: true
 }
 
 export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
@@ -74,23 +74,18 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
         {error && (
           <FailureMessage label={error} onAcknowledge={clearDeletionError} />
         )}
-        <DetailsJeune
-          jeune={jeune}
-          titlePrefix={'Suppression du compte de'}
-          withButtons={false}
-        />
 
         <div className='m-auto mt-20 w-max'>
           <p className='h4-semi text-bleu_nuit'>
-            Confirmation de suppression du compte jeune
+            Confirmez la suppression du compte jeune
           </p>
-          <p className='mt-6 p-4 bg-primary_lighten rounded-medium text-base-medium text-primary flex items-center'>
+          <p className='mt-8 p-4 bg-primary_lighten rounded-medium text-base-medium text-primary flex items-center'>
             <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
             Une fois confirmée toutes les informations liées à ce jeune seront
             supprimées
           </p>
 
-          <div className='mt-6 flex'>
+          <div className='mt-8 flex'>
             {!loading && (
               <ButtonLink
                 href={`/mes-jeunes/${jeune.id}`}
@@ -107,12 +102,12 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
 
             <Button
               type='button'
-              style={ButtonStyle.WARNING}
+              style={ButtonStyle.PRIMARY}
               onClick={supprimerJeune}
               disabled={loading}
               className='ml-6'
             >
-              Supprimer le compte
+              Confirmer
             </Button>
           </div>
         </div>
@@ -141,5 +136,5 @@ export const getServerSideProps: GetServerSideProps<
       redirect: { destination: `/mes-jeunes/${jeune.id}`, permanent: true },
     }
   }
-  return { props: { jeune } }
+  return { props: { jeune, withoutChat: true } }
 }
