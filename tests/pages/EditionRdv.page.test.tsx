@@ -23,6 +23,7 @@ describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
     let jeunes: Jeune[]
+
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
         // Given
@@ -64,6 +65,11 @@ describe('EditionRdv', () => {
         // When
         const actual = await getServerSideProps({
           query: {},
+          req: {
+            headers: {
+              referer: '/mes-jeunes',
+            },
+          },
         } as GetServerSidePropsContext)
 
         // Then
@@ -72,7 +78,11 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toEqual({
-          props: { jeunes, withoutChat: true, from: '/mes-jeunes' },
+          props: {
+            jeunes,
+            withoutChat: true,
+            from: '/mes-jeunes',
+          },
         })
       })
 
@@ -80,6 +90,11 @@ describe('EditionRdv', () => {
         // When
         const actual = await getServerSideProps({
           query: { from: '/mes-rendezvous' },
+          req: {
+            headers: {
+              referer: '/mes-rendezvous',
+            },
+          },
         } as unknown as GetServerSidePropsContext<{ from: string }>)
 
         // Then
@@ -87,13 +102,20 @@ describe('EditionRdv', () => {
           'id-conseiller',
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { from: '/mes-rendezvous' } })
+        expect(actual).toMatchObject({
+          props: { from: '/mes-rendezvous' },
+        })
       })
 
       it('récupère le jeune concerné', async () => {
         // When
         const actual = await getServerSideProps({
           query: { from: '/mes-jeunes/id-jeune' },
+          req: {
+            headers: {
+              referer: '/mes-jeunes/id-jeune',
+            },
+          },
         } as unknown as GetServerSidePropsContext<{ from: string }>)
 
         // Then
@@ -101,7 +123,9 @@ describe('EditionRdv', () => {
           'id-conseiller',
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { idJeuneFrom: 'id-jeune' } })
+        expect(actual).toMatchObject({
+          props: { idJeuneFrom: 'id-jeune' },
+        })
       })
     })
   })

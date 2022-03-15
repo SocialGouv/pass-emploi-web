@@ -21,10 +21,10 @@ import { useRouter } from 'next/router'
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
   withoutChat: true
-  url?: string
+  from: string
 }
 
-function EnvoiMessageGroupe({ jeunes, url }: EnvoiMessageGroupeProps) {
+function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
   const { data: session } = useSession({ required: true })
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -54,8 +54,8 @@ function EnvoiMessageGroupe({ jeunes, url }: EnvoiMessageGroupeProps) {
           session!.accessToken
         )
         .then(() => {
-          if (url) {
-            router.push(`${url}?envoiMessage=succes`)
+          if (from) {
+            router.push(`${from}?envoiMessage=succes`)
           }
         })
         .catch((error) => {
@@ -171,13 +171,13 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   } = sessionOrRedirect
 
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
-  const url = context.req.headers.referer
+  const url: string | undefined = context.req.headers.referer as string
 
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
-      url: url ?? undefined,
+      from: url ?? undefined,
     },
   }
 }

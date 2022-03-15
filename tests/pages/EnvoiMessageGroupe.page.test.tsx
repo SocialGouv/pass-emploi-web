@@ -44,7 +44,11 @@ describe('EnvoiMessageGroupe', () => {
 
     page = renderWithSession(
       <DIProvider dependances={{ jeunesService, messagesService }}>
-        <EnvoiMessageGroupe jeunes={destinataires} withoutChat={true} />
+        <EnvoiMessageGroupe
+          jeunes={destinataires}
+          withoutChat={true}
+          from='/'
+        />
       </DIProvider>
     )
 
