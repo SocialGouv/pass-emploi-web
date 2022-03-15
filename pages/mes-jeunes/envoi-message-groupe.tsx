@@ -142,6 +142,9 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
               required
             />
           </fieldset>
+          {erreurMessage && (
+            <InputError className='mb-12'>{erreurMessage}</InputError>
+          )}
 
           <div className='flex justify-center'>
             <Button
