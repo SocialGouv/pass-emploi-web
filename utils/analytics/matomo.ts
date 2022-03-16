@@ -71,7 +71,6 @@ function track({ structure, customTitle }: TrackSettings): void {
     push(['setCustomDimension', 2, structure])
 
     push(['setDocumentTitle', customTitle || document.title])
-    console.log('lala', customTitle)
     push(['deleteCustomVariables', 'page'])
 
     push(['trackPageView'])

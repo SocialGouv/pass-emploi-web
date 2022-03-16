@@ -92,7 +92,7 @@ describe('MessagesFirebaseAndApiService', () => {
       onJeuneChat = jest.fn()
 
       // When
-      await messagesService.observeJeuneChat(idConseiller, jeune, onJeuneChat)
+      messagesService.observeJeuneChat(idConseiller, jeune, onJeuneChat)
     })
 
     it('finds chat in firebase', async () => {
@@ -109,7 +109,6 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(onJeuneChat).toHaveBeenCalledWith({
         ...jeune,
         ...unChat(),
-        chatId: 'idChat',
       })
     })
   })

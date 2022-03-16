@@ -13,7 +13,7 @@ export interface MessagesService {
 
   sendNouveauMessage(
     conseiller: { id: string; structure: string },
-    destinataires: Jeune[],
+    destinataires: Jeune[] | JeuneChat[],
     newMessage: string,
     accessToken: string
   ): Promise<void>

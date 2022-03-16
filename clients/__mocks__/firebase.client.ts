@@ -8,11 +8,8 @@ const FirebaseClient = jest.fn(() => ({
   addMessage: jest.fn(),
   updateChat: jest.fn(),
   findAndObserveChatDuJeune: jest.fn(
-    (
-      idConseiller: string,
-      idJeune: string,
-      fn: (idChat: string, chat: Chat) => void
-    ) => fn('idChat', unChat())
+    (idConseiller: string, idJeune: string, fn: (chat: Chat) => void) =>
+      fn(unChat())
   ),
   observeChat: jest.fn((idChat: string, fn: (chat: Chat) => void) =>
     fn(unChat())
