@@ -2,7 +2,7 @@ import { act, screen } from '@testing-library/react'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Conversation from 'components/layouts/Conversation'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
+import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { Session } from 'next-auth'
@@ -11,7 +11,6 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
-import { mockedMessagesService } from 'fixtures/services'
 
 jest.mock('components/layouts/Conversation', () => jest.fn(() => <></>))
 jest.useFakeTimers()
@@ -30,6 +29,7 @@ describe('<ChatRoom />', () => {
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
     messagesService = mockedMessagesService({
+      signIn: jest.fn(() => Promise.resolve()),
       observeJeuneChat: jest.fn(
         (idConseiller: string, jeune: Jeune, fn: (chat: JeuneChat) => void) => {
           if (jeune.id === 'jeune-3') {
@@ -53,7 +53,6 @@ describe('<ChatRoom />', () => {
         }
       ),
     })
-
     conseiller = {
       id: 'idConseiller',
       name: 'Taverner',

@@ -2,7 +2,7 @@ import Conversation from 'components/layouts/Conversation'
 import { compareJeuneChat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -14,7 +14,7 @@ import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 
-let currentJeunesChat: JeuneChat[] = [] // had to use extra variable since jeunesChats is always empty in useEffect
+const currentJeunesChat: JeuneChat[] = [] // FIXME had to use extra variable since jeunesChats is always empty in useEffect
 
 export default function ChatRoom() {
   const { data: session } = useSession({ required: true })
@@ -22,24 +22,32 @@ export default function ChatRoom() {
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
-  const [jeunes, setJeunes] = useState<Jeune[]>([])
   const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
     undefined
   )
+  const destructorRef = useRef<() => void>(() => {})
 
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
-  const signInChat = useCallback(
-    async (chatToken) => {
-      await messagesService.signIn(chatToken)
-    },
-    [messagesService]
-  )
-
   const observeJeuneChats = useCallback(
-    (idConseiller: string, jeunesToObserve: Jeune[]) => {
+    (idConseiller: string, jeunesToObserve: Jeune[]): (() => void) => {
+      function updateChat(newJeuneChat: JeuneChat): void {
+        const idxOfJeune = currentJeunesChat.findIndex(
+          (j) => j.chatId === newJeuneChat.chatId
+        )
+
+        if (idxOfJeune !== -1) {
+          currentJeunesChat[idxOfJeune] = newJeuneChat
+        } else {
+          currentJeunesChat.push(newJeuneChat)
+        }
+        currentJeunesChat.sort(compareJeuneChat)
+
+        setJeunesChats([...currentJeunesChat])
+      }
+
       const unsubscribes = jeunesToObserve.map((jeune: Jeune) =>
-        messagesService.observeJeuneChat(idConseiller, jeune, updateJeunesChat)
+        messagesService.observeJeuneChat(idConseiller, jeune, updateChat)
       )
       return () => unsubscribes.forEach((unsubscribe) => unsubscribe())
     },
@@ -47,41 +55,20 @@ export default function ChatRoom() {
   )
 
   useEffect(() => {
-    if (!session) {
-      return
+    if (session) {
+      messagesService
+        .signIn(session.firebaseToken)
+        .then(() =>
+          jeunesService.getJeunesDuConseiller(
+            session.user.id,
+            session.accessToken
+          )
+        )
+        .then((jeunes: Jeune[]) => observeJeuneChats(session.user.id, jeunes))
+        .then((destructor) => (destructorRef.current = destructor))
     }
-
-    jeunesService
-      .getJeunesDuConseiller(session.user.id, session.accessToken)
-      .then((data) => {
-        setJeunes(data)
-        currentJeunesChat = []
-      })
-  }, [session, jeunesService])
-
-  useEffect(() => {
-    if (session?.firebaseToken) {
-      signInChat(session.firebaseToken).then(() => {
-        observeJeuneChats(session.user.id, jeunes)
-      })
-    }
-  }, [session, jeunes, signInChat, observeJeuneChats])
-
-  function updateJeunesChat(newJeuneChat: JeuneChat): void {
-    const idxOfJeune = currentJeunesChat.findIndex(
-      (j) => j.chatId === newJeuneChat.chatId
-    )
-
-    if (idxOfJeune !== -1) {
-      currentJeunesChat[idxOfJeune] = newJeuneChat
-    } else {
-      currentJeunesChat.push(newJeuneChat)
-    }
-
-    currentJeunesChat.sort(compareJeuneChat)
-
-    setJeunesChats([...currentJeunesChat])
-  }
+    return destructorRef.current
+  }, [session, observeJeuneChats, messagesService, jeunesService])
   return (
     <article className={styles.chatRoom}>
       {isInConversation() && (
@@ -94,7 +81,7 @@ export default function ChatRoom() {
       {!isInConversation() && (
         <>
           <h2 className={`h2-semi text-bleu_nuit ml-9 mb-6`}>Ma messagerie</h2>
-          {!jeunesChats?.length && (
+          {!jeunesChats.length && (
             <div className='h-full overflow-y-auto bg-bleu_blanc flex flex-col justify-center items-center'>
               <EmptyMessagesImage focusable='false' aria-hidden='true' />
               <p className='mt-4 text-md-semi text-bleu_nuit w-2/3 text-center'>
