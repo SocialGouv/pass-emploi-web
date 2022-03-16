@@ -57,10 +57,10 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
         session!.accessToken
       )
       await router.push(`${from}?envoiMessage=succes`)
-    } catch (e) {
+    } catch (error) {
       setErreurMessage(
-        e instanceof RequestError
-          ? e.message
+        error instanceof RequestError
+          ? error.message
           : "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
       )
       setTrackingLabel('Message - Échec envoi message')

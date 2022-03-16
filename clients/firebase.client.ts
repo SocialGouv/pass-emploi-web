@@ -123,7 +123,9 @@ class FirebaseClient {
       where('jeuneId', 'in', idsJeunes)
     )
     const querySnapShot: QuerySnapshot<FirebaseChat> = await getDocs(q)
-    return querySnapShot.docs.map((doc) => chatFromFirebase(doc.id, doc.data()))
+    return querySnapShot.docs.map((document) =>
+      chatFromFirebase(document.id, document.data())
+    )
   }
 
   observeChat(idChat: string, onChat: (chat: Chat) => void): () => void {
