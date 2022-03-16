@@ -38,6 +38,9 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
+      sendNouveauMessage: jest.fn(() => {
+        return Promise.resolve()
+      }),
     })
 
     conseiller = {
@@ -126,15 +129,17 @@ describe('<Conversation />', () => {
       fireEvent.submit(form)
 
       // Then
-      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
-        {
-          id: conseiller.id,
-          structure: conseiller.structure,
-        },
-        jeuneChat,
-        newMessage,
-        accessToken
-      )
+      await act(async () => {
+        expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
+          {
+            id: conseiller.id,
+            structure: conseiller.structure,
+          },
+          [jeuneChat],
+          newMessage,
+          accessToken
+        )
+      })
     })
   })
 })

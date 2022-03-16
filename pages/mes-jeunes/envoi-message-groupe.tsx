@@ -47,7 +47,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
     if (!formIsValid()) return
     try {
       await messagesService.signIn(session!.firebaseToken)
-      await messagesService.sendNouveauMessageGroupe(
+      await messagesService.sendNouveauMessage(
         { id: session!.user.id, structure: session!.user.structure },
         selectedJeunes,
         message,

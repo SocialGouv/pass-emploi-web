@@ -40,14 +40,14 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
     setReadByConseiller(jeuneChat)
   }
 
-  const sendNouveauMessage = (event: any) => {
+  const sendNouveauMessage = async (event: any) => {
     event.preventDefault()
-    messagesService.sendNouveauMessage(
+    await messagesService.sendNouveauMessage(
       {
         id: session!.user.id,
         structure: session!.user.structure,
       },
-      jeuneChat,
+      [jeuneChat],
       newMessage,
       session!.accessToken
     )

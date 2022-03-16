@@ -35,7 +35,7 @@ describe('EnvoiMessageGroupe', () => {
     jeunesService = mockedJeunesService()
 
     messagesService = mockedMessagesService({
-      sendNouveauMessageGroupe: jest.fn(() => {
+      sendNouveauMessage: jest.fn(() => {
         return Promise.resolve()
       }),
     })
@@ -93,30 +93,42 @@ describe('EnvoiMessageGroupe', () => {
     })
   })
 
-  describe('quand on soumet le formulaire', () => {
+  describe('quand on remplit le formulaire', () => {
+    let push: jest.Mock
+    let newMessage: string
     beforeEach(() => {
-      let push: jest.Mock
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
-    })
 
-    it('envoi un message à plusieurs destinataires', async () => {
       // Given
-      const newMessage = 'Un nouveau message pour plusieurs destinataires'
+      newMessage = 'Un nouveau message pour plusieurs destinataires'
       destinataires = [destinataires[0], destinataires[1]]
-      // When
+
       userEvent.type(inputSearchJeune, 'Jirac Kenji')
       userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-      fireEvent.change(inputMessage, { target: { value: newMessage } })
-      fireEvent.click(submitButton)
+      fireEvent.change(inputSearchJeune, {
+        target: { value: destinataires[0].id },
+      })
+      fireEvent.change(inputSearchJeune, {
+        target: { value: destinataires[1].id },
+      })
+    })
 
+    it('sélectionne plusieurs jeunes dans la liste', () => {
       // Then
       expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
       expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
       expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
+    })
 
+    it('envoi un message à plusieurs destinataires', async () => {
+      // When
+      fireEvent.change(inputMessage, { target: { value: newMessage } })
+      fireEvent.click(submitButton)
+
+      // Then
       await waitFor(() => {
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
+        expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
           { id: '1', structure: UserStructure.MILO },
           destinataires,
           newMessage,
@@ -125,13 +137,24 @@ describe('EnvoiMessageGroupe', () => {
       })
     })
 
+    it('redirige vers la page précédente', async () => {
+      // Given
+      fireEvent.change(inputMessage, { target: { value: newMessage } })
+
+      // When
+      fireEvent.click(submitButton)
+
+      // Then
+      await waitFor(() => {
+        expect(push).toHaveBeenCalledWith('/mes-jeunes?envoiMessage=succes')
+      })
+    })
+
     it("devrait afficher un message d'erreur en cas d'échec de l'envoi du message", async () => {
       // Given
       const messageErreur =
         "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
-      ;(
-        messagesService.sendNouveauMessageGroupe as Mock<any>
-      ).mockRejectedValue({
+      ;(messagesService.sendNouveauMessage as Mock<any>).mockRejectedValue({
         message: 'whatever',
       })
 
@@ -142,9 +165,7 @@ describe('EnvoiMessageGroupe', () => {
 
       // Then
       await waitFor(() => {
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
-          1
-        )
+        expect(messagesService.sendNouveauMessage).toHaveBeenCalledTimes(1)
       })
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
     })
