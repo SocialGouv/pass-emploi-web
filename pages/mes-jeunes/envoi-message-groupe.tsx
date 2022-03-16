@@ -4,7 +4,7 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import { MouseEvent, useState } from 'react'
+import React, { MouseEvent, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { Container, useDependance } from 'utils/injectionDependances'
@@ -16,7 +16,8 @@ import SendIcon from '../../assets/icons/send.svg'
 import { MessagesService } from 'services/messages.service'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { InputError } from 'components/ui/InputError'
+import { RequestError } from '../../utils/fetchJson'
+import FailureMessage from 'components/FailureMessage'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
@@ -31,7 +32,9 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
 
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
-  const [erreurMessage, setErreurMessage] = useState<string>('')
+  const [erreurMessage, setErreurMessage] = useState<string | undefined>(
+    undefined
+  )
   const initialTracking = 'Message - Rédaction'
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
@@ -54,12 +57,19 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
         session!.accessToken
       )
       await router.push(`${from}?envoiMessage=succes`)
-    } catch (error) {
+    } catch (e) {
       setErreurMessage(
-        "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
+        e instanceof RequestError
+          ? e.message
+          : "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
       )
       setTrackingLabel('Message - Échec envoi message')
     }
+  }
+
+  function clearDeletionError(): void {
+    setErreurMessage(undefined)
+    setTrackingLabel(initialTracking)
   }
 
   useMatomo(trackingLabel)
@@ -78,6 +88,13 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
         </h1>
       </div>
       <div className={`${styles.content} max-w-[500px] m-auto`}>
+        {erreurMessage && (
+          <FailureMessage
+            label={erreurMessage}
+            onAcknowledge={clearDeletionError}
+          />
+        )}
+
         <form>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs sont obligatoires
@@ -125,9 +142,6 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
               required
             />
           </fieldset>
-          {erreurMessage && (
-            <InputError className='mb-12'>{erreurMessage}</InputError>
-          )}
 
           <div className='flex justify-center'>
             <Button
