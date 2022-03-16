@@ -35,7 +35,7 @@ interface InputValue {
   error?: string
 }
 
-function EditionRdv({ jeunes, from, idJeuneFrom }: EditionRdvProps) {
+function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const { data: session } = useSession({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
@@ -419,16 +419,17 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
-  const from: string | undefined = context.query.from as string
+  const referer = context.req.headers.referer
+
   const props: EditionRdvProps = {
     jeunes: jeunes,
     withoutChat: true,
-    from: from ?? '/mes-jeunes',
+    from: referer ?? '/mes-jeunes',
   }
 
-  if (from) {
+  if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
-    const match = regex.exec(from)
+    const match = regex.exec(referer)
     if (match?.groups?.idJeune) props.idJeuneFrom = match.groups.idJeune
   }
 

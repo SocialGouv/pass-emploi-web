@@ -24,8 +24,6 @@ module.exports = {
     FAQ_MILO_EXTERNAL_LINK: process.env.FAQ_MILO_EXTERNAL_LINK,
     FAQ_PE_EXTERNAL_LINK: process.env.FAQ_PE_EXTERNAL_LINK,
     ENABLE_PASS_EMPLOI_SSO: process.env.ENABLE_PASS_EMPLOI_SSO === 'true',
-    ENABLE_MULTI_DESTINATAIRES_MESSAGE:
-      process.env.ENABLE_MULTI_DESTINATAIRES_MESSAGE === 'true',
   },
 
   i18n: {

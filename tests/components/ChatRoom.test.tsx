@@ -11,6 +11,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
+import { mockedMessagesService } from 'fixtures/services'
 
 jest.mock('components/layouts/Conversation', () => jest.fn(() => <></>))
 jest.useFakeTimers()
@@ -28,7 +29,7 @@ describe('<ChatRoom />', () => {
   let tokenChat: string
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
-    messagesService = {
+    messagesService = mockedMessagesService({
       observeJeuneChat: jest.fn(
         (idConseiller: string, jeune: Jeune, fn: (chat: JeuneChat) => void) => {
           if (jeune.id === 'jeune-3') {
@@ -51,14 +52,8 @@ describe('<ChatRoom />', () => {
           return () => {}
         }
       ),
-      observeJeuneReadingDate: jest.fn(),
-      observeMessages: jest.fn(),
-      sendNouveauMessage: jest.fn(),
-      setReadByConseiller: jest.fn(),
-      countMessagesNotRead: jest.fn(),
-      signIn: jest.fn(),
-      signOut: jest.fn(),
-    }
+    })
+
     conseiller = {
       id: 'idConseiller',
       name: 'Taverner',
@@ -78,7 +73,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService, messagesService }}>
-            <ChatRoom enableMultiDestinataireLink={true} />
+            <ChatRoom />
           </DIProvider>,
           { user: conseiller, firebaseToken: tokenChat }
         )

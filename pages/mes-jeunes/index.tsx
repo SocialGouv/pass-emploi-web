@@ -2,7 +2,6 @@ import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
-import SuccessMessage from 'components/SuccessMessage'
 import { ActionsCount } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
@@ -12,7 +11,7 @@ import {
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -23,11 +22,13 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
+import SuccessMessage from 'components/SuccessMessage'
 
 type MesJeunesProps = {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
+  messageEnvoiGroupeSuccess?: boolean
   deletionSuccess?: boolean
 }
 
@@ -35,10 +36,15 @@ function MesJeunes({
   structureConseiller,
   conseillerJeunes,
   isFromEmail,
+  messageEnvoiGroupeSuccess,
   deletionSuccess,
 }: MesJeunesProps) {
+  const router = useRouter()
   const { data: session } = useSession({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
+
+  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
+    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
   const [listeJeunesFiltres, setListJeunesFiltres] = useState<
@@ -72,6 +78,11 @@ function MesJeunes({
     await Router.replace({ pathname: `/mes-jeunes` }, undefined, {
       shallow: true,
     })
+  }
+
+  function closeMessageGroupeEnvoiSuccess(): void {
+    setShowMessageGroupeEnvoiSuccess(false)
+    router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
   const onSearch = useCallback(
@@ -128,6 +139,11 @@ function MesJeunes({
   }, [conseillerJeunes, messagesService, session])
 
   useMatomo(trackingTitle)
+  useMatomo(
+    showMessageGroupeEnvoiSuccess
+      ? 'Mes jeunes - Succès envoi message'
+      : 'Mes jeunes'
+  )
 
   return (
     <>
@@ -149,6 +165,15 @@ function MesJeunes({
           <SuccessMessage
             label='Le compte du jeune a bien été supprimé.'
             onAcknowledge={closeDeletionSuccess}
+          />
+        )}
+
+        {showMessageGroupeEnvoiSuccess && (
+          <SuccessMessage
+            label={
+              'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
+            }
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
 
@@ -227,9 +252,16 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       compareJeunesByLastName
     ),
     isFromEmail: Boolean(context.query?.source),
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
+
   if (context.query.suppression)
     props.deletionSuccess = context.query.suppression === 'succes'
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  }
+
   return { props }
 }
 

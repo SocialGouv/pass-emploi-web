@@ -8,9 +8,10 @@ import { Session } from 'next-auth'
 import React from 'react'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
-import { UserStructure } from '../../interfaces/conseiller'
-import { formatDayDate } from '../../utils/date'
+import { UserStructure } from 'interfaces/conseiller'
+import { formatDayDate } from 'utils/date'
 import renderWithSession from '../renderWithSession'
+import { mockedMessagesService } from 'fixtures/services'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
@@ -23,7 +24,7 @@ describe('<Conversation />', () => {
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
     onBack = jest.fn()
-    messagesService = {
+    messagesService = mockedMessagesService({
       observeJeuneChat: jest.fn(),
       observeJeuneReadingDate: jest.fn(
         (idChat: string, fn: (date: Date) => void) => {
@@ -37,12 +38,11 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
-      sendNouveauMessage: jest.fn(),
-      setReadByConseiller: jest.fn(),
-      signIn: jest.fn(),
-      signOut: jest.fn(),
-      countMessagesNotRead: jest.fn(),
-    }
+      sendNouveauMessage: jest.fn(() => {
+        return Promise.resolve()
+      }),
+    })
+
     conseiller = {
       id: 'idConseiller',
       name: 'Taverner',
@@ -129,15 +129,17 @@ describe('<Conversation />', () => {
       fireEvent.submit(form)
 
       // Then
-      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
-        {
-          id: conseiller.id,
-          structure: conseiller.structure,
-        },
-        jeuneChat,
-        newMessage,
-        accessToken
-      )
+      await act(async () => {
+        expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
+          {
+            id: conseiller.id,
+            structure: conseiller.structure,
+          },
+          [jeuneChat],
+          newMessage,
+          accessToken
+        )
+      })
     })
   })
 })

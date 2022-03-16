@@ -23,6 +23,7 @@ describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
     let jeunes: Jeune[]
+
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
         // Given
@@ -63,7 +64,9 @@ describe('EditionRdv', () => {
       it('récupère la liste des jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
-          query: {},
+          req: {
+            headers: {},
+          },
         } as GetServerSidePropsContext)
 
         // Then
@@ -72,36 +75,52 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toEqual({
-          props: { jeunes, withoutChat: true, from: '/mes-jeunes' },
+          props: {
+            jeunes,
+            withoutChat: true,
+            from: '/mes-jeunes',
+          },
         })
       })
 
       it("récupère la page d'origine", async () => {
         // When
         const actual = await getServerSideProps({
-          query: { from: '/mes-rendezvous' },
-        } as unknown as GetServerSidePropsContext<{ from: string }>)
+          req: {
+            headers: {
+              referer: '/mes-rendezvous',
+            },
+          },
+        } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
           'id-conseiller',
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { from: '/mes-rendezvous' } })
+        expect(actual).toMatchObject({
+          props: { from: '/mes-rendezvous' },
+        })
       })
 
       it('récupère le jeune concerné', async () => {
         // When
         const actual = await getServerSideProps({
-          query: { from: '/mes-jeunes/id-jeune' },
-        } as unknown as GetServerSidePropsContext<{ from: string }>)
+          req: {
+            headers: {
+              referer: '/mes-jeunes/id-jeune',
+            },
+          },
+        } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
           'id-conseiller',
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { idJeuneFrom: 'id-jeune' } })
+        expect(actual).toMatchObject({
+          props: { idJeuneFrom: 'id-jeune' },
+        })
       })
     })
   })
@@ -317,7 +336,7 @@ describe('EditionRdv', () => {
             )
           })
 
-          it('redirige vers la page précedente', () => {
+          it('redirige vers la page précédente', () => {
             // Then
             expect(push).toHaveBeenCalledWith(
               '/mes-rendezvous?creationRdv=succes'

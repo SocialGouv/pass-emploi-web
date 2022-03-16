@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { DIProvider } from 'utils/injectionDependances'
 import { MessagesService } from 'services/messages.service'
+import { mockedMessagesService } from 'fixtures/services'
 
 describe('Recherche', () => {
   let messagesService: MessagesService
@@ -15,18 +16,13 @@ describe('Recherche', () => {
     //GIVEN
     const jeunes = desJeunes()
 
-    messagesService = {
-      observeJeuneChat: jest.fn(),
-      observeJeuneReadingDate: jest.fn(),
-      observeMessages: jest.fn(),
-      sendNouveauMessage: jest.fn(),
-      setReadByConseiller: jest.fn(),
+    messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
       signOut: jest.fn(),
       countMessagesNotRead: jest
         .fn()
         .mockImplementation(() => Promise.resolve()),
-    }
+    })
 
     await act(async () => {
       await renderWithSession(

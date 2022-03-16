@@ -13,10 +13,6 @@ type LayoutProps = {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const enableMultiDestinataireLink: boolean = Boolean(
-    process.env.ENABLE_MULTI_DESTINATAIRES_MESSAGE
-  )
-
   const {
     props: { withoutChat },
   } = children
@@ -33,9 +29,7 @@ export default function Layout({ children }: LayoutProps) {
           <main role='main'>{children}</main>
           <Footer />
         </div>
-        {!withoutChat && (
-          <ChatRoom enableMultiDestinataireLink={enableMultiDestinataireLink} />
-        )}
+        {!withoutChat && <ChatRoom />}
       </div>
       <div id='modal-root' />
     </>

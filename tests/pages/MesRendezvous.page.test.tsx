@@ -41,10 +41,7 @@ describe('MesRendezvous', () => {
         })
 
         expect(addRdv).toBeInTheDocument()
-        expect(addRdv).toHaveAttribute(
-          'href',
-          '/mes-jeunes/edition-rdv?from=/mes-rendezvous'
-        )
+        expect(addRdv).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
 
       it('a deux boutons', () => {

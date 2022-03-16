@@ -39,10 +39,10 @@ export function mockedMessagesService(
     observeJeuneChat: jest.fn(),
     observeJeuneReadingDate: jest.fn(),
     observeMessages: jest.fn(),
-    sendNouveauMessage: jest.fn(),
     setReadByConseiller: jest.fn(),
     signIn: jest.fn(),
     signOut: jest.fn(),
+    sendNouveauMessage: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

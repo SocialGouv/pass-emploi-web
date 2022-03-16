@@ -8,7 +8,7 @@ import { UserStructure } from 'interfaces/conseiller'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -19,17 +19,22 @@ type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
   creationSuccess?: boolean
+  messageEnvoiGroupeSuccess?: boolean
 }
 
 const MesRendezvous = ({
   rendezVousFuturs,
   rendezVousPasses,
   creationSuccess,
+  messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) => {
   const router = useRouter()
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     creationSuccess ?? false
   )
+  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
+    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
@@ -63,6 +68,11 @@ const MesRendezvous = ({
     router.replace('', undefined, { shallow: true })
   }
 
+  function closeMessageGroupeEnvoiSuccess(): void {
+    setShowMessageGroupeEnvoiSuccess(false)
+    router.replace('', undefined, { shallow: true })
+  }
+
   function openDeleteRdvModal(rdv: Rdv) {
     setSelectedRdv(rdv)
     setShowDeleteModal(true)
@@ -75,6 +85,11 @@ const MesRendezvous = ({
   }
 
   useMatomo(trackingTitle)
+  useMatomo(
+    showMessageGroupeEnvoiSuccess
+      ? `${pageTracking} - Succès envoi message`
+      : pageTracking
+  )
 
   return (
     <>
@@ -83,7 +98,7 @@ const MesRendezvous = ({
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <ButtonLink href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
+        <ButtonLink href={'/mes-jeunes/edition-rdv'}>
           Fixer un rendez-vous
         </ButtonLink>
       </span>
@@ -95,6 +110,16 @@ const MesRendezvous = ({
             onAcknowledge={closeRdvCreationMessage}
           />
         )}
+
+        {showMessageGroupeEnvoiSuccess && (
+          <SuccessMessage
+            label={
+              'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
+            }
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
+          />
+        )}
+
         <div role='tablist' className='flex mb-[40px]'>
           <Button
             role='tab'
@@ -166,9 +191,15 @@ export const getServerSideProps: GetServerSideProps<
   const props: MesRendezvousProps = {
     rendezVousFuturs: futurs,
     rendezVousPasses: passes,
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
+
   if (context.query.creationRdv)
     props.creationSuccess = context.query.creationRdv === 'succes'
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  }
   return { props }
 }
 

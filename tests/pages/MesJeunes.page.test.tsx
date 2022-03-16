@@ -90,18 +90,10 @@ describe('Mes Jeunes', () => {
         //GIVEN
         const jeune = unJeuneAvecActionsNonTerminees()
 
-        messagesService = {
-          observeJeuneChat: jest.fn(),
-          observeJeuneReadingDate: jest.fn(),
-          observeMessages: jest.fn(),
-          sendNouveauMessage: jest.fn(),
-          setReadByConseiller: jest.fn(),
+        messagesService = mockedMessagesService({
           signIn: jest.fn(() => Promise.resolve()),
-          signOut: jest.fn(),
-          countMessagesNotRead: jest
-            .fn()
-            .mockImplementation(() => Promise.resolve()),
-        }
+          countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
+        })
 
         await act(async () => {
           renderWithSession(
@@ -142,18 +134,10 @@ describe('Mes Jeunes', () => {
 
     describe('Contenu de page', () => {
       let messagesService: MessagesService
-      messagesService = {
-        observeJeuneChat: jest.fn(),
-        observeJeuneReadingDate: jest.fn(),
-        observeMessages: jest.fn(),
-        sendNouveauMessage: jest.fn(),
-        setReadByConseiller: jest.fn(),
+      messagesService = mockedMessagesService({
         signIn: jest.fn(() => Promise.resolve()),
-        signOut: jest.fn(),
-        countMessagesNotRead: jest
-          .fn()
-          .mockImplementation(() => Promise.resolve()),
-      }
+        countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
+      })
 
       const jeunes = desJeunesAvecActionsNonTerminees()
 

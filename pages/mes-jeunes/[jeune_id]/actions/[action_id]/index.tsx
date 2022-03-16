@@ -1,8 +1,9 @@
 import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import { AppHead } from 'components/AppHead'
-import EchecMessage from 'components/EchecMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import EchecMessage from 'components/EchecMessage'
+import SuccessMessage from 'components/SuccessMessage'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -19,18 +20,28 @@ import { Container, useDependance } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
-type Props = {
+type PageActionProps = {
   action: ActionJeune
   jeune: Jeune
+  messageEnvoiGroupeSuccess?: boolean
 }
 
-function PageAction({ action, jeune }: Props) {
+function PageAction({
+  action,
+  jeune,
+  messageEnvoiGroupeSuccess,
+}: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession({ required: true })
   const router = useRouter()
   const [statut, setStatut] = useState<ActionStatus>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
+
+  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
+    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+
+  const pageTracking = 'Détail Action'
 
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
@@ -60,7 +71,22 @@ function PageAction({ action, jeune }: Props) {
       })
   }
 
-  useMatomo('Détail action')
+  function closeMessageGroupeEnvoiSuccess(): void {
+    setShowMessageGroupeEnvoiSuccess(false)
+    router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  useMatomo(
+    showMessageGroupeEnvoiSuccess
+      ? `${pageTracking} - Succès envoi message`
+      : pageTracking
+  )
 
   return (
     <>
@@ -97,6 +123,15 @@ function PageAction({ action, jeune }: Props) {
               "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
             }
             onAcknowledge={() => setShowEchecMessage(false)}
+          />
+        )}
+
+        {showMessageGroupeEnvoiSuccess && (
+          <SuccessMessage
+            label={
+              'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
+            }
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
 
@@ -151,7 +186,7 @@ function PageAction({ action, jeune }: Props) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
+export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   context
 ) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
@@ -172,11 +207,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     accessToken
   )
 
+  const props: PageActionProps = {
+    action: res,
+    jeune: res.jeune,
+    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+  }
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  }
+
   return {
-    props: {
-      action: res,
-      jeune: res.jeune,
-    },
+    props,
   }
 }
 

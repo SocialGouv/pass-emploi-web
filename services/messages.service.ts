@@ -13,10 +13,10 @@ export interface MessagesService {
 
   sendNouveauMessage(
     conseiller: { id: string; structure: string },
-    jeuneChat: JeuneChat,
+    destinataires: Jeune[] | JeuneChat[],
     newMessage: string,
     accessToken: string
-  ): void
+  ): Promise<void>
 
   setReadByConseiller(idChat: string): void
 
@@ -54,38 +54,6 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await this.firebaseClient.signOut()
   }
 
-  async sendNouveauMessage(
-    conseiller: { id: string; structure: UserStructure },
-    jeuneChat: JeuneChat,
-    newMessage: string,
-    accessToken: string
-  ) {
-    const now = new Date()
-    const encryptedMessage = this.chatCrypto.encrypt(newMessage)
-
-    await Promise.all([
-      this.firebaseClient.addMessage(jeuneChat.chatId, encryptedMessage, now),
-      this.firebaseClient.updateChat(jeuneChat.chatId, {
-        lastMessageContent: encryptedMessage.encryptedText,
-        lastMessageIv: encryptedMessage.iv,
-        lastMessageSentAt: now,
-        lastMessageSentBy: 'conseiller',
-        newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
-        seenByConseiller: true,
-        lastConseillerReading: now,
-      }),
-    ])
-
-    await Promise.all([
-      this.notifierNouveauMessage(conseiller.id, jeuneChat.id, accessToken),
-      this.evenementNouveauMessage(
-        conseiller.structure,
-        conseiller.id,
-        accessToken
-      ),
-    ])
-  }
-
   async setReadByConseiller(idChat: string): Promise<void> {
     const now = new Date()
     await this.firebaseClient.updateChat(idChat, {
@@ -102,23 +70,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     return this.firebaseClient.findAndObserveChatDuJeune(
       idConseiller,
       jeune.id,
-      (id: string, chat: Chat) => {
+      (chat: Chat) => {
         const newJeuneChat: JeuneChat = {
           ...jeune,
-          chatId: id,
-          seenByConseiller: chat.seenByConseiller ?? true,
-          newConseillerMessageCount: chat.newConseillerMessageCount,
+          ...chat,
           lastMessageContent: chat.lastMessageIv
             ? this.chatCrypto.decrypt({
                 encryptedText: chat.lastMessageContent ?? '',
                 iv: chat.lastMessageIv,
               })
             : chat.lastMessageContent,
-          lastMessageSentAt: chat.lastMessageSentAt,
-          lastMessageSentBy: chat.lastMessageSentBy,
-          lastConseillerReading: chat.lastConseillerReading,
-          lastJeuneReading: chat.lastJeuneReading,
-          lastMessageIv: chat.lastMessageIv,
         }
 
         onJeuneChat(newJeuneChat)
@@ -160,14 +121,61 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     return chat?.newConseillerMessageCount ?? 0
   }
 
-  private async notifierNouveauMessage(
+  async sendNouveauMessage(
+    conseiller: { id: string; structure: UserStructure },
+    destinataires: Jeune[],
+    newMessage: string,
+    accessToken: string
+  ) {
+    const now = new Date()
+    const encryptedMessage = this.chatCrypto.encrypt(newMessage)
+
+    const idsJeunes = destinataires.map((destinataire) => destinataire.id)
+
+    const chats = await this.firebaseClient.getChatsDesJeunes(
+      conseiller.id,
+      idsJeunes
+    )
+
+    await Promise.all([
+      chats.map((chat) => {
+        return Promise.all([
+          this.firebaseClient.addMessage(chat.chatId, encryptedMessage, now),
+          this.firebaseClient.updateChat(chat.chatId, {
+            lastMessageContent: encryptedMessage.encryptedText,
+            lastMessageIv: encryptedMessage.iv,
+            lastMessageSentAt: now,
+            lastMessageSentBy: 'conseiller',
+            newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+            seenByConseiller: true,
+            lastConseillerReading: now,
+          }),
+        ])
+      }),
+    ])
+
+    await Promise.all([
+      this.notifierNouveauMessageMultiple(
+        conseiller.id,
+        idsJeunes,
+        accessToken
+      ),
+      this.evenementNouveauMessage(
+        conseiller.structure,
+        conseiller.id,
+        accessToken
+      ),
+    ])
+  }
+
+  private async notifierNouveauMessageMultiple(
     idConseiller: string,
-    idJeune: string,
+    idsJeunes: string[],
     accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
-      `/conseillers/${idConseiller}/jeunes/${idJeune}/notify-message`,
-      undefined,
+      `/conseillers/${idConseiller}/jeunes/notify-messages`,
+      { idsJeunes: idsJeunes },
       accessToken
     )
   }
