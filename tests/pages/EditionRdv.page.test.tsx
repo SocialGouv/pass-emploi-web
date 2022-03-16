@@ -64,11 +64,8 @@ describe('EditionRdv', () => {
       it('récupère la liste des jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
-          query: {},
           req: {
-            headers: {
-              referer: '/mes-jeunes',
-            },
+            headers: {},
           },
         } as GetServerSidePropsContext)
 
@@ -89,13 +86,12 @@ describe('EditionRdv', () => {
       it("récupère la page d'origine", async () => {
         // When
         const actual = await getServerSideProps({
-          query: { from: '/mes-rendezvous' },
           req: {
             headers: {
               referer: '/mes-rendezvous',
             },
           },
-        } as unknown as GetServerSidePropsContext<{ from: string }>)
+        } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
@@ -110,13 +106,12 @@ describe('EditionRdv', () => {
       it('récupère le jeune concerné', async () => {
         // When
         const actual = await getServerSideProps({
-          query: { from: '/mes-jeunes/id-jeune' },
           req: {
             headers: {
               referer: '/mes-jeunes/id-jeune',
             },
           },
-        } as unknown as GetServerSidePropsContext<{ from: string }>)
+        } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
@@ -341,7 +336,7 @@ describe('EditionRdv', () => {
             )
           })
 
-          it('redirige vers la page précedente', () => {
+          it('redirige vers la page précédente', () => {
             // Then
             expect(push).toHaveBeenCalledWith(
               '/mes-rendezvous?creationRdv=succes'

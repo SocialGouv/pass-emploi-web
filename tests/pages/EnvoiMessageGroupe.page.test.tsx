@@ -35,7 +35,7 @@ describe('EnvoiMessageGroupe', () => {
     jeunesService = mockedJeunesService()
 
     messagesService = mockedMessagesService({
-      sendNouveauMessageMultiple: jest.fn(() => {
+      sendNouveauMessageGroupe: jest.fn(() => {
         return Promise.resolve()
       }),
     })
@@ -47,7 +47,7 @@ describe('EnvoiMessageGroupe', () => {
         <EnvoiMessageGroupe
           jeunes={destinataires}
           withoutChat={true}
-          from='/'
+          from='/mes-jeunes'
         />
       </DIProvider>
     )
@@ -116,7 +116,7 @@ describe('EnvoiMessageGroupe', () => {
       expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
 
       await waitFor(() => {
-        expect(messagesService.sendNouveauMessageMultiple).toHaveBeenCalledWith(
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
           { id: '1', structure: UserStructure.MILO },
           destinataires,
           newMessage,
@@ -130,9 +130,9 @@ describe('EnvoiMessageGroupe', () => {
       const messageErreur =
         "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
       ;(
-        messagesService.sendNouveauMessageMultiple as Mock<any>
+        messagesService.sendNouveauMessageGroupe as Mock<any>
       ).mockRejectedValue({
-        message: messageErreur,
+        message: 'whatever',
       })
 
       // When
@@ -142,9 +142,9 @@ describe('EnvoiMessageGroupe', () => {
 
       // Then
       await waitFor(() => {
-        expect(
-          messagesService.sendNouveauMessageMultiple
-        ).toHaveBeenCalledTimes(1)
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
+          1
+        )
       })
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
     })

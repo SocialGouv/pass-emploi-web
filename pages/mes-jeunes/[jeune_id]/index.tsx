@@ -94,7 +94,7 @@ const FicheJeune = ({
     setTrackingLabel(pageTracking)
   }
 
-  function closeMessageGroupeEnvoiMessage(): void {
+  function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
     router.replace(
       {
@@ -126,7 +126,7 @@ const FicheJeune = ({
         </Link>
 
         {!isPoleEmploi && (
-          <ButtonLink href={`/mes-jeunes/edition-rdv?from=${router.asPath}`}>
+          <ButtonLink href={`/mes-jeunes/edition-rdv`}>
             Fixer un rendez-vous
           </ButtonLink>
         )}
@@ -145,7 +145,7 @@ const FicheJeune = ({
             label={
               'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
             }
-            onAcknowledge={closeMessageGroupeEnvoiMessage}
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
 
@@ -263,6 +263,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query?.envoiMessage === 'succes'
+  }
 
   return {
     props,

@@ -79,9 +79,9 @@ function MesJeunes({
     })
   }
 
-  function closeMessageGroupeEnvoiMessage(): void {
+  function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace('', undefined, { shallow: true })
+    router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
   const onSearch = useCallback(
@@ -172,7 +172,7 @@ function MesJeunes({
             label={
               'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
             }
-            onAcknowledge={closeMessageGroupeEnvoiMessage}
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
 
@@ -256,6 +256,11 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
 
   if (context.query.suppression)
     props.deletionSuccess = context.query.suppression === 'succes'
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  }
+
   return { props }
 }
 

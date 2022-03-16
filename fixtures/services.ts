@@ -43,7 +43,7 @@ export function mockedMessagesService(
     setReadByConseiller: jest.fn(),
     signIn: jest.fn(),
     signOut: jest.fn(),
-    sendNouveauMessageMultiple: jest.fn(),
+    sendNouveauMessageGroupe: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

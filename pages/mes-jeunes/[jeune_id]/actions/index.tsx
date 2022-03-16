@@ -72,7 +72,7 @@ function Actions({
     )
   }
 
-  function closeMessageGroupeEnvoiMessage(): void {
+  function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
     router.replace(
       {
@@ -162,7 +162,7 @@ function Actions({
             label={
               'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
             }
-            onAcknowledge={closeMessageGroupeEnvoiMessage}
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
 
@@ -244,6 +244,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     ),
     deleteSuccess: Boolean(context.query.deleteSuccess),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+  }
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
   }
 
   return {

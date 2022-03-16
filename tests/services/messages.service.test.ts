@@ -284,6 +284,7 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.sendNouveauMessageMultiple', () => {
     let destinataires: Jeune[]
     let idsJeunes: string[]
+    let chats: Chat[]
     let conseiller: Session.User
     let newMessageGroupe: string
     const now = new Date()
@@ -306,7 +307,10 @@ describe('MessagesFirebaseAndApiService', () => {
       newMessageGroupe = 'nouveau message groupé'
 
       // When
-      await messagesService.sendNouveauMessageMultiple(
+      chats = idsJeunes.map((idJeune) => unChat({ chatId: `chat-${idJeune}` }))
+      ;(firebaseClient.getChatsDesJeunes as jest.Mock).mockResolvedValue(chats)
+
+      await messagesService.sendNouveauMessageGroupe(
         { id: conseiller.id, structure: UserStructure.MILO },
         destinataires,
         newMessageGroupe,
@@ -315,8 +319,6 @@ describe('MessagesFirebaseAndApiService', () => {
     })
 
     it('ajoute un nouveau message à firebase pour chaque destinataire', async () => {
-      const chats = await firebaseClient.getChatsDesJeunes('1', idsJeunes)
-
       // Then
       expect(firebaseClient.getChatsDesJeunes).toHaveBeenCalledWith(
         conseiller.id,
@@ -336,8 +338,6 @@ describe('MessagesFirebaseAndApiService', () => {
     })
 
     it('met à jour le chat dans firebase pour chaque destinataire', async () => {
-      const chats = await firebaseClient.getChatsDesJeunes('1', idsJeunes)
-
       expect(firebaseClient.getChatsDesJeunes).toHaveBeenCalledWith(
         conseiller.id,
         idsJeunes

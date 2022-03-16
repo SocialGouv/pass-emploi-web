@@ -42,7 +42,7 @@ export interface Chat {
   lastMessageIv: string | undefined
 }
 
-export interface JeuneChat extends Jeune, Chat {}
+export type JeuneChat = Jeune & Chat
 
 export interface DossierMilo {
   id: string

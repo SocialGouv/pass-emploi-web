@@ -419,17 +419,17 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
-  const url: string | undefined = context.req.headers.referer as string
+  const referer = context.req.headers.referer
 
   const props: EditionRdvProps = {
     jeunes: jeunes,
     withoutChat: true,
-    from: url ?? '/mes-jeunes',
+    from: referer ?? '/mes-jeunes',
   }
 
-  if (url) {
+  if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
-    const match = regex.exec(url)
+    const match = regex.exec(referer)
     if (match?.groups?.idJeune) props.idJeuneFrom = match.groups.idJeune
   }
 

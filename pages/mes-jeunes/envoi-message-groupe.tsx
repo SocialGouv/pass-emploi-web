@@ -32,7 +32,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
   const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
   const [message, setMessage] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string>('')
-  const initialTracking: string = !erreurMessage ? 'Message - Rédaction' : ''
+  const initialTracking = 'Message - Rédaction'
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
@@ -44,27 +44,21 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
     e.preventDefault()
     e.stopPropagation()
 
-    if (formIsValid()) {
+    if (!formIsValid()) return
+    try {
       await messagesService.signIn(session!.firebaseToken)
-      await messagesService
-        .sendNouveauMessageMultiple(
-          { id: session!.user.id, structure: session!.user.structure },
-          selectedJeunes,
-          message,
-          session!.accessToken
-        )
-        .then(() => {
-          if (from) {
-            router.push(`${from}?envoiMessage=succes`)
-          }
-        })
-        .catch((error) => {
-          setErreurMessage(
-            "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer." ||
-              (error as Error).message
-          )
-          setTrackingLabel('Message - Échec envoi message')
-        })
+      await messagesService.sendNouveauMessageGroupe(
+        { id: session!.user.id, structure: session!.user.structure },
+        selectedJeunes,
+        message,
+        session!.accessToken
+      )
+      await router.push(`${from}?envoiMessage=succes`)
+    } catch (error) {
+      setErreurMessage(
+        "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
+      )
+      setTrackingLabel('Message - Échec envoi message')
     }
   }
 
@@ -84,7 +78,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
         </h1>
       </div>
       <div className={`${styles.content} max-w-[500px] m-auto`}>
-        <form method='POST'>
+        <form>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs sont obligatoires
           </div>
@@ -171,13 +165,12 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   } = sessionOrRedirect
 
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
-  const url: string | undefined = context.req.headers.referer as string
 
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
-      from: url ?? '/mes-jeunes',
+      from: context.req.headers.referer ?? '/mes-jeunes',
     },
   }
 }

@@ -18,7 +18,7 @@ export interface MessagesService {
     accessToken: string
   ): void
 
-  sendNouveauMessageMultiple(
+  sendNouveauMessageGroupe(
     conseiller: { id: string; structure: string },
     destinataires: Jeune[],
     newMessage: string,
@@ -109,23 +109,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     return this.firebaseClient.findAndObserveChatDuJeune(
       idConseiller,
       jeune.id,
-      (id: string, chat: Chat) => {
+      (chat: Chat) => {
         const newJeuneChat: JeuneChat = {
           ...jeune,
-          chatId: id,
-          seenByConseiller: chat.seenByConseiller ?? true,
-          newConseillerMessageCount: chat.newConseillerMessageCount,
+          ...chat,
           lastMessageContent: chat.lastMessageIv
             ? this.chatCrypto.decrypt({
                 encryptedText: chat.lastMessageContent ?? '',
                 iv: chat.lastMessageIv,
               })
             : chat.lastMessageContent,
-          lastMessageSentAt: chat.lastMessageSentAt,
-          lastMessageSentBy: chat.lastMessageSentBy,
-          lastConseillerReading: chat.lastConseillerReading,
-          lastJeuneReading: chat.lastJeuneReading,
-          lastMessageIv: chat.lastMessageIv,
         }
 
         onJeuneChat(newJeuneChat)
@@ -167,7 +160,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     return chat?.newConseillerMessageCount ?? 0
   }
 
-  async sendNouveauMessageMultiple(
+  async sendNouveauMessageGroupe(
     conseiller: { id: string; structure: UserStructure },
     destinataires: Jeune[],
     newMessage: string,

@@ -41,7 +41,7 @@ function PageAction({
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
-  const pageTracking: string = 'Détail Action'
+  const pageTracking = 'Détail Action'
 
   async function updateAction(statutChoisi: ActionStatus): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
@@ -71,7 +71,7 @@ function PageAction({
       })
   }
 
-  function closeMessageGroupeEnvoiMessage(): void {
+  function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
     router.replace(
       {
@@ -131,7 +131,7 @@ function PageAction({
             label={
               'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
             }
-            onAcknowledge={closeMessageGroupeEnvoiMessage}
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
 
@@ -211,6 +211,10 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     action: res,
     jeune: res.jeune,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+  }
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
   }
 
   return {

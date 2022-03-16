@@ -72,7 +72,7 @@ class FirebaseClient {
   findAndObserveChatDuJeune(
     idConseiller: string,
     idJeune: string,
-    onChatFound: (id: string, chat: Chat) => void
+    onChatFound: (chat: Chat) => void
   ): () => void {
     return onSnapshot<FirebaseChat>(
       query<FirebaseChat>(
@@ -86,10 +86,7 @@ class FirebaseClient {
       (querySnapshot: QuerySnapshot<FirebaseChat>) => {
         if (querySnapshot.empty) return
         const docSnapshot = querySnapshot.docs[0]
-        onChatFound(
-          docSnapshot.id,
-          chatFromFirebase(docSnapshot.id, docSnapshot.data())
-        )
+        onChatFound(chatFromFirebase(docSnapshot.id, docSnapshot.data()))
       }
     )
   }

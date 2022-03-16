@@ -68,8 +68,9 @@ const MesRendezvous = ({
     router.replace('', undefined, { shallow: true })
   }
 
-  function closeMessageGroupeEnvoiMessage(): void {
+  function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
+    router.replace('', undefined, { shallow: true })
   }
 
   function openDeleteRdvModal(rdv: Rdv) {
@@ -97,7 +98,7 @@ const MesRendezvous = ({
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
         <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
-        <ButtonLink href={'/mes-jeunes/edition-rdv?from=/mes-rendezvous'}>
+        <ButtonLink href={'/mes-jeunes/edition-rdv'}>
           Fixer un rendez-vous
         </ButtonLink>
       </span>
@@ -115,7 +116,7 @@ const MesRendezvous = ({
             label={
               'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
             }
-            onAcknowledge={closeMessageGroupeEnvoiMessage}
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
 
@@ -192,8 +193,13 @@ export const getServerSideProps: GetServerSideProps<
     rendezVousPasses: passes,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
+
   if (context.query.creationRdv)
     props.creationSuccess = context.query.creationRdv === 'succes'
+
+  if (context.query?.envoiMessage) {
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  }
   return { props }
 }
 
