@@ -179,6 +179,22 @@ describe('Suppression Jeune', () => {
       })
 
       describe('quand il y a une erreur', () => {
+        it('affiche un message spécifique si la jeune a activé son compte', async () => {
+          // Given
+          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
+            new RequestError("Message d'erreur", 'JEUNE_PAS_INACTIF')
+          )
+
+          // When
+          await act(async () => button.click())
+
+          // Then
+          expect(
+            screen.getByText('compte jeune activé', { exact: false })
+          ).toBeInTheDocument()
+          expect(push).not.toHaveBeenCalled()
+        })
+
         it("affiche le message d'une erreur de requête", async () => {
           // Given
           ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(

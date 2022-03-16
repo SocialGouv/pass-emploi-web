@@ -38,12 +38,20 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
       await jeunesService.supprimerJeune(jeune.id, session!.accessToken)
       await router.push('/mes-jeunes?suppression=succes')
     } catch (e) {
-      setError(
-        e instanceof RequestError
-          ? e.message
-          : 'Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
-      )
       setTracking('Détail jeune - Erreur suppr. compte')
+      if (e instanceof RequestError) {
+        if (e.code === 'JEUNE_PAS_INACTIF') {
+          setError(
+            'Le jeune a activé son compte. Vous ne pouvez pas supprimer un compte jeune activé.'
+          )
+        } else {
+          setError(e.message)
+        }
+      } else {
+        setError(
+          'Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
+        )
+      }
     } finally {
       setLoading(false)
     }

@@ -49,24 +49,30 @@ async function handleError(response: Response): Promise<void> {
     window.location.reload()
   }
 
-  const message = (await response.json())?.message || response.statusText
+  const json: any = await response.json()
+  const message = json?.message || response.statusText
   const error =
-    response.status < 500 ? new RequestError(message) : new ServerError(message)
+    response.status < 500
+      ? new RequestError(message, json?.code)
+      : new ServerError(message)
   console.error('fetchJson', error)
   throw error
 }
 
 export class RequestError implements Error {
   name = 'REQUEST_ERROR'
-  constructor(readonly message: string) {}
+
+  constructor(readonly message: string, readonly code?: string) {}
 }
 
 export class ServerError implements Error {
   name = 'SERVER_ERROR'
+
   constructor(readonly message: string) {}
 }
 
 export class UnexpectedError implements Error {
   name = 'UNEXPECTED_ERROR'
+
   constructor(readonly message: string) {}
 }

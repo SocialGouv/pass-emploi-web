@@ -20,14 +20,14 @@ export default function FailureMessage({
       <FailureIcon
         aria-hidden={true}
         focusable={false}
-        className='w-6 h-6 mr-2'
+        className='w-6 h-6 mr-2 shrink-0'
       />
       <p className='grow'>{label}</p>
       {onAcknowledge && (
         <button
           aria-label="J'ai compris"
           onClick={onAcknowledge}
-          className='border-none'
+          className='border-none shrink-0'
         >
           <CloseIcon
             focusable='false'
