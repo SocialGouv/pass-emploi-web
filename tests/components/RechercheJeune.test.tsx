@@ -1,4 +1,4 @@
-import { desJeunes } from 'fixtures/jeune'
+import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
 import renderWithSession from '../renderWithSession'
 import MesJeunes from 'pages/mes-jeunes'
 import { UserStructure } from 'interfaces/conseiller'
@@ -14,7 +14,7 @@ describe('Recherche', () => {
 
   beforeEach(async () => {
     //GIVEN
-    const jeunes = desJeunes()
+    const jeunes = desJeunesAvecActionsNonTerminees()
 
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),

@@ -13,7 +13,14 @@ export interface MessagesService {
 
   sendNouveauMessage(
     conseiller: { id: string; structure: string },
-    destinataires: Jeune[] | JeuneChat[],
+    jeuneChat: JeuneChat,
+    newMessage: string,
+    accessToken: string
+  ): void
+
+  sendNouveauMessageGroupe(
+    conseiller: { id: string; structure: string },
+    destinataires: Jeune[],
     newMessage: string,
     accessToken: string
   ): Promise<void>
@@ -123,6 +130,36 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   async sendNouveauMessage(
     conseiller: { id: string; structure: UserStructure },
+    jeuneChat: JeuneChat,
+    newMessage: string,
+    accessToken: string
+  ) {
+    const now = new Date()
+    const encryptedMessage = this.chatCrypto.encrypt(newMessage)
+    await Promise.all([
+      this.firebaseClient.addMessage(jeuneChat.chatId, encryptedMessage, now),
+      this.firebaseClient.updateChat(jeuneChat.chatId, {
+        lastMessageContent: encryptedMessage.encryptedText,
+        lastMessageIv: encryptedMessage.iv,
+        lastMessageSentAt: now,
+        lastMessageSentBy: 'conseiller',
+        newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
+        seenByConseiller: true,
+        lastConseillerReading: now,
+      }),
+    ])
+    await Promise.all([
+      this.notifierNouveauMessage(conseiller.id, jeuneChat.id, accessToken),
+      this.evenementNouveauMessage(
+        conseiller.structure,
+        conseiller.id,
+        accessToken
+      ),
+    ])
+  }
+
+  async sendNouveauMessageGroupe(
+    conseiller: { id: string; structure: UserStructure },
     destinataires: Jeune[],
     newMessage: string,
     accessToken: string
@@ -147,8 +184,8 @@ export class MessagesFirebaseAndApiService implements MessagesService {
             lastMessageSentAt: now,
             lastMessageSentBy: 'conseiller',
             newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-            seenByConseiller: true,
-            lastConseillerReading: now,
+            seenByConseiller: false,
+            lastConseillerReading: new Date(0),
           }),
         ])
       }),
@@ -166,6 +203,18 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         accessToken
       ),
     ])
+  }
+
+  private async notifierNouveauMessage(
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/conseillers/${idConseiller}/jeunes/${idJeune}/notify-message`,
+      undefined,
+      accessToken
+    )
   }
 
   private async notifierNouveauMessageMultiple(

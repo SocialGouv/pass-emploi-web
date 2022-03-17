@@ -208,6 +208,73 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
+  describe('.sendNouveauMessage', () => {
+    let conseiller: { id: string; structure: UserStructure }
+    let jeuneChat: JeuneChat
+    let newMessage: string
+    const now = new Date()
+    beforeEach(async () => {
+      // Given
+      jest.setSystemTime(now)
+      jeuneChat = unJeuneChat()
+      newMessage = 'nouveauMessage'
+      // When
+      conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
+      await messagesService.sendNouveauMessage(
+        conseiller,
+        jeuneChat,
+        newMessage,
+        accessToken
+      )
+    })
+    it('adds a new message to firebase', async () => {
+      // Then
+      expect(firebaseClient.addMessage).toHaveBeenCalledWith(
+        jeuneChat.chatId,
+        {
+          encryptedText: `Encrypted: ${newMessage}`,
+          iv: `IV: ${newMessage}`,
+        },
+        now
+      )
+    })
+    it('updates chat in firebase', async () => {
+      // Then
+      expect(firebaseClient.updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+        lastMessageContent: `Encrypted: ${newMessage}`,
+        lastMessageIv: `IV: ${newMessage}`,
+        lastMessageSentAt: now,
+        lastMessageSentBy: 'conseiller',
+        newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
+        seenByConseiller: true,
+        lastConseillerReading: now,
+      })
+    })
+    it('notifies of a new message', async () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        `/conseillers/${conseiller.id}/jeunes/${jeuneChat.id}/notify-message`,
+        undefined,
+        accessToken
+      )
+    })
+    it('tracks new message', async () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_ENVOYE',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: conseiller.structure,
+            id: conseiller.id,
+          },
+        },
+        accessToken
+      )
+    })
+  })
+
   describe('.sendNouveauMessageMultiple', () => {
     let destinataires: Jeune[]
     let idsJeunes: string[]
@@ -237,7 +304,7 @@ describe('MessagesFirebaseAndApiService', () => {
       chats = idsJeunes.map((idJeune) => unChat({ chatId: `chat-${idJeune}` }))
       ;(firebaseClient.getChatsDesJeunes as jest.Mock).mockResolvedValue(chats)
 
-      await messagesService.sendNouveauMessage(
+      await messagesService.sendNouveauMessageGroupe(
         { id: conseiller.id, structure: UserStructure.MILO },
         destinataires,
         newMessageGroupe,
@@ -277,8 +344,8 @@ describe('MessagesFirebaseAndApiService', () => {
           lastMessageSentAt: now,
           lastMessageSentBy: 'conseiller',
           newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-          seenByConseiller: true,
-          lastConseillerReading: now,
+          seenByConseiller: false,
+          lastConseillerReading: new Date(0),
         })
       })
     })
