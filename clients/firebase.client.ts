@@ -37,7 +37,7 @@ class FirebaseClient {
   }
 
   async signIn(token: string): Promise<void> {
-    const temp_attente = 20
+    const temps_attente = 20
     while (this.isSignedIn == null) {
       await new Promise((r) => setTimeout(r, temp_attente))
     }
