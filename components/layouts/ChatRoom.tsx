@@ -138,7 +138,9 @@ export default function ChatRoom() {
                                 )}{' '}
                               </span>
                             )}
-                            {jeuneChat.seenByConseiller ? (
+                            {(jeuneChat.seenByConseiller &&
+                              jeuneChat.lastMessageContent) ||
+                            !jeuneChat.isActivated ? (
                               <FbCheckIcon
                                 focusable='false'
                                 aria-hidden='true'
