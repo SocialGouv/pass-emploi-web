@@ -135,7 +135,7 @@ describe('<Conversation />', () => {
             id: conseiller.id,
             structure: conseiller.structure,
           },
-          [jeuneChat],
+          jeuneChat,
           newMessage,
           accessToken
         )

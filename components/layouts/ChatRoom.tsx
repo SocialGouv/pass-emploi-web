@@ -82,7 +82,6 @@ export default function ChatRoom() {
 
     setJeunesChats([...currentJeunesChat])
   }
-
   return (
     <article className={styles.chatRoom}>
       {isInConversation() && (
@@ -117,11 +116,12 @@ export default function ChatRoom() {
                         >
                           <span className='text-lg-semi text-bleu_nuit mb-2 w-full flex justify-between'>
                             {jeuneChat.firstName} {jeuneChat.lastName}
-                            {!jeuneChat.seenByConseiller && (
-                              <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
-                                Nouveau message
-                              </span>
-                            )}
+                            {!jeuneChat.seenByConseiller &&
+                              jeuneChat.lastMessageContent && (
+                                <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
+                                  Nouveau message
+                                </span>
+                              )}
                           </span>
                           <span className='text-sm text-bleu_gris mb-[8px]'>
                             {' '}

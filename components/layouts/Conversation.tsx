@@ -42,12 +42,12 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
 
   const sendNouveauMessage = async (event: any) => {
     event.preventDefault()
-    await messagesService.sendNouveauMessage(
+    messagesService.sendNouveauMessage(
       {
         id: session!.user.id,
         structure: session!.user.structure,
       },
-      [jeuneChat],
+      jeuneChat,
       newMessage,
       session!.accessToken
     )
