@@ -25,18 +25,22 @@ class FirebaseClient {
   private readonly firebaseApp: FirebaseApp
   private readonly auth: Auth
   private readonly collectionName: string
-  private isSignedIn = false
+  private isSignedIn: boolean | null = null
 
   constructor() {
     this.firebaseApp = FirebaseClient.retrieveApp()
     this.auth = getAuth(this.firebaseApp)
-    this.collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
     this.auth.onAuthStateChanged((user) => {
       this.isSignedIn = Boolean(user)
     })
+    this.collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
   }
 
   async signIn(token: string): Promise<void> {
+    const temps_attente = 20
+    while (this.isSignedIn == null) {
+      await new Promise((r) => setTimeout(r, temps_attente))
+    }
     if (!this.isSignedIn) {
       await signInWithCustomToken(this.auth, token)
     }
