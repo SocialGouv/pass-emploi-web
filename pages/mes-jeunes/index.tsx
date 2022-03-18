@@ -171,7 +171,7 @@ function MesJeunes({
         {showMessageGroupeEnvoiSuccess && (
           <SuccessMessage
             label={
-              'Votre message groupé a été envoyé en tant que message individuel à chacun des jeunes'
+              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
             }
             onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
