@@ -77,9 +77,7 @@ describe('EnvoiMessageGroupe', () => {
       expect(
         screen.getByRole('button', { name: 'Envoyer' })
       ).toBeInTheDocument()
-      expect(
-        screen.getByRole('button', { name: 'Annuler' })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Annuler' })).toBeInTheDocument()
     })
 
     it('ne devrait pas pouvoir cliquer sur le bouton envoyer avec un champ du formulaire vide', () => {
@@ -148,6 +146,33 @@ describe('EnvoiMessageGroupe', () => {
       await waitFor(() => {
         expect(push).toHaveBeenCalledWith('/mes-jeunes?envoiMessage=succes')
       })
+    })
+
+    it('prévient avant de revenir à la page précédente', () => {
+      // Given
+      const previousButton = screen.getByText(
+        "Quitter la rédaction d'un message à plusieurs jeunes"
+      )
+
+      // When
+      previousButton.click()
+
+      // Then
+      expect(() => screen.getByText('Page précédente')).toThrow()
+      expect(previousButton).not.toHaveAttribute('href')
+      expect(push).not.toHaveBeenCalled()
+    })
+
+    it("prévient avant d'annuler", () => {
+      // Given
+      const cancelButton = screen.getByText('Annuler')
+
+      // When
+      cancelButton.click()
+
+      // Then
+      expect(cancelButton).not.toHaveAttribute('href')
+      expect(push).not.toHaveBeenCalled()
     })
 
     it("devrait afficher un message d'erreur en cas d'échec de l'envoi du message", async () => {
