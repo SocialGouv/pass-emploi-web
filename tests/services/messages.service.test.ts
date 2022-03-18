@@ -364,7 +364,7 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(apiClient.post).toHaveBeenCalledWith(
         '/evenements',
         {
-          type: 'MESSAGE_ENVOYE',
+          type: 'MESSAGE_ENVOYE_MULTIPLE',
           emetteur: {
             type: 'CONSEILLER',
             structure: conseiller.structure,

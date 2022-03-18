@@ -197,7 +197,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         idsJeunes,
         accessToken
       ),
-      this.evenementNouveauMessage(
+      this.evenementNouveauMessageMultiple(
         conseiller.structure,
         conseiller.id,
         accessToken
@@ -238,6 +238,25 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       '/evenements',
       {
         type: 'MESSAGE_ENVOYE',
+        emetteur: {
+          type: 'CONSEILLER',
+          structure: structure,
+          id: idConseiller,
+        },
+      },
+      accessToken
+    )
+  }
+
+  private async evenementNouveauMessageMultiple(
+    structure: string,
+    idConseiller: string,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      '/evenements',
+      {
+        type: 'MESSAGE_ENVOYE_MULTIPLE',
         emetteur: {
           type: 'CONSEILLER',
           structure: structure,
