@@ -18,6 +18,8 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { RequestError } from '../../utils/fetchJson'
 import FailureMessage from 'components/FailureMessage'
+import ButtonLink from 'components/ui/ButtonLink'
+import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
@@ -35,11 +37,23 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
   const [erreurMessage, setErreurMessage] = useState<string | undefined>(
     undefined
   )
+  const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+
   const initialTracking = 'Message - Rédaction'
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const formIsValid = () => message !== '' && selectedJeunes.length !== 0
+
+  function formHasChanges(): boolean {
+    return Boolean(selectedJeunes.length >= 1 || message)
+  }
+
+  function openExitPageConfirmationModal(e: MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowLeavePageModal(true)
+  }
 
   async function envoyerMessageGroupe(
     e: MouseEvent<HTMLButtonElement>
@@ -73,16 +87,31 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
   }
 
   useMatomo(trackingLabel)
+  useMatomo(showLeavePageModal ? 'Message - Modale Annulation' : undefined)
 
   return (
     <>
       <AppHead titre='Message multi-destinataires' />
       <div className={`flex items-center ${styles.header}`}>
-        <Link href={from}>
-          <a className='items-center mr-4'>
+        {!formHasChanges() && (
+          <Link href={from}>
+            <a className='items-center mr-4'>
+              <BackIcon role='img' focusable='false' aria-hidden={true} />
+              <span className='sr-only'>Page précédente</span>
+            </a>
+          </Link>
+        )}
+        {formHasChanges() && (
+          <button
+            className='items-center mr-4'
+            onClick={openExitPageConfirmationModal}
+          >
             <BackIcon role='img' focusable='false' aria-hidden={true} />
-          </a>
-        </Link>
+            <span className='sr-only'>
+              Quitter la rédaction d&apos;un message à plusieurs jeunes
+            </span>
+          </button>
+        )}
         <h1 className='text-l-medium text-bleu_nuit'>
           Message multi-destinataires
         </h1>
@@ -144,13 +173,26 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
           </fieldset>
 
           <div className='flex justify-center'>
-            <Button
-              type='reset'
-              style={ButtonStyle.SECONDARY}
-              className='mr-3 p-2'
-            >
-              Annuler
-            </Button>
+            {!formHasChanges() && (
+              <ButtonLink
+                href={from}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3'
+              >
+                Annuler
+              </ButtonLink>
+            )}
+            {formHasChanges() && (
+              <Button
+                aria-label='Quitter la rédaction du message groupé'
+                onClick={openExitPageConfirmationModal}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3 p-2'
+              >
+                Annuler
+              </Button>
+            )}
+
             <Button
               type='submit'
               disabled={!formIsValid()}
@@ -161,6 +203,15 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
               Envoyer
             </Button>
           </div>
+          {showLeavePageModal && (
+            <ExitPageConfirmationModal
+              id='exit-page-confirmation'
+              show={showLeavePageModal}
+              message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
+              onCancel={() => setShowLeavePageModal(false)}
+              href={from}
+            />
+          )}
         </form>
       </div>
     </>
