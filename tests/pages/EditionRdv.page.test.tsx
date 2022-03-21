@@ -5,7 +5,7 @@ import { Jeune } from 'interfaces/jeune'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
-import { modalites } from 'referentiel/rdv'
+import { modalites, types } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { DIProvider } from 'utils/injectionDependances'
@@ -202,6 +202,21 @@ describe('EditionRdv', () => {
           })
         })
 
+        it('contient une liste pour choisir un type', () => {
+          // Then
+          const selectType = within(etape).getByRole('combobox', {
+            name: 'Type',
+          })
+
+          expect(selectType).toBeInTheDocument()
+          expect(selectType).toHaveAttribute('required', '')
+          for (const typeRendezVous of types) {
+            expect(
+              within(etape).getByRole('option', { name: typeRendezVous })
+            ).toBeInTheDocument()
+          }
+        })
+
         it('contient une liste pour choisir une modalité', () => {
           // Then
           const selectModalite = within(etape).getByRole('combobox', {
@@ -282,6 +297,7 @@ describe('EditionRdv', () => {
       describe('formulaire rempli', () => {
         let selectJeune: HTMLSelectElement
         let selectModalite: HTMLSelectElement
+        let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
         let inputHoraire: HTMLInputElement
         let inputDuree: HTMLInputElement
@@ -295,6 +311,9 @@ describe('EditionRdv', () => {
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
+          selectType = screen.getByRole('combobox', {
+            name: 'Type',
+          })
           inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
           inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
           inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
@@ -307,6 +326,7 @@ describe('EditionRdv', () => {
           // Given
           fireEvent.change(selectJeune, { target: { value: jeunes[0].id } })
           fireEvent.change(selectModalite, { target: { value: modalites[0] } })
+          fireEvent.change(selectType, { target: { value: types[0] } })
           fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
           fireEvent.input(inputHoraire, { target: { value: '10:30' } })
           fireEvent.input(inputDuree, { target: { value: '02:37' } })
@@ -327,6 +347,7 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
+                type: types[0],
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
@@ -344,7 +365,7 @@ describe('EditionRdv', () => {
           })
         })
 
-        it("est désactivé quand aucun jeune n'est selectionné", () => {
+        it("est désactivé quand aucun jeune n'est sélectionné", () => {
           // When
           fireEvent.change(selectJeune, { target: { value: '' } })
 
@@ -352,7 +373,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
         })
 
-        it("est désactivé quand aucune modalité n'est selectionnée", () => {
+        it("est désactivé quand aucune modalité n'est sélectionnée", () => {
           // When
           fireEvent.change(selectModalite, { target: { value: '' } })
 
@@ -360,7 +381,15 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
         })
 
-        it("est désactivé quand aucune date n'est selectionnée", () => {
+        it("est désactivé quand aucun type de rendez-vous n'est sélectionné", () => {
+          // When
+          fireEvent.change(selectModalite, { target: { value: '' } })
+
+          // Then
+          expect(buttonValider).toHaveAttribute('disabled', '')
+        })
+
+        it("est désactivé quand aucune date n'est sélectionnée", () => {
           // When
           fireEvent.change(inputDate, { target: { value: '' } })
           fireEvent.blur(inputDate)

@@ -56,7 +56,12 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
 
   function formHasChanges(): boolean {
     return Boolean(
-      typeRendezVous || modalite || date.value || horaire.value || duree.value || commentaire
+      typeRendezVous ||
+        modalite ||
+        date.value ||
+        horaire.value ||
+        duree.value ||
+        commentaire
     )
   }
 
@@ -244,8 +249,6 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
                 </option>
               ))}
             </select>
-
-            <hr/>
 
             <label htmlFor='modalite' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Modalité
