@@ -25,12 +25,12 @@ export default function ChatRoom() {
   const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
     undefined
   )
-  const destructorRef = useRef<() => void>(() => {})
+  const destructorsRef = useRef<(() => void)[]>([])
 
   const isInConversation = () => Boolean(selectedChat !== undefined)
 
   const observeJeuneChats = useCallback(
-    (idConseiller: string, jeunesToObserve: Jeune[]): (() => void) => {
+    (idConseiller: string, jeunesToObserve: Jeune[]): (() => void)[] => {
       function updateChat(newJeuneChat: JeuneChat): void {
         const idxOfJeune = currentJeunesChat.findIndex(
           (j) => j.chatId === newJeuneChat.chatId
@@ -46,10 +46,9 @@ export default function ChatRoom() {
         setJeunesChats([...currentJeunesChat])
       }
 
-      const unsubscribes = jeunesToObserve.map((jeune: Jeune) =>
+      return jeunesToObserve.map((jeune: Jeune) =>
         messagesService.observeJeuneChat(idConseiller, jeune, updateChat)
       )
-      return () => unsubscribes.forEach((unsubscribe) => unsubscribe())
     },
     [messagesService]
   )
@@ -65,9 +64,9 @@ export default function ChatRoom() {
           )
         )
         .then((jeunes: Jeune[]) => observeJeuneChats(session.user.id, jeunes))
-        .then((destructor) => (destructorRef.current = destructor))
+        .then((destructors) => (destructorsRef.current = destructors))
     }
-    return destructorRef.current
+    return () => destructorsRef.current.forEach((destructor) => destructor())
   }, [session, observeJeuneChats, messagesService, jeunesService])
   return (
     <article className={styles.chatRoom}>
