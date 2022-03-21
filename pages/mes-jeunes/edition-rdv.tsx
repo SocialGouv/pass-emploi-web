@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react'
-import { modalites } from 'referentiel/rdv'
+import { modalites, types } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -344,9 +344,9 @@ function EditionRdv({
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
-              {modalites.map((md) => (
-                <option key={md} value={md}>
-                  {md}
+              {modalites.map((modalite) => (
+                <option key={modalite} value={modalite}>
+                  {modalite}
                 </option>
               ))}
             </select>
