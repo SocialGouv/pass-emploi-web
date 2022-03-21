@@ -18,6 +18,7 @@ export interface RdvFormData {
   date: string
   duration: number
   jeuneId: string
+  type: string
   modality: string
 }
 

@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FormEvent, MouseEvent, useState } from 'react'
-import { modalites } from 'referentiel/rdv'
+import { modalites, types } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -42,6 +42,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
+  const [typeRendezVous, setTypeRendezVous] = useState<string>('')
   const [modalite, setModalite] = useState<string>('')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
@@ -55,7 +56,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
 
   function formHasChanges(): boolean {
     return Boolean(
-      modalite || date.value || horaire.value || duree.value || commentaire
+      typeRendezVous || modalite || date.value || horaire.value || duree.value || commentaire
     )
   }
 
@@ -115,7 +116,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId && modalite) &&
+      Boolean(jeuneId && typeRendezVous && modalite) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid()
@@ -138,6 +139,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
       session!.user.id,
       {
         jeuneId,
+        type: typeRendezVous,
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -224,6 +226,27 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
               Type de rendez-vous :
             </legend>
 
+            <label htmlFor='typeRendezVous' className='text-base-medium mb-2'>
+              <span aria-hidden={true}>* </span>Type
+            </label>
+            <select
+              id='typeRendezVous'
+              name='typeRendezVous'
+              defaultValue={''}
+              required={true}
+              onChange={(e) => setTypeRendezVous(e.target.value)}
+              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
+            >
+              <option aria-hidden hidden disabled value={''} />
+              {types.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+
+            <hr/>
+
             <label htmlFor='modalite' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Modalité
             </label>
@@ -236,9 +259,9 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
-              {modalites.map((md) => (
-                <option key={md} value={md}>
-                  {md}
+              {modalites.map((modalite) => (
+                <option key={modalite} value={modalite}>
+                  {modalite}
                 </option>
               ))}
             </select>
