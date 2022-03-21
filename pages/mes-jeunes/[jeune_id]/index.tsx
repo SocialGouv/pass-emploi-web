@@ -12,9 +12,10 @@ import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useCurrentJeune } from 'utils/chat/jeuneContext'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
@@ -39,6 +40,7 @@ const FicheJeune = ({
   const { data: session } = useSession({ required: true })
   const router = useRouter()
 
+  const [_, setCurrentJeune] = useCurrentJeune()
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
@@ -109,6 +111,10 @@ const FicheJeune = ({
       ? `${pageTracking} - Succès envoi message`
       : undefined
   )
+
+  useEffect(() => {
+    setCurrentJeune(jeune)
+  }, [])
 
   return (
     <>

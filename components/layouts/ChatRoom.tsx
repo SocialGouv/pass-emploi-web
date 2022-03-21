@@ -7,6 +7,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import linkStyle from 'styles/components/Link.module.css'
+import { useCurrentJeune } from 'utils/chat/jeuneContext'
 import { formatDayAndHourDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
@@ -25,6 +26,7 @@ export default function ChatRoom() {
   const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
     undefined
   )
+  const [currentJeune, setCurrentJeune] = useCurrentJeune()
   const destructorsRef = useRef<(() => void)[]>([])
 
   const isInConversation = () => Boolean(selectedChat !== undefined)
@@ -68,11 +70,24 @@ export default function ChatRoom() {
     }
     return () => destructorsRef.current.forEach((destructor) => destructor())
   }, [session, observeJeuneChats, messagesService, jeunesService])
+
+  useEffect(() => {
+    if (currentJeune) {
+      const chatToDisplay = jeunesChats.find(
+        (jeuneChat) => jeuneChat.id === currentJeune.id
+      )
+      setSelectedChat(chatToDisplay)
+    }
+  }, [currentJeune, jeunesChats])
+
   return (
     <article className={styles.chatRoom}>
       {isInConversation() && (
         <Conversation
-          onBack={() => setSelectedChat(undefined)}
+          onBack={() => {
+            setSelectedChat(undefined)
+            setCurrentJeune(undefined)
+          }}
           jeuneChat={selectedChat!}
         />
       )}
