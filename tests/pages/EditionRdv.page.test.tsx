@@ -337,7 +337,6 @@ describe('EditionRdv', () => {
         let inputHoraire: HTMLInputElement
         let inputDuree: HTMLInputElement
         let inputCommentaires: HTMLTextAreaElement
-        let inputAutreType: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
         beforeEach(() => {
           // Given
@@ -355,9 +354,6 @@ describe('EditionRdv', () => {
           inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
           inputCommentaires = screen.getByRole('textbox', {
             name: 'Notes Commentaire à destination des jeunes',
-          })
-          inputAutreType = screen.getByRole('textbox', {
-            name: '* Précisez',
           })
 
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
@@ -485,19 +481,27 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", () => {
+        it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async() => {
+          // Given
+          let inputAutreType: HTMLInputElement
+
           // When
           fireEvent.change(selectType, { target: { value: 'Autre' } })
-          fireEvent.blur(inputAutreType)
+          inputAutreType = screen.getByLabelText('* Précisez')
+
+          await waitFor(()=>{
+            expect(inputAutreType).toBeInTheDocument()
+            fireEvent.blur(inputAutreType)
+          })
 
           // Then
-          expect(inputAutreType).toBeInTheDocument()
-          expect(inputAutreType.value).toBeEmpty()
+          expect(inputAutreType.value).toEqual("")
           expect(
             screen.getByText(
               "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous."
             )
           ).toBeInTheDocument()
+
         })
 
         it("est désactivé quand aucune date n'est sélectionnée", () => {
