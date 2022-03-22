@@ -13,6 +13,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  QueryDocumentSnapshot,
   QuerySnapshot,
   Timestamp,
   updateDoc,
@@ -56,25 +57,35 @@ class FirebaseClient {
     date: Date
   ): Promise<void> {
     const { encryptedText: content, iv } = message
-    await addDoc<FirebaseMessage>(
-      collection(
-        this.getChatReference(idChat),
-        'messages'
-      ) as CollectionReference<FirebaseMessage>,
-      {
-        content,
-        iv,
-        sentBy: 'conseiller',
-        creationDate: Timestamp.fromDate(date),
-      }
-    )
+    try {
+      await addDoc<FirebaseMessage>(
+        collection(
+          this.getChatReference(idChat),
+          'messages'
+        ) as CollectionReference<FirebaseMessage>,
+        {
+          content,
+          iv,
+          sentBy: 'conseiller',
+          creationDate: Timestamp.fromDate(date),
+        }
+      )
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
   }
 
   async updateChat(idChat: string, toUpdate: Partial<Chat>): Promise<void> {
-    await updateDoc<FirebaseChat>(
-      this.getChatReference(idChat),
-      chatToFirebase(toUpdate)
-    )
+    try {
+      await updateDoc<FirebaseChat>(
+        this.getChatReference(idChat),
+        chatToFirebase(toUpdate)
+      )
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
   }
 
   findAndObserveChatDuJeune(
@@ -82,100 +93,102 @@ class FirebaseClient {
     idJeune: string,
     onChatFound: (chat: Chat) => void
   ): () => void {
-    return onSnapshot<FirebaseChat>(
-      query<FirebaseChat>(
-        collection(
-          this.getDb(),
-          this.collectionName
-        ) as CollectionReference<FirebaseChat>,
-        where('conseillerId', '==', idConseiller),
-        where('jeuneId', '==', idJeune)
-      ),
-      (querySnapshot: QuerySnapshot<FirebaseChat>) => {
-        if (querySnapshot.empty) return
-        const docSnapshot = querySnapshot.docs[0]
-        onChatFound(chatFromFirebase(docSnapshot.id, docSnapshot.data()))
-      }
-    )
-  }
-
-  async getChatDuJeune(
-    idConseiller: string,
-    idJeune: string
-  ): Promise<Chat | undefined> {
-    const q = query<FirebaseChat>(
-      collection(
-        this.getDb(),
-        this.collectionName
-      ) as CollectionReference<FirebaseChat>,
-      where('conseillerId', '==', idConseiller),
-      where('jeuneId', '==', idJeune)
-    )
-    const querySnapShot = await getDocs(q)
-    if (querySnapShot.empty) return
-
-    const document = querySnapShot.docs[0]
-    return chatFromFirebase(document.id, document.data())
+    try {
+      return onSnapshot<FirebaseChat>(
+        query<FirebaseChat>(
+          collection(
+            this.getDb(),
+            this.collectionName
+          ) as CollectionReference<FirebaseChat>,
+          where('conseillerId', '==', idConseiller),
+          where('jeuneId', '==', idJeune)
+        ),
+        (querySnapshot: QuerySnapshot<FirebaseChat>) => {
+          if (querySnapshot.empty) return
+          const docSnapshot = querySnapshot.docs[0]
+          onChatFound(chatFromFirebase(docSnapshot.id, docSnapshot.data()))
+        }
+      )
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
   }
 
   async getChatsDesJeunes(
     idConseiller: string,
     idsJeunes: string[]
-  ): Promise<Chat[]> {
-    const q = query<FirebaseChat>(
-      collection(
-        this.getDb(),
-        this.collectionName
-      ) as CollectionReference<FirebaseChat>,
-      where('conseillerId', '==', idConseiller),
-      where('jeuneId', 'in', idsJeunes)
-    )
-    const querySnapShot: QuerySnapshot<FirebaseChat> = await getDocs(q)
-    return querySnapShot.docs.map((document) =>
-      chatFromFirebase(document.id, document.data())
-    )
+  ): Promise<{ [idJeune: string]: Chat }> {
+    try {
+      // firestore limits 'in' query to 10
+      const docSnapshots = await this.getFirebaseChatsByBatches(
+        idConseiller,
+        idsJeunes
+      )
+      return docSnapshots.reduce((mappedChats, document) => {
+        const firebaseChat: FirebaseChat = document.data()
+        mappedChats[firebaseChat.jeuneId] = chatFromFirebase(
+          document.id,
+          firebaseChat
+        )
+        return mappedChats
+      }, {} as { [idJeune: string]: Chat })
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
   }
 
   observeChat(idChat: string, onChat: (chat: Chat) => void): () => void {
-    return onSnapshot(
-      this.getChatReference(idChat),
-      (docSnapshot: DocumentSnapshot<FirebaseChat>) => {
-        const data = docSnapshot.data()
-        if (!data) return
-        onChat(chatFromFirebase(docSnapshot.id, data))
-      }
-    )
+    try {
+      return onSnapshot(
+        this.getChatReference(idChat),
+        (docSnapshot: DocumentSnapshot<FirebaseChat>) => {
+          const data = docSnapshot.data()
+          if (!data) return
+          onChat(chatFromFirebase(docSnapshot.id, data))
+        }
+      )
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
   }
 
   observeMessagesDuChat(
     idChat: string,
     onMessages: (messages: Message[]) => void
   ): () => void {
-    return onSnapshot<FirebaseMessage>(
-      query<FirebaseMessage>(
-        collection(
-          this.getChatReference(idChat),
-          'messages'
-        ) as CollectionReference<FirebaseMessage>,
-        orderBy('creationDate')
-      ),
-      (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
-        const messages: Message[] = querySnapshot.docs.map((docSnapshot) => {
-          const firebaseMessage: FirebaseMessage = docSnapshot.data()
-          return {
-            ...firebaseMessage,
-            creationDate: firebaseMessage.creationDate.toDate(),
-            id: docSnapshot.id,
+    try {
+      return onSnapshot<FirebaseMessage>(
+        query<FirebaseMessage>(
+          collection(
+            this.getChatReference(idChat),
+            'messages'
+          ) as CollectionReference<FirebaseMessage>,
+          orderBy('creationDate')
+        ),
+        (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
+          const messages: Message[] = querySnapshot.docs.map((docSnapshot) => {
+            const firebaseMessage: FirebaseMessage = docSnapshot.data()
+            return {
+              ...firebaseMessage,
+              creationDate: firebaseMessage.creationDate.toDate(),
+              id: docSnapshot.id,
+            }
+          })
+
+          if (!messages || !messages[messages.length - 1]?.creationDate) {
+            return
           }
-        })
 
-        if (!messages || !messages[messages.length - 1]?.creationDate) {
-          return
+          onMessages(messages)
         }
-
-        onMessages(messages)
-      }
-    )
+      )
+    } catch (e) {
+      console.error(e)
+      throw e
+    }
   }
 
   private static retrieveApp() {
@@ -195,6 +208,33 @@ class FirebaseClient {
     }
   }
 
+  private async getFirebaseChatsByBatches(
+    idConseiller: string,
+    idsJeunes: string[]
+  ): Promise<QueryDocumentSnapshot<FirebaseChat>[]> {
+    if (!idsJeunes.length) return []
+
+    const collectionRef = collection(
+      this.getDb(),
+      this.collectionName
+    ) as CollectionReference<FirebaseChat>
+
+    const batches: Promise<QuerySnapshot<FirebaseChat>>[] = []
+    const ids = [...idsJeunes]
+    while (ids.length) {
+      const batch = ids.splice(0, 10)
+      const q = query<FirebaseChat>(
+        collectionRef,
+        where('conseillerId', '==', idConseiller),
+        where('jeuneId', 'in', [...batch])
+      )
+      batches.push(getDocs(q))
+    }
+
+    const querySnapshots = await Promise.all(batches)
+    return querySnapshots.flatMap((querySnapshot) => querySnapshot.docs)
+  }
+
   private getDb(): Firestore {
     return getFirestore(this.firebaseApp)
   }
@@ -211,6 +251,7 @@ class FirebaseClient {
 }
 
 interface FirebaseChat {
+  jeuneId: string
   seenByConseiller: boolean
   newConseillerMessageCount: number
   lastMessageContent: string | undefined

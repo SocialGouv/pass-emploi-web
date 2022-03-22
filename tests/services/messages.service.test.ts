@@ -5,9 +5,9 @@ import { desMessages, desMessagesParJour } from 'fixtures/message'
 import { Message, MessagesOfADay } from 'interfaces'
 import { UserStructure } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { Session } from 'next-auth'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
-import { Session } from 'next-auth'
 
 jest.mock('clients/api.client')
 jest.mock('clients/firebase.client')
@@ -173,38 +173,47 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(onJeuneReadingDate).toHaveBeenCalledWith(jeuneReadingDate)
     })
   })
+
   describe('.messagesNotRead', () => {
-    it('retourne nombre de messages nons lus par un jeune', async () => {
+    it('retourne nombre de messages nons lus par les jeunes', async () => {
       // Given
       const idConseiller = 'conseiller-1'
-      const jeuneId = 'jeune-2'
+      const idsJeunes: string[] = ['jeune-1', 'jeune-2', 'jeune-3']
 
       //When
       const actual = await messagesService.countMessagesNotRead(
         idConseiller,
-        jeuneId
+        idsJeunes
       )
 
       //Then
-      expect(firebaseClient.getChatDuJeune).toHaveBeenCalledWith(
+      expect(firebaseClient.getChatsDesJeunes).toHaveBeenCalledWith(
         idConseiller,
-        jeuneId
+        idsJeunes
       )
-      expect(actual).toEqual(1)
+      expect(actual).toEqual({
+        ['jeune-1']: 1,
+        ['jeune-2']: 1,
+        ['jeune-3']: 1,
+      })
     })
 
     it("quand un jeune n'a pas de chat, retourne 0", async () => {
       //Given
-      ;(firebaseClient.getChatDuJeune as jest.Mock).mockResolvedValue(undefined)
+      ;(firebaseClient.getChatsDesJeunes as jest.Mock).mockResolvedValue({})
 
       //When
       const actual = await messagesService.countMessagesNotRead(
         'conseiller-1',
-        'jeune-1'
+        ['jeune-1', 'jeune-2', 'jeune-3']
       )
 
       //Then
-      expect(actual).toEqual(0)
+      expect(actual).toEqual({
+        'jeune-1': 0,
+        'jeune-2': 0,
+        'jeune-3': 0,
+      })
     })
   })
 
@@ -278,7 +287,7 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.sendNouveauMessageMultiple', () => {
     let destinataires: Jeune[]
     let idsJeunes: string[]
-    let chats: Chat[]
+    let chats: { [idJeune: string]: Chat }
     let conseiller: Session.User
     let newMessageGroupe: string
     const now = new Date()
@@ -301,7 +310,10 @@ describe('MessagesFirebaseAndApiService', () => {
       newMessageGroupe = 'nouveau message groupé'
 
       // When
-      chats = idsJeunes.map((idJeune) => unChat({ chatId: `chat-${idJeune}` }))
+      chats = idsJeunes.reduce((mappedChats, idJeune) => {
+        mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })
+        return mappedChats
+      }, {} as { [idJeune: string]: Chat })
       ;(firebaseClient.getChatsDesJeunes as jest.Mock).mockResolvedValue(chats)
 
       await messagesService.sendNouveauMessageGroupe(
@@ -319,7 +331,7 @@ describe('MessagesFirebaseAndApiService', () => {
         idsJeunes
       )
 
-      chats.forEach((chat) => {
+      Object.values(chats).forEach((chat) => {
         expect(firebaseClient.addMessage).toHaveBeenCalledWith(
           chat.chatId,
           {
@@ -337,7 +349,7 @@ describe('MessagesFirebaseAndApiService', () => {
         idsJeunes
       )
       // Then
-      chats.forEach((chat) => {
+      Object.values(chats).forEach((chat) => {
         expect(firebaseClient.updateChat).toHaveBeenCalledWith(chat.chatId, {
           lastMessageContent: `Encrypted: ${newMessageGroupe}`,
           lastMessageIv: `IV: ${newMessageGroupe}`,

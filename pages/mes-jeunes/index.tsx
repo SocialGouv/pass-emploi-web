@@ -2,6 +2,7 @@ import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
+import SuccessMessage from 'components/SuccessMessage'
 import { ActionsCount } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
@@ -22,7 +23,6 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
-import SuccessMessage from 'components/SuccessMessage'
 
 type MesJeunesProps = {
   structureConseiller: string
@@ -118,19 +118,24 @@ function MesJeunes({
     if (session?.firebaseToken) {
       messagesService
         .signIn(session.firebaseToken)
-        .then(() => {
-          return Promise.all(
-            conseillerJeunes.map(async (jeune) => {
-              return {
-                ...jeune,
-                messagesNonLus: await messagesService.countMessagesNotRead(
-                  session.user.id,
-                  jeune.id
-                ),
-              }
-            })
+        .then(() =>
+          messagesService.countMessagesNotRead(
+            session.user.id,
+            conseillerJeunes.map((j) => j.id)
           )
-        })
+        )
+        .catch(() =>
+          conseillerJeunes.reduce(
+            (mappedCounts, jeune) => ({ ...mappedCounts, [jeune.id]: 0 }),
+            {} as { [idJeune: string]: number }
+          )
+        )
+        .then((mappedCounts: { [idJeune: string]: number }) =>
+          conseillerJeunes.map((jeune) => ({
+            ...jeune,
+            messagesNonLus: mappedCounts[jeune.id] ?? 0,
+          }))
+        )
         .then((jeunesAvecMessagesNonLus) => {
           setJeunes(jeunesAvecMessagesNonLus)
           setListJeunesFiltres(jeunesAvecMessagesNonLus)
