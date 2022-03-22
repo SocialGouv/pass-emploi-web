@@ -35,6 +35,10 @@ interface InputValue {
   error?: string
 }
 
+const TYPE_RENDEZ_VOUS = {
+  Autre : 'Autre'
+}
+
 function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const { data: session } = useSession({ required: true })
   const rendezVousService =
@@ -123,7 +127,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
     }
   }
 
-  function validateTypeRendezVous() {
+  function validateTypeRendezVousAutre() {
     if (!typeRendezVous.value) {
       setTypeRendezVous({
         ...typeRendezVous,
@@ -135,7 +139,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId && typeRendezVous && modalite) &&
+      Boolean(jeuneId && typeRendezVous) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid()
@@ -145,7 +149,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   function handleSelectedTypeRendezVous(value: any) {
     setTypeRendezVous(value)
     setShowTypeRdvAutreOption(false)
-    if (value === 'Autre') {
+    if (value === TYPE_RENDEZ_VOUS.Autre) {
       return setShowTypeRdvAutreOption(true)
     }
   }
@@ -291,7 +295,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
                   name='typeRendezVous--autre'
                   required={true}
                   onChange={(e) => setTypeRendezVous({ value: e.target.value })}
-                  onBlur={validateTypeRendezVous}
+                  onBlur={validateTypeRendezVousAutre}
                   aria-invalid={typeRendezVous.error ? true : undefined}
                   aria-describedby={
                     typeRendezVous.error ? 'date-error' : undefined
@@ -306,13 +310,12 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
             )}
 
             <label htmlFor='modalite' className='text-base-medium mb-2'>
-              <span aria-hidden={true}>* </span>Modalité
+              Modalité
             </label>
             <select
               id='modalite'
               name='modalite'
               defaultValue={''}
-              required={true}
               onChange={(e) => setModalite(e.target.value)}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
