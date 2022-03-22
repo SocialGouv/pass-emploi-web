@@ -42,7 +42,11 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
-  const [typeRendezVous, setTypeRendezVous] = useState<string>('')
+  const [typeRendezVous, setTypeRendezVous] = useState<any>({
+    value: '',
+  }) //FIXME typage
+  const [showTypeRdvAutreOption, setShowTypeRdvAutreOption] =
+    useState<boolean>(false)
   const [modalite, setModalite] = useState<string>('')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
@@ -119,6 +123,16 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
     }
   }
 
+  function validateTypeRendezVous() {
+    if (!typeRendezVous.value) {
+      setTypeRendezVous({
+        ...typeRendezVous,
+        error:
+          "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
+      })
+    }
+  }
+
   function formIsValid(): boolean {
     return (
       Boolean(jeuneId && typeRendezVous && modalite) &&
@@ -126,6 +140,14 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
       horaireIsValid() &&
       dureeIsValid()
     )
+  }
+
+  function handleSelectedTypeRendezVous(value: any) {
+    setTypeRendezVous(value)
+    setShowTypeRdvAutreOption(false)
+    if (value === 'Autre') {
+      return setShowTypeRdvAutreOption(true)
+    }
   }
 
   function openLeavePageModal(e: MouseEvent) {
@@ -239,7 +261,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
               name='typeRendezVous'
               defaultValue={''}
               required={true}
-              onChange={(e) => setTypeRendezVous(e.target.value)}
+              onChange={(e) => handleSelectedTypeRendezVous(e.target.value)}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
@@ -249,6 +271,39 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
                 </option>
               ))}
             </select>
+
+            {showTypeRdvAutreOption && (
+              <>
+                <label
+                  htmlFor='typeRendezVous--autre'
+                  className='text-base-medium mb-2'
+                >
+                  <span aria-hidden={true}>* </span>Précisez
+                </label>
+                {typeRendezVous.error && (
+                  <InputError id='date-error' className='mb-2'>
+                    {typeRendezVous.error}
+                  </InputError>
+                )}
+                <input
+                  type='text'
+                  id='typeRendezVous--autre'
+                  name='typeRendezVous--autre'
+                  required={true}
+                  onChange={(e) => setTypeRendezVous({ value: e.target.value })}
+                  onBlur={validateTypeRendezVous}
+                  aria-invalid={typeRendezVous.error ? true : undefined}
+                  aria-describedby={
+                    typeRendezVous.error ? 'date-error' : undefined
+                  }
+                  className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
+                    typeRendezVous.error
+                      ? 'border-warning text-warning'
+                      : 'border-content_color'
+                  }`}
+                />
+              </>
+            )}
 
             <label htmlFor='modalite' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Modalité

@@ -36,7 +36,7 @@ export const types: string[] = [
   'Entretien par un partenaire',
   'Information collective',
   'Visite',
-  'Autre (avec champ libre de saisie qui s’affiche)',
+  'Autre',
 ]
 
 export const modalites: string[] = [
