@@ -489,19 +489,18 @@ describe('EditionRdv', () => {
           fireEvent.change(selectType, { target: { value: 'Autre' } })
           inputAutreType = screen.getByLabelText('* Précisez')
 
-          await waitFor(()=>{
+          await waitFor(() => {
             expect(inputAutreType).toBeInTheDocument()
             fireEvent.blur(inputAutreType)
           })
 
           // Then
-          expect(inputAutreType.value).toEqual("")
+          expect(inputAutreType.value).toEqual('')
           expect(
             screen.getByText(
               "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous."
             )
           ).toBeInTheDocument()
-
         })
 
         it("est désactivé quand aucune date n'est sélectionnée", () => {
