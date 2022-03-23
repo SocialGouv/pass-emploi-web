@@ -12,6 +12,7 @@ import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
+import { TypeRendezVous } from 'interfaces/rdv'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -346,7 +347,7 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
-                type: types[0],
+                type: TypeRendezVous.ACTIVITE_EXTERIEURES,
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
@@ -380,18 +381,18 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
         })
 
-        it("affiche le champ de saisie pour spécifier le type Autre", async () => {
+        it('affiche le champ de saisie pour spécifier le type Autre', async () => {
           // Given
           // When
           fireEvent.change(selectType, { target: { value: 'Autre' } })
 
           // Then
-          await waitFor(()=>{
+          await waitFor(() => {
             expect(screen.getByLabelText('* Précisez')).toBeInTheDocument()
           })
         })
 
-        it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async() => {
+        it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
           let inputAutreType: HTMLInputElement
 
@@ -399,19 +400,18 @@ describe('EditionRdv', () => {
           fireEvent.change(selectType, { target: { value: 'Autre' } })
           inputAutreType = screen.getByLabelText('* Précisez')
 
-          await waitFor(()=>{
+          await waitFor(() => {
             expect(inputAutreType).toBeInTheDocument()
             fireEvent.blur(inputAutreType)
           })
 
           // Then
-          expect(inputAutreType.value).toEqual("")
+          expect(inputAutreType.value).toEqual('')
           expect(
             screen.getByText(
               "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous."
             )
           ).toBeInTheDocument()
-
         })
 
         it("est désactivé quand aucune date n'est sélectionnée", () => {

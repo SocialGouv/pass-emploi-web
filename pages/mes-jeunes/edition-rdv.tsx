@@ -22,6 +22,7 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
+import { TypeRendezVous, mapStringToTypeRdv } from 'interfaces/rdv'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -36,7 +37,7 @@ interface InputValue {
 }
 
 const TYPE_RENDEZ_VOUS = {
-  Autre : 'Autre'
+  Autre: 'Autre',
 }
 
 function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
@@ -164,13 +165,14 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
     e.preventDefault()
 
     if (!formIsValid()) return Promise.resolve()
+    console.log('lala', mapStringToTypeRdv(typeRendezVous))
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
     await rendezVousService.postNewRendezVous(
       session!.user.id,
       {
         jeuneId,
-        type: typeRendezVous,
+        type: mapStringToTypeRdv(typeRendezVous),
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -178,6 +180,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
       },
       session!.accessToken
     )
+
     await router.push(`${from}?creationRdv=succes`)
   }
 
