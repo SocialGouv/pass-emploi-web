@@ -47,12 +47,10 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
-  const [typeRendezVous, setTypeRendezVous] = useState<any>({
-    value: '',
-  }) //FIXME typage
   const [showTypeRdvAutreOption, setShowTypeRdvAutreOption] =
     useState<boolean>(false)
   const [modalite, setModalite] = useState<string>('')
+  const [typeRendezVous, setTypeRendezVous] = useState<any>('')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
@@ -165,7 +163,6 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
     e.preventDefault()
 
     if (!formIsValid()) return Promise.resolve()
-    console.log('lala', mapStringToTypeRdv(typeRendezVous))
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
     await rendezVousService.postNewRendezVous(
