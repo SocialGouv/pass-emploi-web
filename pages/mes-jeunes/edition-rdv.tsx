@@ -59,6 +59,7 @@ function EditionRdv({
   })
   const [showPrecisionType, setShowPrecisionType] = useState<boolean>(false)
   const [modalite, setModalite] = useState<string>('')
+  const [typeRendezVous, setTypeRendezVous] = useState<any>('')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
