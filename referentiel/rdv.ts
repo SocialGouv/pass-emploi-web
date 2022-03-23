@@ -36,6 +36,7 @@ export const types: string[] = [
   'Entretien par un partenaire',
   'Information collective',
   'Visite',
+  'Prestation',
   'Autre',
 ]
 

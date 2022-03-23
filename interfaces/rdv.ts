@@ -25,6 +25,8 @@ export const mapStringToTypeRdv = (type: string): TypeRendezVous => {
       return TypeRendezVous.INFORMATION_COLLECTIVE
     case 'Visite':
       return TypeRendezVous.VISITE
+    case 'Prestation':
+      return TypeRendezVous.PRESTATION
     case 'Autre':
       return TypeRendezVous.AUTRE
     default:

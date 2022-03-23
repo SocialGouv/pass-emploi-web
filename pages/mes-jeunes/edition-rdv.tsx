@@ -22,7 +22,7 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { TypeRendezVous, mapStringToTypeRdv } from 'interfaces/rdv'
+import { mapStringToTypeRdv, TypeRendezVous } from 'interfaces/rdv'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
