@@ -17,8 +17,14 @@ const FirebaseClient = jest.fn(() => ({
   observeMessagesDuChat: jest.fn(
     (idChat: string, fn: (messages: Message[]) => void) => fn([])
   ),
-  getChatDuJeune: jest.fn(() => unChat()),
-  getChatsDesJeunes: jest.fn(() => [unChat()]),
+  getChatsDesJeunes: jest.fn((_, idsJeunes: string[]) =>
+    idsJeunes.reduce((mappedChats, idJeune) => {
+      return {
+        ...mappedChats,
+        [idJeune]: unChat({ chatId: `chat-id-${idJeune}` }),
+      }
+    }, {} as { [idJeune: string]: Chat })
+  ),
   countMessagesNotRead: jest.fn(),
 }))
 

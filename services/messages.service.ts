@@ -1,9 +1,9 @@
 import { ApiClient } from 'clients/api.client'
+import { FirebaseClient } from 'clients/firebase.client'
 import { Message, MessagesOfADay } from 'interfaces'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
-import { FirebaseClient } from 'clients/firebase.client'
 import { UserStructure } from '../interfaces/conseiller'
 
 export interface MessagesService {
@@ -43,7 +43,10 @@ export interface MessagesService {
     onJeuneReadingDate: (date: Date) => void
   ): () => void
 
-  countMessagesNotRead(idConseiller: string, idJeune: string): Promise<number>
+  countMessagesNotRead(
+    idConseiller: string,
+    idsJeunes: string[]
+  ): Promise<{ [idJeune: string]: number }>
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
@@ -122,10 +125,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   async countMessagesNotRead(
     idConseiller: string,
-    idJeune: string
-  ): Promise<number> {
-    const chat = await this.firebaseClient.getChatDuJeune(idConseiller, idJeune)
-    return chat?.newConseillerMessageCount ?? 0
+    idsJeunes: string[]
+  ): Promise<{ [idJeune: string]: number }> {
+    const chats = await this.firebaseClient.getChatsDesJeunes(
+      idConseiller,
+      idsJeunes
+    )
+    return idsJeunes.reduce((mappedCounts, idJeune) => {
+      mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
+      return mappedCounts
+    }, {} as { [idJeune: string]: number })
   }
 
   async sendNouveauMessage(
@@ -169,13 +178,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
     const idsJeunes = destinataires.map((destinataire) => destinataire.id)
 
-    const chats = await this.firebaseClient.getChatsDesJeunes(
+    const mappedChats = await this.firebaseClient.getChatsDesJeunes(
       conseiller.id,
       idsJeunes
     )
 
     await Promise.all([
-      chats.map((chat) => {
+      Object.values(mappedChats).map((chat) => {
         return Promise.all([
           this.firebaseClient.addMessage(chat.chatId, encryptedMessage, now),
           this.firebaseClient.updateChat(chat.chatId, {

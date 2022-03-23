@@ -18,10 +18,7 @@ describe('Recherche', () => {
 
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      signOut: jest.fn(),
-      countMessagesNotRead: jest
-        .fn()
-        .mockImplementation(() => Promise.resolve()),
+      countMessagesNotRead: jest.fn(() => Promise.resolve({})),
     })
 
     await act(async () => {

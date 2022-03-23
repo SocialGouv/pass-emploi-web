@@ -34,17 +34,91 @@ describe('Mes Jeunes', () => {
   afterAll(() => jest.clearAllMocks())
 
   describe('client side', () => {
-    describe('quand le conseiller est MILO', () => {
-      let messagesService: MessagesService
+    let messagesService: MessagesService
+    const jeunes = desJeunesAvecActionsNonTerminees()
+    beforeEach(() => {
+      messagesService = mockedMessagesService({
+        signIn: jest.fn(() => Promise.resolve()),
+        countMessagesNotRead: jest.fn((_, ids: string[]) =>
+          Promise.resolve(
+            ids.reduce(
+              (mapped, id) => ({ ...mapped, [id]: 2 }),
+              {} as { [id: string]: number }
+            )
+          )
+        ),
+      })
+    })
 
+    describe('Contenu de page', () => {
+      beforeEach(async () => {
+        // WHEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+              />
+            </DIProvider>
+          )
+        })
+      })
+
+      it('a un titre de niveau 1', async () => {
+        //THEN
+        expect(
+          screen.getByRole('heading', {
+            level: 1,
+            name: 'Mes Jeunes',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it("affiche la liste des jeunes s'il en a", async () => {
+        //THEN
+        expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
+        jeunes.forEach((jeune) => {
+          expect(
+            screen.getByText(jeune.nbActionsNonTerminees)
+          ).toBeInTheDocument()
+        })
+        expect(screen.getAllByText('2')).toHaveLength(jeunes.length)
+
+        expect(() =>
+          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+        ).toThrow()
+      })
+
+      it('affiche le nombre de messages non lus', async () => {})
+
+      it('affiche le message de succès de suppression de jeune', async () => {
+        //WHEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+              />
+            </DIProvider>
+          )
+        })
+
+        //THEN
+        expect(
+          screen.getByText('Le compte du jeune a bien été supprimé.')
+        ).toBeInTheDocument()
+      })
+    })
+
+    describe('quand le conseiller est MILO', () => {
       beforeEach(async () => {
         //GIVEN
         const jeune = unJeuneAvecActionsNonTerminees()
-
-        messagesService = mockedMessagesService({
-          signIn: jest.fn(() => Promise.resolve()),
-          countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
-        })
 
         await act(async () => {
           renderWithSession(
@@ -84,16 +158,9 @@ describe('Mes Jeunes', () => {
     })
 
     describe('quand le conseiller est Pole emploi', () => {
-      let messagesService: MessagesService
-
       beforeEach(async () => {
         //GIVEN
         const jeune = unJeuneAvecActionsNonTerminees()
-
-        messagesService = mockedMessagesService({
-          signIn: jest.fn(() => Promise.resolve()),
-          countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
-        })
 
         await act(async () => {
           renderWithSession(
@@ -108,7 +175,7 @@ describe('Mes Jeunes', () => {
         })
       })
 
-      it('affiche vers la page de création jeune PE', () => {
+      it('redirige vers la page de création jeune PE', () => {
         // GIVEN
         const addButton = screen.getByRole('button', {
           name: 'Ajouter un jeune',
@@ -132,68 +199,9 @@ describe('Mes Jeunes', () => {
       })
     })
 
-    describe('Contenu de page', () => {
-      let messagesService: MessagesService
-      messagesService = mockedMessagesService({
-        signIn: jest.fn(() => Promise.resolve()),
-        countMessagesNotRead: jest.fn(() => Promise.resolve(0)),
-      })
-
-      const jeunes = desJeunesAvecActionsNonTerminees()
-
-      it('a un titre de niveau 1', async () => {
-        await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={jeunes}
-                isFromEmail
-              />
-            </DIProvider>
-          )
-        })
-
-        //WHEN
-        const heading = screen.getByRole('heading', {
-          level: 1,
-          name: 'Mes Jeunes',
-        })
-
-        //THEN
-        expect(heading).toBeInTheDocument()
-      })
-
-      it("affiche la liste des jeunes s'il en a", async () => {
-        //GIVEN
-        await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={jeunes}
-                isFromEmail
-              />
-            </DIProvider>
-          )
-        })
-        //WHEN
-        const rows = screen.getAllByRole('row')
-
-        //THEN
-        expect(rows.length - 1).toBe(jeunes.length)
-        jeunes.forEach((jeune) => {
-          expect(
-            screen.getByText(`${jeune.nbActionsNonTerminees}`)
-          ).toBeInTheDocument()
-        })
-        expect(() =>
-          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
-        ).toThrow()
-      })
-
-      it("affiche un message invitant à ajouter des jeunes s'il n’en a pas", async () => {
-        //GIVEN
+    describe("quand le conseiller n'a pas de jeune", () => {
+      it('affiche un message invitant à ajouter des jeunes', async () => {
+        // GIVEN
         await act(async () => {
           renderWithSession(
             <DIProvider dependances={{ messagesService }}>
@@ -206,18 +214,22 @@ describe('Mes Jeunes', () => {
           )
         })
 
-        //WHEN
-        const addJeuneText = screen.getByText(
-          "Vous n'avez pas encore intégré de jeunes."
-        )
-
         //THEN
-        expect(addJeuneText).toBeInTheDocument()
+        expect(
+          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+        ).toBeInTheDocument()
         expect(() => screen.getAllByRole('row')).toThrow()
       })
+    })
 
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //WHEN
+    describe('quand la récupération des messages non lus échoue', () => {
+      it('affiche la liste des jeunes', async () => {
+        // GIVEN
+        ;(messagesService.countMessagesNotRead as jest.Mock).mockRejectedValue(
+          new Error()
+        )
+
+        // WHEN
         await act(async () => {
           renderWithSession(
             <DIProvider dependances={{ messagesService }}>
@@ -225,16 +237,13 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={jeunes}
                 isFromEmail
-                deletionSuccess={true}
               />
             </DIProvider>
           )
         })
 
         //THEN
-        expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
-        ).toBeInTheDocument()
+        expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
       })
     })
   })
