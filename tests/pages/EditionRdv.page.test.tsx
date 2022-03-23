@@ -169,6 +169,7 @@ describe('EditionRdv', () => {
           const link = screen.getByText('Page précédente')
           expect(link).toBeInTheDocument()
           expect(link).toHaveAttribute('class', 'sr-only')
+          expect(link.closest('a')).toHaveAttribute('href', '/mes-rendezvous')
         })
       })
 
@@ -286,10 +287,11 @@ describe('EditionRdv', () => {
         })
       })
 
-      it('contient un bouton pour annuler', () => {
+      it('contient un lien pour annuler', () => {
         // Then
         const link = screen.getByText('Annuler')
         expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute('href', '/mes-rendezvous')
       })
 
       describe('formulaire rempli', () => {

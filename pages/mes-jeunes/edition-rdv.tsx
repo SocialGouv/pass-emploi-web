@@ -8,7 +8,7 @@ import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, MouseEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react'
 import { modalites, types } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -22,7 +22,7 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { mapStringToTypeRdv, TypeRendezVous } from 'interfaces/rdv'
+import { mapStringToTypeRdv } from 'interfaces/rdv'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -50,7 +50,9 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const [showTypeRdvAutreOption, setShowTypeRdvAutreOption] =
     useState<boolean>(false)
   const [modalite, setModalite] = useState<string>('')
-  const [typeRendezVous, setTypeRendezVous] = useState<any>('')
+  const [typeRendezVous, setTypeRendezVous] = useState<InputValue>({
+    value: '',
+  })
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
@@ -63,7 +65,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
 
   function formHasChanges(): boolean {
     return Boolean(
-      typeRendezVous ||
+      typeRendezVous.value ||
         modalite ||
         date.value ||
         horaire.value ||
@@ -129,7 +131,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   function validateTypeRendezVousAutre() {
     if (!typeRendezVous.value) {
       setTypeRendezVous({
-        ...typeRendezVous,
+        value: typeRendezVous.value,
         error:
           "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
@@ -138,17 +140,17 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId && typeRendezVous) &&
+      Boolean(jeuneId && typeRendezVous.value) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid()
     )
   }
 
-  function handleSelectedTypeRendezVous(value: any) {
-    setTypeRendezVous(value)
+  function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
+    setTypeRendezVous({ value: e.target.value })
     setShowTypeRdvAutreOption(false)
-    if (value === TYPE_RENDEZ_VOUS.Autre) {
+    if (e.target.value === TYPE_RENDEZ_VOUS.Autre) {
       return setShowTypeRdvAutreOption(true)
     }
   }
@@ -165,11 +167,12 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
     if (!formIsValid()) return Promise.resolve()
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
+    const mappedType = mapStringToTypeRdv(typeRendezVous.value)
     await rendezVousService.postNewRendezVous(
       session!.user.id,
       {
         jeuneId,
-        type: mapStringToTypeRdv(typeRendezVous),
+        type: mappedType,
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -265,7 +268,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
               name='typeRendezVous'
               defaultValue={''}
               required={true}
-              onChange={(e) => handleSelectedTypeRendezVous(e.target.value)}
+              onChange={handleSelectedTypeRendezVous}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
@@ -279,26 +282,28 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
             {showTypeRdvAutreOption && (
               <>
                 <label
-                  htmlFor='typeRendezVous--autre'
+                  htmlFor='typeRendezVous-autre'
                   className='text-base-medium mb-2'
                 >
                   <span aria-hidden={true}>* </span>Précisez
                 </label>
                 {typeRendezVous.error && (
-                  <InputError id='date-error' className='mb-2'>
+                  <InputError id='typeRendezVous-autre--error' className='mb-2'>
                     {typeRendezVous.error}
                   </InputError>
                 )}
                 <input
                   type='text'
-                  id='typeRendezVous--autre'
-                  name='typeRendezVous--autre'
+                  id='typeRendezVous-autre'
+                  name='typeRendezVous-autre'
                   required={true}
                   onChange={(e) => setTypeRendezVous({ value: e.target.value })}
                   onBlur={validateTypeRendezVousAutre}
                   aria-invalid={typeRendezVous.error ? true : undefined}
                   aria-describedby={
-                    typeRendezVous.error ? 'date-error' : undefined
+                    typeRendezVous.error
+                      ? 'typeRendezVous-autre--error'
+                      : undefined
                   }
                   className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
                     typeRendezVous.error
