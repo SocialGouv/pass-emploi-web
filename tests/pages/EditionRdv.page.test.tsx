@@ -403,7 +403,6 @@ describe('EditionRdv', () => {
             // When
             buttonValider.click()
 
-          it('crée un rendez-vous de type Generique', () => {
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
               '1',
@@ -423,10 +422,13 @@ describe('EditionRdv', () => {
 
           it('crée un rendez-vous de type AUTRE', () => {
             // Given
-            fireEvent.change(selectType, { target: { value: 'Autre' } })
+            fireEvent.change(selectType, { target: { value: types.slice(-1) } })
 
             let inputTypeDetail = screen.getByLabelText('* Précisez')
             fireEvent.change(inputTypeDetail, { target: { value: 'un texte de précision' } })
+
+            // When
+            buttonValider.click()
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
@@ -434,7 +436,7 @@ describe('EditionRdv', () => {
               {
                 jeuneId: jeunes[0].id,
                 type: TypeRendezVous.AUTRE,
-                precision: 'un texte de pécision',
+                precision: 'un texte de précision',
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
@@ -448,7 +450,7 @@ describe('EditionRdv', () => {
             // When
             buttonValider.click()
 
-            await waitFor(() => {
+            await waitFor(()=>{
               // Then
               expect(push).toHaveBeenCalledWith(
                 '/mes-rendezvous?creationRdv=succes'
