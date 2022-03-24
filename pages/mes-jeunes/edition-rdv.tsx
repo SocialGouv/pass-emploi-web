@@ -51,6 +51,12 @@ function EditionRdv({
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
+  const [typeRendezVous, setTypeRendezVous] = useState<InputValue>({
+    value: '',
+  })
+  const [typeRendezVousDetail, setTypeRendezVousDetail] = useState<InputValue>({
+    value: '',
+  })
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<InputValue>({
     value: '',
   })
@@ -59,9 +65,6 @@ function EditionRdv({
   })
   const [showPrecisionType, setShowPrecisionType] = useState<boolean>(false)
   const [modalite, setModalite] = useState<string>('')
-  const [typeRendezVous, setTypeRendezVous] = useState<InputValue>({
-    value: '',
-  })
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
@@ -186,6 +189,10 @@ function EditionRdv({
       {
         jeuneId,
         type: codeTypeRendezVous.value,
+        precision:
+          codeTypeRendezVous.value === CODE_TYPE_AUTRE
+            ? precisionType.value
+            : '',
         precision:
           codeTypeRendezVous.value === CODE_TYPE_AUTRE
             ? precisionType.value
