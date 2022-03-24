@@ -13,6 +13,7 @@ import { modalites, types } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
+import switchStyles from 'styles/components/Switch.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -464,7 +465,18 @@ function EditionRdv({
               />
               Informations conseiller :
             </legend>
-            <label htmlFor='commentaire' className='text-base-medium mb-2'>
+            {/*<label htmlFor='presenceConseiller' className=''>*/}
+            {/*  Vous êtes présent au rendez-vous*/}
+            {/*</label>*/}
+            <div>
+              <label className={switchStyles.switch}>
+                Vous êtes présent au rendez-vous
+                <input id='presenceConseiller' type='checkbox' />
+                <span className={switchStyles.slider}></span>
+              </label>
+            </div>
+
+            <label htmlFor='commentaire' className='text-base-regular mb-2'>
               Notes
               <span className='block text-bleu_nuit text-sm-regular'>
                 Commentaire à destination des jeunes
