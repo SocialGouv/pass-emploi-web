@@ -22,7 +22,7 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { mapStringToTypeRdv } from 'interfaces/rdv'
+import { mapStringToTypeRdv, TypeRendezVous } from 'interfaces/rdv'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -47,12 +47,15 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
-  const [showTypeRdvAutreOption, setShowTypeRdvAutreOption] =
-    useState<boolean>(false)
-  const [modalite, setModalite] = useState<string>('')
   const [typeRendezVous, setTypeRendezVous] = useState<InputValue>({
     value: '',
   })
+  const [typeRendezVousDetail, setTypeRendezVousDetail] = useState<InputValue>({
+    value: '',
+  })
+  const [showTypeRdvAutreOption, setShowTypeRdvAutreOption] =
+    useState<boolean>(false)
+  const [modalite, setModalite] = useState<string>('')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
@@ -129,9 +132,9 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   }
 
   function validateTypeRendezVousAutre() {
-    if (!typeRendezVous.value) {
-      setTypeRendezVous({
-        value: typeRendezVous.value,
+    if (!typeRendezVousDetail.value) {
+      setTypeRendezVousDetail({
+        value: typeRendezVousDetail.value,
         error:
           "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
@@ -173,6 +176,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
       {
         jeuneId,
         type: mappedType,
+        precision: typeRendezVousDetail.value ? typeRendezVousDetail.value : '',
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -287,9 +291,9 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
                 >
                   <span aria-hidden={true}>* </span>Précisez
                 </label>
-                {typeRendezVous.error && (
+                {typeRendezVousDetail.error && (
                   <InputError id='typeRendezVous-autre--error' className='mb-2'>
-                    {typeRendezVous.error}
+                    {typeRendezVousDetail.error}
                   </InputError>
                 )}
                 <input
@@ -297,16 +301,16 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
                   id='typeRendezVous-autre'
                   name='typeRendezVous-autre'
                   required={true}
-                  onChange={(e) => setTypeRendezVous({ value: e.target.value })}
+                  onChange={(e) => setTypeRendezVousDetail({ value: e.target.value })}
                   onBlur={validateTypeRendezVousAutre}
-                  aria-invalid={typeRendezVous.error ? true : undefined}
+                  aria-invalid={typeRendezVousDetail.error ? true : undefined}
                   aria-describedby={
-                    typeRendezVous.error
+                    typeRendezVousDetail.error
                       ? 'typeRendezVous-autre--error'
                       : undefined
                   }
                   className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
-                    typeRendezVous.error
+                    typeRendezVousDetail.error
                       ? 'border-warning text-warning'
                       : 'border-content_color'
                   }`}

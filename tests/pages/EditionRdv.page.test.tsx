@@ -341,13 +341,37 @@ describe('EditionRdv', () => {
             buttonValider.click()
           })
 
-          it('crée le rdv', () => {
+          it('crée un rendez-vous de type Generique', () => {
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
               '1',
               {
                 jeuneId: jeunes[0].id,
                 type: TypeRendezVous.ACTIVITE_EXTERIEURES,
+                modality: modalites[0],
+                precision: '',
+                date: '2022-03-03T09:30:00.000Z',
+                duration: 157,
+                comment: 'Lorem ipsum dolor sit amet',
+              },
+              'accessToken'
+            )
+          })
+
+          it('crée un rendez-vous de type AUTRE', () => {
+            // Given
+            fireEvent.change(selectType, { target: { value: 'Autre' } })
+
+            let inputTypeDetail = screen.getByLabelText('* Précisez')
+            fireEvent.change(inputTypeDetail, { target: { value: 'un texte de précision' } })
+
+            // Then
+            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+              '1',
+              {
+                jeuneId: jeunes[0].id,
+                type: TypeRendezVous.AUTRE,
+                precision: 'un texte de pécision',
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
