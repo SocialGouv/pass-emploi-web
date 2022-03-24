@@ -54,7 +54,7 @@ function EditionRdv({
   const [typeRendezVous, setTypeRendezVous] = useState<InputValue>({
     value: '',
   })
-  const [typeRendezVousDetail, setTypeRendezVousDetail] = useState<InputValue>({
+  const [typeRendezVousAutre, setTypeRendezVousAutre] = useState<InputValue>({
     value: '',
   })
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<InputValue>({
@@ -189,10 +189,6 @@ function EditionRdv({
       {
         jeuneId,
         type: codeTypeRendezVous.value,
-        precision:
-          codeTypeRendezVous.value === CODE_TYPE_AUTRE
-            ? precisionType.value
-            : '',
         precision:
           codeTypeRendezVous.value === CODE_TYPE_AUTRE
             ? precisionType.value
@@ -354,9 +350,9 @@ function EditionRdv({
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
-              {modalites.map((modalite) => (
-                <option key={modalite} value={modalite}>
-                  {modalite}
+              {modalites.map((md) => (
+                <option key={md} value={md}>
+                  {md}
                 </option>
               ))}
             </select>
