@@ -1,6 +1,6 @@
 import { BaseJeune } from 'interfaces/jeune'
 import { durees } from 'referentiel/rdv'
-import { TypeRendezVous, Rdv } from '../rdv'
+import { Rdv } from '../rdv'
 
 export interface RdvJson {
   id: string
@@ -19,7 +19,7 @@ export interface RdvFormData {
   duration: number
   jeuneId: string
   type: string
-  precision:string
+  precision: string
   modality: string
 }
 

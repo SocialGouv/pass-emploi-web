@@ -41,6 +41,7 @@ export type Rdv = {
   date: string
   duration: string
   type?: TypeRendezVous
+  precision?: string
   modality: string
   jeune: BaseJeune
 }
@@ -51,6 +52,7 @@ export type RdvJeune = {
   date: string
   duration: string
   type?: TypeRendezVous
+  precision?: string
   modality: string
   jeune: BaseJeune
 }

@@ -22,7 +22,7 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { mapStringToTypeRdv, TypeRendezVous } from 'interfaces/rdv'
+import { mapStringToTypeRdv } from 'interfaces/rdv'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -50,7 +50,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   const [typeRendezVous, setTypeRendezVous] = useState<InputValue>({
     value: '',
   })
-  const [typeRendezVousDetail, setTypeRendezVousDetail] = useState<InputValue>({
+  const [typeRendezVousAutre, setTypeRendezVousAutre] = useState<InputValue>({
     value: '',
   })
   const [showTypeRdvAutreOption, setShowTypeRdvAutreOption] =
@@ -132,9 +132,9 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
   }
 
   function validateTypeRendezVousAutre() {
-    if (!typeRendezVousDetail.value) {
-      setTypeRendezVousDetail({
-        value: typeRendezVousDetail.value,
+    if (!typeRendezVousAutre.value) {
+      setTypeRendezVousAutre({
+        value: typeRendezVousAutre.value,
         error:
           "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
@@ -176,7 +176,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
       {
         jeuneId,
         type: mappedType,
-        precision: typeRendezVousDetail.value ? typeRendezVousDetail.value : '',
+        precision: typeRendezVousAutre.value ? typeRendezVousAutre.value : '',
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -291,9 +291,9 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
                 >
                   <span aria-hidden={true}>* </span>Précisez
                 </label>
-                {typeRendezVousDetail.error && (
+                {typeRendezVousAutre.error && (
                   <InputError id='typeRendezVous-autre--error' className='mb-2'>
-                    {typeRendezVousDetail.error}
+                    {typeRendezVousAutre.error}
                   </InputError>
                 )}
                 <input
@@ -301,16 +301,18 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
                   id='typeRendezVous-autre'
                   name='typeRendezVous-autre'
                   required={true}
-                  onChange={(e) => setTypeRendezVousDetail({ value: e.target.value })}
+                  onChange={(e) =>
+                    setTypeRendezVousAutre({ value: e.target.value })
+                  }
                   onBlur={validateTypeRendezVousAutre}
-                  aria-invalid={typeRendezVousDetail.error ? true : undefined}
+                  aria-invalid={typeRendezVousAutre.error ? true : undefined}
                   aria-describedby={
-                    typeRendezVousDetail.error
+                    typeRendezVousAutre.error
                       ? 'typeRendezVous-autre--error'
                       : undefined
                   }
                   className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
-                    typeRendezVousDetail.error
+                    typeRendezVousAutre.error
                       ? 'border-warning text-warning'
                       : 'border-content_color'
                   }`}
@@ -329,9 +331,9 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
-              {modalites.map((modalite) => (
-                <option key={modalite} value={modalite}>
-                  {modalite}
+              {modalites.map((md) => (
+                <option key={md} value={md}>
+                  {md}
                 </option>
               ))}
             </select>
