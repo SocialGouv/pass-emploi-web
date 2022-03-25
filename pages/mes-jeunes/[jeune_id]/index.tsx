@@ -1,3 +1,4 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
@@ -11,14 +12,14 @@ import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { RdvJeune } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
@@ -29,14 +30,14 @@ interface FicheJeuneProps {
   messageEnvoiGroupeSuccess?: boolean
 }
 
-const FicheJeune = ({
+function FicheJeune({
   jeune,
   rdvs,
   actions,
   rdvCreationSuccess,
   messageEnvoiGroupeSuccess,
-}: FicheJeuneProps) => {
-  const { data: session } = useSession({ required: true })
+}: FicheJeuneProps) {
+  const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
@@ -273,4 +274,4 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   }
 }
 
-export default FicheJeune
+export default withTransaction(FicheJeune.name, 'page')(FicheJeune)

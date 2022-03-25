@@ -1,10 +1,10 @@
 import { UserStructure } from 'interfaces/conseiller'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
 import AideIcon from '../../assets/icons/aide.svg'
 import SupervisionIcon from '../../assets/icons/arrow-right.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
@@ -17,7 +17,7 @@ type SidebarProps = {}
 export default function Sidebar({}: SidebarProps) {
   const router = useRouter()
   const [isLoggedOut, setIsLoggedOut] = useState(false)
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
 
   const isMilo = session?.user.structure === UserStructure.MILO
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI

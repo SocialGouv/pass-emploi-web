@@ -1,3 +1,5 @@
+import { withTransaction } from '@elastic/apm-rum-react'
+
 function Milo() {
   return <></>
 }
@@ -11,4 +13,4 @@ export const getServerSideProps = () => {
   }
 }
 
-export default Milo
+export default withTransaction(Milo.name, 'page')(Milo)

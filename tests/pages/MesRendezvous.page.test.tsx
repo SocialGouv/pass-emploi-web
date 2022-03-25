@@ -1,14 +1,14 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import React from 'react'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { useRouter } from 'next/router'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('MesRendezvous', () => {
   afterAll(() => jest.clearAllMocks())

@@ -1,12 +1,13 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import Conversation from 'components/layouts/Conversation'
 import { compareJeuneChat, Jeune, JeuneChat } from 'interfaces/jeune'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import linkStyle from 'styles/components/Link.module.css'
+import useSession from 'utils/auth/useSession'
 import { formatDayAndHourDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
@@ -16,8 +17,8 @@ import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 
 const currentJeunesChat: JeuneChat[] = [] // FIXME had to use extra variable since jeunesChats is always empty in useEffect
 
-export default function ChatRoom() {
-  const { data: session } = useSession({ required: true })
+function ChatRoom() {
+  const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -164,3 +165,4 @@ export default function ChatRoom() {
     </article>
   )
 }
+export default withTransaction(ChatRoom.name, 'component')(ChatRoom)

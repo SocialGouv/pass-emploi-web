@@ -1,10 +1,11 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import AddActionModal from 'components/action/AddActionModal'
+import FiltresActionsTabList from 'components/action/FiltresActions'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
-import Button from 'components/ui/Button'
 import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
-import FiltresActionsTabList from 'components/action/FiltresActions'
 import SuccessMessage from 'components/SuccessMessage'
+import Button from 'components/ui/Button'
 import {
   ActionJeune,
   ActionStatus,
@@ -18,8 +19,8 @@ import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
@@ -255,4 +256,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-export default Actions
+export default withTransaction(Actions.name, 'page')(Actions)

@@ -1,3 +1,4 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AppHead } from 'components/AppHead'
 import ResettableTextInput from 'components/ResettableTextInput'
 import SuccessMessage from 'components/SuccessMessage'
@@ -8,14 +9,14 @@ import {
   Jeune,
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import React, { FormEvent, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import ArrowIcon from '../../assets/icons/arrow-right.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
 import SearchIcon from '../../assets/icons/search.svg'
@@ -25,7 +26,7 @@ type SupervisionProps = {
 }
 
 function Supervision(_: SupervisionProps) {
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const [conseillerInitial, setConseillerInitial] = useState<{
@@ -409,4 +410,4 @@ export const getServerSideProps: GetServerSideProps<SupervisionProps> = async (
   }
 }
 
-export default Supervision
+export default withTransaction(Supervision.name, 'page')(Supervision)

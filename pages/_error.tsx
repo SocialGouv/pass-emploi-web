@@ -19,11 +19,14 @@ CustomError.getInitialProps = ({ req, res, err }) => {
     props = { statusCode: 404 }
   }
 
+  const erreur =
+    err ?? `Message: ${props.message}, Status Code: ${props.statusCode}`
   const isServerSide = Boolean(req)
   if (isServerSide) {
     const apm = require('elastic-apm-node')
-    const erreur =
-      err ?? `Message: ${props.message}, Status Code: ${props.statusCode}`
+    apm.captureError(erreur)
+  } else {
+    const { apm } = require('@elastic/apm-rum')
     apm.captureError(erreur)
   }
   return props

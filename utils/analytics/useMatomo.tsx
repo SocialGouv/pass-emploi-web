@@ -1,7 +1,7 @@
+import { UserStructure } from 'interfaces/conseiller'
 import { useEffect } from 'react'
 import { track } from 'utils/analytics/matomo'
-import { useSession } from 'next-auth/react'
-import { UserStructure } from 'interfaces/conseiller'
+import useSession from 'utils/auth/useSession'
 
 function userStructureDimensionString(loginMode: string): string {
   switch (loginMode) {
@@ -14,7 +14,7 @@ function userStructureDimensionString(loginMode: string): string {
 }
 
 function useMatomo(title: string | undefined) {
-  const { data: session } = useSession({ required: false })
+  const { data: session } = useSession<false>({ required: false })
 
   useEffect(() => {
     if (!title) {
