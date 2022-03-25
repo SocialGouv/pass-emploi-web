@@ -358,10 +358,12 @@ describe('EditionRdv', () => {
 
           it('crée un rendez-vous de type AUTRE', () => {
             // Given
-            fireEvent.change(selectType, { target: { value: types.slice(-1) } })
+            fireEvent.change(selectType, { target: { value: 'AUTRE' } })
 
-            let inputTypeDetail = screen.getByLabelText('* Précisez')
-            fireEvent.change(inputTypeDetail, { target: { value: 'un texte de précision' } })
+            const inputTypeDetail = screen.getByLabelText('* Précisez')
+            fireEvent.change(inputTypeDetail, {
+              target: { value: 'un texte de précision' },
+            })
 
             // When
             buttonValider.click()
@@ -386,13 +388,12 @@ describe('EditionRdv', () => {
             // When
             buttonValider.click()
 
-            await waitFor(()=>{
+            await waitFor(() => {
               // Then
               expect(push).toHaveBeenCalledWith(
                 '/mes-rendezvous?creationRdv=succes'
               )
             })
-
           })
         })
 
