@@ -1,4 +1,5 @@
 const pino = require('pino')
+const apm = require('elastic-apm-node')
 
 const logger = (defaultConfig) =>
   pino({
@@ -8,6 +9,10 @@ const logger = (defaultConfig) =>
       level(label) {
         return { level: label }
       },
+    },
+    mixin: () => {
+      const currentTraceIds = apm.currentTraceIds
+      return !Object.keys(currentTraceIds).length ? {} : { currentTraceIds }
     },
   })
 

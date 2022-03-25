@@ -17,7 +17,7 @@ describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
-  let conseiller: Session.User
+  let conseiller: Session.HydratedUser
   let accessToken: string
   let tokenChat: string
   const messagesParJour = desMessagesParJour()

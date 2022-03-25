@@ -1,3 +1,4 @@
+import apm, { UserObject } from 'elastic-apm-node'
 import { Redirect } from 'next'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
@@ -33,5 +34,13 @@ export async function withMandatorySessionOrRedirect(
       hasSession: false,
     }
   }
+
+  const { user }: Session = session
+  const userAPM: UserObject = {
+    id: user.id,
+    username: `${user.name}-${user.structure}`,
+    email: user.email ?? '',
+  }
+  apm.setUserContext(userAPM)
   return { session, hasSession: true }
 }
