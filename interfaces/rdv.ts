@@ -1,5 +1,10 @@
 import { BaseJeune } from 'interfaces/jeune'
 
+export interface TypeRendezVous {
+  code: string
+  label: string
+}
+
 export type Rdv = {
   id: string
   subtitle: string

@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
-import { mockedJeunesService } from 'fixtures/services'
+import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { useRouter } from 'next/router'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
@@ -30,12 +30,7 @@ describe('Fiche Jeune', () => {
   let rendezVousService: RendezVousService
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
-    rendezVousService = {
-      deleteRendezVous: jest.fn(),
-      getRendezVousConseiller: jest.fn(),
-      getRendezVousJeune: jest.fn(),
-      postNewRendezVous: jest.fn(),
-    }
+    rendezVousService = mockedRendezVousService()
   })
 
   describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {

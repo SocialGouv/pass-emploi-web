@@ -1,5 +1,5 @@
 import { jsonToRdv, RdvFormData, RdvJson } from 'interfaces/json/rdv'
-import { Rdv, RdvJeune } from 'interfaces/rdv'
+import { Rdv, RdvJeune, TypeRendezVous } from 'interfaces/rdv'
 import { ApiClient } from 'clients/api.client'
 
 export interface RendezVousService {
@@ -17,6 +17,8 @@ export interface RendezVousService {
   getRendezVousJeune(idJeune: string, accessToken: string): Promise<RdvJeune[]>
 
   deleteRendezVous(idRendezVous: string, accessToken: string): Promise<void>
+
+  getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]>
 }
 export class RendezVousApiService implements RendezVousService {
   constructor(private readonly apiClient: ApiClient) {}
@@ -63,5 +65,12 @@ export class RendezVousApiService implements RendezVousService {
     accessToken: string
   ): Promise<void> {
     await this.apiClient.delete(`/rendezvous/${idRendezVous}`, accessToken)
+  }
+
+  getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]> {
+    return this.apiClient.get<TypeRendezVous[]>(
+      '/referentiels/types-rendezvous',
+      accessToken
+    )
   }
 }

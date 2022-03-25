@@ -8,7 +8,7 @@ import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FormEvent, MouseEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -22,9 +22,11 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
+import { TypeRendezVous } from 'interfaces/rdv'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
+  typesRendezVous: TypeRendezVous[]
   from: string
   withoutChat: true
   idJeuneFrom?: string
@@ -35,13 +37,27 @@ interface InputValue {
   error?: string
 }
 
-function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
+const CODE_TYPE_AUTRE = 'AUTRE'
+
+function EditionRdv({
+  jeunes,
+  typesRendezVous,
+  idJeuneFrom,
+  from,
+}: EditionRdvProps) {
   const { data: session } = useSession({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
+  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<InputValue>({
+    value: '',
+  })
+  const [precisionType, setPrecisionType] = useState<InputValue>({
+    value: '',
+  })
+  const [showPrecisionType, setShowPrecisionType] = useState<boolean>(false)
   const [modalite, setModalite] = useState<string>('')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const [date, setDate] = useState<InputValue>({ value: '' })
@@ -55,7 +71,12 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
 
   function formHasChanges(): boolean {
     return Boolean(
-      modalite || date.value || horaire.value || duree.value || commentaire
+      codeTypeRendezVous.value ||
+        modalite ||
+        date.value ||
+        horaire.value ||
+        duree.value ||
+        commentaire
     )
   }
 
@@ -113,13 +134,36 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
     }
   }
 
+  function typeIsValid(): boolean {
+    if (!codeTypeRendezVous.value) return false
+    if (codeTypeRendezVous.value === CODE_TYPE_AUTRE)
+      return Boolean(precisionType.value)
+    return true
+  }
+
+  function validateTypeRendezVousAutre() {
+    if (!precisionType.value) {
+      setPrecisionType({
+        value: precisionType.value,
+        error:
+          "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
+      })
+    }
+  }
+
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId && modalite) &&
+      Boolean(jeuneId) &&
       dateIsValid() &&
       horaireIsValid() &&
-      dureeIsValid()
+      dureeIsValid() &&
+      typeIsValid()
     )
+  }
+
+  function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
+    setCodeTypeRendezVous({ value: e.target.value })
+    setShowPrecisionType(e.target.value === CODE_TYPE_AUTRE)
   }
 
   function openLeavePageModal(e: MouseEvent) {
@@ -138,6 +182,11 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
       session!.user.id,
       {
         jeuneId,
+        type: codeTypeRendezVous.value,
+        precision:
+          codeTypeRendezVous.value === CODE_TYPE_AUTRE
+            ? precisionType.value
+            : '',
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -145,6 +194,7 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
       },
       session!.accessToken
     )
+
     await router.push(`${from}?creationRdv=succes`)
   }
 
@@ -224,14 +274,72 @@ function EditionRdv({ jeunes, idJeuneFrom, from }: EditionRdvProps) {
               Type de rendez-vous :
             </legend>
 
+            <label htmlFor='typeRendezVous' className='text-base-medium mb-2'>
+              <span aria-hidden={true}>* </span>Type
+            </label>
+            {codeTypeRendezVous.error && (
+              <InputError id='typeRendezVous--error' className='mb-2'>
+                {codeTypeRendezVous.error}
+              </InputError>
+            )}
+            <select
+              id='typeRendezVous'
+              name='typeRendezVous'
+              defaultValue={''}
+              required={true}
+              onChange={handleSelectedTypeRendezVous}
+              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
+            >
+              <option aria-hidden hidden disabled value={''} />
+              {typesRendezVous.map(({ code, label }) => (
+                <option key={code} value={code}>
+                  {label}
+                </option>
+              ))}
+            </select>
+
+            {showPrecisionType && (
+              <>
+                <label
+                  htmlFor='typeRendezVous-autre'
+                  className='text-base-medium mb-2'
+                >
+                  <span aria-hidden={true}>* </span>Précisez
+                </label>
+                {precisionType.error && (
+                  <InputError id='typeRendezVous-autre--error' className='mb-2'>
+                    {precisionType.error}
+                  </InputError>
+                )}
+                <input
+                  type='text'
+                  id='typeRendezVous-autre'
+                  name='typeRendezVous-autre'
+                  required={true}
+                  onChange={(e) => setPrecisionType({ value: e.target.value })}
+                  onBlur={validateTypeRendezVousAutre}
+                  aria-invalid={precisionType.error ? true : undefined}
+                  aria-describedby={
+                    precisionType.error
+                      ? 'typeRendezVous-autre--error'
+                      : undefined
+                  }
+                  className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
+                    precisionType.error
+                      ? 'border-warning text-warning'
+                      : 'border-content_color'
+                  }`}
+                />
+              </>
+            )}
+
             <label htmlFor='modalite' className='text-base-medium mb-2'>
-              <span aria-hidden={true}>* </span>Modalité
+              Modalité
             </label>
             <select
               id='modalite'
               name='modalite'
               defaultValue={''}
-              required={true}
               onChange={(e) => setModalite(e.target.value)}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
@@ -414,15 +522,21 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   }
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
+  const rendezVousService =
+    withDependance<RendezVousService>('rendezVousService')
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const typesRendezVous = await rendezVousService.getTypesRendezVous(
+    accessToken
+  )
 
   const referer = context.req.headers.referer
 
   const props: EditionRdvProps = {
     jeunes: jeunes,
+    typesRendezVous: typesRendezVous,
     withoutChat: true,
     from: referer ?? '/mes-jeunes',
   }
