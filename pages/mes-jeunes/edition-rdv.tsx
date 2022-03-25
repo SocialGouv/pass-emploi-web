@@ -141,16 +141,6 @@ function EditionRdv({
     return true
   }
 
-  function validateTypeRendezVous() {
-    if (!codeTypeRendezVous.value) {
-      setPrecisionType({
-        value: codeTypeRendezVous.value,
-        error:
-          "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
-      })
-    }
-  }
-
   function validateTypeRendezVousAutre() {
     if (!precisionType.value) {
       setPrecisionType({
@@ -298,16 +288,6 @@ function EditionRdv({
               defaultValue={''}
               required={true}
               onChange={handleSelectedTypeRendezVous}
-              onBlur={validateTypeRendezVous}
-              aria-invalid={codeTypeRendezVous.error ? true : undefined}
-              aria-describedby={
-                codeTypeRendezVous.error ? 'typeRendezVous--error' : undefined
-              }
-              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8  ${
-                codeTypeRendezVous.error
-                  ? 'border-warning text-warning'
-                  : 'border-content_color'
-              }`}
             >
               <option aria-hidden hidden disabled value={''} />
               {typesRendezVous.map(({ code, label }) => (
