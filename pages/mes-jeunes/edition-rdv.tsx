@@ -142,12 +142,11 @@ function EditionRdv({
   }
 
   function validateTypeRendezVous() {
-    console.log('blur')
     if (!codeTypeRendezVous.value) {
       setPrecisionType({
         value: codeTypeRendezVous.value,
         error:
-          "Le champ Autre n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
+          "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
     }
   }

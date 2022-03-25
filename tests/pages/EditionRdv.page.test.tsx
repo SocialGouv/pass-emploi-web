@@ -5,7 +5,7 @@ import { Jeune } from 'interfaces/jeune'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
-import { modalites, types } from 'referentiel/rdv'
+import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { DIProvider } from 'utils/injectionDependances'
@@ -13,6 +13,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 import { TypeRendezVous } from 'interfaces/rdv'
+import { typesDeRendezVous } from '../../fixtures/rendez-vous'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -23,7 +24,9 @@ describe('EditionRdv', () => {
 
   describe('server side', () => {
     let jeunesService: JeunesService
+    let rendezVousService: RendezVousService
     let jeunes: Jeune[]
+    let typesRendezVous : TypeRendezVous[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
@@ -54,11 +57,17 @@ describe('EditionRdv', () => {
         })
 
         jeunes = desJeunes()
+        typesRendezVous = typesDeRendezVous()
+
         jeunesService = mockedJeunesService({
           getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
         })
+        rendezVousService = mockedRendezVousService({
+          getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous)
+        })
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'rendezVousService') return rendezVousService
         })
       })
 
@@ -78,6 +87,29 @@ describe('EditionRdv', () => {
         expect(actual).toEqual({
           props: {
             jeunes,
+            typesRendezVous,
+            withoutChat: true,
+            from: '/mes-jeunes',
+          },
+        })
+      })
+
+      it('récupère le referentiel des types de rendez vous', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: {
+            headers: {},
+          },
+        } as GetServerSidePropsContext)
+
+        // Then
+        expect(rendezVousService.getTypesRendezVous).toHaveBeenCalledWith(
+          'accessToken'
+        )
+        expect(actual).toEqual({
+          props: {
+            jeunes,
+            typesRendezVous,
             withoutChat: true,
             from: '/mes-jeunes',
           },
@@ -129,10 +161,12 @@ describe('EditionRdv', () => {
   describe('client side', () => {
     let jeunes: Jeune[]
     let rendezVousService: RendezVousService
+    let typesRendezVous : TypeRendezVous[]
     beforeEach(() => {
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService()
-    })
+      typesRendezVous = typesDeRendezVous()
+     })
 
     describe('contenu', () => {
       let push: jest.Mock
@@ -146,6 +180,7 @@ describe('EditionRdv', () => {
           <DIProvider dependances={{ rendezVousService }}>
             <EditionRdv
               jeunes={jeunes}
+              typesRendezVous={typesRendezVous}
               withoutChat={true}
               from={'/mes-rendezvous'}
             />
@@ -211,9 +246,9 @@ describe('EditionRdv', () => {
 
           expect(selectType).toBeInTheDocument()
           expect(selectType).toHaveAttribute('required', '')
-          for (const typeRendezVous of types) {
+          for (const typeRendezVous of typesRendezVous) {
             expect(
-              within(etape).getByRole('option', { name: typeRendezVous })
+              within(etape).getByRole('option', { name: typeRendezVous.label })
             ).toBeInTheDocument()
           }
         })
@@ -326,7 +361,7 @@ describe('EditionRdv', () => {
           // Given
           fireEvent.change(selectJeune, { target: { value: jeunes[0].id } })
           fireEvent.change(selectModalite, { target: { value: modalites[0] } })
-          fireEvent.change(selectType, { target: { value: types[0] } })
+          fireEvent.change(selectType, { target: { value: typesRendezVous[0].code } })
           fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
           fireEvent.input(inputHoraire, { target: { value: '10:30' } })
           fireEvent.input(inputDuree, { target: { value: '02:37' } })
@@ -345,7 +380,7 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
-                type: TypeRendezVous.ACTIVITE_EXTERIEURES,
+                type: "ACTIVITE_EXTERIEURES",
                 modality: modalites[0],
                 precision: '',
                 date: '2022-03-03T09:30:00.000Z',
@@ -373,7 +408,7 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
-                type: TypeRendezVous.AUTRE,
+                type: "AUTRE",
                 precision: 'un texte de précision',
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
@@ -416,7 +451,7 @@ describe('EditionRdv', () => {
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
           // Given
           // When
-          fireEvent.change(selectType, { target: { value: 'Autre' } })
+          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
 
           // Then
           await waitFor(() => {
@@ -429,7 +464,7 @@ describe('EditionRdv', () => {
           let inputAutreType: HTMLInputElement
 
           // When
-          fireEvent.change(selectType, { target: { value: 'Autre' } })
+          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
           inputAutreType = screen.getByLabelText('* Précisez')
 
           await waitFor(() => {
@@ -441,7 +476,7 @@ describe('EditionRdv', () => {
           expect(inputAutreType.value).toEqual('')
           expect(
             screen.getByText(
-              "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous."
+              "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous."
             )
           ).toBeInTheDocument()
         })
@@ -575,6 +610,7 @@ describe('EditionRdv', () => {
           <DIProvider dependances={{ rendezVousService }}>
             <EditionRdv
               jeunes={jeunes}
+              typesRendezVous={typesRendezVous}
               withoutChat={true}
               from={'/mes-rendezvous'}
               idJeuneFrom={idJeune}
