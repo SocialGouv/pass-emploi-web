@@ -19,15 +19,15 @@ import MesJeunes from 'pages/mes-jeunes/index'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import { compareJeunesByLastName } from '../../interfaces/jeune'
 import { ActionsService } from '../../services/actions.service'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {

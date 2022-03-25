@@ -1,11 +1,13 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AppHead } from 'components/AppHead'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { InputError } from 'components/ui/InputError'
+import { Switch } from 'components/ui/Switch'
 import { Jeune } from 'interfaces/jeune'
+import { TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react'
@@ -14,16 +16,15 @@ import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
-import { Switch } from 'components/ui/Switch'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -44,7 +45,7 @@ function EditionRdv({
   idJeuneFrom,
   from,
 }: EditionRdvProps) {
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const router = useRouter()
@@ -641,4 +642,4 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   return { props }
 }
 
-export default EditionRdv
+export default withTransaction(EditionRdv.name, 'page')(EditionRdv)

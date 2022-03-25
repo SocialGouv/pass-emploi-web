@@ -1,12 +1,12 @@
 import Conversation from 'components/layouts/Conversation'
 import { compareJeuneChat, Jeune, JeuneChat } from 'interfaces/jeune'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import linkStyle from 'styles/components/Link.module.css'
+import useSession from 'utils/auth/useSession'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { formatDayAndHourDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
@@ -18,7 +18,7 @@ import EmptyMessagesImage from '../../assets/images/empty_message.svg'
 const currentJeunesChat: JeuneChat[] = [] // FIXME had to use extra variable since jeunesChats is always empty in useEffect
 
 export default function ChatRoom() {
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const messagesService = useDependance<MessagesService>('messagesService')
 

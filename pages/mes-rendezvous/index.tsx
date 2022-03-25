@@ -1,3 +1,4 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AppHead } from 'components/AppHead'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
@@ -12,8 +13,8 @@ import React, { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
@@ -22,12 +23,12 @@ type MesRendezvousProps = {
   messageEnvoiGroupeSuccess?: boolean
 }
 
-const MesRendezvous = ({
+function MesRendezvous({
   rendezVousFuturs,
   rendezVousPasses,
   creationSuccess,
   messageEnvoiGroupeSuccess,
-}: MesRendezvousProps) => {
+}: MesRendezvousProps) {
   const router = useRouter()
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     creationSuccess ?? false
@@ -207,4 +208,4 @@ export const getServerSideProps: GetServerSideProps<
   return { props }
 }
 
-export default MesRendezvous
+export default withTransaction(MesRendezvous.name, 'page')(MesRendezvous)

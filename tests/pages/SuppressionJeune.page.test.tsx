@@ -9,13 +9,13 @@ import SuppressionJeune, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
 import { JeunesService } from 'services/jeunes.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { RequestError, UnexpectedError } from 'utils/fetchJson'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('next/router')
 

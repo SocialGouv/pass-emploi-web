@@ -1,3 +1,4 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
@@ -11,7 +12,6 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Router, { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import { ActionsService } from 'services/actions.service'
@@ -19,9 +19,10 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
 type MesJeunesProps = {
@@ -40,7 +41,7 @@ function MesJeunes({
   deletionSuccess,
 }: MesJeunesProps) {
   const router = useRouter()
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
@@ -270,4 +271,4 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   return { props }
 }
 
-export default MesJeunes
+export default withTransaction(MesJeunes.name, 'page')(MesJeunes)

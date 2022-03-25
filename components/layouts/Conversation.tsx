@@ -1,8 +1,8 @@
 import { Message, MessagesOfADay } from 'interfaces'
 import { JeuneChat } from 'interfaces/jeune'
-import { useSession } from 'next-auth/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MessagesService } from 'services/messages.service'
+import useSession from 'utils/auth/useSession'
 import {
   dateIsToday,
   formatDayDate,
@@ -23,7 +23,7 @@ type ConversationProps = {
 }
 
 export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [newMessage, setNewMessage] = useState('')

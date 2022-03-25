@@ -1,23 +1,24 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import { AppHead } from 'components/AppHead'
-import Button, { ButtonStyle } from 'components/ui/Button'
 import EchecMessage from 'components/EchecMessage'
 import SuccessMessage from 'components/SuccessMessage'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { ActionJeune, ActionStatus } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { ActionsService } from 'services/actions.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { formatDayDate } from 'utils/date'
 import { Container, useDependance } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
 type PageActionProps = {
@@ -32,7 +33,7 @@ function PageAction({
   messageEnvoiGroupeSuccess,
 }: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
   const [statut, setStatut] = useState<ActionStatus>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
@@ -222,4 +223,4 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   }
 }
 
-export default PageAction
+export default withTransaction(PageAction.name, 'page')(PageAction)

@@ -1,3 +1,5 @@
+import { captureRumError } from 'utils/monitoring/init-rum'
+
 export async function fetchJson(
   reqInfo: RequestInfo,
   reqInit?: RequestInit
@@ -30,7 +32,8 @@ async function callFetch(
     const error: UnexpectedError = new UnexpectedError(
       (e as Error).message || 'Unexpected error'
     )
-    console.error('fetchJson', error)
+    console.error('fetchJson exception', error)
+    captureRumError(error)
     throw error
   }
 
@@ -55,7 +58,8 @@ async function handleError(response: Response): Promise<void> {
     response.status < 500
       ? new RequestError(message, json?.code)
       : new ServerError(message)
-  console.error('fetchJson', error)
+  console.error('fetchJson error', error)
+  captureRumError(error)
   throw error
 }
 

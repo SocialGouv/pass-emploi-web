@@ -8,11 +8,11 @@ import PageAction, {
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
 import React from 'react'
 import { ActionsService } from 'services/actions.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 afterAll(() => jest.clearAllMocks())
 
