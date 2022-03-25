@@ -163,7 +163,6 @@ function EditionRdv({
 
   function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
     setCodeTypeRendezVous({ value: e.target.value })
-    setShowPrecisionType(false)
     setShowPrecisionType(e.target.value === CODE_TYPE_AUTRE)
   }
 
@@ -184,7 +183,10 @@ function EditionRdv({
       {
         jeuneId,
         type: codeTypeRendezVous.value,
-        precision: precisionType.value ?? '',
+        precision:
+          codeTypeRendezVous.value === CODE_TYPE_AUTRE
+            ? precisionType.value
+            : '',
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
