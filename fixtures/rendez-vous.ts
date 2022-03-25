@@ -1,41 +1,43 @@
 import { Rdv, RdvJeune, TypeRendezVous } from 'interfaces/rdv'
 
-export const typesDeRendezVous = (overrides: TypeRendezVous[] = []): TypeRendezVous[] =>{
+export const typesDeRendezVous = (
+  overrides: TypeRendezVous[] = []
+): TypeRendezVous[] => {
   return [
     {
-      "code": "ACTIVITE_EXTERIEURES",
-      "label": "Activités extérieures"
+      code: 'ACTIVITE_EXTERIEURES',
+      label: 'Activités extérieures',
     },
     {
-      "code": "ATELIER",
-      "label": "Atelier"
+      code: 'ATELIER',
+      label: 'Atelier',
     },
     {
-      "code": "ENTRETIEN_INDIVIDUEL_CONSEILLER",
-      "label": "Entretien individuel conseiller"
+      code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      label: 'Entretien individuel conseiller',
     },
     {
-      "code": "ENTRETIEN_PARTENAIRE",
-      "label": "Entretien par un partenaire"
+      code: 'ENTRETIEN_PARTENAIRE',
+      label: 'Entretien par un partenaire',
     },
     {
-      "code": "INFORMATION_COLLECTIVE",
-      "label": "Information collective"
+      code: 'INFORMATION_COLLECTIVE',
+      label: 'Information collective',
     },
     {
-      "code": "VISITE",
-      "label": "Visite"
+      code: 'VISITE',
+      label: 'Visite',
     },
     {
-      "code": "PRESTATION",
-      "label": "Prestation"
+      code: 'PRESTATION',
+      label: 'Prestation',
     },
     {
-      "code": "AUTRE",
-      "label": "Autre"
-    }
+      code: 'AUTRE',
+      label: 'Autre',
+    },
+    ...overrides,
   ]
-
 }
 
 export const uneListeDeRdv = (overrides: Partial<Rdv[]> = []): Rdv[] =>

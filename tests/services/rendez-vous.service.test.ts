@@ -3,6 +3,7 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
+import { typesDeRendezVous } from 'fixtures/rendez-vous'
 
 jest.mock('clients/api.client')
 
@@ -19,7 +20,8 @@ describe('RendezVousApiService', () => {
     it('renvoie les types de rendez-vous ', async () => {
       // Given
       const accessToken = 'accessToken'
-      ;(apiClient.get as jest.Mock).mockResolvedValue()
+      const typesRendezVous = typesDeRendezVous()
+      ;(apiClient.get as jest.Mock).mockResolvedValue(typesRendezVous)
 
       // When
       const actual = await rendezVousService.getTypesRendezVous(accessToken)
@@ -29,7 +31,7 @@ describe('RendezVousApiService', () => {
         '/referentiels/types-rendezvous',
         accessToken
       )
-      expect(actual).toEqual()
+      expect(actual).toEqual(typesRendezVous)
     })
   })
 })

@@ -286,6 +286,7 @@ function EditionRdv({
               defaultValue={''}
               required={true}
               onChange={handleSelectedTypeRendezVous}
+              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
               <option aria-hidden hidden disabled value={''} />
               {typesRendezVous.map(({ code, label }) => (
