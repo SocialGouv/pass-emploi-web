@@ -164,9 +164,7 @@ function EditionRdv({
   function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
     setCodeTypeRendezVous({ value: e.target.value })
     setShowPrecisionType(false)
-    if (e.target.value === CODE_TYPE_AUTRE) {
-      return setShowPrecisionType(true)
-    }
+    setShowPrecisionType(e.target.value === CODE_TYPE_AUTRE)
   }
 
   function openLeavePageModal(e: MouseEvent) {
