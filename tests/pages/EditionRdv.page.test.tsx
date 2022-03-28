@@ -258,7 +258,7 @@ describe('EditionRdv', () => {
           it('présence du conseiller est requise et non modifiable', () => {
             // Given
             const inputPresenceConseiller = screen.getByLabelText(
-              'Vous êtes présent au rendez-vous'
+              /Vous êtes présent au rendez-vous/i
             )
 
             // When
@@ -330,7 +330,7 @@ describe('EditionRdv', () => {
             name: 'Étape 4 Informations conseiller :',
           })
           inputPresenceConseiller = screen.getByLabelText(
-            'Vous êtes présent au rendez-vous'
+            /Vous êtes présent au rendez-vous/i
           )
         })
 

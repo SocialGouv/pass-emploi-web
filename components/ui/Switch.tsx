@@ -27,5 +27,7 @@ export const Switch = ({
       onChange={onChange}
     />
     <span className={styles.toggle}></span>
+    {checked && <p className='ml-3'>Oui</p>}
+    {!checked && <p className='ml-3'>Non</p>}
   </>
 )

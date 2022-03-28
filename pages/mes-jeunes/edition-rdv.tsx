@@ -485,8 +485,6 @@ function EditionRdv({
                   onChange={handlePresenceConseiller}
                 />
               </label>
-              {isConseillerPresent && <p className='ml-3'>Oui</p>}
-              {!isConseillerPresent && <p className='ml-3'>Non</p>}
             </div>
 
             <label htmlFor='commentaire' className='text-base-regular mb-2'>
