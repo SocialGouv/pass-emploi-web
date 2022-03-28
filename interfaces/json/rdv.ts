@@ -21,6 +21,7 @@ export interface RdvFormData {
   type: string
   precision: string
   modality: string
+  presenceConseiller: boolean
 }
 
 export function jsonToRdv(rdvData: RdvJson): Rdv {

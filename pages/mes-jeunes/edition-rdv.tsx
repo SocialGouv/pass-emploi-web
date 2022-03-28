@@ -22,7 +22,8 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { TypeRendezVous } from 'interfaces/rdv'
+import { TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
+import { Switch } from 'components/ui/Switch'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -37,8 +38,6 @@ interface InputValue {
   error?: string
 }
 
-const CODE_TYPE_AUTRE = 'AUTRE'
-
 function EditionRdv({
   jeunes,
   typesRendezVous,
@@ -51,6 +50,7 @@ function EditionRdv({
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
+
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<InputValue>({
     value: '',
   })
@@ -66,6 +66,7 @@ function EditionRdv({
   const regexDuree = /^\d{2}:\d{2}$/
   const [duree, setDuree] = useState<InputValue>({ value: '' })
   const [commentaire, setCommentaire] = useState<string>('')
+  const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
@@ -136,7 +137,7 @@ function EditionRdv({
 
   function typeIsValid(): boolean {
     if (!codeTypeRendezVous.value) return false
-    if (codeTypeRendezVous.value === CODE_TYPE_AUTRE)
+    if (codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre)
       return Boolean(precisionType.value)
     return true
   }
@@ -160,10 +161,23 @@ function EditionRdv({
       typeIsValid()
     )
   }
+  const typeEntretienIndividuelConseillerSelected = () =>
+    codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
 
   function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
     setCodeTypeRendezVous({ value: e.target.value })
-    setShowPrecisionType(e.target.value === CODE_TYPE_AUTRE)
+    setShowPrecisionType(e.target.value === TYPE_RENDEZ_VOUS.Autre)
+    if (e.target.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
+      return setConseillerPresent(true)
+    }
+  }
+
+  function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
+    if (typeEntretienIndividuelConseillerSelected()) {
+      setConseillerPresent(true)
+    } else {
+      setConseillerPresent(e.target.checked)
+    }
   }
 
   function openLeavePageModal(e: MouseEvent) {
@@ -184,12 +198,13 @@ function EditionRdv({
         jeuneId,
         type: codeTypeRendezVous.value,
         precision:
-          codeTypeRendezVous.value === CODE_TYPE_AUTRE
+          codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre
             ? precisionType.value
             : '',
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
+        presenceConseiller: isConseillerPresent,
         comment: commentaire,
       },
       session!.accessToken
@@ -458,7 +473,21 @@ function EditionRdv({
               />
               Informations conseiller :
             </legend>
-            <label htmlFor='commentaire' className='text-base-medium mb-2'>
+
+            <div className='flex items-center mb-8'>
+              <label htmlFor='presenceConseiller' className='flex items-center'>
+                <span className='mr-4'>Vous êtes présent au rendez-vous</span>
+                <Switch
+                  id='presenceConseiller'
+                  name='presenceConseiller'
+                  checked={isConseillerPresent}
+                  disabled={typeEntretienIndividuelConseillerSelected()}
+                  onChange={handlePresenceConseiller}
+                />
+              </label>
+            </div>
+
+            <label htmlFor='commentaire' className='text-base-regular mb-2'>
               Notes
               <span className='block text-bleu_nuit text-sm-regular'>
                 Commentaire à destination des jeunes
