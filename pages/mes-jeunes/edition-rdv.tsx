@@ -175,6 +175,18 @@ function EditionRdv({
     setShowPrecisionType(e.target.value === CODE_TYPE_AUTRE)
   }
 
+  function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
+    setPresenceConseiller(e.target.checked)
+    if (typeEntretienIndividuelConseillerSelected()) {
+      setPresenceConseiller(true)
+    }
+  }
+
+  const typeEntretienIndividuelConseillerSelected = () =>
+    Boolean(
+      typeRendezVous.value === TYPE_RENDEZ_VOUS.Entretien_Individuel_Conseiller
+    )
+
   function openLeavePageModal(e: MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
@@ -485,7 +497,8 @@ function EditionRdv({
                   id='presenceConseiller'
                   name='presenceConseiller'
                   checked={isConseillerPresent}
-                  onChange={(e) => setPresenceConseiller(e.target.checked)}
+                  disabled={typeEntretienIndividuelConseillerSelected()}
+                  onChange={handlePresenceConseiller}
                 />
               </label>
               {isConseillerPresent && <p className='ml-3'>Oui</p>}

@@ -42,4 +42,10 @@
     outline: 1px auto -webkit-focus-ring-color;
 }
 
+.checkbox:disabled + .toggle {
+    opacity: 0.6;
+    filter: grayscale(40%);
+    cursor: not-allowed;
+}
+
 /*TODO: use colors and responsive size etc*/
