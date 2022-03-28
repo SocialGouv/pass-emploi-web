@@ -9,11 +9,10 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react'
-import { modalites, types } from 'referentiel/rdv'
+import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
-import switchStyles from 'styles/components/Switch.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -40,8 +39,8 @@ interface InputValue {
 }
 
 const TYPE_RENDEZ_VOUS = {
-  Autre: 'Autre',
-  EntretienIndividuelConseiller: 'Entretien individuel conseiller',
+  Autre: 'AUTRE',
+  EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }
 
 function EditionRdv({
@@ -56,12 +55,7 @@ function EditionRdv({
   const router = useRouter()
 
   const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
-  const [typeRendezVous, setTypeRendezVous] = useState<InputValue>({
-    value: '',
-  })
-  const [typeRendezVousAutre, setTypeRendezVousAutre] = useState<InputValue>({
-    value: '',
-  })
+
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<InputValue>({
     value: '',
   })
@@ -172,6 +166,11 @@ function EditionRdv({
       typeIsValid()
     )
   }
+  const typeEntretienIndividuelConseillerSelected = () =>
+    Boolean(
+      codeTypeRendezVous.value ===
+        TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
+    )
 
   function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
     setCodeTypeRendezVous({ value: e.target.value })
@@ -187,11 +186,6 @@ function EditionRdv({
       setConseillerPresent(true)
     }
   }
-
-  const typeEntretienIndividuelConseillerSelected = () =>
-    Boolean(
-      typeRendezVous.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
-    )
 
   function openLeavePageModal(e: MouseEvent) {
     e.preventDefault()

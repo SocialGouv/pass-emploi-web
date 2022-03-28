@@ -13,7 +13,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 import { TypeRendezVous } from 'interfaces/rdv'
-import { typesDeRendezVous } from '../../fixtures/rendez-vous'
+import { typesDeRendezVous } from 'fixtures/rendez-vous'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -26,7 +26,7 @@ describe('EditionRdv', () => {
     let jeunesService: JeunesService
     let rendezVousService: RendezVousService
     let jeunes: Jeune[]
-    let typesRendezVous : TypeRendezVous[]
+    let typesRendezVous: TypeRendezVous[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
@@ -63,7 +63,7 @@ describe('EditionRdv', () => {
           getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
         })
         rendezVousService = mockedRendezVousService({
-          getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous)
+          getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
         })
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'jeunesService') return jeunesService
@@ -161,12 +161,12 @@ describe('EditionRdv', () => {
   describe('client side', () => {
     let jeunes: Jeune[]
     let rendezVousService: RendezVousService
-    let typesRendezVous : TypeRendezVous[]
+    let typesRendezVous: TypeRendezVous[]
     beforeEach(() => {
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService()
       typesRendezVous = typesDeRendezVous()
-     })
+    })
 
     describe('contenu', () => {
       let push: jest.Mock
@@ -263,11 +263,11 @@ describe('EditionRdv', () => {
 
             // When
             fireEvent.change(selectType, {
-              target: { value: 'Entretien individuel conseiller' },
+              target: { value: 'ENTRETIEN_INDIVIDUEL_CONSEILLER' },
             })
 
             // Then
-            expect(inputPresenceConseiller).toHaveAttribute('disabled', true)
+            expect(inputPresenceConseiller).toBeDisabled()
           })
         })
 
@@ -389,7 +389,9 @@ describe('EditionRdv', () => {
           // Given
           fireEvent.change(selectJeune, { target: { value: jeunes[0].id } })
           fireEvent.change(selectModalite, { target: { value: modalites[0] } })
-          fireEvent.change(selectType, { target: { value: typesRendezVous[0].code } })
+          fireEvent.change(selectType, {
+            target: { value: typesRendezVous[0].code },
+          })
           fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
           fireEvent.input(inputHoraire, { target: { value: '10:30' } })
           fireEvent.input(inputDuree, { target: { value: '02:37' } })
@@ -408,7 +410,7 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
-                type: "ACTIVITE_EXTERIEURES",
+                type: 'ACTIVITE_EXTERIEURES',
                 modality: modalites[0],
                 precision: '',
                 date: '2022-03-03T09:30:00.000Z',
@@ -423,8 +425,8 @@ describe('EditionRdv', () => {
             // Given
             fireEvent.change(selectType, { target: { value: 'AUTRE' } })
 
-            const inputTypeDetail = screen.getByLabelText('* Précisez')
-            fireEvent.change(inputTypeDetail, {
+            const inputTypePrecision = screen.getByLabelText('* Précisez')
+            fireEvent.change(inputTypePrecision, {
               target: { value: 'un texte de précision' },
             })
 
@@ -436,10 +438,9 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
-                type: "AUTRE",
+                type: 'AUTRE',
                 precision: 'un texte de précision',
                 modality: modalites[0],
-                precision: '',
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
@@ -450,10 +451,10 @@ describe('EditionRdv', () => {
 
           it('crée un rendez-vous de type AUTRE', () => {
             // Given
-            fireEvent.change(selectType, { target: { value: types.slice(-1) } })
+            fireEvent.change(selectType, { target: { value: 'AUTRE' } })
 
-            let inputTypeDetail = screen.getByLabelText('* Précisez')
-            fireEvent.change(inputTypeDetail, {
+            let inputTypePrecision = screen.getByLabelText('* Précisez')
+            fireEvent.change(inputTypePrecision, {
               target: { value: 'un texte de précision' },
             })
 
@@ -465,7 +466,7 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
-                type: TypeRendezVous.AUTRE,
+                type: 'AUTRE',
                 precision: 'un texte de précision',
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
@@ -518,19 +519,19 @@ describe('EditionRdv', () => {
 
         it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
-          let inputAutreType: HTMLInputElement
+          let inputTypePrecision: HTMLInputElement
 
           // When
           fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-          inputAutreType = screen.getByLabelText('* Précisez')
+          inputTypePrecision = screen.getByLabelText('* Précisez')
 
           await waitFor(() => {
-            expect(inputAutreType).toBeInTheDocument()
-            fireEvent.blur(inputAutreType)
+            expect(inputTypePrecision).toBeInTheDocument()
+            fireEvent.blur(inputTypePrecision)
           })
 
           // Then
-          expect(inputAutreType.value).toEqual('')
+          expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
               "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous."
@@ -538,24 +539,24 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async() => {
+        it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
-          let inputAutreType: HTMLInputElement
+          let inputTypePrecision: HTMLInputElement
 
           // When
-          fireEvent.change(selectType, { target: { value: 'Autre' } })
-          inputAutreType = screen.getByLabelText('* Précisez')
+          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
+          inputTypePrecision = screen.getByLabelText('* Précisez')
 
           await waitFor(() => {
-            expect(inputAutreType).toBeInTheDocument()
-            fireEvent.blur(inputAutreType)
+            expect(inputTypePrecision).toBeInTheDocument()
+            fireEvent.blur(inputTypePrecision)
           })
 
           // Then
-          expect(inputAutreType.value).toEqual('')
+          expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
-              "Le champ type n'est pas renseigné. Veuillez préciser le type de rendez-vous."
+              "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous."
             )
           ).toBeInTheDocument()
         })
