@@ -24,6 +24,7 @@ import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
 import { TypeRendezVous } from 'interfaces/rdv'
+import { Switch } from 'components/ui/Switch'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -73,6 +74,7 @@ function EditionRdv({
   const regexDuree = /^\d{2}:\d{2}$/
   const [duree, setDuree] = useState<InputValue>({ value: '' })
   const [commentaire, setCommentaire] = useState<string>('')
+  const [isConseillerPresent, setPresenceConseiller] = useState<boolean>(true)
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
@@ -465,15 +467,29 @@ function EditionRdv({
               />
               Informations conseiller :
             </legend>
-            {/*<label htmlFor='presenceConseiller' className=''>*/}
-            {/*  Vous êtes présent au rendez-vous*/}
-            {/*</label>*/}
-            <div>
-              <label className={switchStyles.switch}>
+
+            {/*<div>*/}
+            {/*  <label className={switchStyles.switch}>*/}
+            {/*    Vous êtes présent au rendez-vous*/}
+            {/*    <input id='presenceConseiller' type='checkbox' />*/}
+            {/*    <span className={switchStyles.slider}></span>*/}
+            {/*  </label>*/}
+            {/*  <span>on</span>*/}
+            {/*  <span>off</span>*/}
+            {/*</div>*/}
+
+            <div className={switchStyles.group}>
+              <label htmlFor='presenceConseiller' className='mr-8'>
                 Vous êtes présent au rendez-vous
-                <input id='presenceConseiller' type='checkbox' />
-                <span className={switchStyles.slider}></span>
               </label>
+              <Switch
+                id='presenceConseiller'
+                name='presenceConseiller'
+                checked={isConseillerPresent}
+                onChange={(e) => setPresenceConseiller(e.target.checked)}
+              />
+              {isConseillerPresent && <p>Oui</p>}
+              {!isConseillerPresent && <p>Non</p>}
             </div>
 
             <label htmlFor='commentaire' className='text-base-regular mb-2'>
