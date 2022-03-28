@@ -4,7 +4,7 @@
     width : 50px;
     height : 30px;
     background-color: theme('colors.grey_500');
-    border-radius: 30px;
+    border-radius: 1.8rem;
     border: 1px solid theme('colors.grey_500');
     cursor: pointer;
 }
@@ -13,8 +13,8 @@
 .toggle:after {
     content: '';
     position: absolute;
-    width: 28px;
-    height: 28px;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
     background-color: white;
     left: 1px;
@@ -24,7 +24,7 @@
 
 
 .checkbox:checked + .toggle::after {
-    left : 20px;
+    left : 1.25rem;
 }
 
 .checkbox:checked + .toggle {
@@ -39,7 +39,9 @@
 }
 
 .checkbox:focus + .toggle {
+    outline: 1px solid blue;
     outline: 1px auto -webkit-focus-ring-color;
+
 }
 
 .checkbox:disabled + .toggle {
