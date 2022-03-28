@@ -39,7 +39,10 @@ interface InputValue {
   error?: string
 }
 
-const CODE_TYPE_AUTRE = 'AUTRE'
+const TYPE_RENDEZ_VOUS = {
+  Autre: 'Autre',
+  EntretienIndividuelConseiller: 'Entretien individuel conseiller',
+}
 
 function EditionRdv({
   jeunes,
@@ -74,7 +77,7 @@ function EditionRdv({
   const regexDuree = /^\d{2}:\d{2}$/
   const [duree, setDuree] = useState<InputValue>({ value: '' })
   const [commentaire, setCommentaire] = useState<string>('')
-  const [isConseillerPresent, setPresenceConseiller] = useState<boolean>(true)
+  const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
@@ -145,7 +148,7 @@ function EditionRdv({
 
   function typeIsValid(): boolean {
     if (!codeTypeRendezVous.value) return false
-    if (codeTypeRendezVous.value === CODE_TYPE_AUTRE)
+    if (codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre)
       return Boolean(precisionType.value)
     return true
   }
@@ -172,19 +175,22 @@ function EditionRdv({
 
   function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
     setCodeTypeRendezVous({ value: e.target.value })
-    setShowPrecisionType(e.target.value === CODE_TYPE_AUTRE)
+    setShowPrecisionType(e.target.value === TYPE_RENDEZ_VOUS.Autre)
+    if (e.target.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
+      return setConseillerPresent(true)
+    }
   }
 
   function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
-    setPresenceConseiller(e.target.checked)
+    setConseillerPresent(e.target.checked)
     if (typeEntretienIndividuelConseillerSelected()) {
-      setPresenceConseiller(true)
+      setConseillerPresent(true)
     }
   }
 
   const typeEntretienIndividuelConseillerSelected = () =>
     Boolean(
-      typeRendezVous.value === TYPE_RENDEZ_VOUS.Entretien_Individuel_Conseiller
+      typeRendezVous.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
     )
 
   function openLeavePageModal(e: MouseEvent) {
@@ -205,7 +211,7 @@ function EditionRdv({
         jeuneId,
         type: codeTypeRendezVous.value,
         precision:
-          codeTypeRendezVous.value === CODE_TYPE_AUTRE
+          codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre
             ? precisionType.value
             : '',
         modality: modalite,
@@ -479,16 +485,6 @@ function EditionRdv({
               />
               Informations conseiller :
             </legend>
-
-            {/*<div>*/}
-            {/*  <label className={switchStyles.switch}>*/}
-            {/*    Vous êtes présent au rendez-vous*/}
-            {/*    <input id='presenceConseiller' type='checkbox' />*/}
-            {/*    <span className={switchStyles.slider}></span>*/}
-            {/*  </label>*/}
-            {/*  <span>on</span>*/}
-            {/*  <span>off</span>*/}
-            {/*</div>*/}
 
             <div className='flex items-center mb-8'>
               <label htmlFor='presenceConseiller' className='flex items-center'>

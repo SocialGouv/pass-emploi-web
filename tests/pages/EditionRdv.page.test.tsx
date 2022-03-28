@@ -232,17 +232,18 @@ describe('EditionRdv', () => {
 
       describe('étape 2 type de rendez-vous', () => {
         let etape: HTMLFieldSetElement
+        let selectType: HTMLSelectElement
         beforeEach(() => {
           etape = screen.getByRole('group', {
             name: 'Étape 2 Type de rendez-vous :',
+          })
+          selectType = within(etape).getByRole('combobox', {
+            name: 'Type',
           })
         })
 
         it('contient une liste pour choisir un type', () => {
           // Then
-          const selectType = within(etape).getByRole('combobox', {
-            name: 'Type',
-          })
 
           expect(selectType).toBeInTheDocument()
           expect(selectType).toHaveAttribute('required', '')
@@ -251,6 +252,23 @@ describe('EditionRdv', () => {
               within(etape).getByRole('option', { name: typeRendezVous.label })
             ).toBeInTheDocument()
           }
+        })
+
+        describe('lorsque le type de rendez-vous est de type ENTRETIEN INDIVIDUEL CONSEILLER', () => {
+          it('présence du conseiller est requise et non modifiable', () => {
+            // Given
+            const inputPresenceConseiller = screen.getByLabelText(
+              'Vous êtes présent au rendez-vous'
+            )
+
+            // When
+            fireEvent.change(selectType, {
+              target: { value: 'Entretien individuel conseiller' },
+            })
+
+            // Then
+            expect(inputPresenceConseiller).toHaveAttribute('disabled', true)
+          })
         })
 
         it('contient une liste pour choisir une modalité', () => {
@@ -306,10 +324,20 @@ describe('EditionRdv', () => {
 
       describe('étape 4 informations conseiller', () => {
         let etape: HTMLFieldSetElement
+        let inputPresenceConseiller: HTMLInputElement
         beforeEach(() => {
           etape = screen.getByRole('group', {
             name: 'Étape 4 Informations conseiller :',
           })
+          inputPresenceConseiller = screen.getByLabelText(
+            'Vous êtes présent au rendez-vous'
+          )
+        })
+
+        it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
+          // Then
+
+          expect(inputPresenceConseiller).toBeInTheDocument()
         })
 
         it('contient un champ pour saisir des commentaires', () => {
@@ -425,7 +453,9 @@ describe('EditionRdv', () => {
             fireEvent.change(selectType, { target: { value: types.slice(-1) } })
 
             let inputTypeDetail = screen.getByLabelText('* Précisez')
-            fireEvent.change(inputTypeDetail, { target: { value: 'un texte de précision' } })
+            fireEvent.change(inputTypeDetail, {
+              target: { value: 'un texte de précision' },
+            })
 
             // When
             buttonValider.click()
@@ -450,7 +480,7 @@ describe('EditionRdv', () => {
             // When
             buttonValider.click()
 
-            await waitFor(()=>{
+            await waitFor(() => {
               // Then
               expect(push).toHaveBeenCalledWith(
                 '/mes-rendezvous?creationRdv=succes'
