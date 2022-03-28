@@ -211,6 +211,7 @@ function EditionRdv({
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
+        presenceConseiller: isConseillerPresent,
         comment: commentaire,
       },
       session!.accessToken

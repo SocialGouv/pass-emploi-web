@@ -29,17 +29,6 @@ export const durees = [
   },
 ]
 
-export const types: string[] = [
-  'Activités extérieures',
-  'Atelier',
-  'Entretien individuel conseiller',
-  'Entretien par un partenaire',
-  'Information collective',
-  'Visite',
-  'Prestation',
-  'Autre',
-]
-
 export const modalites: string[] = [
   'en présentiel : Mission locale',
   'en présentiel : Misson locale / Permanence',
