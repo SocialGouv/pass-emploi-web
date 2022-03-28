@@ -1,4 +1,4 @@
-import { Rdv, RdvJeune, TypeRendezVous } from 'interfaces/rdv'
+import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 
 export const typesDeRendezVous = (
   overrides: TypeRendezVous[] = []
@@ -69,7 +69,7 @@ export const uneListeDeRdv = (overrides: Partial<Rdv[]> = []): Rdv[] =>
     ...overrides,
   ] as Rdv[]
 
-export const uneListeDeRdvJeune = (overrides: RdvJeune[] = []): RdvJeune[] =>
+export const uneListeDeRdvJeune = (overrides: Rdv[] = []): Rdv[] =>
   [
     {
       id: '1',
@@ -103,4 +103,4 @@ export const uneListeDeRdvJeune = (overrides: RdvJeune[] = []): RdvJeune[] =>
       modality: 'Par téléphone',
     },
     ...overrides,
-  ] as RdvJeune[]
+  ] as Rdv[]

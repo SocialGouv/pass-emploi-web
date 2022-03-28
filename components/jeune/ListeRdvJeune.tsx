@@ -1,4 +1,4 @@
-import { RdvJeune } from 'interfaces/rdv'
+import { Rdv } from 'interfaces/rdv'
 import React from 'react'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
@@ -7,8 +7,8 @@ import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
 
 type ListeRdvJeuneProps = {
-  rdvs: RdvJeune[]
-  onDelete?: (rdv: RdvJeune) => void
+  rdvs: Rdv[]
+  onDelete?: (rdv: Rdv) => void
 }
 
 const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
@@ -35,7 +35,7 @@ const ListeRdvJeune = ({ rdvs, onDelete }: ListeRdvJeuneProps) => {
           </thead>
 
           <tbody>
-            {rdvs.map((rdv: RdvJeune) => (
+            {rdvs.map((rdv: Rdv) => (
               <tr
                 key={rdv.id}
                 className='grid grid-cols-table_large items-baseline text-sm text-bleu_nuit'

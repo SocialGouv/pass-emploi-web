@@ -1,12 +1,12 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import { RdvJeune } from 'interfaces/rdv'
+import { Rdv } from 'interfaces/rdv'
 import { screen } from '@testing-library/dom'
 import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
 import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 
 describe('<ListeRdvJeune', () => {
-  let listeRdv: RdvJeune[]
+  let listeRdv: Rdv[]
 
   it("devrait afficher un message lorsqu'il n'y a pas de rendez-vous", () => {
     listeRdv = []

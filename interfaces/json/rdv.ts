@@ -4,7 +4,6 @@ import { Rdv } from '../rdv'
 
 export interface RdvJson {
   id: string
-  subtitle: string
   comment: string
   date: string
   duration: string
@@ -31,4 +30,9 @@ export function jsonToRdv(rdvData: RdvJson): Rdv {
       durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
       `${rdvData.duration} min`,
   }
+}
+
+export const TYPE_RENDEZ_VOUS = {
+  Autre: 'AUTRE',
+  EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }

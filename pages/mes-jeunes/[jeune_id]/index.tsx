@@ -9,7 +9,7 @@ import ButtonLink from 'components/ui/ButtonLink'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { RdvJeune } from 'interfaces/rdv'
+import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -23,7 +23,7 @@ import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
   jeune: Jeune
-  rdvs: RdvJeune[]
+  rdvs: Rdv[]
   actions: ActionJeune[]
   rdvCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
@@ -41,9 +41,7 @@ const FicheJeune = ({
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
-  const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
-    undefined
-  )
+  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
@@ -83,7 +81,7 @@ const FicheJeune = ({
     }
   }
 
-  function openDeleteRdvModal(rdv: RdvJeune) {
+  function openDeleteRdvModal(rdv: Rdv) {
     setSelectedRdv(rdv)
     setShowDeleteModal(true)
     setTrackingLabel('Détail jeune - Modale suppression rdv')
@@ -257,7 +255,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const today = new Date()
   const props: FicheJeuneProps = {
     jeune: resInfoJeune,
-    rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
+    rdvs: resRdvJeune.filter((rdv: Rdv) => new Date(rdv.date) > today),
     actions: userActions,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
