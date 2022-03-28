@@ -22,7 +22,7 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { TypeRendezVous } from 'interfaces/rdv'
+import { TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { Switch } from 'components/ui/Switch'
 
 interface EditionRdvProps {
@@ -36,11 +36,6 @@ interface EditionRdvProps {
 interface InputValue {
   value: string
   error?: string
-}
-
-const TYPE_RENDEZ_VOUS = {
-  Autre: 'AUTRE',
-  EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }
 
 function EditionRdv({
@@ -167,10 +162,7 @@ function EditionRdv({
     )
   }
   const typeEntretienIndividuelConseillerSelected = () =>
-    Boolean(
-      codeTypeRendezVous.value ===
-        TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
-    )
+    codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
 
   function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
     setCodeTypeRendezVous({ value: e.target.value })
@@ -181,9 +173,10 @@ function EditionRdv({
   }
 
   function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
-    setConseillerPresent(e.target.checked)
     if (typeEntretienIndividuelConseillerSelected()) {
       setConseillerPresent(true)
+    } else {
+      setConseillerPresent(e.target.checked)
     }
   }
 

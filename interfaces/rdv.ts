@@ -23,3 +23,8 @@ export type RdvJeune = {
   modality: string
   jeune: BaseJeune
 }
+
+export const TYPE_RENDEZ_VOUS = {
+  Autre: 'AUTRE',
+  EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+}

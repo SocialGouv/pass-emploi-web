@@ -416,6 +416,7 @@ describe('EditionRdv', () => {
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
+                presenceConseiller: true,
               },
               'accessToken'
             )
@@ -444,6 +445,7 @@ describe('EditionRdv', () => {
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
+                presenceConseiller: true,
               },
               'accessToken'
             )
@@ -472,6 +474,7 @@ describe('EditionRdv', () => {
                 date: '2022-03-03T09:30:00.000Z',
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
+                presenceConseiller: true,
               },
               'accessToken'
             )
