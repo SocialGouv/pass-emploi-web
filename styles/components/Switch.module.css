@@ -1,18 +1,11 @@
-.group {
-    display: flex;
-    align-items: center;
-    /*justify-content: space-between;*/
-}
-
 .toggle {
     position : relative ;
     display : inline-block;
     width : 50px;
     height : 30px;
-    background-color: theme('colors.grey_100');
+    background-color: theme('colors.grey_500');
     border-radius: 30px;
-    border: 1px solid theme('colors.grey_100');
-    margin-right: 12px;
+    border: 1px solid theme('colors.grey_500');
     cursor: pointer;
 }
 

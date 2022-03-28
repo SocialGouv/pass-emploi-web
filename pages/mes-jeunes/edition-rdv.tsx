@@ -478,18 +478,18 @@ function EditionRdv({
             {/*  <span>off</span>*/}
             {/*</div>*/}
 
-            <div className={switchStyles.group}>
-              <label htmlFor='presenceConseiller' className='mr-8'>
-                Vous êtes présent au rendez-vous
+            <div className='flex items-center mb-8'>
+              <label htmlFor='presenceConseiller' className='flex items-center'>
+                <span className='mr-4'>Vous êtes présent au rendez-vous</span>
+                <Switch
+                  id='presenceConseiller'
+                  name='presenceConseiller'
+                  checked={isConseillerPresent}
+                  onChange={(e) => setPresenceConseiller(e.target.checked)}
+                />
               </label>
-              <Switch
-                id='presenceConseiller'
-                name='presenceConseiller'
-                checked={isConseillerPresent}
-                onChange={(e) => setPresenceConseiller(e.target.checked)}
-              />
-              {isConseillerPresent && <p>Oui</p>}
-              {!isConseillerPresent && <p>Non</p>}
+              {isConseillerPresent && <p className='ml-3'>Oui</p>}
+              {!isConseillerPresent && <p className='ml-3'>Non</p>}
             </div>
 
             <label htmlFor='commentaire' className='text-base-regular mb-2'>
