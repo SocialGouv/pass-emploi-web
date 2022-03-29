@@ -216,7 +216,11 @@ function EditionRdv({
       session!.accessToken
     )
 
-    await router.push(`${from}?creationRdv=succes`)
+    if (from.includes("succes")) {
+      await router.push(`${from}`)
+    } else {
+      await router.push(`${from}?creationRdv=succes`)
+    }
   }
 
   useMatomo(`Création RDV${idJeuneFrom ? ' jeune' : ''}`)
