@@ -13,6 +13,7 @@ export type Rdv = {
   duration: string
   modality: string
   jeune: BaseJeune
+  type: TypeRendezVous
 }
 
 export type RdvJeune = {
