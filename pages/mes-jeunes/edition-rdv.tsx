@@ -205,7 +205,7 @@ function EditionRdv({
           codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre
             ? precisionType.value
             : '',
-        modality: modalite,
+        modality: modalite ? modalite : undefined,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
         adresse: adresse.value ? adresse.value : undefined,
@@ -216,7 +216,7 @@ function EditionRdv({
       session!.accessToken
     )
 
-    if (from.includes("succes")) {
+    if (from.includes('succes')) {
       await router.push(`${from}`)
     } else {
       await router.push(`${from}?creationRdv=succes`)

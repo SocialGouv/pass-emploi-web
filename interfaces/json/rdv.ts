@@ -20,7 +20,7 @@ export interface RdvFormData {
   jeuneId: string
   type: string
   precision: string
-  modality: string
+  modality?: string
   adresse?: string
   organisme?: string
   presenceConseiller: boolean
