@@ -151,7 +151,7 @@ function EditionRdv({
       setPrecisionType({
         value: precisionType.value,
         error:
-          "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
+          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
     }
   }
@@ -205,7 +205,7 @@ function EditionRdv({
           codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre
             ? precisionType.value
             : '',
-        modality: modalite,
+        modality: modalite ? modalite : undefined,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
         adresse: adresse.value ? adresse.value : undefined,
@@ -216,7 +216,11 @@ function EditionRdv({
       session!.accessToken
     )
 
-    await router.push(`${from}?creationRdv=succes`)
+    if (from.includes('succes')) {
+      await router.push(`${from}`)
+    } else {
+      await router.push(`${from}?creationRdv=succes`)
+    }
   }
 
   useMatomo(`Création RDV${idJeuneFrom ? ' jeune' : ''}`)
@@ -325,7 +329,7 @@ function EditionRdv({
                   htmlFor='typeRendezVous-autre'
                   className='text-base-medium mb-2'
                 >
-                  <span aria-hidden={true}>* </span>Précisez
+                  <span aria-hidden={true}>* </span>Préciser
                 </label>
                 {precisionType.error && (
                   <InputError id='typeRendezVous-autre--error' className='mb-2'>
