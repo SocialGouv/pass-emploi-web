@@ -65,8 +65,8 @@ function EditionRdv({
   const [horaire, setHoraire] = useState<InputValue>({ value: '' })
   const regexDuree = /^\d{2}:\d{2}$/
   const [duree, setDuree] = useState<InputValue>({ value: '' })
-  const [adresse, setAdresse] = useState<InputValue>({ value: '' })
-  const [organisme, setOrganisme] = useState<InputValue>({ value: '' })
+  const [adresse, setAdresse] = useState<string>('')
+  const [organisme, setOrganisme] = useState<string>('')
   const [commentaire, setCommentaire] = useState<string>('')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
 
@@ -79,8 +79,8 @@ function EditionRdv({
         date.value ||
         horaire.value ||
         duree.value ||
-        adresse.value ||
-        organisme.value ||
+        adresse ||
+        organisme ||
         commentaire
     )
   }
@@ -208,9 +208,9 @@ function EditionRdv({
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
-        adresse: adresse.value ? adresse.value : undefined,
-        organisme: organisme.value ? organisme.value : undefined,
         presenceConseiller: isConseillerPresent,
+        adresse,
+        organisme,
         comment: commentaire,
       },
       session!.accessToken
@@ -479,7 +479,7 @@ function EditionRdv({
               type='text'
               id='adresse'
               name='adresse'
-              onChange={(e) => setAdresse({ value: e.target.value })}
+              onChange={(e) => setAdresse(e.target.value)}
               className={
                 'border border-solid rounded-medium w-full px-4 py-3 mb-8 bg-location bg-[center_right_1rem] bg-no-repeat'
               }
@@ -495,7 +495,7 @@ function EditionRdv({
               type='text'
               id='organisme'
               name='organisme'
-              onChange={(e) => setOrganisme({ value: e.target.value })}
+              onChange={(e) => setOrganisme(e.target.value)}
               className={
                 'border border-solid rounded-medium w-full px-4 py-3 mb-8'
               }
