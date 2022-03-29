@@ -446,7 +446,7 @@ describe('EditionRdv', () => {
             // Given
             fireEvent.change(selectType, { target: { value: 'AUTRE' } })
 
-            const inputTypePrecision = screen.getByLabelText('* Précisez')
+            const inputTypePrecision = screen.getByLabelText('* Préciser')
             fireEvent.change(inputTypePrecision, {
               target: { value: 'un texte de précision' },
             })
@@ -509,7 +509,7 @@ describe('EditionRdv', () => {
 
           // Then
           await waitFor(() => {
-            expect(screen.getByLabelText('* Précisez')).toBeInTheDocument()
+            expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
           })
         })
 
@@ -519,7 +519,7 @@ describe('EditionRdv', () => {
 
           // When
           fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-          inputTypePrecision = screen.getByLabelText('* Précisez')
+          inputTypePrecision = screen.getByLabelText('* Préciser')
 
           await waitFor(() => {
             expect(inputTypePrecision).toBeInTheDocument()
@@ -530,7 +530,7 @@ describe('EditionRdv', () => {
           expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
-              "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous."
+              "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous."
             )
           ).toBeInTheDocument()
         })
@@ -541,7 +541,7 @@ describe('EditionRdv', () => {
 
           // When
           fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-          inputTypePrecision = screen.getByLabelText('* Précisez')
+          inputTypePrecision = screen.getByLabelText('* Préciser')
 
           await waitFor(() => {
             expect(inputTypePrecision).toBeInTheDocument()
@@ -552,7 +552,7 @@ describe('EditionRdv', () => {
           expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
-              "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous."
+              "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous."
             )
           ).toBeInTheDocument()
         })

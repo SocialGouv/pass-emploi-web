@@ -151,7 +151,7 @@ function EditionRdv({
       setPrecisionType({
         value: precisionType.value,
         error:
-          "Le champ Précisez n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
+          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
     }
   }
@@ -329,7 +329,7 @@ function EditionRdv({
                   htmlFor='typeRendezVous-autre'
                   className='text-base-medium mb-2'
                 >
-                  <span aria-hidden={true}>* </span>Précisez
+                  <span aria-hidden={true}>* </span>Préciser
                 </label>
                 {precisionType.error && (
                   <InputError id='typeRendezVous-autre--error' className='mb-2'>
