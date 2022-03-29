@@ -79,6 +79,8 @@ function EditionRdv({
         date.value ||
         horaire.value ||
         duree.value ||
+        adresse.value ||
+        organisme.value ||
         commentaire
     )
   }
@@ -206,8 +208,8 @@ function EditionRdv({
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
-        adresse: adresse,
-        organisme: organisme,
+        adresse: adresse.value ? adresse.value : undefined,
+        organisme: organisme.value ? organisme.value : undefined,
         presenceConseiller: isConseillerPresent,
         comment: commentaire,
       },

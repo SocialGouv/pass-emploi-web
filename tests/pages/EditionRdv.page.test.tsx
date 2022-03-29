@@ -320,6 +320,24 @@ describe('EditionRdv', () => {
           expect(inputDuree).toHaveAttribute('required', '')
           expect(inputDuree).toHaveAttribute('type', 'text')
         })
+
+        it('contient un champ pour indiquer l’adresse si besoin', () => {
+          // Then
+          const inputAdresse = within(etape).getByLabelText(
+            'Adresse Ex: 12 rue duc, Brest'
+          )
+          expect(inputAdresse).toBeInTheDocument()
+          expect(inputAdresse).toHaveAttribute('type', 'text')
+        })
+
+        it('contient un champ pour indiquer un organisme si besoin', () => {
+          // Then
+          const inputOrganisme = within(etape).getByLabelText(
+            'OrganismeEx: prestataire, entreprise, etc.'
+          )
+          expect(inputOrganisme).toBeInTheDocument()
+          expect(inputOrganisme).toHaveAttribute('type', 'text')
+        })
       })
 
       describe('étape 4 informations conseiller', () => {
@@ -414,6 +432,8 @@ describe('EditionRdv', () => {
                 modality: modalites[0],
                 precision: '',
                 date: '2022-03-03T09:30:00.000Z',
+                adresse: '',
+                organisme: '',
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
                 presenceConseiller: true,
@@ -443,35 +463,8 @@ describe('EditionRdv', () => {
                 precision: 'un texte de précision',
                 modality: modalites[0],
                 date: '2022-03-03T09:30:00.000Z',
-                duration: 157,
-                comment: 'Lorem ipsum dolor sit amet',
-                presenceConseiller: true,
-              },
-              'accessToken'
-            )
-          })
-
-          it('crée un rendez-vous de type AUTRE', () => {
-            // Given
-            fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-
-            let inputTypePrecision = screen.getByLabelText('* Précisez')
-            fireEvent.change(inputTypePrecision, {
-              target: { value: 'un texte de précision' },
-            })
-
-            // When
-            buttonValider.click()
-
-            // Then
-            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
-              '1',
-              {
-                jeuneId: jeunes[0].id,
-                type: 'AUTRE',
-                precision: 'un texte de précision',
-                modality: modalites[0],
-                date: '2022-03-03T09:30:00.000Z',
+                adresse: '',
+                organisme: '',
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
                 presenceConseiller: true,
