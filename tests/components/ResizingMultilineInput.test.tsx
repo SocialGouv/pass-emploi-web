@@ -97,9 +97,9 @@ describe('<ResizingMultilineInput/>', () => {
     expect(textarea).toHaveStyle({ height: '160px' })
   })
 
-  it('clears input on form submit', () => {
+  it('clears input on form submit', async () => {
     // GIVEN
-    userEvent.type(textarea, 'input value')
+    await userEvent.type(textarea, 'input value')
     expect(textarea).toHaveValue('input value')
 
     // WHEN
@@ -109,10 +109,10 @@ describe('<ResizingMultilineInput/>', () => {
     expect(textarea).toHaveValue('')
   })
 
-  it('resets height to min height on form submit', () => {
+  it('resets height to min height on form submit', async () => {
     // GIVEN
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(200)
-    userEvent.type(textarea, 'input value')
+    await userEvent.type(textarea, 'input value')
     expect(textarea).toHaveValue('input value')
 
     // WHEN
