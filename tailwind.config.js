@@ -100,6 +100,7 @@ module.exports = {
       backgroundImage: {
         // path relative to globals.css
         clock: "url('../assets/icons/clock.svg')",
+        location: "url('../assets/icons/location_big.svg')",
       },
     },
   },

@@ -65,6 +65,8 @@ function EditionRdv({
   const [horaire, setHoraire] = useState<InputValue>({ value: '' })
   const regexDuree = /^\d{2}:\d{2}$/
   const [duree, setDuree] = useState<InputValue>({ value: '' })
+  const [adresse, setAdresse] = useState<InputValue>({ value: '' })
+  const [organisme, setOrganisme] = useState<InputValue>({ value: '' })
   const [commentaire, setCommentaire] = useState<string>('')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
 
@@ -204,6 +206,8 @@ function EditionRdv({
         modality: modalite,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
+        adresse: adresse,
+        organisme: organisme,
         presenceConseiller: isConseillerPresent,
         comment: commentaire,
       },
@@ -460,6 +464,39 @@ function EditionRdv({
                   ? 'border-warning text-warning'
                   : 'border-content_color'
               }`}
+            />
+
+            <label htmlFor='adresse' className='text-base-medium mb-2'>
+              Adresse
+              <span className='ml-8 text-bleu_nuit text-sm-regular'>
+                {' '}
+                Ex: 12 rue duc, Brest
+              </span>
+            </label>
+            <input
+              type='text'
+              id='adresse'
+              name='adresse'
+              onChange={(e) => setAdresse({ value: e.target.value })}
+              className={
+                'border border-solid rounded-medium w-full px-4 py-3 mb-8 bg-location bg-[center_right_1rem] bg-no-repeat'
+              }
+            />
+
+            <label htmlFor='organisme' className='text-base-medium mb-2'>
+              Organisme
+              <span className='ml-8 text-bleu_nuit text-sm-regular'>
+                Ex: prestataire, entreprise, etc.
+              </span>
+            </label>
+            <input
+              type='text'
+              id='organisme'
+              name='organisme'
+              onChange={(e) => setOrganisme({ value: e.target.value })}
+              className={
+                'border border-solid rounded-medium w-full px-4 py-3 mb-8'
+              }
             />
           </fieldset>
 

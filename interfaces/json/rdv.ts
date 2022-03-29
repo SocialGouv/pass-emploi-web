@@ -21,6 +21,8 @@ export interface RdvFormData {
   type: string
   precision: string
   modality: string
+  adresse: string
+  organisme: string
   presenceConseiller: boolean
 }
 
