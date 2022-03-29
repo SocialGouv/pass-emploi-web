@@ -19,7 +19,7 @@
   "dependencies": {
     "@badrap/bar-of-progress": "0.1.2",
     "crypto-js": "4.1.1",
-    "firebase": "9.6.7",
+    "firebase": "9.6.10",
     "jsonwebtoken": "8.5.1",
     "next": "12.1.0",
     "next-auth": "4.2.1",
