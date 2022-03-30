@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import ChatRoom from 'components/layouts/ChatRoom'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
@@ -150,9 +150,11 @@ describe('<ChatRoom />', () => {
 
       it('affiche la conversation du jeune', async () => {
         // Then
-        expect(
-          screen.getByText(`conversation-${jeuneSelectionne.id}`)
-        ).toBeInTheDocument()
+        await waitFor(() =>
+          expect(
+            screen.getByText(`conversation-${jeuneSelectionne.id}`)
+          ).toBeInTheDocument()
+        )
       })
 
       it("n'affiche pas les autres chats", async () => {

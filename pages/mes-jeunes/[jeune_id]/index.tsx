@@ -114,7 +114,7 @@ const FicheJeune = ({
 
   useEffect(() => {
     setCurrentJeune(jeune)
-  }, [])
+  }, [jeune, setCurrentJeune])
 
   return (
     <>

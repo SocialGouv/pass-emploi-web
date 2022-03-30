@@ -23,13 +23,11 @@ export default function ChatRoom() {
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [jeunesChats, setJeunesChats] = useState<JeuneChat[]>([])
-  const [selectedChat, setSelectedChat] = useState<JeuneChat | undefined>(
+  const [currentJeune, setCurrentJeune] = useCurrentJeune()
+  const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
-  const [currentJeune, setCurrentJeune] = useCurrentJeune()
   const destructorsRef = useRef<(() => void)[]>([])
-
-  const isInConversation = () => Boolean(selectedChat !== undefined)
 
   const observeJeuneChats = useCallback(
     (idConseiller: string, jeunesToObserve: Jeune[]): (() => void)[] => {
@@ -72,27 +70,25 @@ export default function ChatRoom() {
   }, [session, observeJeuneChats, messagesService, jeunesService])
 
   useEffect(() => {
-    if (currentJeune) {
-      const chatToDisplay = jeunesChats.find(
-        (jeuneChat) => jeuneChat.id === currentJeune.id
+    if (currentJeune?.id) {
+      setCurrentChat(
+        jeunesChats.find((jeuneChat) => jeuneChat.id === currentJeune.id)
       )
-      setSelectedChat(chatToDisplay)
+    } else {
+      setCurrentChat(undefined)
     }
-  }, [currentJeune, jeunesChats])
+  }, [jeunesChats, currentJeune?.id])
 
   return (
     <article className={styles.chatRoom}>
-      {isInConversation() && (
+      {currentChat && (
         <Conversation
-          onBack={() => {
-            setSelectedChat(undefined)
-            setCurrentJeune(undefined)
-          }}
-          jeuneChat={selectedChat!}
+          onBack={() => setCurrentJeune(undefined)}
+          jeuneChat={currentChat}
         />
       )}
 
-      {!isInConversation() && (
+      {!currentChat && (
         <>
           <h2 className={`h2-semi text-bleu_nuit ml-9 mb-6`}>Ma messagerie</h2>
           {!jeunesChats.length && (
@@ -113,7 +109,7 @@ export default function ChatRoom() {
                       <li key={`chat-${jeuneChat.id}`} className='mb-[2px]'>
                         <button
                           className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
-                          onClick={() => setSelectedChat(jeuneChat)}
+                          onClick={() => setCurrentJeune(jeuneChat)}
                         >
                           <span className='text-lg-semi text-bleu_nuit mb-2 w-full flex justify-between'>
                             {jeuneChat.firstName} {jeuneChat.lastName}
