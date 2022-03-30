@@ -162,6 +162,7 @@ describe('EditionRdv', () => {
     let jeunes: Jeune[]
     let rendezVousService: RendezVousService
     let typesRendezVous: TypeRendezVous[]
+    const emailConseiller: string = 'fake@email.com'
     beforeEach(() => {
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService()
@@ -179,6 +180,7 @@ describe('EditionRdv', () => {
         renderWithSession(
           <DIProvider dependances={{ rendezVousService }}>
             <EditionRdv
+              emailConseiller={emailConseiller}
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
@@ -343,22 +345,44 @@ describe('EditionRdv', () => {
       describe('étape 4 informations conseiller', () => {
         let etape: HTMLFieldSetElement
         let inputPresenceConseiller: HTMLInputElement
-        beforeEach(() => {
-          etape = screen.getByRole('group', {
-            name: 'Étape 4 Informations conseiller :',
-          })
+        let inputEmailInvitation: HTMLInputElement
+        it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
+          // Given
           inputPresenceConseiller = screen.getByLabelText(
             /Vous êtes présent au rendez-vous/i
           )
-        })
 
-        it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
           // Then
 
           expect(inputPresenceConseiller).toBeInTheDocument()
         })
 
+        it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
+          // Given
+          inputEmailInvitation = screen.getByLabelText(
+            /Intégrer ce rendez-vous à mon agenda via l'adresse mail suivante :/i
+          )
+
+          // Then
+
+          expect(inputEmailInvitation).toBeInTheDocument()
+        })
+
+        it('indique l’email auquel le conseiller va recevoir son invitation au RDV', () => {
+          // Given
+          let toto: HTMLInputElement = screen.getByLabelText(/fake@email.com/i)
+
+          // Then
+
+          expect(toto).toBeInTheDocument()
+        })
+
         it('contient un champ pour saisir des commentaires', () => {
+          // Given
+          etape = screen.getByRole('group', {
+            name: 'Étape 4 Informations conseiller :',
+          })
+
           // Then
           const inputCommentaires = within(etape).getByRole('textbox', {
             name: 'Notes Commentaire à destination des jeunes',
@@ -437,6 +461,7 @@ describe('EditionRdv', () => {
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
                 presenceConseiller: true,
+                invitation: false,
               },
               'accessToken'
             )
@@ -468,6 +493,7 @@ describe('EditionRdv', () => {
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
                 presenceConseiller: true,
+                invitation: false,
               },
               'accessToken'
             )
@@ -685,6 +711,7 @@ describe('EditionRdv', () => {
         renderWithSession(
           <DIProvider dependances={{ rendezVousService }}>
             <EditionRdv
+              emailConseiller={emailConseiller}
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}

@@ -70,7 +70,7 @@ function EditionRdv({
   const [adresse, setAdresse] = useState<InputValue>({ value: '' })
   const [organisme, setOrganisme] = useState<InputValue>({ value: '' })
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
-  const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(true)
+  const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(false)
   const [commentaire, setCommentaire] = useState<string>('')
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
@@ -540,7 +540,10 @@ function EditionRdv({
 
             <div className='flex items-center mb-8'>
               <label htmlFor='emailInvitation' className='flex items-center'>
-                <span>Recevoir une invitation mail à {emailConseiller}</span>
+                <span>
+                  Intégrer ce rendez-vous à mon agenda via l'adresse mail
+                  suivante : {emailConseiller}
+                </span>
                 <Switch
                   id='emailInvitation'
                   name='emailInvitation'
@@ -628,7 +631,6 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const props: EditionRdvProps = {
     emailConseiller: user.email,
-
     jeunes: jeunes,
     typesRendezVous: typesRendezVous,
     withoutChat: true,
