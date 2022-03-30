@@ -26,6 +26,7 @@ import { TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { Switch } from 'components/ui/Switch'
 
 interface EditionRdvProps {
+  emailConseiller: string
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
   from: string
@@ -39,6 +40,7 @@ interface InputValue {
 }
 
 function EditionRdv({
+  emailConseiller,
   jeunes,
   typesRendezVous,
   idJeuneFrom,
@@ -538,7 +540,7 @@ function EditionRdv({
 
             <div className='flex items-center mb-8'>
               <label htmlFor='emailInvitation' className='flex items-center'>
-                <span>Recevoir une invitation mail à nom.prenom@mail.com</span>
+                <span>Recevoir une invitation mail à {emailConseiller}</span>
                 <Switch
                   id='emailInvitation'
                   name='emailInvitation'
@@ -625,6 +627,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const referer = context.req.headers.referer
 
   const props: EditionRdvProps = {
+    emailConseiller: user.email,
+
     jeunes: jeunes,
     typesRendezVous: typesRendezVous,
     withoutChat: true,
