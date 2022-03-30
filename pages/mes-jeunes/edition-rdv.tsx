@@ -67,8 +67,9 @@ function EditionRdv({
   const [duree, setDuree] = useState<InputValue>({ value: '' })
   const [adresse, setAdresse] = useState<InputValue>({ value: '' })
   const [organisme, setOrganisme] = useState<InputValue>({ value: '' })
-  const [commentaire, setCommentaire] = useState<string>('')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
+  const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(true)
+  const [commentaire, setCommentaire] = useState<string>('')
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
@@ -184,6 +185,10 @@ function EditionRdv({
     }
   }
 
+  function handleSendEmailInvitation(e: ChangeEvent<HTMLInputElement>) {
+    setSendEmailInvitation(e.target.checked)
+  }
+
   function openLeavePageModal(e: MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
@@ -211,6 +216,7 @@ function EditionRdv({
         adresse: adresse.value ? adresse.value : undefined,
         organisme: organisme.value ? organisme.value : undefined,
         presenceConseiller: isConseillerPresent,
+        invitation: sendEmailInvitation,
         comment: commentaire,
       },
       session!.accessToken
@@ -526,6 +532,18 @@ function EditionRdv({
                   checked={isConseillerPresent}
                   disabled={typeEntretienIndividuelConseillerSelected()}
                   onChange={handlePresenceConseiller}
+                />
+              </label>
+            </div>
+
+            <div className='flex items-center mb-8'>
+              <label htmlFor='emailInvitation' className='flex items-center'>
+                <span>Recevoir une invitation mail à nom.prenom@mail.com</span>
+                <Switch
+                  id='emailInvitation'
+                  name='emailInvitation'
+                  checked={sendEmailInvitation}
+                  onChange={handleSendEmailInvitation}
                 />
               </label>
             </div>
