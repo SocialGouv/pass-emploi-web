@@ -13,15 +13,7 @@ export type Rdv = {
   duration: string
   modality: string
   jeune: BaseJeune
-}
-
-export type RdvJeune = {
-  id: string
-  comment: string
-  date: string
-  duration: string
-  modality: string
-  jeune: BaseJeune
+  type: TypeRendezVous
 }
 
 export const TYPE_RENDEZ_VOUS = {

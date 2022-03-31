@@ -144,7 +144,11 @@ const MesRendezvous = ({
         </div>
 
         {displayOldRdv ? (
-          <RdvList id='rendez-vous-passes' rdvs={rendezVousPasses} />
+          <RdvList
+            id='rendez-vous-passes'
+            rdvs={rendezVousPasses}
+            withNameJeune
+          />
         ) : (
           <RdvList
             id='rendez-vous-futurs'

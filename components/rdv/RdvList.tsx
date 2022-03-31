@@ -4,14 +4,23 @@ import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
+import React from 'react'
+import { RdvTypeTag } from 'components/ui/RdvTypeTag'
+import { HeaderCell } from 'components/rdv/HeaderCell'
 
 type RdvListProps = {
   rdvs: Rdv[]
+  withNameJeune?: boolean
   id?: string
   onDelete?: any
 }
 
-const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
+const RdvList = ({
+  id,
+  rdvs,
+  withNameJeune = true,
+  onDelete,
+}: RdvListProps) => {
   const handleDeleteClick = (rdv: Rdv) => {
     onDelete(rdv)
   }
@@ -34,27 +43,34 @@ const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
         <table id={id} className='w-full'>
           <caption className='sr-only'>Liste de mes rendez-vous</caption>
 
-          <thead className='sr-only'>
+          <thead>
             <tr>
-              <th scope='col'>Date et heure du rendez-vous</th>
-              <th scope='col'>Lieu et modalité du rendez-vous</th>
-              <th scope='col'>Commentaires</th>
-              <th scope='col'>Supprimer le rendez-vous</th>
+              <HeaderCell scope='col' label='Horaires' />
+              {withNameJeune && <HeaderCell scope='col' label='Prénom Nom' />}
+              <HeaderCell scope='col' label='Type' />
+              <HeaderCell scope='col' label='Modalité' />
+              <HeaderCell scope='col' label='Note' />
+              <HeaderCell scope='col' label='Supprimer le rendez-vous' srOnly />
             </tr>
           </thead>
 
           <tbody>
             {rdvs.map((rdv: Rdv) => (
               <tr key={rdv.id} className='text-sm text-bleu_nuit'>
-                <td className='p-4'>
+                <td className='p-3'>
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>
+                {withNameJeune && (
+                  <td className='p-3'>
+                    {rdv.jeune.prenom} {rdv.jeune.nom}
+                  </td>
+                )}
 
-                <td className='p-4'>
-                  {rdv.jeune.prenom} {rdv.jeune.nom}
+                <td className='p-3'>
+                  <RdvTypeTag type={rdv.type.label} />
                 </td>
 
-                <td className='p-4 '>
+                <td className='p-3 '>
                   <LocationIcon
                     focusable='false'
                     aria-hidden='true'
@@ -63,17 +79,17 @@ const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
                   {rdv.modality}
                 </td>
 
-                <td className='p-4 [overflow-wrap:anywhere]'>
+                <td className='p-3 [overflow-wrap:anywhere]'>
                   <NoteIcon
                     focusable='false'
                     aria-hidden='true'
                     className='mr-2 inline'
                   />
-                  {rdv.comment || '--'}
+                  {(rdv.comment && '1 note(s)') || '--'}
                 </td>
 
                 {onDelete && (
-                  <td className='p-4'>
+                  <td className='p-3'>
                     <button
                       onClick={() => handleDeleteClick(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
