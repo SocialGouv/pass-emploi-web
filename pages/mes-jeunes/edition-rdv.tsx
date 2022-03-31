@@ -527,7 +527,9 @@ function EditionRdv({
 
             <div className='flex items-center mb-8'>
               <label htmlFor='presenceConseiller' className='flex items-center'>
-                <span className='mr-4'>Vous êtes présent au rendez-vous</span>
+                <span className='w-64 mr-4'>
+                  Vous êtes présent au rendez-vous
+                </span>
                 <Switch
                   id='presenceConseiller'
                   name='presenceConseiller'
@@ -540,7 +542,7 @@ function EditionRdv({
 
             <div className='flex items-center mb-8'>
               <label htmlFor='emailInvitation' className='flex items-center'>
-                <span>
+                <span className='w-64 mr-4'>
                   Intégrer ce rendez-vous à mon agenda via l'adresse mail
                   suivante : {emailConseiller}
                 </span>
