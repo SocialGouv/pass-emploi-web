@@ -5,12 +5,12 @@ import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
 import React from 'react'
-import { RdvTypeItem } from 'components/ui/RdvTypeItem'
-import { HeaderCell } from 'components/ui/HeaderCell'
+import { RdvTypeTag } from 'components/ui/RdvTypeTag'
+import { HeaderCell } from 'components/rdv/HeaderCell'
 
 type RdvListProps = {
   rdvs: Rdv[]
-  withColumnName?: boolean
+  withNameJeune?: boolean
   id?: string
   onDelete?: any
 }
@@ -18,7 +18,7 @@ type RdvListProps = {
 const RdvList = ({
   id,
   rdvs,
-  withColumnName = true,
+  withNameJeune = true,
   onDelete,
 }: RdvListProps) => {
   const handleDeleteClick = (rdv: Rdv) => {
@@ -26,13 +26,9 @@ const RdvList = ({
   }
 
   const dayHourCells = (rdvDate: Date, duration: string) => {
-    const durationString = duration.toString()
-
-    return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(rdvDate)} - ${
-      durationString.includes('min')
-        ? `${durationString})`
-        : `${durationString} min)`
-    }`
+    return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
+      rdvDate
+    )} - ${duration})`
   }
 
   return (
@@ -50,7 +46,7 @@ const RdvList = ({
           <thead>
             <tr>
               <HeaderCell scope='col' label='Horaires' />
-              {withColumnName && <HeaderCell scope='col' label='Prénom Nom' />}
+              {withNameJeune && <HeaderCell scope='col' label='Prénom Nom' />}
               <HeaderCell scope='col' label='Type' />
               <HeaderCell scope='col' label='Modalité' />
               <HeaderCell scope='col' label='Note' />
@@ -64,14 +60,14 @@ const RdvList = ({
                 <td className='p-3'>
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>
-                {withColumnName && (
+                {withNameJeune && (
                   <td className='p-3'>
                     {rdv.jeune.prenom} {rdv.jeune.nom}
                   </td>
                 )}
 
                 <td className='p-3'>
-                  <RdvTypeItem type={rdv.type.label} />
+                  <RdvTypeTag type={rdv.type.label} />
                 </td>
 
                 <td className='p-3 '>

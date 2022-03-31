@@ -147,7 +147,7 @@ const MesRendezvous = ({
           <RdvList
             id='rendez-vous-passes'
             rdvs={rendezVousPasses}
-            withColumnName
+            withNameJeune
           />
         ) : (
           <RdvList

@@ -158,7 +158,7 @@ const FicheJeune = ({
             <RdvList
               rdvs={rdvsAVenir}
               onDelete={openDeleteRdvModal}
-              withColumnName={false}
+              withNameJeune={false}
             />
           ) : (
             <IntegrationPoleEmploi label='convocations' />

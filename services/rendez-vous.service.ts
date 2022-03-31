@@ -50,11 +50,15 @@ export class RendezVousApiService implements RendezVousService {
     }
   }
 
-  getRendezVousJeune(idJeune: string, accessToken: string): Promise<Rdv[]> {
-    return this.apiClient.get<Rdv[]>(
+  async getRendezVousJeune(
+    idJeune: string,
+    accessToken: string
+  ): Promise<Rdv[]> {
+    const rdvsJson = await this.apiClient.get<RdvJson[]>(
       `/jeunes/${idJeune}/rendezvous`,
       accessToken
     )
+    return rdvsJson.map(jsonToRdv)
   }
 
   async deleteRendezVous(
