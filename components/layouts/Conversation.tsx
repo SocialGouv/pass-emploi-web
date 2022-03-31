@@ -33,7 +33,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   )
   const inputFocused = useRef<boolean>(false)
 
-  function setMessageRef(message: HTMLLIElement | null) {
+  function scrollToRef(message: HTMLLIElement | null) {
     if (message) message.scrollIntoView({ behavior: 'smooth' })
   }
 
@@ -120,50 +120,46 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
       </div>
 
       <ul className='p-4 flex-grow overflow-y-auto'>
-        {messagesByDay.map(
-          (messagesOfADay: MessagesOfADay, dailyIndex: number) => (
-            <li key={messagesOfADay.date.getTime()} className='mb-5'>
-              <div className={`text-md text-bleu text-center mb-3`}>
-                <span>{todayOrDate(messagesOfADay.date)}</span>
-              </div>
+        {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
+          <li key={messagesOfADay.date.getTime()} className='mb-5'>
+            <div className={`text-md text-bleu text-center mb-3`}>
+              <span>{todayOrDate(messagesOfADay.date)}</span>
+            </div>
 
-              <ul>
-                {messagesOfADay.messages.map(
-                  (message: Message, index: number) => (
-                    <li key={message.id} className='mb-5' ref={setMessageRef}>
-                      <p
-                        className={`text-md break-words max-w-[90%] p-4 rounded-large w-max whitespace-pre-wrap ${
-                          message.sentBy === 'conseiller'
-                            ? 'text-right text-blanc bg-bleu_nuit mt-0 mr-0 mb-1 ml-auto'
-                            : 'text-left text-bleu_nuit bg-bleu_blanc mb-1'
-                        }`}
-                      >
-                        {message.content}
-                      </p>
-                      <p
-                        className={`text-xs text-bleu_gris ${
-                          message.sentBy === 'conseiller'
-                            ? 'text-right'
-                            : 'text-left'
-                        }`}
-                      >
-                        {formatHourMinuteDate(message.creationDate)}
-                        {message.sentBy === 'conseiller' && (
-                          <span>
-                            {!lastSeenByJeune ||
-                            isDateOlder(lastSeenByJeune, message.creationDate)
-                              ? ' · Envoyé'
-                              : ' · Lu'}
-                          </span>
-                        )}
-                      </p>
-                    </li>
-                  )
-                )}
-              </ul>
-            </li>
-          )
-        )}
+            <ul>
+              {messagesOfADay.messages.map((message: Message) => (
+                <li key={message.id} className='mb-5' ref={scrollToRef}>
+                  <p
+                    className={`text-md break-words max-w-[90%] p-4 rounded-large w-max whitespace-pre-wrap ${
+                      message.sentBy === 'conseiller'
+                        ? 'text-right text-blanc bg-bleu_nuit mt-0 mr-0 mb-1 ml-auto'
+                        : 'text-left text-bleu_nuit bg-bleu_blanc mb-1'
+                    }`}
+                  >
+                    {message.content}
+                  </p>
+                  <p
+                    className={`text-xs text-bleu_gris ${
+                      message.sentBy === 'conseiller'
+                        ? 'text-right'
+                        : 'text-left'
+                    }`}
+                  >
+                    {formatHourMinuteDate(message.creationDate)}
+                    {message.sentBy === 'conseiller' && (
+                      <span>
+                        {!lastSeenByJeune ||
+                        isDateOlder(lastSeenByJeune, message.creationDate)
+                          ? ' · Envoyé'
+                          : ' · Lu'}
+                      </span>
+                    )}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
       </ul>
 
       <form
