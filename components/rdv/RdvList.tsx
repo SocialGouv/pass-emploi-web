@@ -10,19 +10,29 @@ import { HeaderCell } from 'components/ui/HeaderCell'
 
 type RdvListProps = {
   rdvs: Rdv[]
+  withColumnName?: boolean
   id?: string
   onDelete?: any
 }
 
-const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
+const RdvList = ({
+  id,
+  rdvs,
+  withColumnName = true,
+  onDelete,
+}: RdvListProps) => {
   const handleDeleteClick = (rdv: Rdv) => {
     onDelete(rdv)
   }
 
   const dayHourCells = (rdvDate: Date, duration: string) => {
-    return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
-      rdvDate
-    )} - ${duration})`
+    const durationString = duration.toString()
+
+    return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(rdvDate)} - ${
+      durationString.includes('min')
+        ? `${durationString})`
+        : `${durationString} min)`
+    }`
   }
 
   return (
@@ -39,39 +49,32 @@ const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
 
           <thead>
             <tr>
-              {/*<th scope='col'>Date et heure du rendez-vous</th>*/}
-              {/*<th scope='col'>Lieu et modalité du rendez-vous</th>*/}
-              {/*<th scope='col'>Commentaires</th>*/}
-              {/*<th scope='col'>Supprimer le rendez-vous</th>  */}
-              {/*<th scope='col'>Horaires</th>*/}
-              <HeaderCell scope='col'>Horaires</HeaderCell>
-              <HeaderCell scope='col'>Prénom Nom</HeaderCell>
-              <HeaderCell scope='col'>Type</HeaderCell>
-              <HeaderCell scope='col'>Modalité</HeaderCell>
-              <HeaderCell scope='col'>Note</HeaderCell>
-              <HeaderCell scope='col' srOnly>
-                Supprimer le rendez-vous
-              </HeaderCell>
+              <HeaderCell scope='col' label='Horaires' />
+              {withColumnName && <HeaderCell scope='col' label='Prénom Nom' />}
+              <HeaderCell scope='col' label='Type' />
+              <HeaderCell scope='col' label='Modalité' />
+              <HeaderCell scope='col' label='Note' />
+              <HeaderCell scope='col' label='Supprimer le rendez-vous' srOnly />
             </tr>
           </thead>
 
           <tbody>
             {rdvs.map((rdv: Rdv) => (
               <tr key={rdv.id} className='text-sm text-bleu_nuit'>
-                <td className='py-4 pr-4'>
+                <td className='p-3'>
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>
+                {withColumnName && (
+                  <td className='p-3'>
+                    {rdv.jeune.prenom} {rdv.jeune.nom}
+                  </td>
+                )}
 
-                <td className='py-4 pr-4'>
-                  {rdv.jeune.prenom} {rdv.jeune.nom}
-                </td>
-
-                {/*<td className='py-4 pr-4'>{rdv.type.label}</td>*/}
-                <td className='py-4 pr-4'>
+                <td className='p-3'>
                   <RdvTypeItem type={rdv.type.label} />
                 </td>
 
-                <td className='py-4 pr-4 '>
+                <td className='p-3 '>
                   <LocationIcon
                     focusable='false'
                     aria-hidden='true'
@@ -80,17 +83,17 @@ const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
                   {rdv.modality}
                 </td>
 
-                <td className='py-4 pr-4 [overflow-wrap:anywhere]'>
+                <td className='p-3 [overflow-wrap:anywhere]'>
                   <NoteIcon
                     focusable='false'
                     aria-hidden='true'
                     className='mr-2 inline'
                   />
-                  {rdv.comment || '--'}
+                  {(rdv.comment && '1 note(s)') || '--'}
                 </td>
 
                 {onDelete && (
-                  <td className='py-4 pr-4'>
+                  <td className='p-3'>
                     <button
                       onClick={() => handleDeleteClick(rdv)}
                       aria-label={`Supprimer le rendez-vous du ${rdv.date}`}

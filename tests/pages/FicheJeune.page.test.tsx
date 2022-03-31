@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
-import { uneListeDeRdvJeune } from 'fixtures/rendez-vous'
+import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { useRouter } from 'next/router'
@@ -23,8 +23,8 @@ describe('Fiche Jeune', () => {
     jest.clearAllMocks()
   })
 
-  const jeune = unJeune({ firstName: 'Nadia', lastName: 'Sanfamiye' })
-  const rdvs = uneListeDeRdvJeune()
+  const jeune = unJeune()
+  const rdvs = uneListeDeRdv()
   const actions = uneListeDActions()
   let jeunesService: JeunesService
   let rendezVousService: RendezVousService
@@ -47,14 +47,15 @@ describe('Fiche Jeune', () => {
       // Then
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-        'Nadia Sanfamiye'
+        'Kenji Jirac'
       )
     })
 
     it('affiche la liste des rendez-vous du jeune', async () => {
       // Then
       rdvs.forEach((rdv) => {
-        expect(screen.getByText(rdv.comment)).toBeInTheDocument()
+        expect(screen.getByText(rdv.type.label)).toBeInTheDocument()
+        expect(screen.getByText(rdv.modality)).toBeInTheDocument()
       })
     })
 

@@ -2,14 +2,12 @@ import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
-import ListeRdvJeune from 'components/jeune/ListeRdvJeune'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { RdvJeune } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -20,10 +18,12 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { Container } from 'utils/injectionDependances'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
+import RdvList from 'components/rdv/RdvList'
+import { Rdv } from 'interfaces/rdv'
 
 interface FicheJeuneProps {
   jeune: Jeune
-  rdvs: RdvJeune[]
+  rdvs: Rdv[]
   actions: ActionJeune[]
   rdvCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
@@ -41,9 +41,7 @@ const FicheJeune = ({
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
-  const [selectedRdv, setSelectedRdv] = useState<RdvJeune | undefined>(
-    undefined
-  )
+  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
@@ -83,7 +81,7 @@ const FicheJeune = ({
     }
   }
 
-  function openDeleteRdvModal(rdv: RdvJeune) {
+  function openDeleteRdvModal(rdv: Rdv) {
     setSelectedRdv(rdv)
     setShowDeleteModal(true)
     setTrackingLabel('Détail jeune - Modale suppression rdv')
@@ -157,7 +155,11 @@ const FicheJeune = ({
           </h2>
 
           {!isPoleEmploi ? (
-            <ListeRdvJeune rdvs={rdvsAVenir} onDelete={openDeleteRdvModal} />
+            <RdvList
+              rdvs={rdvsAVenir}
+              onDelete={openDeleteRdvModal}
+              withColumnName={false}
+            />
           ) : (
             <IntegrationPoleEmploi label='convocations' />
           )}
@@ -257,7 +259,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const today = new Date()
   const props: FicheJeuneProps = {
     jeune: resInfoJeune,
-    rdvs: resRdvJeune.filter((rdv: RdvJeune) => new Date(rdv.date) > today),
+    rdvs: resRdvJeune.filter((rdv: Rdv) => new Date(rdv.date) > today),
     actions: userActions,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }

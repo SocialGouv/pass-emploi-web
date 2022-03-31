@@ -21,11 +21,11 @@ describe('<RdvList>', () => {
     render(<RdvList rdvs={listeRdv} />)
 
     expect(screen.getByText('21/10/2021 (12:00 - 30 min)')).toBeInTheDocument()
-    expect(screen.getByText(listeRdv[0].modality)).toBeInTheDocument()
     expect(
       screen.getByText(`${listeRdv[0].jeune.prenom} ${listeRdv[0].jeune.nom}`)
     ).toBeInTheDocument()
-    expect(screen.getByText(listeRdv[0].comment)).toBeInTheDocument()
+    expect(screen.getByText(listeRdv[0].type.label)).toBeInTheDocument()
+    expect(screen.getByText(listeRdv[0].modality)).toBeInTheDocument()
   })
 
   it('ne devrait pas afficher un tableau de rdvs quand rdvs est vide', () => {

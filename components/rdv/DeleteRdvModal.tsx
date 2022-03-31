@@ -2,7 +2,7 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
-import { Rdv, RdvJeune } from 'interfaces/rdv'
+import { Rdv } from 'interfaces/rdv'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -14,7 +14,7 @@ type DeleteRdvModalProps = {
   show: boolean
   onClose: any
   onDelete: () => void
-  rdv: Rdv | RdvJeune
+  rdv: Rdv
 }
 
 const DeleteRdvModal = ({
