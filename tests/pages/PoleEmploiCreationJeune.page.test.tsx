@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   RenderResult,
   screen,
@@ -158,23 +159,21 @@ describe('PoleEmploiCreationJeune', () => {
       })
 
       // When
-      fireEvent.click(submitButton)
+      await act(async () => {
+        fireEvent.click(submitButton)
+      })
 
       // Then
-      await waitFor(() => {
-        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
-          1
-        )
-        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledWith(
-          {
-            firstName: 'Nadia',
-            lastName: 'Sanfamiye',
-            email: 'nadia.sanfamiye@poleemploi.fr',
-          },
-          '1',
-          'accessToken'
-        )
-      })
+      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
+      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledWith(
+        {
+          firstName: 'Nadia',
+          lastName: 'Sanfamiye',
+          email: 'nadia.sanfamiye@poleemploi.fr',
+        },
+        '1',
+        'accessToken'
+      )
 
       expect(
         screen.getByRole('button', {
@@ -217,14 +216,12 @@ describe('PoleEmploiCreationJeune', () => {
       })
 
       // When
-      fireEvent.click(submitButton)
+      await act(async () => {
+        fireEvent.click(submitButton)
+      })
 
       // Then
-      await waitFor(() => {
-        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
-          1
-        )
-      })
+      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
   })

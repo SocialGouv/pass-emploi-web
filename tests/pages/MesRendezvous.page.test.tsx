@@ -1,10 +1,10 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen } from '@testing-library/react'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import React from 'react'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { useRouter } from 'next/router'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
@@ -97,14 +97,14 @@ describe('MesRendezvous', () => {
         ).toBeInTheDocument()
       })
 
-      it('permet de cacher le message de succès', () => {
+      it('permet de cacher le message de succès', async () => {
         // Given
         const fermerMessage = screen.getByRole('button', {
           name: "J'ai compris",
         })
 
         // When
-        fermerMessage.click()
+        await act(async () => fermerMessage.click())
 
         // Then
         expect(() =>

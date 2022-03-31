@@ -1,9 +1,4 @@
-import {
-  fireEvent,
-  RenderResult,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
 import { unDossierMilo } from 'fixtures/milo'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
@@ -97,12 +92,12 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      fireEvent.click(createCompteButton)
+      await act(async () => {
+        fireEvent.click(createCompteButton)
+      })
 
       //THEN
-      await waitFor(() => {
-        expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
-      })
+      expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
 
       expect(
         screen.getByRole('button', {
@@ -162,13 +157,12 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      fireEvent.click(createCompteButton)
-
-      //THEN
-      await waitFor(() => {
-        expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
+      await act(async () => {
+        fireEvent.click(createCompteButton)
       })
 
+      //THEN
+      expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
   })
