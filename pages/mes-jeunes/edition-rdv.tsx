@@ -67,8 +67,9 @@ function EditionRdv({
   const [duree, setDuree] = useState<InputValue>({ value: '' })
   const [adresse, setAdresse] = useState<InputValue>({ value: '' })
   const [organisme, setOrganisme] = useState<InputValue>({ value: '' })
-  const [commentaire, setCommentaire] = useState<string>('')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
+  const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(false)
+  const [commentaire, setCommentaire] = useState<string>('')
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
@@ -211,6 +212,7 @@ function EditionRdv({
         adresse: adresse.value ? adresse.value : undefined,
         organisme: organisme.value ? organisme.value : undefined,
         presenceConseiller: isConseillerPresent,
+        invitation: sendEmailInvitation,
         comment: commentaire,
       },
       session!.accessToken
@@ -519,13 +521,30 @@ function EditionRdv({
 
             <div className='flex items-center mb-8'>
               <label htmlFor='presenceConseiller' className='flex items-center'>
-                <span className='mr-4'>Vous êtes présent au rendez-vous</span>
+                <span className='w-64 mr-4'>
+                  Vous êtes présent au rendez-vous
+                </span>
                 <Switch
                   id='presenceConseiller'
                   name='presenceConseiller'
                   checked={isConseillerPresent}
                   disabled={typeEntretienIndividuelConseillerSelected()}
                   onChange={handlePresenceConseiller}
+                />
+              </label>
+            </div>
+
+            <div className='flex items-center mb-8'>
+              <label htmlFor='emailInvitation' className='flex items-center'>
+                <span className='w-64 mr-4'>
+                  Intégrer ce rendez-vous à mon agenda via l’adresse mail
+                  suivante : {session?.user?.email}
+                </span>
+                <Switch
+                  id='emailInvitation'
+                  name='emailInvitation'
+                  checked={sendEmailInvitation}
+                  onChange={(e) => setSendEmailInvitation(e.target.checked)}
                 />
               </label>
             </div>
@@ -541,7 +560,7 @@ function EditionRdv({
               name='commentaire'
               rows={3}
               onChange={(e) => setCommentaire(e.target.value)}
-              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
+              className='border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8'
             />
           </fieldset>
 

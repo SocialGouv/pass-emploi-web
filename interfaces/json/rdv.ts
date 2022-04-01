@@ -25,6 +25,7 @@ export interface RdvFormData {
   adresse?: string
   organisme?: string
   presenceConseiller: boolean
+  invitation: boolean
 }
 
 export function jsonToRdv(rdvData: RdvJson): Rdv {
