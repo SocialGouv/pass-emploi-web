@@ -162,7 +162,6 @@ describe('EditionRdv', () => {
     let jeunes: Jeune[]
     let rendezVousService: RendezVousService
     let typesRendezVous: TypeRendezVous[]
-    const emailConseiller: string = 'fake@email.com'
     beforeEach(() => {
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService()
@@ -180,7 +179,6 @@ describe('EditionRdv', () => {
         renderWithSession(
           <DIProvider dependances={{ rendezVousService }}>
             <EditionRdv
-              emailConseiller={emailConseiller}
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
@@ -360,7 +358,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
           // Given
           inputEmailInvitation = screen.getByLabelText(
-            /Intégrer ce rendez-vous à mon agenda via l'adresse mail suivante :/i
+            /Intégrer ce rendez-vous à mon agenda via l’adresse mail suivante :/i
           )
 
           // Then
@@ -370,11 +368,13 @@ describe('EditionRdv', () => {
 
         it('indique l’email auquel le conseiller va recevoir son invitation au RDV', () => {
           // Given
-          let toto: HTMLInputElement = screen.getByLabelText(/fake@email.com/i)
+
+          let getEmailConseiller: HTMLInputElement =
+            screen.getByLabelText(/fake@email.com/i)
 
           // Then
 
-          expect(toto).toBeInTheDocument()
+          expect(getEmailConseiller).toBeInTheDocument()
         })
 
         it('contient un champ pour saisir des commentaires', () => {
@@ -711,7 +711,6 @@ describe('EditionRdv', () => {
         renderWithSession(
           <DIProvider dependances={{ rendezVousService }}>
             <EditionRdv
-              emailConseiller={emailConseiller}
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}

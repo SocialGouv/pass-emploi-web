@@ -12,6 +12,7 @@ export default function renderWithSession(
     user: {
       id: '1',
       name: 'Nils Tavernier',
+      email: 'fake@email.com',
       structure: UserStructure.MILO,
       estSuperviseur: false,
     },

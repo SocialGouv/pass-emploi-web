@@ -26,7 +26,6 @@ import { TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { Switch } from 'components/ui/Switch'
 
 interface EditionRdvProps {
-  emailConseiller: string
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
   from: string
@@ -40,7 +39,6 @@ interface InputValue {
 }
 
 function EditionRdv({
-  emailConseiller,
   jeunes,
   typesRendezVous,
   idJeuneFrom,
@@ -185,10 +183,6 @@ function EditionRdv({
     } else {
       setConseillerPresent(e.target.checked)
     }
-  }
-
-  function handleSendEmailInvitation(e: ChangeEvent<HTMLInputElement>) {
-    setSendEmailInvitation(e.target.checked)
   }
 
   function openLeavePageModal(e: MouseEvent) {
@@ -543,14 +537,14 @@ function EditionRdv({
             <div className='flex items-center mb-8'>
               <label htmlFor='emailInvitation' className='flex items-center'>
                 <span className='w-64 mr-4'>
-                  Intégrer ce rendez-vous à mon agenda via l'adresse mail
-                  suivante : {emailConseiller}
+                  Intégrer ce rendez-vous à mon agenda via l’adresse mail
+                  suivante : {session?.user?.email}
                 </span>
                 <Switch
                   id='emailInvitation'
                   name='emailInvitation'
                   checked={sendEmailInvitation}
-                  onChange={handleSendEmailInvitation}
+                  onChange={(e) => setSendEmailInvitation(e.target.checked)}
                 />
               </label>
             </div>
@@ -566,7 +560,7 @@ function EditionRdv({
               name='commentaire'
               rows={3}
               onChange={(e) => setCommentaire(e.target.value)}
-              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
+              className='border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8'
             />
           </fieldset>
 
@@ -632,7 +626,6 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const referer = context.req.headers.referer
 
   const props: EditionRdvProps = {
-    emailConseiller: user.email,
     jeunes: jeunes,
     typesRendezVous: typesRendezVous,
     withoutChat: true,
