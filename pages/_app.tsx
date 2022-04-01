@@ -8,7 +8,7 @@ import React, { ReactNode, useEffect } from 'react'
 import 'styles/globals.css'
 import 'styles/typography.css'
 import { init } from 'utils/analytics/matomo'
-import { JeuneProvider } from 'utils/chat/jeuneContext'
+import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { Container, DIProvider } from 'utils/injectionDependances'
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
@@ -46,11 +46,11 @@ export default function App({
             {isLoginPage && <Footer />}
           </div>
         ) : (
-          <JeuneProvider>
+          <CurrentJeuneProvider>
             <Layout>
               <Component {...pageProps} />
             </Layout>
-          </JeuneProvider>
+          </CurrentJeuneProvider>
         )}
       </DIProvider>
     </SessionProvider>

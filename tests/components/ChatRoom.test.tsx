@@ -8,7 +8,7 @@ import { Session } from 'next-auth'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import { JeuneProvider } from 'utils/chat/jeuneContext'
+import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 
@@ -74,9 +74,9 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService, messagesService }}>
-            <JeuneProvider>
+            <CurrentJeuneProvider>
               <ChatRoom />
-            </JeuneProvider>
+            </CurrentJeuneProvider>
           </DIProvider>,
           { user: conseiller, firebaseToken: tokenChat }
         )
@@ -177,9 +177,9 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService, messagesService }}>
-            <JeuneProvider jeune={jeunes[2]}>
+            <CurrentJeuneProvider jeune={jeunes[2]}>
               <ChatRoom />
-            </JeuneProvider>
+            </CurrentJeuneProvider>
           </DIProvider>,
           { user: conseiller, firebaseToken: tokenChat }
         )
@@ -201,7 +201,9 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService, messagesService }}>
-            <ChatRoom />
+            <CurrentJeuneProvider>
+              <ChatRoom />
+            </CurrentJeuneProvider>
           </DIProvider>,
           { user: conseiller, firebaseToken: tokenChat }
         )
