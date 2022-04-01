@@ -1,6 +1,5 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import ChatRoom from 'components/layouts/ChatRoom'
-import Conversation from 'components/layouts/Conversation'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
@@ -9,10 +8,13 @@ import { Session } from 'next-auth'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
+import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('components/layouts/Conversation', () => jest.fn(() => <></>))
+jest.mock('components/layouts/Conversation', () =>
+  jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
+)
 jest.useFakeTimers()
 
 beforeEach(async () => {
@@ -72,7 +74,9 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService, messagesService }}>
-            <ChatRoom />
+            <CurrentJeuneProvider>
+              <ChatRoom />
+            </CurrentJeuneProvider>
           </DIProvider>,
           { user: conseiller, firebaseToken: tokenChat }
         )
@@ -146,24 +150,45 @@ describe('<ChatRoom />', () => {
 
       it('affiche la conversation du jeune', async () => {
         // Then
-        expect(Conversation).toHaveBeenCalledWith(
-          {
-            jeuneChat: unJeuneChat({
-              ...jeuneSelectionne,
-              chatId: `chat-${jeuneSelectionne.id}`,
-            }),
-            onBack: expect.any(Function),
-          },
-          {}
+        await waitFor(() =>
+          expect(
+            screen.getByText(`conversation-${jeuneSelectionne.id}`)
+          ).toBeInTheDocument()
         )
       })
 
       it("n'affiche pas les autres chats", async () => {
         // Then
         expect(() =>
-          screen.getByText(jeunePasSelectionne.firstName, { exact: false })
+          screen.getByText(`conversation-${jeunePasSelectionne.id}`)
         ).toThrow()
       })
+    })
+  })
+
+  describe('réaction au contexte du jeune', () => {
+    it('affiche le chat du jeune courant', async () => {
+      // Given
+      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
+        jeunes
+      )
+
+      // When
+      await act(async () => {
+        await renderWithSession(
+          <DIProvider dependances={{ jeunesService, messagesService }}>
+            <CurrentJeuneProvider jeune={jeunes[2]}>
+              <ChatRoom />
+            </CurrentJeuneProvider>
+          </DIProvider>,
+          { user: conseiller, firebaseToken: tokenChat }
+        )
+      })
+
+      // Then
+      expect(
+        screen.getByText(`conversation-${jeunes[2].id}`)
+      ).toBeInTheDocument()
     })
   })
 
@@ -176,7 +201,9 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService, messagesService }}>
-            <ChatRoom />
+            <CurrentJeuneProvider>
+              <ChatRoom />
+            </CurrentJeuneProvider>
           </DIProvider>,
           { user: conseiller, firebaseToken: tokenChat }
         )

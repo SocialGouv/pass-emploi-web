@@ -37,7 +37,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
 
   const onInputFocused = () => {
     inputFocused.current = true
-    setReadByConseiller(jeuneChat)
+    setReadByConseiller(jeuneChat.chatId)
   }
 
   const sendNouveauMessage = async (event: any) => {
@@ -56,16 +56,16 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   }
 
   const setReadByConseiller = useCallback(
-    (jeuneChatToUpdate: JeuneChat) => {
-      messagesService.setReadByConseiller(jeuneChatToUpdate.chatId)
+    (idChatToUpdate: string) => {
+      messagesService.setReadByConseiller(idChatToUpdate)
     },
     [messagesService]
   )
 
   const observerMessages = useCallback(
-    (jeuneChatToObserve: JeuneChat) => {
+    (idChatToObserve: string) => {
       return messagesService.observeMessages(
-        jeuneChatToObserve.chatId,
+        idChatToObserve,
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
@@ -74,7 +74,7 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
           }
 
           if (inputFocused.current) {
-            setReadByConseiller(jeuneChatToObserve)
+            setReadByConseiller(idChatToObserve)
           }
         }
       )
@@ -83,9 +83,9 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   )
 
   const observerLastJeuneReadingDate = useCallback(
-    (jeuneChatToObserve: JeuneChat) => {
+    (idChatToObserve: string) => {
       return messagesService.observeJeuneReadingDate(
-        jeuneChatToObserve.chatId,
+        idChatToObserve,
         setLastSeenByJeune
       )
     },
@@ -93,16 +93,16 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
   )
 
   useEffect(() => {
-    const unsubscribe = observerMessages(jeuneChat)
-    setReadByConseiller(jeuneChat)
+    const unsubscribe = observerMessages(jeuneChat.chatId)
+    setReadByConseiller(jeuneChat.chatId)
 
     return () => unsubscribe()
-  }, [jeuneChat, observerMessages, setReadByConseiller])
+  }, [jeuneChat.chatId, observerMessages, setReadByConseiller])
 
   useEffect(() => {
-    const unsubscribe = observerLastJeuneReadingDate(jeuneChat)
+    const unsubscribe = observerLastJeuneReadingDate(jeuneChat.chatId)
     return () => unsubscribe()
-  }, [jeuneChat, observerLastJeuneReadingDate])
+  }, [jeuneChat.chatId, observerLastJeuneReadingDate])
 
   return (
     <div className='h-full flex flex-col'>

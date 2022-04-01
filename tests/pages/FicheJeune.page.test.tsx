@@ -9,6 +9,7 @@ import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 
@@ -34,11 +35,17 @@ describe('Fiche Jeune', () => {
   })
 
   describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
+    let setJeune: () => void
     beforeEach(async () => {
+      // Given
+      setJeune = jest.fn()
+
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune jeune={jeune} rdvs={rdvs} actions={actions} />
+          <CurrentJeuneProvider setJeune={setJeune}>
+            <FicheJeune jeune={jeune} rdvs={rdvs} actions={actions} />
+          </CurrentJeuneProvider>
         </DIProvider>
       )
     })
@@ -79,22 +86,14 @@ describe('Fiche Jeune', () => {
       })
     })
 
-    it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
-      renderWithSession(
-        <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} />
-        </DIProvider>
-      )
-      expect(
-        screen.getByRole('link', {
-          name: 'Accédez à cette page pour créer une action',
-        })
-      ).toBeInTheDocument()
-    })
-
     it('permet la prise de rendez-vous', async () => {
       // Then
       expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()
+    })
+
+    it('modifie le currentJeune', () => {
+      // Then
+      expect(setJeune).toHaveBeenCalledWith(jeune)
     })
   })
 
@@ -103,7 +102,9 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune jeune={jeune} rdvs={[]} actions={actions} />
+          <CurrentJeuneProvider>
+            <FicheJeune jeune={jeune} rdvs={[]} actions={actions} />
+          </CurrentJeuneProvider>
         </DIProvider>,
         {
           user: {
@@ -136,6 +137,21 @@ describe('Fiche Jeune', () => {
     })
   })
 
+  it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
+    renderWithSession(
+      <DIProvider dependances={{ jeunesService, rendezVousService }}>
+        <CurrentJeuneProvider>
+          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} />
+        </CurrentJeuneProvider>
+      </DIProvider>
+    )
+    expect(
+      screen.getByRole('link', {
+        name: 'Accédez à cette page pour créer une action',
+      })
+    ).toBeInTheDocument()
+  })
+
   describe('quand la création de rdv est réussie', () => {
     let replace: jest.Mock
     beforeEach(() => {
@@ -146,12 +162,14 @@ describe('Fiche Jeune', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actions={actions}
-            rdvCreationSuccess={true}
-          />
+          <CurrentJeuneProvider>
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actions={actions}
+              rdvCreationSuccess={true}
+            />
+          </CurrentJeuneProvider>
         </DIProvider>
       )
     })

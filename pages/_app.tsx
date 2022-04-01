@@ -1,4 +1,5 @@
 import ProgressBar from '@badrap/bar-of-progress'
+import { Footer } from 'components/Footer'
 import Layout from 'components/layouts/Layout'
 import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
@@ -7,8 +8,8 @@ import React, { ReactNode, useEffect } from 'react'
 import 'styles/globals.css'
 import 'styles/typography.css'
 import { init } from 'utils/analytics/matomo'
+import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { Container, DIProvider } from 'utils/injectionDependances'
-import { Footer } from 'components/Footer'
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
 const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
@@ -24,7 +25,7 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-function App({
+export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps): ReactNode {
@@ -45,15 +46,13 @@ function App({
             {isLoginPage && <Footer />}
           </div>
         ) : (
-          <>
+          <CurrentJeuneProvider>
             <Layout>
               <Component {...pageProps} />
             </Layout>
-          </>
+          </CurrentJeuneProvider>
         )}
       </DIProvider>
     </SessionProvider>
   )
 }
-
-export default App
