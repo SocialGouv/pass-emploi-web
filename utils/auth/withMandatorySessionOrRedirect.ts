@@ -7,8 +7,8 @@ import { GetServerSidePropsContext } from 'next/types'
 export async function withMandatorySessionOrRedirect(
   context: GetServerSidePropsContext
 ): Promise<
-  | { redirect: Redirect; hasSession: false }
-  | { session: Session; hasSession: true }
+  | { hasSession: false; redirect: Redirect }
+  | { hasSession: true; session: Session }
 > {
   const session = await getSession({ req: context.req })
   if (!session) {

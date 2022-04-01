@@ -15,6 +15,11 @@ export interface JeunesService {
 
   getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune>
 
+  getIdJeuneMilo(
+    numeroDossier: string,
+    accessToken: string
+  ): Promise<string | undefined>
+
   createCompteJeunePoleEmploi(
     newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
@@ -99,5 +104,12 @@ export class JeunesApiService implements JeunesService {
 
   async supprimerJeune(idJeune: string, accessToken: string): Promise<void> {
     await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
+  }
+
+  getIdJeuneMilo(
+    _numeroDossier: string,
+    _accessToken: string
+  ): Promise<string | undefined> {
+    throw new Error('Not implemented')
   }
 }
