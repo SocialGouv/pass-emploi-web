@@ -14,7 +14,10 @@ export interface JeunesService {
     accessToken: string
   ): Promise<{ idConseiller: string; jeunes: Jeune[] }>
 
-  getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune>
+  getJeuneDetails(
+    idJeune: string,
+    accessToken: string
+  ): Promise<Jeune | undefined>
 
   getIdJeuneMilo(
     numeroDossier: string,
@@ -50,8 +53,18 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
-  getJeuneDetails(idJeune: string, accessToken: string): Promise<Jeune> {
-    return this.apiClient.get<Jeune>(`/jeunes/${idJeune}`, accessToken)
+  async getJeuneDetails(
+    idJeune: string,
+    accessToken: string
+  ): Promise<Jeune | undefined> {
+    try {
+      return await this.apiClient.get<Jeune>(`/jeunes/${idJeune}`, accessToken)
+    } catch (e) {
+      if (e instanceof RequestError && e.code === '404') {
+        return undefined
+      }
+      throw e
+    }
   }
 
   createCompteJeunePoleEmploi(
@@ -81,6 +94,24 @@ export class JeunesApiService implements JeunesService {
     return { idConseiller: conseiller.id, jeunes: jeunesDuConseiller }
   }
 
+  async getIdJeuneMilo(
+    numeroDossier: string,
+    accessToken: string
+  ): Promise<string | undefined> {
+    try {
+      const { id } = await this.apiClient.get<Jeune>(
+        `/conseillers/milo/jeunes/${numeroDossier}`,
+        accessToken
+      )
+      return id
+    } catch (e) {
+      if (e instanceof RequestError && e.code === '404') {
+        return undefined
+      }
+      throw e
+    }
+  }
+
   async reaffecter(
     idConseillerInitial: string,
     emailConseillerDestination: string,
@@ -105,23 +136,5 @@ export class JeunesApiService implements JeunesService {
 
   async supprimerJeune(idJeune: string, accessToken: string): Promise<void> {
     await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
-  }
-
-  async getIdJeuneMilo(
-    numeroDossier: string,
-    accessToken: string
-  ): Promise<string | undefined> {
-    try {
-      const { id } = await this.apiClient.get<Jeune>(
-        `/conseillers/milo/jeunes/${numeroDossier}`,
-        accessToken
-      )
-      return id
-    } catch (e) {
-      if (e instanceof RequestError && e.code === '404') {
-        return undefined
-      }
-      throw e
-    }
   }
 }

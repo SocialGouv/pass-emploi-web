@@ -3,11 +3,13 @@ import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSidePropsContext } from 'next/types'
 import { getServerSideProps } from 'pages/mes-jeunes/milo/[numero_dossier]'
 import { JeunesService } from 'services/jeunes.service'
+import { trackSSR } from 'utils/analytics/matomo'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('utils/analytics/matomo')
 
 describe('Fiche Jeune MiLo', () => {
   afterAll(() => {
@@ -74,10 +76,17 @@ describe('Fiche Jeune MiLo', () => {
 
             // When
             const actual = await getServerSideProps({
-              query: { numeroDossier: 'numero-dossier' },
+              query: { numero_dossier: 'numero-dossier' },
+              req: { headers: { referer: 'referer-url' } },
             } as unknown as GetServerSidePropsContext)
 
             // Then
+            expect(trackSSR).toHaveBeenCalledWith({
+              structure: 'MILO',
+              customTitle: 'Détail jeune par numéro dossier',
+              pathname: '/mes-jeunes/milo/numero-dossier',
+              refererUrl: 'referer-url',
+            })
             expect(actual).toEqual({
               redirect: {
                 destination: '/mes-jeunes/id-jeune',
@@ -96,10 +105,17 @@ describe('Fiche Jeune MiLo', () => {
 
             // When
             const actual = await getServerSideProps({
-              query: { numeroDossier: 'id-jeune' },
+              query: { numero_dossier: 'dossier-inexistant' },
+              req: { headers: { referer: 'referer-url' } },
             } as unknown as GetServerSidePropsContext)
 
             // Then
+            expect(trackSSR).toHaveBeenCalledWith({
+              structure: 'MILO',
+              customTitle: 'Détail jeune par numéro dossier en erreur',
+              pathname: '/mes-jeunes/milo/dossier-inexistant',
+              refererUrl: 'referer-url',
+            })
             expect(actual).toEqual({
               redirect: { destination: '/mes-jeunes', permanent: true },
             })

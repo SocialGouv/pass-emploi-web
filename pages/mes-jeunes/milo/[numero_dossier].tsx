@@ -1,25 +1,15 @@
 import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSideProps } from 'next'
 import { JeunesService } from 'services/jeunes.service'
+import { trackSSR } from 'utils/analytics/matomo'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import useMatomo from '../../../utils/analytics/useMatomo'
 
-type MiloFicheJeuneProps = {
-  erreurMessageHttpMilo: string
-}
-
-function MiloFicheJeune({ erreurMessageHttpMilo }: MiloFicheJeuneProps) {
-  useMatomo(
-    erreurMessageHttpMilo
-      ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
-      : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune'
-  )
-
+function MiloFicheJeune() {
   return <></>
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.hasSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -30,26 +20,24 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     return { redirect: { destination: '/mes-jeunes', permanent: true } }
   }
 
+  const numeroDossier = context.query.numero_dossier as string
   const jeunesServices = withDependance<JeunesService>('jeunesService')
-  let idJeune: string | undefined = ''
-  let erreurMessageHttpMilo: string = ''
 
-  try {
-    idJeune = await jeunesServices.getIdJeuneMilo(
-      context.query.numero_dossier as string,
-      accessToken
-    )
-  } catch (err) {
-    erreurMessageHttpMilo =
-      (err as Error).message || "Une erreur inconnue s'est produite"
-    console.log('Error in SSR: /mes-jeunes/milo/[numero_dossier]', err)
-  }
+  const idJeune = await jeunesServices.getIdJeuneMilo(
+    numeroDossier,
+    accessToken
+  )
 
   const destination = idJeune ? `/mes-jeunes/${idJeune}` : '/mes-jeunes'
-  return {
-    props: { erreurMessageHttpMilo },
-    redirect: { destination, permanent: true },
-  }
+  trackSSR({
+    structure: UserStructure.MILO,
+    customTitle: `Détail jeune par numéro dossier${
+      !Boolean(idJeune) ? ' en erreur' : ''
+    }`,
+    pathname: `/mes-jeunes/milo/${numeroDossier}`,
+    refererUrl: context.req.headers.referer,
+  })
+  return { redirect: { destination, permanent: true } }
 }
 
 export default MiloFicheJeune

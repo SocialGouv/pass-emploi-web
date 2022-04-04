@@ -177,7 +177,7 @@ export const getServerSideProps: GetServerSideProps<
     } catch (err) {
       erreurMessageHttpMilo =
         (err as Error).message || "Une erreur inconnue s'est produite"
-      console.log('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
+      console.error('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
     }
   }
 
