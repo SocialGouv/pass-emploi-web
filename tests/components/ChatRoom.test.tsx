@@ -145,7 +145,7 @@ describe('<ChatRoom />', () => {
           .closest('button')
 
         // When
-        goToConversation!.click()
+        await act(() => goToConversation!.click())
       })
 
       it('affiche la conversation du jeune', async () => {

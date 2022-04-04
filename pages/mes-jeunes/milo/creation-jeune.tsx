@@ -1,21 +1,20 @@
-import styles from 'styles/components/Layouts.module.css'
-import { GetServerSideProps } from 'next'
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { Container } from 'utils/injectionDependances'
-import { UserStructure } from 'interfaces/conseiller'
-import { DossierMilo } from 'interfaces/jeune'
-import { CreationEtape } from 'components/jeune/CreationEtape'
-import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
-import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
-import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
-
-import BackIcon from '../../../assets/icons/arrow_back.svg'
 import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
+import { CreationEtape } from 'components/jeune/CreationEtape'
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
+import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
+import { UserStructure } from 'interfaces/conseiller'
+import { DossierMilo } from 'interfaces/jeune'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import Router from 'next/router'
+import { ReactNode, useEffect, useState } from 'react'
+import styles from 'styles/components/Layouts.module.css'
+import useMatomo from 'utils/analytics/useMatomo'
+import { Container } from 'utils/injectionDependances'
+import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
+import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 type MiloCreationJeuneProps = {
   dossierId: string
@@ -107,7 +106,7 @@ function MiloCreationJeune({
     }
   }
 
-  function etape1(): React.ReactNode {
+  function etape1(): ReactNode {
     return (
       <FormulaireRechercheDossier
         dossierId={dossierId}
@@ -116,11 +115,11 @@ function MiloCreationJeune({
     )
   }
 
-  function etape3(): React.ReactNode {
+  function etape3(): ReactNode {
     return <SuccessAddJeuneMilo idJeune={createdSucessId} />
   }
 
-  function etape2(): React.ReactNode {
+  function etape2(): ReactNode {
     return (
       <>
         {dossier && (

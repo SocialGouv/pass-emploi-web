@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
@@ -181,14 +181,14 @@ describe('Fiche Jeune', () => {
       ).toBeInTheDocument()
     })
 
-    it('permet de cacher le message de succès', () => {
+    it('permet de cacher le message de succès', async () => {
       // Given
       const fermerMessage = screen.getByRole('button', {
         name: "J'ai compris",
       })
 
       // When
-      fermerMessage.click()
+      await act(async () => fermerMessage.click())
 
       // Then
       expect(() => screen.getByText('Le rendez-vous a bien été créé')).toThrow()

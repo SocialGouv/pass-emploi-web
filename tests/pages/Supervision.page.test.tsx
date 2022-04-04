@@ -149,11 +149,17 @@ describe('Supervision', () => {
           const submitReaffecter = screen.getByText('Réaffecter les jeunes')
 
           // WHEN
-          fireEvent.input(destinationInput, {
-            target: { value: emailConseillerDestination },
+          await act(async () => {
+            fireEvent.input(destinationInput, {
+              target: { value: emailConseillerDestination },
+            })
           })
-          screen.getByText(jeunes[0].firstName, { exact: false }).click()
-          screen.getByText(jeunes[2].firstName, { exact: false }).click()
+          await act(async () =>
+            screen.getByText(jeunes[0].firstName, { exact: false }).click()
+          )
+          await act(async () =>
+            screen.getByText(jeunes[2].firstName, { exact: false }).click()
+          )
           await act(async () => submitReaffecter.click())
 
           // THEN

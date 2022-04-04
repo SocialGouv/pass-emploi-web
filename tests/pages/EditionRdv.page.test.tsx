@@ -1,7 +1,9 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
+import { typesDeRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
+import { TypeRendezVous } from 'interfaces/rdv'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
@@ -12,12 +14,11 @@ import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
-import { TypeRendezVous } from 'interfaces/rdv'
-import { typesDeRendezVous } from 'fixtures/rendez-vous'
 
 jest.mock('utils/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('next/router')
+jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
 
 describe('EditionRdv', () => {
   afterAll(() => jest.clearAllMocks())
@@ -561,28 +562,6 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
-          // Given
-          let inputTypePrecision: HTMLInputElement
-
-          // When
-          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-          inputTypePrecision = screen.getByLabelText('* Préciser')
-
-          await waitFor(() => {
-            expect(inputTypePrecision).toBeInTheDocument()
-            fireEvent.blur(inputTypePrecision)
-          })
-
-          // Then
-          expect(inputTypePrecision.value).toEqual('')
-          expect(
-            screen.getByText(
-              "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous."
-            )
-          ).toBeInTheDocument()
-        })
-
         it("est désactivé quand aucune date n'est sélectionnée", () => {
           // When
           fireEvent.change(inputDate, { target: { value: '' } })
@@ -667,37 +646,39 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it('prévient avant de revenir à la page précédente', () => {
+        it('prévient avant de revenir à la page précédente', async () => {
           // Given
           const button = screen.getByText('Quitter la création du rendez-vous')
 
           // When
-          button.click()
+          await act(async () => button.click())
 
           // Then
           expect(() => screen.getByText('Page précédente')).toThrow()
           expect(button).not.toHaveAttribute('href')
           expect(push).not.toHaveBeenCalled()
-          // TODO comment tester la modal ?
-          // const modalRoot: any = screen.getByTestId('modal-root')
-          // const actual: any = within(modalRoot).getByText('Quitter la page ?')
-          // expect(actual).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Vous allez quitter la création d’un nouveau rendez-vous'
+            )
+          ).toBeInTheDocument()
         })
 
-        it("prévient avant d'annuler", () => {
+        it("prévient avant d'annuler", async () => {
           // Given
           const button = screen.getByText('Annuler')
 
           // When
-          button.click()
+          await act(async () => button.click())
 
           // Then
           expect(button).not.toHaveAttribute('href')
           expect(push).not.toHaveBeenCalled()
-          // TODO comment tester la modal ?
-          // const modalRoot: any = screen.getByTestId('modal-root')
-          // const actual: any = within(modalRoot).getByText('Quitter la page ?')
-          // expect(actual).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Vous allez quitter la création d’un nouveau rendez-vous'
+            )
+          ).toBeInTheDocument()
         })
       })
     })
