@@ -1,3 +1,5 @@
+import MatomoTracker from 'matomo-tracker'
+
 interface InitSettings {
   url: string
   siteId: string
@@ -79,4 +81,33 @@ function track({ structure, customTitle }: TrackSettings): void {
   }, 0)
 }
 
-export { init, track }
+// https://github.com/matomo-org/matomo-nodejs-tracker
+// https://developer.matomo.org/api-reference/tracking-api
+function trackSSR({
+  structure,
+  customTitle,
+  pathname,
+  refererUrl,
+}: Required<TrackSettings> & { pathname: string; refererUrl?: string }): void {
+  const url = process.env.MATOMO_SOCIALGOUV_URL
+  const siteId = process.env.MATOMO_SOCIALGOUV_SITE_ID
+
+  if (!url || !siteId) {
+    console.warn('Matomo disabled, please provide matomo url')
+    return
+  }
+
+  const matomo = new MatomoTracker(siteId, `${url}/matomo.php`)
+
+  matomo.track({
+    url: pathname,
+    rand: Math.random().toString(10).slice(2, 18),
+    apiv: 1,
+    action_name: customTitle,
+    urlref: refererUrl,
+    dimension1: 'conseiller',
+    dimension2: structure,
+  })
+}
+
+export { init, track, trackSSR }

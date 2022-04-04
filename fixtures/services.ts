@@ -10,6 +10,7 @@ export function mockedJeunesService(
     getJeunesDuConseiller: jest.fn(),
     getJeunesDuConseillerParEmail: jest.fn(),
     getJeuneDetails: jest.fn(),
+    getIdJeuneMilo: jest.fn(),
     createCompteJeunePoleEmploi: jest.fn(),
     reaffecter: jest.fn(),
     supprimerJeune: jest.fn(),

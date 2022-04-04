@@ -142,6 +142,8 @@ export const getServerSideProps: GetServerSideProps<
   const idJeune = context.query.jeune_id as string
 
   const jeune = await jeunesService.getJeuneDetails(idJeune, accessToken)
+  if (!jeune) return { notFound: true }
+
   if (jeune.isActivated) {
     return {
       redirect: { destination: `/mes-jeunes/${jeune.id}`, permanent: true },
