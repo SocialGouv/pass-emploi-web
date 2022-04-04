@@ -21,7 +21,7 @@ import {
 } from 'firebase/firestore'
 import { Message } from 'interfaces'
 import { Chat } from 'interfaces/jeune'
-import { captureRumError } from 'utils/monitoring/init-rum'
+import { captureRUMError } from 'utils/monitoring/init-rum'
 
 class FirebaseClient {
   private readonly firebaseApp: FirebaseApp
@@ -73,7 +73,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
-      captureRumError(e as Error)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -86,7 +86,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
-      captureRumError(e as Error)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -114,7 +114,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
-      captureRumError(e as Error)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -139,7 +139,7 @@ class FirebaseClient {
       }, {} as { [idJeune: string]: Chat })
     } catch (e) {
       console.error(e)
-      captureRumError(e as Error)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -156,7 +156,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
-      captureRumError(e as Error)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -193,7 +193,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
-      captureRumError(e as Error)
+      captureRUMError(e as Error)
       throw e
     }
   }

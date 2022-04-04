@@ -13,7 +13,7 @@ export function initRum() {
   return init(config)
 }
 
-export function captureRumError(error: Error | string) {
+export function captureRUMError(error: Error | string) {
   if (typeof window !== 'undefined') {
     apm.captureError(error)
   }
