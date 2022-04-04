@@ -2,6 +2,7 @@ import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces/jeune'
 import { Conseiller } from '../interfaces/conseiller'
 import { RequestError } from '../utils/fetchJson'
+import ErrorCodes from './error-codes'
 
 export interface JeunesService {
   getJeunesDuConseiller(
@@ -60,7 +61,7 @@ export class JeunesApiService implements JeunesService {
     try {
       return await this.apiClient.get<Jeune>(`/jeunes/${idJeune}`, accessToken)
     } catch (e) {
-      if (e instanceof RequestError && e.code === '404') {
+      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
         return undefined
       }
       throw e
@@ -105,7 +106,7 @@ export class JeunesApiService implements JeunesService {
       )
       return id
     } catch (e) {
-      if (e instanceof RequestError && e.code === '404') {
+      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
         return undefined
       }
       throw e
