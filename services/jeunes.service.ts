@@ -106,10 +106,15 @@ export class JeunesApiService implements JeunesService {
     await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
   }
 
-  getIdJeuneMilo(
-    _numeroDossier: string,
-    _accessToken: string
+  async getIdJeuneMilo(
+    numeroDossier: string,
+    accessToken: string
   ): Promise<string | undefined> {
-    throw new Error('Not implemented')
+    const getJeuneByNumeroDossier = await this.apiClient.get<Jeune>(
+      `/conseillers/milo/jeunes/${numeroDossier}`,
+      accessToken
+    )
+
+    return getJeuneByNumeroDossier.id
   }
 }
