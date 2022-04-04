@@ -7,10 +7,10 @@ import Actions, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions'
 import React from 'react'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 afterAll(() => jest.clearAllMocks())
 

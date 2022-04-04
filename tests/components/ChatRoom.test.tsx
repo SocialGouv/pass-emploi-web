@@ -25,7 +25,7 @@ describe('<ChatRoom />', () => {
   const jeunes: Jeune[] = desJeunes()
   let jeunesService: JeunesService
   let messagesService: MessagesService
-  let conseiller: Session.User
+  let conseiller: Session.HydratedUser
   let accessToken: string
   let tokenChat: string
   beforeEach(async () => {

@@ -1,11 +1,11 @@
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { useSession } from 'next-auth/react'
 import router from 'next/router'
 import React, { useState } from 'react'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
 import { useDependance } from 'utils/injectionDependances'
 
 const INPUT_MAX_LENGTH = 250
@@ -23,7 +23,7 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
   const [isCustomMode, setIsCustomMode] = useState(false)
   const [isBackClicked, setIsBackClicked] = useState(false)
   const actionsService = useDependance<ActionsService>('actionsService')
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
 
   const noSelectedAction = () => Boolean(newContent === '')
 

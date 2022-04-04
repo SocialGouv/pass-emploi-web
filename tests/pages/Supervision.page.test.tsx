@@ -6,11 +6,11 @@ import { GetServerSidePropsContext } from 'next/types'
 import Supervision, { getServerSideProps } from 'pages/supervision'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 afterAll(() => {
   jest.clearAllMocks()

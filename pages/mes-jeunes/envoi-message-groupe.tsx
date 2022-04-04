@@ -1,25 +1,26 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AppHead } from 'components/AppHead'
+import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
+import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { MouseEvent, useState } from 'react'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container, useDependance } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
-import { MessagesService } from 'services/messages.service'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
 import { RequestError } from '../../utils/fetchJson'
-import FailureMessage from 'components/FailureMessage'
-import ButtonLink from 'components/ui/ButtonLink'
-import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
@@ -28,7 +29,7 @@ interface EnvoiMessageGroupeProps {
 }
 
 function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -240,4 +241,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
   }
 }
 
-export default EnvoiMessageGroupe
+export default withTransaction(
+  EnvoiMessageGroupe.name,
+  'page'
+)(EnvoiMessageGroupe)

@@ -1,20 +1,21 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AppHead } from 'components/AppHead'
 import FailureMessage from 'components/FailureMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import InfoIcon from '../../../assets/icons/information.svg'
 
@@ -23,8 +24,8 @@ interface SuppressionJeuneProps {
   withoutChat: true
 }
 
-export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
-  const { data: session } = useSession({ required: true })
+function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
+  const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
@@ -148,3 +149,5 @@ export const getServerSideProps: GetServerSideProps<
   }
   return { props: { jeune, withoutChat: true } }
 }
+
+export default withTransaction(SuppressionJeune.name, 'page')(SuppressionJeune)

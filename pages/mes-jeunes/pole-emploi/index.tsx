@@ -1,3 +1,5 @@
+import { withTransaction } from '@elastic/apm-rum-react'
+
 function PoleEmploi() {
   return <></>
 }
@@ -11,4 +13,4 @@ export const getServerSideProps = () => {
   }
 }
 
-export default PoleEmploi
+export default withTransaction(PoleEmploi.name, 'page')(PoleEmploi)

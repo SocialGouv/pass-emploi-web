@@ -288,7 +288,7 @@ describe('MessagesFirebaseAndApiService', () => {
     let destinataires: Jeune[]
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
-    let conseiller: Session.User
+    let conseiller: Session.HydratedUser
     let newMessageGroupe: string
     const now = new Date()
 
