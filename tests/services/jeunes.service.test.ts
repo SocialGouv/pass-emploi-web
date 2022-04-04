@@ -3,6 +3,7 @@ import { desJeunes } from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { unConseiller } from '../../fixtures/conseiller'
+import { RequestError } from '../../utils/fetchJson'
 
 jest.mock('clients/api.client')
 
@@ -73,6 +74,42 @@ describe('JeunesApiService', () => {
         accessToken
       )
       expect(actual).toEqual({ idConseiller: conseiller.id, jeunes })
+    })
+  })
+
+  describe('.getIdJeuneMilo', () => {
+    it("renvoie l'id du jeune MiLo", async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({ id: 'id-jeune' })
+
+      // When
+      const actual = await jeunesService.getIdJeuneMilo(
+        'numero-dossier',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/conseillers/milo/jeunes/numero-dossier',
+        'accessToken'
+      )
+      expect(actual).toEqual('id-jeune')
+    })
+
+    it("renvoie undefined si le jeune n'existe pas", async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new RequestError('Numero dossier non trouvé', '404')
+      )
+
+      // When
+      const actual = await jeunesService.getIdJeuneMilo(
+        'numero-dossier',
+        'accessToken'
+      )
+
+      // Then
+      expect(actual).toEqual(undefined)
     })
   })
 

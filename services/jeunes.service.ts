@@ -1,6 +1,7 @@
 import { ApiClient } from 'clients/api.client'
 import { Jeune } from 'interfaces/jeune'
 import { Conseiller } from '../interfaces/conseiller'
+import { RequestError } from '../utils/fetchJson'
 
 export interface JeunesService {
   getJeunesDuConseiller(
@@ -110,11 +111,17 @@ export class JeunesApiService implements JeunesService {
     numeroDossier: string,
     accessToken: string
   ): Promise<string | undefined> {
-    const getJeuneByNumeroDossier = await this.apiClient.get<Jeune>(
-      `/conseillers/milo/jeunes/${numeroDossier}`,
-      accessToken
-    )
-
-    return getJeuneByNumeroDossier.id
+    try {
+      const { id } = await this.apiClient.get<Jeune>(
+        `/conseillers/milo/jeunes/${numeroDossier}`,
+        accessToken
+      )
+      return id
+    } catch (e) {
+      if (e instanceof RequestError && e.code === '404') {
+        return undefined
+      }
+      throw e
+    }
   }
 }

@@ -38,13 +38,13 @@ async function callFetch(
   }
 
   if (!reponse.ok) {
-    await handleError(reponse)
+    await handleHttpError(reponse)
   }
 
   return reponse
 }
 
-async function handleError(response: Response): Promise<void> {
+async function handleHttpError(response: Response): Promise<void> {
   if (response.status === 401) {
     //ce reload permet de donner la main au SSR pour le cas non-autorisé (refreshtoken expiré).
     //présent dans withMandatorySessionOrRediect
@@ -56,7 +56,7 @@ async function handleError(response: Response): Promise<void> {
   const message = json?.message || response.statusText
   const error =
     response.status < 500
-      ? new RequestError(message, json?.code)
+      ? new RequestError(message, json?.code ?? response.statusText)
       : new ServerError(message)
   console.error('fetchJson error', error)
   captureRUMError(error)
