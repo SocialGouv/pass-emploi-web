@@ -125,7 +125,7 @@ function FicheJeune({
           <a className='flex items-center'>
             <BackIcon aria-hidden={true} focusable='false' />
             <span className='ml-6 h4-semi text-bleu_nuit'>
-              Liste de mes jeunes
+              MES JEUNES
             </span>
           </a>
         </Link>
