@@ -100,6 +100,23 @@ describe('Suppression Jeune', () => {
           expect(actual).toEqual({ props: { jeune, withoutChat: true } })
         })
       })
+
+      describe("quand le jeune n'existe pas", () => {
+        it('redirige vers une erreur 404', async () => {
+          // Give
+          ;(jeunesService.getJeuneDetails as jest.Mock).mockResolvedValue(
+            undefined
+          )
+
+          // When
+          const actual = await getServerSideProps({
+            query: { jeune_id: 'whatever' },
+          } as unknown as GetServerSidePropsContext)
+
+          // Then
+          expect(actual).toEqual({ notFound: true })
+        })
+      })
     })
   })
 

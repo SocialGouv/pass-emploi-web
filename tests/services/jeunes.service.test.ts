@@ -1,5 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import { desJeunes } from 'fixtures/jeune'
+import { desJeunes, unJeune } from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { unConseiller } from '../../fixtures/conseiller'
@@ -74,6 +74,42 @@ describe('JeunesApiService', () => {
         accessToken
       )
       expect(actual).toEqual({ idConseiller: conseiller.id, jeunes })
+    })
+  })
+
+  describe('.getJeuneDetails', () => {
+    it('renvoie les détails du jeune', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue(unJeune())
+
+      // When
+      const actual = await jeunesService.getJeuneDetails(
+        'id-jeune',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/jeunes/id-jeune',
+        'accessToken'
+      )
+      expect(actual).toEqual(unJeune())
+    })
+
+    it("renvoie undefined si le jeune n'existe pas", async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new RequestError('Jeune non trouvé', '404')
+      )
+
+      // When
+      const actual = await jeunesService.getJeuneDetails(
+        'id-jeune',
+        'accessToken'
+      )
+
+      // Then
+      expect(actual).toEqual(undefined)
     })
   })
 
