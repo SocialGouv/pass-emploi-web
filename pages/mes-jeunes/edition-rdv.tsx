@@ -25,6 +25,8 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
+import { DateTime } from 'luxon'
+import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -45,30 +47,43 @@ function EditionRdv({
   typesRendezVous,
   idJeune,
   redirectTo,
+  rdv,
 }: EditionRdvProps) {
   const { data: session } = useSession<true>({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const router = useRouter()
 
-  const [jeuneId, setJeuneId] = useState<string>(idJeune ?? '')
+  const [jeuneId, setJeuneId] = useState<string>(rdv?.jeune.id ?? idJeune ?? '')
 
-  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>('')
+  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
+    rdv?.type.code ?? ''
+  )
   const [precisionType, setPrecisionType] = useState<RequiredInput>({
-    value: '',
+    value: rdv?.precisionType ?? '',
   })
-  const [showPrecisionType, setShowPrecisionType] = useState<boolean>(false)
-  const [modalite, setModalite] = useState<string>('')
+  const [showPrecisionType, setShowPrecisionType] = useState<boolean>(
+    Boolean(rdv?.precisionType)
+  )
+  const [modalite, setModalite] = useState<string>(rdv?.modality ?? '')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-  const [date, setDate] = useState<RequiredInput>({ value: '' })
+  const dateRdv = rdv ? new Date(rdv.date) : undefined
+  const localDate = toIsoLocalDate(dateRdv) ?? ''
+  const [date, setDate] = useState<RequiredInput>({ value: localDate })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const [horaire, setHoraire] = useState<RequiredInput>({ value: '' })
+  const localTime = toIsoLocalTime(dateRdv)?.slice(0, 5) ?? ''
+  const [horaire, setHoraire] = useState<RequiredInput>({ value: localTime })
   const regexDuree = /^\d{2}:\d{2}$/
-  const [duree, setDuree] = useState<RequiredInput>({ value: '' })
+  const dureeRdv = dureeFromMinutes(rdv?.duration)
+  const [duree, setDuree] = useState<RequiredInput>({ value: dureeRdv })
   const [adresse, setAdresse] = useState<string>('')
   const [organisme, setOrganisme] = useState<string>('')
-  const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
-  const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(false)
+  const [isConseillerPresent, setConseillerPresent] = useState<boolean>(
+    rdv?.presenceConseiller ?? true
+  )
+  const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(
+    Boolean(rdv?.invitation)
+  )
   const [commentaire, setCommentaire] = useState<string>('')
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
@@ -275,7 +290,7 @@ function EditionRdv({
             <select
               id='beneficiaire'
               name='beneficiaire'
-              defaultValue={idJeune ?? ''}
+              defaultValue={jeuneId ?? ''}
               required={true}
               disabled={Boolean(idJeune)}
               onChange={(e) => setJeuneId(e.target.value)}
@@ -307,7 +322,7 @@ function EditionRdv({
             <select
               id='typeRendezVous'
               name='typeRendezVous'
-              defaultValue={''}
+              defaultValue={codeTypeRendezVous}
               required={true}
               onChange={handleSelectedTypeRendezVous}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
@@ -338,6 +353,7 @@ function EditionRdv({
                   id='typeRendezVous-autre'
                   name='typeRendezVous-autre'
                   required={true}
+                  defaultValue={precisionType.value}
                   onChange={(e) => setPrecisionType({ value: e.target.value })}
                   onBlur={validateTypeRendezVousAutre}
                   aria-invalid={precisionType.error ? true : undefined}
@@ -361,7 +377,7 @@ function EditionRdv({
             <select
               id='modalite'
               name='modalite'
-              defaultValue={''}
+              defaultValue={modalite}
               onChange={(e) => setModalite(e.target.value)}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
             >
@@ -401,6 +417,7 @@ function EditionRdv({
               type='date'
               id='date'
               name='date'
+              defaultValue={date.value}
               required={true}
               onChange={(e) => setDate({ value: e.target.value })}
               onBlur={validateDate}
@@ -429,6 +446,7 @@ function EditionRdv({
               type='text'
               id='horaire'
               name='horaire'
+              defaultValue={horaire.value}
               required={true}
               onChange={(e) => setHoraire({ value: e.target.value })}
               onBlur={validateHoraire}
@@ -458,6 +476,7 @@ function EditionRdv({
               id='duree'
               name='duree'
               required={true}
+              defaultValue={duree.value}
               onChange={(e) => setDuree({ value: e.target.value })}
               onBlur={validateDuree}
               aria-invalid={duree.error ? true : undefined}
@@ -641,6 +660,14 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   }
 
   return { props }
+}
+
+function dureeFromMinutes(duration?: number): string {
+  if (!duration) return ''
+
+  const hours = Math.floor(duration / 60)
+  const minutes = duration % 60
+  return String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0')
 }
 
 export default withTransaction(EditionRdv.name, 'page')(EditionRdv)

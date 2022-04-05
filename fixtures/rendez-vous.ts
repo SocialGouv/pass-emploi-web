@@ -5,7 +5,7 @@ export const typesDeRendezVous = (
 ): TypeRendezVous[] => {
   return [
     {
-      code: 'ACTIVITE_EXTERIEURES',
+      code: 'ACTIVITES_EXTERIEURES',
       label: 'Activités extérieures',
     },
     {
@@ -43,17 +43,19 @@ export const typesDeRendezVous = (
 export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
   const defaults: Rdv = {
     id: '1',
-    subtitle: 'RDV Kenji',
     comment: 'Rendez-vous avec Kenji',
-    date: 'Thu, 21 Oct 2021 10:00:00 GMT',
-    duration: '30 min',
-    type: { code: 'ACTIVITES_EXTERIEURES', label: 'Activités extérieures' },
-    modality: 'Par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    type: { code: 'AUTRE', label: 'Autre' },
+    precisionType: 'Prise de nouvelles',
+    modality: 'par téléphone',
     jeune: {
       id: '1',
       prenom: 'kenji',
       nom: 'Jirac',
     },
+    presenceConseiller: false,
+    invitation: true,
   }
 
   return { ...defaults, ...overrides }
@@ -63,17 +65,19 @@ export const uneListeDeRdv = (overrides: Rdv[] = []): Rdv[] => [
   unRendezVous(),
   {
     id: '2',
-    subtitle: '1er RDV',
     comment: 'Mon premier rendez-vous',
-    date: 'Mon, 25 Oct 2021 12:00:00 GMT',
-    duration: '25 min',
+    date: '2021-10-25T12:00:00.000Z',
+    duration: 25,
     type: { code: 'ATELIER', label: 'Atelier' },
+    precisionType: '',
     modality: 'En agence',
     jeune: {
       id: '2',
       prenom: 'Raja',
       nom: 'Jirac',
     },
+    presenceConseiller: true,
+    invitation: true,
   },
   ...overrides,
 ]

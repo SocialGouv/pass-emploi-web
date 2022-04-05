@@ -1,12 +1,12 @@
+import { HeaderCell } from 'components/rdv/HeaderCell'
+import { RdvTypeTag } from 'components/ui/RdvTypeTag'
 import { Rdv } from 'interfaces/rdv'
+import React from 'react'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
-import React from 'react'
-import { RdvTypeTag } from 'components/ui/RdvTypeTag'
-import { HeaderCell } from 'components/rdv/HeaderCell'
 
 type RdvListProps = {
   rdvs: Rdv[]
@@ -25,10 +25,10 @@ const RdvList = ({
     onDelete(rdv)
   }
 
-  const dayHourCells = (rdvDate: Date, duration: string) => {
+  const dayHourCells = (rdvDate: Date, duration: number) => {
     return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
       rdvDate
-    )} - ${duration})`
+    )} - ${duration} min)`
   }
 
   return (

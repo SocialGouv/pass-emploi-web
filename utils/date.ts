@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 export const datesAreOnSameDay = (firstDate: Date, secondDate: Date): boolean =>
   firstDate.getFullYear() === secondDate.getFullYear() &&
   firstDate.getMonth() === secondDate.getMonth() &&
@@ -55,4 +57,12 @@ export function compareDatesDesc(
   date2: Date | undefined
 ): number {
   return -compareDates(date1, date2)
+}
+
+export function toIsoLocalDate(date?: Date): string | undefined {
+  return date && DateTime.fromJSDate(date).toISODate()
+}
+
+export function toIsoLocalTime(date?: Date): string | undefined {
+  return date && DateTime.fromJSDate(date).toISOTime()
 }

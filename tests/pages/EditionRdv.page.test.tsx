@@ -13,11 +13,13 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import renderWithSession from '../renderWithSession'
 
+jest.mock('next/router')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
-jest.mock('next/router')
+jest.mock('utils/date')
 jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
 
 describe('EditionRdv', () => {
@@ -123,7 +125,7 @@ describe('EditionRdv', () => {
               referer: '/mes-rendezvous',
             },
           },
-          query: {}
+          query: {},
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -144,7 +146,7 @@ describe('EditionRdv', () => {
               referer: '/mes-jeunes/id-jeune',
             },
           },
-          query: {}
+          query: {},
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -491,7 +493,7 @@ describe('EditionRdv', () => {
               '1',
               {
                 jeuneId: jeunes[0].id,
-                type: 'ACTIVITE_EXTERIEURES',
+                type: 'ACTIVITES_EXTERIEURES',
                 modality: modalites[0],
                 precision: undefined,
                 date: '2022-03-03T09:30:00.000Z',
@@ -745,6 +747,64 @@ describe('EditionRdv', () => {
         })
         expect(selectJeune).toHaveValue(idJeune)
         expect(selectJeune).toHaveAttribute('disabled', '')
+      })
+    })
+
+    describe('quand on souhaite modifier un rdv existant', () => {
+      it('initialise les champs avec les données du rdv', () => {
+        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
+        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
+        // Given
+        const jeune = {
+          id: jeunes[0].id,
+          prenom: jeunes[0].firstName,
+          nom: jeunes[0].lastName,
+        }
+        const rdv = unRendezVous({ jeune })
+
+        // When
+        renderWithSession(
+          <DIProvider dependances={{ rendezVousService }}>
+            <EditionRdv
+              jeunes={jeunes}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              redirectTo={'/mes-rendezvous'}
+              rdv={rdv}
+            />
+          </DIProvider>
+        )
+
+        // Then
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(/ajouter un jeune/).value
+        ).toEqual(rdv.jeune.id)
+        expect(screen.getByLabelText<HTMLSelectElement>(/Type/).value).toEqual(
+          rdv.type.code
+        )
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(/Préciser/).value
+        ).toEqual(rdv.precisionType)
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(/Modalité/).value
+        ).toEqual(rdv.modality)
+        expect(screen.getByLabelText<HTMLInputElement>(/Date/).value).toEqual(
+          '2021-10-21'
+        )
+        expect(screen.getByLabelText<HTMLSelectElement>(/Heure/).value).toEqual(
+          '12:00'
+        )
+        expect(screen.getByLabelText<HTMLSelectElement>(/Durée/).value).toEqual(
+          '02:05'
+        )
+        expect(
+          screen.getByLabelText<HTMLInputElement>(/présent/).checked
+        ).toEqual(false)
+        expect(
+          screen.getByLabelText<HTMLInputElement>(/agenda/).checked
+        ).toEqual(true)
+        // TODO organisme, adresse
+        // TODO commentaire
       })
     })
   })

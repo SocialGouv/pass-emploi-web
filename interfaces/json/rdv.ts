@@ -1,17 +1,17 @@
 import { BaseJeune } from 'interfaces/jeune'
-import { durees } from 'referentiel/rdv'
 import { Rdv, TypeRendezVous } from '../rdv'
 
 export interface RdvJson {
   id: string
-  subtitle: string
-  comment: string
   date: string
-  duration: string
-  jeuneId: string
+  duration: number
   type: TypeRendezVous
   modality: string
   jeune: BaseJeune
+  precision?: string
+  comment?: string
+  presenceConseiller?: boolean
+  invitation?: boolean
 }
 
 export interface RdvFormData {
@@ -31,8 +31,9 @@ export interface RdvFormData {
 export function jsonToRdv(rdvData: RdvJson): Rdv {
   return {
     ...rdvData,
-    duration:
-      durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-      `${rdvData.duration} min`,
+    presenceConseiller: Boolean(rdvData.presenceConseiller),
+    invitation: Boolean(rdvData.invitation),
+    comment: rdvData.comment ?? '',
+    precisionType: rdvData.precision ?? '',
   }
 }
