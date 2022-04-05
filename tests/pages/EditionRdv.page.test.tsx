@@ -90,7 +90,7 @@ describe('EditionRdv', () => {
             jeunes,
             typesRendezVous,
             withoutChat: true,
-            from: '/mes-jeunes',
+            redirectTo: '/mes-jeunes',
           },
         })
       })
@@ -112,7 +112,7 @@ describe('EditionRdv', () => {
             jeunes,
             typesRendezVous,
             withoutChat: true,
-            from: '/mes-jeunes',
+            redirectTo: '/mes-jeunes',
           },
         })
       })
@@ -133,7 +133,7 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { from: '/mes-rendezvous' },
+          props: { redirectTo: '/mes-rendezvous' },
         })
       })
 
@@ -153,7 +153,7 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { idJeuneFrom: 'id-jeune' },
+          props: { idJeune: 'id-jeune' },
         })
       })
     })
@@ -183,7 +183,7 @@ describe('EditionRdv', () => {
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              from={'/mes-rendezvous'}
+              redirectTo={'/mes-rendezvous'}
             />
           </DIProvider>
         )
@@ -455,7 +455,7 @@ describe('EditionRdv', () => {
                 jeuneId: jeunes[0].id,
                 type: 'ACTIVITE_EXTERIEURES',
                 modality: modalites[0],
-                precision: '',
+                precision: undefined,
                 date: '2022-03-03T09:30:00.000Z',
                 adresse: undefined,
                 organisme: undefined,
@@ -695,8 +695,8 @@ describe('EditionRdv', () => {
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              from={'/mes-rendezvous'}
-              idJeuneFrom={idJeune}
+              redirectTo={'/mes-rendezvous'}
+              idJeune={idJeune}
             />
           </DIProvider>
         )

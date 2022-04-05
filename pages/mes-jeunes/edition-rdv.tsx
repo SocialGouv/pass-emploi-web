@@ -29,12 +29,12 @@ import Etape4Icon from '../../assets/icons/etape_4.svg'
 interface EditionRdvProps {
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
-  from: string
+  redirectTo: string
   withoutChat: true
-  idJeuneFrom?: string
+  idJeune?: string
 }
 
-interface InputValue {
+interface RequiredInput {
   value: string
   error?: string
 }
@@ -42,32 +42,30 @@ interface InputValue {
 function EditionRdv({
   jeunes,
   typesRendezVous,
-  idJeuneFrom,
-  from,
+  idJeune,
+  redirectTo,
 }: EditionRdvProps) {
   const { data: session } = useSession<true>({ required: true })
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const router = useRouter()
 
-  const [jeuneId, setJeuneId] = useState<string>(idJeuneFrom ?? '')
+  const [jeuneId, setJeuneId] = useState<string>(idJeune ?? '')
 
-  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<InputValue>({
-    value: '',
-  })
-  const [precisionType, setPrecisionType] = useState<InputValue>({
+  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>('')
+  const [precisionType, setPrecisionType] = useState<RequiredInput>({
     value: '',
   })
   const [showPrecisionType, setShowPrecisionType] = useState<boolean>(false)
   const [modalite, setModalite] = useState<string>('')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-  const [date, setDate] = useState<InputValue>({ value: '' })
+  const [date, setDate] = useState<RequiredInput>({ value: '' })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const [horaire, setHoraire] = useState<InputValue>({ value: '' })
+  const [horaire, setHoraire] = useState<RequiredInput>({ value: '' })
   const regexDuree = /^\d{2}:\d{2}$/
-  const [duree, setDuree] = useState<InputValue>({ value: '' })
-  const [adresse, setAdresse] = useState<InputValue>({ value: '' })
-  const [organisme, setOrganisme] = useState<InputValue>({ value: '' })
+  const [duree, setDuree] = useState<RequiredInput>({ value: '' })
+  const [adresse, setAdresse] = useState<string>('')
+  const [organisme, setOrganisme] = useState<string>('')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(true)
   const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(false)
   const [commentaire, setCommentaire] = useState<string>('')
@@ -76,13 +74,13 @@ function EditionRdv({
 
   function formHasChanges(): boolean {
     return Boolean(
-      codeTypeRendezVous.value ||
+      codeTypeRendezVous ||
         modalite ||
         date.value ||
         horaire.value ||
         duree.value ||
-        adresse.value ||
-        organisme.value ||
+        adresse ||
+        organisme ||
         commentaire
     )
   }
@@ -142,8 +140,8 @@ function EditionRdv({
   }
 
   function typeIsValid(): boolean {
-    if (!codeTypeRendezVous.value) return false
-    if (codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre)
+    if (!codeTypeRendezVous) return false
+    if (codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre)
       return Boolean(precisionType.value)
     return true
   }
@@ -168,13 +166,13 @@ function EditionRdv({
     )
   }
   const typeEntretienIndividuelConseillerSelected = () =>
-    codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
+    codeTypeRendezVous === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
 
   function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
-    setCodeTypeRendezVous({ value: e.target.value })
+    setCodeTypeRendezVous(e.target.value)
     setShowPrecisionType(e.target.value === TYPE_RENDEZ_VOUS.Autre)
     if (e.target.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
-      return setConseillerPresent(true)
+      setConseillerPresent(true)
     }
   }
 
@@ -202,16 +200,16 @@ function EditionRdv({
       session!.user.id,
       {
         jeuneId,
-        type: codeTypeRendezVous.value,
+        type: codeTypeRendezVous,
         precision:
-          codeTypeRendezVous.value === TYPE_RENDEZ_VOUS.Autre
+          codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre
             ? precisionType.value
-            : '',
+            : undefined,
         modality: modalite ? modalite : undefined,
         date: new Date(`${date.value} ${horaire.value}`).toISOString(),
         duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
-        adresse: adresse.value ? adresse.value : undefined,
-        organisme: organisme.value ? organisme.value : undefined,
+        adresse: adresse || undefined,
+        organisme: organisme || undefined,
         presenceConseiller: isConseillerPresent,
         invitation: sendEmailInvitation,
         comment: commentaire,
@@ -219,14 +217,14 @@ function EditionRdv({
       session!.accessToken
     )
 
-    if (from.includes('succes')) {
-      await router.push(`${from}`)
+    if (redirectTo.includes('succes')) {
+      await router.push(`${redirectTo}`)
     } else {
-      await router.push(`${from}?creationRdv=succes`)
+      await router.push(`${redirectTo}?creationRdv=succes`)
     }
   }
 
-  useMatomo(`Création RDV${idJeuneFrom ? ' jeune' : ''}`)
+  useMatomo(`Création RDV${idJeune ? ' jeune' : ''}`)
   useMatomo(showLeavePageModal ? 'Création rdv - Modale Annulation' : undefined)
 
   return (
@@ -234,7 +232,7 @@ function EditionRdv({
       <AppHead titre='Nouveau rendez-vous' />
       <div className={`flex items-center ${styles.header}`}>
         {!formHasChanges() && (
-          <Link href={from}>
+          <Link href={redirectTo}>
             <a className='items-center mr-4'>
               <BackIcon role='img' focusable='false' aria-hidden={true} />
               <span className='sr-only'>Page précédente</span>
@@ -276,9 +274,9 @@ function EditionRdv({
             <select
               id='beneficiaire'
               name='beneficiaire'
-              defaultValue={idJeuneFrom ?? ''}
+              defaultValue={idJeune ?? ''}
               required={true}
-              disabled={Boolean(idJeuneFrom)}
+              disabled={Boolean(idJeune)}
               onChange={(e) => setJeuneId(e.target.value)}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
             >
@@ -305,11 +303,6 @@ function EditionRdv({
             <label htmlFor='typeRendezVous' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Type
             </label>
-            {codeTypeRendezVous.error && (
-              <InputError id='typeRendezVous--error' className='mb-2'>
-                {codeTypeRendezVous.error}
-              </InputError>
-            )}
             <select
               id='typeRendezVous'
               name='typeRendezVous'
@@ -486,7 +479,7 @@ function EditionRdv({
               type='text'
               id='adresse'
               name='adresse'
-              onChange={(e) => setAdresse({ value: e.target.value })}
+              onChange={(e) => setAdresse(e.target.value)}
               className={
                 'border border-solid rounded-medium w-full px-4 py-3 mb-8 bg-location bg-[center_right_1rem] bg-no-repeat'
               }
@@ -502,7 +495,7 @@ function EditionRdv({
               type='text'
               id='organisme'
               name='organisme'
-              onChange={(e) => setOrganisme({ value: e.target.value })}
+              onChange={(e) => setOrganisme(e.target.value)}
               className={
                 'border border-solid rounded-medium w-full px-4 py-3 mb-8'
               }
@@ -568,7 +561,7 @@ function EditionRdv({
           <div className='flex justify-center'>
             {!formHasChanges() && (
               <ButtonLink
-                href={from}
+                href={redirectTo}
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
@@ -598,7 +591,7 @@ function EditionRdv({
           show={showLeavePageModal}
           message='Vous allez quitter la création d’un nouveau rendez-vous'
           onCancel={() => setShowLeavePageModal(false)}
-          href={from}
+          href={redirectTo}
         />
       )}
     </>
@@ -630,13 +623,13 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     jeunes: jeunes,
     typesRendezVous: typesRendezVous,
     withoutChat: true,
-    from: referer ?? '/mes-jeunes',
+    redirectTo: referer ?? '/mes-jeunes',
   }
 
   if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
     const match = regex.exec(referer)
-    if (match?.groups?.idJeune) props.idJeuneFrom = match.groups.idJeune
+    if (match?.groups?.idJeune) props.idJeune = match.groups.idJeune
   }
 
   return { props }
