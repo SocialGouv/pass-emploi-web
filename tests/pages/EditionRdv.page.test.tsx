@@ -1,6 +1,6 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
-import { typesDeRendezVous } from 'fixtures/rendez-vous'
+import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
 import { TypeRendezVous } from 'interfaces/rdv'
@@ -75,9 +75,8 @@ describe('EditionRdv', () => {
       it('récupère la liste des jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
-          req: {
-            headers: {},
-          },
+          req: { headers: {} },
+          query: {},
         } as GetServerSidePropsContext)
 
         // Then
@@ -98,9 +97,8 @@ describe('EditionRdv', () => {
       it('récupère le referentiel des types de rendez vous', async () => {
         // When
         const actual = await getServerSideProps({
-          req: {
-            headers: {},
-          },
+          req: { headers: {} },
+          query: {},
         } as GetServerSidePropsContext)
 
         // Then
@@ -125,6 +123,7 @@ describe('EditionRdv', () => {
               referer: '/mes-rendezvous',
             },
           },
+          query: {}
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -145,6 +144,7 @@ describe('EditionRdv', () => {
               referer: '/mes-jeunes/id-jeune',
             },
           },
+          query: {}
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -155,6 +155,44 @@ describe('EditionRdv', () => {
         expect(actual).toMatchObject({
           props: { idJeune: 'id-jeune' },
         })
+      })
+
+      it('récupère le rendez-vous concerné', async () => {
+        // Given
+        ;(rendezVousService.getDetailRendezVous as jest.Mock).mockResolvedValue(
+          unRendezVous()
+        )
+
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: {} },
+          query: { idRdv: 'id-rdv' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(rendezVousService.getDetailRendezVous).toHaveBeenCalledWith(
+          'id-rdv',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: { rdv: unRendezVous() },
+        })
+      })
+
+      it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
+        // Given
+        ;(rendezVousService.getDetailRendezVous as jest.Mock).mockResolvedValue(
+          undefined
+        )
+
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: {} },
+          query: { idRdv: 'id-rdv' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({ notFound: true })
       })
     })
   })

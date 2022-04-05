@@ -6,7 +6,7 @@ import ButtonLink from 'components/ui/ButtonLink'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
 import { Jeune } from 'interfaces/jeune'
-import { TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
+import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -32,6 +32,7 @@ interface EditionRdvProps {
   redirectTo: string
   withoutChat: true
   idJeune?: string
+  rdv?: Rdv
 }
 
 interface RequiredInput {
@@ -618,6 +619,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   )
 
   const referer = context.req.headers.referer
+  const idRdv = context.query.idRdv as string | undefined
 
   const props: EditionRdvProps = {
     jeunes: jeunes,
@@ -630,6 +632,12 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
     const match = regex.exec(referer)
     if (match?.groups?.idJeune) props.idJeune = match.groups.idJeune
+  }
+
+  if (idRdv) {
+    const rdv = await rendezVousService.getDetailRendezVous(idRdv, accessToken)
+    if (!rdv) return { notFound: true }
+    props.rdv = rdv
   }
 
   return { props }

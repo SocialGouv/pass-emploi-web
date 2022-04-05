@@ -16,10 +16,16 @@ export interface RendezVousService {
 
   getRendezVousJeune(idJeune: string, accessToken: string): Promise<Rdv[]>
 
+  getDetailRendezVous(
+    idRdv: string,
+    accessToken: string
+  ): Promise<Rdv | undefined>
+
   deleteRendezVous(idRendezVous: string, accessToken: string): Promise<void>
 
   getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]>
 }
+
 export class RendezVousApiService implements RendezVousService {
   constructor(private readonly apiClient: ApiClient) {}
 
@@ -59,6 +65,13 @@ export class RendezVousApiService implements RendezVousService {
       accessToken
     )
     return rdvsJson.map(jsonToRdv)
+  }
+
+  getDetailRendezVous(
+    idRdv: string,
+    accessToken: string
+  ): Promise<Rdv | undefined> {
+    throw new Error('Not implemented')
   }
 
   async deleteRendezVous(

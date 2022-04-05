@@ -57,6 +57,7 @@ export function mockedRendezVousService(
     deleteRendezVous: jest.fn(),
     getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
+    getDetailRendezVous: jest.fn(),
     postNewRendezVous: jest.fn(),
     getTypesRendezVous: jest.fn(),
   }
