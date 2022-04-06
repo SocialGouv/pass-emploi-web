@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
-import { act, fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import {
   desJeunes,
   desJeunesAvecActionsNonTerminees,
@@ -22,8 +22,8 @@ import { MessagesService } from 'services/messages.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { compareJeunesByLastName } from '../../interfaces/jeune'
-import { ActionsService } from '../../services/actions.service'
+import { compareJeunesByLastName } from 'interfaces/jeune'
+import { ActionsService } from 'services/actions.service'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
@@ -91,8 +91,6 @@ describe('Mes Jeunes', () => {
         ).toThrow()
       })
 
-      it('affiche le nombre de messages non lus', async () => {})
-
       it('affiche le message de succès de suppression de jeune', async () => {
         //WHEN
         await act(async () => {
@@ -112,6 +110,30 @@ describe('Mes Jeunes', () => {
         expect(
           screen.getByText('Le compte du jeune a bien été supprimé.')
         ).toBeInTheDocument()
+      })
+
+      describe("affiche le statut d'activation du compte d'un jeune", () => {
+        it("si le compte n'a pas été activé", () => {
+          const row1 = within(
+            screen
+              .getByText('Jirac Kenji')
+              .closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(row1.getByText('Compte non activé')).toBeInTheDocument()
+        })
+
+        it('si le compte a été activé', () => {
+          const row2 = within(
+            screen
+              .getByText('Sanfamiye Nadia')
+              .closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(row2.getByText('Le 30/01/2022 à 18:30')).toBeInTheDocument()
+        })
       })
     })
 

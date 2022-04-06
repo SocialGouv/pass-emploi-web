@@ -88,9 +88,13 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
         const date2 = jeune2.lastActivity
           ? new Date(jeune2.lastActivity)
           : undefined
+
+        const sortStatutCompteActif =
+          Number(jeune1.isActivated) - Number(jeune2.isActivated)
+
         return sortDesc
-          ? compareDates(date1, date2)
-          : compareDatesDesc(date1, date2)
+          ? compareDates(date1, date2) || sortStatutCompteActif
+          : compareDatesDesc(date1, date2) || -sortStatutCompteActif
       }
 
       if (isMessage) {
@@ -287,6 +291,9 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                     {jeune.lastActivity
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
+                    {!jeune.isActivated && (
+                      <span className='text-warning'>Compte non activé</span>
+                    )}
                   </span>
 
                   {withActions && (
