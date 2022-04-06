@@ -32,6 +32,7 @@ export const desJeunes = (): Jeune[] => [
     email: 'nadia.sanfamiye@mail.com',
     creationDate: '2022-01-07T17:30:07.756Z',
     lastActivity: '2022-01-30T17:30:07.756Z',
+    isActivated: true,
   }),
   unJeune({
     id: 'jeune-3',
@@ -40,6 +41,7 @@ export const desJeunes = (): Jeune[] => [
     email: 'nadia.sanfamiye@mail.com',
     creationDate: '2021-12-28T17:30:07.756Z',
     lastActivity: '2022-02-07T17:30:07.756Z',
+    isActivated: true,
   }),
 ]
 
@@ -61,6 +63,7 @@ export const desJeunesAvecActionsNonTerminees =
       firstName: 'Nadia',
       lastName: 'Sanfamiye',
       email: 'nadia.sanfamiye@mail.com',
+      isActivated: true,
       creationDate: '2022-01-07T17:30:07.756Z',
       lastActivity: '2022-01-30T17:30:07.756Z',
       nbActionsNonTerminees: 0,
@@ -72,6 +75,7 @@ export const desJeunesAvecActionsNonTerminees =
       email: 'nadia.sanfamiye@mail.com',
       creationDate: '2021-12-28T17:30:07.756Z',
       lastActivity: '2022-02-07T17:30:07.756Z',
+      isActivated: true,
       nbActionsNonTerminees: 8,
     }),
   ]

@@ -1,4 +1,6 @@
 import {
+  compareJeuneByLastActivity,
+  compareJeuneByLastActivityDesc,
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
   getJeuneFullname,
@@ -8,8 +10,6 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
-  compareDates,
-  compareDatesDesc,
   dateIsToday,
   dateIsYesterday,
   formatDayDate,
@@ -82,15 +82,16 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
           : compareJeunesByLastName(jeune1, jeune2)
 
       if (isDate) {
-        const date1 = jeune1.lastActivity
-          ? new Date(jeune1.lastActivity)
-          : undefined
-        const date2 = jeune2.lastActivity
-          ? new Date(jeune2.lastActivity)
-          : undefined
+        const sortStatutCompteActif =
+          Number(jeune1.isActivated) - Number(jeune2.isActivated)
+
         return sortDesc
-          ? compareDates(date1, date2)
-          : compareDatesDesc(date1, date2)
+          ? compareJeuneByLastActivity(jeune1, jeune2, sortStatutCompteActif)
+          : compareJeuneByLastActivityDesc(
+              jeune1,
+              jeune2,
+              sortStatutCompteActif
+            )
       }
 
       if (isMessage) {
@@ -287,6 +288,9 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                     {jeune.lastActivity
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
+                    {!jeune.isActivated && (
+                      <span className='text-warning'>Compte non activé</span>
+                    )}
                   </span>
 
                   {withActions && (
