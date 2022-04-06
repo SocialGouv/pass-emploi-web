@@ -12,6 +12,7 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
+import { conseillersPrecedents } from 'components/jeune/DetailsJeune'
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(() => ({
@@ -68,16 +69,14 @@ describe('Fiche Jeune', () => {
 
     it('affiche un lien vers les actions du jeune', async () => {
       // Then
-      expect(
-        screen.getByRole('link', {
-          name: 'Voir la liste des actions du jeune',
-        })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('link', {
-          name: 'Voir la liste des actions du jeune',
-        })
-      ).toHaveAttribute('href', `/mes-jeunes/${jeune.id}/actions`)
+      const lienActions = screen.getByRole('link', {
+        name: 'Voir la liste des actions du jeune',
+      })
+      expect(lienActions).toBeInTheDocument()
+      expect(lienActions).toHaveAttribute(
+        'href',
+        `/mes-jeunes/${jeune.id}/actions`
+      )
     })
 
     it('affiche les actions du jeune', async () => {
@@ -89,6 +88,24 @@ describe('Fiche Jeune', () => {
     it('permet la prise de rendez-vous', async () => {
       // Then
       expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()
+    })
+
+    it("affiche la liste de l'historique des conseillers du jeune", () => {
+      conseillersPrecedents.forEach((conseiller) => {
+        expect(screen.getByText(conseiller.nom)).toBeInTheDocument()
+      })
+    })
+
+    it("affiche un lien vers l'historique complet des conseillers du jeune", async () => {
+      // Then
+      const lienHistoriqueComplet = screen.getByRole('link', {
+        name: "Voir l'historique complet",
+      })
+      expect(lienHistoriqueComplet).toBeInTheDocument()
+      expect(lienHistoriqueComplet).toHaveAttribute(
+        'href',
+        `/mes-jeunes/${jeune.id}/conseillers`
+      )
     })
 
     it('modifie le currentJeune', () => {

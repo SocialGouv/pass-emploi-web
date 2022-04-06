@@ -4,12 +4,30 @@ import { Jeune } from 'interfaces/jeune'
 import React from 'react'
 import { formatDayDate } from 'utils/date'
 import EmailIcon from '../../assets/icons/email.svg'
+import Link from 'next/link'
 
 interface DetailsJeuneProps {
   jeune: Jeune
   withButtons?: boolean
   titlePrefix?: string
 }
+
+export const conseillersPrecedents = [
+  {
+    id: 'conseiller-1',
+    email: 'mail@mail.com',
+    nom: 'Dublon',
+    prenom: 'Nicolas',
+    date: '12/03/2022',
+  },
+  {
+    id: 'conseiller-2',
+    email: 'conseiller@mail.fr',
+    nom: 'Maravillo',
+    prenom: 'Sarah',
+    date: '14/12/2021',
+  },
+]
 
 export const DetailsJeune = ({
   jeune,
@@ -57,6 +75,27 @@ export const DetailsJeune = ({
           </span>
         </p>
       )}
+
+      <div className='mt-8'>
+        <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
+        <ol className='list-disc'>
+          {conseillersPrecedents.map(({ nom, prenom, date, id }) => (
+            <li className='ml-5' key={id}>
+              Du {date} à aujourd&apos;hui :{' '}
+              <span className='text-base-medium'>
+                {nom} {prenom}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div className='flex justify-center mt-8'>
+        <Link href={`/mes-jeunes/${jeune.id}/conseillers`}>
+          <a className='text-sm text-bleu_nuit underline'>
+            Voir l&apos;historique complet
+          </a>
+        </Link>
+      </div>
     </>
   )
 }

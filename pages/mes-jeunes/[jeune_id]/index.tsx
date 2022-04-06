@@ -144,7 +144,6 @@ function FicheJeune({
             onAcknowledge={closeRdvCreationMessage}
           />
         )}
-
         {showMessageGroupeEnvoiSuccess && (
           <SuccessMessage
             label={
@@ -153,9 +152,8 @@ function FicheJeune({
             onAcknowledge={closeMessageGroupeEnvoiSuccess}
           />
         )}
-
         <DetailsJeune jeune={jeune} />
-
+        {/*TODO: composant listeConseillers?*/}
         <div className='mt-10 border-b border-bleu_blanc'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>
             Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
@@ -171,7 +169,6 @@ function FicheJeune({
             <IntegrationPoleEmploi label='convocations' />
           )}
         </div>
-
         <div className='mt-8 border-b border-bleu_blanc pb-8'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
 
@@ -209,7 +206,6 @@ function FicheJeune({
             </>
           )}
         </div>
-
         {showDeleteModal && selectedRdv && (
           <DeleteRdvModal
             onClose={closeDeleteRdvModal}
