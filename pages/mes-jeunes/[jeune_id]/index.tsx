@@ -118,7 +118,7 @@ function FicheJeune({
 
   function toggleListeConseillers(): void {
     setIsExpanded(!isExpanded)
-    if (isExpanded) {
+    if (!isExpanded) {
       setConseillers(conseillers)
     } else {
       setConseillers(listeConseillersReduite)

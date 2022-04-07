@@ -98,6 +98,7 @@ describe('Fiche Jeune', () => {
     })
 
     it("affiche la liste de l'historique des conseillers du jeune", () => {
+      // Then
       listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
         expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
       })
@@ -109,6 +110,21 @@ describe('Fiche Jeune', () => {
         name: 'Voir l’historique complet',
       })
       expect(button).toBeInTheDocument()
+    })
+
+    it('permet d’afficher la liste complète des conseillers du jeune', async () => {
+      // Given
+      const button = screen.getByRole('button', {
+        name: 'Voir l’historique complet',
+      })
+
+      // When
+      act(() => {
+        button.click()
+      })
+
+      //Then
+      expect(listeConseillers.length).toEqual(6)
     })
 
     it('modifie le currentJeune', () => {

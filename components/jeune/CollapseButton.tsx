@@ -18,7 +18,8 @@ export function CollapseButton({ id, isOpen, onClick }: CollapseButtonProps) {
     >
       {isOpen && (
         <span className='flex'>
-          Réduire la liste <ChevronUpIcon focusable='false' />
+          Réduire la liste{' '}
+          <ChevronUpIcon focusable='false' aria-hidden='true' />
         </span>
       )}
       {!isOpen && (
