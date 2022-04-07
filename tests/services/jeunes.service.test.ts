@@ -1,9 +1,14 @@
 import { ApiClient } from 'clients/api.client'
-import { desJeunes, unJeune } from 'fixtures/jeune'
+import {
+  conseillersPrecedents,
+  desConseillersJeune,
+  desJeunes,
+  unJeune,
+} from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
-import { unConseiller } from '../../fixtures/conseiller'
-import { RequestError } from '../../utils/fetchJson'
+import { unConseiller } from 'fixtures/conseiller'
+import { RequestError } from 'utils/fetchJson'
 
 jest.mock('clients/api.client')
 
@@ -196,6 +201,25 @@ describe('JeunesApiService', () => {
         `/jeunes/id-jeune`,
         accessToken
       )
+    })
+  })
+  describe('.getConseillersDuJeune', () => {
+    it('renvoie les conseillers du jeune', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue(desConseillersJeune())
+
+      // When
+      const actual = await jeunesService.getConseillersDuJeune(
+        'id-jeune',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/jeunes/id-jeune/conseillers',
+        'accessToken'
+      )
+      expect(actual).toEqual(desConseillersJeune())
     })
   })
 })

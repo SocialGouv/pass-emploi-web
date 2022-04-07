@@ -9,7 +9,7 @@ import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
-import { Jeune } from 'interfaces/jeune'
+import { HistoriqueConseiller, Jeune } from 'interfaces/jeune'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
@@ -22,11 +22,14 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { Container } from 'utils/injectionDependances'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
+import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
+import { CollapseButton } from 'components/jeune/CollapseButton'
 
 interface FicheJeuneProps {
   jeune: Jeune
   rdvs: Rdv[]
   actions: ActionJeune[]
+  conseillers: HistoriqueConseiller[]
   rdvCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
@@ -35,6 +38,7 @@ function FicheJeune({
   jeune,
   rdvs,
   actions,
+  conseillers,
   rdvCreationSuccess,
   messageEnvoiGroupeSuccess,
 }: FicheJeuneProps) {
@@ -48,9 +52,15 @@ function FicheJeune({
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
+  const listeConseillersReduite = [...conseillers].slice(0, 5)
+  const [listeConseillers, setConseillers] = useState<HistoriqueConseiller[]>(
+    listeConseillersReduite
+  )
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+
+  const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -106,6 +116,15 @@ function FicheJeune({
     )
   }
 
+  function toggleListeConseillers(): void {
+    setIsExpanded(!isExpanded)
+    if (isExpanded) {
+      setConseillers(conseillers)
+    } else {
+      setConseillers(listeConseillersReduite)
+    }
+  }
+
   useMatomo(trackingLabel)
   useMatomo(
     showMessageGroupeEnvoiSuccess
@@ -153,7 +172,23 @@ function FicheJeune({
           />
         )}
         <DetailsJeune jeune={jeune} />
-        {/*TODO: composant listeConseillers?*/}
+
+        <div className='mt-8'>
+          <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
+          <ListeConseillersJeune
+            id='liste-conseillers'
+            conseillers={listeConseillers}
+          />
+        </div>
+
+        <div className='flex justify-center mt-8'>
+          <CollapseButton
+            id='liste-conseillers'
+            isOpen={isExpanded}
+            onClick={toggleListeConseillers}
+          />
+        </div>
+
         <div className='mt-10 border-b border-bleu_blanc'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>
             Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
@@ -234,26 +269,31 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     session: { accessToken },
   } = sessionOrRedirect
 
-  const [resInfoJeune, resRdvJeune, resActionsJeune] = await Promise.all([
-    jeunesService.getJeuneDetails(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    rendezVousService.getRendezVousJeune(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    actionsService.getActionsJeune(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-  ])
+  const [resInfoJeune, resRdvJeune, resActionsJeune, resConseillers] =
+    await Promise.all([
+      jeunesService.getJeuneDetails(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      rendezVousService.getRendezVousJeune(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      actionsService.getActionsJeune(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getConseillersDuJeune(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+    ])
 
   const userActions: ActionJeune[] = [...resActionsJeune]
     .sort(compareActionsDatesDesc)
     .slice(0, 3)
 
-  if (!resInfoJeune || !resRdvJeune) {
+  if (!resInfoJeune || !resRdvJeune || !resConseillers) {
     return {
       notFound: true,
     }
@@ -264,6 +304,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     jeune: resInfoJeune,
     rdvs: resRdvJeune.filter((rdv: Rdv) => new Date(rdv.date) > today),
     actions: userActions,
+    conseillers: resConseillers,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
   }
   if (context.query.creationRdv)

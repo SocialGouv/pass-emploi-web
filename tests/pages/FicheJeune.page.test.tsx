@@ -1,6 +1,6 @@
 import { act, screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
-import { unJeune } from 'fixtures/jeune'
+import { desConseillersJeune, unJeune } from 'fixtures/jeune'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
@@ -12,7 +12,7 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
-import { conseillersPrecedents } from 'components/jeune/DetailsJeune'
+import { HistoriqueConseiller } from 'interfaces/jeune'
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(() => ({
@@ -28,6 +28,8 @@ describe('Fiche Jeune', () => {
   const jeune = unJeune()
   const rdvs = uneListeDeRdv()
   const actions = uneListeDActions()
+  const listeConseillers = desConseillersJeune()
+
   let jeunesService: JeunesService
   let rendezVousService: RendezVousService
   beforeEach(async () => {
@@ -45,7 +47,12 @@ describe('Fiche Jeune', () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
           <CurrentJeuneProvider setJeune={setJeune}>
-            <FicheJeune jeune={jeune} rdvs={rdvs} actions={actions} />
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actions={actions}
+              conseillers={listeConseillers}
+            />
           </CurrentJeuneProvider>
         </DIProvider>
       )
@@ -91,21 +98,17 @@ describe('Fiche Jeune', () => {
     })
 
     it("affiche la liste de l'historique des conseillers du jeune", () => {
-      conseillersPrecedents.forEach((conseiller) => {
-        expect(screen.getByText(conseiller.nom)).toBeInTheDocument()
+      listeConseillers.forEach(({ nom, prenom }: HistoriqueConseiller) => {
+        expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
       })
     })
 
-    it("affiche un lien vers l'historique complet des conseillers du jeune", async () => {
+    it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
       // Then
-      const lienHistoriqueComplet = screen.getByRole('link', {
-        name: "Voir l'historique complet",
+      const button = screen.getByRole('button', {
+        name: 'Voir l’historique complet',
       })
-      expect(lienHistoriqueComplet).toBeInTheDocument()
-      expect(lienHistoriqueComplet).toHaveAttribute(
-        'href',
-        `/mes-jeunes/${jeune.id}/conseillers`
-      )
+      expect(button).toBeInTheDocument()
     })
 
     it('modifie le currentJeune', () => {
@@ -120,7 +123,12 @@ describe('Fiche Jeune', () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
           <CurrentJeuneProvider>
-            <FicheJeune jeune={jeune} rdvs={[]} actions={actions} />
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actions={actions}
+              conseillers={[]}
+            />
           </CurrentJeuneProvider>
         </DIProvider>,
         {
@@ -129,6 +137,7 @@ describe('Fiche Jeune', () => {
             name: 'Tavernier',
             structure: UserStructure.POLE_EMPLOI,
             estSuperviseur: false,
+            email: '',
           },
         }
       )
@@ -158,7 +167,7 @@ describe('Fiche Jeune', () => {
     renderWithSession(
       <DIProvider dependances={{ jeunesService, rendezVousService }}>
         <CurrentJeuneProvider>
-          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} />
+          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} conseillers={[]} />
         </CurrentJeuneProvider>
       </DIProvider>
     )
@@ -185,6 +194,7 @@ describe('Fiche Jeune', () => {
               rdvs={rdvs}
               actions={actions}
               rdvCreationSuccess={true}
+              conseillers={[]}
             />
           </CurrentJeuneProvider>
         </DIProvider>

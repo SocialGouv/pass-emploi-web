@@ -1,5 +1,6 @@
 import {
   Chat,
+  HistoriqueConseiller,
   Jeune,
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
@@ -103,3 +104,73 @@ export const unJeuneChat = (overrides: Partial<JeuneChat> = {}): JeuneChat => {
   }
   return { ...defaults, ...overrides }
 }
+
+export const unConseillerHistorique = (
+  overrides: Partial<HistoriqueConseiller> = {}
+): HistoriqueConseiller => {
+  const defaults: HistoriqueConseiller = {
+    id: 'conseiller-1',
+    email: 'mail@mail.com',
+    nom: 'Dublon',
+    prenom: 'Nicolas',
+    date: '12/03/2022',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const desConseillersJeune = (): HistoriqueConseiller[] => [
+  unConseillerHistorique(),
+  unConseillerHistorique({
+    id: 'conseiller-2',
+    email: 'conseiller@mail.fr',
+    nom: 'Maravillo',
+    prenom: 'Sarah',
+    date: '14/12/2021',
+  }),
+]
+
+//TODO: supprimer quand back dispo
+export const conseillersPrecedents = [
+  {
+    id: 'conseiller-1',
+    email: 'mail@mail.com',
+    nom: 'Dublon',
+    prenom: 'Nicolas',
+    date: '12/03/2022',
+  },
+  {
+    id: 'conseiller-2',
+    email: 'conseiller@mail.fr',
+    nom: 'Maravillo',
+    prenom: 'Sarah',
+    date: '14/12/2021',
+  },
+  {
+    id: 'conseiller-3',
+    email: 'maravillo@mail.fr',
+    nom: 'Humbert',
+    prenom: 'Mélodie',
+    date: '18/01/2020',
+  },
+  {
+    id: 'conseiller-4',
+    email: 'mail@mail.com',
+    nom: 'Dublon',
+    prenom: 'Nicolas',
+    date: '12/03/2022',
+  },
+  {
+    id: 'conseiller-5',
+    email: 'conseiller@mail.fr',
+    nom: 'Maravillo',
+    prenom: 'Sarah',
+    date: '14/12/2021',
+  },
+  {
+    id: 'conseiller-6',
+    email: 'maravillo@mail.fr',
+    nom: 'Humbert',
+    prenom: 'Mélodie',
+    date: '18/01/2020',
+  },
+]

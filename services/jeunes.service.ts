@@ -1,14 +1,20 @@
 import { ApiClient } from 'clients/api.client'
-import { Jeune } from 'interfaces/jeune'
+import { HistoriqueConseiller, Jeune } from 'interfaces/jeune'
 import { Conseiller } from '../interfaces/conseiller'
 import { RequestError } from '../utils/fetchJson'
 import ErrorCodes from './error-codes'
+import { conseillersPrecedents } from 'fixtures/jeune'
 
 export interface JeunesService {
   getJeunesDuConseiller(
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune[]>
+
+  getConseillersDuJeune(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<HistoriqueConseiller[] | undefined>
 
   getJeunesDuConseillerParEmail(
     emailConseiller: string,
@@ -66,6 +72,27 @@ export class JeunesApiService implements JeunesService {
       }
       throw e
     }
+  }
+
+  //TODO: modifier quand API prête
+  async getConseillersDuJeune(
+    idJeune: string,
+    accessToken: string
+  ): Promise<HistoriqueConseiller[] | undefined> {
+    return conseillersPrecedents
+    // {
+    //   try {
+    //     return await this.apiClient.get<HistoriqueConseiller[]>(
+    //       `/jeunes/${idJeune}/conseillers`,
+    //       accessToken
+    //     )
+    //   } catch (e) {
+    //     if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+    //       return undefined
+    //     }
+    //     throw e
+    //   }
+    // }
   }
 
   createCompteJeunePoleEmploi(
