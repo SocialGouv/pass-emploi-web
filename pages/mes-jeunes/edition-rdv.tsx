@@ -25,7 +25,6 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { DateTime } from 'luxon'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 
 interface EditionRdvProps {
@@ -76,15 +75,15 @@ function EditionRdv({
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(rdv?.duration)
   const [duree, setDuree] = useState<RequiredInput>({ value: dureeRdv })
-  const [adresse, setAdresse] = useState<string>('')
-  const [organisme, setOrganisme] = useState<string>('')
+  const [adresse, setAdresse] = useState<string>(rdv?.adresse ?? '')
+  const [organisme, setOrganisme] = useState<string>(rdv?.organisme ?? '')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(
     rdv?.presenceConseiller ?? true
   )
   const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(
     Boolean(rdv?.invitation)
   )
-  const [commentaire, setCommentaire] = useState<string>('')
+  const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
@@ -499,6 +498,7 @@ function EditionRdv({
               type='text'
               id='adresse'
               name='adresse'
+              defaultValue={adresse}
               onChange={(e) => setAdresse(e.target.value)}
               className={
                 'border border-solid rounded-medium w-full px-4 py-3 mb-8 bg-location bg-[center_right_1rem] bg-no-repeat'
@@ -515,6 +515,7 @@ function EditionRdv({
               type='text'
               id='organisme'
               name='organisme'
+              defaultValue={organisme}
               onChange={(e) => setOrganisme(e.target.value)}
               className={
                 'border border-solid rounded-medium w-full px-4 py-3 mb-8'
@@ -572,6 +573,7 @@ function EditionRdv({
             <textarea
               id='commentaire'
               name='commentaire'
+              defaultValue={commentaire}
               rows={3}
               onChange={(e) => setCommentaire(e.target.value)}
               className='border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8'

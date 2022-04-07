@@ -3,7 +3,7 @@ import { RdvTypeTag } from 'components/ui/RdvTypeTag'
 import { Rdv } from 'interfaces/rdv'
 import React from 'react'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
-
+import { useRouter } from 'next/router'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
@@ -21,6 +21,7 @@ const RdvList = ({
   withNameJeune = true,
   onDelete,
 }: RdvListProps) => {
+  const router = useRouter()
   const handleDeleteClick = (rdv: Rdv) => {
     onDelete(rdv)
   }
@@ -56,7 +57,14 @@ const RdvList = ({
 
           <tbody>
             {rdvs.map((rdv: Rdv) => (
-              <tr key={rdv.id} className='text-sm text-bleu_nuit'>
+              <tr
+                key={rdv.id}
+                className='text-sm text-bleu_nuit'
+                // TODO a modifier , pour tester l'injection des données du rdv
+                onClick={() =>
+                  router.push('/mes-jeunes/edition-rdv?idRdv=' + rdv.id)
+                }
+              >
                 <td className='p-3'>
                   {dayHourCells(new Date(rdv.date), rdv.duration)}
                 </td>

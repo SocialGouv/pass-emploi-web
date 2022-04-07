@@ -798,13 +798,20 @@ describe('EditionRdv', () => {
           '02:05'
         )
         expect(
+          screen.getByLabelText<HTMLInputElement>(/Adresse/).value
+        ).toEqual('36 rue de marseille, 93200 Saint-Denis')
+        expect(
+          screen.getByLabelText<HTMLInputElement>(/Organisme/).value
+        ).toEqual('S.A.R.L')
+        expect(
           screen.getByLabelText<HTMLInputElement>(/présent/).checked
         ).toEqual(false)
         expect(
           screen.getByLabelText<HTMLInputElement>(/agenda/).checked
         ).toEqual(true)
-        // TODO organisme, adresse
-        // TODO commentaire
+        expect(
+          screen.getByLabelText<HTMLInputElement>(/Commentaire/).value
+        ).toEqual('Rendez-vous avec Kenji')
       })
     })
   })

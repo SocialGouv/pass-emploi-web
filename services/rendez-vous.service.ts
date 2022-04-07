@@ -1,6 +1,8 @@
 import { jsonToRdv, RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { ApiClient } from 'clients/api.client'
+import { RequestError } from '../utils/fetchJson'
+import ErrorCodes from './error-codes'
 
 export interface RendezVousService {
   postNewRendezVous(
@@ -67,11 +69,18 @@ export class RendezVousApiService implements RendezVousService {
     return rdvsJson.map(jsonToRdv)
   }
 
-  getDetailRendezVous(
+  async getDetailRendezVous(
     idRdv: string,
     accessToken: string
   ): Promise<Rdv | undefined> {
-    throw new Error('Not implemented')
+    try {
+      return await this.apiClient.get<Rdv>(`/rendezvous/${idRdv}`, accessToken)
+    } catch (e) {
+      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+        return undefined
+      }
+      throw e
+    }
   }
 
   async deleteRendezVous(

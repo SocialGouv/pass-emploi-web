@@ -8,13 +8,15 @@ export interface TypeRendezVous {
 export interface Rdv {
   id: string
   jeune: BaseJeune
+  type: TypeRendezVous
+  precisionType: string
+  modality: string
   date: string
   duration: number
-  modality: string
-  type: TypeRendezVous
+  adresse: string
+  organisme: string
   presenceConseiller: boolean
   invitation: boolean
-  precisionType: string
   comment: string
 }
 

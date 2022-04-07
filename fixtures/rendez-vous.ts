@@ -43,19 +43,21 @@ export const typesDeRendezVous = (
 export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
   const defaults: Rdv = {
     id: '1',
-    comment: 'Rendez-vous avec Kenji',
-    date: '2021-10-21T10:00:00.000Z',
-    duration: 125,
-    type: { code: 'AUTRE', label: 'Autre' },
-    precisionType: 'Prise de nouvelles',
-    modality: 'par téléphone',
     jeune: {
       id: '1',
       prenom: 'kenji',
       nom: 'Jirac',
     },
+    type: { code: 'AUTRE', label: 'Autre' },
+    precisionType: 'Prise de nouvelles',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    adresse: '36 rue de marseille, 93200 Saint-Denis',
+    organisme: 'S.A.R.L',
     presenceConseiller: false,
     invitation: true,
+    comment: 'Rendez-vous avec Kenji',
   }
 
   return { ...defaults, ...overrides }
@@ -65,19 +67,21 @@ export const uneListeDeRdv = (overrides: Rdv[] = []): Rdv[] => [
   unRendezVous(),
   {
     id: '2',
-    comment: 'Mon premier rendez-vous',
-    date: '2021-10-25T12:00:00.000Z',
-    duration: 25,
-    type: { code: 'ATELIER', label: 'Atelier' },
-    precisionType: '',
-    modality: 'En agence',
     jeune: {
       id: '2',
       prenom: 'Raja',
       nom: 'Jirac',
     },
+    type: { code: 'ATELIER', label: 'Atelier' },
+    precisionType: '',
+    modality: 'En agence',
+    date: '2021-10-25T12:00:00.000Z',
+    duration: 25,
+    adresse: '',
+    organisme: '',
     presenceConseiller: true,
     invitation: true,
+    comment: 'Mon premier rendez-vous',
   },
   ...overrides,
 ]

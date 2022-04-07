@@ -3,7 +3,8 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
-import { typesDeRendezVous } from 'fixtures/rendez-vous'
+import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
+import { RequestError } from '../../utils/fetchJson'
 
 jest.mock('clients/api.client')
 
@@ -32,6 +33,42 @@ describe('RendezVousApiService', () => {
         accessToken
       )
       expect(actual).toEqual(typesRendezVous)
+    })
+  })
+
+  describe('.getDetailRendezVous', () => {
+    it('renvoie les détails du rdv', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue(unRendezVous())
+
+      // When
+      const actual = await rendezVousService.getDetailRendezVous(
+        'id-rdv',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/rendezvous/id-rdv',
+        'accessToken'
+      )
+      expect(actual).toEqual(unRendezVous())
+    })
+
+    it("renvoie undefined si le rdv n'existe pas", async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new RequestError('Rdv non trouvé', 'NON_TROUVE')
+      )
+
+      // When
+      const actual = await rendezVousService.getDetailRendezVous(
+        'id-rdv',
+        'accessToken'
+      )
+
+      // Then
+      expect(actual).toEqual(undefined)
     })
   })
 })
