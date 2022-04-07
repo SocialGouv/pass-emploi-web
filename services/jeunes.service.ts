@@ -1,5 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import { HistoriqueConseiller, Jeune } from 'interfaces/jeune'
+import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import { Conseiller } from '../interfaces/conseiller'
 import { RequestError } from '../utils/fetchJson'
 import ErrorCodes from './error-codes'
@@ -14,7 +14,7 @@ export interface JeunesService {
   getConseillersDuJeune(
     idConseiller: string,
     accessToken: string
-  ): Promise<HistoriqueConseiller[] | undefined>
+  ): Promise<ConseillerHistorique[] | undefined>
 
   getJeunesDuConseillerParEmail(
     emailConseiller: string,
@@ -78,7 +78,7 @@ export class JeunesApiService implements JeunesService {
   async getConseillersDuJeune(
     idJeune: string,
     accessToken: string
-  ): Promise<HistoriqueConseiller[] | undefined> {
+  ): Promise<ConseillerHistorique[] | undefined> {
     return conseillersPrecedents
     // {
     //   try {

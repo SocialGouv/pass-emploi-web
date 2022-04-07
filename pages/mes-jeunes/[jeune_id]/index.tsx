@@ -9,7 +9,7 @@ import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
-import { HistoriqueConseiller, Jeune } from 'interfaces/jeune'
+import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import { Rdv } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
@@ -29,7 +29,7 @@ interface FicheJeuneProps {
   jeune: Jeune
   rdvs: Rdv[]
   actions: ActionJeune[]
-  conseillers: HistoriqueConseiller[]
+  conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
@@ -53,7 +53,7 @@ function FicheJeune({
     rdvCreationSuccess ?? false
   )
   const listeConseillersReduite = [...conseillers].slice(0, 5)
-  const [listeConseillers, setConseillers] = useState<HistoriqueConseiller[]>(
+  const [listeConseillers, setConseillers] = useState<ConseillerHistorique[]>(
     listeConseillersReduite
   )
 

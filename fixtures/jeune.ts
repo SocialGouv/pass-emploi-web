@@ -1,6 +1,6 @@
 import {
   Chat,
-  HistoriqueConseiller,
+  ConseillerHistorique,
   Jeune,
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
@@ -106,9 +106,9 @@ export const unJeuneChat = (overrides: Partial<JeuneChat> = {}): JeuneChat => {
 }
 
 export const unConseillerHistorique = (
-  overrides: Partial<HistoriqueConseiller> = {}
-): HistoriqueConseiller => {
-  const defaults: HistoriqueConseiller = {
+  overrides: Partial<ConseillerHistorique> = {}
+): ConseillerHistorique => {
+  const defaults: ConseillerHistorique = {
     id: 'conseiller-1',
     email: 'mail@mail.com',
     nom: 'Dublon',
@@ -118,7 +118,7 @@ export const unConseillerHistorique = (
   return { ...defaults, ...overrides }
 }
 
-export const desConseillersJeune = (): HistoriqueConseiller[] => [
+export const desConseillersJeune = (): ConseillerHistorique[] => [
   unConseillerHistorique(),
   unConseillerHistorique({
     id: 'conseiller-2',

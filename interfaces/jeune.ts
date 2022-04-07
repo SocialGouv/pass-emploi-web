@@ -61,7 +61,7 @@ export interface JeunePoleEmploiFormData {
   email: string
 }
 
-export interface HistoriqueConseiller {
+export interface ConseillerHistorique {
   id: string
   email: string
   nom: string

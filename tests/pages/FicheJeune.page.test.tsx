@@ -12,7 +12,7 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
-import { HistoriqueConseiller } from 'interfaces/jeune'
+import { ConseillerHistorique } from 'interfaces/jeune'
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(() => ({
@@ -98,7 +98,7 @@ describe('Fiche Jeune', () => {
     })
 
     it("affiche la liste de l'historique des conseillers du jeune", () => {
-      listeConseillers.forEach(({ nom, prenom }: HistoriqueConseiller) => {
+      listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
         expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
       })
     })
