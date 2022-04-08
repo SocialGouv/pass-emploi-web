@@ -3,7 +3,7 @@ import { desJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
-import { TypeRendezVous } from 'interfaces/rdv'
+import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
@@ -751,7 +751,8 @@ describe('EditionRdv', () => {
     })
 
     describe('quand on souhaite modifier un rdv existant', () => {
-      it('initialise les champs avec les données du rdv', () => {
+      let rdv: Rdv
+      beforeEach(() => {
         ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
         ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         // Given
@@ -760,7 +761,8 @@ describe('EditionRdv', () => {
           prenom: jeunes[0].firstName,
           nom: jeunes[0].lastName,
         }
-        const rdv = unRendezVous({ jeune })
+
+        rdv = unRendezVous({ jeune })
 
         // When
         renderWithSession(
@@ -774,7 +776,9 @@ describe('EditionRdv', () => {
             />
           </DIProvider>
         )
+      })
 
+      it('initialise les champs avec les données du rdv', () => {
         // Then
         expect(
           screen.getByLabelText<HTMLSelectElement>(/ajouter un jeune/).value
@@ -812,6 +816,18 @@ describe('EditionRdv', () => {
         expect(
           screen.getByLabelText<HTMLInputElement>(/Commentaire/).value
         ).toEqual('Rendez-vous avec Kenji')
+      })
+
+      it('désactive les champs non modifiable', () => {
+        // Then
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(/ajouter un jeune/)
+        ).toBeDisabled()
+        expect(screen.getByLabelText<HTMLSelectElement>(/Type/)).toBeDisabled()
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(/Préciser/)
+        ).toBeDisabled()
+        expect(screen.getByLabelText<HTMLInputElement>(/agenda/)).toBeDisabled()
       })
     })
   })
