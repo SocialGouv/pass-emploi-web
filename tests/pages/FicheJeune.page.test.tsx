@@ -156,9 +156,9 @@ describe('Fiche Jeune', () => {
           user: {
             id: 'idConseiller',
             name: 'Tavernier',
+            email: 'fake@email.fr',
             structure: UserStructure.POLE_EMPLOI,
             estSuperviseur: false,
-            email: '',
           },
         }
       )
@@ -240,6 +240,58 @@ describe('Fiche Jeune', () => {
 
       // Then
       expect(() => screen.getByText('Le rendez-vous a bien été créé')).toThrow()
+      expect(replace).toHaveBeenCalledWith(
+        {
+          pathname: `/mes-jeunes/${jeune.id}`,
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+  describe('quand la modification de rdv est réussie', () => {
+    let replace: jest.Mock
+    beforeEach(() => {
+      // Given
+      replace = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+      // When
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <CurrentJeuneProvider>
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              conseillers={[]}
+              actions={actions}
+              rdvModificationSuccess={true}
+            />
+          </CurrentJeuneProvider>
+        </DIProvider>
+      )
+    })
+
+    it('affiche un message de succès', () => {
+      // Then
+      expect(
+        screen.getByText('Le rendez-vous a bien été modifié')
+      ).toBeInTheDocument()
+    })
+
+    it('permet de cacher le message de succès', async () => {
+      // Given
+      const fermerMessage = screen.getByRole('button', {
+        name: "J'ai compris",
+      })
+
+      // When
+      await act(async () => fermerMessage.click())
+
+      // Then
+      expect(() =>
+        screen.getByText('Le rendez-vous a bien été modifié')
+      ).toThrow()
       expect(replace).toHaveBeenCalledWith(
         {
           pathname: `/mes-jeunes/${jeune.id}`,

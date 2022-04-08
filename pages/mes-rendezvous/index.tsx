@@ -20,6 +20,7 @@ type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
   creationSuccess?: boolean
+  modificationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
 
@@ -27,12 +28,15 @@ function MesRendezvous({
   rendezVousFuturs,
   rendezVousPasses,
   creationSuccess,
+  modificationSuccess,
   messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) {
   const router = useRouter()
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     creationSuccess ?? false
   )
+  const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
+    useState<boolean>(modificationSuccess ?? false)
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
@@ -41,6 +45,7 @@ function MesRendezvous({
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
   const pageTracking = `Mes rendez-vous`
+  //TODO gerer tracking  pour les modif de rdv
   const initialTracking = `${pageTracking}${
     creationSuccess ? ' - Creation rdv succès' : ''
   }`
@@ -66,6 +71,7 @@ function MesRendezvous({
 
   function closeRdvCreationMessage(): void {
     setShowRdvCreationSuccess(false)
+    setShowRdvModificationSuccess(false)
     router.replace('', undefined, { shallow: true })
   }
 
@@ -108,6 +114,13 @@ function MesRendezvous({
         {showRdvCreationSuccess && (
           <SuccessMessage
             label={'Le rendez-vous a bien été créé'}
+            onAcknowledge={closeRdvCreationMessage}
+          />
+        )}
+
+        {showRdvModificationSuccess && (
+          <SuccessMessage
+            label={'Le rendez-vous a bien été modifié'}
             onAcknowledge={closeRdvCreationMessage}
           />
         )}
@@ -201,6 +214,9 @@ export const getServerSideProps: GetServerSideProps<
 
   if (context.query.creationRdv)
     props.creationSuccess = context.query.creationRdv === 'succes'
+
+  if (context.query.modificationRdv)
+    props.modificationSuccess = context.query.modificationRdv === 'succes'
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'

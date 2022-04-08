@@ -113,6 +113,47 @@ describe('MesRendezvous', () => {
         expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
       })
     })
+
+    describe('quand la modification de rdv est réussie', () => {
+      let replace: jest.Mock
+      beforeEach(() => {
+        // Given
+        replace = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+        // When
+        renderWithSession(
+          <MesRendezvous
+            rendezVousFuturs={rendezVousFuturs}
+            rendezVousPasses={rendezVousPasses}
+            modificationSuccess={true}
+          />
+        )
+      })
+
+      it('affiche un message de succès', () => {
+        // Then
+        expect(
+          screen.getByText('Le rendez-vous a bien été modifié')
+        ).toBeInTheDocument()
+      })
+
+      it('permet de cacher le message de succès', async () => {
+        // Given
+        const fermerMessage = screen.getByRole('button', {
+          name: "J'ai compris",
+        })
+
+        // When
+        await act(async () => fermerMessage.click())
+
+        // Then
+        expect(() =>
+          screen.getByText('Le rendez-vous a bien été modifié')
+        ).toThrow()
+        expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
+      })
+    })
   })
 
   describe('server side', () => {

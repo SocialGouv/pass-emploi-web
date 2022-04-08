@@ -101,7 +101,6 @@ function EditionRdv({
           commentaire
       )
     }
-    debugger
     return (
       modalite !== rdv.modality ||
       date.value !== localDate ||
