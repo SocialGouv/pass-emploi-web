@@ -88,15 +88,27 @@ function EditionRdv({
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
   function formHasChanges(): boolean {
-    return Boolean(
-      codeTypeRendezVous ||
-        modalite ||
-        date.value ||
-        horaire.value ||
-        duree.value ||
-        adresse ||
-        organisme ||
-        commentaire
+    if (!rdv) {
+      return Boolean(
+        codeTypeRendezVous ||
+          modalite ||
+          date.value ||
+          horaire.value ||
+          duree.value ||
+          adresse ||
+          organisme ||
+          commentaire
+      )
+    }
+    debugger
+    return (
+      modalite !== rdv.modality ||
+      date.value !== localDate ||
+      horaire.value !== localTime ||
+      duree.value !== dureeRdv ||
+      adresse !== rdv.adresse ||
+      organisme !== rdv.organisme ||
+      commentaire !== rdv.comment
     )
   }
 
@@ -257,7 +269,9 @@ function EditionRdv({
         {formHasChanges() && (
           <button className='items-center mr-4' onClick={openLeavePageModal}>
             <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <span className='sr-only'>Quitter la création du rendez-vous</span>
+            <span className='sr-only'>
+              Quitter la {rdv ? 'modification' : 'création'} du rendez-vous
+            </span>
           </button>
         )}
 
@@ -596,7 +610,9 @@ function EditionRdv({
             )}
             {formHasChanges() && (
               <Button
-                aria-label='Quitter la création du rendez-vous'
+                aria-label={`Quitter la ${
+                  rdv ? 'modification' : 'création'
+                } du rendez-vous`}
                 onClick={openLeavePageModal}
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
@@ -615,7 +631,9 @@ function EditionRdv({
         <ExitPageConfirmationModal
           id='exit-page-confirmation'
           show={showLeavePageModal}
-          message='Vous allez quitter la création d’un nouveau rendez-vous'
+          message={`Vous allez quitter la ${
+            rdv ? 'modification du' : 'création d’un nouveau'
+          } rendez-vous`}
           onCancel={() => setShowLeavePageModal(false)}
           href={redirectTo}
         />

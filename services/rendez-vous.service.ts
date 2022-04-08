@@ -74,7 +74,11 @@ export class RendezVousApiService implements RendezVousService {
     accessToken: string
   ): Promise<Rdv | undefined> {
     try {
-      return await this.apiClient.get<Rdv>(`/rendezvous/${idRdv}`, accessToken)
+      const rdvJson: Promise = await this.apiClient.get<RdvJson>(
+        `/rendezvous/${idRdv}`,
+        accessToken
+      )
+      return jsonToRdv(rdvJson)
     } catch (e) {
       if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
         return undefined

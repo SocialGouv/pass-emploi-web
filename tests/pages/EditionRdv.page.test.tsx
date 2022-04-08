@@ -203,19 +203,18 @@ describe('EditionRdv', () => {
     let jeunes: Jeune[]
     let rendezVousService: RendezVousService
     let typesRendezVous: TypeRendezVous[]
+    let push: jest.Mock
     beforeEach(() => {
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService()
       typesRendezVous = typesDeRendezVous()
+
+      push = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
     })
 
     describe('contenu', () => {
-      let push: jest.Mock
       beforeEach(() => {
-        // Given
-        push = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ push })
-
         // When
         renderWithSession(
           <DIProvider dependances={{ rendezVousService }}>
@@ -828,6 +827,160 @@ describe('EditionRdv', () => {
           screen.getByLabelText<HTMLSelectElement>(/Préciser/)
         ).toBeDisabled()
         expect(screen.getByLabelText<HTMLInputElement>(/agenda/)).toBeDisabled()
+      })
+
+      it('permet de revenir à la page précédente', () => {
+        // Then
+        const link = screen.getByText('Page précédente')
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute('class', 'sr-only')
+        expect(link.closest('a')).toHaveAttribute('href', '/mes-rendezvous')
+      })
+
+      it('contient un lien pour annuler', () => {
+        // Then
+        const link = screen.getByText('Annuler')
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute('href', '/mes-rendezvous')
+      })
+
+      describe('rendez-vous modifié', () => {
+        let selectJeune: HTMLSelectElement
+        let selectModalite: HTMLSelectElement
+        let selectType: HTMLSelectElement
+        let inputDate: HTMLInputElement
+        let inputHoraire: HTMLInputElement
+        let inputDuree: HTMLInputElement
+        let inputCommentaires: HTMLTextAreaElement
+        let buttonValider: HTMLButtonElement
+        beforeEach(() => {
+          // Given
+          selectModalite = screen.getByRole('combobox', {
+            name: 'Modalité',
+          })
+          inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
+          inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
+          inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
+          inputCommentaires = screen.getByRole('textbox', {
+            name: 'Notes Commentaire à destination des jeunes',
+          })
+
+          buttonValider = screen.getByRole('button', { name: 'Envoyer' })
+
+          // Given
+          fireEvent.change(selectModalite, { target: { value: modalites[0] } })
+          fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
+          fireEvent.input(inputHoraire, { target: { value: '10:30' } })
+          fireEvent.input(inputDuree, { target: { value: '02:37' } })
+          fireEvent.input(inputCommentaires, {
+            target: { value: 'Lorem ipsum dolor sit amet' },
+          })
+        })
+
+        it('prévient avant de revenir à la page précédente', async () => {
+          // Given
+          const button = screen.getByText('Quitter la modification du rendez-vous')
+
+          // When
+          await act(async () => button.click())
+
+          // Then
+          expect(() => screen.getByText('Page précédente')).toThrow()
+          expect(button).not.toHaveAttribute('href')
+          expect(push).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(
+              'Vous allez quitter la modification du rendez-vous'
+            )
+          ).toBeInTheDocument()
+        })
+
+        it("prévient avant d'annuler", async () => {
+          // Given
+          const button = screen.getByText('Annuler')
+
+          // When
+          await act(async () => button.click())
+
+          // Then
+          expect(button).not.toHaveAttribute('href')
+          expect(push).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(
+              'Vous allez quitter la modification du rendez-vous'
+            )
+          ).toBeInTheDocument()
+        })
+
+        describe.skip('quand le formulaire est validé', () => {
+          it('crée un rendez-vous de type Generique', () => {
+            // When
+            buttonValider.click()
+
+            // Then
+            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+              '1',
+              {
+                jeuneId: jeunes[0].id,
+                type: 'ACTIVITES_EXTERIEURES',
+                modality: modalites[0],
+                precision: undefined,
+                date: '2022-03-03T09:30:00.000Z',
+                adresse: undefined,
+                organisme: undefined,
+                duration: 157,
+                comment: 'Lorem ipsum dolor sit amet',
+                presenceConseiller: true,
+                invitation: false,
+              },
+              'accessToken'
+            )
+          })
+
+          it('crée un rendez-vous de type AUTRE', () => {
+            // Given
+            fireEvent.change(selectType, { target: { value: 'AUTRE' } })
+
+            const inputTypePrecision = screen.getByLabelText('* Préciser')
+            fireEvent.change(inputTypePrecision, {
+              target: { value: 'un texte de précision' },
+            })
+
+            // When
+            buttonValider.click()
+
+            // Then
+            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+              '1',
+              {
+                jeuneId: jeunes[0].id,
+                type: 'AUTRE',
+                precision: 'un texte de précision',
+                modality: modalites[0],
+                date: '2022-03-03T09:30:00.000Z',
+                adresse: undefined,
+                organisme: undefined,
+                duration: 157,
+                comment: 'Lorem ipsum dolor sit amet',
+                presenceConseiller: true,
+                invitation: false,
+              },
+              'accessToken'
+            )
+          })
+
+          it('redirige vers la page précédente', async () => {
+            // When
+            buttonValider.click()
+
+            await waitFor(() => {
+              // Then
+              expect(push).toHaveBeenCalledWith(
+                '/mes-rendezvous?creationRdv=succes'
+              )
+            })
+          })
+        })
       })
     })
   })
