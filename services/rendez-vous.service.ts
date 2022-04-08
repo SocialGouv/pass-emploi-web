@@ -1,7 +1,6 @@
+import { ApiClient } from 'clients/api.client'
 import { jsonToRdv, RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-import { ApiClient } from 'clients/api.client'
-import { modalites } from '../referentiel/rdv'
 import { RequestError } from '../utils/fetchJson'
 import ErrorCodes from './error-codes'
 

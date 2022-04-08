@@ -325,7 +325,6 @@ function EditionRdv({
               name='beneficiaire'
               defaultValue={jeuneId ?? ''}
               required={true}
-              // TODO gerer le disabled
               disabled={Boolean(idJeune) || Boolean(rdv)}
               onChange={(e) => setJeuneId(e.target.value)}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
@@ -360,7 +359,7 @@ function EditionRdv({
               required={true}
               disabled={Boolean(rdv)}
               onChange={handleSelectedTypeRendezVous}
-              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
+              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
             >
               <option aria-hidden hidden disabled value={''} />
               {typesRendezVous.map(({ code, label }) => (
