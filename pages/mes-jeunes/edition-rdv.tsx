@@ -87,6 +87,8 @@ function EditionRdv({
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const initialTracking = `Création RDV${idJeune ? ' jeune' : ''}`
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -215,9 +217,17 @@ function EditionRdv({
     e.preventDefault()
     e.stopPropagation()
     setShowLeavePageModal(true)
+    setTrackingTitle(
+      `${rdv ? 'Modification' : 'Création'} rdv - Modale Annulation`
+    )
   }
 
-  async function creerRendezVous(e: FormEvent): Promise<void> {
+  function closeLeavePageModal() {
+    setShowLeavePageModal(false)
+    setTrackingTitle(initialTracking)
+  }
+
+  async function soumettreRendezVous(e: FormEvent): Promise<void> {
     e.preventDefault()
 
     if (!formHasChanges()) return Promise.resolve()
@@ -260,8 +270,7 @@ function EditionRdv({
     await router.push(`${redirectPath}?${queryParam}=succes`)
   }
 
-  useMatomo(`Création RDV${idJeune ? ' jeune' : ''}`)
-  useMatomo(showLeavePageModal ? 'Création rdv - Modale Annulation' : undefined)
+  useMatomo(trackingTitle)
 
   return (
     <>
@@ -289,7 +298,7 @@ function EditionRdv({
         } rendez-vous`}</h1>
       </div>
       <div className={`${styles.content} max-w-[500px] m-auto`}>
-        <form onSubmit={creerRendezVous}>
+        <form onSubmit={soumettreRendezVous}>
           <div className='text-sm-regular text-bleu_nuit mb-8'>
             Tous les champs avec * sont obligatoires
           </div>
@@ -648,7 +657,7 @@ function EditionRdv({
           message={`Vous allez quitter la ${
             rdv ? 'modification du' : 'création d’un nouveau'
           } rendez-vous`}
-          onCancel={() => setShowLeavePageModal(false)}
+          onCancel={closeLeavePageModal}
           href={redirectTo}
         />
       )}

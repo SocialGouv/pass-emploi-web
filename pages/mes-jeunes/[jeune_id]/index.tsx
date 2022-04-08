@@ -70,9 +70,10 @@ function FicheJeune({
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
-  const initialTracking: string = `${pageTracking}${
-    rdvCreationSuccess ? ' - Creation rdv succès' : ''
-  }`
+  let initialTracking = pageTracking
+  if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
+  if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
@@ -80,13 +81,7 @@ function FicheJeune({
   function closeRdvEditionMessage(): void {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
-    router.replace(
-      {
-        pathname: `/mes-jeunes/${jeune.id}`,
-      },
-      undefined,
-      { shallow: true }
-    )
+    router.replace('', undefined, { shallow: true })
   }
 
   function deleteRdv() {
@@ -103,7 +98,7 @@ function FicheJeune({
   function openDeleteRdvModal(rdv: Rdv) {
     setSelectedRdv(rdv)
     setShowDeleteModal(true)
-    setTrackingLabel('Détail jeune - Modale suppression rdv')
+    setTrackingLabel(pageTracking + ' - Modale suppression rdv')
   }
 
   function closeDeleteRdvModal() {
@@ -113,13 +108,7 @@ function FicheJeune({
 
   function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace(
-      {
-        pathname: `/mes-jeunes/${jeune.id}`,
-      },
-      undefined,
-      { shallow: true }
-    )
+    router.replace('', undefined, { shallow: true })
   }
 
   function toggleListeConseillers(): void {
@@ -132,11 +121,6 @@ function FicheJeune({
   }
 
   useMatomo(trackingLabel)
-  useMatomo(
-    showMessageGroupeEnvoiSuccess
-      ? `${pageTracking} - Succès envoi message`
-      : undefined
-  )
 
   useEffect(() => {
     setCurrentJeune(jeune)

@@ -240,13 +240,7 @@ describe('Fiche Jeune', () => {
 
       // Then
       expect(() => screen.getByText('Le rendez-vous a bien été créé')).toThrow()
-      expect(replace).toHaveBeenCalledWith(
-        {
-          pathname: `/mes-jeunes/${jeune.id}`,
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
     })
   })
   describe('quand la modification de rdv est réussie', () => {
@@ -292,13 +286,7 @@ describe('Fiche Jeune', () => {
       expect(() =>
         screen.getByText('Le rendez-vous a bien été modifié')
       ).toThrow()
-      expect(replace).toHaveBeenCalledWith(
-        {
-          pathname: `/mes-jeunes/${jeune.id}`,
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
     })
   })
 })
