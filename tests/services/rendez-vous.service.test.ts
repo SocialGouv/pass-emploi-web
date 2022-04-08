@@ -3,8 +3,14 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
-import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
+import {
+  typesDeRendezVous,
+  unRendezVous,
+  unRendezVousJson,
+} from 'fixtures/rendez-vous'
 import { RequestError } from '../../utils/fetchJson'
+import { modalites } from '../../referentiel/rdv'
+import { RdvFormData } from '../../interfaces/json/rdv'
 
 jest.mock('clients/api.client')
 
@@ -39,7 +45,7 @@ describe('RendezVousApiService', () => {
   describe('.getDetailRendezVous', () => {
     it('renvoie les détails du rdv', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue(unRendezVous())
+      ;(apiClient.get as jest.Mock).mockResolvedValue(unRendezVousJson())
 
       // When
       const actual = await rendezVousService.getDetailRendezVous(
@@ -69,6 +75,47 @@ describe('RendezVousApiService', () => {
 
       // Then
       expect(actual).toEqual(undefined)
+    })
+  })
+
+  describe('updateRendezVous', () => {
+    it('met à jour un rendez vous déja existant', async () => {
+      // Given
+      const rdvFormData: RdvFormData = {
+        jeuneId: 'jeune-1',
+        type: 'AUTRE',
+        precision: 'un texte de précision',
+        modality: modalites[0],
+        date: '2022-03-03T09:30:00.000Z',
+        duration: 157,
+        adresse: undefined,
+        organisme: undefined,
+        presenceConseiller: true,
+        invitation: false,
+        comment: 'Lorem ipsum dolor sit amet',
+      }
+
+      // When
+      await rendezVousService.updateRendezVous(
+        'id-rdv',
+        rdvFormData,
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/rendezvous/id-rdv',
+        {
+          modality: modalites[0],
+          date: '2022-03-03T09:30:00.000Z',
+          duration: 157,
+          adresse: undefined,
+          organisme: undefined,
+          presenceConseiller: true,
+          comment: 'Lorem ipsum dolor sit amet',
+        },
+        'accessToken'
+      )
     })
   })
 })

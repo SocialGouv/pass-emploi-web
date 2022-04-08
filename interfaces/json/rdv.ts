@@ -17,27 +17,28 @@ export interface RdvJson {
 }
 
 export interface RdvFormData {
-  comment: string
   date: string
   duration: number
   jeuneId: string
   type: string
+  presenceConseiller: boolean
+  invitation: boolean
   precision?: string
   modality?: string
   adresse?: string
   organisme?: string
-  presenceConseiller: boolean
-  invitation: boolean
+  comment?: string
 }
 
-export function jsonToRdv(rdvData: RdvJson): Rdv {
+export function jsonToRdv(rdvJson: RdvJson): Rdv {
+  const { precision, ...data } = rdvJson
   return {
-    ...rdvData,
-    presenceConseiller: Boolean(rdvData.presenceConseiller),
-    invitation: Boolean(rdvData.invitation),
-    comment: rdvData.comment ?? '',
-    precisionType: rdvData.precision ?? '',
-    adresse: rdvData.adresse ?? '',
-    organisme: rdvData.organisme ?? '',
+    ...data,
+    presenceConseiller: Boolean(rdvJson.presenceConseiller),
+    invitation: Boolean(rdvJson.invitation),
+    comment: rdvJson.comment ?? '',
+    precisionType: precision ?? '',
+    adresse: rdvJson.adresse ?? '',
+    organisme: rdvJson.organisme ?? '',
   }
 }

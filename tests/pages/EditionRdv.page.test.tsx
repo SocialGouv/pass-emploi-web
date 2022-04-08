@@ -770,7 +770,7 @@ describe('EditionRdv', () => {
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              redirectTo={'/mes-rendezvous'}
+              redirectTo={'/mes-rendezvous?creationRdv=succes'}
               rdv={rdv}
             />
           </DIProvider>
@@ -834,20 +834,24 @@ describe('EditionRdv', () => {
         const link = screen.getByText('Page précédente')
         expect(link).toBeInTheDocument()
         expect(link).toHaveAttribute('class', 'sr-only')
-        expect(link.closest('a')).toHaveAttribute('href', '/mes-rendezvous')
+        expect(link.closest('a')).toHaveAttribute(
+          'href',
+          '/mes-rendezvous?creationRdv=succes'
+        )
       })
 
       it('contient un lien pour annuler', () => {
         // Then
         const link = screen.getByText('Annuler')
         expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute('href', '/mes-rendezvous')
+        expect(link).toHaveAttribute(
+          'href',
+          '/mes-rendezvous?creationRdv=succes'
+        )
       })
 
       describe('rendez-vous modifié', () => {
-        let selectJeune: HTMLSelectElement
         let selectModalite: HTMLSelectElement
-        let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
         let inputHoraire: HTMLInputElement
         let inputDuree: HTMLInputElement
@@ -879,7 +883,9 @@ describe('EditionRdv', () => {
 
         it('prévient avant de revenir à la page précédente', async () => {
           // Given
-          const button = screen.getByText('Quitter la modification du rendez-vous')
+          const button = screen.getByText(
+            'Quitter la modification du rendez-vous'
+          )
 
           // When
           await act(async () => button.click())
@@ -912,58 +918,26 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        describe.skip('quand le formulaire est validé', () => {
-          it('crée un rendez-vous de type Generique', () => {
+        describe('quand le formulaire est validé', () => {
+          it('modifie le rendez-vous', async () => {
             // When
-            buttonValider.click()
+            await act(async () => buttonValider.click())
 
             // Then
-            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
-              '1',
-              {
-                jeuneId: jeunes[0].id,
-                type: 'ACTIVITES_EXTERIEURES',
-                modality: modalites[0],
-                precision: undefined,
-                date: '2022-03-03T09:30:00.000Z',
-                adresse: undefined,
-                organisme: undefined,
-                duration: 157,
-                comment: 'Lorem ipsum dolor sit amet',
-                presenceConseiller: true,
-                invitation: false,
-              },
-              'accessToken'
-            )
-          })
-
-          it('crée un rendez-vous de type AUTRE', () => {
-            // Given
-            fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-
-            const inputTypePrecision = screen.getByLabelText('* Préciser')
-            fireEvent.change(inputTypePrecision, {
-              target: { value: 'un texte de précision' },
-            })
-
-            // When
-            buttonValider.click()
-
-            // Then
-            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
-              '1',
+            expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
+              rdv.id,
               {
                 jeuneId: jeunes[0].id,
                 type: 'AUTRE',
-                precision: 'un texte de précision',
                 modality: modalites[0],
+                precision: 'Prise de nouvelles',
                 date: '2022-03-03T09:30:00.000Z',
-                adresse: undefined,
-                organisme: undefined,
+                adresse: '36 rue de marseille, 93200 Saint-Denis',
+                organisme: 'S.A.R.L',
                 duration: 157,
                 comment: 'Lorem ipsum dolor sit amet',
-                presenceConseiller: true,
-                invitation: false,
+                presenceConseiller: false,
+                invitation: true,
               },
               'accessToken'
             )
@@ -971,14 +945,12 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            buttonValider.click()
+            await act(async () => buttonValider.click())
 
-            await waitFor(() => {
-              // Then
-              expect(push).toHaveBeenCalledWith(
-                '/mes-rendezvous?creationRdv=succes'
-              )
-            })
+            // Then
+            expect(push).toHaveBeenCalledWith(
+              '/mes-rendezvous?modificationRdv=succes'
+            )
           })
         })
       })

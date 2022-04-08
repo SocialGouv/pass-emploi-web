@@ -6,6 +6,7 @@ import ButtonLink from 'components/ui/ButtonLink'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
 import { Jeune } from 'interfaces/jeune'
+import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
@@ -18,6 +19,7 @@ import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import BackIcon from '../../assets/icons/arrow_back.svg'
@@ -25,7 +27,6 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 
 interface EditionRdvProps {
   jeunes: Jeune[]
@@ -220,35 +221,44 @@ function EditionRdv({
   async function creerRendezVous(e: FormEvent): Promise<void> {
     e.preventDefault()
 
+    if (!formHasChanges()) return Promise.resolve()
     if (!formIsValid()) return Promise.resolve()
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
-    await rendezVousService.postNewRendezVous(
-      session!.user.id,
-      {
-        jeuneId,
-        type: codeTypeRendezVous,
-        precision:
-          codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre
-            ? precisionType.value
-            : undefined,
-        modality: modalite ? modalite : undefined,
-        date: new Date(`${date.value} ${horaire.value}`).toISOString(),
-        duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
-        adresse: adresse || undefined,
-        organisme: organisme || undefined,
-        presenceConseiller: isConseillerPresent,
-        invitation: sendEmailInvitation,
-        comment: commentaire,
-      },
-      session!.accessToken
-    )
-
-    if (redirectTo.includes('succes')) {
-      await router.push(`${redirectTo}`)
-    } else {
-      await router.push(`${redirectTo}?creationRdv=succes`)
+    const payload: RdvFormData = {
+      jeuneId,
+      type: codeTypeRendezVous,
+      date: new Date(`${date.value} ${horaire.value}`).toISOString(),
+      duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
+      presenceConseiller: isConseillerPresent,
+      invitation: sendEmailInvitation,
+      precision:
+        codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre
+          ? precisionType.value
+          : undefined,
+      modality: modalite || undefined,
+      adresse: adresse || undefined,
+      organisme: organisme || undefined,
+      comment: commentaire || undefined,
     }
+
+    if (!rdv) {
+      await rendezVousService.postNewRendezVous(
+        session!.user.id,
+        payload,
+        session!.accessToken
+      )
+    } else {
+      await rendezVousService.updateRendezVous(
+        rdv.id,
+        payload,
+        session!.accessToken
+      )
+    }
+
+    const [redirectPath] = redirectTo.split('?')
+    const queryParam = rdv ? 'modificationRdv' : 'creationRdv'
+    await router.push(`${redirectPath}?${queryParam}=succes`)
   }
 
   useMatomo(`Création RDV${idJeune ? ' jeune' : ''}`)
@@ -256,7 +266,7 @@ function EditionRdv({
 
   return (
     <>
-      <AppHead titre='Nouveau rendez-vous' />
+      <AppHead titre={`${rdv ? 'Modification' : 'Nouveau'} rendez-vous`} />
       <div className={`flex items-center ${styles.header}`}>
         {!formHasChanges() && (
           <Link href={redirectTo}>
@@ -275,7 +285,9 @@ function EditionRdv({
           </button>
         )}
 
-        <h1 className='text-l-medium text-bleu_nuit'>Nouveau rendez-vous</h1>
+        <h1 className='text-l-medium text-bleu_nuit'>{`${
+          rdv ? 'Modification' : 'Nouveau'
+        } rendez-vous`}</h1>
       </div>
       <div className={`${styles.content} max-w-[500px] m-auto`}>
         <form onSubmit={creerRendezVous}>
@@ -621,7 +633,10 @@ function EditionRdv({
               </Button>
             )}
 
-            <Button type='submit' disabled={!formIsValid()}>
+            <Button
+              type='submit'
+              disabled={!formHasChanges() || !formIsValid()}
+            >
               Envoyer
             </Button>
           </div>

@@ -1,4 +1,5 @@
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { RdvJson } from 'interfaces/json/rdv'
 
 export const typesDeRendezVous = (
   overrides: TypeRendezVous[] = []
@@ -85,3 +86,26 @@ export const uneListeDeRdv = (overrides: Rdv[] = []): Rdv[] => [
   },
   ...overrides,
 ]
+
+export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
+  const defaults: RdvJson = {
+    id: '1',
+    jeune: {
+      id: '1',
+      prenom: 'kenji',
+      nom: 'Jirac',
+    },
+    type: { code: 'AUTRE', label: 'Autre' },
+    precision: 'Prise de nouvelles',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    adresse: '36 rue de marseille, 93200 Saint-Denis',
+    organisme: 'S.A.R.L',
+    presenceConseiller: false,
+    invitation: true,
+    comment: 'Rendez-vous avec Kenji',
+  }
+
+  return { ...defaults, ...overrides }
+}
