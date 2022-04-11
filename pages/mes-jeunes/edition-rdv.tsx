@@ -169,7 +169,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   }
 
   if (idRdv) {
-    const rdv = await rendezVousService.getDetailRendezVous(idRdv, accessToken)
+    const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
     if (!rdv) return { notFound: true }
     props.rdv = rdv
   }

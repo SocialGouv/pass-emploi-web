@@ -48,7 +48,7 @@ describe('RendezVousApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue(unRendezVousJson())
 
       // When
-      const actual = await rendezVousService.getDetailRendezVous(
+      const actual = await rendezVousService.getDetailsRendezVous(
         'id-rdv',
         'accessToken'
       )
@@ -68,7 +68,7 @@ describe('RendezVousApiService', () => {
       )
 
       // When
-      const actual = await rendezVousService.getDetailRendezVous(
+      const actual = await rendezVousService.getDetailsRendezVous(
         'id-rdv',
         'accessToken'
       )

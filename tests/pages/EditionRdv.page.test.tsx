@@ -161,7 +161,7 @@ describe('EditionRdv', () => {
 
       it('récupère le rendez-vous concerné', async () => {
         // Given
-        ;(rendezVousService.getDetailRendezVous as jest.Mock).mockResolvedValue(
+        ;(rendezVousService.getDetailsRendezVous as jest.Mock).mockResolvedValue(
           unRendezVous()
         )
 
@@ -172,7 +172,7 @@ describe('EditionRdv', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(rendezVousService.getDetailRendezVous).toHaveBeenCalledWith(
+        expect(rendezVousService.getDetailsRendezVous).toHaveBeenCalledWith(
           'id-rdv',
           'accessToken'
         )
@@ -183,7 +183,7 @@ describe('EditionRdv', () => {
 
       it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
         // Given
-        ;(rendezVousService.getDetailRendezVous as jest.Mock).mockResolvedValue(
+        ;(rendezVousService.getDetailsRendezVous as jest.Mock).mockResolvedValue(
           undefined
         )
 

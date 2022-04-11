@@ -12,7 +12,7 @@ export interface RendezVousService {
 
   getRendezVousJeune(idJeune: string, accessToken: string): Promise<Rdv[]>
 
-  getDetailRendezVous(
+  getDetailsRendezVous(
     idRdv: string,
     accessToken: string
   ): Promise<Rdv | undefined>
@@ -63,7 +63,7 @@ export class RendezVousApiService implements RendezVousService {
     return rdvsJson.map(jsonToRdv)
   }
 
-  async getDetailRendezVous(
+  async getDetailsRendezVous(
     idRdv: string,
     accessToken: string
   ): Promise<Rdv | undefined> {
