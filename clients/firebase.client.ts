@@ -54,6 +54,7 @@ class FirebaseClient {
 
   async addMessage(
     idChat: string,
+    idConseiller: string,
     message: { encryptedText: string; iv: string },
     date: Date
   ): Promise<void> {
@@ -67,6 +68,7 @@ class FirebaseClient {
         {
           content,
           iv,
+          conseillerId: idConseiller,
           sentBy: 'conseiller',
           creationDate: Timestamp.fromDate(date),
         }
@@ -320,10 +322,11 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
 }
 
 interface FirebaseMessage {
-  content: string
   creationDate: Timestamp
   sentBy: string
+  content: string
   iv: string | undefined
+  conseillerId?: string
 }
 
 export { FirebaseClient }
