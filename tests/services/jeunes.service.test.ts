@@ -1,10 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import {
-  conseillersPrecedents,
-  desConseillersJeune,
-  desJeunes,
-  unJeune,
-} from 'fixtures/jeune'
+import { desConseillersJeune, desJeunes, unJeune } from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { unConseiller } from 'fixtures/conseiller'

@@ -1,5 +1,6 @@
 import { ConseillerHistorique } from 'interfaces/jeune'
 import React from 'react'
+import { formatDayDate } from 'utils/date'
 
 interface ListeConseillersJeuneprops {
   id: string
@@ -15,7 +16,7 @@ export function ListeConseillersJeune({
     <ol className='list-disc' id={id}>
       {conseillers.map(({ nom, prenom, date, id: idConseiller }) => (
         <li className='ml-5' key={idConseiller}>
-          Du {date} à aujourd’hui :{' '}
+          Du {formatDayDate(new Date(date))} à aujourd’hui :{' '}
           <span className='text-base-medium'>
             {nom} {prenom}
           </span>
