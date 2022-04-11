@@ -1,9 +1,9 @@
 import { HeaderCell } from 'components/rdv/HeaderCell'
 import { RdvTypeTag } from 'components/ui/RdvTypeTag'
 import { Rdv } from 'interfaces/rdv'
-import React from 'react'
+import Link from 'next/link'
+import { MouseEvent } from 'react'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
-import { useRouter } from 'next/router'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
@@ -21,8 +21,9 @@ const RdvList = ({
   withNameJeune = true,
   onDelete,
 }: RdvListProps) => {
-  const router = useRouter()
-  const handleDeleteClick = (rdv: Rdv) => {
+  const handleDeleteClick = (e: MouseEvent<HTMLElement>, rdv: Rdv) => {
+    e.preventDefault()
+    e.stopPropagation()
     onDelete(rdv)
   }
 
@@ -41,76 +42,93 @@ const RdvList = ({
       )}
 
       {rdvs.length > 0 && (
-        <table id={id} className='w-full'>
-          <caption className='sr-only'>Liste de mes rendez-vous</caption>
+        <div
+          role='table'
+          id={id}
+          className='table w-full'
+          aria-describedby='table-caption'
+        >
+          <span id='table-caption' className='sr-only'>
+            Liste de mes rendez-vous
+          </span>
 
-          <thead>
-            <tr>
-              <HeaderCell scope='col' label='Horaires' />
-              {withNameJeune && <HeaderCell scope='col' label='Prénom Nom' />}
-              <HeaderCell scope='col' label='Type' />
-              <HeaderCell scope='col' label='Modalité' />
-              <HeaderCell scope='col' label='Note' />
-              <HeaderCell scope='col' label='Supprimer le rendez-vous' srOnly />
-            </tr>
-          </thead>
+          <div role='rowgroup' className='table-row-group'>
+            <div role='row' className='table-row'>
+              <HeaderCell label='Horaires' />
+              {withNameJeune && <HeaderCell label='Prénom Nom' />}
+              <HeaderCell label='Type' />
+              <HeaderCell label='Modalité' />
+              <HeaderCell label='Note' />
+              <HeaderCell label='Supprimer le rendez-vous' srOnly />
+            </div>
+          </div>
 
-          <tbody>
+          <div role='rowgroup' className='table-row-group'>
             {rdvs.map((rdv: Rdv) => (
-              <tr
+              <Link
+                href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
                 key={rdv.id}
-                className='text-sm text-bleu_nuit'
-                // TODO a modifier , pour tester l'injection des données du rdv
-                onClick={() =>
-                  router.push('/mes-jeunes/edition-rdv?idRdv=' + rdv.id)
-                }
               >
-                <td className='p-3'>
-                  {dayHourCells(new Date(rdv.date), rdv.duration)}
-                </td>
-                {withNameJeune && (
-                  <td className='p-3'>
-                    {rdv.jeune.prenom} {rdv.jeune.nom}
-                  </td>
-                )}
+                <a
+                  role='row'
+                  key={rdv.id}
+                  aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.jeune.prenom} ${rdv.jeune.nom}`}
+                  className='table-row text-sm text-bleu_nuit hover:bg-gris_blanc'
+                >
+                  <div role='cell' className='table-cell p-3'>
+                    {dayHourCells(new Date(rdv.date), rdv.duration)}
+                  </div>
+                  {withNameJeune && (
+                    <div role='cell' className='table-cell p-3'>
+                      {rdv.jeune.prenom} {rdv.jeune.nom}
+                    </div>
+                  )}
 
-                <td className='p-3'>
-                  <RdvTypeTag type={rdv.type.label} />
-                </td>
+                  <div role='cell' className='table-cell p-3'>
+                    <RdvTypeTag type={rdv.type.label} />
+                  </div>
 
-                <td className='p-3 '>
-                  <LocationIcon
-                    focusable='false'
-                    aria-hidden='true'
-                    className='mr-2 inline'
-                  />
-                  {rdv.modality}
-                </td>
+                  <div role='cell' className='table-cell p-3 '>
+                    <LocationIcon
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-2 inline'
+                    />
+                    {rdv.modality}
+                  </div>
 
-                <td className='p-3 [overflow-wrap:anywhere]'>
-                  <NoteIcon
-                    focusable='false'
-                    aria-hidden='true'
-                    className='mr-2 inline'
-                  />
-                  {(rdv.comment && '1 note(s)') || '--'}
-                </td>
+                  <div
+                    role='cell'
+                    className='table-cell p-3 [overflow-wrap:anywhere]'
+                  >
+                    <NoteIcon
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-2 inline'
+                    />
+                    {(rdv.comment && '1 note(s)') || '--'}
+                  </div>
 
-                {onDelete && (
-                  <td className='p-3'>
-                    <button
-                      onClick={() => handleDeleteClick(rdv)}
-                      aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
-                      className='border-none'
+                  {onDelete && (
+                    <div
+                      role='cell'
+                      className='table-cell p-3'
+                      onClick={(e) => handleDeleteClick(e, rdv)}
                     >
-                      <DeleteIcon aria-hidden='true' focusable='false' />
-                    </button>
-                  </td>
-                )}
-              </tr>
+                      <button
+                        onClick={(e) => handleDeleteClick(e, rdv)}
+                        aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+                        className='border-none'
+                      >
+                        <DeleteIcon aria-hidden='true' focusable='false' />
+                      </button>
+                    </div>
+                  )}
+                </a>
+              </Link>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       )}
     </>
   )

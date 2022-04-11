@@ -1,9 +1,10 @@
-import React from 'react'
-import { render } from '@testing-library/react'
-import RdvList from '../../components/rdv/RdvList'
-import { Rdv } from '../../interfaces/rdv'
 import { screen } from '@testing-library/dom'
+import { render } from '@testing-library/react'
+import RdvList from 'components/rdv/RdvList'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
+import { Rdv } from 'interfaces/rdv'
+import React from 'react'
+import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 describe('<RdvList>', () => {
   let listeRdv: Rdv[]
@@ -17,15 +18,36 @@ describe('<RdvList>', () => {
   })
 
   it("devrait afficher les informations d'un rendez-vous", () => {
+    // Given
     listeRdv = uneListeDeRdv()
+
+    // When
     render(<RdvList rdvs={listeRdv} />)
 
-    expect(screen.getByText('21/10/2021 (12:00 - 125 min)')).toBeInTheDocument()
-    expect(
-      screen.getByText(`${listeRdv[0].jeune.prenom} ${listeRdv[0].jeune.nom}`)
-    ).toBeInTheDocument()
-    expect(screen.getByText(listeRdv[0].type.label)).toBeInTheDocument()
-    expect(screen.getByText(listeRdv[0].modality)).toBeInTheDocument()
+    // Then
+    listeRdv.forEach((rdv) => {
+      const date = new Date(rdv.date)
+      expect(
+        screen.getByText(`${rdv.jeune.prenom} ${rdv.jeune.nom}`)
+      ).toBeInTheDocument()
+      expect(screen.getByText(rdv.type.label)).toBeInTheDocument()
+      expect(screen.getByText(rdv.modality)).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          `${formatDayDate(date)} (${formatHourMinuteDate(date)} - ${
+            rdv.duration
+          } min)`
+        )
+      ).toBeInTheDocument()
+      const link = screen.getByLabelText(
+        `Modifier rendez-vous du ${rdv.date} avec ${rdv.jeune.prenom} ${rdv.jeune.nom}`
+      )
+      expect(link).toBeInTheDocument()
+      expect(link).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=' + rdv.id
+      )
+    })
   })
 
   it('ne devrait pas afficher un tableau de rdvs quand rdvs est vide', () => {
