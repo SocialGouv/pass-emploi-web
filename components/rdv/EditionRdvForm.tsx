@@ -329,7 +329,7 @@ export function EditionRdvForm({
               aria-describedby={
                 precisionType.error ? 'typeRendezVous-autre--error' : undefined
               }
-              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 disabled:bg-grey_100 ${
                 precisionType.error
                   ? 'border-warning text-warning'
                   : 'border-content_color'
