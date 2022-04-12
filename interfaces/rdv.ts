@@ -5,15 +5,19 @@ export interface TypeRendezVous {
   label: string
 }
 
-export type Rdv = {
+export interface Rdv {
   id: string
-  subtitle: string
-  comment: string
-  date: string
-  duration: string
-  modality: string
   jeune: BaseJeune
   type: TypeRendezVous
+  precisionType: string
+  modality: string
+  date: string
+  duration: number
+  adresse: string
+  organisme: string
+  presenceConseiller: boolean
+  invitation: boolean
+  comment: string
 }
 
 export const TYPE_RENDEZ_VOUS = {

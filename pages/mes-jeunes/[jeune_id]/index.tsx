@@ -1,8 +1,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { AppHead } from 'components/AppHead'
+import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
+import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
@@ -22,8 +24,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { Container } from 'utils/injectionDependances'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import { CollapseButton } from 'components/jeune/CollapseButton'
 
 interface FicheJeuneProps {
   jeune: Jeune
@@ -31,6 +31,7 @@ interface FicheJeuneProps {
   actions: ActionJeune[]
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
+  rdvModificationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
 
@@ -40,22 +41,26 @@ function FicheJeune({
   actions,
   conseillers,
   rdvCreationSuccess,
+  rdvModificationSuccess,
   messageEnvoiGroupeSuccess,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
 
   const [_, setCurrentJeune] = useCurrentJeune()
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
-  const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
-  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
-  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
-    rdvCreationSuccess ?? false
-  )
   const listeConseillersReduite = conseillers.slice(0, 5)
   const [listeConseillers, setConseillers] = useState<ConseillerHistorique[]>(
     listeConseillersReduite
   )
+  const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
+
+  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
+    rdvCreationSuccess ?? false
+  )
+  const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
+    useState<boolean>(rdvModificationSuccess ?? false)
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
@@ -65,22 +70,18 @@ function FicheJeune({
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
-  const initialTracking: string = `${pageTracking}${
-    rdvCreationSuccess ? ' - Creation rdv succès' : ''
-  }`
+  let initialTracking = pageTracking
+  if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
+  if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  function closeRdvCreationMessage(): void {
+  function closeRdvEditionMessage(): void {
     setShowRdvCreationSuccess(false)
-    router.replace(
-      {
-        pathname: `/mes-jeunes/${jeune.id}`,
-      },
-      undefined,
-      { shallow: true }
-    )
+    setShowRdvModificationSuccess(false)
+    router.replace('', undefined, { shallow: true })
   }
 
   function deleteRdv() {
@@ -97,7 +98,7 @@ function FicheJeune({
   function openDeleteRdvModal(rdv: Rdv) {
     setSelectedRdv(rdv)
     setShowDeleteModal(true)
-    setTrackingLabel('Détail jeune - Modale suppression rdv')
+    setTrackingLabel(pageTracking + ' - Modale suppression rdv')
   }
 
   function closeDeleteRdvModal() {
@@ -107,13 +108,7 @@ function FicheJeune({
 
   function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace(
-      {
-        pathname: `/mes-jeunes/${jeune.id}`,
-      },
-      undefined,
-      { shallow: true }
-    )
+    router.replace('', undefined, { shallow: true })
   }
 
   function toggleListeConseillers(): void {
@@ -126,11 +121,6 @@ function FicheJeune({
   }
 
   useMatomo(trackingLabel)
-  useMatomo(
-    showMessageGroupeEnvoiSuccess
-      ? `${pageTracking} - Succès envoi message`
-      : undefined
-  )
 
   useEffect(() => {
     setCurrentJeune(jeune)
@@ -160,7 +150,14 @@ function FicheJeune({
         {showRdvCreationSuccess && (
           <SuccessMessage
             label={'Le rendez-vous a bien été créé'}
-            onAcknowledge={closeRdvCreationMessage}
+            onAcknowledge={closeRdvEditionMessage}
+          />
+        )}
+
+        {showRdvModificationSuccess && (
+          <SuccessMessage
+            label={'Le rendez-vous a bien été modifié'}
+            onAcknowledge={closeRdvEditionMessage}
           />
         )}
         {showMessageGroupeEnvoiSuccess && (
@@ -309,6 +306,9 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'
+
+  if (context.query.modificationRdv)
+    props.rdvModificationSuccess = context.query.modificationRdv === 'succes'
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query?.envoiMessage === 'succes'

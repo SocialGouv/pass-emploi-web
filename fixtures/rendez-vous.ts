@@ -1,11 +1,12 @@
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { RdvJson } from 'interfaces/json/rdv'
 
 export const typesDeRendezVous = (
   overrides: TypeRendezVous[] = []
 ): TypeRendezVous[] => {
   return [
     {
-      code: 'ACTIVITE_EXTERIEURES',
+      code: 'ACTIVITES_EXTERIEURES',
       label: 'Activités extérieures',
     },
     {
@@ -40,33 +41,71 @@ export const typesDeRendezVous = (
   ]
 }
 
-export const uneListeDeRdv = (overrides: Partial<Rdv[]> = []): Rdv[] =>
-  [
-    {
+export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
+  const defaults: Rdv = {
+    id: '1',
+    jeune: {
       id: '1',
-      comment: 'Rendez-vous avec Kenji',
-      date: 'Thu, 21 Oct 2021 10:00:00 GMT',
-      duration: '30 min',
-      type: { code: 'ACTIVITES_EXTERIEURES', label: 'Activités extérieures' },
-      modality: 'Par téléphone',
-      jeune: {
-        id: '1',
-        prenom: 'kenji',
-        nom: 'Jirac',
-      },
+      prenom: 'kenji',
+      nom: 'Jirac',
     },
-    {
+    type: { code: 'AUTRE', label: 'Autre' },
+    precisionType: 'Prise de nouvelles',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    adresse: '36 rue de marseille, 93200 Saint-Denis',
+    organisme: 'S.A.R.L',
+    presenceConseiller: false,
+    invitation: true,
+    comment: 'Rendez-vous avec Kenji',
+  }
+
+  return { ...defaults, ...overrides }
+}
+
+export const uneListeDeRdv = (overrides: Rdv[] = []): Rdv[] => [
+  unRendezVous(),
+  {
+    id: '2',
+    jeune: {
       id: '2',
-      comment: 'Mon premier rendez-vous',
-      date: 'Mon, 25 Oct 2021 12:00:00 GMT',
-      duration: '25 min',
-      type: { code: 'ATELIER', label: 'Atelier' },
-      modality: 'En agence',
-      jeune: {
-        id: '2',
-        prenom: 'Raja',
-        nom: 'Jirac',
-      },
+      prenom: 'Raja',
+      nom: 'Jirac',
     },
-    ...overrides,
-  ] as Rdv[]
+    type: { code: 'ATELIER', label: 'Atelier' },
+    precisionType: '',
+    modality: 'En agence',
+    date: '2021-10-25T12:00:00.000Z',
+    duration: 25,
+    adresse: '',
+    organisme: '',
+    presenceConseiller: true,
+    invitation: true,
+    comment: 'Mon premier rendez-vous',
+  },
+  ...overrides,
+]
+
+export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
+  const defaults: RdvJson = {
+    id: '1',
+    jeune: {
+      id: '1',
+      prenom: 'kenji',
+      nom: 'Jirac',
+    },
+    type: { code: 'AUTRE', label: 'Autre' },
+    precision: 'Prise de nouvelles',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    adresse: '36 rue de marseille, 93200 Saint-Denis',
+    organisme: 'S.A.R.L',
+    presenceConseiller: false,
+    invitation: true,
+    comment: 'Rendez-vous avec Kenji',
+  }
+
+  return { ...defaults, ...overrides }
+}

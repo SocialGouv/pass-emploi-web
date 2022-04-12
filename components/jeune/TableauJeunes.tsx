@@ -275,10 +275,9 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
             {sortedJeunes?.map((jeune: JeuneAvecInfosComplementaires) => (
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
-                  key={jeune.id}
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className={`table-row grid ${gridColsStyle} text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc`}
+                  className={`table-row grid ${gridColsStyle} text-sm text-bleu_nuit items-center hover:bg-gris_blanc`}
                 >
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}
