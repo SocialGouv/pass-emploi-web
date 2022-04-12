@@ -146,7 +146,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage)
     await Promise.all([
-      this.firebaseClient.addMessage(jeuneChat.chatId, encryptedMessage, now),
+      this.firebaseClient.addMessage(
+        jeuneChat.chatId,
+        conseiller.id,
+        encryptedMessage,
+        now
+      ),
       this.firebaseClient.updateChat(jeuneChat.chatId, {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,
@@ -186,7 +191,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await Promise.all([
       Object.values(mappedChats).map((chat) => {
         return Promise.all([
-          this.firebaseClient.addMessage(chat.chatId, encryptedMessage, now),
+          this.firebaseClient.addMessage(
+            chat.chatId,
+            conseiller.id,
+            encryptedMessage,
+            now
+          ),
           this.firebaseClient.updateChat(chat.chatId, {
             lastMessageContent: encryptedMessage.encryptedText,
             lastMessageIv: encryptedMessage.iv,
