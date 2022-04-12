@@ -14,7 +14,6 @@ export function ListeConseillersJeune({
   return (
     <ol className='list-disc' id={id}>
       {conseillers.map((conseiller, index, arr) => {
-        const conseillerSuivant = arr[index - 1]
         const depuis = new Date(conseiller.depuis)
 
         if (index === 0) {
@@ -27,6 +26,8 @@ export function ListeConseillersJeune({
             </li>
           )
         }
+
+        const conseillerSuivant = arr[index - 1]
         return (
           <li className='ml-5' key={depuis.getTime()}>
             {formatDayDate(depuis) +

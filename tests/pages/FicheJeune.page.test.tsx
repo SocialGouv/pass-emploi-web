@@ -97,11 +97,14 @@ describe('Fiche Jeune', () => {
       expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()
     })
 
-    it("affiche la liste de l'historique des conseillers du jeune", () => {
+    it('affiche la liste des 5 premiers conseillers du jeune', () => {
       // Then
-      listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-        expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-      })
+      listeConseillers
+        .slice(0, 5)
+        .forEach(({ nom, prenom }: ConseillerHistorique) => {
+          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+        })
+      expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
     })
 
     it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
@@ -124,7 +127,9 @@ describe('Fiche Jeune', () => {
       })
 
       //Then
-      expect(listeConseillers.length).toEqual(6)
+      listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
+        expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+      })
     })
 
     it('modifie le currentJeune', () => {

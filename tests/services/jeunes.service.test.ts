@@ -1,5 +1,10 @@
 import { ApiClient } from 'clients/api.client'
-import { desConseillersJeune, desJeunes, unJeune } from 'fixtures/jeune'
+import {
+  desConseillersJeune,
+  desConseillersJeuneJson,
+  desJeunes,
+  unJeune,
+} from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { unConseiller } from 'fixtures/conseiller'
@@ -201,7 +206,7 @@ describe('JeunesApiService', () => {
   describe('.getConseillersDuJeune', () => {
     it('renvoie les conseillers du jeune', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue(desConseillersJeune())
+      ;(apiClient.get as jest.Mock).mockResolvedValue(desConseillersJeuneJson())
 
       // When
       const actual = await jeunesService.getConseillersDuJeune(

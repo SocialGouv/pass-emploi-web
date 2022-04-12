@@ -52,7 +52,7 @@ function FicheJeune({
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
-  const listeConseillersReduite = [...conseillers].slice(0, 5)
+  const listeConseillersReduite = conseillers.slice(0, 5)
   const [listeConseillers, setConseillers] = useState<ConseillerHistorique[]>(
     listeConseillersReduite
   )
