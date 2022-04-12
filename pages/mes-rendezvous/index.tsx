@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
@@ -22,6 +21,7 @@ type MesRendezvousProps = {
   creationSuccess?: boolean
   modificationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
+  pageTitle: string
 }
 
 function MesRendezvous({
@@ -96,7 +96,6 @@ function MesRendezvous({
 
   return (
     <>
-      <AppHead titre='Tableau de bord - Mes rendez-vous' />
       <span
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
@@ -206,6 +205,7 @@ export const getServerSideProps: GetServerSideProps<
     rendezVousFuturs: futurs,
     rendezVousPasses: passes,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: 'Tableau de bord - Mes rendez-vous',
   }
 
   if (context.query.creationRdv)

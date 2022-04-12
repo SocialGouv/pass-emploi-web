@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import ResettableTextInput from 'components/ResettableTextInput'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
@@ -23,6 +22,7 @@ import SearchIcon from '../../assets/icons/search.svg'
 
 type SupervisionProps = {
   withoutChat: true
+  pageTitle: string
 }
 
 function Supervision(_: SupervisionProps) {
@@ -164,8 +164,6 @@ function Supervision(_: SupervisionProps) {
 
   return (
     <>
-      <AppHead titre='Supervision' />
-
       <h1 className={`${styles.header} h2-semi text-bleu_nuit`}>
         R&eacute;affectation des jeunes
       </h1>
@@ -406,7 +404,7 @@ export const getServerSideProps: GetServerSideProps<SupervisionProps> = async (
   }
 
   return {
-    props: { withoutChat: true },
+    props: { withoutChat: true, pageTitle: 'Supervision' },
   }
 }
 

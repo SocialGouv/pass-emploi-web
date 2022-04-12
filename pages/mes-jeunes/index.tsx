@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
@@ -24,14 +23,14 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
-import Head from 'next/head'
 
-type MesJeunesProps = {
+interface MesJeunesProps {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
   messageEnvoiGroupeSuccess?: boolean
   deletionSuccess?: boolean
+  pageTitle: string
 }
 
 function MesJeunes({
@@ -151,8 +150,6 @@ function MesJeunes({
     }
   }, [conseillerJeunes, messagesService, session])
 
-  //TODO: useEffect avec countMessagesNotReadConseiller
-
   useMatomo(trackingTitle)
   useMatomo(
     showMessageGroupeEnvoiSuccess
@@ -162,24 +159,6 @@ function MesJeunes({
 
   return (
     <>
-      {/*<AppHead titre='Mes jeunes' />*/}
-      <Head>
-        <title>Espace conseiller CEJ</title>
-        <meta
-          name='description'
-          content="Espace conseiller de l'outil du Contrat d'Engagement Jeune"
-        />
-        <link
-          rel='icon'
-          href={favicon ? `/favicon-${favicon}.png` : `/favicon.png`}
-        />
-        <link
-          rel='preload'
-          href='/fonts/Marianne/static/Marianne-Regular.otf'
-          as='font'
-          crossOrigin=''
-        />
-      </Head>
       <div className={styles.header}>
         <p>
           <button onClick={handleOnClick}>❤️ Smash that Like button!</button>
@@ -291,6 +270,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     ),
     isFromEmail: Boolean(context.query?.source),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: 'Mes jeunes',
   }
 
   if (context.query.suppression)

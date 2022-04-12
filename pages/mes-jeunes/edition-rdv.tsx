@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import { Jeune } from 'interfaces/jeune'
@@ -26,6 +25,7 @@ interface EditionRdvProps {
   withoutChat: true
   idJeune?: string
   rdv?: Rdv
+  pageTitle: string
 }
 
 function EditionRdv({
@@ -84,7 +84,6 @@ function EditionRdv({
 
   return (
     <>
-      <AppHead titre={`${rdv ? 'Modification' : 'Nouveau'} rendez-vous`} />
       <div className={`flex items-center ${styles.header}`}>
         {!hasChanges && (
           <Link href={redirectTo}>
@@ -163,6 +162,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     typesRendezVous: typesRendezVous,
     withoutChat: true,
     redirectTo: referer ?? '/mes-jeunes',
+    pageTitle: 'Nouveau rendez-vous',
   }
 
   if (idRdv) {
@@ -170,6 +170,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     if (!rdv) return { notFound: true }
     props.rdv = rdv
     props.idJeune = rdv.jeune.id
+    props.pageTitle = 'Modification rendez-vous'
   } else if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
     const match = regex.exec(referer)

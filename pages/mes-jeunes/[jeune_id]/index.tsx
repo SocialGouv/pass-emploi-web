@@ -1,6 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
-import { AppHead } from 'components/AppHead'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
@@ -37,6 +36,7 @@ interface FicheJeuneProps {
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
+  pageTitle: string
 }
 
 function FicheJeune({
@@ -132,7 +132,6 @@ function FicheJeune({
 
   return (
     <>
-      <AppHead titre={`Mes jeunes - ${jeune.firstName} ${jeune.lastName}`} />
       <div className={`flex items-center justify-between ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
@@ -310,6 +309,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now),
     actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
     conseillers,
+    pageTitle: `Mes jeunes - ${resInfoJeune.firstName} ${resInfoJeune.lastName}`,
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'
