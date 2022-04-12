@@ -183,7 +183,7 @@ function FicheJeune({
 
         <div className='flex justify-center mt-8'>
           <CollapseButton
-            id='liste-conseillers'
+            controlledId='liste-conseillers'
             isOpen={isExpanded}
             onClick={toggleListeConseillers}
           />
@@ -293,7 +293,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     .sort(compareActionsDatesDesc)
     .slice(0, 3)
 
-  if (!resInfoJeune || !resRdvJeune || !resConseillers) {
+  if (!resInfoJeune || !resRdvJeune) {
     return {
       notFound: true,
     }

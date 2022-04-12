@@ -3,17 +3,21 @@ import ChevronUpIcon from '../../assets/icons/chevron_up.svg'
 import ChevronDownIcon from '../../assets/icons/chevron_down.svg'
 
 interface CollapseButtonProps {
-  id: string
+  controlledId: string
   isOpen: boolean
   onClick: () => void
 }
 
-export function CollapseButton({ id, isOpen, onClick }: CollapseButtonProps) {
+export function CollapseButton({
+  controlledId,
+  isOpen,
+  onClick,
+}: CollapseButtonProps) {
   return (
     <button
       type='button'
       aria-expanded={isOpen}
-      aria-controls={id}
+      aria-controls={controlledId}
       onClick={onClick}
     >
       {isOpen && (

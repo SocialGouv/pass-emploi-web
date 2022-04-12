@@ -66,7 +66,7 @@ export interface ConseillerHistorique {
   email: string
   nom: string
   prenom: string
-  date: string
+  depuis: string
 }
 
 export function compareJeunesByLastName(jeune1: Jeune, jeune2: Jeune): number {
