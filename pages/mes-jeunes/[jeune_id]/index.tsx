@@ -27,6 +27,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
+import Head from 'next/head'
 
 interface FicheJeuneProps {
   jeune: Jeune

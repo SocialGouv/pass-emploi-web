@@ -47,6 +47,8 @@ export interface MessagesService {
     idConseiller: string,
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }>
+
+  countMessagesNotReadConseiller()
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
@@ -135,6 +137,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
       return mappedCounts
     }, {} as { [idJeune: string]: number })
+  }
+
+  async countMessagesNotReadConseiller(
+    idConseiller: string,
+    idsJeunes: string[]
+  ) {
+    return null
   }
 
   async sendNouveauMessage(

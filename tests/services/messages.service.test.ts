@@ -384,4 +384,5 @@ describe('MessagesFirebaseAndApiService', () => {
       )
     })
   })
+  describe('.countMessagesNotReadConseiller', () => {})
 })

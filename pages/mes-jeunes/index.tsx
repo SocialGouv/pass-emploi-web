@@ -24,6 +24,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
+import Head from 'next/head'
 
 type MesJeunesProps = {
   structureConseiller: string
@@ -60,6 +61,11 @@ function MesJeunes({
   if (isFromEmail) initialTracking += ' - Origine email'
   if (showDeletionSuccess) initialTracking += ' - Succès suppr. compte'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+  const [favicon, setFavicon] = useState(false)
+
+  function handleOnClick() {
+    setFavicon(!favicon)
+  }
 
   const handleAddJeune = async () => {
     switch (structureConseiller) {
@@ -140,9 +146,12 @@ function MesJeunes({
         .then((jeunesAvecMessagesNonLus) => {
           setJeunes(jeunesAvecMessagesNonLus)
           setListJeunesFiltres(jeunesAvecMessagesNonLus)
+          // setFavicon(true)
         })
     }
   }, [conseillerJeunes, messagesService, session])
+
+  //TODO: useEffect avec countMessagesNotReadConseiller
 
   useMatomo(trackingTitle)
   useMatomo(
@@ -153,8 +162,28 @@ function MesJeunes({
 
   return (
     <>
-      <AppHead titre='Mes jeunes' />
+      {/*<AppHead titre='Mes jeunes' />*/}
+      <Head>
+        <title>Espace conseiller CEJ</title>
+        <meta
+          name='description'
+          content="Espace conseiller de l'outil du Contrat d'Engagement Jeune"
+        />
+        <link
+          rel='icon'
+          href={favicon ? `/favicon-${favicon}.png` : `/favicon.png`}
+        />
+        <link
+          rel='preload'
+          href='/fonts/Marianne/static/Marianne-Regular.otf'
+          as='font'
+          crossOrigin=''
+        />
+      </Head>
       <div className={styles.header}>
+        <p>
+          <button onClick={handleOnClick}>❤️ Smash that Like button!</button>
+        </p>
         <div className={`flex flex-wrap justify-between mb-6`}>
           <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
           {(structureConseiller === UserStructure.MILO ||
