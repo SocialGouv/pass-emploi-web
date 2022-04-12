@@ -94,7 +94,8 @@ export function EditionRdvForm({
       duree.value !== dureeRdv ||
       adresse !== rdv.adresse ||
       organisme !== rdv.organisme ||
-      commentaire !== rdv.comment
+      commentaire !== rdv.comment ||
+      isConseillerPresent !== rdv.presenceConseiller
     )
   }
 
