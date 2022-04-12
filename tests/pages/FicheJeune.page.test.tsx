@@ -1,6 +1,6 @@
 import { act, screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
-import { unJeune } from 'fixtures/jeune'
+import { desConseillersJeune, unJeune } from 'fixtures/jeune'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
@@ -12,6 +12,7 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
+import { ConseillerHistorique } from 'interfaces/jeune'
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(() => ({
@@ -27,6 +28,8 @@ describe('Fiche Jeune', () => {
   const jeune = unJeune()
   const rdvs = uneListeDeRdv()
   const actions = uneListeDActions()
+  const listeConseillers = desConseillersJeune()
+
   let jeunesService: JeunesService
   let rendezVousService: RendezVousService
   beforeEach(async () => {
@@ -44,7 +47,12 @@ describe('Fiche Jeune', () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
           <CurrentJeuneProvider setJeune={setJeune}>
-            <FicheJeune jeune={jeune} rdvs={rdvs} actions={actions} />
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actions={actions}
+              conseillers={listeConseillers}
+            />
           </CurrentJeuneProvider>
         </DIProvider>
       )
@@ -68,16 +76,14 @@ describe('Fiche Jeune', () => {
 
     it('affiche un lien vers les actions du jeune', async () => {
       // Then
-      expect(
-        screen.getByRole('link', {
-          name: 'Voir la liste des actions du jeune',
-        })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('link', {
-          name: 'Voir la liste des actions du jeune',
-        })
-      ).toHaveAttribute('href', `/mes-jeunes/${jeune.id}/actions`)
+      const lienActions = screen.getByRole('link', {
+        name: 'Voir la liste des actions du jeune',
+      })
+      expect(lienActions).toBeInTheDocument()
+      expect(lienActions).toHaveAttribute(
+        'href',
+        `/mes-jeunes/${jeune.id}/actions`
+      )
     })
 
     it('affiche les actions du jeune', async () => {
@@ -89,6 +95,41 @@ describe('Fiche Jeune', () => {
     it('permet la prise de rendez-vous', async () => {
       // Then
       expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()
+    })
+
+    it('affiche la liste des 5 premiers conseillers du jeune', () => {
+      // Then
+      listeConseillers
+        .slice(0, 5)
+        .forEach(({ nom, prenom }: ConseillerHistorique) => {
+          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+        })
+      expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
+    })
+
+    it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
+      // Then
+      const button = screen.getByRole('button', {
+        name: 'Voir l’historique complet',
+      })
+      expect(button).toBeInTheDocument()
+    })
+
+    it('permet d’afficher la liste complète des conseillers du jeune', async () => {
+      // Given
+      const button = screen.getByRole('button', {
+        name: 'Voir l’historique complet',
+      })
+
+      // When
+      act(() => {
+        button.click()
+      })
+
+      //Then
+      listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
+        expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+      })
     })
 
     it('modifie le currentJeune', () => {
@@ -103,7 +144,12 @@ describe('Fiche Jeune', () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService, rendezVousService }}>
           <CurrentJeuneProvider>
-            <FicheJeune jeune={jeune} rdvs={[]} actions={actions} />
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actions={actions}
+              conseillers={[]}
+            />
           </CurrentJeuneProvider>
         </DIProvider>,
         {
@@ -112,6 +158,7 @@ describe('Fiche Jeune', () => {
             name: 'Tavernier',
             structure: UserStructure.POLE_EMPLOI,
             estSuperviseur: false,
+            email: '',
           },
         }
       )
@@ -141,7 +188,7 @@ describe('Fiche Jeune', () => {
     renderWithSession(
       <DIProvider dependances={{ jeunesService, rendezVousService }}>
         <CurrentJeuneProvider>
-          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} />
+          <FicheJeune jeune={jeune} rdvs={rdvs} actions={[]} conseillers={[]} />
         </CurrentJeuneProvider>
       </DIProvider>
     )
@@ -168,6 +215,7 @@ describe('Fiche Jeune', () => {
               rdvs={rdvs}
               actions={actions}
               rdvCreationSuccess={true}
+              conseillers={[]}
             />
           </CurrentJeuneProvider>
         </DIProvider>

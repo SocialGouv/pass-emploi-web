@@ -1,13 +1,14 @@
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import { MessagesService } from '../services/messages.service'
+import { MessagesService } from 'services/messages.service'
 
 export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
 ): JeunesService {
   const defaults: JeunesService = {
     getJeunesDuConseiller: jest.fn(),
+    getConseillersDuJeune: jest.fn(),
     getJeunesDuConseillerParEmail: jest.fn(),
     getJeuneDetails: jest.fn(),
     getIdJeuneMilo: jest.fn(),

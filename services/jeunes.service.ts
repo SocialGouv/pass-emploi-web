@@ -1,14 +1,23 @@
 import { ApiClient } from 'clients/api.client'
-import { Jeune } from 'interfaces/jeune'
-import { Conseiller } from '../interfaces/conseiller'
-import { RequestError } from '../utils/fetchJson'
+import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
+import { Conseiller } from 'interfaces/conseiller'
+import { RequestError } from 'utils/fetchJson'
 import ErrorCodes from './error-codes'
+import {
+  ConseillerHistoriqueJson,
+  toConseillerHistorique,
+} from 'interfaces/json/conseiller'
 
 export interface JeunesService {
   getJeunesDuConseiller(
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune[]>
+
+  getConseillersDuJeune(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<ConseillerHistorique[]>
 
   getJeunesDuConseillerParEmail(
     emailConseiller: string,
@@ -65,6 +74,26 @@ export class JeunesApiService implements JeunesService {
         return undefined
       }
       throw e
+    }
+  }
+
+  async getConseillersDuJeune(
+    idJeune: string,
+    accessToken: string
+  ): Promise<ConseillerHistorique[]> {
+    {
+      try {
+        const historique = await this.apiClient.get<ConseillerHistoriqueJson[]>(
+          `/jeunes/${idJeune}/conseillers`,
+          accessToken
+        )
+        return historique.map(toConseillerHistorique)
+      } catch (e) {
+        if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+          return []
+        }
+        throw e
+      }
     }
   }
 

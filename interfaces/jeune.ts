@@ -61,6 +61,14 @@ export interface JeunePoleEmploiFormData {
   email: string
 }
 
+export interface ConseillerHistorique {
+  id: string
+  email: string
+  nom: string
+  prenom: string
+  depuis: string
+}
+
 export function compareJeunesByLastName(jeune1: Jeune, jeune2: Jeune): number {
   return `${jeune1.lastName}${jeune1.firstName}`.localeCompare(
     `${jeune2.lastName}${jeune2.firstName}`
