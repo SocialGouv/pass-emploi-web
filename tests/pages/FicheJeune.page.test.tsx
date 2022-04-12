@@ -1,6 +1,10 @@
 import { act, screen } from '@testing-library/react'
 import { uneListeDActions } from 'fixtures/action'
-import { desConseillersJeune, unJeune } from 'fixtures/jeune'
+import {
+  desConseillersJeune,
+  unConseillerHistorique,
+  unJeune,
+} from 'fixtures/jeune'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
@@ -112,6 +116,7 @@ describe('Fiche Jeune', () => {
       const button = screen.getByRole('button', {
         name: 'Voir l’historique complet',
       })
+      expect(listeConseillers.length).toEqual(6)
       expect(button).toBeInTheDocument()
     })
 
@@ -135,6 +140,35 @@ describe('Fiche Jeune', () => {
     it('modifie le currentJeune', () => {
       // Then
       expect(setJeune).toHaveBeenCalledWith(jeune)
+    })
+  })
+
+  describe('quand il y a moins de 5 conseillers dans l’historique', () => {
+    const conseillers = [unConseillerHistorique()]
+    let setJeune: () => void
+
+    beforeEach(() => {
+      setJeune = jest.fn()
+
+      // Given
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <CurrentJeuneProvider setJeune={setJeune}>
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actions={actions}
+              conseillers={conseillers}
+            />
+          </CurrentJeuneProvider>
+        </DIProvider>
+      )
+    })
+
+    it('n’affiche pas de bouton pour dérouler', async () => {
+      // Then
+      expect(conseillers.length).toEqual(1)
+      expect(() => screen.getByText('Voir l’historique complet')).toThrow()
     })
   })
 

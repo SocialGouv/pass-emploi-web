@@ -49,9 +49,9 @@ function FicheJeune({
 
   const [_, setCurrentJeune] = useCurrentJeune()
   const listeConseillersReduite = conseillers.slice(0, 5)
-  const [listeConseillers, setConseillers] = useState<ConseillerHistorique[]>(
-    listeConseillersReduite
-  )
+  const [conseillersAffiches, setConseillersAffiches] = useState<
+    ConseillerHistorique[]
+  >(listeConseillersReduite)
   const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
 
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
@@ -114,9 +114,9 @@ function FicheJeune({
   function toggleListeConseillers(): void {
     setIsExpanded(!isExpanded)
     if (!isExpanded) {
-      setConseillers(conseillers)
+      setConseillersAffiches(conseillers)
     } else {
-      setConseillers(listeConseillersReduite)
+      setConseillersAffiches(listeConseillersReduite)
     }
   }
 
@@ -174,17 +174,19 @@ function FicheJeune({
           <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
           <ListeConseillersJeune
             id='liste-conseillers'
-            conseillers={listeConseillers}
+            conseillers={conseillersAffiches}
           />
         </div>
 
-        <div className='flex justify-center mt-8'>
-          <CollapseButton
-            controlledId='liste-conseillers'
-            isOpen={isExpanded}
-            onClick={toggleListeConseillers}
-          />
-        </div>
+        {conseillers.length > 5 && (
+          <div className='flex justify-center mt-8'>
+            <CollapseButton
+              controlledId='liste-conseillers'
+              isOpen={isExpanded}
+              onClick={toggleListeConseillers}
+            />
+          </div>
+        )}
 
         <div className='mt-10 border-b border-bleu_blanc'>
           <h2 className='h4-semi text-bleu_nuit mb-4'>
