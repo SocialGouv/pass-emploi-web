@@ -48,7 +48,11 @@ export interface MessagesService {
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }>
 
-  countMessagesNotReadConseiller()
+  countMessagesNotReadConseiller(
+    idConseiller: string,
+    idsJeunes: string[],
+    onNouveauMessage: (bool: boolean) => void
+  ): () => void
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
