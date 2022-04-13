@@ -7,8 +7,8 @@ import { GetServerSidePropsContext } from 'next/types'
 export async function withMandatorySessionOrRedirect(
   context: GetServerSidePropsContext
 ): Promise<
-  | { hasSession: false; redirect: Redirect }
-  | { hasSession: true; session: Session }
+  | { validSession: false; redirect: Redirect }
+  | { validSession: true; session: Session }
 > {
   const session = await getSession({ req: context.req })
   if (!session) {
@@ -22,16 +22,27 @@ export async function withMandatorySessionOrRedirect(
         destination: `/login${redirectQueryParam}`,
         permanent: false,
       },
-      hasSession: false,
+      validSession: false,
     }
   }
+
+  if (!session.user.estConseiller) {
+    return {
+      redirect: {
+        destination: '/api/auth/federated-logout',
+        permanent: true,
+      },
+      validSession: false,
+    }
+  }
+
   if (session.error === 'RefreshAccessTokenError') {
     return {
       redirect: {
         destination: `/api/auth/federated-logout`,
         permanent: false,
       },
-      hasSession: false,
+      validSession: false,
     }
   }
 
@@ -42,5 +53,5 @@ export async function withMandatorySessionOrRedirect(
     email: user.email ?? '',
   }
   apm.setUserContext(userAPM)
-  return { session, hasSession: true }
+  return { session, validSession: true }
 }

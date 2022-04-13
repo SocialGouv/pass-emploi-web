@@ -26,6 +26,7 @@ export class Authenticator {
       jwt.refreshToken = account!.refresh_token
       jwt.idConseiller = userId
       jwt.structureConseiller = userStructure
+      jwt.estConseiller = Boolean(userRoles?.includes('CONSEILLER'))
       jwt.estSuperviseur = Boolean(userRoles?.includes('SUPERVISEUR'))
       jwt.expiresAtTimestamp = account!.expires_at
         ? secondsToTimestamp(account!.expires_at)

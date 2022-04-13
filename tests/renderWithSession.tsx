@@ -14,6 +14,7 @@ export default function renderWithSession(
       name: 'Nils Tavernier',
       email: 'fake@email.com',
       structure: UserStructure.MILO,
+      estConseiller: true,
       estSuperviseur: false,
     },
     accessToken: 'accessToken',

@@ -11,7 +11,7 @@ function MiloFicheJeune() {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 

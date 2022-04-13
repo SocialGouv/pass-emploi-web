@@ -164,7 +164,7 @@ describe('MesRendezvous', () => {
           session: {
             user: { structure: 'POLE_EMPLOI' },
           },
-          hasSession: true,
+          validSession: true,
         })
 
         // When

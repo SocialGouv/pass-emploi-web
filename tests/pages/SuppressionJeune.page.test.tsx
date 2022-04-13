@@ -26,7 +26,7 @@ describe('Suppression Jeune', () => {
     it("vérifie que l'utilisateur est connecté", async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: false,
+        validSession: false,
         redirect: { destination: 'whatever' },
       })
 
@@ -42,7 +42,7 @@ describe('Suppression Jeune', () => {
       let jeunesService: JeunesService
       beforeEach(() => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: true,
+          validSession: true,
           session: { accessToken: 'accessToken' },
         })
 

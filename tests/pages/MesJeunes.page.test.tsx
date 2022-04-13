@@ -296,7 +296,7 @@ describe('Mes Jeunes', () => {
     it("vérifie qu'il y a un utilisateur connecté", async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: false,
+        validSession: false,
         redirect: { destination: 'whatever' },
       })
 
@@ -313,7 +313,7 @@ describe('Mes Jeunes', () => {
     it('récupère la liste des jeunes', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: true,
+        validSession: true,
         session: {
           user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
           accessToken: 'accessToken',
@@ -333,7 +333,7 @@ describe('Mes Jeunes', () => {
     it("traite la réussite d'une suppression de jeune", async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: true,
+        validSession: true,
         session: {
           user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
           accessToken: 'accessToken',
@@ -358,7 +358,7 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: true,
+          validSession: true,
           session: {
             user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
             accessToken: 'accessToken',
@@ -396,7 +396,7 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: true,
+          validSession: true,
           session: {
             user: { id: 'id-conseiller', structure: 'MILO' },
             accessToken: 'accessToken',

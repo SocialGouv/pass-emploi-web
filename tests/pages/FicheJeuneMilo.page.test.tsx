@@ -21,7 +21,7 @@ describe('Fiche Jeune MiLo', () => {
       it('requiert la connexion', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: false,
+          validSession: false,
           redirect: { destination: 'whatever' },
         })
 
@@ -39,7 +39,7 @@ describe('Fiche Jeune MiLo', () => {
         it('redirige vers la liste des jeunes', async () => {
           // Given
           ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-            hasSession: true,
+            validSession: true,
             session: { user: { structure: UserStructure.POLE_EMPLOI } },
           })
 
@@ -60,7 +60,7 @@ describe('Fiche Jeune MiLo', () => {
         beforeEach(() => {
           // Given
           ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-            hasSession: true,
+            validSession: true,
             session: { user: { structure: UserStructure.MILO } },
           })
           jeunesService = mockedJeunesService()

@@ -32,6 +32,7 @@ export default NextAuth({
       session.firebaseToken = token.firebaseToken ?? ''
       session.user.id = token.idConseiller ?? ''
       session.user.structure = token.structureConseiller ?? ''
+      session.user.estConseiller = token.estConseiller ?? false
       session.user.estSuperviseur = token.estSuperviseur ?? false
       session.accessToken = token.accessToken ?? ''
       session.error = (token.error as string) ?? ''
