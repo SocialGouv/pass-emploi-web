@@ -43,7 +43,9 @@ function EditionRdv({
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [hasChanges, setHasChanges] = useState<boolean>(false)
 
-  const initialTracking = `Création RDV${idJeune ? ' jeune' : ''}`
+  let initialTracking: string
+  if (rdv) initialTracking = `Modification RDV`
+  else initialTracking = `Création RDV${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function openLeavePageModal() {
@@ -163,16 +165,15 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     redirectTo: referer ?? '/mes-jeunes',
   }
 
-  if (referer) {
-    const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
-    const match = regex.exec(referer)
-    if (match?.groups?.idJeune) props.idJeune = match.groups.idJeune
-  }
-
   if (idRdv) {
     const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
     if (!rdv) return { notFound: true }
     props.rdv = rdv
+    props.idJeune = rdv.jeune.id
+  } else if (referer) {
+    const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
+    const match = regex.exec(referer)
+    if (match?.groups?.idJeune) props.idJeune = match.groups.idJeune
   }
 
   return { props }
