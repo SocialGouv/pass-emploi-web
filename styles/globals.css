@@ -36,7 +36,9 @@ select svg {
   fill: theme('colors.bleu_nuit');
 }
 
+input:disabled,
 select:disabled {
+  opacity: 0.7;
   cursor: not-allowed;
 }
 

@@ -94,7 +94,8 @@ export function EditionRdvForm({
       duree.value !== dureeRdv ||
       adresse !== rdv.adresse ||
       organisme !== rdv.organisme ||
-      commentaire !== rdv.comment
+      commentaire !== rdv.comment ||
+      isConseillerPresent !== rdv.presenceConseiller
     )
   }
 
@@ -329,7 +330,7 @@ export function EditionRdvForm({
               aria-describedby={
                 precisionType.error ? 'typeRendezVous-autre--error' : undefined
               }
-              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 disabled:bg-grey_100 ${
                 precisionType.error
                   ? 'border-warning text-warning'
                   : 'border-content_color'
