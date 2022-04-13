@@ -1,7 +1,7 @@
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import { MessagesService } from 'services/messages.service'
+import { RendezVousService } from 'services/rendez-vous.service'
 
 export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
@@ -26,7 +26,7 @@ export function mockedActionsService(
     createAction: jest.fn(),
     deleteAction: jest.fn(),
     getAction: jest.fn(),
-    getActions: jest.fn(),
+    countActionsJeunes: jest.fn(),
     getActionsJeune: jest.fn(),
     updateAction: jest.fn(),
   }

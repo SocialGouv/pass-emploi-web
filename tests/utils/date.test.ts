@@ -1,8 +1,8 @@
 import {
-  earliestDate,
-  earlyDate,
-  lateDate,
-  latestDate,
+  datePasseeLoin,
+  datePassee,
+  dateFuture,
+  dateFutureLoin,
   now,
 } from 'fixtures/date'
 import {
@@ -54,7 +54,7 @@ describe('dateUtils', () => {
   })
 
   describe('compareDates', () => {
-    const dates = [now, earlyDate, latestDate, earliestDate, now, lateDate]
+    const dates = [now, datePassee, dateFutureLoin, datePasseeLoin, now, dateFuture]
 
     describe('when comparing asc', () => {
       it('orders date by chronological order', async () => {
@@ -63,12 +63,12 @@ describe('dateUtils', () => {
 
         // THEN
         expect(actual).toStrictEqual([
-          earliestDate,
-          earlyDate,
+          datePasseeLoin,
+          datePassee,
           now,
           now,
-          lateDate,
-          latestDate,
+          dateFuture,
+          dateFutureLoin,
         ])
       })
     })
@@ -80,12 +80,12 @@ describe('dateUtils', () => {
 
         // THEN
         expect(actual).toStrictEqual([
-          latestDate,
-          lateDate,
+          dateFutureLoin,
+          dateFuture,
           now,
           now,
-          earlyDate,
-          earliestDate,
+          datePassee,
+          datePasseeLoin,
         ])
       })
     })

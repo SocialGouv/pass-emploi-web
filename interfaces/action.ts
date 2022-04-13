@@ -26,33 +26,6 @@ export enum ActionStatus {
   Done = 'Done',
 }
 
-export function jsonToActionStatus(jsonStatus: string): ActionStatus {
-  switch (jsonStatus) {
-    case 'in_progress':
-      return ActionStatus.InProgress
-    case 'done':
-      return ActionStatus.Done
-    case 'not_started':
-      return ActionStatus.NotStarted
-    default:
-      console.warn(
-        `Statut d'action ${jsonStatus} incorrect, traité comme NotStarted`
-      )
-      return ActionStatus.NotStarted
-  }
-}
-
-export function actionStatusToJson(status: ActionStatus): string {
-  switch (status) {
-    case ActionStatus.NotStarted:
-      return 'not_started'
-    case ActionStatus.InProgress:
-      return 'in_progress'
-    case ActionStatus.Done:
-      return 'done'
-  }
-}
-
 export function compareActionsDatesDesc(
   action1: ActionJeune,
   action2: ActionJeune

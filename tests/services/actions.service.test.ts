@@ -25,14 +25,17 @@ describe('ActionsApiService', () => {
       const action = uneAction({ status: ActionStatus.NotStarted })
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
-          return uneActionJson({ id: action.id, status: 'not_started' })
+          return {
+            ...uneActionJson({ id: action.id, status: 'not_started' }),
+            jeune: 'jeune',
+          }
       })
 
       // WHEN
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual(action)
+      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
     })
 
     it('renvoie une action commencée', async () => {
@@ -40,14 +43,17 @@ describe('ActionsApiService', () => {
       const action = uneAction({ status: ActionStatus.InProgress })
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
-          return uneActionJson({ id: action.id, status: 'in_progress' })
+          return {
+            ...uneActionJson({ id: action.id, status: 'in_progress' }),
+            jeune: 'jeune',
+          }
       })
 
       // WHEN
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual(action)
+      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
     })
 
     it('renvoie une action terminée', async () => {
@@ -55,14 +61,17 @@ describe('ActionsApiService', () => {
       const action = uneAction({ status: ActionStatus.Done })
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/actions/${action.id}`)
-          return uneActionJson({ id: action.id, status: 'done' })
+          return {
+            ...uneActionJson({ id: action.id, status: 'done' }),
+            jeune: 'jeune',
+          }
       })
 
       // WHEN
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual(action)
+      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
     })
   })
 

@@ -4,18 +4,18 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next/types'
 
-export async function withMandatorySessionOrRedirect(
-  context: GetServerSidePropsContext
-): Promise<
+export async function withMandatorySessionOrRedirect({
+  req,
+  resolvedUrl,
+}: GetServerSidePropsContext): Promise<
   | { validSession: false; redirect: Redirect }
   | { validSession: true; session: Session }
 > {
-  const session = await getSession({ req: context.req })
+  const session = await getSession({ req })
   if (!session) {
-    const redirectUrl: string = context.resolvedUrl
     const redirectQueryParam =
-      redirectUrl !== '/'
-        ? `?${new URLSearchParams({ redirectUrl: redirectUrl })}`
+      resolvedUrl !== '/'
+        ? `?${new URLSearchParams({ redirectUrl: resolvedUrl })}`
         : ''
     return {
       redirect: {

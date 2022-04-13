@@ -231,7 +231,10 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       nbActionsNonTerminees: 0,
     }))
   } else {
-    const actions = await actionsService.getActions(user.id, accessToken)
+    const actions = await actionsService.countActionsJeunes(
+      user.id,
+      accessToken
+    )
 
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
       let nbActionsNonTerminees = 0
