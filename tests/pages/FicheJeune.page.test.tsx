@@ -1,6 +1,6 @@
 import { act, screen } from '@testing-library/react'
 import { uneAction, uneListeDActions } from 'fixtures/action'
-import { datePasseeLoin, dateFuture, dateFutureLoin, now } from 'fixtures/date'
+import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import {
   desConseillersJeune,
   unConseillerHistorique,

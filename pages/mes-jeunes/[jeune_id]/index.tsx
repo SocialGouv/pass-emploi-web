@@ -276,47 +276,39 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   } = sessionOrRedirect
 
   const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
-  const [resInfoJeune, resRdvJeune, resActionsJeune, resConseillers] =
-    await Promise.all([
-      jeunesService.getJeuneDetails(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      isPoleEmploi
-        ? []
-        : rendezVousService.getRendezVousJeune(
-            context.query.jeune_id as string,
-            accessToken
-          ),
-      isPoleEmploi
-        ? []
-        : actionsService.getActionsJeune(
-            context.query.jeune_id as string,
-            accessToken
-          ),
-      jeunesService.getConseillersDuJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-    ])
+  const [jeune, conseillers, rdvs, actions] = await Promise.all([
+    jeunesService.getJeuneDetails(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    jeunesService.getConseillersDuJeune(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    isPoleEmploi
+      ? []
+      : rendezVousService.getRendezVousJeune(
+          context.query.jeune_id as string,
+          accessToken
+        ),
+    isPoleEmploi
+      ? []
+      : actionsService.getActionsJeune(
+          context.query.jeune_id as string,
+          accessToken
+        ),
+  ])
 
-  const userActions: ActionJeune[] = [...resActionsJeune]
-    .sort(compareActionsDatesDesc)
-    .slice(0, 3)
-
-  if (!resInfoJeune || !resRdvJeune) {
-    return {
-      notFound: true,
-    }
+  if (!jeune) {
+    return { notFound: true }
   }
 
-  const today = new Date()
+  const now = new Date()
   const props: FicheJeuneProps = {
-    jeune: resInfoJeune,
-    rdvs: resRdvJeune.filter((rdv: Rdv) => new Date(rdv.date) > today),
-    actions: userActions,
-    conseillers: resConseillers,
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    jeune,
+    rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now),
+    actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
+    conseillers,
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'
