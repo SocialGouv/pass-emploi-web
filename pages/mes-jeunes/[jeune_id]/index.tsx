@@ -268,25 +268,32 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const rendezVousService =
     withDependance<RendezVousService>('rendezVousService')
   const actionsService = withDependance<ActionsService>('actionsService')
-
   const {
-    session: { accessToken },
+    session: {
+      accessToken,
+      user: { structure },
+    },
   } = sessionOrRedirect
 
+  const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
   const [resInfoJeune, resRdvJeune, resActionsJeune, resConseillers] =
     await Promise.all([
       jeunesService.getJeuneDetails(
         context.query.jeune_id as string,
         accessToken
       ),
-      rendezVousService.getRendezVousJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      actionsService.getActionsJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
+      isPoleEmploi
+        ? []
+        : rendezVousService.getRendezVousJeune(
+            context.query.jeune_id as string,
+            accessToken
+          ),
+      isPoleEmploi
+        ? []
+        : actionsService.getActionsJeune(
+            context.query.jeune_id as string,
+            accessToken
+          ),
       jeunesService.getConseillersDuJeune(
         context.query.jeune_id as string,
         accessToken

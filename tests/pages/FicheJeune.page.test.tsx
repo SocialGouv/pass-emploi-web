@@ -350,6 +350,35 @@ describe('Fiche Jeune', () => {
   })
 
   describe('server side', () => {
+    const rdvAVenir = unRendezVous({
+      date: DateTime.now().plus({ day: 1 }).toISO(),
+    })
+    let jeunesService: JeunesService
+    let rendezVousService: RendezVousService
+    let actionsService: ActionsService
+    beforeEach(() => {
+      jeunesService = mockedJeunesService({
+        getJeuneDetails: jest.fn(async () => unJeune()),
+        getConseillersDuJeune: jest.fn(async () => desConseillersJeune()),
+      })
+      rendezVousService = mockedRendezVousService({
+        getRendezVousJeune: jest.fn(async () => uneListeDeRdv([rdvAVenir])),
+      })
+      actionsService = mockedActionsService({
+        getActionsJeune: jest.fn(async () => [
+          uneAction({ creationDate: now.toISOString() }),
+          uneAction({ creationDate: datePasseeLoin.toISOString() }),
+          uneAction({ creationDate: dateFuture.toISOString() }),
+          uneAction({ creationDate: dateFutureLoin.toISOString() }),
+        ]),
+      })
+      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+        if (dependance === 'jeunesService') return jeunesService
+        if (dependance === 'rendezVousService') return rendezVousService
+        if (dependance === 'actionsService') return actionsService
+      })
+    })
+
     describe('Quand la session est invalide', () => {
       it('redirige', async () => {
         // Given
@@ -367,135 +396,150 @@ describe('Fiche Jeune', () => {
     })
 
     describe('Quand la session est valide', () => {
-      const rdvAVenir = unRendezVous({
-        date: DateTime.now().plus({ day: 1 }).toISO(),
-      })
-      let jeunesService: JeunesService
-      let rendezVousService: RendezVousService
-      let actionsService: ActionsService
       let actual: GetServerSidePropsResult<any>
       beforeEach(async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken' },
+          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
           validSession: true,
         })
 
-        jeunesService = mockedJeunesService({
-          getJeuneDetails: jest.fn(async () => unJeune()),
-          getConseillersDuJeune: jest.fn(async () => desConseillersJeune()),
-        })
-        rendezVousService = mockedRendezVousService({
-          getRendezVousJeune: jest.fn(async () => uneListeDeRdv([rdvAVenir])),
-        })
-        actionsService = mockedActionsService({
-          getActionsJeune: jest.fn(async () => [
-          uneAction({ creationDate: now.toISOString() }),
-          uneAction({ creationDate: datePasseeLoin.toISOString() }),
-          uneAction({ creationDate: dateFuture.toISOString() }),
-          uneAction({ creationDate: dateFutureLoin.toISOString() }),
-        ]),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'rendezVousService') return rendezVousService
-          if (dependance === 'actionsService') return actionsService
-        })
+        // When
+        actual = await getServerSideProps({
+          query: { jeune_id: 'id-jeune' },
+        } as unknown as GetServerSidePropsContext)
       })
 
-      describe('Props', () => {
-        beforeEach(async () => {
-          // When
-          actual = await getServerSideProps({
-            query: { jeune_id: 'id-jeune' },
-          } as unknown as GetServerSidePropsContext)
-        })
+      it('récupère les infos du jeune', async () => {
+        // Then
+        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({ props: { jeune: unJeune() } })
+      })
 
-        it('récupère les infos du jeune', async () => {
-          // Then
-          expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
-            'id-jeune',
-            'accessToken'
-          )
-          expect(actual).toMatchObject({ props: { jeune: unJeune() } })
-        })
+      it('récupère les rendez-vous à venir du jeune', async () => {
+        // Then
+        expect(rendezVousService.getRendezVousJeune).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({ props: { rdvs: [rdvAVenir] } })
+      })
 
-        it('récupère les rendez-vous à venir du jeune', async () => {
-          // Then
-          expect(rendezVousService.getRendezVousJeune).toHaveBeenCalledWith(
-            'id-jeune',
-            'accessToken'
-          )
-          expect(actual).toMatchObject({ props: { rdvs: [rdvAVenir] } })
-        })
-
-        it('récupère les 3 premieres actions du jeune', async () => {
-          // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-            'id-jeune',
-            'accessToken'
-          )
-          expect(actual).toMatchObject({
-            props: {
+      it('récupère les 3 premieres actions du jeune', async () => {
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: {
             actions: [
               uneAction({ creationDate: dateFutureLoin.toISOString() }),
               uneAction({ creationDate: dateFuture.toISOString() }),
               uneAction({ creationDate: now.toISOString() }),
             ],
           },
-          })
-        })
-
-        it('récupère les conseillers du jeune', async () => {
-          // Then
-          expect(jeunesService.getConseillersDuJeune).toHaveBeenCalledWith(
-            'id-jeune',
-            'accessToken'
-          )
-          expect(actual).toMatchObject({
-            props: { conseillers: desConseillersJeune() },
-          })
         })
       })
 
-      describe('Quand on vient de créer un rendez-vous', () => {
-        it('récupère le statut de la création', async () => {
-          // When
-          const actual = await getServerSideProps({
-            query: { creationRdv: 'succes' },
-          } as unknown as GetServerSidePropsContext)
-
-          // Then
-          expect(actual).toMatchObject({ props: { rdvCreationSuccess: true } })
+      it('récupère les conseillers du jeune', async () => {
+        // Then
+        expect(jeunesService.getConseillersDuJeune).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: { conseillers: desConseillersJeune() },
         })
       })
+    })
 
-      describe('Quand on vient de modifier un rendez-vous', () => {
-        it('récupère le statut de la modification', async () => {
-          // When
-          const actual = await getServerSideProps({
-            query: { modificationRdv: 'succes' },
-          } as unknown as GetServerSidePropsContext)
+    describe('Quand on vient de créer un rendez-vous', () => {
+      it('récupère le statut de la création', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          validSession: true,
+        })
 
-          // Then
-          expect(actual).toMatchObject({
-            props: { rdvModificationSuccess: true },
-          })
+        // When
+        const actual = await getServerSideProps({
+          query: { creationRdv: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({ props: { rdvCreationSuccess: true } })
+      })
+    })
+
+    describe('Quand on vient de modifier un rendez-vous', () => {
+      it('récupère le statut de la modification', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          validSession: true,
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { modificationRdv: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: { rdvModificationSuccess: true },
         })
       })
+    })
 
-      describe("Quand on vient d'envoyer un message groupé", () => {
-        it("récupère le statut de l'envoi", async () => {
-          // When
-          const actual = await getServerSideProps({
-            query: { envoiMessage: 'succes' },
-          } as unknown as GetServerSidePropsContext)
-
-          // Then
-          expect(actual).toMatchObject({
-            props: { messageEnvoiGroupeSuccess: true },
-          })
+    describe("Quand on vient d'envoyer un message groupé", () => {
+      it("récupère le statut de l'envoi", async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          validSession: true,
         })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { envoiMessage: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: { messageEnvoiGroupeSuccess: true },
+        })
+      })
+    })
+
+    describe('Quand le conseiller est Pole emploi', () => {
+      let actual: GetServerSidePropsResult<any>
+      beforeEach(async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: { user: { structure: 'POLE_EMPLOI' } },
+          validSession: true,
+        })
+
+        // When
+        actual = await getServerSideProps({
+          query: {},
+        } as unknown as GetServerSidePropsContext)
+      })
+
+      it('ne recupère pas les rendez-vous', async () => {
+        // Then
+        expect(rendezVousService.getRendezVousJeune).not.toHaveBeenCalled()
+        expect(actual).toMatchObject({ props: { rdvs: [] } })
+      })
+
+      it('ne recupère pas les actions', async () => {
+        // Then
+        expect(actionsService.getActionsJeune).not.toHaveBeenCalled()
+        expect(actual).toMatchObject({ props: { actions: [] } })
       })
     })
   })
