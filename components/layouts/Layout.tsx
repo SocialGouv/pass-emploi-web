@@ -41,7 +41,7 @@ export default function Layout({ children }: LayoutProps) {
           return jeunesService.getJeunesDuConseiller(user.id, accessToken)
         })
         .then((jeunes) => {
-          messagesService.countMessagesNotReadConseiller(
+          messagesService.observeMessagesNotReadConseiller(
             user.id,
             jeunes.map((jeune) => jeune.id),
             (bool) => {

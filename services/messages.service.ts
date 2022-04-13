@@ -48,7 +48,7 @@ export interface MessagesService {
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }>
 
-  countMessagesNotReadConseiller(
+  observeMessagesNotReadConseiller(
     idConseiller: string,
     idsJeunes: string[],
     onNouveauMessage: (bool: boolean) => void
@@ -143,11 +143,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     }, {} as { [idJeune: string]: number })
   }
 
-  async countMessagesNotReadConseiller(
+  async observeMessagesNotReadConseiller(
     idConseiller: string,
-    idsJeunes: string[]
-  ) {
-    return null
+    idsJeunes: string[],
+    onNouveauMessage: (seenByConseiller: boolean) => void
+  ): Promise<boolean> {
+    return this.firebaseClient.observeJeunesChats
   }
 
   async sendNouveauMessage(
