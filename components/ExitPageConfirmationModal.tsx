@@ -6,8 +6,9 @@ import ButtonLink from './ui/ButtonLink'
 
 interface LeavePageModalProps {
   show: boolean
-  onCancel: () => void
   href: string | UrlObject
+  onCancel: () => void
+  source?: 'creation' | 'edition'
   id?: string
   message?: string
 }
@@ -15,6 +16,7 @@ interface LeavePageModalProps {
 export default function ExitPageConfirmationModal({
   message,
   onCancel,
+  source = 'creation',
   href,
   id,
   show,
@@ -24,7 +26,10 @@ export default function ExitPageConfirmationModal({
       <div className='px-20 text-center'>
         <WarningIcon focusable={false} aria-hidden={true} className='m-auto' />
         <p className='mt-6 text-base-medium'>{message}</p>
-        <p className='mt-6'>Toutes les informations saisies seront perdues</p>
+        <p className='mt-6'>
+          Toutes les informations{' '}
+          {source === 'edition' ? 'modifiées' : 'saisies'} seront perdues
+        </p>
       </div>
 
       <div className='mt-14 flex justify-center'>
