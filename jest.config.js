@@ -1,9 +1,11 @@
 module.exports = {
+  clearMocks: true,
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',
   ],
+  coverageReporters: ['lcovonly'],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
     '^.+\\.module\\.(css|sass|scss)$':
@@ -21,6 +23,8 @@ module.exports = {
     '^clients/(.*)$': '<rootDir>/clients/$1',
     '^fixtures/(.*)$': '<rootDir>/fixtures/$1',
   },
+  restoreMocks: true,
+  setupFilesAfterEnv: ['./setupTests.js'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   testEnvironment: 'jsdom',
   transform: {
@@ -32,6 +36,4 @@ module.exports = {
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
-  setupFilesAfterEnv: ['./setupTests.js'],
-  coverageReporters: ['lcovonly'],
 }
