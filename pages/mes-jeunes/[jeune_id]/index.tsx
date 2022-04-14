@@ -17,12 +17,15 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import { ActionsService } from 'services/actions.service'
+import { JeunesService } from 'services/jeunes.service'
+import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
-import { Container } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
@@ -47,7 +50,7 @@ function FicheJeune({
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
 
-  const [_, setCurrentJeune] = useCurrentJeune()
+  const [, setCurrentJeune] = useCurrentJeune()
   const listeConseillersReduite = conseillers.slice(0, 5)
   const [conseillersAffiches, setConseillersAffiches] = useState<
     ConseillerHistorique[]
@@ -257,54 +260,55 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   context
 ) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService, rendezVousService, actionsService } =
-    Container.getDIContainer().dependances
-
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+  const rendezVousService =
+    withDependance<RendezVousService>('rendezVousService')
+  const actionsService = withDependance<ActionsService>('actionsService')
   const {
-    session: { accessToken },
+    session: {
+      accessToken,
+      user: { structure },
+    },
   } = sessionOrRedirect
 
-  const [resInfoJeune, resRdvJeune, resActionsJeune, resConseillers] =
-    await Promise.all([
-      jeunesService.getJeuneDetails(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      rendezVousService.getRendezVousJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      actionsService.getActionsJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      jeunesService.getConseillersDuJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-    ])
+  const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
+  const [jeune, conseillers, rdvs, actions] = await Promise.all([
+    jeunesService.getJeuneDetails(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    jeunesService.getConseillersDuJeune(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    isPoleEmploi
+      ? []
+      : rendezVousService.getRendezVousJeune(
+          context.query.jeune_id as string,
+          accessToken
+        ),
+    isPoleEmploi
+      ? []
+      : actionsService.getActionsJeune(
+          context.query.jeune_id as string,
+          accessToken
+        ),
+  ])
 
-  const userActions: ActionJeune[] = [...resActionsJeune]
-    .sort(compareActionsDatesDesc)
-    .slice(0, 3)
-
-  if (!resInfoJeune || !resRdvJeune) {
-    return {
-      notFound: true,
-    }
+  if (!jeune) {
+    return { notFound: true }
   }
 
-  const today = new Date()
+  const now = new Date()
   const props: FicheJeuneProps = {
-    jeune: resInfoJeune,
-    rdvs: resRdvJeune.filter((rdv: Rdv) => new Date(rdv.date) > today),
-    actions: userActions,
-    conseillers: resConseillers,
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    jeune,
+    rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now),
+    actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
+    conseillers,
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'

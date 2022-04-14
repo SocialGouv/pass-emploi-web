@@ -181,7 +181,7 @@ describe('Supervision', () => {
         session: {
           user: { estSuperviseur: false },
         },
-        hasSession: true,
+        validSession: true,
       })
 
       // When

@@ -110,7 +110,7 @@ describe("Page Liste des actions d'un jeune", () => {
         session: {
           user: { structure: 'POLE_EMPLOI' },
         },
-        hasSession: true,
+        validSession: true,
       })
 
       // When

@@ -35,7 +35,7 @@ describe('EditionRdv', () => {
       it('requiert la connexion', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: false,
+          validSession: false,
           redirect: { destination: 'whatever' },
         })
 
@@ -52,7 +52,7 @@ describe('EditionRdv', () => {
       beforeEach(() => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: true,
+          validSession: true,
           session: {
             user: { id: 'id-conseiller' },
             accessToken: 'accessToken',

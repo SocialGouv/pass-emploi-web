@@ -12,18 +12,18 @@ import {
   mockedMessagesService,
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
+import { compareJeunesByLastName } from 'interfaces/jeune'
 import Router from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import { getServerSideProps } from 'pages/mes-jeunes'
 import MesJeunes from 'pages/mes-jeunes/index'
 import React from 'react'
+import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { compareJeunesByLastName } from 'interfaces/jeune'
-import { ActionsService } from 'services/actions.service'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
@@ -279,7 +279,7 @@ describe('Mes Jeunes', () => {
         getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
       })
       actionsService = mockedActionsService({
-        getActions: jest.fn().mockResolvedValue(
+        countActionsJeunes: jest.fn().mockResolvedValue(
           jeunes.map((j) => ({
             jeuneId: j.id,
             inProgressActionsCount: 2,
@@ -296,7 +296,7 @@ describe('Mes Jeunes', () => {
     it("vérifie qu'il y a un utilisateur connecté", async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: false,
+        validSession: false,
         redirect: { destination: 'whatever' },
       })
 
@@ -313,7 +313,7 @@ describe('Mes Jeunes', () => {
     it('récupère la liste des jeunes', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: true,
+        validSession: true,
         session: {
           user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
           accessToken: 'accessToken',
@@ -333,7 +333,7 @@ describe('Mes Jeunes', () => {
     it("traite la réussite d'une suppression de jeune", async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: true,
+        validSession: true,
         session: {
           user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
           accessToken: 'accessToken',
@@ -358,7 +358,7 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: true,
+          validSession: true,
           session: {
             user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
             accessToken: 'accessToken',
@@ -373,7 +373,7 @@ describe('Mes Jeunes', () => {
 
       it('ne récupère pas les actions des jeunes', () => {
         // Then
-        expect(actionsService.getActions).not.toHaveBeenCalled()
+        expect(actionsService.countActionsJeunes).not.toHaveBeenCalled()
       })
 
       it("renvoie les jeunes sans leur nombre d'actions", () => {
@@ -396,7 +396,7 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: true,
+          validSession: true,
           session: {
             user: { id: 'id-conseiller', structure: 'MILO' },
             accessToken: 'accessToken',
@@ -411,7 +411,7 @@ describe('Mes Jeunes', () => {
 
       it('récupère les actions des jeunes', () => {
         // Then
-        expect(actionsService.getActions).toHaveBeenCalledWith(
+        expect(actionsService.countActionsJeunes).toHaveBeenCalledWith(
           'id-conseiller',
           'accessToken'
         )

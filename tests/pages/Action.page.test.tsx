@@ -25,7 +25,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     beforeEach(() => {
       actionsService = {
         getAction: jest.fn(),
-        getActions: jest.fn(),
+        countActionsJeunes: jest.fn(),
         getActionsJeune: jest.fn(),
         createAction: jest.fn(),
         updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
@@ -84,7 +84,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         session: {
           user: { structure: 'POLE_EMPLOI' },
         },
-        hasSession: true,
+        validSession: true,
       })
 
       // When

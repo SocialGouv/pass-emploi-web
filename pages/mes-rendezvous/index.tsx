@@ -184,7 +184,7 @@ export const getServerSideProps: GetServerSideProps<
   MesRendezvousProps
 > = async (context): Promise<GetServerSidePropsResult<MesRendezvousProps>> => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 

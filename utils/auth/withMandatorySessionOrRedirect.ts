@@ -4,34 +4,45 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next/types'
 
-export async function withMandatorySessionOrRedirect(
-  context: GetServerSidePropsContext
-): Promise<
-  | { hasSession: false; redirect: Redirect }
-  | { hasSession: true; session: Session }
+export async function withMandatorySessionOrRedirect({
+  req,
+  resolvedUrl,
+}: GetServerSidePropsContext): Promise<
+  | { validSession: false; redirect: Redirect }
+  | { validSession: true; session: Session }
 > {
-  const session = await getSession({ req: context.req })
+  const session = await getSession({ req })
   if (!session) {
-    const redirectUrl: string = context.resolvedUrl
     const redirectQueryParam =
-      redirectUrl !== '/'
-        ? `?${new URLSearchParams({ redirectUrl: redirectUrl })}`
+      resolvedUrl !== '/'
+        ? `?${new URLSearchParams({ redirectUrl: resolvedUrl })}`
         : ''
     return {
       redirect: {
         destination: `/login${redirectQueryParam}`,
         permanent: false,
       },
-      hasSession: false,
+      validSession: false,
     }
   }
+
+  if (!session.user.estConseiller) {
+    return {
+      redirect: {
+        destination: '/api/auth/federated-logout',
+        permanent: true,
+      },
+      validSession: false,
+    }
+  }
+
   if (session.error === 'RefreshAccessTokenError') {
     return {
       redirect: {
         destination: `/api/auth/federated-logout`,
         permanent: false,
       },
-      hasSession: false,
+      validSession: false,
     }
   }
 
@@ -42,5 +53,5 @@ export async function withMandatorySessionOrRedirect(
     email: user.email ?? '',
   }
   apm.setUserContext(userAPM)
-  return { session, hasSession: true }
+  return { session, validSession: true }
 }
