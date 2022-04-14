@@ -29,7 +29,7 @@ export default function ChatRoom() {
   )
   const destructorsRef = useRef<(() => void)[]>([])
 
-  const observeJeuneChats = useCallback(
+  const observeJeunesChat = useCallback(
     (idConseiller: string, jeunesToObserve: Jeune[]): (() => void)[] => {
       function updateChat(newJeuneChat: JeuneChat): void {
         const idxOfJeune = currentJeunesChat.findIndex(
@@ -63,11 +63,11 @@ export default function ChatRoom() {
             session.accessToken
           )
         )
-        .then((jeunes: Jeune[]) => observeJeuneChats(session.user.id, jeunes))
+        .then((jeunes: Jeune[]) => observeJeunesChat(session.user.id, jeunes))
         .then((destructors) => (destructorsRef.current = destructors))
     }
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [session, observeJeuneChats, messagesService, jeunesService])
+  }, [session, observeJeunesChat, messagesService, jeunesService])
 
   useEffect(() => {
     if (currentJeune?.id) {

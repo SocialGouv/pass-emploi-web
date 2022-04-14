@@ -60,11 +60,6 @@ function MesJeunes({
   if (isFromEmail) initialTracking += ' - Origine email'
   if (showDeletionSuccess) initialTracking += ' - Succès suppr. compte'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const [favicon, setFavicon] = useState(false)
-
-  function handleOnClick() {
-    setFavicon(!favicon)
-  }
 
   const handleAddJeune = async () => {
     switch (structureConseiller) {
@@ -145,7 +140,6 @@ function MesJeunes({
         .then((jeunesAvecMessagesNonLus) => {
           setJeunes(jeunesAvecMessagesNonLus)
           setListJeunesFiltres(jeunesAvecMessagesNonLus)
-          // setFavicon(true)
         })
     }
   }, [conseillerJeunes, messagesService, session])
@@ -160,9 +154,6 @@ function MesJeunes({
   return (
     <>
       <div className={styles.header}>
-        <p>
-          <button onClick={handleOnClick}>❤️ Smash that Like button!</button>
-        </p>
         <div className={`flex flex-wrap justify-between mb-6`}>
           <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
           {(structureConseiller === UserStructure.MILO ||

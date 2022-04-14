@@ -163,16 +163,6 @@ class FirebaseClient {
     }
   }
 
-  observeJeunesChats(
-    idConseiller: string,
-    idsJeunes: string[],
-    onNouveauMessageInJeunesChats: (messages: Message[]) => void
-  ) {
-    // find les chats des jeunes, et check la valeur seenByConseiller dans chaque chat
-    // chat > message > seenByConseiller
-    // return array de seenByConseiller
-  }
-
   observeMessagesDuChat(
     idChat: string,
     onMessages: (messages: Message[]) => void

@@ -2,16 +2,17 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
-import { ReactElement, useEffect, useState } from 'react'
 import { Footer } from 'components/Footer'
+import { JeuneChat } from 'interfaces/jeune'
+import { ReactElement, useEffect, useState } from 'react'
+import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
+import useSession from 'utils/auth/useSession'
+import { useDependance } from 'utils/injectionDependances'
+import AppHead from '../AppHead'
 import ChatRoom from './ChatRoom'
 import Sidebar from './Sidebar'
-import { AppHead } from '../AppHead'
-import useSession from 'utils/auth/useSession'
-import { useDependance } from '../../utils/injectionDependances/diContext'
-import { MessagesService } from '../../services/messages.service'
-import { JeunesService } from '../../services/jeunes.service'
 
 type LayoutProps = {
   children: ReactElement
@@ -32,6 +33,7 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (!session) return
+    const chats: JeuneChat[] = []
 
     const { user, accessToken, firebaseToken } = session
     if (firebaseToken) {
@@ -41,16 +43,30 @@ export default function Layout({ children }: LayoutProps) {
           return jeunesService.getJeunesDuConseiller(user.id, accessToken)
         })
         .then((jeunes) => {
-          messagesService.observeMessagesNotReadConseiller(
-            user.id,
-            jeunes.map((jeune) => jeune.id),
-            (bool) => {
-              setHasMessageNonLu(bool)
-            }
+          jeunes.forEach((jeune) =>
+            messagesService.observeJeuneChat(user.id, jeune, (updatedChat) => {
+              const chatIndex = chats.findIndex(
+                (chat) => chat.chatId === updatedChat.chatId
+              )
+              if (chatIndex > -1) {
+                chats[chatIndex] = updatedChat
+              } else {
+                chats.push(updatedChat)
+              }
+              if (
+                chats.some(
+                  (chat) => !chat.seenByConseiller && chat.lastMessageContent
+                )
+              ) {
+                setHasMessageNonLu(true)
+              } else {
+                setHasMessageNonLu(false)
+              }
+            })
           )
         })
     }
-  }, [])
+  }, [jeunesService, messagesService, session])
 
   return (
     <>
@@ -61,9 +77,7 @@ export default function Layout({ children }: LayoutProps) {
       >
         <Sidebar />
         <div className={styles.page}>
-          <AppHead
-            titre={hasMessageNonLu ? 'Nouveau(x) message(s)' : pageTitle}
-          />
+          <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
           <main role='main'>{children}</main>
           <Footer />
         </div>

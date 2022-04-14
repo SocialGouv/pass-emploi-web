@@ -384,38 +384,4 @@ describe('MessagesFirebaseAndApiService', () => {
       )
     })
   })
-  describe('.observeMessagesNotReadConseiller', () => {
-    let idConseiller: string
-    let jeunes: Jeune[]
-    let idsJeunes: string[]
-    let observeJeunesChats: () => void // observer si modifications dans la valeur seenByConseiller
-    let seenByConseiller: boolean
-    let onNouveauMessage: (bool: boolean) => void //setHasMessageNonLu
-    let idsChats: string[]
-
-    beforeEach(async () => {
-      // Given
-      jest.setSystemTime(new Date())
-      idConseiller = 'idConseiller'
-      jeunes = desJeunes()
-      idsJeunes = jeunes.map((jeune) => jeune.id)
-      onNouveauMessage = jest.fn()
-
-      // When
-      await messagesService.observeMessagesNotReadConseiller(
-        idConseiller,
-        idsJeunes,
-        onNouveauMessage
-      )
-    })
-
-    it('trouve les chats des jeunes', () => {
-      // Then
-      expect(firebaseClient.observeJeunesChats).toHaveBeenCalledWith(
-        idConseiller,
-        idsJeunes,
-        expect.any(Function)
-      )
-    })
-  })
 })
