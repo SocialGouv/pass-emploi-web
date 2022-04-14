@@ -104,6 +104,6 @@ describe('<Layout />', () => {
   })
 })
 
-function FakeComponent(props: { pageTitle: string }) {
+function FakeComponent(_: { pageTitle: string }) {
   return <></>
 }

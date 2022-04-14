@@ -12,39 +12,56 @@ jest.mock('next/head', () => {
 })
 
 describe('<AppHead/>', () => {
-  it('par défaut', () => {
-    // Given & When
-    const { container } = render(
-      <AppHead titre='Titre de la page' hasMessageNonLu={false} />,
-      {
-        container: document.head,
-      }
-    )
+  describe('par default',()=>{
+    let container: HTMLHeadElement
+    beforeEach(() => {
+      // Given & When
+      ;({ container } = render(
+        <AppHead titre='Titre de la page' hasMessageNonLu={false} />,
+        {
+          container: document.head,
+        }
+      ))
+    })
 
-    // Then
-    expect(document.title).toEqual('Titre de la page - Espace conseiller CEJ')
-    expect(container.querySelector("link[rel='icon']")).toHaveAttribute(
-      'href',
-      '/favicon.png'
-    )
+    it('Affiche le titre de la page', () => {
+      // Then
+      expect(document.title).toEqual('Titre de la page - Espace conseiller CEJ')
+    })
+
+    it('Affiche un favicon', () => {
+      // Then
+      expect(container.querySelector("link[rel='icon']")).toHaveAttribute(
+        'href',
+        '/favicon.png'
+      )
+    })
   })
 
-  it('avec message non lu', () => {
-    // Given & When
-    const { container } = render(
-      <AppHead titre='Titre de la page' hasMessageNonLu={true} />,
-      {
-        container: document.head,
-      }
-    )
+  describe('avec message non lu', () => {
+    let container: HTMLHeadElement
+    beforeEach(() => {
+      // Given & When
+      ;({ container } = render(
+        <AppHead titre='Titre de la page' hasMessageNonLu={true} />,
+        {
+          container: document.head,
+        }
+      ))
+    })
+    it('on indique dans le titre de la page "nouveau(x) message(s)', () => {
+      // Then
+      expect(document.title).toEqual(
+        'Nouveau(x) message(s) - Espace conseiller CEJ'
+      )
+    })
 
-    // Then
-    expect(document.title).toEqual(
-      'Nouveau(x) message(s) - Espace conseiller CEJ'
-    )
-    expect(container.querySelector("link[rel='icon']")).toHaveAttribute(
-      'href',
-      '/favicon_notif.png'
-    )
+    it('on affiche l’icone de notification', () => {
+      // Then
+      expect(container.querySelector("link[rel='icon']")).toHaveAttribute(
+        'href',
+        '/favicon_notif.png'
+      )
+    })
   })
 })
