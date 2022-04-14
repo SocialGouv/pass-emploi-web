@@ -9,14 +9,17 @@ interface AppHeadProps {
 export default function AppHead({ titre, hasMessageNonLu }: AppHeadProps) {
   return (
     <Head>
-      <title>{titre} - Espace conseiller CEJ</title>
+      <title>
+        {hasMessageNonLu ? 'Nouveau(x) message(s)' : titre} - Espace conseiller
+        CEJ
+      </title>
       <meta
         name='description'
         content="Espace conseiller de l'outil du Contrat d'Engagement Jeune"
       />
       <link
         rel='icon'
-        href={`/${hasMessageNonLu ? 'favicon_true' : 'favicon'}.png`}
+        href={`/${hasMessageNonLu ? 'favicon_notif' : 'favicon'}.png`}
       />
       <link
         rel='preload'

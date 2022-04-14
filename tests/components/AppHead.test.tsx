@@ -1,4 +1,4 @@
-import { screen, render, within, getNodeText } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import AppHead from 'components/AppHead'
 import { ReactElement } from 'react'
 
@@ -12,26 +12,39 @@ jest.mock('next/head', () => {
 })
 
 describe('<AppHead/>', () => {
-  it('affiche le titre de la page', () => {
+  it('par défaut', () => {
     // Given & When
-    render(<AppHead titre='Titre de la page' hasMessageNonLu={false} />, {
-      container: document.head,
-    })
+    const { container } = render(
+      <AppHead titre='Titre de la page' hasMessageNonLu={false} />,
+      {
+        container: document.head,
+      }
+    )
 
     // Then
     expect(document.title).toEqual('Titre de la page - Espace conseiller CEJ')
+    expect(container.querySelector("link[rel='icon']")).toHaveAttribute(
+      'href',
+      '/favicon.png'
+    )
   })
 
-  it('affiche la favicon par défaut', () => {
+  it('avec message non lu', () => {
     // Given & When
-    render(<AppHead titre='Titre de la page' hasMessageNonLu={false} />, {
-      container: document.head,
-    })
+    const { container } = render(
+      <AppHead titre='Titre de la page' hasMessageNonLu={true} />,
+      {
+        container: document.head,
+      }
+    )
 
     // Then
-    expect(
-      within(document.head).getByRole('link', { hidden: true })
-    ).toBeInTheDocument()
-    expect(document.head.querySelector('').getAttribute('href')).toBe('/')
+    expect(document.title).toEqual(
+      'Nouveau(x) message(s) - Espace conseiller CEJ'
+    )
+    expect(container.querySelector("link[rel='icon']")).toHaveAttribute(
+      'href',
+      '/favicon_notif.png'
+    )
   })
 })

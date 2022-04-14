@@ -308,7 +308,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now),
     actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
     conseillers,
-    pageTitle: `Mes jeunes - ${resInfoJeune.firstName} ${resInfoJeune.lastName}`,
+    pageTitle: `Mes jeunes - ${jeune.firstName} ${jeune.lastName}`,
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'
