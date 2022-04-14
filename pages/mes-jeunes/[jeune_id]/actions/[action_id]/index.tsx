@@ -1,7 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
-import { AppHead } from 'components/AppHead'
 import EchecMessage from 'components/EchecMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
@@ -25,6 +24,7 @@ type PageActionProps = {
   action: ActionJeune
   jeune: Jeune
   messageEnvoiGroupeSuccess?: boolean
+  pageTitle: string
 }
 
 function PageAction({
@@ -91,9 +91,6 @@ function PageAction({
 
   return (
     <>
-      <AppHead
-        titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content} `}
-      />
       <div className={`flex justify-between ${styles.header}`}>
         <Link href={`/mes-jeunes/${jeune.id}/actions`}>
           <a className='flex items-center'>
@@ -212,6 +209,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     action: res,
     jeune: res.jeune,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: `Mes jeunes - Actions de ${res.jeune.firstName} ${res.jeune.lastName} - ${res.content} `,
   }
 
   if (context.query?.envoiMessage) {

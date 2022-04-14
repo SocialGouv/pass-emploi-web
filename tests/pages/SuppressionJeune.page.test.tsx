@@ -97,7 +97,13 @@ describe('Suppression Jeune', () => {
           } as unknown as GetServerSidePropsContext)
 
           // Then
-          expect(actual).toEqual({ props: { jeune, withoutChat: true } })
+          expect(actual).toEqual({
+            props: {
+              jeune,
+              withoutChat: true,
+              pageTitle: 'Suppression - Kenji Jirac',
+            },
+          })
         })
       })
 
@@ -136,7 +142,7 @@ describe('Suppression Jeune', () => {
 
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <SuppressionJeune jeune={jeune} withoutChat={true} />
+          <SuppressionJeune jeune={jeune} withoutChat={true} pageTitle={''}/>
         </DIProvider>
       )
     })

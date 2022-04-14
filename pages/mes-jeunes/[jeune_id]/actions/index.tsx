@@ -2,7 +2,6 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import AddActionModal from 'components/action/AddActionModal'
 import FiltresActionsTabList from 'components/action/FiltresActions'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
-import { AppHead } from 'components/AppHead'
 import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
@@ -34,6 +33,7 @@ type ActionsProps = {
   actionsTerminees: ActionJeune[]
   deleteSuccess: boolean
   messageEnvoiGroupeSuccess?: boolean
+  pageTitle: string
 }
 
 function Actions({
@@ -110,9 +110,6 @@ function Actions({
 
   return (
     <>
-      <AppHead
-        titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`}
-      />
       <div className={`flex justify-between flex-wrap w-full ${styles.header}`}>
         <Link href={`/mes-jeunes/${jeune.id}`}>
           <a className='p-1 mr-[24px]'>
@@ -245,6 +242,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     ),
     deleteSuccess: Boolean(context.query.deleteSuccess),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: `Mes jeunes - Actions de ${dataDetailsJeune.firstName} ${dataDetailsJeune.lastName}`,
   }
 
   if (context.query?.envoiMessage) {

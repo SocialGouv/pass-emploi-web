@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { CreationEtape } from 'components/jeune/CreationEtape'
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
@@ -21,6 +20,7 @@ type MiloCreationJeuneProps = {
   dossierId: string
   dossier: DossierMilo | null
   erreurMessageHttpMilo: string
+  pageTitle: string
 }
 
 function MiloCreationJeune({
@@ -57,10 +57,6 @@ function MiloCreationJeune({
 
   return (
     <>
-      <AppHead
-        titre={`Mes jeunes - Création d'un compte jeune - Étape ${etape}`}
-      />
-
       <div className={`flex justify-between ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
@@ -180,12 +176,13 @@ export const getServerSideProps: GetServerSideProps<
       console.error('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
     }
   }
-
+  //TODO: remettre numéro étape dans title
   return {
     props: {
       dossierId: dossierId || '',
       dossier,
       erreurMessageHttpMilo,
+      pageTitle: `Mes jeunes - Création d'un compte jeune`,
     },
   }
 }

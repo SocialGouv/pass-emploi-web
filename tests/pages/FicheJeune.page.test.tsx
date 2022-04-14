@@ -70,6 +70,7 @@ describe('Fiche Jeune', () => {
                 rdvs={rdvs}
                 actions={actions}
                 conseillers={listeConseillers}
+                pageTitle={''}
               />
             </CurrentJeuneProvider>
           </DIProvider>
@@ -173,6 +174,7 @@ describe('Fiche Jeune', () => {
                 rdvs={rdvs}
                 actions={actions}
                 conseillers={conseillers}
+                pageTitle={''}
               />
             </CurrentJeuneProvider>
           </DIProvider>
@@ -197,6 +199,7 @@ describe('Fiche Jeune', () => {
                 rdvs={[]}
                 actions={actions}
                 conseillers={[]}
+                pageTitle={''}
               />
             </CurrentJeuneProvider>
           </DIProvider>,
@@ -244,6 +247,7 @@ describe('Fiche Jeune', () => {
               rdvs={rdvs}
               actions={[]}
               conseillers={[]}
+              pageTitle={''}
             />
           </CurrentJeuneProvider>
         </DIProvider>
@@ -272,6 +276,7 @@ describe('Fiche Jeune', () => {
                 actions={actions}
                 rdvCreationSuccess={true}
                 conseillers={[]}
+                pageTitle={''}
               />
             </CurrentJeuneProvider>
           </DIProvider>
@@ -318,6 +323,7 @@ describe('Fiche Jeune', () => {
                 conseillers={[]}
                 actions={actions}
                 rdvModificationSuccess={true}
+                pageTitle={''}
               />
             </CurrentJeuneProvider>
           </DIProvider>

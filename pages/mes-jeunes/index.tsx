@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
@@ -25,12 +24,13 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
-type MesJeunesProps = {
+interface MesJeunesProps {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
   messageEnvoiGroupeSuccess?: boolean
   deletionSuccess?: boolean
+  pageTitle: string
 }
 
 function MesJeunes({
@@ -153,7 +153,6 @@ function MesJeunes({
 
   return (
     <>
-      <AppHead titre='Mes jeunes' />
       <div className={styles.header}>
         <div className={`flex flex-wrap justify-between mb-6`}>
           <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
@@ -262,6 +261,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     ),
     isFromEmail: Boolean(context.query?.source),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: 'Mes jeunes',
   }
 
   if (context.query.suppression)

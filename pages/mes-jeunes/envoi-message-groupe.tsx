@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
@@ -25,6 +24,7 @@ import { RequestError } from '../../utils/fetchJson'
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
   withoutChat: true
+  pageTitle: string
   from: string
 }
 
@@ -92,7 +92,6 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
 
   return (
     <>
-      <AppHead titre='Message multi-destinataires' />
       <div className={`flex items-center ${styles.header}`}>
         {!formHasChanges() && (
           <Link href={from}>
@@ -236,6 +235,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
+      pageTitle: 'Message multi-destinataires',
       from: context.req.headers.referer ?? '/mes-jeunes',
     },
   }

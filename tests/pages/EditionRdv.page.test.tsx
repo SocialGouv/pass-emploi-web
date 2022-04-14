@@ -11,9 +11,9 @@ import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
@@ -86,12 +86,11 @@ describe('EditionRdv', () => {
           'id-conseiller',
           'accessToken'
         )
-        expect(actual).toEqual({
+        expect(actual).toMatchObject({
           props: {
             jeunes,
-            typesRendezVous,
             withoutChat: true,
-            redirectTo: '/mes-jeunes',
+            pageTitle: 'Nouveau rendez-vous',
           },
         })
       })
@@ -107,14 +106,7 @@ describe('EditionRdv', () => {
         expect(rendezVousService.getTypesRendezVous).toHaveBeenCalledWith(
           'accessToken'
         )
-        expect(actual).toEqual({
-          props: {
-            jeunes,
-            typesRendezVous,
-            withoutChat: true,
-            redirectTo: '/mes-jeunes',
-          },
-        })
+        expect(actual).toMatchObject({ props: { typesRendezVous } })
       })
 
       it("récupère la page d'origine", async () => {
@@ -161,9 +153,9 @@ describe('EditionRdv', () => {
 
       it('récupère le rendez-vous concerné', async () => {
         // Given
-        ;(rendezVousService.getDetailsRendezVous as jest.Mock).mockResolvedValue(
-          unRendezVous()
-        )
+        ;(
+          rendezVousService.getDetailsRendezVous as jest.Mock
+        ).mockResolvedValue(unRendezVous())
 
         // When
         const actual = await getServerSideProps({
@@ -177,15 +169,15 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdv: unRendezVous() },
+          props: { rdv: unRendezVous(), pageTitle: 'Modification rendez-vous' },
         })
       })
 
       it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
         // Given
-        ;(rendezVousService.getDetailsRendezVous as jest.Mock).mockResolvedValue(
-          undefined
-        )
+        ;(
+          rendezVousService.getDetailsRendezVous as jest.Mock
+        ).mockResolvedValue(undefined)
 
         // When
         const actual = await getServerSideProps({
@@ -223,6 +215,7 @@ describe('EditionRdv', () => {
               typesRendezVous={typesRendezVous}
               withoutChat={true}
               redirectTo={'/mes-rendezvous'}
+              pageTitle={''}
             />
           </DIProvider>
         )
@@ -736,6 +729,7 @@ describe('EditionRdv', () => {
               withoutChat={true}
               redirectTo={'/mes-rendezvous'}
               idJeune={idJeune}
+              pageTitle={''}
             />
           </DIProvider>
         )
@@ -772,6 +766,7 @@ describe('EditionRdv', () => {
               withoutChat={true}
               redirectTo={'/mes-rendezvous?creationRdv=succes'}
               rdv={rdv}
+              pageTitle={''}
             />
           </DIProvider>
         )

@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import FailureMessage from 'components/FailureMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
@@ -22,6 +21,7 @@ import InfoIcon from '../../../assets/icons/information.svg'
 interface SuppressionJeuneProps {
   jeune: Jeune
   withoutChat: true
+  pageTitle: string
 }
 
 function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
@@ -67,9 +67,6 @@ function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
 
   return (
     <>
-      <AppHead
-        titre={`Mes jeunes - ${jeune.firstName} ${jeune.lastName} - Suppression`}
-      />
       <div className={styles.header}>
         <Link href={`/mes-jeunes/${jeune.id}`}>
           <a className='flex items-center w-max'>
@@ -149,7 +146,13 @@ export const getServerSideProps: GetServerSideProps<
       redirect: { destination: `/mes-jeunes/${jeune.id}`, permanent: true },
     }
   }
-  return { props: { jeune, withoutChat: true } }
+  return {
+    props: {
+      jeune,
+      withoutChat: true,
+      pageTitle: `Suppression - ${jeune.firstName} ${jeune.lastName}`,
+    },
+  }
 }
 
 export default withTransaction(SuppressionJeune.name, 'page')(SuppressionJeune)

@@ -58,7 +58,9 @@ describe('<ChatRoom />', () => {
     conseiller = {
       id: 'idConseiller',
       name: 'Taverner',
+      email: 'fake@mail.com',
       structure: UserStructure.POLE_EMPLOI,
+      estConseiller: true,
       estSuperviseur: false,
     }
     accessToken = 'accessToken'

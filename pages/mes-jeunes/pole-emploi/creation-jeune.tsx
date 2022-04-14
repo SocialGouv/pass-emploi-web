@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { AppHead } from 'components/AppHead'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
 import { SuccessAddJeunePoleEmploi } from 'components/jeune/SuccessAddJeunePoleEmploi'
@@ -17,7 +16,11 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
-function PoleEmploiCreationJeune() {
+interface PoleEmploiCreationJeuneProps {
+  pageTitle: string
+}
+
+function PoleEmploiCreationJeune(): JSX.Element {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const { data: session } = useSession<true>({ required: true })
   const [createdSuccessId, setCreatedSuccessId] = useState<string>('')
@@ -55,8 +58,6 @@ function PoleEmploiCreationJeune() {
 
   return (
     <>
-      <AppHead titre={`Mes jeunes – Création d'un compte jeune`} />
-
       <div className={`flex justify-between ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
@@ -97,7 +98,9 @@ function PoleEmploiCreationJeune() {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+export const getServerSideProps: GetServerSideProps<
+  PoleEmploiCreationJeuneProps
+> = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
 
   if (!sessionOrRedirect.validSession) {
@@ -113,7 +116,11 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     }
   }
 
-  return { props: {} }
+  return {
+    props: {
+      pageTitle: "Mes jeunes – Création d'un compte jeune",
+    },
+  }
 }
 
 export default withTransaction(
