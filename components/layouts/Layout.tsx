@@ -3,7 +3,7 @@
  */
 
 import { Footer } from 'components/Footer'
-import { JeuneChat } from 'interfaces/jeune'
+import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { ReactElement, useEffect, useRef, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -23,56 +23,53 @@ export default function Layout({ children }: LayoutProps) {
     props: { withoutChat, pageTitle },
   } = children
 
-  const { data: session } = useSession<true>({ required: true })
-  const [hasMessageNonLu, setHasMessageNonLu] = useState<boolean>(false)
-
   const messagesService = useDependance<MessagesService>('messagesService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
+  const { data: session } = useSession<true>({ required: true })
+  const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
 
-  function verifierMessageNonLu(updatedChat: JeuneChat, chats: JeuneChat[]) {
-    const chatIndex = chats.findIndex(
-      (chat) => chat.chatId === updatedChat.chatId
-    )
-    if (chatIndex > -1) {
-      chats[chatIndex] = updatedChat
-    } else {
-      chats.push(updatedChat)
-    }
-    if (
-      chats.some((chat) => !chat.seenByConseiller && chat.lastMessageContent)
-    ) {
-      setHasMessageNonLu(true)
-    } else {
-      setHasMessageNonLu(false)
-    }
+  function updateChats(updatedChat: JeuneChat) {
+    setChats((prevChats) => {
+      const chatIndex = prevChats.findIndex(
+        (chat) => chat.chatId === updatedChat.chatId
+      )
+      const updatedChats = [...prevChats]
+      if (chatIndex !== -1) {
+        updatedChats[chatIndex] = updatedChat
+      } else {
+        updatedChats.push(updatedChat)
+      }
+      updatedChats.sort(compareJeuneChat)
+      return updatedChats
+    })
   }
 
-  //TODO optimiser avec l'obesrvable mis en place dans la chatRoom
+  function hasMessageNonLu(): boolean {
+    return chats.some(
+      (chat) => !chat.seenByConseiller && chat.lastMessageContent
+    )
+  }
+
   useEffect(() => {
     if (!session) return
-    const chats: JeuneChat[] = []
 
     const { user, accessToken, firebaseToken } = session
     if (firebaseToken) {
       messagesService
         .signIn(firebaseToken)
-        .then(() => {
-          return jeunesService.getJeunesDuConseiller(user.id, accessToken)
-        })
-        .then((jeunes) => {
-          return jeunes.map((jeune) =>
-            messagesService.observeJeuneChat(user.id, jeune, (updatedChat) =>
-              verifierMessageNonLu(updatedChat, chats)
-            )
+        .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
+        .then((jeunes) =>
+          jeunes.map((jeune) =>
+            messagesService.observeJeuneChat(user.id, jeune, updateChats)
           )
-        })
+        )
         .then((destructors) => (destructorsRef.current = destructors))
     }
 
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [jeunesService, messagesService, session])
+  }, [session, jeunesService, messagesService])
 
   return (
     <>
@@ -83,11 +80,11 @@ export default function Layout({ children }: LayoutProps) {
       >
         <Sidebar />
         <div className={styles.page}>
-          <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
+          <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
           <main role='main'>{children}</main>
           <Footer />
         </div>
-        {!withoutChat && <ChatRoom />}
+        {!withoutChat && <ChatRoom jeunesChats={chats} />}
       </div>
       <div id='modal-root' />
     </>

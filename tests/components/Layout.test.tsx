@@ -1,4 +1,6 @@
 import { act, waitFor } from '@testing-library/react'
+import AppHead from 'components/AppHead'
+import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
@@ -7,42 +9,50 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
-import AppHead from 'components/AppHead'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
+jest.useFakeTimers()
 
 describe('<Layout />', () => {
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
+
   const jeunes: Jeune[] = desJeunes()
+  let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
   let messagesService: MessagesService
   beforeEach(async () => {
+    jest.setSystemTime(new Date())
+    jest.clearAllMocks()
+
+    jeunesChats = [
+      unJeuneChat({
+        ...jeunes[0],
+        chatId: `chat-${jeunes[0].id}`,
+        seenByConseiller: true,
+      }),
+      unJeuneChat({
+        ...jeunes[1],
+        chatId: `chat-${jeunes[1].id}`,
+        seenByConseiller: true,
+      }),
+      unJeuneChat({
+        ...jeunes[2],
+        chatId: `chat-${jeunes[2].id}`,
+        seenByConseiller: false,
+      }),
+    ]
+
     jeunesService = mockedJeunesService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeJeuneChat: jest.fn(
-        (idConseiller: string, jeune: Jeune, fn: (chat: JeuneChat) => void) => {
-          if (jeune.id === 'jeune-3') {
-            fn(
-              unJeuneChat({
-                ...jeune,
-                chatId: `chat-${jeune.id}`,
-                seenByConseiller: false,
-              })
-            )
-          } else {
-            fn(
-              unJeuneChat({
-                ...jeune,
-                chatId: `chat-${jeune.id}`,
-                seenByConseiller: true,
-              })
-            )
-          }
-          return () => {}
-        }
-      ),
+      observeJeuneChat: jest.fn((idConseiller, jeune, fn) => {
+        fn(jeunesChats.find((jeuneChat) => jeuneChat.id === jeune.id)!)
+        return () => {}
+      }),
     })
   })
 
@@ -97,6 +107,16 @@ describe('<Layout />', () => {
             hasMessageNonLu: true,
             titre: 'un titre',
           },
+          {}
+        )
+      })
+    })
+
+    it('affiche la ChatRoom avec les jeunes avec un message non lu en premier', async () => {
+      // Then
+      await waitFor(() => {
+        expect(ChatRoom).toHaveBeenCalledWith(
+          { jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]] },
           {}
         )
       })
