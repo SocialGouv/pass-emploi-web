@@ -61,6 +61,26 @@ describe('RendezVousApiService', () => {
       expect(actual).toEqual(unRendezVous())
     })
 
+    it("renvoie les détails d'un rdv sans créateur", async () => {
+      // Given
+      const rdvJson = unRendezVousJson()
+      delete rdvJson.createur
+      ;(apiClient.get as jest.Mock).mockResolvedValue(rdvJson)
+
+      // When
+      const actual = await rendezVousService.getDetailsRendezVous(
+        'id-rdv',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/rendezvous/id-rdv',
+        'accessToken'
+      )
+      expect(actual).toEqual(unRendezVous({ idCreateur: null }))
+    })
+
     it("renvoie undefined si le rdv n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(

@@ -18,6 +18,7 @@ export interface Rdv {
   presenceConseiller: boolean
   invitation: boolean
   comment: string
+  idCreateur: string | null
 }
 
 export const TYPE_RENDEZ_VOUS = {

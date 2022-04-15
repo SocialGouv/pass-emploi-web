@@ -7,18 +7,22 @@ import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
+import DoneIcon from '../../assets/icons/done.svg'
+import KoIcon from '../../assets/icons/ko.svg'
 
 type RdvListProps = {
   rdvs: Rdv[]
+  idConseiller: string
   withNameJeune?: boolean
   id?: string
   onDelete?: any
 }
 
 const RdvList = ({
-  id,
   rdvs,
+  idConseiller,
   withNameJeune = true,
+  id,
   onDelete,
 }: RdvListProps) => {
   const handleDeleteClick = (e: MouseEvent<HTMLElement>, rdv: Rdv) => {
@@ -59,6 +63,7 @@ const RdvList = ({
               <HeaderCell label='Type' />
               <HeaderCell label='Modalité' />
               <HeaderCell label='Note' />
+              <HeaderCell label='Crée par vous' />
               <HeaderCell label='Supprimer le rendez-vous' srOnly />
             </div>
           </div>
@@ -97,10 +102,7 @@ const RdvList = ({
                     {rdv.modality}
                   </div>
 
-                  <div
-                    role='cell'
-                    className='table-cell p-3 [overflow-wrap:anywhere]'
-                  >
+                  <div role='cell' className='table-cell p-3'>
                     <NoteIcon
                       focusable='false'
                       aria-hidden='true'
@@ -108,6 +110,28 @@ const RdvList = ({
                     />
                     {(rdv.comment && '1 note(s)') || '--'}
                   </div>
+
+                  {rdv.idCreateur && (
+                    <div
+                      role='cell'
+                      className='table-cell p-3'
+                      aria-label={
+                        rdv.idCreateur === idConseiller ? 'oui' : 'non'
+                      }
+                    >
+                      {rdv.idCreateur === idConseiller && (
+                        <DoneIcon
+                          aria-hidden='true'
+                          focusable='false'
+                          className='fill-primary'
+                        />
+                      )}
+                      {rdv.idCreateur !== idConseiller && (
+                        <KoIcon aria-hidden='true' focusable='false' />
+                      )}
+                    </div>
+                  )}
+                  {!rdv.idCreateur && <div role='cell' />}
 
                   {onDelete && (
                     <div
