@@ -2,7 +2,7 @@ import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { Rdv } from 'interfaces/rdv'
+import { RdvListItem } from 'interfaces/rdv'
 import { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -11,18 +11,12 @@ import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 type DeleteRdvModalProps = {
-  show: boolean
-  onClose: any
-  onDelete: () => void
-  rdv: Rdv
+  rdv: RdvListItem
+  onClose: () => void
+  onDelete: (deletedRdv: RdvListItem) => void
 }
 
-const DeleteRdvModal = ({
-  show,
-  onClose,
-  onDelete,
-  rdv,
-}: DeleteRdvModalProps) => {
+const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
   const rendezVousService =
@@ -34,7 +28,7 @@ const DeleteRdvModal = ({
       .deleteRendezVous(rdv.id, session!.accessToken)
       .then(function () {
         setIsSuccess(true)
-        onDelete()
+        onDelete(rdv)
       })
       .catch(function (error) {
         setIsEchec(true)
@@ -58,7 +52,7 @@ const DeleteRdvModal = ({
         <Modal
           title='Confirmation de suppression du rendez-vous'
           onClose={handleCloseModal}
-          show={!isSuccess && show}
+          show={!isSuccess}
           customHeight='300px'
           customWidth='800px'
         >
@@ -91,7 +85,7 @@ const DeleteRdvModal = ({
 
       {isSuccess && (
         <SuccessModal
-          show={isSuccess && show}
+          show={isSuccess}
           message='Votre rendez-vous a bien été supprimé'
           onClose={handleCloseModal}
         />
@@ -99,7 +93,7 @@ const DeleteRdvModal = ({
 
       {isEchec && (
         <EchecModal
-          show={isEchec && show}
+          show={isEchec}
           message="Votre rendez-vous n'a pas été supprimé, veuillez essayer ultérieurement"
           onClose={handleCloseModal}
         />

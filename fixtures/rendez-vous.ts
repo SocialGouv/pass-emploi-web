@@ -1,5 +1,5 @@
-import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { RdvJson } from 'interfaces/json/rdv'
+import { Rdv, RdvListItem, TypeRendezVous } from 'interfaces/rdv'
 
 export const typesDeRendezVous = (
   overrides: TypeRendezVous[] = []
@@ -87,6 +87,39 @@ export const uneListeDeRdv = (): Rdv[] => [
     idCreateur: '2',
   },
 ]
+
+export function desRdvListItems(): RdvListItem[] {
+  return [
+    {
+      id: '1',
+      jeune: {
+        id: '1',
+        prenom: 'kenji',
+        nom: 'Jirac',
+      },
+      type: 'Autre',
+      modality: 'par téléphone',
+      date: '2021-10-21T10:00:00.000Z',
+      duration: 125,
+      hasComment: true,
+      idCreateur: '1',
+    },
+    {
+      id: '2',
+      jeune: {
+        id: '2',
+        prenom: 'Raja',
+        nom: 'Jirac',
+      },
+      type: 'Atelier',
+      modality: 'En agence',
+      date: '2021-10-25T12:00:00.000Z',
+      duration: 25,
+      hasComment: true,
+      idCreateur: '2',
+    },
+  ]
+}
 
 export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
   const defaults: RdvJson = {

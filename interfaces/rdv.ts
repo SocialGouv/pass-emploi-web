@@ -5,6 +5,17 @@ export interface TypeRendezVous {
   label: string
 }
 
+export interface RdvListItem {
+  id: string
+  jeune: BaseJeune
+  type: string
+  modality: string
+  date: string
+  duration: number
+  hasComment: boolean
+  idCreateur: string | null
+}
+
 export interface Rdv {
   id: string
   jeune: BaseJeune
@@ -19,6 +30,19 @@ export interface Rdv {
   invitation: boolean
   comment: string
   idCreateur: string | null
+}
+
+export function rdvToListItem(rdv: Rdv): RdvListItem {
+  return {
+    id: rdv.id,
+    jeune: rdv.jeune,
+    type: rdv.type.label,
+    modality: rdv.modality,
+    date: rdv.date,
+    duration: rdv.duration,
+    hasComment: Boolean(rdv.comment),
+    idCreateur: rdv.idCreateur,
+  }
 }
 
 export const TYPE_RENDEZ_VOUS = {
