@@ -261,7 +261,7 @@ class FirebaseClient {
 
 interface FirebaseChat {
   jeuneId: string
-  seenByConseiller: boolean
+  seenByConseiller: boolean | undefined
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
   lastMessageSentAt: Timestamp | undefined
@@ -310,7 +310,7 @@ function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
 function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
   return {
     chatId: chatId,
-    seenByConseiller: firebaseChat.seenByConseiller,
+    seenByConseiller: firebaseChat.seenByConseiller ?? true,
     newConseillerMessageCount: firebaseChat.newConseillerMessageCount,
     lastMessageContent: firebaseChat.lastMessageContent,
     lastMessageSentAt: firebaseChat.lastMessageSentAt?.toDate(),
