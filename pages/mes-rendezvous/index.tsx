@@ -12,6 +12,7 @@ import React, { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -32,6 +33,8 @@ function MesRendezvous({
   messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) {
   const router = useRouter()
+  const { data: session } = useSession<true>({ required: true })
+
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     creationSuccess ?? false
   )
@@ -155,12 +158,13 @@ function MesRendezvous({
         {displayOldRdv ? (
           <RdvList
             id='rendez-vous-passes'
+            idConseiller={session?.user.id ?? ''}
             rdvs={rendezVousPasses}
-            withNameJeune
           />
         ) : (
           <RdvList
             id='rendez-vous-futurs'
+            idConseiller={session?.user.id ?? ''}
             rdvs={rdvsAVenir}
             onDelete={openDeleteRdvModal}
           />

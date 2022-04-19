@@ -14,6 +14,7 @@ export interface RdvJson {
   invitation?: boolean
   adresse?: string
   organisme?: string
+  createur?: { id: string }
 }
 
 export interface RdvFormData {
@@ -31,7 +32,7 @@ export interface RdvFormData {
 }
 
 export function jsonToRdv(rdvJson: RdvJson): Rdv {
-  const { precision, ...data } = rdvJson
+  const { precision, createur, ...data } = rdvJson
   return {
     ...data,
     presenceConseiller: Boolean(rdvJson.presenceConseiller),
@@ -40,5 +41,6 @@ export function jsonToRdv(rdvJson: RdvJson): Rdv {
     precisionType: precision ?? '',
     adresse: rdvJson.adresse ?? '',
     organisme: rdvJson.organisme ?? '',
+    idCreateur: createur?.id ?? null,
   }
 }

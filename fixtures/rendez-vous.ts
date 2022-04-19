@@ -59,12 +59,13 @@ export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
     presenceConseiller: false,
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
+    idCreateur: '1',
   }
 
   return { ...defaults, ...overrides }
 }
 
-export const uneListeDeRdv = (overrides: Rdv[] = []): Rdv[] => [
+export const uneListeDeRdv = (): Rdv[] => [
   unRendezVous(),
   {
     id: '2',
@@ -83,8 +84,8 @@ export const uneListeDeRdv = (overrides: Rdv[] = []): Rdv[] => [
     presenceConseiller: true,
     invitation: true,
     comment: 'Mon premier rendez-vous',
+    idCreateur: '2',
   },
-  ...overrides,
 ]
 
 export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
@@ -105,6 +106,7 @@ export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
     presenceConseiller: false,
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
+    createur: { id: '1' },
   }
 
   return { ...defaults, ...overrides }

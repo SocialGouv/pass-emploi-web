@@ -198,6 +198,7 @@ function FicheJeune({
           {!isPoleEmploi ? (
             <RdvList
               rdvs={rdvsAVenir}
+              idConseiller={session?.user.id ?? ''}
               onDelete={openDeleteRdvModal}
               withNameJeune={false}
             />
