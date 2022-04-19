@@ -119,14 +119,18 @@ const RdvList = ({
                           <DoneIcon
                             aria-hidden='true'
                             focusable='false'
-                            className='fill-primary'
+                            className='fill-primary h-3'
                           />
                         </>
                       )}
                       {rdv.idCreateur !== idConseiller && (
                         <>
                           <span className='sr-only'>non</span>
-                          <KoIcon aria-hidden='true' focusable='false' />
+                          <KoIcon
+                            aria-hidden='true'
+                            focusable='false'
+                            className='h-3'
+                          />
                         </>
                       )}
                     </div>
