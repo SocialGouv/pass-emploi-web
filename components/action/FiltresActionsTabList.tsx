@@ -3,7 +3,7 @@ import { ActionStatus } from 'interfaces/action'
 
 const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
 
-interface FiltresActionsTabList {
+interface FiltresActionsTabListProps {
   currentFilter: string
   actionsLength: number
   actionsARealiserLength: number
@@ -21,7 +21,7 @@ function FiltresActionsTabList({
   actionsTermineesLength,
   prenomJeune,
   filterClicked,
-}: FiltresActionsTabList) {
+}: FiltresActionsTabListProps) {
   function isSelected(filter: string): boolean {
     return currentFilter === filter
   }

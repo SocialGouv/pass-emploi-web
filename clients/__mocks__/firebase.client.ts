@@ -2,22 +2,22 @@ import { unChat } from 'fixtures/jeune'
 import { Message } from 'interfaces'
 import { Chat } from 'interfaces/jeune'
 
-const FirebaseClient = jest.fn(() => ({
+export const FirebaseClient = jest.fn(() => ({
   signIn: jest.fn(),
   signOut: jest.fn(),
   addMessage: jest.fn(),
   updateChat: jest.fn(),
   findAndObserveChatDuJeune: jest.fn(
-    (idConseiller: string, idJeune: string, fn: (chat: Chat) => void) =>
+    (_idConseiller: string, _idJeune: string, fn: (chat: Chat) => void) =>
       fn(unChat())
   ),
-  observeChat: jest.fn((idChat: string, fn: (chat: Chat) => void) =>
+  observeChat: jest.fn((_idChat: string, fn: (chat: Chat) => void) =>
     fn(unChat())
   ),
   observeMessagesDuChat: jest.fn(
-    (idChat: string, fn: (messages: Message[]) => void) => fn([])
+    (_idChat: string, fn: (messages: Message[]) => void) => fn([])
   ),
-  getChatsDesJeunes: jest.fn((_, idsJeunes: string[]) =>
+  getChatsDesJeunes: jest.fn((_idConseiller, idsJeunes: string[]) =>
     idsJeunes.reduce((mappedChats, idJeune) => {
       return {
         ...mappedChats,
@@ -27,5 +27,3 @@ const FirebaseClient = jest.fn(() => ({
   ),
   countMessagesNotRead: jest.fn(),
 }))
-
-export { FirebaseClient }
