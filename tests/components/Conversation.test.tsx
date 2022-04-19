@@ -49,6 +49,7 @@ describe('<Conversation />', () => {
       structure: UserStructure.POLE_EMPLOI,
       estSuperviseur: false,
       email: 'mail@mail.com',
+      estConseiller: true,
     }
     accessToken = 'accessToken'
     tokenChat = 'tokenChat'
