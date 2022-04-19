@@ -112,22 +112,22 @@ const RdvList = ({
                   </div>
 
                   {rdv.idCreateur && (
-                    <div
-                      role='cell'
-                      className='table-cell p-3'
-                      aria-label={
-                        rdv.idCreateur === idConseiller ? 'oui' : 'non'
-                      }
-                    >
+                    <div role='cell' className='table-cell p-3'>
                       {rdv.idCreateur === idConseiller && (
-                        <DoneIcon
-                          aria-hidden='true'
-                          focusable='false'
-                          className='fill-primary'
-                        />
+                        <>
+                          <span className='sr-only'>oui</span>
+                          <DoneIcon
+                            aria-hidden='true'
+                            focusable='false'
+                            className='fill-primary'
+                          />
+                        </>
                       )}
                       {rdv.idCreateur !== idConseiller && (
-                        <KoIcon aria-hidden='true' focusable='false' />
+                        <>
+                          <span className='sr-only'>non</span>
+                          <KoIcon aria-hidden='true' focusable='false' />
+                        </>
                       )}
                     </div>
                   )}

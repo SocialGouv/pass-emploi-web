@@ -73,10 +73,14 @@ describe('<RdvList>', () => {
     })
 
     // Then
-    expect(within(rendezVous0).getByLabelText('oui')).toBeInTheDocument()
-    expect(within(rendezVous1).getByLabelText('non')).toBeInTheDocument()
-    expect(() => within(rendezVous2).getByLabelText('oui')).toThrow()
-    expect(() => within(rendezVous2).getByLabelText('non')).toThrow()
+    const labelCreateurRdv1 = within(rendezVous0).getByText('oui')
+    expect(labelCreateurRdv1).toBeInTheDocument()
+    expect(labelCreateurRdv1).toHaveAttribute('class', 'sr-only')
+    const labelCreateurRdv2 = within(rendezVous1).getByText('non')
+    expect(labelCreateurRdv2).toBeInTheDocument()
+    expect(labelCreateurRdv2).toHaveAttribute('class', 'sr-only')
+    expect(() => within(rendezVous2).getByText('oui')).toThrow()
+    expect(() => within(rendezVous2).getByText('non')).toThrow()
   })
 
   it('ne devrait pas afficher un tableau de rdvs quand rdvs est vide', () => {
