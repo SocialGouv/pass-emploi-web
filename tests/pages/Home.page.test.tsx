@@ -25,21 +25,42 @@ describe('Home', () => {
       expect(actual).toEqual({ redirect: 'whatever' })
     })
 
-    it('redirige vers la liste des jeunes', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
+    describe('si le conseiller a renseigné son agence', () => {
+      it('redirige vers la liste des jeunes', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { source: 'email' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          redirect: {
+            destination: '/mes-jeunes?source=email',
+            permanent: true,
+          },
+        })
       })
+    })
 
-      // When
-      const actual = await getServerSideProps({
-        query: { source: 'email' },
-      } as unknown as GetServerSidePropsContext)
+    describe("si le conseiller n'a pas renseigné son agence", () => {
+      it("affiche les info nécessaires pour renseigner l'agence", async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+        })
 
-      // Then
-      expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({
-        redirect: { destination: '/mes-jeunes?source=email', permanent: true },
+        // When
+        const actual = await getServerSideProps({
+          query: { source: 'email' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({ props: { referentiel: [] } })
       })
     })
   })
