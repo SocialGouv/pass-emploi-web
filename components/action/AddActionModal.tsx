@@ -15,7 +15,7 @@ type ActionModalProps = {
   onAdd: any
 }
 
-const AddActionModal = ({ onClose, onAdd }: ActionModalProps) => {
+export default function AddActionModal({ onClose, onAdd }: ActionModalProps) {
   const [newContent, setNewContent] = useState('')
   const [newComment, setNewComment] = useState('')
   const [isCommentMode, setIsCommentMode] = useState(false)
@@ -24,21 +24,23 @@ const AddActionModal = ({ onClose, onAdd }: ActionModalProps) => {
   const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession<true>({ required: true })
 
-  const noSelectedAction = () => Boolean(newContent === '')
+  function noSelectedAction() {
+    return Boolean(newContent === '')
+  }
 
-  const handleSelectedAction = (selectedActionContent: string) => {
+  function handleSelectedAction(selectedActionContent: string) {
     setNewContent(selectedActionContent)
     setIsCommentMode(true)
     setIsBackClicked(false)
   }
 
-  const toggleCustomMode = () => {
+  function toggleCustomMode() {
     setIsCustomMode(!isCustomMode)
     setNewContent('')
     setNewComment('')
   }
 
-  const handleAddClick = (event: any) => {
+  function handleAddClick(event: any) {
     event.preventDefault()
 
     if (noSelectedAction()) {
@@ -64,12 +66,13 @@ const AddActionModal = ({ onClose, onAdd }: ActionModalProps) => {
       })
   }
 
-  const handleCloseModal = () => {
+  function handleCloseModal() {
     setNewContent('')
     setIsCommentMode(false)
     setNewComment('')
     onClose()
   }
+
   useMatomo(
     isCustomMode
       ? 'Actions jeune - Modale création action personnalisée'
@@ -228,5 +231,3 @@ const AddActionModal = ({ onClose, onAdd }: ActionModalProps) => {
     </>
   )
 }
-
-export default AddActionModal

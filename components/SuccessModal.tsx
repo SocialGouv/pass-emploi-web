@@ -8,8 +8,8 @@ type SuccessModalProps = {
   message: string
 }
 
-const SuccessModal = ({ onClose, message }: SuccessModalProps) => {
-  const handleCloseModal = () => {
+export default function SuccessModal({ onClose, message }: SuccessModalProps) {
+  function handleCloseModal() {
     onClose()
   }
 
@@ -34,5 +34,3 @@ const SuccessModal = ({ onClose, message }: SuccessModalProps) => {
     </Modal>
   )
 }
-
-export default SuccessModal
