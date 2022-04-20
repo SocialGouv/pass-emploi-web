@@ -1,14 +1,14 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen } from '@testing-library/react'
 import { uneListeDeRdv } from 'fixtures/rendez-vous'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import React from 'react'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { useRouter } from 'next/router'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('MesRendezvous', () => {
   afterAll(() => jest.clearAllMocks())
@@ -97,18 +97,59 @@ describe('MesRendezvous', () => {
         ).toBeInTheDocument()
       })
 
-      it('permet de cacher le message de succès', () => {
+      it('permet de cacher le message de succès', async () => {
         // Given
         const fermerMessage = screen.getByRole('button', {
           name: "J'ai compris",
         })
 
         // When
-        fermerMessage.click()
+        await act(async () => fermerMessage.click())
 
         // Then
         expect(() =>
           screen.getByText('Le rendez-vous a bien été créé')
+        ).toThrow()
+        expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
+      })
+    })
+
+    describe('quand la modification de rdv est réussie', () => {
+      let replace: jest.Mock
+      beforeEach(() => {
+        // Given
+        replace = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+        // When
+        renderWithSession(
+          <MesRendezvous
+            rendezVousFuturs={rendezVousFuturs}
+            rendezVousPasses={rendezVousPasses}
+            modificationSuccess={true}
+          />
+        )
+      })
+
+      it('affiche un message de succès', () => {
+        // Then
+        expect(
+          screen.getByText('Le rendez-vous a bien été modifié')
+        ).toBeInTheDocument()
+      })
+
+      it('permet de cacher le message de succès', async () => {
+        // Given
+        const fermerMessage = screen.getByRole('button', {
+          name: "J'ai compris",
+        })
+
+        // When
+        await act(async () => fermerMessage.click())
+
+        // Then
+        expect(() =>
+          screen.getByText('Le rendez-vous a bien été modifié')
         ).toThrow()
         expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
       })
@@ -123,7 +164,7 @@ describe('MesRendezvous', () => {
           session: {
             user: { structure: 'POLE_EMPLOI' },
           },
-          hasSession: true,
+          validSession: true,
         })
 
         // When

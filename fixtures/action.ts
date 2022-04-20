@@ -8,8 +8,8 @@ export const uneAction = (
     id: 'id-action-1',
     content: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
-    creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
+    creationDate: '2022-02-15T14:50:46.000Z',
+    lastUpdate: '2022-02-16T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: ActionStatus.NotStarted,
@@ -18,25 +18,14 @@ export const uneAction = (
   return { ...defaults, ...overrides }
 }
 
-export const uneListeDActions = (
-  actionsSupplementaires: ActionJeune[] = []
-): ActionJeune[] => [
-  {
-    id: 'id-action-1',
-    content: 'Identifier ses atouts et ses compétences',
-    comment: 'Je suis un beau commentaire',
-    creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
-    creator: 'Nils',
-    creatorType: 'conseiller',
-    status: ActionStatus.NotStarted,
-  },
+export const uneListeDActions = (): ActionJeune[] => [
+  uneAction(),
   {
     id: 'id-action-2',
     content: 'Compléter son cv',
     comment: 'Je suis un beau commentaire',
-    creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
+    creationDate: '2022-02-17T14:50:46.000Z',
+    lastUpdate: '2022-02-18T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: ActionStatus.InProgress,
@@ -45,13 +34,12 @@ export const uneListeDActions = (
     id: 'id-action-3',
     content: 'Chercher une formation',
     comment: 'Je suis un beau commentaire',
-    creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
+    creationDate: '2022-02-19T14:50:46.000Z',
+    lastUpdate: '2022-02-20T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: ActionStatus.Done,
   },
-  ...actionsSupplementaires,
 ]
 
 export const uneActionJson = (
@@ -79,7 +67,7 @@ export const uneListeDActionsJson = (
     content: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
     creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
+    lastUpdate: 'Wed, 16 Feb 2022 14:50:46 UTC',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'not_started',
@@ -88,8 +76,8 @@ export const uneListeDActionsJson = (
     id: 'id-action-2',
     content: 'Compléter son cv',
     comment: 'Je suis un beau commentaire',
-    creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
+    creationDate: 'Thu, 17 Feb 2022 14:50:46 UTC',
+    lastUpdate: 'Fri, 18 Feb 2022 14:50:46 UTC',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'in_progress',
@@ -98,8 +86,8 @@ export const uneListeDActionsJson = (
     id: 'id-action-3',
     content: 'Chercher une formation',
     comment: 'Je suis un beau commentaire',
-    creationDate: 'Tue, 15 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Tue, 16 Feb 2022 14:50:46 UTC',
+    creationDate: 'Sat, 19 Feb 2022 14:50:46 UTC',
+    lastUpdate: 'Sun, 20 Feb 2022 14:50:46 UTC',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'done',

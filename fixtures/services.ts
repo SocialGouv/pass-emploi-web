@@ -1,15 +1,17 @@
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import { MessagesService } from '../services/messages.service'
 
 export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
 ): JeunesService {
   const defaults: JeunesService = {
     getJeunesDuConseiller: jest.fn(),
+    getConseillersDuJeune: jest.fn(),
     getJeunesDuConseillerParEmail: jest.fn(),
     getJeuneDetails: jest.fn(),
+    getIdJeuneMilo: jest.fn(),
     createCompteJeunePoleEmploi: jest.fn(),
     reaffecter: jest.fn(),
     supprimerJeune: jest.fn(),
@@ -24,7 +26,7 @@ export function mockedActionsService(
     createAction: jest.fn(),
     deleteAction: jest.fn(),
     getAction: jest.fn(),
-    getActions: jest.fn(),
+    countActionsJeunes: jest.fn(),
     getActionsJeune: jest.fn(),
     updateAction: jest.fn(),
   }
@@ -52,10 +54,13 @@ export function mockedRendezVousService(
   overrides: Partial<RendezVousService> = {}
 ): RendezVousService {
   const defaults: RendezVousService = {
-    deleteRendezVous: jest.fn(),
     getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
+    getDetailsRendezVous: jest.fn(),
+    getTypesRendezVous: jest.fn(),
     postNewRendezVous: jest.fn(),
+    updateRendezVous: jest.fn(),
+    deleteRendezVous: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

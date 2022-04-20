@@ -1,25 +1,40 @@
+import { HeaderCell } from 'components/rdv/HeaderCell'
+import { RdvTypeTag } from 'components/ui/RdvTypeTag'
 import { Rdv } from 'interfaces/rdv'
+import Link from 'next/link'
+import { MouseEvent } from 'react'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
-
 import DeleteIcon from '../../assets/icons/delete.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
+import DoneIcon from '../../assets/icons/done.svg'
+import KoIcon from '../../assets/icons/ko.svg'
 
 type RdvListProps = {
   rdvs: Rdv[]
+  idConseiller: string
+  withNameJeune?: boolean
   id?: string
   onDelete?: any
 }
 
-const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
-  const handleDeleteClick = (rdv: Rdv) => {
+const RdvList = ({
+  rdvs,
+  idConseiller,
+  withNameJeune = true,
+  id,
+  onDelete,
+}: RdvListProps) => {
+  const handleDeleteClick = (e: MouseEvent<HTMLElement>, rdv: Rdv) => {
+    e.preventDefault()
+    e.stopPropagation()
     onDelete(rdv)
   }
 
-  const dayHourCells = (rdvDate: Date, duration: string) => {
+  const dayHourCells = (rdvDate: Date, duration: number) => {
     return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
       rdvDate
-    )} - ${duration})`
+    )} - ${duration} min)`
   }
 
   return (
@@ -31,62 +46,117 @@ const RdvList = ({ id, rdvs, onDelete }: RdvListProps) => {
       )}
 
       {rdvs.length > 0 && (
-        <table id={id} className='w-full'>
-          <caption className='sr-only'>Liste de mes rendez-vous</caption>
+        <div
+          role='table'
+          id={id}
+          className='table w-full'
+          aria-describedby='table-caption'
+        >
+          <span id='table-caption' className='sr-only'>
+            Liste de mes rendez-vous
+          </span>
 
-          <thead className='sr-only'>
-            <tr>
-              <th scope='col'>Date et heure du rendez-vous</th>
-              <th scope='col'>Lieu et modalité du rendez-vous</th>
-              <th scope='col'>Commentaires</th>
-              <th scope='col'>Supprimer le rendez-vous</th>
-            </tr>
-          </thead>
+          <div role='rowgroup' className='table-row-group'>
+            <div role='row' className='table-row'>
+              <HeaderCell label='Horaires' />
+              {withNameJeune && <HeaderCell label='Prénom Nom' />}
+              <HeaderCell label='Type' />
+              <HeaderCell label='Modalité' />
+              <HeaderCell label='Note' />
+              <HeaderCell label='Crée par vous' />
+              <HeaderCell label='Supprimer le rendez-vous' srOnly />
+            </div>
+          </div>
 
-          <tbody>
+          <div role='rowgroup' className='table-row-group'>
             {rdvs.map((rdv: Rdv) => (
-              <tr key={rdv.id} className='text-sm text-bleu_nuit'>
-                <td className='p-4'>
-                  {dayHourCells(new Date(rdv.date), rdv.duration)}
-                </td>
+              <Link
+                href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
+                key={rdv.id}
+              >
+                <a
+                  role='row'
+                  key={rdv.id}
+                  aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.jeune.prenom} ${rdv.jeune.nom}`}
+                  className='table-row text-sm text-bleu_nuit hover:bg-gris_blanc'
+                >
+                  <div role='cell' className='table-cell p-3'>
+                    {dayHourCells(new Date(rdv.date), rdv.duration)}
+                  </div>
+                  {withNameJeune && (
+                    <div role='cell' className='table-cell p-3'>
+                      {rdv.jeune.prenom} {rdv.jeune.nom}
+                    </div>
+                  )}
 
-                <td className='p-4'>
-                  {rdv.jeune.prenom} {rdv.jeune.nom}
-                </td>
+                  <div role='cell' className='table-cell p-3'>
+                    <RdvTypeTag type={rdv.type.label} />
+                  </div>
 
-                <td className='p-4 '>
-                  <LocationIcon
-                    focusable='false'
-                    aria-hidden='true'
-                    className='mr-2 inline'
-                  />
-                  {rdv.modality}
-                </td>
+                  <div role='cell' className='table-cell p-3 '>
+                    <LocationIcon
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-2 inline'
+                    />
+                    {rdv.modality}
+                  </div>
 
-                <td className='p-4 [overflow-wrap:anywhere]'>
-                  <NoteIcon
-                    focusable='false'
-                    aria-hidden='true'
-                    className='mr-2 inline'
-                  />
-                  {rdv.comment || '--'}
-                </td>
+                  <div role='cell' className='table-cell p-3'>
+                    <NoteIcon
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-2 inline'
+                    />
+                    {(rdv.comment && '1 note(s)') || '--'}
+                  </div>
 
-                {onDelete && (
-                  <td className='p-4'>
-                    <button
-                      onClick={() => handleDeleteClick(rdv)}
-                      aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
-                      className='border-none'
+                  {rdv.idCreateur && (
+                    <div role='cell' className='table-cell p-3'>
+                      {rdv.idCreateur === idConseiller && (
+                        <>
+                          <span className='sr-only'>oui</span>
+                          <DoneIcon
+                            aria-hidden='true'
+                            focusable='false'
+                            className='fill-primary h-3'
+                          />
+                        </>
+                      )}
+                      {rdv.idCreateur !== idConseiller && (
+                        <>
+                          <span className='sr-only'>non</span>
+                          <KoIcon
+                            aria-hidden='true'
+                            focusable='false'
+                            className='h-3'
+                          />
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {!rdv.idCreateur && <div role='cell' />}
+
+                  {onDelete && (
+                    <div
+                      role='cell'
+                      className='table-cell p-3'
+                      onClick={(e) => handleDeleteClick(e, rdv)}
                     >
-                      <DeleteIcon aria-hidden='true' focusable='false' />
-                    </button>
-                  </td>
-                )}
-              </tr>
+                      <button
+                        onClick={(e) => handleDeleteClick(e, rdv)}
+                        aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+                        className='border-none'
+                      >
+                        <DeleteIcon aria-hidden='true' focusable='false' />
+                      </button>
+                    </div>
+                  )}
+                </a>
+              </Link>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       )}
     </>
   )

@@ -1,9 +1,9 @@
 import { uneAction } from 'fixtures/action'
 import {
-  earliestDate,
-  earlyDate,
-  lateDate,
-  latestDate,
+  datePasseeLoin,
+  datePassee,
+  dateFuture,
+  dateFutureLoin,
   now,
 } from 'fixtures/date'
 import { compareActionsDatesDesc } from '../../interfaces/action'
@@ -13,24 +13,24 @@ describe('Action', () => {
     it('tri les actions par date de création décroissante', () => {
       // Given
       const createdLast = uneAction({
-        creationDate: latestDate.toISOString(),
-        lastUpdate: earliestDate.toISOString(),
+        creationDate: dateFutureLoin.toISOString(),
+        lastUpdate: datePasseeLoin.toISOString(),
       })
       const createdAfter = uneAction({
-        creationDate: lateDate.toISOString(),
-        lastUpdate: earlyDate.toISOString(),
+        creationDate: dateFuture.toISOString(),
+        lastUpdate: datePassee.toISOString(),
       })
       const createdNow = uneAction({
         creationDate: now.toISOString(),
         lastUpdate: now.toISOString(),
       })
       const createdBefore = uneAction({
-        creationDate: earlyDate.toISOString(),
-        lastUpdate: lateDate.toISOString(),
+        creationDate: datePassee.toISOString(),
+        lastUpdate: dateFuture.toISOString(),
       })
       const createdFirst = uneAction({
-        creationDate: earliestDate.toISOString(),
-        lastUpdate: latestDate.toISOString(),
+        creationDate: datePasseeLoin.toISOString(),
+        lastUpdate: dateFutureLoin.toISOString(),
       })
 
       // When

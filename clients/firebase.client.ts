@@ -21,6 +21,7 @@ import {
 } from 'firebase/firestore'
 import { Message } from 'interfaces'
 import { Chat } from 'interfaces/jeune'
+import { captureRUMError } from 'utils/monitoring/init-rum'
 
 class FirebaseClient {
   private readonly firebaseApp: FirebaseApp
@@ -53,6 +54,7 @@ class FirebaseClient {
 
   async addMessage(
     idChat: string,
+    idConseiller: string,
     message: { encryptedText: string; iv: string },
     date: Date
   ): Promise<void> {
@@ -66,12 +68,14 @@ class FirebaseClient {
         {
           content,
           iv,
+          conseillerId: idConseiller,
           sentBy: 'conseiller',
           creationDate: Timestamp.fromDate(date),
         }
       )
     } catch (e) {
       console.error(e)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -84,6 +88,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -111,6 +116,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -135,6 +141,7 @@ class FirebaseClient {
       }, {} as { [idJeune: string]: Chat })
     } catch (e) {
       console.error(e)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -151,6 +158,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -187,6 +195,7 @@ class FirebaseClient {
       )
     } catch (e) {
       console.error(e)
+      captureRUMError(e as Error)
       throw e
     }
   }
@@ -252,7 +261,7 @@ class FirebaseClient {
 
 interface FirebaseChat {
   jeuneId: string
-  seenByConseiller: boolean
+  seenByConseiller: boolean | undefined
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
   lastMessageSentAt: Timestamp | undefined
@@ -301,7 +310,7 @@ function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
 function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
   return {
     chatId: chatId,
-    seenByConseiller: firebaseChat.seenByConseiller,
+    seenByConseiller: firebaseChat.seenByConseiller ?? true,
     newConseillerMessageCount: firebaseChat.newConseillerMessageCount,
     lastMessageContent: firebaseChat.lastMessageContent,
     lastMessageSentAt: firebaseChat.lastMessageSentAt?.toDate(),
@@ -313,10 +322,11 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
 }
 
 interface FirebaseMessage {
-  content: string
   creationDate: Timestamp
   sentBy: string
+  content: string
   iv: string | undefined
+  conseillerId?: string
 }
 
 export { FirebaseClient }

@@ -12,7 +12,9 @@ export default function renderWithSession(
     user: {
       id: '1',
       name: 'Nils Tavernier',
+      email: 'fake@email.com',
       structure: UserStructure.MILO,
+      estConseiller: true,
       estSuperviseur: false,
     },
     accessToken: 'accessToken',

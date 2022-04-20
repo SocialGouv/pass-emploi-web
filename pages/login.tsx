@@ -1,3 +1,4 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { FormButton } from 'components/ui/FormButton'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
@@ -11,7 +12,7 @@ interface LoginProps {
   isFromEmail: boolean
 }
 
-const Login = ({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) => {
+function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -114,4 +115,4 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
   }
 }
 
-export default Login
+export default withTransaction(Login.name, 'page')(Login)

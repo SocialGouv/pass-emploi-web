@@ -1,66 +1,113 @@
-import { Rdv, RdvJeune } from 'interfaces/rdv'
+import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { RdvJson } from 'interfaces/json/rdv'
 
-export const uneListeDeRdv = (overrides: Partial<Rdv[]> = []): Rdv[] =>
-  [
+export const typesDeRendezVous = (
+  overrides: TypeRendezVous[] = []
+): TypeRendezVous[] => {
+  return [
     {
-      id: '1',
-      comment: 'Rendez-vous avec Kenji',
-      date: 'Thu, 21 Oct 2021 10:00:00 GMT',
-      duration: '30 min',
-      modality: 'Par téléphone',
-      jeune: {
-        id: '1',
-        prenom: 'kenji',
-        nom: 'Jirac',
-      },
+      code: 'ACTIVITES_EXTERIEURES',
+      label: 'Activités extérieures',
     },
     {
-      id: '2',
-      comment: 'Mon premier rendez-vous',
-      date: 'Mon, 25 Oct 2021 12:00:00 GMT',
-      duration: '25 min',
-      modality: 'En agence',
-      jeune: {
-        id: '2',
-        prenom: 'Raja',
-        nom: 'Jirac',
-      },
+      code: 'ATELIER',
+      label: 'Atelier',
+    },
+    {
+      code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      label: 'Entretien individuel conseiller',
+    },
+    {
+      code: 'ENTRETIEN_PARTENAIRE',
+      label: 'Entretien par un partenaire',
+    },
+    {
+      code: 'INFORMATION_COLLECTIVE',
+      label: 'Information collective',
+    },
+    {
+      code: 'VISITE',
+      label: 'Visite',
+    },
+    {
+      code: 'PRESTATION',
+      label: 'Prestation',
+    },
+    {
+      code: 'AUTRE',
+      label: 'Autre',
     },
     ...overrides,
-  ] as Rdv[]
+  ]
+}
 
-export const uneListeDeRdvJeune = (overrides: RdvJeune[] = []): RdvJeune[] =>
-  [
-    {
+export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
+  const defaults: Rdv = {
+    id: '1',
+    jeune: {
       id: '1',
-      comment: 'Mon premier rendez-vous',
-      date: 'Mon, 25 Oct 2021 07:00:00 GMT',
-      duration: '25',
-      modality: 'En agence',
-      jeune: {
-        id: '1',
-        prenom: 'kenji',
-        nom: 'Jirac',
-      },
+      prenom: 'kenji',
+      nom: 'Jirac',
     },
-    {
+    type: { code: 'AUTRE', label: 'Autre' },
+    precisionType: 'Prise de nouvelles',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    adresse: '36 rue de marseille, 93200 Saint-Denis',
+    organisme: 'S.A.R.L',
+    presenceConseiller: false,
+    invitation: true,
+    comment: 'Rendez-vous avec Kenji',
+    idCreateur: '1',
+  }
+
+  return { ...defaults, ...overrides }
+}
+
+export const uneListeDeRdv = (): Rdv[] => [
+  unRendezVous(),
+  {
+    id: '2',
+    jeune: {
       id: '2',
-      comment: 'Rendez-vous avec Kenji',
-      date: 'Thu, 21 Oct 2021 07:00:00 GMT',
-      duration: '30',
-      modality: 'Par téléphone',
-      jeune: {
-        id: '1',
-        prenom: 'kenji',
-        nom: 'Jirac',
-      },
+      prenom: 'Raja',
+      nom: 'Jirac',
     },
-    {
-      id: '3',
-      comment: 'Rendez-vous dans 10 ans',
-      date: 'Thu, 21 Oct 2021 12:00:00 GMT',
-      duration: '30',
-      modality: 'Par téléphone',
+    type: { code: 'ATELIER', label: 'Atelier' },
+    precisionType: '',
+    modality: 'En agence',
+    date: '2021-10-25T12:00:00.000Z',
+    duration: 25,
+    adresse: '',
+    organisme: '',
+    presenceConseiller: true,
+    invitation: true,
+    comment: 'Mon premier rendez-vous',
+    idCreateur: '2',
+  },
+]
+
+export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
+  const defaults: RdvJson = {
+    id: '1',
+    jeune: {
+      id: '1',
+      prenom: 'kenji',
+      nom: 'Jirac',
     },
-    ...overrides,
-  ] as RdvJeune[]
+    type: { code: 'AUTRE', label: 'Autre' },
+    precision: 'Prise de nouvelles',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    adresse: '36 rue de marseille, 93200 Saint-Denis',
+    organisme: 'S.A.R.L',
+    presenceConseiller: false,
+    invitation: true,
+    comment: 'Rendez-vous avec Kenji',
+    createur: { id: '1' },
+  }
+
+  return { ...defaults, ...overrides }
+}

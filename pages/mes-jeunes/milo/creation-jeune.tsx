@@ -1,26 +1,26 @@
-import styles from 'styles/components/Layouts.module.css'
-import { GetServerSideProps } from 'next'
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
-import { Container } from 'utils/injectionDependances'
+import { withTransaction } from '@elastic/apm-rum-react'
+import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
+import { CreationEtape } from 'components/jeune/CreationEtape'
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
+import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
-import { CreationEtape } from 'components/jeune/CreationEtape'
-import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
-import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
-import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
-
-import BackIcon from '../../../assets/icons/arrow_back.svg'
-import { AppHead } from 'components/AppHead'
-import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import Router from 'next/router'
+import React, { ReactNode, useEffect, useState } from 'react'
+import styles from 'styles/components/Layouts.module.css'
+import useMatomo from 'utils/analytics/useMatomo'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { Container } from 'utils/injectionDependances'
+import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 type MiloCreationJeuneProps = {
   dossierId: string
   dossier: DossierMilo | null
   erreurMessageHttpMilo: string
+  pageTitle: string
 }
 
 function MiloCreationJeune({
@@ -57,10 +57,6 @@ function MiloCreationJeune({
 
   return (
     <>
-      <AppHead
-        titre={`Mes jeunes - Création d'un compte jeune - Étape ${etape}`}
-      />
-
       <div className={`flex justify-between ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
@@ -107,7 +103,7 @@ function MiloCreationJeune({
     }
   }
 
-  function etape1(): React.ReactNode {
+  function etape1(): ReactNode {
     return (
       <FormulaireRechercheDossier
         dossierId={dossierId}
@@ -116,11 +112,11 @@ function MiloCreationJeune({
     )
   }
 
-  function etape3(): React.ReactNode {
+  function etape3(): ReactNode {
     return <SuccessAddJeuneMilo idJeune={createdSucessId} />
   }
 
-  function etape2(): React.ReactNode {
+  function etape2(): ReactNode {
     return (
       <>
         {dossier && (
@@ -148,7 +144,7 @@ export const getServerSideProps: GetServerSideProps<
 > = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
 
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -177,17 +173,21 @@ export const getServerSideProps: GetServerSideProps<
     } catch (err) {
       erreurMessageHttpMilo =
         (err as Error).message || "Une erreur inconnue s'est produite"
-      console.log('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
+      console.error('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
     }
   }
-
+  //TODO: remettre numéro étape dans title
   return {
     props: {
       dossierId: dossierId || '',
       dossier,
       erreurMessageHttpMilo,
+      pageTitle: `Mes jeunes - Création d'un compte jeune`,
     },
   }
 }
 
-export default MiloCreationJeune
+export default withTransaction(
+  MiloCreationJeune.name,
+  'page'
+)(MiloCreationJeune)

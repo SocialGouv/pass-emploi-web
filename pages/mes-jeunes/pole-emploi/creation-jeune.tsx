@@ -1,24 +1,28 @@
-import { AppHead } from 'components/AppHead'
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
 import { SuccessAddJeunePoleEmploi } from 'components/jeune/SuccessAddJeunePoleEmploi'
 import { UserStructure } from 'interfaces/conseiller'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 
-function PoleEmploiCreationJeune() {
+interface PoleEmploiCreationJeuneProps {
+  pageTitle: string
+}
+
+function PoleEmploiCreationJeune(): JSX.Element {
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const [createdSuccessId, setCreatedSuccessId] = useState<string>('')
   const [creationError, setCreationError] = useState<string>('')
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
@@ -54,8 +58,6 @@ function PoleEmploiCreationJeune() {
 
   return (
     <>
-      <AppHead titre={`Mes jeunes – Création d'un compte jeune`} />
-
       <div className={`flex justify-between ${styles.header}`}>
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
@@ -96,10 +98,12 @@ function PoleEmploiCreationJeune() {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+export const getServerSideProps: GetServerSideProps<
+  PoleEmploiCreationJeuneProps
+> = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
 
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -112,7 +116,14 @@ export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
     }
   }
 
-  return { props: {} }
+  return {
+    props: {
+      pageTitle: "Mes jeunes – Création d'un compte jeune",
+    },
+  }
 }
 
-export default PoleEmploiCreationJeune
+export default withTransaction(
+  PoleEmploiCreationJeune.name,
+  'page'
+)(PoleEmploiCreationJeune)

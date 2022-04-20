@@ -1,5 +1,14 @@
-require('next-logger')
+require('dotenv').config({ path: '.env.local' })
+const serviceName = process.env.APP || 'pa-front-local'
+const apm = require('elastic-apm-node').start({
+  serviceName: `ssr-${serviceName}`,
+  secretToken: process.env.APM_SECRET_TOKEN || '',
+  serverUrl: process.env.APM_URL || '',
+  environment: process.env.ENVIRONMENT || 'development',
+  active: process.env.APM_IS_ACTIVE === 'true',
+})
 
+require('next-logger')
 const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
@@ -14,6 +23,7 @@ const handle = app.getRequestHandler()
 app.prepare().then(() => {
   createServer((req, res) => {
     const parsedUrl = parse(req.url, true)
+    apm.setTransactionName(`${req.method} ${parsedUrl.pathname}`)
     handle(req, res, parsedUrl)
   }).listen(port, (err) => {
     if (err) throw err

@@ -1,95 +1,51 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import ChatRoom from 'components/layouts/ChatRoom'
-import Conversation from 'components/layouts/Conversation'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
-import { Session } from 'next-auth'
 import React from 'react'
-import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
-import { DIProvider } from 'utils/injectionDependances'
+import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('components/layouts/Conversation', () => jest.fn(() => <></>))
-jest.useFakeTimers()
-
-beforeEach(async () => {
-  jest.setSystemTime(new Date())
-})
+jest.mock('components/layouts/Conversation', () =>
+  jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
+)
 
 describe('<ChatRoom />', () => {
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
+
   const jeunes: Jeune[] = desJeunes()
-  let jeunesService: JeunesService
-  let messagesService: MessagesService
-  let conseiller: Session.User
-  let accessToken: string
-  let tokenChat: string
+  let jeunesChats: JeuneChat[]
   beforeEach(async () => {
-    jeunesService = mockedJeunesService()
-    messagesService = mockedMessagesService({
-      signIn: jest.fn(() => Promise.resolve()),
-      observeJeuneChat: jest.fn(
-        (idConseiller: string, jeune: Jeune, fn: (chat: JeuneChat) => void) => {
-          if (jeune.id === 'jeune-3') {
-            fn(
-              unJeuneChat({
-                ...jeune,
-                chatId: `chat-${jeune.id}`,
-                seenByConseiller: false,
-              })
-            )
-          } else {
-            fn(
-              unJeuneChat({
-                ...jeune,
-                chatId: `chat-${jeune.id}`,
-                seenByConseiller: true,
-              })
-            )
-          }
-          return () => {}
-        }
-      ),
-    })
-    conseiller = {
-      id: 'idConseiller',
-      name: 'Taverner',
-      structure: UserStructure.POLE_EMPLOI,
-      estSuperviseur: false,
-    }
-    accessToken = 'accessToken'
-    tokenChat = 'tokenChat'
+    jeunesChats = [
+      unJeuneChat({
+        ...jeunes[0],
+        chatId: `chat-${jeunes[0].id}`,
+        seenByConseiller: true,
+      }),
+      unJeuneChat({
+        ...jeunes[1],
+        chatId: `chat-${jeunes[1].id}`,
+        seenByConseiller: true,
+      }),
+      unJeuneChat({
+        ...jeunes[2],
+        chatId: `chat-${jeunes[2].id}`,
+        seenByConseiller: false,
+      }),
+    ]
   })
 
   describe('quand le conseiller a des jeunes', () => {
     beforeEach(async () => {
-      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
-        jeunes
-      )
-
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService, messagesService }}>
-            <ChatRoom />
-          </DIProvider>,
-          { user: conseiller, firebaseToken: tokenChat }
+          <CurrentJeuneProvider>
+            <ChatRoom jeunesChats={jeunesChats} />
+          </CurrentJeuneProvider>
         )
       })
-    })
-
-    it('fetch conseiller list of jeune', async () => {
-      // Then
-      expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
-        conseiller.id,
-        accessToken
-      )
-    })
-
-    it('sign into chat', async () => {
-      // Then
-      expect(messagesService.signIn).toHaveBeenCalled()
     })
 
     it('devrait avoir le lien multidestination', () => {
@@ -101,32 +57,11 @@ describe('<ChatRoom />', () => {
 
     describe('pour chaque jeune', () => {
       const cases = jeunes.map((jeune) => [jeune])
-      it.each(cases)('subscribes to chat', async (jeune) => {
-        // Then
-        expect(messagesService.observeJeuneChat).toHaveBeenCalledWith(
-          conseiller.id,
-          jeune,
-          expect.any(Function)
-        )
-      })
-
-      it.each(cases)('affiche le chat', (jeune) => {
+      it.each(cases)('affiche le chat de %j', (jeune) => {
         // Then
         expect(
           screen.getByText(`${jeune.firstName} ${jeune.lastName}`)
         ).toBeInTheDocument()
-      })
-
-      it('affiche les jeunes dans le bon ordre', () => {
-        expect(screen.getAllByRole('listitem')[0]).toHaveTextContent(
-          "Maria D'Aböville-Muñoz François"
-        )
-        expect(screen.getAllByRole('listitem')[1]).toHaveTextContent(
-          'Kenji Jirac'
-        )
-        expect(screen.getAllByRole('listitem')[2]).toHaveTextContent(
-          'Nadia Sanfamiye'
-        )
       })
     })
 
@@ -141,44 +76,53 @@ describe('<ChatRoom />', () => {
           .closest('button')
 
         // When
-        goToConversation!.click()
+        await act(() => goToConversation!.click())
       })
 
       it('affiche la conversation du jeune', async () => {
         // Then
-        expect(Conversation).toHaveBeenCalledWith(
-          {
-            jeuneChat: unJeuneChat({
-              ...jeuneSelectionne,
-              chatId: `chat-${jeuneSelectionne.id}`,
-            }),
-            onBack: expect.any(Function),
-          },
-          {}
+        await waitFor(() =>
+          expect(
+            screen.getByText(`conversation-${jeuneSelectionne.id}`)
+          ).toBeInTheDocument()
         )
       })
 
       it("n'affiche pas les autres chats", async () => {
         // Then
         expect(() =>
-          screen.getByText(jeunePasSelectionne.firstName, { exact: false })
+          screen.getByText(`conversation-${jeunePasSelectionne.id}`)
         ).toThrow()
       })
     })
   })
 
-  describe("quand le conseiller n'a pas de jeunes", () => {
-    it('affiche un message informatif', async () => {
-      // Given
-      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue([])
-
+  describe('réaction au contexte du jeune', () => {
+    it('affiche le chat du jeune courant', async () => {
       // When
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService, messagesService }}>
-            <ChatRoom />
-          </DIProvider>,
-          { user: conseiller, firebaseToken: tokenChat }
+          <CurrentJeuneProvider jeune={jeunes[2]}>
+            <ChatRoom jeunesChats={jeunesChats} />
+          </CurrentJeuneProvider>
+        )
+      })
+
+      // Then
+      expect(
+        screen.getByText(`conversation-${jeunes[2].id}`)
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe("quand le conseiller n'a pas de jeunes", () => {
+    it('affiche un message informatif', async () => {
+      // When
+      await act(async () => {
+        await renderWithSession(
+          <CurrentJeuneProvider>
+            <ChatRoom jeunesChats={[]} />
+          </CurrentJeuneProvider>
         )
       })
 

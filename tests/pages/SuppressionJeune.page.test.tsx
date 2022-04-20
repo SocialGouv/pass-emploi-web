@@ -9,13 +9,13 @@ import SuppressionJeune, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
 import { JeunesService } from 'services/jeunes.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { RequestError, UnexpectedError } from 'utils/fetchJson'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('next/router')
 
@@ -26,7 +26,7 @@ describe('Suppression Jeune', () => {
     it("vérifie que l'utilisateur est connecté", async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        hasSession: false,
+        validSession: false,
         redirect: { destination: 'whatever' },
       })
 
@@ -42,7 +42,7 @@ describe('Suppression Jeune', () => {
       let jeunesService: JeunesService
       beforeEach(() => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          hasSession: true,
+          validSession: true,
           session: { accessToken: 'accessToken' },
         })
 
@@ -97,7 +97,30 @@ describe('Suppression Jeune', () => {
           } as unknown as GetServerSidePropsContext)
 
           // Then
-          expect(actual).toEqual({ props: { jeune, withoutChat: true } })
+          expect(actual).toEqual({
+            props: {
+              jeune,
+              withoutChat: true,
+              pageTitle: 'Suppression - Kenji Jirac',
+            },
+          })
+        })
+      })
+
+      describe("quand le jeune n'existe pas", () => {
+        it('redirige vers une erreur 404', async () => {
+          // Give
+          ;(jeunesService.getJeuneDetails as jest.Mock).mockResolvedValue(
+            undefined
+          )
+
+          // When
+          const actual = await getServerSideProps({
+            query: { jeune_id: 'whatever' },
+          } as unknown as GetServerSidePropsContext)
+
+          // Then
+          expect(actual).toEqual({ notFound: true })
         })
       })
     })
@@ -119,7 +142,7 @@ describe('Suppression Jeune', () => {
 
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <SuppressionJeune jeune={jeune} withoutChat={true} />
+          <SuppressionJeune jeune={jeune} withoutChat={true} pageTitle={''}/>
         </DIProvider>
       )
     })

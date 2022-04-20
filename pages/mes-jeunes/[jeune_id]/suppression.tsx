@@ -1,30 +1,31 @@
-import { AppHead } from 'components/AppHead'
+import { withTransaction } from '@elastic/apm-rum-react'
 import FailureMessage from 'components/FailureMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import InfoIcon from '../../../assets/icons/information.svg'
 
 interface SuppressionJeuneProps {
   jeune: Jeune
   withoutChat: true
+  pageTitle: string
 }
 
-export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
-  const { data: session } = useSession({ required: true })
+function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
+  const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
@@ -66,9 +67,6 @@ export default function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
 
   return (
     <>
-      <AppHead
-        titre={`Mes jeunes - ${jeune.firstName} ${jeune.lastName} - Suppression`}
-      />
       <div className={styles.header}>
         <Link href={`/mes-jeunes/${jeune.id}`}>
           <a className='flex items-center w-max'>
@@ -130,7 +128,7 @@ export const getServerSideProps: GetServerSideProps<
   SuppressionJeuneProps
 > = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -141,10 +139,20 @@ export const getServerSideProps: GetServerSideProps<
   const idJeune = context.query.jeune_id as string
 
   const jeune = await jeunesService.getJeuneDetails(idJeune, accessToken)
+  if (!jeune) return { notFound: true }
+
   if (jeune.isActivated) {
     return {
       redirect: { destination: `/mes-jeunes/${jeune.id}`, permanent: true },
     }
   }
-  return { props: { jeune, withoutChat: true } }
+  return {
+    props: {
+      jeune,
+      withoutChat: true,
+      pageTitle: `Suppression - ${jeune.firstName} ${jeune.lastName}`,
+    },
+  }
 }
+
+export default withTransaction(SuppressionJeune.name, 'page')(SuppressionJeune)

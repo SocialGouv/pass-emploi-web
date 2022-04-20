@@ -1,4 +1,4 @@
-import { AppHead } from 'components/AppHead'
+import { withTransaction } from '@elastic/apm-rum-react'
 import ResettableTextInput from 'components/ResettableTextInput'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
@@ -8,24 +8,25 @@ import {
   Jeune,
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import React, { FormEvent, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import ArrowIcon from '../../assets/icons/arrow-right.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 
 type SupervisionProps = {
   withoutChat: true
+  pageTitle: string
 }
 
 function Supervision(_: SupervisionProps) {
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const [conseillerInitial, setConseillerInitial] = useState<{
@@ -163,8 +164,6 @@ function Supervision(_: SupervisionProps) {
 
   return (
     <>
-      <AppHead titre='Supervision' />
-
       <h1 className={`${styles.header} h2-semi text-bleu_nuit`}>
         R&eacute;affectation des jeunes
       </h1>
@@ -393,7 +392,7 @@ export const getServerSideProps: GetServerSideProps<SupervisionProps> = async (
   context
 ) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -405,8 +404,8 @@ export const getServerSideProps: GetServerSideProps<SupervisionProps> = async (
   }
 
   return {
-    props: { withoutChat: true },
+    props: { withoutChat: true, pageTitle: 'Supervision' },
   }
 }
 
-export default Supervision
+export default withTransaction(Supervision.name, 'page')(Supervision)

@@ -1,3 +1,4 @@
+import { User } from 'next-auth'
 import { DefaultJWT } from 'next-auth/jwt/types'
 
 declare module 'next-auth' {
@@ -5,17 +6,18 @@ declare module 'next-auth' {
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface Session {
-    user: Session.User
+    user: Session.HydratedUser
     accessToken: string
     firebaseToken: string
     error?: string
   }
 
   namespace Session {
-    interface User {
-      id: string
+    interface HydratedUser extends User {
       name: string
+      email: string
       structure: string
+      estConseiller: boolean
       estSuperviseur: boolean
     }
   }
@@ -29,6 +31,7 @@ declare module 'next-auth/jwt' {
     expiresAtTimestamp?: number
     idConseiller?: string
     structureConseiller?: string
+    estConseiller?: boolean
     estSuperviseur?: boolean
   }
 }

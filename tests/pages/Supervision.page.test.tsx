@@ -6,11 +6,11 @@ import { GetServerSidePropsContext } from 'next/types'
 import Supervision, { getServerSideProps } from 'pages/supervision'
 import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import renderWithSession from '../renderWithSession'
 
-jest.mock('utils/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 afterAll(() => {
   jest.clearAllMocks()
@@ -149,11 +149,17 @@ describe('Supervision', () => {
           const submitReaffecter = screen.getByText('Réaffecter les jeunes')
 
           // WHEN
-          fireEvent.input(destinationInput, {
-            target: { value: emailConseillerDestination },
+          await act(async () => {
+            fireEvent.input(destinationInput, {
+              target: { value: emailConseillerDestination },
+            })
           })
-          screen.getByText(jeunes[0].firstName, { exact: false }).click()
-          screen.getByText(jeunes[2].firstName, { exact: false }).click()
+          await act(async () =>
+            screen.getByText(jeunes[0].firstName, { exact: false }).click()
+          )
+          await act(async () =>
+            screen.getByText(jeunes[2].firstName, { exact: false }).click()
+          )
           await act(async () => submitReaffecter.click())
 
           // THEN
@@ -175,7 +181,7 @@ describe('Supervision', () => {
         session: {
           user: { estSuperviseur: false },
         },
-        hasSession: true,
+        validSession: true,
       })
 
       // When

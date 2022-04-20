@@ -1,4 +1,6 @@
 import {
+  compareJeuneByLastActivity,
+  compareJeuneByLastActivityDesc,
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
   getJeuneFullname,
@@ -8,8 +10,6 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
-  compareDates,
-  compareDatesDesc,
   dateIsToday,
   dateIsYesterday,
   formatDayDate,
@@ -82,15 +82,16 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
           : compareJeunesByLastName(jeune1, jeune2)
 
       if (isDate) {
-        const date1 = jeune1.lastActivity
-          ? new Date(jeune1.lastActivity)
-          : undefined
-        const date2 = jeune2.lastActivity
-          ? new Date(jeune2.lastActivity)
-          : undefined
+        const sortStatutCompteActif =
+          Number(jeune1.isActivated) - Number(jeune2.isActivated)
+
         return sortDesc
-          ? compareDates(date1, date2)
-          : compareDatesDesc(date1, date2)
+          ? compareJeuneByLastActivity(jeune1, jeune2, sortStatutCompteActif)
+          : compareJeuneByLastActivityDesc(
+              jeune1,
+              jeune2,
+              sortStatutCompteActif
+            )
       }
 
       if (isMessage) {
@@ -187,14 +188,14 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
-                  aria-label={`Afficher la liste des jeunes triée par dates de dernière action du jeune par ordre ${
+                  aria-label={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
                     isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
                   }`}
-                  title={`Afficher la liste des jeunes triée par dates de dernière action du jeune par ordre ${
+                  title={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
                     isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
                   }`}
                 >
-                  <span className='mr-1'>Dernière action du jeune</span>
+                  <span className='mr-1'>Dernière activité du jeune</span>
                   {isDate && (
                     <ArrowDown
                       focusable='false'
@@ -274,10 +275,9 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
             {sortedJeunes?.map((jeune: JeuneAvecInfosComplementaires) => (
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
-                  key={jeune.id}
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className={`table-row grid ${gridColsStyle} text-sm text-bleu_nuit items-center cursor-pointer hover:bg-gris_blanc`}
+                  className={`table-row grid ${gridColsStyle} text-sm text-bleu_nuit items-center hover:bg-gris_blanc`}
                 >
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}
@@ -287,6 +287,9 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                     {jeune.lastActivity
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
+                    {!jeune.isActivated && (
+                      <span className='text-warning'>Compte non activé</span>
+                    )}
                   </span>
 
                   {withActions && (

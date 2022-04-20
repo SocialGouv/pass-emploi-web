@@ -1,3 +1,4 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
@@ -21,4 +22,4 @@ function Logout() {
   return <div>LOGOUT</div>
 }
 
-export default Logout
+export default withTransaction(Logout.name, 'page')(Logout)

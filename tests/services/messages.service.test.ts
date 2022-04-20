@@ -5,7 +5,6 @@ import { desMessages, desMessagesParJour } from 'fixtures/message'
 import { Message, MessagesOfADay } from 'interfaces'
 import { UserStructure } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
-import { Session } from 'next-auth'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 
@@ -240,6 +239,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(firebaseClient.addMessage).toHaveBeenCalledWith(
         jeuneChat.chatId,
+        conseiller.id,
         {
           encryptedText: `Encrypted: ${newMessage}`,
           iv: `IV: ${newMessage}`,
@@ -247,6 +247,7 @@ describe('MessagesFirebaseAndApiService', () => {
         now
       )
     })
+
     it('updates chat in firebase', async () => {
       // Then
       expect(firebaseClient.updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
@@ -259,6 +260,7 @@ describe('MessagesFirebaseAndApiService', () => {
         lastConseillerReading: now,
       })
     })
+
     it('notifies of a new message', async () => {
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -267,6 +269,7 @@ describe('MessagesFirebaseAndApiService', () => {
         accessToken
       )
     })
+
     it('tracks new message', async () => {
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -288,19 +291,12 @@ describe('MessagesFirebaseAndApiService', () => {
     let destinataires: Jeune[]
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
-    let conseiller: Session.User
     let newMessageGroupe: string
     const now = new Date()
 
     beforeEach(async () => {
       // Given
       jest.setSystemTime(now)
-      conseiller = {
-        id: '1',
-        structure: UserStructure.MILO,
-        estSuperviseur: false,
-        name: 'Tavernier',
-      }
       destinataires = desJeunes()
       idsJeunes = [
         destinataires[0].id,
@@ -317,7 +313,7 @@ describe('MessagesFirebaseAndApiService', () => {
       ;(firebaseClient.getChatsDesJeunes as jest.Mock).mockResolvedValue(chats)
 
       await messagesService.sendNouveauMessageGroupe(
-        { id: conseiller.id, structure: UserStructure.MILO },
+        { id: 'id-conseiller', structure: UserStructure.MILO },
         destinataires,
         newMessageGroupe,
         accessToken
@@ -327,13 +323,14 @@ describe('MessagesFirebaseAndApiService', () => {
     it('ajoute un nouveau message à firebase pour chaque destinataire', async () => {
       // Then
       expect(firebaseClient.getChatsDesJeunes).toHaveBeenCalledWith(
-        conseiller.id,
+        'id-conseiller',
         idsJeunes
       )
 
       Object.values(chats).forEach((chat) => {
         expect(firebaseClient.addMessage).toHaveBeenCalledWith(
           chat.chatId,
+          'id-conseiller',
           {
             encryptedText: `Encrypted: ${newMessageGroupe}`,
             iv: `IV: ${newMessageGroupe}`,
@@ -345,7 +342,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('met à jour le chat dans firebase pour chaque destinataire', async () => {
       expect(firebaseClient.getChatsDesJeunes).toHaveBeenCalledWith(
-        conseiller.id,
+        'id-conseiller',
         idsJeunes
       )
       // Then
@@ -365,7 +362,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('notifie envoi de message pour chaque destinataire', async () => {
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
-        `/conseillers/${conseiller.id}/jeunes/notify-messages`,
+        `/conseillers/id-conseiller/jeunes/notify-messages`,
         { idsJeunes: idsJeunes },
         accessToken
       )
@@ -379,8 +376,8 @@ describe('MessagesFirebaseAndApiService', () => {
           type: 'MESSAGE_ENVOYE_MULTIPLE',
           emetteur: {
             type: 'CONSEILLER',
-            structure: conseiller.structure,
-            id: conseiller.id,
+            structure: UserStructure.MILO,
+            id: 'id-conseiller',
           },
         },
         accessToken

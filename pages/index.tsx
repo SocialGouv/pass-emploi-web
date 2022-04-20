@@ -1,16 +1,17 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
-interface HomeProps {}
+function Home() {
+  return <></>
+}
 
-const Home = (props: HomeProps) => {}
-
-export const getServerSideProps: GetServerSideProps<HomeProps> = async (
+export const getServerSideProps: GetServerSideProps<{}> = async (
   context
-): Promise<GetServerSidePropsResult<HomeProps>> => {
+): Promise<GetServerSidePropsResult<{}>> => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
 
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -26,4 +27,4 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (
   }
 }
 
-export default Home
+export default withTransaction(Home.name, 'page')(Home)

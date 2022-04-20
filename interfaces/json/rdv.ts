@@ -1,31 +1,46 @@
 import { BaseJeune } from 'interfaces/jeune'
-import { durees } from 'referentiel/rdv'
-import { Rdv } from '../rdv'
+import { Rdv, TypeRendezVous } from '../rdv'
 
 export interface RdvJson {
   id: string
-  subtitle: string
-  comment: string
   date: string
-  duration: string
-  jeuneId: string
+  duration: number
+  type: TypeRendezVous
   modality: string
   jeune: BaseJeune
+  precision?: string
+  comment?: string
+  presenceConseiller?: boolean
+  invitation?: boolean
+  adresse?: string
+  organisme?: string
+  createur?: { id: string }
 }
 
 export interface RdvFormData {
-  comment: string
   date: string
   duration: number
   jeuneId: string
-  modality: string
+  type: string
+  presenceConseiller: boolean
+  invitation: boolean
+  precision?: string
+  modality?: string
+  adresse?: string
+  organisme?: string
+  comment?: string
 }
 
-export function jsonToRdv(rdvData: RdvJson): Rdv {
+export function jsonToRdv(rdvJson: RdvJson): Rdv {
+  const { precision, createur, ...data } = rdvJson
   return {
-    ...rdvData,
-    duration:
-      durees.find((duree: any) => duree.value === rdvData.duration)?.text ||
-      `${rdvData.duration} min`,
+    ...data,
+    presenceConseiller: Boolean(rdvJson.presenceConseiller),
+    invitation: Boolean(rdvJson.invitation),
+    comment: rdvJson.comment ?? '',
+    precisionType: precision ?? '',
+    adresse: rdvJson.adresse ?? '',
+    organisme: rdvJson.organisme ?? '',
+    idCreateur: createur?.id ?? null,
   }
 }

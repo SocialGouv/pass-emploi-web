@@ -1,20 +1,27 @@
 import { BaseJeune } from 'interfaces/jeune'
 
-export type Rdv = {
-  id: string
-  subtitle: string
-  comment: string
-  date: string
-  duration: string
-  modality: string
-  jeune: BaseJeune
+export interface TypeRendezVous {
+  code: string
+  label: string
 }
 
-export type RdvJeune = {
+export interface Rdv {
   id: string
-  comment: string
-  date: string
-  duration: string
-  modality: string
   jeune: BaseJeune
+  type: TypeRendezVous
+  precisionType: string
+  modality: string
+  date: string
+  duration: number
+  adresse: string
+  organisme: string
+  presenceConseiller: boolean
+  invitation: boolean
+  comment: string
+  idCreateur: string | null
+}
+
+export const TYPE_RENDEZ_VOUS = {
+  Autre: 'AUTRE',
+  EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }

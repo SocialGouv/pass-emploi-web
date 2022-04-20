@@ -1,4 +1,4 @@
-import { AppHead } from 'components/AppHead'
+import { withTransaction } from '@elastic/apm-rum-react'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
@@ -11,7 +11,6 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import { useSession } from 'next-auth/react'
 import Router, { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import { ActionsService } from 'services/actions.service'
@@ -19,17 +18,19 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
-type MesJeunesProps = {
+interface MesJeunesProps {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
   messageEnvoiGroupeSuccess?: boolean
   deletionSuccess?: boolean
+  pageTitle: string
 }
 
 function MesJeunes({
@@ -40,7 +41,7 @@ function MesJeunes({
   deletionSuccess,
 }: MesJeunesProps) {
   const router = useRouter()
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
@@ -152,7 +153,6 @@ function MesJeunes({
 
   return (
     <>
-      <AppHead titre='Mes jeunes' />
       <div className={styles.header}>
         <div className={`flex flex-wrap justify-between mb-6`}>
           <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
@@ -212,7 +212,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   context
 ) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -230,7 +230,10 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       nbActionsNonTerminees: 0,
     }))
   } else {
-    const actions = await actionsService.getActions(user.id, accessToken)
+    const actions = await actionsService.countActionsJeunes(
+      user.id,
+      accessToken
+    )
 
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
       let nbActionsNonTerminees = 0
@@ -258,6 +261,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     ),
     isFromEmail: Boolean(context.query?.source),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: 'Mes jeunes',
   }
 
   if (context.query.suppression)
@@ -270,4 +274,4 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   return { props }
 }
 
-export default MesJeunes
+export default withTransaction(MesJeunes.name, 'page')(MesJeunes)

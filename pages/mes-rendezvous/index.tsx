@@ -1,4 +1,4 @@
-import { AppHead } from 'components/AppHead'
+import { withTransaction } from '@elastic/apm-rum-react'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
@@ -12,26 +12,34 @@ import React, { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 
 type MesRendezvousProps = {
   rendezVousFuturs: Rdv[]
   rendezVousPasses: Rdv[]
   creationSuccess?: boolean
+  modificationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
+  pageTitle: string
 }
 
-const MesRendezvous = ({
+function MesRendezvous({
   rendezVousFuturs,
   rendezVousPasses,
   creationSuccess,
+  modificationSuccess,
   messageEnvoiGroupeSuccess,
-}: MesRendezvousProps) => {
+}: MesRendezvousProps) {
   const router = useRouter()
+  const { data: session } = useSession<true>({ required: true })
+
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     creationSuccess ?? false
   )
+  const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
+    useState<boolean>(modificationSuccess ?? false)
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
@@ -39,10 +47,12 @@ const MesRendezvous = ({
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
   const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
+
   const pageTracking = `Mes rendez-vous`
-  const initialTracking = `${pageTracking}${
-    creationSuccess ? ' - Creation rdv succès' : ''
-  }`
+  let initialTracking = pageTracking
+  if (creationSuccess) initialTracking += ' - Creation rdv succès'
+  if (modificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function deleteRdv() {
@@ -63,8 +73,9 @@ const MesRendezvous = ({
     }
   }
 
-  function closeRdvCreationMessage(): void {
+  function closeRdvEditionMessage(): void {
     setShowRdvCreationSuccess(false)
+    setShowRdvModificationSuccess(false)
     router.replace('', undefined, { shallow: true })
   }
 
@@ -76,7 +87,7 @@ const MesRendezvous = ({
   function openDeleteRdvModal(rdv: Rdv) {
     setSelectedRdv(rdv)
     setShowDeleteModal(true)
-    setTrackingTitle('Mes rendez-vous - Modale suppression rdv')
+    setTrackingTitle(pageTracking + ' - Modale suppression rdv')
   }
 
   function closeDeleteRdvModal() {
@@ -85,15 +96,9 @@ const MesRendezvous = ({
   }
 
   useMatomo(trackingTitle)
-  useMatomo(
-    showMessageGroupeEnvoiSuccess
-      ? `${pageTracking} - Succès envoi message`
-      : pageTracking
-  )
 
   return (
     <>
-      <AppHead titre='Tableau de bord - Mes rendez-vous' />
       <span
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
@@ -107,7 +112,14 @@ const MesRendezvous = ({
         {showRdvCreationSuccess && (
           <SuccessMessage
             label={'Le rendez-vous a bien été créé'}
-            onAcknowledge={closeRdvCreationMessage}
+            onAcknowledge={closeRdvEditionMessage}
+          />
+        )}
+
+        {showRdvModificationSuccess && (
+          <SuccessMessage
+            label={'Le rendez-vous a bien été modifié'}
+            onAcknowledge={closeRdvEditionMessage}
           />
         )}
 
@@ -144,10 +156,15 @@ const MesRendezvous = ({
         </div>
 
         {displayOldRdv ? (
-          <RdvList id='rendez-vous-passes' rdvs={rendezVousPasses} />
+          <RdvList
+            id='rendez-vous-passes'
+            idConseiller={session?.user.id ?? ''}
+            rdvs={rendezVousPasses}
+          />
         ) : (
           <RdvList
             id='rendez-vous-futurs'
+            idConseiller={session?.user.id ?? ''}
             rdvs={rdvsAVenir}
             onDelete={openDeleteRdvModal}
           />
@@ -170,7 +187,7 @@ export const getServerSideProps: GetServerSideProps<
   MesRendezvousProps
 > = async (context): Promise<GetServerSidePropsResult<MesRendezvousProps>> => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -192,10 +209,14 @@ export const getServerSideProps: GetServerSideProps<
     rendezVousFuturs: futurs,
     rendezVousPasses: passes,
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: 'Tableau de bord - Mes rendez-vous',
   }
 
   if (context.query.creationRdv)
     props.creationSuccess = context.query.creationRdv === 'succes'
+
+  if (context.query.modificationRdv)
+    props.modificationSuccess = context.query.modificationRdv === 'succes'
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
@@ -203,4 +224,4 @@ export const getServerSideProps: GetServerSideProps<
   return { props }
 }
 
-export default MesRendezvous
+export default withTransaction(MesRendezvous.name, 'page')(MesRendezvous)

@@ -1,23 +1,25 @@
+import { userEvent } from '@storybook/testing-library'
 import {
+  act,
   fireEvent,
   RenderResult,
   screen,
   waitFor,
 } from '@testing-library/react'
-import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
-import { JeunesService } from 'services/jeunes.service'
-import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
-import { MessagesService } from 'services/messages.service'
 import { desJeunes } from 'fixtures/jeune'
+import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
-import { userEvent } from '@storybook/testing-library'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
+import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
+import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
+import { DIProvider } from 'utils/injectionDependances'
+import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
+jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
 
 describe('EnvoiMessageGroupe', () => {
   let destinataires: Jeune[]
@@ -148,31 +150,41 @@ describe('EnvoiMessageGroupe', () => {
       })
     })
 
-    it('prévient avant de revenir à la page précédente', () => {
+    it('prévient avant de revenir à la page précédente', async () => {
       // Given
       const previousButton = screen.getByText(
         "Quitter la rédaction d'un message à plusieurs jeunes"
       )
 
       // When
-      previousButton.click()
+      await act(async () => previousButton.click())
 
       // Then
       expect(() => screen.getByText('Page précédente')).toThrow()
       expect(previousButton).not.toHaveAttribute('href')
       expect(push).not.toHaveBeenCalled()
+      expect(
+        screen.getByText(
+          "Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
+        )
+      ).toBeInTheDocument()
     })
 
-    it("prévient avant d'annuler", () => {
+    it("prévient avant d'annuler", async () => {
       // Given
       const cancelButton = screen.getByText('Annuler')
 
       // When
-      cancelButton.click()
+      await act(async () => cancelButton.click())
 
       // Then
       expect(cancelButton).not.toHaveAttribute('href')
       expect(push).not.toHaveBeenCalled()
+      expect(
+        screen.getByText(
+          "Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
+        )
+      ).toBeInTheDocument()
     })
 
     it("devrait afficher un message d'erreur en cas d'échec de l'envoi du message", async () => {

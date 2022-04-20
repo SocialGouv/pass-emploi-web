@@ -17,7 +17,7 @@ describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
-  let conseiller: Session.User
+  let conseiller: Session.HydratedUser
   let accessToken: string
   let tokenChat: string
   const messagesParJour = desMessagesParJour()
@@ -48,10 +48,13 @@ describe('<Conversation />', () => {
       name: 'Taverner',
       structure: UserStructure.POLE_EMPLOI,
       estSuperviseur: false,
+      email: 'mail@mail.com',
     }
     accessToken = 'accessToken'
     tokenChat = 'tokenChat'
 
+    // https://github.com/jsdom/jsdom/issues/1695
+    window.HTMLElement.prototype.scrollIntoView = jest.fn()
     await act(async () => {
       await renderWithSession(
         <DIProvider dependances={{ messagesService }}>
@@ -60,8 +63,6 @@ describe('<Conversation />', () => {
         { user: conseiller, firebaseToken: tokenChat }
       )
     })
-    // https://github.com/jsdom/jsdom/issues/1695
-    window.HTMLElement.prototype.scrollIntoView = jest.fn()
   })
 
   it('subscribes to chat messages', async () => {

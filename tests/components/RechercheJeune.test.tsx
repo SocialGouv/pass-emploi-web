@@ -67,7 +67,7 @@ describe('Recherche', () => {
 
     it('quand on recherche un nom avec des caractères spéciaux', async () => {
       //GIVEN
-      userEvent.type(inputSearch, 'muñoz')
+      await userEvent.type(inputSearch, 'muñoz')
 
       //WHEN
       fireEvent.click(submitButton)
@@ -84,7 +84,7 @@ describe('Recherche', () => {
         name: /D'Aböville-Muñoz François/i,
       })
 
-      userEvent.type(inputSearch, "D'Aböville-Muñoz")
+      await userEvent.type(inputSearch, "D'Aböville-Muñoz")
 
       //WHEN
       fireEvent.click(submitButton)
@@ -99,7 +99,7 @@ describe('Recherche', () => {
         name: /D'Aböville-Muñoz François/i,
       })
 
-      userEvent.type(inputSearch, 'D aböville-Muñoz')
+      await userEvent.type(inputSearch, 'D aböville-Muñoz')
 
       //WHEN
       fireEvent.click(submitButton)

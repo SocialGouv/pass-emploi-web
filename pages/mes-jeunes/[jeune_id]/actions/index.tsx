@@ -1,10 +1,10 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import AddActionModal from 'components/action/AddActionModal'
-import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
-import { AppHead } from 'components/AppHead'
-import Button from 'components/ui/Button'
-import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import FiltresActionsTabList from 'components/action/FiltresActions'
+import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import SuccessMessage from 'components/SuccessMessage'
+import Button from 'components/ui/Button'
 import {
   ActionJeune,
   ActionStatus,
@@ -18,8 +18,8 @@ import Router, { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container } from 'utils/injectionDependances'
-import { withMandatorySessionOrRedirect } from 'utils/withMandatorySessionOrRedirect'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
@@ -33,6 +33,7 @@ type ActionsProps = {
   actionsTerminees: ActionJeune[]
   deleteSuccess: boolean
   messageEnvoiGroupeSuccess?: boolean
+  pageTitle: string
 }
 
 function Actions({
@@ -109,9 +110,6 @@ function Actions({
 
   return (
     <>
-      <AppHead
-        titre={`Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`}
-      />
       <div className={`flex justify-between flex-wrap w-full ${styles.header}`}>
         <Link href={`/mes-jeunes/${jeune.id}`}>
           <a className='p-1 mr-[24px]'>
@@ -198,7 +196,7 @@ function Actions({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.hasSession) {
+  if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
@@ -244,6 +242,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     ),
     deleteSuccess: Boolean(context.query.deleteSuccess),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
+    pageTitle: `Mes jeunes - Actions de ${dataDetailsJeune.firstName} ${dataDetailsJeune.lastName}`,
   }
 
   if (context.query?.envoiMessage) {
@@ -255,4 +254,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-export default Actions
+export default withTransaction(Actions.name, 'page')(Actions)

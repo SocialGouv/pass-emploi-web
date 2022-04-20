@@ -19,13 +19,14 @@ export class Authenticator {
   }): Promise<HydratedJWT> {
     const isFirstSignin = Boolean(account)
     if (isFirstSignin) {
-      const { userId, userStructure, userRoles } = decode(
+      const { userId, userStructure, userRoles, userType } = decode(
         <string>account!.access_token
       ) as JwtPayload
       jwt.accessToken = account!.access_token
       jwt.refreshToken = account!.refresh_token
       jwt.idConseiller = userId
       jwt.structureConseiller = userStructure
+      jwt.estConseiller = userType === 'CONSEILLER'
       jwt.estSuperviseur = Boolean(userRoles?.includes('SUPERVISEUR'))
       jwt.expiresAtTimestamp = account!.expires_at
         ? secondsToTimestamp(account!.expires_at)

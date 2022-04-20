@@ -1,12 +1,12 @@
-import Button, { ButtonStyle } from 'components/ui/Button'
 import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
-import { Rdv, RdvJeune } from 'interfaces/rdv'
-import { useSession } from 'next-auth/react'
+import Button, { ButtonStyle } from 'components/ui/Button'
+import { Rdv } from 'interfaces/rdv'
 import { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
 import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -14,7 +14,7 @@ type DeleteRdvModalProps = {
   show: boolean
   onClose: any
   onDelete: () => void
-  rdv: Rdv | RdvJeune
+  rdv: Rdv
 }
 
 const DeleteRdvModal = ({
@@ -27,7 +27,7 @@ const DeleteRdvModal = ({
   const [isEchec, setIsEchec] = useState(false)
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
-  const { data: session } = useSession({ required: true })
+  const { data: session } = useSession<true>({ required: true })
 
   const handleDeleteRdv = () => {
     rendezVousService
