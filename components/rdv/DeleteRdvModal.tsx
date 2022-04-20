@@ -48,11 +48,10 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
 
   return (
     <>
-      {Boolean(!isSuccess && !isEchec) && (
+      {!isSuccess && !isEchec && (
         <Modal
           title='Confirmation de suppression du rendez-vous'
           onClose={handleCloseModal}
-          show={!isSuccess}
           customHeight='300px'
           customWidth='800px'
         >
@@ -85,7 +84,6 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
 
       {isSuccess && (
         <SuccessModal
-          show={isSuccess}
           message='Votre rendez-vous a bien été supprimé'
           onClose={handleCloseModal}
         />
@@ -93,7 +91,6 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
 
       {isEchec && (
         <EchecModal
-          show={isEchec}
           message="Votre rendez-vous n'a pas été supprimé, veuillez essayer ultérieurement"
           onClose={handleCloseModal}
         />

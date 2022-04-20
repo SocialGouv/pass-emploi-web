@@ -45,7 +45,7 @@ function Actions({
   deleteSuccess,
   messageEnvoiGroupeSuccess,
 }: ActionsProps) {
-  const [showModal, setShowModal] = useState<boolean | undefined>(undefined)
+  const [showModal, setShowModal] = useState<boolean>(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
@@ -144,10 +144,8 @@ function Actions({
               setTrackingLabel('Actions jeune')
             }}
             onAdd={Router.reload}
-            show={showModal}
           />
         )}
-
         {showSuccessMessage && (
           <DeprecatedSuccessMessage
             onAcknowledge={() => closeSuccessMessage()}
