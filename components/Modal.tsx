@@ -25,6 +25,20 @@ export default function Modal({
 }: ModalProps) {
   const [isBrowser, setIsBrowser] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
+  const previousFocusedElement = useRef<HTMLElement | null>(null)
+  const keyListeners = useRef(
+    new Map([
+      ['Tab', handleTabKey],
+      ['Escape', handleClose],
+    ])
+  )
+
+  function focusOnRender(element: HTMLElement | null) {
+    if (element && !previousFocusedElement.current) {
+      previousFocusedElement.current = document.activeElement as HTMLElement
+      element.focus()
+    }
+  }
 
   function handleTabKey(e: any) {
     if (!modalRef.current) return
@@ -49,24 +63,22 @@ export default function Modal({
 
   function handleClose(e: any) {
     e.preventDefault()
+    if (previousFocusedElement.current) previousFocusedElement.current.focus()
     onClose()
   }
 
+  // FIXME à supprimer quand creation action sur page dédiée
   function handleBackClick(e: any) {
     e.preventDefault()
     onBack()
   }
 
-  const keyListenersMap = new Map([
-    ['Tab', handleTabKey],
-    ['Escape', handleClose],
-  ])
-  useEffect(() => {
-    function keyListener(e: any) {
-      const listener = keyListenersMap.get(e.key)
-      return listener && listener(e)
-    }
+  function keyListener(e: any) {
+    const listener = keyListeners.current.get(e.key)
+    return listener && listener(e)
+  }
 
+  useEffect(() => {
     setIsBrowser(true)
     document.addEventListener('keydown', keyListener)
 
@@ -102,7 +114,7 @@ export default function Modal({
           <h1 id='modal-title' className='h4-semi flex-auto'>
             {title}
           </h1>
-          <button type='button' onClick={handleClose}>
+          <button type='button' onClick={handleClose} ref={focusOnRender}>
             <CloseIcon
               role='img'
               focusable='false'
