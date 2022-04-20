@@ -1,32 +1,28 @@
 import React, { useEffect, useState } from 'react'
-var ReactDOM = require('react-dom')
-
-import CloseIcon from '../assets/icons/close_modal.svg'
-import BackIcon from '../assets/icons/back_modale.svg'
-
+import { createPortal } from 'react-dom'
 import styles from 'styles/components/Modal.module.css'
+import BackIcon from '../assets/icons/back_modale.svg'
+import CloseIcon from '../assets/icons/close_modal.svg'
 
-type ModalProps = {
+interface ModalProps {
   title: string
   show: boolean
   onClose: any
   children: any
-  id?: string
   onBack?: any
   customHeight?: string
   customWidth?: string
 }
 
-const Modal = ({
+export default function Modal({
   show,
-  id,
   onClose,
   onBack,
   children,
   title,
   customHeight,
   customWidth,
-}: ModalProps) => {
+}: ModalProps) {
   const [isBrowser, setIsBrowser] = useState(false)
 
   useEffect(() => {
@@ -44,7 +40,7 @@ const Modal = ({
   }
 
   const modalContent = show ? (
-    <div id={id} className={styles.modalOverlay}>
+    <div className={styles.modalOverlay}>
       <div
         className='rounded-x_large bg-blanc'
         style={{
@@ -78,13 +74,9 @@ const Modal = ({
   ) : null
 
   if (isBrowser) {
-    return ReactDOM.createPortal(
-      modalContent,
-      document.getElementById('modal-root')
-    )
+    const modalRoot = document.getElementById('modal-root')
+    return modalRoot ? createPortal(modalContent, modalRoot) : null
   } else {
     return null
   }
 }
-
-export default Modal

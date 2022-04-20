@@ -121,7 +121,6 @@ function EditionRdv({
       </div>
       {showLeavePageModal && (
         <ExitPageConfirmationModal
-          id='exit-page-confirmation'
           show={showLeavePageModal}
           message={`Vous allez quitter la ${
             rdv ? 'modification du' : 'création d’un nouveau'
