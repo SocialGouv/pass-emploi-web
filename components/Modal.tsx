@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styles from 'styles/components/Modal.module.css'
 import BackIcon from '../assets/icons/back_modale.svg'
@@ -24,20 +24,54 @@ export default function Modal({
   customWidth,
 }: ModalProps) {
   const [isBrowser, setIsBrowser] = useState(false)
+  const modalRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    setIsBrowser(true)
-  }, [])
+  function handleTabKey(e: any) {
+    if (!modalRef.current) return
 
-  const handleCloseClick = (e: any) => {
+    const focusableModalElements: NodeListOf<HTMLElement> =
+      modalRef.current.querySelectorAll(
+        'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+      )
+    const firstElement = focusableModalElements[0]
+    const lastElement =
+      focusableModalElements[focusableModalElements.length - 1]
+
+    if (!e.shiftKey && document.activeElement === lastElement) {
+      firstElement.focus()
+      e.preventDefault()
+    }
+    if (e.shiftKey && document.activeElement === firstElement) {
+      lastElement.focus()
+      e.preventDefault()
+    }
+  }
+
+  function handleClose(e: any) {
     e.preventDefault()
     onClose()
   }
 
-  const handleBackClick = (e: any) => {
+  function handleBackClick(e: any) {
     e.preventDefault()
     onBack()
   }
+
+  const keyListenersMap = new Map([
+    ['Tab', handleTabKey],
+    ['Escape', handleClose],
+  ])
+  useEffect(() => {
+    function keyListener(e: any) {
+      const listener = keyListenersMap.get(e.key)
+      return listener && listener(e)
+    }
+
+    setIsBrowser(true)
+    document.addEventListener('keydown', keyListener)
+
+    return () => document.removeEventListener('keydown', keyListener)
+  }, [])
 
   const modalContent = show ? (
     <div
@@ -52,28 +86,29 @@ export default function Modal({
           height: customHeight,
           width: customWidth,
         }}
+        ref={modalRef}
       >
         <div className='text-bleu_nuit flex justify-between items-center p-5'>
           {onBack && (
-            <a href='#' onClick={handleBackClick}>
+            <button type='button' onClick={handleBackClick}>
               <BackIcon
                 role='img'
                 focusable='false'
                 className='mr-[24px]'
                 aria-label='Revenir sur la fenêtre précédente'
               />
-            </a>
+            </button>
           )}
           <h1 id='modal-title' className='h4-semi flex-auto'>
             {title}
           </h1>
-          <a href='#' onClick={handleCloseClick}>
+          <button type='button' onClick={handleClose}>
             <CloseIcon
               role='img'
               focusable='false'
               aria-label='Fermer la fenêtre'
             />
-          </a>
+          </button>
         </div>
         <div className='px-5 pt-3 pb-8'>{children}</div>
       </div>
