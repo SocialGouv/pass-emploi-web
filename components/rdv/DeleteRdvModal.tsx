@@ -16,14 +16,18 @@ type DeleteRdvModalProps = {
   onDelete: (deletedRdv: RdvListItem) => void
 }
 
-const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
+export default function DeleteRdvModal({
+  onClose,
+  onDelete,
+  rdv,
+}: DeleteRdvModalProps) {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const { data: session } = useSession<true>({ required: true })
 
-  const handleDeleteRdv = () => {
+  function handleDeleteRdv() {
     rendezVousService
       .deleteRendezVous(rdv.id, session!.accessToken)
       .then(function () {
@@ -36,7 +40,7 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
       })
   }
 
-  const handleCloseModal = () => {
+  function handleCloseModal() {
     setIsSuccess(false)
     setIsEchec(false)
     onClose()
@@ -98,5 +102,3 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
     </>
   )
 }
-
-export default DeleteRdvModal

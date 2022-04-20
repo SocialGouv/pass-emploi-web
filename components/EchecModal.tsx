@@ -6,8 +6,8 @@ type EchecModalProps = {
   message: string
 }
 
-const EchecModal = ({ onClose, message }: EchecModalProps) => {
-  const handleCloseModal = () => {
+export default function EchecModal({ onClose, message }: EchecModalProps) {
+  function handleCloseModal() {
     onClose()
   }
 
@@ -26,5 +26,3 @@ const EchecModal = ({ onClose, message }: EchecModalProps) => {
     </Modal>
   )
 }
-
-export default EchecModal
