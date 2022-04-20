@@ -11,7 +11,7 @@ import ButtonLink from 'components/ui/ButtonLink'
 import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
-import { Rdv } from 'interfaces/rdv'
+import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -29,7 +29,7 @@ import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 interface FicheJeuneProps {
   jeune: Jeune
-  rdvs: Rdv[]
+  rdvs: RdvListItem[]
   actions: ActionJeune[]
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
@@ -55,10 +55,11 @@ function FicheJeune({
   const [conseillersAffiches, setConseillersAffiches] = useState<
     ConseillerHistorique[]
   >(listeConseillersReduite)
-  const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
+  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rdvs)
 
-  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+  const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
+    undefined
+  )
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
@@ -87,25 +88,21 @@ function FicheJeune({
     router.replace('', undefined, { shallow: true })
   }
 
-  function deleteRdv() {
-    if (selectedRdv) {
-      const index = rdvsAVenir.indexOf(selectedRdv)
-      const nouvelleListeRdvs = [
-        ...rdvsAVenir.slice(0, index),
-        ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
-      ]
-      setRdvsAVenir(nouvelleListeRdvs)
-    }
+  function deleteRdv(deletedRdv: RdvListItem) {
+    setRdvsAVenir((prevRdvs) => {
+      const index = rdvsAVenir.indexOf(deletedRdv)
+      prevRdvs.splice(index)
+      return prevRdvs
+    })
   }
 
-  function openDeleteRdvModal(rdv: Rdv) {
+  function openDeleteRdvModal(rdv: RdvListItem) {
     setSelectedRdv(rdv)
-    setShowDeleteModal(true)
     setTrackingLabel(pageTracking + ' - Modale suppression rdv')
   }
 
   function closeDeleteRdvModal() {
-    setShowDeleteModal(false)
+    setSelectedRdv(undefined)
     setTrackingLabel(pageTracking)
   }
 
@@ -243,11 +240,10 @@ function FicheJeune({
             </>
           )}
         </div>
-        {showDeleteModal && selectedRdv && (
+        {selectedRdv && (
           <DeleteRdvModal
             onClose={closeDeleteRdvModal}
             onDelete={deleteRdv}
-            show={showDeleteModal}
             rdv={selectedRdv}
           />
         )}
@@ -306,7 +302,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const now = new Date()
   const props: FicheJeuneProps = {
     jeune,
-    rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now),
+    rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.firstName} ${jeune.lastName}`,

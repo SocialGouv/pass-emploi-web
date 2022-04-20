@@ -75,7 +75,7 @@ function Supervision(_: SupervisionProps) {
     setEmailConseillerDestination({ value: '' })
   }
 
-  function toggleJeune(e: FormEvent, jeune: Jeune) {
+  function toggleJeune(_event: FormEvent, jeune: Jeune) {
     setErreurReaffectation(undefined)
     if (idsJeunesSelected.includes(jeune.id)) {
       setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))

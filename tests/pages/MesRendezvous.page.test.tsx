@@ -1,5 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react'
-import { uneListeDeRdv } from 'fixtures/rendez-vous'
+import { desRdvListItems } from 'fixtures/rendez-vous'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
@@ -14,14 +14,15 @@ describe('MesRendezvous', () => {
   afterAll(() => jest.clearAllMocks())
 
   describe('client side', () => {
-    const rendezVousPasses = uneListeDeRdv()
-    const rendezVousFuturs = uneListeDeRdv()
+    const rendezVousPasses = desRdvListItems()
+    const rendezVousFuturs = desRdvListItems()
     describe('contenu', () => {
       beforeEach(() => {
         renderWithSession(
           <MesRendezvous
             rendezVousFuturs={rendezVousFuturs}
             rendezVousPasses={rendezVousPasses}
+            pageTitle=''
           />
         )
       })
@@ -86,6 +87,7 @@ describe('MesRendezvous', () => {
             rendezVousFuturs={rendezVousFuturs}
             rendezVousPasses={rendezVousPasses}
             creationSuccess={true}
+            pageTitle=''
           />
         )
       })
@@ -127,6 +129,7 @@ describe('MesRendezvous', () => {
             rendezVousFuturs={rendezVousFuturs}
             rendezVousPasses={rendezVousPasses}
             modificationSuccess={true}
+            pageTitle=''
           />
         )
       })

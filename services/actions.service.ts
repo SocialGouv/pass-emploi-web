@@ -53,7 +53,7 @@ export class ActionsApiService implements ActionsService {
     idConseiller: string,
     accessToken: string
   ): Promise<ActionsCount[]> {
-    return await this.apiClient.get<ActionsCount[]>(
+    return this.apiClient.get<ActionsCount[]>(
       `/conseillers/${idConseiller}/actions`,
       accessToken
     )

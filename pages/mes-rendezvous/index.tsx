@@ -5,7 +5,7 @@ import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { UserStructure } from 'interfaces/conseiller'
-import { Rdv } from 'interfaces/rdv'
+import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
@@ -17,8 +17,8 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type MesRendezvousProps = {
-  rendezVousFuturs: Rdv[]
-  rendezVousPasses: Rdv[]
+  rendezVousFuturs: RdvListItem[]
+  rendezVousPasses: RdvListItem[]
   creationSuccess?: boolean
   modificationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
@@ -43,10 +43,11 @@ function MesRendezvous({
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+  const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
+    undefined
+  )
+  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rendezVousFuturs)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
-  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
-  const [rdvsAVenir, setRdvsAVenir] = useState(rendezVousFuturs)
 
   const pageTracking = `Mes rendez-vous`
   let initialTracking = pageTracking
@@ -55,13 +56,12 @@ function MesRendezvous({
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  function deleteRdv() {
-    const index = rdvsAVenir.indexOf(selectedRdv!)
-    const newArray = [
-      ...rdvsAVenir.slice(0, index),
-      ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
-    ]
-    setRdvsAVenir(newArray)
+  function deleteRdv(deletedRdv: RdvListItem) {
+    setRdvsAVenir((prevRdvs) => {
+      const index = rdvsAVenir.indexOf(deletedRdv)
+      prevRdvs.splice(index)
+      return prevRdvs
+    })
   }
 
   function toggleDisplayOldRdv(): void {
@@ -84,14 +84,13 @@ function MesRendezvous({
     router.replace('', undefined, { shallow: true })
   }
 
-  function openDeleteRdvModal(rdv: Rdv) {
+  function openDeleteRdvModal(rdv: RdvListItem) {
     setSelectedRdv(rdv)
-    setShowDeleteModal(true)
     setTrackingTitle(pageTracking + ' - Modale suppression rdv')
   }
 
   function closeDeleteRdvModal() {
-    setShowDeleteModal(false)
+    setSelectedRdv(undefined)
     setTrackingTitle(pageTracking)
   }
 
@@ -170,12 +169,11 @@ function MesRendezvous({
           />
         )}
 
-        {showDeleteModal && (
+        {selectedRdv && (
           <DeleteRdvModal
+            rdv={selectedRdv}
             onClose={closeDeleteRdvModal}
             onDelete={deleteRdv}
-            show={showDeleteModal}
-            rdv={selectedRdv!}
           />
         )}
       </div>
@@ -206,8 +204,8 @@ export const getServerSideProps: GetServerSideProps<
   )
 
   const props: MesRendezvousProps = {
-    rendezVousFuturs: futurs,
-    rendezVousPasses: passes,
+    rendezVousFuturs: futurs.map(rdvToListItem),
+    rendezVousPasses: passes.map(rdvToListItem),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
   }

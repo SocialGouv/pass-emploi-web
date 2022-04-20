@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import AddActionModal from 'components/action/AddActionModal'
-import FiltresActionsTabList from 'components/action/FiltresActions'
+import FiltresActionsTabList from 'components/action/FiltresActionsTabList'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import SuccessMessage from 'components/SuccessMessage'

@@ -6,7 +6,11 @@ import {
   unConseillerHistorique,
   unJeune,
 } from 'fixtures/jeune'
-import { uneListeDeRdv, unRendezVous } from 'fixtures/rendez-vous'
+import {
+  desRdvListItems,
+  uneListeDeRdv,
+  unRendezVous,
+} from 'fixtures/rendez-vous'
 import {
   mockedActionsService,
   mockedJeunesService,
@@ -14,6 +18,7 @@ import {
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique } from 'interfaces/jeune'
+import { rdvToListItem } from 'interfaces/rdv'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
@@ -44,7 +49,7 @@ describe('Fiche Jeune', () => {
 
   describe('client side', () => {
     const jeune = unJeune()
-    const rdvs = uneListeDeRdv()
+    const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
 
@@ -88,7 +93,7 @@ describe('Fiche Jeune', () => {
       it('affiche la liste des rendez-vous du jeune', async () => {
         // Then
         rdvs.forEach((rdv) => {
-          expect(screen.getByText(rdv.type.label)).toBeInTheDocument()
+          expect(screen.getByText(rdv.type)).toBeInTheDocument()
           expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         })
       })
@@ -218,9 +223,11 @@ describe('Fiche Jeune', () => {
 
       it("n'affiche pas la liste des rendez-vous du jeune", async () => {
         // Then
-        rdvs.forEach((rdv) => {
-          expect(() => screen.getByText(rdv.comment)).toThrow()
-        })
+        expect(
+          screen.getByText(
+            'Gérez les convocations de ce jeune depuis vos outils Pôle emploi.'
+          )
+        ).toBeInTheDocument()
       })
 
       it("n'affiche pas de lien vers les actions du jeune", async () => {
@@ -230,6 +237,11 @@ describe('Fiche Jeune', () => {
             name: 'Voir la liste des actions du jeune',
           })
         ).toThrow()
+        expect(
+          screen.getByText(
+            'Gérez les actions et démarches de ce jeune depuis vos outils Pôle emploi.'
+          )
+        ).toBeInTheDocument()
       })
 
       it('ne permet pas la prise de rendez-vous', async () => {
@@ -433,7 +445,9 @@ describe('Fiche Jeune', () => {
           'id-jeune',
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { rdvs: [rdvAVenir] } })
+        expect(actual).toMatchObject({
+          props: { rdvs: [rdvToListItem(rdvAVenir)] },
+        })
       })
 
       it('récupère les 3 premieres actions du jeune', async () => {

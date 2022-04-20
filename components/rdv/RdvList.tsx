@@ -1,21 +1,21 @@
 import { HeaderCell } from 'components/rdv/HeaderCell'
 import { RdvTypeTag } from 'components/ui/RdvTypeTag'
-import { Rdv } from 'interfaces/rdv'
+import { RdvListItem } from 'interfaces/rdv'
 import Link from 'next/link'
 import { MouseEvent } from 'react'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 import DeleteIcon from '../../assets/icons/delete.svg'
-import LocationIcon from '../../assets/icons/location.svg'
-import NoteIcon from '../../assets/icons/note.svg'
 import DoneIcon from '../../assets/icons/done.svg'
 import KoIcon from '../../assets/icons/ko.svg'
+import LocationIcon from '../../assets/icons/location.svg'
+import NoteIcon from '../../assets/icons/note.svg'
 
 type RdvListProps = {
-  rdvs: Rdv[]
+  rdvs: RdvListItem[]
   idConseiller: string
   withNameJeune?: boolean
   id?: string
-  onDelete?: any
+  onDelete?: (rdv: RdvListItem) => void
 }
 
 const RdvList = ({
@@ -25,10 +25,10 @@ const RdvList = ({
   id,
   onDelete,
 }: RdvListProps) => {
-  const handleDeleteClick = (e: MouseEvent<HTMLElement>, rdv: Rdv) => {
+  const handleDelete = (e: MouseEvent<HTMLElement>, rdv: RdvListItem) => {
     e.preventDefault()
     e.stopPropagation()
-    onDelete(rdv)
+    if (onDelete) onDelete(rdv)
   }
 
   const dayHourCells = (rdvDate: Date, duration: number) => {
@@ -69,7 +69,7 @@ const RdvList = ({
           </div>
 
           <div role='rowgroup' className='table-row-group'>
-            {rdvs.map((rdv: Rdv) => (
+            {rdvs.map((rdv: RdvListItem) => (
               <Link
                 href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
                 key={rdv.id}
@@ -90,7 +90,7 @@ const RdvList = ({
                   )}
 
                   <div role='cell' className='table-cell p-3'>
-                    <RdvTypeTag type={rdv.type.label} />
+                    <RdvTypeTag type={rdv.type} />
                   </div>
 
                   <div role='cell' className='table-cell p-3 '>
@@ -108,7 +108,7 @@ const RdvList = ({
                       aria-hidden='true'
                       className='mr-2 inline'
                     />
-                    {(rdv.comment && '1 note(s)') || '--'}
+                    {(rdv.hasComment && '1 note(s)') || '--'}
                   </div>
 
                   {rdv.idCreateur && (
@@ -141,10 +141,10 @@ const RdvList = ({
                     <div
                       role='cell'
                       className='table-cell p-3'
-                      onClick={(e) => handleDeleteClick(e, rdv)}
+                      onClick={(e) => handleDelete(e, rdv)}
                     >
                       <button
-                        onClick={(e) => handleDeleteClick(e, rdv)}
+                        onClick={(e) => handleDelete(e, rdv)}
                         aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
                         className='border-none'
                       >
