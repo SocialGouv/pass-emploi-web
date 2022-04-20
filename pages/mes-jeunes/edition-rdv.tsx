@@ -121,13 +121,12 @@ function EditionRdv({
       </div>
       {showLeavePageModal && (
         <ExitPageConfirmationModal
-          show={showLeavePageModal}
           message={`Vous allez quitter la ${
             rdv ? 'modification du' : 'création d’un nouveau'
           } rendez-vous`}
           source={rdv ? 'edition' : 'creation'}
           onCancel={closeLeavePageModal}
-          href={redirectTo}
+          destination={redirectTo}
         />
       )}
     </>

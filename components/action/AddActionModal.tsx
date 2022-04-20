@@ -11,12 +11,11 @@ import { useDependance } from 'utils/injectionDependances'
 const INPUT_MAX_LENGTH = 250
 
 type ActionModalProps = {
-  show: boolean
   onClose: any
   onAdd: any
 }
 
-const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
+const AddActionModal = ({ onClose, onAdd }: ActionModalProps) => {
   const [newContent, setNewContent] = useState('')
   const [newComment, setNewComment] = useState('')
   const [isCommentMode, setIsCommentMode] = useState(false)
@@ -91,139 +90,141 @@ const AddActionModal = ({ show, onClose, onAdd }: ActionModalProps) => {
 
   return (
     <>
-      <Modal
-        title='Créer une nouvelle action'
-        onClose={handleCloseModal}
-        show={!isCommentMode && show}
-        customHeight='636px'
-        customWidth='939px'
-      >
-        <div className='flex mb-10'>
-          <Button
-            type='button'
-            className='mr-2'
-            style={isCustomMode ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
-            onClick={toggleCustomMode}
-          >
-            Actions prédéfinies
-          </Button>
+      {!isCommentMode && (
+        <Modal
+          title='Créer une nouvelle action'
+          onClose={handleCloseModal}
+          customHeight='636px'
+          customWidth='939px'
+        >
+          <div className='flex mb-10'>
+            <Button
+              type='button'
+              className='mr-2'
+              style={isCustomMode ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
+              onClick={toggleCustomMode}
+            >
+              Actions prédéfinies
+            </Button>
 
-          <Button
-            type='button'
-            style={isCustomMode ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
-            onClick={toggleCustomMode}
-          >
-            Action personnalisée
-          </Button>
-        </div>
-
-        {!isCustomMode && (
-          <div className='h-[425px] overflow-scroll mb-10'>
-            {actionsPredefinies.map(({ id, content }) => (
-              <button
-                key={id}
-                type='button'
-                className='w-full px-6 py-4 mb-2 text-left border border-solid border-bleu_blanc rounded-medium'
-                onClick={() => handleSelectedAction(content)}
-              >
-                <p className='text-sm text-bleu_nuit'>{content}</p>
-              </button>
-            ))}
+            <Button
+              type='button'
+              style={isCustomMode ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
+              onClick={toggleCustomMode}
+            >
+              Action personnalisée
+            </Button>
           </div>
-        )}
 
-        {isCustomMode && (
-          <div className='h-[425px] mb-10'>
-            <form onSubmit={handleAddClick}>
-              <label
-                htmlFor='customContent'
-                className='text-sm text-bleu_nuit block mb-5'
-              >
-                Intitulé de l&apos;action (obligatoire)
-              </label>
+          {!isCustomMode && (
+            <div className='h-[425px] overflow-scroll mb-10'>
+              {actionsPredefinies.map(({ id, content }) => (
+                <button
+                  key={id}
+                  type='button'
+                  className='w-full px-6 py-4 mb-2 text-left border border-solid border-bleu_blanc rounded-medium'
+                  onClick={() => handleSelectedAction(content)}
+                >
+                  <p className='text-sm text-bleu_nuit'>{content}</p>
+                </button>
+              ))}
+            </div>
+          )}
 
-              <input
-                id='customContent'
-                name='customContent'
-                maxLength={INPUT_MAX_LENGTH}
-                value={newContent}
-                onChange={(e) => setNewContent(e.target.value)}
-                className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-solid border-bleu_blanc rounded-medium'
-                placeholder='Ajouter un contenu...'
-              />
+          {isCustomMode && (
+            <div className='h-[425px] mb-10'>
+              <form onSubmit={handleAddClick}>
+                <label
+                  htmlFor='customContent'
+                  className='text-sm text-bleu_nuit block mb-5'
+                >
+                  Intitulé de l&apos;action (obligatoire)
+                </label>
 
-              <label
-                htmlFor='cutomComment'
-                className='text-sm text-bleu_nuit block mb-5'
-              >
-                Commentaire de l&apos;action
-              </label>
+                <input
+                  id='customContent'
+                  name='customContent'
+                  maxLength={INPUT_MAX_LENGTH}
+                  value={newContent}
+                  onChange={(e) => setNewContent(e.target.value)}
+                  className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-solid border-bleu_blanc rounded-medium'
+                  placeholder='Ajouter un contenu...'
+                />
 
-              <textarea
-                id='cutomComment'
-                name='cutomComment'
-                maxLength={INPUT_MAX_LENGTH}
-                rows={3}
-                cols={5}
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-bleu_blanc rounded-medium'
-                placeholder='Ajouter un commentaire...'
-              />
+                <label
+                  htmlFor='cutomComment'
+                  className='text-sm text-bleu_nuit block mb-5'
+                >
+                  Commentaire de l&apos;action
+                </label>
 
-              <Button
-                type='submit'
-                className='px-12 py-2.5 m-auto'
-                disabled={noSelectedAction()}
-              >
-                <span className='px-12'>Envoyer l&apos;action</span>
-              </Button>
-            </form>
-          </div>
-        )}
-      </Modal>
+                <textarea
+                  id='cutomComment'
+                  name='cutomComment'
+                  maxLength={INPUT_MAX_LENGTH}
+                  rows={3}
+                  cols={5}
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className='w-full text-sm text-bleu_nuit p-4 mb-14 border border-solid border-bleu_blanc rounded-medium'
+                  placeholder='Ajouter un commentaire...'
+                />
 
-      <Modal
-        title={newContent}
-        onClose={handleCloseModal}
-        onBack={() => {
-          setIsCommentMode(false)
-          setIsBackClicked(true)
-          setNewComment('')
-        }}
-        show={isCommentMode && show}
-        customHeight='360px'
-        customWidth='939px'
-      >
-        <form onSubmit={handleAddClick}>
-          <label
-            htmlFor='comment'
-            className='text-sm text-bleu_nuit block mb-5'
-          >
-            Ajouter un commentaire à votre action
-          </label>
+                <Button
+                  type='submit'
+                  className='px-12 py-2.5 m-auto'
+                  disabled={noSelectedAction()}
+                >
+                  <span className='px-12'>Envoyer l&apos;action</span>
+                </Button>
+              </form>
+            </div>
+          )}
+        </Modal>
+      )}
 
-          <textarea
-            id='comment'
-            name='comment'
-            rows={3}
-            cols={5}
-            value={newComment}
-            maxLength={INPUT_MAX_LENGTH}
-            onChange={(e) => setNewComment(e.target.value)}
-            className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-solid border-bleu_blanc rounded-medium'
-            placeholder='Ajouter un commentaire...'
-          />
+      {isCommentMode && (
+        <Modal
+          title={newContent}
+          onClose={handleCloseModal}
+          onBack={() => {
+            setIsCommentMode(false)
+            setIsBackClicked(true)
+            setNewComment('')
+          }}
+          customHeight='360px'
+          customWidth='939px'
+        >
+          <form onSubmit={handleAddClick}>
+            <label
+              htmlFor='comment'
+              className='text-sm text-bleu_nuit block mb-5'
+            >
+              Ajouter un commentaire à votre action
+            </label>
 
-          <Button
-            type='submit'
-            className='px-12 py-2.5 m-auto'
-            disabled={noSelectedAction()}
-          >
-            <span className='px-12'>Envoyer l&apos;action</span>
-          </Button>
-        </form>
-      </Modal>
+            <textarea
+              id='comment'
+              name='comment'
+              rows={3}
+              cols={5}
+              value={newComment}
+              maxLength={INPUT_MAX_LENGTH}
+              onChange={(e) => setNewComment(e.target.value)}
+              className='w-full text-sm text-bleu_nuit p-4 mb-7 border border-solid border-bleu_blanc rounded-medium'
+              placeholder='Ajouter un commentaire...'
+            />
+
+            <Button
+              type='submit'
+              className='px-12 py-2.5 m-auto'
+              disabled={noSelectedAction()}
+            >
+              <span className='px-12'>Envoyer l&apos;action</span>
+            </Button>
+          </form>
+        </Modal>
+      )}
     </>
   )
 }

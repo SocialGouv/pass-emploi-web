@@ -171,7 +171,7 @@ function MesRendezvous({
 
         {selectedRdv && (
           <DeleteRdvModal
-            rdv={selectedRdv}
+            rdv={selectedRdv!}
             onClose={closeDeleteRdvModal}
             onDelete={deleteRdv}
           />

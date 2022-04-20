@@ -6,7 +6,6 @@ import CloseIcon from '../assets/icons/close_modal.svg'
 
 interface ModalProps {
   title: string
-  show: boolean
   onClose: any
   children: any
   onBack?: any
@@ -15,7 +14,6 @@ interface ModalProps {
 }
 
 export default function Modal({
-  show,
   onClose,
   onBack,
   children,
@@ -85,7 +83,7 @@ export default function Modal({
     return () => document.removeEventListener('keydown', keyListener)
   }, [])
 
-  const modalContent = show ? (
+  const modalContent = (
     <div
       role='dialog'
       aria-modal='true'
@@ -125,7 +123,7 @@ export default function Modal({
         <div className='px-5 pt-3 pb-8'>{children}</div>
       </div>
     </div>
-  ) : null
+  )
 
   if (isBrowser) {
     const modalRoot = document.getElementById('modal-root')

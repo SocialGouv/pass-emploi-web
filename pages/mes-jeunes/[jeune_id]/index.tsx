@@ -244,7 +244,7 @@ function FicheJeune({
           <DeleteRdvModal
             onClose={closeDeleteRdvModal}
             onDelete={deleteRdv}
-            rdv={selectedRdv}
+            rdv={selectedRdv!}
           />
         )}
       </div>
