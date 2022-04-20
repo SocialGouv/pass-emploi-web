@@ -40,7 +40,12 @@ export default function Modal({
   }
 
   const modalContent = show ? (
-    <div className={styles.modalOverlay}>
+    <div
+      role='dialog'
+      aria-modal='true'
+      aria-labelledby='modal-title'
+      className={styles.modalOverlay}
+    >
       <div
         className='rounded-x_large bg-blanc'
         style={{
@@ -59,7 +64,9 @@ export default function Modal({
               />
             </a>
           )}
-          <h1 className='h4-semi flex-auto'>{title}</h1>
+          <h1 id='modal-title' className='h4-semi flex-auto'>
+            {title}
+          </h1>
           <a href='#' onClick={handleCloseClick}>
             <CloseIcon
               role='img'
