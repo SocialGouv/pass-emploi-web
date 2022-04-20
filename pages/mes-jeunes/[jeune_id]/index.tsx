@@ -91,7 +91,7 @@ function FicheJeune({
   function deleteRdv(deletedRdv: RdvListItem) {
     setRdvsAVenir((prevRdvs) => {
       const index = rdvsAVenir.indexOf(deletedRdv)
-      prevRdvs.splice(index)
+      prevRdvs.splice(index, 1)
       return prevRdvs
     })
   }
