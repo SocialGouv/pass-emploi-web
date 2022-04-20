@@ -22,9 +22,9 @@ const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
   createServer((req, res) => {
-    const url = new URL(req.url)
-    apm.setTransactionName(`${req.method} ${url.pathname}`)
-    handle(req, res, url)
+    const parsedUrl = parse(req.url, true)
+    apm.setTransactionName(`${req.method} ${parsedUrl.pathname}`)
+    handle(req, res, parsedUrl)
   }).listen(port, (err) => {
     if (err) throw err
     console.log(`> Ready on http://${hostname}:${port}`)
