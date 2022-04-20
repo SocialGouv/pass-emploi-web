@@ -18,7 +18,7 @@ const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 type ConversationProps = {
-  conseillers: ConseillerHistorique[] | undefined
+  conseillers: ConseillerHistorique[]
   jeuneChat: JeuneChat
   onBack: () => void
 }
@@ -64,12 +64,12 @@ export default function Conversation({
   }
 
   function getConseillerNomComplet(message: Message) {
-    const conseiller = conseillers?.find(
+    const conseiller = conseillers.find(
       (conseiller) => conseiller.id === message.conseillerId
     )
     if (conseiller) {
       return `${conseiller?.prenom.toLowerCase()} ${conseiller?.nom.toLowerCase()}`
-    } else return
+    }
   }
 
   const setReadByConseiller = useCallback(
@@ -145,17 +145,17 @@ export default function Conversation({
               {messagesOfADay.messages.map((message: Message) => (
                 <li key={message.id} className='mb-5' ref={scrollToRef}>
                   <div
-                    className={`text-md break-words max-w-[90%] p-4 rounded-large w-max whitespace-normal ${
+                    className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
                       message.sentBy === 'conseiller'
                         ? 'text-right text-blanc bg-bleu_nuit mt-0 mr-0 mb-1 ml-auto'
                         : 'text-left text-bleu_nuit bg-bleu_blanc mb-1'
                     }`}
                   >
-                    {' '}
-                    <p className='text-sm-regular capitalize'>
-                      {message.sentBy === 'conseiller' &&
-                        getConseillerNomComplet(message)}
-                    </p>
+                    {message.sentBy === 'conseiller' && (
+                      <p className='text-sm-regular capitalize'>
+                        {getConseillerNomComplet(message)}
+                      </p>
+                    )}
                     <p className='whitespace-pre-wrap'>{message.content}</p>
                   </div>
                   <p
