@@ -4,7 +4,7 @@ export interface Message {
   creationDate: Date
   sentBy: string
   iv: string | undefined
-  conseillerId?: string
+  conseillerId: string | undefined
 }
 
 export interface MessagesOfADay {

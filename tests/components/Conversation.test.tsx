@@ -1,9 +1,9 @@
 import { act, fireEvent, screen } from '@testing-library/react'
 import Conversation from 'components/layouts/Conversation'
-import { unJeuneChat } from 'fixtures/jeune'
+import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { MessagesOfADay } from 'interfaces'
-import { JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Session } from 'next-auth'
 import React from 'react'
 import { MessagesService } from 'services/messages.service'
@@ -11,18 +11,22 @@ import { DIProvider } from 'utils/injectionDependances'
 import { UserStructure } from 'interfaces/conseiller'
 import { formatDayDate } from 'utils/date'
 import renderWithSession from '../renderWithSession'
-import { mockedMessagesService } from 'fixtures/services'
+import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
+import { JeunesService } from 'services/jeunes.service'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
+  let jeunesService: JeunesService
   let conseiller: Session.HydratedUser
+  let conseillersJeunes: ConseillerHistorique[]
   let accessToken: string
   let tokenChat: string
   const messagesParJour = desMessagesParJour()
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
+    conseillersJeunes = desConseillersJeune()
     onBack = jest.fn()
     messagesService = mockedMessagesService({
       observeJeuneChat: jest.fn(),
@@ -42,6 +46,7 @@ describe('<Conversation />', () => {
         return Promise.resolve()
       }),
     })
+    jeunesService = mockedJeunesService()
 
     conseiller = {
       id: 'idConseiller',
@@ -58,8 +63,12 @@ describe('<Conversation />', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn()
     await act(async () => {
       await renderWithSession(
-        <DIProvider dependances={{ messagesService }}>
-          <Conversation jeuneChat={jeuneChat} onBack={onBack} />
+        <DIProvider dependances={{ messagesService, jeunesService }}>
+          <Conversation
+            jeuneChat={jeuneChat}
+            conseillers={conseillersJeunes}
+            onBack={onBack}
+          />
         </DIProvider>,
         { user: conseiller, firebaseToken: tokenChat }
       )
@@ -102,6 +111,18 @@ describe('<Conversation />', () => {
     it.each(casesMessages)(`displays message content`, (message) => {
       // Then
       expect(screen.getByText(message.content)).toBeInTheDocument()
+    })
+    //FIXME: use within and closest
+    it.each(casesMessages)(`displays conseiller full name`, (message) => {
+      // Then
+      conseillersJeunes.forEach((conseiller) => {
+        if (conseiller.id === message.conseillerId) {
+          expect(
+            // screen.getByText(`${conseiller.prenom} ${conseiller.nom}`)
+            screen.getByText('lala')
+          ).toBeInTheDocument()
+        }
+      })
     })
   })
 

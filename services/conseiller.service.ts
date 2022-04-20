@@ -1,10 +1,6 @@
 import { ApiClient } from 'clients/api.client'
 import { DossierMilo } from 'interfaces/jeune'
-import { Conseiller } from 'interfaces/conseiller'
-import { RequestError } from 'utils/fetchJson'
-import ErrorCodes from './error-codes'
 
-// FIXME : à déplacer dans JeunesService ?
 export interface ConseillerService {
   getDossierJeune(
     idDossier: string,
@@ -21,11 +17,6 @@ export interface ConseillerService {
     },
     accessToken: string
   ): Promise<{ id: string }>
-
-  getDetailsConseiller(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<Conseiller | undefined>
 }
 
 export class ConseillerApiService implements ConseillerService {
@@ -56,22 +47,5 @@ export class ConseillerApiService implements ConseillerService {
       newJeune,
       accessToken
     )
-  }
-
-  async getDetailsConseiller(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<Conseiller | undefined> {
-    try {
-      return await this.apiClient.get<Conseiller>(
-        `/conseillers/${idConseiller}`,
-        accessToken
-      )
-    } catch (e) {
-      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
-        return undefined
-      }
-      throw e
-    }
   }
 }

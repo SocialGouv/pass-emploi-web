@@ -1,5 +1,5 @@
 import Conversation from 'components/layouts/Conversation'
-import { JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
@@ -10,16 +10,34 @@ import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import EmptyMessagesImage from '../../assets/images/empty_message.svg'
+import { useDependance } from 'utils/injectionDependances'
+import { JeunesService } from 'services/jeunes.service'
+import useSession from 'utils/auth/useSession'
 
 interface ChatRoomProps {
   jeunesChats: JeuneChat[]
+  conseillersJeunes: ConseillerHistorique[]
 }
 
 export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
+  const { data: session } = useSession<true>({ required: true })
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+
   const [currentJeune, setCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
+  const [conseillers, setConseillers] = useState<
+    ConseillerHistorique[] | undefined
+  >(undefined)
+
+  useEffect(() => {
+    if (currentJeune?.id && session) {
+      jeunesService
+        .getConseillersDuJeune(currentJeune.id, session.accessToken)
+        .then((conseillers) => setConseillers(conseillers))
+    }
+  }, [jeunesService, currentJeune?.id, session])
 
   useEffect(() => {
     if (currentJeune?.id) {
@@ -37,6 +55,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
         <Conversation
           onBack={() => setCurrentJeune(undefined)}
           jeuneChat={currentChat}
+          conseillers={conseillers}
         />
       )}
 

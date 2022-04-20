@@ -60,6 +60,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={jeunes}
                 isFromEmail
+                pageTitle={''}
               />
             </DIProvider>
           )
@@ -101,6 +102,7 @@ describe('Mes Jeunes', () => {
                 conseillerJeunes={jeunes}
                 isFromEmail
                 deletionSuccess={true}
+                pageTitle={''}
               />
             </DIProvider>
           )
@@ -149,6 +151,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={[jeune]}
                 isFromEmail
+                pageTitle={''}
               />
             </DIProvider>
           )
@@ -191,6 +194,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.POLE_EMPLOI}
                 conseillerJeunes={[jeune]}
                 isFromEmail
+                pageTitle={''}
               />
             </DIProvider>
           )
@@ -231,6 +235,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={[]}
                 isFromEmail
+                pageTitle={''}
               />
             </DIProvider>
           )
@@ -259,6 +264,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={jeunes}
                 isFromEmail
+                pageTitle={''}
               />
             </DIProvider>
           )
