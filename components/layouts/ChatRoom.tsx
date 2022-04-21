@@ -16,7 +16,6 @@ import useSession from 'utils/auth/useSession'
 
 interface ChatRoomProps {
   jeunesChats: JeuneChat[]
-  conseillersJeunes: ConseillerHistorique[]
 }
 
 export default function ChatRoom({ jeunesChats }: ChatRoomProps) {

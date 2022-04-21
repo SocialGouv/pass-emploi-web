@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import Conversation from 'components/layouts/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
@@ -112,16 +112,30 @@ describe('<Conversation />', () => {
       // Then
       expect(screen.getByText(message.content)).toBeInTheDocument()
     })
-    //FIXME: use within and closest
     it.each(casesMessages)(`displays conseiller full name`, (message) => {
       // Then
-      conseillersJeunes.forEach((conseiller) => {
-        if (conseiller.id === message.conseillerId) {
-          expect(
-            // screen.getByText(`${conseiller.prenom} ${conseiller.nom}`)
-            screen.getByText('lala')
-          ).toBeInTheDocument()
-        }
+
+      const listMessages = screen.getAllByTestId('messages')
+      listMessages.forEach((list) => {
+        const { getAllByRole } = within(list)
+        const listItems = getAllByRole('listitem')
+        const conseillersNames = listItems.map((item) => item)
+
+        conseillersNames.forEach((conseiller, index) => {
+          const idsConseillers = conseillersJeunes.map(
+            (conseiller) => conseiller.id
+          )
+          const nomComplets = conseillersJeunes.map(
+            (conseiller) => `${conseiller.prenom} ${conseiller.nom}`
+          )
+          if (idsConseillers[index] === message.conseillerId) {
+            expect(
+              within(conseiller).getByText(`${nomComplets[index]}`, {
+                exact: false,
+              })
+            ).toBeInTheDocument()
+          }
+        })
       })
     })
   })

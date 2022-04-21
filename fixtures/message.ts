@@ -7,7 +7,7 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     creationDate: new Date(),
     sentBy: 'conseiller',
     iv: 'iv',
-    conseillerId: '1',
+    conseillerId: 'conseiller-1',
   }
 
   return { ...defaults, ...args }
@@ -44,6 +44,7 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         id: 'message-1',
         content: 'Decrypted: Message du 22/12/2021',
         creationDate: new Date(2021, 11, 22),
+        conseillerId: 'conseiller-1',
       }),
     ],
   },

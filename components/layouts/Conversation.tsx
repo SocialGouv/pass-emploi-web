@@ -141,7 +141,7 @@ export default function Conversation({
               <span>{todayOrDate(messagesOfADay.date)}</span>
             </div>
 
-            <ul>
+            <ul data-testid='messages'>
               {messagesOfADay.messages.map((message: Message) => (
                 <li key={message.id} className='mb-5' ref={scrollToRef}>
                   <div

@@ -114,7 +114,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
   describe('.observeMessages', () => {
     let idChat: string
-    let onMessages: (messagesGroupesParJou: MessagesOfADay[]) => void
+    let onMessages: (messagesGroupesParJour: MessagesOfADay[]) => void
     beforeEach(async () => {
       // Given
       ;(firebaseClient.observeMessagesDuChat as jest.Mock).mockImplementation(
