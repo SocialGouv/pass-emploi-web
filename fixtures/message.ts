@@ -23,11 +23,13 @@ export const desMessages = (): Message[] => [
     id: 'message-2',
     content: 'Message du 10/1/2022',
     creationDate: new Date(2022, 0, 10),
+    conseillerId: 'conseiller-2',
   }),
   unMessage({
     id: 'message-3',
     content: 'Message du 13/1/2022 9h',
     creationDate: new Date(2022, 0, 13, 9),
+    conseillerId: 'conseiller-3',
   }),
   unMessage({
     id: 'message-4',
@@ -44,7 +46,6 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         id: 'message-1',
         content: 'Decrypted: Message du 22/12/2021',
         creationDate: new Date(2021, 11, 22),
-        conseillerId: 'conseiller-1',
       }),
     ],
   },
@@ -55,6 +56,7 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         id: 'message-2',
         content: 'Decrypted: Message du 10/1/2022',
         creationDate: new Date(2022, 0, 10),
+        conseillerId: 'conseiller-2',
       }),
     ],
   },
@@ -65,6 +67,7 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         id: 'message-3',
         content: 'Decrypted: Message du 13/1/2022 9h',
         creationDate: new Date(2022, 0, 13, 9),
+        conseillerId: 'conseiller-3',
       }),
       unMessage({
         id: 'message-4',

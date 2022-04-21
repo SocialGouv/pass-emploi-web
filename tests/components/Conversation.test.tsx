@@ -11,14 +11,12 @@ import { DIProvider } from 'utils/injectionDependances'
 import { UserStructure } from 'interfaces/conseiller'
 import { formatDayDate } from 'utils/date'
 import renderWithSession from '../renderWithSession'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
-import { JeunesService } from 'services/jeunes.service'
+import { mockedMessagesService } from 'fixtures/services'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
-  let jeunesService: JeunesService
   let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
   let accessToken: string
@@ -46,7 +44,6 @@ describe('<Conversation />', () => {
         return Promise.resolve()
       }),
     })
-    jeunesService = mockedJeunesService()
 
     conseiller = {
       id: 'idConseiller',
@@ -63,7 +60,7 @@ describe('<Conversation />', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn()
     await act(async () => {
       await renderWithSession(
-        <DIProvider dependances={{ messagesService, jeunesService }}>
+        <DIProvider dependances={{ messagesService }}>
           <Conversation
             jeuneChat={jeuneChat}
             conseillers={conseillersJeunes}
@@ -112,31 +109,19 @@ describe('<Conversation />', () => {
       // Then
       expect(screen.getByText(message.content)).toBeInTheDocument()
     })
+
     it.each(casesMessages)(`displays conseiller full name`, (message) => {
       // Then
-
-      const listMessages = screen.getAllByTestId('messages')
-      listMessages.forEach((list) => {
-        const { getAllByRole } = within(list)
-        const listItems = getAllByRole('listitem')
-        const conseillersNames = listItems.map((item) => item)
-
-        conseillersNames.forEach((conseiller, index) => {
-          const idsConseillers = conseillersJeunes.map(
-            (conseiller) => conseiller.id
-          )
-          const nomComplets = conseillersJeunes.map(
-            (conseiller) => `${conseiller.prenom} ${conseiller.nom}`
-          )
-          if (idsConseillers[index] === message.conseillerId) {
-            expect(
-              within(conseiller).getByText(`${nomComplets[index]}`, {
-                exact: false,
-              })
-            ).toBeInTheDocument()
-          }
-        })
-      })
+      const messageItem = screen.getByTestId(message.id)
+      const conseiller = conseillersJeunes.find(
+        (conseiller) => conseiller.id === message.conseillerId
+      )
+      expect(
+        within(messageItem).getByText(
+          `${conseiller?.prenom} ${conseiller?.nom}`,
+          { exact: false }
+        )
+      ).toBeInTheDocument()
     })
   })
 

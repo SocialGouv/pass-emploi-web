@@ -141,9 +141,14 @@ export default function Conversation({
               <span>{todayOrDate(messagesOfADay.date)}</span>
             </div>
 
-            <ul data-testid='messages'>
+            <ul>
               {messagesOfADay.messages.map((message: Message) => (
-                <li key={message.id} className='mb-5' ref={scrollToRef}>
+                <li
+                  key={message.id}
+                  className='mb-5'
+                  ref={scrollToRef}
+                  data-testid={message.id}
+                >
                   <div
                     className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
                       message.sentBy === 'conseiller'
@@ -152,7 +157,7 @@ export default function Conversation({
                     }`}
                   >
                     {message.sentBy === 'conseiller' && (
-                      <p className='text-sm-regular capitalize'>
+                      <p className='text-sm-regular capitalize mb-1'>
                         {getConseillerNomComplet(message)}
                       </p>
                     )}
