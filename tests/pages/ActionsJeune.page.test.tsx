@@ -1,21 +1,28 @@
 import { fireEvent, screen } from '@testing-library/react'
-import { uneAction } from 'fixtures/action'
+import { uneAction, uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
-import { ActionStatus } from 'interfaces/action'
+import { mockedActionsService, mockedJeunesService } from 'fixtures/services'
+import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { Jeune } from 'interfaces/jeune'
+import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 import Actions, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions'
 import React from 'react'
+import { ActionsService } from 'services/actions.service'
+import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withDependance from 'utils/injectionDependances/withDependance'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('utils/injectionDependances/withDependance')
 
-afterAll(() => jest.clearAllMocks())
+afterAll(() => jest.resetAllMocks())
 
 describe("Page Liste des actions d'un jeune", () => {
-  describe('pour un conseiller MiLo', () => {
+  describe('client side', () => {
     const actions = [
       uneAction({ id: 'action-1', content: 'action 1' }),
       uneAction({ id: 'action-2', content: 'action 2' }),
@@ -26,7 +33,7 @@ describe("Page Liste des actions d'un jeune", () => {
       content: 'action commencée',
       status: ActionStatus.InProgress,
     })
-    const uneActionTermine = uneAction({
+    const uneActionTerminee = uneAction({
       id: 'action-terminee',
       content: 'action terminee',
       status: ActionStatus.Done,
@@ -42,11 +49,12 @@ describe("Page Liste des actions d'un jeune", () => {
         <Actions
           jeune={jeune}
           deleteSuccess={false}
-          actions={[uneActionCommencee, uneActionTermine, ...actions]}
-          actionsCommencees={[uneActionCommencee]}
-          actionsARealiser={[...actions]}
-          actionsTerminees={[uneActionTermine]}
-          actionsAnnulees={[uneActionAnnulee]}
+          actions={[
+            ...actions,
+            uneActionCommencee,
+            uneActionTerminee,
+            uneActionAnnulee,
+          ]}
           pageTitle=''
         />
       )
@@ -93,7 +101,41 @@ describe("Page Liste des actions d'un jeune", () => {
         }
       })
 
-      it("Affiche les actions terminees lorsqu'on clique sur le bouton terminee", async () => {
+      it("Affiche les actions non commencée lorsqu'on clique sur le bouton À réaliser", async () => {
+        //GIVEN
+        const aRealiserFilterTab = screen.getByRole('tab', {
+          name: 'À réaliser (2)',
+        })
+
+        //WHEN
+        fireEvent.click(aRealiserFilterTab)
+
+        //THEN
+        expect(screen.getByText(actions[0].content)).toBeInTheDocument()
+        expect(screen.getByText(actions[1].content)).toBeInTheDocument()
+        expect(() => screen.getByText(uneActionCommencee.content)).toThrow()
+        expect(() => screen.getByText(uneActionTerminee.content)).toThrow()
+        expect(() => screen.getByText(uneActionAnnulee.content)).toThrow()
+      })
+
+      it("Affiche les actions en cours lorsqu'on clique sur le bouton Commencées", async () => {
+        //GIVEN
+        const commenceesFilterTab = screen.getByRole('tab', {
+          name: 'Commencées (1)',
+        })
+
+        //WHEN
+        fireEvent.click(commenceesFilterTab)
+
+        //THEN
+        expect(screen.getByText(uneActionCommencee.content)).toBeInTheDocument()
+        expect(() => screen.getByText(actions[0].content)).toThrow()
+        expect(() => screen.getByText(actions[1].content)).toThrow()
+        expect(() => screen.getByText(uneActionTerminee.content)).toThrow()
+        expect(() => screen.getByText(uneActionAnnulee.content)).toThrow()
+      })
+
+      it("Affiche les actions terminees lorsqu'on clique sur le bouton Terminées", async () => {
         //GIVEN
         const termineesFilterTab = screen.getByRole('tab', {
           name: 'Terminées (1)',
@@ -103,21 +145,38 @@ describe("Page Liste des actions d'un jeune", () => {
         fireEvent.click(termineesFilterTab)
 
         //THEN
-        expect(screen.getByText(uneActionTermine.content)).toBeInTheDocument()
-        expect(() => screen.getByText(uneActionCommencee.content)).toThrow()
+        expect(screen.getByText(uneActionTerminee.content)).toBeInTheDocument()
         expect(() => screen.getByText(actions[0].content)).toThrow()
+        expect(() => screen.getByText(actions[1].content)).toThrow()
+        expect(() => screen.getByText(uneActionCommencee.content)).toThrow()
+        expect(() => screen.getByText(uneActionAnnulee.content)).toThrow()
+      })
+
+      it("Affiche les actions annulées lorsqu'on clique sur le bouton Annulées", async () => {
+        //GIVEN
+        const annuleesFilterTab = screen.getByRole('tab', {
+          name: 'Annulées (1)',
+        })
+
+        //WHEN
+        fireEvent.click(annuleesFilterTab)
+
+        //THEN
+        expect(screen.getByText(uneActionAnnulee.content)).toBeInTheDocument()
+        expect(() => screen.getByText(actions[0].content)).toThrow()
+        expect(() => screen.getByText(actions[1].content)).toThrow()
+        expect(() => screen.getByText(uneActionCommencee.content)).toThrow()
+        expect(() => screen.getByText(uneActionTerminee.content)).toThrow()
       })
     })
   })
 
-  describe('Pour un conseiller Pole Emploi', () => {
-    it('renvoie une 404', async () => {
+  describe('server side', () => {
+    it('nécessite une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        session: {
-          user: { structure: 'POLE_EMPLOI' },
-        },
-        validSession: true,
+        validSession: false,
+        redirect: 'whatever',
       })
 
       // When
@@ -125,7 +184,84 @@ describe("Page Liste des actions d'un jeune", () => {
 
       // Then
       expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ notFound: true })
+      expect(actual).toEqual({ redirect: 'whatever' })
+    })
+
+    describe("quand l'utilisateur est Pole emploi", () => {
+      it('renvoie une 404', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'POLE_EMPLOI' },
+          },
+        })
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ notFound: true })
+      })
+    })
+
+    describe("quand l'utilisateur n'est pas Pole emploi", () => {
+      let jeune: Jeune
+      let actions: ActionJeune[]
+      let jeunesService: JeunesService
+      let actionsService: ActionsService
+      let actual: GetServerSidePropsResult<any>
+      beforeEach(async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'MILO' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        jeune = unJeune()
+        actions = uneListeDActions()
+        jeunesService = mockedJeunesService({
+          getJeuneDetails: jest.fn(async () => jeune),
+        })
+        actionsService = mockedActionsService({
+          getActionsJeune: jest.fn(async () => actions),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'actionsService') return actionsService
+        })
+
+        // When
+        actual = await getServerSideProps({
+          query: { jeune_id: 'id-jeune' },
+        } as unknown as GetServerSidePropsContext)
+      })
+
+      it('récupère les infos du jeune', () => {
+        // Then
+        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: { jeune, pageTitle: 'Mes jeunes - Actions de Kenji Jirac' },
+        })
+      })
+
+      it('récupère les actions du jeune triées par dates', () => {
+        // Then
+        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: { actions: [actions[2], actions[1], actions[0]] },
+        })
+      })
     })
   })
 })

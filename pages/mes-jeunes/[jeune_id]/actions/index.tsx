@@ -1,37 +1,38 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import AddActionModal from 'components/action/AddActionModal'
-import FiltresActionsTabList from 'components/action/FiltresActionsTabList'
+import FiltresActionsTabList, {
+  TOUTES_LES_ACTIONS_LABEL,
+} from 'components/action/FiltresActionsTabList'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
 import {
   ActionJeune,
+  ActionsParStatut,
   ActionStatus,
   compareActionsDatesDesc,
+  LABELS_STATUT,
+  NombreActionsParStatut,
 } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { ActionsService } from 'services/actions.service'
+import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { Container } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
-const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
-
-type ActionsProps = {
+interface ActionsProps {
   jeune: Jeune
   actions: ActionJeune[]
-  actionsARealiser: ActionJeune[]
-  actionsCommencees: ActionJeune[]
-  actionsTerminees: ActionJeune[]
-  actionsAnnulees: ActionJeune[]
   deleteSuccess: boolean
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
@@ -40,29 +41,26 @@ type ActionsProps = {
 function Actions({
   jeune,
   actions,
-  actionsARealiser,
-  actionsCommencees,
-  actionsTerminees,
-  actionsAnnulees,
   deleteSuccess,
   messageEnvoiGroupeSuccess,
 }: ActionsProps) {
+  const router = useRouter()
   const [showModal, setShowModal] = useState<boolean>(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
-
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
-
+  const [actionsParStatut, setActionsParStatut] = useState<ActionsParStatut>(
+    sortActionsParStatut([])
+  )
   const [actionsFiltrees, setActionsFiltrees] = useState(actions)
   const [currentFilter, setCurrentFilter] = useState<ActionStatus | string>(
     TOUTES_LES_ACTIONS_LABEL
   )
+
   const initialTracking: string = showSuccessMessage
     ? 'Actions jeune - Succès - Suppression Action'
     : 'Actions jeune'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
-
-  const router = useRouter()
 
   const closeSuccessMessage = () => {
     setShowSuccessMessage(false)
@@ -91,19 +89,29 @@ function Actions({
     if (newFilter === TOUTES_LES_ACTIONS_LABEL) {
       setTrackingLabel('Actions jeune')
       setActionsFiltrees(actions)
-    } else if (newFilter === ActionStatus.NotStarted) {
-      setTrackingLabel('Actions jeune - Filtre A réaliser')
-      setActionsFiltrees(actionsARealiser)
-    } else if (newFilter === ActionStatus.InProgress) {
-      setTrackingLabel('Actions jeune - Filtre Commencées')
-      setActionsFiltrees(actionsCommencees)
-    } else if (newFilter === ActionStatus.Done) {
-      setTrackingLabel('Actions jeune - Filtre Terminées')
-      setActionsFiltrees(actionsTerminees)
     } else {
-      setTrackingLabel('Actions jeune - Filtre Annulées')
-      setActionsFiltrees(actionsAnnulees)
+      const statut = newFilter as ActionStatus
+      setTrackingLabel(`Actions jeune - Filtre ${LABELS_STATUT[statut]}`)
+      setActionsFiltrees(actionsParStatut[statut])
     }
+  }
+
+  function sortActionsParStatut(
+    actionsATrier: ActionJeune[]
+  ): ActionsParStatut {
+    return Object.values(ActionStatus).reduce((parStatut, statut) => {
+      parStatut[statut] = actionsATrier.filter(
+        (action) => action.status === statut
+      )
+      return parStatut
+    }, {} as ActionsParStatut)
+  }
+
+  function getNombreActionsParStatut(): NombreActionsParStatut {
+    return Object.values(ActionStatus).reduce((parStatut, statut) => {
+      parStatut[statut] = actionsParStatut[statut].length
+      return parStatut
+    }, {} as { [key in ActionStatus]: number })
   }
 
   useMatomo(trackingLabel)
@@ -112,6 +120,10 @@ function Actions({
       ? `Actions jeune - Succès envoi message`
       : 'Actions jeune'
   )
+
+  useEffect(() => {
+    setActionsParStatut(sortActionsParStatut(actions))
+  }, [actions])
 
   return (
     <>
@@ -169,12 +181,10 @@ function Actions({
 
         <FiltresActionsTabList
           currentFilter={currentFilter}
-          actionsLength={actions.length}
-          actionsARealiserLength={actionsARealiser.length}
-          actionsCommenceesLength={actionsCommencees.length}
-          actionsTermineesLength={actionsTerminees.length}
-          actionsAnnuleesLength={actionsAnnulees.length}
+          actionsCount={actions.length}
+          actionsCountParStatut={getNombreActionsParStatut()}
           prenomJeune={jeune.firstName}
+          controlledIdPrefix='panneau-actions'
           filterClicked={(newFilter) => handleActionsFiltreesClicked(newFilter)}
         />
 
@@ -211,9 +221,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { notFound: true }
   }
 
-  const { actionsService, jeunesService } =
-    Container.getDIContainer().dependances
-  const [dataDetailsJeune, dataActionsJeune] = await Promise.all([
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+  const actionsService = withDependance<ActionsService>('actionsService')
+  const [jeune, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,
       accessToken
@@ -224,32 +234,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     ),
   ])
 
-  if (!dataDetailsJeune || !dataActionsJeune) {
+  if (!jeune) {
     return {
       notFound: true,
     }
   }
-
-  const sortedActions = [...dataActionsJeune].sort(compareActionsDatesDesc)
-
   const props: ActionsProps = {
-    jeune: dataDetailsJeune,
-    actions: sortedActions,
-    actionsARealiser: sortedActions.filter(
-      (action) => action.status === ActionStatus.NotStarted
-    ),
-    actionsCommencees: sortedActions.filter(
-      (action) => action.status === ActionStatus.InProgress
-    ),
-    actionsTerminees: sortedActions.filter(
-      (action) => action.status === ActionStatus.Done
-    ),
-    actionsAnnulees: sortedActions.filter(
-      (action) => action.status === ActionStatus.Canceled
-    ),
+    jeune: jeune,
+    actions: [...actions].sort(compareActionsDatesDesc),
     deleteSuccess: Boolean(context.query.deleteSuccess),
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
-    pageTitle: `Mes jeunes - Actions de ${dataDetailsJeune.firstName} ${dataDetailsJeune.lastName}`,
+    pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`,
   }
 
   if (context.query?.envoiMessage) {

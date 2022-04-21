@@ -27,6 +27,16 @@ export enum ActionStatus {
   Canceled = 'Canceled',
 }
 
+export type ActionsParStatut = { [key in ActionStatus]: ActionJeune[] }
+export type NombreActionsParStatut = { [key in ActionStatus]: number }
+
+export const LABELS_STATUT: { [key in ActionStatus]: string } = {
+  Canceled: 'Annulées',
+  Done: 'Terminées',
+  InProgress: 'Commencées',
+  NotStarted: 'À réaliser',
+}
+
 export function compareActionsDatesDesc(
   action1: ActionJeune,
   action2: ActionJeune

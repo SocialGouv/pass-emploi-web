@@ -201,7 +201,6 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const props: PageActionProps = {
     action: res,
     jeune: res.jeune,
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
     pageTitle: `Mes jeunes - Actions de ${res.jeune.firstName} ${res.jeune.lastName} - ${res.content} `,
   }
 

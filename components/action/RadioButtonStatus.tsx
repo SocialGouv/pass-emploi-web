@@ -12,22 +12,22 @@ interface RadioButtonStatusProps {
 const mappedStatus: {
   [key in ActionStatus]: { label: string; color: string; icon: any }
 } = {
-  [ActionStatus.NotStarted]: {
+  NotStarted: {
     label: 'À réaliser',
     color: 'accent_1',
     icon: DoneIcon,
   },
-  [ActionStatus.InProgress]: {
+  InProgress: {
     label: 'Commencée',
     color: 'accent_3',
     icon: DoneIcon,
   },
-  [ActionStatus.Done]: {
+  Done: {
     label: 'Terminée',
     color: 'accent_2',
     icon: DoneIcon,
   },
-  [ActionStatus.Canceled]: {
+  Canceled: {
     label: 'Annulée',
     color: 'warning',
     icon: CancelIcon,

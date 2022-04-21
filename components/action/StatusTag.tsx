@@ -8,22 +8,22 @@ interface TagProps {
 const mappedStatus: {
   [key in ActionStatus]: { label: string; color: string; colorLighten: string }
 } = {
-  [ActionStatus.NotStarted]: {
+  NotStarted: {
     label: 'À réaliser',
     color: 'accent_1',
     colorLighten: 'accent_1_lighten',
   },
-  [ActionStatus.InProgress]: {
+  InProgress: {
     label: 'Commencée',
     color: 'accent_3',
     colorLighten: 'accent_3_lighten',
   },
-  [ActionStatus.Done]: {
+  Done: {
     label: 'Terminée',
     color: 'accent_2',
     colorLighten: 'accent_2_lighten',
   },
-  [ActionStatus.Canceled]: {
+  Canceled: {
     label: 'Annulée',
     color: 'warning',
     colorLighten: 'warning_lighten',

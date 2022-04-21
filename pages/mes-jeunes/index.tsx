@@ -260,7 +260,6 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       compareJeunesByLastName
     ),
     isFromEmail: Boolean(context.query?.source),
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
     pageTitle: 'Mes jeunes',
   }
 
