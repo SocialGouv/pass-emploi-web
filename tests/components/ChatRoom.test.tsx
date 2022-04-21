@@ -14,9 +14,6 @@ jest.mock('components/layouts/Conversation', () =>
 )
 
 describe('<ChatRoom />', () => {
-  afterAll(() => {
-    jest.resetAllMocks()
-  })
   const jeunes: Jeune[] = desJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService

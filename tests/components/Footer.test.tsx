@@ -6,10 +6,6 @@ import { Footer } from 'components/Footer'
 
 describe('<Footer/>', () => {
   let component: RenderResult
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
-
   it('affiche les liens du footer', () => {
     // GIVEN
     component = renderWithSession(<Footer />)

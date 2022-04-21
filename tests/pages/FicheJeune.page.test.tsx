@@ -43,10 +43,6 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('Fiche Jeune', () => {
-  afterAll(() => {
-    jest.clearAllMocks()
-  })
-
   describe('client side', () => {
     const jeune = unJeune()
     const rdvs = desRdvListItems()

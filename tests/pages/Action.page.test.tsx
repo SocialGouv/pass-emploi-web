@@ -14,8 +14,6 @@ import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
-afterAll(() => jest.clearAllMocks())
-
 describe("Page Détail d'une action d'un jeune", () => {
   describe('pour un conseiller MiLo', () => {
     const action = uneAction()
@@ -33,7 +31,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       }
       page = renderWithSession(
         <DIProvider dependances={{ actionsService }}>
-          <PageAction action={action} jeune={jeune} />
+          <PageAction action={action} jeune={jeune} pageTitle='' />
         </DIProvider>
       )
     })

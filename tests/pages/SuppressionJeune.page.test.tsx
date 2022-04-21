@@ -20,8 +20,6 @@ jest.mock('utils/injectionDependances/withDependance')
 jest.mock('next/router')
 
 describe('Suppression Jeune', () => {
-  afterAll(() => jest.clearAllMocks())
-
   describe('server side', () => {
     it("vérifie que l'utilisateur est connecté", async () => {
       // Given
@@ -142,7 +140,7 @@ describe('Suppression Jeune', () => {
 
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <SuppressionJeune jeune={jeune} withoutChat={true} pageTitle={''}/>
+          <SuppressionJeune jeune={jeune} withoutChat={true} pageTitle={''} />
         </DIProvider>
       )
     })

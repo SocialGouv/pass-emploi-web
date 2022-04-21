@@ -11,8 +11,6 @@ jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('MesRendezvous', () => {
-  afterAll(() => jest.clearAllMocks())
-
   describe('client side', () => {
     const rendezVousPasses = desRdvListItems()
     const rendezVousFuturs = desRdvListItems()

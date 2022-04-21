@@ -31,8 +31,6 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {
-  afterAll(() => jest.clearAllMocks())
-
   describe('client side', () => {
     let messagesService: MessagesService
     const jeunes = desJeunesAvecActionsNonTerminees()
@@ -60,7 +58,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={jeunes}
                 isFromEmail
-                pageTitle={''}
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -102,7 +100,7 @@ describe('Mes Jeunes', () => {
                 conseillerJeunes={jeunes}
                 isFromEmail
                 deletionSuccess={true}
-                pageTitle={''}
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -151,7 +149,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={[jeune]}
                 isFromEmail
-                pageTitle={''}
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -194,7 +192,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.POLE_EMPLOI}
                 conseillerJeunes={[jeune]}
                 isFromEmail
-                pageTitle={''}
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -235,7 +233,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={[]}
                 isFromEmail
-                pageTitle={''}
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -264,7 +262,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={jeunes}
                 isFromEmail
-                pageTitle={''}
+                pageTitle=''
               />
             </DIProvider>
           )

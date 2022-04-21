@@ -19,8 +19,6 @@ import renderWithSession from '../renderWithSession'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
-afterAll(() => jest.resetAllMocks())
-
 describe("Page Liste des actions d'un jeune", () => {
   describe('client side', () => {
     const actions = [
