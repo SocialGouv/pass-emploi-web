@@ -26,9 +26,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
-  const [conseillers, setConseillers] = useState<
-    ConseillerHistorique[] | undefined
-  >(undefined)
+  const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
   useEffect(() => {
     if (currentJeune?.id && session) {
