@@ -63,7 +63,7 @@ const RdvList = ({
               <HeaderCell label='Type' />
               <HeaderCell label='Modalité' />
               <HeaderCell label='Note' />
-              <HeaderCell label='Crée par vous' />
+              <HeaderCell label='Créé par vous' />
               <HeaderCell label='Supprimer le rendez-vous' srOnly />
             </div>
           </div>
