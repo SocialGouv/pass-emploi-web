@@ -23,9 +23,14 @@ const mappedStatus: {
     color: 'accent_2',
     colorLighten: 'accent_2_lighten',
   },
+  [ActionStatus.Canceled]: {
+    label: 'Annulée',
+    color: 'warning',
+    colorLighten: 'warning_lighten',
+  },
 }
 
-const Tag = ({ status }: TagProps) => {
+export default function StatusTag({ status }: TagProps) {
   const { label, color, colorLighten } = mappedStatus[status]
   return (
     <span
@@ -34,18 +39,4 @@ const Tag = ({ status }: TagProps) => {
       {label}
     </span>
   )
-}
-
-export const StatusTag = (props: any) => {
-  switch (props.status) {
-    case ActionStatus.InProgress:
-      return <Tag status={ActionStatus.InProgress} />
-
-    case ActionStatus.Done:
-      return <Tag status={ActionStatus.Done} />
-
-    case ActionStatus.NotStarted:
-    default:
-      return <Tag status={ActionStatus.NotStarted} />
-  }
 }

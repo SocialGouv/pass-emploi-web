@@ -9,6 +9,7 @@ interface FiltresActionsTabListProps {
   actionsARealiserLength: number
   actionsCommenceesLength: number
   actionsTermineesLength: number
+  actionsAnnuleesLength: number
   prenomJeune: string
   filterClicked: (filter: ActionStatus | string) => void
 }
@@ -19,6 +20,7 @@ function FiltresActionsTabList({
   actionsARealiserLength,
   actionsCommenceesLength,
   actionsTermineesLength,
+  actionsAnnuleesLength,
   prenomJeune,
   filterClicked,
 }: FiltresActionsTabListProps) {
@@ -106,6 +108,24 @@ function FiltresActionsTabList({
         onClick={() => filterClicked(ActionStatus.Done)}
       >
         Terminées ({actionsTermineesLength})
+      </Button>
+      <Button
+        role='tab'
+        id={`actions-${ActionStatus.Canceled}`}
+        type='button'
+        tabIndex={getTabIndex(ActionStatus.Canceled)}
+        selected={isSelected(ActionStatus.Canceled)}
+        disabled={actionsTermineesLength === 0}
+        aria-controls={`panneau-actions-${ActionStatus.Canceled}`}
+        className='mr-4'
+        style={
+          isSelected(ActionStatus.Canceled)
+            ? ButtonStyle.PRIMARY
+            : ButtonStyle.SECONDARY
+        }
+        onClick={() => filterClicked(ActionStatus.Canceled)}
+      >
+        Annulées ({actionsAnnuleesLength})
       </Button>
     </div>
   )

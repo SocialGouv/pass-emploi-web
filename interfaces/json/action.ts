@@ -30,6 +30,8 @@ function jsonToActionStatus(jsonStatus: string): ActionStatus {
       return ActionStatus.InProgress
     case 'done':
       return ActionStatus.Done
+    case 'canceled':
+      return ActionStatus.Canceled
     case 'not_started':
       return ActionStatus.NotStarted
     default:
@@ -48,5 +50,7 @@ export function actionStatusToJson(status: ActionStatus): string {
       return 'in_progress'
     case ActionStatus.Done:
       return 'done'
+    case ActionStatus.Canceled:
+      return 'canceled'
   }
 }

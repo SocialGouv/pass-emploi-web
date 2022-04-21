@@ -24,6 +24,7 @@ export enum ActionStatus {
   NotStarted = 'NotStarted',
   InProgress = 'InProgress',
   Done = 'Done',
+  Canceled = 'Canceled',
 }
 
 export function compareActionsDatesDesc(

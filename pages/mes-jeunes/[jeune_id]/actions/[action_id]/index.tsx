@@ -150,21 +150,14 @@ function PageAction({
           <dd>
             <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
               <InfoAction label='Statut' isForm={true}>
-                <RadioButtonStatus
-                  status={ActionStatus.NotStarted}
-                  isSelected={statut === ActionStatus.NotStarted}
-                  onChange={updateAction}
-                />
-                <RadioButtonStatus
-                  status={ActionStatus.InProgress}
-                  isSelected={statut === ActionStatus.InProgress}
-                  onChange={updateAction}
-                />
-                <RadioButtonStatus
-                  status={ActionStatus.Done}
-                  isSelected={statut === ActionStatus.Done}
-                  onChange={updateAction}
-                />
+                {Object.values(ActionStatus).map((status: ActionStatus) => (
+                  <RadioButtonStatus
+                    key={status.toLowerCase()}
+                    status={status}
+                    isSelected={statut === status}
+                    onChange={updateAction}
+                  />
+                ))}
               </InfoAction>
 
               <InfoAction label="Date d'actualisation">

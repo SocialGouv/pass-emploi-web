@@ -1,11 +1,10 @@
+import StatusTag from 'components/action/StatusTag'
 import { ActionJeune } from 'interfaces/action'
-
-import NoteIcon from '../../assets/icons/note_outline.svg'
-import ChevronIcon from '../../assets/icons/chevron_right.svg'
-import React from 'react'
 import Link from 'next/link'
+import React from 'react'
 import { formatDayDate } from 'utils/date'
-import { StatusTag } from './StatusTag'
+import ChevronIcon from '../../assets/icons/chevron_right.svg'
+import NoteIcon from '../../assets/icons/note_outline.svg'
 
 type ActionRowProps = {
   action: ActionJeune

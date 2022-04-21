@@ -31,6 +31,7 @@ type ActionsProps = {
   actionsARealiser: ActionJeune[]
   actionsCommencees: ActionJeune[]
   actionsTerminees: ActionJeune[]
+  actionsAnnulees: ActionJeune[]
   deleteSuccess: boolean
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
@@ -42,6 +43,7 @@ function Actions({
   actionsARealiser,
   actionsCommencees,
   actionsTerminees,
+  actionsAnnulees,
   deleteSuccess,
   messageEnvoiGroupeSuccess,
 }: ActionsProps) {
@@ -95,9 +97,12 @@ function Actions({
     } else if (newFilter === ActionStatus.InProgress) {
       setTrackingLabel('Actions jeune - Filtre Commencées')
       setActionsFiltrees(actionsCommencees)
-    } else {
+    } else if (newFilter === ActionStatus.Done) {
       setTrackingLabel('Actions jeune - Filtre Terminées')
       setActionsFiltrees(actionsTerminees)
+    } else {
+      setTrackingLabel('Actions jeune - Filtre Annulées')
+      setActionsFiltrees(actionsAnnulees)
     }
   }
 
@@ -168,6 +173,7 @@ function Actions({
           actionsARealiserLength={actionsARealiser.length}
           actionsCommenceesLength={actionsCommencees.length}
           actionsTermineesLength={actionsTerminees.length}
+          actionsAnnuleesLength={actionsAnnulees.length}
           prenomJeune={jeune.firstName}
           filterClicked={(newFilter) => handleActionsFiltreesClicked(newFilter)}
         />
@@ -237,6 +243,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     ),
     actionsTerminees: sortedActions.filter(
       (action) => action.status === ActionStatus.Done
+    ),
+    actionsAnnulees: sortedActions.filter(
+      (action) => action.status === ActionStatus.Canceled
     ),
     deleteSuccess: Boolean(context.query.deleteSuccess),
     messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),

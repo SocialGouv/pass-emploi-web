@@ -31,6 +31,11 @@ describe("Page Liste des actions d'un jeune", () => {
       content: 'action terminee',
       status: ActionStatus.Done,
     })
+    const uneActionAnnulee = uneAction({
+      id: 'action-annulee',
+      content: 'action annulee',
+      status: ActionStatus.Canceled,
+    })
 
     beforeEach(() => {
       renderWithSession(
@@ -41,6 +46,8 @@ describe("Page Liste des actions d'un jeune", () => {
           actionsCommencees={[uneActionCommencee]}
           actionsARealiser={[...actions]}
           actionsTerminees={[uneActionTermine]}
+          actionsAnnulees={[uneActionAnnulee]}
+          pageTitle=''
         />
       )
     })
@@ -80,7 +87,7 @@ describe("Page Liste des actions d'un jeune", () => {
         expect(selected).toHaveAttribute('tabIndex', '-1')
 
         const notSelected = screen.getAllByRole('tab', { selected: false })
-        expect(notSelected.length).toEqual(3)
+        expect(notSelected.length).toEqual(4)
         for (const filtre of notSelected) {
           expect(filtre).toHaveAttribute('tabIndex', '0')
         }

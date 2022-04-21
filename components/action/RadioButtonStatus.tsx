@@ -1,6 +1,7 @@
 import { ActionStatus } from 'interfaces/action'
 import { MouseEvent } from 'react'
 import DoneIcon from '../../assets/icons/simple_done.svg'
+import CancelIcon from '../../assets/icons/cancel.svg'
 
 interface RadioButtonStatusProps {
   status: ActionStatus
@@ -9,19 +10,27 @@ interface RadioButtonStatusProps {
 }
 
 const mappedStatus: {
-  [key in ActionStatus]: { label: string; color: string }
+  [key in ActionStatus]: { label: string; color: string; icon: any }
 } = {
   [ActionStatus.NotStarted]: {
     label: 'À réaliser',
     color: 'accent_1',
+    icon: DoneIcon,
   },
   [ActionStatus.InProgress]: {
     label: 'Commencée',
     color: 'accent_3',
+    icon: DoneIcon,
   },
   [ActionStatus.Done]: {
     label: 'Terminée',
     color: 'accent_2',
+    icon: DoneIcon,
+  },
+  [ActionStatus.Canceled]: {
+    label: 'Annulée',
+    color: 'warning',
+    icon: CancelIcon,
   },
 }
 
@@ -35,7 +44,7 @@ export const RadioButtonStatus = ({
     onChange(status)
   }
 
-  const { label, color } = mappedStatus[status]
+  const { label, color, icon: StatusIcon } = mappedStatus[status]
   const id = `option-statut--${label.toLowerCase()}`
   const selectedStyle = `border-${color} bg-${color}_lighten text-${color}`
 
@@ -47,10 +56,10 @@ export const RadioButtonStatus = ({
       onClick={onClick}
     >
       {isSelected && (
-        <DoneIcon
+        <StatusIcon
           focusable={false}
           aria-hidden={true}
-          className={`fill-${color} mr-2`}
+          className={`fill-${color} mr-2 w-4`}
         />
       )}
       <label htmlFor={id} className='whitespace-nowrap cursor-pointer'>
