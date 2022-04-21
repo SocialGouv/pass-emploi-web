@@ -16,14 +16,18 @@ type DeleteRdvModalProps = {
   onDelete: (deletedRdv: RdvListItem) => void
 }
 
-const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
+export default function DeleteRdvModal({
+  onClose,
+  onDelete,
+  rdv,
+}: DeleteRdvModalProps) {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const { data: session } = useSession<true>({ required: true })
 
-  const handleDeleteRdv = () => {
+  function handleDeleteRdv() {
     rendezVousService
       .deleteRendezVous(rdv.id, session!.accessToken)
       .then(function () {
@@ -36,7 +40,7 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
       })
   }
 
-  const handleCloseModal = () => {
+  function handleCloseModal() {
     setIsSuccess(false)
     setIsEchec(false)
     onClose()
@@ -48,11 +52,10 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
 
   return (
     <>
-      {Boolean(!isSuccess && !isEchec) && (
+      {!isSuccess && !isEchec && (
         <Modal
           title='Confirmation de suppression du rendez-vous'
           onClose={handleCloseModal}
-          show={!isSuccess}
           customHeight='300px'
           customWidth='800px'
         >
@@ -85,7 +88,6 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
 
       {isSuccess && (
         <SuccessModal
-          show={isSuccess}
           message='Votre rendez-vous a bien été supprimé'
           onClose={handleCloseModal}
         />
@@ -93,7 +95,6 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
 
       {isEchec && (
         <EchecModal
-          show={isEchec}
           message="Votre rendez-vous n'a pas été supprimé, veuillez essayer ultérieurement"
           onClose={handleCloseModal}
         />
@@ -101,5 +102,3 @@ const DeleteRdvModal = ({ onClose, onDelete, rdv }: DeleteRdvModalProps) => {
     </>
   )
 }
-
-export default DeleteRdvModal

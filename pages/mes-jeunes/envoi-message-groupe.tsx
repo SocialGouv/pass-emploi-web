@@ -205,11 +205,9 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
           </div>
           {showLeavePageModal && (
             <ExitPageConfirmationModal
-              id='exit-page-confirmation'
-              show={showLeavePageModal}
               message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
               onCancel={() => setShowLeavePageModal(false)}
-              href={from}
+              destination={from}
             />
           )}
         </form>

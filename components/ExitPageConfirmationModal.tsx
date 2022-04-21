@@ -4,12 +4,10 @@ import WarningIcon from '../assets/icons/warning.svg'
 import Modal from './Modal'
 import ButtonLink from './ui/ButtonLink'
 
-interface LeavePageModalProps {
-  show: boolean
-  href: string | UrlObject
+interface ExitPageConfirmationModalProps {
+  destination: string | UrlObject
   onCancel: () => void
   source?: 'creation' | 'edition'
-  id?: string
   message?: string
 }
 
@@ -17,12 +15,10 @@ export default function ExitPageConfirmationModal({
   message,
   onCancel,
   source = 'creation',
-  href,
-  id,
-  show,
-}: LeavePageModalProps) {
+  destination,
+}: ExitPageConfirmationModalProps) {
   return (
-    <Modal id={id} show={show} title='Quitter la page ?' onClose={onCancel}>
+    <Modal title='Quitter la page ?' onClose={onCancel}>
       <div className='px-20 text-center'>
         <WarningIcon focusable={false} aria-hidden={true} className='m-auto' />
         <p className='mt-6 text-base-medium'>{message}</p>
@@ -41,7 +37,7 @@ export default function ExitPageConfirmationModal({
         >
           Annuler
         </Button>
-        <ButtonLink href={href}>Continuer</ButtonLink>
+        <ButtonLink href={destination}>Continuer</ButtonLink>
       </div>
     </Modal>
   )
