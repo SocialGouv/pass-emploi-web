@@ -189,10 +189,10 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
                   aria-label={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
-                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                    isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
                   title={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
-                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                    isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
                 >
                   <span className='mr-1'>Dernière activité du jeune</span>
