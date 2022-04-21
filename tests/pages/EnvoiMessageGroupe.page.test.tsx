@@ -5,6 +5,7 @@ import {
   RenderResult,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
@@ -47,6 +48,7 @@ describe('EnvoiMessageGroupe', () => {
     page = renderWithSession(
       <DIProvider dependances={{ jeunesService, messagesService }}>
         <EnvoiMessageGroupe
+          pageTitle={''}
           jeunes={destinataires}
           withoutChat={true}
           from='/mes-jeunes'
@@ -209,6 +211,30 @@ describe('EnvoiMessageGroupe', () => {
         )
       })
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
+    })
+  })
+
+  describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
+    let push: jest.Mock
+    let newMessage: string
+    beforeEach(() => {
+      push = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
+
+      // Given
+      newMessage = 'Un nouveau message pour plusieurs destinataires'
+
+      userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+    })
+
+    it('sélectionne tout les jeunes dans la liste', () => {
+      // Then
+      expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
+      expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
+      expect(
+        screen.getByText("D'Aböville-Muñoz François Maria")
+      ).toBeInTheDocument()
+      expect(screen.getByText('Destinataires (3)')).toBeInTheDocument()
     })
   })
 })

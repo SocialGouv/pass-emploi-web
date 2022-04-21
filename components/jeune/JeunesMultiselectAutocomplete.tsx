@@ -20,7 +20,19 @@ export default function JeunesMultiselectAutocomplete({
     )
   }
 
+  function selectAllJeunes(): Jeune[] {
+    const allJeunes = selectedJeunes.concat(getJeunesNotSelected())
+    return allJeunes
+  }
+
   function selectJeune(inputValue: string) {
+    if (inputValue === 'Sélectionner tous mes jeunes') {
+      const updatedSelectedJeunes = selectAllJeunes()
+      setSelectedJeunes(updatedSelectedJeunes)
+      onUpdate(updatedSelectedJeunes)
+      input.current!.value = ''
+    }
+
     const jeune = getJeunesNotSelected().find(
       (j) => getJeuneFullname(j) === inputValue
     )
@@ -62,6 +74,9 @@ export default function JeunesMultiselectAutocomplete({
         aria-controls='selected-items'
       />
       <datalist id='items'>
+        {getJeunesNotSelected().length > 0 && (
+          <option key='select-all' value='Sélectionner tous mes jeunes' />
+        )}
         {getJeunesNotSelected().map((jeune) => (
           <option key={jeune.id} value={getJeuneFullname(jeune)} />
         ))}
