@@ -13,7 +13,8 @@ export default function EchecModal({ onClose, message }: EchecModalProps) {
 
   return (
     <Modal
-      title='   '
+      title='Échec'
+      showTitle={false}
       onClose={handleCloseModal}
       customHeight='250px'
       customWidth='780px'

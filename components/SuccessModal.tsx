@@ -15,7 +15,8 @@ export default function SuccessModal({ onClose, message }: SuccessModalProps) {
 
   return (
     <Modal
-      title='   '
+      title='Succès'
+      showTitle={false}
       onClose={handleCloseModal}
       customHeight='350px'
       customWidth='780px'
