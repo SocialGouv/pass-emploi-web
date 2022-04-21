@@ -326,7 +326,7 @@ interface FirebaseMessage {
   sentBy: string
   content: string
   iv: string | undefined
-  conseillerId?: string
+  conseillerId: string | undefined
 }
 
 export { FirebaseClient }

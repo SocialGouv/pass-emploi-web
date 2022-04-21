@@ -1,5 +1,5 @@
 import { Message, MessagesOfADay } from 'interfaces'
-import { JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
@@ -18,16 +18,22 @@ const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 type ConversationProps = {
+  conseillers: ConseillerHistorique[]
   jeuneChat: JeuneChat
   onBack: () => void
 }
 
-export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
+export default function Conversation({
+  jeuneChat,
+  conseillers,
+  onBack,
+}: ConversationProps) {
   const { data: session } = useSession<true>({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
+
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
   )
@@ -55,6 +61,13 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
     )
 
     setNewMessage('')
+  }
+
+  function getConseillerNomComplet(message: Message) {
+    const conseiller = conseillers.find((c) => c.id === message.conseillerId)
+    if (conseiller) {
+      return `${conseiller?.prenom.toLowerCase()} ${conseiller?.nom.toLowerCase()}`
+    }
   }
 
   const setReadByConseiller = useCallback(
@@ -128,16 +141,26 @@ export default function Conversation({ jeuneChat, onBack }: ConversationProps) {
 
             <ul>
               {messagesOfADay.messages.map((message: Message) => (
-                <li key={message.id} className='mb-5' ref={scrollToRef}>
-                  <p
-                    className={`text-md break-words max-w-[90%] p-4 rounded-large w-max whitespace-pre-wrap ${
+                <li
+                  key={message.id}
+                  className='mb-5'
+                  ref={scrollToRef}
+                  data-testid={message.id}
+                >
+                  <div
+                    className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
                       message.sentBy === 'conseiller'
                         ? 'text-right text-blanc bg-bleu_nuit mt-0 mr-0 mb-1 ml-auto'
                         : 'text-left text-bleu_nuit bg-bleu_blanc mb-1'
                     }`}
                   >
-                    {message.content}
-                  </p>
+                    {message.sentBy === 'conseiller' && (
+                      <p className='text-sm-regular capitalize mb-1'>
+                        {getConseillerNomComplet(message)}
+                      </p>
+                    )}
+                    <p className='whitespace-pre-wrap'>{message.content}</p>
+                  </div>
                   <p
                     className={`text-xs text-bleu_gris ${
                       message.sentBy === 'conseiller'

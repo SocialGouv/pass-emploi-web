@@ -1,7 +1,6 @@
 import { ApiClient } from 'clients/api.client'
 import { DossierMilo } from 'interfaces/jeune'
 
-// FIXME : à déplacer dans JeunesService ?
 export interface ConseillerService {
   getDossierJeune(
     idDossier: string,
