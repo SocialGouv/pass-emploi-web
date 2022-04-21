@@ -32,7 +32,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     if (currentJeune?.id && session) {
       jeunesService
         .getConseillersDuJeune(currentJeune.id, session.accessToken)
-        .then((conseillers) => setConseillers(conseillers))
+        .then((conseillersJeunes) => setConseillers(conseillersJeunes))
     }
   }, [jeunesService, currentJeune?.id, session])
 
