@@ -1,7 +1,9 @@
-import { StatutAction } from 'interfaces/action'
 import { MouseEvent } from 'react'
-import DoneIcon from '../../assets/icons/simple_done.svg'
+
 import CancelIcon from '../../assets/icons/cancel.svg'
+import DoneIcon from '../../assets/icons/simple_done.svg'
+
+import { StatutAction } from 'interfaces/action'
 
 interface RadioButtonStatusProps {
   status: StatutAction

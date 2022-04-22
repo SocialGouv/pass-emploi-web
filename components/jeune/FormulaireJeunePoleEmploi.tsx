@@ -1,7 +1,8 @@
+import { FormEvent, useEffect, useState } from 'react'
+
 import Button from 'components/ui/Button'
 import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
-import { FormEvent, useEffect, useState } from 'react'
 import isEmailValid from 'utils/isEmailValid'
 
 type FormulaireJeunePoleEmploiProps = {

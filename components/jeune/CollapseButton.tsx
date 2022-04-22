@@ -1,6 +1,7 @@
 import React from 'react'
-import ChevronUpIcon from '../../assets/icons/chevron_up.svg'
+
 import ChevronDownIcon from '../../assets/icons/chevron_down.svg'
+import ChevronUpIcon from '../../assets/icons/chevron_up.svg'
 
 interface CollapseButtonProps {
   controlledId: string

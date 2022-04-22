@@ -2,5 +2,29 @@
   "extends": [
     "next/core-web-vitals",
     "plugin:prettier/recommended"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parserOptions": { "project": "./tsconfig.*?.json" },
+      "rules": {
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "jsx-a11y/anchor-is-valid": "off",
+        "no-case-declarations": "off",
+        "import/no-unresolved": "error",
+        "import/order": [
+          "error",
+          {
+            "alphabetize": {
+              "order": "asc",
+              "caseInsensitive": true
+            },
+            "newlines-between": "always",
+            "groups": ["builtin", "external", "parent", "sibling", "index"],
+            "pathGroupsExcludedImportTypes": ["builtin"]
+          }
+        ]
+      }
+    }
   ]
 }
