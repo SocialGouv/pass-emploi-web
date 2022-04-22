@@ -108,12 +108,6 @@ describe('EnvoiMessageGroupe', () => {
 
       userEvent.type(inputSearchJeune, 'Jirac Kenji')
       userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-      fireEvent.change(inputSearchJeune, {
-        target: { value: destinataires[0].id },
-      })
-      fireEvent.change(inputSearchJeune, {
-        target: { value: destinataires[1].id },
-      })
     })
 
     it('sélectionne plusieurs jeunes dans la liste', () => {
@@ -215,19 +209,10 @@ describe('EnvoiMessageGroupe', () => {
   })
 
   describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
-    let push: jest.Mock
-    let newMessage: string
-    beforeEach(() => {
-      push = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ push })
-
-      // Given
-      newMessage = 'Un nouveau message pour plusieurs destinataires'
-
-      userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
-    })
-
     it('sélectionne tout les jeunes dans la liste', () => {
+      // When
+      userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+
       // Then
       expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
       expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()

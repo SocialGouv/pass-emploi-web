@@ -7,6 +7,8 @@ interface JeunesMultiselectAutocompleteProps {
   onUpdate: (selection: Jeune[]) => void
 }
 
+const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
+
 export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
@@ -21,12 +23,11 @@ export default function JeunesMultiselectAutocomplete({
   }
 
   function selectAllJeunes(): Jeune[] {
-    const allJeunes = selectedJeunes.concat(getJeunesNotSelected())
-    return allJeunes
+    return selectedJeunes.concat(getJeunesNotSelected())
   }
 
   function selectJeune(inputValue: string) {
-    if (inputValue === 'Sélectionner tous mes jeunes') {
+    if (inputValue === SELECT_ALL_JEUNES_OPTION) {
       const updatedSelectedJeunes = selectAllJeunes()
       setSelectedJeunes(updatedSelectedJeunes)
       onUpdate(updatedSelectedJeunes)
@@ -34,7 +35,10 @@ export default function JeunesMultiselectAutocomplete({
     }
 
     const jeune = getJeunesNotSelected().find(
-      (j) => getJeuneFullname(j) === inputValue
+      (j) =>
+        getJeuneFullname(j).localeCompare(inputValue, undefined, {
+          sensitivity: 'base',
+        }) === 0
     )
     if (jeune) {
       const updatedSelectedJeunes = selectedJeunes.concat(jeune)
@@ -75,7 +79,7 @@ export default function JeunesMultiselectAutocomplete({
       />
       <datalist id='items'>
         {getJeunesNotSelected().length > 0 && (
-          <option key='select-all' value='Sélectionner tous mes jeunes' />
+          <option key='select-all' value={SELECT_ALL_JEUNES_OPTION} />
         )}
         {getJeunesNotSelected().map((jeune) => (
           <option key={jeune.id} value={getJeuneFullname(jeune)} />
