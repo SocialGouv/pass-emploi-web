@@ -166,11 +166,30 @@ function MesJeunes({
       </div>
 
       <div className={`w-full flex flex-col ${styles.content}`}>
-        {showDeletionSuccess && (
+        {showDeletionSuccess && structureConseiller !== UserStructure.MILO && (
           <SuccessMessage
             label='Le compte du jeune a bien été supprimé.'
             onAcknowledge={closeDeletionSuccess}
           />
+        )}
+
+        {showDeletionSuccess && structureConseiller === UserStructure.MILO && (
+          <SuccessMessage
+            label='Le compte du jeune a bien été supprimé.'
+            onAcknowledge={closeDeletionSuccess}
+          >
+            <>
+              Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
+              transmettre en amont le numéro de dossier technique à l’adresse{' '}
+              <a
+                className='underline hover:text-primary_darken'
+                href='mailto:support@pass-emploi.beta.gouv.fr'
+              >
+                support@pass-emploi.beta.gouv.fr
+              </a>
+              .
+            </>
+          </SuccessMessage>
         )}
 
         {showMessageGroupeEnvoiSuccess && (
