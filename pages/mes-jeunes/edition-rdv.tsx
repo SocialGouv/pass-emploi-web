@@ -113,7 +113,7 @@ function EditionRdv({
           idJeune={idJeune}
           rdv={rdv}
           redirectTo={redirectTo}
-          conseillerEmail={session!.user?.email}
+          conseillerEmail={session?.user.email ?? ''}
           onChanges={setHasChanges}
           soumettreRendezVous={soumettreRendezVous}
           leaveWithChanges={openLeavePageModal}
