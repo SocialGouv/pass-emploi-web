@@ -1,4 +1,5 @@
 import Button, { ButtonStyle } from 'components/ui/Button'
+import { MouseEvent, useRef } from 'react'
 import { UrlObject } from 'url'
 import WarningIcon from '../assets/icons/warning.svg'
 import Modal from './Modal'
@@ -17,8 +18,12 @@ export default function ExitPageConfirmationModal({
   source = 'creation',
   destination,
 }: ExitPageConfirmationModalProps) {
+  const modalRef = useRef<{
+    closeModal: (e: KeyboardEvent | MouseEvent) => void
+  }>(null)
+
   return (
-    <Modal title='Quitter la page ?' onClose={onCancel}>
+    <Modal title='Quitter la page ?' onClose={onCancel} ref={modalRef}>
       <div className='px-20 text-center'>
         <WarningIcon focusable={false} aria-hidden={true} className='m-auto' />
         <p className='mt-6 text-base-medium'>{message}</p>
@@ -32,7 +37,7 @@ export default function ExitPageConfirmationModal({
         <Button
           type='button'
           style={ButtonStyle.SECONDARY}
-          onClick={onCancel}
+          onClick={(e) => modalRef.current!.closeModal(e)}
           className='mr-3'
         >
           Annuler

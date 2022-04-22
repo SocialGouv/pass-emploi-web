@@ -1,4 +1,12 @@
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
+import {
+  forwardRef,
+  MouseEvent,
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 import { createPortal } from 'react-dom'
 import styles from 'styles/components/Modal.module.css'
 import BackIcon from '../assets/icons/back_modale.svg'
@@ -14,15 +22,21 @@ interface ModalProps {
   customWidth?: string
 }
 
-export default function Modal({
-  title,
-  onClose,
-  children: modalContent,
-  showTitle = true,
-  onBack,
-  customHeight,
-  customWidth,
-}: ModalProps) {
+const Modal = forwardRef((props: ModalProps, ref) => {
+  const {
+    children: modalContent,
+    customHeight,
+    customWidth,
+    onBack,
+    onClose,
+    showTitle = true,
+    title,
+  } = props
+
+  useImperativeHandle(ref, () => ({
+    closeModal: handleClose,
+  }))
+
   const [isBrowser, setIsBrowser] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
   const previousFocusedElement = useRef<HTMLElement | null>(null)
@@ -153,4 +167,7 @@ export default function Modal({
   } else {
     return null
   }
-}
+})
+
+Modal.displayName = 'Modal'
+export default Modal
