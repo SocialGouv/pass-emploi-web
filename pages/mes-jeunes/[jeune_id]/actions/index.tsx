@@ -1,4 +1,12 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import Router, { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+
+import AddIcon from '../../../../assets/icons/add.svg'
+import BackIcon from '../../../../assets/icons/arrow_back.svg'
+
 import AddActionModal from 'components/action/AddActionModal'
 import FiltresActionsTabList, {
   LABELS_FILTRES,
@@ -17,18 +25,12 @@ import {
 } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { GetServerSideProps } from 'next'
-import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
-import AddIcon from '../../../../assets/icons/add.svg'
-import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
 interface ActionsProps {
   jeune: Jeune

@@ -1,18 +1,20 @@
-import Conversation from 'components/layouts/Conversation'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import styles from 'styles/components/Layouts.module.css'
-import linkStyle from 'styles/components/Link.module.css'
-import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
-import { formatDayAndHourDate } from 'utils/date'
+
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import EmptyMessagesImage from '../../assets/images/empty_message.svg'
-import { useDependance } from 'utils/injectionDependances'
+
+import Conversation from 'components/layouts/Conversation'
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
+import styles from 'styles/components/Layouts.module.css'
+import linkStyle from 'styles/components/Link.module.css'
 import useSession from 'utils/auth/useSession'
+import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { formatDayAndHourDate } from 'utils/date'
+import { useDependance } from 'utils/injectionDependances'
 
 interface ChatRoomProps {
   jeunesChats: JeuneChat[]

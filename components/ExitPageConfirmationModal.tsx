@@ -1,9 +1,16 @@
+<<<<<<< Updated upstream
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { MouseEvent, useRef } from 'react'
+=======
+>>>>>>> Stashed changes
 import { UrlObject } from 'url'
+
 import WarningIcon from '../assets/icons/warning.svg'
+
 import Modal from './Modal'
 import ButtonLink from './ui/ButtonLink'
+
+import Button, { ButtonStyle } from 'components/ui/Button'
 
 interface ExitPageConfirmationModalProps {
   destination: string | UrlObject

@@ -1,4 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import React, { FormEvent, useState } from 'react'
+
+import ArrowIcon from '../../assets/icons/arrow-right.svg'
+import ImportantIcon from '../../assets/icons/important.svg'
+import SearchIcon from '../../assets/icons/search.svg'
+
 import ResettableTextInput from 'components/ResettableTextInput'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
@@ -7,8 +14,6 @@ import {
   getJeuneFullname,
   Jeune,
 } from 'interfaces/jeune'
-import { GetServerSideProps } from 'next'
-import React, { FormEvent, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -16,9 +21,6 @@ import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
-import ArrowIcon from '../../assets/icons/arrow-right.svg'
-import ImportantIcon from '../../assets/icons/important.svg'
-import SearchIcon from '../../assets/icons/search.svg'
 
 type SupervisionProps = {
   withoutChat: true

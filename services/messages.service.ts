@@ -1,10 +1,13 @@
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
+<<<<<<< Updated upstream
 import { Message, MessagesOfADay } from 'interfaces'
+=======
+import { UserStructure } from 'interfaces/conseiller'
+>>>>>>> Stashed changes
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
-import { UserStructure } from '../interfaces/conseiller'
 
 export interface MessagesService {
   signIn(token: string): Promise<void>

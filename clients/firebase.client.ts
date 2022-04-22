@@ -71,6 +71,10 @@ class FirebaseClient {
           conseillerId: idConseiller,
           sentBy: 'conseiller',
           creationDate: Timestamp.fromDate(date),
+<<<<<<< Updated upstream
+=======
+          type: TypeMessage.MESSAGE,
+>>>>>>> Stashed changes
         }
       )
     } catch (e) {
@@ -327,6 +331,37 @@ interface FirebaseMessage {
   content: string
   iv: string | undefined
   conseillerId: string | undefined
+<<<<<<< Updated upstream
+=======
+  type: TypeMessage
+}
+
+function docSnapshotToMessage(
+  docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
+): Message {
+  const firebaseMessage = docSnapshot.data()
+  return {
+    ...firebaseMessage,
+    creationDate: firebaseMessage.creationDate.toDate(),
+    id: docSnapshot.id,
+    type: firebaseToMessageType(firebaseMessage.type),
+  }
+}
+
+function firebaseToMessageType(
+  type: 'NOUVEAU_CONSEILLER' | 'MESSAGE' | undefined
+): TypeMessage {
+  switch (type) {
+    case 'NOUVEAU_CONSEILLER':
+      return TypeMessage.NOUVEAU_CONSEILLER
+    case 'MESSAGE':
+    case undefined:
+      return TypeMessage.MESSAGE
+    default:
+      console.warn(`Type message ${type} incorrect, traité comme Message`)
+      return TypeMessage.MESSAGE
+  }
+>>>>>>> Stashed changes
 }
 
 export { FirebaseClient }

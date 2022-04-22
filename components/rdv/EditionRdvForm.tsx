@@ -1,17 +1,19 @@
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+
+import Etape1Icon from '../../assets/icons/etape_1.svg'
+import Etape2Icon from '../../assets/icons/etape_2.svg'
+import Etape3Icon from '../../assets/icons/etape_3.svg'
+import Etape4Icon from '../../assets/icons/etape_4.svg'
+import { Jeune } from '../../interfaces/jeune'
+
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { modalites } from 'referentiel/rdv'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
-import Etape1Icon from '../../assets/icons/etape_1.svg'
-import Etape2Icon from '../../assets/icons/etape_2.svg'
-import Etape3Icon from '../../assets/icons/etape_3.svg'
-import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { Jeune } from '../../interfaces/jeune'
 
 interface RequiredInput {
   value: string

@@ -1,6 +1,16 @@
+<<<<<<< Updated upstream
 import { Message, MessagesOfADay } from 'interfaces'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+=======
+>>>>>>> Stashed changes
 import { useCallback, useEffect, useRef, useState } from 'react'
+
+import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
+import SendIcon from '../../assets/icons/send.svg'
+import ResizingMultilineInput from '../ResizingMultilineInput'
+
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import {
@@ -10,9 +20,6 @@ import {
   isDateOlder,
 } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
-import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
-import SendIcon from '../../assets/icons/send.svg'
-import ResizingMultilineInput from '../ResizingMultilineInput'
 
 const todayOrDate = (date: Date) =>
   dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
