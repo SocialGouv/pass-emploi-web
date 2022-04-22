@@ -1,33 +1,33 @@
-import { ActionStatus } from 'interfaces/action'
+import { StatutAction } from 'interfaces/action'
 import { MouseEvent } from 'react'
 import DoneIcon from '../../assets/icons/simple_done.svg'
 import CancelIcon from '../../assets/icons/cancel.svg'
 
 interface RadioButtonStatusProps {
-  status: ActionStatus
+  status: StatutAction
   isSelected: boolean
-  onChange: (statutChoisi: ActionStatus) => void
+  onChange: (statutChoisi: StatutAction) => void
 }
 
 const mappedStatus: {
-  [key in ActionStatus]: { label: string; color: string; icon: any }
+  [key in StatutAction]: { label: string; color: string; icon: any }
 } = {
-  NotStarted: {
+  ARealiser: {
     label: 'À réaliser',
     color: 'accent_1',
     icon: DoneIcon,
   },
-  InProgress: {
+  Commencee: {
     label: 'Commencée',
     color: 'accent_3',
     icon: DoneIcon,
   },
-  Done: {
+  Terminee: {
     label: 'Terminée',
     color: 'accent_2',
     icon: DoneIcon,
   },
-  Canceled: {
+  Annulee: {
     label: 'Annulée',
     color: 'warning',
     icon: CancelIcon,

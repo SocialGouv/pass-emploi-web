@@ -3,7 +3,7 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import SuccessMessage from 'components/SuccessMessage'
-import { ActionsCount } from 'interfaces/action'
+import { TotalActions } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
   compareJeunesByLastName,
@@ -230,26 +230,17 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       nbActionsNonTerminees: 0,
     }))
   } else {
-    const actions = await actionsService.countActionsJeunes(
-      user.id,
-      accessToken
-    )
+    const totauxActions: TotalActions[] =
+      await actionsService.countActionsJeunes(user.id, accessToken)
 
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
-      let nbActionsNonTerminees = 0
-      const currentJeuneAction = actions.find(
-        (action: ActionsCount) => action.jeuneId === jeune.id
+      const totalJeune = totauxActions.find(
+        (action) => action.idJeune === jeune.id
       )
-
-      if (currentJeuneAction) {
-        nbActionsNonTerminees =
-          currentJeuneAction.inProgressActionsCount +
-          currentJeuneAction.todoActionsCount
-      }
 
       return {
         ...jeune,
-        nbActionsNonTerminees,
+        nbActionsNonTerminees: totalJeune?.nbActionsNonTerminees ?? 0,
       }
     })
   }

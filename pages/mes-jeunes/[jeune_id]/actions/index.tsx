@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import AddActionModal from 'components/action/AddActionModal'
 import FiltresActionsTabList, {
+  LABELS_FILTRES,
   TOUTES_LES_ACTIONS_LABEL,
 } from 'components/action/FiltresActionsTabList'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
@@ -10,9 +11,8 @@ import Button from 'components/ui/Button'
 import {
   ActionJeune,
   ActionsParStatut,
-  ActionStatus,
+  StatutAction,
   compareActionsDatesDesc,
-  LABELS_STATUT,
   NombreActionsParStatut,
 } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
@@ -53,7 +53,7 @@ function Actions({
     sortActionsParStatut([])
   )
   const [actionsFiltrees, setActionsFiltrees] = useState(actions)
-  const [currentFilter, setCurrentFilter] = useState<ActionStatus | string>(
+  const [currentFilter, setCurrentFilter] = useState<StatutAction | string>(
     TOUTES_LES_ACTIONS_LABEL
   )
 
@@ -84,14 +84,14 @@ function Actions({
     )
   }
 
-  const handleActionsFiltreesClicked = (newFilter: ActionStatus | string) => {
+  const handleActionsFiltreesClicked = (newFilter: StatutAction | string) => {
     setCurrentFilter(newFilter)
     if (newFilter === TOUTES_LES_ACTIONS_LABEL) {
       setTrackingLabel('Actions jeune')
       setActionsFiltrees(actions)
     } else {
-      const statut = newFilter as ActionStatus
-      setTrackingLabel(`Actions jeune - Filtre ${LABELS_STATUT[statut]}`)
+      const statut = newFilter as StatutAction
+      setTrackingLabel(`Actions jeune - Filtre ${LABELS_FILTRES[statut]}`)
       setActionsFiltrees(actionsParStatut[statut])
     }
   }
@@ -99,7 +99,7 @@ function Actions({
   function sortActionsParStatut(
     actionsATrier: ActionJeune[]
   ): ActionsParStatut {
-    return Object.values(ActionStatus).reduce((parStatut, statut) => {
+    return Object.values(StatutAction).reduce((parStatut, statut) => {
       parStatut[statut] = actionsATrier.filter(
         (action) => action.status === statut
       )
@@ -108,10 +108,10 @@ function Actions({
   }
 
   function getNombreActionsParStatut(): NombreActionsParStatut {
-    return Object.values(ActionStatus).reduce((parStatut, statut) => {
+    return Object.values(StatutAction).reduce((parStatut, statut) => {
       parStatut[statut] = actionsParStatut[statut].length
       return parStatut
-    }, {} as { [key in ActionStatus]: number })
+    }, {} as { [key in StatutAction]: number })
   }
 
   useMatomo(trackingLabel)

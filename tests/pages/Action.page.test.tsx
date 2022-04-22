@@ -1,7 +1,7 @@
 import { RenderResult, screen, waitFor } from '@testing-library/react'
 import { uneAction } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
-import { ActionStatus } from 'interfaces/action'
+import { StatutAction } from 'interfaces/action'
 import { GetServerSidePropsContext } from 'next/types'
 import PageAction, {
   getServerSideProps,
@@ -65,7 +65,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         await waitFor(() => {
           expect(actionsService.updateAction).toHaveBeenCalledWith(
             action.id,
-            ActionStatus.InProgress,
+            StatutAction.Commencee,
             'accessToken'
           )
         })

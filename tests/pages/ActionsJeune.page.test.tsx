@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import { uneAction, uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 import { mockedActionsService, mockedJeunesService } from 'fixtures/services'
-import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { ActionJeune, StatutAction } from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -29,17 +29,17 @@ describe("Page Liste des actions d'un jeune", () => {
     const uneActionCommencee = uneAction({
       id: 'action-commencee',
       content: 'action commencée',
-      status: ActionStatus.InProgress,
+      status: StatutAction.Commencee,
     })
     const uneActionTerminee = uneAction({
       id: 'action-terminee',
       content: 'action terminee',
-      status: ActionStatus.Done,
+      status: StatutAction.Terminee,
     })
     const uneActionAnnulee = uneAction({
       id: 'action-annulee',
       content: 'action annulee',
-      status: ActionStatus.Canceled,
+      status: StatutAction.Annulee,
     })
 
     beforeEach(() => {
@@ -99,7 +99,7 @@ describe("Page Liste des actions d'un jeune", () => {
         }
       })
 
-      it("Affiche les actions non commencée lorsqu'on clique sur le bouton À réaliser", async () => {
+      it("Affiche les actions non commencées lorsqu'on clique sur le bouton À réaliser", async () => {
         //GIVEN
         const aRealiserFilterTab = screen.getByRole('tab', {
           name: 'À réaliser (2)',

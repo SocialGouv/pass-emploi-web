@@ -285,9 +285,8 @@ describe('Mes Jeunes', () => {
       actionsService = mockedActionsService({
         countActionsJeunes: jest.fn().mockResolvedValue(
           jeunes.map((j) => ({
-            jeuneId: j.id,
-            inProgressActionsCount: 2,
-            todoActionsCount: 5,
+            idJeune: j.id,
+            nbActionsNonTerminees: 7,
           }))
         ),
       })

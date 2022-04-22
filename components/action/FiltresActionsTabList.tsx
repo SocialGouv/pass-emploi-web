@@ -1,9 +1,5 @@
 import Button, { ButtonStyle } from 'components/ui/Button'
-import {
-  NombreActionsParStatut,
-  ActionStatus,
-  LABELS_STATUT,
-} from 'interfaces/action'
+import { NombreActionsParStatut, StatutAction } from 'interfaces/action'
 
 export const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
 
@@ -13,7 +9,14 @@ interface FiltresActionsTabListProps {
   actionsCountParStatut: NombreActionsParStatut
   prenomJeune: string
   controlledIdPrefix: string
-  filterClicked: (filter: ActionStatus | string) => void
+  filterClicked: (filter: StatutAction | string) => void
+}
+
+export const LABELS_FILTRES: { [key in StatutAction]: string } = {
+  Annulee: 'Annulées',
+  Terminee: 'Terminées',
+  Commencee: 'Commencées',
+  ARealiser: 'À réaliser',
 }
 
 function FiltresActionsTabList({
@@ -55,7 +58,7 @@ function FiltresActionsTabList({
       >
         Toutes ({actionsCount})
       </Button>
-      {Object.values(ActionStatus).map((statut) => (
+      {Object.values(StatutAction).map((statut) => (
         <Button
           role='tab'
           key={`actions-${statut.toLowerCase()}`}
@@ -71,7 +74,7 @@ function FiltresActionsTabList({
           }
           onClick={() => filterClicked(statut)}
         >
-          {LABELS_STATUT[statut]} ({actionsCountParStatut[statut]})
+          {LABELS_FILTRES[statut]} ({actionsCountParStatut[statut]})
         </Button>
       ))}
     </div>

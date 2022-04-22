@@ -1,29 +1,29 @@
-import { ActionStatus } from 'interfaces/action'
+import { StatutAction } from 'interfaces/action'
 import React from 'react'
 
 interface TagProps {
-  status: ActionStatus
+  status: StatutAction
 }
 
 const mappedStatus: {
-  [key in ActionStatus]: { label: string; color: string; colorLighten: string }
+  [key in StatutAction]: { label: string; color: string; colorLighten: string }
 } = {
-  NotStarted: {
+  ARealiser: {
     label: 'À réaliser',
     color: 'accent_1',
     colorLighten: 'accent_1_lighten',
   },
-  InProgress: {
+  Commencee: {
     label: 'Commencée',
     color: 'accent_3',
     colorLighten: 'accent_3_lighten',
   },
-  Done: {
+  Terminee: {
     label: 'Terminée',
     color: 'accent_2',
     colorLighten: 'accent_2_lighten',
   },
-  Canceled: {
+  Annulee: {
     label: 'Annulée',
     color: 'warning',
     colorLighten: 'warning_lighten',
