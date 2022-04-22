@@ -5,6 +5,7 @@ import {
   RenderResult,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
@@ -47,6 +48,7 @@ describe('EnvoiMessageGroupe', () => {
     page = renderWithSession(
       <DIProvider dependances={{ jeunesService, messagesService }}>
         <EnvoiMessageGroupe
+          pageTitle={''}
           jeunes={destinataires}
           withoutChat={true}
           from='/mes-jeunes'
@@ -106,12 +108,6 @@ describe('EnvoiMessageGroupe', () => {
 
       userEvent.type(inputSearchJeune, 'Jirac Kenji')
       userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-      fireEvent.change(inputSearchJeune, {
-        target: { value: destinataires[0].id },
-      })
-      fireEvent.change(inputSearchJeune, {
-        target: { value: destinataires[1].id },
-      })
     })
 
     it('sélectionne plusieurs jeunes dans la liste', () => {
@@ -209,6 +205,21 @@ describe('EnvoiMessageGroupe', () => {
         )
       })
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
+    })
+  })
+
+  describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
+    it('sélectionne tout les jeunes dans la liste', () => {
+      // When
+      userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+
+      // Then
+      expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
+      expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
+      expect(
+        screen.getByText("D'Aböville-Muñoz François Maria")
+      ).toBeInTheDocument()
+      expect(screen.getByText('Destinataires (3)')).toBeInTheDocument()
     })
   })
 })

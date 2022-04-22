@@ -7,6 +7,8 @@ interface JeunesMultiselectAutocompleteProps {
   onUpdate: (selection: Jeune[]) => void
 }
 
+const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
+
 export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
@@ -20,9 +22,23 @@ export default function JeunesMultiselectAutocomplete({
     )
   }
 
+  function selectAllJeunes(): Jeune[] {
+    return selectedJeunes.concat(getJeunesNotSelected())
+  }
+
   function selectJeune(inputValue: string) {
+    if (inputValue === SELECT_ALL_JEUNES_OPTION) {
+      const updatedSelectedJeunes = selectAllJeunes()
+      setSelectedJeunes(updatedSelectedJeunes)
+      onUpdate(updatedSelectedJeunes)
+      input.current!.value = ''
+    }
+
     const jeune = getJeunesNotSelected().find(
-      (j) => getJeuneFullname(j) === inputValue
+      (j) =>
+        getJeuneFullname(j).localeCompare(inputValue, undefined, {
+          sensitivity: 'base',
+        }) === 0
     )
     if (jeune) {
       const updatedSelectedJeunes = selectedJeunes.concat(jeune)
@@ -62,6 +78,9 @@ export default function JeunesMultiselectAutocomplete({
         aria-controls='selected-items'
       />
       <datalist id='items'>
+        {getJeunesNotSelected().length > 0 && (
+          <option key='select-all' value={SELECT_ALL_JEUNES_OPTION} />
+        )}
         {getJeunesNotSelected().map((jeune) => (
           <option key={jeune.id} value={getJeuneFullname(jeune)} />
         ))}
