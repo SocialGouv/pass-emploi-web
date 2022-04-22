@@ -4,7 +4,7 @@ import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import EchecMessage from 'components/EchecMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { ActionJeune, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
@@ -35,7 +35,7 @@ function PageAction({
   const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
-  const [statut, setStatut] = useState<ActionStatus>(action.status)
+  const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
@@ -44,7 +44,7 @@ function PageAction({
 
   const pageTracking = 'Détail Action'
 
-  async function updateAction(statutChoisi: ActionStatus): Promise<void> {
+  async function updateAction(statutChoisi: StatutAction): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
       action.id,
       statutChoisi,
@@ -150,21 +150,14 @@ function PageAction({
           <dd>
             <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
               <InfoAction label='Statut' isForm={true}>
-                <RadioButtonStatus
-                  status={ActionStatus.NotStarted}
-                  isSelected={statut === ActionStatus.NotStarted}
-                  onChange={updateAction}
-                />
-                <RadioButtonStatus
-                  status={ActionStatus.InProgress}
-                  isSelected={statut === ActionStatus.InProgress}
-                  onChange={updateAction}
-                />
-                <RadioButtonStatus
-                  status={ActionStatus.Done}
-                  isSelected={statut === ActionStatus.Done}
-                  onChange={updateAction}
-                />
+                {Object.values(StatutAction).map((status: StatutAction) => (
+                  <RadioButtonStatus
+                    key={status.toLowerCase()}
+                    status={status}
+                    isSelected={statut === status}
+                    onChange={updateAction}
+                  />
+                ))}
               </InfoAction>
 
               <InfoAction label="Date d'actualisation">
@@ -208,7 +201,6 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const props: PageActionProps = {
     action: res,
     jeune: res.jeune,
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
     pageTitle: `Mes jeunes - Actions de ${res.jeune.firstName} ${res.jeune.lastName} - ${res.content} `,
   }
 

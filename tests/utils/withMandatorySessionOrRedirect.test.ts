@@ -6,10 +6,6 @@ import { withMandatorySessionOrRedirect } from '../../utils/auth/withMandatorySe
 jest.mock('next-auth/react')
 
 describe('withMandatorySessionOrRedirect', () => {
-  afterAll(() => {
-    jest.clearAllMocks()
-  })
-
   let session: Session
   beforeEach(() => {
     session = { user: { estConseiller: true } } as Session

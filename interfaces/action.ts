@@ -8,23 +8,23 @@ export interface ActionJeune {
   lastUpdate: string
   creator: string
   creatorType: string
-  status: ActionStatus
+  status: StatutAction
 }
 
-export interface ActionsCount {
-  jeuneId: string
-  jeuneFirstName: string
-  jeuneLastName: string
-  todoActionsCount: number
-  doneActionsCount: number
-  inProgressActionsCount: number
+export interface TotalActions {
+  idJeune: string
+  nbActionsNonTerminees: number
 }
 
-export enum ActionStatus {
-  NotStarted = 'NotStarted',
-  InProgress = 'InProgress',
-  Done = 'Done',
+export enum StatutAction {
+  ARealiser = 'ARealiser',
+  Commencee = 'Commencee',
+  Terminee = 'Terminee',
+  Annulee = 'Annulee',
 }
+
+export type ActionsParStatut = { [key in StatutAction]: ActionJeune[] }
+export type NombreActionsParStatut = { [key in StatutAction]: number }
 
 export function compareActionsDatesDesc(
   action1: ActionJeune,

@@ -1,5 +1,4 @@
 import React from 'react'
-import { RenderResult } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
 import Sidebar from 'components/layouts/Sidebar'
 import renderWithSession from '../renderWithSession'
@@ -24,16 +23,9 @@ jest.mock('next/router', () => ({
 }))
 
 describe('<Sidebar/>', () => {
-  let component: RenderResult
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
-
   it('affiche les liens de la barre de navigation', () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />)
-
     // WHEN
+    renderWithSession(<Sidebar />)
 
     // THEN
     expect(screen.getByRole('navigation')).toBeInTheDocument()
@@ -44,10 +36,8 @@ describe('<Sidebar/>', () => {
   })
 
   it('affiche le lien de déconnexion', () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />)
-
     // WHEN
+    renderWithSession(<Sidebar />)
 
     // THEN
     expect(
@@ -58,17 +48,17 @@ describe('<Sidebar/>', () => {
   })
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />, {
+    // WHEN
+    renderWithSession(<Sidebar />, {
       user: {
         id: '1',
         name: 'Nils Tavernier',
         structure: UserStructure.POLE_EMPLOI,
         estSuperviseur: false,
+        email: 'fake@email.com',
+        estConseiller: true,
       },
     })
-
-    // WHEN
 
     // THEN
     expect(screen.getByRole('navigation')).toBeInTheDocument()
@@ -78,17 +68,17 @@ describe('<Sidebar/>', () => {
   })
 
   it('affiche le lien de supervision lorsque le conseiller est superviseur', () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />, {
+    // WHEN
+    renderWithSession(<Sidebar />, {
       user: {
         id: '1',
         name: 'Nils Tavernier',
         structure: UserStructure.MILO,
         estSuperviseur: true,
+        email: 'fake@email.com',
+        estConseiller: true,
       },
     })
-
-    // WHEN
 
     // THEN
     expect(screen.getByRole('navigation')).toBeInTheDocument()

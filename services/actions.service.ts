@@ -1,8 +1,9 @@
 import { ApiClient } from 'clients/api.client'
-import { ActionJeune, ActionsCount, ActionStatus } from 'interfaces/action'
+import { ActionJeune, StatutAction, TotalActions } from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
 import {
   ActionJeuneJson,
+  ActionsCountJson,
   actionStatusToJson,
   jsonToActionJeune,
 } from 'interfaces/json/action'
@@ -16,7 +17,7 @@ export interface ActionsService {
   countActionsJeunes(
     idConseiller: string,
     accessToken: string
-  ): Promise<ActionsCount[]>
+  ): Promise<TotalActions[]>
 
   getActionsJeune(idJeune: string, accessToken: string): Promise<ActionJeune[]>
 
@@ -29,9 +30,9 @@ export interface ActionsService {
 
   updateAction(
     idAction: string,
-    nouveauStatut: ActionStatus,
+    nouveauStatut: StatutAction,
     accessToken: string
-  ): Promise<ActionStatus>
+  ): Promise<StatutAction>
 
   deleteAction(idAction: string, accessToken: string): Promise<void>
 }
@@ -52,11 +53,16 @@ export class ActionsApiService implements ActionsService {
   async countActionsJeunes(
     idConseiller: string,
     accessToken: string
-  ): Promise<ActionsCount[]> {
-    return this.apiClient.get<ActionsCount[]>(
+  ): Promise<TotalActions[]> {
+    const counts = await this.apiClient.get<ActionsCountJson[]>(
       `/conseillers/${idConseiller}/actions`,
       accessToken
     )
+    return counts.map((count: ActionsCountJson) => ({
+      idJeune: count.jeuneId,
+      nbActionsNonTerminees:
+        count.todoActionsCount + count.inProgressActionsCount,
+    }))
   }
 
   async getActionsJeune(
@@ -85,9 +91,9 @@ export class ActionsApiService implements ActionsService {
 
   async updateAction(
     idAction: string,
-    nouveauStatut: ActionStatus,
+    nouveauStatut: StatutAction,
     accessToken: string
-  ): Promise<ActionStatus> {
+  ): Promise<StatutAction> {
     await this.apiClient.put(
       `/actions/${idAction}`,
       { status: actionStatusToJson(nouveauStatut) },

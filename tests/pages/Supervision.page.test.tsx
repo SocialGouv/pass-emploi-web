@@ -12,10 +12,6 @@ import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
-afterAll(() => {
-  jest.clearAllMocks()
-})
-
 describe('Supervision', () => {
   describe('quand le conseiller est superviseur', () => {
     let jeunesService: JeunesService
@@ -25,7 +21,7 @@ describe('Supervision', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <Supervision withoutChat={true} />
+          <Supervision withoutChat={true} pageTitle='' />
         </DIProvider>,
         {
           user: {
@@ -33,6 +29,8 @@ describe('Supervision', () => {
             name: 'Nils Tavernier',
             structure: UserStructure.POLE_EMPLOI,
             estSuperviseur: true,
+            email: 'fake@email.com',
+            estConseiller: true,
           },
         }
       )

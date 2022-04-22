@@ -1,7 +1,7 @@
 import { RenderResult, screen, waitFor } from '@testing-library/react'
 import { uneAction } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
-import { ActionStatus } from 'interfaces/action'
+import { StatutAction } from 'interfaces/action'
 import { GetServerSidePropsContext } from 'next/types'
 import PageAction, {
   getServerSideProps,
@@ -13,8 +13,6 @@ import { DIProvider } from 'utils/injectionDependances'
 import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-
-afterAll(() => jest.clearAllMocks())
 
 describe("Page Détail d'une action d'un jeune", () => {
   describe('pour un conseiller MiLo', () => {
@@ -33,7 +31,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       }
       page = renderWithSession(
         <DIProvider dependances={{ actionsService }}>
-          <PageAction action={action} jeune={jeune} />
+          <PageAction action={action} jeune={jeune} pageTitle='' />
         </DIProvider>
       )
     })
@@ -67,7 +65,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         await waitFor(() => {
           expect(actionsService.updateAction).toHaveBeenCalledWith(
             action.id,
-            ActionStatus.InProgress,
+            StatutAction.Commencee,
             'accessToken'
           )
         })

@@ -206,7 +206,6 @@ export const getServerSideProps: GetServerSideProps<
   const props: MesRendezvousProps = {
     rendezVousFuturs: futurs.map(rdvToListItem),
     rendezVousPasses: passes.map(rdvToListItem),
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
   }
 

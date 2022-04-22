@@ -23,8 +23,6 @@ jest.mock('utils/date')
 jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
 
 describe('EditionRdv', () => {
-  afterAll(() => jest.clearAllMocks())
-
   describe('server side', () => {
     let jeunesService: JeunesService
     let rendezVousService: RendezVousService

@@ -1,4 +1,4 @@
-import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { ActionJeune, StatutAction } from 'interfaces/action'
 import { ActionJeuneJson } from '../interfaces/json/action'
 
 export const uneAction = (
@@ -12,7 +12,7 @@ export const uneAction = (
     lastUpdate: '2022-02-16T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted,
+    status: StatutAction.ARealiser,
   }
 
   return { ...defaults, ...overrides }
@@ -28,7 +28,7 @@ export const uneListeDActions = (): ActionJeune[] => [
     lastUpdate: '2022-02-18T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: ActionStatus.InProgress,
+    status: StatutAction.Commencee,
   },
   {
     id: 'id-action-3',
@@ -38,7 +38,7 @@ export const uneListeDActions = (): ActionJeune[] => [
     lastUpdate: '2022-02-20T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: ActionStatus.Done,
+    status: StatutAction.Terminee,
   },
 ]
 

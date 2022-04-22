@@ -16,17 +16,12 @@ jest.mock('components/AppHead', () => jest.fn(() => <></>))
 jest.useFakeTimers()
 
 describe('<Layout />', () => {
-  afterAll(() => {
-    jest.resetAllMocks()
-  })
-
   const jeunes: Jeune[] = desJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
   let messagesService: MessagesService
   beforeEach(async () => {
     jest.setSystemTime(new Date())
-    jest.clearAllMocks()
 
     jeunesChats = [
       unJeuneChat({

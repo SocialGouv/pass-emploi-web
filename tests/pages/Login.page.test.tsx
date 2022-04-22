@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { signIn } from 'next-auth/react'
 import Login from 'pages/login'
 import React from 'react'
@@ -15,11 +15,6 @@ jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
 describe('Login', () => {
-  afterEach(() => {
-    jest.resetAllMocks()
-    return cleanup
-  })
-
   describe('render', () => {
     beforeEach(async () => {
       render(<Login isFromEmail={false} />)
