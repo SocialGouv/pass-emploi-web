@@ -100,7 +100,7 @@ describe('Mes Jeunes', () => {
                 conseillerJeunes={jeunes}
                 isFromEmail
                 deletionSuccess={true}
-                pageTitle=''
+                pageTitle={''}
               />
             </DIProvider>
           )
@@ -178,6 +178,33 @@ describe('Mes Jeunes', () => {
           screen.getByRole('columnheader', { name: 'Actions' })
         ).toBeInTheDocument()
       })
+
+      it('affiche le message de succès de suppression de jeune', async () => {
+        //WHEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+                pageTitle={''}
+              />
+            </DIProvider>
+          )
+        })
+
+        //THEN
+        expect(
+          screen.getByText('Le compte du jeune a bien été supprimé.')
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', {
+            name: 'support@pass-emploi.beta.gouv.fr',
+          })
+        ).toBeInTheDocument()
+      })
     })
 
     describe('quand le conseiller est Pole emploi', () => {
@@ -220,6 +247,28 @@ describe('Mes Jeunes', () => {
         expect(() =>
           screen.getByRole('columnheader', { name: 'Actions' })
         ).toThrow()
+      })
+
+      it('affiche le message de succès de suppression de jeune', async () => {
+        //WHEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.POLE_EMPLOI}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+                pageTitle={''}
+              />
+            </DIProvider>
+          )
+        })
+
+        //THEN
+        expect(
+          screen.getByText('Le compte du jeune a bien été supprimé.')
+        ).toBeInTheDocument()
       })
     })
 

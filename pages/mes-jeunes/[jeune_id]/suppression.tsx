@@ -17,14 +17,19 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import BackIcon from '../../../assets/icons/arrow_back.svg'
 import InfoIcon from '../../../assets/icons/information.svg'
+import { UserStructure } from 'interfaces/conseiller'
 
 interface SuppressionJeuneProps {
   jeune: Jeune
   withoutChat: true
   pageTitle: string
+  structureConseiller: string
 }
 
-function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
+function SuppressionJeune({
+  jeune,
+  structureConseiller,
+}: SuppressionJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
@@ -87,11 +92,26 @@ function SuppressionJeune({ jeune }: SuppressionJeuneProps) {
           <p className='h4-semi text-bleu_nuit'>
             Confirmez la suppression du compte jeune
           </p>
-          <p className='mt-8 p-4 bg-primary_lighten rounded-medium text-base-medium text-primary flex items-center'>
-            <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
-            Une fois confirmée toutes les informations liées à ce jeune seront
-            supprimées
-          </p>
+          <div className='mt-8 p-4 bg-primary_lighten rounded-medium  text-primary'>
+            <p className='flex text-base-medium  items-center mb-2'>
+              <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
+              Une fois confirmée toutes les informations liées à ce compte jeune
+              seront supprimées
+            </p>
+            {structureConseiller === UserStructure.MILO && (
+              <p>
+                Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
+                transmettre en amont le numéro de dossier technique à l’adresse{' '}
+                <a
+                  className='underline hover:text-primary_darken'
+                  href='mailto:support@pass-emploi.beta.gouv.fr'
+                >
+                  support@pass-emploi.beta.gouv.fr
+                </a>
+                .
+              </p>
+            )}
+          </div>
 
           <div className='mt-8 flex'>
             {!loading && (
@@ -134,7 +154,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const {
-    session: { accessToken },
+    session: { user, accessToken },
   } = sessionOrRedirect
   const idJeune = context.query.jeune_id as string
 
@@ -151,6 +171,7 @@ export const getServerSideProps: GetServerSideProps<
       jeune,
       withoutChat: true,
       pageTitle: `Suppression - ${jeune.firstName} ${jeune.lastName}`,
+      structureConseiller: user.structure,
     },
   }
 }
