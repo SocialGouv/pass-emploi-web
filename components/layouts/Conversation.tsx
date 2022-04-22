@@ -1,4 +1,4 @@
-import { Message, MessagesOfADay } from 'interfaces'
+import { Message, MessagesOfADay } from 'interfaces/message'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { MessagesService } from 'services/messages.service'

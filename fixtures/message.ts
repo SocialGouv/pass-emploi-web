@@ -1,4 +1,4 @@
-import { Message, MessagesOfADay } from 'interfaces'
+import { Message, MessagesOfADay, TypeMessage } from 'interfaces/message'
 
 export const unMessage = (args: Partial<Message> = {}): Message => {
   const defaults: Message = {
@@ -8,6 +8,7 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     sentBy: 'conseiller',
     iv: 'iv',
     conseillerId: 'conseiller-1',
+    type: TypeMessage.MESSAGE,
   }
 
   return { ...defaults, ...args }
@@ -35,6 +36,12 @@ export const desMessages = (): Message[] => [
     id: 'message-4',
     content: 'Message du 13/1/2022 10h',
     creationDate: new Date(2022, 0, 13, 10),
+  }),
+  unMessage({
+    id: 'message-5',
+    content: 'Changement de conseiller',
+    creationDate: new Date(2022, 0, 14),
+    type: TypeMessage.NOUVEAU_CONSEILLER,
   }),
 ]
 
