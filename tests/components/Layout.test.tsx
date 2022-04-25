@@ -1,4 +1,5 @@
-import { act, waitFor } from '@testing-library/react'
+import { act, waitFor, screen } from '@testing-library/react'
+
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
@@ -13,6 +14,7 @@ import renderWithSession from '../renderWithSession'
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
+jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
 jest.useFakeTimers()
 
 describe('<Layout />', () => {
@@ -114,6 +116,33 @@ describe('<Layout />', () => {
           { jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]] },
           {}
         )
+      })
+    })
+  })
+
+  describe('quand le conseiller se connecte', () => {
+    describe('quand le conseiller à renseigner son agence', () => {})
+    describe('quand le conseiller n’à pas renseigné son agence', () => {
+      it('affiche une modale', async () => {
+        // Given & When
+        ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
+          jeunes
+        )
+        await act(async () => {
+          await renderWithSession(
+            <DIProvider dependances={{ jeunesService, messagesService }}>
+              <Layout>
+                <FakeComponent pageTitle='un titre' />
+              </Layout>
+            </DIProvider>
+          )
+        })
+        // Then
+        await waitFor(() => {
+          expect(
+            screen.getByText('Ajoutez votre agence à votre profil')
+          ).toBeInTheDocument()
+        })
       })
     })
   })
