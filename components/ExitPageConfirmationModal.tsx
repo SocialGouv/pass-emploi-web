@@ -1,9 +1,13 @@
-import Button, { ButtonStyle } from 'components/ui/Button'
-import { MouseEvent, useRef } from 'react'
 import { UrlObject } from 'url'
+
+import { MouseEvent, useRef } from 'react'
+
 import WarningIcon from '../assets/icons/warning.svg'
+
 import Modal from './Modal'
 import ButtonLink from './ui/ButtonLink'
+
+import Button, { ButtonStyle } from 'components/ui/Button'
 
 interface ExitPageConfirmationModalProps {
   destination: string | UrlObject
