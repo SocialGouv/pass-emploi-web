@@ -41,7 +41,7 @@ describe('Suppression Jeune', () => {
       beforeEach(() => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
-          session: { accessToken: 'accessToken' },
+          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
         })
 
         jeunesService = mockedJeunesService({
@@ -100,6 +100,7 @@ describe('Suppression Jeune', () => {
               jeune,
               withoutChat: true,
               pageTitle: 'Suppression - Kenji Jirac',
+              structureConseiller: 'MILO',
             },
           })
         })
@@ -140,7 +141,12 @@ describe('Suppression Jeune', () => {
 
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <SuppressionJeune jeune={jeune} withoutChat={true} pageTitle={''} />
+          <SuppressionJeune
+            jeune={jeune}
+            withoutChat={true}
+            pageTitle=''
+            structureConseiller='MILO'
+          />
         </DIProvider>
       )
     })
