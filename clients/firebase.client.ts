@@ -19,9 +19,19 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
-import { Message } from 'interfaces'
 import { Chat } from 'interfaces/jeune'
+import { Message, TypeMessage } from 'interfaces/message'
 import { captureRUMError } from 'utils/monitoring/init-rum'
+
+type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE'
+interface FirebaseMessage {
+  creationDate: Timestamp
+  sentBy: string
+  content: string
+  iv: string | undefined
+  conseillerId: string | undefined
+  type: TypeMessageFirebase | undefined
+}
 
 class FirebaseClient {
   private readonly firebaseApp: FirebaseApp
@@ -71,6 +81,7 @@ class FirebaseClient {
           conseillerId: idConseiller,
           sentBy: 'conseiller',
           creationDate: Timestamp.fromDate(date),
+          type: 'MESSAGE',
         }
       )
     } catch (e) {
@@ -177,14 +188,8 @@ class FirebaseClient {
           orderBy('creationDate')
         ),
         (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
-          const messages: Message[] = querySnapshot.docs.map((docSnapshot) => {
-            const firebaseMessage: FirebaseMessage = docSnapshot.data()
-            return {
-              ...firebaseMessage,
-              creationDate: firebaseMessage.creationDate.toDate(),
-              id: docSnapshot.id,
-            }
-          })
+          const messages: Message[] =
+            querySnapshot.docs.map(docSnapshotToMessage)
 
           if (!messages || !messages[messages.length - 1]?.creationDate) {
             return
@@ -321,12 +326,31 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
   }
 }
 
-interface FirebaseMessage {
-  creationDate: Timestamp
-  sentBy: string
-  content: string
-  iv: string | undefined
-  conseillerId: string | undefined
+function docSnapshotToMessage(
+  docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
+): Message {
+  const firebaseMessage = docSnapshot.data()
+  return {
+    ...firebaseMessage,
+    creationDate: firebaseMessage.creationDate.toDate(),
+    id: docSnapshot.id,
+    type: firebaseToMessageType(firebaseMessage.type),
+  }
+}
+
+function firebaseToMessageType(
+  type: TypeMessageFirebase | undefined
+): TypeMessage {
+  switch (type) {
+    case 'NOUVEAU_CONSEILLER':
+      return TypeMessage.NOUVEAU_CONSEILLER
+    case 'MESSAGE':
+    case undefined:
+      return TypeMessage.MESSAGE
+    default:
+      console.warn(`Type message ${type} incorrect, traité comme Message`)
+      return TypeMessage.MESSAGE
+  }
 }
 
 export { FirebaseClient }

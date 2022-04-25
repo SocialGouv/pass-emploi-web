@@ -1,7 +1,7 @@
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
-import { Message, MessagesOfADay } from 'interfaces'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { Message, MessagesOfADay, TypeMessage } from 'interfaces/message'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
 import { UserStructure } from '../interfaces/conseiller'
@@ -289,21 +289,23 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   private grouperMessagesParJour(messages: Message[]): MessagesOfADay[] {
     const messagesByDay: { [day: string]: MessagesOfADay } = {}
 
-    messages.forEach((message: Message) => {
-      message.content = message.iv
-        ? this.chatCrypto.decrypt({
-            encryptedText: message.content,
-            iv: message.iv,
-          })
-        : message.content
-      const day = formatDayDate(message.creationDate)
-      const messagesOfDay = messagesByDay[day] ?? {
-        date: message.creationDate,
-        messages: [],
-      }
-      messagesOfDay.messages.push(message)
-      messagesByDay[day] = messagesOfDay
-    })
+    messages
+      .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
+      .forEach((message) => {
+        message.content = message.iv
+          ? this.chatCrypto.decrypt({
+              encryptedText: message.content,
+              iv: message.iv,
+            })
+          : message.content
+        const day = formatDayDate(message.creationDate)
+        const messagesOfDay = messagesByDay[day] ?? {
+          date: message.creationDate,
+          messages: [],
+        }
+        messagesOfDay.messages.push(message)
+        messagesByDay[day] = messagesOfDay
+      })
 
     return Object.values(messagesByDay)
   }

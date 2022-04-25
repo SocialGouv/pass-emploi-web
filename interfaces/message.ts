@@ -1,3 +1,7 @@
+export enum TypeMessage {
+  NOUVEAU_CONSEILLER = 'NOUVEAU_CONSEILLER',
+  MESSAGE = 'MESSAGE',
+}
 export interface Message {
   id: string
   content: string
@@ -5,6 +9,7 @@ export interface Message {
   sentBy: string
   iv: string | undefined
   conseillerId: string | undefined
+  type: TypeMessage
 }
 
 export interface MessagesOfADay {
