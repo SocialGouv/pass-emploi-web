@@ -1,14 +1,16 @@
-import { HeaderCell } from 'components/rdv/HeaderCell'
-import { RdvTypeTag } from 'components/ui/RdvTypeTag'
-import { RdvListItem } from 'interfaces/rdv'
 import Link from 'next/link'
 import { MouseEvent } from 'react'
-import { formatDayDate, formatHourMinuteDate } from 'utils/date'
+
 import DeleteIcon from '../../assets/icons/delete.svg'
 import DoneIcon from '../../assets/icons/done.svg'
 import KoIcon from '../../assets/icons/ko.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import NoteIcon from '../../assets/icons/note.svg'
+
+import { HeaderCell } from 'components/rdv/HeaderCell'
+import { RdvTypeTag } from 'components/ui/RdvTypeTag'
+import { RdvListItem } from 'interfaces/rdv'
+import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 type RdvListProps = {
   rdvs: RdvListItem[]

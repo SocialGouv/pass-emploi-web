@@ -1,6 +1,7 @@
+import { ReactElement } from 'react'
+
 import CloseIcon from '../assets/icons/close.svg'
 import SuccessIcon from '../assets/icons/done.svg'
-import { ReactElement } from 'react'
 
 interface SuccessMessageProps {
   label: string

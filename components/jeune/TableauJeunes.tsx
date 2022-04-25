@@ -1,3 +1,10 @@
+import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
+
+import ArrowDouble from '../../assets/icons/arrow_double.svg'
+import ArrowDown from '../../assets/icons/arrow_down.svg'
+import MessageIcon from '../../assets/icons/note_outline_big.svg'
+
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
@@ -6,8 +13,6 @@ import {
   getJeuneFullname,
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
-import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
   dateIsToday,
@@ -15,9 +20,6 @@ import {
   formatDayDate,
   formatHourMinuteDate,
 } from 'utils/date'
-import ArrowDouble from '../../assets/icons/arrow_double.svg'
-import ArrowDown from '../../assets/icons/arrow_down.svg'
-import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 enum SortColumn {
   NOM = 'NOM',

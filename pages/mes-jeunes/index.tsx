@@ -1,4 +1,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import Router, { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useState } from 'react'
+
+import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
+
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
@@ -10,9 +16,6 @@ import {
   JeuneAvecInfosComplementaires,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
-import { GetServerSideProps } from 'next'
-import Router, { useRouter } from 'next/router'
-import React, { useCallback, useEffect, useState } from 'react'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -22,7 +25,6 @@ import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
 
 interface MesJeunesProps {
   structureConseiller: string

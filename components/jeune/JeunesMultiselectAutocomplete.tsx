@@ -1,6 +1,8 @@
-import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 import React, { useRef, useState } from 'react'
+
 import RemoveIcon from '../../assets/icons/remove.svg'
+
+import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
   jeunes: Jeune[]

@@ -1,5 +1,6 @@
-import styles from 'styles/components/Switch.module.css'
 import { ChangeEvent } from 'react'
+
+import styles from 'styles/components/Switch.module.css'
 
 interface SwitchProps {
   id: string

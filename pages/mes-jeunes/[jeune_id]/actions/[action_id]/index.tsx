@@ -1,4 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+
+import BackIcon from '../../../../../assets/icons/arrow_back.svg'
+
 import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import EchecMessage from 'components/EchecMessage'
@@ -7,10 +14,6 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { ActionJeune, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { GetServerSideProps } from 'next'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
 import { ActionsService } from 'services/actions.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -18,7 +21,6 @@ import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { formatDayDate } from 'utils/date'
 import { Container, useDependance } from 'utils/injectionDependances'
-import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
 type PageActionProps = {
   action: ActionJeune

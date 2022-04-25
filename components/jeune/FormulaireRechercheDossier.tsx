@@ -1,8 +1,9 @@
-import Button from 'components/ui/Button'
-import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
 import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
+
 import IndicationRechercheDossier from 'components/jeune/IndicationRechercheDossier'
+import Button from 'components/ui/Button'
+import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
 
 type FormulaireRechercheDossierProps = {
   dossierId?: string

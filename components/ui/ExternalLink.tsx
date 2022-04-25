@@ -1,5 +1,6 @@
-import LaunchIcon from '../../assets/icons/launch.svg'
 import React from 'react'
+
+import LaunchIcon from '../../assets/icons/launch.svg'
 
 interface ExternalLinkProps {
   href: string

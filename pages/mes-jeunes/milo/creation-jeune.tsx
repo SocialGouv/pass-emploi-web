@@ -1,4 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import Router from 'next/router'
+import React, { ReactNode, useEffect, useState } from 'react'
+
+import BackIcon from '../../../assets/icons/arrow_back.svg'
+
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { CreationEtape } from 'components/jeune/CreationEtape'
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
@@ -6,15 +13,10 @@ import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDoss
 import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
-import { GetServerSideProps } from 'next'
-import Link from 'next/link'
-import Router from 'next/router'
-import React, { ReactNode, useEffect, useState } from 'react'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container } from 'utils/injectionDependances'
-import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 type MiloCreationJeuneProps = {
   dossierId: string

@@ -1,6 +1,8 @@
 import React from 'react'
-import { ActionJeune } from 'interfaces/action'
+
 import ActionRow from './ActionRow'
+
+import { ActionJeune } from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {

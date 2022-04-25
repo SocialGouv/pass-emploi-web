@@ -1,15 +1,17 @@
-import Button from 'components/ui/Button'
-import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
-import { DossierMilo } from 'interfaces/jeune'
 import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
+
+import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
+import RefreshIcon from '../../assets/icons/refresh.svg'
+
+import Button from 'components/ui/Button'
+import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
+import { DossierMilo } from 'interfaces/jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { useDependance } from 'utils/injectionDependances'
-import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
-import RefreshIcon from '../../assets/icons/refresh.svg'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo

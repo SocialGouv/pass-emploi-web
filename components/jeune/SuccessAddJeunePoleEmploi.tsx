@@ -1,6 +1,7 @@
+import CheckSuccessIcon from '../../assets/icons/check_success.svg'
+
 import ButtonLink from 'components/ui/ButtonLink'
 import useMatomo from 'utils/analytics/useMatomo'
-import CheckSuccessIcon from '../../assets/icons/check_success.svg'
 
 interface SuccessAddJeunePoleEmploiProps {
   idJeune: string

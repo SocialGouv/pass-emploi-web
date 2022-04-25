@@ -1,12 +1,17 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import FailureMessage from 'components/FailureMessage'
-import Button, { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
-import { Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+
+import BackIcon from '../../../assets/icons/arrow_back.svg'
+import InfoIcon from '../../../assets/icons/information.svg'
+
+import FailureMessage from 'components/FailureMessage'
+import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
+import { UserStructure } from 'interfaces/conseiller'
+import { Jeune } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -15,9 +20,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import BackIcon from '../../../assets/icons/arrow_back.svg'
-import InfoIcon from '../../../assets/icons/information.svg'
-import { UserStructure } from 'interfaces/conseiller'
 
 interface SuppressionJeuneProps {
   jeune: Jeune

@@ -1,5 +1,6 @@
-import { UserStructure } from 'interfaces/conseiller'
 import { GetServerSideProps } from 'next'
+
+import { UserStructure } from 'interfaces/conseiller'
 import { JeunesService } from 'services/jeunes.service'
 import { trackSSR } from 'utils/analytics/matomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'

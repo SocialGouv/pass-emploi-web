@@ -1,5 +1,6 @@
-import { StatutAction } from 'interfaces/action'
 import React from 'react'
+
+import { StatutAction } from 'interfaces/action'
 
 interface TagProps {
   status: StatutAction

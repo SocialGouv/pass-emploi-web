@@ -2,17 +2,20 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
+import { ReactElement, useEffect, useRef, useState } from 'react'
+
+import AppHead from '../AppHead'
+
+import ChatRoom from './ChatRoom'
+import Sidebar from './Sidebar'
+
 import { Footer } from 'components/Footer'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
-import { ReactElement, useEffect, useRef, useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useSession from 'utils/auth/useSession'
 import { useDependance } from 'utils/injectionDependances'
-import AppHead from '../AppHead'
-import ChatRoom from './ChatRoom'
-import Sidebar from './Sidebar'
 
 type LayoutProps = {
   children: ReactElement

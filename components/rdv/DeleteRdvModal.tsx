@@ -1,9 +1,10 @@
+import { useState } from 'react'
+
 import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import SuccessModal from 'components/SuccessModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { RdvListItem } from 'interfaces/rdv'
-import { useState } from 'react'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'

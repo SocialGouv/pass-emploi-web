@@ -1,9 +1,11 @@
+import React from 'react'
+
+import EmailIcon from '../../assets/icons/email.svg'
+
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { Jeune } from 'interfaces/jeune'
-import React from 'react'
 import { formatDayDate } from 'utils/date'
-import EmailIcon from '../../assets/icons/email.svg'
 
 interface DetailsJeuneProps {
   jeune: Jeune

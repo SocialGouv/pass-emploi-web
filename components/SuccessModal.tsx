@@ -1,7 +1,7 @@
+import CheckIcon from '../assets/icons/check.svg'
+
 import Modal from 'components/Modal'
 import Button from 'components/ui/Button'
-
-import CheckIcon from '../assets/icons/check.svg'
 
 type SuccessModalProps = {
   onClose: any
