@@ -8,9 +8,11 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import styles from 'styles/components/Modal.module.css'
+
 import BackIcon from '../assets/icons/back_modale.svg'
 import CloseIcon from '../assets/icons/close_modal.svg'
+
+import styles from 'styles/components/Modal.module.css'
 
 interface ModalProps {
   title: string

@@ -1,7 +1,8 @@
-import Modal from 'components/Modal'
-import Button, { ButtonStyle } from 'components/ui/Button'
 import router from 'next/router'
 import React, { useState } from 'react'
+
+import Modal from 'components/Modal'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'

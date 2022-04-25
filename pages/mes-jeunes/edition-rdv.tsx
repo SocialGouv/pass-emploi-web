@@ -1,13 +1,16 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+
+import BackIcon from '../../assets/icons/arrow_back.svg'
+
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-import { GetServerSideProps } from 'next'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -16,7 +19,6 @@ import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import BackIcon from '../../assets/icons/arrow_back.svg'
 
 interface EditionRdvProps {
   jeunes: Jeune[]

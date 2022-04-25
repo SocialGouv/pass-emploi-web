@@ -1,5 +1,6 @@
-import { ConseillerHistorique } from 'interfaces/jeune'
 import React from 'react'
+
+import { ConseillerHistorique } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface ListeConseillersJeuneprops {
