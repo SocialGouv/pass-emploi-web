@@ -5,22 +5,23 @@ import {
   RenderResult,
   screen,
   waitFor,
-  within,
 } from '@testing-library/react'
+import { Mock } from 'jest-mock'
+import { useRouter } from 'next/router'
+
+import renderWithSession from '../renderWithSession'
+
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { Mock } from 'jest-mock'
-import { useRouter } from 'next/router'
 import EnvoiMessageGroupe from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
-jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
+jest.mock('components/Modal')
 
 describe('EnvoiMessageGroupe', () => {
   let destinataires: Jeune[]

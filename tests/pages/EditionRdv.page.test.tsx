@@ -1,11 +1,14 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+
+import renderWithSession from '../renderWithSession'
+
 import { desJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
@@ -14,13 +17,12 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('utils/date')
-jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
+jest.mock('components/Modal')
 
 describe('EditionRdv', () => {
   describe('server side', () => {
