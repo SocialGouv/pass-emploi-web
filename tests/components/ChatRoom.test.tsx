@@ -1,13 +1,15 @@
 import { act, screen, waitFor } from '@testing-library/react'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import ChatRoom from 'components/layouts/ChatRoom'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
-import { ConseillerHistorique, Jeune, JeuneChat } from 'interfaces/jeune'
-import React from 'react'
-import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
-import renderWithSession from '../renderWithSession'
-import { DIProvider } from 'utils/injectionDependances'
-import { JeunesService } from 'services/jeunes.service'
 import { mockedJeunesService } from 'fixtures/services'
+import { ConseillerHistorique, Jeune, JeuneChat } from 'interfaces/jeune'
+import { JeunesService } from 'services/jeunes.service'
+import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
+import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Conversation', () =>
   jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
@@ -82,7 +84,7 @@ describe('<ChatRoom />', () => {
           .closest('button')
 
         // When
-        await act(() => goToConversation!.click())
+        await act(async () => goToConversation!.click())
       })
 
       it('affiche la conversation du jeune', async () => {
