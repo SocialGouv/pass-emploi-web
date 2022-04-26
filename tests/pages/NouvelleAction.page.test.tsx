@@ -5,7 +5,7 @@ import { GetServerSidePropsContext } from 'next/types'
 import renderWithSession from '../renderWithSession'
 
 import { mockedActionsService } from 'fixtures/services'
-import EditionAction, {
+import NouvelleAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
 import { actionsPredefinies } from 'referentiel/action'
@@ -16,7 +16,7 @@ import { DIProvider } from 'utils/injectionDependances'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 
-describe('EditionAction', () => {
+describe('NouvelleAction', () => {
   describe('server side', () => {
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
@@ -73,7 +73,11 @@ describe('EditionAction', () => {
       await act(async () => {
         renderWithSession(
           <DIProvider dependances={{ actionsService }}>
-            <EditionAction idJeune='id-jeune' withoutChat={true} pageTitle='' />
+            <NouvelleAction
+              idJeune='id-jeune'
+              withoutChat={true}
+              pageTitle=''
+            />
           </DIProvider>
         )
       })
@@ -198,7 +202,10 @@ describe('EditionAction', () => {
 
           it('redirige vers la fiche du jeune', () => {
             // Then
-            expect(push).toHaveBeenCalledWith('/mes-jeunes/id-jeune/actions')
+            expect(push).toHaveBeenCalledWith({
+              pathname: `/mes-jeunes/id-jeune/actions`,
+              query: { creation: 'succes' },
+            })
           })
         })
       })
@@ -277,7 +284,10 @@ describe('EditionAction', () => {
 
           it('redirige vers la fiche du jeune', () => {
             // Then
-            expect(push).toHaveBeenCalledWith('/mes-jeunes/id-jeune/actions')
+            expect(push).toHaveBeenCalledWith({
+              pathname: `/mes-jeunes/id-jeune/actions`,
+              query: { creation: 'succes' },
+            })
           })
         })
       })

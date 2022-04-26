@@ -11,6 +11,7 @@ import ButtonLink from 'components/ui/ButtonLink'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
 import styles from 'styles/components/Layouts.module.css'
+import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
@@ -26,17 +27,24 @@ function EditionAction({ idJeune }: EditionActionProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
 
-  const [currentTab, setCurrentTab] = useState<
-    'predefinies' | 'personnalisees'
-  >('predefinies')
+  type Tab = 'predefinie' | 'personnalisee'
+  const tabsLabel: { [key in Tab]: string } = {
+    predefinie: 'prédéfinie',
+    personnalisee: 'personnalisée',
+  }
+  const [currentTab, setCurrentTab] = useState<Tab>('predefinie')
   const [intitule, setIntitule] = useState<string>('')
   const [commentaire, setCommentaire] = useState<string>('')
   const INPUT_MAX_LENGTH = 250
 
+  const [trackingTitle, setTrackingTitle] = useState<string>(
+    `Actions jeune – Création action ${tabsLabel[currentTab]}`
+  )
+
   function switchTab() {
-    setCurrentTab((prevTab) =>
-      prevTab === 'predefinies' ? 'personnalisees' : 'predefinies'
-    )
+    const newTab = currentTab === 'predefinie' ? 'personnalisee' : 'predefinie'
+    setCurrentTab(newTab)
+    setTrackingTitle(`Actions jeune – Création action ${tabsLabel[currentTab]}`)
   }
 
   function formulaireEstValide(): boolean {
@@ -54,8 +62,13 @@ function EditionAction({ idJeune }: EditionActionProps) {
       idJeune,
       session!.accessToken
     )
-    await router.push(`/mes-jeunes/${idJeune}/actions`)
+    await router.push({
+      pathname: `/mes-jeunes/${idJeune}/actions`,
+      query: { creation: 'succes' },
+    })
   }
+
+  useMatomo(trackingTitle)
 
   return (
     <>
@@ -76,42 +89,31 @@ function EditionAction({ idJeune }: EditionActionProps) {
       >
         <form onSubmit={creerAction}>
           <div role='tablist' className='flex mb-10'>
-            <Button
-              role='tab'
-              type='button'
-              id='creer-action-predefinie'
-              controls='form-action-predefinie'
-              onClick={switchTab}
-              style={
-                currentTab === 'predefinies'
-                  ? ButtonStyle.PRIMARY
-                  : ButtonStyle.SECONDARY
-              }
-            >
-              Action prédéfinie
-            </Button>
-            <Button
-              role='tab'
-              type='button'
-              id='creer-action-personnalisee'
-              controls='form-action-personnalisee'
-              onClick={switchTab}
-              className='ml-6'
-              style={
-                currentTab === 'personnalisees'
-                  ? ButtonStyle.PRIMARY
-                  : ButtonStyle.SECONDARY
-              }
-            >
-              Action personnalisée
-            </Button>
+            {Object.entries(tabsLabel).map(([tab, label]) => (
+              <Button
+                role='tab'
+                type='button'
+                key={`creer-action-${tab}`}
+                id={`creer-action-${tab}`}
+                controls={`form-action-${tab}`}
+                onClick={switchTab}
+                style={
+                  currentTab === tab
+                    ? ButtonStyle.PRIMARY
+                    : ButtonStyle.SECONDARY
+                }
+                className='ml-3 first:ml-0'
+              >
+                Action {label}
+              </Button>
+            ))}
           </div>
 
           <p className='text-sm-medium text-content_color'>
             Tous les champs avec * sont obligatoires
           </p>
 
-          {currentTab === 'predefinies' && (
+          {currentTab === 'predefinie' && (
             <div
               id='form-action-predefinie'
               aria-labelledby='creer-action-predefinie'
@@ -152,7 +154,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
             </div>
           )}
 
-          {currentTab === 'personnalisees' && (
+          {currentTab === 'personnalisee' && (
             <div
               id='form-action-personnalisee'
               aria-labelledby='creer-action-personnalisee'

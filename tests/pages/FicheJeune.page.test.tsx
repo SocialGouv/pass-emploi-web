@@ -1,4 +1,12 @@
 import { act, screen } from '@testing-library/react'
+import { DateTime } from 'luxon'
+import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import { uneAction, uneListeDActions } from 'fixtures/action'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import {
@@ -19,12 +27,7 @@ import {
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
-import { DateTime } from 'luxon'
-import { GetServerSidePropsResult } from 'next'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import FicheJeune, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -32,7 +35,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(() => ({
@@ -311,7 +313,11 @@ describe('Fiche Jeune', () => {
         expect(() =>
           screen.getByText('Le rendez-vous a bien été créé')
         ).toThrow()
-        expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
+        expect(replace).toHaveBeenCalledWith(
+          { pathname: '/mes-jeunes/jeune-1' },
+          undefined,
+          { shallow: true }
+        )
       })
     })
     describe('quand la modification de rdv est réussie', () => {
@@ -358,7 +364,11 @@ describe('Fiche Jeune', () => {
         expect(() =>
           screen.getByText('Le rendez-vous a bien été modifié')
         ).toThrow()
-        expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
+        expect(replace).toHaveBeenCalledWith(
+          { pathname: '/mes-jeunes/jeune-1' },
+          undefined,
+          { shallow: true }
+        )
       })
     })
   })

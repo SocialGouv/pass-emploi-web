@@ -62,7 +62,7 @@ function PageAction({
       .then(() => {
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,
-          query: { deleteSuccess: true },
+          query: { suppression: 'succes' },
         })
       })
       .catch((error: Error) => {

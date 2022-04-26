@@ -12,7 +12,6 @@ import FiltresActionsTabList, {
   TOUTES_LES_ACTIONS_LABEL,
 } from 'components/action/FiltresActionsTabList'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
-import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
 import {
@@ -34,19 +33,26 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface ActionsProps {
   jeune: Jeune
   actions: ActionJeune[]
-  deleteSuccess: boolean
-  messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
+  creationSuccess?: boolean
+  suppressionSuccess?: boolean
+  messageEnvoiGroupeSuccess?: boolean
 }
 
 function Actions({
   jeune,
   actions,
-  deleteSuccess,
+  creationSuccess,
+  suppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: ActionsProps) {
   const router = useRouter()
-  const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
+  const [showCreationSuccess, setShowCreationSuccess] = useState<boolean>(
+    creationSuccess ?? false
+  )
+  const [showSuppressionSuccess, setShowSuppressionSuccess] = useState<boolean>(
+    suppressionSuccess ?? false
+  )
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
   const [actionsParStatut, setActionsParStatut] = useState<ActionsParStatut>(
@@ -57,14 +63,16 @@ function Actions({
     TOUTES_LES_ACTIONS_LABEL
   )
 
-  const initialTracking: string = showSuccessMessage
-    ? 'Actions jeune - Succès - Suppression Action'
-    : 'Actions jeune'
+  const pageTracking = 'Actions jeune'
+  let initialTracking = pageTracking
+  if (creationSuccess) initialTracking += ' - Succès - Creation Action'
+  if (suppressionSuccess) initialTracking += ' - Succès - Suppression Action'
+  if (messageEnvoiGroupeSuccess) initialTracking += ' -  Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  const closeSuccessMessage = () => {
-    setShowSuccessMessage(false)
-    router.replace(
+  async function closeCreationSuccessMessage() {
+    setShowCreationSuccess(false)
+    await router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}/actions`,
       },
@@ -73,9 +81,20 @@ function Actions({
     )
   }
 
-  function closeMessageGroupeEnvoiSuccess(): void {
+  async function closeSuppressionSuccessMessage() {
+    setShowSuppressionSuccess(false)
+    await router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}/actions`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  async function closeMessageGroupeEnvoiSuccess() {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace(
+    await router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}/actions`,
       },
@@ -87,7 +106,7 @@ function Actions({
   const handleActionsFiltreesClicked = (newFilter: StatutAction | string) => {
     setCurrentFilter(newFilter)
     if (newFilter === TOUTES_LES_ACTIONS_LABEL) {
-      setTrackingLabel('Actions jeune')
+      setTrackingLabel(pageTracking)
       setActionsFiltrees(actions)
     } else {
       const statut = newFilter as StatutAction
@@ -115,11 +134,6 @@ function Actions({
   }
 
   useMatomo(trackingLabel)
-  useMatomo(
-    showMessageGroupeEnvoiSuccess
-      ? `Actions jeune - Succès envoi message`
-      : 'Actions jeune'
-  )
 
   useEffect(() => {
     setActionsParStatut(sortActionsParStatut(actions))
@@ -154,10 +168,17 @@ function Actions({
       </div>
 
       <div className={styles.content}>
-        {showSuccessMessage && (
-          <DeprecatedSuccessMessage
-            onAcknowledge={() => closeSuccessMessage()}
+        {showCreationSuccess && (
+          <SuccessMessage
+            label={"L'action a bien été créée"}
+            onAcknowledge={closeCreationSuccessMessage}
+          />
+        )}
+
+        {showSuppressionSuccess && (
+          <SuccessMessage
             label={"L'action a bien été supprimée"}
+            onAcknowledge={closeSuppressionSuccessMessage}
           />
         )}
 
@@ -233,10 +254,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const props: ActionsProps = {
     jeune: jeune,
     actions: [...actions].sort(compareActionsDatesDesc),
-    deleteSuccess: Boolean(context.query.deleteSuccess),
     pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`,
   }
 
+  if (context.query?.creation) {
+    props.creationSuccess = context.query.creation === 'succes'
+  }
+  if (context.query?.suppression) {
+    props.suppressionSuccess = context.query.suppression === 'succes'
+  }
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
   }

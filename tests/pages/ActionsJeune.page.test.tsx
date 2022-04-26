@@ -48,7 +48,6 @@ describe("Page Liste des actions d'un jeune", () => {
       renderWithSession(
         <Actions
           jeune={jeune}
-          deleteSuccess={false}
           actions={[
             ...actions,
             uneActionCommencee,
@@ -56,6 +55,8 @@ describe("Page Liste des actions d'un jeune", () => {
             uneActionAnnulee,
           ]}
           pageTitle=''
+          creationSuccess={true}
+          suppressionSuccess={true}
         />
       )
     })
@@ -92,6 +93,18 @@ describe("Page Liste des actions d'un jeune", () => {
       expect(
         screen.getByRole('link', { name: 'Créer une nouvelle action' })
       ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
+    })
+
+    it("affiche le succès de la création d'une action", () => {
+      // Then
+      expect(screen.getByText("L'action a bien été créée")).toBeInTheDocument()
+    })
+
+    it("affiche le succès de la suppression d'une action", () => {
+      // Then
+      expect(
+        screen.getByText("L'action a bien été supprimée")
+      ).toBeInTheDocument()
     })
 
     describe("Filtres de la liste d'actions", () => {
@@ -243,7 +256,12 @@ describe("Page Liste des actions d'un jeune", () => {
 
         // When
         actual = await getServerSideProps({
-          query: { jeune_id: 'id-jeune' },
+          query: {
+            jeune_id: 'id-jeune',
+            creation: 'succes',
+            suppression: 'succes',
+            envoiMessage: 'succes',
+          },
         } as unknown as GetServerSidePropsContext)
       })
 
@@ -266,6 +284,27 @@ describe("Page Liste des actions d'un jeune", () => {
         )
         expect(actual).toMatchObject({
           props: { actions: [actions[2], actions[1], actions[0]] },
+        })
+      })
+
+      it("récupère le résultat de la suppression d'une action", () => {
+        // The
+        expect(actual).toMatchObject({
+          props: { suppressionSuccess: true },
+        })
+      })
+
+      it("récupère le résultat de l'envoi d'un message groupé", () => {
+        // The
+        expect(actual).toMatchObject({
+          props: { messageEnvoiGroupeSuccess: true },
+        })
+      })
+
+      it("récupère le résultat de la cráetion d'une action", () => {
+        // The
+        expect(actual).toMatchObject({
+          props: { creationSuccess: true },
         })
       })
     })
