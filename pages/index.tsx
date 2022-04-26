@@ -15,23 +15,6 @@ interface HomePageProps {
 }
 
 function Home({ conseiller }: HomePageProps) {
-  //TODO: pour status connexion
-
-  // const { data: session } = useSession<true>({ required: true })
-  // const conseillerService =
-  //   useDependance<ConseillerService>('conseillerService')
-  // const [current, setConseiller] = useState<Conseiller | undefined>(undefined)
-  //
-  // useEffect(() => {
-  //   if (session) {
-  //     const { user, accessToken } = session
-  //     conseillerService
-  //       .getConseiller(user.id, accessToken)
-  //       .then((currentConseiller) => setConseiller(currentConseiller))
-  //       .then(() => console.log('current effect', current))
-  //   }
-  // }, [conseillerService, session])
-
   return <>{!conseiller?.agence?.id && <RenseignementModal />}</>
 }
 
@@ -52,12 +35,14 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     ? `?source=${context.query.source}`
     : ''
 
-  console.log('query source', context.query)
-
   const conseillerService =
     withDependance<ConseillerService>('conseillerService')
 
   const conseiller = await conseillerService.getConseiller(user.id, accessToken)
+
+  if (!conseiller) {
+    return { notFound: true }
+  }
 
   if (conseiller?.agence?.id) {
     return {
@@ -68,11 +53,6 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     }
   }
 
-  if (!conseiller) {
-    return { notFound: true }
-  }
-
-  console.log('server side', conseiller)
   return {
     props: {
       conseiller: conseiller,

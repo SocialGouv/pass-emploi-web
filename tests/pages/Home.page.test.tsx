@@ -28,7 +28,7 @@ describe('Home', () => {
         it('affiche une modale', async () => {
           // Given
           conseillerService = mockedConseillerService({
-            getConseiller: jest.fn(async () => Promise.resolve()),
+            getConseiller: jest.fn(async () => Promise.resolve(unConseiller())),
           })
 
           renderWithSession(
@@ -95,7 +95,37 @@ describe('Home', () => {
     })
 
     describe('si le conseiller a renseigné son agence', () => {
-      xit('redirige vers la liste des jeunes', async () => {})
+      it('redirige vers la liste des jeunes', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { id: '1' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        const conseillerAvecAgence = {
+          ...unConseiller(),
+          agence: { id: '443', nom: 'MLS3F SAINT-LOUIS' },
+        }
+        conseillerService = mockedConseillerService({
+          getConseiller: jest.fn(async () => conseillerAvecAgence),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'conseillerService') return conseillerService
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: {},
+        } as unknown as GetServerSidePropsContext)
+
+        //Then
+        expect(actual).toEqual({
+          redirect: { destination: '/mes-jeunes', permanent: true },
+        })
+      })
     })
   })
 })
