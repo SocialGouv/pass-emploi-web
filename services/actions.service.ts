@@ -22,7 +22,7 @@ export interface ActionsService {
   getActionsJeune(idJeune: string, accessToken: string): Promise<ActionJeune[]>
 
   createAction(
-    newAction: { content: string; comment: string },
+    action: { intitule: string; commentaire: string },
     idConseiller: string,
     idJeune: string,
     accessToken: string
@@ -77,14 +77,15 @@ export class ActionsApiService implements ActionsService {
   }
 
   async createAction(
-    newAction: { content: string; comment: string },
+    action: { intitule: string; commentaire: string },
     idConseiller: string,
     idJeune: string,
     accessToken: string
   ): Promise<void> {
+    const payload = { content: action.intitule, comment: action.commentaire }
     await this.apiClient.post(
       `/conseillers/${idConseiller}/jeunes/${idJeune}/action`,
-      newAction,
+      payload,
       accessToken
     )
   }

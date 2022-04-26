@@ -1,12 +1,12 @@
 import { ApiClient } from 'clients/api.client'
-import { ActionsApiService } from 'services/actions.service'
 import {
   uneAction,
   uneActionJson,
   uneListeDActions,
   uneListeDActionsJson,
-} from '../../fixtures/action'
-import { StatutAction } from '../../interfaces/action'
+} from 'fixtures/action'
+import { StatutAction } from 'interfaces/action'
+import { ActionsApiService } from 'services/actions.service'
 
 jest.mock('clients/api.client')
 
@@ -97,14 +97,9 @@ describe('ActionsApiService', () => {
   describe('.createAction', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
-      const newAction: any = {
-        content: 'content',
-        comment: 'comment',
-      }
-
       // WHEN
       await actionsService.createAction(
-        newAction,
+        { intitule: 'content', commentaire: 'comment' },
         'id-conseiller',
         'id-jeune',
         'accessToken'
@@ -113,7 +108,7 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/action',
-        newAction,
+        { content: 'content', comment: 'comment' },
         'accessToken'
       )
     })

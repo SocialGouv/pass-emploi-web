@@ -1,13 +1,12 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
-import AddActionModal from 'components/action/AddActionModal'
 import FiltresActionsTabList, {
   LABELS_FILTRES,
   TOUTES_LES_ACTIONS_LABEL,
@@ -15,13 +14,13 @@ import FiltresActionsTabList, {
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import SuccessMessage from 'components/SuccessMessage'
-import Button from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import {
   ActionJeune,
   ActionsParStatut,
-  StatutAction,
   compareActionsDatesDesc,
   NombreActionsParStatut,
+  StatutAction,
 } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -47,7 +46,6 @@ function Actions({
   messageEnvoiGroupeSuccess,
 }: ActionsProps) {
   const router = useRouter()
-  const [showModal, setShowModal] = useState<boolean>(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
@@ -149,22 +147,13 @@ function Actions({
           </p>
         </div>
 
-        <Button onClick={() => setShowModal(true)}>
+        <ButtonLink href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}>
           <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
           Créer une nouvelle action
-        </Button>
+        </ButtonLink>
       </div>
 
       <div className={styles.content}>
-        {showModal && (
-          <AddActionModal
-            onClose={() => {
-              setShowModal(false)
-              setTrackingLabel('Actions jeune')
-            }}
-            onAdd={Router.reload}
-          />
-        )}
         {showSuccessMessage && (
           <DeprecatedSuccessMessage
             onAcknowledge={() => closeSuccessMessage()}

@@ -121,10 +121,6 @@ describe('EditionRdv', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
-          'id-conseiller',
-          'accessToken'
-        )
         expect(actual).toMatchObject({
           props: { redirectTo: '/mes-rendezvous' },
         })
@@ -142,10 +138,6 @@ describe('EditionRdv', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
-          'id-conseiller',
-          'accessToken'
-        )
         expect(actual).toMatchObject({
           props: { idJeune: 'id-jeune' },
         })
@@ -255,7 +247,7 @@ describe('EditionRdv', () => {
           expect(selectJeune).toBeInTheDocument()
           expect(selectJeune).toHaveAttribute('required', '')
           for (const jeune of jeunes) {
-            const jeuneOption = within(etape).getByRole('option', {
+            const jeuneOption = within(selectJeune).getByRole('option', {
               name: `${jeune.lastName} ${jeune.firstName}`,
             })
             expect(jeuneOption).toBeInTheDocument()
