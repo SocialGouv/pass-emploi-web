@@ -76,6 +76,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <>
+      <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
       <div
         className={`${styles.container} ${
           !withoutChat ? styles.container_with_chat : ''
@@ -83,7 +84,6 @@ export default function Layout({ children }: LayoutProps) {
       >
         <Sidebar />
         <div className={styles.page}>
-          <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
           <main role='main'>{children}</main>
           <Footer />
         </div>

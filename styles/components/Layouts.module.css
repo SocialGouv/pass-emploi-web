@@ -50,7 +50,8 @@
 
 .content.content_without_chat {
   max-width: 500px;
-  margin: auto
+  padding: 40px 0;
+  margin: auto;
 }
 
 .footer {

@@ -6,7 +6,7 @@ import { FormEvent, useState } from 'react'
 
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
-import Button from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
@@ -26,14 +26,15 @@ function EditionAction({ idJeune }: EditionActionProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
 
-  const [tab, setTab] = useState<'predefinies' | 'personnalisees'>(
-    'predefinies'
-  )
+  const [currentTab, setCurrentTab] = useState<
+    'predefinies' | 'personnalisees'
+  >('predefinies')
   const [intitule, setIntitule] = useState<string>('')
   const [commentaire, setCommentaire] = useState<string>('')
+  const INPUT_MAX_LENGTH = 250
 
   function switchTab() {
-    setTab((prevTab) =>
+    setCurrentTab((prevTab) =>
       prevTab === 'predefinies' ? 'personnalisees' : 'predefinies'
     )
   }
@@ -70,15 +71,22 @@ function EditionAction({ idJeune }: EditionActionProps) {
           Créer une nouvelle action
         </h1>
       </div>
-      <div className={`${styles.content} ${styles.content_without_chat}`}>
+      <div
+        className={`${styles.content} ${styles.content_without_chat} w-full`}
+      >
         <form onSubmit={creerAction}>
-          <div role='tablist'>
+          <div role='tablist' className='flex mb-10'>
             <Button
               role='tab'
               type='button'
               id='creer-action-predefinie'
               controls='form-action-predefinie'
               onClick={switchTab}
+              style={
+                currentTab === 'predefinies'
+                  ? ButtonStyle.PRIMARY
+                  : ButtonStyle.SECONDARY
+              }
             >
               Action prédéfinie
             </Button>
@@ -88,45 +96,72 @@ function EditionAction({ idJeune }: EditionActionProps) {
               id='creer-action-personnalisee'
               controls='form-action-personnalisee'
               onClick={switchTab}
+              className='ml-6'
+              style={
+                currentTab === 'personnalisees'
+                  ? ButtonStyle.PRIMARY
+                  : ButtonStyle.SECONDARY
+              }
             >
               Action personnalisée
             </Button>
           </div>
 
-          {tab === 'predefinies' && (
+          <p className='text-sm-medium text-content_color'>
+            Tous les champs avec * sont obligatoires
+          </p>
+
+          {currentTab === 'predefinies' && (
             <div
               id='form-action-predefinie'
               aria-labelledby='creer-action-predefinie'
+              className='mt-5'
             >
-              <label htmlFor='intitule-action-predefinie'>
+              <label
+                htmlFor='intitule-action-predefinie'
+                className='text-md text-content_color block'
+              >
                 * Choisir une action prédéfinie
               </label>
               <select
                 id='intitule-action-predefinie'
                 required={true}
                 onChange={(e) => setIntitule(e.target.value)}
+                defaultValue={''}
+                className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
               >
+                <option aria-hidden hidden disabled value={''} />
                 {actionsPredefinies.map(({ id, content }) => (
                   <option key={id}>{content}</option>
                 ))}
               </select>
 
-              <label htmlFor='commentaire-action-predefinie'>
+              <label
+                htmlFor='commentaire-action-predefinie'
+                className='mt-10 text-md text-content_color block'
+              >
                 Commentaire de l&apos;action
               </label>
               <textarea
                 id='commentaire-action-predefinie'
                 onChange={(e) => setCommentaire(e.target.value)}
+                maxLength={INPUT_MAX_LENGTH}
+                rows={3}
+                className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
               />
             </div>
           )}
 
-          {tab === 'personnalisees' && (
+          {currentTab === 'personnalisees' && (
             <div
               id='form-action-personnalisee'
               aria-labelledby='creer-action-personnalisee'
+              className='mt-5'
             >
-              <label htmlFor='intitule-action-personnalisee'>
+              <label
+                htmlFor='intitule-action-personnalisee'
+                className='text-md text-content_color block'
+              >
                 * Intitulé de l&apos;action
               </label>
               <input
@@ -134,24 +169,40 @@ function EditionAction({ idJeune }: EditionActionProps) {
                 id='intitule-action-personnalisee'
                 required={true}
                 onChange={(e) => setIntitule(e.target.value)}
+                className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
               />
 
-              <label htmlFor='commentaire-action-personnalisee'>
+              <label
+                htmlFor='commentaire-action-personnalisee'
+                className='mt-10 text-md text-content_color block'
+              >
                 Commentaire de l&apos;action
               </label>
               <textarea
                 id='commentaire-action-personnalisee'
                 onChange={(e) => setCommentaire(e.target.value)}
+                maxLength={INPUT_MAX_LENGTH}
+                rows={3}
+                className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
               />
             </div>
           )}
 
-          <ButtonLink href={`/mes-jeunes/${idJeune}/actions`}>
-            Annuler
-          </ButtonLink>
-          <Button type='submit' disabled={!formulaireEstValide()}>
-            Envoyer
-          </Button>
+          <div className='mt-10 flex justify-center'>
+            <ButtonLink
+              href={`/mes-jeunes/${idJeune}/actions`}
+              style={ButtonStyle.SECONDARY}
+            >
+              Annuler
+            </ButtonLink>
+            <Button
+              type='submit'
+              disabled={!formulaireEstValide()}
+              className='ml-6'
+            >
+              Envoyer
+            </Button>
+          </div>
         </form>
       </div>
     </>
