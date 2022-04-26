@@ -1,4 +1,6 @@
-import { act, waitFor, screen } from '@testing-library/react'
+import { act, waitFor } from '@testing-library/react'
+
+import renderWithSession from '../renderWithSession'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
@@ -9,12 +11,10 @@ import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
-jest.mock('components/Modal', () => jest.fn(({ children }) => <>{children}</>))
 jest.useFakeTimers()
 
 describe('<Layout />', () => {
@@ -120,34 +120,7 @@ describe('<Layout />', () => {
     })
   })
 
-  describe('quand le conseiller se connecte', () => {
-    describe('quand le conseiller à renseigner son agence', () => {})
-    describe('quand le conseiller n’à pas renseigné son agence', () => {
-      it('affiche une modale', async () => {
-        // Given & When
-        ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
-          jeunes
-        )
-        await act(async () => {
-          await renderWithSession(
-            <DIProvider dependances={{ jeunesService, messagesService }}>
-              <Layout>
-                <FakeComponent pageTitle='un titre' />
-              </Layout>
-            </DIProvider>
-          )
-        })
-        // Then
-        await waitFor(() => {
-          expect(
-            screen.getByText('Ajoutez votre agence à votre profil')
-          ).toBeInTheDocument()
-        })
-      })
-    })
-  })
+  function FakeComponent(_: { pageTitle: string }) {
+    return <></>
+  }
 })
-
-function FakeComponent(_: { pageTitle: string }) {
-  return <></>
-}

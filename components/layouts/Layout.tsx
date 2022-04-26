@@ -5,6 +5,7 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from '../AppHead'
+import RenseignementModal from '../RenseignementModal'
 
 import ChatRoom from './ChatRoom'
 import Sidebar from './Sidebar'
@@ -16,7 +17,6 @@ import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useSession from 'utils/auth/useSession'
 import { useDependance } from 'utils/injectionDependances'
-import RenseignementModal from '../RenseignementModal'
 
 type LayoutProps = {
   children: ReactElement
@@ -31,7 +31,6 @@ export default function Layout({ children }: LayoutProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const { data: session } = useSession<true>({ required: true })
-  const [isAgenceRenseignee, setIsAgenceRenseignee] = useState(true)
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
 
@@ -90,7 +89,6 @@ export default function Layout({ children }: LayoutProps) {
           <Footer />
         </div>
         {!withoutChat && <ChatRoom jeunesChats={chats} />}
-        {isAgenceRenseignee && <RenseignementModal />}
       </div>
       <div id='modal-root' />
     </>
