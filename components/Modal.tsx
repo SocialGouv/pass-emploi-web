@@ -122,7 +122,10 @@ const Modal = forwardRef((props: ModalProps, ref) => {
           </button>
         )}
         {showTitle && (
-          <h1 id='modal-title' className='h4-semi flex-auto'>
+          <h1
+            id='modal-title'
+            className='text-base-medium text-content_color text-center flex-auto'
+          >
             {title}
           </h1>
         )}

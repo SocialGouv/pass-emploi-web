@@ -15,7 +15,15 @@ interface HomePageProps {
 }
 
 function Home({ conseiller }: HomePageProps) {
-  return <>{!conseiller?.agence?.id && <RenseignementModal />}</>
+  const { data: session } = useSession({ required: true })
+
+  return (
+    <>
+      {!conseiller?.agence?.id && (
+        <RenseignementModal typeStructure={session?.user?.structure} />
+      )}
+    </>
+  )
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async (

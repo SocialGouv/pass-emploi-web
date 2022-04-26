@@ -38,7 +38,11 @@ describe('Home', () => {
           )
 
           // Then
-          expect(screen.getByText('une modale')).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Afin d’améliorer la qualité du service, nous avons besoin de connaître votre agence de rattachement.'
+            )
+          ).toBeInTheDocument()
         })
       })
     })
