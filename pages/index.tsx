@@ -1,26 +1,31 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { useEffect, useState } from 'react'
 
 import RenseignementModal from 'components/RenseignementModal'
-import { Conseiller } from 'interfaces/conseiller'
+import { Conseiller, UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface HomePageProps {
   conseiller: Conseiller
+  structureConseiller: string
 }
 
-function Home({ conseiller }: HomePageProps) {
-  const { data: session } = useSession({ required: true })
+function Home({ conseiller, structureConseiller }: HomePageProps) {
+  const isPoleEmploi = structureConseiller === UserStructure.POLE_EMPLOI
+  const isMilo = structureConseiller === UserStructure.MILO
+
+  const type =
+    structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
 
   return (
     <>
-      {!conseiller?.agence?.id && (
-        <RenseignementModal typeStructure={session?.user?.structure} />
+      {isPoleEmploi && !conseiller?.agence?.id && (
+        <RenseignementModal structureConseiller={type} onClose={() => ({})} />
+      )}
+      {isMilo && !conseiller?.agence?.id && (
+        <RenseignementModal structureConseiller={type} onClose={() => ({})} />
       )}
     </>
   )
@@ -64,6 +69,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   return {
     props: {
       conseiller: conseiller,
+      structureConseiller: user.structure,
     },
   }
 }
