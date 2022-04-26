@@ -14,7 +14,9 @@ interface HomePageProps {
 }
 
 function Home({ conseiller, structureConseiller }: HomePageProps) {
-  const [showRenseignementModal, setShowRenseignementModal] = useState(Boolean(!conseiller?.agence?.id))
+  const [showRenseignementModal, setShowRenseignementModal] = useState(
+    Boolean(!conseiller?.agence?.id)
+  )
   const isPassEmploi = structureConseiller === UserStructure.PASS_EMPLOI
 
   function handleCloseModal() {
@@ -59,7 +61,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     return { notFound: true }
   }
 
-  if (conseiller?.agence?.id) {
+  if (conseiller?.agence?.id || user.structure === UserStructure.PASS_EMPLOI) {
     return {
       redirect: {
         destination: `/mes-jeunes${sourceQueryParam}`,
