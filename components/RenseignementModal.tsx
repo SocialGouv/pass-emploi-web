@@ -1,6 +1,7 @@
 import React, { MouseEvent, useRef } from 'react'
 
 import InfoIcon from '../assets/icons/information.svg'
+import { UserStructure } from '../interfaces/conseiller'
 
 import Modal from './Modal'
 
@@ -13,13 +14,16 @@ export default function RenseignementModal({
   structureConseiller,
   onClose,
 }: RenseignementModalProps) {
+  const type =
+    structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
+
   const modalRef = useRef<{
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
 
   return (
     <Modal
-      title={`Ajoutez votre ${structureConseiller} à votre profil`}
+      title={`Ajoutez votre ${type} à votre profil`}
       onClose={onClose}
       ref={modalRef}
     >
@@ -27,7 +31,7 @@ export default function RenseignementModal({
         <p className='flex text-base-medium  items-center mb-2'>
           <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
           Afin d’améliorer la qualité du service, nous avons besoin de connaître
-          votre {structureConseiller} de rattachement.
+          votre {type} de rattachement.
         </p>
       </div>
     </Modal>

@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import { useState } from 'react'
 
 import RenseignementModal from 'components/RenseignementModal'
 import { Conseiller, UserStructure } from 'interfaces/conseiller'
@@ -13,19 +14,20 @@ interface HomePageProps {
 }
 
 function Home({ conseiller, structureConseiller }: HomePageProps) {
-  const isPoleEmploi = structureConseiller === UserStructure.POLE_EMPLOI
-  const isMilo = structureConseiller === UserStructure.MILO
+  const [showRenseignementModal, setShowRenseignementModal] = useState(Boolean(!conseiller?.agence?.id))
+  const isPassEmploi = structureConseiller === UserStructure.PASS_EMPLOI
 
-  const type =
-    structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
+  function handleCloseModal() {
+    setShowRenseignementModal(false)
+  }
 
   return (
     <>
-      {isPoleEmploi && !conseiller?.agence?.id && (
-        <RenseignementModal structureConseiller={type} onClose={() => ({})} />
-      )}
-      {isMilo && !conseiller?.agence?.id && (
-        <RenseignementModal structureConseiller={type} onClose={() => ({})} />
+      {showRenseignementModal && !isPassEmploi && !conseiller?.agence?.id && (
+        <RenseignementModal
+          structureConseiller={structureConseiller}
+          onClose={handleCloseModal}
+        />
       )}
     </>
   )

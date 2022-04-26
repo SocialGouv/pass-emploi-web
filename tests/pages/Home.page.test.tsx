@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { Conseiller, UserStructure } from '../../interfaces/conseiller'
 import renderWithSession from '../renderWithSession'
 
 import { unConseiller } from 'fixtures/conseiller'
@@ -24,25 +25,58 @@ describe('Home', () => {
     describe('contenu', () => {
       describe('si le conseiller n’a pas renseigné son agence', () => {
         let conseillerService: ConseillerService
+        describe('on affiche une modale', () => {
+          let conseiller: Conseiller
+          it('en tant que conseiller Pôle Emploi', () => {
+            // Given
+            conseiller = { ...unConseiller(), agence: { id: '', nom: '' } }
+            conseillerService = mockedConseillerService({
+              getConseiller: jest.fn(async () =>
+                Promise.resolve(conseiller)
+              ),
+            })
 
-        it('affiche une modale', async () => {
-          // Given
-          conseillerService = mockedConseillerService({
-            getConseiller: jest.fn(async () => Promise.resolve(unConseiller())),
-          })
-
-          renderWithSession(
-            <DIProvider dependances={{ conseillerService }}>
-              <Home conseiller={unConseiller()} />
-            </DIProvider>
-          )
-
-          // Then
-          expect(
-            screen.getByText(
-              'Afin d’améliorer la qualité du service, nous avons besoin de connaître votre agence de rattachement.'
+            renderWithSession(
+              <DIProvider dependances={{ conseillerService }}>
+                <Home
+                  conseiller={conseiller}
+                  structureConseiller={UserStructure.POLE_EMPLOI}
+                />
+              </DIProvider>
             )
-          ).toBeInTheDocument()
+
+            // Then
+            expect(
+              screen.getByText(
+                'Afin d’améliorer la qualité du service, nous avons besoin de connaître votre agence de rattachement.'
+              )
+            ).toBeInTheDocument()
+          })
+          it('en tant que conseiller Mission locale', () => {
+            // Given
+            conseiller = { ...unConseiller(), agence: { id: '', nom: '' } }
+            conseillerService = mockedConseillerService({
+              getConseiller: jest.fn(async () =>
+                Promise.resolve(conseiller)
+              ),
+            })
+
+            renderWithSession(
+              <DIProvider dependances={{ conseillerService }}>
+                <Home
+                  conseiller={conseiller}
+                  structureConseiller={UserStructure.MILO}
+                />
+              </DIProvider>
+            )
+
+            // Then
+            expect(
+              screen.getByText(
+                'Afin d’améliorer la qualité du service, nous avons besoin de connaître votre Mission locale de rattachement.'
+              )
+            ).toBeInTheDocument()
+          })
         })
       })
     })
