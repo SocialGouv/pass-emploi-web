@@ -1,7 +1,7 @@
-import { ActionJeune, StatutAction } from '../action'
+import { Action, StatutAction } from '../action'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
-export interface ActionJeuneJson {
+export interface ActionJson {
   id: string
   content: string
   comment: string
@@ -18,7 +18,7 @@ export interface ActionsCountJson {
   inProgressActionsCount: number
 }
 
-export function jsonToActionJeune(json: ActionJeuneJson): ActionJeune {
+export function jsonToAction(json: ActionJson): Action {
   return {
     id: json.id,
     content: json.content,

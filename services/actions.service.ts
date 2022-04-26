@@ -1,25 +1,26 @@
 import { ApiClient } from 'clients/api.client'
-import { ActionJeune, StatutAction, TotalActions } from 'interfaces/action'
+import { Action, StatutAction, TotalActions } from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
 import {
-  ActionJeuneJson,
+  ActionJson,
   ActionsCountJson,
   actionStatusToJson,
-  jsonToActionJeune,
+  jsonToAction,
 } from 'interfaces/json/action'
+import { RequestError } from 'utils/fetchJson'
 
 export interface ActionsService {
   getAction(
     idAction: string,
     accessToken: string
-  ): Promise<ActionJeune & { jeune: Jeune }>
+  ): Promise<{ action: Action; jeune: Jeune } | undefined>
 
   countActionsJeunes(
     idConseiller: string,
     accessToken: string
   ): Promise<TotalActions[]>
 
-  getActionsJeune(idJeune: string, accessToken: string): Promise<ActionJeune[]>
+  getActionsJeune(idJeune: string, accessToken: string): Promise<Action[]>
 
   createAction(
     action: { intitule: string; commentaire: string },
@@ -43,11 +44,16 @@ export class ActionsApiService implements ActionsService {
   async getAction(
     idAction: string,
     accessToken: string
-  ): Promise<ActionJeune & { jeune: Jeune }> {
-    const { jeune, ...actionJson } = await this.apiClient.get<
-      ActionJeuneJson & { jeune: Jeune }
-    >(`/actions/${idAction}`, accessToken)
-    return { ...jsonToActionJeune(actionJson), jeune }
+  ): Promise<{ action: Action; jeune: Jeune } | undefined> {
+    try {
+      const { jeune, ...actionJson } = await this.apiClient.get<
+        ActionJson & { jeune: Jeune }
+      >(`/actions/${idAction}`, accessToken)
+      return { action: jsonToAction(actionJson), jeune }
+    } catch (e) {
+      if (e instanceof RequestError) return undefined
+      throw e
+    }
   }
 
   async countActionsJeunes(
@@ -68,12 +74,12 @@ export class ActionsApiService implements ActionsService {
   async getActionsJeune(
     idJeune: string,
     accessToken: string
-  ): Promise<ActionJeune[]> {
-    const actionsJson = await this.apiClient.get<ActionJeuneJson[]>(
+  ): Promise<Action[]> {
+    const actionsJson = await this.apiClient.get<ActionJson[]>(
       `/jeunes/${idJeune}/actions`,
       accessToken
     )
-    return actionsJson.map(jsonToActionJeune)
+    return actionsJson.map(jsonToAction)
   }
 
   async createAction(

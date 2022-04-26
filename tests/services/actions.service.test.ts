@@ -7,6 +7,7 @@ import {
 } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 import { ActionsApiService } from 'services/actions.service'
+import { RequestError } from 'utils/fetchJson'
 
 jest.mock('clients/api.client')
 
@@ -35,7 +36,7 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
     })
 
     it('renvoie une action commencée', async () => {
@@ -53,7 +54,7 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
     })
 
     it('renvoie une action terminée', async () => {
@@ -71,7 +72,20 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+    })
+
+    it('ne renvoie pas une action inexistante', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new RequestError('Action non trouvée', 'NON_TROUVE')
+      )
+
+      // WHEN
+      const actual = await actionsService.getAction('action-id', 'accessToken')
+
+      // THEN
+      expect(actual).toEqual(undefined)
     })
   })
 

@@ -15,7 +15,7 @@ import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
 import {
-  ActionJeune,
+  Action,
   ActionsParStatut,
   compareActionsDatesDesc,
   NombreActionsParStatut,
@@ -32,7 +32,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface ActionsProps {
   jeune: Jeune
-  actions: ActionJeune[]
+  actions: Action[]
   pageTitle: string
   creationSuccess?: boolean
   suppressionSuccess?: boolean
@@ -115,9 +115,7 @@ function Actions({
     }
   }
 
-  function sortActionsParStatut(
-    actionsATrier: ActionJeune[]
-  ): ActionsParStatut {
+  function sortActionsParStatut(actionsATrier: Action[]): ActionsParStatut {
     return Object.values(StatutAction).reduce((parStatut, statut) => {
       parStatut[statut] = actionsATrier.filter(
         (action) => action.status === statut

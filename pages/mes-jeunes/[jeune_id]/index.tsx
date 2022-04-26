@@ -15,7 +15,7 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
-import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
+import { Action, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -32,7 +32,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface FicheJeuneProps {
   jeune: Jeune
   rdvs: RdvListItem[]
-  actions: ActionJeune[]
+  actions: Action[]
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean

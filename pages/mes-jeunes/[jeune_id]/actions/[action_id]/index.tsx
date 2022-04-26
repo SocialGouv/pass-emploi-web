@@ -11,7 +11,7 @@ import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import EchecMessage from 'components/EchecMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { ActionJeune, StatutAction } from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { ActionsService } from 'services/actions.service'
@@ -20,10 +20,11 @@ import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { formatDayDate } from 'utils/date'
-import { Container, useDependance } from 'utils/injectionDependances'
+import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 type PageActionProps = {
-  action: ActionJeune
+  action: Action
   jeune: Jeune
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
@@ -194,25 +195,25 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     return { notFound: true }
   }
 
-  const { actionsService } = Container.getDIContainer().dependances
-  const res = await actionsService.getAction(
+  const actionsService = withDependance<ActionsService>('actionsService')
+  const actionEtJeune = await actionsService.getAction(
     context.query.action_id as string,
     accessToken
   )
+  if (!actionEtJeune) return { notFound: true }
 
+  const { action, jeune } = actionEtJeune
   const props: PageActionProps = {
-    action: res,
-    jeune: res.jeune,
-    pageTitle: `Mes jeunes - Actions de ${res.jeune.firstName} ${res.jeune.lastName} - ${res.content} `,
+    action,
+    jeune,
+    pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`,
   }
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
   }
 
-  return {
-    props,
-  }
+  return { props }
 }
 
 export default withTransaction(PageAction.name, 'page')(PageAction)

@@ -8,7 +8,7 @@ import renderWithSession from '../renderWithSession'
 import { uneAction, uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 import { mockedActionsService, mockedJeunesService } from 'fixtures/services'
-import { ActionJeune, StatutAction } from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
 import Actions, {
   getServerSideProps,
@@ -227,7 +227,7 @@ describe("Page Liste des actions d'un jeune", () => {
 
     describe("quand l'utilisateur n'est pas Pole emploi", () => {
       let jeune: Jeune
-      let actions: ActionJeune[]
+      let actions: Action[]
       let jeunesService: JeunesService
       let actionsService: ActionsService
       let actual: GetServerSidePropsResult<any>
