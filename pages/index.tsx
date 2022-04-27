@@ -1,36 +1,31 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 import RenseignementModal from 'components/RenseignementModal'
-import { Conseiller, UserStructure } from 'interfaces/conseiller'
+import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface HomePageProps {
-  conseiller: Conseiller
+  redirectUrl: string
   structureConseiller: string
 }
 
-function Home({ conseiller, structureConseiller }: HomePageProps) {
-  const [showRenseignementModal, setShowRenseignementModal] = useState(
-    Boolean(!conseiller?.agence?.id)
-  )
-  const isPassEmploi = structureConseiller === UserStructure.PASS_EMPLOI
+function Home({ redirectUrl, structureConseiller }: HomePageProps) {
+  const router = useRouter()
 
-  function handleCloseModal() {
-    setShowRenseignementModal(false)
+  async function handleCloseModal() {
+    await router.push(redirectUrl)
   }
 
   return (
     <>
-      {showRenseignementModal && !isPassEmploi && !conseiller?.agence?.id && (
-        <RenseignementModal
-          structureConseiller={structureConseiller}
-          onClose={handleCloseModal}
-        />
-      )}
+      <RenseignementModal
+        structureConseiller={structureConseiller}
+        onClose={handleCloseModal}
+      />
     </>
   )
 }
@@ -61,10 +56,12 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     return { notFound: true }
   }
 
+  const redirectUrl = (context.query.redirectUrl as string) ?? '/mes-jeunes'
+
   if (conseiller?.agence?.id || user.structure === UserStructure.PASS_EMPLOI) {
     return {
       redirect: {
-        destination: `/mes-jeunes${sourceQueryParam}`,
+        destination: `${redirectUrl}${sourceQueryParam}`,
         permanent: true,
       },
     }
@@ -72,7 +69,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
   return {
     props: {
-      conseiller: conseiller,
+      redirectUrl,
       structureConseiller: user.structure,
     },
   }
