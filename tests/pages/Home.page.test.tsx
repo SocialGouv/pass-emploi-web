@@ -26,13 +26,15 @@ describe('Home', () => {
       let conseillerService: ConseillerService
       describe('on affiche une modale', () => {
         let conseiller: Conseiller
-        it('en tant que conseiller Pôle Emploi', () => {
-          // Given
+        beforeEach(() => {
           conseiller = { ...unConseiller(), agence: { id: '', nom: '' } }
           conseillerService = mockedConseillerService({
             getConseiller: jest.fn(async () => Promise.resolve(conseiller)),
           })
+        })
 
+        it('en tant que conseiller Pôle Emploi', () => {
+          // Given
           renderWithSession(
             <DIProvider dependances={{ conseillerService }}>
               <Home
@@ -49,13 +51,9 @@ describe('Home', () => {
             )
           ).toBeInTheDocument()
         })
+
         it('en tant que conseiller Mission locale', () => {
           // Given
-          conseiller = { ...unConseiller(), agence: { id: '', nom: '' } }
-          conseillerService = mockedConseillerService({
-            getConseiller: jest.fn(async () => Promise.resolve(conseiller)),
-          })
-
           renderWithSession(
             <DIProvider dependances={{ conseillerService }}>
               <Home
