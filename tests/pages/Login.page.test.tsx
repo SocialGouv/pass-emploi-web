@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { signIn } from 'next-auth/react'
-import Login from 'pages/login'
 import React from 'react'
+
+import Login from 'pages/login'
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -58,7 +59,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: 'redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'pe-conseiller' }
       )
     })
@@ -75,7 +76,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: 'redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'similo-conseiller' }
       )
     })
@@ -121,7 +122,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: 'redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=redirectUrl' },
         { kc_idp_hint: '' }
       )
     })
