@@ -1,9 +1,11 @@
 import React, { MouseEvent, useRef } from 'react'
 
 import InfoIcon from '../assets/icons/information.svg'
-import { UserStructure } from '../interfaces/conseiller'
 
 import Modal from './Modal'
+
+import { UserStructure } from 'interfaces/conseiller'
+import useMatomo from 'utils/analytics/useMatomo'
 
 interface RenseignementModalProps {
   structureConseiller: string
@@ -20,6 +22,8 @@ export default function RenseignementModal({
   const modalRef = useRef<{
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
+
+  useMatomo('Pop-in sélection agence')
 
   return (
     <Modal
