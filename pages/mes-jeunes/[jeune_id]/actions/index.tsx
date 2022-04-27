@@ -1,27 +1,25 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import AddIcon from '../../../../assets/icons/add.svg'
 import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
-import AddActionModal from 'components/action/AddActionModal'
 import FiltresActionsTabList, {
   LABELS_FILTRES,
   TOUTES_LES_ACTIONS_LABEL,
 } from 'components/action/FiltresActionsTabList'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
-import DeprecatedSuccessMessage from 'components/DeprecatedSuccessMessage'
 import SuccessMessage from 'components/SuccessMessage'
-import Button from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import {
-  ActionJeune,
+  Action,
   ActionsParStatut,
-  StatutAction,
   compareActionsDatesDesc,
   NombreActionsParStatut,
+  StatutAction,
 } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -34,21 +32,27 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface ActionsProps {
   jeune: Jeune
-  actions: ActionJeune[]
-  deleteSuccess: boolean
-  messageEnvoiGroupeSuccess?: boolean
+  actions: Action[]
   pageTitle: string
+  creationSuccess?: boolean
+  suppressionSuccess?: boolean
+  messageEnvoiGroupeSuccess?: boolean
 }
 
 function Actions({
   jeune,
   actions,
-  deleteSuccess,
+  creationSuccess,
+  suppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: ActionsProps) {
   const router = useRouter()
-  const [showModal, setShowModal] = useState<boolean>(false)
-  const [showSuccessMessage, setShowSuccessMessage] = useState(deleteSuccess)
+  const [showCreationSuccess, setShowCreationSuccess] = useState<boolean>(
+    creationSuccess ?? false
+  )
+  const [showSuppressionSuccess, setShowSuppressionSuccess] = useState<boolean>(
+    suppressionSuccess ?? false
+  )
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
   const [actionsParStatut, setActionsParStatut] = useState<ActionsParStatut>(
@@ -59,14 +63,16 @@ function Actions({
     TOUTES_LES_ACTIONS_LABEL
   )
 
-  const initialTracking: string = showSuccessMessage
-    ? 'Actions jeune - Succès - Suppression Action'
-    : 'Actions jeune'
+  const pageTracking = 'Actions jeune'
+  let initialTracking = pageTracking
+  if (creationSuccess) initialTracking += ' - Succès - Creation Action'
+  if (suppressionSuccess) initialTracking += ' - Succès - Suppression Action'
+  if (messageEnvoiGroupeSuccess) initialTracking += ' -  Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  const closeSuccessMessage = () => {
-    setShowSuccessMessage(false)
-    router.replace(
+  async function closeCreationSuccessMessage() {
+    setShowCreationSuccess(false)
+    await router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}/actions`,
       },
@@ -75,9 +81,20 @@ function Actions({
     )
   }
 
-  function closeMessageGroupeEnvoiSuccess(): void {
+  async function closeSuppressionSuccessMessage() {
+    setShowSuppressionSuccess(false)
+    await router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}/actions`,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  async function closeMessageGroupeEnvoiSuccess() {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace(
+    await router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}/actions`,
       },
@@ -89,7 +106,7 @@ function Actions({
   const handleActionsFiltreesClicked = (newFilter: StatutAction | string) => {
     setCurrentFilter(newFilter)
     if (newFilter === TOUTES_LES_ACTIONS_LABEL) {
-      setTrackingLabel('Actions jeune')
+      setTrackingLabel(pageTracking)
       setActionsFiltrees(actions)
     } else {
       const statut = newFilter as StatutAction
@@ -98,9 +115,7 @@ function Actions({
     }
   }
 
-  function sortActionsParStatut(
-    actionsATrier: ActionJeune[]
-  ): ActionsParStatut {
+  function sortActionsParStatut(actionsATrier: Action[]): ActionsParStatut {
     return Object.values(StatutAction).reduce((parStatut, statut) => {
       parStatut[statut] = actionsATrier.filter(
         (action) => action.status === statut
@@ -117,11 +132,6 @@ function Actions({
   }
 
   useMatomo(trackingLabel)
-  useMatomo(
-    showMessageGroupeEnvoiSuccess
-      ? `Actions jeune - Succès envoi message`
-      : 'Actions jeune'
-  )
 
   useEffect(() => {
     setActionsParStatut(sortActionsParStatut(actions))
@@ -149,26 +159,24 @@ function Actions({
           </p>
         </div>
 
-        <Button onClick={() => setShowModal(true)}>
+        <ButtonLink href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}>
           <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
           Créer une nouvelle action
-        </Button>
+        </ButtonLink>
       </div>
 
       <div className={styles.content}>
-        {showModal && (
-          <AddActionModal
-            onClose={() => {
-              setShowModal(false)
-              setTrackingLabel('Actions jeune')
-            }}
-            onAdd={Router.reload}
+        {showCreationSuccess && (
+          <SuccessMessage
+            label={"L'action a bien été créée"}
+            onAcknowledge={closeCreationSuccessMessage}
           />
         )}
-        {showSuccessMessage && (
-          <DeprecatedSuccessMessage
-            onAcknowledge={() => closeSuccessMessage()}
+
+        {showSuppressionSuccess && (
+          <SuccessMessage
             label={"L'action a bien été supprimée"}
+            onAcknowledge={closeSuppressionSuccessMessage}
           />
         )}
 
@@ -244,10 +252,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const props: ActionsProps = {
     jeune: jeune,
     actions: [...actions].sort(compareActionsDatesDesc),
-    deleteSuccess: Boolean(context.query.deleteSuccess),
     pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`,
   }
 
+  if (context.query?.creation) {
+    props.creationSuccess = context.query.creation === 'succes'
+  }
+  if (context.query?.suppression) {
+    props.suppressionSuccess = context.query.suppression === 'succes'
+  }
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
   }

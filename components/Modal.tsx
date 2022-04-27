@@ -9,7 +9,6 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 
-import BackIcon from '../assets/icons/back_modale.svg'
 import CloseIcon from '../assets/icons/close_modal.svg'
 
 import styles from 'styles/components/Modal.module.css'
@@ -19,7 +18,6 @@ interface ModalProps {
   onClose: () => void
   children: ReactNode
   showTitle?: boolean
-  onBack?: () => void
   customHeight?: string
   customWidth?: string
 }
@@ -29,7 +27,6 @@ const Modal = forwardRef((props: ModalProps, ref) => {
     children: modalContent,
     customHeight,
     customWidth,
-    onBack,
     onClose,
     showTitle = true,
     title,
@@ -83,12 +80,6 @@ const Modal = forwardRef((props: ModalProps, ref) => {
     onClose()
   }
 
-  // FIXME à supprimer quand creation action sur page dédiée
-  function handleBackClick(e: MouseEvent) {
-    e.preventDefault()
-    onBack!()
-  }
-
   function keyListener(e: KeyboardEvent) {
     const listener = keyListeners.current.get(e.key)
     return listener && listener(e)
@@ -111,16 +102,6 @@ const Modal = forwardRef((props: ModalProps, ref) => {
       ref={modalRef}
     >
       <div className='text-bleu_nuit flex justify-end items-center p-5'>
-        {onBack && (
-          <button type='button' onClick={handleBackClick}>
-            <BackIcon
-              role='img'
-              focusable='false'
-              className='mr-[24px]'
-              aria-label='Revenir sur la fenêtre précédente'
-            />
-          </button>
-        )}
         {showTitle && (
           <h1 id='modal-title' className='h4-semi flex-auto'>
             {title}

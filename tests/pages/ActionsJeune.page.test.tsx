@@ -1,20 +1,22 @@
 import { fireEvent, screen } from '@testing-library/react'
+import { GetServerSidePropsResult } from 'next'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import { uneAction, uneListeDActions } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
 import { mockedActionsService, mockedJeunesService } from 'fixtures/services'
-import { ActionJeune, StatutAction } from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
-import { GetServerSidePropsResult } from 'next'
-import { GetServerSidePropsContext } from 'next/types'
 import Actions, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -46,7 +48,6 @@ describe("Page Liste des actions d'un jeune", () => {
       renderWithSession(
         <Actions
           jeune={jeune}
-          deleteSuccess={false}
           actions={[
             ...actions,
             uneActionCommencee,
@@ -54,6 +55,8 @@ describe("Page Liste des actions d'un jeune", () => {
             uneActionAnnulee,
           ]}
           pageTitle=''
+          creationSuccess={true}
+          suppressionSuccess={true}
         />
       )
     })
@@ -84,6 +87,24 @@ describe("Page Liste des actions d'un jeune", () => {
         .closest('a')
       expect(backLink).toBeInTheDocument()
       expect(backLink).toHaveAttribute('href', '/mes-jeunes/jeune-1')
+    })
+
+    it('a un lien pour créer une action', () => {
+      expect(
+        screen.getByRole('link', { name: 'Créer une nouvelle action' })
+      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
+    })
+
+    it("affiche le succès de la création d'une action", () => {
+      // Then
+      expect(screen.getByText("L'action a bien été créée")).toBeInTheDocument()
+    })
+
+    it("affiche le succès de la suppression d'une action", () => {
+      // Then
+      expect(
+        screen.getByText("L'action a bien été supprimée")
+      ).toBeInTheDocument()
     })
 
     describe("Filtres de la liste d'actions", () => {
@@ -206,7 +227,7 @@ describe("Page Liste des actions d'un jeune", () => {
 
     describe("quand l'utilisateur n'est pas Pole emploi", () => {
       let jeune: Jeune
-      let actions: ActionJeune[]
+      let actions: Action[]
       let jeunesService: JeunesService
       let actionsService: ActionsService
       let actual: GetServerSidePropsResult<any>
@@ -235,7 +256,12 @@ describe("Page Liste des actions d'un jeune", () => {
 
         // When
         actual = await getServerSideProps({
-          query: { jeune_id: 'id-jeune' },
+          query: {
+            jeune_id: 'id-jeune',
+            creation: 'succes',
+            suppression: 'succes',
+            envoiMessage: 'succes',
+          },
         } as unknown as GetServerSidePropsContext)
       })
 
@@ -258,6 +284,27 @@ describe("Page Liste des actions d'un jeune", () => {
         )
         expect(actual).toMatchObject({
           props: { actions: [actions[2], actions[1], actions[0]] },
+        })
+      })
+
+      it("récupère le résultat de la suppression d'une action", () => {
+        // The
+        expect(actual).toMatchObject({
+          props: { suppressionSuccess: true },
+        })
+      })
+
+      it("récupère le résultat de l'envoi d'un message groupé", () => {
+        // The
+        expect(actual).toMatchObject({
+          props: { messageEnvoiGroupeSuccess: true },
+        })
+      })
+
+      it("récupère le résultat de la cráetion d'une action", () => {
+        // The
+        expect(actual).toMatchObject({
+          props: { creationSuccess: true },
         })
       })
     })

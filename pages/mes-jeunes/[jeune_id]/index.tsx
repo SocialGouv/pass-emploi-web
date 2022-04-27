@@ -15,7 +15,7 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
-import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
+import { Action, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -32,7 +32,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface FicheJeuneProps {
   jeune: Jeune
   rdvs: RdvListItem[]
-  actions: ActionJeune[]
+  actions: Action[]
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -84,10 +84,12 @@ function FicheJeune({
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  function closeRdvEditionMessage(): void {
+  async function closeRdvEditionMessage() {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
-    router.replace('', undefined, { shallow: true })
+    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
+      shallow: true,
+    })
   }
 
   function deleteRdv(deletedRdv: RdvListItem) {
@@ -108,9 +110,11 @@ function FicheJeune({
     setTrackingLabel(pageTracking)
   }
 
-  function closeMessageGroupeEnvoiSuccess(): void {
+  async function closeMessageGroupeEnvoiSuccess() {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace('', undefined, { shallow: true })
+    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
+      shallow: true,
+    })
   }
 
   function toggleListeConseillers(): void {

@@ -118,7 +118,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
           Message multi-destinataires
         </h1>
       </div>
-      <div className={`${styles.content} max-w-[500px] m-auto`}>
+      <div className={`${styles.content} ${styles.content_without_chat}`}>
         {erreurMessage && (
           <FailureMessage
             label={erreurMessage}

@@ -5,11 +5,11 @@ import ChevronIcon from '../../assets/icons/chevron_right.svg'
 import NoteIcon from '../../assets/icons/note_outline.svg'
 
 import StatusTag from 'components/action/StatusTag'
-import { ActionJeune } from 'interfaces/action'
+import { Action } from 'interfaces/action'
 import { formatDayDate } from 'utils/date'
 
 interface ActionRowProps {
-  action: ActionJeune
+  action: Action
   jeuneId: string
   borderStyle: string
 }

@@ -1,21 +1,28 @@
 import { RenderResult, screen, waitFor } from '@testing-library/react'
+import { GetServerSidePropsResult } from 'next'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import { uneAction } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
-import { StatutAction } from 'interfaces/action'
-import { GetServerSidePropsContext } from 'next/types'
+import { mockedActionsService } from 'fixtures/services'
+import { Action, StatutAction } from 'interfaces/action'
+import { Jeune } from 'interfaces/jeune'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('utils/injectionDependances/withDependance')
 
 describe("Page Détail d'une action d'un jeune", () => {
-  describe('pour un conseiller MiLo', () => {
+  describe('client-side', () => {
     const action = uneAction()
     const jeune = unJeune()
     let actionsService: ActionsService
@@ -75,14 +82,12 @@ describe("Page Détail d'une action d'un jeune", () => {
     describe('Au clique sur la suppression', () => {})
   })
 
-  describe('Pour un conseiller Pole Emploi', () => {
-    it('renvoie une 404', async () => {
+  describe('server-side', () => {
+    it('requiert une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        session: {
-          user: { structure: 'POLE_EMPLOI' },
-        },
-        validSession: true,
+        validSession: false,
+        redirect: 'wherever',
       })
 
       // When
@@ -90,7 +95,95 @@ describe("Page Détail d'une action d'un jeune", () => {
 
       // Then
       expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ notFound: true })
+      expect(actual).toEqual({ redirect: 'wherever' })
+    })
+
+    describe('quand le conseiller est Pôle emploi', () => {
+      it('renvoie une 404', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'POLE_EMPLOI' },
+          },
+        })
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ notFound: true })
+      })
+    })
+
+    describe("quand le conseiller n'est pas Pôle emploi", () => {
+      let action: Action
+      let jeune: Jeune
+      let actionsService: ActionsService
+      let actual: GetServerSidePropsResult<any>
+      beforeEach(async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
+        })
+        action = uneAction()
+        jeune = unJeune()
+        actionsService = mockedActionsService({
+          getAction: jest.fn(async () => ({ action, jeune })),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+
+        // When
+        actual = await getServerSideProps({
+          query: { action_id: 'id-action', envoiMessage: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+      })
+
+      it("récupère les info de l'action et du jeune", async () => {
+        // Then
+        expect(actionsService.getAction).toHaveBeenCalledWith(
+          'id-action',
+          'accessToken'
+        )
+        const pageTitle = `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`
+        expect(actual).toMatchObject({ props: { action, jeune, pageTitle } })
+      })
+
+      it("récupère le succès d'envoie de message groupé", () => {
+        // Then
+        expect(actual).toMatchObject({
+          props: { messageEnvoiGroupeSuccess: true },
+        })
+      })
+    })
+
+    describe("quand l'action n'existe pas", () => {
+      it('renvoie une 404', async () => {
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
+        })
+        const actionsService: ActionsService = mockedActionsService({
+          getAction: jest.fn(async () => undefined),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+
+        // When
+        let actual: GetServerSidePropsResult<any> = await getServerSideProps({
+          query: { action_id: 'id-action', envoiMessage: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({ notFound: true })
+      })
     })
   })
 })

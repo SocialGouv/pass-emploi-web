@@ -1,12 +1,13 @@
 import { ApiClient } from 'clients/api.client'
-import { ActionsApiService } from 'services/actions.service'
 import {
   uneAction,
   uneActionJson,
   uneListeDActions,
   uneListeDActionsJson,
-} from '../../fixtures/action'
-import { StatutAction } from '../../interfaces/action'
+} from 'fixtures/action'
+import { StatutAction } from 'interfaces/action'
+import { ActionsApiService } from 'services/actions.service'
+import { RequestError } from 'utils/fetchJson'
 
 jest.mock('clients/api.client')
 
@@ -35,7 +36,7 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
     })
 
     it('renvoie une action commencée', async () => {
@@ -53,7 +54,7 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
     })
 
     it('renvoie une action terminée', async () => {
@@ -71,7 +72,20 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+    })
+
+    it('ne renvoie pas une action inexistante', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new RequestError('Action non trouvée', 'NON_TROUVE')
+      )
+
+      // WHEN
+      const actual = await actionsService.getAction('action-id', 'accessToken')
+
+      // THEN
+      expect(actual).toEqual(undefined)
     })
   })
 
@@ -97,14 +111,9 @@ describe('ActionsApiService', () => {
   describe('.createAction', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
-      const newAction: any = {
-        content: 'content',
-        comment: 'comment',
-      }
-
       // WHEN
       await actionsService.createAction(
-        newAction,
+        { intitule: 'content', commentaire: 'comment' },
         'id-conseiller',
         'id-jeune',
         'accessToken'
@@ -113,7 +122,7 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/action',
-        newAction,
+        { content: 'content', comment: 'comment' },
         'accessToken'
       )
     })

@@ -2,12 +2,12 @@ import React from 'react'
 
 import ActionRow from './ActionRow'
 
-import { ActionJeune } from 'interfaces/action'
+import { Action } from 'interfaces/action'
 import { Jeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
   jeune: Jeune
-  actions: ActionJeune[]
+  actions: Action[]
   hideTableHead?: boolean
 }
 
@@ -44,7 +44,7 @@ export const TableauActionsJeune = ({
       </div>
 
       <div role='rowgroup' className='table-row-group'>
-        {actions.map((action: ActionJeune) => (
+        {actions.map((action: Action) => (
           <ActionRow
             key={action.id}
             action={action}

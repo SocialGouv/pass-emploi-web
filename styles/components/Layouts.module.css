@@ -48,6 +48,12 @@
   padding: 40px 48px;
 }
 
+.content.content_without_chat {
+  max-width: 500px;
+  padding: 40px 0;
+  margin: auto;
+}
+
 .footer {
   grid-area: footer;
   display: flex;
