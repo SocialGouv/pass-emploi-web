@@ -98,7 +98,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       expect(actual).toEqual({ redirect: 'wherever' })
     })
 
-    describe('quand le conseiller est Pole emploi', () => {
+    describe('quand le conseiller est Pôle emploi', () => {
       it('renvoie une 404', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -117,7 +117,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       })
     })
 
-    describe("quand le conseiller n'est pas Pole emploi", () => {
+    describe("quand le conseiller n'est pas Pôle emploi", () => {
       let action: Action
       let jeune: Jeune
       let actionsService: ActionsService

@@ -23,9 +23,9 @@ interface EditionActionProps {
 }
 
 function EditionAction({ idJeune }: EditionActionProps) {
-  const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
+  const actionsService = useDependance<ActionsService>('actionsService')
 
   type Tab = 'predefinie' | 'personnalisee'
   const tabsLabel: { [key in Tab]: string } = {
@@ -45,6 +45,10 @@ function EditionAction({ idJeune }: EditionActionProps) {
     const newTab = currentTab === 'predefinie' ? 'personnalisee' : 'predefinie'
     setCurrentTab(newTab)
     setTrackingTitle(`Actions jeune – Création action ${tabsLabel[currentTab]}`)
+  }
+
+  function isSelected(tab: string): boolean {
+    return currentTab === tab
   }
 
   function formulaireEstValide(): boolean {
@@ -97,10 +101,10 @@ function EditionAction({ idJeune }: EditionActionProps) {
                 id={`creer-action-${tab}`}
                 controls={`form-action-${tab}`}
                 onClick={switchTab}
+                tabIndex={isSelected(tab) ? -1 : 0}
+                selected={isSelected(tab)}
                 style={
-                  currentTab === tab
-                    ? ButtonStyle.PRIMARY
-                    : ButtonStyle.SECONDARY
+                  isSelected(tab) ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY
                 }
                 className='ml-3 first:ml-0'
               >
@@ -115,6 +119,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
           {currentTab === 'predefinie' && (
             <div
+              role='tabpanel'
               id='form-action-predefinie'
               aria-labelledby='creer-action-predefinie'
               className='mt-5'
@@ -156,6 +161,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
           {currentTab === 'personnalisee' && (
             <div
+              role='tabpanel'
               id='form-action-personnalisee'
               aria-labelledby='creer-action-personnalisee'
               className='mt-5'
@@ -224,7 +230,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       idJeune,
       withoutChat: true,
-      pageTitle: 'Actions jeune – Création action prédéfinie',
+      pageTitle: 'Actions jeune – Création action',
     },
   }
 }

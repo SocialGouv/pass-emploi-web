@@ -53,7 +53,7 @@ describe('NouvelleAction', () => {
           props: {
             idJeune: 'id-jeune',
             withoutChat: true,
-            pageTitle: 'Actions jeune – Création action prédéfinie',
+            pageTitle: 'Actions jeune – Création action',
           },
         })
       })
