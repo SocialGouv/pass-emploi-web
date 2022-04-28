@@ -1,11 +1,22 @@
 import { GetServerSideProps } from 'next'
 
-import { Conseiller } from 'interfaces/conseiller'
+import { Conseiller, UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-export default function Profil({ conseiller }: { conseiller: Conseiller }) {
+interface ProfilProps {
+  conseiller: Conseiller
+  structureConseiller: string
+}
+
+export default function Profil({
+  conseiller,
+  structureConseiller,
+}: ProfilProps) {
+  const labelAgence =
+    structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
+
   return (
     <>
       <h1>Profil</h1>
@@ -22,7 +33,7 @@ export default function Profil({ conseiller }: { conseiller: Conseiller }) {
 
         {conseiller.agence && (
           <>
-            <dt aria-label='Votre agence'>Votre agence :</dt>
+            <dt aria-label={`Votre ${labelAgence}`}>Votre {labelAgence} :</dt>
             <dd>{conseiller.agence.nom}</dd>
           </>
         )}
@@ -31,9 +42,9 @@ export default function Profil({ conseiller }: { conseiller: Conseiller }) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{
-  conseiller: Conseiller
-}> = async (context) => {
+export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
+  context
+) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -45,5 +56,7 @@ export const getServerSideProps: GetServerSideProps<{
   const conseiller = await conseillerService.getConseiller(user.id, accessToken)
   if (!conseiller) throw new Error(`Conseiller ${user.id} inexistant`)
 
-  return { props: { conseiller: conseiller! } }
+  return {
+    props: { conseiller: conseiller, structureConseiller: user.structure },
+  }
 }

@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
+import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { Conseiller } from '../../interfaces/conseiller'
+import { ConseillerService } from '../../services/conseiller.service'
 import getByDefinitionTerm from '../querySelector'
 
 import { unConseiller } from 'fixtures/conseiller'
@@ -30,30 +33,43 @@ describe('Page Profil conseiller', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
-      it('récupère les informations du conseiller', async () => {
+      let conseiller: Conseiller
+      let conseillerService: ConseillerService
+      let actual: GetServerSidePropsResult<any>
+
+      beforeEach(async () => {
         // Given
-        const conseiller = unConseiller()
-        const conseillerService = mockedConseillerService({
-          getConseiller: jest.fn(async () => conseiller),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(conseillerService)
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
             accessToken: 'accessToken',
-            user: { id: 'id-conseiller' },
+            user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
           },
         })
+        conseiller = unConseiller()
+        conseillerService = mockedConseillerService({
+          getConseiller: jest.fn(async () => conseiller),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(conseillerService)
 
         // When
-        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+        actual = await getServerSideProps({} as GetServerSidePropsContext)
+      })
 
+      it('récupère les informations du conseiller', () => {
         // Then
         expect(conseillerService.getConseiller).toHaveBeenCalledWith(
           'id-conseiller',
           'accessToken'
         )
-        expect(actual).toEqual({ props: { conseiller } })
+        expect(actual).toMatchObject({ props: { conseiller } })
+      })
+
+      it('récupère la structure du conseiller', () => {
+        // Then
+        expect(actual).toMatchObject({
+          props: { structureConseiller: 'POLE_EMPLOI' },
+        })
       })
     })
 
@@ -95,6 +111,7 @@ describe('Page Profil conseiller', () => {
               email: 'nils.tavernier@mail.com',
               agence: { id: 'MLS3F', nom: 'MLS3F SAINT-LOUIS' },
             })}
+            structureConseiller='POLE_EMPLOI'
           />
         )
       })
@@ -121,7 +138,12 @@ describe('Page Profil conseiller', () => {
     describe('quand il manque des informations', () => {
       it("n'affiche pas les informations manquantes", () => {
         // When
-        render(<Profil conseiller={unConseiller()} />)
+        render(
+          <Profil
+            conseiller={unConseiller()}
+            structureConseiller='POLE_EMPLOI'
+          />
+        )
 
         // Then
         expect(() =>
@@ -130,6 +152,25 @@ describe('Page Profil conseiller', () => {
         expect(() =>
           screen.getByRole('term', { name: /Votre agence/ })
         ).toThrow()
+      })
+    })
+
+    describe('quand le conseiller est MILO', () => {
+      it('affiche le label correspondant', () => {
+        // When
+        render(
+          <Profil
+            conseiller={unConseiller({
+              agence: { id: 'MLS3F', nom: 'MLS3F SAINT-LOUIS' },
+            })}
+            structureConseiller='MILO'
+          />
+        )
+
+        // Then
+        expect(getByDefinitionTerm('Votre Mission locale')).toHaveTextContent(
+          'MLS3F SAINT-LOUIS'
+        )
       })
     })
   })
