@@ -107,6 +107,10 @@ export default function Sidebar({}: SidebarProps) {
             <AideIcon aria-hidden='true' focusable='false' className='mr-2' />
             <span className='text-md text-bleu_nuit text-center'>Aide</span>
           </a>
+
+          <Link href='/profil'>
+            <a>Mon profil</a>
+          </Link>
         </nav>
       </div>
 
