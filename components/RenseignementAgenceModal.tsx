@@ -7,16 +7,16 @@ import Modal from './Modal'
 import { UserStructure } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
 
-interface RenseignementModalProps {
+interface RenseignementAgenceModalProps {
   structureConseiller: string
   onClose: () => void
 }
 
-export default function RenseignementModal({
+export default function RenseignementAgenceModal({
   structureConseiller,
   onClose,
-}: RenseignementModalProps) {
-  const type =
+}: RenseignementAgenceModalProps) {
+  const labelAgence =
     structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
 
   const modalRef = useRef<{
@@ -27,7 +27,7 @@ export default function RenseignementModal({
 
   return (
     <Modal
-      title={`Ajoutez votre ${type} à votre profil`}
+      title={`Ajoutez votre ${labelAgence} à votre profil`}
       onClose={onClose}
       ref={modalRef}
     >
@@ -35,7 +35,7 @@ export default function RenseignementModal({
         <p className='flex text-base-medium  items-center mb-2'>
           <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
           Afin d’améliorer la qualité du service, nous avons besoin de connaître
-          votre {type} de rattachement.
+          votre {labelAgence} de rattachement.
         </p>
       </div>
     </Modal>

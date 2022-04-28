@@ -1,8 +1,6 @@
 import { Conseiller } from '../interfaces/conseiller'
 import { RequestError } from '../utils/fetchJson'
 
-import ErrorCodes from './error-codes'
-
 import { ApiClient } from 'clients/api.client'
 import { DossierMilo } from 'interfaces/jeune'
 
@@ -69,7 +67,7 @@ export class ConseillerApiService implements ConseillerService {
         accessToken
       )
     } catch (e) {
-      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+      if (e instanceof RequestError) {
         return undefined
       }
       throw e

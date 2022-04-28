@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 
-import RenseignementModal from 'components/RenseignementModal'
+import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -16,15 +16,15 @@ interface HomePageProps {
 function Home({ redirectUrl, structureConseiller }: HomePageProps) {
   const router = useRouter()
 
-  async function handleCloseModal() {
+  async function redirectToUrl() {
     await router.push(redirectUrl)
   }
 
   return (
     <>
-      <RenseignementModal
+      <RenseignementAgenceModal
         structureConseiller={structureConseiller}
-        onClose={handleCloseModal}
+        onClose={redirectToUrl}
       />
     </>
   )
@@ -34,7 +34,6 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   context
 ): Promise<GetServerSidePropsResult<HomePageProps>> => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
@@ -51,14 +50,16 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     withDependance<ConseillerService>('conseillerService')
 
   const conseiller = await conseillerService.getConseiller(user.id, accessToken)
-
   if (!conseiller) {
-    return { notFound: true }
+    throw new Error(`Conseiller ${user.id} innexistant`)
   }
 
   const redirectUrl = (context.query.redirectUrl as string) ?? '/mes-jeunes'
 
-  if (conseiller?.agence?.id || user.structure === UserStructure.PASS_EMPLOI) {
+  if (
+    Boolean(conseiller.agence) ||
+    user.structure === UserStructure.PASS_EMPLOI
+  ) {
     return {
       redirect: {
         destination: `${redirectUrl}${sourceQueryParam}`,

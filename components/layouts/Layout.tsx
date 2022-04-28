@@ -5,7 +5,6 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from '../AppHead'
-import RenseignementModal from '../RenseignementModal'
 
 import ChatRoom from './ChatRoom'
 import Sidebar from './Sidebar'

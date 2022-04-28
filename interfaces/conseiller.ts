@@ -13,5 +13,5 @@ export interface Conseiller {
   id: string
   firstName: string
   lastName: string
-  agence: Agence
+  agence?: Agence
 }
