@@ -1,4 +1,7 @@
 import { act, waitFor } from '@testing-library/react'
+
+import renderWithSession from '../renderWithSession'
+
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
@@ -8,7 +11,6 @@ import { Jeune, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
@@ -117,8 +119,8 @@ describe('<Layout />', () => {
       })
     })
   })
-})
 
-function FakeComponent(_: { pageTitle: string }) {
-  return <></>
-}
+  function FakeComponent(_: { pageTitle: string }) {
+    return <></>
+  }
+})

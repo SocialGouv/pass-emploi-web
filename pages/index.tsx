@@ -1,29 +1,77 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 
+import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
+import { UserStructure } from 'interfaces/conseiller'
+import { ConseillerService } from 'services/conseiller.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withDependance from 'utils/injectionDependances/withDependance'
 
-function Home() {
-  return <></>
+interface HomePageProps {
+  redirectUrl: string
+  structureConseiller: string
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (
-  context
-): Promise<GetServerSidePropsResult<{}>> => {
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+function Home({ redirectUrl, structureConseiller }: HomePageProps) {
+  const router = useRouter()
 
+  async function redirectToUrl() {
+    await router.push(redirectUrl)
+  }
+
+  return (
+    <>
+      <RenseignementAgenceModal
+        structureConseiller={structureConseiller}
+        onClose={redirectToUrl}
+      />
+    </>
+  )
+}
+
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
+  context
+): Promise<GetServerSidePropsResult<HomePageProps>> => {
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
+
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
 
   const sourceQueryParam = context.query.source
     ? `?source=${context.query.source}`
     : ''
 
+  const conseillerService =
+    withDependance<ConseillerService>('conseillerService')
+
+  const conseiller = await conseillerService.getConseiller(user.id, accessToken)
+  if (!conseiller) {
+    throw new Error(`Conseiller ${user.id} innexistant`)
+  }
+
+  const redirectUrl = (context.query.redirectUrl as string) ?? '/mes-jeunes'
+
+  if (
+    Boolean(conseiller.agence) ||
+    user.structure === UserStructure.PASS_EMPLOI
+  ) {
+    return {
+      redirect: {
+        destination: `${redirectUrl}${sourceQueryParam}`,
+        permanent: true,
+      },
+    }
+  }
+
   return {
-    redirect: {
-      destination: `/mes-jeunes${sourceQueryParam}`,
-      permanent: true,
+    props: {
+      redirectUrl,
+      structureConseiller: user.structure,
     },
   }
 }

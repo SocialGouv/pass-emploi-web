@@ -24,7 +24,11 @@ function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
       try {
         await signIn(
           'keycloak',
-          { callbackUrl: redirectUrl ?? '/' },
+          {
+            callbackUrl: redirectUrl
+              ? '/index?' + new URLSearchParams({ redirectUrl })
+              : '/',
+          },
           { kc_idp_hint: provider ?? '' }
         )
       } catch (error) {

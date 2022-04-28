@@ -1,10 +1,11 @@
+import { UserStructure } from '../interfaces/conseiller'
+
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay, TypeMessage } from 'interfaces/message'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
-import { UserStructure } from '../interfaces/conseiller'
 
 export interface MessagesService {
   signIn(token: string): Promise<void>
