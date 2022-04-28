@@ -10,19 +10,16 @@ import { formatDayDate } from 'utils/date'
 interface DetailsJeuneProps {
   jeune: Jeune
   withButtons?: boolean
-  titlePrefix?: string
 }
 
 export const DetailsJeune = ({
   jeune,
-  titlePrefix,
   withButtons = true,
 }: DetailsJeuneProps) => {
   return (
     <>
       <div className='flex'>
         <h1 className='h2-semi text-bleu_nuit mb-3'>
-          {titlePrefix ? `${titlePrefix} ` : ''}
           {jeune.firstName} {jeune.lastName}
         </h1>
 

@@ -1,7 +1,10 @@
-import React from 'react'
 import { screen } from '@testing-library/dom'
-import Sidebar from 'components/layouts/Sidebar'
+import { within } from '@testing-library/react'
+import React from 'react'
+
 import renderWithSession from '../renderWithSession'
+
+import Sidebar from 'components/layouts/Sidebar'
 import { UserStructure } from 'interfaces/conseiller'
 
 jest.mock('next/router', () => ({
@@ -28,11 +31,18 @@ describe('<Sidebar/>', () => {
     renderWithSession(<Sidebar />)
 
     // THEN
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
-    expect(screen.getByText('Rendez-vous')).toBeInTheDocument()
-    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
-    expect(screen.getByText('Aide')).toBeInTheDocument()
-    expect(() => screen.getByText('Supervision')).toThrow()
+    const navigation = screen.getByRole('navigation')
+    expect(
+      within(navigation).getByRole('link', { name: 'Rendez-vous' })
+    ).toHaveAttribute('href', '/mes-rendezvous')
+    expect(
+      within(navigation).getByRole('link', { name: 'Mes jeunes' })
+    ).toHaveAttribute('href', '/mes-jeunes')
+    expect(within(navigation).getByLabelText(/Aide/)).toBeInTheDocument()
+    expect(
+      within(navigation).getByRole('link', { name: 'Mon profil' })
+    ).toHaveAttribute('href', '/profil')
+    expect(() => within(navigation).getByText('Supervision')).toThrow()
   })
 
   it('affiche le lien de déconnexion', () => {
@@ -41,9 +51,7 @@ describe('<Sidebar/>', () => {
 
     // THEN
     expect(
-      screen.getByRole('link', {
-        name: 'Se déconnecter',
-      })
+      screen.getByRole('link', { name: 'Se déconnecter' })
     ).toBeInTheDocument()
   })
 
@@ -61,10 +69,7 @@ describe('<Sidebar/>', () => {
     })
 
     // THEN
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
     expect(() => screen.getByText('Rendez-vous')).toThrow()
-    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
-    expect(screen.getByText('Aide')).toBeInTheDocument()
   })
 
   it('affiche le lien de supervision lorsque le conseiller est superviseur', () => {
@@ -81,10 +86,9 @@ describe('<Sidebar/>', () => {
     })
 
     // THEN
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
-    expect(screen.getByText('Rendez-vous')).toBeInTheDocument()
-    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
-    expect(screen.getByText('Aide')).toBeInTheDocument()
-    expect(screen.getByText('Supervision')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Supervision' })).toHaveAttribute(
+      'href',
+      '/supervision'
+    )
   })
 })

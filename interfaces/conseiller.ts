@@ -13,5 +13,6 @@ export interface Conseiller {
   id: string
   firstName: string
   lastName: string
+  email?: string
   agence?: Agence
 }
