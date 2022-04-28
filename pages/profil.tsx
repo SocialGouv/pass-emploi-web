@@ -1,3 +1,4 @@
+import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 
 import { Conseiller, UserStructure } from 'interfaces/conseiller'
@@ -12,10 +13,7 @@ interface ProfilProps {
   pageTitle: string
 }
 
-export default function Profil({
-  conseiller,
-  structureConseiller,
-}: ProfilProps) {
+function Profil({ conseiller, structureConseiller }: ProfilProps) {
   const labelAgence =
     structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
 
@@ -68,3 +66,5 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     },
   }
 }
+
+export default withTransaction(Profil.name, 'page')(Profil)
