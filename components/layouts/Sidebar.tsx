@@ -6,6 +6,7 @@ import AideIcon from '../../assets/icons/aide.svg'
 import SupervisionIcon from '../../assets/icons/arrow-right.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
+import PersonIcon from '../../assets/icons/person.svg'
 import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
 import Logo from '../../assets/images/logo_110.svg'
 
@@ -35,10 +36,14 @@ export default function Sidebar({}: SidebarProps) {
 
   return (
     <div className={styles.sidebar}>
-      <div>
-        <Logo focusable='false' aria-hidden={true} className='mb-8 mx-auto' />
+      <Logo focusable='false' aria-hidden={true} className='mb-8 mx-auto' />
 
-        <nav role='navigation' aria-label='Menu principal'>
+      <nav
+        role='navigation'
+        aria-label='Menu principal'
+        className='grow flex flex-col justify-between'
+      >
+        <div>
           <Link href={'/mes-jeunes'}>
             <a
               className={
@@ -107,12 +112,19 @@ export default function Sidebar({}: SidebarProps) {
             <AideIcon aria-hidden='true' focusable='false' className='mr-2' />
             <span className='text-md text-bleu_nuit text-center'>Aide</span>
           </a>
+        </div>
 
-          <Link href='/profil'>
-            <a>Mon profil</a>
-          </Link>
-        </nav>
-      </div>
+        <Link href='/profil'>
+          <a className='text-md text-bleu_nuit text-center'>
+            <PersonIcon
+              focusable='false'
+              aria-hidden='true'
+              className='fill-bleu_nuit'
+            />
+            <span className='ml-2'>Mon profil</span>
+          </a>
+        </Link>
+      </nav>
 
       <div className='flex justify-between items-center'>
         {session && (

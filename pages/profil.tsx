@@ -1,8 +1,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import React from 'react'
 
 import { Conseiller, UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -21,25 +23,33 @@ function Profil({ conseiller, structureConseiller }: ProfilProps) {
 
   return (
     <>
-      <h1>Profil</h1>
-      <h3>
-        {conseiller.firstName} {conseiller.lastName}
-      </h3>
-      <dl>
-        {conseiller.email && (
-          <>
-            <dt aria-label='Votre e-mail'>Votre e-mail :</dt>
-            <dd>{conseiller.email}</dd>
-          </>
-        )}
+      <div className={styles.header}>
+        <h1 className='h2-semi text-bleu_nuit'>Profil</h1>
+      </div>
+      <div className={styles.content}>
+        <h2 className='h2-semi text-bleu_nuit'>
+          {conseiller.firstName} {conseiller.lastName}
+        </h2>
+        <dl className='mt-3 text-sm-semi text-bleu_nuit'>
+          {conseiller.email && (
+            <>
+              <dt aria-label='Votre e-mail' className='mt-2 inline'>
+                Votre e-mail :
+              </dt>
+              <dd className='inline ml-2'>{conseiller.email}</dd>
+            </>
+          )}
 
-        {conseiller.agence && (
-          <>
-            <dt aria-label={`Votre ${labelAgence}`}>Votre {labelAgence} :</dt>
-            <dd>{conseiller.agence.nom}</dd>
-          </>
-        )}
-      </dl>
+          {conseiller.agence && (
+            <>
+              <dt aria-label={`Votre ${labelAgence}`} className='inline mt-2'>
+                Votre {labelAgence} :
+              </dt>
+              <dd className='inline ml-2'>{conseiller.agence.nom}</dd>
+            </>
+          )}
+        </dl>
+      </div>
     </>
   )
 }
