@@ -2,13 +2,13 @@ import { render, screen } from '@testing-library/react'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { Conseiller } from '../../interfaces/conseiller'
-import { ConseillerService } from '../../services/conseiller.service'
 import getByDefinitionTerm from '../querySelector'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { mockedConseillerService } from 'fixtures/services'
+import { Conseiller } from 'interfaces/conseiller'
 import Profil, { getServerSideProps } from 'pages/profil'
+import { ConseillerService } from 'services/conseiller.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 

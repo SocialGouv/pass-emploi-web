@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 
 import { Conseiller, UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -16,6 +17,8 @@ export default function Profil({
 }: ProfilProps) {
   const labelAgence =
     structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
+
+  useMatomo('Profil')
 
   return (
     <>
