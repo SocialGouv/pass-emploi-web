@@ -68,7 +68,10 @@ describe('Page Profil conseiller', () => {
       it('récupère la structure du conseiller', () => {
         // Then
         expect(actual).toMatchObject({
-          props: { structureConseiller: 'POLE_EMPLOI' },
+          props: {
+            structureConseiller: 'POLE_EMPLOI',
+            pageTitle: 'Mon profil',
+          },
         })
       })
     })
@@ -112,6 +115,7 @@ describe('Page Profil conseiller', () => {
               agence: { id: 'MLS3F', nom: 'MLS3F SAINT-LOUIS' },
             })}
             structureConseiller='POLE_EMPLOI'
+            pageTitle=''
           />
         )
       })
@@ -142,6 +146,7 @@ describe('Page Profil conseiller', () => {
           <Profil
             conseiller={unConseiller()}
             structureConseiller='POLE_EMPLOI'
+            pageTitle=''
           />
         )
 
@@ -164,6 +169,7 @@ describe('Page Profil conseiller', () => {
               agence: { id: 'MLS3F', nom: 'MLS3F SAINT-LOUIS' },
             })}
             structureConseiller='MILO'
+            pageTitle=''
           />
         )
 

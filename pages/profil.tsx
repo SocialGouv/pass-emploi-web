@@ -9,6 +9,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface ProfilProps {
   conseiller: Conseiller
   structureConseiller: string
+  pageTitle: string
 }
 
 export default function Profil({
@@ -60,6 +61,10 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
   if (!conseiller) throw new Error(`Conseiller ${user.id} inexistant`)
 
   return {
-    props: { conseiller: conseiller, structureConseiller: user.structure },
+    props: {
+      conseiller: conseiller,
+      structureConseiller: user.structure,
+      pageTitle: 'Mon profil',
+    },
   }
 }
