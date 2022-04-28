@@ -45,11 +45,20 @@ module.exports = {
     reactRemoveProperties: true,
   },
   webpack(config) {
+    // https://react-svgr.com/docs/next/
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
       use: ['@svgr/webpack'],
     })
+
+    // https://www.elastic.co/guide/en/apm/agent/rum-js/current/install-the-agent.html#using-bundlers
+    const { EnvironmentPlugin } = require('webpack')
+    config.plugins.push(
+      new EnvironmentPlugin({
+        NODE_ENV: 'development',
+      })
+    )
 
     return config
   },
