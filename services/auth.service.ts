@@ -34,11 +34,13 @@ export class AuthService {
     })
   }
 
-  async getFirebaseToken(accessToken: string): Promise<{ token: string }> {
-    return this.apiClient!.post<{ token: string }>(
-      '/auth/firebase/token',
-      {},
-      accessToken
-    )
+  async getFirebaseToken(
+    accessToken: string
+  ): Promise<{ token: string; cleChiffrement: string }> {
+    const { token, cle: cleChiffrement } = await this.apiClient!.post<{
+      token: string
+      cle: string
+    }>('/auth/firebase/token', {}, accessToken)
+    return { token, cleChiffrement }
   }
 }

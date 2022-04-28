@@ -46,7 +46,7 @@ describe('<Layout />', () => {
     jeunesService = mockedJeunesService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeJeuneChat: jest.fn((idConseiller, jeune, fn) => {
+      observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
         fn(jeunesChats.find((jeuneChat) => jeuneChat.id === jeune.id)!)
         return () => {}
       }),
@@ -91,6 +91,7 @@ describe('<Layout />', () => {
         expect(messagesService.observeJeuneChat).toHaveBeenCalledWith(
           '1',
           jeune,
+          'cleChiffrement',
           expect.any(Function)
         )
       })

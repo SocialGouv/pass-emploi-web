@@ -58,14 +58,19 @@ export default function Layout({ children }: LayoutProps) {
   useEffect(() => {
     if (!session) return
 
-    const { user, accessToken, firebaseToken } = session
+    const { user, accessToken, firebaseToken, cleChiffrement } = session
     if (firebaseToken) {
       messagesService
         .signIn(firebaseToken)
         .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
         .then((jeunes) =>
           jeunes.map((jeune) =>
-            messagesService.observeJeuneChat(user.id, jeune, updateChats)
+            messagesService.observeJeuneChat(
+              user.id,
+              jeune,
+              cleChiffrement,
+              updateChats
+            )
           )
         )
         .then((destructors) => (destructorsRef.current = destructors))

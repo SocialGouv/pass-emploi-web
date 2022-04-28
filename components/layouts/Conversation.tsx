@@ -59,7 +59,8 @@ export default function Conversation({
       },
       jeuneChat,
       newMessage,
-      session!.accessToken
+      session!.accessToken,
+      session!.cleChiffrement
     )
 
     setNewMessage('')
@@ -83,6 +84,7 @@ export default function Conversation({
     (idChatToObserve: string) => {
       return messagesService.observeMessages(
         idChatToObserve,
+        session!.cleChiffrement,
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 

@@ -19,6 +19,7 @@ export default function renderWithSession(
     },
     accessToken: 'accessToken',
     firebaseToken: 'firebaseToken',
+    cleChiffrement: 'cleChiffrement',
     expires: new Date(Date.now() + 300000).toISOString(),
   }
 

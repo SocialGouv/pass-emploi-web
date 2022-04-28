@@ -25,6 +25,7 @@ describe('MessagesFirebaseAndApiService', () => {
   let apiClient: ApiClient
   let messagesService: MessagesFirebaseAndApiService
   let accessToken: string
+  let cleChiffrement: string
 
   beforeEach(async () => {
     // Given
@@ -36,6 +37,7 @@ describe('MessagesFirebaseAndApiService', () => {
       apiClient
     )
     accessToken = 'accessToken'
+    cleChiffrement = 'cleChiffrement'
   })
 
   describe('.signIn', () => {
@@ -91,7 +93,12 @@ describe('MessagesFirebaseAndApiService', () => {
       onJeuneChat = jest.fn()
 
       // When
-      messagesService.observeJeuneChat(idConseiller, jeune, onJeuneChat)
+      messagesService.observeJeuneChat(
+        idConseiller,
+        jeune,
+        cleChiffrement,
+        onJeuneChat
+      )
     })
 
     it('finds chat in firebase', async () => {
@@ -124,7 +131,7 @@ describe('MessagesFirebaseAndApiService', () => {
       onMessages = jest.fn()
 
       // When
-      await messagesService.observeMessages(idChat, onMessages)
+      await messagesService.observeMessages(idChat, cleChiffrement, onMessages)
     })
 
     it('subscribes to chat messages in firebase', async () => {
@@ -232,7 +239,8 @@ describe('MessagesFirebaseAndApiService', () => {
         conseiller,
         jeuneChat,
         newMessage,
-        accessToken
+        accessToken,
+        cleChiffrement
       )
     })
     it('adds a new message to firebase', async () => {
@@ -312,7 +320,8 @@ describe('MessagesFirebaseAndApiService', () => {
         { id: 'id-conseiller', structure: UserStructure.MILO },
         idsJeunes,
         newMessageGroupe,
-        accessToken
+        accessToken,
+        cleChiffrement
       )
     })
 

@@ -9,6 +9,7 @@ declare module 'next-auth' {
     user: Session.HydratedUser
     accessToken: string
     firebaseToken: string
+    cleChiffrement: string
     error?: string
   }
 
@@ -28,6 +29,7 @@ declare module 'next-auth/jwt' {
     accessToken?: string
     refreshToken?: string
     firebaseToken?: string
+    cleChiffrement?: string
     expiresAtTimestamp?: number
     idConseiller?: string
     structureConseiller?: string

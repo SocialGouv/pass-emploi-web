@@ -75,7 +75,8 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
         { id: session!.user.id, structure: session!.user.structure },
         selectedJeunesIds,
         message,
-        session!.accessToken
+        session!.accessToken,
+        session!.cleChiffrement
       )
       await router.push(`${previousUrl}?envoiMessage=succes`)
     } catch (error) {
