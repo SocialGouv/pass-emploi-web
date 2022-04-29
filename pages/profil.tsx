@@ -36,16 +36,19 @@ function Profil({ conseiller, structureConseiller }: ProfilProps) {
               <dt aria-label='Votre e-mail' className='mt-2 inline'>
                 Votre e-mail :
               </dt>
-              <dd className='inline ml-2'>{conseiller.email}</dd>
+              <dd className='ml-2 inline'>{conseiller.email}</dd>
             </>
           )}
 
           {conseiller.agence && (
             <>
-              <dt aria-label={`Votre ${labelAgence}`} className='inline mt-2'>
+              <dt
+                aria-label={`Votre ${labelAgence}`}
+                className='mt-2 inline before:block before:content-[""]'
+              >
                 Votre {labelAgence} :
               </dt>
-              <dd className='inline ml-2'>{conseiller.agence.nom}</dd>
+              <dd className='ml-2 inline'>{conseiller.agence.nom}</dd>
             </>
           )}
         </dl>
