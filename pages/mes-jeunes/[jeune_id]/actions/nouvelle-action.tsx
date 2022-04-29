@@ -135,7 +135,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
                 required={true}
                 onChange={(e) => setIntitule(e.target.value)}
                 defaultValue={''}
-                className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
+                className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3 truncate'
               >
                 <option aria-hidden hidden disabled value={''} />
                 {actionsPredefinies.map(({ id, content }) => (
