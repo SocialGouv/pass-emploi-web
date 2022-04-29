@@ -1,39 +1,27 @@
-module.exports = {
-  clearMocks: true,
-  collectCoverageFrom: [
-    '**/*.{js,jsx,ts,tsx}',
-    '!**/*.d.ts',
-    '!**/node_modules/**',
-  ],
-  coverageReporters: ['lcovonly'],
-  moduleNameMapper: {
-    // Handle CSS imports (with CSS modules)
-    '^.+\\.module\\.(css|sass|scss)$':
-      '<rootDir>/styles/__mocks__/styleMock.js',
+const nextJest = require('next/jest')
 
-    /* Handle image imports
-    https://jestjs.io/docs/webpack#handling-static-assets */
-    '^.+\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
-    '^components/(.*)$': '<rootDir>/components/$1',
-    '^pages/(.*)$': '<rootDir>/pages/$1',
-    '^utils/(.*)$': '<rootDir>/utils/$1',
-    '^referentiel/(.*)$': '<rootDir>/referentiel/$1',
-    '^interfaces/(.*)$': '<rootDir>/interfaces/$1',
-    '^services/(.*)$': '<rootDir>/services/$1',
-    '^clients/(.*)$': '<rootDir>/clients/$1',
-    '^fixtures/(.*)$': '<rootDir>/fixtures/$1',
-  },
+const createJestConfig = nextJest({
+  dir: './',
+})
+
+const customJestConfig = {
+  clearMocks: true,
+  moduleDirectories: ['node_modules', '<rootDir>/'],
   restoreMocks: true,
   setupFilesAfterEnv: ['./setupTests.js'],
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
-  testEnvironment: 'jsdom',
-  transform: {
-    /* Use babel-jest to transpile tests with the next/babel preset
-    https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object */
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
-  },
-  transformIgnorePatterns: [
-    '/node_modules/',
-    '^.+\\.module\\.(css|sass|scss)$',
-  ],
+  testEnvironment: 'jest-environment-jsdom',
 }
+
+// FIXME waiting for next@12.1.6 https://github.com/vercel/next.js/commit/23c82e42af6f8297ef28a4e6fd40f95e4891d7d5
+const jestConfig = async () => {
+  const nextJestConfig = await createJestConfig(customJestConfig)()
+  return {
+    ...nextJestConfig,
+    moduleNameMapper: {
+      '\\.svg$': '<rootDir>/assets/__mocks__/SvgrMock.jsx',
+      ...nextJestConfig.moduleNameMapper,
+    },
+  }
+}
+
+module.exports = jestConfig
