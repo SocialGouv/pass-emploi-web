@@ -100,6 +100,27 @@ describe('Home', () => {
         )
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
       })
+
+      it("préviens si l'agence n'est pas renseignée", async () => {
+        // Given
+        const searchAgence = screen.getByRole('combobox', {
+          name: /votre agence/,
+        })
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
+        fireEvent.input(searchAgence, { target: { value: 'pouet' } })
+        await act(async () => {
+          submit.click()
+        })
+
+        // Then
+        expect(
+          screen.getByText('Sélectionner une agence dans la liste')
+        ).toBeInTheDocument()
+        expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+        expect(replace).not.toHaveBeenCalled()
+      })
     })
 
     describe('quand le conseiller est Mission locale', () => {

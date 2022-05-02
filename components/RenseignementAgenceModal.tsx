@@ -2,6 +2,8 @@ import React, { FormEvent, useState } from 'react'
 
 import InfoIcon from '../assets/icons/information.svg'
 
+import { InputError } from './ui/InputError'
+
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { Agence, UserStructure } from 'interfaces/conseiller'
@@ -19,9 +21,10 @@ export default function RenseignementAgenceModal({
   onAgenceChoisie,
   onClose,
 }: RenseignementAgenceModalProps) {
-  const [idAgenceSelectionnee, setIdAgenceSelectionnee] = useState<
-    string | undefined
-  >(undefined)
+  const [idAgenceSelectionnee, setIdAgenceSelectionnee] = useState<{
+    value?: string
+    erreur?: string
+  }>({})
 
   const labelAgence =
     structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
@@ -29,16 +32,23 @@ export default function RenseignementAgenceModal({
   function selectAgence(nomAgence: string) {
     const agence = referentielAgences.find((a) => a.nom === nomAgence)
     if (agence) {
-      setIdAgenceSelectionnee(agence.id)
+      setIdAgenceSelectionnee({ value: agence.id })
     } else {
-      setIdAgenceSelectionnee(undefined)
+      setIdAgenceSelectionnee({})
     }
   }
 
   function submitAgenceSelectionnee(e: FormEvent) {
     e.preventDefault()
     // TODO gestion message erreur
-    onAgenceChoisie(idAgenceSelectionnee!)
+    if (!idAgenceSelectionnee.value) {
+      setIdAgenceSelectionnee({
+        ...idAgenceSelectionnee,
+        erreur: 'Sélectionner une agence dans la liste',
+      })
+    } else {
+      onAgenceChoisie(idAgenceSelectionnee.value)
+    }
   }
 
   return (
@@ -58,13 +68,27 @@ export default function RenseignementAgenceModal({
         <label htmlFor='search-agence' className='text-base-medium'>
           Rechercher votre {labelAgence} dans la liste suivante
         </label>
+        {idAgenceSelectionnee.erreur && (
+          <InputError id='search-agence--error'>
+            {idAgenceSelectionnee.erreur}
+          </InputError>
+        )}
         <input
           type='text'
           id='search-agence'
-          className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
           list='agences'
-          onChange={(e) => selectAgence(e.target.value)}
           multiple={false}
+          required={true}
+          onChange={(e) => selectAgence(e.target.value)}
+          aria-invalid={idAgenceSelectionnee.erreur ? true : undefined}
+          aria-describedby={
+            idAgenceSelectionnee.erreur ? 'search-agence--error' : undefined
+          }
+          className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 disabled:bg-grey_100 ${
+            idAgenceSelectionnee.erreur
+              ? 'border-warning text-warning'
+              : 'border-content_color'
+          }`}
         />
         <datalist id='agences'>
           {referentielAgences.map((agence) => (
