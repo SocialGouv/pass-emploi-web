@@ -17,7 +17,7 @@ function Home({ redirectUrl, structureConseiller }: HomePageProps) {
   const router = useRouter()
 
   async function redirectToUrl() {
-    await router.push(redirectUrl)
+    await router.replace(redirectUrl)
   }
 
   return (

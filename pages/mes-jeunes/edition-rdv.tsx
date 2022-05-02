@@ -155,16 +155,17 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   )
 
   const referer = context.req.headers.referer
-  const idRdv = context.query.idRdv as string | undefined
-
+  const redirectTo =
+    referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   const props: EditionRdvProps = {
     jeunes: jeunes,
     typesRendezVous: typesRendezVous,
     withoutChat: true,
-    redirectTo: referer ?? '/mes-jeunes',
+    redirectTo,
     pageTitle: 'Nouveau rendez-vous',
   }
 
+  const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
     const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
     if (!rdv) return { notFound: true }
@@ -181,3 +182,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 }
 
 export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
+
+function comingFromHome(referer: string): boolean {
+  return referer.split('?')[0].endsWith('/index')
+}
