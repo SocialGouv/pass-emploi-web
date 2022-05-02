@@ -22,12 +22,14 @@ function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
     async (provider?: string) => {
       const redirectUrl: string = router.query.redirectUrl as string
       try {
+        const callbackUrl: string = redirectUrl
+          ? '/index?' + new URLSearchParams({ redirectUrl })
+          : '/'
+        debugger
         await signIn(
           'keycloak',
           {
-            callbackUrl: redirectUrl
-              ? '/index?' + new URLSearchParams({ redirectUrl })
-              : '/',
+            callbackUrl: callbackUrl,
           },
           { kc_idp_hint: provider ?? '' }
         )

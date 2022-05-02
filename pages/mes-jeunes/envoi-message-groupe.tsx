@@ -8,7 +8,6 @@ import BackIcon from '../../assets/icons/arrow_back.svg'
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
-import { RequestError } from '../../utils/fetchJson'
 
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import FailureMessage from 'components/FailureMessage'
@@ -16,21 +15,24 @@ import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAut
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { Container, useDependance } from 'utils/injectionDependances'
+import { RequestError } from 'utils/fetchJson'
+import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 interface EnvoiMessageGroupeProps {
   jeunes: Jeune[]
   withoutChat: true
   pageTitle: string
-  from: string
+  previousUrl: string
 }
 
-function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
+function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -73,7 +75,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
         message,
         session!.accessToken
       )
-      await router.push(`${from}?envoiMessage=succes`)
+      await router.push(`${previousUrl}?envoiMessage=succes`)
     } catch (error) {
       setErreurMessage(
         error instanceof RequestError
@@ -96,7 +98,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
     <>
       <div className={`flex items-center ${styles.header}`}>
         {!formHasChanges() && (
-          <Link href={from}>
+          <Link href={previousUrl}>
             <a className='items-center mr-4'>
               <BackIcon role='img' focusable='false' aria-hidden={true} />
               <span className='sr-only'>Page précédente</span>
@@ -177,7 +179,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
           <div className='flex justify-center'>
             {!formHasChanges() && (
               <ButtonLink
-                href={from}
+                href={previousUrl}
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
@@ -209,7 +211,7 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
             <ExitPageConfirmationModal
               message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
               onCancel={() => setShowLeavePageModal(false)}
-              destination={from}
+              destination={previousUrl}
             />
           )}
         </form>
@@ -218,25 +220,30 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+export const getServerSideProps: GetServerSideProps<
+  EnvoiMessageGroupeProps
+> = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService } = Container.getDIContainer().dependances
+  const jeunesService = withDependance<JeunesService>('jeunesService')
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
 
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
+  const referer: string | undefined = context.req.headers.referer
+  const previousUrl =
+    referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
       pageTitle: 'Message multi-destinataires',
-      from: context.req.headers.referer ?? '/mes-jeunes',
+      previousUrl,
     },
   }
 }
@@ -245,3 +252,7 @@ export default withTransaction(
   EnvoiMessageGroupe.name,
   'page'
 )(EnvoiMessageGroupe)
+
+function comingFromHome(referer: string): boolean {
+  return referer.split('?')[0].endsWith('/index')
+}
