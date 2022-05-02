@@ -126,6 +126,24 @@ describe('EditionRdv', () => {
         })
       })
 
+      it('ignore le referer si besoin', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: {
+            headers: {
+              referer:
+                '/http://localhost:3000/index?redirectUrl=%2Fmes-jeunes%2Fedition-rdv',
+            },
+          },
+          query: {},
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: { redirectTo: '/mes-jeunes' },
+        })
+      })
+
       it('récupère le jeune concerné', async () => {
         // When
         const actual = await getServerSideProps({
