@@ -1,37 +1,50 @@
-import React, { MouseEvent, useRef } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import InfoIcon from '../assets/icons/information.svg'
 
-import Modal from './Modal'
-
+import Modal from 'components/Modal'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { Agence, UserStructure } from 'interfaces/conseiller'
-import useMatomo from 'utils/analytics/useMatomo'
 
 interface RenseignementAgenceModalProps {
   structureConseiller: string
   referentielAgences: Agence[]
+  onAgenceChoisie: (idAgence: string) => void
   onClose: () => void
 }
 
 export default function RenseignementAgenceModal({
   structureConseiller,
   referentielAgences,
+  onAgenceChoisie,
   onClose,
 }: RenseignementAgenceModalProps) {
+  const [idAgenceSelectionnee, setIdAgenceSelectionnee] = useState<
+    string | undefined
+  >(undefined)
+
   const labelAgence =
     structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
 
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  function selectAgence(nomAgence: string) {
+    const agence = referentielAgences.find((a) => a.nom === nomAgence)
+    if (agence) {
+      setIdAgenceSelectionnee(agence.id)
+    } else {
+      setIdAgenceSelectionnee(undefined)
+    }
+  }
 
-  useMatomo('Pop-in sélection agence')
+  function submitAgenceSelectionnee(e: FormEvent) {
+    e.preventDefault()
+    // TODO gestion message erreur
+    onAgenceChoisie(idAgenceSelectionnee!)
+  }
 
   return (
     <Modal
       title={`Ajoutez votre ${labelAgence} à votre profil`}
       onClose={onClose}
-      ref={modalRef}
     >
       <div className='p-4 bg-primary_lighten rounded-medium  text-primary'>
         <p className='flex text-base-medium  items-center mb-2'>
@@ -40,23 +53,32 @@ export default function RenseignementAgenceModal({
           votre {labelAgence} de rattachement.
         </p>
       </div>
-      <label htmlFor='typeRendezVous' className='text-base-medium mb-2'>
-        <span aria-hidden={true}>* </span>Type
-      </label>
-      <select
-        id='agence'
-        name='agence'
-        required={true}
-        className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
-      >
-        <option aria-hidden hidden disabled value={''} />
-        {referentielAgences.map(({ id, nom }) => (
-          // TODO voir comment gerer les annonce sans ids
-          <option key={id} value={nom}>
-            {nom}
-          </option>
-        ))}
-      </select>
+
+      <form onSubmit={submitAgenceSelectionnee}>
+        <label htmlFor='search-agence' className='text-base-medium'>
+          Rechercher votre {labelAgence} dans la liste suivante
+        </label>
+        <input
+          type='text'
+          id='search-agence'
+          className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
+          list='agences'
+          onChange={(e) => selectAgence(e.target.value)}
+          multiple={false}
+        />
+        <datalist id='agences'>
+          {referentielAgences.map((agence) => (
+            <option key={agence.id} value={agence.nom}>
+              {agence.nom}
+            </option>
+          ))}
+        </datalist>
+
+        <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
+          Annuler
+        </Button>
+        <Button type='submit'>Ajouter</Button>
+      </form>
     </Modal>
   )
 }

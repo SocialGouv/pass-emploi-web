@@ -5,6 +5,17 @@ import { ApiClient } from 'clients/api.client'
 import { DossierMilo } from 'interfaces/jeune'
 
 export interface ConseillerService {
+  getConseiller(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Conseiller | undefined>
+
+  modifierAgence(
+    idConseiller: string,
+    idAgence: string,
+    accessToken: string
+  ): Promise<void>
+
   getDossierJeune(
     idDossier: string,
     accessToken: string
@@ -20,15 +31,39 @@ export interface ConseillerService {
     },
     accessToken: string
   ): Promise<{ id: string }>
-
-  getConseiller(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<Conseiller | undefined>
 }
 
 export class ConseillerApiService implements ConseillerService {
   constructor(private readonly apiClient: ApiClient) {}
+
+  async getConseiller(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<Conseiller | undefined> {
+    try {
+      return await this.apiClient.get<Conseiller>(
+        `/conseillers/${idConseiller}`,
+        accessToken
+      )
+    } catch (e) {
+      if (e instanceof RequestError) {
+        return undefined
+      }
+      throw e
+    }
+  }
+
+  modifierAgence(
+    idConseiller: string,
+    idAgence: string,
+    accessToken: string
+  ): Promise<void> {
+    return this.apiClient.put(
+      `/conseillers/${idConseiller}`,
+      { agence: { id: idAgence } },
+      accessToken
+    )
+  }
 
   getDossierJeune(
     idDossier: string,
@@ -55,22 +90,5 @@ export class ConseillerApiService implements ConseillerService {
       newJeune,
       accessToken
     )
-  }
-
-  async getConseiller(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<Conseiller | undefined> {
-    try {
-      return await this.apiClient.get<Conseiller>(
-        `/conseillers/${idConseiller}`,
-        accessToken
-      )
-    } catch (e) {
-      if (e instanceof RequestError) {
-        return undefined
-      }
-      throw e
-    }
   }
 }

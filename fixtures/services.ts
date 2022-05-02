@@ -72,6 +72,7 @@ export function mockedConseillerService(
 ): ConseillerService {
   const defaults: ConseillerService = {
     getConseiller: jest.fn(),
+    modifierAgence: jest.fn(),
     getDossierJeune: jest.fn(),
     createCompteJeuneMilo: jest.fn(),
   }

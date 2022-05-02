@@ -35,4 +35,22 @@ describe('ConseillerApiService', () => {
       expect(actual).toEqual(conseiller)
     })
   })
+
+  describe('.modifierAgence', () => {
+    it("modifie le conseiller avec l'id de l'agence", async () => {
+      // When
+      await conseillerService.modifierAgence(
+        'id-conseiller',
+        'id-agence',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller',
+        { agence: { id: 'id-agence' } },
+        'accessToken'
+      )
+    })
+  })
 })

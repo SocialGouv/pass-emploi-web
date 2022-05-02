@@ -2,15 +2,16 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 
-import { AgencesService } from '../services/agences.service'
-
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { Agence, UserStructure } from 'interfaces/conseiller'
+import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
+import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-// TODO pourquoi parfois type parfois interface ? (index jeune , index rdv )
 interface HomePageProps {
   redirectUrl: string
   structureConseiller: string
@@ -23,18 +24,31 @@ function Home({
   referentielAgences,
 }: HomePageProps) {
   const router = useRouter()
+  const { data: session } = useSession<true>({ required: true })
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
+
+  async function selectAgence(idAgence: string): Promise<void> {
+    await conseillerService.modifierAgence(
+      session!.user.id,
+      idAgence,
+      session!.accessToken
+    )
+    await router.replace(redirectUrl + '?choixAgence=succes')
+  }
 
   async function redirectToUrl() {
     await router.replace(redirectUrl)
   }
 
-  console.log(referentielAgences)
+  useMatomo('Pop-in sélection agence')
 
   return (
     <>
       <RenseignementAgenceModal
         structureConseiller={structureConseiller}
         referentielAgences={referentielAgences}
+        onAgenceChoisie={selectAgence}
         onClose={redirectToUrl}
       />
     </>
@@ -59,35 +73,34 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
   const conseillerService =
     withDependance<ConseillerService>('conseillerService')
-
   const conseiller = await conseillerService.getConseiller(user.id, accessToken)
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} innexistant`)
   }
 
-  const redirectUrl = (context.query.redirectUrl as string) ?? '/mes-jeunes'
-
+  const redirectUrl =
+    (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
   if (
     Boolean(conseiller.agence) ||
     user.structure === UserStructure.PASS_EMPLOI
   ) {
     return {
       redirect: {
-        destination: `${redirectUrl}${sourceQueryParam}`,
+        destination: `${redirectUrl}`,
         permanent: true,
       },
     }
   }
 
   const agenceService = withDependance<AgencesService>('agencesService')
-  // TODO changer structure
-  const referentielAgences = await agenceService.getAgences('MILO', accessToken)
-
+  const referentielAgences = await agenceService.getAgences(
+    user.structure,
+    accessToken
+  )
   return {
     props: {
       redirectUrl,
-      // TODO changer structure
-      structureConseiller: 'MILO',
+      structureConseiller: user.structure,
       referentielAgences,
     },
   }
