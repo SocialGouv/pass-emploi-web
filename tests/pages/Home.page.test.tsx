@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { uneListeDAgencesMILO } from '../../fixtures/agence'
+import { AgencesService } from '../../services/agences.service'
+
 import { unConseiller } from 'fixtures/conseiller'
 import { mockedConseillerService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
@@ -26,6 +29,8 @@ describe('Home', () => {
           render(
             <Home
               structureConseiller={UserStructure.POLE_EMPLOI}
+              // TODO a modifier
+              referentielAgences={[]}
               redirectUrl='/mes-jeunes'
             />
           )
@@ -43,6 +48,8 @@ describe('Home', () => {
           render(
             <Home
               structureConseiller={UserStructure.MILO}
+              // TODO a modifier
+              referentielAgences={[]}
               redirectUrl='/mes-jeunes'
             />
           )
@@ -60,6 +67,7 @@ describe('Home', () => {
 
   describe('server side', () => {
     let conseillerService: ConseillerService
+    let agencesService: AgencesService
     it('nécessite une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -136,8 +144,13 @@ describe('Home', () => {
         conseillerService = mockedConseillerService({
           getConseiller: jest.fn(async () => conseiller),
         })
+
+        agencesService = {
+          getAgences: jest.fn(async () => uneListeDAgencesMILO()),
+        }
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'conseillerService') return conseillerService
+          if (dependance === 'agencesService') return agencesService
         })
       })
       it('renvoie les props nécessaires pour demander l’agence', async () => {
@@ -151,6 +164,7 @@ describe('Home', () => {
           props: {
             redirectUrl: '/mes-jeunes',
             structureConseiller: UserStructure.MILO,
+            referentielAgences: uneListeDAgencesMILO(),
           },
         })
       })
@@ -165,6 +179,7 @@ describe('Home', () => {
           props: {
             redirectUrl: '/mes-rendezvous',
             structureConseiller: UserStructure.MILO,
+            referentielAgences: uneListeDAgencesMILO(),
           },
         })
       })

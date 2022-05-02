@@ -4,16 +4,18 @@ import InfoIcon from '../assets/icons/information.svg'
 
 import Modal from './Modal'
 
-import { UserStructure } from 'interfaces/conseiller'
+import { Agence, UserStructure } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface RenseignementAgenceModalProps {
   structureConseiller: string
+  referentielAgences: Agence[]
   onClose: () => void
 }
 
 export default function RenseignementAgenceModal({
   structureConseiller,
+  referentielAgences,
   onClose,
 }: RenseignementAgenceModalProps) {
   const labelAgence =
@@ -38,6 +40,23 @@ export default function RenseignementAgenceModal({
           votre {labelAgence} de rattachement.
         </p>
       </div>
+      <label htmlFor='typeRendezVous' className='text-base-medium mb-2'>
+        <span aria-hidden={true}>* </span>Type
+      </label>
+      <select
+        id='agence'
+        name='agence'
+        required={true}
+        className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
+      >
+        <option aria-hidden hidden disabled value={''} />
+        {referentielAgences.map(({ id, nom }) => (
+          // TODO voir comment gerer les annonce sans ids
+          <option key={id} value={nom}>
+            {nom}
+          </option>
+        ))}
+      </select>
     </Modal>
   )
 }

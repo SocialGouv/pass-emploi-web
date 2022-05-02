@@ -2,28 +2,39 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 
+import { AgencesService } from '../services/agences.service'
+
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import { UserStructure } from 'interfaces/conseiller'
+import { Agence, UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
+// TODO pourquoi parfois type parfois interface ? (index jeune , index rdv )
 interface HomePageProps {
   redirectUrl: string
   structureConseiller: string
+  referentielAgences: Agence[]
 }
 
-function Home({ redirectUrl, structureConseiller }: HomePageProps) {
+function Home({
+  redirectUrl,
+  structureConseiller,
+  referentielAgences,
+}: HomePageProps) {
   const router = useRouter()
 
   async function redirectToUrl() {
     await router.replace(redirectUrl)
   }
 
+  console.log(referentielAgences)
+
   return (
     <>
       <RenseignementAgenceModal
         structureConseiller={structureConseiller}
+        referentielAgences={referentielAgences}
         onClose={redirectToUrl}
       />
     </>
@@ -68,10 +79,16 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     }
   }
 
+  const agenceService = withDependance<AgencesService>('agencesService')
+  // TODO changer structure
+  const referentielAgences = await agenceService.getAgences('MILO', accessToken)
+
   return {
     props: {
       redirectUrl,
-      structureConseiller: user.structure,
+      // TODO changer structure
+      structureConseiller: 'MILO',
+      referentielAgences,
     },
   }
 }
