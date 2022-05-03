@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Router, { useRouter } from 'next/router'
+import Router from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
@@ -30,9 +30,10 @@ interface MesJeunesProps {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
+  pageTitle: string
   messageEnvoiGroupeSuccess?: boolean
   deletionSuccess?: boolean
-  pageTitle: string
+  ajoutAgenceSuccess?: boolean
 }
 
 function MesJeunes({
@@ -41,8 +42,8 @@ function MesJeunes({
   isFromEmail,
   messageEnvoiGroupeSuccess,
   deletionSuccess,
+  ajoutAgenceSuccess,
 }: MesJeunesProps) {
-  const router = useRouter()
   const { data: session } = useSession<true>({ required: true })
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -55,6 +56,9 @@ function MesJeunes({
   >([])
   const [showDeletionSuccess, setShowDeletionSuccess] = useState<boolean>(
     deletionSuccess ?? false
+  )
+  const [showAjoutAgenceSuccess, setShowAjoutAgenceSuccess] = useState<boolean>(
+    ajoutAgenceSuccess ?? false
   )
 
   let initialTracking = 'Mes jeunes'
@@ -83,9 +87,14 @@ function MesJeunes({
     })
   }
 
-  function closeMessageGroupeEnvoiSuccess(): void {
+  async function closeMessageGroupeEnvoiSuccess(): Promise<void> {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace('/mes-jeunes', undefined, { shallow: true })
+    await Router.replace('/mes-jeunes', undefined, { shallow: true })
+  }
+
+  async function closeAjoutAgenceSuccessMessage(): Promise<void> {
+    setShowAjoutAgenceSuccess(false)
+    await Router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
   const onSearch = useCallback(
@@ -203,6 +212,13 @@ function MesJeunes({
           />
         )}
 
+        {showAjoutAgenceSuccess && (
+          <SuccessMessage
+            label='Votre agence a été ajoutée à votre profil'
+            onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
+          />
+        )}
+
         {conseillerJeunes.length === 0 && (
           <div className='mx-auto my-0'>
             <AddJeuneImage
@@ -278,8 +294,12 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   if (context.query.suppression)
     props.deletionSuccess = context.query.suppression === 'succes'
 
-  if (context.query?.envoiMessage) {
+  if (context.query.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  }
+
+  if (context.query.choixAgence) {
+    props.ajoutAgenceSuccess = context.query.choixAgence === 'succes'
   }
 
   return { props }
