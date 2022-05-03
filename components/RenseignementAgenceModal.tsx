@@ -56,20 +56,18 @@ export default function RenseignementAgenceModal({
       title={`Ajoutez votre ${labelAgence} à votre profil`}
       onClose={onClose}
     >
-      <div className='p-4 bg-primary_lighten rounded-medium  text-primary'>
-        <p className='flex text-base-medium  items-center mb-2'>
-          <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
-          Afin d’améliorer la qualité du service, nous avons besoin de connaître
-          votre {labelAgence} de rattachement.
-        </p>
-      </div>
+      <p className='p-6 bg-primary_lighten rounded-medium text-primary text-base-medium flex items-center'>
+        <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
+        Afin d’améliorer la qualité du service, nous avons besoin de connaître
+        votre {labelAgence} de rattachement.
+      </p>
 
-      <form onSubmit={submitAgenceSelectionnee}>
+      <form onSubmit={submitAgenceSelectionnee} className='pt-3'>
         <label htmlFor='search-agence' className='text-base-medium'>
           Rechercher votre {labelAgence} dans la liste suivante
         </label>
         {idAgenceSelectionnee.erreur && (
-          <InputError id='search-agence--error'>
+          <InputError id='search-agence--error' className='mt-2'>
             {idAgenceSelectionnee.erreur}
           </InputError>
         )}
@@ -84,7 +82,7 @@ export default function RenseignementAgenceModal({
           aria-describedby={
             idAgenceSelectionnee.erreur ? 'search-agence--error' : undefined
           }
-          className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 disabled:bg-grey_100 ${
+          className={`border border-solid rounded-medium w-full px-4 py-3 mt-2 disabled:bg-grey_100 ${
             idAgenceSelectionnee.erreur
               ? 'border-warning text-warning'
               : 'border-content_color'
@@ -97,11 +95,14 @@ export default function RenseignementAgenceModal({
             </option>
           ))}
         </datalist>
-
-        <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
-          Annuler
-        </Button>
-        <Button type='submit'>Ajouter</Button>
+        <div className='mt-14 flex justify-center'>
+          <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
+            Annuler
+          </Button>
+          <Button className='ml-6' type='submit'>
+            Ajouter
+          </Button>
+        </div>
       </form>
     </Modal>
   )
