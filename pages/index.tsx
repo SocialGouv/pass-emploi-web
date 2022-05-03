@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { Agence, UserStructure } from 'interfaces/conseiller'
@@ -28,12 +29,17 @@ function Home({
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
 
+  const [trackingLabel, setTrackingLabel] = useState<string>(
+    'Pop-in sélection agence'
+  )
+
   async function selectAgence(idAgence: string): Promise<void> {
     await conseillerService.modifierAgence(
       session!.user.id,
       idAgence,
       session!.accessToken
     )
+    setTrackingLabel('Succès ajout agence')
     await router.replace(redirectUrl + '?choixAgence=succes')
   }
 
@@ -41,7 +47,7 @@ function Home({
     await router.replace(redirectUrl)
   }
 
-  useMatomo('Pop-in sélection agence')
+  useMatomo(trackingLabel)
 
   return (
     <>
