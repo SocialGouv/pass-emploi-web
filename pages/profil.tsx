@@ -48,7 +48,7 @@ function Profil({ conseiller, structureConseiller }: ProfilProps) {
               >
                 Votre {labelAgence} :
               </dt>
-              <dd className='ml-2 inline'>{conseiller.agence.nom}</dd>
+              <dd className='ml-2 inline'>{conseiller.agence}</dd>
             </>
           )}
         </dl>

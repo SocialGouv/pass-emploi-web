@@ -14,6 +14,5 @@ export interface Conseiller {
   firstName: string
   lastName: string
   email?: string
-  // TODO use string only ?
-  agence?: Agence
+  agence?: string
 }

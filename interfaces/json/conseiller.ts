@@ -19,3 +19,14 @@ export function toConseillerHistorique(
     depuis: conseiller.date,
   }
 }
+
+export interface ConseillerJson {
+  id: string
+  firstName: string
+  lastName: string
+  email?: string
+  agence?: {
+    id?: string
+    nom: string
+  }
+}

@@ -40,7 +40,6 @@ export default function RenseignementAgenceModal({
 
   function submitAgenceSelectionnee(e: FormEvent) {
     e.preventDefault()
-    // TODO gestion message erreur
     if (!idAgenceSelectionnee.value) {
       setIdAgenceSelectionnee({
         ...idAgenceSelectionnee,
