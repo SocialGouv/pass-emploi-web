@@ -1,11 +1,10 @@
+import { ApiClient } from 'clients/api.client'
 import {
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
-} from '../../fixtures/agence'
-import { UserStructure } from '../../interfaces/conseiller'
-import { AgencesApiService } from '../../services/agences.service'
-
-import { ApiClient } from 'clients/api.client'
+} from 'fixtures/agence'
+import { UserStructure } from 'interfaces/conseiller'
+import { AgencesApiService } from 'services/agences.service'
 
 jest.mock('clients/api.client')
 
@@ -39,7 +38,7 @@ describe('AgencesApiService', () => {
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
     })
 
-    it('renvoie le referentiel des agences Pole Emploi', async () => {
+    it('renvoie le referentiel des agences Pôle Emploi', async () => {
       // Given
       structure = UserStructure.POLE_EMPLOI
       // WHEN

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react'
 
 import SearchIcon from '../../assets/icons/search.svg'
+
 import ResettableTextInput from 'components/ui/ResettableTextInput'
 
 interface RechercheJeuneProps {

@@ -1,5 +1,5 @@
-import { ApiClient } from '../clients/api.client'
-import { Agence } from '../interfaces/conseiller'
+import { ApiClient } from 'clients/api.client'
+import { Agence } from 'interfaces/conseiller'
 
 export interface AgencesService {
   getAgences(structure: string, accessToken: string): Promise<Agence[]>

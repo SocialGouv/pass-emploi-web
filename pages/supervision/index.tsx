@@ -6,9 +6,9 @@ import ArrowIcon from '../../assets/icons/arrow-right.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 
-import ResettableTextInput from 'components/ui/ResettableTextInput'
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
+import ResettableTextInput from 'components/ui/ResettableTextInput'
 import {
   compareJeunesByLastName,
   getJeuneFullname,

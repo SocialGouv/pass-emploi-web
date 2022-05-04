@@ -101,7 +101,7 @@ describe('Home', () => {
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
       })
 
-      it("préviens si l'agence n'est pas renseignée", async () => {
+      it("prévient si l'agence n'est pas renseignée", async () => {
         // Given
         const searchAgence = screen.getByRole('combobox', {
           name: /votre agence/,
@@ -124,7 +124,7 @@ describe('Home', () => {
     })
 
     describe('quand le conseiller est Mission locale', () => {
-      it('adapte les textes', () => {
+      it("affiche 'Mission locale' au lieu de 'agence'", () => {
         // Given
         renderWithSession(
           <DIProvider
