@@ -5,12 +5,14 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react'
-import { mockedJeunesService } from 'fixtures/services'
 import { Mock } from 'jest-mock'
+
+import renderWithSession from '../renderWithSession'
+
+import { mockedJeunesService } from 'fixtures/services'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
@@ -106,25 +108,6 @@ describe('PoleEmploiCreationJeune', () => {
         // Then
         expect(
           screen.getByText("Veuillez renseigner l'e-mail du jeune")
-        ).toBeInTheDocument()
-        await waitFor(() => {
-          expect(
-            jeunesService.createCompteJeunePoleEmploi
-          ).toHaveBeenCalledTimes(0)
-        })
-      })
-
-      it('demande un email avec un format correct', async () => {
-        // Given
-        const inputEmail = screen.getByLabelText(emailLabel)
-        fireEvent.change(inputEmail, { target: { value: 'email@' } })
-
-        // When
-        fireEvent.click(submitButton)
-
-        // Then
-        expect(
-          screen.getByText('L’e-mail renseigné n’est pas au bon format')
         ).toBeInTheDocument()
         await waitFor(() => {
           expect(

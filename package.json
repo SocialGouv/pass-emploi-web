@@ -63,6 +63,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-storybook": "^0.5.7",
     "jest": "^28.0.0",
+    "jest-environment-jsdom": "^28.0.2",
     "node-mocks-http": "^1.11.0",
     "pino-pretty": "^7.5.1",
     "postcss": "^8.4.7",
