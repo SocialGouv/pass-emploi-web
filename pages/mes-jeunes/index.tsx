@@ -23,6 +23,7 @@ import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useChatCreds } from 'utils/chat/chatCredsContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -45,6 +46,7 @@ function MesJeunes({
   ajoutAgenceSuccess,
 }: MesJeunesProps) {
   const { data: session } = useSession<true>({ required: true })
+  const [chatCreds] = useChatCreds()
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
@@ -127,33 +129,33 @@ function MesJeunes({
   )
 
   useEffect(() => {
-    if (session?.firebaseToken) {
-      messagesService
-        .signIn(session.firebaseToken)
-        .then(() =>
-          messagesService.countMessagesNotRead(
-            session.user.id,
-            conseillerJeunes.map((j) => j.id)
-          )
+    if (!session || !chatCreds) return
+
+    messagesService
+      .signIn(chatCreds.token)
+      .then(() =>
+        messagesService.countMessagesNotRead(
+          session.user.id,
+          conseillerJeunes.map((j) => j.id)
         )
-        .catch(() =>
-          conseillerJeunes.reduce(
-            (mappedCounts, jeune) => ({ ...mappedCounts, [jeune.id]: 0 }),
-            {} as { [idJeune: string]: number }
-          )
+      )
+      .catch(() =>
+        conseillerJeunes.reduce(
+          (mappedCounts, jeune) => ({ ...mappedCounts, [jeune.id]: 0 }),
+          {} as { [idJeune: string]: number }
         )
-        .then((mappedCounts: { [idJeune: string]: number }) =>
-          conseillerJeunes.map((jeune) => ({
-            ...jeune,
-            messagesNonLus: mappedCounts[jeune.id] ?? 0,
-          }))
-        )
-        .then((jeunesAvecMessagesNonLus) => {
-          setJeunes(jeunesAvecMessagesNonLus)
-          setListJeunesFiltres(jeunesAvecMessagesNonLus)
-        })
-    }
-  }, [conseillerJeunes, messagesService, session])
+      )
+      .then((mappedCounts: { [idJeune: string]: number }) =>
+        conseillerJeunes.map((jeune) => ({
+          ...jeune,
+          messagesNonLus: mappedCounts[jeune.id] ?? 0,
+        }))
+      )
+      .then((jeunesAvecMessagesNonLus) => {
+        setJeunes(jeunesAvecMessagesNonLus)
+        setListJeunesFiltres(jeunesAvecMessagesNonLus)
+      })
+  }, [chatCreds, conseillerJeunes, messagesService, session])
 
   useMatomo(trackingTitle)
   useMatomo(

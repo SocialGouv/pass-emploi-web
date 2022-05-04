@@ -16,7 +16,6 @@ describe('Authenticator', () => {
   beforeEach(() => {
     authService = {
       fetchRefreshedTokens: jest.fn(),
-      getFirebaseToken: jest.fn(),
     }
 
     authenticator = new Authenticator(authService)
@@ -35,10 +34,6 @@ describe('Authenticator', () => {
     describe("Quand c'est la 1ere connexion", () => {
       it('enrichit le JWT avec les infos du token et du conseiller', async () => {
         // Given
-        authService.getFirebaseToken = jest.fn().mockResolvedValueOnce({
-          token: 'firebaseToken',
-          cleChiffrement: 'cleChiffrement',
-        })
         const expiresAtInSeconds: number = 1638434737
 
         // When
@@ -61,8 +56,6 @@ describe('Authenticator', () => {
           idConseiller: '41',
           estSuperviseur: true,
           estConseiller: true,
-          firebaseToken: 'firebaseToken',
-          cleChiffrement: 'cleChiffrement',
           structureConseiller: UserStructure.PASS_EMPLOI,
         })
       })

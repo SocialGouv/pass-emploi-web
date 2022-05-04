@@ -21,6 +21,7 @@ import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useChatCreds } from 'utils/chat/chatCredsContext'
 import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -34,6 +35,7 @@ interface EnvoiMessageGroupeProps {
 
 function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
   const { data: session } = useSession<true>({ required: true })
+  const [chatCreds] = useChatCreds()
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -70,13 +72,13 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
 
     if (!formIsValid()) return
     try {
-      await messagesService.signIn(session!.firebaseToken)
+      await messagesService.signIn(chatCreds!.token)
       await messagesService.sendNouveauMessageGroupe(
         { id: session!.user.id, structure: session!.user.structure },
         selectedJeunesIds,
         message,
         session!.accessToken,
-        session!.cleChiffrement
+        chatCreds!.cleChiffrement
       )
       await router.push(`${previousUrl}?envoiMessage=succes`)
     } catch (error) {

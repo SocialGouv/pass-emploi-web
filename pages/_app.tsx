@@ -9,6 +9,7 @@ import Layout from 'components/layouts/Layout'
 import 'styles/globals.css'
 import 'styles/typography.css'
 import { init } from 'utils/analytics/matomo'
+import { ChatCredsProvider } from 'utils/chat/chatCredsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { Container, DIProvider } from 'utils/injectionDependances'
 import { initRum } from 'utils/monitoring/init-rum'
@@ -49,11 +50,13 @@ export default function App({
             {isLoginPage && <Footer />}
           </div>
         ) : (
-          <CurrentJeuneProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </CurrentJeuneProvider>
+          <ChatCredsProvider>
+            <CurrentJeuneProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </CurrentJeuneProvider>
+          </ChatCredsProvider>
         )}
       </DIProvider>
     </SessionProvider>

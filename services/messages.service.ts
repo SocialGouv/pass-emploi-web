@@ -3,11 +3,18 @@ import { UserStructure } from '../interfaces/conseiller'
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
-import { Message, MessagesOfADay, TypeMessage } from 'interfaces/message'
+import {
+  ChatCreds,
+  Message,
+  MessagesOfADay,
+  TypeMessage,
+} from 'interfaces/message'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
 
 export interface MessagesService {
+  getChatCredentials(accessToken: string): Promise<ChatCreds>
+
   signIn(token: string): Promise<void>
 
   signOut(): Promise<void>
@@ -60,6 +67,14 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     private readonly chatCrypto: ChatCrypto,
     private readonly apiClient: ApiClient
   ) {}
+
+  async getChatCredentials(accessToken: string): Promise<ChatCreds> {
+    const { token, cle: cleChiffrement } = await this.apiClient.post<{
+      token: string
+      cle: string
+    }>('/auth/firebase/token', {}, accessToken)
+    return { token: token, cleChiffrement }
+  }
 
   async signIn(token: string): Promise<void> {
     await this.firebaseClient.signIn(token)

@@ -1,6 +1,5 @@
-import { ConseillerService } from '../services/conseiller.service'
-
 import { ActionsService } from 'services/actions.service'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -39,6 +38,7 @@ export function mockedMessagesService(
   overrides: Partial<MessagesService> = {}
 ): MessagesService {
   const defaults: MessagesService = {
+    getChatCredentials: jest.fn(),
     countMessagesNotRead: jest.fn(),
     observeJeuneChat: jest.fn(),
     observeJeuneReadingDate: jest.fn(),

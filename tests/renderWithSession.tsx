@@ -1,8 +1,10 @@
 import { render, RenderResult } from '@testing-library/react'
-import { UserStructure } from 'interfaces/conseiller'
 import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import React from 'react'
+
+import { UserStructure } from 'interfaces/conseiller'
+import { ChatCredsProvider } from 'utils/chat/chatCredsContext'
 
 export default function renderWithSession(
   children: JSX.Element,
@@ -18,12 +20,18 @@ export default function renderWithSession(
       estSuperviseur: false,
     },
     accessToken: 'accessToken',
-    firebaseToken: 'firebaseToken',
-    cleChiffrement: 'cleChiffrement',
     expires: new Date(Date.now() + 300000).toISOString(),
   }
 
   const session = { ...defaultSession, ...customSession }
 
-  return render(<SessionProvider session={session}>{children}</SessionProvider>)
+  return render(
+    <SessionProvider session={session}>
+      <ChatCredsProvider
+        creds={{ token: 'firebaseToken', cleChiffrement: 'cleChiffrement' }}
+      >
+        {children}
+      </ChatCredsProvider>
+    </SessionProvider>
+  )
 }

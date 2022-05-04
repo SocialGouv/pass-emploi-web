@@ -4,17 +4,16 @@
 
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
-import AppHead from '../AppHead'
-
-import ChatRoom from './ChatRoom'
-import Sidebar from './Sidebar'
-
+import AppHead from 'components/AppHead'
 import { Footer } from 'components/Footer'
+import ChatRoom from 'components/layouts/ChatRoom'
+import Sidebar from 'components/layouts/Sidebar'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useSession from 'utils/auth/useSession'
+import { useChatCreds } from 'utils/chat/chatCredsContext'
 import { useDependance } from 'utils/injectionDependances'
 
 type LayoutProps = {
@@ -30,6 +29,7 @@ export default function Layout({ children }: LayoutProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const { data: session } = useSession<true>({ required: true })
+  const [chatCreds, setChatCreds] = useChatCreds()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
 
@@ -56,28 +56,32 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   useEffect(() => {
-    if (!session) return
+    if (session && !chatCreds) {
+      messagesService.getChatCredentials(session.accessToken).then(setChatCreds)
+    }
+  }, [session, chatCreds, messagesService, setChatCreds])
 
-    const { user, accessToken, firebaseToken, cleChiffrement } = session
-    if (firebaseToken) {
-      messagesService
-        .signIn(firebaseToken)
-        .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
-        .then((jeunes) =>
-          jeunes.map((jeune) =>
-            messagesService.observeJeuneChat(
-              user.id,
-              jeune,
-              cleChiffrement,
-              updateChats
-            )
+  useEffect(() => {
+    if (!session || !chatCreds) return
+
+    const { user, accessToken } = session
+    messagesService
+      .signIn(chatCreds.token)
+      .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
+      .then((jeunes) =>
+        jeunes.map((jeune) =>
+          messagesService.observeJeuneChat(
+            user.id,
+            jeune,
+            chatCreds.cleChiffrement,
+            updateChats
           )
         )
-        .then((destructors) => (destructorsRef.current = destructors))
-    }
+      )
+      .then((destructors) => (destructorsRef.current = destructors))
 
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [session, jeunesService, messagesService])
+  }, [session, jeunesService, messagesService, chatCreds])
 
   return (
     <>
