@@ -1,6 +1,6 @@
 import React, { ChangeEvent, MouseEvent } from 'react'
 
-import CloseIcon from '../assets/icons/close.svg'
+import CloseIcon from '../../assets/icons/close.svg'
 
 interface ResettableTextInputProps {
   id: string

@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import SendIcon from '../../assets/icons/send.svg'
-import ResizingMultilineInput from '../ResizingMultilineInput'
 
+import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesService } from 'services/messages.service'

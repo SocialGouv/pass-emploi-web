@@ -2,9 +2,9 @@ import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { desJeunes, unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
-import { Message, MessagesOfADay } from 'interfaces/message'
 import { UserStructure } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 
@@ -298,11 +298,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Given
       jest.setSystemTime(now)
       destinataires = desJeunes()
-      idsJeunes = [
-        destinataires[0].id,
-        destinataires[1].id,
-        destinataires[2].id,
-      ]
+      idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'nouveau message groupé'
 
       // When
@@ -314,7 +310,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
       await messagesService.sendNouveauMessageGroupe(
         { id: 'id-conseiller', structure: UserStructure.MILO },
-        destinataires,
+        idsJeunes,
         newMessageGroupe,
         accessToken
       )

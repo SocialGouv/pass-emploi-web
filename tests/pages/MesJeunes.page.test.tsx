@@ -1,6 +1,12 @@
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
 import { act, fireEvent, screen, within } from '@testing-library/react'
+import Router from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import {
   desJeunes,
   desJeunesAvecActionsNonTerminees,
@@ -13,18 +19,14 @@ import {
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { compareJeunesByLastName } from 'interfaces/jeune'
-import Router from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import { getServerSideProps } from 'pages/mes-jeunes'
 import MesJeunes from 'pages/mes-jeunes/index'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -321,6 +323,28 @@ describe('Mes Jeunes', () => {
         expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
       })
     })
+
+    describe('quand on vient de selectionner une agence', () => {
+      it('affiche un message de succès', () => {
+        // When
+        renderWithSession(
+          <DIProvider dependances={{ messagesService }}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+              ajoutAgenceSuccess={true}
+            />
+          </DIProvider>
+        )
+
+        // Then
+        expect(
+          screen.getByText('Votre agence a été ajoutée à votre profil')
+        ).toBeInTheDocument()
+      })
+    })
   })
 
   describe('server side', () => {
@@ -401,6 +425,29 @@ describe('Mes Jeunes', () => {
       expect(actual).toMatchObject({
         props: {
           deletionSuccess: true,
+        },
+      })
+    })
+
+    it('traite la réussite du renseignement de mon agence', async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+          accessToken: 'accessToken',
+        },
+      })
+
+      // When
+      const actual = await getServerSideProps({
+        query: { choixAgence: 'succes' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(actual).toMatchObject({
+        props: {
+          ajoutAgenceSuccess: true,
         },
       })
     })

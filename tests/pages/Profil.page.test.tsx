@@ -112,7 +112,7 @@ describe('Page Profil conseiller', () => {
           <Profil
             conseiller={unConseiller({
               email: 'nils.tavernier@mail.com',
-              agence: { id: 'MLS3F', nom: 'MLS3F SAINT-LOUIS' },
+              agence: 'MLS3F SAINT-LOUIS',
             })}
             structureConseiller='POLE_EMPLOI'
             pageTitle=''
@@ -165,9 +165,7 @@ describe('Page Profil conseiller', () => {
         // When
         render(
           <Profil
-            conseiller={unConseiller({
-              agence: { id: 'MLS3F', nom: 'MLS3F SAINT-LOUIS' },
-            })}
+            conseiller={unConseiller({ agence: 'MLS3F SAINT-LOUIS' })}
             structureConseiller='MILO'
             pageTitle=''
           />

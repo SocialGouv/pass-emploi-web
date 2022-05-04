@@ -25,7 +25,6 @@ function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
         const callbackUrl: string = redirectUrl
           ? '/index?' + new URLSearchParams({ redirectUrl })
           : '/'
-        debugger
         await signIn(
           'keycloak',
           {

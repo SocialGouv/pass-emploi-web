@@ -1,43 +1,103 @@
-import React, { MouseEvent, useRef } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import InfoIcon from '../assets/icons/information.svg'
 
-import Modal from './Modal'
+import { InputError } from './ui/InputError'
+import SelectAutocomplete from './ui/SelectAutocomplete'
 
-import { UserStructure } from 'interfaces/conseiller'
-import useMatomo from 'utils/analytics/useMatomo'
+import Modal from 'components/Modal'
+import Button, { ButtonStyle } from 'components/ui/Button'
+import { Agence, UserStructure } from 'interfaces/conseiller'
 
 interface RenseignementAgenceModalProps {
   structureConseiller: string
+  referentielAgences: Agence[]
+  onAgenceChoisie: (idAgence: string) => void
   onClose: () => void
 }
 
 export default function RenseignementAgenceModal({
   structureConseiller,
+  referentielAgences,
+  onAgenceChoisie,
   onClose,
 }: RenseignementAgenceModalProps) {
+  const [idAgenceSelectionnee, setIdAgenceSelectionnee] = useState<{
+    value?: string
+    erreur?: string
+  }>({})
+
   const labelAgence =
     structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
 
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  function selectAgence(nomAgence: string) {
+    const agence = referentielAgences.find((a) => a.nom === nomAgence)
+    if (agence) {
+      setIdAgenceSelectionnee({ value: agence.id })
+    } else {
+      setIdAgenceSelectionnee({})
+    }
+  }
 
-  useMatomo('Pop-in sélection agence')
+  function submitAgenceSelectionnee(e: FormEvent) {
+    e.preventDefault()
+    if (!idAgenceSelectionnee.value) {
+      setIdAgenceSelectionnee({
+        ...idAgenceSelectionnee,
+        erreur: 'Sélectionner une agence dans la liste',
+      })
+    } else {
+      onAgenceChoisie(idAgenceSelectionnee.value)
+    }
+  }
 
   return (
     <Modal
       title={`Ajoutez votre ${labelAgence} à votre profil`}
       onClose={onClose}
-      ref={modalRef}
     >
-      <div className='p-4 bg-primary_lighten rounded-medium  text-primary'>
-        <p className='flex text-base-medium  items-center mb-2'>
-          <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
-          Afin d’améliorer la qualité du service, nous avons besoin de connaître
-          votre {labelAgence} de rattachement.
-        </p>
-      </div>
+      <p className='p-6 bg-primary_lighten rounded-medium text-primary text-base-medium flex items-center'>
+        <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
+        Afin d’améliorer la qualité du service, nous avons besoin de connaître
+        votre {labelAgence} de rattachement.
+      </p>
+
+      <form onSubmit={submitAgenceSelectionnee} className='pt-3'>
+        <label htmlFor='search-agence' className='text-base-medium'>
+          Rechercher votre {labelAgence} dans la liste suivante
+        </label>
+        {idAgenceSelectionnee.erreur && (
+          <InputError id='search-agence--error' className='mt-2'>
+            {idAgenceSelectionnee.erreur}
+          </InputError>
+        )}
+        <SelectAutocomplete
+          id='search-agence'
+          options={referentielAgences.map(({ id, nom }) => ({
+            id,
+            value: nom,
+          }))}
+          onChange={(e) => selectAgence(e.target.value)}
+          aria-invalid={idAgenceSelectionnee.erreur ? true : undefined}
+          aria-describedby={
+            idAgenceSelectionnee.erreur ? 'search-agence--error' : undefined
+          }
+          className={`border border-solid rounded-medium w-full px-4 py-3 mt-2 disabled:bg-grey_100 ${
+            idAgenceSelectionnee.erreur
+              ? 'border-warning text-warning'
+              : 'border-content_color'
+          }`}
+        />
+
+        <div className='mt-14 flex justify-center'>
+          <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
+            Annuler
+          </Button>
+          <Button className='ml-6' type='submit'>
+            Ajouter
+          </Button>
+        </div>
+      </form>
     </Modal>
   )
 }
