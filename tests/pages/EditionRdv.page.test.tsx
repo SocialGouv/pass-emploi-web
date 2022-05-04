@@ -301,7 +301,7 @@ describe('EditionRdv', () => {
           it('présence du conseiller est requise et non modifiable', () => {
             // Given
             const inputPresenceConseiller = screen.getByLabelText(
-              /Vous êtes présent au rendez-vous/i
+              /Informer les bénéficiaires qu’un conseiller sera présent au rendez-vous/i
             )
 
             // When
@@ -390,7 +390,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
           // Given
           inputPresenceConseiller = screen.getByLabelText(
-            /Vous êtes présent au rendez-vous/i
+            /Informer les bénéficiaires qu’un conseiller sera présent au rendez-vous/i
           )
 
           // Then
@@ -750,6 +750,47 @@ describe('EditionRdv', () => {
         })
         expect(selectJeune).toHaveValue(idJeune)
         expect(selectJeune).toHaveAttribute('disabled', '')
+      })
+    })
+
+    describe('quand le conseiller connecter n’est pas le même que celui qui à crée le rdv', () => {
+      let rdv: Rdv
+      beforeEach(() => {
+        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
+        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
+        // Given
+        const jeune = {
+          id: jeunes[0].id,
+          prenom: jeunes[0].firstName,
+          nom: jeunes[0].lastName,
+        }
+
+        rdv = unRendezVous({ jeune, idCreateur: '2' })
+
+        // When
+        renderWithSession(
+          <DIProvider dependances={{ rendezVousService }}>
+            <EditionRdv
+              jeunes={jeunes}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              redirectTo={'/mes-rendezvous?creationRdv=succes'}
+              rdv={rdv}
+              pageTitle={''}
+            />
+          </DIProvider>
+        )
+      })
+
+      it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
+        // Given
+        const inputEmailInvitation = screen.getByLabelText(
+          /Le créateur du rendez-vous recevra un mail pour l'informer de la modification./i
+        )
+
+        // Then
+
+        expect(inputEmailInvitation).toBeInTheDocument()
       })
     })
 

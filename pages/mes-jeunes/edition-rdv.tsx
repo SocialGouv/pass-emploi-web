@@ -115,6 +115,9 @@ function EditionRdv({
           idJeune={idJeune}
           rdv={rdv}
           redirectTo={redirectTo}
+          conseillerIsCreator={
+            rdv ? session?.user.id === rdv?.idCreateur : true
+          }
           conseillerEmail={session?.user.email ?? ''}
           onChanges={setHasChanges}
           soumettreRendezVous={soumettreRendezVous}
