@@ -30,7 +30,7 @@
     "next": "12.1.5",
     "next-auth": "4.3.3",
     "next-logger": "3.0.1",
-    "pino": "7.10.0",
+    "pino": "7.11.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-router-dom": "6.3.0"
