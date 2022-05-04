@@ -37,7 +37,7 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
 
-  const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
+  const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string | undefined>(
     undefined
@@ -48,10 +48,12 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  const formIsValid = () => message !== '' && selectedJeunes.length !== 0
+  function formIsValid(): boolean {
+    return Boolean(selectedJeunesIds.length && message)
+  }
 
   function formHasChanges(): boolean {
-    return Boolean(selectedJeunes.length >= 1 || message)
+    return Boolean(selectedJeunesIds.length || message)
   }
 
   function openExitPageConfirmationModal(e: MouseEvent) {
@@ -71,7 +73,7 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
       await messagesService.signIn(session!.firebaseToken)
       await messagesService.sendNouveauMessageGroupe(
         { id: session!.user.id, structure: session!.user.structure },
-        selectedJeunes,
+        selectedJeunesIds,
         message,
         session!.accessToken
       )
@@ -145,7 +147,7 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
             </legend>
             <JeunesMultiselectAutocomplete
               jeunes={jeunes}
-              onUpdate={setSelectedJeunes}
+              onUpdate={setSelectedJeunesIds}
             />
           </fieldset>
 

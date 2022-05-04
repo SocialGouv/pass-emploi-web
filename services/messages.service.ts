@@ -21,7 +21,7 @@ export interface MessagesService {
 
   sendNouveauMessageGroupe(
     conseiller: { id: string; structure: string },
-    destinataires: Jeune[],
+    idsDestinataires: string[],
     newMessage: string,
     accessToken: string
   ): Promise<void>
@@ -175,18 +175,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   async sendNouveauMessageGroupe(
     conseiller: { id: string; structure: UserStructure },
-    destinataires: Jeune[],
+    idsDestinataires: string[],
     newMessage: string,
     accessToken: string
   ) {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage)
 
-    const idsJeunes = destinataires.map((destinataire) => destinataire.id)
-
     const mappedChats = await this.firebaseClient.getChatsDesJeunes(
       conseiller.id,
-      idsJeunes
+      idsDestinataires
     )
 
     await Promise.all([
@@ -214,7 +212,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await Promise.all([
       this.notifierNouveauMessageMultiple(
         conseiller.id,
-        idsJeunes,
+        idsDestinataires,
         accessToken
       ),
       this.evenementNouveauMessageMultiple(

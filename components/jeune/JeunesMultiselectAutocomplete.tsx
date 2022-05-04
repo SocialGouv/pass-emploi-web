@@ -1,30 +1,47 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import RemoveIcon from '../../assets/icons/remove.svg'
 
+import SelectAutocomplete from 'components/ui/SelectAutocomplete'
 import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
   jeunes: Jeune[]
-  onUpdate: (selection: Jeune[]) => void
+  onUpdate: (selectedIds: string[]) => void
 }
 
 const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
 
+interface OptionJeune {
+  id: string
+  value: string
+}
 export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
 }: JeunesMultiselectAutocompleteProps) {
-  const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
+  const optionsJeunes: OptionJeune[] = jeunes.map((jeune) => ({
+    id: jeune.id,
+    value: getJeuneFullname(jeune),
+  }))
+  const [selectedJeunes, setSelectedJeunes] = useState<OptionJeune[]>([])
   const input = useRef<HTMLInputElement>(null)
 
-  function getJeunesNotSelected(): Jeune[] {
-    return jeunes.filter(
+  function getJeunesNotSelected(): OptionJeune[] {
+    return optionsJeunes.filter(
       (jeune) => selectedJeunes.findIndex((j) => j.id === jeune.id) < 0
     )
   }
 
-  function selectAllJeunes(): Jeune[] {
+  function buildOptions(): OptionJeune[] {
+    const jeunesNotSelected = getJeunesNotSelected()
+    if (!jeunesNotSelected.length) return []
+    return [
+      { id: 'select-all-jeunes', value: SELECT_ALL_JEUNES_OPTION },
+    ].concat(jeunesNotSelected)
+  }
+
+  function selectAllJeunes(): OptionJeune[] {
     return selectedJeunes.concat(getJeunesNotSelected())
   }
 
@@ -32,20 +49,20 @@ export default function JeunesMultiselectAutocomplete({
     if (inputValue === SELECT_ALL_JEUNES_OPTION) {
       const updatedSelectedJeunes = selectAllJeunes()
       setSelectedJeunes(updatedSelectedJeunes)
-      onUpdate(updatedSelectedJeunes)
+      onUpdate(updatedSelectedJeunes.map((selected) => selected.id))
       input.current!.value = ''
     }
 
-    const jeune = getJeunesNotSelected().find(
-      (j) =>
-        getJeuneFullname(j).localeCompare(inputValue, undefined, {
+    const option = getJeunesNotSelected().find(
+      ({ value }) =>
+        value.localeCompare(inputValue, undefined, {
           sensitivity: 'base',
         }) === 0
     )
-    if (jeune) {
-      const updatedSelectedJeunes = selectedJeunes.concat(jeune)
+    if (option) {
+      const updatedSelectedJeunes = selectedJeunes.concat(option)
       setSelectedJeunes(updatedSelectedJeunes)
-      onUpdate(updatedSelectedJeunes)
+      onUpdate(updatedSelectedJeunes.map((selected) => selected.id))
       input.current!.value = ''
     }
   }
@@ -56,7 +73,7 @@ export default function JeunesMultiselectAutocomplete({
       const updatedSelectedJeune = [...selectedJeunes]
       updatedSelectedJeune.splice(indexSelectedJeune, 1)
       setSelectedJeunes(updatedSelectedJeune)
-      onUpdate(updatedSelectedJeune)
+      onUpdate(updatedSelectedJeune.map((selected) => selected.id))
     }
   }
 
@@ -68,25 +85,15 @@ export default function JeunesMultiselectAutocomplete({
           Nom et prénom
         </span>
       </label>
-      <input
-        type='text'
+      <SelectAutocomplete
         id='item-input'
-        name='item'
-        ref={input}
-        className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
-        list='items'
+        options={buildOptions()}
         onChange={(e) => selectJeune(e.target.value)}
+        className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
         multiple={true}
         aria-controls='selected-items'
+        ref={input}
       />
-      <datalist id='items'>
-        {getJeunesNotSelected().length > 0 && (
-          <option key='select-all' value={SELECT_ALL_JEUNES_OPTION} />
-        )}
-        {getJeunesNotSelected().map((jeune) => (
-          <option key={jeune.id} value={getJeuneFullname(jeune)} />
-        ))}
-      </datalist>
 
       <p
         aria-label={`Destinataires sélectionnés (${selectedJeunes.length})`}
@@ -105,17 +112,17 @@ export default function JeunesMultiselectAutocomplete({
           aria-live='polite'
           aria-relevant='additions removals'
         >
-          {selectedJeunes.map((jeune) => (
+          {selectedJeunes.map(({ id, value }) => (
             <li
-              key={jeune.id}
+              key={id}
               className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
               aria-atomic={true}
             >
-              {getJeuneFullname(jeune)}
+              {value}
               <button
                 type='reset'
                 title='Enlever'
-                onClick={() => unselectJeune(jeune.id)}
+                onClick={() => unselectJeune(id)}
               >
                 <span className='sr-only'>Enlever le jeune</span>
                 <RemoveIcon focusable={false} aria-hidden={true} />

@@ -3,6 +3,7 @@ import React, { FormEvent, useState } from 'react'
 import InfoIcon from '../assets/icons/information.svg'
 
 import { InputError } from './ui/InputError'
+import SelectAutocomplete from './ui/SelectAutocomplete'
 
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
@@ -70,12 +71,12 @@ export default function RenseignementAgenceModal({
             {idAgenceSelectionnee.erreur}
           </InputError>
         )}
-        <input
-          type='text'
+        <SelectAutocomplete
           id='search-agence'
-          list='agences'
-          multiple={false}
-          required={true}
+          options={referentielAgences.map(({ id, nom }) => ({
+            id,
+            value: nom,
+          }))}
           onChange={(e) => selectAgence(e.target.value)}
           aria-invalid={idAgenceSelectionnee.erreur ? true : undefined}
           aria-describedby={
@@ -87,13 +88,7 @@ export default function RenseignementAgenceModal({
               : 'border-content_color'
           }`}
         />
-        <datalist id='agences'>
-          {referentielAgences.map((agence) => (
-            <option key={agence.id} value={agence.nom}>
-              {agence.nom}
-            </option>
-          ))}
-        </datalist>
+
         <div className='mt-14 flex justify-center'>
           <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
             Annuler

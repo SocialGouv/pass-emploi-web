@@ -32,7 +32,7 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
-    let destinataires: Jeune[]
+    let jeunes: Jeune[]
     let jeunesService: JeunesService
     let messagesService: MessagesService
     let page: RenderResult
@@ -42,7 +42,7 @@ describe('EnvoiMessageGroupe', () => {
     let accessToken: string
 
     beforeEach(async () => {
-      destinataires = desJeunes()
+      jeunes = desJeunes()
 
       jeunesService = mockedJeunesService()
 
@@ -58,7 +58,7 @@ describe('EnvoiMessageGroupe', () => {
         <DIProvider dependances={{ jeunesService, messagesService }}>
           <EnvoiMessageGroupe
             pageTitle={''}
-            jeunes={destinataires}
+            jeunes={jeunes}
             withoutChat={true}
             previousUrl='/mes-jeunes'
           />
@@ -115,7 +115,6 @@ describe('EnvoiMessageGroupe', () => {
 
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
-        destinataires = [destinataires[0], destinataires[1]]
 
         userEvent.type(inputSearchJeune, 'Jirac Kenji')
         userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
@@ -137,7 +136,7 @@ describe('EnvoiMessageGroupe', () => {
         await waitFor(() => {
           expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
             { id: '1', structure: UserStructure.MILO },
-            destinataires,
+            [jeunes[0].id, jeunes[1].id],
             newMessage,
             accessToken
           )
