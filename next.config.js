@@ -40,10 +40,11 @@ module.exports = {
     defaultLocale: 'fr-FR',
   },
 
-  compiler: {
-    // https://nextjs.org/docs/advanced-features/compiler#remove-react-properties
-    reactRemoveProperties: true,
-  },
+  // FIXME https://github.com/vercel/next.js/issues/36651
+  // compiler: {
+  //   // https://nextjs.org/docs/advanced-features/compiler#remove-react-properties
+  //   reactRemoveProperties: true,
+  // },
   webpack(config) {
     // https://react-svgr.com/docs/next/
     config.module.rules.push({
