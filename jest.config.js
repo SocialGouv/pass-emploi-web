@@ -15,4 +15,11 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
 }
 
-module.exports = createJestConfig(customJestConfig)
+const jestConfig = async () => {
+  const nextJestConfig = await createJestConfig(customJestConfig)()
+  // https://github.com/vercel/next.js/issues/35634
+  nextJestConfig.transformIgnorePatterns = ['/node_modules/(?!@?firebase)']
+  return nextJestConfig
+}
+
+module.exports = jestConfig
