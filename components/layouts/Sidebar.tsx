@@ -121,7 +121,13 @@ export default function Sidebar({}: SidebarProps) {
         </div>
 
         <Link href='/profil'>
-          <a className='text-md text-bleu_nuit text-center'>
+          <a
+            className={`text-md text-bleu_nuit text-center
+                  ${
+                    router.pathname.startsWith('/profil') ? 'bg-bleu_blanc' : ''
+                  }
+                `}
+          >
             <PersonIcon
               focusable='false'
               aria-hidden='true'
@@ -131,12 +137,9 @@ export default function Sidebar({}: SidebarProps) {
           </a>
         </Link>
       </nav>
-
-      <div className='flex justify-between items-center'>
-        {session && (
-          <p className='text-lg-semi text-bleu_nuit'>{session!.user.name}</p>
-        )}
-
+      {/*TODO: create spacing component*/}
+      <div className='mb-8'></div>
+      <div className='flex p-2 m-2 items-center layout_m:justify-center'>
         <Link href={'/api/logout'}>
           <a
             onClick={handleLogout}
@@ -146,6 +149,9 @@ export default function Sidebar({}: SidebarProps) {
             <LogoutIcon aria-hidden='true' focusable='false' />
           </a>
         </Link>
+        {session && (
+          <p className='text-bleu_nuit layout_m:sr-only'>Déconnexion</p>
+        )}
       </div>
     </div>
   )

@@ -95,8 +95,6 @@ module.exports = {
     },
     extend: {
       screens: {
-        layout_xs: '375px',
-        layout_s: '600px',
         layout_base: { max: '900px' },
         layout_m: { max: '1024px' },
         layout_l: '1200px',

@@ -1,18 +1,18 @@
 .container {
-  --sidebar-w: 15vw;
-  --page-w: 85vw;
-  --page-w-with-chat: 60vw;
-  --chat-w: 25vw;
+  --sidebar-width: 15vw;
+  --page-width: 85vw;
+  --page-width-with-chat: 61vw;
+  --chat-width: 24vw;
 
   display: grid;
   grid-template-areas: 'sidebar page';
-  grid-template-columns: var(--sidebar-w) var(--page-w);
+  grid-template-columns: var(--sidebar-width) var(--page-width);
   grid-template-rows: 100vh;
 }
 
 .container.container_with_chat {
   grid-template-areas: 'sidebar page chat';
-  grid-template-columns: var(--sidebar-w) var(--page-w-with-chat) var(--chat-w);
+  grid-template-columns: var(--sidebar-width) var(--page-width-with-chat) var(--chat-width);
 }
 
 .sidebar {
@@ -24,12 +24,27 @@
   padding: 20px 19px 16px;
   text-align: center;
   border-right: 1px solid theme('colors.primary_lighten');
-
 }
 
 @media screen and (max-width: 1024px) {
+ .container {
+   grid-template-columns: 10vw 90vw;
+ }
+  .container.container_with_chat {
+    grid-template-columns: 10vw 70vw 20vw;
+  }
   .sidebar a {
       justify-content: center;
+  }
+
+  .sidebar svg {
+    margin-right: 0;
+  }
+}
+
+@media screen and (min-width: 900px) {
+  .sidebar nav  {
+    margin: 8px;
   }
 
 }
@@ -74,9 +89,10 @@
   display: flex;
   align-items: center;
   margin-bottom: 7px;
-  padding: 11px;
+  padding: 8px;
   border-radius: 8px;
 }
+
 
 .chatRoom {
   grid-area: chat;
