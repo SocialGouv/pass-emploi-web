@@ -214,7 +214,11 @@ function MesJeunes({
 
         {showAjoutAgenceSuccess && (
           <SuccessMessage
-            label='Votre agence a été ajoutée à votre profil'
+            label={`Votre ${
+              structureConseiller === UserStructure.MILO
+                ? 'Mission locale'
+                : 'agence'
+            } a été ajoutée à votre profil`}
             onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
           />
         )}

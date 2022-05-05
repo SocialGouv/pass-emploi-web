@@ -341,7 +341,7 @@ describe('Mes Jeunes', () => {
 
         // Then
         expect(
-          screen.getByText('Votre agence a été ajoutée à votre profil')
+          screen.getByText('Votre Mission locale a été ajoutée à votre profil')
         ).toBeInTheDocument()
       })
     })
