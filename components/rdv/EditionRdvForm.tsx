@@ -24,6 +24,7 @@ interface EditionRdvFormProps {
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
   redirectTo: string
+  conseillerIsCreator: boolean
   conseillerEmail: string
   soumettreRendezVous: (payload: RdvFormData) => Promise<void>
   leaveWithChanges: () => void
@@ -36,6 +37,7 @@ export function EditionRdvForm({
   jeunes,
   typesRendezVous,
   redirectTo,
+  conseillerIsCreator,
   conseillerEmail,
   soumettreRendezVous,
   leaveWithChanges,
@@ -232,6 +234,15 @@ export function EditionRdvForm({
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
   })
+
+  function emailInvitationText(conseillerIsCreator: boolean) {
+    if (conseillerIsCreator) {
+      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :
+      ${conseillerEmail}`
+    } else {
+      return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."
+    }
+  }
 
   // JSX
   return (
@@ -501,7 +512,10 @@ export function EditionRdvForm({
 
         <div className='flex items-center mb-8'>
           <label htmlFor='presenceConseiller' className='flex items-center'>
-            <span className='w-64 mr-4'>Vous êtes présent au rendez-vous</span>
+            <span className='w-64 mr-4'>
+              Informer les bénéficiaires qu’un conseiller sera présent au
+              rendez-vous
+            </span>
             <Switch
               id='presenceConseiller'
               name='presenceConseiller'
@@ -515,8 +529,7 @@ export function EditionRdvForm({
         <div className='flex items-center mb-8'>
           <label htmlFor='emailInvitation' className='flex items-center'>
             <span className='w-64 mr-4'>
-              Intégrer ce rendez-vous à mon agenda via l’adresse mail suivante :{' '}
-              {conseillerEmail}
+              {emailInvitationText(conseillerIsCreator)}
             </span>
             <Switch
               id='emailInvitation'
