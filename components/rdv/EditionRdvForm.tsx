@@ -237,7 +237,7 @@ export function EditionRdvForm({
 
   function emailInvitationText(conseillerIsCreator: boolean) {
     if (conseillerIsCreator) {
-      return `Intégrer ce rendez-vous à mon agenda via l’adresse mail suivante :
+      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :
       ${conseillerEmail}`
     } else {
       return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."

@@ -401,7 +401,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
           // Given
           inputEmailInvitation = screen.getByLabelText(
-            /Intégrer ce rendez-vous à mon agenda via l’adresse mail suivante :/i
+            /Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :/i
           )
 
           // Then
@@ -753,19 +753,18 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand le conseiller connecter n’est pas le même que celui qui à crée le rdv', () => {
-      let rdv: Rdv
-      beforeEach(() => {
+    describe('quand le conseiller connecté n’est pas le même que celui qui à crée le rdv', () => {
+      it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
+        // Given
         ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
         ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
-        // Given
         const jeune = {
           id: jeunes[0].id,
           prenom: jeunes[0].firstName,
           nom: jeunes[0].lastName,
         }
 
-        rdv = unRendezVous({ jeune, idCreateur: '2' })
+        const rdv = unRendezVous({ jeune, idCreateur: '2' })
 
         // When
         renderWithSession(
@@ -780,10 +779,6 @@ describe('EditionRdv', () => {
             />
           </DIProvider>
         )
-      })
-
-      it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
-        // Given
         const inputEmailInvitation = screen.getByLabelText(
           /Le créateur du rendez-vous recevra un mail pour l'informer de la modification./i
         )
