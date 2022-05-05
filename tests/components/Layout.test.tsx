@@ -17,7 +17,13 @@ jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 jest.useFakeTimers()
 
+const mockAudio = jest.fn()
+global.Audio = jest.fn().mockImplementation(() => ({
+  play: mockAudio,
+}))
+
 describe('<Layout />', () => {
+  let updateChatCall: (jeuneChat: JeuneChat) => void
   const jeunes: Jeune[] = desJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
@@ -47,7 +53,10 @@ describe('<Layout />', () => {
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
       observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
-        fn(jeunesChats.find((jeuneChat) => jeuneChat.id === jeune.id)!)
+        updateChatCall = fn
+        updateChatCall(
+          jeunesChats.find((jeuneChat) => jeuneChat.id === jeune.id)!
+        )
         return () => {}
       }),
     })
@@ -94,6 +103,47 @@ describe('<Layout />', () => {
           'cleChiffrement',
           expect.any(Function)
         )
+      })
+    })
+
+    describe('mise à jour des chats', () => {
+      it("notifie quand c'est un nouveau message d'un jeune", async () => {
+        // Given
+        const unJeuneChatNonLu = unJeuneChat({
+          ...jeunes[0],
+          lastMessageSentBy: 'jeune',
+          chatId: `chat-${jeunes[0].id}`,
+          lastMessageContent:
+            'Ceci est tellement nouveau, donne moi de la notif',
+        })
+
+        // When
+        await act(async () => {
+          updateChatCall(unJeuneChatNonLu)
+        })
+
+        // Then
+        await waitFor(() => {
+          expect(mockAudio).toHaveBeenCalled()
+        })
+      })
+      it("ne notifie pas quand c'est une tierce modification du chat", async () => {
+        // Given
+        const unJeuneChatDejaVu = unJeuneChat({
+          ...jeunes[0],
+          chatId: `chat-${jeunes[0].id}`,
+          lastMessageSentBy: 'conseiller',
+        })
+
+        // When
+        await act(async () => {
+          updateChatCall(unJeuneChatDejaVu)
+        })
+
+        // Then
+        await waitFor(() => {
+          expect(mockAudio).not.toHaveBeenCalled()
+        })
       })
     })
 

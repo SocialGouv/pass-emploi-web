@@ -2,13 +2,13 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
-import { ReactElement, useEffect, useRef, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
 import { Footer } from 'components/Footer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Sidebar from 'components/layouts/Sidebar'
-import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
+import { Chat, compareJeuneChat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -19,6 +19,8 @@ import { useDependance } from 'utils/injectionDependances'
 type LayoutProps = {
   children: ReactElement
 }
+
+const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
 export default function Layout({ children }: LayoutProps) {
   const {
@@ -32,28 +34,51 @@ export default function Layout({ children }: LayoutProps) {
   const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
-  function updateChats(updatedChat: JeuneChat) {
-    setChats((prevChats) => {
-      const chatIndex = prevChats.findIndex(
-        (chat) => chat.chatId === updatedChat.chatId
-      )
-      const updatedChats = [...prevChats]
-      if (chatIndex !== -1) {
-        updatedChats[chatIndex] = updatedChat
-      } else {
-        updatedChats.push(updatedChat)
-      }
-      updatedChats.sort(compareJeuneChat)
-      return updatedChats
-    })
-  }
+  const updateChats = useCallback(
+    (updatedChat: JeuneChat) => {
+      setChats((prevChats) => {
+        const chatIndex = prevChats.findIndex(
+          (chat) => chat.chatId === updatedChat.chatId
+        )
+        const updatedChats = [...prevChats]
+
+        if (chatIndex !== -1) {
+          if (aUnNouveauMessage(prevChats[chatIndex], updatedChat)) {
+            audio?.play()
+          }
+          updatedChats[chatIndex] = updatedChat
+        } else {
+          updatedChats.push(updatedChat)
+        }
+        updatedChats.sort(compareJeuneChat)
+        return updatedChats
+      })
+    },
+    [audio]
+  )
 
   function hasMessageNonLu(): boolean {
     return chats.some(
       (chat) => !chat.seenByConseiller && chat.lastMessageContent
     )
   }
+
+  function aUnNouveauMessage(
+    previousChat: Jeune & Chat,
+    updatedChat: Jeune & Chat
+  ) {
+    return (
+      previousChat.lastMessageContent !== updatedChat.lastMessageContent &&
+      updatedChat.lastMessageSentBy === 'jeune'
+    )
+  }
+
+  useEffect(() => {
+    // https://github.com/vercel/next.js/discussions/17963
+    setAudio(new Audio(CHEMIN_DU_SON))
+  }, [])
 
   useEffect(() => {
     if (session && !chatCredentials) {
@@ -65,7 +90,6 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (!session || !chatCredentials) return
-
     const { user, accessToken } = session
     messagesService
       .signIn(chatCredentials.token)
@@ -83,7 +107,7 @@ export default function Layout({ children }: LayoutProps) {
       .then((destructors) => (destructorsRef.current = destructors))
 
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [session, jeunesService, messagesService, chatCredentials])
+  }, [session, jeunesService, messagesService, chatCredentials, updateChats])
 
   return (
     <>
