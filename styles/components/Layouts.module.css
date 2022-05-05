@@ -24,6 +24,14 @@
   padding: 20px 19px 16px;
   text-align: center;
   border-right: 1px solid theme('colors.primary_lighten');
+
+}
+
+@media screen and (max-width: 1024px) {
+  .sidebar a {
+      justify-content: center;
+  }
+
 }
 
 .page {

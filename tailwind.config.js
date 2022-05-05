@@ -19,10 +19,10 @@ module.exports = {
   ], // Retain all classes starting with...
   theme: {
     screens: {
-      sm: '480px',
-      md: '768px',
-      lg: '976px',
-      xl: '1441px',
+      // sm: '480px',
+      // md: '768px',
+      // lg: '976px',
+      // xl: '1441px',
     },
     /**
      * Usage
@@ -94,6 +94,14 @@ module.exports = {
       table_large: '28% 2fr 3fr auto',
     },
     extend: {
+      screens: {
+        layout_xs: '375px',
+        layout_s: '600px',
+        layout_base: { max: '900px' },
+        layout_m: { max: '1024px' },
+        layout_l: '1200px',
+        layout_xl: '1200px',
+      },
       fontFamily: {
         sans: ['Marianne'],
       },

@@ -55,7 +55,7 @@ export default function Sidebar({}: SidebarProps) {
                 aria-hidden='true'
                 className='mr-2'
               />
-              <span className='text-md text-bleu_nuit text-center'>
+              <span className='text-md text-bleu_nuit text-center layout_m:sr-only'>
                 Mes jeunes
               </span>
             </a>
@@ -75,7 +75,9 @@ export default function Sidebar({}: SidebarProps) {
                   aria-hidden='true'
                   className='mr-2'
                 />
-                <span className='text-md text-bleu_nuit'>Rendez-vous</span>
+                <span className='text-md text-bleu_nuit layout_m:sr-only'>
+                  Rendez-vous
+                </span>
               </a>
             </Link>
           )}
@@ -94,7 +96,9 @@ export default function Sidebar({}: SidebarProps) {
                   aria-hidden='true'
                   className='mr-2'
                 />
-                <span className='text-md text-bleu_nuit'>Supervision</span>
+                <span className='text-md text-bleu_nuit layout_m:sr-only'>
+                  Supervision
+                </span>
               </a>
             </Link>
           )}
@@ -110,7 +114,9 @@ export default function Sidebar({}: SidebarProps) {
             rel='noreferrer noopener'
           >
             <AideIcon aria-hidden='true' focusable='false' className='mr-2' />
-            <span className='text-md text-bleu_nuit text-center'>Aide</span>
+            <span className='text-md text-bleu_nuit text-center layout_m:sr-only'>
+              Aide
+            </span>
           </a>
         </div>
 
@@ -121,7 +127,7 @@ export default function Sidebar({}: SidebarProps) {
               aria-hidden='true'
               className='fill-bleu_nuit'
             />
-            <span className='ml-2'>Mon profil</span>
+            <span className='ml-2 layout_m:sr-only'>Mon profil</span>
           </a>
         </Link>
       </nav>
