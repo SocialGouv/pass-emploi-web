@@ -124,7 +124,7 @@ describe('Home', () => {
     })
 
     describe('quand le conseiller est Mission locale', () => {
-      it("affiche 'Mission locale' au lieu de 'agence'", () => {
+      it("affiche 'Mission locale' au lieu de 'agence'", async () => {
         // Given
         renderWithSession(
           <DIProvider
@@ -137,6 +137,16 @@ describe('Home', () => {
             />
           </DIProvider>
         )
+        const searchMission = screen.getByRole('combobox', {
+          name: /votre Mission locale/,
+        })
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
+        fireEvent.input(searchMission, { target: { value: 'pouet' } })
+        await act(async () => {
+          submit.click()
+        })
 
         // Then
         expect(
@@ -144,6 +154,9 @@ describe('Home', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('combobox', { name: /votre Mission locale/ })
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(/Sélectionner une Mission locale/)
         ).toBeInTheDocument()
       })
     })

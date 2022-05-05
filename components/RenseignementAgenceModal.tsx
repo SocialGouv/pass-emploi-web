@@ -44,7 +44,7 @@ export default function RenseignementAgenceModal({
     if (!idAgenceSelectionnee.value) {
       setIdAgenceSelectionnee({
         ...idAgenceSelectionnee,
-        erreur: 'Sélectionner une agence dans la liste',
+        erreur: `Sélectionner une ${labelAgence} dans la liste`,
       })
     } else {
       onAgenceChoisie(idAgenceSelectionnee.value)
