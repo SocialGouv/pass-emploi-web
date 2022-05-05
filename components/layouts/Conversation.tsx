@@ -8,6 +8,7 @@ import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import {
   dateIsToday,
   formatDayDate,
@@ -31,6 +32,7 @@ export default function Conversation({
   onBack,
 }: ConversationProps) {
   const { data: session } = useSession<true>({ required: true })
+  const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
 
   const [newMessage, setNewMessage] = useState('')
@@ -59,7 +61,8 @@ export default function Conversation({
       },
       jeuneChat,
       newMessage,
-      session!.accessToken
+      session!.accessToken,
+      chatCredentials!.cleChiffrement
     )
 
     setNewMessage('')
@@ -81,8 +84,11 @@ export default function Conversation({
 
   const observerMessages = useCallback(
     (idChatToObserve: string) => {
+      if (!chatCredentials) return () => {}
+
       return messagesService.observeMessages(
         idChatToObserve,
+        chatCredentials.cleChiffrement,
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
@@ -92,7 +98,7 @@ export default function Conversation({
         }
       )
     },
-    [messagesService, setReadByConseiller]
+    [chatCredentials, messagesService, setReadByConseiller]
   )
 
   const observerLastJeuneReadingDate = useCallback(

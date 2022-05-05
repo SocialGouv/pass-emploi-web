@@ -1,17 +1,19 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
+import { Session } from 'next-auth'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import Conversation from 'components/layouts/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
-import { MessagesOfADay } from 'interfaces/message'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Session } from 'next-auth'
-import React from 'react'
-import { MessagesService } from 'services/messages.service'
-import { DIProvider } from 'utils/injectionDependances'
-import { UserStructure } from 'interfaces/conseiller'
-import { formatDayDate } from 'utils/date'
-import renderWithSession from '../renderWithSession'
 import { mockedMessagesService } from 'fixtures/services'
+import { UserStructure } from 'interfaces/conseiller'
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { MessagesOfADay } from 'interfaces/message'
+import { MessagesService } from 'services/messages.service'
+import { formatDayDate } from 'utils/date'
+import { DIProvider } from 'utils/injectionDependances'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
@@ -19,8 +21,6 @@ describe('<Conversation />', () => {
   let messagesService: MessagesService
   let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
-  let accessToken: string
-  let tokenChat: string
   const messagesParJour = desMessagesParJour()
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
@@ -35,7 +35,7 @@ describe('<Conversation />', () => {
         }
       ),
       observeMessages: jest.fn(
-        (idChat: string, fn: (messages: MessagesOfADay[]) => void) => {
+        (_idChat, _cle, fn: (messages: MessagesOfADay[]) => void) => {
           fn(messagesParJour)
           return () => {}
         }
@@ -53,8 +53,6 @@ describe('<Conversation />', () => {
       email: 'mail@mail.com',
       estConseiller: true,
     }
-    accessToken = 'accessToken'
-    tokenChat = 'tokenChat'
 
     // https://github.com/jsdom/jsdom/issues/1695
     window.HTMLElement.prototype.scrollIntoView = jest.fn()
@@ -67,7 +65,7 @@ describe('<Conversation />', () => {
             onBack={onBack}
           />
         </DIProvider>,
-        { user: conseiller, firebaseToken: tokenChat }
+        { user: conseiller }
       )
     })
   })
@@ -76,6 +74,7 @@ describe('<Conversation />', () => {
     // Then
     expect(messagesService.observeMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
+      'cleChiffrement',
       expect.any(Function)
     )
   })
@@ -159,7 +158,8 @@ describe('<Conversation />', () => {
           },
           jeuneChat,
           newMessage,
-          accessToken
+          'accessToken',
+          'cleChiffrement'
         )
       })
     })

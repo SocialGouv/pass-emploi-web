@@ -1,4 +1,3 @@
-import { ApiClient } from 'clients/api.client'
 import { fetchJson } from 'utils/fetchJson'
 
 interface RefreshedTokens {
@@ -8,11 +7,9 @@ interface RefreshedTokens {
 }
 
 export class AuthService {
-  private readonly apiClient: ApiClient
   private readonly issuerPrefix?: string
 
   constructor() {
-    this.apiClient = new ApiClient()
     this.issuerPrefix = process.env.KEYCLOAK_ISSUER
   }
 
@@ -32,13 +29,5 @@ export class AuthService {
       method: 'POST',
       body,
     })
-  }
-
-  async getFirebaseToken(accessToken: string): Promise<{ token: string }> {
-    return this.apiClient!.post<{ token: string }>(
-      '/auth/firebase/token',
-      {},
-      accessToken
-    )
   }
 }

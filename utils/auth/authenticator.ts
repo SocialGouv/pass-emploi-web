@@ -1,6 +1,7 @@
 import { decode, JwtPayload } from 'jsonwebtoken'
 import { Account } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
+
 import { AuthService } from 'services/auth.service'
 
 function secondsToTimestamp(seconds: number): number {
@@ -17,25 +18,7 @@ export class Authenticator {
     jwt: JWT | HydratedJWT
     account?: Account
   }): Promise<HydratedJWT> {
-    const isFirstSignin = Boolean(account)
-    if (isFirstSignin) {
-      const { userId, userStructure, userRoles, userType } = decode(
-        <string>account!.access_token
-      ) as JwtPayload
-      jwt.accessToken = account!.access_token
-      jwt.refreshToken = account!.refresh_token
-      jwt.idConseiller = userId
-      jwt.structureConseiller = userStructure
-      jwt.estConseiller = userType === 'CONSEILLER'
-      jwt.estSuperviseur = Boolean(userRoles?.includes('SUPERVISEUR'))
-      jwt.expiresAtTimestamp = account!.expires_at
-        ? secondsToTimestamp(account!.expires_at)
-        : undefined
-      jwt.firebaseToken = await this.handleFirebaseToken(
-        account!.access_token as string
-      )
-      return jwt
-    }
+    if (account) return hydrateJwtAtFirstSignin(account, jwt)
 
     const hydratedJWT = jwt as HydratedJWT
     const safetyRefreshBuffer: number = 15
@@ -70,10 +53,25 @@ export class Authenticator {
       }
     }
   }
+}
 
-  private async handleFirebaseToken(accessToken: string) {
-    const { token } = await this.authService.getFirebaseToken(accessToken)
-    return token
+async function hydrateJwtAtFirstSignin(
+  { access_token, expires_at, refresh_token }: Account,
+  jwt: JWT
+): Promise<HydratedJWT> {
+  const { userId, userStructure, userRoles, userType } = decode(
+    <string>access_token
+  ) as JwtPayload
+
+  return {
+    ...jwt,
+    accessToken: access_token,
+    refreshToken: refresh_token,
+    idConseiller: userId,
+    structureConseiller: userStructure,
+    estConseiller: userType === 'CONSEILLER',
+    estSuperviseur: Boolean(userRoles?.includes('SUPERVISEUR')),
+    expiresAtTimestamp: expires_at ? secondsToTimestamp(expires_at) : undefined,
   }
 }
 

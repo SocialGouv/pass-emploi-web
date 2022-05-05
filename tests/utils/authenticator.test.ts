@@ -1,8 +1,9 @@
 import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
+
+import { UserStructure } from 'interfaces/conseiller'
 import { AuthService } from 'services/auth.service'
 import { Authenticator } from 'utils/auth/authenticator'
-import { UserStructure } from 'interfaces/conseiller'
 
 const now = 163887007214
 
@@ -15,7 +16,6 @@ describe('Authenticator', () => {
   beforeEach(() => {
     authService = {
       fetchRefreshedTokens: jest.fn(),
-      getFirebaseToken: jest.fn(),
     }
 
     authenticator = new Authenticator(authService)
@@ -34,9 +34,6 @@ describe('Authenticator', () => {
     describe("Quand c'est la 1ere connexion", () => {
       it('enrichit le JWT avec les infos du token et du conseiller', async () => {
         // Given
-        authService.getFirebaseToken = jest
-          .fn()
-          .mockResolvedValueOnce({ token: 'firebaseToken' })
         const expiresAtInSeconds: number = 1638434737
 
         // When
@@ -58,7 +55,7 @@ describe('Authenticator', () => {
           expiresAtTimestamp: expiresAtInSeconds * 1000,
           idConseiller: '41',
           estSuperviseur: true,
-          firebaseToken: 'firebaseToken',
+          estConseiller: true,
           structureConseiller: UserStructure.PASS_EMPLOI,
         })
       })

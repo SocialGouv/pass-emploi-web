@@ -4,17 +4,16 @@
 
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
-import AppHead from '../AppHead'
-
-import ChatRoom from './ChatRoom'
-import Sidebar from './Sidebar'
-
+import AppHead from 'components/AppHead'
 import { Footer } from 'components/Footer'
+import ChatRoom from 'components/layouts/ChatRoom'
+import Sidebar from 'components/layouts/Sidebar'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useSession from 'utils/auth/useSession'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 
 type LayoutProps = {
@@ -30,6 +29,7 @@ export default function Layout({ children }: LayoutProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const { data: session } = useSession<true>({ required: true })
+  const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
 
@@ -56,23 +56,34 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   useEffect(() => {
-    if (!session) return
-
-    const { user, accessToken, firebaseToken } = session
-    if (firebaseToken) {
+    if (session && !chatCredentials) {
       messagesService
-        .signIn(firebaseToken)
-        .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
-        .then((jeunes) =>
-          jeunes.map((jeune) =>
-            messagesService.observeJeuneChat(user.id, jeune, updateChats)
+        .getChatCredentials(session.accessToken)
+        .then(setChatCredentials)
+    }
+  }, [session, chatCredentials, messagesService, setChatCredentials])
+
+  useEffect(() => {
+    if (!session || !chatCredentials) return
+
+    const { user, accessToken } = session
+    messagesService
+      .signIn(chatCredentials.token)
+      .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
+      .then((jeunes) =>
+        jeunes.map((jeune) =>
+          messagesService.observeJeuneChat(
+            user.id,
+            jeune,
+            chatCredentials.cleChiffrement,
+            updateChats
           )
         )
-        .then((destructors) => (destructorsRef.current = destructors))
-    }
+      )
+      .then((destructors) => (destructorsRef.current = destructors))
 
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [session, jeunesService, messagesService])
+  }, [session, jeunesService, messagesService, chatCredentials])
 
   return (
     <>

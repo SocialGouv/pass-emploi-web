@@ -1,8 +1,8 @@
 import { Jeune } from 'interfaces/jeune'
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
 
-type CurrentJeune = Jeune | undefined
-type CurrentJeuneState = [CurrentJeune, (currentJeune: CurrentJeune) => void]
+type MaybeJeune = Jeune | undefined
+type CurrentJeuneState = [MaybeJeune, (currentJeune: MaybeJeune) => void]
 
 const CurrentJeuneContext = createContext<CurrentJeuneState | undefined>(
   undefined
@@ -15,10 +15,10 @@ export function CurrentJeuneProvider({
 }: {
   children: ReactNode
   jeune?: Jeune
-  setJeune?: (currentJeune: CurrentJeune) => void
+  setJeune?: (currentJeune: MaybeJeune) => void
 }) {
   const [currentJeune, setCurrentJeune]: CurrentJeuneState =
-    useState<CurrentJeune>(jeune)
+    useState<MaybeJeune>(jeune)
   const setter = setJeune ?? setCurrentJeune
   const value: CurrentJeuneState = useMemo(
     () => [currentJeune, setter],

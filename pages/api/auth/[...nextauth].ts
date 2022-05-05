@@ -30,7 +30,6 @@ export default NextAuth({
       session: Session
       token: HydratedJWT
     }) {
-      session.firebaseToken = token.firebaseToken ?? ''
       session.user.id = token.idConseiller ?? ''
       session.user.structure = token.structureConseiller ?? ''
       session.user.estConseiller = token.estConseiller ?? false
