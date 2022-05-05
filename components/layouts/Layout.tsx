@@ -13,7 +13,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useSession from 'utils/auth/useSession'
-import { useChatCreds } from 'utils/chat/chatCredsContext'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 
 type LayoutProps = {
@@ -29,7 +29,7 @@ export default function Layout({ children }: LayoutProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const { data: session } = useSession<true>({ required: true })
-  const [chatCreds, setChatCreds] = useChatCreds()
+  const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
 
@@ -56,24 +56,26 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   useEffect(() => {
-    if (session && !chatCreds) {
-      messagesService.getChatCredentials(session.accessToken).then(setChatCreds)
+    if (session && !chatCredentials) {
+      messagesService
+        .getChatCredentials(session.accessToken)
+        .then(setChatCredentials)
     }
-  }, [session, chatCreds, messagesService, setChatCreds])
+  }, [session, chatCredentials, messagesService, setChatCredentials])
 
   useEffect(() => {
-    if (!session || !chatCreds) return
+    if (!session || !chatCredentials) return
 
     const { user, accessToken } = session
     messagesService
-      .signIn(chatCreds.token)
+      .signIn(chatCredentials.token)
       .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
       .then((jeunes) =>
         jeunes.map((jeune) =>
           messagesService.observeJeuneChat(
             user.id,
             jeune,
-            chatCreds.cleChiffrement,
+            chatCredentials.cleChiffrement,
             updateChats
           )
         )
@@ -81,7 +83,7 @@ export default function Layout({ children }: LayoutProps) {
       .then((destructors) => (destructorsRef.current = destructors))
 
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [session, jeunesService, messagesService, chatCreds])
+  }, [session, jeunesService, messagesService, chatCredentials])
 
   return (
     <>

@@ -17,7 +17,7 @@ export interface MessagesOfADay {
   messages: Message[]
 }
 
-export interface ChatCreds {
+export interface ChatCredentials {
   token: string
   cleChiffrement: string
 }
