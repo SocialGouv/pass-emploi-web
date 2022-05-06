@@ -3,12 +3,9 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import AideIcon from '../../assets/icons/aide.svg'
-import SupervisionIcon from '../../assets/icons/arrow-right.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
-import PeopleIcon from '../../assets/icons/people.svg'
-import PersonIcon from '../../assets/icons/person.svg'
-import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
 import Logo from '../../assets/images/logo_110.svg'
+import NavLink from '../ui/NavLink'
 
 import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
@@ -25,6 +22,8 @@ export default function Sidebar({}: SidebarProps) {
   const isMilo = session?.user.structure === UserStructure.MILO
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
   const isSuperviseur = session?.user.estSuperviseur
+
+  const currentNavLink = (href: string) => router.pathname.startsWith(href)
 
   async function handleLogout(event: any) {
     event.preventDefault()
@@ -44,63 +43,31 @@ export default function Sidebar({}: SidebarProps) {
         className='grow flex flex-col justify-between'
       >
         <div>
-          <Link href={'/mes-jeunes'}>
-            <a
-              className={
-                router.pathname.startsWith('/mes-jeunes') ? 'bg-bleu_blanc' : ''
-              }
-            >
-              <PeopleIcon
-                focusable='false'
-                aria-hidden='true'
-                className='mr-2'
-              />
-              <span className='text-md text-bleu_nuit text-center layout_m:sr-only'>
-                Mes jeunes
-              </span>
-            </a>
-          </Link>
+          <NavLink
+            isActive={currentNavLink('/mes-jeunes')}
+            href='/mes-jeunes'
+            label='Mes jeunes'
+            iconName='people'
+          />
 
           {!isPoleEmploi && (
-            <Link href={'/mes-rendezvous'}>
-              <a
-                className={
-                  router.pathname.startsWith('/mes-rendezvous')
-                    ? 'bg-bleu_blanc'
-                    : ''
-                }
-              >
-                <RendezvousIcon
-                  focusable='false'
-                  aria-hidden='true'
-                  className='mr-2'
-                />
-                <span className='text-md text-bleu_nuit layout_m:sr-only'>
-                  Rendez-vous
-                </span>
-              </a>
-            </Link>
+            <NavLink
+              isActive={currentNavLink('/mes-rendezvous')}
+              href='/mes-rendezvous'
+              label='Rendez-vous'
+              iconName='rendezvous'
+            />
           )}
 
           {isSuperviseur && (
-            <Link href={'/supervision'}>
-              <a
-                className={
-                  router.pathname.startsWith('/supervision')
-                    ? 'bg-bleu_blanc'
-                    : ''
-                }
-              >
-                <SupervisionIcon
-                  focusable='false'
-                  aria-hidden='true'
-                  className='mr-2'
-                />
-                <span className='text-md text-bleu_nuit layout_m:sr-only'>
-                  Supervision
-                </span>
-              </a>
-            </Link>
+            <>
+              <NavLink
+                iconName='supervision'
+                label='Supervision'
+                href='/supervision'
+                isActive={currentNavLink('/supervision')}
+              />
+            </>
           )}
 
           <a
@@ -120,23 +87,14 @@ export default function Sidebar({}: SidebarProps) {
           </a>
         </div>
 
-        <Link href='/profil'>
-          <a
-            className={`text-md text-bleu_nuit text-center
-                  ${
-                    router.pathname.startsWith('/profil') ? 'bg-bleu_blanc' : ''
-                  }
-                `}
-          >
-            <PersonIcon
-              focusable='false'
-              aria-hidden='true'
-              className='fill-bleu_nuit'
-            />
-            <span className='ml-2 layout_m:sr-only'>Mon profil</span>
-          </a>
-        </Link>
+        <NavLink
+          isActive={currentNavLink('/profil')}
+          href='/profil'
+          label={session && session!.user.name}
+          iconName='person'
+        />
       </nav>
+
       {/*TODO: create spacing component*/}
       <div className='mb-8'></div>
       <div className='flex p-2 m-2 items-center layout_m:justify-center'>
