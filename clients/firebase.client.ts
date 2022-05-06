@@ -19,6 +19,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+
 import { Chat } from 'interfaces/jeune'
 import { Message, TypeMessage } from 'interfaces/message'
 import { captureRUMError } from 'utils/monitoring/init-rum'
