@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 import BackIcon from '../../assets/icons/arrow_back.svg'
 
+import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import { Jeune } from 'interfaces/jeune'
@@ -40,9 +41,11 @@ function EditionRdv({
   const router = useRouter()
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
-
   const { data: session } = useSession<true>({ required: true })
+
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
+    useState<RdvFormData | undefined>(undefined)
   const [hasChanges, setHasChanges] = useState<boolean>(false)
 
   let initialTracking: string
@@ -120,6 +123,7 @@ function EditionRdv({
           onChanges={setHasChanges}
           soumettreRendezVous={soumettreRendezVous}
           leaveWithChanges={openLeavePageModal}
+          showConfirmationModal={setPayloadForConfirmationModal}
         />
       </div>
       {showLeavePageModal && (
@@ -130,6 +134,14 @@ function EditionRdv({
           source={rdv ? 'edition' : 'creation'}
           onCancel={closeLeavePageModal}
           destination={redirectTo}
+        />
+      )}
+      {payloadForConfirmationModal && (
+        <ConfirmationUpdateRdvModal
+          onCancel={() => setPayloadForConfirmationModal(undefined)}
+          onConfirmation={() =>
+            soumettreRendezVous(payloadForConfirmationModal)
+          }
         />
       )}
     </>
