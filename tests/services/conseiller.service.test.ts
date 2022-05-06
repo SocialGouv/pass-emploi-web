@@ -41,7 +41,7 @@ describe('ConseillerApiService', () => {
       // When
       await conseillerService.modifierAgence(
         'id-conseiller',
-        'id-agence',
+        { id: 'id-agence' },
         'accessToken'
       )
 
@@ -49,6 +49,22 @@ describe('ConseillerApiService', () => {
       expect(apiClient.put).toHaveBeenCalledWith(
         '/conseillers/id-conseiller',
         { agence: { id: 'id-agence' } },
+        'accessToken'
+      )
+    })
+
+    it("modifie le conseiller avec le nom de l'agence", async () => {
+      // When
+      await conseillerService.modifierAgence(
+        'id-conseiller',
+        { nom: 'Agence libre' },
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller',
+        { agence: { nom: 'Agence libre' } },
         'accessToken'
       )
     })

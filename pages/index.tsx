@@ -33,10 +33,12 @@ function Home({
     'Pop-in sélection agence'
   )
 
-  async function selectAgence(idAgence: string): Promise<void> {
+  async function selectAgence(
+    agence: { id: string } | { nom: string }
+  ): Promise<void> {
     await conseillerService.modifierAgence(
       session!.user.id,
-      idAgence,
+      agence,
       session!.accessToken
     )
     setTrackingLabel('Succès ajout agence')
