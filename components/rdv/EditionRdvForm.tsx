@@ -5,6 +5,7 @@ import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
 import { Jeune } from '../../interfaces/jeune'
+import { RequiredValue } from '../RequiredValue'
 
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
@@ -14,11 +15,6 @@ import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
-
-interface RequiredInput {
-  value: string
-  error?: string
-}
 
 interface EditionRdvFormProps {
   jeunes: Jeune[]
@@ -52,7 +48,7 @@ export function EditionRdvForm({
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
     rdv?.type.code ?? ''
   )
-  const [precisionType, setPrecisionType] = useState<RequiredInput>({
+  const [precisionType, setPrecisionType] = useState<RequiredValue>({
     value: rdv?.precisionType ?? '',
   })
   const [showPrecisionType, setShowPrecisionType] = useState<boolean>(
@@ -62,13 +58,13 @@ export function EditionRdvForm({
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const dateRdv = rdv ? new Date(rdv.date) : undefined
   const localDate = toIsoLocalDate(dateRdv) ?? ''
-  const [date, setDate] = useState<RequiredInput>({ value: localDate })
+  const [date, setDate] = useState<RequiredValue>({ value: localDate })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
   const localTime = toIsoLocalTime(dateRdv)?.slice(0, 5) ?? ''
-  const [horaire, setHoraire] = useState<RequiredInput>({ value: localTime })
+  const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(rdv?.duration)
-  const [duree, setDuree] = useState<RequiredInput>({ value: dureeRdv })
+  const [duree, setDuree] = useState<RequiredValue>({ value: dureeRdv })
   const [adresse, setAdresse] = useState<string>(rdv?.adresse ?? '')
   const [organisme, setOrganisme] = useState<string>(rdv?.organisme ?? '')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(

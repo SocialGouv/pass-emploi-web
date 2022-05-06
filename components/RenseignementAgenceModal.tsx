@@ -2,6 +2,7 @@ import React, { FormEvent, useRef, useState } from 'react'
 
 import InfoIcon from '../assets/icons/information.svg'
 
+import { RequiredValue } from './RequiredValue'
 import { InputError } from './ui/InputError'
 import ResettableTextInput from './ui/ResettableTextInput'
 import SelectAutocomplete from './ui/SelectAutocomplete'
@@ -23,15 +24,10 @@ export default function RenseignementAgenceModal({
   onAgenceChoisie,
   onClose,
 }: RenseignementAgenceModalProps) {
-  const [idAgenceSelectionnee, setIdAgenceSelectionnee] = useState<{
-    value?: string
-    erreur?: string
-  }>({})
+  const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
+    useState<RequiredValue>({ value: '' })
   const [showAgenceLibre, setShowAgenceLibre] = useState<boolean>(false)
-  const [agenceLibre, setAgenceLibre] = useState<{
-    value?: string
-    erreur?: string
-  }>({})
+  const [agenceLibre, setAgenceLibre] = useState<RequiredValue>({ value: '' })
   const searchAgenceRef = useRef<HTMLInputElement>(null)
 
   const labelAgence =
@@ -42,7 +38,7 @@ export default function RenseignementAgenceModal({
     if (agence) {
       setIdAgenceSelectionnee({ value: agence.id })
     } else {
-      setIdAgenceSelectionnee({})
+      setIdAgenceSelectionnee({ value: '' })
     }
   }
 
@@ -52,14 +48,14 @@ export default function RenseignementAgenceModal({
       if (!idAgenceSelectionnee.value) {
         setIdAgenceSelectionnee({
           ...idAgenceSelectionnee,
-          erreur: `Sélectionner une ${labelAgence} dans la liste`,
+          error: `Sélectionner une ${labelAgence} dans la liste`,
         })
       } else {
         onAgenceChoisie({ id: idAgenceSelectionnee.value })
       }
     } else {
       if (!agenceLibre.value) {
-        setAgenceLibre({ ...agenceLibre, erreur: `Saisir une ${labelAgence}` })
+        setAgenceLibre({ ...agenceLibre, error: `Saisir une ${labelAgence}` })
       } else {
         onAgenceChoisie({ nom: agenceLibre.value })
       }
@@ -70,7 +66,7 @@ export default function RenseignementAgenceModal({
     setShowAgenceLibre(e.target.checked)
     if (e.target.checked) {
       searchAgenceRef.current!.value = ''
-      setIdAgenceSelectionnee({})
+      setIdAgenceSelectionnee({ value: '' })
     }
   }
 
@@ -89,9 +85,9 @@ export default function RenseignementAgenceModal({
         <label htmlFor='search-agence' className='text-base-medium'>
           Rechercher votre {labelAgence} dans la liste suivante
         </label>
-        {idAgenceSelectionnee.erreur && (
+        {idAgenceSelectionnee.error && (
           <InputError id='search-agence--error' className='mt-2'>
-            {idAgenceSelectionnee.erreur}
+            {idAgenceSelectionnee.error}
           </InputError>
         )}
         <SelectAutocomplete
@@ -102,12 +98,12 @@ export default function RenseignementAgenceModal({
             value: nom,
           }))}
           onChange={(e) => selectAgence(e.target.value)}
-          aria-invalid={idAgenceSelectionnee.erreur ? true : undefined}
+          aria-invalid={idAgenceSelectionnee.error ? true : undefined}
           aria-describedby={
-            idAgenceSelectionnee.erreur ? 'search-agence--error' : undefined
+            idAgenceSelectionnee.error ? 'search-agence--error' : undefined
           }
           className={`border border-solid rounded-medium w-full px-4 py-3 mt-2 disabled:bg-grey_100 ${
-            idAgenceSelectionnee.erreur
+            idAgenceSelectionnee.error
               ? 'border-warning text-warning'
               : 'border-content_color'
           }`}
@@ -129,9 +125,9 @@ export default function RenseignementAgenceModal({
             <label htmlFor='agence-libre'>
               Saisir le nom de votre {labelAgence}
             </label>
-            {agenceLibre.erreur && (
+            {agenceLibre.error && (
               <InputError id='agence-libre--error'>
-                {agenceLibre.erreur}
+                {agenceLibre.error}
               </InputError>
             )}
             <ResettableTextInput
