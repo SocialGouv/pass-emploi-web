@@ -23,7 +23,7 @@ global.Audio = jest.fn().mockImplementation(() => ({
 }))
 
 describe('<Layout />', () => {
-  let updateChatCall: (jeuneChat: JeuneChat) => void
+  let updateChatRef: (jeuneChat: JeuneChat) => void
   const jeunes: Jeune[] = desJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
@@ -53,8 +53,8 @@ describe('<Layout />', () => {
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
       observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
-        updateChatCall = fn
-        updateChatCall(
+        updateChatRef = fn
+        updateChatRef(
           jeunesChats.find((jeuneChat) => jeuneChat.id === jeune.id)!
         )
         return () => {}
@@ -119,7 +119,7 @@ describe('<Layout />', () => {
 
         // When
         await act(async () => {
-          updateChatCall(unJeuneChatNonLu)
+          updateChatRef(unJeuneChatNonLu)
         })
 
         // Then
@@ -129,7 +129,7 @@ describe('<Layout />', () => {
       })
       it("ne notifie pas quand c'est une tierce modification du chat", async () => {
         // Given
-        const unJeuneChatDejaVu = unJeuneChat({
+        const unJeuneChatDejaLu = unJeuneChat({
           ...jeunes[0],
           chatId: `chat-${jeunes[0].id}`,
           lastMessageSentBy: 'conseiller',
@@ -137,7 +137,7 @@ describe('<Layout />', () => {
 
         // When
         await act(async () => {
-          updateChatCall(unJeuneChatDejaVu)
+          updateChatRef(unJeuneChatDejaLu)
         })
 
         // Then

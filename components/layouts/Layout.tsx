@@ -8,7 +8,7 @@ import AppHead from 'components/AppHead'
 import { Footer } from 'components/Footer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Sidebar from 'components/layouts/Sidebar'
-import { Chat, compareJeuneChat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -65,10 +65,7 @@ export default function Layout({ children }: LayoutProps) {
     )
   }
 
-  function aUnNouveauMessage(
-    previousChat: Jeune & Chat,
-    updatedChat: Jeune & Chat
-  ) {
+  function aUnNouveauMessage(previousChat: JeuneChat, updatedChat: JeuneChat) {
     return (
       previousChat.lastMessageContent !== updatedChat.lastMessageContent &&
       updatedChat.lastMessageSentBy === 'jeune'
