@@ -36,6 +36,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
           onChange={setQuery}
           onReset={onReset}
           roundedRight={false}
+          className='flex-1'
         />
 
         <button

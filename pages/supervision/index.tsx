@@ -210,6 +210,7 @@ function Supervision(_: SupervisionProps) {
                 onReset={resetAll}
                 type={'email'}
                 roundedRight={false}
+                className='flex-1'
               />
               <button
                 className={`flex p-3 items-center text-base-medium text-bleu_nuit border border-solid border-bleu_nuit rounded-r-medium ${
@@ -256,16 +257,14 @@ function Supervision(_: SupervisionProps) {
             onSubmit={reaffecterJeunes}
             className='grow col-start-2 row-start-2'
           >
-            <div className='flex'>
-              <ResettableTextInput
-                id={'email-conseiller-destination'}
-                value={emailConseillerDestination.value}
-                onChange={editEmailConseillerDestination}
-                onReset={() => editEmailConseillerDestination('')}
-                disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
-                type={'email'}
-              />
-            </div>
+            <ResettableTextInput
+              id={'email-conseiller-destination'}
+              value={emailConseillerDestination.value}
+              onChange={editEmailConseillerDestination}
+              onReset={() => editEmailConseillerDestination('')}
+              disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
+              type={'email'}
+            />
           </form>
 
           {Boolean(emailConseillerDestination.error) && (
