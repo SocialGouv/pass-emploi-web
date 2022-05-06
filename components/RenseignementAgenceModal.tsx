@@ -110,7 +110,7 @@ export default function RenseignementAgenceModal({
           aria-describedby={
             idAgenceSelectionnee.error ? 'search-agence--error' : undefined
           }
-          className={`border border-solid rounded-medium w-full px-4 py-3 mt-2 disabled:bg-grey_100 ${
+          className={`border border-solid rounded-medium w-full px-4 py-3 mt-2 disabled:border-disabled disabled:opacity-70 ${
             idAgenceSelectionnee.error
               ? 'border-warning text-warning'
               : 'border-content_color'
@@ -147,7 +147,11 @@ export default function RenseignementAgenceModal({
             value={agenceLibre.value ?? ''}
             onChange={(value) => setAgenceLibre({ value })}
             onReset={() => setAgenceLibre({ value: '' })}
-            className='mt-2'
+            className={`mt-2 border border-solid rounded-medium w-full mt-2 ${
+              agenceLibre.error
+                ? 'border-warning text-warning'
+                : 'border-content_color'
+            }`}
           />
         </div>
 

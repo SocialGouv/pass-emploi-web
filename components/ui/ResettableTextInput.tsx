@@ -9,7 +9,6 @@ interface ResettableTextInputProps {
   onReset: () => void
   disabled?: boolean
   type?: string
-  roundedRight?: boolean
   className?: string
 }
 
@@ -22,7 +21,6 @@ const ResettableTextInput = forwardRef(
       onReset,
       disabled = false,
       type = 'text',
-      roundedRight = true,
       className,
     }: ResettableTextInputProps,
     ref: ForwardedRef<HTMLInputElement>
@@ -39,7 +37,13 @@ const ResettableTextInput = forwardRef(
     }
 
     return (
-      <div className={`flex flex-horizontal ${className ?? ''}`}>
+      <div
+        className={`flex flex-horizontal overflow-hidden ${className ?? ''} ${
+          disabled
+            ? 'cursor-not-allowed text-disabled border-disabled opacity-70'
+            : ''
+        }`}
+      >
         <input
           type={type}
           id={id}
@@ -47,24 +51,18 @@ const ResettableTextInput = forwardRef(
           ref={ref}
           value={value}
           onChange={applyChange}
-          className={`flex-1 p-3 border border-solid border-r-0 border-grey_700 rounded-l-medium text-base-medium text-bleu_nuit bg-blanc disabled:cursor-not-allowed disabled:border-disabled disabled:text-disabled`}
+          className={`flex-1 p-3 bg-blanc`}
           disabled={disabled}
         />
         <button
           type='reset'
           title='Effacer'
-          className={`border border-solid ${
-            roundedRight ? 'rounded-r-medium' : 'border-r-0'
-          } border-l-0 border-grey_700 w-8 text-bleu_nuit disabled:border-disabled disabled:cursor-not-allowed`}
+          className={`w-8 cursor-[inherit]`}
           onClick={applyReset}
           disabled={disabled}
         >
           <span className='sr-only'>Effacer le champ de saisie</span>
-          <CloseIcon
-            className={`text-bleu_nuit ${disabled ? 'fill-disabled' : ''}`}
-            focusable={false}
-            aria-hidden={true}
-          />
+          <CloseIcon focusable={false} aria-hidden={true} fill='currentColor' />
         </button>
       </div>
     )

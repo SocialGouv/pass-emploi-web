@@ -209,8 +209,7 @@ function Supervision(_: SupervisionProps) {
                 onChange={editEmailConseillerInitial}
                 onReset={resetAll}
                 type={'email'}
-                roundedRight={false}
-                className='flex-1'
+                className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
               />
               <button
                 className={`flex p-3 items-center text-base-medium text-bleu_nuit border border-solid border-bleu_nuit rounded-r-medium ${
@@ -264,6 +263,7 @@ function Supervision(_: SupervisionProps) {
               onReset={() => editEmailConseillerDestination('')}
               disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
               type={'email'}
+              className='flex-1 border border-solid border-grey_700 rounded-medium text-base-medium text-bleu_nuit'
             />
           </form>
 
