@@ -4,9 +4,10 @@ import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import Logo from '../assets/images/logo_258.svg'
+import Logo from '../assets/images/logo_app_cej.svg'
 
 import { FormButton } from 'components/ui/FormButton'
+import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface LoginProps {
@@ -55,23 +56,19 @@ function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
   }
 
   useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
-
   return (
-    <div className='bg-bleu_blanc w-full h-screen relative'>
+    <div className={`${styles.login} w-full h-screen relative`}>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <Logo focusable='false' aria-hidden={true} className='m-auto' />
+        <Logo
+          focusable='false'
+          aria-hidden={true}
+          className='m-auto h-56 w-56'
+        />
 
         <div className='bg-blanc px-[122px] py-[48px] rounded-x_large'>
-          <h1 className='text-lg-semi text-bleu_nuit text-center mb-[48px]'>
+          <h1 className='text-m-medium text-primary_darken text-center mb-[48px]'>
             Connectez-vous à l&apos;espace conseiller
           </h1>
-
-          {ssoPassEmploiEstActive && (
-            <FormButton
-              label='Authentification pass emploi'
-              handleSubmit={(event) => handleSubmit(event)}
-            />
-          )}
 
           <FormButton
             label='Connexion conseiller Mission Locale'
@@ -83,6 +80,14 @@ function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
             className='pt-4'
             handleSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
           />
+
+          {ssoPassEmploiEstActive && (
+            <FormButton
+              className='mt-4'
+              label='Authentification pass emploi'
+              handleSubmit={(event) => handleSubmit(event)}
+            />
+          )}
 
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>

@@ -7,19 +7,30 @@ interface NavLinkProps {
   href: string
   label: string | null
   iconName: string
+  onClick?: any
 }
 
-function NavLink({ isActive, href, label, iconName }: NavLinkProps) {
+function NavLink({ isActive, href, label, iconName, onClick }: NavLinkProps) {
   return (
     <Link href={href}>
-      <a className={isActive ? 'bg-bleu_blanc' : ''}>
+      <a
+        onClick={onClick}
+        className={` flex ${isActive ? 'bg-bleu_blanc' : ''}`}
+      >
+        {isActive && <span className='text-lg-semi text-primary'>·</span>}
         <IconComponent
           focusable='false'
           aria-hidden='true'
-          className='mr-2'
+          className={`mr-2 fill-blanc ${isActive ? 'fill-primary' : 'inherit'}`}
           name={iconName}
         />
-        <span className='text-md text-bleu_nuit layout_m:sr-only'>{label}</span>
+        <span
+          className={` text-md text-blanc layout_m:sr-only ${
+            isActive ? 'text-primary' : 'inherit'
+          }`}
+        >
+          {label}
+        </span>
       </a>
     </Link>
   )

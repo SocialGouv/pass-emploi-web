@@ -1,10 +1,8 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
-import AideIcon from '../../assets/icons/aide.svg'
-import LogoutIcon from '../../assets/icons/logout.svg'
-import Logo from '../../assets/images/logo_110.svg'
+import Logo from '../../assets/images/logo_app_cej.svg'
+import IconComponent from '../ui/IconComponent'
 import NavLink from '../ui/NavLink'
 
 import { UserStructure } from 'interfaces/conseiller'
@@ -80,8 +78,13 @@ export default function Sidebar({}: SidebarProps) {
             target='_blank'
             rel='noreferrer noopener'
           >
-            <AideIcon aria-hidden='true' focusable='false' className='mr-2' />
-            <span className='text-md text-bleu_nuit text-center layout_m:sr-only'>
+            <IconComponent
+              name='aide'
+              aria-hidden='true'
+              focusable='false'
+              className='mr-2 fill-blanc'
+            />
+            <span className='text-md text-blanc text-center layout_m:sr-only'>
               Aide
             </span>
           </a>
@@ -91,26 +94,23 @@ export default function Sidebar({}: SidebarProps) {
           isActive={currentNavLink('/profil')}
           href='/profil'
           label={session && session!.user.name}
-          iconName='person'
+          iconName='profil'
         />
       </nav>
 
       {/*TODO: create spacing component*/}
       <div className='mb-8'></div>
       <div className='flex p-2 m-2 items-center layout_m:justify-center'>
-        <Link href={'/api/logout'}>
-          <a
-            onClick={handleLogout}
-            className='mr-2'
-            aria-label='Se déconnecter'
-          >
-            <LogoutIcon aria-hidden='true' focusable='false' />
-          </a>
-        </Link>
-        {session && (
-          <p className='text-bleu_nuit layout_m:sr-only'>Déconnexion</p>
-        )}
+        <NavLink
+          isActive={currentNavLink('/api/logout')}
+          href='/api/logout'
+          label='Déconnexion'
+          iconName='logout'
+          onClick={handleLogout}
+        />
       </div>
     </div>
   )
 }
+
+//todo: modifier logo et vérifier padding/marges

@@ -24,6 +24,7 @@
   padding: 20px 19px 16px;
   text-align: center;
   border-right: 1px solid theme('colors.primary_lighten');
+  background-color: theme('colors.primary');
 }
 
 @media screen and (max-width: 1024px) {
@@ -100,4 +101,14 @@
   flex-direction: column;
   padding-top: 44px;
   border-left: 2px solid theme('colors.bleu_blanc');
+}
+
+.login {
+  background:linear-gradient(26deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
+}
+@media screen and (max-width: 900px) {
+  .login  {
+    background:linear-gradient(36deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
+  }
+
 }
