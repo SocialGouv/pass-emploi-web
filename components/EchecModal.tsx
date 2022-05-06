@@ -19,7 +19,9 @@ export default function EchecModal({ onClose, message }: EchecModalProps) {
       customHeight='250px'
       customWidth='780px'
     >
-      <p className='text-md text-bleu_nuit text-center mb-[30px]'>{message}</p>
+      <p className='text-md text-primary_darken text-center mb-[30px]'>
+        {message}
+      </p>
 
       <Button type='button' onClick={handleCloseModal} className='m-auto'>
         <span className='px-[40px]'> C&apos;est compris </span>

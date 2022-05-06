@@ -17,7 +17,7 @@ export const Footer = () => {
         {liens.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className={`mr-4 text-bleu_nuit fill-bleu_nuit hover:text-primary hover:fill-primary`}
+            className={`mr-4 text-primary_darken fill-primary_darken hover:text-primary hover:fill-primary`}
           >
             <ExternalLink
               key={url}

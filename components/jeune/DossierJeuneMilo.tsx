@@ -67,8 +67,8 @@ const DossierJeuneMilo = ({
 
   return (
     <>
-      <div className='border border-bleu_blanc rounded-large p-6'>
-        <dl className='text-bleu_nuit'>
+      <div className='border border-primary_lighten rounded-large p-6'>
+        <dl className='text-primary_darken'>
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Prénom'>
               Prénom :
@@ -138,7 +138,7 @@ const DossierJeuneMilo = ({
 
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'}>
-          <a className='flex items-center text-sm-medium text-bleu_nuit mr-6'>
+          <a className='flex items-center text-sm-medium text-primary_darken mr-6'>
             <ArrowLeftIcon
               className='mr-2.5'
               role='img'

@@ -64,7 +64,7 @@ function PoleEmploiCreationJeune(): JSX.Element {
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
             <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <span className='ml-6 h4-semi text-bleu_nuit'>
+            <span className='ml-6 h4-semi text-primary'>
               Liste de mes jeunes
             </span>
           </a>
@@ -80,7 +80,7 @@ function PoleEmploiCreationJeune(): JSX.Element {
       </div>
 
       <div className={`${styles.content} pl-32`}>
-        <h1 className='text-m-medium text-bleu_nuit mt-6 mb-4'>
+        <h1 className='text-m-medium mt-6 mb-4'>
           Création d&apos;un compte jeune
         </h1>
 

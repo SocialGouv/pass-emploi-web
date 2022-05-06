@@ -141,7 +141,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
   return (
     <>
       {sortedJeunes.length === 0 ? (
-        <p className='mt-32 text-base-medium text-center text-bleu_nuit'>
+        <p className='mt-32 text-base-medium text-center text-primary'>
           Aucun jeune trouvé
         </p>
       ) : (
@@ -158,7 +158,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
             <div role='row' className={`table-row grid ${gridColsStyle}`}>
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left py-4'
+                className='table-cell text-sm text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
@@ -185,7 +185,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
               </span>
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left py-4'
+                className='table-cell text-sm text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
@@ -214,7 +214,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
               {withActions && (
                 <span
                   role='columnheader'
-                  className='table-cell text-sm text-bleu text-left py-4'
+                  className='table-cell text-sm  text-left py-4'
                 >
                   <button
                     className='flex border-none hover:bg-gris_blanc p-2 rounded-medium items-center mx-auto'
@@ -245,7 +245,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
 
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left py-4'
+                className='table-cell text-sm  text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
@@ -279,7 +279,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 <a
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className={`table-row grid ${gridColsStyle} text-sm text-bleu_nuit items-center hover:bg-gris_blanc`}
+                  className={`table-row grid ${gridColsStyle} text-sm  items-center hover:bg-gris_blanc`}
                 >
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}
@@ -299,7 +299,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                       role='cell'
                       className='table-cell text-primary_darken p-4 items-center mx-auto'
                     >
-                      <span className='w-5 h-5 flex justify-center items-center bg-primary_lighten rounded-full text-center p-3.5'>
+                      <span className='w-5 h-5 flex justify-center items-center text-blanc bg-primary rounded-full text-center p-3.5'>
                         {jeune.nbActionsNonTerminees}
                       </span>
                     </span>

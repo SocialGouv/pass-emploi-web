@@ -19,7 +19,7 @@ export const DetailsJeune = ({
   return (
     <>
       <div className='flex'>
-        <h1 className='h2-semi text-bleu_nuit mb-3'>
+        <h1 className='h2-semi mb-3'>
           {jeune.firstName} {jeune.lastName}
         </h1>
 
@@ -34,13 +34,13 @@ export const DetailsJeune = ({
         )}
       </div>
 
-      <dl className='flex text-sm-semi text-bleu_nuit mb-2'>
+      <dl className='flex text-sm-semi mb-2'>
         <dt className='mr-2'>Ajouté le :</dt>
         <dd>{formatDayDate(new Date(jeune.creationDate))}</dd>
       </dl>
 
       {jeune.email && (
-        <dl className='flex text-sm-semi text-bleu_nuit'>
+        <dl className='flex text-sm-semi'>
           <dt className='mr-2'>
             <EmailIcon focusable='false' role='img' title='e-mail' />
           </dt>

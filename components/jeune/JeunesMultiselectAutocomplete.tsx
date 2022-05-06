@@ -81,7 +81,7 @@ export default function JeunesMultiselectAutocomplete({
     <>
       <label htmlFor='item-input' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-        <span className='text-bleu_nuit text-sm-regular block'>
+        <span className='text-primary_darken text-sm-regular block'>
           Nom et prénom
         </span>
       </label>
@@ -89,7 +89,7 @@ export default function JeunesMultiselectAutocomplete({
         id='item-input'
         options={buildOptions()}
         onChange={(e) => selectJeune(e.target.value)}
-        className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
+        className='text-sm text-primary_darken w-full p-3 mb-2 mt-4 border border-content_color rounded-medium cursor-pointer bg-blanc'
         multiple={true}
         aria-controls='selected-items'
         ref={input}

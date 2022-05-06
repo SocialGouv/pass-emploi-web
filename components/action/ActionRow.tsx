@@ -46,7 +46,7 @@ export default function ActionRow({
         </div>
         <div
           role='cell'
-          className={`table-cell relative text-bleu_nuit ${borderStyle}`}
+          className={`table-cell relative text-primary_darken ${borderStyle}`}
         >
           {formatDayDate(new Date(action.creationDate))}
         </div>

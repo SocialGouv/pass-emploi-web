@@ -102,7 +102,7 @@ function MesRendezvous({
       <span
         className={`flex flex-wrap justify-between items-center ${styles.header}`}
       >
-        <h1 className='h2-semi text-bleu_nuit'>Rendez-vous</h1>
+        <h1 className='h2-semi text-primary'>Rendez-vous</h1>
         <ButtonLink href={'/mes-jeunes/edition-rdv'}>
           Fixer un rendez-vous
         </ButtonLink>

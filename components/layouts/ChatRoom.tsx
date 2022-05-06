@@ -60,11 +60,11 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
       {!currentChat && (
         <>
-          <h2 className={`h2-semi text-bleu_nuit ml-9 mb-6`}>Ma messagerie</h2>
+          <h2 className={`h2-semi text-primary ml-9 mb-6`}>Ma messagerie</h2>
           {!jeunesChats.length && (
-            <div className='h-full overflow-y-auto bg-bleu_blanc flex flex-col justify-center items-center'>
+            <div className='h-full overflow-y-auto bg-grey_100 flex flex-col justify-center items-center'>
               <EmptyMessagesImage focusable='false' aria-hidden='true' />
-              <p className='mt-4 text-md-semi text-bleu_nuit w-2/3 text-center'>
+              <p className='mt-4 text-md-semi w-2/3 text-center'>
                 Vous devriez avoir des jeunes inscrits pour discuter avec eux
               </p>
             </div>
@@ -79,7 +79,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                       className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
                       onClick={() => setCurrentJeune(jeuneChat)}
                     >
-                      <span className='text-lg-semi text-bleu_nuit mb-2 w-full flex justify-between'>
+                      <span className='text-lg-semi text-primary_darken mb-2 w-full flex justify-between'>
                         {jeuneChat.firstName} {jeuneChat.lastName}
                         {!jeuneChat.seenByConseiller &&
                           jeuneChat.lastMessageContent && (
@@ -88,14 +88,14 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                             </span>
                           )}
                       </span>
-                      <span className='text-sm text-bleu_gris mb-[8px]'>
+                      <span className='text-sm text-grey_800 mb-[8px]'>
                         {' '}
                         {jeuneChat.lastMessageSentBy === 'conseiller'
                           ? 'Vous'
                           : jeuneChat.firstName}{' '}
                         : {jeuneChat.lastMessageContent}
                       </span>
-                      <span className='text-xxs-italic text-bleu_nuit self-end flex'>
+                      <span className='text-xxs-italic text-content_color self-end flex'>
                         {jeuneChat.lastMessageContent && (
                           <span className='mr-[7px]'>
                             {formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}

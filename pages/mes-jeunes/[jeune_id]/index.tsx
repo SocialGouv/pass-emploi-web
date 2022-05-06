@@ -138,7 +138,7 @@ function FicheJeune({
         <Link href={'/mes-jeunes'}>
           <a className='flex items-center'>
             <BackIcon aria-hidden={true} focusable='false' />
-            <span className='ml-6 h4-semi text-bleu_nuit'>
+            <span className='ml-6 h4-semi text-primary'>
               Liste de mes jeunes
             </span>
           </a>
@@ -193,8 +193,8 @@ function FicheJeune({
           </div>
         )}
 
-        <div className='mt-10 border-b border-bleu_blanc'>
-          <h2 className='h4-semi text-bleu_nuit mb-4'>
+        <div className='mt-10 border-b border-primary_lighten'>
+          <h2 className='h4-semi text-primary_darken mb-4'>
             Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
           </h2>
 
@@ -209,8 +209,8 @@ function FicheJeune({
             <IntegrationPoleEmploi label='convocations' />
           )}
         </div>
-        <div className='mt-8 border-b border-bleu_blanc pb-8'>
-          <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
+        <div className='mt-8 border-b border-primary_lighten pb-8'>
+          <h2 className='h4-semi text-primary_darken mb-4'>Actions</h2>
 
           {isPoleEmploi && (
             <IntegrationPoleEmploi label='actions et démarches' />
@@ -225,7 +225,7 @@ function FicheJeune({
               />
               <div className='flex justify-center mt-8'>
                 <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                  <a className='text-sm text-bleu_nuit underline'>
+                  <a className='text-sm text-primary_darken underline'>
                     Voir la liste des actions du jeune
                   </a>
                 </Link>
@@ -235,11 +235,11 @@ function FicheJeune({
 
           {!isPoleEmploi && actions.length === 0 && (
             <>
-              <p className='text-md text-bleu mb-2'>
+              <p className='text-md mb-2'>
                 {jeune.firstName} n&apos;a pas encore d&apos;action
               </p>
               <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                <a className='text-sm text-bleu_nuit underline'>
+                <a className='text-sm text-primary_darken underline'>
                   Accédez à cette page pour créer une action
                 </a>
               </Link>

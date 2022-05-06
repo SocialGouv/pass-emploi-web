@@ -30,12 +30,12 @@ module.exports = {
      * - HTML: <p className="text-violet" >
      */
     colors: {
-      bleu_nuit: '#333866',
-      bleu: '#767BA8',
+      // bleu_nuit: '#333866',
+      // bleu: '#767BA8',
       blanc: '#FFFFFF',
-      bleu_gris: '#9196C0',
-      bleu_clair: '#C8CBE4',
-      bleu_blanc: '#F4F5FF',
+      // bleu_gris: '#9196C0',
+      // bleu_clair: '#C8CBE4',
+      // bleu_blanc: '#F4F5FF',
       gris_blanc: '#F6F9FC',
       violet: '#9762DA',
       rose: '#EF5DA8',

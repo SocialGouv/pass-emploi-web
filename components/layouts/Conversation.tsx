@@ -133,7 +133,7 @@ export default function Conversation({
             aria-label='Retour sur ma messagerie'
           />
         </button>
-        <h2 className='w-full text-center text-bleu_nuit h2-semi mb-8'>
+        <h2 className='w-full text-center text-primary_darken h2-semi mb-8'>
           Discuter avec
           <br />
           {jeuneChat.firstName} {jeuneChat.lastName}
@@ -158,8 +158,8 @@ export default function Conversation({
                   <div
                     className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
                       message.sentBy === 'conseiller'
-                        ? 'text-right text-blanc bg-bleu_nuit mt-0 mr-0 mb-1 ml-auto'
-                        : 'text-left text-bleu_nuit bg-bleu_blanc mb-1'
+                        ? 'text-right text-blanc bg-primary_darken mt-0 mr-0 mb-1 ml-auto'
+                        : 'text-left text-primary_darken bg-bleu_blanc mb-1'
                     }`}
                   >
                     {message.sentBy === 'conseiller' && (
@@ -203,7 +203,7 @@ export default function Conversation({
         </label>
         <ResizingMultilineInput
           id='input-new-message'
-          className='flex-grow p-4 bg-bleu_blanc mr-2 rounded-x_large border-0 text-md text-bleu_nuit border-none'
+          className='flex-grow p-4 bg-bleu_blanc mr-2 rounded-x_large border-0 text-md text-primary_darken border-none'
           onFocus={onInputFocused}
           onBlur={() => (inputFocused.current = false)}
           onChange={(e) => setNewMessage(e.target.value)}

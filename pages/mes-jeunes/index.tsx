@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import AddJeuneImage from '../../assets/images/ajouter_un_jeune.svg'
+import AddJeuneImage from '../../assets/images/empty_state.svg'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
@@ -168,7 +168,7 @@ function MesJeunes({
     <>
       <div className={styles.header}>
         <div className={`flex flex-wrap justify-between mb-6`}>
-          <h1 className='h2-semi text-bleu_nuit'>Mes Jeunes</h1>
+          <h1 className='h2-semi text-primary'>Mes Jeunes</h1>
           {(structureConseiller === UserStructure.MILO ||
             structureConseiller === UserStructure.POLE_EMPLOI) && (
             <AjouterJeuneButton handleAddJeune={handleAddJeune} />
@@ -226,13 +226,13 @@ function MesJeunes({
         )}
 
         {conseillerJeunes.length === 0 && (
-          <div className='mx-auto my-0'>
+          <div className='mx-auto my-0 flex flex-col items-center'>
             <AddJeuneImage
               aria-hidden='true'
               focusable='false'
               className='mb-16'
             />
-            <p className='text-bleu_nuit text-base-medium mb-12'>
+            <p className='text-base-medium mb-12'>
               Vous n&apos;avez pas encore intégré de jeunes.
             </p>
 

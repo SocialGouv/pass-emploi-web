@@ -98,7 +98,7 @@ function PageAction({
         <Link href={`/mes-jeunes/${jeune.id}/actions`}>
           <a className='flex items-center'>
             <BackIcon focusable='false' aria-hidden={true} />
-            <span className='ml-6 h4-semi text-bleu_nuit'>
+            <span className='ml-6 h4-semi text-primary_darken'>
               Actions de {jeune.firstName} {jeune.lastName}
             </span>
           </a>
@@ -137,19 +137,21 @@ function PageAction({
         )}
 
         <dl>
-          <dt className='text-bleu text-sm-semi'>Intitulé de l&apos;action</dt>
-          <dd className='mt-4 text-bleu_nuit text-md-semi'>{action.content}</dd>
+          <dt className='text-sm-semi'>Intitulé de l&apos;action</dt>
+          <dd className='mt-4 text-primary_darken text-md-semi'>
+            {action.content}
+          </dd>
 
           {action.comment && (
             <>
-              <dt className='mt-8 text-bleu text-sm-semi'>Commentaire</dt>
-              <dd className='mt-4 text-bleu_nuit text-base-regular'>
+              <dt className='mt-8 text-sm-semi'>Commentaire</dt>
+              <dd className='mt-4 text-primary_darken text-base-regular'>
                 {action.comment}
               </dd>
             </>
           )}
 
-          <dt className='mt-8 text-bleu text-sm-semi'>Informations</dt>
+          <dt className='mt-8 text-sm-semi'>Informations</dt>
           <dd>
             <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
               <InfoAction label='Statut' isForm={true}>

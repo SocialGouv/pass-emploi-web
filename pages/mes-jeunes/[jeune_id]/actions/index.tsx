@@ -151,10 +151,10 @@ function Actions({
         </Link>
 
         <div className='flex-auto'>
-          <h1 className='h2 text-bleu_nuit mb-5'>
+          <h1 className='h2 text-primary mb-5'>
             Les actions de {`${jeune.firstName} ${jeune.lastName}`}
           </h1>
-          <p className='text-md text-bleu'>
+          <p className='text-md'>
             Retrouvez le détail des actions de votre bénéficiaire
           </p>
         </div>
@@ -209,7 +209,7 @@ function Actions({
         </div>
 
         {actions.length === 0 && (
-          <p className='text-md text-bleu mt-6'>
+          <p className='text-m text-primary mt-6'>
             {jeune.firstName} n&apos;a pas encore d&apos;action
           </p>
         )}
