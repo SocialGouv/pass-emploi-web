@@ -27,29 +27,6 @@
   background-color: theme('colors.primary');
 }
 
-@media screen and (max-width: 1024px) {
- .container {
-   grid-template-columns: 10vw 90vw;
- }
-  .container.container_with_chat {
-    grid-template-columns: 10vw 70vw 20vw;
-  }
-  .sidebar a {
-      justify-content: center;
-  }
-
-  .sidebar svg {
-    margin-right: 0;
-  }
-}
-
-@media screen and (min-width: 900px) {
-  .sidebar nav  {
-    margin: 8px;
-  }
-
-}
-
 .page {
   grid-area: page;
   display: grid;
@@ -106,9 +83,36 @@
 .login {
   background:linear-gradient(26deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
 }
+
+@media screen and (max-width: 1024px) {
+  .container {
+    grid-template-columns: 10vw 90vw;
+  }
+  .container.container_with_chat {
+    grid-template-columns: 10vw 70vw 20vw;
+  }
+  .sidebar a {
+    justify-content: center;
+  }
+
+  .sidebar svg {
+    margin-right: 0;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .sidebar nav  {
+    margin: 8px;
+  }
+
+}
+
 @media screen and (max-width: 900px) {
   .login  {
     background:linear-gradient(36deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
   }
-
+  .footer ul  {
+    flex-direction: column;
+  }
 }
+

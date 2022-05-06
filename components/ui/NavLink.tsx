@@ -17,7 +17,7 @@ function NavLink({ isActive, href, label, iconName, onClick }: NavLinkProps) {
         onClick={onClick}
         className={` flex ${isActive ? 'bg-bleu_blanc' : ''}`}
       >
-        {isActive && <span className='text-lg-semi text-primary'>·</span>}
+        {isActive && <span className='text-l-medium text-primary'>·</span>}
         <IconComponent
           focusable='false'
           aria-hidden='true'
