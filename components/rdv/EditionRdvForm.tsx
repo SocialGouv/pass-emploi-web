@@ -31,6 +31,7 @@ interface EditionRdvFormProps {
   onChanges: (hasChanges: boolean) => void
   rdv?: Rdv
   idJeune?: string
+  showConfirmationModal: (payload: RdvFormData) => void
 }
 
 export function EditionRdvForm({
@@ -44,6 +45,7 @@ export function EditionRdvForm({
   onChanges,
   rdv,
   idJeune,
+  showConfirmationModal,
 }: EditionRdvFormProps) {
   const [jeuneId, setJeuneId] = useState<string>(rdv?.jeune.id ?? idJeune ?? '')
 
@@ -227,7 +229,11 @@ export function EditionRdvForm({
       organisme: organisme || undefined,
       comment: commentaire || undefined,
     }
-    await soumettreRendezVous(payload)
+    if (!conseillerIsCreator) {
+      showConfirmationModal(payload)
+    } else {
+      await soumettreRendezVous(payload)
+    }
   }
 
   useEffect(() => {

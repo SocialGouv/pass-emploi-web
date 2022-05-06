@@ -753,42 +753,6 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand le conseiller connecté n’est pas le même que celui qui à crée le rdv', () => {
-      it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
-        // Given
-        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
-        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
-        const jeune = {
-          id: jeunes[0].id,
-          prenom: jeunes[0].firstName,
-          nom: jeunes[0].lastName,
-        }
-
-        const rdv = unRendezVous({ jeune, idCreateur: '2' })
-
-        // When
-        renderWithSession(
-          <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              redirectTo={'/mes-rendezvous?creationRdv=succes'}
-              rdv={rdv}
-              pageTitle={''}
-            />
-          </DIProvider>
-        )
-        const inputEmailInvitation = screen.getByLabelText(
-          /Le créateur du rendez-vous recevra un mail pour l'informer de la modification./i
-        )
-
-        // Then
-
-        expect(inputEmailInvitation).toBeInTheDocument()
-      })
-    })
-
     describe('quand on souhaite modifier un rdv existant', () => {
       let rdv: Rdv
       beforeEach(() => {
@@ -993,6 +957,98 @@ describe('EditionRdv', () => {
               '/mes-rendezvous?modificationRdv=succes'
             )
           })
+        })
+      })
+    })
+
+    describe('quand le conseiller connecté n’est pas le même que celui qui à crée le rdv', () => {
+      let rdv: Rdv
+      beforeEach(() => {
+        // Given
+        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
+        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
+        const jeune = {
+          id: jeunes[0].id,
+          prenom: jeunes[0].firstName,
+          nom: jeunes[0].lastName,
+        }
+
+        rdv = unRendezVous({ jeune, idCreateur: '2' })
+
+        // When
+        renderWithSession(
+          <DIProvider dependances={{ rendezVousService }}>
+            <EditionRdv
+              jeunes={jeunes}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              redirectTo={'/mes-rendezvous?creationRdv=succes'}
+              rdv={rdv}
+              pageTitle={''}
+            />
+          </DIProvider>
+        )
+      })
+
+      it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
+        // Then
+        expect(
+          screen.getByLabelText(
+            /Le créateur du rendez-vous recevra un mail pour l'informer de la modification./i
+          )
+        ).toBeInTheDocument()
+      })
+
+      describe('quand on modifie le rendez-vous', () => {
+        beforeEach(async () => {
+          const inputCommentaire =
+            screen.getByLabelText<HTMLInputElement>(/Commentaire/)
+          fireEvent.input(inputCommentaire, {
+            target: { value: 'modification du commentaire' },
+          })
+          const buttonSubmit = screen.getByText('Envoyer')
+
+          // When
+          await act(async () => buttonSubmit.click())
+        })
+
+        it('affiche une modal de verification', () => {
+          // Then
+          expect(
+            screen.getByText(
+              'Vous avez modifié un rendez-vous dont vous n’êtes pas le créateur'
+            )
+          ).toBeInTheDocument()
+          expect(rendezVousService.updateRendezVous).not.toHaveBeenCalled()
+        })
+
+        it('affiche une modal de verification si le rendez vous à été modifié', async () => {
+          // Given
+          const boutonConfirmer = screen.getByRole('button', {
+            name: 'Confirmer',
+          })
+
+          // When
+          boutonConfirmer.click()
+
+          // Then
+          expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
+            rdv.id,
+            {
+              jeuneId: jeunes[0].id,
+              type: 'AUTRE',
+              modality: modalites[2],
+              precision: 'Prise de nouvelles',
+              date: '2021-10-21T10:00:00.000Z',
+              adresse: '36 rue de marseille, 93200 Saint-Denis',
+              organisme: 'S.A.R.L',
+              duration: 125,
+              comment: 'modification du commentaire',
+              presenceConseiller: false,
+              invitation: true,
+            },
+            'accessToken'
+          )
         })
       })
     })
