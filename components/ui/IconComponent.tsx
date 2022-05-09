@@ -14,7 +14,10 @@ const iconTypes = {
   aide: AideIcon,
 }
 
+// @ts-ignore
+//FIXME: props avec typescript
 const IconComponent = ({ name, ...props }) => {
+  // @ts-ignore
   let Icon = iconTypes[name]
   return <Icon {...props} />
 }
