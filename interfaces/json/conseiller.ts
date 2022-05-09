@@ -29,4 +29,5 @@ export interface ConseillerJson {
     id?: string
     nom: string
   }
+  notificationsSonores: boolean
 }

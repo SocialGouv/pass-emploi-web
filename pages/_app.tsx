@@ -42,6 +42,8 @@ export default function App({
   }, [])
 
   return (
+    //TODO-613: ajouter un context Conseiller
+    //TODO-613: ajouter un context Audio ?
     <SessionProvider session={session}>
       <DIProvider dependances={Container.getDIContainer().dependances}>
         {isLoginPage || isLogoutPage ? (

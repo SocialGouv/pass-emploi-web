@@ -15,4 +15,5 @@ export interface Conseiller {
   lastName: string
   email?: string
   agence?: string
+  notificationsSonores: boolean
 }

@@ -34,6 +34,7 @@ export default function Layout({ children }: LayoutProps) {
   const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
+  //TODO-613: lire la valeur du profil pour faire jouer la notif ou pas
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
   const updateChats = useCallback(

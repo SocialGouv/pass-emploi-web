@@ -1,5 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import { unConseiller } from 'fixtures/conseiller'
+import { unConseiller, unConseillerJson } from 'fixtures/conseiller'
 import { ConseillerApiService } from 'services/conseiller.service'
 
 jest.mock('clients/api.client')
@@ -18,8 +18,7 @@ describe('ConseillerApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
-      const conseiller = unConseiller()
-      ;(apiClient.get as jest.Mock).mockResolvedValue(conseiller)
+      ;(apiClient.get as jest.Mock).mockResolvedValue(unConseillerJson())
 
       // When
       const actual = await conseillerService.getConseiller(
@@ -32,7 +31,7 @@ describe('ConseillerApiService', () => {
         `/conseillers/${idConseiller}`,
         accessToken
       )
-      expect(actual).toEqual(conseiller)
+      expect(actual).toEqual(unConseiller())
     })
   })
 
