@@ -1,4 +1,4 @@
-import { Rdv, TypeRendezVous } from '../rdv'
+import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 
 import { BaseJeune } from 'interfaces/jeune'
 
@@ -21,7 +21,7 @@ export interface RdvJson {
 export interface RdvFormData {
   date: string
   duration: number
-  jeuneId: string
+  jeunesIds: string[]
   type: string
   presenceConseiller: boolean
   invitation: boolean

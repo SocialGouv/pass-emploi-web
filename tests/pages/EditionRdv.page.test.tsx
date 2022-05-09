@@ -494,7 +494,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
               '1',
               {
-                jeuneId: jeunes[0].id,
+                jeunesIds: [jeunes[0].id],
                 type: 'ACTIVITES_EXTERIEURES',
                 modality: modalites[0],
                 precision: undefined,
@@ -526,7 +526,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
               '1',
               {
-                jeuneId: jeunes[0].id,
+                jeunesIds: [jeunes[0].id],
                 type: 'AUTRE',
                 precision: 'un texte de précision',
                 modality: modalites[0],
@@ -932,7 +932,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
               rdv.id,
               {
-                jeuneId: jeunes[0].id,
+                jeunesIds: [jeunes[0].id],
                 type: 'AUTRE',
                 modality: modalites[0],
                 precision: 'Prise de nouvelles',
@@ -1047,7 +1047,7 @@ describe('EditionRdv', () => {
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
             rdv.id,
             {
-              jeuneId: jeunes[0].id,
+              jeunesIds: [jeunes[0].id],
               type: 'AUTRE',
               modality: modalites[2],
               precision: 'Prise de nouvelles',

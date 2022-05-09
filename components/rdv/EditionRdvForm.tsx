@@ -44,7 +44,9 @@ export function EditionRdvForm({
   idJeune,
   showConfirmationModal,
 }: EditionRdvFormProps) {
-  const [jeuneId, setJeuneId] = useState<string>(rdv?.jeune.id ?? idJeune ?? '')
+  const [jeunesIds, setJeunesIds] = useState<string[]>(
+    rdv ? [rdv.jeune.id] : idJeune ? [idJeune] : []
+  )
 
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
     rdv?.type.code ?? ''
@@ -104,7 +106,7 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId) &&
+      Boolean(jeunesIds.length) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
@@ -211,7 +213,7 @@ export function EditionRdvForm({
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
     const payload: RdvFormData = {
-      jeuneId,
+      jeunesIds,
       type: codeTypeRendezVous,
       date: new Date(`${date.value} ${horaire.value}`).toISOString(),
       duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -272,10 +274,12 @@ export function EditionRdvForm({
         <select
           id='beneficiaire'
           name='beneficiaire'
-          defaultValue={jeuneId ?? ''}
+          defaultValue={jeunesIds[0] ?? ''}
           required={true}
           disabled={Boolean(idJeune) || Boolean(rdv)}
-          onChange={(e) => setJeuneId(e.target.value)}
+          onChange={(e) =>
+            setJeunesIds(Boolean(e.target.value) ? [e.target.value] : [])
+          }
           className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
         >
           <option aria-hidden hidden disabled value={''} />
