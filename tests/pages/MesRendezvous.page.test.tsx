@@ -16,13 +16,11 @@ describe('MesRendezvous', () => {
     const rendezVousFuturs = desRdvListItems()
     describe('contenu', () => {
       beforeEach(() => {
-        renderWithSession(
-          <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
-            pageTitle=''
-          />
-        )
+        renderWithSession(<MesRendezvous
+          rendezVousFuturs={ rendezVousFuturs }
+          rendezVousPasses={ rendezVousPasses }
+          pageTitle=""
+        />)
       })
 
       it('a un titre de niveau 1', () => {
@@ -80,14 +78,12 @@ describe('MesRendezvous', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
 
         // When
-        renderWithSession(
-          <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
-            creationSuccess={true}
-            pageTitle=''
-          />
-        )
+        renderWithSession(<MesRendezvous
+          rendezVousFuturs={ rendezVousFuturs }
+          rendezVousPasses={ rendezVousPasses }
+          creationSuccess={ true }
+          pageTitle=""
+        />)
       })
 
       it('affiche un message de succès', () => {
@@ -122,14 +118,12 @@ describe('MesRendezvous', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
 
         // When
-        renderWithSession(
-          <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
-            modificationSuccess={true}
-            pageTitle=''
-          />
-        )
+        renderWithSession(<MesRendezvous
+          rendezVousFuturs={ rendezVousFuturs }
+          rendezVousPasses={ rendezVousPasses }
+          modificationSuccess={ true }
+          pageTitle=""
+        />)
       })
 
       it('affiche un message de succès', () => {

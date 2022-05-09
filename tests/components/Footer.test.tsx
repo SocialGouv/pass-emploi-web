@@ -8,7 +8,7 @@ describe('<Footer/>', () => {
   let component: RenderResult
   it('affiche les liens du footer', () => {
     // GIVEN
-    component = renderWithSession(<Footer />)
+    component = renderWithSession(<Footer/>)
 
     // WHEN
 

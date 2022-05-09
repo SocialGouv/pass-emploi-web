@@ -51,16 +51,14 @@ describe('EnvoiMessageGroupe', () => {
         }),
       })
 
-      page = renderWithSession(
-      <DIProvider dependances={{ jeunesService, messagesService }}>
+      page = renderWithSession(<DIProvider dependances={ { jeunesService, messagesService } }>
         <EnvoiMessageGroupe
-          pageTitle={''}
-          jeunes={jeunes}
-            withoutChat={true}
-            previousUrl='/mes-jeunes'
-          />
-        </DIProvider>
-      )
+          pageTitle={ '' }
+          jeunes={ jeunes }
+          withoutChat={ true }
+          previousUrl="/mes-jeunes"
+        />
+      </DIProvider>)
 
       inputSearchJeune = screen.getByRole('combobox', {
         name: 'Rechercher et ajouter des jeunes Nom et prénom',

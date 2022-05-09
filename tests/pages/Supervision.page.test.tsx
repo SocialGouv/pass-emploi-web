@@ -19,21 +19,18 @@ describe('Supervision', () => {
       // Given
       jeunesService = mockedJeunesService()
       // When
-      renderWithSession(
-        <DIProvider dependances={{ jeunesService }}>
-          <Supervision withoutChat={true} pageTitle='' />
-        </DIProvider>,
-        {
-          user: {
-            id: '1',
-            name: 'Nils Tavernier',
-            structure: UserStructure.POLE_EMPLOI,
-            estSuperviseur: true,
-            email: 'fake@email.com',
-            estConseiller: true,
-          },
+      renderWithSession(<DIProvider dependances={ { jeunesService } }>
+        <Supervision withoutChat={ true } pageTitle=""/>
+      </DIProvider>, {
+        user: {
+          id: '1',
+          name: 'Nils Tavernier',
+          structure: UserStructure.POLE_EMPLOI,
+          estSuperviseur: true,
+          email: 'fake@email.com',
+          estConseiller: true
         }
-      )
+      })
     })
 
     it('affiche le titre de la page', () => {

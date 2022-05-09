@@ -3,12 +3,16 @@ import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import React from 'react'
 
-import { UserStructure } from 'interfaces/conseiller'
+import { unConseiller } from '../fixtures/conseiller'
+import { ConseillerProvider } from '../utils/conseiller/conseillerContext'
+
+import { Conseiller, UserStructure } from 'interfaces/conseiller'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 
 export default function renderWithSession(
   children: JSX.Element,
-  customSession?: Partial<Session>
+  customSession?: Partial<Session>,
+  customConseiller?: Partial<Conseiller>
 ): RenderResult {
   const defaultSession: Session = {
     user: {
@@ -24,6 +28,7 @@ export default function renderWithSession(
   }
 
   const session = { ...defaultSession, ...customSession }
+  const conseiller = { ...unConseiller(), ...customConseiller }
 
   return render(
     <SessionProvider session={session}>
@@ -33,7 +38,9 @@ export default function renderWithSession(
           cleChiffrement: 'cleChiffrement',
         }}
       >
-        {children}
+        <ConseillerProvider conseiller={conseiller}>
+          {children}
+        </ConseillerProvider>
       </ChatCredentialsProvider>
     </SessionProvider>
   )

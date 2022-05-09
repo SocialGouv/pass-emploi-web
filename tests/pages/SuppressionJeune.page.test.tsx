@@ -139,16 +139,14 @@ describe('Suppression Jeune', () => {
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
-      renderWithSession(
-        <DIProvider dependances={{ jeunesService }}>
-          <SuppressionJeune
-            jeune={jeune}
-            withoutChat={true}
-            pageTitle=''
-            structureConseiller='MILO'
-          />
-        </DIProvider>
-      )
+      renderWithSession(<DIProvider dependances={ { jeunesService } }>
+        <SuppressionJeune
+          jeune={ jeune }
+          withoutChat={ true }
+          pageTitle=""
+          structureConseiller="MILO"
+        />
+      </DIProvider>)
     })
 
     it('permet de revenir à la page précédente', () => {

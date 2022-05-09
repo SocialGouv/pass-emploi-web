@@ -40,8 +40,17 @@ export default function Layout({ children }: LayoutProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
-  //TODO-613: lire la valeur du profil pour faire jouer la notif ou pas
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
+
+  const doitEmettreUnSon = useCallback(
+    (previousChat: JeuneChat, updatedChat: JeuneChat) => {
+      return (
+        conseiller?.notificationsSonores &&
+        aUnNouveauMessage(previousChat, updatedChat)
+      )
+    },
+    [conseiller]
+  )
 
   const updateChats = useCallback(
     (updatedChat: JeuneChat) => {
@@ -52,10 +61,7 @@ export default function Layout({ children }: LayoutProps) {
         const updatedChats = [...prevChats]
 
         if (chatIndex !== -1) {
-          if (
-            conseiller?.notificationsSonores &&
-            aUnNouveauMessage(prevChats[chatIndex], updatedChat)
-          ) {
+          if (doitEmettreUnSon(prevChats[chatIndex], updatedChat)) {
             audio?.play()
           }
           updatedChats[chatIndex] = updatedChat
@@ -66,7 +72,7 @@ export default function Layout({ children }: LayoutProps) {
         return updatedChats
       })
     },
-    [audio]
+    [audio, doitEmettreUnSon]
   )
 
   function hasMessageNonLu(): boolean {
@@ -101,7 +107,7 @@ export default function Layout({ children }: LayoutProps) {
         .getConseiller(session.user.id, session.accessToken)
         .then(setConseiller)
     }
-  }, [conseiller, conseillerService, session, setConseiller])
+  }, [session, conseiller, conseillerService, setConseiller])
 
   useEffect(() => {
     if (!session || !chatCredentials) return

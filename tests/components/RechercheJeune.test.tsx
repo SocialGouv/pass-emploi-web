@@ -22,15 +22,13 @@ describe('Recherche', () => {
     })
 
     await act(async () => {
-      await renderWithSession(
-        <DIProvider dependances={{ messagesService }}>
-          <MesJeunes
-            structureConseiller={UserStructure.MILO}
-            conseillerJeunes={jeunes}
-            isFromEmail
-          />
-        </DIProvider>
-      )
+      await renderWithSession(<DIProvider dependances={ { messagesService } }>
+        <MesJeunes
+          structureConseiller={ UserStructure.MILO }
+          conseillerJeunes={ jeunes }
+          isFromEmail
+        />
+      </DIProvider>)
     })
   })
 

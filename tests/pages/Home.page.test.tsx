@@ -37,15 +37,13 @@ describe('Home', () => {
         conseillerService = mockedConseillerService()
 
         // When
-        renderWithSession(
-          <DIProvider dependances={{ conseillerService }}>
-            <Home
-              structureConseiller={UserStructure.POLE_EMPLOI}
-              referentielAgences={agences}
-              redirectUrl='/mes-jeunes'
-            />
-          </DIProvider>
-        )
+        renderWithSession(<DIProvider dependances={ { conseillerService } }>
+          <Home
+            structureConseiller={ UserStructure.POLE_EMPLOI }
+            referentielAgences={ agences }
+            redirectUrl="/mes-jeunes"
+          />
+        </DIProvider>)
       })
 
       it("contient un message pour demander l'agence du conseiller", () => {
@@ -193,17 +191,15 @@ describe('Home', () => {
     describe('quand le conseiller est Mission locale', () => {
       it("affiche 'Mission locale' au lieu de 'agence'", async () => {
         // Given
-        renderWithSession(
-          <DIProvider
-            dependances={{ conseillerService: mockedConseillerService() }}
-          >
-            <Home
-              structureConseiller={UserStructure.MILO}
-              referentielAgences={[]}
-              redirectUrl='/mes-jeunes'
-            />
-          </DIProvider>
-        )
+        renderWithSession(<DIProvider
+          dependances={ { conseillerService: mockedConseillerService() } }
+        >
+          <Home
+            structureConseiller={ UserStructure.MILO }
+            referentielAgences={ [] }
+            redirectUrl="/mes-jeunes"
+          />
+        </DIProvider>)
         const searchMission = screen.getByRole('combobox', {
           name: /votre Mission locale/,
         })

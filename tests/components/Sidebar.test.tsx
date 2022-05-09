@@ -28,7 +28,7 @@ jest.mock('next/router', () => ({
 describe('<Sidebar/>', () => {
   it('affiche les liens de la barre de navigation', () => {
     // WHEN
-    renderWithSession(<Sidebar />)
+    renderWithSession(<Sidebar/>)
 
     // THEN
     const navigation = screen.getByRole('navigation')
@@ -47,7 +47,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche le lien de déconnexion', () => {
     // WHEN
-    renderWithSession(<Sidebar />)
+    renderWithSession(<Sidebar/>)
 
     // THEN
     expect(
@@ -57,15 +57,15 @@ describe('<Sidebar/>', () => {
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
     // WHEN
-    renderWithSession(<Sidebar />, {
+    renderWithSession(<Sidebar/>, {
       user: {
         id: '1',
         name: 'Nils Tavernier',
         structure: UserStructure.POLE_EMPLOI,
         estSuperviseur: false,
         email: 'fake@email.com',
-        estConseiller: true,
-      },
+        estConseiller: true
+      }
     })
 
     // THEN
@@ -74,15 +74,15 @@ describe('<Sidebar/>', () => {
 
   it('affiche le lien de supervision lorsque le conseiller est superviseur', () => {
     // WHEN
-    renderWithSession(<Sidebar />, {
+    renderWithSession(<Sidebar/>, {
       user: {
         id: '1',
         name: 'Nils Tavernier',
         structure: UserStructure.MILO,
         estSuperviseur: true,
         email: 'fake@email.com',
-        estConseiller: true,
-      },
+        estConseiller: true
+      }
     })
 
     // THEN
