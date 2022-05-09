@@ -40,7 +40,7 @@ describe('<Sidebar/>', () => {
     ).toHaveAttribute('href', '/mes-jeunes')
     expect(within(navigation).getByLabelText(/Aide/)).toBeInTheDocument()
     expect(
-      within(navigation).getByRole('link', { name: 'Mon profil' })
+      within(navigation).getByRole('link', { name: 'Nils Tavernier' })
     ).toHaveAttribute('href', '/profil')
     expect(() => within(navigation).getByText('Supervision')).toThrow()
   })
@@ -51,7 +51,7 @@ describe('<Sidebar/>', () => {
 
     // THEN
     expect(
-      screen.getByRole('link', { name: 'Se déconnecter' })
+      screen.getByRole('link', { name: 'Déconnexion' })
     ).toBeInTheDocument()
   })
 
