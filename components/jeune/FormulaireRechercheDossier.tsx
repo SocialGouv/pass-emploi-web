@@ -65,7 +65,7 @@ function FormulaireRechercheDossier({
           onChange={(e) => handleSearchInputChanges(e.target.value)}
           className={`mt-4 mb-8 p-3 w-8/12 border rounded-medium text-sm ${
             messageErreur
-              ? 'border-deprecated_warning text-deprecated_warning'
+              ? 'border-warning text-warning'
               : 'border-content_color text-primary_darken'
           }`}
         />

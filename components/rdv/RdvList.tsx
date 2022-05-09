@@ -80,7 +80,7 @@ const RdvList = ({
                   role='row'
                   key={rdv.id}
                   aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.jeune.prenom} ${rdv.jeune.nom}`}
-                  className='table-row text-sm  hover:bg-gris_blanc'
+                  className='table-row text-sm  hover:bg-primary_lighten'
                 >
                   <div role='cell' className='table-cell p-3'>
                     {dayHourCells(new Date(rdv.date), rdv.duration)}

@@ -30,20 +30,7 @@ module.exports = {
      * - HTML: <p className="text-violet" >
      */
     colors: {
-      // bleu_nuit: '#333866',
-      // bleu: '#767BA8',
       blanc: '#FFFFFF',
-      // bleu_gris: '#9196C0',
-      // bleu_clair: '#C8CBE4',
-      // bleu_blanc: '#F4F5FF',
-      gris_blanc: '#F6F9FC',
-      violet: '#9762DA',
-      rose: '#EF5DA8',
-      rouge_france: '#E1000F',
-      rouge_france_5: '#E1000F0D',
-      deprecated_warning: '#FF3F15',
-      grey_3: '#646667',
-      // zeroheight
       primary: '#3B69D1',
       primary_lighten: '#EEF1F8',
       primary_darken: '#274996',
@@ -79,6 +66,7 @@ module.exports = {
     }),
 
     placeholderColor: (theme) => theme('colors'),
+    screenSize: (theme) => theme('screens'),
 
     borderRadius: {
       none: '0',
@@ -98,7 +86,7 @@ module.exports = {
         layout_base: { max: '900px' },
         layout_m: { max: '1024px' },
         layout_l: '1200px',
-        layout_xl: '1200px',
+        layout_xl: '1425px',
       },
       fontFamily: {
         sans: ['Marianne'],

@@ -98,11 +98,9 @@ export default function Sidebar({}: SidebarProps) {
         />
       </nav>
 
-      {/*TODO: create spacing component*/}
-      <div className='mb-8'></div>
+      <span className='border-b border-blanc mx-4 mb-8'></span>
       <div className='flex p-2 m-2 items-center layout_m:justify-center'>
         <NavLink
-          isActive={currentNavLink('/api/logout')}
           href='/api/logout'
           label='Déconnexion'
           iconName='logout'
@@ -112,5 +110,3 @@ export default function Sidebar({}: SidebarProps) {
     </div>
   )
 }
-
-//todo: modifier logo et vérifier padding/marges

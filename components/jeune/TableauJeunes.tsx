@@ -161,7 +161,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 className='table-cell text-sm text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.NOM)}
                   aria-label={`Afficher la liste des jeunes triée par noms de famille par ordre alphabétique ${
                     isName && !sortDesc ? 'inversé' : ''
@@ -188,7 +188,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 className='table-cell text-sm text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
                   aria-label={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
                     isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
@@ -217,7 +217,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                   className='table-cell text-sm  text-left py-4'
                 >
                   <button
-                    className='flex border-none hover:bg-gris_blanc p-2 rounded-medium items-center mx-auto'
+                    className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center mx-auto'
                     onClick={() =>
                       sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
                     }
@@ -248,7 +248,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 className='table-cell text-sm  text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.MESSAGES)}
                   aria-label={`Afficher la liste des messages non lus par nombre ${
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
@@ -279,7 +279,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 <a
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className={`table-row grid ${gridColsStyle} text-sm  items-center hover:bg-gris_blanc`}
+                  className={`table-row grid ${gridColsStyle} text-sm  items-center hover:bg-primary_lighten`}
                 >
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}

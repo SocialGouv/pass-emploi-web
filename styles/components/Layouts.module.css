@@ -83,7 +83,7 @@
   background:linear-gradient(26deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: theme('screens.layout_m.max')) {
   .container {
     grid-template-columns: 10vw 90vw;
   }
@@ -99,14 +99,14 @@
   }
 }
 
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: theme('screens.layout_l')) {
   .sidebar nav  {
     margin: 8px;
   }
 
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: theme('screens.layout_base.max')) {
   .login  {
     background:linear-gradient(36deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
   }

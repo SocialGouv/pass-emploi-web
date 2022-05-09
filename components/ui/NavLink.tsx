@@ -3,7 +3,7 @@ import Link from 'next/link'
 import IconComponent from './IconComponent'
 
 interface NavLinkProps {
-  isActive: boolean
+  isActive?: boolean
   href: string
   label: string | null
   iconName: string
