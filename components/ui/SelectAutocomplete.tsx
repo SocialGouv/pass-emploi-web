@@ -10,6 +10,7 @@ interface SelectAutocompleteProps {
   multiple?: boolean
   required?: boolean
   disabled?: boolean
+  'aria-required'?: boolean
 }
 
 const SelectAutocomplete = forwardRef<
@@ -25,6 +26,7 @@ const SelectAutocomplete = forwardRef<
         list={`${props.id}--options`}
         multiple={props.multiple ?? false}
         required={props.required ?? false}
+        aria-required={props['aria-required']}
         onChange={props.onChange}
         aria-invalid={props['aria-invalid']}
         aria-describedby={props['aria-describedby']}

@@ -4,14 +4,15 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { Jeune } from '../../interfaces/jeune'
-import InformationMessage from '../InformationMessage'
-import { RequiredValue } from '../RequiredValue'
 
+import InformationMessage from 'components/InformationMessage'
+import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
+import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
@@ -256,7 +257,7 @@ export function EditionRdvForm({
         Tous les champs avec * sont obligatoires
       </div>
 
-      <fieldset className='border-none flex flex-col'>
+      <fieldset className='border-none flex flex-col mb-8'>
         <legend className='flex items-center text-m-medium mb-4'>
           <Etape1Icon
             role='img'
@@ -267,28 +268,12 @@ export function EditionRdvForm({
           Bénéficiaires :
         </legend>
 
-        <label htmlFor='beneficiaire' className='text-base-medium mb-2'>
-          <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
-          <span className='text-sm-regular block'>Nom et prénom</span>
-        </label>
-        <select
-          id='beneficiaire'
-          name='beneficiaire'
-          defaultValue={jeunesIds[0] ?? ''}
-          required={true}
+        <JeunesMultiselectAutocomplete
+          jeunes={jeunes}
+          defaultIds={jeunesIds}
+          onUpdate={(selectedIds) => setJeunesIds(selectedIds)}
           disabled={Boolean(idJeune) || Boolean(rdv)}
-          onChange={(e) =>
-            setJeunesIds(Boolean(e.target.value) ? [e.target.value] : [])
-          }
-          className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
-        >
-          <option aria-hidden hidden disabled value={''} />
-          {jeunes.map((j) => (
-            <option key={j.id} value={j.id}>
-              {j.lastName} {j.firstName}
-            </option>
-          ))}
-        </select>
+        />
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>

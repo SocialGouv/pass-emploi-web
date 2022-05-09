@@ -9,7 +9,7 @@ import BackIcon from '../../assets/icons/arrow_back.svg'
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
-import { Jeune } from 'interfaces/jeune'
+import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { JeunesService } from 'services/jeunes.service'
@@ -171,7 +171,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const redirectTo =
     referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   const props: EditionRdvProps = {
-    jeunes: jeunes,
+    jeunes: [...jeunes].sort(compareJeunesByLastName),
     typesRendezVous: typesRendezVous,
     withoutChat: true,
     redirectTo,
