@@ -76,8 +76,7 @@
   grid-area: chat;
   display: flex;
   flex-direction: column;
-  padding-top: 44px;
-  border-left: 2px solid theme('colors.bleu_blanc');
+  background-color: theme('colors.grey_100');
 }
 
 .login {

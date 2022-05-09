@@ -60,7 +60,11 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
       {!currentChat && (
         <>
-          <h2 className={`h2-semi text-primary ml-9 mb-6`}>Ma messagerie</h2>
+          <h2 className={`text-m-medium text-primary text-center m-3`}>
+            Messagerie
+          </h2>
+          <span className='border-b border-grey_500 mx-4 mb-6'></span>
+
           {!jeunesChats.length && (
             <div className='h-full overflow-y-auto bg-grey_100 flex flex-col justify-center items-center'>
               <EmptyMessagesImage focusable='false' aria-hidden='true' />
@@ -72,21 +76,22 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
           {jeunesChats.length > 0 && (
             <>
-              <ul className='h-full overflow-y-auto bg-bleu_blanc pb-24'>
+              <ul className='h-full overflow-y-auto px-4 pb-24'>
                 {jeunesChats.map((jeuneChat: JeuneChat) => (
-                  <li key={`chat-${jeuneChat.id}`} className='mb-[2px]'>
+                  <li key={`chat-${jeuneChat.id}`} className='mb-2'>
                     <button
-                      className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
+                      className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-[6px]'
                       onClick={() => setCurrentJeune(jeuneChat)}
                     >
-                      <span className='text-lg-semi text-primary_darken mb-2 w-full flex justify-between'>
+                      {!jeuneChat.seenByConseiller &&
+                        jeuneChat.lastMessageContent && (
+                          <p className='flex items-center text-accent_1 text-sm-regular mb-2'>
+                            <span className='text-[48px] mr-1'>·</span>
+                            Nouveau message
+                          </p>
+                        )}
+                      <span className='text-md-semi text-primary_darken mb-2 w-full flex justify-between'>
                         {jeuneChat.firstName} {jeuneChat.lastName}
-                        {!jeuneChat.seenByConseiller &&
-                          jeuneChat.lastMessageContent && (
-                            <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
-                              Nouveau message
-                            </span>
-                          )}
                       </span>
                       <span className='text-sm text-grey_800 mb-[8px]'>
                         {' '}

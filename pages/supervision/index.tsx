@@ -328,7 +328,7 @@ function Supervision(_: SupervisionProps) {
             } ml-5`}
           >
             <table className='w-full'>
-              <caption className='text-m-medium mb-8'>
+              <caption className='text-m-medium text-left mb-8'>
                 Jeunes de {conseillerInitial.email}
               </caption>
               <thead>
