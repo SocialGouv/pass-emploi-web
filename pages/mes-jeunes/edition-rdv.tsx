@@ -183,7 +183,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
     if (!rdv) return { notFound: true }
     props.rdv = rdv
-    props.idJeune = rdv.jeune.id
+    props.idJeune = rdv.jeunes[0].id
     props.pageTitle = 'Modification rendez-vous'
   } else if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/

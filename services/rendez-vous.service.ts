@@ -106,7 +106,7 @@ export class RendezVousApiService implements RendezVousService {
     accessToken: string
   ): Promise<void> {
     const payload = {
-      jeunesIds: [updatedRdv.jeuneId],
+      jeunesIds: updatedRdv.jeunesIds,
       modality: updatedRdv.modality,
       date: updatedRdv.date,
       duration: updatedRdv.duration,

@@ -35,7 +35,7 @@ describe('<RdvList>', () => {
             modality: 'en visio',
             date: '2022-10-21T10:00:00.000Z',
             duration: 30,
-            jeune: { id: '3', prenom: 'Nadia', nom: 'Sanfamiye' },
+            jeunes: [{ id: '3', prenom: 'Nadia', nom: 'Sanfamiye' }],
             createur: null,
           })
         )
@@ -50,9 +50,7 @@ describe('<RdvList>', () => {
       // Then
       listeRdv.forEach((rdv) => {
         const date = new Date(rdv.date)
-        expect(
-          screen.getByText(`${rdv.jeune.prenom} ${rdv.jeune.nom}`)
-        ).toBeInTheDocument()
+        expect(screen.getByText(`${rdv.beneficiaires}`)).toBeInTheDocument()
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         expect(
@@ -68,7 +66,7 @@ describe('<RdvList>', () => {
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
         const link = screen.getByLabelText(
-          `Modifier rendez-vous du ${rdv.date} avec ${rdv.jeune.prenom} ${rdv.jeune.nom}`
+          `Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`
         )
         expect(link).toBeInTheDocument()
         expect(link).toHaveAttribute(
@@ -80,19 +78,13 @@ describe('<RdvList>', () => {
 
     it('affiche si l’utilisateur est le créateur du rendez-vous', () => {
       const rendezVous0 = screen.getByRole('row', {
-        name: new RegExp(
-          `${listeRdv[0].jeune.prenom} ${listeRdv[0].jeune.nom}`
-        ),
+        name: new RegExp(`${listeRdv[0].beneficiaires}`),
       })
       const rendezVous1 = screen.getByRole('row', {
-        name: new RegExp(
-          `${listeRdv[1].jeune.prenom} ${listeRdv[1].jeune.nom}`
-        ),
+        name: new RegExp(`${listeRdv[1].beneficiaires}`),
       })
       const rendezVous2 = screen.getByRole('row', {
-        name: new RegExp(
-          `${listeRdv[2].jeune.prenom} ${listeRdv[2].jeune.nom}`
-        ),
+        name: new RegExp(`${listeRdv[2].beneficiaires}`),
       })
 
       // Then
@@ -118,6 +110,40 @@ describe('<RdvList>', () => {
       // Then
       expect(deleteButton).toBeInTheDocument()
       expect(onDelete).toHaveBeenCalledWith(listeRdv[0])
+    })
+  })
+
+  describe('Quand plusieurs jeunes participe à un rendez-vous', () => {
+    it('should ', () => {
+      // Given
+      const listeRdv: RdvListItem[] = [
+        rdvToListItem(
+          unRendezVous({
+            id: '3',
+            type: {
+              code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+              label: 'Entretien individuel conseiller',
+            },
+            modality: 'en visio',
+            date: '2022-10-21T10:00:00.000Z',
+            duration: 30,
+            jeunes: [
+              { id: '3', prenom: 'Nadia', nom: 'Sanfamiye' },
+              { id: '4', prenom: 'Avon', nom: 'Barksdale' },
+              { id: '7', prenom: 'Christiano', nom: 'Seven' },
+            ],
+            idCreateur: null,
+          })
+        ),
+      ]
+
+      const onDelete = jest.fn()
+
+      render(<RdvList rdvs={listeRdv} onDelete={onDelete} idConseiller='1' />)
+
+      // When
+      // Then
+      expect(screen.getByText(`Bénéficiaires multiples`)).toBeInTheDocument()
     })
   })
 })

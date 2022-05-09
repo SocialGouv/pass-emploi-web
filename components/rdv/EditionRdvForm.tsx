@@ -45,9 +45,13 @@ export function EditionRdvForm({
   idJeune,
   showConfirmationModal,
 }: EditionRdvFormProps) {
-  const [jeunesIds, setJeunesIds] = useState<string[]>(
-    rdv ? [rdv.jeune.id] : idJeune ? [idJeune] : []
-  )
+  const defaultIds = []
+  if (rdv) {
+    defaultIds.push(...rdv.jeunes.map(({ id }) => id))
+  } else if (idJeune) {
+    defaultIds.push(idJeune)
+  }
+  const [idsJeunes, setIdsJeunes] = useState<string[]>(defaultIds)
 
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
     rdv?.type.code ?? ''
@@ -83,7 +87,8 @@ export function EditionRdvForm({
   function formHasChanges(): boolean {
     if (!rdv) {
       return Boolean(
-        codeTypeRendezVous ||
+        idsJeunes.length ||
+          codeTypeRendezVous ||
           modalite ||
           date.value ||
           horaire.value ||
@@ -93,6 +98,7 @@ export function EditionRdvForm({
           commentaire
       )
     }
+
     return (
       modalite !== rdv.modality ||
       date.value !== localDate ||
@@ -107,7 +113,7 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeunesIds.length) &&
+      Boolean(idsJeunes.length) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
@@ -214,7 +220,7 @@ export function EditionRdvForm({
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
     const payload: RdvFormData = {
-      jeunesIds,
+      jeunesIds: idsJeunes,
       type: codeTypeRendezVous,
       date: new Date(`${date.value} ${horaire.value}`).toISOString(),
       duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -270,9 +276,9 @@ export function EditionRdvForm({
 
         <JeunesMultiselectAutocomplete
           jeunes={jeunes}
-          defaultIds={jeunesIds}
-          onUpdate={(selectedIds) => setJeunesIds(selectedIds)}
-          disabled={Boolean(idJeune) || Boolean(rdv)}
+          defaultIds={idsJeunes}
+          onUpdate={(selectedIds) => setIdsJeunes(selectedIds)}
+          disabled={Boolean(rdv)}
         />
       </fieldset>
 

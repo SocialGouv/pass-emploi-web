@@ -792,7 +792,7 @@ describe('EditionRdv', () => {
           nom: jeunes[0].lastName,
         }
 
-        rdv = unRendezVous({ jeune })
+        rdv = unRendezVous({ jeunes: [jeune] })
 
         // When
         renderWithSession(
@@ -1015,7 +1015,7 @@ describe('EditionRdv', () => {
         }
 
         rdv = unRendezVous({
-          jeune,
+          jeunes: [jeune],
           createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
         })
 

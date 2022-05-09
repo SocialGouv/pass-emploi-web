@@ -8,7 +8,7 @@ export interface RdvJson {
   duration: number
   type: TypeRendezVous
   modality: string
-  jeune: BaseJeune
+  jeunes: BaseJeune[]
   precision?: string
   comment?: string
   presenceConseiller?: boolean

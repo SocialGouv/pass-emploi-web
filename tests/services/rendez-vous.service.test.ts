@@ -102,7 +102,7 @@ describe('RendezVousApiService', () => {
     it('met à jour un rendez vous déja existant', async () => {
       // Given
       const rdvFormData: RdvFormData = {
-        jeuneId: 'jeune-1',
+        jeunesIds: ['jeune-1', 'jeune-2'],
         type: 'AUTRE',
         precision: 'un texte de précision',
         modality: modalites[0],
@@ -126,7 +126,7 @@ describe('RendezVousApiService', () => {
       expect(apiClient.put).toHaveBeenCalledWith(
         '/rendezvous/id-rdv',
         {
-          jeunesIds: ['jeune-1'],
+          jeunesIds: ['jeune-1', 'jeune-2'],
           modality: modalites[0],
           date: '2022-03-03T09:30:00.000Z',
           duration: 157,
