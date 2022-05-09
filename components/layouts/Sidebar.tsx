@@ -93,7 +93,7 @@ export default function Sidebar({}: SidebarProps) {
         <NavLink
           isActive={currentNavLink('/profil')}
           href='/profil'
-          label={session!.user.name}
+          label={session && session!.user.name}
           iconName='profil'
         />
       </nav>
