@@ -10,7 +10,6 @@ export const unConseiller = (
     firstName: 'Nils',
     lastName: 'Tavernier',
     notificationsSonores: false,
-    agence: 'Milo Marseille',
   }
   return { ...defaults, ...overrides }
 }
@@ -22,10 +21,6 @@ export const unConseillerJson = (
     id: '1',
     firstName: 'Nils',
     lastName: 'Tavernier',
-    agence: {
-      nom: 'Milo Marseille',
-      id: 'ID',
-    },
     notificationsSonores: false,
   }
   return { ...defaults, ...overrides }
