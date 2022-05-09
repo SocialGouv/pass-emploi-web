@@ -93,13 +93,13 @@ export default function Sidebar({}: SidebarProps) {
         <NavLink
           isActive={currentNavLink('/profil')}
           href='/profil'
-          label={session && session!.user.name}
+          label={session!.user.name}
           iconName='profil'
         />
       </nav>
 
       <span className='border-b border-blanc mx-4 mb-8'></span>
-      <div className='flex p-2 m-2 items-center layout_m:justify-center'>
+      <div className='flex flex-col m-2 items-center layout_m:justify-center'>
         <NavLink
           href='/api/logout'
           label='Déconnexion'
