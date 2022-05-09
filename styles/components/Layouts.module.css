@@ -23,8 +23,15 @@
   overflow-x: hidden; /* Disable horizontal scroll */
   padding: 20px 19px 16px;
   text-align: center;
-  border-right: 1px solid theme('colors.primary_lighten');
   background-color: theme('colors.primary');
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 .page {
@@ -62,15 +69,6 @@
   padding: 16px 0;
   border-top: 2px solid theme('colors.primary_lighten');
 }
-
-.sidebar nav a {
-  display: flex;
-  align-items: center;
-  margin-bottom: 7px;
-  padding: 8px;
-  border-radius: 8px;
-}
-
 
 .chatRoom {
   grid-area: chat;

@@ -18,12 +18,6 @@ module.exports = {
     { pattern: /^h-/ },
   ], // Retain all classes starting with...
   theme: {
-    screens: {
-      // sm: '480px',
-      // md: '768px',
-      // lg: '976px',
-      // xl: '1441px',
-    },
     /**
      * Usage
      * - CSS : background-color: theme('colors.violet');
