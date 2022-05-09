@@ -65,6 +65,16 @@ describe('Home', () => {
         )
       })
 
+      it("contient un bouton pour dire que l'agence n'est pas dans liste", () => {
+        // Then
+        expect(
+          screen.getByRole('checkbox', { name: /Mon agence n’apparaît pas/ })
+        ).toBeInTheDocument()
+        expect(() =>
+          screen.getByRole('textbox', { name: /Saisir le nom/ })
+        ).toThrow()
+      })
+
       it('contient un bouton pour annuler', async () => {
         // Given
         const annuler = screen.getByRole('button', { name: 'Annuler' })
@@ -95,7 +105,7 @@ describe('Home', () => {
         // Then
         expect(conseillerService.modifierAgence).toHaveBeenCalledWith(
           '1',
-          agence.id,
+          { id: agence.id },
           'accessToken'
         )
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
@@ -120,6 +130,63 @@ describe('Home', () => {
         ).toBeInTheDocument()
         expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
         expect(replace).not.toHaveBeenCalled()
+      })
+
+      describe("quand l'agence n'est pas dans la liste", () => {
+        let searchAgence: HTMLInputElement
+        let agenceLibre: HTMLInputElement
+        beforeEach(async () => {
+          // Given
+          searchAgence = screen.getByRole('combobox', {
+            name: /Rechercher/,
+          })
+          fireEvent.input(searchAgence, { target: { value: 'pouet' } })
+
+          const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
+            name: /n’apparaît pas/,
+          })
+          await act(async () => {
+            checkAgenceNonTrouvee.click()
+          })
+
+          agenceLibre = screen.getByRole('textbox', {
+            name: /Saisir le nom de votre agence/,
+          })
+        })
+
+        it('permet de renseigner une agence libre', async () => {
+          // When
+          fireEvent.input(agenceLibre, { target: { value: 'Agence libre' } })
+          const submit = screen.getByRole('button', { name: 'Ajouter' })
+          await act(async () => {
+            submit.click()
+          })
+
+          // Then
+          expect(conseillerService.modifierAgence).toHaveBeenCalledWith(
+            '1',
+            { nom: 'Agence libre' },
+            'accessToken'
+          )
+        })
+
+        it('bloque la sélection dans la liste', () => {
+          // Then
+          expect(searchAgence.value).toEqual('')
+          expect(searchAgence).toHaveAttribute('disabled', '')
+        })
+
+        it("prévient si l'agence n'est pas renseignée", async () => {
+          // When
+          const submit = screen.getByRole('button', { name: 'Ajouter' })
+          await act(async () => {
+            submit.click()
+          })
+
+          // Then
+          expect(screen.getByText('Saisir une agence')).toBeInTheDocument()
+          expect(conseillerService.modifierAgence).toHaveBeenCalledTimes(0)
+        })
       })
     })
 
@@ -153,10 +220,22 @@ describe('Home', () => {
           screen.getByText(/Mission locale de rattachement/)
         ).toBeInTheDocument()
         expect(
-          screen.getByRole('combobox', { name: /votre Mission locale/ })
-        ).toBeInTheDocument()
-        expect(
           screen.getByText(/Sélectionner une Mission locale/)
+        ).toBeInTheDocument()
+
+        // When
+        const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
+          name: /Ma Mission locale n’apparaît pas/,
+        })
+        await act(async () => {
+          checkAgenceNonTrouvee.click()
+        })
+
+        // Then
+        expect(
+          screen.getByRole('textbox', {
+            name: /Saisir le nom de votre Mission locale/,
+          })
         ).toBeInTheDocument()
       })
     })
@@ -193,7 +272,7 @@ describe('Home', () => {
 
         const conseillerAvecAgence = {
           ...unConseiller(),
-          agence: { id: '443', nom: 'MLS3F SAINT-LOUIS' },
+          agence: 'MLS3F SAINT-LOUIS',
         }
         conseillerService = mockedConseillerService({
           getConseiller: jest.fn(async () => conseillerAvecAgence),

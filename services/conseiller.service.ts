@@ -12,7 +12,7 @@ export interface ConseillerService {
 
   modifierAgence(
     idConseiller: string,
-    idAgence: string,
+    agence: { id: string } | { nom: string },
     accessToken: string
   ): Promise<void>
 
@@ -58,12 +58,12 @@ export class ConseillerApiService implements ConseillerService {
 
   modifierAgence(
     idConseiller: string,
-    idAgence: string,
+    agence: { id: string } | { nom: string },
     accessToken: string
   ): Promise<void> {
     return this.apiClient.put(
       `/conseillers/${idConseiller}`,
-      { agence: { id: idAgence } },
+      { agence },
       accessToken
     )
   }

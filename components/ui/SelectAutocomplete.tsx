@@ -1,4 +1,4 @@
-import { ChangeEventHandler, forwardRef, MutableRefObject } from 'react'
+import { ChangeEventHandler, forwardRef } from 'react'
 
 interface SelectAutocompleteProps {
   options: { id: string; value: string }[]
@@ -9,6 +9,7 @@ interface SelectAutocompleteProps {
   'aria-describedby'?: string
   multiple?: boolean
   required?: boolean
+  disabled?: boolean
 }
 
 const SelectAutocomplete = forwardRef<
@@ -20,6 +21,7 @@ const SelectAutocomplete = forwardRef<
       <input
         type='text'
         id={props.id}
+        ref={ref}
         list={`${props.id}--options`}
         multiple={props.multiple ?? false}
         required={props.required ?? false}
@@ -27,7 +29,7 @@ const SelectAutocomplete = forwardRef<
         aria-invalid={props['aria-invalid']}
         aria-describedby={props['aria-describedby']}
         className={props.className}
-        ref={ref}
+        disabled={props.disabled}
       />
       <datalist id={`${props.id}--options`}>
         {props.options.map(({ id, value }) => (

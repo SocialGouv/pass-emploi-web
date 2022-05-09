@@ -94,7 +94,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
 
   const modalTemplate = (
     <div
-      className='rounded-x_large bg-blanc'
+      className='rounded-x_large bg-blanc max-w-[620px]'
       style={{
         height: customHeight,
         width: customWidth,
