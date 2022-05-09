@@ -41,13 +41,12 @@ export class ConseillerApiService implements ConseillerService {
     accessToken: string
   ): Promise<Conseiller | undefined> {
     try {
-      const { agence, ...conseiller } =
-        await this.apiClient.get<ConseillerJson>(
-          `/conseillers/${idConseiller}`,
-          accessToken
-        )
+      const conseillerJson = await this.apiClient.get<ConseillerJson>(
+        `/conseillers/${idConseiller}`,
+        accessToken
+      )
 
-      return agence ? { ...conseiller, agence: agence.nom } : conseiller
+      return ConseillerApiService.toConseiller(conseillerJson)
     } catch (e) {
       if (e instanceof RequestError) {
         return undefined
@@ -93,5 +92,17 @@ export class ConseillerApiService implements ConseillerService {
       newJeune,
       accessToken
     )
+  }
+
+  private static toConseiller(conseillerJson: ConseillerJson): Conseiller {
+    const { agence, ...conseiller } = conseillerJson
+    if (agence) {
+      return {
+        ...conseiller,
+        agence: agence.nom,
+      }
+    } else {
+      return conseiller
+    }
   }
 }

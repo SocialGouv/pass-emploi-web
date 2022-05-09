@@ -1,11 +1,13 @@
 import { screen } from '@testing-library/react'
-import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
-import { unDossierMilo } from 'fixtures/milo'
 import React from 'react'
-import { ConseillerService } from 'services/conseiller.service'
-import { DIProvider } from 'utils/injectionDependances'
+
 import getByDefinitionTerm from '../querySelector'
 import renderWithSession from '../renderWithSession'
+
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import { unDossierMilo } from 'fixtures/milo'
+import { ConseillerService } from 'services/conseiller.service'
+import { DIProvider } from 'utils/injectionDependances'
 
 describe('<DossierMilo', () => {
   const conseillerService: ConseillerService = {

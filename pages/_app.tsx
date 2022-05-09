@@ -4,6 +4,8 @@ import { AppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { ReactNode, useEffect } from 'react'
 
+import { ConseillerProvider } from '../utils/conseiller/conseillerContext'
+
 import { Footer } from 'components/Footer'
 import Layout from 'components/layouts/Layout'
 import 'styles/globals.css'
@@ -42,8 +44,6 @@ export default function App({
   }, [])
 
   return (
-    //TODO-613: ajouter un context Conseiller
-    //TODO-613: ajouter un context Audio ?
     <SessionProvider session={session}>
       <DIProvider dependances={Container.getDIContainer().dependances}>
         {isLoginPage || isLogoutPage ? (
@@ -53,11 +53,13 @@ export default function App({
           </div>
         ) : (
           <ChatCredentialsProvider>
-            <CurrentJeuneProvider>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </CurrentJeuneProvider>
+            <ConseillerProvider>
+              <CurrentJeuneProvider>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </CurrentJeuneProvider>
+            </ConseillerProvider>
           </ChatCredentialsProvider>
         )}
       </DIProvider>

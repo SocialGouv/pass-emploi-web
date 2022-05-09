@@ -4,6 +4,9 @@
 
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
+import { ConseillerService } from '../../services/conseiller.service'
+import { useConseiller } from '../../utils/conseiller/conseillerContext'
+
 import AppHead from 'components/AppHead'
 import { Footer } from 'components/Footer'
 import ChatRoom from 'components/layouts/ChatRoom'
@@ -29,9 +32,12 @@ export default function Layout({ children }: LayoutProps) {
 
   const messagesService = useDependance<MessagesService>('messagesService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
 
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials, setChatCredentials] = useChatCredentials()
+  const [conseiller, setConseiller] = useConseiller()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
   //TODO-613: lire la valeur du profil pour faire jouer la notif ou pas
@@ -46,7 +52,10 @@ export default function Layout({ children }: LayoutProps) {
         const updatedChats = [...prevChats]
 
         if (chatIndex !== -1) {
-          if (aUnNouveauMessage(prevChats[chatIndex], updatedChat)) {
+          if (
+            conseiller?.notificationsSonores &&
+            aUnNouveauMessage(prevChats[chatIndex], updatedChat)
+          ) {
             audio?.play()
           }
           updatedChats[chatIndex] = updatedChat
@@ -85,6 +94,14 @@ export default function Layout({ children }: LayoutProps) {
         .then(setChatCredentials)
     }
   }, [session, chatCredentials, messagesService, setChatCredentials])
+
+  useEffect(() => {
+    if (session && !conseiller) {
+      conseillerService
+        .getConseiller(session.user.id, session.accessToken)
+        .then(setConseiller)
+    }
+  }, [conseiller, conseillerService, session, setConseiller])
 
   useEffect(() => {
     if (!session || !chatCredentials) return
