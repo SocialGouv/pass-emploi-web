@@ -39,6 +39,7 @@ export default function SuccessMessage({
           </button>
         )}
       </div>
+      // FIXME ajoute espace si children
       {children}
     </div>
   )

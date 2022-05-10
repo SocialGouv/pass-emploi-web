@@ -99,7 +99,10 @@ export function EditionRdvForm({
       )
     }
 
+    const previousIds = rdv.jeunes.map(({ id }) => id).sort()
+    idsJeunes.sort()
     return (
+      previousIds.toString() !== idsJeunes.toString() ||
       modalite !== rdv.modality ||
       date.value !== localDate ||
       horaire.value !== localTime ||
@@ -276,9 +279,9 @@ export function EditionRdvForm({
 
         <JeunesMultiselectAutocomplete
           jeunes={jeunes}
+          typeSelection='Bénéficiaires'
           defaultIds={idsJeunes}
           onUpdate={(selectedIds) => setIdsJeunes(selectedIds)}
-          disabled={Boolean(rdv)}
         />
       </fieldset>
 

@@ -150,6 +150,7 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
             </legend>
             <JeunesMultiselectAutocomplete
               jeunes={jeunes}
+              typeSelection='Destinataires'
               onUpdate={setSelectedJeunesIds}
             />
           </fieldset>
