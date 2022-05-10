@@ -46,11 +46,13 @@ describe('<ChatRoom />', () => {
   describe('quand le conseiller a des jeunes', () => {
     beforeEach(async () => {
       await act(async () => {
-        await renderWithSession(<DIProvider dependances={ { jeunesService } }>
-          <CurrentJeuneProvider>
-            <ChatRoom jeunesChats={ jeunesChats }/>
-          </CurrentJeuneProvider>
-        </DIProvider>)
+        await renderWithSession(
+          <DIProvider dependances={{ jeunesService }}>
+            <CurrentJeuneProvider>
+              <ChatRoom jeunesChats={jeunesChats} />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
       })
     })
 
@@ -107,11 +109,13 @@ describe('<ChatRoom />', () => {
     it('affiche le chat du jeune courant', async () => {
       // When
       await act(async () => {
-        await renderWithSession(<DIProvider dependances={ { jeunesService } }>
-          <CurrentJeuneProvider jeune={ jeunes[2] }>
-            <ChatRoom jeunesChats={ jeunesChats }/>
-          </CurrentJeuneProvider>
-        </DIProvider>)
+        await renderWithSession(
+          <DIProvider dependances={{ jeunesService }}>
+            <CurrentJeuneProvider jeune={jeunes[2]}>
+              <ChatRoom jeunesChats={jeunesChats} />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
       })
 
       // Then
@@ -125,11 +129,13 @@ describe('<ChatRoom />', () => {
     it('affiche un message informatif', async () => {
       // When
       await act(async () => {
-        await renderWithSession(<DIProvider dependances={ { jeunesService } }>
-          <CurrentJeuneProvider>
-            <ChatRoom jeunesChats={ [] }/>
-          </CurrentJeuneProvider>
-        </DIProvider>)
+        await renderWithSession(
+          <DIProvider dependances={{ jeunesService }}>
+            <CurrentJeuneProvider>
+              <ChatRoom jeunesChats={[]} />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
       })
 
       // Then

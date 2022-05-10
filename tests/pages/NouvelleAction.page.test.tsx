@@ -71,13 +71,15 @@ describe('NouvelleAction', () => {
 
       // When
       await act(async () => {
-        renderWithSession(<DIProvider dependances={ { actionsService } }>
-          <NouvelleAction
-            idJeune="id-jeune"
-            withoutChat={ true }
-            pageTitle=""
-          />
-        </DIProvider>)
+        renderWithSession(
+          <DIProvider dependances={{ actionsService }}>
+            <NouvelleAction
+              idJeune='id-jeune'
+              withoutChat={true}
+              pageTitle=''
+            />
+          </DIProvider>
+        )
       })
     })
 

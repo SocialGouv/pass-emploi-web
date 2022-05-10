@@ -1,13 +1,15 @@
-import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
-import renderWithSession from '../renderWithSession'
-import MesJeunes from 'pages/mes-jeunes'
-import { UserStructure } from 'interfaces/conseiller'
 import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { DIProvider } from 'utils/injectionDependances'
-import { MessagesService } from 'services/messages.service'
+
+import renderWithSession from '../renderWithSession'
+
+import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
 import { mockedMessagesService } from 'fixtures/services'
+import { UserStructure } from 'interfaces/conseiller'
+import MesJeunes from 'pages/mes-jeunes'
+import { MessagesService } from 'services/messages.service'
+import { DIProvider } from 'utils/injectionDependances'
 
 describe('Recherche', () => {
   let messagesService: MessagesService
@@ -22,13 +24,15 @@ describe('Recherche', () => {
     })
 
     await act(async () => {
-      await renderWithSession(<DIProvider dependances={ { messagesService } }>
-        <MesJeunes
-          structureConseiller={ UserStructure.MILO }
-          conseillerJeunes={ jeunes }
-          isFromEmail
-        />
-      </DIProvider>)
+      await renderWithSession(
+        <DIProvider dependances={{ messagesService }}>
+          <MesJeunes
+            structureConseiller={UserStructure.MILO}
+            conseillerJeunes={jeunes}
+            isFromEmail
+          />
+        </DIProvider>
+      )
     })
   })
 

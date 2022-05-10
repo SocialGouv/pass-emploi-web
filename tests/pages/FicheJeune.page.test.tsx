@@ -65,17 +65,19 @@ describe('Fiche Jeune', () => {
         setJeune = jest.fn()
 
         // When
-        renderWithSession(<DIProvider dependances={ { jeunesService, rendezVousService } }>
-            <CurrentJeuneProvider setJeune={ setJeune }>
-                <FicheJeune
-                        jeune={ jeune }
-                        rdvs={ rdvs }
-                        actions={ actions }
-                        conseillers={ listeConseillers }
-                        pageTitle={ '' }
-                />
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
+            <CurrentJeuneProvider setJeune={setJeune}>
+              <FicheJeune
+                jeune={jeune}
+                rdvs={rdvs}
+                actions={actions}
+                conseillers={listeConseillers}
+                pageTitle={''}
+              />
             </CurrentJeuneProvider>
-        </DIProvider>)
+          </DIProvider>
+        )
       })
 
       it('affiche le titre de la fiche', async () => {
@@ -167,17 +169,19 @@ describe('Fiche Jeune', () => {
         setJeune = jest.fn()
 
         // Given
-        renderWithSession(<DIProvider dependances={ { jeunesService, rendezVousService } }>
-            <CurrentJeuneProvider setJeune={ setJeune }>
-                <FicheJeune
-                        jeune={ jeune }
-                        rdvs={ rdvs }
-                        actions={ actions }
-                        conseillers={ conseillers }
-                        pageTitle={ '' }
-                />
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
+            <CurrentJeuneProvider setJeune={setJeune}>
+              <FicheJeune
+                jeune={jeune}
+                rdvs={rdvs}
+                actions={actions}
+                conseillers={conseillers}
+                pageTitle={''}
+              />
             </CurrentJeuneProvider>
-        </DIProvider>)
+          </DIProvider>
+        )
       })
 
       it('n’affiche pas de bouton pour dérouler', async () => {
@@ -190,26 +194,29 @@ describe('Fiche Jeune', () => {
     describe("quand l'utilisateur est un conseiller Pole emploi", () => {
       beforeEach(async () => {
         // When
-        renderWithSession(<DIProvider dependances={ { jeunesService, rendezVousService } }>
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
             <CurrentJeuneProvider>
-                <FicheJeune
-                        jeune={ jeune }
-                        rdvs={ [] }
-                        actions={ actions }
-                        conseillers={ [] }
-                        pageTitle={ '' }
-                />
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actions={actions}
+                conseillers={[]}
+                pageTitle={''}
+              />
             </CurrentJeuneProvider>
-        </DIProvider>, {
+          </DIProvider>,
+          {
             user: {
-                id: 'idConseiller',
-                name: 'Tavernier',
-                email: 'fake@email.fr',
-                structure: UserStructure.POLE_EMPLOI,
-                estConseiller: true,
-                estSuperviseur: false
-            }
-        })
+              id: 'idConseiller',
+              name: 'Tavernier',
+              email: 'fake@email.fr',
+              structure: UserStructure.POLE_EMPLOI,
+              estConseiller: true,
+              estSuperviseur: false,
+            },
+          }
+        )
       })
 
       it("n'affiche pas la liste des rendez-vous du jeune", async () => {
@@ -242,18 +249,20 @@ describe('Fiche Jeune', () => {
     })
 
     it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
-      renderWithSession(<DIProvider dependances={ { jeunesService, rendezVousService } }>
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
           <CurrentJeuneProvider>
-              <FicheJeune
-                      jeune={ jeune }
-                      rdvs={ rdvs }
-                      actions={ [] }
-                      conseillers={ [] }
-                      pageTitle={ '' }
-              />
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actions={[]}
+              conseillers={[]}
+              pageTitle={''}
+            />
           </CurrentJeuneProvider>
-      </DIProvider>)
-        expect(
+        </DIProvider>
+      )
+      expect(
         screen.getByRole('link', {
           name: 'Accédez à cette page pour créer une action',
         })
@@ -268,18 +277,20 @@ describe('Fiche Jeune', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
 
         // When
-        renderWithSession(<DIProvider dependances={ { jeunesService, rendezVousService } }>
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
             <CurrentJeuneProvider>
-                <FicheJeune
-                        jeune={ jeune }
-                        rdvs={ rdvs }
-                        actions={ actions }
-                        rdvCreationSuccess={ true }
-                        conseillers={ [] }
-                        pageTitle={ '' }
-                />
+              <FicheJeune
+                jeune={jeune}
+                rdvs={rdvs}
+                actions={actions}
+                rdvCreationSuccess={true}
+                conseillers={[]}
+                pageTitle={''}
+              />
             </CurrentJeuneProvider>
-        </DIProvider>)
+          </DIProvider>
+        )
       })
 
       it('affiche un message de succès', () => {
@@ -317,18 +328,20 @@ describe('Fiche Jeune', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
 
         // When
-        renderWithSession(<DIProvider dependances={ { jeunesService, rendezVousService } }>
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
             <CurrentJeuneProvider>
-                <FicheJeune
-                        jeune={ jeune }
-                        rdvs={ rdvs }
-                        conseillers={ [] }
-                        actions={ actions }
-                        rdvModificationSuccess={ true }
-                        pageTitle={ '' }
-                />
+              <FicheJeune
+                jeune={jeune}
+                rdvs={rdvs}
+                conseillers={[]}
+                actions={actions}
+                rdvModificationSuccess={true}
+                pageTitle={''}
+              />
             </CurrentJeuneProvider>
-        </DIProvider>)
+          </DIProvider>
+        )
       })
 
       it('affiche un message de succès', () => {

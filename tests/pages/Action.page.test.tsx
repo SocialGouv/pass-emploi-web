@@ -36,9 +36,11 @@ describe("Page Détail d'une action d'un jeune", () => {
         updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
         deleteAction: jest.fn(),
       }
-      page = renderWithSession(<DIProvider dependances={ { actionsService } }>
-        <PageAction action={ action } jeune={ jeune } pageTitle=""/>
-      </DIProvider>)
+      page = renderWithSession(
+        <DIProvider dependances={{ actionsService }}>
+          <PageAction action={action} jeune={jeune} pageTitle='' />
+        </DIProvider>
+      )
     })
 
     it("Devrait afficher les information d'une action", () => {

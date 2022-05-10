@@ -5,6 +5,7 @@ interface ErrorProps {
   statusCode?: number
   message?: string
 }
+
 const CustomError: NextPage<ErrorProps> = ({ statusCode, message }) => (
   <Error statusCode={statusCode || 500} title={message} />
 )

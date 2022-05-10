@@ -1,20 +1,24 @@
 import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
+
+import renderWithSession from '../renderWithSession'
+
 import { unDossierMilo } from 'fixtures/milo'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
 
 describe('MiloCreationJeune', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
     beforeEach(() => {
-      renderWithSession(<MiloCreationJeune
-        dossierId=""
-        dossier={ null }
-        erreurMessageHttpMilo=""
-      />)
+      renderWithSession(
+        <MiloCreationJeune
+          dossierId=''
+          dossier={null}
+          erreurMessageHttpMilo=''
+        />
+      )
     })
 
     it('devrait afficher le champ de recherche de dossier', () => {
@@ -50,11 +54,13 @@ describe('MiloCreationJeune', () => {
     it("quand le dossier est invalide avec un message d'erreur", () => {
       //GIVEN
       const messageErreur = "un message d'erreur"
-      renderWithSession(<MiloCreationJeune
-        dossierId="1"
-        dossier={ null }
-        erreurMessageHttpMilo={ messageErreur }
-      />)
+      renderWithSession(
+        <MiloCreationJeune
+          dossierId='1'
+          dossier={null}
+          erreurMessageHttpMilo={messageErreur}
+        />
+      )
 
       //THEN
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
@@ -73,13 +79,15 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo()
 
-      page = renderWithSession(<DIProvider dependances={ { conseillerService } }>
-        <MiloCreationJeune
-          dossierId="1"
-          dossier={ dossier }
-          erreurMessageHttpMilo={ '' }
-        />
-      </DIProvider>)
+      page = renderWithSession(
+        <DIProvider dependances={{ conseillerService }}>
+          <MiloCreationJeune
+            dossierId='1'
+            dossier={dossier}
+            erreurMessageHttpMilo={''}
+          />
+        </DIProvider>
+      )
 
       //WHEN
       const createCompteButton = screen.getByRole('button', {
@@ -136,13 +144,15 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo({ email: 'incorrectemail' })
 
-      page = renderWithSession(<DIProvider dependances={ { conseillerService } }>
-        <MiloCreationJeune
-          dossierId="1"
-          dossier={ dossier }
-          erreurMessageHttpMilo={ '' }
-        />
-      </DIProvider>)
+      page = renderWithSession(
+        <DIProvider dependances={{ conseillerService }}>
+          <MiloCreationJeune
+            dossierId='1'
+            dossier={dossier}
+            erreurMessageHttpMilo={''}
+          />
+        </DIProvider>
+      )
 
       //WHEN
       const createCompteButton = screen.getByRole('button', {

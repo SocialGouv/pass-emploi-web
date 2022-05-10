@@ -1,10 +1,13 @@
 import { screen } from '@testing-library/dom'
 import { act } from '@testing-library/react'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+
+import renderWithSession from '../renderWithSession'
+
 import { unJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { Jeune } from 'interfaces/jeune'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import SuppressionJeune, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
@@ -13,7 +16,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { RequestError, UnexpectedError } from 'utils/fetchJson'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -139,14 +141,16 @@ describe('Suppression Jeune', () => {
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
-      renderWithSession(<DIProvider dependances={ { jeunesService } }>
-        <SuppressionJeune
-          jeune={ jeune }
-          withoutChat={ true }
-          pageTitle=""
-          structureConseiller="MILO"
-        />
-      </DIProvider>)
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService }}>
+          <SuppressionJeune
+            jeune={jeune}
+            withoutChat={true}
+            pageTitle=''
+            structureConseiller='MILO'
+          />
+        </DIProvider>
+      )
     })
 
     it('permet de revenir à la page précédente', () => {

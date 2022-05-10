@@ -54,14 +54,16 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // WHEN
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.MILO }
-              conseillerJeunes={ jeunes }
-              isFromEmail
-              pageTitle=""
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                pageTitle=''
+              />
+            </DIProvider>
+          )
         })
       })
 
@@ -93,15 +95,17 @@ describe('Mes Jeunes', () => {
       it('affiche le message de succès de suppression de jeune', async () => {
         //WHEN
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.MILO }
-              conseillerJeunes={ jeunes }
-              isFromEmail
-              deletionSuccess={ true }
-              pageTitle={ '' }
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+                pageTitle={''}
+              />
+            </DIProvider>
+          )
         })
 
         //THEN
@@ -141,14 +145,16 @@ describe('Mes Jeunes', () => {
         const jeune = unJeuneAvecActionsNonTerminees()
 
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.MILO }
-              conseillerJeunes={ [jeune] }
-              isFromEmail
-              pageTitle=""
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={[jeune]}
+                isFromEmail
+                pageTitle=''
+              />
+            </DIProvider>
+          )
         })
       })
 
@@ -178,15 +184,17 @@ describe('Mes Jeunes', () => {
       it('affiche le message de succès de suppression de jeune', async () => {
         //WHEN
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.MILO }
-              conseillerJeunes={ jeunes }
-              isFromEmail
-              deletionSuccess={ true }
-              pageTitle={ '' }
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+                pageTitle={''}
+              />
+            </DIProvider>
+          )
         })
 
         //THEN
@@ -207,14 +215,16 @@ describe('Mes Jeunes', () => {
         const jeune = unJeuneAvecActionsNonTerminees()
 
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.POLE_EMPLOI }
-              conseillerJeunes={ [jeune] }
-              isFromEmail
-              pageTitle=""
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.POLE_EMPLOI}
+                conseillerJeunes={[jeune]}
+                isFromEmail
+                pageTitle=''
+              />
+            </DIProvider>
+          )
         })
       })
 
@@ -244,15 +254,17 @@ describe('Mes Jeunes', () => {
       it('affiche le message de succès de suppression de jeune', async () => {
         //WHEN
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.POLE_EMPLOI }
-              conseillerJeunes={ jeunes }
-              isFromEmail
-              deletionSuccess={ true }
-              pageTitle={ '' }
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.POLE_EMPLOI}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+                pageTitle={''}
+              />
+            </DIProvider>
+          )
         })
 
         //THEN
@@ -266,14 +278,16 @@ describe('Mes Jeunes', () => {
       it('affiche un message invitant à ajouter des jeunes', async () => {
         // GIVEN
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.MILO }
-              conseillerJeunes={ [] }
-              isFromEmail
-              pageTitle=""
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={[]}
+                isFromEmail
+                pageTitle=''
+              />
+            </DIProvider>
+          )
         })
 
         //THEN
@@ -293,14 +307,16 @@ describe('Mes Jeunes', () => {
 
         // WHEN
         await act(async () => {
-          renderWithSession(<DIProvider dependances={ { messagesService } }>
-            <MesJeunes
-              structureConseiller={ UserStructure.MILO }
-              conseillerJeunes={ jeunes }
-              isFromEmail
-              pageTitle=""
-            />
-          </DIProvider>)
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                pageTitle=''
+              />
+            </DIProvider>
+          )
         })
 
         //THEN
@@ -311,15 +327,17 @@ describe('Mes Jeunes', () => {
     describe('quand on vient de selectionner une agence', () => {
       it('affiche un message de succès', () => {
         // When
-        renderWithSession(<DIProvider dependances={ { messagesService } }>
-          <MesJeunes
-            structureConseiller={ UserStructure.MILO }
-            conseillerJeunes={ jeunes }
-            isFromEmail
-            pageTitle=""
-            ajoutAgenceSuccess={ true }
-          />
-        </DIProvider>)
+        renderWithSession(
+          <DIProvider dependances={{ messagesService }}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+              ajoutAgenceSuccess={true}
+            />
+          </DIProvider>
+        )
 
         // Then
         expect(

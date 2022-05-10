@@ -21,9 +21,11 @@ describe('PoleEmploiCreationJeune', () => {
   const emailLabel: string = '*E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
-    page = renderWithSession(<DIProvider dependances={ { jeunesService } }>
-      <PoleEmploiCreationJeune/>
-    </DIProvider>)
+    page = renderWithSession(
+      <DIProvider dependances={{ jeunesService }}>
+        <PoleEmploiCreationJeune />
+      </DIProvider>
+    )
 
     submitButton = screen.getByRole('button', {
       name: 'Créer le compte',

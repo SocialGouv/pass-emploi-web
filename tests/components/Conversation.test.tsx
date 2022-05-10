@@ -57,13 +57,16 @@ describe('<Conversation />', () => {
     // https://github.com/jsdom/jsdom/issues/1695
     window.HTMLElement.prototype.scrollIntoView = jest.fn()
     await act(async () => {
-      await renderWithSession(<DIProvider dependances={ { messagesService } }>
-        <Conversation
-          jeuneChat={ jeuneChat }
-          conseillers={ conseillersJeunes }
-          onBack={ onBack }
-        />
-      </DIProvider>, { user: conseiller })
+      await renderWithSession(
+        <DIProvider dependances={{ messagesService }}>
+          <Conversation
+            jeuneChat={jeuneChat}
+            conseillers={conseillersJeunes}
+            onBack={onBack}
+          />
+        </DIProvider>,
+        { user: conseiller }
+      )
     })
   })
 

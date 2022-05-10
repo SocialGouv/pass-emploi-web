@@ -45,18 +45,20 @@ describe("Page Liste des actions d'un jeune", () => {
     })
 
     beforeEach(() => {
-      renderWithSession(<Actions
-        jeune={ jeune }
-        actions={ [
-          ...actions,
-          uneActionCommencee,
-          uneActionTerminee,
-          uneActionAnnulee
-        ] }
-        pageTitle=""
-        creationSuccess={ true }
-        suppressionSuccess={ true }
-      />)
+      renderWithSession(
+        <Actions
+          jeune={jeune}
+          actions={[
+            ...actions,
+            uneActionCommencee,
+            uneActionTerminee,
+            uneActionAnnulee,
+          ]}
+          pageTitle=''
+          creationSuccess={true}
+          suppressionSuccess={true}
+        />
+      )
     })
 
     it('affiche la liste des actions du jeune', () => {
