@@ -1031,7 +1031,7 @@ describe('EditionRdv', () => {
           expect(rendezVousService.updateRendezVous).not.toHaveBeenCalled()
         })
 
-        it('affiche une modal de verification si le rendez vous à été modifié', async () => {
+        it('modifie le rendez-vous après la modale', async () => {
           // Given
           const boutonConfirmer = screen.getByRole('button', {
             name: 'Confirmer',

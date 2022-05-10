@@ -226,7 +226,7 @@ export function EditionRdvForm({
       organisme: organisme || undefined,
       comment: commentaire || undefined,
     }
-    if (!conseillerIsCreator) {
+    if (!conseillerIsCreator && sendEmailInvitation) {
       showConfirmationModal(payload)
     } else {
       await soumettreRendezVous(payload)
