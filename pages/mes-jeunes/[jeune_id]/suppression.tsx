@@ -5,9 +5,9 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import BackIcon from '../../../assets/icons/arrow_back.svg'
-import InfoIcon from '../../../assets/icons/information.svg'
 
 import FailureMessage from 'components/FailureMessage'
+import InformationMessage from 'components/InformationMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { UserStructure } from 'interfaces/conseiller'
@@ -94,25 +94,23 @@ function SuppressionJeune({
           <p className='h4-semi text-bleu_nuit'>
             Confirmez la suppression du compte jeune
           </p>
-          <div className='mt-8 p-4 bg-primary_lighten rounded-medium  text-primary'>
-            <p className='flex text-base-medium  items-center mb-2'>
-              <InfoIcon focusable={false} aria-hidden={true} className='mr-2' />
-              Une fois confirmée toutes les informations liées à ce compte jeune
-              seront supprimées
-            </p>
-            {structureConseiller === UserStructure.MILO && (
-              <p>
-                Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
-                transmettre en amont le numéro de dossier technique à l’adresse{' '}
-                <a
-                  className='underline hover:text-primary_darken'
-                  href='mailto:support@pass-emploi.beta.gouv.fr'
-                >
-                  support@pass-emploi.beta.gouv.fr
-                </a>
-                .
-              </p>
-            )}
+          <div className='mt-8'>
+            <InformationMessage content='Une fois confirmée toutes les informations liées à ce compte jeune seront supprimées'>
+              {structureConseiller === UserStructure.MILO && (
+                <p>
+                  Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci
+                  de transmettre en amont le numéro de dossier technique à
+                  l’adresse{' '}
+                  <a
+                    className='underline hover:text-primary_darken'
+                    href='mailto:support@pass-emploi.beta.gouv.fr'
+                  >
+                    support@pass-emploi.beta.gouv.fr
+                  </a>
+                  .
+                </p>
+              )}
+            </InformationMessage>
           </div>
 
           <div className='mt-8 flex'>

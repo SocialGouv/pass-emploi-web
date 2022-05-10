@@ -5,6 +5,7 @@ import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
 import { Jeune } from '../../interfaces/jeune'
+import InformationMessage from '../InformationMessage'
 import { RequiredValue } from '../RequiredValue'
 
 import Button, { ButtonStyle } from 'components/ui/Button'
@@ -511,6 +512,12 @@ export function EditionRdvForm({
           />
           Informations conseiller :
         </legend>
+
+        {!conseillerIsCreator && (
+          <div className='mb-6'>
+            <InformationMessage content="Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda" />
+          </div>
+        )}
 
         <div className='flex items-center mb-8'>
           <label htmlFor='presenceConseiller' className='flex items-center'>

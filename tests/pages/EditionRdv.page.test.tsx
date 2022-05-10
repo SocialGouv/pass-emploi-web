@@ -990,11 +990,20 @@ describe('EditionRdv', () => {
         )
       })
 
-      it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
+      it('contient un champ pour demander si le créateur recevra un email d’invitation au RDV', () => {
         // Then
         expect(
           screen.getByLabelText(
             /Le créateur du rendez-vous recevra un mail pour l'informer de la modification./i
+          )
+        ).toBeInTheDocument()
+      })
+
+      it("contient un message pour prévenir le conseiller qu'il ne recevra pas d'invitation", () => {
+        // Then
+        expect(
+          screen.getByText(
+            "Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda"
           )
         ).toBeInTheDocument()
       })

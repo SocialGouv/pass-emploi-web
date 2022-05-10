@@ -1,14 +1,12 @@
 import React, { FormEvent, useRef, useState } from 'react'
 
-import InfoIcon from '../assets/icons/information.svg'
-
-import { RequiredValue } from './RequiredValue'
-import { InputError } from './ui/InputError'
-import ResettableTextInput from './ui/ResettableTextInput'
-import SelectAutocomplete from './ui/SelectAutocomplete'
-
+import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
+import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import { InputError } from 'components/ui/InputError'
+import ResettableTextInput from 'components/ui/ResettableTextInput'
+import SelectAutocomplete from 'components/ui/SelectAutocomplete'
 import { Agence, UserStructure } from 'interfaces/conseiller'
 
 interface RenseignementAgenceModalProps {
@@ -79,15 +77,9 @@ export default function RenseignementAgenceModal({
       title={`Ajoutez votre ${labelAgence} à votre profil`}
       onClose={onClose}
     >
-      <p className='p-6 bg-primary_lighten rounded-medium text-primary text-base-medium flex items-center'>
-        <InfoIcon
-          focusable={false}
-          aria-hidden={true}
-          className='mr-2 shrink-0'
-        />
-        Afin d’améliorer la qualité du service, nous avons besoin de connaître
-        votre {labelAgence} de rattachement.
-      </p>
+      <InformationMessage
+        content={`Afin d’améliorer la qualité du service, nous avons besoin de connaître votre ${labelAgence} de rattachement.`}
+      />
 
       <form onSubmit={submitAgenceSelectionnee} className='px-10 pt-6'>
         <label htmlFor='search-agence' className='text-base-medium'>
