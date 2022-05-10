@@ -1,15 +1,17 @@
-import { render, screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
-
-import getByDefinitionTerm from '../querySelector'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { mockedConseillerService } from 'fixtures/services'
 import { Conseiller } from 'interfaces/conseiller'
 import Profil, { getServerSideProps } from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
+import getByDefinitionTerm from 'tests/querySelector'
+import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -105,19 +107,30 @@ describe('Page Profil conseiller', () => {
   })
 
   describe('client side', () => {
+    let conseillerService: ConseillerService
+    let conseiller: Conseiller
+
+    beforeEach(() => {
+      conseillerService = mockedConseillerService()
+    })
     describe('contenu', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
+        // Given
+        conseiller = unConseiller({
+          email: 'nils.tavernier@mail.com',
+          agence: 'MLS3F SAINT-LOUIS',
+        })
+
         // When
-        render(
-          <Profil
-            conseiller={unConseiller({
-              email: 'nils.tavernier@mail.com',
-              agence: 'MLS3F SAINT-LOUIS',
-            })}
-            structureConseiller='POLE_EMPLOI'
-            pageTitle=''
-          />
-        )
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ conseillerService }}>
+              <ConseillerProvider conseiller={conseiller}>
+                <Profil structureConseiller='POLE_EMPLOI' pageTitle='' />
+              </ConseillerProvider>
+            </DIProvider>
+          )
+        })
       })
 
       it('affiche le titre de la page', () => {
@@ -137,18 +150,32 @@ describe('Page Profil conseiller', () => {
           'MLS3F SAINT-LOUIS'
         )
       })
+
+      it("contient un champs pour sélectionner l'activation des notifications", () => {
+        // When
+        const toggleNotification =
+          screen.getByRole<HTMLInputElement>('checkbox')
+
+        // Then
+        expect(toggleNotification).toBeInTheDocument()
+        expect(toggleNotification.checked).toEqual(
+          conseiller.notificationsSonores
+        )
+      })
     })
 
     describe('quand il manque des informations', () => {
-      it("n'affiche pas les informations manquantes", () => {
+      it("n'affiche pas les informations manquantes", async () => {
         // When
-        render(
-          <Profil
-            conseiller={unConseiller()}
-            structureConseiller='POLE_EMPLOI'
-            pageTitle=''
-          />
-        )
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ conseillerService }}>
+              <ConseillerProvider conseiller={unConseiller()}>
+                <Profil structureConseiller='POLE_EMPLOI' pageTitle='' />
+              </ConseillerProvider>
+            </DIProvider>
+          )
+        })
 
         // Then
         expect(() =>
@@ -161,19 +188,74 @@ describe('Page Profil conseiller', () => {
     })
 
     describe('quand le conseiller est MILO', () => {
-      it('affiche le label correspondant', () => {
+      it('affiche le label correspondant', async () => {
+        // Given
+        const conseiller = unConseiller({
+          email: 'nils.tavernier@mail.com',
+          agence: 'MLS3F SAINT-LOUIS',
+        })
+
         // When
-        render(
-          <Profil
-            conseiller={unConseiller({ agence: 'MLS3F SAINT-LOUIS' })}
-            structureConseiller='MILO'
-            pageTitle=''
-          />
-        )
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ conseillerService }}>
+              <ConseillerProvider conseiller={conseiller}>
+                <Profil structureConseiller='MILO' pageTitle='' />
+              </ConseillerProvider>
+            </DIProvider>
+          )
+        })
 
         // Then
         expect(getByDefinitionTerm('Votre Mission locale')).toHaveTextContent(
           'MLS3F SAINT-LOUIS'
+        )
+      })
+    })
+
+    describe('quand on change le paramétrage des notifications', () => {
+      beforeEach(async () => {
+        // Given
+        const conseiller = unConseiller({
+          notificationsSonores: false,
+        })
+
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ conseillerService }}>
+              <ConseillerProvider conseiller={conseiller}>
+                <Profil structureConseiller='POLE_EMPLOI' pageTitle='' />
+              </ConseillerProvider>
+            </DIProvider>
+          )
+        })
+
+        const toggleNotification =
+          screen.getByRole<HTMLInputElement>('checkbox')
+
+        // When
+        await act(async () => {
+          await toggleNotification.click()
+        })
+      })
+      it('met à jour côté API', async () => {
+        // Then
+        expect(
+          conseillerService.modifierNotificationsSonores
+        ).toHaveBeenCalledWith(
+          conseiller.id,
+          !conseiller.notificationsSonores,
+          'accessToken'
+        )
+      })
+      it('met à jour le conseiller', async () => {
+        // Then
+        expect(
+          conseillerService.modifierNotificationsSonores
+        ).toHaveBeenCalledWith(
+          conseiller.id,
+          !conseiller.notificationsSonores,
+          'accessToken'
         )
       })
     })
