@@ -4,14 +4,15 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { Jeune } from '../../interfaces/jeune'
-import InformationMessage from '../InformationMessage'
-import { RequiredValue } from '../RequiredValue'
 
+import InformationMessage from 'components/InformationMessage'
+import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
+import { Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
@@ -44,7 +45,13 @@ export function EditionRdvForm({
   idJeune,
   showConfirmationModal,
 }: EditionRdvFormProps) {
-  const [jeuneId, setJeuneId] = useState<string>(rdv?.jeune.id ?? idJeune ?? '')
+  const defaultIds = []
+  if (rdv) {
+    defaultIds.push(...rdv.jeunes.map(({ id }) => id))
+  } else if (idJeune) {
+    defaultIds.push(idJeune)
+  }
+  const [idsJeunes, setIdsJeunes] = useState<string[]>(defaultIds)
 
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
     rdv?.type.code ?? ''
@@ -80,7 +87,8 @@ export function EditionRdvForm({
   function formHasChanges(): boolean {
     if (!rdv) {
       return Boolean(
-        codeTypeRendezVous ||
+        idsJeunes.length ||
+          codeTypeRendezVous ||
           modalite ||
           date.value ||
           horaire.value ||
@@ -90,6 +98,7 @@ export function EditionRdvForm({
           commentaire
       )
     }
+
     return (
       modalite !== rdv.modality ||
       date.value !== localDate ||
@@ -104,7 +113,7 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId) &&
+      Boolean(idsJeunes.length) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
@@ -211,7 +220,7 @@ export function EditionRdvForm({
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
     const payload: RdvFormData = {
-      jeuneId,
+      jeunesIds: idsJeunes,
       type: codeTypeRendezVous,
       date: new Date(`${date.value} ${horaire.value}`).toISOString(),
       duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -254,7 +263,7 @@ export function EditionRdvForm({
         Tous les champs avec * sont obligatoires
       </div>
 
-      <fieldset className='border-none flex flex-col'>
+      <fieldset className='border-none flex flex-col mb-8'>
         <legend className='flex items-center text-m-medium mb-4'>
           <Etape1Icon
             role='img'
@@ -265,26 +274,12 @@ export function EditionRdvForm({
           Bénéficiaires :
         </legend>
 
-        <label htmlFor='beneficiaire' className='text-base-medium mb-2'>
-          <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
-          <span className='text-sm-regular block'>Nom et prénom</span>
-        </label>
-        <select
-          id='beneficiaire'
-          name='beneficiaire'
-          defaultValue={jeuneId ?? ''}
-          required={true}
-          disabled={Boolean(idJeune) || Boolean(rdv)}
-          onChange={(e) => setJeuneId(e.target.value)}
-          className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
-        >
-          <option aria-hidden hidden disabled value={''} />
-          {jeunes.map((j) => (
-            <option key={j.id} value={j.id}>
-              {j.lastName} {j.firstName}
-            </option>
-          ))}
-        </select>
+        <JeunesMultiselectAutocomplete
+          jeunes={jeunes}
+          defaultIds={idsJeunes}
+          onUpdate={(selectedIds) => setIdsJeunes(selectedIds)}
+          disabled={Boolean(rdv)}
+        />
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>

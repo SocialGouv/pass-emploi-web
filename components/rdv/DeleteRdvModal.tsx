@@ -62,8 +62,7 @@ export default function DeleteRdvModal({
         >
           <p className='text-md text-primary_darken mb-[48px]'>
             Souhaitez-vous vraiment supprimer votre rendez-vous avec{' '}
-            {rdv.jeune.prenom} {rdv.jeune.nom} le{' '}
-            {formatDayDate(new Date(rdv.date))}?
+            {rdv.beneficiaires} le {formatDayDate(new Date(rdv.date))}?
           </p>
 
           <div className='flex'>

@@ -79,7 +79,7 @@ const RdvList = ({
                 <a
                   role='row'
                   key={rdv.id}
-                  aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.jeune.prenom} ${rdv.jeune.nom}`}
+                  aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`}
                   className='table-row text-sm  hover:bg-primary_lighten'
                 >
                   <div role='cell' className='table-cell p-3'>
@@ -87,7 +87,7 @@ const RdvList = ({
                   </div>
                   {withNameJeune && (
                     <div role='cell' className='table-cell p-3'>
-                      {rdv.jeune.prenom} {rdv.jeune.nom}
+                      {rdv.beneficiaires}
                     </div>
                   )}
 

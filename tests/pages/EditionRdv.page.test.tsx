@@ -7,7 +7,7 @@ import renderWithSession from '../renderWithSession'
 import { desJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
-import { Jeune } from 'interfaces/jeune'
+import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
@@ -88,7 +88,7 @@ describe('EditionRdv', () => {
         )
         expect(actual).toMatchObject({
           props: {
-            jeunes,
+            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
             pageTitle: 'Nouveau rendez-vous',
           },
@@ -260,13 +260,15 @@ describe('EditionRdv', () => {
         it('contient une liste pour choisir un jeune', () => {
           // Then
           const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter un jeune Nom et prénom',
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
           })
-          expect(selectJeune).toBeInTheDocument()
-          expect(selectJeune).toHaveAttribute('required', '')
+          const options = within(etape).getByRole('listbox', { hidden: true })
+
+          expect(selectJeune).toHaveAttribute('aria-required', 'true')
           for (const jeune of jeunes) {
-            const jeuneOption = within(selectJeune).getByRole('option', {
+            const jeuneOption = within(options).getByRole('option', {
               name: `${jeune.lastName} ${jeune.firstName}`,
+              hidden: true,
             })
             expect(jeuneOption).toBeInTheDocument()
           }
@@ -443,7 +445,7 @@ describe('EditionRdv', () => {
       })
 
       describe('formulaire rempli', () => {
-        let selectJeune: HTMLSelectElement
+        let selectJeunes: HTMLInputElement
         let selectModalite: HTMLSelectElement
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
@@ -451,10 +453,10 @@ describe('EditionRdv', () => {
         let inputDuree: HTMLInputElement
         let inputCommentaires: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
-        beforeEach(() => {
+        beforeEach(async () => {
           // Given
-          selectJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter un jeune Nom et prénom',
+          selectJeunes = screen.getByRole('combobox', {
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
@@ -472,7 +474,12 @@ describe('EditionRdv', () => {
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
           // Given
-          fireEvent.change(selectJeune, { target: { value: jeunes[0].id } })
+          fireEvent.input(selectJeunes, {
+            target: { value: getJeuneFullname(jeunes[0]) },
+          })
+          fireEvent.input(selectJeunes, {
+            target: { value: getJeuneFullname(jeunes[2]) },
+          })
           fireEvent.change(selectModalite, { target: { value: modalites[0] } })
           fireEvent.change(selectType, {
             target: { value: typesRendezVous[0].code },
@@ -486,7 +493,7 @@ describe('EditionRdv', () => {
         })
 
         describe('quand le formulaire est validé', () => {
-          it('crée un rendez-vous de type Generique', () => {
+          it('crée un rendez-vous de type Generique', async () => {
             // When
             buttonValider.click()
 
@@ -494,7 +501,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
               '1',
               {
-                jeuneId: jeunes[0].id,
+                jeunesIds: [jeunes[0].id, jeunes[2].id],
                 type: 'ACTIVITES_EXTERIEURES',
                 modality: modalites[0],
                 precision: undefined,
@@ -526,7 +533,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
               '1',
               {
-                jeuneId: jeunes[0].id,
+                jeunesIds: [jeunes[0].id, jeunes[2].id],
                 type: 'AUTRE',
                 precision: 'un texte de précision',
                 modality: modalites[0],
@@ -555,9 +562,21 @@ describe('EditionRdv', () => {
           })
         })
 
-        it("est désactivé quand aucun jeune n'est sélectionné", () => {
+        it("est désactivé quand aucun jeune n'est sélectionné", async () => {
+          // Given
+          const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
+            'button',
+            {
+              name: 'Enlever le jeune',
+            }
+          )
+
           // When
-          fireEvent.change(selectJeune, { target: { value: '' } })
+          for (const bouton of enleverJeunes) {
+            await act(async () => {
+              bouton.click()
+            })
+          }
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -729,6 +748,7 @@ describe('EditionRdv', () => {
       it('initialise et fige le destinataire', () => {
         // Given
         const idJeune = jeunes[2].id
+        const jeuneFullname = getJeuneFullname(jeunes[2])
 
         // When
         renderWithSession(
@@ -745,11 +765,18 @@ describe('EditionRdv', () => {
         )
 
         // Then
-        const selectJeune = screen.getByRole('combobox', {
-          name: 'Rechercher et ajouter un jeune Nom et prénom',
+        expect(() =>
+          screen.getByRole('option', {
+            name: jeuneFullname,
+            hidden: true,
+          })
+        ).toThrow()
+        const destinataires = screen.getByRole('region', {
+          name: /Destinataires/,
         })
-        expect(selectJeune).toHaveValue(idJeune)
-        expect(selectJeune).toHaveAttribute('disabled', '')
+        expect(
+          within(destinataires).getByText(jeuneFullname)
+        ).toBeInTheDocument()
       })
     })
 
@@ -765,7 +792,7 @@ describe('EditionRdv', () => {
           nom: jeunes[0].lastName,
         }
 
-        rdv = unRendezVous({ jeune })
+        rdv = unRendezVous({ jeunes: [jeune] })
 
         // When
         renderWithSession(
@@ -782,11 +809,25 @@ describe('EditionRdv', () => {
         )
       })
 
-      it('initialise les champs avec les données du rdv', () => {
-        // Then
+      it('sélectionne le jeune du rendez-vous', () => {
+        const jeuneFullname = getJeuneFullname(jeunes[0])
+        expect(() =>
+          screen.getByRole('option', {
+            name: jeuneFullname,
+            hidden: true,
+          })
+        ).toThrow()
+
+        const destinataires = screen.getByRole('region', {
+          name: /Destinataires/,
+        })
         expect(
-          screen.getByLabelText<HTMLSelectElement>(/ajouter un jeune/).value
-        ).toEqual(rdv.jeune.id)
+          within(destinataires).getByText(jeuneFullname)
+        ).toBeInTheDocument()
+      })
+
+      it('initialise les autres champs avec les données du rdv', () => {
+        // Then
         expect(screen.getByLabelText<HTMLSelectElement>(/Type/).value).toEqual(
           rdv.type.code
         )
@@ -825,7 +866,7 @@ describe('EditionRdv', () => {
       it('désactive les champs non modifiable', () => {
         // Then
         expect(
-          screen.getByLabelText<HTMLSelectElement>(/ajouter un jeune/)
+          screen.getByLabelText<HTMLSelectElement>(/ajouter des jeunes/)
         ).toBeDisabled()
         expect(screen.getByLabelText<HTMLSelectElement>(/Type/)).toBeDisabled()
         expect(
@@ -932,7 +973,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
               rdv.id,
               {
-                jeuneId: jeunes[0].id,
+                jeunesIds: [jeunes[0].id],
                 type: 'AUTRE',
                 modality: modalites[0],
                 precision: 'Prise de nouvelles',
@@ -974,7 +1015,7 @@ describe('EditionRdv', () => {
         }
 
         rdv = unRendezVous({
-          jeune,
+          jeunes: [jeune],
           createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
         })
 
@@ -1047,7 +1088,7 @@ describe('EditionRdv', () => {
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
             rdv.id,
             {
-              jeuneId: jeunes[0].id,
+              jeunesIds: [jeunes[0].id],
               type: 'AUTRE',
               modality: modalites[2],
               precision: 'Prise de nouvelles',

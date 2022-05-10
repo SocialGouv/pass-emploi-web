@@ -7,7 +7,7 @@ export interface TypeRendezVous {
 
 export interface RdvListItem {
   id: string
-  jeune: BaseJeune
+  beneficiaires: string
   type: string
   modality: string
   date: string
@@ -18,7 +18,7 @@ export interface RdvListItem {
 
 export interface Rdv {
   id: string
-  jeune: BaseJeune
+  jeunes: BaseJeune[]
   type: TypeRendezVous
   precisionType: string
   modality: string
@@ -35,7 +35,7 @@ export interface Rdv {
 export function rdvToListItem(rdv: Rdv): RdvListItem {
   return {
     id: rdv.id,
-    jeune: rdv.jeune,
+    beneficiaires: getBeneficiaires(rdv.jeunes),
     type: rdv.type.label,
     modality: rdv.modality,
     date: rdv.date,
@@ -43,6 +43,12 @@ export function rdvToListItem(rdv: Rdv): RdvListItem {
     hasComment: Boolean(rdv.comment),
     idCreateur: rdv.createur?.id ?? null,
   }
+}
+
+function getBeneficiaires(jeunes: BaseJeune[]) {
+  if (jeunes.length > 1) return 'Bénéficiaires multiples'
+  if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
+  return ''
 }
 
 export const TYPE_RENDEZ_VOUS = {
