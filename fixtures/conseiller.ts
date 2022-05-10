@@ -1,6 +1,5 @@
-import { ConseillerJson } from '../interfaces/json/conseiller'
-
 import { Conseiller } from 'interfaces/conseiller'
+import { ConseillerJson } from 'interfaces/json/conseiller'
 
 export const unConseiller = (
   overrides: Partial<Conseiller> = {}

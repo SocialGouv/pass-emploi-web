@@ -1,11 +1,9 @@
 import { act, waitFor } from '@testing-library/react'
 
-import { ConseillerService } from '../../services/conseiller.service'
-import renderWithSession from '../renderWithSession'
-
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
+import { unConseiller } from 'fixtures/conseiller'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
 import {
   mockedConseillerService,
@@ -13,8 +11,11 @@ import {
   mockedMessagesService,
 } from 'fixtures/services'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
+import renderWithSession from 'tests/renderWithSession'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
@@ -80,12 +81,14 @@ describe('<Layout />', () => {
           <DIProvider
             dependances={{ jeunesService, conseillerService, messagesService }}
           >
-            <Layout>
-              <FakeComponent pageTitle='un titre' />
-            </Layout>
-          </DIProvider>,
-          undefined,
-          { notificationsSonores: false }
+            <ConseillerProvider
+              conseiller={unConseiller({ notificationsSonores: false })}
+            >
+              <Layout>
+                <FakeComponent pageTitle='un titre' />
+              </Layout>
+            </ConseillerProvider>
+          </DIProvider>
         )
       })
     })
@@ -174,12 +177,14 @@ describe('<Layout />', () => {
           <DIProvider
             dependances={{ jeunesService, conseillerService, messagesService }}
           >
-            <Layout>
-              <FakeComponent pageTitle='un titre' />
-            </Layout>
-          </DIProvider>,
-          undefined,
-          { notificationsSonores: true }
+            <ConseillerProvider
+              conseiller={unConseiller({ notificationsSonores: true })}
+            >
+              <Layout>
+                <FakeComponent pageTitle='un titre' />
+              </Layout>
+            </ConseillerProvider>
+          </DIProvider>
         )
       })
     })

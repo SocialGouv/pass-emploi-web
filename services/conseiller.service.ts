@@ -1,7 +1,7 @@
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
-import { ConseillerJson } from 'interfaces/json/conseiller'
+import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
 import { RequestError } from 'utils/fetchJson'
 
 export interface ConseillerService {
@@ -46,7 +46,7 @@ export class ConseillerApiService implements ConseillerService {
         accessToken
       )
 
-      return ConseillerApiService.toConseiller(conseillerJson)
+      return jsonToConseiller(conseillerJson)
     } catch (e) {
       if (e instanceof RequestError) {
         return undefined
@@ -92,17 +92,5 @@ export class ConseillerApiService implements ConseillerService {
       newJeune,
       accessToken
     )
-  }
-
-  private static toConseiller(conseillerJson: ConseillerJson): Conseiller {
-    const { agence, ...conseiller } = conseillerJson
-    if (agence) {
-      return {
-        ...conseiller,
-        agence: agence.nom,
-      }
-    } else {
-      return conseiller
-    }
   }
 }

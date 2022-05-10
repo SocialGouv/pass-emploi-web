@@ -2,21 +2,20 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
-
-import { ConseillerService } from '../../services/conseiller.service'
-import { useConseiller } from '../../utils/conseiller/conseillerContext'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
 import { Footer } from 'components/Footer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Sidebar from 'components/layouts/Sidebar'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
 type LayoutProps = {
@@ -41,39 +40,6 @@ export default function Layout({ children }: LayoutProps) {
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
-
-  const doitEmettreUnSon = useCallback(
-    (previousChat: JeuneChat, updatedChat: JeuneChat) => {
-      return (
-        conseiller?.notificationsSonores &&
-        aUnNouveauMessage(previousChat, updatedChat)
-      )
-    },
-    [conseiller]
-  )
-
-  const updateChats = useCallback(
-    (updatedChat: JeuneChat) => {
-      setChats((prevChats) => {
-        const chatIndex = prevChats.findIndex(
-          (chat) => chat.chatId === updatedChat.chatId
-        )
-        const updatedChats = [...prevChats]
-
-        if (chatIndex !== -1) {
-          if (doitEmettreUnSon(prevChats[chatIndex], updatedChat)) {
-            audio?.play()
-          }
-          updatedChats[chatIndex] = updatedChat
-        } else {
-          updatedChats.push(updatedChat)
-        }
-        updatedChats.sort(compareJeuneChat)
-        return updatedChats
-      })
-    },
-    [audio, doitEmettreUnSon]
-  )
 
   function hasMessageNonLu(): boolean {
     return chats.some(
@@ -110,7 +76,7 @@ export default function Layout({ children }: LayoutProps) {
   }, [session, conseiller, conseillerService, setConseiller])
 
   useEffect(() => {
-    if (!session || !chatCredentials) return
+    if (!session || !chatCredentials || !conseiller || !audio) return
     const { user, accessToken } = session
     messagesService
       .signIn(chatCredentials.token)
@@ -128,7 +94,41 @@ export default function Layout({ children }: LayoutProps) {
       .then((destructors) => (destructorsRef.current = destructors))
 
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [session, jeunesService, messagesService, chatCredentials, updateChats])
+
+    function updateChats(updatedChat: JeuneChat) {
+      setChats((prevChats) => {
+        const chatIndex = prevChats.findIndex(
+          (chat) => chat.chatId === updatedChat.chatId
+        )
+        const updatedChats = [...prevChats]
+
+        if (chatIndex !== -1) {
+          if (doitEmettreUnSon(prevChats[chatIndex], updatedChat)) {
+            audio?.play()
+          }
+          updatedChats[chatIndex] = updatedChat
+        } else {
+          updatedChats.push(updatedChat)
+        }
+        updatedChats.sort(compareJeuneChat)
+        return updatedChats
+      })
+    }
+
+    function doitEmettreUnSon(previousChat: JeuneChat, updatedChat: JeuneChat) {
+      return (
+        conseiller?.notificationsSonores &&
+        aUnNouveauMessage(previousChat, updatedChat)
+      )
+    }
+  }, [
+    session,
+    jeunesService,
+    messagesService,
+    chatCredentials,
+    audio,
+    conseiller,
+  ])
 
   return (
     <>

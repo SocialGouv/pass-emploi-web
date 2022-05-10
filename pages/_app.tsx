@@ -4,8 +4,6 @@ import { AppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { ReactNode, useEffect } from 'react'
 
-import { ConseillerProvider } from '../utils/conseiller/conseillerContext'
-
 import { Footer } from 'components/Footer'
 import Layout from 'components/layouts/Layout'
 import 'styles/globals.css'
@@ -13,6 +11,7 @@ import 'styles/typography.css'
 import { init } from 'utils/analytics/matomo'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { Container, DIProvider } from 'utils/injectionDependances'
 import { initRum } from 'utils/monitoring/init-rum'
 

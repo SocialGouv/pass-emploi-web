@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react'
 
-import { Conseiller } from '../../interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
 
 type MaybeConseiller = Conseiller | undefined
 type ConseillerState = [MaybeConseiller, (credentials: MaybeConseiller) => void]

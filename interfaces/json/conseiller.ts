@@ -1,4 +1,5 @@
-import { ConseillerHistorique } from '../jeune'
+import { Conseiller } from 'interfaces/conseiller'
+import { ConseillerHistorique } from 'interfaces/jeune'
 
 export interface ConseillerHistoriqueJson {
   id: string
@@ -30,4 +31,16 @@ export interface ConseillerJson {
     nom: string
   }
   notificationsSonores: boolean
+}
+
+export function jsonToConseiller(conseillerJson: ConseillerJson): Conseiller {
+  const { agence, ...conseiller } = conseillerJson
+  if (agence) {
+    return {
+      ...conseiller,
+      agence: agence.nom,
+    }
+  } else {
+    return conseiller
+  }
 }
