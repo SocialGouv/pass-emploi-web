@@ -973,7 +973,10 @@ describe('EditionRdv', () => {
           nom: jeunes[0].lastName,
         }
 
-        rdv = unRendezVous({ jeune, idCreateur: '2' })
+        rdv = unRendezVous({
+          jeune,
+          createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
+        })
 
         // When
         renderWithSession(
@@ -1003,7 +1006,7 @@ describe('EditionRdv', () => {
         // Then
         expect(
           screen.getByText(
-            "Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda"
+            "Le rendez-vous a été créé par un autre conseiller : Gaëlle Hermet. Vous ne recevrez pas d'invitation dans votre agenda"
           )
         ).toBeInTheDocument()
       })

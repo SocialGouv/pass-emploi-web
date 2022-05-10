@@ -1,5 +1,6 @@
-import { BaseJeune } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from '../rdv'
+
+import { BaseJeune } from 'interfaces/jeune'
 
 export interface RdvJson {
   id: string
@@ -14,7 +15,7 @@ export interface RdvJson {
   invitation?: boolean
   adresse?: string
   organisme?: string
-  createur?: { id: string }
+  createur?: { id: string; nom: string; prenom: string }
 }
 
 export interface RdvFormData {
@@ -41,6 +42,6 @@ export function jsonToRdv(rdvJson: RdvJson): Rdv {
     precisionType: precision ?? '',
     adresse: rdvJson.adresse ?? '',
     organisme: rdvJson.organisme ?? '',
-    idCreateur: createur?.id ?? null,
+    createur: createur ?? null,
   }
 }

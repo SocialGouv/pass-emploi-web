@@ -514,9 +514,26 @@ export function EditionRdvForm({
         </legend>
 
         {!conseillerIsCreator && (
-          <div className='mb-6'>
-            <InformationMessage content="Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda" />
-          </div>
+          <>
+            {rdv!.createur && (
+              <div className='mb-6'>
+                <InformationMessage
+                  content={`Le rendez-vous a été créé par un autre conseiller : ${
+                    rdv!.createur.prenom
+                  } ${
+                    rdv!.createur.nom
+                  }. Vous ne recevrez pas d'invitation dans votre agenda`}
+                />
+              </div>
+            )}
+            {!rdv!.createur && (
+              <div className='mb-6'>
+                <InformationMessage
+                  content={`Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <div className='flex items-center mb-8'>

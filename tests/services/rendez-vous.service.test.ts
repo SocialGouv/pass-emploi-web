@@ -78,7 +78,7 @@ describe('RendezVousApiService', () => {
         '/rendezvous/id-rdv',
         'accessToken'
       )
-      expect(actual).toEqual(unRendezVous({ idCreateur: null }))
+      expect(actual).toEqual(unRendezVous({ createur: null }))
     })
 
     it("renvoie undefined si le rdv n'existe pas", async () => {
