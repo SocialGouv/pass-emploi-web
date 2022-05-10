@@ -17,6 +17,6 @@ export const DeprecatedErrorMessage = ({
       focusable='false'
       aria-hidden='true'
     />
-    <p className='text-sm-medium text-deprecated_warning'>{children}</p>
+    <p className='text-sm-medium text-warning'>{children}</p>
   </div>
 )

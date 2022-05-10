@@ -78,7 +78,7 @@ function SuppressionJeune({
         <Link href={`/mes-jeunes/${jeune.id}`}>
           <a className='flex items-center w-max'>
             <BackIcon aria-hidden={true} focusable='false' />
-            <span className='ml-6 h4-semi text-bleu_nuit'>
+            <span className='ml-6 h4-semi text-primary_darken'>
               Détails {jeune.firstName} {jeune.lastName}
             </span>
           </a>
@@ -91,7 +91,7 @@ function SuppressionJeune({
         )}
 
         <div className='m-auto mt-20 w-max'>
-          <p className='h4-semi text-bleu_nuit'>
+          <p className='h4-semi text-primary_darken'>
             Confirmez la suppression du compte jeune
           </p>
           <div className='mt-8'>

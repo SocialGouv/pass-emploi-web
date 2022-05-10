@@ -84,7 +84,7 @@ describe('Login', () => {
 
   describe('quand la connexion pass emploi est activée', () => {
     beforeEach(async () => {
-      render(<Login ssoPassEmploiEstActive={true} isFromEmail={false} />)
+      render(<Login ssoPassEmploiEstActif={true} isFromEmail={false} />)
     })
 
     it('devrait avoir trois boutons', () => {

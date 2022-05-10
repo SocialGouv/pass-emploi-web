@@ -39,7 +39,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
         />
 
         <button
-          className='flex p-3 items-center text-base-medium text-bleu_nuit border border-bleu_nuit rounded-r-medium hover:bg-primary_lighten'
+          className='flex p-3 items-center text-base-medium text-primary border border-primary rounded-r-medium hover:bg-primary_lighten'
           type='submit'
         >
           <SearchIcon focusable='false' aria-hidden={true} />

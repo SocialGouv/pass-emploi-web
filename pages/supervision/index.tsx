@@ -166,7 +166,7 @@ function Supervision(_: SupervisionProps) {
 
   return (
     <>
-      <h1 className={`${styles.header} h2-semi text-bleu_nuit`}>
+      <h1 className={`${styles.header} h2-semi text-primary`}>
         R&eacute;affectation des jeunes
       </h1>
 
@@ -175,7 +175,7 @@ function Supervision(_: SupervisionProps) {
           <SuccessMessage label={'Les jeunes ont été réaffectés avec succès'} />
         )}
 
-        <div className='mb-10 bg-gris_blanc rounded-medium p-6 text-bleu_nuit'>
+        <div className='mb-10 bg-accent_2_lighten rounded-medium p-6'>
           <p className='text-base-medium mb-4'>
             Pour réaffecter les jeunes d&apos;un conseiller vers un autre
             conseiller :
@@ -212,7 +212,7 @@ function Supervision(_: SupervisionProps) {
                 className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
               />
               <button
-                className={`flex p-3 items-center text-base-medium text-bleu_nuit border border-solid border-bleu_nuit rounded-r-medium ${
+                className={`flex p-3 items-center text-base-medium text-primary_darken border border-solid border-content_color rounded-r-medium ${
                   isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
                 } disabled:cursor-not-allowed disabled:border-disabled`}
                 type='submit'
@@ -328,7 +328,7 @@ function Supervision(_: SupervisionProps) {
             } ml-5`}
           >
             <table className='w-full'>
-              <caption className='text-m-medium mb-8'>
+              <caption className='text-m-medium text-left mb-8'>
                 Jeunes de {conseillerInitial.email}
               </caption>
               <thead>

@@ -107,7 +107,7 @@ function EditionRdv({
           </button>
         )}
 
-        <h1 className='text-l-medium text-bleu_nuit'>{`${
+        <h1 className='text-l-medium text-primary'>{`${
           rdv ? 'Modification' : 'Nouveau'
         } rendez-vous`}</h1>
       </div>

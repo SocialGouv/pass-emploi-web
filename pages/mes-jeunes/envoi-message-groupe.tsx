@@ -121,7 +121,7 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
             </span>
           </button>
         )}
-        <h1 className='text-l-medium text-bleu_nuit'>
+        <h1 className='text-l-medium text-primary'>
           Message multi-destinataires
         </h1>
       </div>
@@ -134,7 +134,7 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
         )}
 
         <form>
-          <div className='text-sm-regular text-bleu_nuit mb-8'>
+          <div className='text-sm-regular text-primary_darken mb-8'>
             Tous les champs sont obligatoires
           </div>
 
@@ -173,7 +173,7 @@ function EnvoiMessageGroupe({ jeunes, previousUrl }: EnvoiMessageGroupeProps) {
               id='message'
               name='message'
               rows={10}
-              className={`w-full text-sm text-bleu_nuit p-4  border border-solid border-black rounded-medium mt-4 ${
+              className={`w-full text-sm text-primary_darken p-4  border border-solid border-black rounded-medium mt-4 ${
                 erreurMessage ? 'mb-[8px]' : 'mb-14'
               }`}
               onChange={(e) => setMessage(e.target.value)}

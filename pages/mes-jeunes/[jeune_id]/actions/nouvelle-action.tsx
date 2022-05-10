@@ -84,7 +84,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           </a>
         </Link>
 
-        <h1 className='text-l-medium text-bleu_nuit'>
+        <h1 className='text-l-medium text-primary'>
           Créer une nouvelle action
         </h1>
       </div>

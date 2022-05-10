@@ -24,13 +24,13 @@ function Profil({ conseiller, structureConseiller }: ProfilProps) {
   return (
     <>
       <div className={styles.header}>
-        <h1 className='h2-semi text-bleu_nuit'>Profil</h1>
+        <h1 className='h2-semi text-primary'>Profil</h1>
       </div>
       <div className={styles.content}>
-        <h2 className='h2-semi text-bleu_nuit'>
+        <h2 className='h2-semi text-content_color'>
           {conseiller.firstName} {conseiller.lastName}
         </h2>
-        <dl className='mt-3 text-sm-semi text-bleu_nuit'>
+        <dl className='mt-3 text-sm-semi'>
           {conseiller.email && (
             <>
               <dt aria-label='Votre e-mail' className='mt-2 inline'>

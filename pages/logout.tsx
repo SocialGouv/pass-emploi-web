@@ -20,7 +20,7 @@ function Logout() {
     logout()
   }, [messagesService, router])
 
-  return <div>LOGOUT</div>
+  return <></>
 }
 
 export default withTransaction(Logout.name, 'page')(Logout)

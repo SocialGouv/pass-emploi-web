@@ -12,25 +12,26 @@
 */
 
 .buttonPrimary {
-  background-color: theme('colors.bleu_nuit');
+  background-color: theme('colors.primary');
   color: theme('colors.blanc');
   border: 1px solid transparent;
 }
 
 .buttonPrimary:hover,
 .buttonPrimary:active {
-  background-color: theme('colors.blanc');
-  color: theme('colors.bleu_nuit');
-  border: 1px solid theme('colors.bleu_nuit');
+  background-color: theme('colors.primary_darken');
+  color: theme('colors.blanc');
+  border: 1px solid theme('colors.primary');
 }
 
 .buttonPrimary:hover svg,
 .buttonPrimary:active svg {
-  fill: theme('colors.bleu_nuit');
+  fill: theme('colors.blanc');
 }
 
 .buttonPrimary[disabled] {
-  background-color: theme('colors.bleu_gris');
+  background-color: theme('colors.primary');
+  opacity: 50%;
   cursor: not-allowed;
   border: 1px solid transparent;
 }
@@ -50,24 +51,25 @@
 
 .buttonSecondary {
   background-color: theme('colors.blanc');
-  color: theme('colors.bleu_nuit');
-  border: 1px solid theme('colors.bleu_nuit');
+  color: theme('colors.primary');
+  border: 1px solid theme('colors.primary');
 }
 
 .buttonSecondary:hover,
 .buttonSecondary:active {
-  background-color: theme('colors.bleu_nuit');
-  color: theme('colors.blanc');
-  border: 1px solid transparent;
+  background-color: theme('colors.primary_lighten');
+  color: theme('colors.primary');
+  border: 1px solid theme('colors.primary');
 }
 
 .buttonSecondary:hover svg,
 .buttonSecondary:active svg {
-  fill: theme('colors.blanc');
+  fill: theme('colors.primary');
 }
 
 .buttonSecondary[disabled] {
-  background-color: theme('colors.disabled');
+  background-color: theme('colors.primary');
+  opacity: 50%;
   cursor: not-allowed;
   border: 1px solid transparent;
   color: theme('colors.blanc');

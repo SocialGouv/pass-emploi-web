@@ -42,7 +42,7 @@ const RdvList = ({
   return (
     <>
       {rdvs.length === 0 && (
-        <p id={id} className='text-md text-bleu mb-8'>
+        <p id={id} className='text-md  mb-8'>
           Vous n&apos;avez pas de rendez-vous pour le moment
         </p>
       )}
@@ -80,7 +80,7 @@ const RdvList = ({
                   role='row'
                   key={rdv.id}
                   aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.jeune.prenom} ${rdv.jeune.nom}`}
-                  className='table-row text-sm text-bleu_nuit hover:bg-gris_blanc'
+                  className='table-row text-sm  hover:bg-primary_lighten'
                 >
                   <div role='cell' className='table-cell p-3'>
                     {dayHourCells(new Date(rdv.date), rdv.duration)}

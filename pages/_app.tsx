@@ -19,7 +19,7 @@ const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
 
 const progress = new ProgressBar({
   size: 5,
-  color: '#9196C0',
+  color: '#274996',
   className: 'bar-of-progress',
   delay: 100,
 })

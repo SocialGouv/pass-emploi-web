@@ -250,7 +250,7 @@ export function EditionRdvForm({
   // JSX
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <div className='text-sm-regular text-bleu_nuit mb-8'>
+      <div className='text-sm-medium mb-8'>
         Tous les champs avec * sont obligatoires
       </div>
 
@@ -267,9 +267,7 @@ export function EditionRdvForm({
 
         <label htmlFor='beneficiaire' className='text-base-medium mb-2'>
           <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
-          <span className='text-bleu_nuit text-sm-regular block'>
-            Nom et prénom
-          </span>
+          <span className='text-sm-regular block'>Nom et prénom</span>
         </label>
         <select
           id='beneficiaire'
@@ -387,10 +385,7 @@ export function EditionRdvForm({
 
         <label htmlFor='date' className='text-base-medium mb-2'>
           <span aria-hidden={true}>* </span>Date
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Format : JJ/MM/AAAA
-          </span>
+          <span className='ml-8 text-sm-regular'> Format : JJ/MM/AAAA</span>
         </label>
         {date.error && (
           <InputError id='date-error' className='mb-2'>
@@ -414,10 +409,7 @@ export function EditionRdvForm({
 
         <label htmlFor='horaire' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Heure
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Format : HH:MM
-          </span>
+          <span className='ml-8 text-sm-regular'> Format : HH:MM</span>
         </label>
         {horaire.error && (
           <InputError id='horaire-error' className='mb-2'>
@@ -443,10 +435,7 @@ export function EditionRdvForm({
 
         <label htmlFor='duree' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Durée
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Format : HH:MM
-          </span>
+          <span className='ml-8 text-sm-regular'> Format : HH:MM</span>
         </label>
         {duree.error && (
           <InputError id='duree-error' className='mb-2'>
@@ -470,10 +459,7 @@ export function EditionRdvForm({
 
         <label htmlFor='adresse' className='text-base-medium mb-2'>
           Adresse
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Ex: 12 rue duc, Brest
-          </span>
+          <span className='ml-8 text-sm-regular'> Ex: 12 rue duc, Brest</span>
         </label>
         <input
           type='text'
@@ -488,7 +474,7 @@ export function EditionRdvForm({
 
         <label htmlFor='organisme' className='text-base-medium mb-2'>
           Organisme
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
+          <span className='ml-8 text-sm-regular'>
             Ex: prestataire, entreprise, etc.
           </span>
         </label>
@@ -569,7 +555,7 @@ export function EditionRdvForm({
 
         <label htmlFor='commentaire' className='text-base-regular mb-2'>
           Notes
-          <span className='block text-bleu_nuit text-sm-regular'>
+          <span className='block text-sm-regular'>
             Commentaire à destination des jeunes
           </span>
         </label>
