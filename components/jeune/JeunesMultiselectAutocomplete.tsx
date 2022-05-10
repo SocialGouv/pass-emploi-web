@@ -9,28 +9,25 @@ interface JeunesMultiselectAutocompleteProps {
   jeunes: Jeune[]
   typeSelection: string
   onUpdate: (selectedIds: string[]) => void
-  defaultIds?: string[]
+  defaultJeunes?: OptionJeune[]
 }
 
 const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
 
-interface OptionJeune {
+export interface OptionJeune {
   id: string
   value: string
 }
+
 export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
   typeSelection,
-  defaultIds = [],
+  defaultJeunes = [],
 }: JeunesMultiselectAutocompleteProps) {
-  const optionsJeunes: OptionJeune[] = jeunes.map((jeune) => ({
-    id: jeune.id,
-    value: getJeuneFullname(jeune),
-  }))
-  const [selectedJeunes, setSelectedJeunes] = useState<OptionJeune[]>(
-    optionsJeunes.filter(({ id }) => defaultIds.includes(id))
-  )
+  const optionsJeunes: OptionJeune[] = jeunes.map(jeuneToOption)
+  const [selectedJeunes, setSelectedJeunes] =
+    useState<OptionJeune[]>(defaultJeunes)
   const input = useRef<HTMLInputElement>(null)
 
   function getJeunesNotSelected(): OptionJeune[] {
@@ -138,4 +135,11 @@ export default function JeunesMultiselectAutocomplete({
       )}
     </>
   )
+}
+
+export function jeuneToOption(jeune: Jeune): OptionJeune {
+  return {
+    id: jeune.id,
+    value: getJeuneFullname(jeune),
+  }
 }

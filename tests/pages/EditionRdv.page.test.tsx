@@ -1041,9 +1041,14 @@ describe('EditionRdv', () => {
           prenom: jeunes[0].firstName,
           nom: jeunes[0].lastName,
         }
+        const jeuneAutreConseiller = {
+          id: 'jeune-autre-conseiller',
+          prenom: 'Michel',
+          nom: 'Dupont',
+        }
 
         rdv = unRendezVous({
-          jeunes: [jeune],
+          jeunes: [jeune, jeuneAutreConseiller],
           createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
         })
 
@@ -1060,6 +1065,33 @@ describe('EditionRdv', () => {
             />
           </DIProvider>
         )
+      })
+
+      it('contient tous les jeunes, y compris ceux qui ne sont pas aux conseiller connecté', () => {
+        // Given
+        const beneficiaires = screen.getByRole('region', {
+          name: /Bénéficiaires/,
+        })
+
+        // Then
+        expect(
+          within(beneficiaires).getByText(getJeuneFullname(jeunes[0]))
+        ).toBeInTheDocument()
+        expect(() =>
+          screen.getByRole('option', {
+            name: getJeuneFullname(jeunes[0]),
+            hidden: true,
+          })
+        ).toThrow()
+        expect(
+          within(beneficiaires).getByText('Dupont Michel')
+        ).toBeInTheDocument()
+        expect(() =>
+          screen.getByRole('option', {
+            name: 'Dupont Michel',
+            hidden: true,
+          })
+        ).toThrow()
       })
 
       it('contient un champ pour demander si le créateur recevra un email d’invitation au RDV', () => {
@@ -1116,7 +1148,7 @@ describe('EditionRdv', () => {
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
             rdv.id,
             {
-              jeunesIds: [jeunes[0].id],
+              jeunesIds: [jeunes[0].id, 'jeune-autre-conseiller'],
               type: 'AUTRE',
               modality: modalites[2],
               precision: 'Prise de nouvelles',
