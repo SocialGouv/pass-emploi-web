@@ -1,8 +1,8 @@
 import { ApiClient } from 'clients/api.client'
 import { jsonToRdv, RdvFormData, RdvJson } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-import { RequestError } from '../utils/fetchJson'
-import ErrorCodes from './error-codes'
+import ErrorCodes from 'services/error-codes'
+import { RequestError } from 'utils/fetchJson'
 
 export interface RendezVousService {
   getRendezVousConseiller(
@@ -106,6 +106,7 @@ export class RendezVousApiService implements RendezVousService {
     accessToken: string
   ): Promise<void> {
     const payload = {
+      jeunesIds: [updatedRdv.jeuneId],
       modality: updatedRdv.modality,
       date: updatedRdv.date,
       duration: updatedRdv.duration,
