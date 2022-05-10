@@ -12,7 +12,6 @@ import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -35,8 +34,6 @@ describe('Page Profil conseiller', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
-      let conseiller: Conseiller
-      let conseillerService: ConseillerService
       let actual: GetServerSidePropsResult<any>
 
       beforeEach(async () => {
@@ -48,23 +45,9 @@ describe('Page Profil conseiller', () => {
             user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
           },
         })
-        conseiller = unConseiller()
-        conseillerService = mockedConseillerService({
-          getConseiller: jest.fn(async () => conseiller),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(conseillerService)
 
         // When
         actual = await getServerSideProps({} as GetServerSidePropsContext)
-      })
-
-      it('récupère les informations du conseiller', () => {
-        // Then
-        expect(conseillerService.getConseiller).toHaveBeenCalledWith(
-          'id-conseiller',
-          'accessToken'
-        )
-        expect(actual).toMatchObject({ props: { conseiller } })
       })
 
       it('récupère la structure du conseiller', () => {
@@ -75,33 +58,6 @@ describe('Page Profil conseiller', () => {
             pageTitle: 'Mon profil',
           },
         })
-      })
-    })
-
-    describe("quand le conseiller n'existe pas", () => {
-      it('renvoie une erreur', async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          validSession: true,
-          session: {
-            accessToken: 'accessToken',
-            user: { id: 'id-conseiller' },
-          },
-        })
-
-        const conseillerService = mockedConseillerService({
-          getConseiller: jest.fn(async () => undefined),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(conseillerService)
-
-        // When
-        let error
-        try {
-          await getServerSideProps({} as GetServerSidePropsContext)
-        } catch (e) {
-          error = e
-        }
-        expect(error).toBeInstanceOf(Error)
       })
     })
   })
@@ -239,16 +195,6 @@ describe('Page Profil conseiller', () => {
         })
       })
       it('met à jour côté API', async () => {
-        // Then
-        expect(
-          conseillerService.modifierNotificationsSonores
-        ).toHaveBeenCalledWith(
-          conseiller.id,
-          !conseiller.notificationsSonores,
-          'accessToken'
-        )
-      })
-      it('met à jour le conseiller', async () => {
         // Then
         expect(
           conseillerService.modifierNotificationsSonores

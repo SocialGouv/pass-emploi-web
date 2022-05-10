@@ -2,17 +2,15 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { ChangeEvent } from 'react'
 
-import { Switch } from '../components/ui/Switch'
-import useSession from '../utils/auth/useSession'
-import { useConseiller } from '../utils/conseiller/conseillerContext'
-import { useDependance } from '../utils/injectionDependances'
-
+import { Switch } from 'components/ui/Switch'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useDependance } from 'utils/injectionDependances'
 
 interface ProfilProps {
   structureConseiller: string
@@ -111,16 +109,10 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
-  const conseillerService =
-    withDependance<ConseillerService>('conseillerService')
-  const { user, accessToken } = sessionOrRedirect.session
-  const conseiller = await conseillerService.getConseiller(user.id, accessToken)
-  if (!conseiller) throw new Error(`Conseiller ${user.id} inexistant`)
+  const { user } = sessionOrRedirect.session
 
   return {
     props: {
-      conseiller: conseiller,
       structureConseiller: user.structure,
       pageTitle: 'Mon profil',
     },
