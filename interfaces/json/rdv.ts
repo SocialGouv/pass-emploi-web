@@ -1,6 +1,5 @@
-import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-
 import { BaseJeune } from 'interfaces/jeune'
+import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 
 export interface RdvJson {
   id: string
@@ -18,6 +17,8 @@ export interface RdvJson {
   createur?: { id: string; nom: string; prenom: string }
 }
 
+export type RdvJeuneJson = Omit<RdvJson, 'jeunes'> & { jeune: BaseJeune }
+
 export interface RdvFormData {
   date: string
   duration: number
@@ -30,6 +31,11 @@ export interface RdvFormData {
   adresse?: string
   organisme?: string
   comment?: string
+}
+
+export function rdvJeuneJsonToRdv(rdvJeuneJson: RdvJeuneJson): Rdv {
+  const { jeune, ...data } = rdvJeuneJson
+  return jsonToRdv({ ...data, jeunes: [jeune] })
 }
 
 export function jsonToRdv(rdvJson: RdvJson): Rdv {
