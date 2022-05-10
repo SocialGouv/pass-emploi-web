@@ -16,7 +16,7 @@ export default function SuccessMessage({
 }: SuccessMessageProps) {
   return (
     <div className='flex-col items-center text-success bg-success_lighten p-6 rounded-medium mb-8'>
-      <div className='flex justify-between mb-2'>
+      <div className='flex justify-between'>
         <div className='flex items-center'>
           <SuccessIcon
             aria-hidden={true}
@@ -39,8 +39,7 @@ export default function SuccessMessage({
           </button>
         )}
       </div>
-      // FIXME ajoute espace si children
-      {children}
+      {children && <div className='mt-2'>{children}</div>}
     </div>
   )
 }
