@@ -1,16 +1,16 @@
 import { ApiClient } from 'clients/api.client'
 import {
-  RendezVousApiService,
-  RendezVousService,
-} from 'services/rendez-vous.service'
-import {
   typesDeRendezVous,
   unRendezVous,
   unRendezVousJson,
 } from 'fixtures/rendez-vous'
-import { RequestError } from '../../utils/fetchJson'
-import { modalites } from '../../referentiel/rdv'
-import { RdvFormData } from '../../interfaces/json/rdv'
+import { RdvFormData } from 'interfaces/json/rdv'
+import { modalites } from 'referentiel/rdv'
+import {
+  RendezVousApiService,
+  RendezVousService,
+} from 'services/rendez-vous.service'
+import { RequestError } from 'utils/fetchJson'
 
 jest.mock('clients/api.client')
 
@@ -78,7 +78,7 @@ describe('RendezVousApiService', () => {
         '/rendezvous/id-rdv',
         'accessToken'
       )
-      expect(actual).toEqual(unRendezVous({ idCreateur: null }))
+      expect(actual).toEqual(unRendezVous({ createur: null }))
     })
 
     it("renvoie undefined si le rdv n'existe pas", async () => {
@@ -126,6 +126,7 @@ describe('RendezVousApiService', () => {
       expect(apiClient.put).toHaveBeenCalledWith(
         '/rendezvous/id-rdv',
         {
+          jeunesIds: ['jeune-1'],
           modality: modalites[0],
           date: '2022-03-03T09:30:00.000Z',
           duration: 157,

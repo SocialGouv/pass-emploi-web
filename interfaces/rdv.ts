@@ -29,7 +29,7 @@ export interface Rdv {
   presenceConseiller: boolean
   invitation: boolean
   comment: string
-  idCreateur: string | null
+  createur: { id: string; nom: string; prenom: string } | null
 }
 
 export function rdvToListItem(rdv: Rdv): RdvListItem {
@@ -41,7 +41,7 @@ export function rdvToListItem(rdv: Rdv): RdvListItem {
     date: rdv.date,
     duration: rdv.duration,
     hasComment: Boolean(rdv.comment),
-    idCreateur: rdv.idCreateur,
+    idCreateur: rdv.createur?.id ?? null,
   }
 }
 

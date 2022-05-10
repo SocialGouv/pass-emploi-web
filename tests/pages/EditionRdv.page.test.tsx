@@ -973,7 +973,10 @@ describe('EditionRdv', () => {
           nom: jeunes[0].lastName,
         }
 
-        rdv = unRendezVous({ jeune, idCreateur: '2' })
+        rdv = unRendezVous({
+          jeune,
+          createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
+        })
 
         // When
         renderWithSession(
@@ -990,11 +993,20 @@ describe('EditionRdv', () => {
         )
       })
 
-      it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
+      it('contient un champ pour demander si le créateur recevra un email d’invitation au RDV', () => {
         // Then
         expect(
           screen.getByLabelText(
             /Le créateur du rendez-vous recevra un mail pour l'informer de la modification./i
+          )
+        ).toBeInTheDocument()
+      })
+
+      it("contient un message pour prévenir le conseiller qu'il ne recevra pas d'invitation", () => {
+        // Then
+        expect(
+          screen.getByText(
+            "Le rendez-vous a été créé par un autre conseiller : Gaëlle Hermet. Vous ne recevrez pas d'invitation dans votre agenda"
           )
         ).toBeInTheDocument()
       })
@@ -1022,7 +1034,7 @@ describe('EditionRdv', () => {
           expect(rendezVousService.updateRendezVous).not.toHaveBeenCalled()
         })
 
-        it('affiche une modal de verification si le rendez vous à été modifié', async () => {
+        it('modifie le rendez-vous après la modale', async () => {
           // Given
           const boutonConfirmer = screen.getByRole('button', {
             name: 'Confirmer',

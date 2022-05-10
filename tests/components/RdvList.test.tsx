@@ -1,9 +1,10 @@
 import { screen } from '@testing-library/dom'
 import { render, within } from '@testing-library/react'
+import React from 'react'
+
 import RdvList from 'components/rdv/RdvList'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import React from 'react'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 describe('<RdvList>', () => {
@@ -35,7 +36,7 @@ describe('<RdvList>', () => {
             date: '2022-10-21T10:00:00.000Z',
             duration: 30,
             jeune: { id: '3', prenom: 'Nadia', nom: 'Sanfamiye' },
-            idCreateur: null,
+            createur: null,
           })
         )
       )
