@@ -1,14 +1,16 @@
 import { act, fireEvent, screen } from '@testing-library/react'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { GetServerSidePropsContext } from 'next/types'
 import Supervision, { getServerSideProps } from 'pages/supervision'
-import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 

@@ -1,4 +1,5 @@
 import { Conseiller } from 'interfaces/conseiller'
+import { ConseillerJson } from 'interfaces/json/conseiller'
 
 export const unConseiller = (
   overrides: Partial<Conseiller> = {}
@@ -7,6 +8,19 @@ export const unConseiller = (
     id: '1',
     firstName: 'Nils',
     lastName: 'Tavernier',
+    notificationsSonores: false,
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const unConseillerJson = (
+  overrides: Partial<ConseillerJson> = {}
+): ConseillerJson => {
+  const defaults: ConseillerJson = {
+    id: '1',
+    firstName: 'Nils',
+    lastName: 'Tavernier',
+    notificationsSonores: false,
   }
   return { ...defaults, ...overrides }
 }

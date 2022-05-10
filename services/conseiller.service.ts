@@ -1,7 +1,7 @@
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
-import { ConseillerJson } from 'interfaces/json/conseiller'
+import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
 import { RequestError } from 'utils/fetchJson'
 
 export interface ConseillerService {
@@ -41,13 +41,12 @@ export class ConseillerApiService implements ConseillerService {
     accessToken: string
   ): Promise<Conseiller | undefined> {
     try {
-      const { agence, ...conseiller } =
-        await this.apiClient.get<ConseillerJson>(
-          `/conseillers/${idConseiller}`,
-          accessToken
-        )
+      const conseillerJson = await this.apiClient.get<ConseillerJson>(
+        `/conseillers/${idConseiller}`,
+        accessToken
+      )
 
-      return agence ? { ...conseiller, agence: agence.nom } : conseiller
+      return jsonToConseiller(conseillerJson)
     } catch (e) {
       if (e instanceof RequestError) {
         return undefined

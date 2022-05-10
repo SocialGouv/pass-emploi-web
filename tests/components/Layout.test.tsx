@@ -1,15 +1,21 @@
 import { act, waitFor } from '@testing-library/react'
 
-import renderWithSession from '../renderWithSession'
-
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
+import { unConseiller } from 'fixtures/conseiller'
 import { desJeunes, unJeuneChat } from 'fixtures/jeune'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
+import {
+  mockedConseillerService,
+  mockedJeunesService,
+  mockedMessagesService,
+} from 'fixtures/services'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
+import renderWithSession from 'tests/renderWithSession'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
@@ -27,6 +33,7 @@ describe('<Layout />', () => {
   const jeunes: Jeune[] = desJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
+  let conseillerService: ConseillerService
   let messagesService: MessagesService
   beforeEach(async () => {
     jest.setSystemTime(new Date())
@@ -50,6 +57,7 @@ describe('<Layout />', () => {
     ]
 
     jeunesService = mockedJeunesService()
+    conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
       observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
@@ -70,16 +78,22 @@ describe('<Layout />', () => {
 
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService, messagesService }}>
-            <Layout>
-              <FakeComponent pageTitle='un titre' />
-            </Layout>
+          <DIProvider
+            dependances={{ jeunesService, conseillerService, messagesService }}
+          >
+            <ConseillerProvider
+              conseiller={unConseiller({ notificationsSonores: false })}
+            >
+              <Layout>
+                <FakeComponent pageTitle='un titre' />
+              </Layout>
+            </ConseillerProvider>
           </DIProvider>
         )
       })
     })
 
-    it('fetch conseiller list of jeune', async () => {
+    it('récupère la liste des jeunes du conseiller', () => {
       // Then
       expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
         '1',
@@ -87,7 +101,7 @@ describe('<Layout />', () => {
       )
     })
 
-    it('sign into chat', async () => {
+    it('sign into chat', () => {
       // Then
       expect(messagesService.signIn).toHaveBeenCalled()
     })
@@ -106,8 +120,8 @@ describe('<Layout />', () => {
       })
     })
 
-    describe('mise à jour des chats', () => {
-      it("notifie quand c'est un nouveau message d'un jeune", async () => {
+    describe("quand il n'a pas activé ses notifications sonores", () => {
+      it("ne notifie pas quand c'est un nouveau message d'un jeune", async () => {
         // Given
         const unJeuneChatNonLu = unJeuneChat({
           ...jeunes[0],
@@ -120,24 +134,6 @@ describe('<Layout />', () => {
         // When
         await act(async () => {
           updateChatRef(unJeuneChatNonLu)
-        })
-
-        // Then
-        await waitFor(() => {
-          expect(mockAudio).toHaveBeenCalled()
-        })
-      })
-      it("ne notifie pas quand c'est une tierce modification du chat", async () => {
-        // Given
-        const unJeuneChatDejaLu = unJeuneChat({
-          ...jeunes[0],
-          chatId: `chat-${jeunes[0].id}`,
-          lastMessageSentBy: 'conseiller',
-        })
-
-        // When
-        await act(async () => {
-          updateChatRef(unJeuneChatDejaLu)
         })
 
         // Then
@@ -167,6 +163,70 @@ describe('<Layout />', () => {
           { jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]] },
           {}
         )
+      })
+    })
+  })
+
+  describe('quand le conseiller a activé ses notifications', () => {
+    beforeEach(async () => {
+      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
+        jeunes
+      )
+      await act(async () => {
+        await renderWithSession(
+          <DIProvider
+            dependances={{ jeunesService, conseillerService, messagesService }}
+          >
+            <ConseillerProvider
+              conseiller={unConseiller({ notificationsSonores: true })}
+            >
+              <Layout>
+                <FakeComponent pageTitle='un titre' />
+              </Layout>
+            </ConseillerProvider>
+          </DIProvider>
+        )
+      })
+    })
+
+    it("notifie quand c'est un nouveau message d'un jeune", async () => {
+      // Given
+      const unJeuneChatNonLu = unJeuneChat({
+        ...jeunes[0],
+        lastMessageSentBy: 'jeune',
+        chatId: `chat-${jeunes[0].id}`,
+        lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
+      })
+
+      // When
+      await act(async () => {
+        updateChatRef(unJeuneChatNonLu)
+      })
+
+      // Then
+      await waitFor(() => {
+        expect(mockAudio).toHaveBeenCalled()
+      })
+    })
+
+    it("ne notifie pas quand c'est un évènement de chat qui ne correspond pas à un nouveau message", async () => {
+      // Given
+      const unJeuneChatNonLu = unJeuneChat({
+        ...jeunes[0],
+        lastMessageSentBy: 'conseiller',
+        chatId: `chat-${jeunes[0].id}`,
+        lastMessageContent:
+          'Ceci est un message de conseiller, pourquoi notifier ?',
+      })
+
+      // When
+      await act(async () => {
+        updateChatRef(unJeuneChatNonLu)
+      })
+
+      // Then
+      await waitFor(() => {
+        expect(mockAudio).not.toHaveBeenCalled()
       })
     })
   })

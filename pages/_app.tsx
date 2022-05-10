@@ -11,6 +11,7 @@ import 'styles/typography.css'
 import { init } from 'utils/analytics/matomo'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { Container, DIProvider } from 'utils/injectionDependances'
 import { initRum } from 'utils/monitoring/init-rum'
 
@@ -51,11 +52,13 @@ export default function App({
           </div>
         ) : (
           <ChatCredentialsProvider>
-            <CurrentJeuneProvider>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </CurrentJeuneProvider>
+            <ConseillerProvider>
+              <CurrentJeuneProvider>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </CurrentJeuneProvider>
+            </ConseillerProvider>
           </ChatCredentialsProvider>
         )}
       </DIProvider>

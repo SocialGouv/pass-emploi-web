@@ -33,12 +33,12 @@ jest.mock('utils/injectionDependances/withDependance')
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
     let jeunes: Jeune[]
-  let jeunesService: JeunesService
-  let messagesService: MessagesService
-  let page: RenderResult
-  let inputSearchJeune: HTMLSelectElement
-  let inputMessage: HTMLInputElement
-  let submitButton: HTMLButtonElement
+    let jeunesService: JeunesService
+    let messagesService: MessagesService
+    let page: RenderResult
+    let inputSearchJeune: HTMLSelectElement
+    let inputMessage: HTMLInputElement
+    let submitButton: HTMLButtonElement
 
     beforeEach(async () => {
       jeunes = desJeunes()
@@ -52,10 +52,10 @@ describe('EnvoiMessageGroupe', () => {
       })
 
       page = renderWithSession(
-      <DIProvider dependances={{ jeunesService, messagesService }}>
-        <EnvoiMessageGroupe
-          pageTitle={''}
-          jeunes={jeunes}
+        <DIProvider dependances={{ jeunesService, messagesService }}>
+          <EnvoiMessageGroupe
+            pageTitle={''}
+            jeunes={jeunes}
             withoutChat={true}
             previousUrl='/mes-jeunes'
           />
@@ -136,10 +136,10 @@ describe('EnvoiMessageGroupe', () => {
             [jeunes[0].id, jeunes[1].id],
             newMessage,
             'accessToken',
-          'cleChiffrement'
-        )
+            'cleChiffrement'
+          )
+        })
       })
-    })
 
       it('redirige vers la page précédente', async () => {
         // Given

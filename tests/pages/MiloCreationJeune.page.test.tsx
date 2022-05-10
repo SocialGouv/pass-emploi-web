@@ -1,9 +1,11 @@
 import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
+
+import renderWithSession from '../renderWithSession'
+
 import { unDossierMilo } from 'fixtures/milo'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('next/router')
 

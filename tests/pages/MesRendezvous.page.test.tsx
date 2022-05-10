@@ -1,11 +1,13 @@
 import { act, fireEvent, screen } from '@testing-library/react'
-import { desRdvListItems } from 'fixtures/rendez-vous'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
-import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import React from 'react'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+
 import renderWithSession from '../renderWithSession'
+
+import { desRdvListItems } from 'fixtures/rendez-vous'
+import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
