@@ -1,7 +1,7 @@
 .container {
   --sidebar-width: 15vw;
   --page-width: 85vw;
-  --page-width-with-chat: 61vw;
+  --page-width-with-chat: calc(var(--page-width) - var(--chat-width));
   --chat-width: 24vw;
 
   display: grid;
@@ -21,7 +21,7 @@
   flex-direction: column;
   justify-content: space-between;
   overflow-x: hidden; /* Disable horizontal scroll */
-  padding: 20px 19px 16px;
+  padding: 24px 16px;
   text-align: center;
   background-color: theme('colors.primary');
 }
@@ -29,7 +29,6 @@
 .sidebar nav a {
   display: flex;
   align-items: center;
-  margin-bottom: 7px;
   padding: 8px;
   border-radius: 8px;
 }
@@ -77,10 +76,6 @@
   background-color: theme('colors.grey_100');
 }
 
-.login {
-  background:linear-gradient(26deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
-}
-
 @media screen and (max-width: theme('screens.layout_m.max')) {
   .container {
     grid-template-columns: 10vw 90vw;
@@ -97,17 +92,7 @@
   }
 }
 
-@media screen and (min-width: theme('screens.layout_l')) {
-  .sidebar nav  {
-    margin: 8px;
-  }
-
-}
-
 @media screen and (max-width: theme('screens.layout_base.max')) {
-  .login  {
-    background:linear-gradient(36deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
-  }
   .footer ul  {
     flex-direction: column;
   }

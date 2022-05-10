@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import Router from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import AddJeuneImage from '../../assets/images/empty_state.svg'
+import EmptyStateImage from '../../assets/images/empty_state.svg'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
@@ -227,7 +227,7 @@ function MesJeunes({
 
         {conseillerJeunes.length === 0 && (
           <div className='mx-auto my-0 flex flex-col items-center'>
-            <AddJeuneImage
+            <EmptyStateImage
               aria-hidden='true'
               focusable='false'
               className='mb-16'

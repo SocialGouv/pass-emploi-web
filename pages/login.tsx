@@ -7,15 +7,15 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Logo from '../assets/images/logo_app_cej.svg'
 
 import { FormButton } from 'components/ui/FormButton'
-import styles from 'styles/components/Layouts.module.css'
+import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface LoginProps {
-  ssoPassEmploiEstActive?: boolean
+  ssoPassEmploiEstActif?: boolean
   isFromEmail: boolean
 }
 
-function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
+function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -81,7 +81,7 @@ function Login({ ssoPassEmploiEstActive, isFromEmail }: LoginProps) {
             handleSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
           />
 
-          {ssoPassEmploiEstActive && (
+          {ssoPassEmploiEstActif && (
             <FormButton
               className='mt-4'
               label='Authentification pass emploi'
@@ -121,7 +121,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 
   return {
     props: {
-      ssoPassEmploiEstActive: process.env.ENABLE_PASS_EMPLOI_SSO,
+      ssoPassEmploiEstActif: process.env.ENABLE_PASS_EMPLOI_SSO,
       isFromEmail: isFromEmail,
     },
   }

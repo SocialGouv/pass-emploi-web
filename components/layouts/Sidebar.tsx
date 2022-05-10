@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
 import IconComponent from '../ui/IconComponent'
-import NavLink from '../ui/NavLink'
+import NavbarLink from '../ui/NavbarLink'
 
 import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
@@ -21,7 +21,7 @@ export default function Sidebar({}: SidebarProps) {
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
   const isSuperviseur = session?.user.estSuperviseur
 
-  const currentNavLink = (href: string) => router.pathname.startsWith(href)
+  const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
 
   async function handleLogout(event: any) {
     event.preventDefault()
@@ -41,16 +41,16 @@ export default function Sidebar({}: SidebarProps) {
         className='grow flex flex-col justify-between'
       >
         <div>
-          <NavLink
-            isActive={currentNavLink('/mes-jeunes')}
+          <NavbarLink
+            isActive={isCurrentRoute('/mes-jeunes')}
             href='/mes-jeunes'
             label='Mes jeunes'
             iconName='people'
           />
 
           {!isPoleEmploi && (
-            <NavLink
-              isActive={currentNavLink('/mes-rendezvous')}
+            <NavbarLink
+              isActive={isCurrentRoute('/mes-rendezvous')}
               href='/mes-rendezvous'
               label='Rendez-vous'
               iconName='rendezvous'
@@ -59,11 +59,11 @@ export default function Sidebar({}: SidebarProps) {
 
           {isSuperviseur && (
             <>
-              <NavLink
+              <NavbarLink
                 iconName='supervision'
                 label='Supervision'
                 href='/supervision'
-                isActive={currentNavLink('/supervision')}
+                isActive={isCurrentRoute('/supervision')}
               />
             </>
           )}
@@ -89,18 +89,19 @@ export default function Sidebar({}: SidebarProps) {
             </span>
           </a>
         </div>
-
-        <NavLink
-          isActive={currentNavLink('/profil')}
-          href='/profil'
-          label={session && session!.user.name}
-          iconName='profil'
-        />
+        {session && (
+          <NavbarLink
+            isActive={isCurrentRoute('/profil')}
+            href='/profil'
+            label={session.user.name}
+            iconName='profil'
+          />
+        )}
       </nav>
 
       <span className='border-b border-blanc mx-4 mb-8'></span>
-      <div className='flex flex-col m-2 items-center layout_m:justify-center'>
-        <NavLink
+      <div className='flex flex-col justify-between'>
+        <NavbarLink
           href='/api/logout'
           label='Déconnexion'
           iconName='logout'

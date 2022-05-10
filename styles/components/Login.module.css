@@ -1,0 +1,9 @@
+.login {
+    background:linear-gradient(26deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%,  theme('colors.primary') );
+}
+
+@media screen and (max-width: theme('screens.layout_base.max')) {
+    .login {
+        background: linear-gradient(36deg, theme('colors.primary_darken'), theme('colors.primary_darken') 50%, theme('colors.primary') 50%, theme('colors.primary'));
+    }
+}

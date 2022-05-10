@@ -10,12 +10,20 @@ interface NavLinkProps {
   onClick?: any
 }
 
-function NavLink({ isActive, href, label, iconName, onClick }: NavLinkProps) {
+function NavbarLink({
+  isActive,
+  href,
+  label,
+  iconName,
+  onClick,
+}: NavLinkProps) {
   return (
     <Link href={href}>
       <a
         onClick={onClick}
-        className={` flex ${isActive ? 'bg-primary_lighten' : ''}`}
+        className={`flex mb-6 p-2 layout_base:p-0 ${
+          isActive ? 'bg-primary_lighten' : ''
+        }`}
       >
         {isActive && <span className='text-l-medium text-primary'>·</span>}
         <IconComponent
@@ -36,4 +44,4 @@ function NavLink({ isActive, href, label, iconName, onClick }: NavLinkProps) {
   )
 }
 
-export default NavLink
+export default NavbarLink
