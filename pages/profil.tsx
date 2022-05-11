@@ -81,19 +81,19 @@ function Profil({ structureConseiller }: ProfilProps) {
           </section>
           <section>
             <h2 className='text-l-medium mb-4'>Notifications</h2>
-            <div className='flex items-center'>
-              <label htmlFor='notificationsSonores' className='mr-4'>
+            <label htmlFor='notificationSonore' className='flex items-center'>
+              <span className='mr-4'>
                 Recevoir des notifications sonores pour la réception de nouveaux
                 messages
-              </label>
+              </span>
               <Switch
-                id='notificationsSonores'
+                id='notificationSonore'
                 checkedLabel='Activé'
                 uncheckedLabel='Desactivé'
                 checked={conseiller.notificationsSonores}
                 onChange={toggleNotificationsSonores}
               />
-            </div>
+            </label>
           </section>
         </div>
       )}
