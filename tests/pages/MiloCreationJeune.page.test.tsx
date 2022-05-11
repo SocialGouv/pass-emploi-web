@@ -3,6 +3,7 @@ import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
 import renderWithSession from '../renderWithSession'
 
 import { unDossierMilo } from 'fixtures/milo'
+import { mockedConseillerService } from 'fixtures/services'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { DIProvider } from 'utils/injectionDependances'
@@ -74,13 +75,9 @@ describe('MiloCreationJeune', () => {
     let conseillerService: ConseillerService
     it("devrait afficher les informations de succès de création d'un compte", async () => {
       //GIVEN
-      conseillerService = {
-        getConseiller: jest.fn(),
-        modifierAgence: jest.fn(),
-        modifierNotificationsSonores: jest.fn(),
-        getDossierJeune: jest.fn(),
+      conseillerService = mockedConseillerService({
         createCompteJeuneMilo: jest.fn((_) => Promise.resolve({ id: 'un-id' })),
-      }
+      })
 
       const dossier = unDossierMilo()
 
@@ -141,15 +138,11 @@ describe('MiloCreationJeune', () => {
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       //GIVEN
-      conseillerService = {
-        getConseiller: jest.fn(),
-        modifierAgence: jest.fn(),
-        modifierNotificationsSonores: jest.fn(),
-        getDossierJeune: jest.fn(),
+      conseillerService = mockedConseillerService({
         createCompteJeuneMilo: jest.fn((_) =>
           Promise.reject({ message: "un message d'erreur" })
         ),
-      }
+      })
 
       const dossier = unDossierMilo({ email: 'incorrectemail' })
 
