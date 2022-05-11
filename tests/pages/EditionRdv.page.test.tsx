@@ -772,7 +772,7 @@ describe('EditionRdv', () => {
           })
         ).toThrow()
         const destinataires = screen.getByRole('region', {
-          name: /Destinataires/,
+          name: /Bénéficiaires/,
         })
         expect(
           within(destinataires).getByText(jeuneFullname)
@@ -786,13 +786,18 @@ describe('EditionRdv', () => {
         ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
         ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         // Given
-        const jeune = {
+        const jeune0 = {
           id: jeunes[0].id,
           prenom: jeunes[0].firstName,
           nom: jeunes[0].lastName,
         }
+        const jeune2 = {
+          id: jeunes[2].id,
+          prenom: jeunes[2].firstName,
+          nom: jeunes[2].lastName,
+        }
 
-        rdv = unRendezVous({ jeunes: [jeune] })
+        rdv = unRendezVous({ jeunes: [jeune0, jeune2] })
 
         // When
         renderWithSession(
@@ -809,20 +814,30 @@ describe('EditionRdv', () => {
         )
       })
 
-      it('sélectionne le jeune du rendez-vous', () => {
-        const jeuneFullname = getJeuneFullname(jeunes[0])
+      it('sélectionne les jeunes du rendez-vous', () => {
+        const jeune0Fullname = getJeuneFullname(jeunes[0])
+        const jeune2Fullname = getJeuneFullname(jeunes[2])
         expect(() =>
           screen.getByRole('option', {
-            name: jeuneFullname,
+            name: jeune0Fullname,
+            hidden: true,
+          })
+        ).toThrow()
+        expect(() =>
+          screen.getByRole('option', {
+            name: jeune2Fullname,
             hidden: true,
           })
         ).toThrow()
 
         const destinataires = screen.getByRole('region', {
-          name: /Destinataires/,
+          name: /Bénéficiaires/,
         })
         expect(
-          within(destinataires).getByText(jeuneFullname)
+          within(destinataires).getByText(jeune0Fullname)
+        ).toBeInTheDocument()
+        expect(
+          within(destinataires).getByText(jeune2Fullname)
         ).toBeInTheDocument()
       })
 
@@ -865,9 +880,6 @@ describe('EditionRdv', () => {
 
       it('désactive les champs non modifiable', () => {
         // Then
-        expect(
-          screen.getByLabelText<HTMLSelectElement>(/ajouter des jeunes/)
-        ).toBeDisabled()
         expect(screen.getByLabelText<HTMLSelectElement>(/Type/)).toBeDisabled()
         expect(
           screen.getByLabelText<HTMLSelectElement>(/Préciser/)
@@ -897,33 +909,49 @@ describe('EditionRdv', () => {
       })
 
       describe('rendez-vous modifié', () => {
-        let selectModalite: HTMLSelectElement
-        let inputDate: HTMLInputElement
-        let inputHoraire: HTMLInputElement
-        let inputDuree: HTMLInputElement
-        let inputCommentaires: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
-        beforeEach(() => {
+        beforeEach(async () => {
           // Given
-          selectModalite = screen.getByRole('combobox', {
+          const searchJeune = screen.getByRole('combobox', {
+            name: /ajouter des jeunes/,
+          })
+          const beneficiaires = screen.getByRole('region', {
+            name: /Bénéficiaires/,
+          })
+          const jeuneSelectionne = within(beneficiaires).getByText(
+            getJeuneFullname(jeunes[2])
+          )
+          const enleverJeune = within(jeuneSelectionne).getByRole('button', {
+            name: /Enlever/,
+          })
+
+          const selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
-          inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
-          inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
-          inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
-          inputCommentaires = screen.getByRole('textbox', {
+          const inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
+          const inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
+          const inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
+          const inputCommentaires = screen.getByRole('textbox', {
             name: 'Notes Commentaire à destination des jeunes',
           })
 
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
           // Given
-          fireEvent.change(selectModalite, { target: { value: modalites[0] } })
-          fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
-          fireEvent.input(inputHoraire, { target: { value: '10:30' } })
-          fireEvent.input(inputDuree, { target: { value: '02:37' } })
-          fireEvent.input(inputCommentaires, {
-            target: { value: 'Lorem ipsum dolor sit amet' },
+          await act(async () => {
+            fireEvent.input(searchJeune, {
+              target: { value: getJeuneFullname(jeunes[1]) },
+            })
+            enleverJeune.click()
+            fireEvent.change(selectModalite, {
+              target: { value: modalites[0] },
+            })
+            fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
+            fireEvent.input(inputHoraire, { target: { value: '10:30' } })
+            fireEvent.input(inputDuree, { target: { value: '02:37' } })
+            fireEvent.input(inputCommentaires, {
+              target: { value: 'Lorem ipsum dolor sit amet' },
+            })
           })
         })
 
@@ -973,7 +1001,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
               rdv.id,
               {
-                jeunesIds: [jeunes[0].id],
+                jeunesIds: [jeunes[0].id, jeunes[1].id],
                 type: 'AUTRE',
                 modality: modalites[0],
                 precision: 'Prise de nouvelles',
@@ -1013,9 +1041,14 @@ describe('EditionRdv', () => {
           prenom: jeunes[0].firstName,
           nom: jeunes[0].lastName,
         }
+        const jeuneAutreConseiller = {
+          id: 'jeune-autre-conseiller',
+          prenom: 'Michel',
+          nom: 'Dupont',
+        }
 
         rdv = unRendezVous({
-          jeunes: [jeune],
+          jeunes: [jeune, jeuneAutreConseiller],
           createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
         })
 
@@ -1032,6 +1065,33 @@ describe('EditionRdv', () => {
             />
           </DIProvider>
         )
+      })
+
+      it('contient tous les jeunes, y compris ceux qui ne sont pas aux conseiller connecté', () => {
+        // Given
+        const beneficiaires = screen.getByRole('region', {
+          name: /Bénéficiaires/,
+        })
+
+        // Then
+        expect(
+          within(beneficiaires).getByText(getJeuneFullname(jeunes[0]))
+        ).toBeInTheDocument()
+        expect(() =>
+          screen.getByRole('option', {
+            name: getJeuneFullname(jeunes[0]),
+            hidden: true,
+          })
+        ).toThrow()
+        expect(
+          within(beneficiaires).getByText('Dupont Michel')
+        ).toBeInTheDocument()
+        expect(() =>
+          screen.getByRole('option', {
+            name: 'Dupont Michel',
+            hidden: true,
+          })
+        ).toThrow()
       })
 
       it('contient un champ pour demander si le créateur recevra un email d’invitation au RDV', () => {
@@ -1088,7 +1148,7 @@ describe('EditionRdv', () => {
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
             rdv.id,
             {
-              jeunesIds: [jeunes[0].id],
+              jeunesIds: [jeunes[0].id, 'jeune-autre-conseiller'],
               type: 'AUTRE',
               modality: modalites[2],
               precision: 'Prise de nouvelles',

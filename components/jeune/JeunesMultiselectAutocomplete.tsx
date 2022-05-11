@@ -7,30 +7,27 @@ import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
   jeunes: Jeune[]
+  typeSelection: string
   onUpdate: (selectedIds: string[]) => void
-  defaultIds?: string[]
-  disabled?: boolean
+  defaultJeunes?: OptionJeune[]
 }
 
 const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
 
-interface OptionJeune {
+export interface OptionJeune {
   id: string
   value: string
 }
+
 export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
-  defaultIds = [],
-  disabled,
+  typeSelection,
+  defaultJeunes = [],
 }: JeunesMultiselectAutocompleteProps) {
-  const optionsJeunes: OptionJeune[] = jeunes.map((jeune) => ({
-    id: jeune.id,
-    value: getJeuneFullname(jeune),
-  }))
-  const [selectedJeunes, setSelectedJeunes] = useState<OptionJeune[]>(
-    optionsJeunes.filter(({ id }) => defaultIds.includes(id))
-  )
+  const optionsJeunes: OptionJeune[] = jeunes.map(jeuneToOption)
+  const [selectedJeunes, setSelectedJeunes] =
+    useState<OptionJeune[]>(defaultJeunes)
   const input = useRef<HTMLInputElement>(null)
 
   function getJeunesNotSelected(): OptionJeune[] {
@@ -96,18 +93,17 @@ export default function JeunesMultiselectAutocomplete({
         className='text-sm text-primary_darken w-full p-3 mb-2 mt-4 border border-content_color rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70'
         aria-required={true}
         multiple={true}
-        disabled={disabled}
         aria-controls='selected-items'
         ref={input}
       />
 
       <p
-        aria-label={`Destinataires sélectionnés (${selectedJeunes.length})`}
+        aria-label={`${typeSelection} sélectionnés (${selectedJeunes.length})`}
         id='items-label'
         className='text-base-medium mb-2'
         aria-live='polite'
       >
-        Destinataires ({selectedJeunes.length})
+        {typeSelection} ({selectedJeunes.length})
       </p>
       {selectedJeunes.length > 0 && (
         <ul
@@ -125,20 +121,25 @@ export default function JeunesMultiselectAutocomplete({
               aria-atomic={true}
             >
               {value}
-              {!disabled && (
-                <button
-                  type='reset'
-                  title='Enlever'
-                  onClick={() => unselectJeune(id)}
-                >
-                  <span className='sr-only'>Enlever le jeune</span>
-                  <RemoveIcon focusable={false} aria-hidden={true} />
-                </button>
-              )}
+              <button
+                type='reset'
+                title='Enlever'
+                onClick={() => unselectJeune(id)}
+              >
+                <span className='sr-only'>Enlever le jeune</span>
+                <RemoveIcon focusable={false} aria-hidden={true} />
+              </button>
             </li>
           ))}
         </ul>
       )}
     </>
   )
+}
+
+export function jeuneToOption(jeune: Jeune): OptionJeune {
+  return {
+    id: jeune.id,
+    value: getJeuneFullname(jeune),
+  }
 }

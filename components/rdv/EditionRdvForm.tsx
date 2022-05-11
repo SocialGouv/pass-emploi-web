@@ -6,7 +6,10 @@ import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
 
 import InformationMessage from 'components/InformationMessage'
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import JeunesMultiselectAutocomplete, {
+  jeuneToOption,
+  OptionJeune,
+} from 'components/jeune/JeunesMultiselectAutocomplete'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
@@ -45,17 +48,14 @@ export function EditionRdvForm({
   idJeune,
   showConfirmationModal,
 }: EditionRdvFormProps) {
-  const defaultIds = []
-  if (rdv) {
-    defaultIds.push(...rdv.jeunes.map(({ id }) => id))
-  } else if (idJeune) {
-    defaultIds.push(idJeune)
-  }
-  const [idsJeunes, setIdsJeunes] = useState<string[]>(defaultIds)
-
+  const defaultJeunes = initJeunesFromRdvOrIdJeune()
+  const [idsJeunes, setIdsJeunes] = useState<string[]>(
+    defaultJeunes.map(({ id }) => id)
+  )
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
     rdv?.type.code ?? ''
   )
+
   const [precisionType, setPrecisionType] = useState<RequiredValue>({
     value: rdv?.precisionType ?? '',
   })
@@ -82,8 +82,8 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
-
   // fonctions
+
   function formHasChanges(): boolean {
     if (!rdv) {
       return Boolean(
@@ -99,7 +99,10 @@ export function EditionRdvForm({
       )
     }
 
+    const previousIds = rdv.jeunes.map(({ id }) => id).sort()
+    idsJeunes.sort()
     return (
+      previousIds.toString() !== idsJeunes.toString() ||
       modalite !== rdv.modality ||
       date.value !== localDate ||
       horaire.value !== localTime ||
@@ -110,7 +113,6 @@ export function EditionRdvForm({
       isConseillerPresent !== rdv.presenceConseiller
     )
   }
-
   function formIsValid(): boolean {
     return (
       Boolean(idsJeunes.length) &&
@@ -257,6 +259,7 @@ export function EditionRdvForm({
   }
 
   // JSX
+
   return (
     <form onSubmit={handleSoumettreRdv}>
       <div className='text-sm-medium mb-8'>
@@ -276,9 +279,9 @@ export function EditionRdvForm({
 
         <JeunesMultiselectAutocomplete
           jeunes={jeunes}
-          defaultIds={idsJeunes}
+          typeSelection='Bénéficiaires'
+          defaultJeunes={defaultJeunes}
           onUpdate={(selectedIds) => setIdsJeunes(selectedIds)}
-          disabled={Boolean(rdv)}
         />
       </fieldset>
 
@@ -594,6 +597,20 @@ export function EditionRdvForm({
       </div>
     </form>
   )
+
+  function initJeunesFromRdvOrIdJeune(): OptionJeune[] {
+    if (rdv) {
+      return rdv.jeunes.map(({ id, nom, prenom }) => ({
+        id,
+        value: nom + ' ' + prenom,
+      }))
+    }
+    if (idJeune) {
+      const jeune = jeunes.find(({ id }) => id === idJeune)!
+      return [jeuneToOption(jeune)]
+    }
+    return []
+  }
 }
 
 function dureeFromMinutes(duration?: number): string {
