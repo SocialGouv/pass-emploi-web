@@ -49,19 +49,27 @@ function EditionRdv({
   const [hasChanges, setHasChanges] = useState<boolean>(false)
 
   let initialTracking: string
-  if (rdv) initialTracking = `Modification RDV`
-  else initialTracking = `Création RDV${idJeune ? ' jeune' : ''}`
+  if (rdv) initialTracking = `Modification rdv`
+  else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function openLeavePageModal() {
     setShowLeavePageModal(true)
-    setTrackingTitle(
-      `${rdv ? 'Modification' : 'Création'} rdv - Modale Annulation`
-    )
+    setTrackingTitle(`${initialTracking} - Modale Annulation`)
   }
 
   function closeLeavePageModal() {
     setShowLeavePageModal(false)
+    setTrackingTitle(initialTracking)
+  }
+
+  function showConfirmationModale(payload: RdvFormData) {
+    setPayloadForConfirmationModal(payload)
+    setTrackingTitle(`${initialTracking} - Modale confirmation modification`)
+  }
+
+  function closeConfirmationModale() {
+    setPayloadForConfirmationModal(undefined)
     setTrackingTitle(initialTracking)
   }
 
@@ -123,7 +131,7 @@ function EditionRdv({
           onChanges={setHasChanges}
           soumettreRendezVous={soumettreRendezVous}
           leaveWithChanges={openLeavePageModal}
-          showConfirmationModal={setPayloadForConfirmationModal}
+          showConfirmationModal={showConfirmationModale}
         />
       </div>
       {showLeavePageModal && (
@@ -138,7 +146,7 @@ function EditionRdv({
       )}
       {payloadForConfirmationModal && (
         <ConfirmationUpdateRdvModal
-          onCancel={() => setPayloadForConfirmationModal(undefined)}
+          onCancel={closeConfirmationModale}
           onConfirmation={() =>
             soumettreRendezVous(payloadForConfirmationModal)
           }
