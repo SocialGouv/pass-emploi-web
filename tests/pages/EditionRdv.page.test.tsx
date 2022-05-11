@@ -249,6 +249,13 @@ describe('EditionRdv', () => {
           expect(link).toHaveAttribute('class', 'sr-only')
           expect(link.closest('a')).toHaveAttribute('href', '/mes-rendezvous')
         })
+
+        it("ne contient pas de message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", () => {
+          // Then
+          expect(() =>
+            screen.getByText(/des jeunes que vous ne suivez pas/)
+          ).toThrow()
+        })
       })
 
       describe('étape 1 bénéficiaires', () => {
@@ -1067,6 +1074,13 @@ describe('EditionRdv', () => {
         )
       })
 
+      it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", () => {
+        // Then
+        expect(
+          screen.getByText(/des jeunes que vous ne suivez pas/)
+        ).toBeInTheDocument()
+      })
+
       it('contient tous les jeunes, y compris ceux qui ne sont pas aux conseiller connecté', () => {
         // Given
         const beneficiaires = screen.getByRole('region', {
@@ -1074,17 +1088,26 @@ describe('EditionRdv', () => {
         })
 
         // Then
-        expect(
-          within(beneficiaires).getByText(getJeuneFullname(jeunes[0]))
-        ).toBeInTheDocument()
+        const jeune = within(beneficiaires).getByText(
+          getJeuneFullname(jeunes[0])
+        )
+        expect(() =>
+          within(jeune).getByLabelText(
+            /Ce jeune n'est pas dans votre portefeuille/
+          )
+        ).toThrow()
         expect(() =>
           screen.getByRole('option', {
             name: getJeuneFullname(jeunes[0]),
             hidden: true,
           })
         ).toThrow()
+
+        const autreJeune = within(beneficiaires).getByText('Dupont Michel')
         expect(
-          within(beneficiaires).getByText('Dupont Michel')
+          within(autreJeune).getByLabelText(
+            /Ce jeune n'est pas dans votre portefeuille/
+          )
         ).toBeInTheDocument()
         expect(() =>
           screen.getByRole('option', {
