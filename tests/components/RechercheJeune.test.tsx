@@ -30,6 +30,7 @@ describe('Recherche', () => {
             structureConseiller={UserStructure.MILO}
             conseillerJeunes={jeunes}
             isFromEmail
+            pageTitle=''
           />
         </DIProvider>
       )
