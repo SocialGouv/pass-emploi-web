@@ -11,6 +11,9 @@ import { DIProvider } from 'utils/injectionDependances'
 
 describe('<DossierMilo', () => {
   const conseillerService: ConseillerService = {
+    getConseiller: jest.fn(),
+    modifierAgence: jest.fn(),
+    modifierNotificationsSonores: jest.fn(),
     createCompteJeuneMilo: jest.fn(),
     getDossierJeune: jest.fn()(),
   }

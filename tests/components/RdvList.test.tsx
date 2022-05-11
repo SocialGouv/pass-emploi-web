@@ -132,7 +132,6 @@ describe('<RdvList>', () => {
               { id: '4', prenom: 'Avon', nom: 'Barksdale' },
               { id: '7', prenom: 'Christiano', nom: 'Seven' },
             ],
-            idCreateur: null,
           })
         ),
       ]

@@ -17,6 +17,7 @@ describe('MiloCreationJeune', () => {
           dossierId=''
           dossier={null}
           erreurMessageHttpMilo=''
+          pageTitle=''
         />
       )
     })
@@ -59,6 +60,7 @@ describe('MiloCreationJeune', () => {
           dossierId='1'
           dossier={null}
           erreurMessageHttpMilo={messageErreur}
+          pageTitle=''
         />
       )
 
@@ -73,6 +75,9 @@ describe('MiloCreationJeune', () => {
     it("devrait afficher les informations de succès de création d'un compte", async () => {
       //GIVEN
       conseillerService = {
+        getConseiller: jest.fn(),
+        modifierAgence: jest.fn(),
+        modifierNotificationsSonores: jest.fn(),
         getDossierJeune: jest.fn(),
         createCompteJeuneMilo: jest.fn((_) => Promise.resolve({ id: 'un-id' })),
       }
@@ -85,6 +90,7 @@ describe('MiloCreationJeune', () => {
             dossierId='1'
             dossier={dossier}
             erreurMessageHttpMilo={''}
+            pageTitle=''
           />
         </DIProvider>
       )
@@ -136,6 +142,9 @@ describe('MiloCreationJeune', () => {
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       //GIVEN
       conseillerService = {
+        getConseiller: jest.fn(),
+        modifierAgence: jest.fn(),
+        modifierNotificationsSonores: jest.fn(),
         getDossierJeune: jest.fn(),
         createCompteJeuneMilo: jest.fn((_) =>
           Promise.reject({ message: "un message d'erreur" })
@@ -150,6 +159,7 @@ describe('MiloCreationJeune', () => {
             dossierId='1'
             dossier={dossier}
             erreurMessageHttpMilo={''}
+            pageTitle=''
           />
         </DIProvider>
       )
