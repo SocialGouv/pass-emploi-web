@@ -325,19 +325,21 @@ describe('Mes Jeunes', () => {
     })
 
     describe('quand on vient de selectionner une agence', () => {
-      it('affiche un message de succès', () => {
+      it('affiche un message de succès', async () => {
         // When
-        renderWithSession(
-          <DIProvider dependances={{ messagesService }}>
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-              ajoutAgenceSuccess={true}
-            />
-          </DIProvider>
-        )
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                pageTitle=''
+                ajoutAgenceSuccess={true}
+              />
+            </DIProvider>
+          )
+        })
 
         // Then
         expect(
