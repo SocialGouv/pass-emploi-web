@@ -536,34 +536,28 @@ export function EditionRdvForm({
         )}
 
         <div className='flex items-center mb-8'>
-          <label htmlFor='presenceConseiller' className='flex items-center'>
-            <span className='w-64 mr-4'>
-              Informer les bénéficiaires qu’un conseiller sera présent au
-              rendez-vous
-            </span>
-            <Switch
-              id='presenceConseiller'
-              name='presenceConseiller'
-              checked={isConseillerPresent}
-              disabled={typeEntretienIndividuelConseillerSelected()}
-              onChange={handlePresenceConseiller}
-            />
+          <label htmlFor='presenceConseiller' className='w-64 mr-4'>
+            Informer les bénéficiaires qu’un conseiller sera présent au
+            rendez-vous
           </label>
+          <Switch
+            id='presenceConseiller'
+            checked={isConseillerPresent}
+            disabled={typeEntretienIndividuelConseillerSelected()}
+            onChange={handlePresenceConseiller}
+          />
         </div>
 
         <div className='flex items-center mb-8'>
-          <label htmlFor='emailInvitation' className='flex items-center'>
-            <span className='w-64 mr-4'>
-              {emailInvitationText(conseillerIsCreator)}
-            </span>
-            <Switch
-              id='emailInvitation'
-              name='emailInvitation'
-              disabled={Boolean(rdv)}
-              checked={sendEmailInvitation}
-              onChange={(e) => setSendEmailInvitation(e.target.checked)}
-            />
+          <label htmlFor='emailInvitation' className='w-64 mr-4'>
+            {emailInvitationText(conseillerIsCreator)}
           </label>
+          <Switch
+            id='emailInvitation'
+            disabled={Boolean(rdv)}
+            checked={sendEmailInvitation}
+            onChange={(e) => setSendEmailInvitation(e.target.checked)}
+          />
         </div>
 
         <label htmlFor='commentaire' className='text-base-regular mb-2'>

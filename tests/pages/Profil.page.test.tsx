@@ -107,14 +107,13 @@ describe('Page Profil conseiller', () => {
         )
       })
 
-      it("contient un champs pour sélectionner l'activation des notifications", () => {
+      it("contient un champ pour sélectionner l'activation des notifications", () => {
         // When
-        const toggleNotification =
-          screen.getByRole<HTMLInputElement>('checkbox')
+        const toggleNotifications = getToggleNotifications()
 
         // Then
-        expect(toggleNotification).toBeInTheDocument()
-        expect(toggleNotification.checked).toEqual(
+        expect(toggleNotifications).toBeInTheDocument()
+        expect(toggleNotifications.checked).toEqual(
           conseiller.notificationsSonores
         )
       })
@@ -186,12 +185,11 @@ describe('Page Profil conseiller', () => {
           )
         })
 
-        const toggleNotification =
-          screen.getByRole<HTMLInputElement>('checkbox')
+        const toggleNotifications = getToggleNotifications()
 
         // When
         await act(async () => {
-          await toggleNotification.click()
+          await toggleNotifications.click()
         })
       })
       it('met à jour côté API', async () => {
@@ -207,3 +205,9 @@ describe('Page Profil conseiller', () => {
     })
   })
 })
+
+function getToggleNotifications() {
+  return screen.getByRole<HTMLInputElement>('checkbox', {
+    name: /notifications sonores/,
+  })
+}

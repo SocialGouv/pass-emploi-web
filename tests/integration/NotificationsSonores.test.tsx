@@ -52,59 +52,110 @@ describe('Intégration notifications sonores', () => {
         return () => {}
       }),
     })
+    ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
+      jeunes
+    )
   })
 
-  describe("quand le conseiller n'avait pas activé ses notifications sonores…", () => {
-    beforeEach(async () => {
-      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
-        jeunes
-      )
-
+  describe('quand le conseiller active ses notification', () => {
+    it("il reçoit bien une notification lors d'un nouveau message.", async () => {
+      // Given
       await act(async () => {
-        await renderWithSession(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider
-              conseiller={unConseiller({ notificationsSonores: false })}
-            >
-              <Layout>
-                <Profil structureConseiller={'MILO'} pageTitle={'Profil'} />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
+        await renderWithNotificationsSonores(
+          jeunesService,
+          conseillerService,
+          messagesService,
+          false
         )
       })
-    })
-
-    describe("puis qu'il les active…", () => {
-      beforeEach(async () => {
-        const toggleNotification =
-          screen.getByRole<HTMLInputElement>('checkbox')
-        await act(async () => {
-          toggleNotification.click()
-        })
+      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await waitFor(() => {
+        expect(mockAudio).toHaveBeenCalledTimes(0)
       })
 
-      it("il reçoit bien une notification lors d'un nouveau message.", async () => {
-        // When
-        await act(async () => {
-          updateChatRef(
-            unJeuneChat({
-              ...jeunes[0],
-              lastMessageSentBy: 'jeune',
-              chatId: `chat-${jeunes[0].id}`,
-              lastMessageContent:
-                'Ceci est tellement nouveau, donne moi de la notif',
-            })
-          )
-        })
+      // When
+      await toggleNotifications()
+      await unNouveauMessageArrive(updateChatRef, jeunes)
 
-        // Then
-        await waitFor(() => {
-          expect(mockAudio).toHaveBeenCalled()
-        })
+      // Then
+      await waitFor(() => {
+        expect(mockAudio).toHaveBeenCalledTimes(1)
+      })
+    })
+  })
+
+  describe('quand le conseiller désactive ses notification', () => {
+    it("il ne reçoit pas de notification lors d'un nouveau message.", async () => {
+      // Given
+      await act(async () => {
+        await renderWithNotificationsSonores(
+          jeunesService,
+          conseillerService,
+          messagesService,
+          true
+        )
+      })
+      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await waitFor(() => {
+        expect(mockAudio).toHaveBeenCalledTimes(1)
+      })
+
+      // When
+      await toggleNotifications()
+      await unNouveauMessageArrive(updateChatRef, jeunes)
+
+      // Then
+      await waitFor(() => {
+        expect(mockAudio).toHaveBeenCalledTimes(1)
       })
     })
   })
 })
+
+async function renderWithNotificationsSonores(
+  jeunesService: JeunesService,
+  conseillerService: ConseillerService,
+  messagesService: MessagesService,
+  notificationsSonores: boolean
+) {
+  await renderWithSession(
+    <DIProvider
+      dependances={{ jeunesService, conseillerService, messagesService }}
+    >
+      <ConseillerProvider
+        conseiller={unConseiller({
+          notificationsSonores: notificationsSonores,
+        })}
+      >
+        <Layout>
+          <Profil structureConseiller={'MILO'} pageTitle={'Profil'} />
+        </Layout>
+      </ConseillerProvider>
+    </DIProvider>
+  )
+}
+
+async function toggleNotifications() {
+  const toggleNotifications = screen.getByRole<HTMLInputElement>('checkbox', {
+    name: /notifications sonores/,
+  })
+  await act(async () => {
+    toggleNotifications.click()
+  })
+}
+
+async function unNouveauMessageArrive(
+  updateChatRef: (jeuneChat: JeuneChat) => void,
+  jeunes: Jeune[]
+) {
+  await act(async () => {
+    updateChatRef(
+      unJeuneChat({
+        ...jeunes[0],
+        lastMessageSentBy: 'jeune',
+        chatId: `chat-${jeunes[0].id}`,
+        lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
+      })
+    )
+  })
+}

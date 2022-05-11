@@ -4,7 +4,6 @@ import styles from 'styles/components/Switch.module.css'
 
 interface SwitchProps {
   id: string
-  name: string
   checked: boolean
   checkedLabel?: string
   uncheckedLabel?: string
@@ -14,7 +13,6 @@ interface SwitchProps {
 
 export const Switch = ({
   id,
-  name,
   checked,
   disabled,
   checkedLabel = 'Oui',
@@ -25,7 +23,6 @@ export const Switch = ({
     <input
       type='checkbox'
       id={id}
-      name={name}
       checked={checked}
       disabled={disabled}
       className={styles.checkbox}

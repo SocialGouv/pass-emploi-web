@@ -27,78 +27,77 @@ function Profil({ structureConseiller }: ProfilProps) {
   const [conseiller, setConseiller] = useConseiller()
   const { data: session } = useSession<true>({ required: true })
 
-  function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
-    if (conseiller && session) {
-      const conseillerMisAJour = {
-        ...conseiller,
-        notificationsSonores: Boolean(e.target.checked),
-      }
-      setConseiller(conseillerMisAJour)
-      conseillerService.modifierNotificationsSonores(
-        conseiller.id,
-        conseillerMisAJour.notificationsSonores,
-        session.accessToken
-      )
+  async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
+    const conseillerMisAJour = {
+      ...conseiller!,
+      notificationsSonores: e.target.checked,
     }
+    await conseillerService.modifierNotificationsSonores(
+      conseiller!.id,
+      conseillerMisAJour.notificationsSonores,
+      session!.accessToken
+    )
+    setConseiller(conseillerMisAJour)
   }
 
   useMatomo('Profil')
 
-  return conseiller ? (
+  return (
     <>
       <div className={styles.header}>
         <h1 className='h2-semi text-primary'>Profil</h1>
       </div>
-      <div className={styles.content}>
-        <div className='mb-8'>
-          <h2 className='text-l-medium mb-4'>Informations</h2>
-          <div className='pl-4'>
-            <h3 className='text-m-medium'>
-              {conseiller.firstName} {conseiller.lastName}
-            </h3>
-            <dl className='mt-3 text-sm-semi'>
-              {conseiller.email && (
-                <>
-                  <dt aria-label='Votre e-mail' className='mt-2 inline'>
-                    Votre e-mail :
-                  </dt>
-                  <dd className='ml-2 inline'>{conseiller.email}</dd>
-                </>
-              )}
+      {conseiller && (
+        <div className={styles.content}>
+          <section className='mb-8'>
+            <h2 className='text-l-medium mb-4'>Informations</h2>
+            <div className='pl-4'>
+              <h3 className='text-m-medium'>
+                {conseiller.firstName} {conseiller.lastName}
+              </h3>
+              <dl className='mt-3 text-sm-semi'>
+                {conseiller.email && (
+                  <>
+                    <dt aria-label='Votre e-mail' className='mt-2 inline'>
+                      Votre e-mail :
+                    </dt>
+                    <dd className='ml-2 inline'>{conseiller.email}</dd>
+                  </>
+                )}
 
-              {conseiller.agence && (
-                <>
-                  <dt
-                    aria-label={`Votre ${labelAgence}`}
-                    className='mt-2 inline before:block before:content-[""]'
-                  >
-                    Votre {labelAgence} :
-                  </dt>
-                  <dd className='ml-2 inline'>{conseiller.agence}</dd>
-                </>
-              )}
-            </dl>
-          </div>
+                {conseiller.agence && (
+                  <>
+                    <dt
+                      aria-label={`Votre ${labelAgence}`}
+                      className='mt-2 inline before:block before:content-[""]'
+                    >
+                      Votre {labelAgence} :
+                    </dt>
+                    <dd className='ml-2 inline'>{conseiller.agence}</dd>
+                  </>
+                )}
+              </dl>
+            </div>
+          </section>
+          <section>
+            <h2 className='text-l-medium mb-4'>Notifications</h2>
+            <div className='flex items-center'>
+              <label htmlFor='notificationsSonores' className='mr-4'>
+                Recevoir des notifications sonores pour la réception de nouveaux
+                messages
+              </label>
+              <Switch
+                id='notificationsSonores'
+                checkedLabel='Activé'
+                uncheckedLabel='Desactivé'
+                checked={conseiller.notificationsSonores}
+                onChange={toggleNotificationsSonores}
+              />
+            </div>
+          </section>
         </div>
-        <h2 className='text-l-medium mb-4'>Notifications</h2>
-        <label htmlFor='notificationSonore' className='flex items-center'>
-          <span className='mr-4'>
-            Recevoir des notifications sonores pour la réception de nouveaux
-            messages
-          </span>
-          <Switch
-            id='notificationSonore'
-            name='notificationSonore'
-            checkedLabel='Activé'
-            uncheckedLabel='Desactivé'
-            checked={conseiller.notificationsSonores}
-            onChange={toggleNotificationsSonores}
-          />
-        </label>
-      </div>
+      )}
     </>
-  ) : (
-    <></>
   )
 }
 

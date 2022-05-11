@@ -82,7 +82,7 @@ describe('<Layout />', () => {
             dependances={{ jeunesService, conseillerService, messagesService }}
           >
             <ConseillerProvider
-              conseiller={unConseiller({ notificationsSonores: false })}
+              conseiller={unConseiller({ notificationsSonores: true })}
             >
               <Layout>
                 <FakeComponent pageTitle='un titre' />
@@ -120,29 +120,6 @@ describe('<Layout />', () => {
       })
     })
 
-    describe("quand il n'a pas activé ses notifications sonores", () => {
-      it("ne notifie pas quand c'est un nouveau message d'un jeune", async () => {
-        // Given
-        const unJeuneChatNonLu = unJeuneChat({
-          ...jeunes[0],
-          lastMessageSentBy: 'jeune',
-          chatId: `chat-${jeunes[0].id}`,
-          lastMessageContent:
-            'Ceci est tellement nouveau, donne moi de la notif',
-        })
-
-        // When
-        await act(async () => {
-          updateChatRef(unJeuneChatNonLu)
-        })
-
-        // Then
-        await waitFor(() => {
-          expect(mockAudio).not.toHaveBeenCalled()
-        })
-      })
-    })
-
     it('paramètre la balise head en fonction des messages non lus', async () => {
       // Then
       await waitFor(() => {
@@ -165,31 +142,8 @@ describe('<Layout />', () => {
         )
       })
     })
-  })
 
-  describe('quand le conseiller a activé ses notifications', () => {
-    beforeEach(async () => {
-      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
-        jeunes
-      )
-      await act(async () => {
-        await renderWithSession(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider
-              conseiller={unConseiller({ notificationsSonores: true })}
-            >
-              <Layout>
-                <FakeComponent pageTitle='un titre' />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
-        )
-      })
-    })
-
-    it("notifie quand c'est un nouveau message d'un jeune", async () => {
+    it("notifie quand un nouveau message d'un jeune arrive", async () => {
       // Given
       const unJeuneChatNonLu = unJeuneChat({
         ...jeunes[0],
@@ -226,7 +180,50 @@ describe('<Layout />', () => {
 
       // Then
       await waitFor(() => {
-        expect(mockAudio).not.toHaveBeenCalled()
+        expect(mockAudio).toHaveBeenCalledTimes(0)
+      })
+    })
+  })
+
+  describe('quand le conseiller a désactivé ses notifications', () => {
+    beforeEach(async () => {
+      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
+        jeunes
+      )
+      await act(async () => {
+        await renderWithSession(
+          <DIProvider
+            dependances={{ jeunesService, conseillerService, messagesService }}
+          >
+            <ConseillerProvider
+              conseiller={unConseiller({ notificationsSonores: false })}
+            >
+              <Layout>
+                <FakeComponent pageTitle='un titre' />
+              </Layout>
+            </ConseillerProvider>
+          </DIProvider>
+        )
+      })
+    })
+
+    it("ne notifie pas quand un nouveau message d'un jeune arrive", async () => {
+      // Given
+      const unJeuneChatNonLu = unJeuneChat({
+        ...jeunes[0],
+        lastMessageSentBy: 'jeune',
+        chatId: `chat-${jeunes[0].id}`,
+        lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
+      })
+
+      // When
+      await act(async () => {
+        updateChatRef(unJeuneChatNonLu)
+      })
+
+      // Then
+      await waitFor(() => {
+        expect(mockAudio).toHaveBeenCalledTimes(0)
       })
     })
   })
