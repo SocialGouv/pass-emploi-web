@@ -75,4 +75,22 @@ describe('ConseillerApiService', () => {
       )
     })
   })
+
+  describe('.modifierNotificationsSonores', () => {
+    it("modifie le conseiller avec l'activation des notifications sonores", async () => {
+      // When
+      await conseillerService.modifierNotificationsSonores(
+        'id-conseiller',
+        true,
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller',
+        { notificationsSonores: true },
+        'accessToken'
+      )
+    })
+  })
 })

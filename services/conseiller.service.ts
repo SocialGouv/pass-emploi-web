@@ -16,6 +16,12 @@ export interface ConseillerService {
     accessToken: string
   ): Promise<void>
 
+  modifierNotificationsSonores(
+    idConseiller: string,
+    hasNotificationsSonores: boolean,
+    accessToken: string
+  ): Promise<void>
+
   getDossierJeune(
     idDossier: string,
     accessToken: string
@@ -63,6 +69,18 @@ export class ConseillerApiService implements ConseillerService {
     return this.apiClient.put(
       `/conseillers/${idConseiller}`,
       { agence },
+      accessToken
+    )
+  }
+
+  modifierNotificationsSonores(
+    idConseiller: string,
+    hasNotificationsSonores: boolean,
+    accessToken: string
+  ): Promise<void> {
+    return this.apiClient.put(
+      `/conseillers/${idConseiller}`,
+      { notificationsSonores: hasNotificationsSonores },
       accessToken
     )
   }

@@ -1,5 +1,6 @@
-import { Jeune } from 'interfaces/jeune'
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
+
+import { Jeune } from 'interfaces/jeune'
 
 type MaybeJeune = Jeune | undefined
 type CurrentJeuneState = [MaybeJeune, (currentJeune: MaybeJeune) => void]
