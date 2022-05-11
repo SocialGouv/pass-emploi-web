@@ -82,7 +82,16 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
+
   // fonctions
+  function aDesJeunesDUnAutrePortefeuille(): boolean {
+    if (rdv) {
+      return rdv.jeunes.some(
+        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
+      )
+    }
+    return false
+  }
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -262,9 +271,15 @@ export function EditionRdvForm({
 
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <div className='text-sm-medium mb-8'>
+      <div className='text-sm-medium mb-6'>
         Tous les champs avec * sont obligatoires
       </div>
+
+      {aDesJeunesDUnAutrePortefeuille() && (
+        <div className='mb-6'>
+          <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et ne sont pas dans votre portefeuille' />
+        </div>
+      )}
 
       <fieldset className='border-none flex flex-col mb-8'>
         <legend className='flex items-center text-m-medium mb-4'>

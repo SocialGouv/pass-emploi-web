@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 
+import InfoIcon from '../../assets/icons/information.svg'
 import RemoveIcon from '../../assets/icons/remove.svg'
 
 import SelectAutocomplete from 'components/ui/SelectAutocomplete'
@@ -42,6 +43,10 @@ export default function JeunesMultiselectAutocomplete({
     return [
       { id: 'select-all-jeunes', value: SELECT_ALL_JEUNES_OPTION },
     ].concat(jeunesNotSelected)
+  }
+
+  function estJeuneDUnAutrePortefeuille(id: string): boolean {
+    return !optionsJeunes.some((option) => option.id === id)
   }
 
   function selectAllJeunes(): OptionJeune[] {
@@ -120,7 +125,24 @@ export default function JeunesMultiselectAutocomplete({
               className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
               aria-atomic={true}
             >
-              {value}
+              {estJeuneDUnAutrePortefeuille(id) && (
+                <div className='flex items-center text-base-medium text-accent_3'>
+                  <div
+                    title="Ce jeune n'est pas dans votre portefeuille"
+                    aria-label="Ce jeune n'est pas dans votre portefeuille"
+                    className='mr-2'
+                  >
+                    <InfoIcon
+                      focusable={false}
+                      aria-hidden={true}
+                      className='fill-accent_3'
+                    />
+                  </div>
+                  {value}
+                </div>
+              )}
+              {!estJeuneDUnAutrePortefeuille(id) && value}
+
               <button
                 type='reset'
                 title='Enlever'
