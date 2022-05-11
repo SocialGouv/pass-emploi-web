@@ -5,13 +5,7 @@ export async function fetchJson(
   reqInit?: RequestInit
 ): Promise<any> {
   const response = await callFetch(reqInfo, reqInit)
-
-  if (
-    !response.headers.has('content-length') ||
-    parseInt(response.headers.get('content-length')!, 10) > 0
-  ) {
-    return response.json()
-  }
+  return response.json()
 }
 
 export async function fetchNoContent(
