@@ -89,7 +89,7 @@ function Profil({ structureConseiller }: ProfilProps) {
               <Switch
                 id='notificationSonore'
                 checkedLabel='Activé'
-                uncheckedLabel='Desactivé'
+                uncheckedLabel='Désactivé'
                 checked={conseiller.notificationsSonores}
                 onChange={toggleNotificationsSonores}
               />
