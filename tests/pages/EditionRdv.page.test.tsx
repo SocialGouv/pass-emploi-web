@@ -587,6 +587,11 @@ describe('EditionRdv', () => {
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText(
+              "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+            )
+          ).toBeInTheDocument()
         })
 
         it("est désactivé quand aucun type de rendez-vous n'est sélectionné", () => {
