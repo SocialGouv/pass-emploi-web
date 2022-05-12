@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
 import IconComponent from '../ui/IconComponent'
@@ -77,6 +77,7 @@ export default function Sidebar({}: SidebarProps) {
             }
             target='_blank'
             rel='noreferrer noopener'
+            className='hover:bg-primary_darken'
           >
             <IconComponent
               name='aide'
@@ -87,6 +88,12 @@ export default function Sidebar({}: SidebarProps) {
             <span className='text-md text-blanc text-center layout_m:sr-only'>
               Aide
             </span>
+            <IconComponent
+              name='launch'
+              aria-hidden={true}
+              focusable='false'
+              className='mx-2 fill-blanc layout_m:hidden'
+            />
           </a>
         </div>
         {session && (
@@ -95,6 +102,7 @@ export default function Sidebar({}: SidebarProps) {
             href='/profil'
             label={session.user.name}
             iconName='profil'
+            className='break-all'
           />
         )}
       </nav>
