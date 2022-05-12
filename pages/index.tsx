@@ -83,7 +83,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     withDependance<ConseillerService>('conseillerService')
   const conseiller = await conseillerService.getConseiller(user.id, accessToken)
   if (!conseiller) {
-    throw new Error(`Conseiller ${user.id} innexistant`)
+    throw new Error(`Conseiller ${user.id} inexistant`)
   }
 
   const redirectUrl =

@@ -77,6 +77,7 @@ export default function Sidebar({}: SidebarProps) {
             }
             target='_blank'
             rel='noreferrer noopener'
+            className='hover:bg-primary_darken'
           >
             <IconComponent
               name='aide'

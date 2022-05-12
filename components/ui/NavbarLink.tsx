@@ -22,19 +22,19 @@ function NavbarLink({
       <a
         onClick={onClick}
         className={`flex mb-6 p-2 layout_base:p-0 ${
-          isActive ? 'bg-primary_lighten' : ''
+          isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
         }`}
       >
         {isActive && <span className='text-l-medium text-primary'>·</span>}
         <IconComponent
           focusable='false'
           aria-hidden='true'
-          className={`mr-2 fill-blanc ${isActive ? 'fill-primary' : 'inherit'}`}
+          className={`mr-2 ${isActive ? 'fill-primary' : 'fill-blanc'}`}
           name={iconName}
         />
         <span
-          className={` text-md text-blanc layout_m:sr-only ${
-            isActive ? 'text-primary' : 'inherit'
+          className={` text-md layout_m:sr-only ${
+            isActive ? 'text-primary' : 'text-blanc'
           }`}
         >
           {label}
