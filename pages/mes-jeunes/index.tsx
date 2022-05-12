@@ -16,10 +16,10 @@ import {
   JeuneAvecInfosComplementaires,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -27,11 +27,10 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface MesJeunesProps {
+interface MesJeunesProps extends PageProps {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
-  pageTitle: string
   messageEnvoiGroupeSuccess?: boolean
   deletionSuccess?: boolean
   ajoutAgenceSuccess?: boolean
@@ -166,87 +165,81 @@ function MesJeunes({
 
   return (
     <>
-      <div className={styles.header}>
-        <div className={`flex flex-wrap justify-between mb-6`}>
-          <h1 className='h2-semi text-primary'>Mes Jeunes</h1>
-          {(structureConseiller === UserStructure.MILO ||
-            structureConseiller === UserStructure.POLE_EMPLOI) && (
-            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
-          )}
-        </div>
-
+      <div className={`flex flex-wrap justify-between items-end mb-6`}>
         <RechercheJeune onSearchFilterBy={onSearch} />
-      </div>
-
-      <div className={`w-full flex flex-col ${styles.content}`}>
-        {showDeletionSuccess && structureConseiller !== UserStructure.MILO && (
-          <SuccessMessage
-            label='Le compte du jeune a bien été supprimé.'
-            onAcknowledge={closeDeletionSuccess}
-          />
-        )}
-
-        {showDeletionSuccess && structureConseiller === UserStructure.MILO && (
-          <SuccessMessage
-            label='Le compte du jeune a bien été supprimé.'
-            onAcknowledge={closeDeletionSuccess}
-          >
-            <>
-              Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
-              transmettre en amont le numéro de dossier technique à l’adresse{' '}
-              <a
-                className='underline hover:text-primary_darken'
-                href='mailto:support@pass-emploi.beta.gouv.fr'
-              >
-                support@pass-emploi.beta.gouv.fr
-              </a>
-              .
-            </>
-          </SuccessMessage>
-        )}
-
-        {showMessageGroupeEnvoiSuccess && (
-          <SuccessMessage
-            label={
-              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-            }
-            onAcknowledge={closeMessageGroupeEnvoiSuccess}
-          />
-        )}
-
-        {showAjoutAgenceSuccess && (
-          <SuccessMessage
-            label={`Votre ${
-              structureConseiller === UserStructure.MILO
-                ? 'Mission locale'
-                : 'agence'
-            } a été ajoutée à votre profil`}
-            onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
-          />
-        )}
-
-        {conseillerJeunes.length === 0 && (
-          <div className='mx-auto my-0 flex flex-col items-center'>
-            <EmptyStateImage
-              aria-hidden='true'
-              focusable='false'
-              className='mb-16'
-            />
-            <p className='text-base-medium mb-12'>
-              Vous n&apos;avez pas encore intégré de jeunes.
-            </p>
-
-            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
-          </div>
-        )}
-
-        {conseillerJeunes.length > 0 && (
-          <TableauJeunes
-            jeunes={listeJeunesFiltres}
-            withActions={structureConseiller !== UserStructure.POLE_EMPLOI}
-          />
+        {(structureConseiller === UserStructure.MILO ||
+          structureConseiller === UserStructure.POLE_EMPLOI) && (
+          <AjouterJeuneButton handleAddJeune={handleAddJeune} />
         )}
       </div>
+
+      {showDeletionSuccess && structureConseiller !== UserStructure.MILO && (
+        <SuccessMessage
+          label='Le compte du jeune a bien été supprimé.'
+          onAcknowledge={closeDeletionSuccess}
+        />
+      )}
+
+      {showDeletionSuccess && structureConseiller === UserStructure.MILO && (
+        <SuccessMessage
+          label='Le compte du jeune a bien été supprimé.'
+          onAcknowledge={closeDeletionSuccess}
+        >
+          <>
+            Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
+            transmettre en amont le numéro de dossier technique à l’adresse{' '}
+            <a
+              className='underline hover:text-primary_darken'
+              href='mailto:support@pass-emploi.beta.gouv.fr'
+            >
+              support@pass-emploi.beta.gouv.fr
+            </a>
+            .
+          </>
+        </SuccessMessage>
+      )}
+
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
+
+      {showAjoutAgenceSuccess && (
+        <SuccessMessage
+          label={`Votre ${
+            structureConseiller === UserStructure.MILO
+              ? 'Mission locale'
+              : 'agence'
+          } a été ajoutée à votre profil`}
+          onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
+        />
+      )}
+
+      {conseillerJeunes.length === 0 && (
+        <div className='mx-auto my-0 flex flex-col items-center'>
+          <EmptyStateImage
+            aria-hidden='true'
+            focusable='false'
+            className='mb-16'
+          />
+          <p className='text-base-medium mb-12'>
+            Vous n&apos;avez pas encore intégré de jeunes.
+          </p>
+
+          <AjouterJeuneButton handleAddJeune={handleAddJeune} />
+        </div>
+      )}
+
+      {conseillerJeunes.length > 0 && (
+        <TableauJeunes
+          jeunes={listeJeunesFiltres}
+          withActions={structureConseiller !== UserStructure.POLE_EMPLOI}
+        />
+      )}
     </>
   )
 }

@@ -1,10 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-
-import BackIcon from '../../../../../assets/icons/arrow_back.svg'
 
 import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
@@ -14,8 +11,8 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { Action, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -23,7 +20,7 @@ import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-type PageActionProps = {
+interface PageActionProps extends PageProps {
   action: Action
   jeune: Jeune
   messageEnvoiGroupeSuccess?: boolean
@@ -94,90 +91,74 @@ function PageAction({
 
   return (
     <>
-      <div className={`flex justify-between ${styles.header}`}>
-        <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-          <a className='flex items-center'>
-            <BackIcon focusable='false' aria-hidden={true} />
-            <span className='ml-6 h4-semi text-primary_darken'>
-              Actions de {jeune.firstName} {jeune.lastName}
-            </span>
-          </a>
-        </Link>
+      {action.creatorType === 'conseiller' && (
+        <Button
+          label="Supprimer l'action"
+          onClick={() => deleteAction()}
+          style={ButtonStyle.WARNING}
+          disabled={deleteDisabled}
+          className='mb-4'
+        >
+          Supprimer l&apos;action
+        </Button>
+      )}
 
-        {action.creatorType === 'conseiller' && (
-          <Button
-            label="Supprimer l'action"
-            onClick={() => deleteAction()}
-            style={ButtonStyle.WARNING}
-            className='px-[36px] py-[16px]'
-            disabled={deleteDisabled}
-          >
-            Supprimer l&apos;action
-          </Button>
-        )}
-      </div>
+      {showEchecMessage && (
+        <EchecMessage
+          label={
+            "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
+          }
+          onAcknowledge={() => setShowEchecMessage(false)}
+        />
+      )}
 
-      <div className={styles.content}>
-        {showEchecMessage && (
-          <EchecMessage
-            label={
-              "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
-            }
-            onAcknowledge={() => setShowEchecMessage(false)}
-          />
-        )}
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
 
-        {showMessageGroupeEnvoiSuccess && (
-          <SuccessMessage
-            label={
-              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-            }
-            onAcknowledge={closeMessageGroupeEnvoiSuccess}
-          />
+      <dl>
+        {action.comment && (
+          <>
+            <dt className='text-sm-semi'>Commentaire</dt>
+            <dd className='mt-4 text-primary_darken text-base-regular'>
+              {action.comment}
+            </dd>
+          </>
         )}
 
-        <dl>
-          <dt className='text-sm-semi'>Intitulé de l&apos;action</dt>
-          <dd className='mt-4 text-primary_darken text-md-semi'>
-            {action.content}
-          </dd>
+        <dt className={`text-sm-semi ${action.comment ? 'mt-8' : ''}`}>
+          Informations
+        </dt>
+        <dd>
+          <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+            <InfoAction label='Statut' isForm={true}>
+              {Object.values(StatutAction).map((status: StatutAction) => (
+                <RadioButtonStatus
+                  key={status.toLowerCase()}
+                  status={status}
+                  isSelected={statut === status}
+                  onChange={updateAction}
+                />
+              ))}
+            </InfoAction>
 
-          {action.comment && (
-            <>
-              <dt className='mt-8 text-sm-semi'>Commentaire</dt>
-              <dd className='mt-4 text-primary_darken text-base-regular'>
-                {action.comment}
-              </dd>
-            </>
-          )}
+            <InfoAction label="Date d'actualisation">
+              {formatDayDate(new Date(action.lastUpdate))}
+            </InfoAction>
 
-          <dt className='mt-8 text-sm-semi'>Informations</dt>
-          <dd>
-            <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-              <InfoAction label='Statut' isForm={true}>
-                {Object.values(StatutAction).map((status: StatutAction) => (
-                  <RadioButtonStatus
-                    key={status.toLowerCase()}
-                    status={status}
-                    isSelected={statut === status}
-                    onChange={updateAction}
-                  />
-                ))}
-              </InfoAction>
+            <InfoAction label='Date de création'>
+              {formatDayDate(new Date(action.creationDate))}
+            </InfoAction>
 
-              <InfoAction label="Date d'actualisation">
-                {formatDayDate(new Date(action.lastUpdate))}
-              </InfoAction>
-
-              <InfoAction label='Date de création'>
-                {formatDayDate(new Date(action.creationDate))}
-              </InfoAction>
-
-              <InfoAction label='Créateur'>{action.creator}</InfoAction>
-            </dl>
-          </dd>
-        </dl>
-      </div>
+            <InfoAction label='Créateur'>{action.creator}</InfoAction>
+          </dl>
+        </dd>
+      </dl>
     </>
   )
 }
@@ -209,6 +190,8 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     action,
     jeune,
     pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`,
+    pageHeader: action.content,
+    returnTo: `/mes-jeunes/${jeune.id}/actions`,
   }
 
   if (context.query?.envoiMessage) {

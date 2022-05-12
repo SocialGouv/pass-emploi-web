@@ -22,14 +22,14 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
   }
 
   return (
-    <form role='search' onSubmit={onSubmit}>
+    <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
       <label
         htmlFor='rechercher-jeunes'
         className='text-base-medium text-content_color'
       >
         Rechercher un jeune par son nom de famille
       </label>
-      <div className='flex mt-3.5 w-9/12'>
+      <div className='flex mt-3.5'>
         <ResettableTextInput
           id={'rechercher-jeunes'}
           value={query}

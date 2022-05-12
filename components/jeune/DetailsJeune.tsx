@@ -19,10 +19,6 @@ export const DetailsJeune = ({
   return (
     <>
       <div className='flex'>
-        <h1 className='h2-semi mb-3'>
-          {jeune.firstName} {jeune.lastName}
-        </h1>
-
         {!jeune.isActivated && withButtons && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}

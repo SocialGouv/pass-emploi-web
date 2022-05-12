@@ -1,10 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import Router from 'next/router'
 import React, { ReactNode, useEffect, useState } from 'react'
-
-import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { CreationEtape } from 'components/jeune/CreationEtape'
@@ -13,16 +10,15 @@ import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDoss
 import { SuccessAddJeuneMilo } from 'components/jeune/SuccessAddJeuneMilo'
 import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
-import styles from 'styles/components/Layouts.module.css'
+import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container } from 'utils/injectionDependances'
 
-type MiloCreationJeuneProps = {
+interface MiloCreationJeuneProps extends PageProps {
   dossierId: string
   dossier: DossierMilo | null
   erreurMessageHttpMilo: string
-  pageTitle: string
 }
 
 function MiloCreationJeune({
@@ -59,17 +55,8 @@ function MiloCreationJeune({
 
   return (
     <>
-      <div className={`flex justify-between ${styles.header}`}>
-        <Link href={'/mes-jeunes'}>
-          <a className='flex items-center'>
-            <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <span className='ml-6 h4-semi text-primary'>
-              Liste de mes jeunes
-            </span>
-          </a>
-        </Link>
-
-        {createdSucessId && (
+      {createdSucessId && (
+        <div className='mb-4'>
           <AjouterJeuneButton
             handleAddJeune={() => {
               Router.push('/mes-jeunes/milo/creation-jeune')
@@ -78,17 +65,15 @@ function MiloCreationJeune({
               setEtape(1)
             }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className={`${styles.content} pl-32`}>
-        <CreationEtape etape={etape} />
+      <CreationEtape etape={etape} />
 
-        <h1 className='text-m-medium text-primary mt-6 mb-4'>
-          Création d&apos;un compte jeune
-        </h1>
-        {switchSteps()}
-      </div>
+      <h1 className='text-m-medium text-primary mt-6 mb-4'>
+        Création d&apos;un compte jeune
+      </h1>
+      {switchSteps()}
     </>
   )
 
@@ -185,6 +170,7 @@ export const getServerSideProps: GetServerSideProps<
       dossier,
       erreurMessageHttpMilo,
       pageTitle: `Mes jeunes - Création d'un compte jeune`,
+      pageHeader: `Création d'un compte jeune`,
     },
   }
 }

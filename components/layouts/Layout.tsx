@@ -2,13 +2,17 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
-import { ReactElement, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
+
+import BackIcon from '../../assets/icons/arrow_back.svg'
 
 import AppHead from 'components/AppHead'
 import { Footer } from 'components/Footer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Sidebar from 'components/layouts/Sidebar'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -18,15 +22,15 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
-type LayoutProps = {
-  children: ReactElement
+interface LayoutProps {
+  children: ReactElement<PageProps>
 }
 
 const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
 export default function Layout({ children }: LayoutProps) {
   const {
-    props: { withoutChat, pageTitle },
+    props: { pageTitle, pageHeader, returnTo, withoutChat },
   } = children
 
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -140,7 +144,36 @@ export default function Layout({ children }: LayoutProps) {
       >
         <Sidebar />
         <div className={styles.page}>
-          <main role='main'>{children}</main>
+          <header className={styles.header}>
+            {returnTo && (
+              <div className='flex items-center'>
+                <Link href={returnTo}>
+                  <a>
+                    <BackIcon aria-hidden={true} focusable={false} />
+                    <span className='sr-only'>Page précédente</span>
+                  </a>
+                </Link>
+                <h1 className='ml-4 h2-semi text-primary'>
+                  {pageHeader || pageTitle}
+                </h1>
+              </div>
+            )}
+            {!returnTo && (
+              <h1 className='h2-semi text-primary'>
+                {pageHeader || pageTitle}
+              </h1>
+            )}
+          </header>
+
+          <main
+            role='main'
+            className={`${styles.content} ${
+              withoutChat ? styles.content_without_chat : ''
+            }`}
+          >
+            {children}
+          </main>
+
           <Footer />
         </div>
         {!withoutChat && <ChatRoom jeunesChats={chats} />}

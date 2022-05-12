@@ -1,41 +1,36 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-
-import BackIcon from '../../assets/icons/arrow_back.svg'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
+import { PageProps } from 'interfaces/pageProps'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface EditionRdvProps {
+interface EditionRdvProps extends PageProps {
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
-  redirectTo: string
-  withoutChat: true
   idJeune?: string
   rdv?: Rdv
-  pageTitle: string
+  returnTo: string
 }
 
 function EditionRdv({
   jeunes,
   typesRendezVous,
   idJeune,
-  redirectTo,
+  returnTo,
   rdv,
 }: EditionRdvProps) {
   const router = useRouter()
@@ -46,7 +41,7 @@ function EditionRdv({
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
     useState<RdvFormData | undefined>(undefined)
-  const [hasChanges, setHasChanges] = useState<boolean>(false)
+  // FIXME const [hasChanges, setHasChanges] = useState<boolean>(false)
 
   let initialTracking: string
   if (rdv) initialTracking = `Modification rdv`
@@ -88,7 +83,7 @@ function EditionRdv({
       )
     }
 
-    const [redirectPath] = redirectTo.split('?')
+    const [redirectPath] = returnTo.split('?')
     const queryParam = rdv ? 'modificationRdv' : 'creationRdv'
     await router.push(`${redirectPath}?${queryParam}=succes`)
   }
@@ -97,43 +92,23 @@ function EditionRdv({
 
   return (
     <>
-      <div className={`flex items-center ${styles.header}`}>
-        {!hasChanges && (
-          <Link href={redirectTo}>
-            <a className='items-center mr-4'>
-              <BackIcon role='img' focusable='false' aria-hidden={true} />
-              <span className='sr-only'>Page précédente</span>
-            </a>
-          </Link>
-        )}
-        {hasChanges && (
-          <button className='items-center mr-4' onClick={openLeavePageModal}>
-            <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <span className='sr-only'>
-              Quitter la {rdv ? 'modification' : 'création'} du rendez-vous
-            </span>
-          </button>
-        )}
+      {/*FIXME back bouton triggers modale when hasChanges*/}
+      <EditionRdvForm
+        jeunes={jeunes}
+        typesRendezVous={typesRendezVous}
+        idJeune={idJeune}
+        rdv={rdv}
+        redirectTo={returnTo}
+        conseillerIsCreator={!rdv || session?.user.id === rdv.createur?.id}
+        conseillerEmail={session?.user.email ?? ''}
+        onChanges={(_) => {
+          /*setHasChanges*/
+        }}
+        soumettreRendezVous={soumettreRendezVous}
+        leaveWithChanges={openLeavePageModal}
+        showConfirmationModal={showConfirmationModale}
+      />
 
-        <h1 className='text-l-medium text-primary'>{`${
-          rdv ? 'Modification' : 'Nouveau'
-        } rendez-vous`}</h1>
-      </div>
-      <div className={`${styles.content} ${styles.content_without_chat}`}>
-        <EditionRdvForm
-          jeunes={jeunes}
-          typesRendezVous={typesRendezVous}
-          idJeune={idJeune}
-          rdv={rdv}
-          redirectTo={redirectTo}
-          conseillerIsCreator={!rdv || session?.user.id === rdv.createur?.id}
-          conseillerEmail={session?.user.email ?? ''}
-          onChanges={setHasChanges}
-          soumettreRendezVous={soumettreRendezVous}
-          leaveWithChanges={openLeavePageModal}
-          showConfirmationModal={showConfirmationModale}
-        />
-      </div>
       {showLeavePageModal && (
         <ExitPageConfirmationModal
           message={`Vous allez quitter la ${
@@ -141,7 +116,7 @@ function EditionRdv({
           } rendez-vous`}
           source={rdv ? 'edition' : 'creation'}
           onCancel={closeLeavePageModal}
-          destination={redirectTo}
+          destination={returnTo}
         />
       )}
       {payloadForConfirmationModal && (
@@ -182,7 +157,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     jeunes: [...jeunes].sort(compareJeunesByLastName),
     typesRendezVous: typesRendezVous,
     withoutChat: true,
-    redirectTo,
+    returnTo: redirectTo,
     pageTitle: 'Nouveau rendez-vous',
   }
 
@@ -193,6 +168,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     props.rdv = rdv
     props.idJeune = rdv.jeunes[0].id
     props.pageTitle = 'Modification rendez-vous'
+    props.pageHeader = 'Modification rendez-vous'
   } else if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
     const match = regex.exec(referer)

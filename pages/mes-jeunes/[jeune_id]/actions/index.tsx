@@ -1,11 +1,9 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import AddIcon from '../../../../assets/icons/add.svg'
-import BackIcon from '../../../../assets/icons/arrow_back.svg'
 
 import FiltresActionsTabList, {
   LABELS_FILTRES,
@@ -23,17 +21,16 @@ import {
 } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface ActionsProps {
+interface ActionsProps extends PageProps {
   jeune: Jeune
   actions: Action[]
-  pageTitle: string
   creationSuccess?: boolean
   suppressionSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
@@ -139,81 +136,56 @@ function Actions({
 
   return (
     <>
-      <div className={`flex justify-between flex-wrap w-full ${styles.header}`}>
-        <Link href={`/mes-jeunes/${jeune.id}`}>
-          <a className='p-1 mr-[24px]'>
-            <BackIcon
-              role='img'
-              focusable='false'
-              aria-label='Retour sur la fiche du jeune'
-            />
-          </a>
-        </Link>
-
-        <div className='flex-auto'>
-          <h1 className='h2 text-primary mb-5'>
-            Les actions de {`${jeune.firstName} ${jeune.lastName}`}
-          </h1>
-          <p className='text-md'>
-            Retrouvez le détail des actions de votre bénéficiaire
-          </p>
-        </div>
-
-        <ButtonLink href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}>
-          <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
-          Créer une nouvelle action
-        </ButtonLink>
-      </div>
-
-      <div className={styles.content}>
-        {showCreationSuccess && (
-          <SuccessMessage
-            label={"L'action a bien été créée"}
-            onAcknowledge={closeCreationSuccessMessage}
-          />
-        )}
-
-        {showSuppressionSuccess && (
-          <SuccessMessage
-            label={"L'action a bien été supprimée"}
-            onAcknowledge={closeSuppressionSuccessMessage}
-          />
-        )}
-
-        {showMessageGroupeEnvoiSuccess && (
-          <SuccessMessage
-            label={
-              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-            }
-            onAcknowledge={closeMessageGroupeEnvoiSuccess}
-          />
-        )}
-
-        <FiltresActionsTabList
-          currentFilter={currentFilter}
-          actionsCount={actions.length}
-          actionsCountParStatut={getNombreActionsParStatut()}
-          prenomJeune={jeune.firstName}
-          controlledIdPrefix='panneau-actions'
-          filterClicked={(newFilter) => handleActionsFiltreesClicked(newFilter)}
+      {/* FIXME sous-titre perdu */}
+      <ButtonLink
+        href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+        className='mb-4 w-fit'
+      >
+        <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+        Créer une nouvelle action
+      </ButtonLink>
+      {showCreationSuccess && (
+        <SuccessMessage
+          label={"L'action a bien été créée"}
+          onAcknowledge={closeCreationSuccessMessage}
         />
-
-        <div
-          role='tabpanel'
-          aria-labelledby={`actions-${currentFilter}`}
-          tabIndex={0}
-          id={`panneau-actions-${currentFilter}`}
-          className='mt-8'
-        >
-          <TableauActionsJeune jeune={jeune} actions={actionsFiltrees} />
-        </div>
-
-        {actions.length === 0 && (
-          <p className='text-m text-primary mt-6'>
-            {jeune.firstName} n&apos;a pas encore d&apos;action
-          </p>
-        )}
+      )}
+      {showSuppressionSuccess && (
+        <SuccessMessage
+          label={"L'action a bien été supprimée"}
+          onAcknowledge={closeSuppressionSuccessMessage}
+        />
+      )}
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
+      <FiltresActionsTabList
+        currentFilter={currentFilter}
+        actionsCount={actions.length}
+        actionsCountParStatut={getNombreActionsParStatut()}
+        prenomJeune={jeune.firstName}
+        controlledIdPrefix='panneau-actions'
+        filterClicked={(newFilter) => handleActionsFiltreesClicked(newFilter)}
+      />
+      <div
+        role='tabpanel'
+        aria-labelledby={`actions-${currentFilter}`}
+        tabIndex={0}
+        id={`panneau-actions-${currentFilter}`}
+        className='mt-8'
+      >
+        <TableauActionsJeune jeune={jeune} actions={actionsFiltrees} />
       </div>
+      {actions.length === 0 && (
+        <p className='text-m text-primary mt-6'>
+          {jeune.firstName} n&apos;a pas encore d&apos;action
+        </p>
+      )}
     </>
   )
 }
@@ -253,6 +225,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     jeune: jeune,
     actions: [...actions].sort(compareActionsDatesDesc),
     pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName}`,
+    pageHeader: `Les actions de ${jeune.firstName} ${jeune.lastName}`,
   }
 
   if (context.query?.creation) {

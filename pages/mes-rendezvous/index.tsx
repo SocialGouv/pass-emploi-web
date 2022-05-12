@@ -9,15 +9,15 @@ import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { UserStructure } from 'interfaces/conseiller'
+import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { RendezVousService } from 'services/rendez-vous.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-type MesRendezvousProps = {
+interface MesRendezvousProps extends PageProps {
   rendezVousFuturs: RdvListItem[]
   rendezVousPasses: RdvListItem[]
   creationSuccess?: boolean
@@ -99,85 +99,78 @@ function MesRendezvous({
 
   return (
     <>
-      <span
-        className={`flex flex-wrap justify-between items-center ${styles.header}`}
-      >
-        <h1 className='h2-semi text-primary'>Rendez-vous</h1>
-        <ButtonLink href={'/mes-jeunes/edition-rdv'}>
-          Fixer un rendez-vous
-        </ButtonLink>
-      </span>
+      <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-4 w-fit'>
+        Fixer un rendez-vous
+      </ButtonLink>
 
-      <div className={styles.content}>
-        {showRdvCreationSuccess && (
-          <SuccessMessage
-            label={'Le rendez-vous a bien été créé'}
-            onAcknowledge={closeRdvEditionMessage}
-          />
-        )}
+      {showRdvCreationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été créé'}
+          onAcknowledge={closeRdvEditionMessage}
+        />
+      )}
 
-        {showRdvModificationSuccess && (
-          <SuccessMessage
-            label={'Le rendez-vous a bien été modifié'}
-            onAcknowledge={closeRdvEditionMessage}
-          />
-        )}
+      {showRdvModificationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été modifié'}
+          onAcknowledge={closeRdvEditionMessage}
+        />
+      )}
 
-        {showMessageGroupeEnvoiSuccess && (
-          <SuccessMessage
-            label={
-              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-            }
-            onAcknowledge={closeMessageGroupeEnvoiSuccess}
-          />
-        )}
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
 
-        <div role='tablist' className='flex mb-[40px]'>
-          <Button
-            role='tab'
-            type='button'
-            controls='rendez-vous-futurs'
-            className='mr-[8px]'
-            style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
-            onClick={toggleDisplayOldRdv}
-          >
-            Prochains rendez-vous
-          </Button>
+      <div role='tablist' className='flex mb-[40px]'>
+        <Button
+          role='tab'
+          type='button'
+          controls='rendez-vous-futurs'
+          className='mr-[8px]'
+          style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
+          onClick={toggleDisplayOldRdv}
+        >
+          Prochains rendez-vous
+        </Button>
 
-          <Button
-            role='tab'
-            type='button'
-            controls='rendez-vous-passes'
-            style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
-            onClick={toggleDisplayOldRdv}
-          >
-            Rendez-vous passés
-          </Button>
-        </div>
-
-        {displayOldRdv ? (
-          <RdvList
-            id='rendez-vous-passes'
-            idConseiller={session?.user.id ?? ''}
-            rdvs={rendezVousPasses}
-          />
-        ) : (
-          <RdvList
-            id='rendez-vous-futurs'
-            idConseiller={session?.user.id ?? ''}
-            rdvs={rdvsAVenir}
-            onDelete={openDeleteRdvModal}
-          />
-        )}
-
-        {selectedRdv && (
-          <DeleteRdvModal
-            rdv={selectedRdv}
-            onClose={closeDeleteRdvModal}
-            onDelete={deleteRdv}
-          />
-        )}
+        <Button
+          role='tab'
+          type='button'
+          controls='rendez-vous-passes'
+          style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
+          onClick={toggleDisplayOldRdv}
+        >
+          Rendez-vous passés
+        </Button>
       </div>
+
+      {displayOldRdv ? (
+        <RdvList
+          id='rendez-vous-passes'
+          idConseiller={session?.user.id ?? ''}
+          rdvs={rendezVousPasses}
+        />
+      ) : (
+        <RdvList
+          id='rendez-vous-futurs'
+          idConseiller={session?.user.id ?? ''}
+          rdvs={rdvsAVenir}
+          onDelete={openDeleteRdvModal}
+        />
+      )}
+
+      {selectedRdv && (
+        <DeleteRdvModal
+          rdv={selectedRdv}
+          onClose={closeDeleteRdvModal}
+          onDelete={deleteRdv}
+        />
+      )}
     </>
   )
 }
@@ -208,6 +201,7 @@ export const getServerSideProps: GetServerSideProps<
     rendezVousFuturs: futurs.map(rdvToListItem),
     rendezVousPasses: passes.map(rdvToListItem),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
+    pageHeader: 'Rendez-vous',
   }
 
   if (context.query.creationRdv)
