@@ -3,6 +3,7 @@
  */
 
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import BackIcon from '../../assets/icons/arrow_back.svg'
@@ -33,6 +34,7 @@ export default function Layout({ children }: LayoutProps) {
     props: { pageTitle, pageHeader, returnTo, withoutChat },
   } = children
 
+  const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const conseillerService =
@@ -44,6 +46,27 @@ export default function Layout({ children }: LayoutProps) {
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
+
+  // TODO Check que ça déclenche pas plein de render
+  const ariane = buildFilAriane(router.asPath)
+
+  function buildFilAriane(url: string): { fragment: string; href: string }[] {
+    const crumbs: { fragment: string; href: string }[] = []
+    url
+      .split('/')
+      .slice(1, -1)
+      .forEach((fragment, index) => {
+        if (index > 0) {
+          crumbs.push({
+            fragment,
+            href: `${crumbs[index - 1].href}/${fragment}`,
+          })
+        } else {
+          crumbs.push({ fragment, href: `/${fragment}` })
+        }
+      })
+    return crumbs
+  }
 
   function hasMessageNonLu(): boolean {
     return chats.some(
@@ -145,6 +168,22 @@ export default function Layout({ children }: LayoutProps) {
         <Sidebar />
         <div className={styles.page}>
           <header className={styles.header}>
+            <ul className='mb-2 flex'>
+              {ariane.map(({ href, fragment }, index) => (
+                <li key={fragment}>
+                  {index > 0 && (
+                    <span className='mx-2' aria-hidden={true}>
+                      /
+                    </span>
+                  )}
+                  <Link href={href}>
+                    <a className='text-primary hover:text-primary_darken'>
+                      {fragment}
+                    </a>
+                  </Link>
+                </li>
+              ))}
+            </ul>
             {returnTo && (
               <div className='flex items-center'>
                 <Link href={returnTo}>
