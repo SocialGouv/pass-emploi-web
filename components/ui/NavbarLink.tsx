@@ -7,6 +7,7 @@ interface NavLinkProps {
   href: string
   label: string | null
   iconName: string
+  className?: string
   onClick?: any
 }
 
@@ -15,6 +16,7 @@ function NavbarLink({
   href,
   label,
   iconName,
+  className,
   onClick,
 }: NavLinkProps) {
   return (
@@ -33,7 +35,7 @@ function NavbarLink({
           name={iconName}
         />
         <span
-          className={` text-md layout_m:sr-only ${
+          className={`text-md layout_m:sr-only break-words ${className ?? ''} ${
             isActive ? 'text-primary' : 'text-blanc'
           }`}
         >

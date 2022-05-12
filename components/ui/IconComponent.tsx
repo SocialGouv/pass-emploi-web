@@ -1,5 +1,6 @@
 import AideIcon from '../../assets/icons/aide.svg'
 import SupervisionIcon from '../../assets/icons/arrow-right.svg'
+import LaunchIcon from '../../assets/icons/launch.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
 import ProfilIcon from '../../assets/icons/profil.svg'
@@ -12,6 +13,7 @@ const iconTypes = {
   rendezvous: RendezvousIcon,
   logout: LogoutIcon,
   aide: AideIcon,
+  launch: LaunchIcon,
 }
 
 // @ts-ignore
