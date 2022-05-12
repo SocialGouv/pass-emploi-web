@@ -99,22 +99,20 @@ function Profil({ structureConseiller }: ProfilProps) {
             <h2 className='text-l-medium mb-4'>
               Application CEJ jeune - mode démo
             </h2>
-            <span>
-              <p className='mb-4'>
-                Le mode démo vous permet de visualiser l’application CEJ
-                utilisée par vos bénéficiaires.
-              </p>
-              <p className='mb-4'>
-                Pour accéder au mode démo, vous devez télécharger l’application
-                sur le store de votre choix, l’ouvrir puis appuyer 3 fois sur le
-                logo “Contrat d’Engagement Jeune” visible sur la page de
-                connexion.
-              </p>
-              <p>
-                L’application est disponible sur Google Play Store et sur l’App
-                Store.
-              </p>
-            </span>
+            <p className='mb-4'>
+              Le mode démo vous permet de visualiser l’application CEJ utilisée
+              par vos bénéficiaires.
+            </p>
+            <p className='mb-4'>
+              Pour accéder au mode démo, vous devez télécharger l’application
+              sur le store de votre choix, l’ouvrir puis
+              <b>appuyer 3 fois sur le logo </b>“Contrat d’Engagement Jeune”
+              visible sur la page de connexion.
+            </p>
+            <p>
+              L’application est disponible sur Google Play Store et sur l’App
+              Store.
+            </p>
           </section>
         </div>
       )}
