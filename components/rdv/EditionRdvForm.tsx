@@ -49,9 +49,9 @@ export function EditionRdvForm({
   showConfirmationModal,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
-  const [idsJeunes, setIdsJeunes] = useState<string[]>(
-    defaultJeunes.map(({ id }) => id)
-  )
+  const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
+    value: defaultJeunes.map(({ id }) => id),
+  })
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
     rdv?.type.code ?? ''
   )
@@ -96,7 +96,7 @@ export function EditionRdvForm({
   function formHasChanges(): boolean {
     if (!rdv) {
       return Boolean(
-        idsJeunes.length ||
+        idsJeunes.value.length ||
           codeTypeRendezVous ||
           modalite ||
           date.value ||
@@ -109,9 +109,9 @@ export function EditionRdvForm({
     }
 
     const previousIds = rdv.jeunes.map(({ id }) => id).sort()
-    idsJeunes.sort()
+    idsJeunes.value.sort()
     return (
-      previousIds.toString() !== idsJeunes.toString() ||
+      previousIds.toString() !== idsJeunes.value.toString() ||
       modalite !== rdv.modality ||
       date.value !== localDate ||
       horaire.value !== localTime ||
@@ -125,7 +125,7 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
-      Boolean(idsJeunes.length) &&
+      Boolean(idsJeunes.value.length) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
@@ -139,6 +139,15 @@ export function EditionRdvForm({
     if (e.target.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
+  }
+
+  function updateIdsJeunes(selectedIds: string[]) {
+    setIdsJeunes({
+      value: selectedIds,
+      error: !selectedIds.length
+        ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+        : undefined,
+    })
   }
 
   function validateTypeRendezVousAutre() {
@@ -232,7 +241,7 @@ export function EditionRdvForm({
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
     const payload: RdvFormData = {
-      jeunesIds: idsJeunes,
+      jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous,
       date: new Date(`${date.value} ${horaire.value}`).toISOString(),
       duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -297,7 +306,8 @@ export function EditionRdvForm({
           jeunes={jeunes}
           typeSelection='Bénéficiaires'
           defaultJeunes={defaultJeunes}
-          onUpdate={(selectedIds) => setIdsJeunes(selectedIds)}
+          onUpdate={updateIdsJeunes}
+          error={idsJeunes.error}
         />
       </fieldset>
 

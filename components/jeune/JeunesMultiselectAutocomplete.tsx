@@ -3,6 +3,7 @@ import { useRef, useState } from 'react'
 import InfoIcon from '../../assets/icons/information.svg'
 import RemoveIcon from '../../assets/icons/remove.svg'
 
+import { InputError } from 'components/ui/InputError'
 import SelectAutocomplete from 'components/ui/SelectAutocomplete'
 import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 
@@ -11,6 +12,7 @@ interface JeunesMultiselectAutocompleteProps {
   typeSelection: string
   onUpdate: (selectedIds: string[]) => void
   defaultJeunes?: OptionJeune[]
+  error?: string
 }
 
 const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
@@ -24,6 +26,7 @@ export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
   typeSelection,
+  error,
   defaultJeunes = [],
 }: JeunesMultiselectAutocompleteProps) {
   const optionsJeunes: OptionJeune[] = jeunes.map(jeuneToOption)
@@ -87,24 +90,33 @@ export default function JeunesMultiselectAutocomplete({
 
   return (
     <>
-      <label htmlFor='item-input' className='text-base-medium'>
+      <label htmlFor='select-jeunes' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
         <span className='text-sm-regular block'>Nom et prénom</span>
       </label>
+      {error && (
+        <InputError id='select-jeunes--error' className='mt-2'>
+          {error}
+        </InputError>
+      )}
       <SelectAutocomplete
-        id='item-input'
+        id='select-jeunes'
         options={buildOptions()}
         onChange={(e) => selectJeune(e.target.value)}
-        className='text-sm text-primary_darken w-full p-3 mb-2 mt-4 border border-content_color rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70'
+        className={`text-sm text-primary_darken w-full p-3 mb-2 mt-4 border rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70 ${
+          error ? 'border-warning' : 'border-content_color'
+        }`}
         aria-required={true}
         multiple={true}
-        aria-controls='selected-items'
+        aria-controls='selected-jeunes'
         ref={input}
+        aria-describedby='select-jeunes--error'
+        aria-invalid={error ? true : undefined}
       />
 
       <p
         aria-label={`${typeSelection} sélectionnés (${selectedJeunes.length})`}
-        id='items-label'
+        id='selected-jeunes--title'
         className='text-base-medium mb-2'
         aria-live='polite'
       >
@@ -112,8 +124,8 @@ export default function JeunesMultiselectAutocomplete({
       </p>
       {selectedJeunes.length > 0 && (
         <ul
-          aria-labelledby='items-label'
-          id='selected-items'
+          aria-labelledby='selected-jeunes--title'
+          id='selected-jeunes'
           role='region'
           className='bg-grey_100 rounded-[12px] px-2 py-4 max-h-96 overflow-y-auto'
           aria-live='polite'
