@@ -79,7 +79,7 @@ function Profil({ structureConseiller }: ProfilProps) {
               </dl>
             </div>
           </section>
-          <section>
+          <section className='mb-8'>
             <h2 className='text-l-medium mb-4'>Notifications</h2>
             <label htmlFor='notificationSonore' className='flex items-center'>
               <span className='mr-4'>
@@ -94,6 +94,23 @@ function Profil({ structureConseiller }: ProfilProps) {
                 onChange={toggleNotificationsSonores}
               />
             </label>
+          </section>
+          <section className='mb-8'>
+            <h2 className='text-l-medium mb-4'>
+              Application CEJ jeune - mode démo
+            </h2>
+            <span>
+              Le mode démo vous permet de visualiser l’application CEJ utilisée
+              par vos bénéficiaires. <br />
+              <br />
+              Pour accéder au mode démo, vous devez télécharger l’application
+              sur le store de votre choix, l’ouvrir puis appuyer 3 fois sur le
+              logo “Contrat d’Engagement Jeune” visible sur la page de
+              connexion. <br />
+              <br />
+              L’application est disponible sur Google Play Store et sur l’App
+              Store.
+            </span>
           </section>
         </div>
       )}
