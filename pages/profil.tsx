@@ -2,6 +2,9 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { ChangeEvent } from 'react'
 
+import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
+import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
+
 import { Switch } from 'components/ui/Switch'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerService } from 'services/conseiller.service'
@@ -106,13 +109,29 @@ function Profil({ structureConseiller }: ProfilProps) {
             <p className='mb-4'>
               Pour accéder au mode démo, vous devez télécharger l’application
               sur le store de votre choix, l’ouvrir puis
-              <b>appuyer 3 fois sur le logo </b>“Contrat d’Engagement Jeune”
+              <b> appuyer 3 fois sur le logo </b>“Contrat d’Engagement Jeune”
               visible sur la page de connexion.
             </p>
             <p>
               L’application est disponible sur Google Play Store et sur l’App
               Store.
             </p>
+            <div className='flex justify-evenly mt-8'>
+              <div className='flex flex-col items-center'>
+                <QrcodeAppStore
+                  focusable='false'
+                  aria-label='QR code pour l’App Store'
+                />
+                <p className='text-sm-medium'>App Store</p>
+              </div>
+              <div className='flex flex-col items-center'>
+                <QrcodePlayStore
+                  focusable='false'
+                  aria-label='QR code pour Google Play'
+                />
+                <p className='text-sm-medium'>Google Play</p>
+              </div>
+            </div>
           </section>
         </div>
       )}
