@@ -272,8 +272,8 @@ describe('MessagesFirebaseAndApiService', () => {
     it('notifies of a new message', async () => {
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
-        `/conseillers/${conseiller.id}/jeunes/${jeuneChat.id}/notify-message`,
-        undefined,
+        `/conseillers/${conseiller.id}/jeunes/notify-messages`,
+        { idsJeunes: [jeuneChat.id] },
         accessToken
       )
     })
@@ -295,7 +295,7 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
-  describe('.sendNouveauMessageMultiple', () => {
+  describe('.sendNouveauMessageGroupe', () => {
     let destinataires: Jeune[]
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }

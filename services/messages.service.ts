@@ -189,7 +189,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       }),
     ])
     await Promise.all([
-      this.notifierNouveauMessage(conseiller.id, jeuneChat.id, accessToken),
+      this.notifierNouveauMessage(conseiller.id, [jeuneChat.id], accessToken),
       this.evenementNouveauMessage(
         conseiller.structure,
         conseiller.id,
@@ -236,11 +236,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     ])
 
     await Promise.all([
-      this.notifierNouveauMessageMultiple(
-        conseiller.id,
-        idsDestinataires,
-        accessToken
-      ),
+      this.notifierNouveauMessage(conseiller.id, idsDestinataires, accessToken),
       this.evenementNouveauMessageMultiple(
         conseiller.structure,
         conseiller.id,
@@ -250,18 +246,6 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   private async notifierNouveauMessage(
-    idConseiller: string,
-    idJeune: string,
-    accessToken: string
-  ): Promise<void> {
-    await this.apiClient.post(
-      `/conseillers/${idConseiller}/jeunes/${idJeune}/notify-message`,
-      undefined,
-      accessToken
-    )
-  }
-
-  private async notifierNouveauMessageMultiple(
     idConseiller: string,
     idsJeunes: string[],
     accessToken: string
