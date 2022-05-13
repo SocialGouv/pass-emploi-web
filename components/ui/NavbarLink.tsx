@@ -27,7 +27,11 @@ function NavbarLink({
           isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
         }`}
       >
-        {isActive && <span className='text-l-medium text-primary'>·</span>}
+        {isActive && (
+          <span className='text-[24px] font-bold leading-6 text-primary'>
+            ·
+          </span>
+        )}
         <IconComponent
           focusable='false'
           aria-hidden='true'
