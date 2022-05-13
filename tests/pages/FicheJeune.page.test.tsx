@@ -80,14 +80,6 @@ describe('Fiche Jeune', () => {
         )
       })
 
-      it('affiche le titre de la fiche', async () => {
-        // Then
-        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
-        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-          'Kenji Jirac'
-        )
-      })
-
       it('affiche la liste des rendez-vous du jeune', async () => {
         // Then
         rdvs.forEach((rdv) => {
@@ -442,7 +434,17 @@ describe('Fiche Jeune', () => {
           'id-jeune',
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { jeune: unJeune() } })
+        expect(actual).toEqual({
+          props: {
+            jeune: unJeune(),
+            pageTitle: 'Mes jeunes - Kenji Jirac',
+            pageHeader: 'Kenji Jirac',
+            returnTo: '/mes-jeunes',
+            rdvs: expect.arrayContaining([]),
+            actions: expect.arrayContaining([]),
+            conseillers: expect.arrayContaining([]),
+          },
+        })
       })
 
       it('récupère les rendez-vous à venir du jeune', async () => {

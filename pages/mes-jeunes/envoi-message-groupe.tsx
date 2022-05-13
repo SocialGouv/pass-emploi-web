@@ -97,7 +97,6 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
   return (
     <>
-      {/*FIXME back bouton triggers modale when hasChanges*/}
       {erreurMessage && (
         <FailureMessage
           label={erreurMessage}

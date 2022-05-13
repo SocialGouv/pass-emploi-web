@@ -17,6 +17,9 @@ import renderWithSession from 'tests/renderWithSession'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(() => ({ asPath: '/path/to/page' })),
+}))
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))

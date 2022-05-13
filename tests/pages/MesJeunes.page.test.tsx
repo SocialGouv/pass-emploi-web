@@ -67,16 +67,6 @@ describe('Mes Jeunes', () => {
         })
       })
 
-      it('a un titre de niveau 1', async () => {
-        //THEN
-        expect(
-          screen.getByRole('heading', {
-            level: 1,
-            name: 'Mes Jeunes',
-          })
-        ).toBeInTheDocument()
-      })
-
       it("affiche la liste des jeunes s'il en a", async () => {
         //THEN
         expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
@@ -520,7 +510,7 @@ describe('Mes Jeunes', () => {
 
       it("renvoie les jeunes avec leur nombre d'actions", () => {
         // Then
-        expect(actual).toMatchObject({
+        expect(actual).toEqual({
           props: {
             conseillerJeunes: desJeunes()
               .map((jeune) => ({
@@ -528,6 +518,9 @@ describe('Mes Jeunes', () => {
                 nbActionsNonTerminees: 7,
               }))
               .sort(compareJeunesByLastName),
+            structureConseiller: 'MILO',
+            pageTitle: 'Mes jeunes',
+            isFromEmail: false
           },
         })
       })

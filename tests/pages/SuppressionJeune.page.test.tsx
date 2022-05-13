@@ -100,9 +100,11 @@ describe('Suppression Jeune', () => {
           expect(actual).toEqual({
             props: {
               jeune,
+              structureConseiller: 'MILO',
               withoutChat: true,
               pageTitle: 'Suppression - Kenji Jirac',
-              structureConseiller: 'MILO',
+              pageHeader: 'Suppression de Kenji Jirac',
+              returnTo: '/mes-jeunes/jeune-1',
             },
           })
         })
@@ -150,16 +152,6 @@ describe('Suppression Jeune', () => {
             structureConseiller='MILO'
           />
         </DIProvider>
-      )
-    })
-
-    it('permet de revenir à la page précédente', () => {
-      // Then
-      const link = screen.getByText('Détails Nadia Sanfamiye')
-      expect(link).toBeInTheDocument()
-      expect(link.closest('a')).toHaveAttribute(
-        'href',
-        `/mes-jeunes/${jeune.id}`
       )
     })
 

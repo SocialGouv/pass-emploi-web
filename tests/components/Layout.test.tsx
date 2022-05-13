@@ -1,4 +1,5 @@
-import { act, waitFor } from '@testing-library/react'
+import { act, waitFor, screen } from '@testing-library/react'
+import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
@@ -11,6 +12,7 @@ import {
   mockedMessagesService,
 } from 'fixtures/services'
 import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -21,6 +23,7 @@ import { DIProvider } from 'utils/injectionDependances'
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
+jest.mock('next/router')
 jest.useFakeTimers()
 
 const mockAudio = jest.fn()
@@ -55,8 +58,12 @@ describe('<Layout />', () => {
         seenByConseiller: false,
       }),
     ]
-
-    jeunesService = mockedJeunesService()
+    ;(useRouter as jest.Mock).mockReturnValue({
+      asPath: '/path/to/current/page',
+    })
+    jeunesService = mockedJeunesService({
+      getJeunesDuConseiller: jest.fn(async () => jeunes),
+    })
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
@@ -70,12 +77,8 @@ describe('<Layout />', () => {
     })
   })
 
-  describe('quand le conseiller a des jeunes', () => {
+  describe('cas nominal', () => {
     beforeEach(async () => {
-      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
-        jeunes
-      )
-
       await act(async () => {
         await renderWithSession(
           <DIProvider
@@ -85,12 +88,43 @@ describe('<Layout />', () => {
               conseiller={unConseiller({ notificationsSonores: true })}
             >
               <Layout>
-                <FakeComponent pageTitle='un titre' />
+                <FakeComponent
+                  pageTitle='un titre'
+                  pageHeader='Titre de la page'
+                />
               </Layout>
             </ConseillerProvider>
           </DIProvider>
         )
       })
+    })
+
+    it('affiche le titre de la page', () => {
+      // Then
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'Titre de la page' })
+      ).toBeInTheDocument()
+    })
+
+    it("affiche le fil d'ariane", () => {
+      // Then
+      expect(screen.getByRole('link', { name: 'path' })).toHaveAttribute(
+        'href',
+        '/path'
+      )
+      expect(screen.getByRole('link', { name: 'to' })).toHaveAttribute(
+        'href',
+        '/path/to'
+      )
+      expect(screen.getByRole('link', { name: 'current' })).toHaveAttribute(
+        'href',
+        '/path/to/current'
+      )
+    })
+
+    it('signs into chat', () => {
+      // Then
+      expect(messagesService.signIn).toHaveBeenCalled()
     })
 
     it('récupère la liste des jeunes du conseiller', () => {
@@ -99,11 +133,6 @@ describe('<Layout />', () => {
         '1',
         'accessToken'
       )
-    })
-
-    it('sign into chat', () => {
-      // Then
-      expect(messagesService.signIn).toHaveBeenCalled()
     })
 
     describe('pour chaque jeune', () => {
@@ -186,10 +215,8 @@ describe('<Layout />', () => {
   })
 
   describe('quand le conseiller a désactivé ses notifications', () => {
-    beforeEach(async () => {
-      ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
-        jeunes
-      )
+    it("ne notifie pas quand un nouveau message d'un jeune arrive", async () => {
+      // Given
       await act(async () => {
         await renderWithSession(
           <DIProvider
@@ -205,18 +232,14 @@ describe('<Layout />', () => {
           </DIProvider>
         )
       })
-    })
 
-    it("ne notifie pas quand un nouveau message d'un jeune arrive", async () => {
-      // Given
+      // When
       const unJeuneChatNonLu = unJeuneChat({
         ...jeunes[0],
         lastMessageSentBy: 'jeune',
         chatId: `chat-${jeunes[0].id}`,
         lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
       })
-
-      // When
       await act(async () => {
         updateChatRef(unJeuneChatNonLu)
       })
@@ -228,7 +251,34 @@ describe('<Layout />', () => {
     })
   })
 
-  function FakeComponent(_: { pageTitle: string }) {
+  describe('quand la page nécessite un bouton "retour"', () => {
+    it('affiche un bouton "retour"', async () => {
+      // When
+      await act(async () => {
+        await renderWithSession(
+          <DIProvider
+            dependances={{ jeunesService, conseillerService, messagesService }}
+          >
+            <ConseillerProvider conseiller={unConseiller()}>
+              <Layout>
+                <FakeComponent
+                  pageTitle='un titre'
+                  returnTo='/path/to/previous/page'
+                />
+              </Layout>
+            </ConseillerProvider>
+          </DIProvider>
+        )
+      })
+
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Page précédente' })
+      ).toHaveAttribute('href', '/path/to/previous/page')
+    })
+  })
+
+  function FakeComponent(_: PageProps) {
     return <></>
   }
 })

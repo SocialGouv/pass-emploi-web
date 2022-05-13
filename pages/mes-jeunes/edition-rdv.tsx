@@ -21,9 +21,9 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface EditionRdvProps extends PageProps {
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
+  returnTo: string
   idJeune?: string
   rdv?: Rdv
-  returnTo: string
 }
 
 function EditionRdv({
@@ -92,7 +92,6 @@ function EditionRdv({
 
   return (
     <>
-      {/*FIXME back bouton triggers modale when hasChanges*/}
       <EditionRdvForm
         jeunes={jeunes}
         typesRendezVous={typesRendezVous}
