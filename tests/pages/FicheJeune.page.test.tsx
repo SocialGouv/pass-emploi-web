@@ -36,11 +36,6 @@ import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(() => ({
-    asPath: '/mes-jeunes/jeune-1',
-  })),
-}))
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 

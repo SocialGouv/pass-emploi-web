@@ -23,7 +23,6 @@ import { DIProvider } from 'utils/injectionDependances'
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
-jest.mock('next/router')
 jest.useFakeTimers()
 
 const mockAudio = jest.fn()

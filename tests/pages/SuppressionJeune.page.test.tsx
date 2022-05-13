@@ -19,7 +19,6 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
-jest.mock('next/router')
 
 describe('Suppression Jeune', () => {
   describe('server side', () => {
@@ -132,7 +131,7 @@ describe('Suppression Jeune', () => {
   describe('client side', () => {
     let jeune: Jeune
     let jeunesService: JeunesService
-    let push: jest.Mock
+    let push: Function
     beforeEach(() => {
       jeune = unJeune({
         firstName: 'Nadia',

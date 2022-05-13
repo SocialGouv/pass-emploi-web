@@ -1,4 +1,5 @@
 import { act, screen, waitFor } from '@testing-library/react'
+import { useRouter } from 'next/router'
 
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
@@ -17,9 +18,6 @@ import renderWithSession from 'tests/renderWithSession'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(() => ({ asPath: '/path/to/page' })),
-}))
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
@@ -38,6 +36,7 @@ describe('Intégration notifications sonores', () => {
   let messagesService: MessagesService
   beforeEach(async () => {
     jest.setSystemTime(new Date())
+    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/path/to/page' })
 
     jeunesService = mockedJeunesService()
     conseillerService = mockedConseillerService()

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
 import { act, fireEvent, screen, within } from '@testing-library/react'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -28,15 +28,18 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-jest.mock('next/router')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {
   describe('client side', () => {
+    let push: Function
     let messagesService: MessagesService
     const jeunes = desJeunesAvecActionsNonTerminees()
     beforeEach(() => {
+      push = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
+
       messagesService = mockedMessagesService({
         signIn: jest.fn(() => Promise.resolve()),
         countMessagesNotRead: jest.fn((_, ids: string[]) =>
@@ -153,15 +156,12 @@ describe('Mes Jeunes', () => {
         const addButton = screen.getByRole('button', {
           name: 'Ajouter un jeune',
         })
-        const routerSpy = jest.spyOn(Router, 'push')
 
         //WHEN
         fireEvent.click(addButton)
 
         //THEN
-        expect(routerSpy).toHaveBeenCalledWith(
-          '/mes-jeunes/milo/creation-jeune'
-        )
+        expect(push).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
       })
 
       it("affiche le nombre d'actions des jeunes", () => {
@@ -223,13 +223,12 @@ describe('Mes Jeunes', () => {
         const addButton = screen.getByRole('button', {
           name: 'Ajouter un jeune',
         })
-        const routerSpy = jest.spyOn(Router, 'push')
 
         //WHEN
         fireEvent.click(addButton)
 
         //THEN
-        expect(routerSpy).toHaveBeenCalledWith(
+        expect(push).toHaveBeenCalledWith(
           '/mes-jeunes/pole-emploi/creation-jeune'
         )
       })
@@ -520,7 +519,7 @@ describe('Mes Jeunes', () => {
               .sort(compareJeunesByLastName),
             structureConseiller: 'MILO',
             pageTitle: 'Mes jeunes',
-            isFromEmail: false
+            isFromEmail: false,
           },
         })
       })

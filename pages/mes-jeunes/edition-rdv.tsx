@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
-import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
+import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
@@ -17,6 +17,7 @@ import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { useLeavePageModale } from 'utils/useLeavePageModale'
 
 interface EditionRdvProps extends PageProps {
   jeunes: Jeune[]
@@ -39,9 +40,10 @@ function EditionRdv({
   const { data: session } = useSession<true>({ required: true })
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const [leavePageModalShown, setLeavePageModalShown] = useState<boolean>(false)
   const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
     useState<RdvFormData | undefined>(undefined)
-  // FIXME const [hasChanges, setHasChanges] = useState<boolean>(false)
+  const [hasChanges, setHasChanges] = useState<boolean>(false)
 
   let initialTracking: string
   if (rdv) initialTracking = `Modification rdv`
@@ -50,11 +52,13 @@ function EditionRdv({
 
   function openLeavePageModal() {
     setShowLeavePageModal(true)
+    setLeavePageModalShown(true)
     setTrackingTitle(`${initialTracking} - Modale Annulation`)
   }
 
   function closeLeavePageModal() {
     setShowLeavePageModal(false)
+    setLeavePageModalShown(false)
     setTrackingTitle(initialTracking)
   }
 
@@ -88,6 +92,8 @@ function EditionRdv({
     await router.push(`${redirectPath}?${queryParam}=succes`)
   }
 
+  useLeavePageModale(hasChanges && !leavePageModalShown, openLeavePageModal)
+
   useMatomo(trackingTitle)
 
   return (
@@ -100,16 +106,14 @@ function EditionRdv({
         redirectTo={returnTo}
         conseillerIsCreator={!rdv || session?.user.id === rdv.createur?.id}
         conseillerEmail={session?.user.email ?? ''}
-        onChanges={(_) => {
-          /*setHasChanges*/
-        }}
+        onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
         leaveWithChanges={openLeavePageModal}
         showConfirmationModal={showConfirmationModale}
       />
 
       {showLeavePageModal && (
-        <ExitPageConfirmationModal
+        <LeavePageConfirmationModal
           message={`Vous allez quitter la ${
             rdv ? 'modification du' : 'création d’un nouveau'
           } rendez-vous`}

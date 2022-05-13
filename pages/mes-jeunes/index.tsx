@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import EmptyStateImage from '../../assets/images/empty_state.svg'
@@ -47,6 +47,7 @@ function MesJeunes({
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
+  const router = useRouter()
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
@@ -71,10 +72,10 @@ function MesJeunes({
   const handleAddJeune = async () => {
     switch (structureConseiller) {
       case UserStructure.MILO:
-        await Router.push('/mes-jeunes/milo/creation-jeune')
+        await router.push('/mes-jeunes/milo/creation-jeune')
         break
       case UserStructure.POLE_EMPLOI:
-        await Router.push('/mes-jeunes/pole-emploi/creation-jeune')
+        await router.push('/mes-jeunes/pole-emploi/creation-jeune')
         break
       default:
         break
@@ -83,19 +84,19 @@ function MesJeunes({
 
   async function closeDeletionSuccess(): Promise<void> {
     setShowDeletionSuccess(false)
-    await Router.replace({ pathname: `/mes-jeunes` }, undefined, {
+    await router.replace({ pathname: `/mes-jeunes` }, undefined, {
       shallow: true,
     })
   }
 
   async function closeMessageGroupeEnvoiSuccess(): Promise<void> {
     setShowMessageGroupeEnvoiSuccess(false)
-    await Router.replace('/mes-jeunes', undefined, { shallow: true })
+    await router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
   async function closeAjoutAgenceSuccessMessage(): Promise<void> {
     setShowAjoutAgenceSuccess(false)
-    await Router.replace('/mes-jeunes', undefined, { shallow: true })
+    await router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
   const onSearch = useCallback(

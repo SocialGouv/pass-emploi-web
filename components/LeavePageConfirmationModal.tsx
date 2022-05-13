@@ -9,19 +9,19 @@ import ButtonLink from './ui/ButtonLink'
 
 import Button, { ButtonStyle } from 'components/ui/Button'
 
-interface ExitPageConfirmationModalProps {
+interface LeavePageConfirmationModalProps {
   destination: string | UrlObject
   onCancel: () => void
   source?: 'creation' | 'edition'
   message?: string
 }
 
-export default function ExitPageConfirmationModal({
+export default function LeavePageConfirmationModal({
   message,
   onCancel,
   source = 'creation',
   destination,
-}: ExitPageConfirmationModalProps) {
+}: LeavePageConfirmationModalProps) {
   const modalRef = useRef<{
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)

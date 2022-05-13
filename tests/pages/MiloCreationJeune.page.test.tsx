@@ -8,8 +8,6 @@ import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { DIProvider } from 'utils/injectionDependances'
 
-jest.mock('next/router')
-
 describe('MiloCreationJeune', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
     beforeEach(() => {

@@ -25,7 +25,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 jest.mock('components/Modal')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -97,7 +96,7 @@ describe('EnvoiMessageGroupe', () => {
     })
 
     describe('quand on remplit le formulaire', () => {
-      let push: jest.Mock
+      let push: Function
       let newMessage: string
       beforeEach(() => {
         push = jest.fn(() => Promise.resolve())
@@ -147,7 +146,7 @@ describe('EnvoiMessageGroupe', () => {
         })
       })
 
-      // FIXME back bouton triggers modale when hasChanges
+      // FIXME trouver comment tester
       // it('prévient avant de revenir à la page précédente', async () => {
       //   // Given
       //   const previousButton = screen.getByText(

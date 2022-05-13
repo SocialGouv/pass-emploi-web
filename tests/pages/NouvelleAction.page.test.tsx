@@ -14,7 +14,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 
 describe('NouvelleAction', () => {
   describe('server side', () => {
@@ -62,7 +61,7 @@ describe('NouvelleAction', () => {
 
   describe('client side', () => {
     let actionsService: ActionsService
-    let push: jest.Mock
+    let push: Function
     beforeEach(async () => {
       // Given
       push = jest.fn(async () => {})

@@ -7,9 +7,9 @@ import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
 
-import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
 import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
@@ -23,6 +23,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { useLeavePageModale } from 'utils/useLeavePageModale'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   jeunes: Jeune[]
@@ -41,6 +42,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     undefined
   )
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const [leavePageModalShown, setLeavePageModalShown] = useState<boolean>(false)
 
   const initialTracking = 'Message - Rédaction'
 
@@ -54,10 +56,19 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     return Boolean(selectedJeunesIds.length || message)
   }
 
-  function openExitPageConfirmationModal(e: MouseEvent) {
-    e.preventDefault()
-    e.stopPropagation()
+  function openLeavePageConfirmationModal(e?: MouseEvent) {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
     setShowLeavePageModal(true)
+    setLeavePageModalShown(true)
+  }
+
+  function closeLeavePageConfirmationModal() {
+    setShowLeavePageModal(false)
+    setLeavePageModalShown(false)
   }
 
   async function envoyerMessageGroupe(
@@ -94,6 +105,11 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
   useMatomo(trackingLabel)
   useMatomo(showLeavePageModal ? 'Message - Modale Annulation' : undefined)
+
+  useLeavePageModale(
+    formHasChanges() && !leavePageModalShown,
+    openLeavePageConfirmationModal
+  )
 
   return (
     <>
@@ -166,7 +182,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           {formHasChanges() && (
             <Button
               aria-label='Quitter la rédaction du message groupé'
-              onClick={openExitPageConfirmationModal}
+              onClick={openLeavePageConfirmationModal}
               style={ButtonStyle.SECONDARY}
               className='mr-3 p-2'
             >
@@ -185,9 +201,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           </Button>
         </div>
         {showLeavePageModal && (
-          <ExitPageConfirmationModal
+          <LeavePageConfirmationModal
             message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
-            onCancel={() => setShowLeavePageModal(false)}
+            onCancel={closeLeavePageConfirmationModal}
             destination={returnTo}
           />
         )}

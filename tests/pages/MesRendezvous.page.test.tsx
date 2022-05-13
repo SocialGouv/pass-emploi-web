@@ -11,7 +11,6 @@ import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-jest.mock('next/router')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 

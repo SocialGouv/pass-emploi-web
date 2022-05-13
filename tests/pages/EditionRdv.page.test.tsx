@@ -18,7 +18,6 @@ import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-jest.mock('next/router')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('utils/date')
@@ -189,7 +188,7 @@ describe('EditionRdv', () => {
     let jeunes: Jeune[]
     let rendezVousService: RendezVousService
     let typesRendezVous: TypeRendezVous[]
-    let push: jest.Mock
+    let push: Function
     beforeEach(() => {
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService()
@@ -685,7 +684,7 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        // FIXME back bouton triggers modale when hasChanges
+        // FIXME trouver comment tester
         // it('prévient avant de revenir à la page précédente', async () => {
         //   // Given
         //   const button = screen.getByText('Quitter la création du rendez-vous')
@@ -923,7 +922,7 @@ describe('EditionRdv', () => {
           })
         })
 
-        // FIXME back bouton triggers modale when hasChanges
+        // FIXME trouver comment tester
         // it('prévient avant de revenir à la page précédente', async () => {
         //   // Given
         //   const button = screen.getByText(
