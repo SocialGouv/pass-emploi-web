@@ -118,14 +118,14 @@ function Profil({ structureConseiller }: ProfilProps) {
                   focusable='false'
                   aria-label='QR code pour l’App Store'
                 />
-                <p className='text-sm-medium'>App Store</p>
+                <p className='text-s-medium'>App Store</p>
               </div>
               <div className='flex flex-col items-center'>
                 <QrcodePlayStore
                   focusable='false'
                   aria-label='QR code pour Google Play'
                 />
-                <p className='text-sm-medium'>Google Play</p>
+                <p className='text-s-medium'>Google Play</p>
               </div>
             </div>
           </section>

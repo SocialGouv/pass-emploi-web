@@ -93,7 +93,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           ))}
         </div>
 
-        <p className='text-sm-medium text-content_color'>
+        <p className='text-s-medium text-content_color'>
           Tous les champs avec * sont obligatoires
         </p>
 

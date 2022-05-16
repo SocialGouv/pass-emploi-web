@@ -8,6 +8,7 @@
   grid-template-areas: 'sidebar page';
   grid-template-columns: var(--sidebar-width) var(--page-width);
   grid-template-rows: 100vh;
+  position: fixed;
 }
 
 .container.container_with_chat {

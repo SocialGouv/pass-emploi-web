@@ -74,7 +74,7 @@ function SuppressionJeune({
       )}
 
       <div className='m-auto mt-20 w-max'>
-        <p className='h4-semi text-primary_darken'>
+        <p className='text-l-regular text-primary_darken'>
           Confirmez la suppression du compte jeune
         </p>
         <div className='mt-8'>

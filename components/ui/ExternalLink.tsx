@@ -14,7 +14,7 @@ export const ExternalLink = ({ href, label, onClick }: ExternalLinkProps) => {
       href={href}
       target='_blank'
       rel='noreferrer noopener'
-      className='flex items-center text-sm-regular whitespace-nowrap underline text-[inherit]'
+      className='flex items-center text-s-regular whitespace-nowrap underline text-[inherit]'
       aria-label={`${label} (nouvelle fenêtre)`}
       onClick={onClick}
     >

@@ -125,7 +125,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       )}
 
       <form>
-        <div className='text-sm-regular text-primary_darken mb-8'>
+        <div className='text-s-regular text-primary_darken mb-8'>
           Tous les champs sont obligatoires
         </div>
 

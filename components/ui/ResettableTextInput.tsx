@@ -51,7 +51,7 @@ const ResettableTextInput = forwardRef(
           ref={ref}
           value={value}
           onChange={applyChange}
-          className={`flex-1 p-3 bg-blanc`}
+          className={`flex-1 p-3 bg-blanc rounded-l-medium`}
           disabled={disabled}
         />
         <button
