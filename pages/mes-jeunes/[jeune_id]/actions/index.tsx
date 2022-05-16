@@ -136,7 +136,6 @@ function Actions({
 
   return (
     <>
-      {/* FIXME sous-titre perdu */}
       <ButtonLink
         href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
         className='mb-4 w-fit'

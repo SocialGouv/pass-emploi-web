@@ -2,15 +2,13 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
-import BackIcon from '../../assets/icons/arrow_back.svg'
-
 import AppHead from 'components/AppHead'
-import { Footer } from 'components/Footer'
 import ChatRoom from 'components/layouts/ChatRoom'
+import { Footer } from 'components/layouts/Footer'
+import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -46,27 +44,6 @@ export default function Layout({ children }: LayoutProps) {
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
-
-  // TODO Check que ça déclenche pas plein de render
-  const ariane = buildFilAriane(router.asPath)
-
-  function buildFilAriane(url: string): { fragment: string; href: string }[] {
-    const crumbs: { fragment: string; href: string }[] = []
-    url
-      .split('/')
-      .slice(1, -1)
-      .forEach((fragment, index) => {
-        if (index > 0) {
-          crumbs.push({
-            fragment,
-            href: `${crumbs[index - 1].href}/${fragment}`,
-          })
-        } else {
-          crumbs.push({ fragment, href: `/${fragment}` })
-        }
-      })
-    return crumbs
-  }
 
   function hasMessageNonLu(): boolean {
     return chats.some(
@@ -167,42 +144,12 @@ export default function Layout({ children }: LayoutProps) {
       >
         <Sidebar />
         <div className={styles.page}>
-          <header className={styles.header}>
-            <ul className='mb-2 flex'>
-              {ariane.map(({ href, fragment }, index) => (
-                <li key={fragment}>
-                  {index > 0 && (
-                    <span className='mx-2' aria-hidden={true}>
-                      /
-                    </span>
-                  )}
-                  <Link href={href}>
-                    <a className='text-primary hover:text-primary_darken'>
-                      {fragment}
-                    </a>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            {returnTo && (
-              <div className='flex items-center'>
-                <Link href={returnTo}>
-                  <a>
-                    <BackIcon aria-hidden={true} focusable={false} />
-                    <span className='sr-only'>Page précédente</span>
-                  </a>
-                </Link>
-                <h1 className='ml-4 h2-semi text-primary'>
-                  {pageHeader || pageTitle}
-                </h1>
-              </div>
-            )}
-            {!returnTo && (
-              <h1 className='h2-semi text-primary'>
-                {pageHeader || pageTitle}
-              </h1>
-            )}
-          </header>
+          <Header
+            currentPath={router.asPath}
+            returnTo={returnTo}
+            pageHeader={pageHeader}
+            pageTitle={pageTitle}
+          />
 
           <main
             role='main'
