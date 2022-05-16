@@ -38,7 +38,7 @@ const ResettableTextInput = forwardRef(
 
     return (
       <div
-        className={`flex flex-horizontal  overflow-hidden ${className ?? ''} ${
+        className={`flex flex-horizontal overflow-hidden ${className ?? ''} ${
           disabled
             ? 'cursor-not-allowed text-disabled border-disabled opacity-70'
             : ''
