@@ -44,7 +44,7 @@ module.exports = {
       grey_700: '#878787',
       grey_500: '#B2B2B2',
       grey_100: '#F1F1F1',
-      disabled: '#999BB3',
+      disabled: '#73758D',
     },
 
     fill: (theme) => ({
