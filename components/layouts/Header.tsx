@@ -29,8 +29,11 @@ export function Header({ currentPath, pageHeader, returnTo }: HeaderProps) {
               <span className='sr-only'>Page précédente</span>
             </a>
           </Link>
-          <h1 className='ml-4 h2-semi text-primary'>{pageHeader}</h1>
+          <h1 className='ml-4 text-xl-medium text-primary'>{pageHeader}</h1>
         </div>
+      )}
+      {!returnTo && (
+        <h1 className='text-xl-medium text-primary'>{pageHeader}</h1>
       )}
     </header>
   )

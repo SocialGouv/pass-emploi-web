@@ -172,7 +172,7 @@ function Supervision(_: SupervisionProps) {
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
         </p>
-        <ol className='flex text-sm-medium'>
+        <ol className='flex text-s-medium'>
           <li className='mr-8'>
             1. Renseigner l’adresse e-mail du conseiller initial
           </li>
@@ -330,13 +330,13 @@ function Supervision(_: SupervisionProps) {
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-sm-regular text-content_color'
+                  className='pb-2 pl-4 pr-4 text-s-regular text-content_color'
                 >
                   Nom et prénom
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-sm-regular text-content_color'
+                  className='pb-2 pl-4 pr-4 text-s-regular text-content_color'
                 >
                   Conseiller précédent
                 </th>

@@ -92,7 +92,7 @@ export default function JeunesMultiselectAutocomplete({
     <>
       <label htmlFor='select-jeunes' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-        <span className='text-sm-regular block'>Nom et prénom</span>
+        <span className='text-s-regular block'>Nom et prénom</span>
       </label>
       {error && (
         <InputError id='select-jeunes--error' className='mt-2'>

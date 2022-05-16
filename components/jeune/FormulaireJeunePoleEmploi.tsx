@@ -103,7 +103,7 @@ function FormulaireJeunePoleEmploi({
       </p>
 
       <form method='POST' onSubmit={handleJeuneSubmit}>
-        <div className='text-sm-medium mb-8'>
+        <div className='text-s-medium mb-8'>
           Les champs marqués d&apos;une * sont obligatoires.
         </div>
 
@@ -145,9 +145,9 @@ function FormulaireJeunePoleEmploi({
 
         <label className='block mb-4 text-md-semi' htmlFor='jeune-email'>
           *E-mail{' '}
-          <span className='text-sm-regular'>(ex : monemail@exemple.com)</span>
+          <span className='text-s-regular'>(ex : monemail@exemple.com)</span>
         </label>
-        <span className='text-sm-regular'>
+        <span className='text-s-regular'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
           dossier MAP du jeune.
         </span>

@@ -193,7 +193,7 @@ function FicheJeune({
       )}
 
       <div className='mt-10 border-b border-primary_lighten'>
-        <h2 className='h4-semi text-primary_darken mb-4'>
+        <h2 className='text-l-regular text-primary_darken mb-4'>
           Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
         </h2>
 
@@ -209,7 +209,7 @@ function FicheJeune({
         )}
       </div>
       <div className='mt-8 border-b border-primary_lighten pb-8'>
-        <h2 className='h4-semi text-primary_darken mb-4'>Actions</h2>
+        <h2 className='text-l-regular text-primary_darken mb-4'>Actions</h2>
 
         {isPoleEmploi && <IntegrationPoleEmploi label='actions et démarches' />}
 

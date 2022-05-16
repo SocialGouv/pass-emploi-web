@@ -85,7 +85,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                     >
                       {!jeuneChat.seenByConseiller &&
                         jeuneChat.lastMessageContent && (
-                          <p className='flex items-center text-accent_1 text-sm-regular mb-2'>
+                          <p className='flex items-center text-accent_1 text-s-regular mb-2'>
                             <span className='text-[48px] mr-1'>·</span>
                             Nouveau message
                           </p>

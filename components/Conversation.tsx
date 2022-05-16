@@ -164,7 +164,7 @@ export default function Conversation({
                     }`}
                   >
                     {message.sentBy === 'conseiller' && (
-                      <p className='text-sm-regular capitalize mb-1'>
+                      <p className='text-s-regular capitalize mb-1'>
                         {getConseillerNomComplet(message)}
                       </p>
                     )}

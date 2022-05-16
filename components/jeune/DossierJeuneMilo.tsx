@@ -73,44 +73,44 @@ const DossierJeuneMilo = ({
             <dt className='text-sm mr-1' aria-label='Prénom'>
               Prénom :
             </dt>
-            <dd className='text-sm-medium'> {dossier.prenom}</dd>
+            <dd className='text-s-medium'> {dossier.prenom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Nom'>
               Nom :
             </dt>
-            <dd className='text-sm-medium'> {dossier.nom}</dd>
+            <dd className='text-s-medium'> {dossier.nom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Date de naissance'>
               Date de naissance :
             </dt>
-            <dd className='text-sm-medium'> {dossier.dateDeNaissance}</dd>
+            <dd className='text-s-medium'> {dossier.dateDeNaissance}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Code postal'>
               Code postal :
             </dt>
-            <dd className='text-sm-medium'> {dossier.codePostal}</dd>
+            <dd className='text-s-medium'> {dossier.codePostal}</dd>
           </div>
           <div className='flex items-center mb-3'>
             <dt
               className={` ${
-                dossier.email ? 'text-sm mr-1' : 'text-sm-medium text-warning'
+                dossier.email ? 'text-sm mr-1' : 'text-s-medium text-warning'
               }`}
               aria-label='E-mail'
             >
               E-mail :
             </dt>
 
-            <dd className='text-sm-medium'>{dossier.email || ''}</dd>
+            <dd className='text-s-medium'>{dossier.email || ''}</dd>
           </div>
           {!dossier.email && (
             <>
-              <p className='text-sm-medium text-warning mb-2'>
+              <p className='text-s-medium text-warning mb-2'>
                 L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
               </p>
               <ol className='text-sm text-warning'>
@@ -136,7 +136,7 @@ const DossierJeuneMilo = ({
 
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'}>
-          <a className='flex items-center text-sm-medium text-primary_darken mr-6'>
+          <a className='flex items-center text-s-medium text-primary_darken mr-6'>
             <ArrowLeftIcon
               className='mr-2.5'
               role='img'

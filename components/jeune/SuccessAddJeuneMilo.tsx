@@ -21,7 +21,7 @@ export const SuccessAddJeuneMilo = ({ idJeune }: SuccessAddJeuneMiloProps) => {
         <h2 className='text-base-medium text-primary mb-4'>
           Le compte jeune a été créé avec succès.
         </h2>
-        <p className='text-sm-medium'>
+        <p className='text-s-medium'>
           Vous pouvez désormais le retrouver dans l&apos;onglet &quot;Mes
           jeunes&quot;
         </p>
