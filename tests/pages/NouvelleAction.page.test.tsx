@@ -48,11 +48,13 @@ describe('NouvelleAction', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(actual).toMatchObject({
+        expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
             withoutChat: true,
             pageTitle: 'Actions jeune – Création action',
+            pageHeader: 'Créer une nouvelle action',
+            returnTo: '/mes-jeunes/id-jeune/actions',
           },
         })
       })
@@ -80,30 +82,6 @@ describe('NouvelleAction', () => {
           </DIProvider>
         )
       })
-    })
-
-    it('contient un titre', () => {
-      // Then
-      expect(
-        screen.getByRole('heading', {
-          level: 1,
-          name: 'Créer une nouvelle action',
-        })
-      ).toBeInTheDocument()
-    })
-
-    it('permet de revenir à la page précédente', () => {
-      // Then
-      expect(
-        screen.getByRole('link', {
-          hidden: true,
-          name: 'Page précédente',
-        })
-      ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions')
-      expect(screen.getByText('Page précédente')).toHaveAttribute(
-        'class',
-        'sr-only'
-      )
     })
 
     it("permet d'annuler la création de l'action", () => {

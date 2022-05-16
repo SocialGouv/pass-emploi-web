@@ -147,8 +147,7 @@ export default function Layout({ children }: LayoutProps) {
           <Header
             currentPath={router.asPath}
             returnTo={returnTo}
-            pageHeader={pageHeader}
-            pageTitle={pageTitle}
+            pageHeader={pageHeader ?? pageTitle}
           />
 
           <main

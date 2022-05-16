@@ -7,20 +7,19 @@ import styles from 'styles/components/Layouts.module.css'
 
 interface HeaderProps {
   currentPath: string
-  pageTitle: string
   returnTo?: string
-  pageHeader?: string
+  pageHeader: string
 }
 
-export function Header({
-  currentPath,
-  pageTitle,
-  pageHeader = pageTitle,
-  returnTo,
-}: HeaderProps) {
+export function Header({ currentPath, pageHeader, returnTo }: HeaderProps) {
   return (
     <header className={styles.header}>
-      {!returnTo && <FilAriane currentPath={currentPath} />}
+      {!returnTo && (
+        <>
+          <FilAriane currentPath={currentPath} />
+          <h1 className='h2-semi text-primary'>{pageHeader}</h1>
+        </>
+      )}
 
       {returnTo && (
         <div className='flex items-center'>
@@ -33,7 +32,6 @@ export function Header({
           <h1 className='ml-4 h2-semi text-primary'>{pageHeader}</h1>
         </div>
       )}
-      {!returnTo && <h1 className='h2-semi text-primary'>{pageHeader}</h1>}
     </header>
   )
 }
