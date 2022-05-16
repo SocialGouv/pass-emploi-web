@@ -2,7 +2,10 @@ import NextAuth, { Account, Session } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
-import authenticator from 'utils/auth/authenticator'
+import Authenticator from 'utils/auth/authenticator'
+import HttpClient from 'utils/httpClient'
+
+const authenticator = new Authenticator(new HttpClient())
 
 export default NextAuth({
   providers: [

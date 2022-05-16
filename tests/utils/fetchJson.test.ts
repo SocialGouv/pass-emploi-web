@@ -1,12 +1,15 @@
-import {
-  fetchJson,
-  fetchNoContent,
+import HttpClient, {
   RequestError,
   ServerError,
   UnexpectedError,
-} from 'utils/fetchJson'
+} from 'utils/httpClient'
 
-describe('fetchJson', () => {
+describe('HttpClient', () => {
+  let httpClient: HttpClient
+  beforeEach(() => {
+    httpClient = new HttpClient()
+  })
+
   describe('fetchJson', () => {
     let reqInfo: RequestInfo
     let reqInit: RequestInit
@@ -28,7 +31,7 @@ describe('fetchJson', () => {
       })
 
       // When
-      actual = await fetchJson(reqInfo, reqInit)
+      actual = await httpClient.fetchJson(reqInfo, reqInit)
     })
 
     it('encapsulates call to fetch', () => {
@@ -51,7 +54,7 @@ describe('fetchJson', () => {
         // When
         let error
         try {
-          await fetchJson('/api/path/whatever')
+          await httpClient.fetchJson('/api/path/whatever')
         } catch (e) {
           error = e
         }
@@ -78,7 +81,7 @@ describe('fetchJson', () => {
         // When
         let error
         try {
-          await fetchJson('/api/path/whatever')
+          await httpClient.fetchJson('/api/path/whatever')
         } catch (e) {
           error = e
         }
@@ -109,7 +112,7 @@ describe('fetchJson', () => {
         // When
         let error
         try {
-          await fetchJson('/api/path/whatever')
+          await httpClient.fetchJson('/api/path/whatever')
         } catch (e) {
           error = e
         }
@@ -147,7 +150,7 @@ describe('fetchJson', () => {
       })
 
       // When
-      actual = await fetchNoContent(reqInfo, reqInit)
+      actual = await httpClient.fetchNoContent(reqInfo, reqInit)
     })
 
     it('encapsulates call to fetch', () => {
@@ -170,7 +173,7 @@ describe('fetchJson', () => {
         // When
         let error
         try {
-          await fetchNoContent('/api/path/whatever')
+          await httpClient.fetchNoContent('/api/path/whatever')
         } catch (e) {
           error = e
         }
@@ -197,7 +200,7 @@ describe('fetchJson', () => {
         // When
         let error
         try {
-          await fetchNoContent('/api/path/whatever')
+          await httpClient.fetchNoContent('/api/path/whatever')
         } catch (e) {
           error = e
         }
@@ -228,7 +231,7 @@ describe('fetchJson', () => {
         // When
         let error
         try {
-          await fetchNoContent('/api/path/whatever')
+          await httpClient.fetchNoContent('/api/path/whatever')
         } catch (e) {
           error = e
         }

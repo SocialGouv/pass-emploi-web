@@ -1,3 +1,5 @@
+import { FakeApiClient } from '../utils/fakeApiClient'
+
 import { ApiClient } from 'clients/api.client'
 import {
   typesDeRendezVous,
@@ -10,16 +12,14 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
-import { RequestError } from 'utils/fetchJson'
-
-jest.mock('clients/api.client')
+import { RequestError } from 'utils/httpClient'
 
 describe('RendezVousApiService', () => {
   let apiClient: ApiClient
   let rendezVousService: RendezVousService
   beforeEach(async () => {
     // Given
-    apiClient = new ApiClient()
+    apiClient = new FakeApiClient()
     rendezVousService = new RendezVousApiService(apiClient)
   })
 

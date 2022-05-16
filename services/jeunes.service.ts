@@ -1,7 +1,7 @@
 import { ApiClient } from 'clients/api.client'
 import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import { Conseiller } from 'interfaces/conseiller'
-import { RequestError } from 'utils/fetchJson'
+import { RequestError } from 'utils/httpClient'
 import ErrorCodes from './error-codes'
 import {
   ConseillerHistoriqueJson,

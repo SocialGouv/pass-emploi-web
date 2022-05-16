@@ -1,4 +1,7 @@
+import { FakeApiClient } from '../utils/fakeApiClient'
+
 import { ApiClient } from 'clients/api.client'
+import { unConseiller } from 'fixtures/conseiller'
 import {
   desConseillersJeune,
   desConseillersJeuneJson,
@@ -7,17 +10,14 @@ import {
 } from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
-import { unConseiller } from 'fixtures/conseiller'
-import { RequestError } from 'utils/fetchJson'
-
-jest.mock('clients/api.client')
+import { RequestError } from 'utils/httpClient'
 
 describe('JeunesApiService', () => {
   let apiClient: ApiClient
   let jeunesService: JeunesApiService
   beforeEach(async () => {
     // Given
-    apiClient = new ApiClient()
+    apiClient = new FakeApiClient()
     jeunesService = new JeunesApiService(apiClient)
   })
 

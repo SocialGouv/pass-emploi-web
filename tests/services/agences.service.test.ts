@@ -1,3 +1,5 @@
+import { FakeApiClient } from '../utils/fakeApiClient'
+
 import { ApiClient } from 'clients/api.client'
 import {
   uneListeDAgencesMILO,
@@ -6,14 +8,12 @@ import {
 import { UserStructure } from 'interfaces/conseiller'
 import { AgencesApiService } from 'services/agences.service'
 
-jest.mock('clients/api.client')
-
 describe('AgencesApiService', () => {
   let apiClient: ApiClient
   let agencesService: AgencesApiService
   beforeEach(async () => {
     // Given
-    apiClient = new ApiClient()
+    apiClient = new FakeApiClient()
     agencesService = new AgencesApiService(apiClient)
   })
 

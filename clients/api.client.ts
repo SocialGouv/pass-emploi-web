@@ -1,9 +1,24 @@
-import { fetchJson, fetchNoContent } from 'utils/fetchJson'
+import HttpClient from 'utils/httpClient'
 
-export class ApiClient {
+export interface ApiClient {
+  get<T>(path: string, accessToken: string): Promise<T>
+  post<T>(
+    path: string,
+    payload: { [key: string]: any } | undefined,
+    accessToken: string
+  ): Promise<T>
+  put(
+    path: string,
+    payload: { [key: string]: any },
+    accessToken: string
+  ): Promise<void>
+  delete(path: string, accessToken: string): Promise<void>
+}
+
+export class ApiHttpClient implements ApiClient {
   private readonly apiPrefix?: string
 
-  constructor() {
+  constructor(private readonly httpClient: HttpClient) {
     this.apiPrefix = process.env.API_ENDPOINT
   }
 
@@ -12,7 +27,9 @@ export class ApiClient {
       Authorization: `Bearer ${accessToken}`,
     })
 
-    const json = await fetchJson(`${this.apiPrefix}${path}`, { headers })
+    const json = await this.httpClient.fetchJson(`${this.apiPrefix}${path}`, {
+      headers,
+    })
     return json as T
   }
 
@@ -32,7 +49,10 @@ export class ApiClient {
     }
     if (payload) reqInit.body = JSON.stringify(payload)
 
-    const json = await fetchJson(`${this.apiPrefix}${path}`, reqInit)
+    const json = await this.httpClient.fetchJson(
+      `${this.apiPrefix}${path}`,
+      reqInit
+    )
     return json as T
   }
 
@@ -46,7 +66,7 @@ export class ApiClient {
       'content-type': 'application/json',
     })
 
-    return fetchNoContent(`${this.apiPrefix}${path}`, {
+    return this.httpClient.fetchNoContent(`${this.apiPrefix}${path}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(payload),
@@ -59,7 +79,7 @@ export class ApiClient {
       'content-type': 'application/json',
     })
 
-    await fetchNoContent(`${this.apiPrefix}${path}`, {
+    await this.httpClient.fetchNoContent(`${this.apiPrefix}${path}`, {
       method: 'DELETE',
       headers,
     })

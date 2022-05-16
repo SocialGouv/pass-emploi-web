@@ -1,15 +1,15 @@
+import { FakeApiClient } from '../utils/fakeApiClient'
+
 import { ApiClient } from 'clients/api.client'
 import { unConseiller, unConseillerJson } from 'fixtures/conseiller'
 import { ConseillerApiService } from 'services/conseiller.service'
-
-jest.mock('clients/api.client')
 
 describe('ConseillerApiService', () => {
   let apiClient: ApiClient
   let conseillerService: ConseillerApiService
   beforeEach(async () => {
     // Given
-    apiClient = new ApiClient()
+    apiClient = new FakeApiClient()
     conseillerService = new ConseillerApiService(apiClient)
   })
 

@@ -8,7 +8,7 @@ import {
 } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import ErrorCodes from 'services/error-codes'
-import { RequestError } from 'utils/fetchJson'
+import { RequestError } from 'utils/httpClient'
 
 export interface RendezVousService {
   getRendezVousConseiller(
