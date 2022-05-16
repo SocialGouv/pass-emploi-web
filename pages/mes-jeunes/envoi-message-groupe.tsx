@@ -41,8 +41,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const [erreurMessage, setErreurMessage] = useState<string | undefined>(
     undefined
   )
+  const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
+    useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
-  const [leavePageModalShown, setLeavePageModalShown] = useState<boolean>(false)
 
   const initialTracking = 'Message - Rédaction'
 
@@ -63,12 +64,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     }
 
     setShowLeavePageModal(true)
-    setLeavePageModalShown(true)
+    setConfirmBeforeLeaving(false)
   }
 
   function closeLeavePageConfirmationModal() {
     setShowLeavePageModal(false)
-    setLeavePageModalShown(false)
+    setConfirmBeforeLeaving(true)
   }
 
   async function envoyerMessageGroupe(
@@ -78,6 +79,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     e.stopPropagation()
 
     if (!formIsValid()) return
+
+    setConfirmBeforeLeaving(false)
     try {
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(
@@ -89,6 +92,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       )
       await router.push(`${returnTo}?envoiMessage=succes`)
     } catch (error) {
+      setConfirmBeforeLeaving(true)
       setErreurMessage(
         error instanceof RequestError
           ? error.message
@@ -107,7 +111,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   useMatomo(showLeavePageModal ? 'Message - Modale Annulation' : undefined)
 
   useLeavePageModal(
-    formHasChanges() && !leavePageModalShown,
+    formHasChanges() && confirmBeforeLeaving,
     openLeavePageConfirmationModal
   )
 

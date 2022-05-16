@@ -40,7 +40,8 @@ function EditionRdv({
   const { data: session } = useSession<true>({ required: true })
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
-  const [leavePageModalShown, setLeavePageModalShown] = useState<boolean>(false)
+  const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
+    useState<boolean>(true)
   const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
     useState<RdvFormData | undefined>(undefined)
   const [hasChanges, setHasChanges] = useState<boolean>(false)
@@ -52,13 +53,13 @@ function EditionRdv({
 
   function openLeavePageModal() {
     setShowLeavePageModal(true)
-    setLeavePageModalShown(true)
+    setConfirmBeforeLeaving(false)
     setTrackingTitle(`${initialTracking} - Modale Annulation`)
   }
 
   function closeLeavePageModal() {
     setShowLeavePageModal(false)
-    setLeavePageModalShown(false)
+    setConfirmBeforeLeaving(true)
     setTrackingTitle(initialTracking)
   }
 
@@ -73,6 +74,7 @@ function EditionRdv({
   }
 
   async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
+    setConfirmBeforeLeaving(false)
     if (!rdv) {
       await rendezVousService.postNewRendezVous(
         session!.user.id,
@@ -92,7 +94,7 @@ function EditionRdv({
     await router.push(`${redirectPath}?${queryParam}=succes`)
   }
 
-  useLeavePageModal(hasChanges && !leavePageModalShown, openLeavePageModal)
+  useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
   useMatomo(trackingTitle)
 

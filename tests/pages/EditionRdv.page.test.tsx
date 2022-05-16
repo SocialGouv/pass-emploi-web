@@ -467,7 +467,9 @@ describe('EditionRdv', () => {
         describe('quand le formulaire est validé', () => {
           it('crée un rendez-vous de type Generique', async () => {
             // When
-            buttonValider.click()
+            await act(async () => {
+              buttonValider.click()
+            })
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
@@ -489,7 +491,7 @@ describe('EditionRdv', () => {
             )
           })
 
-          it('crée un rendez-vous de type AUTRE', () => {
+          it('crée un rendez-vous de type AUTRE', async () => {
             // Given
             fireEvent.change(selectType, { target: { value: 'AUTRE' } })
 
@@ -499,7 +501,9 @@ describe('EditionRdv', () => {
             })
 
             // When
-            buttonValider.click()
+            await act(async () => {
+              buttonValider.click()
+            })
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
@@ -523,14 +527,14 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            buttonValider.click()
-
-            await waitFor(() => {
-              // Then
-              expect(push).toHaveBeenCalledWith(
-                '/mes-rendezvous?creationRdv=succes'
-              )
+            await act(async () => {
+              buttonValider.click()
             })
+
+            // Then
+            expect(push).toHaveBeenCalledWith(
+              '/mes-rendezvous?creationRdv=succes'
+            )
           })
         })
 
@@ -568,7 +572,6 @@ describe('EditionRdv', () => {
         })
 
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
-          // Given
           // When
           fireEvent.change(selectType, { target: { value: 'AUTRE' } })
 
@@ -1126,7 +1129,9 @@ describe('EditionRdv', () => {
           })
 
           // When
-          boutonConfirmer.click()
+          await act(async () => {
+            boutonConfirmer.click()
+          })
 
           // Then
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
