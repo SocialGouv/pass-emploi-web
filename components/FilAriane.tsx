@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
+import ChevronIcon from '../assets/icons/chevron_right.svg'
+
 interface FilArianeProps {
   currentPath: string
 }
@@ -27,16 +29,20 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
   }, [currentPath])
 
   return (
-    <ul className='mb-2 flex'>
+    <ul className='mb-2 flex items-center'>
       {ariane.map(({ href, fragment }, index) => (
-        <li key={fragment}>
+        <li key={fragment} className='flex items-center'>
           {index > 0 && (
-            <span className='mx-2' aria-hidden={true}>
-              /
-            </span>
+            <ChevronIcon
+              aria-hidden={true}
+              focusable={false}
+              className='mx-2 fill-content_color'
+            />
           )}
           <Link href={href}>
-            <a className='text-primary hover:text-primary_darken'>{fragment}</a>
+            <a className='text-sm-regular text-content_color underline hover:text-primary_darken'>
+              {fragment}
+            </a>
           </Link>
         </li>
       ))}
