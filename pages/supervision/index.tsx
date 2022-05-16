@@ -395,7 +395,6 @@ export const getServerSideProps: GetServerSideProps<SupervisionProps> = async (
     return { notFound: true }
   }
 
-  // FIXME withoutChat mais largeur pêtée du coup
   return {
     props: {
       pageTitle: 'Supervision',

@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import { ButtonStyle } from '../../../components/ui/Button'
+
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
@@ -131,11 +133,23 @@ function FicheJeune({
 
   return (
     <>
-      {!isPoleEmploi && (
-        <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4 w-fit'>
-          Fixer un rendez-vous
-        </ButtonLink>
-      )}
+      <div className='flex'>
+        {!isPoleEmploi && (
+          <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4 w-fit'>
+            Fixer un rendez-vous
+          </ButtonLink>
+        )}
+
+        {!jeune.isActivated && (
+          <ButtonLink
+            href={`/mes-jeunes/${jeune.id}/suppression`}
+            style={ButtonStyle.WARNING}
+            className='ml-8'
+          >
+            Supprimer ce compte
+          </ButtonLink>
+        )}
+      </div>
 
       {showRdvCreationSuccess && (
         <SuccessMessage
@@ -295,7 +309,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.firstName} ${jeune.lastName}`,
     pageHeader: `${jeune.firstName} ${jeune.lastName}`,
-    returnTo: '/mes-jeunes',
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'

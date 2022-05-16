@@ -17,7 +17,7 @@ import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { useLeavePageModale } from 'utils/useLeavePageModale'
+import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EditionRdvProps extends PageProps {
   jeunes: Jeune[]
@@ -62,12 +62,12 @@ function EditionRdv({
     setTrackingTitle(initialTracking)
   }
 
-  function showConfirmationModale(payload: RdvFormData) {
+  function showConfirmationModal(payload: RdvFormData) {
     setPayloadForConfirmationModal(payload)
     setTrackingTitle(`${initialTracking} - Modale confirmation modification`)
   }
 
-  function closeConfirmationModale() {
+  function closeConfirmationModal() {
     setPayloadForConfirmationModal(undefined)
     setTrackingTitle(initialTracking)
   }
@@ -92,7 +92,7 @@ function EditionRdv({
     await router.push(`${redirectPath}?${queryParam}=succes`)
   }
 
-  useLeavePageModale(hasChanges && !leavePageModalShown, openLeavePageModal)
+  useLeavePageModal(hasChanges && !leavePageModalShown, openLeavePageModal)
 
   useMatomo(trackingTitle)
 
@@ -109,7 +109,7 @@ function EditionRdv({
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
         leaveWithChanges={openLeavePageModal}
-        showConfirmationModal={showConfirmationModale}
+        showConfirmationModal={showConfirmationModal}
       />
 
       {showLeavePageModal && (
@@ -124,7 +124,7 @@ function EditionRdv({
       )}
       {payloadForConfirmationModal && (
         <ConfirmationUpdateRdvModal
-          onCancel={closeConfirmationModale}
+          onCancel={closeConfirmationModal}
           onConfirmation={() =>
             soumettreRendezVous(payloadForConfirmationModal)
           }

@@ -23,7 +23,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { useLeavePageModale } from 'utils/useLeavePageModale'
+import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   jeunes: Jeune[]
@@ -106,7 +106,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   useMatomo(trackingLabel)
   useMatomo(showLeavePageModal ? 'Message - Modale Annulation' : undefined)
 
-  useLeavePageModale(
+  useLeavePageModal(
     formHasChanges() && !leavePageModalShown,
     openLeavePageConfirmationModal
   )

@@ -50,15 +50,5 @@ describe('<DetailsJeune>', () => {
         screen.getByText('pas encore connecté', { exact: false })
       ).toBeInTheDocument()
     })
-
-    it('permet de le supprimer', () => {
-      // Then
-      const link = screen.getByText('Supprimer ce compte')
-      expect(link).toBeInTheDocument()
-      expect(link).toHaveAttribute(
-        'href',
-        `/mes-jeunes/${jeune.id}/suppression`
-      )
-    })
   })
 })

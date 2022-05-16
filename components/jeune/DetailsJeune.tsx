@@ -2,34 +2,16 @@ import React from 'react'
 
 import EmailIcon from '../../assets/icons/email.svg'
 
-import { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
 import { Jeune } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: Jeune
-  withButtons?: boolean
 }
 
-export const DetailsJeune = ({
-  jeune,
-  withButtons = true,
-}: DetailsJeuneProps) => {
+export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
   return (
     <>
-      <div className='flex'>
-        {!jeune.isActivated && withButtons && (
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/suppression`}
-            style={ButtonStyle.WARNING}
-            className='ml-8'
-          >
-            Supprimer ce compte
-          </ButtonLink>
-        )}
-      </div>
-
       <dl className='flex text-sm-semi mb-2'>
         <dt className='mr-2'>Ajouté le :</dt>
         <dd>{formatDayDate(new Date(jeune.creationDate))}</dd>

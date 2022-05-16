@@ -1,10 +1,11 @@
-import { act, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import { DetailsJeune } from '../../components/jeune/DetailsJeune'
 import renderWithSession from '../renderWithSession'
 
 import { uneAction, uneListeDActions } from 'fixtures/action'
@@ -25,7 +26,7 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique } from 'interfaces/jeune'
+import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
@@ -256,6 +257,31 @@ describe('Fiche Jeune', () => {
       ).toBeInTheDocument()
     })
 
+    it("permet de supprimer un jeune qui ne s'est jamais connecté", async () => {
+      // When
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <CurrentJeuneProvider>
+            <FicheJeune
+              jeune={{ ...jeune, isActivated: false }}
+              rdvs={rdvs}
+              actions={[]}
+              conseillers={[]}
+              pageTitle={''}
+            />
+          </CurrentJeuneProvider>
+        </DIProvider>
+      )
+
+      // Then
+      const link = screen.getByText('Supprimer ce compte')
+      expect(link).toBeInTheDocument()
+      expect(link).toHaveAttribute(
+        'href',
+        `/mes-jeunes/${jeune.id}/suppression`
+      )
+    })
+
     describe('quand la création de rdv est réussie', () => {
       let replace: jest.Mock
       beforeEach(() => {
@@ -307,6 +333,7 @@ describe('Fiche Jeune', () => {
         )
       })
     })
+
     describe('quand la modification de rdv est réussie', () => {
       let replace: jest.Mock
       beforeEach(() => {
@@ -434,7 +461,6 @@ describe('Fiche Jeune', () => {
             jeune: unJeune(),
             pageTitle: 'Mes jeunes - Kenji Jirac',
             pageHeader: 'Kenji Jirac',
-            returnTo: '/mes-jeunes',
             rdvs: expect.arrayContaining([]),
             actions: expect.arrayContaining([]),
             conseillers: expect.arrayContaining([]),

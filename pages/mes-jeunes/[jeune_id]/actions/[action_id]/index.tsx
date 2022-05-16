@@ -191,7 +191,6 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     jeune,
     pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`,
     pageHeader: action.content,
-    returnTo: `/mes-jeunes/${jeune.id}/actions`,
   }
 
   if (context.query?.envoiMessage) {

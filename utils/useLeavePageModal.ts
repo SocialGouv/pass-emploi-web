@@ -1,16 +1,16 @@
 import Router from 'next/router'
 import { useCallback, useEffect } from 'react'
 
-export function useLeavePageModale(
+export function useLeavePageModal(
   enabled: boolean | (() => boolean),
-  openModale: () => void
+  openModal: () => void
 ) {
   useBeforeUnload(enabled)
 
   useEffect(() => {
     function handler() {
       if (typeof enabled === 'function' ? enabled() : enabled) {
-        openModale()
+        openModal()
         throw new Error('Navigation annulée pour confirmation')
       }
     }
@@ -20,7 +20,7 @@ export function useLeavePageModale(
     return () => {
       Router.events.off('beforeHistoryChange', handler)
     }
-  }, [enabled, openModale])
+  }, [enabled, openModal])
 }
 
 function useBeforeUnload(enabled: boolean | (() => boolean)) {

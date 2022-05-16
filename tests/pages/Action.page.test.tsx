@@ -138,7 +138,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             jeune,
             pageTitle,
             pageHeader: action.content,
-            returnTo: '/mes-jeunes/jeune-1/actions',
             messageEnvoiGroupeSuccess: true,
           },
         })

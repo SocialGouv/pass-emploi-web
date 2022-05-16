@@ -20,7 +20,7 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className={styles.header}>
-      <FilAriane currentPath={currentPath} />
+      {!returnTo && <FilAriane currentPath={currentPath} />}
 
       {returnTo && (
         <div className='flex items-center'>
