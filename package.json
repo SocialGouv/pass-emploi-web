@@ -17,7 +17,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@badrap/bar-of-progress": "0.1.2",
+    "@badrap/bar-of-progress": "0.2.1",
     "@elastic/apm-rum": "5.11.0",
     "@elastic/apm-rum-react": "1.4.0",
     "crypto-js": "4.1.1",
