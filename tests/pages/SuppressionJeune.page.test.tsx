@@ -19,7 +19,6 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
-jest.mock('next/router')
 
 describe('Suppression Jeune', () => {
   describe('server side', () => {
@@ -100,9 +99,11 @@ describe('Suppression Jeune', () => {
           expect(actual).toEqual({
             props: {
               jeune,
+              structureConseiller: 'MILO',
               withoutChat: true,
               pageTitle: 'Suppression - Kenji Jirac',
-              structureConseiller: 'MILO',
+              pageHeader: 'Suppression de Kenji Jirac',
+              returnTo: '/mes-jeunes/jeune-1',
             },
           })
         })
@@ -130,7 +131,7 @@ describe('Suppression Jeune', () => {
   describe('client side', () => {
     let jeune: Jeune
     let jeunesService: JeunesService
-    let push: jest.Mock
+    let push: Function
     beforeEach(() => {
       jeune = unJeune({
         firstName: 'Nadia',
@@ -150,16 +151,6 @@ describe('Suppression Jeune', () => {
             structureConseiller='MILO'
           />
         </DIProvider>
-      )
-    })
-
-    it('permet de revenir à la page précédente', () => {
-      // Then
-      const link = screen.getByText('Détails Nadia Sanfamiye')
-      expect(link).toBeInTheDocument()
-      expect(link.closest('a')).toHaveAttribute(
-        'href',
-        `/mes-jeunes/${jeune.id}`
       )
     })
 

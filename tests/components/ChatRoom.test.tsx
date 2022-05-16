@@ -11,7 +11,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 
-jest.mock('components/layouts/Conversation', () =>
+jest.mock('components/Conversation', () =>
   jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
 )
 

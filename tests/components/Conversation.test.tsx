@@ -4,7 +4,7 @@ import React from 'react'
 
 import renderWithSession from '../renderWithSession'
 
-import Conversation from 'components/layouts/Conversation'
+import Conversation from 'components/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'

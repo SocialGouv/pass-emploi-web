@@ -52,10 +52,11 @@ describe('Page Profil conseiller', () => {
 
       it('récupère la structure du conseiller', () => {
         // Then
-        expect(actual).toMatchObject({
+        expect(actual).toEqual({
           props: {
             structureConseiller: 'POLE_EMPLOI',
             pageTitle: 'Mon profil',
+            pageHeader: 'Profil',
           },
         })
       })
@@ -87,13 +88,6 @@ describe('Page Profil conseiller', () => {
             </DIProvider>
           )
         })
-      })
-
-      it('affiche le titre de la page', () => {
-        // Then
-        expect(
-          screen.getByRole('heading', { name: 'Profil' })
-        ).toBeInTheDocument()
       })
 
       it('affiche les informations du conseiller', () => {

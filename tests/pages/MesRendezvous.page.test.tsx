@@ -5,12 +5,14 @@ import React from 'react'
 
 import renderWithSession from '../renderWithSession'
 
-import { desRdvListItems } from 'fixtures/rendez-vous'
+import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
+import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withDependance from 'utils/injectionDependances/withDependance'
 
-jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('utils/injectionDependances/withDependance')
 
 describe('MesRendezvous', () => {
   describe('client side', () => {
@@ -25,15 +27,6 @@ describe('MesRendezvous', () => {
             pageTitle=''
           />
         )
-      })
-
-      it('a un titre de niveau 1', () => {
-        const heading = screen.getByRole('heading', {
-          level: 1,
-          name: 'Rendez-vous',
-        })
-
-        expect(heading).toBeInTheDocument()
       })
 
       it('a un lien pour fixer un rendez-vous', () => {
@@ -160,6 +153,31 @@ describe('MesRendezvous', () => {
   })
 
   describe('server side', () => {
+    beforeEach(() => {
+      const rendezVousService = mockedRendezVousService({
+        getRendezVousConseiller: jest.fn(async () => ({
+          futurs: [unRendezVous()],
+          passes: [
+            unRendezVous({
+              jeunes: [
+                {
+                  id: '1',
+                  prenom: 'kenji',
+                  nom: 'Jirac',
+                },
+                {
+                  id: '2',
+                  prenom: 'Nadia',
+                  nom: 'Sanfamiy',
+                },
+              ],
+            }),
+          ],
+        })),
+      })
+      ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
+    })
+
     describe('Pour un conseiller Pole Emploi', () => {
       it('renvoie une 404', async () => {
         // Given
@@ -176,6 +194,42 @@ describe('MesRendezvous', () => {
         // Then
         expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
         expect(actual).toEqual({ notFound: true })
+      })
+    })
+
+    describe('quand le conseiller est connecté', () => {
+      it('récupère les rendez-vous du conseiller', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: { user: { structure: 'MILO' } },
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: {},
+        } as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          props: {
+            rendezVousFuturs: [
+              expect.objectContaining({
+                beneficiaires: 'kenji Jirac',
+                hasComment: true,
+                idCreateur: '1',
+                type: 'Autre',
+              }),
+            ],
+            rendezVousPasses: [
+              expect.objectContaining({
+                beneficiaires: 'Bénéficiaires multiples',
+              }),
+            ],
+            pageTitle: 'Tableau de bord - Mes rendez-vous',
+            pageHeader: 'Rendez-vous',
+          },
+        })
       })
     })
   })

@@ -4,7 +4,7 @@ import React from 'react'
 
 import renderWithSession from '../renderWithSession'
 
-import { Footer } from 'components/Footer'
+import { Footer } from 'components/layouts/Footer'
 
 describe('<Footer/>', () => {
   let component: RenderResult

@@ -1,26 +1,21 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import Router from 'next/router'
 import React, { useState } from 'react'
-
-import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
 import { SuccessAddJeunePoleEmploi } from 'components/jeune/SuccessAddJeunePoleEmploi'
 import { UserStructure } from 'interfaces/conseiller'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 
-interface PoleEmploiCreationJeuneProps {
-  pageTitle: string
-}
+interface PoleEmploiCreationJeuneProps extends PageProps {}
 
 function PoleEmploiCreationJeune(): JSX.Element {
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -60,42 +55,31 @@ function PoleEmploiCreationJeune(): JSX.Element {
 
   return (
     <>
-      <div className={`flex justify-between ${styles.header}`}>
-        <Link href={'/mes-jeunes'}>
-          <a className='flex items-center'>
-            <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <span className='ml-6 h4-semi text-primary'>
-              Liste de mes jeunes
-            </span>
-          </a>
-        </Link>
-
-        {createdSuccessId && (
+      {createdSuccessId && (
+        <div className='mb-4'>
           <AjouterJeuneButton
             handleAddJeune={() => {
               Router.reload()
             }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className={`${styles.content} pl-32`}>
-        <h1 className='text-m-medium mt-6 mb-4'>
-          Création d&apos;un compte jeune
-        </h1>
+      <h1 className='text-m-medium mt-6 mb-4'>
+        Création d&apos;un compte jeune
+      </h1>
 
-        {!createdSuccessId && (
-          <FormulaireJeunePoleEmploi
-            creerJeunePoleEmploi={creerJeunePoleEmploi}
-            creationError={creationError}
-            creationEnCours={creationEnCours}
-          />
-        )}
+      {!createdSuccessId && (
+        <FormulaireJeunePoleEmploi
+          creerJeunePoleEmploi={creerJeunePoleEmploi}
+          creationError={creationError}
+          creationEnCours={creationEnCours}
+        />
+      )}
 
-        {createdSuccessId && (
-          <SuccessAddJeunePoleEmploi idJeune={createdSuccessId} />
-        )}
-      </div>
+      {createdSuccessId && (
+        <SuccessAddJeunePoleEmploi idJeune={createdSuccessId} />
+      )}
     </>
   )
 }
@@ -121,6 +105,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       pageTitle: "Mes jeunes – Création d'un compte jeune",
+      pageHeader: "Création d'un compte jeune",
     },
   }
 }

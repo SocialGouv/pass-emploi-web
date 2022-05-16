@@ -1,10 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-
-import BackIcon from '../../../assets/icons/arrow_back.svg'
 
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
@@ -12,8 +9,8 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -21,10 +18,8 @@ import { RequestError } from 'utils/fetchJson'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface SuppressionJeuneProps {
+interface SuppressionJeuneProps extends PageProps {
   jeune: Jeune
-  withoutChat: true
-  pageTitle: string
   structureConseiller: string
 }
 
@@ -74,70 +69,56 @@ function SuppressionJeune({
 
   return (
     <>
-      <div className={styles.header}>
-        <Link href={`/mes-jeunes/${jeune.id}`}>
-          <a className='flex items-center w-max'>
-            <BackIcon aria-hidden={true} focusable='false' />
-            <span className='ml-6 h4-semi text-primary_darken'>
-              Détails {jeune.firstName} {jeune.lastName}
-            </span>
-          </a>
-        </Link>
-      </div>
+      {error && (
+        <FailureMessage label={error} onAcknowledge={clearDeletionError} />
+      )}
 
-      <div className={styles.content}>
-        {error && (
-          <FailureMessage label={error} onAcknowledge={clearDeletionError} />
-        )}
-
-        <div className='m-auto mt-20 w-max'>
-          <p className='h4-semi text-primary_darken'>
-            Confirmez la suppression du compte jeune
-          </p>
-          <div className='mt-8'>
-            <InformationMessage content='Une fois confirmée toutes les informations liées à ce compte jeune seront supprimées'>
-              {structureConseiller === UserStructure.MILO && (
-                <p>
-                  Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci
-                  de transmettre en amont le numéro de dossier technique à
-                  l’adresse{' '}
-                  <a
-                    className='underline hover:text-primary_darken'
-                    href='mailto:support@pass-emploi.beta.gouv.fr'
-                  >
-                    support@pass-emploi.beta.gouv.fr
-                  </a>
-                  .
-                </p>
-              )}
-            </InformationMessage>
-          </div>
-
-          <div className='mt-8 flex'>
-            {!loading && (
-              <ButtonLink
-                href={`/mes-jeunes/${jeune.id}`}
-                style={ButtonStyle.SECONDARY}
-              >
-                Annuler
-              </ButtonLink>
+      <div className='m-auto mt-20 w-max'>
+        <p className='h4-semi text-primary_darken'>
+          Confirmez la suppression du compte jeune
+        </p>
+        <div className='mt-8'>
+          <InformationMessage content='Une fois confirmée toutes les informations liées à ce compte jeune seront supprimées'>
+            {structureConseiller === UserStructure.MILO && (
+              <p>
+                Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
+                transmettre en amont le numéro de dossier technique à l’adresse{' '}
+                <a
+                  className='underline hover:text-primary_darken'
+                  href='mailto:support@pass-emploi.beta.gouv.fr'
+                >
+                  support@pass-emploi.beta.gouv.fr
+                </a>
+                .
+              </p>
             )}
-            {loading && (
-              <Button style={ButtonStyle.SECONDARY} disabled={true}>
-                Annuler
-              </Button>
-            )}
+          </InformationMessage>
+        </div>
 
-            <Button
-              type='button'
-              style={ButtonStyle.PRIMARY}
-              onClick={supprimerJeune}
-              disabled={loading}
-              className='ml-6'
+        <div className='mt-8 flex'>
+          {!loading && (
+            <ButtonLink
+              href={`/mes-jeunes/${jeune.id}`}
+              style={ButtonStyle.SECONDARY}
             >
-              Confirmer
+              Annuler
+            </ButtonLink>
+          )}
+          {loading && (
+            <Button style={ButtonStyle.SECONDARY} disabled={true}>
+              Annuler
             </Button>
-          </div>
+          )}
+
+          <Button
+            type='button'
+            style={ButtonStyle.PRIMARY}
+            onClick={supprimerJeune}
+            disabled={loading}
+            className='ml-6'
+          >
+            Confirmer
+          </Button>
         </div>
       </div>
     </>
@@ -169,9 +150,11 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       jeune,
+      structureConseiller: user.structure,
       withoutChat: true,
       pageTitle: `Suppression - ${jeune.firstName} ${jeune.lastName}`,
-      structureConseiller: user.structure,
+      pageHeader: `Suppression de ${jeune.firstName} ${jeune.lastName}`,
+      returnTo: `/mes-jeunes/${jeune.id}`,
     },
   }
 }

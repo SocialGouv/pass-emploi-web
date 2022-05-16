@@ -62,12 +62,6 @@ describe("Page Liste des actions d'un jeune", () => {
     })
 
     it('affiche la liste des actions du jeune', () => {
-      expect(
-        screen.getByRole('heading', {
-          level: 1,
-          name: `Les actions de ${jeune.firstName} ${jeune.lastName}`,
-        })
-      ).toBeInTheDocument()
       actions.forEach((action) => {
         expect(screen.getByText(action.content)).toBeInTheDocument()
         const lien = screen.getByLabelText(
@@ -79,14 +73,6 @@ describe("Page Liste des actions d'un jeune", () => {
           `/mes-jeunes/${jeune.id}/actions/${action.id}`
         )
       })
-    })
-
-    it('a un lien pour revenir sur la page précédente', () => {
-      const backLink = screen
-        .getByLabelText('Retour sur la fiche du jeune')
-        .closest('a')
-      expect(backLink).toBeInTheDocument()
-      expect(backLink).toHaveAttribute('href', '/mes-jeunes/jeune-1')
     })
 
     it('a un lien pour créer une action', () => {
@@ -191,6 +177,25 @@ describe("Page Liste des actions d'un jeune", () => {
   })
 
   describe('server side', () => {
+    let jeune: Jeune
+    let actions: Action[]
+    let jeunesService: JeunesService
+    let actionsService: ActionsService
+    beforeEach(() => {
+      jeune = unJeune()
+      actions = uneListeDActions()
+      jeunesService = mockedJeunesService({
+        getJeuneDetails: jest.fn(async () => jeune),
+      })
+      actionsService = mockedActionsService({
+        getActionsJeune: jest.fn(async () => actions),
+      })
+      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+        if (dependance === 'jeunesService') return jeunesService
+        if (dependance === 'actionsService') return actionsService
+      })
+    })
+
     it('nécessite une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -226,10 +231,6 @@ describe("Page Liste des actions d'un jeune", () => {
     })
 
     describe("quand l'utilisateur n'est pas Pole emploi", () => {
-      let jeune: Jeune
-      let actions: Action[]
-      let jeunesService: JeunesService
-      let actionsService: ActionsService
       let actual: GetServerSidePropsResult<any>
       beforeEach(async () => {
         // Given
@@ -241,26 +242,10 @@ describe("Page Liste des actions d'un jeune", () => {
           },
         })
 
-        jeune = unJeune()
-        actions = uneListeDActions()
-        jeunesService = mockedJeunesService({
-          getJeuneDetails: jest.fn(async () => jeune),
-        })
-        actionsService = mockedActionsService({
-          getActionsJeune: jest.fn(async () => actions),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'actionsService') return actionsService
-        })
-
         // When
         actual = await getServerSideProps({
           query: {
             jeune_id: 'id-jeune',
-            creation: 'succes',
-            suppression: 'succes',
-            envoiMessage: 'succes',
           },
         } as unknown as GetServerSidePropsContext)
       })
@@ -271,8 +256,13 @@ describe("Page Liste des actions d'un jeune", () => {
           'id-jeune',
           'accessToken'
         )
-        expect(actual).toMatchObject({
-          props: { jeune, pageTitle: 'Mes jeunes - Actions de Kenji Jirac' },
+        expect(actual).toEqual({
+          props: {
+            jeune,
+            pageTitle: 'Mes jeunes - Actions de Kenji Jirac',
+            pageHeader: 'Les actions de Kenji Jirac',
+            actions: expect.arrayContaining([]),
+          },
         })
       })
 
@@ -285,6 +275,30 @@ describe("Page Liste des actions d'un jeune", () => {
         expect(actual).toMatchObject({
           props: { actions: [actions[2], actions[1], actions[0]] },
         })
+      })
+    })
+
+    describe('Résultats actions préalables', () => {
+      let actual: GetServerSidePropsResult<any>
+      beforeEach(async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'MILO' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        // When
+        actual = await getServerSideProps({
+          query: {
+            jeune_id: 'id-jeune',
+            creation: 'succes',
+            suppression: 'succes',
+            envoiMessage: 'succes',
+          },
+        } as unknown as GetServerSidePropsContext)
       })
 
       it("récupère le résultat de la suppression d'une action", () => {
@@ -301,7 +315,7 @@ describe("Page Liste des actions d'un jeune", () => {
         })
       })
 
-      it("récupère le résultat de la cráetion d'une action", () => {
+      it("récupère le résultat de la création d'une action", () => {
         // The
         expect(actual).toMatchObject({
           props: { creationSuccess: true },

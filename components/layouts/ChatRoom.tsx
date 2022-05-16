@@ -6,7 +6,7 @@ import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import EmptyMessagesImage from '../../assets/images/empty_state.svg'
 
-import Conversation from 'components/layouts/Conversation'
+import Conversation from 'components/Conversation'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'

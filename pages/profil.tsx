@@ -7,17 +7,16 @@ import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
 import { Switch } from 'components/ui/Switch'
 import { UserStructure } from 'interfaces/conseiller'
+import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
-interface ProfilProps {
+interface ProfilProps extends PageProps {
   structureConseiller: string
-  pageTitle: string
 }
 
 function Profil({ structureConseiller }: ProfilProps) {
@@ -47,11 +46,8 @@ function Profil({ structureConseiller }: ProfilProps) {
 
   return (
     <>
-      <div className={styles.header}>
-        <h1 className='h2-semi text-primary'>Profil</h1>
-      </div>
       {conseiller && (
-        <div className={styles.content}>
+        <>
           <section className='mb-8'>
             <h2 className='text-l-medium mb-4'>Informations</h2>
             <div className='pl-4'>
@@ -133,7 +129,7 @@ function Profil({ structureConseiller }: ProfilProps) {
               </div>
             </div>
           </section>
-        </div>
+        </>
       )}
     </>
   )
@@ -152,6 +148,7 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     props: {
       structureConseiller: user.structure,
       pageTitle: 'Mon profil',
+      pageHeader: 'Profil',
     },
   }
 }

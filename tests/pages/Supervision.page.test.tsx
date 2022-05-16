@@ -15,7 +15,7 @@ import { DIProvider } from 'utils/injectionDependances'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('Supervision', () => {
-  describe('quand le conseiller est superviseur', () => {
+  describe('client side', () => {
     let jeunesService: JeunesService
     beforeEach(async () => {
       // Given
@@ -35,14 +35,6 @@ describe('Supervision', () => {
             estConseiller: true,
           },
         }
-      )
-    })
-
-    it('affiche le titre de la page', () => {
-      //THEN
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-        'Réaffectation des jeunes'
       )
     })
 
@@ -174,22 +166,43 @@ describe('Supervision', () => {
     })
   })
 
-  describe("quand le conseiller n'est pas superviseur", () => {
-    it('renvoie une page 404', async () => {
+  describe('server side', () => {
+    describe("quand le conseiller n'est pas superviseur", () => {
+      it('renvoie une page 404', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          session: { user: { estSuperviseur: false } },
+          validSession: true,
+        })
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ notFound: true })
+      })
+    })
+  })
+
+  describe('quand le conseiller est superviseur', () => {
+    it('prépare la page', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        session: {
-          user: { estSuperviseur: false },
-        },
         validSession: true,
+        session: { user: { estSuperviseur: true } },
       })
 
       // When
       const actual = await getServerSideProps({} as GetServerSidePropsContext)
 
       // Then
-      expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ notFound: true })
+      expect(actual).toEqual({
+        props: {
+          pageTitle: 'Supervision',
+          pageHeader: 'Réaffectation des jeunes',
+        },
+      })
     })
   })
 })

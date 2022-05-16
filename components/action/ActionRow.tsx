@@ -54,9 +54,9 @@ export default function ActionRow({
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
             <ChevronIcon
-              className='mr-1'
               focusable='false'
               aria-hidden='true'
+              className='mr-1 fill-primary'
             />
           </span>
         </div>

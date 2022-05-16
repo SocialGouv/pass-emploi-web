@@ -21,7 +21,6 @@ import withDependance from 'utils/injectionDependances/withDependance'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('components/Modal')
-jest.mock('next/router', () => ({ useRouter: jest.fn() }))
 
 describe('Home', () => {
   describe('client side', () => {

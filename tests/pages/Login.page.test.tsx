@@ -1,23 +1,21 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import Login from 'pages/login'
 
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      query: { redirectUrl: 'redirectUrl' },
-    }
-  },
-}))
-
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
+
 describe('Login', () => {
   describe('render', () => {
     beforeEach(async () => {
+      ;(useRouter as jest.Mock).mockReturnValue({
+        query: { redirectUrl: 'redirectUrl' },
+      })
+
       render(<Login isFromEmail={false} />)
     })
 

@@ -1,4 +1,5 @@
 import { act, screen, waitFor } from '@testing-library/react'
+import { useRouter } from 'next/router'
 
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
@@ -35,6 +36,7 @@ describe('Intégration notifications sonores', () => {
   let messagesService: MessagesService
   beforeEach(async () => {
     jest.setSystemTime(new Date())
+    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/path/to/page' })
 
     jeunesService = mockedJeunesService()
     conseillerService = mockedConseillerService()

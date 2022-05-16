@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom'
 import { within } from '@testing-library/react'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import renderWithSession from '../renderWithSession'
@@ -7,25 +8,11 @@ import renderWithSession from '../renderWithSession'
 import Sidebar from 'components/layouts/Sidebar'
 import { UserStructure } from 'interfaces/conseiller'
 
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      route: '/',
-      pathname: '',
-      query: '',
-      asPath: '',
-      push: jest.fn(),
-      events: {
-        on: jest.fn(),
-        off: jest.fn(),
-      },
-      beforePopState: jest.fn(() => null),
-      prefetch: jest.fn(() => null),
-    }
-  },
-}))
-
 describe('<Sidebar/>', () => {
+  beforeEach(() => {
+    ;(useRouter as jest.Mock).mockReturnValue({ pathname: '' })
+  })
+
   it('affiche les liens de la barre de navigation', () => {
     // WHEN
     renderWithSession(<Sidebar />)

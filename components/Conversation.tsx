@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import BackIcon from '../../assets/icons/arrow_back.svg'
-import SendIcon from '../../assets/icons/send.svg'
+import BackIcon from '../assets/icons/arrow_back.svg'
+import SendIcon from '../assets/icons/send.svg'
 
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'

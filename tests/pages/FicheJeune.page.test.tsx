@@ -1,10 +1,11 @@
-import { act, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import { DetailsJeune } from '../../components/jeune/DetailsJeune'
 import renderWithSession from '../renderWithSession'
 
 import { uneAction, uneListeDActions } from 'fixtures/action'
@@ -25,7 +26,7 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique } from 'interfaces/jeune'
+import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
@@ -36,11 +37,6 @@ import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(() => ({
-    asPath: '/mes-jeunes/jeune-1',
-  })),
-}))
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
@@ -77,14 +73,6 @@ describe('Fiche Jeune', () => {
               />
             </CurrentJeuneProvider>
           </DIProvider>
-        )
-      })
-
-      it('affiche le titre de la fiche', async () => {
-        // Then
-        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
-        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-          'Kenji Jirac'
         )
       })
 
@@ -269,6 +257,31 @@ describe('Fiche Jeune', () => {
       ).toBeInTheDocument()
     })
 
+    it("permet de supprimer un jeune qui ne s'est jamais connecté", async () => {
+      // When
+      renderWithSession(
+        <DIProvider dependances={{ jeunesService, rendezVousService }}>
+          <CurrentJeuneProvider>
+            <FicheJeune
+              jeune={{ ...jeune, isActivated: false }}
+              rdvs={rdvs}
+              actions={[]}
+              conseillers={[]}
+              pageTitle={''}
+            />
+          </CurrentJeuneProvider>
+        </DIProvider>
+      )
+
+      // Then
+      const link = screen.getByText('Supprimer ce compte')
+      expect(link).toBeInTheDocument()
+      expect(link).toHaveAttribute(
+        'href',
+        `/mes-jeunes/${jeune.id}/suppression`
+      )
+    })
+
     describe('quand la création de rdv est réussie', () => {
       let replace: jest.Mock
       beforeEach(() => {
@@ -320,6 +333,7 @@ describe('Fiche Jeune', () => {
         )
       })
     })
+
     describe('quand la modification de rdv est réussie', () => {
       let replace: jest.Mock
       beforeEach(() => {
@@ -442,7 +456,16 @@ describe('Fiche Jeune', () => {
           'id-jeune',
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { jeune: unJeune() } })
+        expect(actual).toEqual({
+          props: {
+            jeune: unJeune(),
+            pageTitle: 'Mes jeunes - Kenji Jirac',
+            pageHeader: 'Kenji Jirac',
+            rdvs: expect.arrayContaining([]),
+            actions: expect.arrayContaining([]),
+            conseillers: expect.arrayContaining([]),
+          },
+        })
       })
 
       it('récupère les rendez-vous à venir du jeune', async () => {

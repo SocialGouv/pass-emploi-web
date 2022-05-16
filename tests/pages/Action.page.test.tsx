@@ -44,20 +44,10 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     it("Devrait afficher les information d'une action", () => {
-      expect(screen.getByText(action.content)).toBeInTheDocument()
       expect(screen.getByText(action.comment)).toBeInTheDocument()
       expect(screen.getByText('15/02/2022')).toBeInTheDocument()
       expect(screen.getByText('16/02/2022')).toBeInTheDocument()
       expect(screen.getByText(action.creator)).toBeInTheDocument()
-    })
-
-    it('Devrait avoir un lien pour revenir sur la page précédente', () => {
-      const backLink = screen.getByRole('link', {
-        name: 'Actions de Kenji Jirac',
-      })
-
-      expect(backLink).toBeInTheDocument()
-      expect(backLink).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions')
     })
 
     describe('Au clique sur un statut', () => {
@@ -118,12 +108,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     describe("quand le conseiller n'est pas Pôle emploi", () => {
-      let action: Action
-      let jeune: Jeune
-      let actionsService: ActionsService
-      let actual: GetServerSidePropsResult<any>
-      beforeEach(async () => {
-        // Given
+      it("récupère les info de l'action et du jeune", async () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
@@ -131,33 +116,30 @@ describe("Page Détail d'une action d'un jeune", () => {
             user: { structure: 'MILO' },
           },
         })
-        action = uneAction()
-        jeune = unJeune()
-        actionsService = mockedActionsService({
+        const action: Action = uneAction()
+        const jeune: Jeune = unJeune()
+        const actionsService: ActionsService = mockedActionsService({
           getAction: jest.fn(async () => ({ action, jeune })),
         })
         ;(withDependance as jest.Mock).mockReturnValue(actionsService)
 
         // When
-        actual = await getServerSideProps({
+        const actual: GetServerSidePropsResult<any> = await getServerSideProps({
           query: { action_id: 'id-action', envoiMessage: 'succes' },
-        } as unknown as GetServerSidePropsContext)
-      })
-
-      it("récupère les info de l'action et du jeune", async () => {
-        // Then
+        } as unknown as GetServerSidePropsContext) // Then
         expect(actionsService.getAction).toHaveBeenCalledWith(
           'id-action',
           'accessToken'
         )
         const pageTitle = `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`
-        expect(actual).toMatchObject({ props: { action, jeune, pageTitle } })
-      })
-
-      it("récupère le succès d'envoie de message groupé", () => {
-        // Then
-        expect(actual).toMatchObject({
-          props: { messageEnvoiGroupeSuccess: true },
+        expect(actual).toEqual({
+          props: {
+            action,
+            jeune,
+            pageTitle,
+            pageHeader: action.content,
+            messageEnvoiGroupeSuccess: true,
+          },
         })
       })
     })
