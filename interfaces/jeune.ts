@@ -22,6 +22,11 @@ export type Jeune = {
     prenom: string
     email?: string
   }
+  situationCourante?: {
+    etat: string
+    categorie: string
+    dateFin?: string
+  }
 }
 
 export type JeuneAvecNbActionsNonTerminees = Jeune & {

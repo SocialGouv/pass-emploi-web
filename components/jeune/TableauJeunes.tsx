@@ -302,7 +302,9 @@ export const TableauJeunes = ({
 
                   {withSituations && (
                     <span role='cell' className='table-cell p-4'>
-                      <p>La situation de mon jeune</p>
+                      {jeune.situationCourante
+                        ? jeune.situationCourante.categorie
+                        : 'Sans situation'}
                     </span>
                   )}
 
