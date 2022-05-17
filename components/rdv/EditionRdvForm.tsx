@@ -287,7 +287,7 @@ export function EditionRdvForm({
 
       {aDesJeunesDUnAutrePortefeuille() && (
         <div className='mb-6'>
-          <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et ne sont pas dans votre portefeuille' />
+          <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
 
