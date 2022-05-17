@@ -31,6 +31,7 @@ enum SortColumn {
 interface TableauJeunesProps {
   jeunes: JeuneAvecInfosComplementaires[]
   withActions: boolean
+  withSituations: boolean
 }
 
 function todayOrDate(date: Date): string {
@@ -47,7 +48,11 @@ function todayOrDate(date: Date): string {
   return `${dateString} à ${formatHourMinuteDate(date)}`
 }
 
-export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
+export const TableauJeunes = ({
+  jeunes,
+  withActions,
+  withSituations,
+}: TableauJeunesProps) => {
   const [sortedJeunes, setSortedJeunes] =
     useState<JeuneAvecInfosComplementaires[]>(jeunes)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
@@ -60,9 +65,11 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
   const isAction = currentSortedColumn === SortColumn.NB_ACTIONS_NON_TERMINEES
   const isMessage = currentSortedColumn === SortColumn.MESSAGES
 
-  const gridColsStyle = withActions
-    ? 'grid-cols-[repeat(4,1fr)]'
-    : 'grid-cols-[repeat(3,1fr)]'
+  let nombreDeColonnes = 3
+  if (withActions) nombreDeColonnes++
+  if (withSituations) nombreDeColonnes++
+
+  const gridColsStyle = `grid-cols-[repeat(${nombreDeColonnes},1fr)]`
 
   const sortJeunes = (newSortColumn: SortColumn) => {
     if (currentSortedColumn !== newSortColumn) {
@@ -183,6 +190,14 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                   )}
                 </button>
               </span>
+              {withSituations && (
+                <span
+                  role='columnheader'
+                  className='table-cell text-sm text-left p-6'
+                >
+                  <span className='mr-1'>Situation</span>
+                </span>
+              )}
               <span
                 role='columnheader'
                 className='table-cell text-sm text-left py-4'
@@ -284,6 +299,12 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}
                   </span>
+
+                  {withSituations && (
+                    <span role='cell' className='table-cell p-4'>
+                      <p>La situation de mon jeune</p>
+                    </span>
+                  )}
 
                   <span role='cell' className='table-cell p-4'>
                     {jeune.lastActivity
