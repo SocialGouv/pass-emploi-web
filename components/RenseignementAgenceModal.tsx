@@ -12,7 +12,7 @@ import { Agence, UserStructure } from 'interfaces/conseiller'
 interface RenseignementAgenceModalProps {
   structureConseiller: string
   referentielAgences: Agence[]
-  onAgenceChoisie: (agence: { id: string } | { nom: string }) => void
+  onAgenceChoisie: (agence: { id?: string; nom: string }) => void
   onClose: () => void
 }
 
@@ -50,7 +50,10 @@ export default function RenseignementAgenceModal({
           error: `Sélectionner une ${labelAgence} dans la liste`,
         })
       } else {
-        onAgenceChoisie({ id: idAgenceSelectionnee.value })
+        const agenceChoisie = referentielAgences.find(
+          ({ id }) => id === idAgenceSelectionnee.value
+        )
+        onAgenceChoisie(agenceChoisie!)
       }
     } else {
       if (!agenceLibre.value) {
