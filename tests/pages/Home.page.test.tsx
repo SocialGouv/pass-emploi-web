@@ -2,6 +2,7 @@ import { act, fireEvent, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { ConseillerProvider } from '../../utils/conseiller/conseillerContext'
 import renderWithSession from '../renderWithSession'
 
 import {
@@ -38,11 +39,13 @@ describe('Home', () => {
         // When
         renderWithSession(
           <DIProvider dependances={{ conseillerService }}>
-            <Home
-              structureConseiller={UserStructure.POLE_EMPLOI}
-              referentielAgences={agences}
-              redirectUrl='/mes-jeunes'
-            />
+            <ConseillerProvider conseiller={unConseiller()}>
+              <Home
+                structureConseiller={UserStructure.POLE_EMPLOI}
+                referentielAgences={agences}
+                redirectUrl='/mes-jeunes'
+              />
+            </ConseillerProvider>
           </DIProvider>
         )
       })
@@ -104,7 +107,7 @@ describe('Home', () => {
         // Then
         expect(conseillerService.modifierAgence).toHaveBeenCalledWith(
           '1',
-          { id: agence.id },
+          { id: agence.id, nom: 'Agence Pôle emploi THIERS' },
           'accessToken'
         )
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
@@ -196,11 +199,13 @@ describe('Home', () => {
           <DIProvider
             dependances={{ conseillerService: mockedConseillerService() }}
           >
-            <Home
-              structureConseiller={UserStructure.MILO}
-              referentielAgences={[]}
-              redirectUrl='/mes-jeunes'
-            />
+            <ConseillerProvider conseiller={unConseiller()}>
+              <Home
+                structureConseiller={UserStructure.MILO}
+                referentielAgences={[]}
+                redirectUrl='/mes-jeunes'
+              />
+            </ConseillerProvider>
           </DIProvider>
         )
         const searchMission = screen.getByRole('combobox', {

@@ -10,6 +10,7 @@ import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -26,6 +27,7 @@ function Home({
 }: HomePageProps) {
   const router = useRouter()
   const { data: session } = useSession<true>({ required: true })
+  const [conseiller, setConseiller] = useConseiller()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
 
@@ -33,14 +35,16 @@ function Home({
     'Pop-in sélection agence'
   )
 
-  async function selectAgence(
-    agence: { id: string } | { nom: string }
-  ): Promise<void> {
+  async function selectAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
     await conseillerService.modifierAgence(
       session!.user.id,
       agence,
       session!.accessToken
     )
+    setConseiller({ ...conseiller!, agence: agence.nom })
     setTrackingLabel('Succès ajout agence')
     await router.replace(redirectUrl + '?choixAgence=succes')
   }
