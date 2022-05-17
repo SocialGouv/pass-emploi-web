@@ -84,44 +84,34 @@ export default function Conversation({
 
   const observerMessages = useCallback(
     (idChatToObserve: string) => {
-      if (!chatCredentials) return () => {}
+      if (!chatCredentials) return { unsubscribe: () => {} }
 
-      return messagesService.observeMessages(
-        idChatToObserve,
-        chatCredentials.cleChiffrement,
-        (messagesGroupesParJour: MessagesOfADay[]) => {
+      return messagesService
+        .observeMessages(idChatToObserve, chatCredentials.cleChiffrement)
+        .subscribe((messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
           if (inputFocused.current) {
             setReadByConseiller(idChatToObserve)
           }
-        }
-      )
+        })
     },
     [chatCredentials, messagesService, setReadByConseiller]
   )
 
-  const observerLastJeuneReadingDate = useCallback(
-    (idChatToObserve: string) => {
-      return messagesService.observeJeuneReadingDate(
-        idChatToObserve,
-        setLastSeenByJeune
-      )
-    },
-    [messagesService]
-  )
-
   useEffect(() => {
-    const unsubscribe = observerMessages(jeuneChat.chatId)
+    const subscription = observerMessages(jeuneChat.chatId)
     setReadByConseiller(jeuneChat.chatId)
 
-    return () => unsubscribe()
+    return () => subscription.unsubscribe()
   }, [jeuneChat.chatId, observerMessages, setReadByConseiller])
 
   useEffect(() => {
-    const unsubscribe = observerLastJeuneReadingDate(jeuneChat.chatId)
-    return () => unsubscribe()
-  }, [jeuneChat.chatId, observerLastJeuneReadingDate])
+    const subscription = messagesService
+      .observeJeuneReadingDate(jeuneChat.chatId)
+      .subscribe(setLastSeenByJeune)
+    return () => subscription.unsubscribe()
+  }, [jeuneChat.chatId, messagesService])
 
   return (
     <div className='h-full flex flex-col bg-grey_100'>

@@ -1,6 +1,7 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
 import { Session } from 'next-auth'
 import React from 'react'
+import { of } from 'rxjs'
 
 import renderWithSession from '../renderWithSession'
 
@@ -10,7 +11,6 @@ import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { MessagesOfADay } from 'interfaces/message'
 import { MessagesService } from 'services/messages.service'
 import { formatDayDate } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
@@ -28,18 +28,8 @@ describe('<Conversation />', () => {
     onBack = jest.fn()
     messagesService = mockedMessagesService({
       observeJeuneChat: jest.fn(),
-      observeJeuneReadingDate: jest.fn(
-        (idChat: string, fn: (date: Date) => void) => {
-          fn(new Date())
-          return () => {}
-        }
-      ),
-      observeMessages: jest.fn(
-        (_idChat, _cle, fn: (messages: MessagesOfADay[]) => void) => {
-          fn(messagesParJour)
-          return () => {}
-        }
-      ),
+      observeJeuneReadingDate: jest.fn(() => of(new Date())),
+      observeMessages: jest.fn(() => of(messagesParJour)),
       sendNouveauMessage: jest.fn(() => {
         return Promise.resolve()
       }),
@@ -74,8 +64,7 @@ describe('<Conversation />', () => {
     // Then
     expect(messagesService.observeMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
-      'cleChiffrement',
-      expect.any(Function)
+      'cleChiffrement'
     )
   })
 
@@ -89,8 +78,7 @@ describe('<Conversation />', () => {
   it('subscribes to jeune reading', async () => {
     // Then
     expect(messagesService.observeJeuneReadingDate).toHaveBeenCalledWith(
-      jeuneChat.chatId,
-      expect.any(Function)
+      jeuneChat.chatId
     )
   })
 

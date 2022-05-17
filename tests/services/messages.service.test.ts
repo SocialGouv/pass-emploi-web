@@ -1,10 +1,11 @@
+import { of } from 'rxjs'
+
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { desJeunes, unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
-import { desMessages, desMessagesParJour } from 'fixtures/message'
+import { desMessages } from 'fixtures/message'
 import { UserStructure } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
-import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 
@@ -84,99 +85,62 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.observeJeuneChat', () => {
     let idConseiller: string
     let jeune: Jeune
-    let onJeuneChat: (chat: Chat) => void
     beforeEach(async () => {
       // Given
       jest.setSystemTime(new Date())
       idConseiller = 'idConseiller'
       jeune = unJeune()
-      onJeuneChat = jest.fn()
 
       // When
-      messagesService.observeJeuneChat(
-        idConseiller,
-        jeune,
-        cleChiffrement,
-        onJeuneChat
-      )
+      messagesService.observeJeuneChat(idConseiller, jeune, cleChiffrement)
     })
 
     it('finds chat in firebase', async () => {
       // Then
       expect(firebaseClient.findAndObserveChatDuJeune).toHaveBeenCalledWith(
         idConseiller,
-        jeune.id,
-        expect.any(Function)
+        jeune.id
       )
-    })
-
-    it('calls provided callback with new jeuneChat built from found chat', async () => {
-      // Then
-      expect(onJeuneChat).toHaveBeenCalledWith({
-        ...jeune,
-        ...unChat(),
-      })
     })
   })
 
   describe('.observeMessages', () => {
     let idChat: string
-    let onMessages: (messagesGroupesParJour: MessagesOfADay[]) => void
     beforeEach(async () => {
       // Given
-      ;(firebaseClient.observeMessagesDuChat as jest.Mock).mockImplementation(
-        (idChat: string, fn: (messages: Message[]) => void) => fn(desMessages())
+      ;(firebaseClient.observeMessagesDuChat as jest.Mock).mockReturnValue(
+        of(desMessages())
       )
       idChat = 'idChat'
-      onMessages = jest.fn()
 
       // When
-      await messagesService.observeMessages(idChat, cleChiffrement, onMessages)
+      await messagesService.observeMessages(idChat, cleChiffrement)
     })
 
     it('subscribes to chat messages in firebase', async () => {
       // Then
-      expect(firebaseClient.observeMessagesDuChat).toHaveBeenCalledWith(
-        idChat,
-        expect.any(Function)
-      )
-    })
-
-    it('calls provided callback with decrypted messages grouped by day', async () => {
-      // Then
-      expect(onMessages).toHaveBeenCalledWith(desMessagesParJour())
+      expect(firebaseClient.observeMessagesDuChat).toHaveBeenCalledWith(idChat)
     })
   })
 
   describe('.observeJeuneReadingDate', () => {
     let idChat: string
     let jeuneReadingDate: Date
-    let onJeuneReadingDate: (date: Date) => void
     beforeEach(async () => {
       // Given
       jeuneReadingDate = new Date(2022, 0, 12)
-      ;(firebaseClient.observeChat as jest.Mock).mockImplementation(
-        (idChat: string, fn: (chat: Chat) => void) =>
-          fn(unChat({ lastJeuneReading: jeuneReadingDate }))
+      ;(firebaseClient.observeChat as jest.Mock).mockReturnValue(
+        of(unChat({ lastJeuneReading: jeuneReadingDate }))
       )
       idChat = 'idChat'
-      onJeuneReadingDate = jest.fn()
 
       // When
-      await messagesService.observeJeuneReadingDate(idChat, onJeuneReadingDate)
+      await messagesService.observeJeuneReadingDate(idChat)
     })
 
     it('subscribes to chat in firebase', async () => {
       // Then
-      expect(firebaseClient.observeChat).toHaveBeenCalledWith(
-        idChat,
-        expect.any(Function)
-      )
-    })
-
-    it('calls provided callback with chat lastJeuneReadingDate', async () => {
-      // Then
-      expect(onJeuneReadingDate).toHaveBeenCalledWith(jeuneReadingDate)
+      expect(firebaseClient.observeChat).toHaveBeenCalledWith(idChat)
     })
   })
 

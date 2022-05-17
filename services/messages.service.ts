@@ -1,3 +1,5 @@
+import { filter, map, Observable } from 'rxjs'
+
 import { UserStructure } from '../interfaces/conseiller'
 
 import { ApiClient } from 'clients/api.client'
@@ -40,20 +42,15 @@ export interface MessagesService {
   observeJeuneChat(
     idConseiller: string,
     jeune: Jeune,
-    cleChiffrement: string,
-    updateChat: (chat: JeuneChat) => void
-  ): () => void
+    cleChiffrement: string
+  ): Observable<JeuneChat>
 
   observeMessages(
     idChat: string,
-    cleChiffrement: string,
-    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
-  ): () => void
+    cleChiffrement: string
+  ): Observable<MessagesOfADay[]>
 
-  observeJeuneReadingDate(
-    idChat: string,
-    onJeuneReadingDate: (date: Date) => void
-  ): () => void
+  observeJeuneReadingDate(idChat: string): Observable<Date>
 
   countMessagesNotRead(
     idConseiller: string,
@@ -95,14 +92,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   observeJeuneChat(
     idConseiller: string,
     jeune: Jeune,
-    cleChiffrement: string,
-    onJeuneChat: (chat: JeuneChat) => void
-  ): () => void {
-    return this.firebaseClient.findAndObserveChatDuJeune(
-      idConseiller,
-      jeune.id,
-      (chat: Chat) => {
-        const newJeuneChat: JeuneChat = {
+    cleChiffrement: string
+  ): Observable<JeuneChat> {
+    return this.firebaseClient
+      .findAndObserveChatDuJeune(idConseiller, jeune.id)
+      .pipe(
+        map((chat: Chat) => ({
           ...jeune,
           ...chat,
           lastMessageContent: chat.lastMessageIv
@@ -114,38 +109,28 @@ export class MessagesFirebaseAndApiService implements MessagesService {
                 cleChiffrement
               )
             : chat.lastMessageContent,
-        }
-
-        onJeuneChat(newJeuneChat)
-      }
-    )
+        }))
+      )
   }
 
   observeMessages(
     idChat: string,
-    cleChiffrement: string,
-    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
-  ): () => void {
-    return this.firebaseClient.observeMessagesDuChat(
-      idChat,
-      (messages: Message[]) => {
-        const messagesGroupesParJour: MessagesOfADay[] =
+    cleChiffrement: string
+  ): Observable<MessagesOfADay[]> {
+    return this.firebaseClient
+      .observeMessagesDuChat(idChat)
+      .pipe(
+        map((messages: Message[]) =>
           this.grouperMessagesParJour(messages, cleChiffrement)
-        onMessagesGroupesParJour(messagesGroupesParJour)
-      }
-    )
+        )
+      )
   }
 
-  observeJeuneReadingDate(
-    idChat: string,
-    onJeuneReadingDate: (date: Date) => void
-  ): () => void {
-    return this.firebaseClient.observeChat(idChat, (chat: Chat) => {
-      const lastJeuneReadingDate = chat.lastJeuneReading
-      if (lastJeuneReadingDate) {
-        onJeuneReadingDate(lastJeuneReadingDate)
-      }
-    })
+  observeJeuneReadingDate(idChat: string): Observable<Date> {
+    return this.firebaseClient.observeChat(idChat).pipe(
+      map(({ lastJeuneReading }) => lastJeuneReading),
+      filter(Boolean)
+    )
   }
 
   async countMessagesNotRead(

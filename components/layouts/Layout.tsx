@@ -4,6 +4,7 @@
 
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import { Subscription } from 'rxjs'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
@@ -42,7 +43,7 @@ export default function Layout({ children }: LayoutProps) {
   const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [conseiller, setConseiller] = useConseiller()
   const [chats, setChats] = useState<JeuneChat[]>([])
-  const destructorsRef = useRef<(() => void)[]>([])
+  const subscriptionsRef = useRef<Subscription[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
   function hasMessageNonLu(): boolean {
@@ -85,19 +86,19 @@ export default function Layout({ children }: LayoutProps) {
     messagesService
       .signIn(chatCredentials.token)
       .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
-      .then((jeunes) =>
-        jeunes.map((jeune) =>
-          messagesService.observeJeuneChat(
-            user.id,
-            jeune,
-            chatCredentials.cleChiffrement,
-            updateChats
-          )
+      .then((jeunes) => {
+        return jeunes.map((jeune) =>
+          messagesService
+            .observeJeuneChat(user.id, jeune, chatCredentials.cleChiffrement)
+            .subscribe(updateChats)
         )
-      )
-      .then((destructors) => (destructorsRef.current = destructors))
+      })
+      .then((subscriptions) => (subscriptionsRef.current = subscriptions))
 
-    return () => destructorsRef.current.forEach((destructor) => destructor())
+    return () =>
+      subscriptionsRef.current.forEach((subscriptions) =>
+        subscriptions.unsubscribe()
+      )
 
     function updateChats(updatedChat: JeuneChat) {
       setChats((prevChats) => {

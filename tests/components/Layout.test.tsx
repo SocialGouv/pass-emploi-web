@@ -1,5 +1,6 @@
-import { act, waitFor, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import { useRouter } from 'next/router'
+import { BehaviorSubject, of, Subject } from 'rxjs'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
@@ -31,7 +32,7 @@ global.Audio = jest.fn().mockImplementation(() => ({
 }))
 
 describe('<Layout />', () => {
-  let updateChatRef: (jeuneChat: JeuneChat) => void
+  let chatSubject: Subject<JeuneChat>
   const jeunes: Jeune[] = desJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
@@ -66,12 +67,15 @@ describe('<Layout />', () => {
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
-        updateChatRef = fn
-        updateChatRef(
-          jeunesChats.find((jeuneChat) => jeuneChat.id === jeune.id)!
-        )
-        return () => {}
+      observeJeuneChat: jest.fn((_, jeune, _cle) => {
+        const jeuneChat = jeunesChats.find(
+          (jeuneChat) => jeuneChat.id === jeune.id
+        )!
+        if (jeune.id === jeunes[0].id) {
+          chatSubject = new BehaviorSubject(jeuneChat)
+          return chatSubject
+        }
+        return of(jeuneChat)
       }),
     })
   })
@@ -142,8 +146,7 @@ describe('<Layout />', () => {
         expect(messagesService.observeJeuneChat).toHaveBeenCalledWith(
           '1',
           jeune,
-          'cleChiffrement',
-          expect.any(Function)
+          'cleChiffrement'
         )
       })
     })
@@ -182,7 +185,7 @@ describe('<Layout />', () => {
 
       // When
       await act(async () => {
-        updateChatRef(unJeuneChatNonLu)
+        chatSubject.next(unJeuneChatNonLu)
       })
 
       // Then
@@ -203,7 +206,7 @@ describe('<Layout />', () => {
 
       // When
       await act(async () => {
-        updateChatRef(unJeuneChatNonLu)
+        chatSubject.next(unJeuneChatNonLu)
       })
 
       // Then
@@ -240,7 +243,7 @@ describe('<Layout />', () => {
         lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
       })
       await act(async () => {
-        updateChatRef(unJeuneChatNonLu)
+        chatSubject.next(unJeuneChatNonLu)
       })
 
       // Then

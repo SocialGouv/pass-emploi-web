@@ -1,5 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react'
 import { useRouter } from 'next/router'
+import { BehaviorSubject, of, Subject } from 'rxjs'
 
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
@@ -29,7 +30,7 @@ global.Audio = jest.fn().mockImplementation(() => ({
 }))
 
 describe('Intégration notifications sonores', () => {
-  let updateChatRef: (jeuneChat: JeuneChat) => void
+  let chatSubject: Subject<JeuneChat>
   const jeunes: Jeune[] = desJeunes()
   let jeunesService: JeunesService
   let conseillerService: ConseillerService
@@ -42,16 +43,17 @@ describe('Intégration notifications sonores', () => {
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
-        updateChatRef = fn
-        updateChatRef(
-          unJeuneChat({
-            ...jeunes[0],
-            chatId: `chat-${jeunes[0].id}`,
-            seenByConseiller: true,
-          })
-        )
-        return () => {}
+      observeJeuneChat: jest.fn((_, jeune, _cle) => {
+        const chat = unJeuneChat({
+          ...jeunes[0],
+          chatId: `chat-${jeunes[0].id}`,
+          seenByConseiller: true,
+        })
+        if (jeune.id === jeunes[0].id) {
+          chatSubject = new BehaviorSubject(chat)
+          return chatSubject
+        }
+        return of(chat)
       }),
     })
     ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
@@ -70,14 +72,14 @@ describe('Intégration notifications sonores', () => {
           false
         )
       })
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(chatSubject, jeunes)
       await waitFor(() => {
         expect(mockAudio).toHaveBeenCalledTimes(0)
       })
 
       // When
       await toggleNotifications()
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(chatSubject, jeunes)
 
       // Then
       await waitFor(() => {
@@ -97,14 +99,14 @@ describe('Intégration notifications sonores', () => {
           true
         )
       })
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(chatSubject, jeunes)
       await waitFor(() => {
         expect(mockAudio).toHaveBeenCalledTimes(1)
       })
 
       // When
       await toggleNotifications()
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(chatSubject, jeunes)
 
       // Then
       await waitFor(() => {
@@ -147,11 +149,11 @@ async function toggleNotifications() {
 }
 
 async function unNouveauMessageArrive(
-  updateChatRef: (jeuneChat: JeuneChat) => void,
+  chatSubject: Subject<JeuneChat>,
   jeunes: Jeune[]
 ) {
   await act(async () => {
-    updateChatRef(
+    chatSubject.next(
       unJeuneChat({
         ...jeunes[0],
         lastMessageSentBy: 'jeune',

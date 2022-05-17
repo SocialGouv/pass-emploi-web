@@ -19,6 +19,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { Observable } from 'rxjs'
 
 import { Chat } from 'interfaces/jeune'
 import { Message, TypeMessage } from 'interfaces/message'
@@ -107,24 +108,27 @@ class FirebaseClient {
 
   findAndObserveChatDuJeune(
     idConseiller: string,
-    idJeune: string,
-    onChatFound: (chat: Chat) => void
-  ): () => void {
+    idJeune: string
+  ): Observable<Chat> {
     try {
-      return onSnapshot<FirebaseChat>(
-        query<FirebaseChat>(
-          collection(
-            this.getDb(),
-            this.collectionName
-          ) as CollectionReference<FirebaseChat>,
-          where('conseillerId', '==', idConseiller),
-          where('jeuneId', '==', idJeune)
-        ),
-        (querySnapshot: QuerySnapshot<FirebaseChat>) => {
-          if (querySnapshot.empty) return
-          const docSnapshot = querySnapshot.docs[0]
-          onChatFound(chatFromFirebase(docSnapshot.id, docSnapshot.data()))
-        }
+      return new Observable<Chat>((subscriber) =>
+        onSnapshot<FirebaseChat>(
+          query<FirebaseChat>(
+            collection(
+              this.getDb(),
+              this.collectionName
+            ) as CollectionReference<FirebaseChat>,
+            where('conseillerId', '==', idConseiller),
+            where('jeuneId', '==', idJeune)
+          ),
+          (querySnapshot: QuerySnapshot<FirebaseChat>) => {
+            if (querySnapshot.empty) return
+            const docSnapshot = querySnapshot.docs[0]
+            subscriber.next(
+              chatFromFirebase(docSnapshot.id, docSnapshot.data())
+            )
+          }
+        )
       )
     } catch (e) {
       console.error(e)
@@ -158,15 +162,17 @@ class FirebaseClient {
     }
   }
 
-  observeChat(idChat: string, onChat: (chat: Chat) => void): () => void {
+  observeChat(idChat: string): Observable<Chat> {
     try {
-      return onSnapshot(
-        this.getChatReference(idChat),
-        (docSnapshot: DocumentSnapshot<FirebaseChat>) => {
-          const data = docSnapshot.data()
-          if (!data) return
-          onChat(chatFromFirebase(docSnapshot.id, data))
-        }
+      return new Observable<Chat>((subscriber) =>
+        onSnapshot(
+          this.getChatReference(idChat),
+          (docSnapshot: DocumentSnapshot<FirebaseChat>) => {
+            const data = docSnapshot.data()
+            if (!data) return
+            subscriber.next(chatFromFirebase(docSnapshot.id, data))
+          }
+        )
       )
     } catch (e) {
       console.error(e)
@@ -175,29 +181,28 @@ class FirebaseClient {
     }
   }
 
-  observeMessagesDuChat(
-    idChat: string,
-    onMessages: (messages: Message[]) => void
-  ): () => void {
+  observeMessagesDuChat(idChat: string): Observable<Message[]> {
     try {
-      return onSnapshot<FirebaseMessage>(
-        query<FirebaseMessage>(
-          collection(
-            this.getChatReference(idChat),
-            'messages'
-          ) as CollectionReference<FirebaseMessage>,
-          orderBy('creationDate')
-        ),
-        (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
-          const messages: Message[] =
-            querySnapshot.docs.map(docSnapshotToMessage)
+      return new Observable<Message[]>((subscriber) =>
+        onSnapshot<FirebaseMessage>(
+          query<FirebaseMessage>(
+            collection(
+              this.getChatReference(idChat),
+              'messages'
+            ) as CollectionReference<FirebaseMessage>,
+            orderBy('creationDate')
+          ),
+          (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
+            const messages: Message[] =
+              querySnapshot.docs.map(docSnapshotToMessage)
 
-          if (!messages || !messages[messages.length - 1]?.creationDate) {
-            return
+            if (!messages || !messages[messages.length - 1]?.creationDate) {
+              return
+            }
+
+            subscriber.next(messages)
           }
-
-          onMessages(messages)
-        }
+        )
       )
     } catch (e) {
       console.error(e)
