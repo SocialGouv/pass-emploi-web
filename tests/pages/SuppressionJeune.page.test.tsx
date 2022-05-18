@@ -13,7 +13,7 @@ import SuppressionJeune, {
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { RequestError, UnexpectedError } from 'utils/fetchJson'
+import { RequestError, UnexpectedError } from 'utils/httpClient'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 

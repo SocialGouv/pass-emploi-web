@@ -2,14 +2,25 @@ import { decode, JwtPayload } from 'jsonwebtoken'
 import { Account } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
 
-import { AuthService } from 'services/auth.service'
+import { UserRole, UserType } from 'interfaces/conseiller'
+import HttpClient from 'utils/httpClient'
 
 function secondsToTimestamp(seconds: number): number {
   return seconds * 1000
 }
 
-export class Authenticator {
-  constructor(private readonly authService: AuthService) {}
+interface RefreshedTokens {
+  access_token: string | undefined
+  refresh_token: string | undefined
+  expires_in: number | undefined
+}
+
+export default class Authenticator {
+  private readonly issuerPrefix?: string
+
+  constructor(private readonly httpClient: HttpClient) {
+    this.issuerPrefix = process.env.KEYCLOAK_ISSUER
+  }
 
   async handleJWTAndRefresh({
     jwt,
@@ -18,7 +29,7 @@ export class Authenticator {
     jwt: JWT | HydratedJWT
     account?: Account
   }): Promise<HydratedJWT> {
-    if (account) return hydrateJwtAtFirstSignin(account, jwt)
+    if (account) return Authenticator.hydrateJwtAtFirstSignin(account, jwt)
 
     const hydratedJWT = jwt as HydratedJWT
     const safetyRefreshBuffer: number = 15
@@ -34,9 +45,7 @@ export class Authenticator {
 
   private async refreshAccessToken(jwt: HydratedJWT) {
     try {
-      const refreshedTokens = await this.authService.fetchRefreshedTokens(
-        jwt.refreshToken
-      )
+      const refreshedTokens = await this.fetchRefreshedTokens(jwt.refreshToken)
 
       return {
         ...jwt,
@@ -53,27 +62,46 @@ export class Authenticator {
       }
     }
   }
-}
 
-async function hydrateJwtAtFirstSignin(
-  { access_token, expires_at, refresh_token }: Account,
-  jwt: JWT
-): Promise<HydratedJWT> {
-  const { userId, userStructure, userRoles, userType } = decode(
-    <string>access_token
-  ) as JwtPayload
+  private async fetchRefreshedTokens(
+    refreshToken?: string
+  ): Promise<RefreshedTokens> {
+    const url = `${this.issuerPrefix}/protocol/openid-connect/token`
+    const body = new URLSearchParams({
+      client_id: process.env.KEYCLOAK_ID ?? '',
+      client_secret: process.env.KEYCLOAK_SECRET ?? '',
+      grant_type: 'refresh_token',
+      refresh_token: `${refreshToken}`,
+    })
 
-  return {
-    ...jwt,
-    accessToken: access_token,
-    refreshToken: refresh_token,
-    idConseiller: userId,
-    structureConseiller: userStructure,
-    estConseiller: userType === 'CONSEILLER',
-    estSuperviseur: Boolean(userRoles?.includes('SUPERVISEUR')),
-    expiresAtTimestamp: expires_at ? secondsToTimestamp(expires_at) : undefined,
+    return this.httpClient.fetchJson(url, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      method: 'POST',
+      body,
+    })
+  }
+
+  private static async hydrateJwtAtFirstSignin(
+    { access_token, expires_at, refresh_token }: Account,
+    jwt: JWT
+  ): Promise<HydratedJWT> {
+    const { userId, userStructure, userRoles, userType } = decode(
+      <string>access_token
+    ) as JwtPayload
+
+    return {
+      ...jwt,
+      accessToken: access_token,
+      refreshToken: refresh_token,
+      idConseiller: userId,
+      structureConseiller: userStructure,
+      estConseiller: userType === UserType.CONSEILLER,
+      estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
+      expiresAtTimestamp: expires_at
+        ? secondsToTimestamp(expires_at)
+        : undefined,
+    }
   }
 }
-
-const authenticator = new Authenticator(new AuthService())
-export default authenticator

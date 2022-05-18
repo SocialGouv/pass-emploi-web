@@ -23,7 +23,6 @@ import { DIProvider } from 'utils/injectionDependances'
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
-jest.useFakeTimers()
 
 const mockAudio = jest.fn()
 global.Audio = jest.fn().mockImplementation(() => ({
@@ -31,6 +30,10 @@ global.Audio = jest.fn().mockImplementation(() => ({
 }))
 
 describe('<Layout />', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
   let updateChatRef: (jeuneChat: JeuneChat) => void
   const jeunes: Jeune[] = desJeunes()
   let jeunesChats: JeuneChat[]

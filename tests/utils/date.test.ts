@@ -13,9 +13,11 @@ import {
   isDateOlder,
 } from 'utils/date'
 
-jest.useFakeTimers()
-
 describe('dateUtils', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
   describe('isDateOlder', () => {
     it('isDateOlder renvoie true si la date est plus ancienne', () => {
       const dateAvant = new Date('Thu, 21 Oct 2021 10:01:19 GMT')
@@ -54,7 +56,14 @@ describe('dateUtils', () => {
   })
 
   describe('compareDates', () => {
-    const dates = [now, datePassee, dateFutureLoin, datePasseeLoin, now, dateFuture]
+    const dates = [
+      now,
+      datePassee,
+      dateFutureLoin,
+      datePasseeLoin,
+      now,
+      dateFuture,
+    ]
 
     describe('when comparing asc', () => {
       it('orders date by chronological order', async () => {

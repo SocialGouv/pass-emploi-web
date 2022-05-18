@@ -7,7 +7,7 @@ import {
   actionStatusToJson,
   jsonToAction,
 } from 'interfaces/json/action'
-import { RequestError } from 'utils/fetchJson'
+import { RequestError } from 'utils/httpClient'
 
 export interface ActionsService {
   getAction(

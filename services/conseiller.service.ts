@@ -2,7 +2,7 @@ import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
-import { RequestError } from 'utils/fetchJson'
+import { RequestError } from 'utils/httpClient'
 
 export interface ConseillerService {
   getConseiller(

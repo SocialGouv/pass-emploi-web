@@ -20,6 +20,7 @@ import {
   where,
 } from 'firebase/firestore'
 
+import { UserType } from 'interfaces/conseiller'
 import { Chat } from 'interfaces/jeune'
 import { Message, TypeMessage } from 'interfaces/message'
 import { captureRUMError } from 'utils/monitoring/init-rum'
@@ -80,7 +81,7 @@ class FirebaseClient {
           content,
           iv,
           conseillerId: idConseiller,
-          sentBy: 'conseiller',
+          sentBy: UserType.CONSEILLER.toLowerCase(),
           creationDate: Timestamp.fromDate(date),
           type: 'MESSAGE',
         }

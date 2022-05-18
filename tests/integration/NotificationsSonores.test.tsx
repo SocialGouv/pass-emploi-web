@@ -21,7 +21,6 @@ import { DIProvider } from 'utils/injectionDependances'
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
-jest.useFakeTimers()
 
 const mockAudio = jest.fn()
 global.Audio = jest.fn().mockImplementation(() => ({
@@ -35,6 +34,7 @@ describe('Intégration notifications sonores', () => {
   let conseillerService: ConseillerService
   let messagesService: MessagesService
   beforeEach(async () => {
+    jest.useFakeTimers()
     jest.setSystemTime(new Date())
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/path/to/page' })
 

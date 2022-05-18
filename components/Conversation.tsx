@@ -4,6 +4,7 @@ import BackIcon from '../assets/icons/arrow_back.svg'
 import SendIcon from '../assets/icons/send.svg'
 
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
+import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesService } from 'services/messages.service'
@@ -73,6 +74,10 @@ export default function Conversation({
     if (conseiller) {
       return `${conseiller?.prenom.toLowerCase()} ${conseiller?.nom.toLowerCase()}`
     }
+  }
+
+  function isSentByConseiller(message: Message): boolean {
+    return message.sentBy === UserType.CONSEILLER.toLowerCase()
   }
 
   const setReadByConseiller = useCallback(
@@ -158,12 +163,12 @@ export default function Conversation({
                 >
                   <div
                     className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
-                      message.sentBy === 'conseiller'
+                      isSentByConseiller(message)
                         ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
                         : 'text-left text-blanc bg-primary_darken mb-1'
                     }`}
                   >
-                    {message.sentBy === 'conseiller' && (
+                    {isSentByConseiller(message) && (
                       <p className='text-s-regular capitalize mb-1'>
                         {getConseillerNomComplet(message)}
                       </p>
@@ -172,13 +177,11 @@ export default function Conversation({
                   </div>
                   <p
                     className={`text-xs text-grey_800 ${
-                      message.sentBy === 'conseiller'
-                        ? 'text-right'
-                        : 'text-left'
+                      isSentByConseiller(message) ? 'text-right' : 'text-left'
                     }`}
                   >
                     {formatHourMinuteDate(message.creationDate)}
-                    {message.sentBy === 'conseiller' && (
+                    {isSentByConseiller(message) && (
                       <span>
                         {!lastSeenByJeune ||
                         isDateOlder(lastSeenByJeune, message.creationDate)
