@@ -4,6 +4,14 @@ export enum UserStructure {
   PASS_EMPLOI = 'PASS_EMPLOI',
 }
 
+export enum UserType {
+  CONSEILLER = 'CONSEILLER',
+}
+
+export enum UserRole {
+  SUPERVISEUR = 'SUPERVISEUR',
+}
+
 export interface Agence {
   id: string
   nom: string

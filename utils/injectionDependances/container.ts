@@ -34,7 +34,6 @@ export class Container {
 
   static getDIContainer(): Container {
     if (!Container.diContainer) {
-      console.log('BUILD NEW CONTAINER')
       Container.diContainer = Container.buildDIContainer()
     }
     return Container.diContainer

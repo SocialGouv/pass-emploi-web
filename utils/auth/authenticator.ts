@@ -2,6 +2,7 @@ import { decode, JwtPayload } from 'jsonwebtoken'
 import { Account } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
 
+import { UserRole, UserType } from 'interfaces/conseiller'
 import HttpClient from 'utils/httpClient'
 
 function secondsToTimestamp(seconds: number): number {
@@ -96,8 +97,8 @@ export default class Authenticator {
       refreshToken: refresh_token,
       idConseiller: userId,
       structureConseiller: userStructure,
-      estConseiller: userType === 'CONSEILLER',
-      estSuperviseur: Boolean(userRoles?.includes('SUPERVISEUR')),
+      estConseiller: userType === UserType.CONSEILLER,
+      estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
       expiresAtTimestamp: expires_at
         ? secondsToTimestamp(expires_at)
         : undefined,

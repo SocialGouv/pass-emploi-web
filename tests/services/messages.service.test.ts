@@ -13,15 +13,11 @@ import { ChatCrypto } from 'utils/chat/chatCrypto'
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
 
-beforeEach(async () => {
-  jest.useFakeTimers()
-})
-
-afterEach(() => {
-  jest.useRealTimers()
-})
-
 describe('MessagesFirebaseAndApiService', () => {
+  beforeEach(async () => {
+    jest.useFakeTimers()
+  })
+
   let firebaseClient: FirebaseClient
   let apiClient: ApiClient
   let messagesService: MessagesFirebaseAndApiService

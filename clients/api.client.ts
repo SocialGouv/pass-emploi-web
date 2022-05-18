@@ -4,7 +4,7 @@ export interface ApiClient {
   get<T>(path: string, accessToken: string): Promise<T>
   post<T>(
     path: string,
-    payload: { [key: string]: any } | undefined,
+    payload: { [key: string]: any },
     accessToken: string
   ): Promise<T>
   put(
@@ -27,15 +27,14 @@ export class ApiHttpClient implements ApiClient {
       Authorization: `Bearer ${accessToken}`,
     })
 
-    const json = await this.httpClient.fetchJson(`${this.apiPrefix}${path}`, {
+    return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, {
       headers,
     })
-    return json as T
   }
 
   async post<T = void>(
     path: string,
-    payload: { [key: string]: any } | undefined,
+    payload: { [key: string]: any },
     accessToken: string
   ): Promise<T> {
     const headers = new Headers({
@@ -49,11 +48,7 @@ export class ApiHttpClient implements ApiClient {
     }
     if (payload) reqInit.body = JSON.stringify(payload)
 
-    const json = await this.httpClient.fetchJson(
-      `${this.apiPrefix}${path}`,
-      reqInit
-    )
-    return json as T
+    return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
   }
 
   async put(
