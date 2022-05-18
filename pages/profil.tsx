@@ -49,6 +49,14 @@ function Profil({ structureConseiller }: ProfilProps) {
       {conseiller && (
         <>
           <section className='mb-8'>
+            <h2 className='text-l-medium mb-4'>FILE</h2>
+            <div className='pl-4'>
+              <a href='http://localhost:5000/files/redirect/4'>API direct with redirect</a> <br/>
+              <a href='http://localhost:5000/files/4'>API direct without redirect</a><br/>
+              <a href='/api/files/4'>API thru next</a>
+            </div>
+          </section>
+          <section className='mb-8'>
             <h2 className='text-l-medium mb-4'>Informations</h2>
             <div className='pl-4'>
               <h3 className='text-m-medium'>
