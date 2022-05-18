@@ -1,4 +1,5 @@
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Tab from 'components/ui/Tab'
+import TabList from 'components/ui/TabList'
 import { NombreActionsParStatut, StatutAction } from 'interfaces/action'
 
 export const TOUTES_LES_ACTIONS_LABEL: string = 'toutes'
@@ -31,53 +32,26 @@ function FiltresActionsTabList({
     return currentFilter === filter
   }
 
-  function getTabIndex(filter: string): -1 | 0 {
-    return isSelected(filter) ? -1 : 0
-  }
-
   return (
-    <div
-      role='tablist'
-      className='flex'
-      aria-label={`Filtrer les actions de ${prenomJeune} par statut`}
-    >
-      <Button
-        role='tab'
-        id='actions-toutes'
-        type='button'
-        tabIndex={getTabIndex(TOUTES_LES_ACTIONS_LABEL)}
+    <TabList label={`Filtrer les actions de ${prenomJeune} par statut`}>
+      <Tab
+        label='Toutes'
+        count={actionsCount}
+        controls={`${controlledIdPrefix}-${TOUTES_LES_ACTIONS_LABEL}`}
         selected={isSelected(TOUTES_LES_ACTIONS_LABEL)}
-        aria-controls={`${controlledIdPrefix}-${TOUTES_LES_ACTIONS_LABEL}`}
-        className='mr-4'
-        style={
-          isSelected(TOUTES_LES_ACTIONS_LABEL)
-            ? ButtonStyle.PRIMARY
-            : ButtonStyle.SECONDARY
-        }
-        onClick={() => filterClicked(TOUTES_LES_ACTIONS_LABEL)}
-      >
-        Toutes ({actionsCount})
-      </Button>
+        onSelectTab={() => filterClicked(TOUTES_LES_ACTIONS_LABEL)}
+      />
       {Object.values(StatutAction).map((statut) => (
-        <Button
-          role='tab'
-          key={`actions-${statut.toLowerCase()}`}
-          id={`actions-${statut.toLowerCase()}`}
-          type='button'
-          tabIndex={getTabIndex(statut)}
+        <Tab
+          key={statut}
+          label={LABELS_FILTRES[statut]}
+          count={actionsCountParStatut[statut]}
+          controls={`${controlledIdPrefix}-${statut}`}
           selected={isSelected(statut)}
-          aria-controls={`${controlledIdPrefix}-${statut}`}
-          disabled={actionsCountParStatut[statut] === 0}
-          className='mr-4'
-          style={
-            isSelected(statut) ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY
-          }
-          onClick={() => filterClicked(statut)}
-        >
-          {LABELS_FILTRES[statut]} ({actionsCountParStatut[statut]})
-        </Button>
+          onSelectTab={() => filterClicked(statut)}
+        />
       ))}
-    </div>
+    </TabList>
   )
 }
 

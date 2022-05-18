@@ -19,10 +19,11 @@ export const TableauActionsJeune = ({
   const borderStyle = 'border-solid border-0 border-b-2 border-b-grey_700'
 
   return (
-    <div role='table' className='table w-full' aria-describedby='table-caption'>
-      <span id='table-caption' className='sr-only'>
-        Liste des actions de {jeune.firstName} {jeune.lastName}
-      </span>
+    <div
+      role='table'
+      className='table w-full'
+      aria-label={`Liste des actions de ${jeune.firstName} ${jeune.lastName}`}
+    >
       <div
         role='rowgroup'
         className={`table-header-group ${hideTableHead ? 'sr-only' : ''}`}

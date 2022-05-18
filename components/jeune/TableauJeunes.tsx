@@ -5,6 +5,7 @@ import ArrowDouble from '../../assets/icons/arrow_double.svg'
 import ArrowDown from '../../assets/icons/arrow_down.svg'
 import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
+import { Badge } from 'components/ui/Badge'
 import SituationTag from 'components/jeune/SituationTag'
 import {
   compareJeuneByLastActivity,
@@ -359,9 +360,9 @@ export const TableauJeunes = ({
                       role='cell'
                       className='table-cell text-primary_darken p-4'
                     >
-                      <span className='w-5 h-5 flex justify-center items-center text-blanc bg-primary rounded-full text-center p-3.5 mx-auto'>
-                        {jeune.nbActionsNonTerminees}
-                      </span>
+                      <div className='mx-auto w-fit'>
+                        <Badge count={jeune.nbActionsNonTerminees} />
+                      </div>
                     </span>
                   )}
                   <span role='cell' className='table-cell p-4'>

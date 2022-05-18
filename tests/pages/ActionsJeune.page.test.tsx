@@ -102,14 +102,14 @@ describe("Page Liste des actions d'un jeune", () => {
         const notSelected = screen.getAllByRole('tab', { selected: false })
         expect(notSelected.length).toEqual(4)
         for (const filtre of notSelected) {
-          expect(filtre).toHaveAttribute('tabIndex', '0')
+          expect(filtre).not.toHaveAttribute('tabIndex')
         }
       })
 
       it("Affiche les actions non commencées lorsqu'on clique sur le bouton À réaliser", async () => {
         //GIVEN
         const aRealiserFilterTab = screen.getByRole('tab', {
-          name: 'À réaliser (2)',
+          name: 'À réaliser 2',
         })
 
         //WHEN
@@ -126,7 +126,7 @@ describe("Page Liste des actions d'un jeune", () => {
       it("Affiche les actions en cours lorsqu'on clique sur le bouton Commencées", async () => {
         //GIVEN
         const commenceesFilterTab = screen.getByRole('tab', {
-          name: 'Commencées (1)',
+          name: 'Commencées 1',
         })
 
         //WHEN
@@ -143,7 +143,7 @@ describe("Page Liste des actions d'un jeune", () => {
       it("Affiche les actions terminees lorsqu'on clique sur le bouton Terminées", async () => {
         //GIVEN
         const termineesFilterTab = screen.getByRole('tab', {
-          name: 'Terminées (1)',
+          name: 'Terminées 1',
         })
 
         //WHEN
@@ -160,7 +160,7 @@ describe("Page Liste des actions d'un jeune", () => {
       it("Affiche les actions annulées lorsqu'on clique sur le bouton Annulées", async () => {
         //GIVEN
         const annuleesFilterTab = screen.getByRole('tab', {
-          name: 'Annulées (1)',
+          name: 'Annulées 1',
         })
 
         //WHEN
