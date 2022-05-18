@@ -141,10 +141,7 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         //GIVEN
         jeune = unJeuneAvecActionsNonTerminees({
-          situationCourante: {
-            etat: 'EN_COURS',
-            categorie: "Demandeur d'emploi",
-          },
+          situation: "Demandeur d'emploi",
         })
 
         await act(async () => {
@@ -189,9 +186,7 @@ describe('Mes Jeunes', () => {
       })
 
       it('affiche la situation courante du jeune', () => {
-        expect(
-          screen.getByText(jeune.situationCourante!.categorie)
-        ).toBeInTheDocument()
+        expect(screen.getByText(jeune.situation!)).toBeInTheDocument()
       })
 
       it('affiche le message de succès de suppression de jeune', async () => {

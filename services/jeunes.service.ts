@@ -1,12 +1,17 @@
-import { ApiClient } from 'clients/api.client'
-import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
-import { Conseiller } from 'interfaces/conseiller'
-import { RequestError } from 'utils/httpClient'
 import ErrorCodes from './error-codes'
+
+import { ApiClient } from 'clients/api.client'
+import { Conseiller } from 'interfaces/conseiller'
+import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
+import {
+  JeuneDuConseillerJson,
+  toJeuneDuConseiller,
+} from 'interfaces/json/jeune'
+import { RequestError } from 'utils/httpClient'
 
 export interface JeunesService {
   getJeunesDuConseiller(
@@ -53,14 +58,15 @@ export interface JeunesService {
 export class JeunesApiService implements JeunesService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  getJeunesDuConseiller(
+  async getJeunesDuConseiller(
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune[]> {
-    return this.apiClient.get<Jeune[]>(
+    const jeunes = await this.apiClient.get<JeuneDuConseillerJson[]>(
       `/conseillers/${idConseiller}/jeunes`,
       accessToken
     )
+    return jeunes.map(toJeuneDuConseiller)
   }
 
   async getJeuneDetails(

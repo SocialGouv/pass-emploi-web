@@ -22,11 +22,7 @@ export type Jeune = {
     prenom: string
     email?: string
   }
-  situationCourante?: {
-    etat: string
-    categorie: string
-    dateFin?: string
-  }
+  situation?: string
 }
 
 export type JeuneAvecNbActionsNonTerminees = Jeune & {
@@ -91,6 +87,16 @@ export function compareJeunesByFirstname(jeune1: Jeune, jeune2: Jeune): number {
   return `${jeune1.firstName}${jeune1.lastName}`.localeCompare(
     `${jeune2.firstName}${jeune2.lastName}`
   )
+}
+
+export function compareJeunesBySituation(jeune1: Jeune, jeune2: Jeune): number {
+  return `${jeune1.situation}`.localeCompare(`${jeune2.situation}`)
+}
+export function compareJeunesBySituationDesc(
+  jeune1: Jeune,
+  jeune2: Jeune
+): number {
+  return -compareJeunesBySituation(jeune1, jeune2)
 }
 
 export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {

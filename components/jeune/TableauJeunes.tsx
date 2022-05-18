@@ -10,6 +10,8 @@ import {
   compareJeuneByLastActivityDesc,
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
+  compareJeunesBySituation,
+  compareJeunesBySituationDesc,
   getJeuneFullname,
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
@@ -62,6 +64,7 @@ export const TableauJeunes = ({
   const [sortDesc, setSortDesc] = useState<boolean>(false)
 
   const isName = currentSortedColumn === SortColumn.NOM
+  const isSituation = currentSortedColumn === SortColumn.SITUATION
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
   const isAction = currentSortedColumn === SortColumn.NB_ACTIONS_NON_TERMINEES
   const isMessage = currentSortedColumn === SortColumn.MESSAGES
@@ -84,6 +87,11 @@ export const TableauJeunes = ({
         return sortDesc
           ? compareJeunesByLastNameDesc(jeune1, jeune2)
           : compareJeunesByLastName(jeune1, jeune2)
+
+      if (isSituation)
+        return sortDesc
+          ? compareJeunesBySituationDesc(jeune1, jeune2)
+          : compareJeunesBySituation(jeune1, jeune2)
 
       if (isDate) {
         const sortStatutCompteActif =
@@ -117,6 +125,7 @@ export const TableauJeunes = ({
     currentSortedColumn,
     isDate,
     isName,
+    isSituation,
     isMessage,
     sortDesc,
     jeunes,
@@ -131,6 +140,10 @@ export const TableauJeunes = ({
     if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
     if (isName && sortDesc)
       return 'Mes jeunes - Nom - Ordre alphabétique inversé'
+    if (isSituation && !sortDesc)
+      return 'Mes jeunes - Situation - Ordre alphabétique'
+    if (isSituation && sortDesc)
+      return 'Mes jeunes - Situation - Ordre alphabétique inversé'
     if (isAction && sortDesc) return 'Mes jeunes - Actions - Ordre croissant'
     if (isAction && !sortDesc) return 'Mes jeunes - Actions - Ordre décroissant'
     if (isMessage && sortDesc) return 'Mes jeunes - Messages - Ordre croissant'
@@ -190,21 +203,28 @@ export const TableauJeunes = ({
                   role='columnheader'
                   className='table-cell text-sm text-left p-4'
                 >
-                  {/* <button
+                  <button
                     className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
                     onClick={() => sortJeunes(SortColumn.SITUATION)}
-                    aria-label={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
-                      isDate && !sortDesc
-                        ? 'chronologique'
-                        : 'antéchronologique'
+                    aria-label={`Afficher la liste des jeunes triée par situation par ordre alphabétique ${
+                      isSituation && !sortDesc ? 'inversé' : ''
                     }`}
-                    title={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
-                      isDate && !sortDesc
-                        ? 'chronologique'
-                        : 'antéchronologique'
+                    title={`Afficher la liste des jeunes triée par situation par ordre alphabétique ${
+                      isSituation && !sortDesc ? 'inversé' : ''
                     }`}
-                  ></button> */}
-                  <span className='mr-1'>Situation</span>
+                  >
+                    <span className='mr-1'>Situation</span>
+                    {isSituation && (
+                      <ArrowDown
+                        focusable='false'
+                        aria-hidden='true'
+                        className={sortDesc ? 'rotate-180' : ''}
+                      />
+                    )}
+                    {!isSituation && (
+                      <ArrowDouble focusable='false' aria-hidden='true' />
+                    )}
+                  </button>
                 </span>
               )}
               <span
@@ -311,9 +331,7 @@ export const TableauJeunes = ({
 
                   {withSituations && (
                     <span role='cell' className='table-cell p-4'>
-                      {jeune.situationCourante
-                        ? jeune.situationCourante.categorie
-                        : 'Sans situation'}
+                      {jeune.situation ?? 'Sans situation'}
                     </span>
                   )}
 
