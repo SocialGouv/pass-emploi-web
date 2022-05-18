@@ -5,7 +5,6 @@ import DeleteIcon from '../../assets/icons/delete.svg'
 import DoneIcon from '../../assets/icons/done.svg'
 import KoIcon from '../../assets/icons/ko.svg'
 import LocationIcon from '../../assets/icons/location.svg'
-import NoteIcon from '../../assets/icons/note.svg'
 
 import { HeaderCell } from 'components/rdv/HeaderCell'
 import { RdvTypeTag } from 'components/ui/RdvTypeTag'
@@ -64,7 +63,6 @@ const RdvList = ({
               {withNameJeune && <HeaderCell label='Prénom Nom' />}
               <HeaderCell label='Type' />
               <HeaderCell label='Modalité' />
-              <HeaderCell label='Note' />
               <HeaderCell label='Créé par vous' />
               <HeaderCell label='Supprimer le rendez-vous' srOnly />
             </div>
@@ -102,15 +100,6 @@ const RdvList = ({
                       className='mr-2 inline'
                     />
                     {rdv.modality}
-                  </div>
-
-                  <div role='cell' className='table-cell p-3'>
-                    <NoteIcon
-                      focusable='false'
-                      aria-hidden='true'
-                      className='mr-2 inline'
-                    />
-                    {(rdv.hasComment && '1 note(s)') || '--'}
                   </div>
 
                   {rdv.idCreateur && (
