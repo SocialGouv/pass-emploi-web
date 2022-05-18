@@ -101,7 +101,6 @@ export function desRdvListItems(): RdvListItem[] {
       modality: 'par téléphone',
       date: '2021-10-21T10:00:00.000Z',
       duration: 125,
-      hasComment: true,
       idCreateur: '1',
     },
     {
@@ -111,7 +110,6 @@ export function desRdvListItems(): RdvListItem[] {
       modality: 'En agence',
       date: '2021-10-25T12:00:00.000Z',
       duration: 25,
-      hasComment: true,
       idCreateur: '2',
     },
   ]
