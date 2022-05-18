@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@badrap/bar-of-progress": "0.2.1",
-    "@elastic/apm-rum": "5.11.0",
-    "@elastic/apm-rum-react": "1.4.0",
+    "@elastic/apm-rum": "5.11.1",
+    "@elastic/apm-rum-react": "1.4.1",
     "crypto-js": "4.1.1",
     "dotenv": "16.0.1",
     "elastic-apm-node": "3.33.0",
