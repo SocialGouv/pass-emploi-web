@@ -23,6 +23,8 @@ export interface JeuneDuConseillerJson {
 export function toJeuneDuConseiller(jeune: JeuneDuConseillerJson): Jeune {
   return {
     ...jeune,
-    situation: jeune.situationCourante?.categorie,
+    situation: jeune.situationCourante
+      ? jeune.situationCourante.categorie
+      : 'Sans situation',
   }
 }

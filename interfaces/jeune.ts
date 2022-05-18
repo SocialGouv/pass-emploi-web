@@ -22,7 +22,7 @@ export type Jeune = {
     prenom: string
     email?: string
   }
-  situation?: string
+  situation: string
 }
 
 export type JeuneAvecNbActionsNonTerminees = Jeune & {
