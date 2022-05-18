@@ -21,6 +21,7 @@ export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
       nom: 'Tavernier',
       email: 'conseiller@email.com',
     },
+    situation: 'Sans situation',
   }
   return { ...defaults, ...overrides }
 }
