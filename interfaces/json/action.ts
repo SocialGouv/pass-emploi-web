@@ -1,17 +1,24 @@
-import { ActionJeune, ActionStatus } from '../action'
+import { Action, StatutAction } from '../action'
 
-export type ActionJeuneJson = {
+type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
+export interface ActionJson {
   id: string
   content: string
   comment: string
   creationDate: string
   lastUpdate: string
-  status: 'not_started' | 'in_progress' | 'done'
+  status: ActionStatusJson
   creator: string
   creatorType: string
 }
 
-export function jsonToActionJeune(json: ActionJeuneJson): ActionJeune {
+export interface ActionsCountJson {
+  jeuneId: string
+  todoActionsCount: number
+  inProgressActionsCount: number
+}
+
+export function jsonToAction(json: ActionJson): Action {
   return {
     id: json.id,
     content: json.content,
@@ -24,29 +31,33 @@ export function jsonToActionJeune(json: ActionJeuneJson): ActionJeune {
   }
 }
 
-function jsonToActionStatus(jsonStatus: string): ActionStatus {
+function jsonToActionStatus(jsonStatus: ActionStatusJson): StatutAction {
   switch (jsonStatus) {
     case 'in_progress':
-      return ActionStatus.InProgress
+      return StatutAction.Commencee
     case 'done':
-      return ActionStatus.Done
+      return StatutAction.Terminee
+    case 'canceled':
+      return StatutAction.Annulee
     case 'not_started':
-      return ActionStatus.NotStarted
+      return StatutAction.ARealiser
     default:
       console.warn(
-        `Statut d'action ${jsonStatus} incorrect, traité comme NotStarted`
+        `Statut d'action ${jsonStatus} incorrect, traité comme ARealiser`
       )
-      return ActionStatus.NotStarted
+      return StatutAction.ARealiser
   }
 }
 
-export function actionStatusToJson(status: ActionStatus): string {
+export function actionStatusToJson(status: StatutAction): ActionStatusJson {
   switch (status) {
-    case ActionStatus.NotStarted:
+    case StatutAction.ARealiser:
       return 'not_started'
-    case ActionStatus.InProgress:
+    case StatutAction.Commencee:
       return 'in_progress'
-    case ActionStatus.Done:
+    case StatutAction.Terminee:
       return 'done'
+    case StatutAction.Annulee:
+      return 'canceled'
   }
 }

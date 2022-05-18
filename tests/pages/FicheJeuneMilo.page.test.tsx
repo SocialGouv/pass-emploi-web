@@ -12,10 +12,6 @@ jest.mock('utils/injectionDependances/withDependance')
 jest.mock('utils/analytics/matomo')
 
 describe('Fiche Jeune MiLo', () => {
-  afterAll(() => {
-    jest.clearAllMocks()
-  })
-
   describe('server side', () => {
     describe("Quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {

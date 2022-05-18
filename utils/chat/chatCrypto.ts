@@ -9,14 +9,13 @@ export interface EncryptedTextWithInitializationVector {
 }
 
 export class ChatCrypto {
-  key: CryptoJS.lib.WordArray
-  constructor() {
-    this.key = Utf8.parse(process.env.FIREBASE_CRYPT_KEY ?? '')
-  }
-
-  encrypt(message: string): EncryptedTextWithInitializationVector {
+  encrypt(
+    message: string,
+    cleChiffrement: string
+  ): EncryptedTextWithInitializationVector {
+    const key = Utf8.parse(cleChiffrement)
     const iv = WordArray.random(16)
-    const encrypted = AES.encrypt(message, this.key, { iv })
+    const encrypted = AES.encrypt(message, key, { iv })
 
     return {
       encryptedText: encrypted.ciphertext.toString(Base64),
@@ -24,8 +23,12 @@ export class ChatCrypto {
     }
   }
 
-  decrypt(encryptedText: EncryptedTextWithInitializationVector): string {
-    return AES.decrypt(encryptedText.encryptedText, this.key, {
+  decrypt(
+    encryptedText: EncryptedTextWithInitializationVector,
+    cleChiffrement: string
+  ): string {
+    const key = Utf8.parse(cleChiffrement)
+    return AES.decrypt(encryptedText.encryptedText, key, {
       iv: Base64.parse(encryptedText.iv),
     }).toString(Utf8)
   }

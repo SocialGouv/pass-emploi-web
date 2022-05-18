@@ -8,7 +8,6 @@ declare module 'next-auth' {
   interface Session {
     user: Session.HydratedUser
     accessToken: string
-    firebaseToken: string
     error?: string
   }
 
@@ -27,7 +26,6 @@ declare module 'next-auth/jwt' {
   interface HydratedJWT extends Record<string, unknown>, DefaultJWT {
     accessToken?: string
     refreshToken?: string
-    firebaseToken?: string
     expiresAtTimestamp?: number
     idConseiller?: string
     structureConseiller?: string

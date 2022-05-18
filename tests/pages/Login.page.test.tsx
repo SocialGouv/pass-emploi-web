@@ -1,27 +1,21 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { signIn } from 'next-auth/react'
-import Login from 'pages/login'
+import { useRouter } from 'next/router'
 import React from 'react'
 
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      query: { redirectUrl: 'redirectUrl' },
-    }
-  },
-}))
+import Login from 'pages/login'
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
-describe('Login', () => {
-  afterEach(() => {
-    jest.resetAllMocks()
-    return cleanup
-  })
 
+describe('Login', () => {
   describe('render', () => {
     beforeEach(async () => {
+      ;(useRouter as jest.Mock).mockReturnValue({
+        query: { redirectUrl: 'redirectUrl' },
+      })
+
       render(<Login isFromEmail={false} />)
     })
 
@@ -63,7 +57,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: 'redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'pe-conseiller' }
       )
     })
@@ -80,7 +74,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: 'redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'similo-conseiller' }
       )
     })
@@ -88,7 +82,7 @@ describe('Login', () => {
 
   describe('quand la connexion pass emploi est activée', () => {
     beforeEach(async () => {
-      render(<Login ssoPassEmploiEstActive={true} isFromEmail={false} />)
+      render(<Login ssoPassEmploiEstActif={true} isFromEmail={false} />)
     })
 
     it('devrait avoir trois boutons', () => {
@@ -126,7 +120,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: 'redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=redirectUrl' },
         { kc_idp_hint: '' }
       )
     })

@@ -1,11 +1,12 @@
 import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
+
+import renderWithSession from '../renderWithSession'
+
 import { unDossierMilo } from 'fixtures/milo'
+import { mockedConseillerService } from 'fixtures/services'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
-
-jest.mock('next/router')
 
 describe('MiloCreationJeune', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
@@ -15,6 +16,7 @@ describe('MiloCreationJeune', () => {
           dossierId=''
           dossier={null}
           erreurMessageHttpMilo=''
+          pageTitle=''
         />
       )
     })
@@ -57,6 +59,7 @@ describe('MiloCreationJeune', () => {
           dossierId='1'
           dossier={null}
           erreurMessageHttpMilo={messageErreur}
+          pageTitle=''
         />
       )
 
@@ -70,10 +73,9 @@ describe('MiloCreationJeune', () => {
     let conseillerService: ConseillerService
     it("devrait afficher les informations de succès de création d'un compte", async () => {
       //GIVEN
-      conseillerService = {
-        getDossierJeune: jest.fn(),
+      conseillerService = mockedConseillerService({
         createCompteJeuneMilo: jest.fn((_) => Promise.resolve({ id: 'un-id' })),
-      }
+      })
 
       const dossier = unDossierMilo()
 
@@ -83,6 +85,7 @@ describe('MiloCreationJeune', () => {
             dossierId='1'
             dossier={dossier}
             erreurMessageHttpMilo={''}
+            pageTitle=''
           />
         </DIProvider>
       )
@@ -133,12 +136,11 @@ describe('MiloCreationJeune', () => {
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       //GIVEN
-      conseillerService = {
-        getDossierJeune: jest.fn(),
+      conseillerService = mockedConseillerService({
         createCompteJeuneMilo: jest.fn((_) =>
           Promise.reject({ message: "un message d'erreur" })
         ),
-      }
+      })
 
       const dossier = unDossierMilo({ email: 'incorrectemail' })
 
@@ -148,6 +150,7 @@ describe('MiloCreationJeune', () => {
             dossierId='1'
             dossier={dossier}
             erreurMessageHttpMilo={''}
+            pageTitle=''
           />
         </DIProvider>
       )

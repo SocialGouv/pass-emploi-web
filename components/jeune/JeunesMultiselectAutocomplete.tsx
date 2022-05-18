@@ -1,33 +1,79 @@
-import { getJeuneFullname, Jeune } from 'interfaces/jeune'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
+
+import InfoIcon from '../../assets/icons/information.svg'
 import RemoveIcon from '../../assets/icons/remove.svg'
+
+import { InputError } from 'components/ui/InputError'
+import SelectAutocomplete from 'components/ui/SelectAutocomplete'
+import { getJeuneFullname, Jeune } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
   jeunes: Jeune[]
-  onUpdate: (selection: Jeune[]) => void
+  typeSelection: string
+  onUpdate: (selectedIds: string[]) => void
+  defaultJeunes?: OptionJeune[]
+  error?: string
+}
+
+const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
+
+export interface OptionJeune {
+  id: string
+  value: string
 }
 
 export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
+  typeSelection,
+  error,
+  defaultJeunes = [],
 }: JeunesMultiselectAutocompleteProps) {
-  const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
+  const optionsJeunes: OptionJeune[] = jeunes.map(jeuneToOption)
+  const [selectedJeunes, setSelectedJeunes] =
+    useState<OptionJeune[]>(defaultJeunes)
   const input = useRef<HTMLInputElement>(null)
 
-  function getJeunesNotSelected(): Jeune[] {
-    return jeunes.filter(
+  function getJeunesNotSelected(): OptionJeune[] {
+    return optionsJeunes.filter(
       (jeune) => selectedJeunes.findIndex((j) => j.id === jeune.id) < 0
     )
   }
 
+  function buildOptions(): OptionJeune[] {
+    const jeunesNotSelected = getJeunesNotSelected()
+    if (!jeunesNotSelected.length) return []
+    return [
+      { id: 'select-all-jeunes', value: SELECT_ALL_JEUNES_OPTION },
+    ].concat(jeunesNotSelected)
+  }
+
+  function estJeuneDUnAutrePortefeuille(id: string): boolean {
+    return !optionsJeunes.some((option) => option.id === id)
+  }
+
+  function selectAllJeunes(): OptionJeune[] {
+    return selectedJeunes.concat(getJeunesNotSelected())
+  }
+
   function selectJeune(inputValue: string) {
-    const jeune = getJeunesNotSelected().find(
-      (j) => getJeuneFullname(j) === inputValue
-    )
-    if (jeune) {
-      const updatedSelectedJeunes = selectedJeunes.concat(jeune)
+    if (inputValue === SELECT_ALL_JEUNES_OPTION) {
+      const updatedSelectedJeunes = selectAllJeunes()
       setSelectedJeunes(updatedSelectedJeunes)
-      onUpdate(updatedSelectedJeunes)
+      onUpdate(updatedSelectedJeunes.map((selected) => selected.id))
+      input.current!.value = ''
+    }
+
+    const option = getJeunesNotSelected().find(
+      ({ value }) =>
+        value.localeCompare(inputValue, undefined, {
+          sensitivity: 'base',
+        }) === 0
+    )
+    if (option) {
+      const updatedSelectedJeunes = selectedJeunes.concat(option)
+      setSelectedJeunes(updatedSelectedJeunes)
+      onUpdate(updatedSelectedJeunes.map((selected) => selected.id))
       input.current!.value = ''
     }
   }
@@ -38,63 +84,81 @@ export default function JeunesMultiselectAutocomplete({
       const updatedSelectedJeune = [...selectedJeunes]
       updatedSelectedJeune.splice(indexSelectedJeune, 1)
       setSelectedJeunes(updatedSelectedJeune)
-      onUpdate(updatedSelectedJeune)
+      onUpdate(updatedSelectedJeune.map((selected) => selected.id))
     }
   }
 
   return (
     <>
-      <label htmlFor='item-input' className='text-base-medium'>
+      <label htmlFor='select-jeunes' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-        <span className='text-bleu_nuit text-sm-regular block'>
-          Nom et prénom
-        </span>
+        <span className='text-s-regular block'>Nom et prénom</span>
       </label>
-      <input
-        type='text'
-        id='item-input'
-        name='item'
-        ref={input}
-        className='text-sm text-bleu_nuit w-full p-3 mb-2 mt-4 border border-bleu_nuit rounded-medium cursor-pointer bg-blanc'
-        list='items'
+      {error && (
+        <InputError id='select-jeunes--error' className='mt-2'>
+          {error}
+        </InputError>
+      )}
+      <SelectAutocomplete
+        id='select-jeunes'
+        options={buildOptions()}
         onChange={(e) => selectJeune(e.target.value)}
+        className={`text-sm text-primary_darken w-full p-3 mb-2 mt-4 border rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70 ${
+          error ? 'border-warning' : 'border-content_color'
+        }`}
+        aria-required={true}
         multiple={true}
-        aria-controls='selected-items'
+        aria-controls='selected-jeunes'
+        ref={input}
+        aria-describedby='select-jeunes--error'
+        aria-invalid={error ? true : undefined}
       />
-      <datalist id='items'>
-        {getJeunesNotSelected().map((jeune) => (
-          <option key={jeune.id} value={getJeuneFullname(jeune)} />
-        ))}
-      </datalist>
 
       <p
-        aria-label={`Destinataires sélectionnés (${selectedJeunes.length})`}
-        id='items-label'
+        aria-label={`${typeSelection} sélectionnés (${selectedJeunes.length})`}
+        id='selected-jeunes--title'
         className='text-base-medium mb-2'
         aria-live='polite'
       >
-        Destinataires ({selectedJeunes.length})
+        {typeSelection} ({selectedJeunes.length})
       </p>
       {selectedJeunes.length > 0 && (
         <ul
-          aria-labelledby='items-label'
-          id='selected-items'
+          aria-labelledby='selected-jeunes--title'
+          id='selected-jeunes'
           role='region'
           className='bg-grey_100 rounded-[12px] px-2 py-4 max-h-96 overflow-y-auto'
           aria-live='polite'
           aria-relevant='additions removals'
         >
-          {selectedJeunes.map((jeune) => (
+          {selectedJeunes.map(({ id, value }) => (
             <li
-              key={jeune.id}
+              key={id}
               className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
               aria-atomic={true}
             >
-              {getJeuneFullname(jeune)}
+              {estJeuneDUnAutrePortefeuille(id) && (
+                <div className='flex items-center text-base-medium text-accent_3'>
+                  <div
+                    title="Ce jeune n'est pas dans votre portefeuille"
+                    aria-label="Ce jeune n'est pas dans votre portefeuille"
+                    className='mr-2'
+                  >
+                    <InfoIcon
+                      focusable={false}
+                      aria-hidden={true}
+                      className='fill-accent_3'
+                    />
+                  </div>
+                  {value}
+                </div>
+              )}
+              {!estJeuneDUnAutrePortefeuille(id) && value}
+
               <button
                 type='reset'
                 title='Enlever'
-                onClick={() => unselectJeune(jeune.id)}
+                onClick={() => unselectJeune(id)}
               >
                 <span className='sr-only'>Enlever le jeune</span>
                 <RemoveIcon focusable={false} aria-hidden={true} />
@@ -105,4 +169,11 @@ export default function JeunesMultiselectAutocomplete({
       )}
     </>
   )
+}
+
+export function jeuneToOption(jeune: Jeune): OptionJeune {
+  return {
+    id: jeune.id,
+    value: getJeuneFullname(jeune),
+  }
 }

@@ -1,28 +1,33 @@
-import Button, { ButtonStyle } from 'components/ui/Button'
 import { UrlObject } from 'url'
+
+import { MouseEvent, useRef } from 'react'
+
 import WarningIcon from '../assets/icons/warning.svg'
+
 import Modal from './Modal'
 import ButtonLink from './ui/ButtonLink'
 
-interface LeavePageModalProps {
-  show: boolean
-  href: string | UrlObject
+import Button, { ButtonStyle } from 'components/ui/Button'
+
+interface LeavePageConfirmationModalProps {
+  destination: string | UrlObject
   onCancel: () => void
   source?: 'creation' | 'edition'
-  id?: string
   message?: string
 }
 
-export default function ExitPageConfirmationModal({
+export default function LeavePageConfirmationModal({
   message,
   onCancel,
   source = 'creation',
-  href,
-  id,
-  show,
-}: LeavePageModalProps) {
+  destination,
+}: LeavePageConfirmationModalProps) {
+  const modalRef = useRef<{
+    closeModal: (e: KeyboardEvent | MouseEvent) => void
+  }>(null)
+
   return (
-    <Modal id={id} show={show} title='Quitter la page ?' onClose={onCancel}>
+    <Modal title='Quitter la page ?' onClose={onCancel} ref={modalRef}>
       <div className='px-20 text-center'>
         <WarningIcon focusable={false} aria-hidden={true} className='m-auto' />
         <p className='mt-6 text-base-medium'>{message}</p>
@@ -36,12 +41,12 @@ export default function ExitPageConfirmationModal({
         <Button
           type='button'
           style={ButtonStyle.SECONDARY}
-          onClick={onCancel}
+          onClick={(e) => modalRef.current!.closeModal(e)}
           className='mr-3'
         >
           Annuler
         </Button>
-        <ButtonLink href={href}>Continuer</ButtonLink>
+        <ButtonLink href={destination}>Continuer</ButtonLink>
       </div>
     </Modal>
   )

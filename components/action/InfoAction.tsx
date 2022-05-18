@@ -8,7 +8,7 @@ interface InfoActionProps {
 
 function InfoAction({ label, children, isForm = false }: InfoActionProps) {
   const styles =
-    'py-4 border-0 border-b border-solid border-b-primary_lighten text-bleu text-sm-regular'
+    'py-4 border-0 border-b border-solid border-b-primary_lighten text-sm-regular'
   return (
     <>
       <dt

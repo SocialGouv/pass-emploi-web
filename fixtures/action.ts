@@ -1,10 +1,8 @@
-import { ActionJeune, ActionStatus } from 'interfaces/action'
-import { ActionJeuneJson } from '../interfaces/json/action'
+import { Action, StatutAction } from 'interfaces/action'
+import { ActionJson } from 'interfaces/json/action'
 
-export const uneAction = (
-  overrides: Partial<ActionJeune> = {}
-): ActionJeune => {
-  const defaults: ActionJeune = {
+export const uneAction = (overrides: Partial<Action> = {}): Action => {
+  const defaults: Action = {
     id: 'id-action-1',
     content: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
@@ -12,13 +10,13 @@ export const uneAction = (
     lastUpdate: '2022-02-16T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: ActionStatus.NotStarted,
+    status: StatutAction.ARealiser,
   }
 
   return { ...defaults, ...overrides }
 }
 
-export const uneListeDActions = (): ActionJeune[] => [
+export const uneListeDActions = (): Action[] => [
   uneAction(),
   {
     id: 'id-action-2',
@@ -28,7 +26,7 @@ export const uneListeDActions = (): ActionJeune[] => [
     lastUpdate: '2022-02-18T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: ActionStatus.InProgress,
+    status: StatutAction.Commencee,
   },
   {
     id: 'id-action-3',
@@ -38,14 +36,14 @@ export const uneListeDActions = (): ActionJeune[] => [
     lastUpdate: '2022-02-20T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: ActionStatus.Done,
+    status: StatutAction.Terminee,
   },
 ]
 
 export const uneActionJson = (
-  overrides: Partial<ActionJeuneJson> = {}
-): ActionJeuneJson => {
-  const defaults: ActionJeuneJson = {
+  overrides: Partial<ActionJson> = {}
+): ActionJson => {
+  const defaults: ActionJson = {
     id: 'id-action-1',
     content: 'Identifier ses atouts et ses compétences',
     comment: 'Je suis un beau commentaire',
@@ -60,8 +58,8 @@ export const uneActionJson = (
 }
 
 export const uneListeDActionsJson = (
-  supplementaryActions: ActionJeuneJson[] = []
-): ActionJeuneJson[] => [
+  supplementaryActions: ActionJson[] = []
+): ActionJson[] => [
   {
     id: 'id-action-1',
     content: 'Identifier ses atouts et ses compétences',

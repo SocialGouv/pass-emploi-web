@@ -1,52 +1,62 @@
-import Button, { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
-import { InputError } from 'components/ui/InputError'
-import { Switch } from 'components/ui/Switch'
-import { RdvFormData } from 'interfaces/json/rdv'
-import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { modalites } from 'referentiel/rdv'
-import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
+
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import Etape3Icon from '../../assets/icons/etape_3.svg'
 import Etape4Icon from '../../assets/icons/etape_4.svg'
-import { Jeune } from '../../interfaces/jeune'
 
-interface RequiredInput {
-  value: string
-  error?: string
-}
+import InformationMessage from 'components/InformationMessage'
+import JeunesMultiselectAutocomplete, {
+  jeuneToOption,
+  OptionJeune,
+} from 'components/jeune/JeunesMultiselectAutocomplete'
+import { RequiredValue } from 'components/RequiredValue'
+import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
+import { InputError } from 'components/ui/InputError'
+import { Switch } from 'components/ui/Switch'
+import { Jeune } from 'interfaces/jeune'
+import { RdvFormData } from 'interfaces/json/rdv'
+import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
+import { modalites } from 'referentiel/rdv'
+import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 
 interface EditionRdvFormProps {
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
   redirectTo: string
+  conseillerIsCreator: boolean
   conseillerEmail: string
   soumettreRendezVous: (payload: RdvFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
   rdv?: Rdv
   idJeune?: string
+  showConfirmationModal: (payload: RdvFormData) => void
 }
 
 export function EditionRdvForm({
   jeunes,
   typesRendezVous,
   redirectTo,
+  conseillerIsCreator,
   conseillerEmail,
   soumettreRendezVous,
   leaveWithChanges,
   onChanges,
   rdv,
   idJeune,
+  showConfirmationModal,
 }: EditionRdvFormProps) {
-  const [jeuneId, setJeuneId] = useState<string>(rdv?.jeune.id ?? idJeune ?? '')
-
+  const defaultJeunes = initJeunesFromRdvOrIdJeune()
+  const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
+    value: defaultJeunes.map(({ id }) => id),
+  })
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
     rdv?.type.code ?? ''
   )
-  const [precisionType, setPrecisionType] = useState<RequiredInput>({
+
+  const [precisionType, setPrecisionType] = useState<RequiredValue>({
     value: rdv?.precisionType ?? '',
   })
   const [showPrecisionType, setShowPrecisionType] = useState<boolean>(
@@ -56,13 +66,13 @@ export function EditionRdvForm({
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const dateRdv = rdv ? new Date(rdv.date) : undefined
   const localDate = toIsoLocalDate(dateRdv) ?? ''
-  const [date, setDate] = useState<RequiredInput>({ value: localDate })
+  const [date, setDate] = useState<RequiredValue>({ value: localDate })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
   const localTime = toIsoLocalTime(dateRdv)?.slice(0, 5) ?? ''
-  const [horaire, setHoraire] = useState<RequiredInput>({ value: localTime })
+  const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(rdv?.duration)
-  const [duree, setDuree] = useState<RequiredInput>({ value: dureeRdv })
+  const [duree, setDuree] = useState<RequiredValue>({ value: dureeRdv })
   const [adresse, setAdresse] = useState<string>(rdv?.adresse ?? '')
   const [organisme, setOrganisme] = useState<string>(rdv?.organisme ?? '')
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(
@@ -74,10 +84,20 @@ export function EditionRdvForm({
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
 
   // fonctions
+  function aDesJeunesDUnAutrePortefeuille(): boolean {
+    if (rdv) {
+      return rdv.jeunes.some(
+        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
+      )
+    }
+    return false
+  }
+
   function formHasChanges(): boolean {
     if (!rdv) {
       return Boolean(
-        codeTypeRendezVous ||
+        idsJeunes.value.length ||
+          codeTypeRendezVous ||
           modalite ||
           date.value ||
           horaire.value ||
@@ -87,7 +107,11 @@ export function EditionRdvForm({
           commentaire
       )
     }
+
+    const previousIds = rdv.jeunes.map(({ id }) => id).sort()
+    idsJeunes.value.sort()
     return (
+      previousIds.toString() !== idsJeunes.value.toString() ||
       modalite !== rdv.modality ||
       date.value !== localDate ||
       horaire.value !== localTime ||
@@ -101,7 +125,7 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
-      Boolean(jeuneId) &&
+      Boolean(idsJeunes.value.length) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
@@ -115,6 +139,15 @@ export function EditionRdvForm({
     if (e.target.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
+  }
+
+  function updateIdsJeunes(selectedIds: string[]) {
+    setIdsJeunes({
+      value: selectedIds,
+      error: !selectedIds.length
+        ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+        : undefined,
+    })
   }
 
   function validateTypeRendezVousAutre() {
@@ -208,7 +241,7 @@ export function EditionRdvForm({
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
     const payload: RdvFormData = {
-      jeuneId,
+      jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous,
       date: new Date(`${date.value} ${horaire.value}`).toISOString(),
       duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
@@ -223,7 +256,11 @@ export function EditionRdvForm({
       organisme: organisme || undefined,
       comment: commentaire || undefined,
     }
-    await soumettreRendezVous(payload)
+    if (!conseillerIsCreator && sendEmailInvitation) {
+      showConfirmationModal(payload)
+    } else {
+      await soumettreRendezVous(payload)
+    }
   }
 
   useEffect(() => {
@@ -231,14 +268,30 @@ export function EditionRdvForm({
     else onChanges(false)
   })
 
+  function emailInvitationText(conseillerIsCreator: boolean) {
+    if (conseillerIsCreator) {
+      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :
+      ${conseillerEmail}`
+    } else {
+      return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."
+    }
+  }
+
   // JSX
+
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <div className='text-sm-regular text-bleu_nuit mb-8'>
+      <div className='text-s-medium mb-6'>
         Tous les champs avec * sont obligatoires
       </div>
 
-      <fieldset className='border-none flex flex-col'>
+      {aDesJeunesDUnAutrePortefeuille() && (
+        <div className='mb-6'>
+          <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
+        </div>
+      )}
+
+      <fieldset className='border-none flex flex-col mb-8'>
         <legend className='flex items-center text-m-medium mb-4'>
           <Etape1Icon
             role='img'
@@ -249,28 +302,13 @@ export function EditionRdvForm({
           Bénéficiaires :
         </legend>
 
-        <label htmlFor='beneficiaire' className='text-base-medium mb-2'>
-          <span aria-hidden={true}>* </span>Rechercher et ajouter un jeune
-          <span className='text-bleu_nuit text-sm-regular block'>
-            Nom et prénom
-          </span>
-        </label>
-        <select
-          id='beneficiaire'
-          name='beneficiaire'
-          defaultValue={jeuneId ?? ''}
-          required={true}
-          disabled={Boolean(idJeune) || Boolean(rdv)}
-          onChange={(e) => setJeuneId(e.target.value)}
-          className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
-        >
-          <option aria-hidden hidden disabled value={''} />
-          {jeunes.map((j) => (
-            <option key={j.id} value={j.id}>
-              {j.lastName} {j.firstName}
-            </option>
-          ))}
-        </select>
+        <JeunesMultiselectAutocomplete
+          jeunes={jeunes}
+          typeSelection='Bénéficiaires'
+          defaultJeunes={defaultJeunes}
+          onUpdate={updateIdsJeunes}
+          error={idsJeunes.error}
+        />
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>
@@ -371,10 +409,7 @@ export function EditionRdvForm({
 
         <label htmlFor='date' className='text-base-medium mb-2'>
           <span aria-hidden={true}>* </span>Date
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Format : JJ/MM/AAAA
-          </span>
+          <span className='ml-8 text-s-regular'> Format : JJ/MM/AAAA</span>
         </label>
         {date.error && (
           <InputError id='date-error' className='mb-2'>
@@ -398,10 +433,7 @@ export function EditionRdvForm({
 
         <label htmlFor='horaire' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Heure
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Format : HH:MM
-          </span>
+          <span className='ml-8 text-s-regular'> Format : HH:MM</span>
         </label>
         {horaire.error && (
           <InputError id='horaire-error' className='mb-2'>
@@ -427,10 +459,7 @@ export function EditionRdvForm({
 
         <label htmlFor='duree' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Durée
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Format : HH:MM
-          </span>
+          <span className='ml-8 text-s-regular'> Format : HH:MM</span>
         </label>
         {duree.error && (
           <InputError id='duree-error' className='mb-2'>
@@ -454,10 +483,7 @@ export function EditionRdvForm({
 
         <label htmlFor='adresse' className='text-base-medium mb-2'>
           Adresse
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
-            {' '}
-            Ex: 12 rue duc, Brest
-          </span>
+          <span className='ml-8 text-s-regular'> Ex: 12 rue duc, Brest</span>
         </label>
         <input
           type='text'
@@ -472,7 +498,7 @@ export function EditionRdvForm({
 
         <label htmlFor='organisme' className='text-base-medium mb-2'>
           Organisme
-          <span className='ml-8 text-bleu_nuit text-sm-regular'>
+          <span className='ml-8 text-s-regular'>
             Ex: prestataire, entreprise, etc.
           </span>
         </label>
@@ -497,12 +523,37 @@ export function EditionRdvForm({
           Informations conseiller :
         </legend>
 
+        {!conseillerIsCreator && (
+          <>
+            {rdv!.createur && (
+              <div className='mb-6'>
+                <InformationMessage
+                  content={`Le rendez-vous a été créé par un autre conseiller : ${
+                    rdv!.createur.prenom
+                  } ${
+                    rdv!.createur.nom
+                  }. Vous ne recevrez pas d'invitation dans votre agenda`}
+                />
+              </div>
+            )}
+            {!rdv!.createur && (
+              <div className='mb-6'>
+                <InformationMessage
+                  content={`Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
+                />
+              </div>
+            )}
+          </>
+        )}
+
         <div className='flex items-center mb-8'>
           <label htmlFor='presenceConseiller' className='flex items-center'>
-            <span className='w-64 mr-4'>Vous êtes présent au rendez-vous</span>
+            <span className='w-64 mr-4'>
+              Informer les bénéficiaires qu’un conseiller sera présent au
+              rendez-vous
+            </span>
             <Switch
               id='presenceConseiller'
-              name='presenceConseiller'
               checked={isConseillerPresent}
               disabled={typeEntretienIndividuelConseillerSelected()}
               onChange={handlePresenceConseiller}
@@ -513,12 +564,10 @@ export function EditionRdvForm({
         <div className='flex items-center mb-8'>
           <label htmlFor='emailInvitation' className='flex items-center'>
             <span className='w-64 mr-4'>
-              Intégrer ce rendez-vous à mon agenda via l’adresse mail suivante :{' '}
-              {conseillerEmail}
+              {emailInvitationText(conseillerIsCreator)}
             </span>
             <Switch
               id='emailInvitation'
-              name='emailInvitation'
               disabled={Boolean(rdv)}
               checked={sendEmailInvitation}
               onChange={(e) => setSendEmailInvitation(e.target.checked)}
@@ -528,7 +577,7 @@ export function EditionRdvForm({
 
         <label htmlFor='commentaire' className='text-base-regular mb-2'>
           Notes
-          <span className='block text-bleu_nuit text-sm-regular'>
+          <span className='block text-s-regular'>
             Commentaire à destination des jeunes
           </span>
         </label>
@@ -572,6 +621,20 @@ export function EditionRdvForm({
       </div>
     </form>
   )
+
+  function initJeunesFromRdvOrIdJeune(): OptionJeune[] {
+    if (rdv) {
+      return rdv.jeunes.map(({ id, nom, prenom }) => ({
+        id,
+        value: nom + ' ' + prenom,
+      }))
+    }
+    if (idJeune) {
+      const jeune = jeunes.find(({ id }) => id === idJeune)!
+      return [jeuneToOption(jeune)]
+    }
+    return []
+  }
 }
 
 function dureeFromMinutes(duration?: number): string {

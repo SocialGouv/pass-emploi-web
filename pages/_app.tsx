@@ -1,14 +1,17 @@
 import ProgressBar from '@badrap/bar-of-progress'
-import { Footer } from 'components/Footer'
-import Layout from 'components/layouts/Layout'
 import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { ReactNode, useEffect } from 'react'
+
+import { Footer } from 'components/layouts/Footer'
+import Layout from 'components/layouts/Layout'
 import 'styles/globals.css'
 import 'styles/typography.css'
 import { init } from 'utils/analytics/matomo'
+import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { Container, DIProvider } from 'utils/injectionDependances'
 import { initRum } from 'utils/monitoring/init-rum'
 
@@ -17,7 +20,7 @@ const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
 
 const progress = new ProgressBar({
   size: 5,
-  color: '#9196C0',
+  color: '#274996',
   className: 'bar-of-progress',
   delay: 100,
 })
@@ -48,11 +51,15 @@ export default function App({
             {isLoginPage && <Footer />}
           </div>
         ) : (
-          <CurrentJeuneProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </CurrentJeuneProvider>
+          <ChatCredentialsProvider>
+            <ConseillerProvider>
+              <CurrentJeuneProvider>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </CurrentJeuneProvider>
+            </ConseillerProvider>
+          </ChatCredentialsProvider>
         )}
       </DIProvider>
     </SessionProvider>

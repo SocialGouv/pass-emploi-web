@@ -1,16 +1,14 @@
-import { UserStructure } from 'interfaces/conseiller'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import React, { useState } from 'react'
+
+import Logo from '../../assets/images/logo_app_cej.svg'
+import IconComponent from '../ui/IconComponent'
+import NavbarLink from '../ui/NavbarLink'
+
+import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
-import AideIcon from '../../assets/icons/aide.svg'
-import SupervisionIcon from '../../assets/icons/arrow-right.svg'
-import LogoutIcon from '../../assets/icons/logout.svg'
-import PeopleIcon from '../../assets/icons/people.svg'
-import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
-import Logo from '../../assets/images/logo_110.svg'
 
 type SidebarProps = {}
 
@@ -23,6 +21,8 @@ export default function Sidebar({}: SidebarProps) {
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
   const isSuperviseur = session?.user.estSuperviseur
 
+  const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
+
   async function handleLogout(event: any) {
     event.preventDefault()
     setIsLoggedOut(true)
@@ -33,63 +33,39 @@ export default function Sidebar({}: SidebarProps) {
 
   return (
     <div className={styles.sidebar}>
-      <div>
-        <Logo focusable='false' aria-hidden={true} className='mb-8 mx-auto' />
+      <Logo focusable='false' aria-hidden={true} className='mb-8 mx-auto' />
 
-        <nav role='navigation' aria-label='Menu principal'>
-          <Link href={'/mes-jeunes'}>
-            <a
-              className={
-                router.pathname.startsWith('/mes-jeunes') ? 'bg-bleu_blanc' : ''
-              }
-            >
-              <PeopleIcon
-                focusable='false'
-                aria-hidden='true'
-                className='mr-2'
-              />
-              <span className='text-md text-bleu_nuit text-center'>
-                Mes jeunes
-              </span>
-            </a>
-          </Link>
+      <nav
+        role='navigation'
+        aria-label='Menu principal'
+        className='grow flex flex-col justify-between'
+      >
+        <div>
+          <NavbarLink
+            isActive={isCurrentRoute('/mes-jeunes')}
+            href='/mes-jeunes'
+            label='Mes jeunes'
+            iconName='people'
+          />
 
           {!isPoleEmploi && (
-            <Link href={'/mes-rendezvous'}>
-              <a
-                className={
-                  router.pathname.startsWith('/mes-rendezvous')
-                    ? 'bg-bleu_blanc'
-                    : ''
-                }
-              >
-                <RendezvousIcon
-                  focusable='false'
-                  aria-hidden='true'
-                  className='mr-2'
-                />
-                <span className='text-md text-bleu_nuit'>Rendez-vous</span>
-              </a>
-            </Link>
+            <NavbarLink
+              isActive={isCurrentRoute('/mes-rendezvous')}
+              href='/mes-rendezvous'
+              label='Rendez-vous'
+              iconName='rendezvous'
+            />
           )}
 
           {isSuperviseur && (
-            <Link href={'/supervision'}>
-              <a
-                className={
-                  router.pathname.startsWith('/supervision')
-                    ? 'bg-bleu_blanc'
-                    : ''
-                }
-              >
-                <SupervisionIcon
-                  focusable='false'
-                  aria-hidden='true'
-                  className='mr-2'
-                />
-                <span className='text-md text-bleu_nuit'>Supervision</span>
-              </a>
-            </Link>
+            <>
+              <NavbarLink
+                iconName='supervision'
+                label='Supervision'
+                href='/supervision'
+                isActive={isCurrentRoute('/supervision')}
+              />
+            </>
           )}
 
           <a
@@ -101,27 +77,44 @@ export default function Sidebar({}: SidebarProps) {
             }
             target='_blank'
             rel='noreferrer noopener'
+            className='hover:bg-primary_darken'
           >
-            <AideIcon aria-hidden='true' focusable='false' className='mr-2' />
-            <span className='text-md text-bleu_nuit text-center'>Aide</span>
+            <IconComponent
+              name='aide'
+              aria-hidden='true'
+              focusable='false'
+              className='mr-2 fill-blanc'
+            />
+            <span className='text-md text-blanc text-center layout_m:sr-only'>
+              Aide
+            </span>
+            <IconComponent
+              name='launch'
+              aria-hidden={true}
+              focusable='false'
+              className='mx-2 fill-blanc layout_m:hidden'
+            />
           </a>
-        </nav>
-      </div>
-
-      <div className='flex justify-between items-center'>
+        </div>
         {session && (
-          <p className='text-lg-semi text-bleu_nuit'>{session!.user.name}</p>
+          <NavbarLink
+            isActive={isCurrentRoute('/profil')}
+            href='/profil'
+            label={session.user.name}
+            iconName='profil'
+            className='break-all'
+          />
         )}
+      </nav>
 
-        <Link href={'/api/logout'}>
-          <a
-            onClick={handleLogout}
-            className='mr-2'
-            aria-label='Se déconnecter'
-          >
-            <LogoutIcon aria-hidden='true' focusable='false' />
-          </a>
-        </Link>
+      <span className='border-b border-blanc mx-4 mb-8'></span>
+      <div className='flex flex-col justify-between'>
+        <NavbarLink
+          href='/api/logout'
+          label='Déconnexion'
+          iconName='logout'
+          onClick={handleLogout}
+        />
       </div>
     </div>
   )

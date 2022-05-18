@@ -1,4 +1,5 @@
 import React from 'react'
+
 import Exclamation from '../../assets/icons/exclamation.svg'
 
 interface DeprecatedErrorMessageProps {
@@ -16,6 +17,6 @@ export const DeprecatedErrorMessage = ({
       focusable='false'
       aria-hidden='true'
     />
-    <p className='text-sm-medium text-deprecated_warning'>{children}</p>
+    <p className='text-s-medium text-warning'>{children}</p>
   </div>
 )

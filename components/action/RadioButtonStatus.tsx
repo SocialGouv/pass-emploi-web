@@ -1,27 +1,38 @@
-import { ActionStatus } from 'interfaces/action'
 import { MouseEvent } from 'react'
+
+import CancelIcon from '../../assets/icons/cancel.svg'
 import DoneIcon from '../../assets/icons/simple_done.svg'
 
+import { StatutAction } from 'interfaces/action'
+
 interface RadioButtonStatusProps {
-  status: ActionStatus
+  status: StatutAction
   isSelected: boolean
-  onChange: (statutChoisi: ActionStatus) => void
+  onChange: (statutChoisi: StatutAction) => void
 }
 
 const mappedStatus: {
-  [key in ActionStatus]: { label: string; color: string }
+  [key in StatutAction]: { label: string; color: string; icon: any }
 } = {
-  [ActionStatus.NotStarted]: {
+  ARealiser: {
     label: 'À réaliser',
     color: 'accent_1',
+    icon: DoneIcon,
   },
-  [ActionStatus.InProgress]: {
+  Commencee: {
     label: 'Commencée',
     color: 'accent_3',
+    icon: DoneIcon,
   },
-  [ActionStatus.Done]: {
+  Terminee: {
     label: 'Terminée',
     color: 'accent_2',
+    icon: DoneIcon,
+  },
+  Annulee: {
+    label: 'Annulée',
+    color: 'warning',
+    icon: CancelIcon,
   },
 }
 
@@ -35,7 +46,7 @@ export const RadioButtonStatus = ({
     onChange(status)
   }
 
-  const { label, color } = mappedStatus[status]
+  const { label, color, icon: StatusIcon } = mappedStatus[status]
   const id = `option-statut--${label.toLowerCase()}`
   const selectedStyle = `border-${color} bg-${color}_lighten text-${color}`
 
@@ -47,10 +58,10 @@ export const RadioButtonStatus = ({
       onClick={onClick}
     >
       {isSelected && (
-        <DoneIcon
+        <StatusIcon
           focusable={false}
           aria-hidden={true}
-          className={`fill-${color} mr-2`}
+          className={`fill-${color} mr-2 w-4`}
         />
       )}
       <label htmlFor={id} className='whitespace-nowrap cursor-pointer'>

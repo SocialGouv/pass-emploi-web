@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
+
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { unJeune } from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
@@ -13,12 +14,6 @@ describe('<DetailsJeune>', () => {
     render(<DetailsJeune jeune={jeune} />)
 
     // Then
-    expect(
-      screen.getByRole('heading', {
-        level: 1,
-        name: `${jeune.firstName} ${jeune.lastName}`,
-      })
-    ).toBeInTheDocument()
     expect(() =>
       screen.getByText('pas encore connecté', { exact: false })
     ).toThrow()
@@ -54,16 +49,6 @@ describe('<DetailsJeune>', () => {
       expect(
         screen.getByText('pas encore connecté', { exact: false })
       ).toBeInTheDocument()
-    })
-
-    it('permet de le supprimer', () => {
-      // Then
-      const link = screen.getByText('Supprimer ce compte')
-      expect(link).toBeInTheDocument()
-      expect(link).toHaveAttribute(
-        'href',
-        `/mes-jeunes/${jeune.id}/suppression`
-      )
     })
   })
 })

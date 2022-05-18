@@ -1,23 +1,21 @@
 import { act, fireEvent, screen } from '@testing-library/react'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { GetServerSidePropsContext } from 'next/types'
 import Supervision, { getServerSideProps } from 'pages/supervision'
-import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
-afterAll(() => {
-  jest.clearAllMocks()
-})
-
 describe('Supervision', () => {
-  describe('quand le conseiller est superviseur', () => {
+  describe('client side', () => {
     let jeunesService: JeunesService
     beforeEach(async () => {
       // Given
@@ -25,7 +23,7 @@ describe('Supervision', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <Supervision withoutChat={true} />
+          <Supervision withoutChat={true} pageTitle='' />
         </DIProvider>,
         {
           user: {
@@ -33,16 +31,10 @@ describe('Supervision', () => {
             name: 'Nils Tavernier',
             structure: UserStructure.POLE_EMPLOI,
             estSuperviseur: true,
+            email: 'fake@email.com',
+            estConseiller: true,
           },
         }
-      )
-    })
-
-    it('affiche le titre de la page', () => {
-      //THEN
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-        'Réaffectation des jeunes'
       )
     })
 
@@ -174,22 +166,43 @@ describe('Supervision', () => {
     })
   })
 
-  describe("quand le conseiller n'est pas superviseur", () => {
-    it('renvoie une page 404', async () => {
+  describe('server side', () => {
+    describe("quand le conseiller n'est pas superviseur", () => {
+      it('renvoie une page 404', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          session: { user: { estSuperviseur: false } },
+          validSession: true,
+        })
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ notFound: true })
+      })
+    })
+  })
+
+  describe('quand le conseiller est superviseur', () => {
+    it('prépare la page', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        session: {
-          user: { estSuperviseur: false },
-        },
         validSession: true,
+        session: { user: { estSuperviseur: true } },
       })
 
       // When
       const actual = await getServerSideProps({} as GetServerSidePropsContext)
 
       // Then
-      expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ notFound: true })
+      expect(actual).toEqual({
+        props: {
+          pageTitle: 'Supervision',
+          pageHeader: 'Réaffectation des jeunes',
+        },
+      })
     })
   })
 })

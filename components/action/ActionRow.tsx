@@ -1,35 +1,39 @@
-import { ActionJeune } from 'interfaces/action'
-
-import NoteIcon from '../../assets/icons/note_outline.svg'
-import ChevronIcon from '../../assets/icons/chevron_right.svg'
-import React from 'react'
 import Link from 'next/link'
-import { formatDayDate } from 'utils/date'
-import { StatusTag } from './StatusTag'
+import React from 'react'
 
-type ActionRowProps = {
-  action: ActionJeune
+import ChevronIcon from '../../assets/icons/chevron_right.svg'
+import NoteIcon from '../../assets/icons/note_outline.svg'
+
+import StatusTag from 'components/action/StatusTag'
+import { Action } from 'interfaces/action'
+import { formatDayDate } from 'utils/date'
+
+interface ActionRowProps {
+  action: Action
   jeuneId: string
+  borderStyle: string
 }
 
-const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
-  const rowLink = 'absolute inset-0 focus:outline-none'
-  const styles = 'relative border-solid border-0 border-b-2 border-b-grey_700'
-  const url = `/mes-jeunes/${jeuneId}/actions/${action.id}`
-
+export default function ActionRow({
+  action,
+  jeuneId,
+  borderStyle,
+}: ActionRowProps) {
   return (
-    <Link href={url} passHref>
-      <tr className='hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'>
-        <td className='relative pl-4 py-4 border-solid border-0 border-b-2 border-b-grey_700'>
+    <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
+      <a
+        role='row'
+        aria-label={`Détail de l'action ${action.content}`}
+        className='table-row hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'
+      >
+        <div
+          role='cell'
+          className={`table-cell relative pl-4 py-4 ${borderStyle}`}
+        >
           <span className='flex items-center'>
             <span className='text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
-            <a
-              aria-label={`Détail de l'action ${action.content}`}
-              href={url}
-              className={rowLink}
-            />
             {action.comment && (
               <NoteIcon
                 role='img'
@@ -39,29 +43,24 @@ const ActionRow = ({ action, jeuneId }: ActionRowProps) => {
               />
             )}
           </span>
-        </td>
-        <td className='relative text-bleu_nuit border-solid border-0 border-b-2 border-b-grey_700'>
+        </div>
+        <div
+          role='cell'
+          className={`table-cell relative text-primary_darken ${borderStyle}`}
+        >
           {formatDayDate(new Date(action.creationDate))}
-          <a
-            href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}
-            tabIndex={-1}
-            className={rowLink}
-          />
-        </td>
-        <td className={styles}>
+        </div>
+        <div role='cell' className={`table-cell relative ${borderStyle}`}>
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
-            <a href={url} tabIndex={-1} className={rowLink} />
             <ChevronIcon
-              className='mr-1'
               focusable='false'
               aria-hidden='true'
+              className='mr-1 fill-primary'
             />
           </span>
-        </td>
-      </tr>
+        </div>
+      </a>
     </Link>
   )
 }
-
-export default ActionRow

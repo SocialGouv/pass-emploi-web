@@ -1,5 +1,6 @@
-import Button from 'components/ui/Button'
 import AddIcon from '../../assets/icons/add_person.svg'
+
+import Button from 'components/ui/Button'
 
 interface AjouterJeuneButtonProps {
   handleAddJeune: () => void

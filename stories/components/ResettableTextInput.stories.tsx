@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
-import ResettableTextInput from 'components/ResettableTextInput'
+
+import ResettableTextInput from 'components/ui/ResettableTextInput'
 
 export default {
   title: 'Components/Form/ResettableTextInput',
@@ -18,10 +19,6 @@ export default {
     },
     onReset: { description: 'Efface le champ de saisie' },
     onChange: {},
-    roundedRight: {
-      type: 'boolean',
-      description: 'La forme du border right du bouton de reset',
-    },
   },
 } as ComponentMeta<typeof ResettableTextInput>
 

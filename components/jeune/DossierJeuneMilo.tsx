@@ -1,15 +1,17 @@
-import Button from 'components/ui/Button'
-import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
-import { DossierMilo } from 'interfaces/jeune'
 import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
+
+import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
+import RefreshIcon from '../../assets/icons/refresh.svg'
+
+import Button from 'components/ui/Button'
+import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
+import { DossierMilo } from 'interfaces/jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { useDependance } from 'utils/injectionDependances'
-import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
-import RefreshIcon from '../../assets/icons/refresh.svg'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
@@ -65,55 +67,53 @@ const DossierJeuneMilo = ({
 
   return (
     <>
-      <div className='border border-bleu_blanc rounded-large p-6'>
-        <dl className='text-bleu_nuit'>
+      <div className='border border-primary_lighten rounded-large p-6'>
+        <dl className='text-primary_darken'>
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Prénom'>
               Prénom :
             </dt>
-            <dd className='text-sm-medium'> {dossier.prenom}</dd>
+            <dd className='text-s-medium'> {dossier.prenom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Nom'>
               Nom :
             </dt>
-            <dd className='text-sm-medium'> {dossier.nom}</dd>
+            <dd className='text-s-medium'> {dossier.nom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Date de naissance'>
               Date de naissance :
             </dt>
-            <dd className='text-sm-medium'> {dossier.dateDeNaissance}</dd>
+            <dd className='text-s-medium'> {dossier.dateDeNaissance}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
             <dt className='text-sm mr-1' aria-label='Code postal'>
               Code postal :
             </dt>
-            <dd className='text-sm-medium'> {dossier.codePostal}</dd>
+            <dd className='text-s-medium'> {dossier.codePostal}</dd>
           </div>
           <div className='flex items-center mb-3'>
             <dt
               className={` ${
-                dossier.email
-                  ? 'text-sm mr-1'
-                  : 'text-sm-medium text-deprecated_warning'
+                dossier.email ? 'text-sm mr-1' : 'text-s-medium text-warning'
               }`}
               aria-label='E-mail'
             >
               E-mail :
             </dt>
 
-            <dd className='text-sm-medium'>{dossier.email || ''}</dd>
+            <dd className='text-s-medium'>{dossier.email || ''}</dd>
           </div>
           {!dossier.email && (
             <>
-              <p className='text-sm-medium text-deprecated_warning mb-2'>
+              <p className='text-s-medium text-warning mb-2'>
                 L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
               </p>
-              <ol className='text-sm text-deprecated_warning'>
+              <ol className='text-sm text-warning'>
                 <li className='mb-3.5'>
                   1. Renseignez l&apos;e-mail du jeune sur son profil i-Milo
                 </li>
@@ -136,7 +136,7 @@ const DossierJeuneMilo = ({
 
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'}>
-          <a className='flex items-center text-sm-medium text-bleu_nuit mr-6'>
+          <a className='flex items-center text-s-medium text-primary_darken mr-6'>
             <ArrowLeftIcon
               className='mr-2.5'
               role='img'

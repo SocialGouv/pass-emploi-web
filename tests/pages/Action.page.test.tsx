@@ -1,23 +1,28 @@
 import { RenderResult, screen, waitFor } from '@testing-library/react'
+import { GetServerSidePropsResult } from 'next'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import { uneAction } from 'fixtures/action'
 import { unJeune } from 'fixtures/jeune'
-import { ActionStatus } from 'interfaces/action'
-import { GetServerSidePropsContext } from 'next/types'
+import { mockedActionsService } from 'fixtures/services'
+import { Action, StatutAction } from 'interfaces/action'
+import { Jeune } from 'interfaces/jeune'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
-import renderWithSession from '../renderWithSession'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-
-afterAll(() => jest.clearAllMocks())
+jest.mock('utils/injectionDependances/withDependance')
 
 describe("Page Détail d'une action d'un jeune", () => {
-  describe('pour un conseiller MiLo', () => {
+  describe('client-side', () => {
     const action = uneAction()
     const jeune = unJeune()
     let actionsService: ActionsService
@@ -33,26 +38,16 @@ describe("Page Détail d'une action d'un jeune", () => {
       }
       page = renderWithSession(
         <DIProvider dependances={{ actionsService }}>
-          <PageAction action={action} jeune={jeune} />
+          <PageAction action={action} jeune={jeune} pageTitle='' />
         </DIProvider>
       )
     })
 
     it("Devrait afficher les information d'une action", () => {
-      expect(screen.getByText(action.content)).toBeInTheDocument()
       expect(screen.getByText(action.comment)).toBeInTheDocument()
       expect(screen.getByText('15/02/2022')).toBeInTheDocument()
       expect(screen.getByText('16/02/2022')).toBeInTheDocument()
       expect(screen.getByText(action.creator)).toBeInTheDocument()
-    })
-
-    it('Devrait avoir un lien pour revenir sur la page précédente', () => {
-      const backLink = screen.getByRole('link', {
-        name: 'Actions de Kenji Jirac',
-      })
-
-      expect(backLink).toBeInTheDocument()
-      expect(backLink).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions')
     })
 
     describe('Au clique sur un statut', () => {
@@ -67,7 +62,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         await waitFor(() => {
           expect(actionsService.updateAction).toHaveBeenCalledWith(
             action.id,
-            ActionStatus.InProgress,
+            StatutAction.Commencee,
             'accessToken'
           )
         })
@@ -77,14 +72,12 @@ describe("Page Détail d'une action d'un jeune", () => {
     describe('Au clique sur la suppression', () => {})
   })
 
-  describe('Pour un conseiller Pole Emploi', () => {
-    it('renvoie une 404', async () => {
+  describe('server-side', () => {
+    it('requiert une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        session: {
-          user: { structure: 'POLE_EMPLOI' },
-        },
-        validSession: true,
+        validSession: false,
+        redirect: 'wherever',
       })
 
       // When
@@ -92,7 +85,87 @@ describe("Page Détail d'une action d'un jeune", () => {
 
       // Then
       expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ notFound: true })
+      expect(actual).toEqual({ redirect: 'wherever' })
+    })
+
+    describe('quand le conseiller est Pôle emploi', () => {
+      it('renvoie une 404', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'POLE_EMPLOI' },
+          },
+        })
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ notFound: true })
+      })
+    })
+
+    describe("quand le conseiller n'est pas Pôle emploi", () => {
+      it("récupère les info de l'action et du jeune", async () => {
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
+        })
+        const action: Action = uneAction()
+        const jeune: Jeune = unJeune()
+        const actionsService: ActionsService = mockedActionsService({
+          getAction: jest.fn(async () => ({ action, jeune })),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+
+        // When
+        const actual: GetServerSidePropsResult<any> = await getServerSideProps({
+          query: { action_id: 'id-action', envoiMessage: 'succes' },
+        } as unknown as GetServerSidePropsContext) // Then
+        expect(actionsService.getAction).toHaveBeenCalledWith(
+          'id-action',
+          'accessToken'
+        )
+        const pageTitle = `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`
+        expect(actual).toEqual({
+          props: {
+            action,
+            jeune,
+            pageTitle,
+            pageHeader: action.content,
+            messageEnvoiGroupeSuccess: true,
+          },
+        })
+      })
+    })
+
+    describe("quand l'action n'existe pas", () => {
+      it('renvoie une 404', async () => {
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
+        })
+        const actionsService: ActionsService = mockedActionsService({
+          getAction: jest.fn(async () => undefined),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+
+        // When
+        let actual: GetServerSidePropsResult<any> = await getServerSideProps({
+          query: { action_id: 'id-action', envoiMessage: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({ notFound: true })
+      })
     })
   })
 })

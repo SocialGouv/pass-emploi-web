@@ -1,59 +1,75 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import ExitPageConfirmationModal from 'components/ExitPageConfirmationModal'
-import FailureMessage from 'components/FailureMessage'
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
-import Button, { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { MouseEvent, useState } from 'react'
-import { MessagesService } from 'services/messages.service'
-import styles from 'styles/components/Layouts.module.css'
-import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { Container, useDependance } from 'utils/injectionDependances'
-import BackIcon from '../../assets/icons/arrow_back.svg'
+
 import Etape1Icon from '../../assets/icons/etape_1.svg'
 import Etape2Icon from '../../assets/icons/etape_2.svg'
 import SendIcon from '../../assets/icons/send.svg'
-import { RequestError } from '../../utils/fetchJson'
 
-interface EnvoiMessageGroupeProps {
+import FailureMessage from 'components/FailureMessage'
+import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
+import Button, { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
+import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
+import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
+import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { RequestError } from 'utils/fetchJson'
+import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
+import { useLeavePageModal } from 'utils/useLeavePageModal'
+
+interface EnvoiMessageGroupeProps extends PageProps {
   jeunes: Jeune[]
-  withoutChat: true
-  pageTitle: string
-  from: string
+  returnTo: string
 }
 
-function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
+function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const { data: session } = useSession<true>({ required: true })
+  const [chatCredentials] = useChatCredentials()
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
 
-  const [selectedJeunes, setSelectedJeunes] = useState<Jeune[]>([])
+  const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string | undefined>(
     undefined
   )
+  const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
+    useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
   const initialTracking = 'Message - Rédaction'
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  const formIsValid = () => message !== '' && selectedJeunes.length !== 0
-
-  function formHasChanges(): boolean {
-    return Boolean(selectedJeunes.length >= 1 || message)
+  function formIsValid(): boolean {
+    return Boolean(selectedJeunesIds.length && message)
   }
 
-  function openExitPageConfirmationModal(e: MouseEvent) {
-    e.preventDefault()
-    e.stopPropagation()
+  function formHasChanges(): boolean {
+    return Boolean(selectedJeunesIds.length || message)
+  }
+
+  function openLeavePageConfirmationModal(e?: MouseEvent) {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
     setShowLeavePageModal(true)
+    setConfirmBeforeLeaving(false)
+  }
+
+  function closeLeavePageConfirmationModal() {
+    setShowLeavePageModal(false)
+    setConfirmBeforeLeaving(true)
   }
 
   async function envoyerMessageGroupe(
@@ -63,16 +79,20 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
     e.stopPropagation()
 
     if (!formIsValid()) return
+
+    setConfirmBeforeLeaving(false)
     try {
-      await messagesService.signIn(session!.firebaseToken)
+      await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(
         { id: session!.user.id, structure: session!.user.structure },
-        selectedJeunes,
+        selectedJeunesIds,
         message,
-        session!.accessToken
+        session!.accessToken,
+        chatCredentials!.cleChiffrement
       )
-      await router.push(`${from}?envoiMessage=succes`)
+      await router.push(`${returnTo}?envoiMessage=succes`)
     } catch (error) {
+      setConfirmBeforeLeaving(true)
       setErreurMessage(
         error instanceof RequestError
           ? error.message
@@ -90,153 +110,136 @@ function EnvoiMessageGroupe({ jeunes, from }: EnvoiMessageGroupeProps) {
   useMatomo(trackingLabel)
   useMatomo(showLeavePageModal ? 'Message - Modale Annulation' : undefined)
 
+  useLeavePageModal(
+    formHasChanges() && confirmBeforeLeaving,
+    openLeavePageConfirmationModal
+  )
+
   return (
     <>
-      <div className={`flex items-center ${styles.header}`}>
-        {!formHasChanges() && (
-          <Link href={from}>
-            <a className='items-center mr-4'>
-              <BackIcon role='img' focusable='false' aria-hidden={true} />
-              <span className='sr-only'>Page précédente</span>
-            </a>
-          </Link>
-        )}
-        {formHasChanges() && (
-          <button
-            className='items-center mr-4'
-            onClick={openExitPageConfirmationModal}
+      {erreurMessage && (
+        <FailureMessage
+          label={erreurMessage}
+          onAcknowledge={clearDeletionError}
+        />
+      )}
+
+      <form>
+        <div className='text-s-regular text-primary_darken mb-8'>
+          Tous les champs sont obligatoires
+        </div>
+
+        <fieldset className='border-none mb-10'>
+          <legend className='flex items-center text-m-medium mb-4'>
+            <Etape1Icon
+              role='img'
+              focusable='false'
+              aria-label='Étape 1'
+              className='mr-2'
+            />
+            Destinataires
+          </legend>
+          <JeunesMultiselectAutocomplete
+            jeunes={jeunes}
+            typeSelection='Destinataires'
+            onUpdate={setSelectedJeunesIds}
+          />
+        </fieldset>
+
+        <fieldset className='border-none'>
+          <legend className='flex items-center text-m-medium mb-4'>
+            <Etape2Icon
+              role='img'
+              focusable='false'
+              aria-label='Étape 2'
+              className='mr-2'
+            />
+            Écrivez votre message
+          </legend>
+
+          <label htmlFor='message' className='text-base-medium'>
+            <span aria-hidden='true'>*</span> Message
+          </label>
+
+          <textarea
+            id='message'
+            name='message'
+            rows={10}
+            className={`w-full text-sm text-primary_darken p-4  border border-solid border-black rounded-medium mt-4 ${
+              erreurMessage ? 'mb-[8px]' : 'mb-14'
+            }`}
+            onChange={(e) => setMessage(e.target.value)}
+            required
+          />
+        </fieldset>
+
+        <div className='flex justify-center'>
+          {!formHasChanges() && (
+            <ButtonLink
+              href={returnTo}
+              style={ButtonStyle.SECONDARY}
+              className='mr-3'
+            >
+              Annuler
+            </ButtonLink>
+          )}
+          {formHasChanges() && (
+            <Button
+              aria-label='Quitter la rédaction du message groupé'
+              onClick={openLeavePageConfirmationModal}
+              style={ButtonStyle.SECONDARY}
+              className='mr-3 p-2'
+            >
+              Annuler
+            </Button>
+          )}
+
+          <Button
+            type='submit'
+            disabled={!formIsValid()}
+            className='flex items-center p-2'
+            onClick={envoyerMessageGroupe}
           >
-            <BackIcon role='img' focusable='false' aria-hidden={true} />
-            <span className='sr-only'>
-              Quitter la rédaction d&apos;un message à plusieurs jeunes
-            </span>
-          </button>
-        )}
-        <h1 className='text-l-medium text-bleu_nuit'>
-          Message multi-destinataires
-        </h1>
-      </div>
-      <div className={`${styles.content} max-w-[500px] m-auto`}>
-        {erreurMessage && (
-          <FailureMessage
-            label={erreurMessage}
-            onAcknowledge={clearDeletionError}
+            <SendIcon aria-hidden='true' focusable='false' className='mr-2' />
+            Envoyer
+          </Button>
+        </div>
+        {showLeavePageModal && (
+          <LeavePageConfirmationModal
+            message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
+            onCancel={closeLeavePageConfirmationModal}
+            destination={returnTo}
           />
         )}
-
-        <form>
-          <div className='text-sm-regular text-bleu_nuit mb-8'>
-            Tous les champs sont obligatoires
-          </div>
-
-          <fieldset className='border-none mb-10'>
-            <legend className='flex items-center text-m-medium mb-4'>
-              <Etape1Icon
-                role='img'
-                focusable='false'
-                aria-label='Étape 1'
-                className='mr-2'
-              />
-              Destinataires
-            </legend>
-            <JeunesMultiselectAutocomplete
-              jeunes={jeunes}
-              onUpdate={setSelectedJeunes}
-            />
-          </fieldset>
-
-          <fieldset className='border-none'>
-            <legend className='flex items-center text-m-medium mb-4'>
-              <Etape2Icon
-                role='img'
-                focusable='false'
-                aria-label='Étape 2'
-                className='mr-2'
-              />
-              Écrivez votre message
-            </legend>
-
-            <label htmlFor='message' className='text-base-medium'>
-              <span aria-hidden='true'>*</span> Message
-            </label>
-
-            <textarea
-              id='message'
-              name='message'
-              rows={10}
-              className={`w-full text-sm text-bleu_nuit p-4  border border-solid border-black rounded-medium mt-4 ${
-                erreurMessage ? 'mb-[8px]' : 'mb-14'
-              }`}
-              onChange={(e) => setMessage(e.target.value)}
-              required
-            />
-          </fieldset>
-
-          <div className='flex justify-center'>
-            {!formHasChanges() && (
-              <ButtonLink
-                href={from}
-                style={ButtonStyle.SECONDARY}
-                className='mr-3'
-              >
-                Annuler
-              </ButtonLink>
-            )}
-            {formHasChanges() && (
-              <Button
-                aria-label='Quitter la rédaction du message groupé'
-                onClick={openExitPageConfirmationModal}
-                style={ButtonStyle.SECONDARY}
-                className='mr-3 p-2'
-              >
-                Annuler
-              </Button>
-            )}
-
-            <Button
-              type='submit'
-              disabled={!formIsValid()}
-              className='flex items-center p-2'
-              onClick={envoyerMessageGroupe}
-            >
-              <SendIcon aria-hidden='true' focusable='false' className='mr-2' />
-              Envoyer
-            </Button>
-          </div>
-          {showLeavePageModal && (
-            <ExitPageConfirmationModal
-              id='exit-page-confirmation'
-              show={showLeavePageModal}
-              message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
-              onCancel={() => setShowLeavePageModal(false)}
-              href={from}
-            />
-          )}
-        </form>
-      </div>
+      </form>
     </>
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+export const getServerSideProps: GetServerSideProps<
+  EnvoiMessageGroupeProps
+> = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { jeunesService } = Container.getDIContainer().dependances
+  const jeunesService = withDependance<JeunesService>('jeunesService')
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
 
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
+  const referer: string | undefined = context.req.headers.referer
+  const previousUrl =
+    referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByLastName),
       withoutChat: true,
       pageTitle: 'Message multi-destinataires',
-      from: context.req.headers.referer ?? '/mes-jeunes',
+      returnTo: previousUrl,
     },
   }
 }
@@ -245,3 +248,7 @@ export default withTransaction(
   EnvoiMessageGroupe.name,
   'page'
 )(EnvoiMessageGroupe)
+
+function comingFromHome(referer: string): boolean {
+  return referer.split('?')[0].endsWith('/index')
+}

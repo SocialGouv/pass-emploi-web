@@ -33,7 +33,7 @@ select {
 }
 
 select svg {
-  fill: theme('colors.bleu_nuit');
+  fill: theme('colors.primary');
 }
 
 input:disabled,

@@ -1,4 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+
+import { ButtonStyle } from '../../../components/ui/Button'
+
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
@@ -8,34 +15,28 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
-import { ActionJeune, compareActionsDatesDesc } from 'interfaces/action'
+import { Action, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
-import { Rdv } from 'interfaces/rdv'
-import { GetServerSideProps } from 'next'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import { PageProps } from 'interfaces/pageProps'
+import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import withDependance from 'utils/injectionDependances/withDependance'
-import BackIcon from '../../../assets/icons/arrow_back.svg'
 
-interface FicheJeuneProps {
+interface FicheJeuneProps extends PageProps {
   jeune: Jeune
-  rdvs: Rdv[]
-  actions: ActionJeune[]
+  rdvs: RdvListItem[]
+  actions: Action[]
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
-  pageTitle: string
 }
 
 function FicheJeune({
@@ -55,10 +56,11 @@ function FicheJeune({
   const [conseillersAffiches, setConseillersAffiches] = useState<
     ConseillerHistorique[]
   >(listeConseillersReduite)
-  const [rdvsAVenir, setRdvsAVenir] = useState(rdvs)
+  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rdvs)
 
-  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+  const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
+    undefined
+  )
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
@@ -81,37 +83,37 @@ function FicheJeune({
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  function closeRdvEditionMessage(): void {
+  async function closeRdvEditionMessage() {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
-    router.replace('', undefined, { shallow: true })
+    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
+      shallow: true,
+    })
   }
 
-  function deleteRdv() {
-    if (selectedRdv) {
-      const index = rdvsAVenir.indexOf(selectedRdv)
-      const nouvelleListeRdvs = [
-        ...rdvsAVenir.slice(0, index),
-        ...rdvsAVenir.slice(index + 1, rdvsAVenir.length),
-      ]
-      setRdvsAVenir(nouvelleListeRdvs)
-    }
+  function deleteRdv(deletedRdv: RdvListItem) {
+    setRdvsAVenir((prevRdvs) => {
+      const index = rdvsAVenir.indexOf(deletedRdv)
+      prevRdvs.splice(index, 1)
+      return prevRdvs
+    })
   }
 
-  function openDeleteRdvModal(rdv: Rdv) {
+  function openDeleteRdvModal(rdv: RdvListItem) {
     setSelectedRdv(rdv)
-    setShowDeleteModal(true)
     setTrackingLabel(pageTracking + ' - Modale suppression rdv')
   }
 
   function closeDeleteRdvModal() {
-    setShowDeleteModal(false)
+    setSelectedRdv(undefined)
     setTrackingLabel(pageTracking)
   }
 
-  function closeMessageGroupeEnvoiSuccess(): void {
+  async function closeMessageGroupeEnvoiSuccess() {
     setShowMessageGroupeEnvoiSuccess(false)
-    router.replace('', undefined, { shallow: true })
+    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
+      shallow: true,
+    })
   }
 
   function toggleListeConseillers(): void {
@@ -131,127 +133,123 @@ function FicheJeune({
 
   return (
     <>
-      <div className={`flex items-center justify-between ${styles.header}`}>
-        <Link href={'/mes-jeunes'}>
-          <a className='flex items-center'>
-            <BackIcon aria-hidden={true} focusable='false' />
-            <span className='ml-6 h4-semi text-bleu_nuit'>
-              Liste de mes jeunes
-            </span>
-          </a>
-        </Link>
-
+      <div className='flex'>
         {!isPoleEmploi && (
-          <ButtonLink href={`/mes-jeunes/edition-rdv`}>
+          <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4 w-fit'>
             Fixer un rendez-vous
+          </ButtonLink>
+        )}
+
+        {!jeune.isActivated && (
+          <ButtonLink
+            href={`/mes-jeunes/${jeune.id}/suppression`}
+            style={ButtonStyle.WARNING}
+            className='ml-8'
+          >
+            Supprimer ce compte
           </ButtonLink>
         )}
       </div>
 
-      <div className={styles.content}>
-        {showRdvCreationSuccess && (
-          <SuccessMessage
-            label={'Le rendez-vous a bien été créé'}
-            onAcknowledge={closeRdvEditionMessage}
-          />
-        )}
+      {showRdvCreationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été créé'}
+          onAcknowledge={closeRdvEditionMessage}
+        />
+      )}
 
-        {showRdvModificationSuccess && (
-          <SuccessMessage
-            label={'Le rendez-vous a bien été modifié'}
-            onAcknowledge={closeRdvEditionMessage}
-          />
-        )}
-        {showMessageGroupeEnvoiSuccess && (
-          <SuccessMessage
-            label={
-              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-            }
-            onAcknowledge={closeMessageGroupeEnvoiSuccess}
-          />
-        )}
-        <DetailsJeune jeune={jeune} />
+      {showRdvModificationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été modifié'}
+          onAcknowledge={closeRdvEditionMessage}
+        />
+      )}
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
+      <DetailsJeune jeune={jeune} />
 
-        <div className='mt-8'>
-          <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
-          <ListeConseillersJeune
-            id='liste-conseillers'
-            conseillers={conseillersAffiches}
+      <div className='mt-8'>
+        <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
+        <ListeConseillersJeune
+          id='liste-conseillers'
+          conseillers={conseillersAffiches}
+        />
+      </div>
+
+      {conseillers.length > 5 && (
+        <div className='flex justify-center mt-8'>
+          <CollapseButton
+            controlledId='liste-conseillers'
+            isOpen={isExpanded}
+            onClick={toggleListeConseillers}
           />
         </div>
+      )}
 
-        {conseillers.length > 5 && (
-          <div className='flex justify-center mt-8'>
-            <CollapseButton
-              controlledId='liste-conseillers'
-              isOpen={isExpanded}
-              onClick={toggleListeConseillers}
-            />
-          </div>
-        )}
+      <div className='mt-10 border-b border-primary_lighten'>
+        <h2 className='text-l-regular text-primary_darken mb-4'>
+          Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
+        </h2>
 
-        <div className='mt-10 border-b border-bleu_blanc'>
-          <h2 className='h4-semi text-bleu_nuit mb-4'>
-            Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
-          </h2>
-
-          {!isPoleEmploi ? (
-            <RdvList
-              rdvs={rdvsAVenir}
-              idConseiller={session?.user.id ?? ''}
-              onDelete={openDeleteRdvModal}
-              withNameJeune={false}
-            />
-          ) : (
-            <IntegrationPoleEmploi label='convocations' />
-          )}
-        </div>
-        <div className='mt-8 border-b border-bleu_blanc pb-8'>
-          <h2 className='h4-semi text-bleu_nuit mb-4'>Actions</h2>
-
-          {isPoleEmploi && (
-            <IntegrationPoleEmploi label='actions et démarches' />
-          )}
-
-          {!isPoleEmploi && actions.length !== 0 && (
-            <>
-              <TableauActionsJeune
-                jeune={jeune}
-                actions={actions}
-                hideTableHead={true}
-              />
-              <div className='flex justify-center mt-8'>
-                <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                  <a className='text-sm text-bleu_nuit underline'>
-                    Voir la liste des actions du jeune
-                  </a>
-                </Link>
-              </div>
-            </>
-          )}
-
-          {!isPoleEmploi && actions.length === 0 && (
-            <>
-              <p className='text-md text-bleu mb-2'>
-                {jeune.firstName} n&apos;a pas encore d&apos;action
-              </p>
-              <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                <a className='text-sm text-bleu_nuit underline'>
-                  Accédez à cette page pour créer une action
-                </a>
-              </Link>
-            </>
-          )}
-        </div>
-        {showDeleteModal && selectedRdv && (
-          <DeleteRdvModal
-            onClose={closeDeleteRdvModal}
-            onDelete={deleteRdv}
-            show={showDeleteModal}
-            rdv={selectedRdv}
+        {!isPoleEmploi ? (
+          <RdvList
+            rdvs={rdvsAVenir}
+            idConseiller={session?.user.id ?? ''}
+            onDelete={openDeleteRdvModal}
+            withNameJeune={false}
           />
+        ) : (
+          <IntegrationPoleEmploi label='convocations' />
         )}
       </div>
+      <div className='mt-8 border-b border-primary_lighten pb-8'>
+        <h2 className='text-l-regular text-primary_darken mb-4'>Actions</h2>
+
+        {isPoleEmploi && <IntegrationPoleEmploi label='actions et démarches' />}
+
+        {!isPoleEmploi && actions.length !== 0 && (
+          <>
+            <TableauActionsJeune
+              jeune={jeune}
+              actions={actions}
+              hideTableHead={true}
+            />
+            <div className='flex justify-center mt-8'>
+              <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+                <a className='text-sm text-primary_darken underline'>
+                  Voir la liste des actions du jeune
+                </a>
+              </Link>
+            </div>
+          </>
+        )}
+
+        {!isPoleEmploi && actions.length === 0 && (
+          <>
+            <p className='text-md mb-2'>
+              {jeune.firstName} n&apos;a pas encore d&apos;action
+            </p>
+            <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+              <a className='text-sm text-primary_darken underline'>
+                Accédez à cette page pour créer une action
+              </a>
+            </Link>
+          </>
+        )}
+      </div>
+      {selectedRdv && (
+        <DeleteRdvModal
+          onClose={closeDeleteRdvModal}
+          onDelete={deleteRdv}
+          rdv={selectedRdv}
+        />
+      )}
     </>
   )
 }
@@ -306,10 +304,11 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const now = new Date()
   const props: FicheJeuneProps = {
     jeune,
-    rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now),
+    rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.firstName} ${jeune.lastName}`,
+    pageHeader: `${jeune.firstName} ${jeune.lastName}`,
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'

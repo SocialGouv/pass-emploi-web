@@ -1,7 +1,10 @@
+import { FormEvent, useEffect, useState } from 'react'
+
+import { RequiredValue } from '../RequiredValue'
+
 import Button from 'components/ui/Button'
 import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
-import { FormEvent, useEffect, useState } from 'react'
 import isEmailValid from 'utils/isEmailValid'
 
 type FormulaireJeunePoleEmploiProps = {
@@ -15,13 +18,13 @@ function FormulaireJeunePoleEmploi({
   creationError,
   creationEnCours,
 }: FormulaireJeunePoleEmploiProps) {
-  const [prenom, setPrenom] = useState<{ value: string; error?: string }>({
+  const [prenom, setPrenom] = useState<RequiredValue>({
     value: '',
   })
-  const [nom, setNom] = useState<{ value: string; error?: string }>({
+  const [nom, setNom] = useState<RequiredValue>({
     value: '',
   })
-  const [email, setEmail] = useState<{ value: string; error?: string }>({
+  const [email, setEmail] = useState<RequiredValue>({
     value: '',
   })
   const [error, setError] = useState<string>(creationError)
@@ -94,20 +97,17 @@ function FormulaireJeunePoleEmploi({
 
   return (
     <>
-      <p className='text-base-regular text-bleu mb-4'>
+      <p className='text-base-regular mb-4'>
         Saisissez les coordonnées du jeune pour lequel vous voulez créer un
         compte
       </p>
 
       <form method='POST' onSubmit={handleJeuneSubmit}>
-        <div className='text-sm-regular text-bleu_nuit mb-8'>
+        <div className='text-s-medium mb-8'>
           Les champs marqués d&apos;une * sont obligatoires.
         </div>
 
-        <label
-          className='block text-md-semi text-bleu_nuit'
-          htmlFor='jeune-prenom'
-        >
+        <label className='block text-md-semi' htmlFor='jeune-prenom'>
           *Prénom
         </label>
         <input
@@ -118,18 +118,15 @@ function FormulaireJeunePoleEmploi({
           onChange={(e) => handleNomChanges(e.target.value)}
           className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
             prenom.error
-              ? 'border-deprecated_warning text-deprecated_warning'
-              : 'border-bleu_nuit text-bleu_nuit'
+              ? 'border-warning text-warning'
+              : 'border-content_color'
           }`}
         />
         {prenom.error && (
           <DeprecatedErrorMessage>{prenom.error}</DeprecatedErrorMessage>
         )}
 
-        <label
-          className='block text-md-semi text-bleu_nuit'
-          htmlFor='jeune-nom'
-        >
+        <label className='block text-md-semi' htmlFor='jeune-nom'>
           *Nom
         </label>
         <input
@@ -139,25 +136,18 @@ function FormulaireJeunePoleEmploi({
           value={nom.value}
           onChange={(e) => handlePrenomChanges(e.target.value)}
           className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
-            nom.error
-              ? 'border-deprecated_warning text-deprecated_warning'
-              : 'border-bleu_nuit text-bleu_nuit'
+            nom.error ? 'border-warning text-warning' : 'border-content_color'
           }`}
         />
         {nom.error && (
           <DeprecatedErrorMessage>{nom.error}</DeprecatedErrorMessage>
         )}
 
-        <label
-          className='block mb-4 text-md-semi text-bleu_nuit'
-          htmlFor='jeune-email'
-        >
+        <label className='block mb-4 text-md-semi' htmlFor='jeune-email'>
           *E-mail{' '}
-          <span className='text-sm-regular text-bleu_nuit'>
-            (ex : monemail@exemple.com)
-          </span>
+          <span className='text-s-regular'>(ex : monemail@exemple.com)</span>
         </label>
-        <span className='text-sm-regular text-bleu_nuit'>
+        <span className='text-s-regular'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
           dossier MAP du jeune.
         </span>
@@ -169,8 +159,8 @@ function FormulaireJeunePoleEmploi({
           onChange={(e) => handleEmailChanges(e.target.value)}
           className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
             email.error || error
-              ? 'border-deprecated_warning text-deprecated_warning'
-              : 'border-bleu_nuit text-bleu_nuit'
+              ? 'border-warning text-warning'
+              : 'border-content_color text-primary_darken'
           }`}
         />
         {email.error && (

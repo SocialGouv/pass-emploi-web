@@ -1,100 +1,81 @@
-import React from 'react'
-import { RenderResult } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
-import Sidebar from 'components/layouts/Sidebar'
+import { within } from '@testing-library/react'
+import { useRouter } from 'next/router'
+import React from 'react'
+
 import renderWithSession from '../renderWithSession'
+
+import Sidebar from 'components/layouts/Sidebar'
 import { UserStructure } from 'interfaces/conseiller'
 
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      route: '/',
-      pathname: '',
-      query: '',
-      asPath: '',
-      push: jest.fn(),
-      events: {
-        on: jest.fn(),
-        off: jest.fn(),
-      },
-      beforePopState: jest.fn(() => null),
-      prefetch: jest.fn(() => null),
-    }
-  },
-}))
-
 describe('<Sidebar/>', () => {
-  let component: RenderResult
-  afterEach(() => {
-    jest.clearAllMocks()
+  beforeEach(() => {
+    ;(useRouter as jest.Mock).mockReturnValue({ pathname: '' })
   })
 
   it('affiche les liens de la barre de navigation', () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />)
-
     // WHEN
+    renderWithSession(<Sidebar />)
 
     // THEN
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
-    expect(screen.getByText('Rendez-vous')).toBeInTheDocument()
-    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
-    expect(screen.getByText('Aide')).toBeInTheDocument()
-    expect(() => screen.getByText('Supervision')).toThrow()
+    const navigation = screen.getByRole('navigation')
+    expect(
+      within(navigation).getByRole('link', { name: 'Rendez-vous' })
+    ).toHaveAttribute('href', '/mes-rendezvous')
+    expect(
+      within(navigation).getByRole('link', { name: 'Mes jeunes' })
+    ).toHaveAttribute('href', '/mes-jeunes')
+    expect(within(navigation).getByLabelText(/Aide/)).toBeInTheDocument()
+    expect(
+      within(navigation).getByRole('link', { name: 'Nils Tavernier' })
+    ).toHaveAttribute('href', '/profil')
+    expect(() => within(navigation).getByText('Supervision')).toThrow()
   })
 
   it('affiche le lien de déconnexion', () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />)
-
     // WHEN
+    renderWithSession(<Sidebar />)
 
     // THEN
     expect(
-      screen.getByRole('link', {
-        name: 'Se déconnecter',
-      })
+      screen.getByRole('link', { name: 'Déconnexion' })
     ).toBeInTheDocument()
   })
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />, {
+    // WHEN
+    renderWithSession(<Sidebar />, {
       user: {
         id: '1',
         name: 'Nils Tavernier',
         structure: UserStructure.POLE_EMPLOI,
         estSuperviseur: false,
+        email: 'fake@email.com',
+        estConseiller: true,
       },
     })
 
-    // WHEN
-
     // THEN
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
     expect(() => screen.getByText('Rendez-vous')).toThrow()
-    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
-    expect(screen.getByText('Aide')).toBeInTheDocument()
   })
 
   it('affiche le lien de supervision lorsque le conseiller est superviseur', () => {
-    // GIVEN
-    component = renderWithSession(<Sidebar />, {
+    // WHEN
+    renderWithSession(<Sidebar />, {
       user: {
         id: '1',
         name: 'Nils Tavernier',
         structure: UserStructure.MILO,
         estSuperviseur: true,
+        email: 'fake@email.com',
+        estConseiller: true,
       },
     })
 
-    // WHEN
-
     // THEN
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
-    expect(screen.getByText('Rendez-vous')).toBeInTheDocument()
-    expect(screen.getByText('Mes jeunes')).toBeInTheDocument()
-    expect(screen.getByText('Aide')).toBeInTheDocument()
-    expect(screen.getByText('Supervision')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Supervision' })).toHaveAttribute(
+      'href',
+      '/supervision'
+    )
   })
 })

@@ -1,4 +1,5 @@
 import { ActionsService } from 'services/actions.service'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -37,6 +38,7 @@ export function mockedMessagesService(
   overrides: Partial<MessagesService> = {}
 ): MessagesService {
   const defaults: MessagesService = {
+    getChatCredentials: jest.fn(),
     countMessagesNotRead: jest.fn(),
     observeJeuneChat: jest.fn(),
     observeJeuneReadingDate: jest.fn(),
@@ -61,6 +63,19 @@ export function mockedRendezVousService(
     postNewRendezVous: jest.fn(),
     updateRendezVous: jest.fn(),
     deleteRendezVous: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedConseillerService(
+  overrides: Partial<ConseillerService> = {}
+): ConseillerService {
+  const defaults: ConseillerService = {
+    getConseiller: jest.fn(),
+    modifierAgence: jest.fn(),
+    modifierNotificationsSonores: jest.fn(),
+    getDossierJeune: jest.fn(),
+    createCompteJeuneMilo: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

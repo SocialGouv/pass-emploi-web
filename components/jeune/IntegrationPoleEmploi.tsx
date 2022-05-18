@@ -1,4 +1,5 @@
 import React from 'react'
+
 import Exclamation from '../../assets/icons/exclamation.svg'
 
 interface IntegrationPoleEmploiProps {
@@ -15,10 +16,10 @@ export const IntegrationPoleEmploi = ({
       aria-hidden='true'
     />
     <div>
-      <p className='text-sm-medium'>
+      <p className='text-s-medium'>
         Cette fonctionnalité n&apos;est pas encore disponible.
       </p>
-      <p className='text-sm-regular'>
+      <p className='text-s-regular'>
         Gérez les {label} de ce jeune depuis vos outils Pôle emploi.
       </p>
     </div>

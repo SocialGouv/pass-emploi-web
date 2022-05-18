@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import ResizingMultilineInput from 'components/ResizingMultilineInput'
+import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 
 describe('<ResizingMultilineInput/>', () => {
   let form: HTMLSpanElement

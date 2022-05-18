@@ -1,47 +1,24 @@
-import { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
-import { Jeune } from 'interfaces/jeune'
 import React from 'react'
-import { formatDayDate } from 'utils/date'
+
 import EmailIcon from '../../assets/icons/email.svg'
+
+import { Jeune } from 'interfaces/jeune'
+import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: Jeune
-  withButtons?: boolean
-  titlePrefix?: string
 }
 
-export const DetailsJeune = ({
-  jeune,
-  titlePrefix,
-  withButtons = true,
-}: DetailsJeuneProps) => {
+export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
   return (
     <>
-      <div className='flex'>
-        <h1 className='h2-semi text-bleu_nuit mb-3'>
-          {titlePrefix ? `${titlePrefix} ` : ''}
-          {jeune.firstName} {jeune.lastName}
-        </h1>
-
-        {!jeune.isActivated && withButtons && (
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/suppression`}
-            style={ButtonStyle.WARNING}
-            className='ml-8'
-          >
-            Supprimer ce compte
-          </ButtonLink>
-        )}
-      </div>
-
-      <dl className='flex text-sm-semi text-bleu_nuit mb-2'>
+      <dl className='flex text-sm-semi mb-2'>
         <dt className='mr-2'>Ajouté le :</dt>
         <dd>{formatDayDate(new Date(jeune.creationDate))}</dd>
       </dl>
 
       {jeune.email && (
-        <dl className='flex text-sm-semi text-bleu_nuit'>
+        <dl className='flex text-sm-semi'>
           <dt className='mr-2'>
             <EmailIcon focusable='false' role='img' title='e-mail' />
           </dt>

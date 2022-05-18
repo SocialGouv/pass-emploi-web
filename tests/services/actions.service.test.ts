@@ -1,12 +1,13 @@
 import { ApiClient } from 'clients/api.client'
-import { ActionsApiService } from 'services/actions.service'
 import {
   uneAction,
   uneActionJson,
   uneListeDActions,
   uneListeDActionsJson,
-} from '../../fixtures/action'
-import { ActionStatus } from '../../interfaces/action'
+} from 'fixtures/action'
+import { StatutAction } from 'interfaces/action'
+import { ActionsApiService } from 'services/actions.service'
+import { RequestError } from 'utils/fetchJson'
 
 jest.mock('clients/api.client')
 
@@ -22,7 +23,7 @@ describe('ActionsApiService', () => {
   describe('.getAction', () => {
     it('renvoie une action non commencée', async () => {
       // GIVEN
-      const action = uneAction({ status: ActionStatus.NotStarted })
+      const action = uneAction({ status: StatutAction.ARealiser })
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
@@ -35,12 +36,12 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
     })
 
     it('renvoie une action commencée', async () => {
       // GIVEN
-      const action = uneAction({ status: ActionStatus.InProgress })
+      const action = uneAction({ status: StatutAction.Commencee })
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
@@ -53,12 +54,12 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
     })
 
     it('renvoie une action terminée', async () => {
       // GIVEN
-      const action = uneAction({ status: ActionStatus.Done })
+      const action = uneAction({ status: StatutAction.Terminee })
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/actions/${action.id}`)
           return {
@@ -71,7 +72,20 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ ...action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+    })
+
+    it('ne renvoie pas une action inexistante', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new RequestError('Action non trouvée', 'NON_TROUVE')
+      )
+
+      // WHEN
+      const actual = await actionsService.getAction('action-id', 'accessToken')
+
+      // THEN
+      expect(actual).toEqual(undefined)
     })
   })
 
@@ -97,14 +111,9 @@ describe('ActionsApiService', () => {
   describe('.createAction', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
-      const newAction: any = {
-        content: 'content',
-        comment: 'comment',
-      }
-
       // WHEN
       await actionsService.createAction(
-        newAction,
+        { intitule: 'content', commentaire: 'comment' },
         'id-conseiller',
         'id-jeune',
         'accessToken'
@@ -113,7 +122,7 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/action',
-        newAction,
+        { content: 'content', comment: 'comment' },
         'accessToken'
       )
     })
@@ -124,7 +133,7 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.updateAction(
         'id-action',
-        ActionStatus.NotStarted,
+        StatutAction.ARealiser,
         'accessToken'
       )
 
@@ -134,14 +143,14 @@ describe('ActionsApiService', () => {
         { status: 'not_started' },
         'accessToken'
       )
-      expect(actual).toStrictEqual(ActionStatus.NotStarted)
+      expect(actual).toStrictEqual(StatutAction.ARealiser)
     })
 
     it('met à jour une action commencée', async () => {
       // WHEN
       const actual = await actionsService.updateAction(
         'id-action',
-        ActionStatus.InProgress,
+        StatutAction.Commencee,
         'accessToken'
       )
 
@@ -151,14 +160,14 @@ describe('ActionsApiService', () => {
         { status: 'in_progress' },
         'accessToken'
       )
-      expect(actual).toStrictEqual(ActionStatus.InProgress)
+      expect(actual).toStrictEqual(StatutAction.Commencee)
     })
 
     it('met à jour une action terminée', async () => {
       // WHEN
       const actual = await actionsService.updateAction(
         'id-action',
-        ActionStatus.Done,
+        StatutAction.Terminee,
         'accessToken'
       )
 
@@ -168,7 +177,7 @@ describe('ActionsApiService', () => {
         { status: 'done' },
         'accessToken'
       )
-      expect(actual).toStrictEqual(ActionStatus.Done)
+      expect(actual).toStrictEqual(StatutAction.Terminee)
     })
   })
 

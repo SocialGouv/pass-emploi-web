@@ -4,8 +4,16 @@ export enum UserStructure {
   PASS_EMPLOI = 'PASS_EMPLOI',
 }
 
+export interface Agence {
+  id: string
+  nom: string
+}
+
 export interface Conseiller {
   id: string
   firstName: string
   lastName: string
+  email?: string
+  agence?: string
+  notificationsSonores: boolean
 }

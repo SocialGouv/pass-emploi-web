@@ -1,6 +1,12 @@
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
 import { act, fireEvent, screen, within } from '@testing-library/react'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
+
 import {
   desJeunes,
   desJeunesAvecActionsNonTerminees,
@@ -13,30 +19,27 @@ import {
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import { compareJeunesByLastName } from 'interfaces/jeune'
-import Router from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import { getServerSideProps } from 'pages/mes-jeunes'
 import MesJeunes from 'pages/mes-jeunes/index'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import renderWithSession from '../renderWithSession'
 
-jest.mock('next/router')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {
-  afterAll(() => jest.clearAllMocks())
-
   describe('client side', () => {
+    let push: Function
     let messagesService: MessagesService
     const jeunes = desJeunesAvecActionsNonTerminees()
     beforeEach(() => {
+      push = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
+
       messagesService = mockedMessagesService({
         signIn: jest.fn(() => Promise.resolve()),
         countMessagesNotRead: jest.fn((_, ids: string[]) =>
@@ -60,20 +63,11 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={jeunes}
                 isFromEmail
+                pageTitle=''
               />
             </DIProvider>
           )
         })
-      })
-
-      it('a un titre de niveau 1', async () => {
-        //THEN
-        expect(
-          screen.getByRole('heading', {
-            level: 1,
-            name: 'Mes Jeunes',
-          })
-        ).toBeInTheDocument()
       })
 
       it("affiche la liste des jeunes s'il en a", async () => {
@@ -101,6 +95,7 @@ describe('Mes Jeunes', () => {
                 conseillerJeunes={jeunes}
                 isFromEmail
                 deletionSuccess={true}
+                pageTitle={''}
               />
             </DIProvider>
           )
@@ -149,6 +144,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={[jeune]}
                 isFromEmail
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -160,21 +156,45 @@ describe('Mes Jeunes', () => {
         const addButton = screen.getByRole('button', {
           name: 'Ajouter un jeune',
         })
-        const routerSpy = jest.spyOn(Router, 'push')
 
         //WHEN
         fireEvent.click(addButton)
 
         //THEN
-        expect(routerSpy).toHaveBeenCalledWith(
-          '/mes-jeunes/milo/creation-jeune'
-        )
+        expect(push).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
       })
 
       it("affiche le nombre d'actions des jeunes", () => {
         // Then
         expect(
           screen.getByRole('columnheader', { name: 'Actions' })
+        ).toBeInTheDocument()
+      })
+
+      it('affiche le message de succès de suppression de jeune', async () => {
+        //WHEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+                pageTitle={''}
+              />
+            </DIProvider>
+          )
+        })
+
+        //THEN
+        expect(
+          screen.getByText('Le compte du jeune a bien été supprimé.')
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', {
+            name: 'support@pass-emploi.beta.gouv.fr',
+          })
         ).toBeInTheDocument()
       })
     })
@@ -191,6 +211,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.POLE_EMPLOI}
                 conseillerJeunes={[jeune]}
                 isFromEmail
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -202,13 +223,12 @@ describe('Mes Jeunes', () => {
         const addButton = screen.getByRole('button', {
           name: 'Ajouter un jeune',
         })
-        const routerSpy = jest.spyOn(Router, 'push')
 
         //WHEN
         fireEvent.click(addButton)
 
         //THEN
-        expect(routerSpy).toHaveBeenCalledWith(
+        expect(push).toHaveBeenCalledWith(
           '/mes-jeunes/pole-emploi/creation-jeune'
         )
       })
@@ -218,6 +238,28 @@ describe('Mes Jeunes', () => {
         expect(() =>
           screen.getByRole('columnheader', { name: 'Actions' })
         ).toThrow()
+      })
+
+      it('affiche le message de succès de suppression de jeune', async () => {
+        //WHEN
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.POLE_EMPLOI}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                deletionSuccess={true}
+                pageTitle={''}
+              />
+            </DIProvider>
+          )
+        })
+
+        //THEN
+        expect(
+          screen.getByText('Le compte du jeune a bien été supprimé.')
+        ).toBeInTheDocument()
       })
     })
 
@@ -231,6 +273,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={[]}
                 isFromEmail
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -259,6 +302,7 @@ describe('Mes Jeunes', () => {
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={jeunes}
                 isFromEmail
+                pageTitle=''
               />
             </DIProvider>
           )
@@ -266,6 +310,30 @@ describe('Mes Jeunes', () => {
 
         //THEN
         expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
+      })
+    })
+
+    describe('quand on vient de selectionner une agence', () => {
+      it('affiche un message de succès', async () => {
+        // When
+        await act(async () => {
+          renderWithSession(
+            <DIProvider dependances={{ messagesService }}>
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={jeunes}
+                isFromEmail
+                pageTitle=''
+                ajoutAgenceSuccess={true}
+              />
+            </DIProvider>
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByText('Votre Mission locale a été ajoutée à votre profil')
+        ).toBeInTheDocument()
       })
     })
   })
@@ -281,9 +349,8 @@ describe('Mes Jeunes', () => {
       actionsService = mockedActionsService({
         countActionsJeunes: jest.fn().mockResolvedValue(
           jeunes.map((j) => ({
-            jeuneId: j.id,
-            inProgressActionsCount: 2,
-            todoActionsCount: 5,
+            idJeune: j.id,
+            nbActionsNonTerminees: 7,
           }))
         ),
       })
@@ -349,6 +416,29 @@ describe('Mes Jeunes', () => {
       expect(actual).toMatchObject({
         props: {
           deletionSuccess: true,
+        },
+      })
+    })
+
+    it('traite la réussite du renseignement de mon agence', async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+          accessToken: 'accessToken',
+        },
+      })
+
+      // When
+      const actual = await getServerSideProps({
+        query: { choixAgence: 'succes' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(actual).toMatchObject({
+        props: {
+          ajoutAgenceSuccess: true,
         },
       })
     })
@@ -419,7 +509,7 @@ describe('Mes Jeunes', () => {
 
       it("renvoie les jeunes avec leur nombre d'actions", () => {
         // Then
-        expect(actual).toMatchObject({
+        expect(actual).toEqual({
           props: {
             conseillerJeunes: desJeunes()
               .map((jeune) => ({
@@ -427,6 +517,9 @@ describe('Mes Jeunes', () => {
                 nbActionsNonTerminees: 7,
               }))
               .sort(compareJeunesByLastName),
+            structureConseiller: 'MILO',
+            pageTitle: 'Mes jeunes',
+            isFromEmail: false,
           },
         })
       })

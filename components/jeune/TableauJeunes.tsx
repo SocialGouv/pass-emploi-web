@@ -1,3 +1,10 @@
+import Link from 'next/link'
+import React, { useEffect, useState } from 'react'
+
+import ArrowDouble from '../../assets/icons/arrow_double.svg'
+import ArrowDown from '../../assets/icons/arrow_down.svg'
+import MessageIcon from '../../assets/icons/note_outline_big.svg'
+
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
@@ -6,8 +13,6 @@ import {
   getJeuneFullname,
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
-import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
   dateIsToday,
@@ -15,9 +20,6 @@ import {
   formatDayDate,
   formatHourMinuteDate,
 } from 'utils/date'
-import ArrowDouble from '../../assets/icons/arrow_double.svg'
-import ArrowDown from '../../assets/icons/arrow_down.svg'
-import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 enum SortColumn {
   NOM = 'NOM',
@@ -139,7 +141,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
   return (
     <>
       {sortedJeunes.length === 0 ? (
-        <p className='mt-32 text-base-medium text-center text-bleu_nuit'>
+        <p className='mt-32 text-base-medium text-center text-primary'>
           Aucun jeune trouvé
         </p>
       ) : (
@@ -156,10 +158,10 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
             <div role='row' className={`table-row grid ${gridColsStyle}`}>
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left py-4'
+                className='table-cell text-sm text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.NOM)}
                   aria-label={`Afficher la liste des jeunes triée par noms de famille par ordre alphabétique ${
                     isName && !sortDesc ? 'inversé' : ''
@@ -183,16 +185,16 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
               </span>
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left py-4'
+                className='table-cell text-sm text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
                   aria-label={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
-                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                    isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
                   title={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
-                    isDate && !sortDesc ? 'antéchronologique' : 'chronologique'
+                    isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
                 >
                   <span className='mr-1'>Dernière activité du jeune</span>
@@ -212,10 +214,10 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
               {withActions && (
                 <span
                   role='columnheader'
-                  className='table-cell text-sm text-bleu text-left py-4'
+                  className='table-cell text-sm  text-left py-4'
                 >
                   <button
-                    className='flex border-none hover:bg-gris_blanc p-2 rounded-medium items-center mx-auto'
+                    className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center mx-auto'
                     onClick={() =>
                       sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
                     }
@@ -243,10 +245,10 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
 
               <span
                 role='columnheader'
-                className='table-cell text-sm text-bleu text-left py-4'
+                className='table-cell text-sm  text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-gris_blanc p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
                   onClick={() => sortJeunes(SortColumn.MESSAGES)}
                   aria-label={`Afficher la liste des messages non lus par nombre ${
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
@@ -277,7 +279,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 <a
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className={`table-row grid ${gridColsStyle} text-sm text-bleu_nuit items-center hover:bg-gris_blanc`}
+                  className={`table-row grid ${gridColsStyle} text-sm  items-center hover:bg-primary_lighten`}
                 >
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}
@@ -297,7 +299,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                       role='cell'
                       className='table-cell text-primary_darken p-4 items-center mx-auto'
                     >
-                      <span className='w-5 h-5 flex justify-center items-center bg-primary_lighten rounded-full text-center p-3.5'>
+                      <span className='w-5 h-5 flex justify-center items-center text-blanc bg-primary rounded-full text-center p-3.5'>
                         {jeune.nbActionsNonTerminees}
                       </span>
                     </span>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import useMatomo from 'utils/analytics/useMatomo'
-import styles from 'styles/components/Layouts.module.css'
-import { ExternalLink } from './ui/ExternalLink'
+
+import { ExternalLink } from 'components/ui/ExternalLink'
 import { liens } from 'referentiel/liens'
+import styles from 'styles/components/Layouts.module.css'
+import useMatomo from 'utils/analytics/useMatomo'
 
 export const Footer = () => {
   const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
@@ -15,7 +16,7 @@ export const Footer = () => {
         {liens.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className={`mr-4 text-bleu_nuit fill-bleu_nuit hover:text-primary hover:fill-primary`}
+            className={`mr-4 text-primary_darken fill-primary_darken hover:text-primary hover:fill-primary`}
           >
             <ExternalLink
               key={url}

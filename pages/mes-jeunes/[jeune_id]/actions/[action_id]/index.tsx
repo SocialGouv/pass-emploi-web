@@ -1,27 +1,27 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+
 import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import EchecMessage from 'components/EchecMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { ActionJeune, ActionStatus } from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
-import { GetServerSideProps } from 'next'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
-import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { formatDayDate } from 'utils/date'
-import { Container, useDependance } from 'utils/injectionDependances'
-import BackIcon from '../../../../../assets/icons/arrow_back.svg'
+import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
-type PageActionProps = {
-  action: ActionJeune
+interface PageActionProps extends PageProps {
+  action: Action
   jeune: Jeune
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
@@ -35,7 +35,7 @@ function PageAction({
   const actionsService = useDependance<ActionsService>('actionsService')
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
-  const [statut, setStatut] = useState<ActionStatus>(action.status)
+  const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
@@ -44,7 +44,7 @@ function PageAction({
 
   const pageTracking = 'Détail Action'
 
-  async function updateAction(statutChoisi: ActionStatus): Promise<void> {
+  async function updateAction(statutChoisi: StatutAction): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
       action.id,
       statutChoisi,
@@ -60,7 +60,7 @@ function PageAction({
       .then(() => {
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,
-          query: { deleteSuccess: true },
+          query: { suppression: 'succes' },
         })
       })
       .catch((error: Error) => {
@@ -91,95 +91,74 @@ function PageAction({
 
   return (
     <>
-      <div className={`flex justify-between ${styles.header}`}>
-        <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-          <a className='flex items-center'>
-            <BackIcon focusable='false' aria-hidden={true} />
-            <span className='ml-6 h4-semi text-bleu_nuit'>
-              Actions de {jeune.firstName} {jeune.lastName}
-            </span>
-          </a>
-        </Link>
+      {action.creatorType === 'conseiller' && (
+        <Button
+          label="Supprimer l'action"
+          onClick={() => deleteAction()}
+          style={ButtonStyle.WARNING}
+          disabled={deleteDisabled}
+          className='mb-4'
+        >
+          Supprimer l&apos;action
+        </Button>
+      )}
 
-        {action.creatorType === 'conseiller' && (
-          <Button
-            label="Supprimer l'action"
-            onClick={() => deleteAction()}
-            style={ButtonStyle.WARNING}
-            className='px-[36px] py-[16px]'
-            disabled={deleteDisabled}
-          >
-            Supprimer l&apos;action
-          </Button>
-        )}
-      </div>
+      {showEchecMessage && (
+        <EchecMessage
+          label={
+            "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
+          }
+          onAcknowledge={() => setShowEchecMessage(false)}
+        />
+      )}
 
-      <div className={styles.content}>
-        {showEchecMessage && (
-          <EchecMessage
-            label={
-              "Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
-            }
-            onAcknowledge={() => setShowEchecMessage(false)}
-          />
-        )}
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
 
-        {showMessageGroupeEnvoiSuccess && (
-          <SuccessMessage
-            label={
-              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-            }
-            onAcknowledge={closeMessageGroupeEnvoiSuccess}
-          />
+      <dl>
+        {action.comment && (
+          <>
+            <dt className='text-sm-semi'>Commentaire</dt>
+            <dd className='mt-4 text-primary_darken text-base-regular'>
+              {action.comment}
+            </dd>
+          </>
         )}
 
-        <dl>
-          <dt className='text-bleu text-sm-semi'>Intitulé de l&apos;action</dt>
-          <dd className='mt-4 text-bleu_nuit text-md-semi'>{action.content}</dd>
-
-          {action.comment && (
-            <>
-              <dt className='mt-8 text-bleu text-sm-semi'>Commentaire</dt>
-              <dd className='mt-4 text-bleu_nuit text-base-regular'>
-                {action.comment}
-              </dd>
-            </>
-          )}
-
-          <dt className='mt-8 text-bleu text-sm-semi'>Informations</dt>
-          <dd>
-            <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-              <InfoAction label='Statut' isForm={true}>
+        <dt className={`text-sm-semi ${action.comment ? 'mt-8' : ''}`}>
+          Informations
+        </dt>
+        <dd>
+          <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+            <InfoAction label='Statut' isForm={true}>
+              {Object.values(StatutAction).map((status: StatutAction) => (
                 <RadioButtonStatus
-                  status={ActionStatus.NotStarted}
-                  isSelected={statut === ActionStatus.NotStarted}
+                  key={status.toLowerCase()}
+                  status={status}
+                  isSelected={statut === status}
                   onChange={updateAction}
                 />
-                <RadioButtonStatus
-                  status={ActionStatus.InProgress}
-                  isSelected={statut === ActionStatus.InProgress}
-                  onChange={updateAction}
-                />
-                <RadioButtonStatus
-                  status={ActionStatus.Done}
-                  isSelected={statut === ActionStatus.Done}
-                  onChange={updateAction}
-                />
-              </InfoAction>
+              ))}
+            </InfoAction>
 
-              <InfoAction label="Date d'actualisation">
-                {formatDayDate(new Date(action.lastUpdate))}
-              </InfoAction>
+            <InfoAction label="Date d'actualisation">
+              {formatDayDate(new Date(action.lastUpdate))}
+            </InfoAction>
 
-              <InfoAction label='Date de création'>
-                {formatDayDate(new Date(action.creationDate))}
-              </InfoAction>
+            <InfoAction label='Date de création'>
+              {formatDayDate(new Date(action.creationDate))}
+            </InfoAction>
 
-              <InfoAction label='Créateur'>{action.creator}</InfoAction>
-            </dl>
-          </dd>
-        </dl>
-      </div>
+            <InfoAction label='Créateur'>{action.creator}</InfoAction>
+          </dl>
+        </dd>
+      </dl>
     </>
   )
 }
@@ -199,26 +178,26 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     return { notFound: true }
   }
 
-  const { actionsService } = Container.getDIContainer().dependances
-  const res = await actionsService.getAction(
+  const actionsService = withDependance<ActionsService>('actionsService')
+  const actionEtJeune = await actionsService.getAction(
     context.query.action_id as string,
     accessToken
   )
+  if (!actionEtJeune) return { notFound: true }
 
+  const { action, jeune } = actionEtJeune
   const props: PageActionProps = {
-    action: res,
-    jeune: res.jeune,
-    messageEnvoiGroupeSuccess: Boolean(context.query?.envoiMessage),
-    pageTitle: `Mes jeunes - Actions de ${res.jeune.firstName} ${res.jeune.lastName} - ${res.content} `,
+    action,
+    jeune,
+    pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`,
+    pageHeader: action.content,
   }
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
   }
 
-  return {
-    props,
-  }
+  return { props }
 }
 
 export default withTransaction(PageAction.name, 'page')(PageAction)

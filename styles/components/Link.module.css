@@ -7,22 +7,22 @@
   border: 1px solid transparent;
   border-radius: 9999px;
   transition: border-color, color 0.2s, background-color 0.2s;
-  background-color: theme('colors.bleu_nuit');
+  background-color: theme('colors.primary');
   color: theme('colors.blanc');
 }
 
 .linkButtonBlue:hover {
   background-color: theme('colors.blanc');
-  color: theme('colors.bleu_nuit');
-  border: 1px solid theme('colors.bleu_nuit');
+  color: theme('colors.primary');
+  border: 1px solid theme('colors.primary');
 }
 
 .linkButtonBlue:hover svg {
-  fill: theme('colors.bleu_nuit');
+  fill: theme('colors.primary');
 }
 
 .linkButtonBlue:active {
   background-color: theme('colors.blanc');
-  color: theme('colors.bleu_nuit');
-  border: 1px solid theme('colors.bleu_nuit');
+  color: theme('colors.primary');
+  border: 1px solid theme('colors.primary');
 }

@@ -1,25 +1,42 @@
-import Conversation from 'components/layouts/Conversation'
-import { JeuneChat } from 'interfaces/jeune'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import styles from 'styles/components/Layouts.module.css'
-import linkStyle from 'styles/components/Link.module.css'
-import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
-import { formatDayAndHourDate } from 'utils/date'
+
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
-import EmptyMessagesImage from '../../assets/images/empty_message.svg'
+import EmptyMessagesImage from '../../assets/images/empty_state.svg'
+
+import Conversation from 'components/Conversation'
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { JeunesService } from 'services/jeunes.service'
+import styles from 'styles/components/Layouts.module.css'
+import linkStyle from 'styles/components/Link.module.css'
+import useSession from 'utils/auth/useSession'
+import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { formatDayAndHourDate } from 'utils/date'
+import { useDependance } from 'utils/injectionDependances'
 
 interface ChatRoomProps {
   jeunesChats: JeuneChat[]
 }
 
 export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
+  const { data: session } = useSession<true>({ required: true })
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+
   const [currentJeune, setCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
+  const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
+
+  useEffect(() => {
+    if (currentJeune?.id && session) {
+      jeunesService
+        .getConseillersDuJeune(currentJeune.id, session.accessToken)
+        .then((conseillersJeunes) => setConseillers(conseillersJeunes))
+    }
+  }, [jeunesService, currentJeune?.id, session])
 
   useEffect(() => {
     if (currentJeune?.id) {
@@ -37,16 +54,21 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
         <Conversation
           onBack={() => setCurrentJeune(undefined)}
           jeuneChat={currentChat}
+          conseillers={conseillers}
         />
       )}
 
       {!currentChat && (
         <>
-          <h2 className={`h2-semi text-bleu_nuit ml-9 mb-6`}>Ma messagerie</h2>
+          <h2 className={`text-m-medium text-primary text-center m-3`}>
+            Messagerie
+          </h2>
+          <span className='border-b border-grey_500 mx-4 mb-6'></span>
+
           {!jeunesChats.length && (
-            <div className='h-full overflow-y-auto bg-bleu_blanc flex flex-col justify-center items-center'>
+            <div className='h-full overflow-y-auto bg-grey_100 flex flex-col justify-center items-center'>
               <EmptyMessagesImage focusable='false' aria-hidden='true' />
-              <p className='mt-4 text-md-semi text-bleu_nuit w-2/3 text-center'>
+              <p className='mt-4 text-md-semi w-2/3 text-center'>
                 Vous devriez avoir des jeunes inscrits pour discuter avec eux
               </p>
             </div>
@@ -54,30 +76,31 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
           {jeunesChats.length > 0 && (
             <>
-              <ul className='h-full overflow-y-auto bg-bleu_blanc pb-24'>
+              <ul className='h-full overflow-y-auto px-4 pb-24'>
                 {jeunesChats.map((jeuneChat: JeuneChat) => (
-                  <li key={`chat-${jeuneChat.id}`} className='mb-[2px]'>
+                  <li key={`chat-${jeuneChat.id}`} className='mb-2'>
                     <button
-                      className='w-full pt-4 pr-3 pb-2 pl-9 flex flex-col text-left border-none bg-blanc'
+                      className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-[6px]'
                       onClick={() => setCurrentJeune(jeuneChat)}
                     >
-                      <span className='text-lg-semi text-bleu_nuit mb-2 w-full flex justify-between'>
+                      {!jeuneChat.seenByConseiller &&
+                        jeuneChat.lastMessageContent && (
+                          <p className='flex items-center text-accent_1 text-s-regular mb-2'>
+                            <span className='text-[48px] mr-1'>·</span>
+                            Nouveau message
+                          </p>
+                        )}
+                      <span className='text-md-semi text-primary_darken mb-2 w-full flex justify-between'>
                         {jeuneChat.firstName} {jeuneChat.lastName}
-                        {!jeuneChat.seenByConseiller &&
-                          jeuneChat.lastMessageContent && (
-                            <span className='text-violet text-xs border px-[7px] py-[5px] float-right rounded-x_small'>
-                              Nouveau message
-                            </span>
-                          )}
                       </span>
-                      <span className='text-sm text-bleu_gris mb-[8px]'>
+                      <span className='text-sm text-grey_800 mb-[8px]'>
                         {' '}
                         {jeuneChat.lastMessageSentBy === 'conseiller'
                           ? 'Vous'
                           : jeuneChat.firstName}{' '}
                         : {jeuneChat.lastMessageContent}
                       </span>
-                      <span className='text-xxs-italic text-bleu_nuit self-end flex'>
+                      <span className='text-xxs-italic text-content_color self-end flex'>
                         {jeuneChat.lastMessageContent && (
                           <span className='mr-[7px]'>
                             {formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}

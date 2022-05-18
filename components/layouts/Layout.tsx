@@ -2,49 +2,48 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
-import { Footer } from 'components/Footer'
+import { useRouter } from 'next/router'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
+
+import AppHead from 'components/AppHead'
+import ChatRoom from 'components/layouts/ChatRoom'
+import { Footer } from 'components/layouts/Footer'
+import { Header } from 'components/layouts/Header'
+import Sidebar from 'components/layouts/Sidebar'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
-import { ReactElement, useEffect, useRef, useState } from 'react'
+import { PageProps } from 'interfaces/pageProps'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import useSession from 'utils/auth/useSession'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
-import AppHead from '../AppHead'
-import ChatRoom from './ChatRoom'
-import Sidebar from './Sidebar'
 
-type LayoutProps = {
-  children: ReactElement
+interface LayoutProps {
+  children: ReactElement<PageProps>
 }
+
+const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
 export default function Layout({ children }: LayoutProps) {
   const {
-    props: { withoutChat, pageTitle },
+    props: { pageTitle, pageHeader, returnTo, withoutChat },
   } = children
 
+  const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
 
   const { data: session } = useSession<true>({ required: true })
+  const [chatCredentials, setChatCredentials] = useChatCredentials()
+  const [conseiller, setConseiller] = useConseiller()
   const [chats, setChats] = useState<JeuneChat[]>([])
   const destructorsRef = useRef<(() => void)[]>([])
-
-  function updateChats(updatedChat: JeuneChat) {
-    setChats((prevChats) => {
-      const chatIndex = prevChats.findIndex(
-        (chat) => chat.chatId === updatedChat.chatId
-      )
-      const updatedChats = [...prevChats]
-      if (chatIndex !== -1) {
-        updatedChats[chatIndex] = updatedChat
-      } else {
-        updatedChats.push(updatedChat)
-      }
-      updatedChats.sort(compareJeuneChat)
-      return updatedChats
-    })
-  }
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
   function hasMessageNonLu(): boolean {
     return chats.some(
@@ -52,27 +51,92 @@ export default function Layout({ children }: LayoutProps) {
     )
   }
 
-  useEffect(() => {
-    if (!session) return
+  function aUnNouveauMessage(previousChat: JeuneChat, updatedChat: JeuneChat) {
+    return (
+      previousChat.lastMessageContent !== updatedChat.lastMessageContent &&
+      updatedChat.lastMessageSentBy === 'jeune'
+    )
+  }
 
-    const { user, accessToken, firebaseToken } = session
-    if (firebaseToken) {
+  useEffect(() => {
+    // https://github.com/vercel/next.js/discussions/17963
+    setAudio(new Audio(CHEMIN_DU_SON))
+  }, [])
+
+  useEffect(() => {
+    if (session && !chatCredentials) {
       messagesService
-        .signIn(firebaseToken)
-        .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
-        .then((jeunes) =>
-          jeunes.map((jeune) =>
-            messagesService.observeJeuneChat(user.id, jeune, updateChats)
+        .getChatCredentials(session.accessToken)
+        .then(setChatCredentials)
+    }
+  }, [session, chatCredentials, messagesService, setChatCredentials])
+
+  useEffect(() => {
+    if (session && !conseiller) {
+      conseillerService
+        .getConseiller(session.user.id, session.accessToken)
+        .then(setConseiller)
+    }
+  }, [session, conseiller, conseillerService, setConseiller])
+
+  useEffect(() => {
+    if (!session || !chatCredentials || !conseiller || !audio) return
+    const { user, accessToken } = session
+    messagesService
+      .signIn(chatCredentials.token)
+      .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
+      .then((jeunes) =>
+        jeunes.map((jeune) =>
+          messagesService.observeJeuneChat(
+            user.id,
+            jeune,
+            chatCredentials.cleChiffrement,
+            updateChats
           )
         )
-        .then((destructors) => (destructorsRef.current = destructors))
-    }
+      )
+      .then((destructors) => (destructorsRef.current = destructors))
 
     return () => destructorsRef.current.forEach((destructor) => destructor())
-  }, [session, jeunesService, messagesService])
+
+    function updateChats(updatedChat: JeuneChat) {
+      setChats((prevChats) => {
+        const chatIndex = prevChats.findIndex(
+          (chat) => chat.chatId === updatedChat.chatId
+        )
+        const updatedChats = [...prevChats]
+
+        if (chatIndex !== -1) {
+          if (doitEmettreUnSon(prevChats[chatIndex], updatedChat)) {
+            audio?.play()
+          }
+          updatedChats[chatIndex] = updatedChat
+        } else {
+          updatedChats.push(updatedChat)
+        }
+        updatedChats.sort(compareJeuneChat)
+        return updatedChats
+      })
+    }
+
+    function doitEmettreUnSon(previousChat: JeuneChat, updatedChat: JeuneChat) {
+      return (
+        conseiller?.notificationsSonores &&
+        aUnNouveauMessage(previousChat, updatedChat)
+      )
+    }
+  }, [
+    session,
+    jeunesService,
+    messagesService,
+    chatCredentials,
+    audio,
+    conseiller,
+  ])
 
   return (
     <>
+      <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
       <div
         className={`${styles.container} ${
           !withoutChat ? styles.container_with_chat : ''
@@ -80,8 +144,21 @@ export default function Layout({ children }: LayoutProps) {
       >
         <Sidebar />
         <div className={styles.page}>
-          <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
-          <main role='main'>{children}</main>
+          <Header
+            currentPath={router.asPath}
+            returnTo={returnTo}
+            pageHeader={pageHeader ?? pageTitle}
+          />
+
+          <main
+            role='main'
+            className={`${styles.content} ${
+              withoutChat ? styles.content_without_chat : ''
+            }`}
+          >
+            {children}
+          </main>
+
           <Footer />
         </div>
         {!withoutChat && <ChatRoom jeunesChats={chats} />}

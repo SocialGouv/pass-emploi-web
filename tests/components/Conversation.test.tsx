@@ -1,28 +1,30 @@
-import { act, fireEvent, screen } from '@testing-library/react'
-import Conversation from 'components/layouts/Conversation'
-import { unJeuneChat } from 'fixtures/jeune'
-import { desMessagesParJour } from 'fixtures/message'
-import { MessagesOfADay } from 'interfaces'
-import { JeuneChat } from 'interfaces/jeune'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import { Session } from 'next-auth'
 import React from 'react'
-import { MessagesService } from 'services/messages.service'
-import { DIProvider } from 'utils/injectionDependances'
-import { UserStructure } from 'interfaces/conseiller'
-import { formatDayDate } from 'utils/date'
+
 import renderWithSession from '../renderWithSession'
+
+import Conversation from 'components/Conversation'
+import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
+import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
+import { UserStructure } from 'interfaces/conseiller'
+import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { MessagesOfADay } from 'interfaces/message'
+import { MessagesService } from 'services/messages.service'
+import { formatDayDate } from 'utils/date'
+import { DIProvider } from 'utils/injectionDependances'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
   let conseiller: Session.HydratedUser
-  let accessToken: string
-  let tokenChat: string
+  let conseillersJeunes: ConseillerHistorique[]
   const messagesParJour = desMessagesParJour()
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
+    conseillersJeunes = desConseillersJeune()
     onBack = jest.fn()
     messagesService = mockedMessagesService({
       observeJeuneChat: jest.fn(),
@@ -33,7 +35,7 @@ describe('<Conversation />', () => {
         }
       ),
       observeMessages: jest.fn(
-        (idChat: string, fn: (messages: MessagesOfADay[]) => void) => {
+        (_idChat, _cle, fn: (messages: MessagesOfADay[]) => void) => {
           fn(messagesParJour)
           return () => {}
         }
@@ -49,18 +51,21 @@ describe('<Conversation />', () => {
       structure: UserStructure.POLE_EMPLOI,
       estSuperviseur: false,
       email: 'mail@mail.com',
+      estConseiller: true,
     }
-    accessToken = 'accessToken'
-    tokenChat = 'tokenChat'
 
     // https://github.com/jsdom/jsdom/issues/1695
     window.HTMLElement.prototype.scrollIntoView = jest.fn()
     await act(async () => {
       await renderWithSession(
         <DIProvider dependances={{ messagesService }}>
-          <Conversation jeuneChat={jeuneChat} onBack={onBack} />
+          <Conversation
+            jeuneChat={jeuneChat}
+            conseillers={conseillersJeunes}
+            onBack={onBack}
+          />
         </DIProvider>,
-        { user: conseiller, firebaseToken: tokenChat }
+        { user: conseiller }
       )
     })
   })
@@ -69,6 +74,7 @@ describe('<Conversation />', () => {
     // Then
     expect(messagesService.observeMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
+      'cleChiffrement',
       expect.any(Function)
     )
   })
@@ -101,6 +107,20 @@ describe('<Conversation />', () => {
     it.each(casesMessages)(`displays message content`, (message) => {
       // Then
       expect(screen.getByText(message.content)).toBeInTheDocument()
+    })
+
+    it.each(casesMessages)(`displays conseiller full name`, (message) => {
+      // Then
+      const messageItem = screen.getByTestId(message.id)
+      const conseiller = conseillersJeunes.find(
+        (conseiller) => conseiller.id === message.conseillerId
+      )
+      expect(
+        within(messageItem).getByText(
+          `${conseiller?.prenom} ${conseiller?.nom}`,
+          { exact: false }
+        )
+      ).toBeInTheDocument()
     })
   })
 
@@ -138,7 +158,8 @@ describe('<Conversation />', () => {
           },
           jeuneChat,
           newMessage,
-          accessToken
+          'accessToken',
+          'cleChiffrement'
         )
       })
     })

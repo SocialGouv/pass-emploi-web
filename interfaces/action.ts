@@ -1,6 +1,6 @@
 import { compareDatesDesc } from 'utils/date'
 
-export interface ActionJeune {
+export interface Action {
   id: string
   content: string
   comment: string
@@ -8,27 +8,27 @@ export interface ActionJeune {
   lastUpdate: string
   creator: string
   creatorType: string
-  status: ActionStatus
+  status: StatutAction
 }
 
-export interface ActionsCount {
-  jeuneId: string
-  jeuneFirstName: string
-  jeuneLastName: string
-  todoActionsCount: number
-  doneActionsCount: number
-  inProgressActionsCount: number
+export interface TotalActions {
+  idJeune: string
+  nbActionsNonTerminees: number
 }
 
-export enum ActionStatus {
-  NotStarted = 'NotStarted',
-  InProgress = 'InProgress',
-  Done = 'Done',
+export enum StatutAction {
+  ARealiser = 'ARealiser',
+  Commencee = 'Commencee',
+  Terminee = 'Terminee',
+  Annulee = 'Annulee',
 }
+
+export type ActionsParStatut = { [key in StatutAction]: Action[] }
+export type NombreActionsParStatut = { [key in StatutAction]: number }
 
 export function compareActionsDatesDesc(
-  action1: ActionJeune,
-  action2: ActionJeune
+  action1: Action,
+  action2: Action
 ): number {
   const compare = compareDatesDesc(
     new Date(action1.creationDate),

@@ -1,6 +1,8 @@
 import { FormEvent, useState } from 'react'
+
 import SearchIcon from '../../assets/icons/search.svg'
-import ResettableTextInput from '../ResettableTextInput'
+
+import ResettableTextInput from 'components/ui/ResettableTextInput'
 
 interface RechercheJeuneProps {
   onSearchFilterBy: (query: string) => void
@@ -20,24 +22,24 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
   }
 
   return (
-    <form role='search' onSubmit={onSubmit}>
+    <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
       <label
         htmlFor='rechercher-jeunes'
         className='text-base-medium text-content_color'
       >
         Rechercher un jeune par son nom de famille
       </label>
-      <div className='flex mt-3.5 w-9/12'>
+      <div className='flex mt-3.5'>
         <ResettableTextInput
           id={'rechercher-jeunes'}
           value={query}
           onChange={setQuery}
           onReset={onReset}
-          roundedRight={false}
+          className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
         />
 
         <button
-          className='flex p-3 items-center text-base-medium text-bleu_nuit border border-bleu_nuit rounded-r-medium hover:bg-primary_lighten'
+          className='flex p-3 items-center text-base-medium text-primary border border-primary rounded-r-medium hover:bg-primary_lighten'
           type='submit'
         >
           <SearchIcon focusable='false' aria-hidden={true} />

@@ -2,5 +2,26 @@
   "extends": [
     "next/core-web-vitals",
     "plugin:prettier/recommended"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parserOptions": { "project": "./tsconfig.*?.json" },
+      "rules": {
+        "import/no-unresolved": "error",
+        "import/order": [
+          "error",
+          {
+            "alphabetize": {
+              "order": "asc",
+              "caseInsensitive": true
+            },
+            "newlines-between": "always",
+            "groups": ["builtin", "external", "parent", "sibling", "index"],
+            "pathGroupsExcludedImportTypes": ["builtin"]
+          }
+        ]
+      }
+    }
   ]
 }

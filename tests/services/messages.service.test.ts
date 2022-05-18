@@ -2,9 +2,9 @@ import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { desJeunes, unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
-import { Message, MessagesOfADay } from 'interfaces'
 import { UserStructure } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 
@@ -25,6 +25,7 @@ describe('MessagesFirebaseAndApiService', () => {
   let apiClient: ApiClient
   let messagesService: MessagesFirebaseAndApiService
   let accessToken: string
+  let cleChiffrement: string
 
   beforeEach(async () => {
     // Given
@@ -36,6 +37,7 @@ describe('MessagesFirebaseAndApiService', () => {
       apiClient
     )
     accessToken = 'accessToken'
+    cleChiffrement = 'cleChiffrement'
   })
 
   describe('.signIn', () => {
@@ -91,7 +93,12 @@ describe('MessagesFirebaseAndApiService', () => {
       onJeuneChat = jest.fn()
 
       // When
-      messagesService.observeJeuneChat(idConseiller, jeune, onJeuneChat)
+      messagesService.observeJeuneChat(
+        idConseiller,
+        jeune,
+        cleChiffrement,
+        onJeuneChat
+      )
     })
 
     it('finds chat in firebase', async () => {
@@ -114,7 +121,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
   describe('.observeMessages', () => {
     let idChat: string
-    let onMessages: (messagesGroupesParJou: MessagesOfADay[]) => void
+    let onMessages: (messagesGroupesParJour: MessagesOfADay[]) => void
     beforeEach(async () => {
       // Given
       ;(firebaseClient.observeMessagesDuChat as jest.Mock).mockImplementation(
@@ -124,7 +131,7 @@ describe('MessagesFirebaseAndApiService', () => {
       onMessages = jest.fn()
 
       // When
-      await messagesService.observeMessages(idChat, onMessages)
+      await messagesService.observeMessages(idChat, cleChiffrement, onMessages)
     })
 
     it('subscribes to chat messages in firebase', async () => {
@@ -232,7 +239,8 @@ describe('MessagesFirebaseAndApiService', () => {
         conseiller,
         jeuneChat,
         newMessage,
-        accessToken
+        accessToken,
+        cleChiffrement
       )
     })
     it('adds a new message to firebase', async () => {
@@ -264,8 +272,8 @@ describe('MessagesFirebaseAndApiService', () => {
     it('notifies of a new message', async () => {
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
-        `/conseillers/${conseiller.id}/jeunes/${jeuneChat.id}/notify-message`,
-        undefined,
+        `/conseillers/${conseiller.id}/jeunes/notify-messages`,
+        { idsJeunes: [jeuneChat.id] },
         accessToken
       )
     })
@@ -287,7 +295,7 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
-  describe('.sendNouveauMessageMultiple', () => {
+  describe('.sendNouveauMessageGroupe', () => {
     let destinataires: Jeune[]
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
@@ -298,11 +306,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Given
       jest.setSystemTime(now)
       destinataires = desJeunes()
-      idsJeunes = [
-        destinataires[0].id,
-        destinataires[1].id,
-        destinataires[2].id,
-      ]
+      idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'nouveau message groupé'
 
       // When
@@ -314,9 +318,10 @@ describe('MessagesFirebaseAndApiService', () => {
 
       await messagesService.sendNouveauMessageGroupe(
         { id: 'id-conseiller', structure: UserStructure.MILO },
-        destinataires,
+        idsJeunes,
         newMessageGroupe,
-        accessToken
+        accessToken,
+        cleChiffrement
       )
     })
 

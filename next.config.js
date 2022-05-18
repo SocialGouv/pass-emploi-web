@@ -17,7 +17,6 @@ module.exports = {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
-    FIREBASE_CRYPT_KEY: process.env.FIREBASE_CRYPT_KEY,
     FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
     FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
@@ -38,5 +37,29 @@ module.exports = {
   i18n: {
     locales: ['fr-FR'],
     defaultLocale: 'fr-FR',
+  },
+
+  // FIXME https://github.com/vercel/next.js/issues/36651
+  // compiler: {
+  //   // https://nextjs.org/docs/advanced-features/compiler#remove-react-properties
+  //   reactRemoveProperties: true,
+  // },
+  webpack(config) {
+    // https://react-svgr.com/docs/next/
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: ['@svgr/webpack'],
+    })
+
+    // https://www.elastic.co/guide/en/apm/agent/rum-js/current/install-the-agent.html#using-bundlers
+    const { EnvironmentPlugin } = require('webpack')
+    config.plugins.push(
+      new EnvironmentPlugin({
+        NODE_ENV: 'development',
+      })
+    )
+
+    return config
   },
 }

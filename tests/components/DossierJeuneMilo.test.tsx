@@ -1,17 +1,21 @@
 import { screen } from '@testing-library/react'
-import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
-import { unDossierMilo } from 'fixtures/milo'
 import React from 'react'
-import { ConseillerService } from 'services/conseiller.service'
-import { DIProvider } from 'utils/injectionDependances'
+
 import getByDefinitionTerm from '../querySelector'
 import renderWithSession from '../renderWithSession'
 
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import { unDossierMilo } from 'fixtures/milo'
+import { mockedConseillerService } from 'fixtures/services'
+import { ConseillerService } from 'services/conseiller.service'
+import { DIProvider } from 'utils/injectionDependances'
+
 describe('<DossierMilo', () => {
-  const conseillerService: ConseillerService = {
-    createCompteJeuneMilo: jest.fn(),
-    getDossierJeune: jest.fn()(),
-  }
+  let conseillerService: ConseillerService
+
+  beforeEach(() => {
+    conseillerService = mockedConseillerService()
+  })
 
   describe("quand l'e-mail du jeune est renseigné", () => {
     it("devrait afficher les informations d'un dossier jeune avec e-mail", () => {
