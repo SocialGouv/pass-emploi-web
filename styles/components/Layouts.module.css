@@ -90,6 +90,17 @@
   }
 }
 
+@media screen and (max-width: theme('screens.layout_s.max')) {
+  .container.container_with_chat {
+    grid-template-columns: 0 0 100vw;
+  }
+
+  .sidebar,
+  .page {
+    display: none;
+  }
+}
+
 @media screen and (max-width: theme('screens.layout_base.max')) {
   .footer ul {
     flex-direction: column;
