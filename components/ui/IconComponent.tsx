@@ -1,3 +1,4 @@
+import ActionsIcon from '../../assets/icons/actions.svg'
 import AideIcon from '../../assets/icons/aide.svg'
 import SupervisionIcon from '../../assets/icons/arrow-right.svg'
 import CalendarIcon from '../../assets/icons/calendar.svg'
@@ -8,6 +9,7 @@ import ProfilIcon from '../../assets/icons/profil.svg'
 import RendezvousIcon from '../../assets/icons/rendez-vous.svg'
 
 const iconTypes = {
+  actions: ActionsIcon,
   aide: AideIcon,
   calendar: CalendarIcon,
   launch: LaunchIcon,

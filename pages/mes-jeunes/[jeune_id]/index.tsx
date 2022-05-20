@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { ButtonStyle } from '../../../components/ui/Button'
-
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
@@ -14,7 +12,10 @@ import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
+import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import Tab from 'components/ui/Tab'
+import TabList from 'components/ui/TabList'
 import { Action, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
@@ -50,27 +51,28 @@ function FicheJeune({
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
-
   const [, setCurrentJeune] = useCurrentJeune()
+
   const listeConseillersReduite = conseillers.slice(0, 5)
   const [conseillersAffiches, setConseillersAffiches] = useState<
     ConseillerHistorique[]
   >(listeConseillersReduite)
-  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rdvs)
+  const [expandListeConseillers, setExpandListeConseillers] =
+    useState<boolean>(false)
 
+  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rdvs)
   const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
     undefined
   )
+  const [currentTab, setCurrentTab] = useState<'rdvs' | 'actions'>('rdvs')
+
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
   const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
     useState<boolean>(rdvModificationSuccess ?? false)
-
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
-
-  const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -117,8 +119,8 @@ function FicheJeune({
   }
 
   function toggleListeConseillers(): void {
-    setIsExpanded(!isExpanded)
-    if (!isExpanded) {
+    setExpandListeConseillers(!expandListeConseillers)
+    if (!expandListeConseillers) {
       setConseillersAffiches(conseillers)
     } else {
       setConseillersAffiches(listeConseillersReduite)
@@ -194,63 +196,94 @@ function FicheJeune({
         <div className='flex justify-center mt-8'>
           <CollapseButton
             controlledId='liste-conseillers'
-            isOpen={isExpanded}
+            isOpen={expandListeConseillers}
             onClick={toggleListeConseillers}
           />
         </div>
       )}
 
-      <div className='mt-10 border-b border-primary_lighten'>
-        <h2 className='text-l-regular text-primary_darken mb-4'>
-          Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
-        </h2>
+      <TabList className='mt-10'>
+        <Tab
+          label='Rendez-vous'
+          count={!isPoleEmploi ? rdvs.length : undefined}
+          selected={currentTab === 'rdvs'}
+          controls='liste-rdvs'
+          onSelectTab={() => setCurrentTab('rdvs')}
+          iconName='calendar'
+        />
+        <Tab
+          label='Actions'
+          count={!isPoleEmploi ? actions.length : undefined}
+          selected={currentTab === 'actions'}
+          controls='liste-actions'
+          onSelectTab={() => setCurrentTab('actions')}
+          iconName='actions'
+        />
+      </TabList>
 
-        {!isPoleEmploi ? (
-          <RdvList
-            rdvs={rdvsAVenir}
-            idConseiller={session?.user.id ?? ''}
-            onDelete={openDeleteRdvModal}
-            withNameJeune={false}
-          />
-        ) : (
-          <IntegrationPoleEmploi label='convocations' />
-        )}
-      </div>
-      <div className='mt-8 border-b border-primary_lighten pb-8'>
-        <h2 className='text-l-regular text-primary_darken mb-4'>Actions</h2>
-
-        {isPoleEmploi && <IntegrationPoleEmploi label='actions et démarches' />}
-
-        {!isPoleEmploi && actions.length !== 0 && (
-          <>
-            <TableauActionsJeune
-              jeune={jeune}
-              actions={actions}
-              hideTableHead={true}
+      {currentTab === 'rdvs' && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-rdvs--tab'
+          tabIndex={0}
+          id='liste-rdvs'
+          className='mt-10 border-b border-primary_lighten'
+        >
+          {!isPoleEmploi ? (
+            <RdvList
+              rdvs={rdvsAVenir}
+              idConseiller={session?.user.id ?? ''}
+              onDelete={openDeleteRdvModal}
+              withNameJeune={false}
             />
-            <div className='flex justify-center mt-8'>
+          ) : (
+            <IntegrationPoleEmploi label='convocations' />
+          )}
+        </div>
+      )}
+      {currentTab === 'actions' && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-actions--tab'
+          tabIndex={0}
+          id='liste-actions'
+          className='mt-8 border-b border-primary_lighten pb-8'
+        >
+          {isPoleEmploi && (
+            <IntegrationPoleEmploi label='actions et démarches' />
+          )}
+
+          {!isPoleEmploi && actions.length !== 0 && (
+            <>
+              <TableauActionsJeune
+                jeune={jeune}
+                actions={actions.slice(0, 3)}
+                hideTableHead={true}
+              />
+              <div className='flex justify-center mt-8'>
+                <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+                  <a className='text-sm text-primary_darken underline'>
+                    Voir la liste des actions du jeune
+                  </a>
+                </Link>
+              </div>
+            </>
+          )}
+
+          {!isPoleEmploi && actions.length === 0 && (
+            <>
+              <p className='text-md mb-2'>
+                {jeune.firstName} n&apos;a pas encore d&apos;action
+              </p>
               <Link href={`/mes-jeunes/${jeune.id}/actions`}>
                 <a className='text-sm text-primary_darken underline'>
-                  Voir la liste des actions du jeune
+                  Accédez à cette page pour créer une action
                 </a>
               </Link>
-            </div>
-          </>
-        )}
-
-        {!isPoleEmploi && actions.length === 0 && (
-          <>
-            <p className='text-md mb-2'>
-              {jeune.firstName} n&apos;a pas encore d&apos;action
-            </p>
-            <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-              <a className='text-sm text-primary_darken underline'>
-                Accédez à cette page pour créer une action
-              </a>
-            </Link>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      )}
       {selectedRdv && (
         <DeleteRdvModal
           onClose={closeDeleteRdvModal}
@@ -313,7 +346,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
-    actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
+    actions: [...actions].sort(compareActionsDatesDesc),
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.firstName} ${jeune.lastName}`,
     pageHeader: `${jeune.firstName} ${jeune.lastName}`,
