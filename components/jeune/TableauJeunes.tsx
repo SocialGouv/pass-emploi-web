@@ -10,6 +10,8 @@ import {
   compareJeuneByLastActivityDesc,
   compareJeunesByLastName,
   compareJeunesByLastNameDesc,
+  compareJeunesBySituation,
+  compareJeunesBySituationDesc,
   getJeuneFullname,
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
@@ -23,6 +25,7 @@ import {
 
 enum SortColumn {
   NOM = 'NOM',
+  SITUATION = 'SITUATION',
   DERNIERE_ACTIVITE = 'DERNIERE_ACTIVITE',
   NB_ACTIONS_NON_TERMINEES = 'NB_ACTIONS_NON_TERMINEES',
   MESSAGES = 'MESSAGES',
@@ -31,6 +34,7 @@ enum SortColumn {
 interface TableauJeunesProps {
   jeunes: JeuneAvecInfosComplementaires[]
   withActions: boolean
+  withSituations: boolean
 }
 
 function todayOrDate(date: Date): string {
@@ -47,7 +51,11 @@ function todayOrDate(date: Date): string {
   return `${dateString} à ${formatHourMinuteDate(date)}`
 }
 
-export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
+export const TableauJeunes = ({
+  jeunes,
+  withActions,
+  withSituations,
+}: TableauJeunesProps) => {
   const [sortedJeunes, setSortedJeunes] =
     useState<JeuneAvecInfosComplementaires[]>(jeunes)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
@@ -56,13 +64,10 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
   const [sortDesc, setSortDesc] = useState<boolean>(false)
 
   const isName = currentSortedColumn === SortColumn.NOM
+  const isSituation = currentSortedColumn === SortColumn.SITUATION
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
   const isAction = currentSortedColumn === SortColumn.NB_ACTIONS_NON_TERMINEES
   const isMessage = currentSortedColumn === SortColumn.MESSAGES
-
-  const gridColsStyle = withActions
-    ? 'grid-cols-[repeat(4,1fr)]'
-    : 'grid-cols-[repeat(3,1fr)]'
 
   const sortJeunes = (newSortColumn: SortColumn) => {
     if (currentSortedColumn !== newSortColumn) {
@@ -82,6 +87,11 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
         return sortDesc
           ? compareJeunesByLastNameDesc(jeune1, jeune2)
           : compareJeunesByLastName(jeune1, jeune2)
+
+      if (isSituation)
+        return sortDesc
+          ? compareJeunesBySituationDesc(jeune1, jeune2)
+          : compareJeunesBySituation(jeune1, jeune2)
 
       if (isDate) {
         const sortStatutCompteActif =
@@ -115,6 +125,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
     currentSortedColumn,
     isDate,
     isName,
+    isSituation,
     isMessage,
     sortDesc,
     jeunes,
@@ -129,6 +140,10 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
     if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
     if (isName && sortDesc)
       return 'Mes jeunes - Nom - Ordre alphabétique inversé'
+    if (isSituation && !sortDesc)
+      return 'Mes jeunes - Situation - Ordre alphabétique'
+    if (isSituation && sortDesc)
+      return 'Mes jeunes - Situation - Ordre alphabétique inversé'
     if (isAction && sortDesc) return 'Mes jeunes - Actions - Ordre croissant'
     if (isAction && !sortDesc) return 'Mes jeunes - Actions - Ordre décroissant'
     if (isMessage && sortDesc) return 'Mes jeunes - Messages - Ordre croissant'
@@ -147,21 +162,21 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
       ) : (
         <div
           role='table'
-          className='table w-full'
+          className='table table-fixed w-full'
           aria-describedby='table-caption'
         >
           <div id='table-caption' className='sr-only'>
             Liste de mes jeunes
           </div>
 
-          <div role='rowgroup'>
-            <div role='row' className={`table-row grid ${gridColsStyle}`}>
+          <div role='rowgroup' className='table-row-group'>
+            <div role='row' className={`table-row`}>
               <span
                 role='columnheader'
                 className='table-cell text-sm text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
                   onClick={() => sortJeunes(SortColumn.NOM)}
                   aria-label={`Afficher la liste des jeunes triée par noms de famille par ordre alphabétique ${
                     isName && !sortDesc ? 'inversé' : ''
@@ -183,12 +198,41 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                   )}
                 </button>
               </span>
+              {withSituations && (
+                <span
+                  role='columnheader'
+                  className='table-cell text-sm text-left p-4'
+                >
+                  <button
+                    className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
+                    onClick={() => sortJeunes(SortColumn.SITUATION)}
+                    aria-label={`Afficher la liste des jeunes triée par situation par ordre alphabétique ${
+                      isSituation && !sortDesc ? 'inversé' : ''
+                    }`}
+                    title={`Afficher la liste des jeunes triée par situation par ordre alphabétique ${
+                      isSituation && !sortDesc ? 'inversé' : ''
+                    }`}
+                  >
+                    <span className='mr-1'>Situation</span>
+                    {isSituation && (
+                      <ArrowDown
+                        focusable='false'
+                        aria-hidden='true'
+                        className={sortDesc ? 'rotate-180' : ''}
+                      />
+                    )}
+                    {!isSituation && (
+                      <ArrowDouble focusable='false' aria-hidden='true' />
+                    )}
+                  </button>
+                </span>
+              )}
               <span
                 role='columnheader'
                 className='table-cell text-sm text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
                   aria-label={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
                     isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
@@ -248,7 +292,7 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                 className='table-cell text-sm  text-left py-4'
               >
                 <button
-                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium'
+                  className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center mx-auto'
                   onClick={() => sortJeunes(SortColumn.MESSAGES)}
                   aria-label={`Afficher la liste des messages non lus par nombre ${
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
@@ -273,17 +317,23 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
             </div>
           </div>
 
-          <div role='rowgroup'>
+          <div role='rowgroup' className='table-row-group'>
             {sortedJeunes?.map((jeune: JeuneAvecInfosComplementaires) => (
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className={`table-row grid ${gridColsStyle} text-sm  items-center hover:bg-primary_lighten`}
+                  className={`table-row text-sm  items-center hover:bg-primary_lighten`}
                 >
                   <span role='cell' className='table-cell p-4'>
                     {getJeuneFullname(jeune)}
                   </span>
+
+                  {withSituations && (
+                    <span role='cell' className='table-cell p-4'>
+                      {jeune.situationCourante}
+                    </span>
+                  )}
 
                   <span role='cell' className='table-cell p-4'>
                     {jeune.lastActivity
@@ -297,15 +347,15 @@ export const TableauJeunes = ({ jeunes, withActions }: TableauJeunesProps) => {
                   {withActions && (
                     <span
                       role='cell'
-                      className='table-cell text-primary_darken p-4 items-center mx-auto'
+                      className='table-cell text-primary_darken p-4'
                     >
-                      <span className='w-5 h-5 flex justify-center items-center text-blanc bg-primary rounded-full text-center p-3.5'>
+                      <span className='w-5 h-5 flex justify-center items-center text-blanc bg-primary rounded-full text-center p-3.5 mx-auto'>
                         {jeune.nbActionsNonTerminees}
                       </span>
                     </span>
                   )}
                   <span role='cell' className='table-cell p-4'>
-                    <div className='relative'>
+                    <div className='relative w-fit mx-auto'>
                       <MessageIcon aria-hidden='true' focusable='false' />
                       {jeune.messagesNonLus > 0 && (
                         <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>

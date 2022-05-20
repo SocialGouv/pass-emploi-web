@@ -6,6 +6,7 @@ import {
   JeuneChat,
 } from 'interfaces/jeune'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
+import { JeuneJson } from 'interfaces/json/jeune'
 
 export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
   const defaults: Jeune = {
@@ -21,6 +22,7 @@ export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
       nom: 'Tavernier',
       email: 'conseiller@email.com',
     },
+    situationCourante: 'Sans situation',
   }
   return { ...defaults, ...overrides }
 }
@@ -37,6 +39,46 @@ export const desJeunes = (): Jeune[] => [
     isActivated: true,
   }),
   unJeune({
+    id: 'jeune-3',
+    firstName: 'Maria',
+    lastName: "D'Aböville-Muñoz François",
+    email: 'nadia.sanfamiye@mail.com',
+    creationDate: '2021-12-28T17:30:07.756Z',
+    lastActivity: '2022-02-07T17:30:07.756Z',
+    isActivated: true,
+  }),
+]
+
+export const unJeuneJson = (overrides: Partial<JeuneJson> = {}): JeuneJson => {
+  const defaults: JeuneJson = {
+    id: 'jeune-1',
+    firstName: 'Kenji',
+    lastName: 'Jirac',
+    email: 'kenji.jirac@email.fr',
+    isActivated: false,
+    creationDate: '2021-12-07T17:30:07.756Z',
+    lastActivity: '2021-12-07T17:30:07.756Z',
+    conseillerPrecedent: {
+      prenom: 'Nils',
+      nom: 'Tavernier',
+      email: 'conseiller@email.com',
+    },
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const desJeunesJson = (): JeuneJson[] => [
+  unJeuneJson(),
+  unJeuneJson({
+    id: 'jeune-2',
+    firstName: 'Nadia',
+    lastName: 'Sanfamiye',
+    email: 'nadia.sanfamiye@mail.com',
+    creationDate: '2022-01-07T17:30:07.756Z',
+    lastActivity: '2022-01-30T17:30:07.756Z',
+    isActivated: true,
+  }),
+  unJeuneJson({
     id: 'jeune-3',
     firstName: 'Maria',
     lastName: "D'Aböville-Muñoz François",

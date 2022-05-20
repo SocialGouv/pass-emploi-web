@@ -239,6 +239,7 @@ function MesJeunes({
         <TableauJeunes
           jeunes={listeJeunesFiltres}
           withActions={structureConseiller !== UserStructure.POLE_EMPLOI}
+          withSituations={structureConseiller === UserStructure.MILO}
         />
       )}
     </>

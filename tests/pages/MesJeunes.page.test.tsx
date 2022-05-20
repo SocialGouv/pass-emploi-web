@@ -18,7 +18,10 @@ import {
   mockedMessagesService,
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { compareJeunesByLastName } from 'interfaces/jeune'
+import {
+  compareJeunesByLastName,
+  JeuneAvecNbActionsNonTerminees,
+} from 'interfaces/jeune'
 import { getServerSideProps } from 'pages/mes-jeunes'
 import MesJeunes from 'pages/mes-jeunes/index'
 import { ActionsService } from 'services/actions.service'
@@ -133,9 +136,13 @@ describe('Mes Jeunes', () => {
     })
 
     describe('quand le conseiller est MILO', () => {
+      let jeune: JeuneAvecNbActionsNonTerminees
+
       beforeEach(async () => {
         //GIVEN
-        const jeune = unJeuneAvecActionsNonTerminees()
+        jeune = unJeuneAvecActionsNonTerminees({
+          situationCourante: "Demandeur d'emploi",
+        })
 
         await act(async () => {
           renderWithSession(
@@ -164,11 +171,22 @@ describe('Mes Jeunes', () => {
         expect(push).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
       })
 
-      it("affiche le nombre d'actions des jeunes", () => {
+      it("affiche la colonne nombre d'actions des jeunes", () => {
         // Then
         expect(
           screen.getByRole('columnheader', { name: 'Actions' })
         ).toBeInTheDocument()
+      })
+
+      it('affiche la colonne situation courante des jeunes', () => {
+        // Then
+        expect(
+          screen.getByRole('columnheader', { name: 'Situation' })
+        ).toBeInTheDocument()
+      })
+
+      it('affiche la situation courante du jeune', () => {
+        expect(screen.getByText(jeune.situationCourante!)).toBeInTheDocument()
       })
 
       it('affiche le message de succès de suppression de jeune', async () => {
@@ -237,6 +255,13 @@ describe('Mes Jeunes', () => {
         // Then
         expect(() =>
           screen.getByRole('columnheader', { name: 'Actions' })
+        ).toThrow()
+      })
+
+      it("n'affiche pas la situation courante des jeunes", () => {
+        // Then
+        expect(() =>
+          screen.getByRole('columnheader', { name: 'Situation' })
         ).toThrow()
       })
 
