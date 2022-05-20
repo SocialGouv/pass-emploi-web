@@ -97,12 +97,12 @@ describe("Page Liste des actions d'un jeune", () => {
       it('Affiche les boutons des filtres', () => {
         const selected = screen.getByRole('tab', { selected: true })
         expect(selected).toBeInTheDocument()
-        expect(selected).toHaveAttribute('tabIndex', '-1')
+        expect(selected).toHaveAttribute('tabIndex', '0')
 
         const notSelected = screen.getAllByRole('tab', { selected: false })
         expect(notSelected.length).toEqual(4)
         for (const filtre of notSelected) {
-          expect(filtre).not.toHaveAttribute('tabIndex')
+          expect(filtre).toHaveAttribute('tabIndex', '-1')
         }
       })
 
@@ -273,7 +273,7 @@ describe("Page Liste des actions d'un jeune", () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { actions: [actions[2], actions[1], actions[0]] },
+          props: { actions: [actions[3], actions[2], actions[1], actions[0]] },
         })
       })
     })

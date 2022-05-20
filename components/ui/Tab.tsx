@@ -20,11 +20,10 @@ export default function Tab({
   iconName,
 }: TabProps) {
   return (
-    <button
+    <li
       role='tab'
       id={`${controls}--tab`}
-      type='button'
-      tabIndex={selected ? -1 : undefined}
+      tabIndex={selected ? 0 : -1}
       aria-controls={controls}
       aria-selected={selected}
       onClick={onSelectTab}
@@ -52,6 +51,6 @@ export default function Tab({
           <Badge count={count} />
         </span>
       )}
-    </button>
+    </li>
   )
 }
