@@ -165,7 +165,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             id='message'
             name='message'
             rows={10}
-            className={`w-full text-sm text-primary_darken p-4  border border-solid border-black rounded-medium mt-4 ${
+            className={`w-full text-sm p-4  border border-solid border-black rounded-medium mt-4 ${
               erreurMessage ? 'mb-[8px]' : 'mb-14'
             }`}
             onChange={(e) => setMessage(e.target.value)}

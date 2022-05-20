@@ -3,6 +3,8 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 
+import SendIcon from '../../../../assets/icons/send.svg'
+
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import Tab from 'components/ui/Tab'
@@ -182,6 +184,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
             disabled={!formulaireEstValide()}
             className='ml-6'
           >
+            <SendIcon focusable='false' aria-hidden='true' className='mr-2' />
             Envoyer
           </Button>
         </div>

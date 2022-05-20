@@ -1,4 +1,4 @@
-import AddIcon from '../../assets/icons/add_person.svg'
+import AddIcon from '../../assets/icons/add.svg'
 
 import Button from 'components/ui/Button'
 

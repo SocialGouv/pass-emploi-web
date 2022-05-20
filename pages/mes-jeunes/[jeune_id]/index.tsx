@@ -135,6 +135,14 @@ function FicheJeune({
 
   return (
     <>
+      {!jeune.isActivated && (
+        <p className='mb-6 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
+          <span className='text-sm-semi text-warning'>
+            Ce jeune ne s&apos;est pas encore connect&eacute; &agrave;
+            l&apos;application.
+          </span>
+        </p>
+      )}
       <div className='flex'>
         {!isPoleEmploi && (
           <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4 w-fit'>
@@ -265,7 +273,7 @@ function FicheJeune({
               />
               <div className='flex justify-center mt-8'>
                 <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                  <a className='text-sm text-primary_darken underline'>
+                  <a className='text-sm text-primary_darken underline hover:text-primary'>
                     Voir la liste des actions du jeune
                   </a>
                 </Link>
