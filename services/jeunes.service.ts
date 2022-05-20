@@ -7,10 +7,7 @@ import {
   ConseillerHistoriqueJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
-import {
-  JeuneDuConseillerJson,
-  toJeuneDuConseiller,
-} from 'interfaces/json/jeune'
+import { JeuneJson, jsonToJeune } from 'interfaces/json/jeune'
 import { RequestError } from 'utils/httpClient'
 
 export interface JeunesService {
@@ -43,7 +40,7 @@ export interface JeunesService {
     newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
     accessToken: string
-  ): Promise<Jeune>
+  ): Promise<{ id: string }>
 
   reaffecter(
     idConseillerInitial: string,
@@ -62,11 +59,11 @@ export class JeunesApiService implements JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune[]> {
-    const jeunes = await this.apiClient.get<JeuneDuConseillerJson[]>(
+    const jeunes = await this.apiClient.get<JeuneJson[]>(
       `/conseillers/${idConseiller}/jeunes`,
       accessToken
     )
-    return jeunes.map(toJeuneDuConseiller)
+    return jeunes.map(jsonToJeune)
   }
 
   async getJeuneDetails(
@@ -74,7 +71,11 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<Jeune | undefined> {
     try {
-      return await this.apiClient.get<Jeune>(`/jeunes/${idJeune}`, accessToken)
+      const jeune = await this.apiClient.get<JeuneJson>(
+        `/jeunes/${idJeune}`,
+        accessToken
+      )
+      return jsonToJeune(jeune)
     } catch (e) {
       if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
         return undefined
@@ -107,8 +108,8 @@ export class JeunesApiService implements JeunesService {
     newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
     accessToken: string
-  ): Promise<Jeune> {
-    return this.apiClient.post<Jeune>(
+  ): Promise<{ id: string }> {
+    return this.apiClient.post<{ id: string }>(
       `/conseillers/pole-emploi/jeunes`,
       { ...newJeune, idConseiller: idConseiller },
       accessToken
@@ -135,7 +136,7 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<string | undefined> {
     try {
-      const { id } = await this.apiClient.get<Jeune>(
+      const { id } = await this.apiClient.get<{ id: string }>(
         `/conseillers/milo/jeunes/${numeroDossier}`,
         accessToken
       )

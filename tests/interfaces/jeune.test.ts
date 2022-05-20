@@ -13,8 +13,10 @@ describe('Jeune', () => {
   describe('.compareJeunesBySituation', () => {
     it('trie les jeunes par situation par ordre alphabétique', () => {
       // Given
-      const unJeuneSituationBenevolat = unJeune({ situation: 'Bénévolat' })
-      const unJeuneSituationEmploi = unJeune({ situation: 'Emploi' })
+      const unJeuneSituationBenevolat = unJeune({
+        situationCourante: 'Bénévolat',
+      })
+      const unJeuneSituationEmploi = unJeune({ situationCourante: 'Emploi' })
       const unJeuneSansSituation = unJeune()
       const unJeuneSansSituationAussi = unJeune()
 

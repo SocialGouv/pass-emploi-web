@@ -6,7 +6,9 @@ import {
   desConseillersJeune,
   desConseillersJeuneJson,
   desJeunes,
+  desJeunesJson,
   unJeune,
+  unJeuneJson,
 } from 'fixtures/jeune'
 import { Jeune } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
@@ -26,8 +28,8 @@ describe('JeunesApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
-      const jeunes = desJeunes()
-      ;(apiClient.get as jest.Mock).mockResolvedValue(jeunes)
+      const jeunesJson = desJeunesJson()
+      ;(apiClient.get as jest.Mock).mockResolvedValue(jeunesJson)
 
       // When
       const actual = await jeunesService.getJeunesDuConseiller(
@@ -40,7 +42,7 @@ describe('JeunesApiService', () => {
         `/conseillers/${idConseiller}/jeunes`,
         accessToken
       )
-      expect(actual).toEqual(jeunes)
+      expect(actual).toEqual(desJeunes())
     })
   })
 
@@ -48,7 +50,7 @@ describe('JeunesApiService', () => {
     const email = 'conseiller@email.com'
     const accessToken = 'accessToken'
     const conseiller = unConseiller()
-    const jeunes = desJeunes()
+    const jeunes = desJeunesJson()
     let actual: { idConseiller: string; jeunes: Jeune[] }
     beforeEach(async () => {
       // Given
@@ -78,14 +80,17 @@ describe('JeunesApiService', () => {
         `/conseillers/${conseiller.id}/jeunes`,
         accessToken
       )
-      expect(actual).toEqual({ idConseiller: conseiller.id, jeunes })
+      expect(actual).toEqual({
+        idConseiller: conseiller.id,
+        jeunes: desJeunes(),
+      })
     })
   })
 
   describe('.getJeuneDetails', () => {
     it('renvoie les détails du jeune', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue(unJeune())
+      ;(apiClient.get as jest.Mock).mockResolvedValue(unJeuneJson())
 
       // When
       const actual = await jeunesService.getJeuneDetails(

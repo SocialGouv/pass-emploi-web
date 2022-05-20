@@ -331,7 +331,7 @@ export const TableauJeunes = ({
 
                   {withSituations && (
                     <span role='cell' className='table-cell p-4'>
-                      {jeune.situation}
+                      {jeune.situationCourante}
                     </span>
                   )}
 

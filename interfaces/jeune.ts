@@ -9,7 +9,7 @@ export interface BaseJeune {
   nom: string
 }
 
-export type Jeune = {
+export interface Jeune {
   id: string
   firstName: string
   lastName: string
@@ -22,7 +22,7 @@ export type Jeune = {
     prenom: string
     email?: string
   }
-  situation: string
+  situationCourante?: string
 }
 
 export type JeuneAvecNbActionsNonTerminees = Jeune & {
@@ -90,7 +90,9 @@ export function compareJeunesByFirstname(jeune1: Jeune, jeune2: Jeune): number {
 }
 
 export function compareJeunesBySituation(jeune1: Jeune, jeune2: Jeune): number {
-  return `${jeune1.situation}`.localeCompare(`${jeune2.situation}`)
+  return `${jeune1.situationCourante}`.localeCompare(
+    `${jeune2.situationCourante}`
+  )
 }
 export function compareJeunesBySituationDesc(
   jeune1: Jeune,

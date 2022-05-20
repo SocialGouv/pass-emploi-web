@@ -32,7 +32,7 @@ function PoleEmploiCreationJeune(): JSX.Element {
     setCreationError('')
     setCreationEnCours(true)
     try {
-      const jeune = await jeunesService.createCompteJeunePoleEmploi(
+      const { id } = await jeunesService.createCompteJeunePoleEmploi(
         {
           firstName: newJeune.prenom,
           lastName: newJeune.nom,
@@ -41,7 +41,7 @@ function PoleEmploiCreationJeune(): JSX.Element {
         session.user.id,
         session.accessToken
       )
-      setCreatedSuccessId(jeune.id)
+      setCreatedSuccessId(id)
     } catch (error) {
       setCreationError(
         (error as Error).message || "Une erreur inconnue s'est produite"

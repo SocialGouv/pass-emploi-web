@@ -1,6 +1,6 @@
 import { Jeune } from 'interfaces/jeune'
 
-export interface JeuneDuConseillerJson {
+export interface JeuneJson {
   id: string
   firstName: string
   lastName: string
@@ -20,10 +20,10 @@ export interface JeuneDuConseillerJson {
   }
 }
 
-export function toJeuneDuConseiller(jeune: JeuneDuConseillerJson): Jeune {
+export function jsonToJeune(jeune: JeuneJson): Jeune {
   return {
     ...jeune,
-    situation: jeune.situationCourante
+    situationCourante: jeune.situationCourante
       ? jeune.situationCourante.categorie
       : 'Sans situation',
   }
