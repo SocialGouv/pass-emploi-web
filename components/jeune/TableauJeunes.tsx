@@ -241,7 +241,11 @@ export const TableauJeunes = ({
                     isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
                 >
-                  <span className='mr-1'>Dernière activité du jeune</span>
+                  <span className='mr-1'>
+                    Dernière activité
+                    <br />
+                    du jeune
+                  </span>
                   {isDate && (
                     <ArrowDown
                       focusable='false'
@@ -301,7 +305,10 @@ export const TableauJeunes = ({
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
                   }`}
                 >
-                  <span className='mr-1'>Messages</span>
+                  <span className='mr-1'>
+                    Messages non lus
+                    <br /> par le jeune
+                  </span>
                   {isMessage && (
                     <ArrowDown
                       focusable='false'
