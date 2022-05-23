@@ -1,4 +1,4 @@
-import { ReactNode, KeyboardEvent, useRef, useState, useEffect } from 'react'
+import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react'
 
 interface TabListProps {
   children: ReactNode
