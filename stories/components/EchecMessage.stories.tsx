@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
+
 import EchecMessage from 'components/EchecMessage'
 
 export default {

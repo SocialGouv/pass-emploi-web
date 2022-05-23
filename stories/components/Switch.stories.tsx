@@ -16,6 +16,7 @@ export default {
     checked: {
       control: { type: 'boolean' },
     },
+    onChange: { action: 'changed' },
   },
 } as ComponentMeta<typeof Switch>
 

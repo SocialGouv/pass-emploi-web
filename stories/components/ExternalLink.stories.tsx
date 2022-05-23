@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
+
 import { ExternalLink } from 'components/ui/ExternalLink'
 
 export default {
