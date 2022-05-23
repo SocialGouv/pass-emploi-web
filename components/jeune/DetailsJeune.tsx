@@ -1,6 +1,7 @@
 import React from 'react'
 
 import EmailIcon from '../../assets/icons/email.svg'
+import LaunchIcon from '../../assets/icons/launch.svg'
 
 import { Jeune } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
@@ -23,6 +24,24 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
             <EmailIcon focusable='false' role='img' title='e-mail' />
           </dt>
           <dd>{jeune.email}</dd>
+        </dl>
+      )}
+
+      {jeune.urlDossierMilo && (
+        <dl className='mt-2 flex text-sm-semi items-center'>
+          <dd>
+            <a
+              className='underline text-primary hover:text-primary_darken'
+              href={jeune.urlDossierMilo}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Dossier jeune i-Milo
+            </a>
+          </dd>
+          <dt className='ml-2'>
+            <LaunchIcon focusable='false' role='img' title='ouvrir' />
+          </dt>
         </dl>
       )}
 

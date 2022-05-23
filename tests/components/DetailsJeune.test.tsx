@@ -8,7 +8,10 @@ import { Jeune } from 'interfaces/jeune'
 describe('<DetailsJeune>', () => {
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     // Given
-    const jeune = unJeune({ isActivated: true })
+    const jeune = unJeune({
+      isActivated: true,
+      urlDossierMilo: 'https://dossier-milo.fr',
+    })
 
     // When
     render(<DetailsJeune jeune={jeune} />)
@@ -19,6 +22,11 @@ describe('<DetailsJeune>', () => {
     ).toThrow()
     expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
     expect(screen.getByTitle('e-mail')).toBeInTheDocument()
+    expect(screen.getByText('Dossier jeune i-Milo')).toBeInTheDocument()
+    expect(screen.getByText('Dossier jeune i-Milo')).toHaveAttribute(
+      'href',
+      'https://dossier-milo.fr'
+    )
     expect(screen.getByText('07/12/2021')).toBeInTheDocument()
   })
 
@@ -32,6 +40,17 @@ describe('<DetailsJeune>', () => {
 
     // Then
     expect(screen.queryByTitle('e-mail')).toBeNull()
+  })
+
+  it("n'affiche pas le lien vers le dossier MILO si le jeune n'en a pas", () => {
+    // Given
+    const jeune = unJeune({ urlDossierMilo: undefined })
+
+    // When
+    render(<DetailsJeune jeune={jeune} />)
+
+    // Then
+    expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
   })
 
   describe("quand le jeune ne s'est jamais connecté", () => {
