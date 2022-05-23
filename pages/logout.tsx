@@ -12,9 +12,14 @@ function Logout() {
 
   useEffect(() => {
     async function logout() {
-      await messagesService.signOut()
-      await signOut({ redirect: false, callbackUrl: '/login' })
-      router.push('/login')
+      try {
+        await Promise.all([
+          messagesService.signOut(),
+          signOut({ redirect: false, callbackUrl: '/login' }),
+        ])
+      } finally {
+        router.push('/login')
+      }
     }
 
     logout()
