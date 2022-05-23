@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
-import IconComponent, { IconName } from '../ui/IconComponent'
-import NavbarLink from '../ui/NavbarLink'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import NavbarLink from 'components/ui/NavbarLink'
 import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -60,7 +60,7 @@ export default function Sidebar({}: SidebarProps) {
           {isSuperviseur && (
             <>
               <NavbarLink
-                iconName={IconName.Reaffectation}
+                iconName={IconName.ArrowRight}
                 label='Réaffectation'
                 href='/reaffectation'
                 isActive={isCurrentRoute('/reaffectation')}
