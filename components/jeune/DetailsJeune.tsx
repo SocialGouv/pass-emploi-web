@@ -8,9 +8,13 @@ import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: Jeune
+  onDossierMiloClick: () => void
 }
 
-export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
+export const DetailsJeune = ({
+  jeune,
+  onDossierMiloClick,
+}: DetailsJeuneProps) => {
   return (
     <>
       <dl className='flex text-sm-semi mb-2'>
@@ -34,6 +38,7 @@ export const DetailsJeune = ({ jeune }: DetailsJeuneProps) => {
               className='underline text-primary hover:text-primary_darken'
               href={jeune.urlDossierMilo}
               target='_blank'
+              onClick={onDossierMiloClick}
               rel='noopener noreferrer'
             >
               Dossier jeune i-Milo

@@ -125,6 +125,10 @@ function FicheJeune({
     }
   }
 
+  function trackDossierMiloClick() {
+    setTrackingLabel(pageTracking + ' - Dossier i-Milo')
+  }
+
   useMatomo(trackingLabel)
 
   useEffect(() => {
@@ -172,7 +176,7 @@ function FicheJeune({
           onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
       )}
-      <DetailsJeune jeune={jeune} />
+      <DetailsJeune jeune={jeune} onDossierMiloClick={trackDossierMiloClick} />
 
       <div className='mt-8'>
         <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
