@@ -1,11 +1,10 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { DetailsJeune } from '../../components/jeune/DetailsJeune'
 import renderWithSession from '../renderWithSession'
 
 import { uneAction, uneListeDActions } from 'fixtures/action'
@@ -26,7 +25,7 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
+import { ConseillerHistorique, SituationJeune } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
@@ -233,6 +232,79 @@ describe('Fiche Jeune', () => {
       it('ne permet pas la prise de rendez-vous', async () => {
         // Then
         expect(() => screen.getByText('Fixer un rendez-vous')).toThrow()
+      })
+    })
+
+    describe('quand l’utilisateur est un conseiller MILO', () => {
+      describe('quand le jeune n’a aucune situation', () => {
+        it('affiche les informations concernant la situation du jeune', () => {
+          // Given
+          renderWithSession(
+            <DIProvider dependances={{ jeunesService, rendezVousService }}>
+              <CurrentJeuneProvider>
+                <FicheJeune
+                  jeune={jeune}
+                  rdvs={[]}
+                  actions={actions}
+                  conseillers={[]}
+                  pageTitle={''}
+                />
+              </CurrentJeuneProvider>
+            </DIProvider>,
+            {
+              user: {
+                id: 'idConseiller',
+                name: 'Tavernier',
+                email: 'fake@email.fr',
+                structure: UserStructure.MILO,
+                estConseiller: true,
+                estSuperviseur: false,
+              },
+            }
+          )
+
+          // Then
+          expect(screen.getByText('Situation')).toBeInTheDocument()
+          expect(screen.getByText('Sans situation')).toBeInTheDocument()
+        })
+      })
+      describe('quand le jeune a une liste de situations', () => {
+        it('affiche les informations concernant la situation du jeune ', () => {
+          // Given
+          const situations = [
+            { etat: 'en cours', categorie: SituationJeune.EMPLOI },
+            { etat: 'prévue', categorie: SituationJeune.CONTRAT_EN_ALTERNANCE },
+          ]
+          renderWithSession(
+            <DIProvider dependances={{ jeunesService, rendezVousService }}>
+              <CurrentJeuneProvider>
+                <FicheJeune
+                  jeune={unJeune({ situations: situations })}
+                  rdvs={[]}
+                  actions={actions}
+                  conseillers={[]}
+                  pageTitle={''}
+                />
+              </CurrentJeuneProvider>
+            </DIProvider>,
+            {
+              user: {
+                id: 'idConseiller',
+                name: 'Tavernier',
+                email: 'fake@email.fr',
+                structure: UserStructure.MILO,
+                estConseiller: true,
+                estSuperviseur: false,
+              },
+            }
+          )
+
+          // Then
+          expect(screen.getByText('Situation')).toBeInTheDocument()
+          expect(screen.getByText('Emploi')).toBeInTheDocument()
+          expect(screen.getByText('en cours')).toBeInTheDocument()
+          expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
+        })
       })
     })
 

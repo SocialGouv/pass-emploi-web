@@ -32,7 +32,8 @@ export interface JeuneJson {
 export function jsonToJeune(jeune: JeuneJson): Jeune {
   return {
     ...jeune,
-    situationCourante: jeune.situationCourante?.categorie ?? 'Sans situation',
+    situationCourante:
+      jeune.situationCourante?.categorie ?? SituationJeune.SANS_SITUATION,
     situations:
       jeune.situations?.map((situation) => ({
         ...situation,

@@ -1,8 +1,10 @@
 import React from 'react'
 
+import { Tag } from '../ui/Tag'
+
 import { StatutAction } from 'interfaces/action'
 
-interface TagProps {
+interface StatutTagProps {
   status: StatutAction
 }
 
@@ -31,13 +33,7 @@ const mappedStatus: {
   },
 }
 
-export default function StatusTag({ status }: TagProps) {
+export default function StatusTag({ status }: StatutTagProps) {
   const { label, color, colorLighten } = mappedStatus[status]
-  return (
-    <span
-      className={`table-cell text-xs-medium border border-solid border-${color} text-${color} px-4 py-[2px] bg-${colorLighten} rounded-x_large whitespace-nowrap`}
-    >
-      {label}
-    </span>
-  )
+  return <Tag label={label} color={color} colorLighten={colorLighten} />
 }

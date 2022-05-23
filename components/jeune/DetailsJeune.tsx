@@ -3,16 +3,20 @@ import React from 'react'
 import EmailIcon from '../../assets/icons/email.svg'
 import LaunchIcon from '../../assets/icons/launch.svg'
 
-import { Jeune } from 'interfaces/jeune'
+import SituationTag from './SituationTag'
+
+import { Jeune, SituationJeune } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: Jeune
+  withSituations?: boolean
   onDossierMiloClick: () => void
 }
 
 export const DetailsJeune = ({
   jeune,
+  withSituations,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
   return (
@@ -68,44 +72,50 @@ export const DetailsJeune = ({
         </p>
       )}
 
-      <div className='border border-solid rounded-medium w-full px-4 py-3 mt-2 border-grey_100'>
-        <h2 className='text-base-medium mb-2'>Situation</h2>
-        {!(jeune.situations && jeune.situations.length) && (
-          <ol className='list-none'>
-            <>
-              <li>Sans situation</li>
-              <li>
-                Etat : <span className='text-base-medium'>--</span>
-              </li>
-              <li>
-                Fin le : <span className='text-base-medium'>--</span>
-              </li>
-            </>
-          </ol>
-        )}
-
-        {jeune.situations?.length && (
-          <>
+      {withSituations && (
+        <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
+          <h2 className='text-base-medium'>Situation</h2>
+          {!(jeune.situations && jeune.situations.length) && (
             <ol className='list-none'>
+              <li className='mt-3'>
+                <div className='mb-3'>
+                  <SituationTag situation={SituationJeune.SANS_SITUATION} />
+                </div>
+                <div className='mb-3'>
+                  Etat : <span className='text-base-medium'>--</span>
+                </div>
+                <div>
+                  Fin le : <span className='text-base-medium'>--</span>
+                </div>
+              </li>
+            </ol>
+          )}
+
+          {jeune.situations && Boolean(jeune.situations?.length) && (
+            <ol className='list-none flex flex-row flex-wrap'>
               {jeune.situations.map((situation) => (
                 <>
-                  <li>{situation.categorie}</li>
-                  <li className='ml-5'>
-                    Etat :{' '}
-                    <span className='text-base-medium'>{situation.etat}</span>
-                  </li>
-                  <li className='ml-5'>
-                    Fin le :{' '}
-                    <span className='text-base-medium'>
-                      {situation.dateFin ?? '--'}
-                    </span>
+                  <li className='mt-3 mr-32 last:mr-0'>
+                    <div className='mb-3'>
+                      <SituationTag situation={situation.categorie} />
+                    </div>
+                    <div className='mb-3'>
+                      Etat :{' '}
+                      <span className='text-base-medium'>{situation.etat}</span>
+                    </div>
+                    <div className=''>
+                      Fin le :{' '}
+                      <span className='text-base-medium'>
+                        {situation.dateFin ?? '--'}
+                      </span>
+                    </div>
                   </li>
                 </>
               ))}
             </ol>
-          </>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </>
   )
 }

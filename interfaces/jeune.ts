@@ -13,6 +13,7 @@ export enum SituationJeune {
   CONTRAT_DE_VOLONTARIAT_BENEVOLAT = 'Contrat de volontariat - bénévolat',
   SCOLARITE = 'Scolarité',
   DEMANDEUR_D_EMPLOI = "Demandeur d'emploi",
+  SANS_SITUATION = 'Sans situation',
 }
 export interface BaseJeune {
   id: string
@@ -34,8 +35,8 @@ export interface Jeune {
     prenom: string
     email?: string
   }
-  situationCourante?: string
-  situations?: Array<{
+  situationCourante: SituationJeune
+  situations: Array<{
     etat: string
     categorie: SituationJeune
     dateFin?: string

@@ -5,6 +5,8 @@ import ArrowDouble from '../../assets/icons/arrow_double.svg'
 import ArrowDown from '../../assets/icons/arrow_down.svg'
 import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
+import SituationTag from './SituationTag'
+
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
@@ -14,6 +16,7 @@ import {
   compareJeunesBySituationDesc,
   getJeuneFullname,
   JeuneAvecInfosComplementaires,
+  SituationJeune,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
@@ -338,7 +341,9 @@ export const TableauJeunes = ({
 
                   {withSituations && (
                     <span role='cell' className='table-cell p-4'>
-                      {jeune.situationCourante}
+                      <SituationTag
+                        situation={jeune.situationCourante}
+                      ></SituationTag>
                     </span>
                   )}
 

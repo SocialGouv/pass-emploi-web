@@ -1,6 +1,7 @@
+import { GetServerSidePropsContext } from 'next/types'
+
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { GetServerSidePropsContext } from 'next/types'
 import { getServerSideProps } from 'pages/mes-jeunes/milo/[numero_dossier]'
 import { JeunesService } from 'services/jeunes.service'
 import { trackSSR } from 'utils/analytics/matomo'
