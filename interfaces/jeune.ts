@@ -17,6 +17,7 @@ export interface Jeune {
   lastActivity: string
   email?: string
   isActivated?: boolean
+  urlDossierMilo?: string
   conseillerPrecedent?: {
     nom: string
     prenom: string
@@ -94,6 +95,7 @@ export function compareJeunesBySituation(jeune1: Jeune, jeune2: Jeune): number {
     `${jeune2.situationCourante}`
   )
 }
+
 export function compareJeunesBySituationDesc(
   jeune1: Jeune,
   jeune2: Jeune

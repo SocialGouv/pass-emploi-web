@@ -8,6 +8,7 @@ export interface JeuneJson {
   lastActivity: string
   email?: string
   isActivated?: boolean
+  urlDossierMilo?: string
   conseillerPrecedent?: {
     nom: string
     prenom: string

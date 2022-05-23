@@ -90,7 +90,11 @@ describe('JeunesApiService', () => {
   describe('.getJeuneDetails', () => {
     it('renvoie les détails du jeune', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue(unJeuneJson())
+      ;(apiClient.get as jest.Mock).mockResolvedValue(
+        unJeuneJson({
+          urlDossierMilo: 'url-dossier-milo',
+        })
+      )
 
       // When
       const actual = await jeunesService.getJeuneDetails(
@@ -103,7 +107,11 @@ describe('JeunesApiService', () => {
         '/jeunes/id-jeune',
         'accessToken'
       )
-      expect(actual).toEqual(unJeune())
+      expect(actual).toEqual(
+        unJeune({
+          urlDossierMilo: 'url-dossier-milo',
+        })
+      )
     })
 
     it("renvoie undefined si le jeune n'existe pas", async () => {
