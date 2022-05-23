@@ -3,6 +3,17 @@ import { compareDates, compareDatesDesc } from 'utils/date'
 /**
  * TODO: utiliser cette interface en classe mère pour Jeune lorsque la traduction sera faite
  */
+
+export enum SituationJeune {
+  EMPLOI = 'Emploi',
+  CONTRAT_EN_ALTERNANCE = 'Contrat en Alternance',
+  FORMATION = 'Formation',
+  IMMERSION_EN_ENTREPRISE = 'Immersion en entreprise',
+  PMSMP = 'Pmsmp',
+  CONTRAT_DE_VOLONTARIAT_BENEVOLAT = 'Contrat de volontariat - bénévolat',
+  SCOLARITE = 'Scolarité',
+  DEMANDEUR_D_EMPLOI = "Demandeur d'emploi",
+}
 export interface BaseJeune {
   id: string
   prenom: string
@@ -24,6 +35,11 @@ export interface Jeune {
     email?: string
   }
   situationCourante?: string
+  situations?: Array<{
+    etat: string
+    categorie: SituationJeune
+    dateFin?: string
+  }>
 }
 
 export type JeuneAvecNbActionsNonTerminees = Jeune & {

@@ -67,6 +67,45 @@ export const DetailsJeune = ({
           </span>
         </p>
       )}
+
+      <div className='border border-solid rounded-medium w-full px-4 py-3 mt-2 border-grey_100'>
+        <h2 className='text-base-medium mb-2'>Situation</h2>
+        {!(jeune.situations && jeune.situations.length) && (
+          <ol className='list-none'>
+            <>
+              <li>Sans situation</li>
+              <li>
+                Etat : <span className='text-base-medium'>--</span>
+              </li>
+              <li>
+                Fin le : <span className='text-base-medium'>--</span>
+              </li>
+            </>
+          </ol>
+        )}
+
+        {jeune.situations?.length && (
+          <>
+            <ol className='list-none'>
+              {jeune.situations.map((situation) => (
+                <>
+                  <li>{situation.categorie}</li>
+                  <li className='ml-5'>
+                    Etat :{' '}
+                    <span className='text-base-medium'>{situation.etat}</span>
+                  </li>
+                  <li className='ml-5'>
+                    Fin le :{' '}
+                    <span className='text-base-medium'>
+                      {situation.dateFin ?? '--'}
+                    </span>
+                  </li>
+                </>
+              ))}
+            </ol>
+          </>
+        )}
+      </div>
     </>
   )
 }
