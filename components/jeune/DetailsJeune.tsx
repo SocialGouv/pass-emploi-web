@@ -3,9 +3,8 @@ import React from 'react'
 import EmailIcon from '../../assets/icons/email.svg'
 import LaunchIcon from '../../assets/icons/launch.svg'
 
-import SituationTag from './SituationTag'
-
-import { Jeune, SituationJeune } from 'interfaces/jeune'
+import SituationTag from 'components/jeune/SituationTag'
+import { Jeune, CategorieSituation } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
@@ -76,10 +75,10 @@ export const DetailsJeune = ({
         <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
           <h2 className='text-base-medium'>Situation</h2>
           {!(jeune.situations && jeune.situations.length) && (
-            <ol className='list-none'>
+            <ol>
               <li className='mt-3'>
                 <div className='mb-3'>
-                  <SituationTag situation={SituationJeune.SANS_SITUATION} />
+                  <SituationTag situation={CategorieSituation.SANS_SITUATION} />
                 </div>
                 <div className='mb-3'>
                   Etat : <span className='text-base-medium'>--</span>
@@ -92,25 +91,28 @@ export const DetailsJeune = ({
           )}
 
           {jeune.situations && Boolean(jeune.situations.length) && (
-            <ol className='list-none flex flex-row flex-wrap'>
+            <ol className='flex flex-row flex-wrap'>
               {jeune.situations.map((situation) => (
-                <>
-                  <li className='mt-3 mr-32 last:mr-0'>
-                    <div className='mb-3'>
-                      <SituationTag situation={situation.categorie} />
-                    </div>
-                    <div className='mb-3'>
-                      Etat :{' '}
-                      <span className='text-base-medium'>{situation.etat}</span>
-                    </div>
-                    <div className=''>
-                      Fin le :{' '}
-                      <span className='text-base-medium'>
-                        {situation.dateFin ?? '--'}
-                      </span>
-                    </div>
-                  </li>
-                </>
+                <li
+                  className='mt-3 mr-32 last:mr-0'
+                  key={situation.etat + '-' + situation.categorie}
+                >
+                  <div className='mb-3'>
+                    <SituationTag situation={situation.categorie} />
+                  </div>
+                  <div className='mb-3'>
+                    Etat :{' '}
+                    <span className='text-base-medium'>
+                      {situation.etat ?? '--'}
+                    </span>
+                  </div>
+                  <div className=''>
+                    Fin le :{' '}
+                    <span className='text-base-medium'>
+                      {situation.dateFin ?? '--'}
+                    </span>
+                  </div>
+                </li>
               ))}
             </ol>
           )}

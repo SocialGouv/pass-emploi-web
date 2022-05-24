@@ -4,7 +4,7 @@ import {
   Jeune,
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
-  SituationJeune,
+  CategorieSituation,
 } from 'interfaces/jeune'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 import { JeuneJson } from 'interfaces/json/jeune'
@@ -23,7 +23,7 @@ export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
       nom: 'Tavernier',
       email: 'conseiller@email.com',
     },
-    situationCourante: SituationJeune.SANS_SITUATION,
+    situationCourante: CategorieSituation.SANS_SITUATION,
     situations: [],
   }
   return { ...defaults, ...overrides }

@@ -4,7 +4,13 @@ import { compareDates, compareDatesDesc } from 'utils/date'
  * TODO: utiliser cette interface en classe mère pour Jeune lorsque la traduction sera faite
  */
 
-export enum SituationJeune {
+export enum EtatSituation {
+  EN_COURS = 'en cours',
+  PREVU = 'prévue',
+  TERMINE = 'terminée',
+}
+
+export enum CategorieSituation {
   EMPLOI = 'Emploi',
   CONTRAT_EN_ALTERNANCE = 'Contrat en Alternance',
   FORMATION = 'Formation',
@@ -35,10 +41,10 @@ export interface Jeune {
     prenom: string
     email?: string
   }
-  situationCourante: SituationJeune
+  situationCourante: CategorieSituation
   situations: Array<{
-    etat: string
-    categorie: SituationJeune
+    etat?: EtatSituation
+    categorie: CategorieSituation
     dateFin?: string
   }>
 }

@@ -25,7 +25,11 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique, SituationJeune } from 'interfaces/jeune'
+import {
+  ConseillerHistorique,
+  CategorieSituation,
+  EtatSituation,
+} from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
@@ -272,8 +276,14 @@ describe('Fiche Jeune', () => {
         it('affiche les informations concernant la situation du jeune ', () => {
           // Given
           const situations = [
-            { etat: 'en cours', categorie: SituationJeune.EMPLOI },
-            { etat: 'prévue', categorie: SituationJeune.CONTRAT_EN_ALTERNANCE },
+            {
+              etat: EtatSituation.EN_COURS,
+              categorie: CategorieSituation.EMPLOI,
+            },
+            {
+              etat: EtatSituation.PREVU,
+              categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
+            },
           ]
           renderWithSession(
             <DIProvider dependances={{ jeunesService, rendezVousService }}>

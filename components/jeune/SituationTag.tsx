@@ -1,67 +1,59 @@
 import React from 'react'
 
 import { Tag } from 'components/ui/Tag'
-import { SituationJeune } from 'interfaces/jeune'
+import { CategorieSituation } from 'interfaces/jeune'
 
 interface TagProps {
-  situation: SituationJeune
+  situation: CategorieSituation
 }
 
 const mappedSituation: {
-  [key in SituationJeune]: {
-    label: string
+  [key in CategorieSituation]: {
     color: string
-    colorLighten: string
+    backgroundColor: string
   }
 } = {
   Emploi: {
-    label: 'Emploi',
     color: 'accent_3',
-    colorLighten: 'accent_3_lighten',
+    backgroundColor: 'accent_3_lighten',
   },
   'Contrat en Alternance': {
-    label: 'Contrat en Alternance',
     color: 'accent_3',
-    colorLighten: 'accent_3_lighten',
+    backgroundColor: 'accent_3_lighten',
   },
   Formation: {
-    label: 'Formation',
     color: 'accent_3',
-    colorLighten: 'accent_3_lighten',
+    backgroundColor: 'accent_3_lighten',
   },
   'Immersion en entreprise': {
-    label: 'Immersion en entreprise',
     color: 'accent_3',
-    colorLighten: 'accent_3_lighten',
+    backgroundColor: 'accent_3_lighten',
   },
   Pmsmp: {
-    label: 'Pmsmp',
     color: 'accent_1',
-    colorLighten: 'accent_1_lighten',
+    backgroundColor: 'accent_1_lighten',
   },
   'Contrat de volontariat - bénévolat': {
-    label: 'Contrat de volontariat - bénévolat',
     color: 'accent_1',
-    colorLighten: 'accent_1_lighten',
+    backgroundColor: 'accent_1_lighten',
   },
   Scolarité: {
-    label: 'Scolarité',
     color: 'accent_3',
-    colorLighten: 'accent_3_lighten',
+    backgroundColor: 'accent_3_lighten',
   },
   "Demandeur d'emploi": {
-    label: "Demandeur d'emploi",
     color: 'accent_1',
-    colorLighten: 'accent_1_lighten',
+    backgroundColor: 'accent_1_lighten',
   },
   'Sans situation': {
-    label: 'Sans situation',
     color: 'grey_800',
-    colorLighten: 'grey_100',
+    backgroundColor: 'grey_100',
   },
 }
 
 export default function SituationTag({ situation }: TagProps) {
-  const { label, color, colorLighten } = mappedSituation[situation]
-  return <Tag label={label} color={color} colorLighten={colorLighten} />
+  const { color, backgroundColor } = mappedSituation[situation]
+  return (
+    <Tag label={situation} color={color} backgroundColor={backgroundColor} />
+  )
 }
