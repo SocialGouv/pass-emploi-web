@@ -2,9 +2,8 @@ import { useState } from 'react'
 
 import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
-import SuccessModal from 'components/SuccessModal'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { RdvListItem } from 'interfaces/rdv'
+import { getBeneficiaires, Rdv } from 'interfaces/rdv'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
@@ -12,17 +11,16 @@ import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 type DeleteRdvModalProps = {
-  rdv: RdvListItem
+  rdv: Rdv
   onClose: () => void
-  onDelete: (deletedRdv: RdvListItem) => void
+  onDelete: (deletedRdv: Rdv) => void
 }
 
 export default function DeleteRdvModal({
+  rdv,
   onClose,
   onDelete,
-  rdv,
 }: DeleteRdvModalProps) {
-  const [isSuccess, setIsSuccess] = useState(false)
   const [isEchec, setIsEchec] = useState(false)
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
@@ -32,7 +30,6 @@ export default function DeleteRdvModal({
     rendezVousService
       .deleteRendezVous(rdv.id, session!.accessToken)
       .then(function () {
-        setIsSuccess(true)
         onDelete(rdv)
       })
       .catch(function (error) {
@@ -42,18 +39,15 @@ export default function DeleteRdvModal({
   }
 
   function handleCloseModal() {
-    setIsSuccess(false)
     setIsEchec(false)
     onClose()
   }
-
-  useMatomo(isSuccess ? 'Succès modale suppression rdv' : undefined)
 
   useMatomo(isEchec ? 'Échec modale suppression rdv' : undefined)
 
   return (
     <>
-      {!isSuccess && !isEchec && (
+      {!isEchec && (
         <Modal
           title='Confirmation de suppression du rendez-vous'
           onClose={handleCloseModal}
@@ -62,7 +56,8 @@ export default function DeleteRdvModal({
         >
           <p className='text-md text-primary_darken mb-[48px]'>
             Souhaitez-vous vraiment supprimer votre rendez-vous avec{' '}
-            {rdv.beneficiaires} le {formatDayDate(new Date(rdv.date))}?
+            {getBeneficiaires(rdv.jeunes)} le{' '}
+            {formatDayDate(new Date(rdv.date))}?
           </p>
 
           <div className='flex'>
@@ -84,13 +79,6 @@ export default function DeleteRdvModal({
             </Button>
           </div>
         </Modal>
-      )}
-
-      {isSuccess && (
-        <SuccessModal
-          message='Votre rendez-vous a bien été supprimé'
-          onClose={handleCloseModal}
-        />
       )}
 
       {isEchec && (

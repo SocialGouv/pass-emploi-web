@@ -43,7 +43,7 @@ export function rdvToListItem(rdv: Rdv): RdvListItem {
   }
 }
 
-function getBeneficiaires(jeunes: BaseJeune[]) {
+export function getBeneficiaires(jeunes: BaseJeune[]) {
   if (jeunes.length > 1) return 'Bénéficiaires multiples'
   if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
   return ''

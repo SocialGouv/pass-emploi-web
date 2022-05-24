@@ -1,7 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import React, { useState, MouseEvent } from 'react'
+
+import DeleteIcon from '../../assets/icons/delete.svg'
+import DeleteRdvModal from '../../components/rdv/DeleteRdvModal'
+import Button, { ButtonStyle } from '../../components/ui/Button'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
@@ -40,6 +44,7 @@ function EditionRdv({
   const { data: session } = useSession<true>({ required: true })
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
@@ -50,6 +55,12 @@ function EditionRdv({
   if (rdv) initialTracking = `Modification rdv`
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const handleDelete = (e: MouseEvent<HTMLElement>, rdv: Rdv) => {
+    e.preventDefault()
+    e.stopPropagation()
+    openDeleteRdvModal(rdv)
+  }
 
   function openLeavePageModal() {
     setShowLeavePageModal(true)
@@ -71,6 +82,21 @@ function EditionRdv({
   function closeConfirmationModal() {
     setPayloadForConfirmationModal(undefined)
     setTrackingTitle(initialTracking)
+  }
+
+  function openDeleteRdvModal(rdv: Rdv) {
+    setSelectedRdv(rdv)
+    setTrackingTitle(initialTracking + ' - Modale suppression rdv')
+  }
+
+  function closeDeleteRdvModal() {
+    setSelectedRdv(undefined)
+    setTrackingTitle(initialTracking)
+  }
+
+  async function onDeleteRdvSuccess() {
+    const [redirectPath] = returnTo.split('?')
+    await router.push(`${redirectPath}?suppressionRdv=succes`)
   }
 
   async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
@@ -100,6 +126,18 @@ function EditionRdv({
 
   return (
     <>
+      {rdv && (
+        <div className='flex justify-end'>
+          <Button
+            style={ButtonStyle.SECONDARY}
+            onClick={(e) => handleDelete(e, rdv)}
+            aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+          >
+            <DeleteIcon aria-hidden='true' focusable='false' className='mr-2' />
+            Supprimer
+          </Button>
+        </div>
+      )}
       <EditionRdvForm
         jeunes={jeunes}
         typesRendezVous={typesRendezVous}
@@ -130,6 +168,13 @@ function EditionRdv({
           onConfirmation={() =>
             soumettreRendezVous(payloadForConfirmationModal)
           }
+        />
+      )}
+      {selectedRdv && (
+        <DeleteRdvModal
+          onClose={closeDeleteRdvModal}
+          onDelete={onDeleteRdvSuccess}
+          rdv={selectedRdv}
         />
       )}
     </>

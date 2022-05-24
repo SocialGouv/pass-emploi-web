@@ -1,7 +1,5 @@
 import Link from 'next/link'
-import { MouseEvent } from 'react'
 
-import DeleteIcon from '../../assets/icons/delete.svg'
 import DoneIcon from '../../assets/icons/done.svg'
 import KoIcon from '../../assets/icons/ko.svg'
 import LocationIcon from '../../assets/icons/location.svg'
@@ -15,21 +13,13 @@ type RdvListProps = {
   rdvs: RdvListItem[]
   idConseiller: string
   withNameJeune?: boolean
-  onDelete?: (rdv: RdvListItem) => void
 }
 
 const RdvList = ({
   rdvs,
   idConseiller,
   withNameJeune = true,
-  onDelete,
 }: RdvListProps) => {
-  const handleDelete = (e: MouseEvent<HTMLElement>, rdv: RdvListItem) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (onDelete) onDelete(rdv)
-  }
-
   const dayHourCells = (rdvDate: Date, duration: number) => {
     return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
       rdvDate
@@ -57,7 +47,6 @@ const RdvList = ({
               <HeaderCell label='Type' />
               <HeaderCell label='Modalité' />
               <HeaderCell label='Créé par vous' />
-              <HeaderCell label='Supprimer le rendez-vous' srOnly />
             </div>
           </div>
 
@@ -120,22 +109,6 @@ const RdvList = ({
                     </div>
                   )}
                   {!rdv.idCreateur && <div role='cell' />}
-
-                  {onDelete && (
-                    <div
-                      role='cell'
-                      className='table-cell p-3'
-                      onClick={(e) => handleDelete(e, rdv)}
-                    >
-                      <button
-                        onClick={(e) => handleDelete(e, rdv)}
-                        aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
-                        className='border-none'
-                      >
-                        <DeleteIcon aria-hidden='true' focusable='false' />
-                      </button>
-                    </div>
-                  )}
                 </a>
               </Link>
             ))}
