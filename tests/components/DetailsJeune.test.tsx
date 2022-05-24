@@ -14,20 +14,18 @@ describe('<DetailsJeune>', () => {
     })
 
     // When
-    render(<DetailsJeune jeune={jeune} />)
+    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
 
     // Then
     expect(() =>
       screen.getByText('pas encore connecté', { exact: false })
     ).toThrow()
     expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
-    expect(screen.getByTitle('e-mail')).toBeInTheDocument()
-    expect(screen.getByText('Dossier jeune i-Milo')).toBeInTheDocument()
     expect(screen.getByText('Dossier jeune i-Milo')).toHaveAttribute(
       'href',
       'https://dossier-milo.fr'
     )
-    expect(screen.getByText('07/12/2021')).toBeInTheDocument()
+    expect(screen.getByLabelText('07/12/2021')).toBeInTheDocument()
   })
 
   it("n'affiche pas le mail si le jeune n'en a pas", () => {
@@ -36,7 +34,7 @@ describe('<DetailsJeune>', () => {
     delete jeune.email
 
     // When
-    render(<DetailsJeune jeune={jeune} />)
+    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
 
     // Then
     expect(screen.queryByTitle('e-mail')).toBeNull()
@@ -47,7 +45,7 @@ describe('<DetailsJeune>', () => {
     const jeune = unJeune({ urlDossierMilo: undefined })
 
     // When
-    render(<DetailsJeune jeune={jeune} />)
+    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
 
     // Then
     expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
@@ -60,7 +58,7 @@ describe('<DetailsJeune>', () => {
       jeune = unJeune({ isActivated: false })
 
       // When
-      render(<DetailsJeune jeune={jeune} />)
+      render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
     })
 
     it("affiche l'information", () => {

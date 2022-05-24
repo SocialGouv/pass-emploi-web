@@ -17,38 +17,47 @@ export const DetailsJeune = ({
 }: DetailsJeuneProps) => {
   return (
     <>
-      <dl className='flex text-sm-semi mb-2'>
-        <dt className='mr-2'>Ajouté le :</dt>
-        <dd>{formatDayDate(new Date(jeune.creationDate))}</dd>
+      <dl className='text-sm-semi'>
+        <dt className='sr-only'>Ajouté le</dt>
+        <dd aria-label={formatDayDate(new Date(jeune.creationDate))}>
+          Ajouté le : {formatDayDate(new Date(jeune.creationDate))}
+        </dd>
+        {jeune.email && (
+          <>
+            <dt className='sr-only'>e-mail</dt>
+            <dd className='flex items-center mt-2'>
+              <EmailIcon
+                aria-hidden={true}
+                focusable='false'
+                className='mr-2'
+              />
+              {jeune.email}
+            </dd>
+          </>
+        )}
+        {jeune.urlDossierMilo && (
+          <>
+            <dt className='sr-only'>Dossier externe</dt>
+            <dd className='mt-2'>
+              <a
+                className='underline text-primary hover:text-primary_darken flex items-center'
+                href={jeune.urlDossierMilo}
+                target='_blank'
+                onClick={onDossierMiloClick}
+                rel='noopener noreferrer'
+              >
+                Dossier jeune i-Milo
+                <LaunchIcon
+                  focusable='false'
+                  role='img'
+                  title='ouvrir'
+                  className='ml-2'
+                />
+              </a>
+            </dd>
+          </>
+        )}
       </dl>
-
-      {jeune.email && (
-        <dl className='flex text-sm-semi'>
-          <dt className='mr-2'>
-            <EmailIcon focusable='false' role='img' title='e-mail' />
-          </dt>
-          <dd>{jeune.email}</dd>
-        </dl>
-      )}
-
-      {jeune.urlDossierMilo && (
-        <dl className='mt-2 flex text-sm-semi items-center'>
-          <dd>
-            <a
-              className='underline text-primary hover:text-primary_darken'
-              href={jeune.urlDossierMilo}
-              target='_blank'
-              onClick={onDossierMiloClick}
-              rel='noopener noreferrer'
-            >
-              Dossier jeune i-Milo
-            </a>
-          </dd>
-          <dt className='ml-2'>
-            <LaunchIcon focusable='false' role='img' title='ouvrir' />
-          </dt>
-        </dl>
-      )}
 
       {!jeune.isActivated && (
         <p className='mt-4 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
