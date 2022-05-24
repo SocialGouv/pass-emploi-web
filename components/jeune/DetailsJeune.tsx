@@ -91,7 +91,7 @@ export const DetailsJeune = ({
             </ol>
           )}
 
-          {jeune.situations && Boolean(jeune.situations?.length) && (
+          {jeune.situations && Boolean(jeune.situations.length) && (
             <ol className='list-none flex flex-row flex-wrap'>
               {jeune.situations.map((situation) => (
                 <>
