@@ -1,5 +1,6 @@
-import { UserStructure } from 'interfaces/conseiller'
 import { useEffect } from 'react'
+
+import { UserStructure } from 'interfaces/conseiller'
 import { track } from 'utils/analytics/matomo'
 import useSession from 'utils/auth/useSession'
 
