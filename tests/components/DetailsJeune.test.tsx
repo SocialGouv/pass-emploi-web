@@ -10,7 +10,7 @@ describe('<DetailsJeune>', () => {
     // Given
     const jeune = unJeune({
       isActivated: true,
-      urlDossierMilo: 'https://dossier-milo.fr',
+      urlDossier: 'https://dossier-milo.fr',
     })
 
     // When
@@ -40,9 +40,9 @@ describe('<DetailsJeune>', () => {
     expect(screen.queryByTitle('e-mail')).toBeNull()
   })
 
-  it("n'affiche pas le lien vers le dossier MILO si le jeune n'en a pas", () => {
+  it("n'affiche pas le lien vers le dossier si le jeune n'en a pas", () => {
     // Given
-    const jeune = unJeune({ urlDossierMilo: undefined })
+    const jeune = unJeune({ urlDossier: undefined })
 
     // When
     render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)

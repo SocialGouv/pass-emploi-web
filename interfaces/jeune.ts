@@ -17,7 +17,7 @@ export interface Jeune {
   lastActivity: string
   email?: string
   isActivated?: boolean
-  urlDossierMilo?: string
+  urlDossier?: string
   conseillerPrecedent?: {
     nom: string
     prenom: string

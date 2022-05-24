@@ -35,13 +35,13 @@ export const DetailsJeune = ({
             </dd>
           </>
         )}
-        {jeune.urlDossierMilo && (
+        {jeune.urlDossier && (
           <>
             <dt className='sr-only'>Dossier externe</dt>
             <dd className='mt-2'>
               <a
                 className='underline text-primary hover:text-primary_darken flex items-center'
-                href={jeune.urlDossierMilo}
+                href={jeune.urlDossier}
                 target='_blank'
                 onClick={onDossierMiloClick}
                 rel='noopener noreferrer'

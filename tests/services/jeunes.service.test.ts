@@ -92,7 +92,7 @@ describe('JeunesApiService', () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue(
         unJeuneJson({
-          urlDossierMilo: 'url-dossier-milo',
+          urlDossier: 'url-dossier',
         })
       )
 
@@ -109,7 +109,7 @@ describe('JeunesApiService', () => {
       )
       expect(actual).toEqual(
         unJeune({
-          urlDossierMilo: 'url-dossier-milo',
+          urlDossier: 'url-dossier',
         })
       )
     })
