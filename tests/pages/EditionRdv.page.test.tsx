@@ -261,7 +261,6 @@ describe('EditionRdv', () => {
 
         it('contient une liste pour choisir un type', () => {
           // Then
-
           expect(selectType).toBeInTheDocument()
           expect(selectType).toHaveAttribute('required', '')
           for (const typeRendezVous of typesRendezVous) {
@@ -792,6 +791,24 @@ describe('EditionRdv', () => {
               pageTitle={''}
             />
           </DIProvider>
+        )
+      })
+
+      it('permet la suppression du rendez-vous', async () => {
+        // Given
+        const deleteButton1 = screen.getByText('Supprimer')
+
+        // When
+        await act(async () => {
+          deleteButton1.click()
+          const deleteButton2 = screen.getByText('Supprimer')
+          deleteButton2.click()
+        })
+
+        // Then
+        expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
+          rdv.id,
+          'accessToken'
         )
       })
 

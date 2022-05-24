@@ -4,33 +4,28 @@ import EchecModal from 'components/EchecModal'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { getBeneficiaires, Rdv } from 'interfaces/rdv'
-import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { formatDayDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 
 type DeleteRdvModalProps = {
   rdv: Rdv
   onClose: () => void
-  onDelete: (deletedRdv: Rdv) => void
+  performDelete: Promise<void>
+  onDeleteSuccess: (deletedRdv: Rdv) => void
 }
 
 export default function DeleteRdvModal({
   rdv,
   onClose,
-  onDelete,
+  performDelete,
+  onDeleteSuccess,
 }: DeleteRdvModalProps) {
   const [isEchec, setIsEchec] = useState(false)
-  const rendezVousService =
-    useDependance<RendezVousService>('rendezVousService')
-  const { data: session } = useSession<true>({ required: true })
 
   function handleDeleteRdv() {
-    rendezVousService
-      .deleteRendezVous(rdv.id, session!.accessToken)
+    performDelete
       .then(function () {
-        onDelete(rdv)
+        onDeleteSuccess(rdv)
       })
       .catch(function (error) {
         setIsEchec(true)

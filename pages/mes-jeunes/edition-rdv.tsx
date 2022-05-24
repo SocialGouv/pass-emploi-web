@@ -138,6 +138,7 @@ function EditionRdv({
           </Button>
         </div>
       )}
+
       <EditionRdvForm
         jeunes={jeunes}
         typesRendezVous={typesRendezVous}
@@ -173,7 +174,11 @@ function EditionRdv({
       {selectedRdv && (
         <DeleteRdvModal
           onClose={closeDeleteRdvModal}
-          onDelete={onDeleteRdvSuccess}
+          performDelete={rendezVousService.deleteRendezVous(
+            selectedRdv.id,
+            session!.accessToken
+          )}
+          onDeleteSuccess={onDeleteRdvSuccess}
           rdv={selectedRdv}
         />
       )}
