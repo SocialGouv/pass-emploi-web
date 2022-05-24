@@ -14,6 +14,7 @@ import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, compareActionsDatesDesc } from 'interfaces/action'
@@ -209,7 +210,7 @@ function FicheJeune({
           selected={currentTab === 'rdvs'}
           controls='liste-rdvs'
           onSelectTab={() => setCurrentTab('rdvs')}
-          iconName='calendar'
+          iconName={IconName.Calendar}
         />
         <Tab
           label='Actions'
@@ -217,7 +218,7 @@ function FicheJeune({
           selected={currentTab === 'actions'}
           controls='liste-actions'
           onSelectTab={() => setCurrentTab('actions')}
-          iconName='actions'
+          iconName={IconName.Actions}
         />
       </TabList>
 

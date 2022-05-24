@@ -1,4 +1,4 @@
-import IconComponent from './IconComponent'
+import IconComponent, { IconName } from './IconComponent'
 
 import { Badge } from 'components/ui/Badge'
 
@@ -8,7 +8,7 @@ export interface TabProps {
   selected: boolean
   onSelectTab: () => void
   count?: number
-  iconName?: string
+  iconName?: IconName
 }
 
 export default function Tab({
