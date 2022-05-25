@@ -39,7 +39,7 @@ const RdvList = ({
   return (
     <>
       {rdvs.length === 0 && (
-        <p className='text-md  mb-8'>
+        <p className='text-md mb-8'>
           Vous n&apos;avez pas de rendez-vous pour le moment
         </p>
       )}

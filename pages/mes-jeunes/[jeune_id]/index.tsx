@@ -65,7 +65,11 @@ function FicheJeune({
   const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
     undefined
   )
-  const [currentTab, setCurrentTab] = useState<'rdvs' | 'actions'>('rdvs')
+  enum Tabs {
+    RDVS = 'RDVS',
+    ACTIONS = 'ACTIONS',
+  }
+  const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.RDVS)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -207,22 +211,22 @@ function FicheJeune({
         <Tab
           label='Rendez-vous'
           count={!isPoleEmploi ? rdvs.length : undefined}
-          selected={currentTab === 'rdvs'}
+          selected={currentTab === Tabs.RDVS}
           controls='liste-rdvs'
-          onSelectTab={() => setCurrentTab('rdvs')}
+          onSelectTab={() => setCurrentTab(Tabs.RDVS)}
           iconName={IconName.Calendar}
         />
         <Tab
           label='Actions'
           count={!isPoleEmploi ? actions.length : undefined}
-          selected={currentTab === 'actions'}
+          selected={currentTab === Tabs.ACTIONS}
           controls='liste-actions'
-          onSelectTab={() => setCurrentTab('actions')}
+          onSelectTab={() => setCurrentTab(Tabs.ACTIONS)}
           iconName={IconName.Actions}
         />
       </TabList>
 
-      {currentTab === 'rdvs' && (
+      {currentTab === Tabs.RDVS && (
         <div
           role='tabpanel'
           aria-labelledby='liste-rdvs--tab'
@@ -242,7 +246,7 @@ function FicheJeune({
           )}
         </div>
       )}
-      {currentTab === 'actions' && (
+      {currentTab === Tabs.ACTIONS && (
         <div
           role='tabpanel'
           aria-labelledby='liste-actions--tab'
