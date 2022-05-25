@@ -15,7 +15,6 @@ import {
   compareJeunesBySituationDesc,
   getJeuneFullname,
   JeuneAvecInfosComplementaires,
-  CategorieSituation,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
