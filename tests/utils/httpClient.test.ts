@@ -26,7 +26,7 @@ describe('HttpClient', () => {
       }
       ;(fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        headers: new Headers(),
+        headers: new Headers({ 'content-type': 'application/json' }),
         json: jest.fn(async () => ({ some: 'response' })),
       })
 
@@ -42,6 +42,23 @@ describe('HttpClient', () => {
     it('returns response json', async () => {
       // Then
       expect(actual).toEqual({ some: 'response' })
+    })
+
+    describe('when response has no content', () => {
+      it('returns nothing ', async () => {
+        // Given
+        ;(fetch as jest.Mock).mockResolvedValue({
+          ok: true,
+          headers: new Headers(),
+          json: jest.fn().mockRejectedValue(new Error('Error parsing Json')),
+        })
+
+        // When
+        actual = await httpClient.fetchJson(reqInfo, reqInit)
+
+        // Then
+        expect(actual).toBeUndefined()
+      })
     })
 
     describe('when call fails', () => {
