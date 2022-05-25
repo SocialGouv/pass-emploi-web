@@ -173,7 +173,7 @@ function Actions({
       />
       <div
         role='tabpanel'
-        aria-labelledby={`actions-${currentFilter}`}
+        aria-labelledby={`panneau-actions-${currentFilter}--tab`}
         tabIndex={0}
         id={`panneau-actions-${currentFilter}`}
         className='mt-8'

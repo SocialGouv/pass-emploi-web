@@ -75,7 +75,7 @@ export class ActionsApiService implements ActionsService {
     idJeune: string,
     accessToken: string
   ): Promise<Action[]> {
-    const actionsJson = await this.apiClient.get<ActionJson[]>(
+    const actionsJson: ActionJson[] = await this.apiClient.get<ActionJson[]>(
       `/jeunes/${idJeune}/actions`,
       accessToken
     )

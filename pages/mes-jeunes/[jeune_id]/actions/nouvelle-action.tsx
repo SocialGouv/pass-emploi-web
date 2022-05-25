@@ -5,6 +5,8 @@ import { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import Tab from 'components/ui/Tab'
+import TabList from 'components/ui/TabList'
 import { PageProps } from 'interfaces/pageProps'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
@@ -72,26 +74,17 @@ function EditionAction({ idJeune }: EditionActionProps) {
   return (
     <>
       <form onSubmit={creerAction}>
-        <div role='tablist' className='flex mb-10'>
+        <TabList className='mb-10'>
           {Object.entries(tabsLabel).map(([tab, label]) => (
-            <Button
-              role='tab'
-              type='button'
-              key={`creer-action-${tab}`}
-              id={`creer-action-${tab}`}
+            <Tab
+              key={tab}
+              label={`Action ${label}`}
               controls={`form-action-${tab}`}
-              onClick={switchTab}
-              tabIndex={isSelected(tab) ? -1 : 0}
               selected={isSelected(tab)}
-              style={
-                isSelected(tab) ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY
-              }
-              className='ml-3 first:ml-0'
-            >
-              Action {label}
-            </Button>
+              onSelectTab={switchTab}
+            />
           ))}
-        </div>
+        </TabList>
 
         <p className='text-s-medium text-content_color'>
           Tous les champs avec * sont obligatoires
@@ -144,6 +137,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
             role='tabpanel'
             id='form-action-personnalisee'
             aria-labelledby='creer-action-personnalisee'
+            tabIndex={0}
             className='mt-5'
           >
             <label

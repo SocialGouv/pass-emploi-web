@@ -15,7 +15,6 @@ type RdvListProps = {
   rdvs: RdvListItem[]
   idConseiller: string
   withNameJeune?: boolean
-  id?: string
   onDelete?: (rdv: RdvListItem) => void
 }
 
@@ -23,7 +22,6 @@ const RdvList = ({
   rdvs,
   idConseiller,
   withNameJeune = true,
-  id,
   onDelete,
 }: RdvListProps) => {
   const handleDelete = (e: MouseEvent<HTMLElement>, rdv: RdvListItem) => {
@@ -41,7 +39,7 @@ const RdvList = ({
   return (
     <>
       {rdvs.length === 0 && (
-        <p id={id} className='text-md  mb-8'>
+        <p className='text-md mb-8'>
           Vous n&apos;avez pas de rendez-vous pour le moment
         </p>
       )}
@@ -49,14 +47,9 @@ const RdvList = ({
       {rdvs.length > 0 && (
         <div
           role='table'
-          id={id}
           className='table w-full'
-          aria-describedby='table-caption'
+          aria-label='Liste de mes rendez-vous'
         >
-          <span id='table-caption' className='sr-only'>
-            Liste de mes rendez-vous
-          </span>
-
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
               <HeaderCell label='Horaires' />

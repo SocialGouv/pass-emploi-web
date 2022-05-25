@@ -6,8 +6,9 @@ import React, { useState } from 'react'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
-import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import Tab from 'components/ui/Tab'
+import TabList from 'components/ui/TabList'
 import { UserStructure } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -126,42 +127,46 @@ function MesRendezvous({
         />
       )}
 
-      <div role='tablist' className='flex mb-[40px]'>
-        <Button
-          role='tab'
-          type='button'
+      <TabList className='mb-[40px]'>
+        <Tab
+          label='Prochains rendez-vous'
           controls='rendez-vous-futurs'
-          className='mr-[8px]'
-          style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
-          onClick={toggleDisplayOldRdv}
-        >
-          Prochains rendez-vous
-        </Button>
-
-        <Button
-          role='tab'
-          type='button'
+          selected={!displayOldRdv}
+          onSelectTab={toggleDisplayOldRdv}
+        />
+        <Tab
+          label='Rendez-vous passés'
           controls='rendez-vous-passes'
-          style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
-          onClick={toggleDisplayOldRdv}
-        >
-          Rendez-vous passés
-        </Button>
-      </div>
+          selected={displayOldRdv}
+          onSelectTab={toggleDisplayOldRdv}
+        />
+      </TabList>
 
       {displayOldRdv ? (
-        <RdvList
+        <div
+          role='tabpanel'
           id='rendez-vous-passes'
-          idConseiller={session?.user.id ?? ''}
-          rdvs={rendezVousPasses}
-        />
+          aria-labelledby='rendez-vous-passes--tab'
+          tabIndex={0}
+        >
+          <RdvList
+            idConseiller={session?.user.id ?? ''}
+            rdvs={rendezVousPasses}
+          />
+        </div>
       ) : (
-        <RdvList
+        <div
+          role='tabpanel'
           id='rendez-vous-futurs'
-          idConseiller={session?.user.id ?? ''}
-          rdvs={rdvsAVenir}
-          onDelete={openDeleteRdvModal}
-        />
+          aria-labelledby='rendez-vous-futurs--tab'
+          tabIndex={0}
+        >
+          <RdvList
+            idConseiller={session?.user.id ?? ''}
+            rdvs={rdvsAVenir}
+            onDelete={openDeleteRdvModal}
+          />
+        </div>
       )}
 
       {selectedRdv && (
