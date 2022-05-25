@@ -176,7 +176,11 @@ function FicheJeune({
           onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
       )}
-      <DetailsJeune jeune={jeune} onDossierMiloClick={trackDossierMiloClick} />
+      <DetailsJeune
+        jeune={jeune}
+        withSituations={session?.user.structure === UserStructure.MILO}
+        onDossierMiloClick={trackDossierMiloClick}
+      />
 
       <div className='mt-8'>
         <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>

@@ -3,6 +3,24 @@ import { compareDates, compareDatesDesc } from 'utils/date'
 /**
  * TODO: utiliser cette interface en classe mère pour Jeune lorsque la traduction sera faite
  */
+
+export enum EtatSituation {
+  EN_COURS = 'en cours',
+  PREVU = 'prévue',
+  TERMINE = 'terminée',
+}
+
+export enum CategorieSituation {
+  EMPLOI = 'Emploi',
+  CONTRAT_EN_ALTERNANCE = 'Contrat en Alternance',
+  FORMATION = 'Formation',
+  IMMERSION_EN_ENTREPRISE = 'Immersion en entreprise',
+  PMSMP = 'Pmsmp',
+  CONTRAT_DE_VOLONTARIAT_BENEVOLAT = 'Contrat de volontariat - bénévolat',
+  SCOLARITE = 'Scolarité',
+  DEMANDEUR_D_EMPLOI = "Demandeur d'emploi",
+  SANS_SITUATION = 'Sans situation',
+}
 export interface BaseJeune {
   id: string
   prenom: string
@@ -23,7 +41,12 @@ export interface Jeune {
     prenom: string
     email?: string
   }
-  situationCourante?: string
+  situationCourante: CategorieSituation
+  situations: Array<{
+    etat?: EtatSituation
+    categorie: CategorieSituation
+    dateFin?: string
+  }>
 }
 
 export type JeuneAvecNbActionsNonTerminees = Jeune & {
