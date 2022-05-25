@@ -191,7 +191,9 @@ describe('EditionRdv', () => {
     let push: Function
     beforeEach(() => {
       jeunes = desJeunes()
-      rendezVousService = mockedRendezVousService()
+      rendezVousService = mockedRendezVousService({
+        deleteRendezVous: jest.fn().mockResolvedValue(undefined),
+      })
       typesRendezVous = typesDeRendezVous()
 
       push = jest.fn(() => Promise.resolve())
@@ -794,21 +796,28 @@ describe('EditionRdv', () => {
         )
       })
 
-      it('permet la suppression du rendez-vous', async () => {
+      it('permet la suppression du rendez-vous, et retourne à la page précédente', async () => {
         // Given
-        const deleteButton1 = screen.getByText('Supprimer')
+        const deleteButtonFromPage = screen.getByText('Supprimer')
+        await act(async () => {
+          deleteButtonFromPage.click()
+        })
+        const deleteButtonFromModal = within(
+          screen.getByTestId('fake-modal')
+        ).getByText('Supprimer')
 
         // When
         await act(async () => {
-          deleteButton1.click()
-          const deleteButton2 = screen.getByText('Supprimer')
-          deleteButton2.click()
+          deleteButtonFromModal.click()
         })
 
         // Then
         expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
           rdv.id,
           'accessToken'
+        )
+        expect(push).toHaveBeenCalledWith(
+          '/mes-rendezvous?suppressionRdv=succes'
         )
       })
 

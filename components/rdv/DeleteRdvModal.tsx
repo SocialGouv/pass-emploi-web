@@ -10,7 +10,7 @@ import { formatDayDate } from 'utils/date'
 type DeleteRdvModalProps = {
   rdv: Rdv
   onClose: () => void
-  performDelete: Promise<void>
+  performDelete: () => Promise<void>
   onDeleteSuccess: (deletedRdv: Rdv) => void
 }
 
@@ -23,7 +23,7 @@ export default function DeleteRdvModal({
   const [isEchec, setIsEchec] = useState(false)
 
   function handleDeleteRdv() {
-    performDelete
+    performDelete()
       .then(function () {
         onDeleteSuccess(rdv)
       })
@@ -62,7 +62,7 @@ export default function DeleteRdvModal({
               style={ButtonStyle.WARNING}
               onClick={handleDeleteRdv}
             >
-              <span className='px-[40px]'> Supprimer </span>
+              <span className='px-[40px]'>Supprimer</span>
             </Button>
 
             <Button
@@ -70,7 +70,7 @@ export default function DeleteRdvModal({
               style={ButtonStyle.SECONDARY}
               onClick={handleCloseModal}
             >
-              <span className='px-[40px]'> Annuler </span>
+              <span className='px-[40px]'>Annuler</span>
             </Button>
           </div>
         </Modal>

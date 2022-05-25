@@ -174,10 +174,12 @@ function EditionRdv({
       {selectedRdv && (
         <DeleteRdvModal
           onClose={closeDeleteRdvModal}
-          performDelete={rendezVousService.deleteRendezVous(
-            selectedRdv.id,
-            session!.accessToken
-          )}
+          performDelete={() =>
+            rendezVousService.deleteRendezVous(
+              selectedRdv.id,
+              session!.accessToken
+            )
+          }
           onDeleteSuccess={onDeleteRdvSuccess}
           rdv={selectedRdv}
         />
