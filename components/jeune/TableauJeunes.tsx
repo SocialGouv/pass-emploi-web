@@ -341,6 +341,7 @@ export const TableauJeunes = ({
                   {withSituations && (
                     <span role='cell' className='table-cell p-4'>
                       <SituationTag
+                        className={'max-w-[180px] truncate text-ellipsis'}
                         situation={jeune.situationCourante}
                       ></SituationTag>
                     </span>

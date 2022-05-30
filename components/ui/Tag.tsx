@@ -4,12 +4,15 @@ interface TagProps {
   label: string
   color: string
   backgroundColor: string
+  className?: string
 }
 
-export function Tag({ label, color, backgroundColor }: TagProps) {
+export function Tag({ label, color, backgroundColor, className }: TagProps) {
   return (
     <span
-      className={`table-cell text-xs-medium border border-solid border-${color} text-${color} px-4 py-[2px] bg-${backgroundColor} rounded-x_large whitespace-nowrap`}
+      className={`table-cell text-xs-medium border border-solid border-${color} text-${color} px-3 py-[4px] bg-${backgroundColor} rounded-x_large whitespace-nowrap ${
+        className ?? ''
+      }`}
     >
       {label}
     </span>

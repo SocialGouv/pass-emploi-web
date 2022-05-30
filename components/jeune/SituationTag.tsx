@@ -5,6 +5,7 @@ import { CategorieSituation } from 'interfaces/jeune'
 
 interface TagProps {
   situation: CategorieSituation
+  className?: string
 }
 
 const mappedSituation: {
@@ -51,9 +52,14 @@ const mappedSituation: {
   },
 }
 
-export default function SituationTag({ situation }: TagProps) {
+export default function SituationTag({ situation, className }: TagProps) {
   const { color, backgroundColor } = mappedSituation[situation]
   return (
-    <Tag label={situation} color={color} backgroundColor={backgroundColor} />
+    <Tag
+      label={situation}
+      color={color}
+      backgroundColor={backgroundColor}
+      className={className}
+    />
   )
 }
