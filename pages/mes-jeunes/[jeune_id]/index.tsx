@@ -123,7 +123,7 @@ function FicheJeune({
 
   function switchTab(tab: Onglet): void {
     setCurrentTab(tab)
-    const tabLabel = tab === Onglet.ACTIONS ? 'Action' : 'Événements'
+    const tabLabel = tab === Onglet.ACTIONS ? 'Actions' : 'Événements'
     setTrackingLabel(pageTracking + ' - Consultation ' + tabLabel)
   }
 
