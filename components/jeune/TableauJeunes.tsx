@@ -164,7 +164,7 @@ export const TableauJeunes = ({
       ) : (
         <div
           role='table'
-          className='table table-fixed w-full'
+          className='table w-full'
           aria-describedby='table-caption'
         >
           <div id='table-caption' className='sr-only'>
@@ -341,7 +341,9 @@ export const TableauJeunes = ({
                   {withSituations && (
                     <span role='cell' className='table-cell p-4'>
                       <SituationTag
-                        className={'max-w-[180px] truncate text-ellipsis'}
+                        className={
+                          'max-w-[180px] layout_l:max-w-[100px] truncate text-ellipsis'
+                        }
                         situation={jeune.situationCourante}
                       ></SituationTag>
                     </span>
