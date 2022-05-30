@@ -9,7 +9,6 @@ import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import { ButtonStyle } from 'components/ui/Button'
@@ -38,6 +37,7 @@ interface FicheJeuneProps extends PageProps {
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
+  rdvSuppressionSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
 
@@ -48,6 +48,7 @@ function FicheJeune({
   conseillers,
   rdvCreationSuccess,
   rdvModificationSuccess,
+  rdvSuppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
@@ -61,10 +62,6 @@ function FicheJeune({
   const [expandListeConseillers, setExpandListeConseillers] =
     useState<boolean>(false)
 
-  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rdvs)
-  const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
-    undefined
-  )
   enum Tabs {
     RDVS = 'RDVS',
     ACTIONS = 'ACTIONS',
@@ -76,6 +73,10 @@ function FicheJeune({
   )
   const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
     useState<boolean>(rdvModificationSuccess ?? false)
+
+  const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
+    useState<boolean>(rdvSuppressionSuccess ?? false)
+
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
@@ -85,35 +86,19 @@ function FicheJeune({
   let initialTracking = pageTracking
   if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
   if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (rdvSuppressionSuccess) initialTracking += ' - Suppression rdv succès'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  async function closeRdvEditionMessage() {
+  async function closeRdvMessage() {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
+    setShowRdvSuppressionSuccess(false)
     await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
       shallow: true,
     })
-  }
-
-  function deleteRdv(deletedRdv: RdvListItem) {
-    setRdvsAVenir((prevRdvs) => {
-      const index = rdvsAVenir.indexOf(deletedRdv)
-      prevRdvs.splice(index, 1)
-      return prevRdvs
-    })
-  }
-
-  function openDeleteRdvModal(rdv: RdvListItem) {
-    setSelectedRdv(rdv)
-    setTrackingLabel(pageTracking + ' - Modale suppression rdv')
-  }
-
-  function closeDeleteRdvModal() {
-    setSelectedRdv(undefined)
-    setTrackingLabel(pageTracking)
   }
 
   async function closeMessageGroupeEnvoiSuccess() {
@@ -165,16 +150,24 @@ function FicheJeune({
       {showRdvCreationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
       {showRdvModificationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
+
+      {showRdvSuppressionSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été supprimé'}
+          onAcknowledge={closeRdvMessage}
+        />
+      )}
+
       {showMessageGroupeEnvoiSuccess && (
         <SuccessMessage
           label={
@@ -236,9 +229,8 @@ function FicheJeune({
         >
           {!isPoleEmploi ? (
             <RdvList
-              rdvs={rdvsAVenir}
+              rdvs={rdvs}
               idConseiller={session?.user.id ?? ''}
-              onDelete={openDeleteRdvModal}
               withNameJeune={false}
             />
           ) : (
@@ -288,13 +280,6 @@ function FicheJeune({
             </>
           )}
         </div>
-      )}
-      {selectedRdv && (
-        <DeleteRdvModal
-          onClose={closeDeleteRdvModal}
-          onDelete={deleteRdv}
-          rdv={selectedRdv}
-        />
       )}
     </>
   )
@@ -361,6 +346,9 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   if (context.query.modificationRdv)
     props.rdvModificationSuccess = context.query.modificationRdv === 'succes'
+
+  if (context.query.suppressionRdv)
+    props.rdvSuppressionSuccess = context.query.suppressionRdv === 'succes'
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query?.envoiMessage === 'succes'

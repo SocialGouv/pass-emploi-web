@@ -21,7 +21,6 @@ describe('<RdvList>', () => {
 
   describe('Quand il y a des rendez-vous', () => {
     let listeRdv: RdvListItem[]
-    let onDelete: () => {}
     beforeEach(() => {
       // Given
       listeRdv = desRdvListItems().concat(
@@ -40,10 +39,9 @@ describe('<RdvList>', () => {
           })
         )
       )
-      onDelete = jest.fn()
 
       // When
-      render(<RdvList rdvs={listeRdv} onDelete={onDelete} idConseiller='1' />)
+      render(<RdvList rdvs={listeRdv} idConseiller='1' />)
     })
 
     it('affiche les informations des rendez-vous', () => {
@@ -97,20 +95,6 @@ describe('<RdvList>', () => {
       expect(() => within(rendezVous2).getByText('oui')).toThrow()
       expect(() => within(rendezVous2).getByText('non')).toThrow()
     })
-
-    it('permet la suppression des rendez-vous', () => {
-      // Given
-      const deleteButton = screen.getByLabelText<HTMLButtonElement>(
-        `Supprimer le rendez-vous du ${listeRdv[0].date}`
-      )
-
-      // When
-      deleteButton.click()
-
-      // Then
-      expect(deleteButton).toBeInTheDocument()
-      expect(onDelete).toHaveBeenCalledWith(listeRdv[0])
-    })
   })
 
   describe('Quand plusieurs jeunes participe à un rendez-vous', () => {
@@ -136,9 +120,7 @@ describe('<RdvList>', () => {
         ),
       ]
 
-      const onDelete = jest.fn()
-
-      render(<RdvList rdvs={listeRdv} onDelete={onDelete} idConseiller='1' />)
+      render(<RdvList rdvs={listeRdv} idConseiller='1' />)
 
       // When
       // Then
