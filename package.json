@@ -22,7 +22,7 @@
     "@elastic/apm-rum-react": "1.4.1",
     "crypto-js": "4.1.1",
     "dotenv": "16.0.1",
-    "elastic-apm-node": "3.33.0",
+    "elastic-apm-node": "3.34.0",
     "firebase": "9.8.2",
     "jsonwebtoken": "8.5.1",
     "luxon": "2.4.0",
