@@ -79,7 +79,7 @@ module.exports = {
       screens: {
         layout_base: { max: '900px' },
         layout_m: { max: '1024px' },
-        layout_l: '1200px',
+        layout_l: { max: '1200px' },
         layout_xl: '1425px',
       },
       fontFamily: {
