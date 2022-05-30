@@ -62,11 +62,11 @@ function FicheJeune({
   const [expandListeConseillers, setExpandListeConseillers] =
     useState<boolean>(false)
 
-  enum Tabs {
+  enum Onglet {
     RDVS = 'RDVS',
     ACTIONS = 'ACTIONS',
   }
-  const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.RDVS)
+  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.RDVS)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -119,6 +119,12 @@ function FicheJeune({
 
   function trackDossierMiloClick() {
     setTrackingLabel(pageTracking + ' - Dossier i-Milo')
+  }
+
+  function switchTab(tab: Onglet): void {
+    setCurrentTab(tab)
+    const tabLabel = tab === Onglet.ACTIONS ? 'Action' : 'Événements'
+    setTrackingLabel(pageTracking + ' - Consultation ' + tabLabel)
   }
 
   useMatomo(trackingLabel)
@@ -204,22 +210,22 @@ function FicheJeune({
         <Tab
           label='Rendez-vous'
           count={!isPoleEmploi ? rdvs.length : undefined}
-          selected={currentTab === Tabs.RDVS}
+          selected={currentTab === Onglet.RDVS}
           controls='liste-rdvs'
-          onSelectTab={() => setCurrentTab(Tabs.RDVS)}
+          onSelectTab={() => switchTab(Onglet.RDVS)}
           iconName={IconName.Calendar}
         />
         <Tab
           label='Actions'
           count={!isPoleEmploi ? actions.length : undefined}
-          selected={currentTab === Tabs.ACTIONS}
+          selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
-          onSelectTab={() => setCurrentTab(Tabs.ACTIONS)}
+          onSelectTab={() => switchTab(Onglet.ACTIONS)}
           iconName={IconName.Actions}
         />
       </TabList>
 
-      {currentTab === Tabs.RDVS && (
+      {currentTab === Onglet.RDVS && (
         <div
           role='tabpanel'
           aria-labelledby='liste-rdvs--tab'
@@ -238,7 +244,7 @@ function FicheJeune({
           )}
         </div>
       )}
-      {currentTab === Tabs.ACTIONS && (
+      {currentTab === Onglet.ACTIONS && (
         <div
           role='tabpanel'
           aria-labelledby='liste-actions--tab'
