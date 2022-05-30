@@ -192,7 +192,7 @@ describe('EditionRdv', () => {
     beforeEach(() => {
       jeunes = desJeunes()
       rendezVousService = mockedRendezVousService({
-        deleteRendezVous: jest.fn().mockResolvedValue(undefined),
+        deleteRendezVous: jest.fn(async () => undefined),
       })
       typesRendezVous = typesDeRendezVous()
 

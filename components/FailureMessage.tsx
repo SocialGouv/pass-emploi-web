@@ -3,18 +3,16 @@ import FailureIcon from '../assets/icons/important_outline.svg'
 
 type FailureMessageProps = {
   label: string
-  alert?: boolean
   onAcknowledge?: () => void
 }
 
 export default function FailureMessage({
   label,
-  alert = true,
   onAcknowledge,
 }: FailureMessageProps) {
   return (
     <div
-      role={`${alert ? 'alert' : 'undefined'}`}
+      role='alert'
       className='text-warning bg-warning_lighten p-6 flex items-center rounded-medium mb-8'
     >
       <FailureIcon

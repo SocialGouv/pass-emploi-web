@@ -56,6 +56,7 @@ function MesRendezvous({
   let initialTracking = pageTracking
   if (creationSuccess) initialTracking += ' - Creation rdv succès'
   if (modificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (suppressionSuccess) initialTracking += ' - Suppression rdv succès'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -68,7 +69,7 @@ function MesRendezvous({
     }
   }
 
-  function closeRdvEditionMessage(): void {
+  function closeRdvMessage(): void {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
     setShowRdvSuppressionSuccess(false)
@@ -80,11 +81,7 @@ function MesRendezvous({
     router.replace('', undefined, { shallow: true })
   }
 
-  useMatomo(
-    showRdvSuppressionSuccess
-      ? trackingTitle + ' - Succès modale suppression rdv'
-      : trackingTitle
-  )
+  useMatomo(trackingTitle)
 
   return (
     <>
@@ -95,21 +92,21 @@ function MesRendezvous({
       {showRdvCreationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
       {showRdvModificationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
       {showRdvSuppressionSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 

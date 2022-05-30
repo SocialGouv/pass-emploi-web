@@ -86,12 +86,13 @@ function FicheJeune({
   let initialTracking = pageTracking
   if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
   if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (rdvSuppressionSuccess) initialTracking += ' - Suppression rdv succès'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  async function closeRdvEditionMessage() {
+  async function closeRdvMessage() {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
     setShowRdvSuppressionSuccess(false)
@@ -122,12 +123,6 @@ function FicheJeune({
 
   useMatomo(trackingLabel)
 
-  useMatomo(
-    showRdvSuppressionSuccess
-      ? trackingLabel + ' - Succès modale suppression rdv'
-      : trackingLabel
-  )
-
   useEffect(() => {
     setCurrentJeune(jeune)
   }, [jeune, setCurrentJeune])
@@ -155,21 +150,21 @@ function FicheJeune({
       {showRdvCreationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
       {showRdvModificationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
       {showRdvSuppressionSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 

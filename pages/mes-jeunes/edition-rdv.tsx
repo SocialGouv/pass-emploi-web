@@ -1,15 +1,16 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useState, MouseEvent } from 'react'
+import React, { useState } from 'react'
 
 import DeleteIcon from '../../assets/icons/delete.svg'
-import DeleteRdvModal from '../../components/rdv/DeleteRdvModal'
-import Button, { ButtonStyle } from '../../components/ui/Button'
+import FailureMessage from '../../components/FailureMessage'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
+import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
@@ -44,11 +45,13 @@ function EditionRdv({
   const { data: session } = useSession<true>({ required: true })
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
-  const [selectedRdv, setSelectedRdv] = useState<Rdv | undefined>(undefined)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
     useState<RdvFormData | undefined>(undefined)
+
+  const [showDeleteRdvModal, setShowDeleteRdvModal] = useState<boolean>(false)
+  const [showDeleteRdvError, setShowDeleteRdvError] = useState<boolean>(false)
   const [hasChanges, setHasChanges] = useState<boolean>(false)
 
   let initialTracking: string
@@ -56,10 +59,10 @@ function EditionRdv({
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  const handleDelete = (e: MouseEvent<HTMLElement>, rdv: Rdv) => {
+  function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
     e.stopPropagation()
-    openDeleteRdvModal(rdv)
+    openDeleteRdvModal()
   }
 
   function openLeavePageModal() {
@@ -84,19 +87,14 @@ function EditionRdv({
     setTrackingTitle(initialTracking)
   }
 
-  function openDeleteRdvModal(rdv: Rdv) {
-    setSelectedRdv(rdv)
+  function openDeleteRdvModal() {
+    setShowDeleteRdvModal(true)
     setTrackingTitle(initialTracking + ' - Modale suppression rdv')
   }
 
   function closeDeleteRdvModal() {
-    setSelectedRdv(undefined)
+    setShowDeleteRdvModal(false)
     setTrackingTitle(initialTracking)
-  }
-
-  async function onDeleteRdvSuccess() {
-    const [redirectPath] = returnTo.split('?')
-    await router.push(`${redirectPath}?suppressionRdv=succes`)
   }
 
   async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
@@ -120,23 +118,41 @@ function EditionRdv({
     await router.push(`${redirectPath}?${queryParam}=succes`)
   }
 
+  async function deleteRendezVous(): Promise<void> {
+    setShowDeleteRdvError(false)
+    setShowDeleteRdvModal(false)
+    try {
+      await rendezVousService.deleteRendezVous(rdv!.id, session!.accessToken)
+      const [redirectPath] = returnTo.split('?')
+      await router.push(`${redirectPath}?suppressionRdv=succes`)
+    } catch (e) {
+      setShowDeleteRdvError(true)
+    }
+  }
+
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
   useMatomo(trackingTitle)
 
   return (
     <>
+      {showDeleteRdvError && (
+        <FailureMessage
+          label="Votre rendez-vous n'a pas été supprimé, veuillez essayer ultérieurement"
+          onAcknowledge={() => setShowDeleteRdvError(false)}
+        />
+      )}
+
       {rdv && (
-        <div className='flex justify-end'>
-          <Button
-            style={ButtonStyle.SECONDARY}
-            onClick={(e) => handleDelete(e, rdv)}
-            aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
-          >
-            <DeleteIcon aria-hidden='true' focusable='false' className='mr-2' />
-            Supprimer
-          </Button>
-        </div>
+        <Button
+          style={ButtonStyle.SECONDARY}
+          onClick={handleDelete}
+          aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+          className='mb-4'
+        >
+          <DeleteIcon aria-hidden='true' focusable='false' className='mr-2' />
+          Supprimer
+        </Button>
       )}
 
       <EditionRdvForm
@@ -171,17 +187,10 @@ function EditionRdv({
           }
         />
       )}
-      {selectedRdv && (
+      {showDeleteRdvModal && (
         <DeleteRdvModal
           onClose={closeDeleteRdvModal}
-          performDelete={() =>
-            rendezVousService.deleteRendezVous(
-              selectedRdv.id,
-              session!.accessToken
-            )
-          }
-          onDeleteSuccess={onDeleteRdvSuccess}
-          rdv={selectedRdv}
+          performDelete={deleteRendezVous}
         />
       )}
     </>
