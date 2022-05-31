@@ -41,9 +41,12 @@ export default function Layout({ children }: LayoutProps) {
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [conseiller, setConseiller] = useConseiller()
+
   const [chats, setChats] = useState<JeuneChat[]>([])
-  const destructorsRef = useRef<(() => void)[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
+
+  const mainRef = useRef<HTMLDivElement>(null)
+  const destructorsRef = useRef<(() => void)[]>([])
 
   function hasMessageNonLu(): boolean {
     return chats.some(
@@ -134,6 +137,10 @@ export default function Layout({ children }: LayoutProps) {
     conseiller,
   ])
 
+  useEffect(() => {
+    if (mainRef.current) mainRef.current.scrollTo(0, 0)
+  }, [router.asPath, mainRef])
+
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
@@ -143,7 +150,7 @@ export default function Layout({ children }: LayoutProps) {
         }`}
       >
         <Sidebar />
-        <div className={styles.page}>
+        <div ref={mainRef} className={styles.page}>
           <Header
             currentPath={router.asPath}
             returnTo={returnTo}
