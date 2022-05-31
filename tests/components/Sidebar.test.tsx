@@ -59,7 +59,7 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Rendez-vous')).toThrow()
   })
 
-  it('affiche le lien de supervision lorsque le conseiller est superviseur', () => {
+  it('affiche le lien de réaffectation des jeunes lorsque le conseiller est superviseur', () => {
     // WHEN
     renderWithSession(<Sidebar />, {
       user: {
@@ -73,9 +73,9 @@ describe('<Sidebar/>', () => {
     })
 
     // THEN
-    expect(screen.getByRole('link', { name: 'Supervision' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Réaffectation' })).toHaveAttribute(
       'href',
-      '/supervision'
+      '/supervision/reaffectation'
     )
   })
 })

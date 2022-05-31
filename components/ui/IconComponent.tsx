@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef } from 'react'
 
 import ActionsIcon from '../../assets/icons/actions.svg'
 import AideIcon from '../../assets/icons/aide.svg'
-import SupervisionIcon from '../../assets/icons/arrow-right.svg'
+import ReaffectationIcon from '../../assets/icons/arrow-right.svg'
 import CalendarIcon from '../../assets/icons/calendar.svg'
 import LaunchIcon from '../../assets/icons/launch.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
@@ -19,7 +19,7 @@ export enum IconName {
   People = 'People',
   Profil = 'Profil',
   RendezVous = 'RendezVous',
-  Supervision = 'Supervision',
+  Reaffectation = 'Reaffectation',
 }
 
 const iconsByName: { [key in IconName]: any } = {
@@ -31,7 +31,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.RendezVous]: RendezvousIcon,
-  [IconName.Supervision]: SupervisionIcon,
+  [IconName.Reaffectation]: ReaffectationIcon,
 }
 
 interface IconComponentProps extends ComponentPropsWithoutRef<any> {

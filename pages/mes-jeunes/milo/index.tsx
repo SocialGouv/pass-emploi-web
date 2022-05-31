@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 
 function Milo() {
-  return <></>
+  return null
 }
 
 export const getServerSideProps = () => {

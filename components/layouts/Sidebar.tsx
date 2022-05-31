@@ -60,10 +60,10 @@ export default function Sidebar({}: SidebarProps) {
           {isSuperviseur && (
             <>
               <NavbarLink
-                iconName={IconName.Supervision}
-                label='Supervision'
-                href='/supervision'
-                isActive={isCurrentRoute('/supervision')}
+                iconName={IconName.Reaffectation}
+                label='Réaffectation'
+                href='/supervision/reaffectation'
+                isActive={isCurrentRoute('/supervision/reaffectation')}
               />
             </>
           )}
