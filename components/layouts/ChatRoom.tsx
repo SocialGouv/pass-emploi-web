@@ -7,6 +7,7 @@ import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import EmptyMessagesImage from '../../assets/images/empty_state.svg'
 
 import Conversation from 'components/Conversation'
+import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -95,7 +96,8 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                       </span>
                       <span className='text-sm text-grey_800 mb-[8px]'>
                         {' '}
-                        {jeuneChat.lastMessageSentBy === 'conseiller'
+                        {jeuneChat.lastMessageSentBy ===
+                        UserType.CONSEILLER.toLowerCase()
                           ? 'Vous'
                           : jeuneChat.firstName}{' '}
                         : {jeuneChat.lastMessageContent}

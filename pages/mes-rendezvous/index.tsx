@@ -3,11 +3,11 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
-import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import Tab from 'components/ui/Tab'
+import TabList from 'components/ui/TabList'
 import { UserStructure } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -22,6 +22,7 @@ interface MesRendezvousProps extends PageProps {
   rendezVousPasses: RdvListItem[]
   creationSuccess?: boolean
   modificationSuccess?: boolean
+  suppressionSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
 }
@@ -31,6 +32,7 @@ function MesRendezvous({
   rendezVousPasses,
   creationSuccess,
   modificationSuccess,
+  suppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) {
   const router = useRouter()
@@ -41,29 +43,22 @@ function MesRendezvous({
   )
   const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
     useState<boolean>(modificationSuccess ?? false)
+
+  const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
+    useState<boolean>(suppressionSuccess ?? false)
+
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
-  const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
-    undefined
-  )
-  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rendezVousFuturs)
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
 
   const pageTracking = `Mes rendez-vous`
   let initialTracking = pageTracking
   if (creationSuccess) initialTracking += ' - Creation rdv succès'
   if (modificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (suppressionSuccess) initialTracking += ' - Suppression rdv succès'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-
-  function deleteRdv(deletedRdv: RdvListItem) {
-    setRdvsAVenir((prevRdvs) => {
-      const index = rdvsAVenir.indexOf(deletedRdv)
-      prevRdvs.splice(index, 1)
-      return prevRdvs
-    })
-  }
 
   function toggleDisplayOldRdv(): void {
     setDisplayOldRdv(!displayOldRdv)
@@ -74,25 +69,16 @@ function MesRendezvous({
     }
   }
 
-  function closeRdvEditionMessage(): void {
+  function closeRdvMessage(): void {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
+    setShowRdvSuppressionSuccess(false)
     router.replace('', undefined, { shallow: true })
   }
 
   function closeMessageGroupeEnvoiSuccess(): void {
     setShowMessageGroupeEnvoiSuccess(false)
     router.replace('', undefined, { shallow: true })
-  }
-
-  function openDeleteRdvModal(rdv: RdvListItem) {
-    setSelectedRdv(rdv)
-    setTrackingTitle(pageTracking + ' - Modale suppression rdv')
-  }
-
-  function closeDeleteRdvModal() {
-    setSelectedRdv(undefined)
-    setTrackingTitle(pageTracking)
   }
 
   useMatomo(trackingTitle)
@@ -106,14 +92,21 @@ function MesRendezvous({
       {showRdvCreationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
       {showRdvModificationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
+        />
+      )}
+
+      {showRdvSuppressionSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été supprimé'}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
@@ -126,50 +119,45 @@ function MesRendezvous({
         />
       )}
 
-      <div role='tablist' className='flex mb-[40px]'>
-        <Button
-          role='tab'
-          type='button'
+      <TabList className='mb-[40px]'>
+        <Tab
+          label='Prochains rendez-vous'
           controls='rendez-vous-futurs'
-          className='mr-[8px]'
-          style={displayOldRdv ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY}
-          onClick={toggleDisplayOldRdv}
-        >
-          Prochains rendez-vous
-        </Button>
-
-        <Button
-          role='tab'
-          type='button'
+          selected={!displayOldRdv}
+          onSelectTab={toggleDisplayOldRdv}
+        />
+        <Tab
+          label='Rendez-vous passés'
           controls='rendez-vous-passes'
-          style={displayOldRdv ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
-          onClick={toggleDisplayOldRdv}
-        >
-          Rendez-vous passés
-        </Button>
-      </div>
+          selected={displayOldRdv}
+          onSelectTab={toggleDisplayOldRdv}
+        />
+      </TabList>
 
       {displayOldRdv ? (
-        <RdvList
+        <div
+          role='tabpanel'
           id='rendez-vous-passes'
-          idConseiller={session?.user.id ?? ''}
-          rdvs={rendezVousPasses}
-        />
+          aria-labelledby='rendez-vous-passes--tab'
+          tabIndex={0}
+        >
+          <RdvList
+            idConseiller={session?.user.id ?? ''}
+            rdvs={rendezVousPasses}
+          />
+        </div>
       ) : (
-        <RdvList
+        <div
+          role='tabpanel'
           id='rendez-vous-futurs'
-          idConseiller={session?.user.id ?? ''}
-          rdvs={rdvsAVenir}
-          onDelete={openDeleteRdvModal}
-        />
-      )}
-
-      {selectedRdv && (
-        <DeleteRdvModal
-          rdv={selectedRdv}
-          onClose={closeDeleteRdvModal}
-          onDelete={deleteRdv}
-        />
+          aria-labelledby='rendez-vous-futurs--tab'
+          tabIndex={0}
+        >
+          <RdvList
+            idConseiller={session?.user.id ?? ''}
+            rdvs={rendezVousFuturs}
+          />
+        </div>
       )}
     </>
   )
@@ -209,6 +197,9 @@ export const getServerSideProps: GetServerSideProps<
 
   if (context.query.modificationRdv)
     props.modificationSuccess = context.query.modificationRdv === 'succes'
+
+  if (context.query.suppressionRdv)
+    props.suppressionSuccess = context.query.suppressionRdv === 'succes'
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'

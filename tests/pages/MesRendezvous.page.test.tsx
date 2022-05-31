@@ -216,7 +216,6 @@ describe('MesRendezvous', () => {
             rendezVousFuturs: [
               expect.objectContaining({
                 beneficiaires: 'kenji Jirac',
-                hasComment: true,
                 idCreateur: '1',
                 type: 'Autre',
               }),

@@ -3,13 +3,31 @@ import { compareDates, compareDatesDesc } from 'utils/date'
 /**
  * TODO: utiliser cette interface en classe mère pour Jeune lorsque la traduction sera faite
  */
+
+export enum EtatSituation {
+  EN_COURS = 'en cours',
+  PREVU = 'prévue',
+  TERMINE = 'terminée',
+}
+
+export enum CategorieSituation {
+  EMPLOI = 'Emploi',
+  CONTRAT_EN_ALTERNANCE = 'Contrat en Alternance',
+  FORMATION = 'Formation',
+  IMMERSION_EN_ENTREPRISE = 'Immersion en entreprise',
+  PMSMP = 'Pmsmp',
+  CONTRAT_DE_VOLONTARIAT_BENEVOLAT = 'Contrat de volontariat - bénévolat',
+  SCOLARITE = 'Scolarité',
+  DEMANDEUR_D_EMPLOI = "Demandeur d'emploi",
+  SANS_SITUATION = 'Sans situation',
+}
 export interface BaseJeune {
   id: string
   prenom: string
   nom: string
 }
 
-export type Jeune = {
+export interface Jeune {
   id: string
   firstName: string
   lastName: string
@@ -17,11 +35,18 @@ export type Jeune = {
   lastActivity: string
   email?: string
   isActivated?: boolean
+  urlDossier?: string
   conseillerPrecedent?: {
     nom: string
     prenom: string
     email?: string
   }
+  situationCourante: CategorieSituation
+  situations: Array<{
+    etat?: EtatSituation
+    categorie: CategorieSituation
+    dateFin?: string
+  }>
 }
 
 export type JeuneAvecNbActionsNonTerminees = Jeune & {
@@ -86,6 +111,19 @@ export function compareJeunesByFirstname(jeune1: Jeune, jeune2: Jeune): number {
   return `${jeune1.firstName}${jeune1.lastName}`.localeCompare(
     `${jeune2.firstName}${jeune2.lastName}`
   )
+}
+
+export function compareJeunesBySituation(jeune1: Jeune, jeune2: Jeune): number {
+  return `${jeune1.situationCourante}`.localeCompare(
+    `${jeune2.situationCourante}`
+  )
+}
+
+export function compareJeunesBySituationDesc(
+  jeune1: Jeune,
+  jeune2: Jeune
+): number {
+  return -compareJeunesBySituation(jeune1, jeune2)
 }
 
 export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {

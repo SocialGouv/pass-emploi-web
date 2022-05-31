@@ -9,7 +9,7 @@ import EchecMessage from 'components/EchecMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { Action, StatutAction } from 'interfaces/action'
-import { UserStructure } from 'interfaces/conseiller'
+import { UserStructure, UserType } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
@@ -91,7 +91,7 @@ function PageAction({
 
   return (
     <>
-      {action.creatorType === 'conseiller' && (
+      {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
         <Button
           label="Supprimer l'action"
           onClick={() => deleteAction()}

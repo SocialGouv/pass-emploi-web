@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
-import IconComponent from '../ui/IconComponent'
+import IconComponent, { IconName } from '../ui/IconComponent'
 import NavbarLink from '../ui/NavbarLink'
 
 import { UserStructure } from 'interfaces/conseiller'
@@ -45,7 +45,7 @@ export default function Sidebar({}: SidebarProps) {
             isActive={isCurrentRoute('/mes-jeunes')}
             href='/mes-jeunes'
             label='Mes jeunes'
-            iconName='people'
+            iconName={IconName.People}
           />
 
           {!isPoleEmploi && (
@@ -53,14 +53,14 @@ export default function Sidebar({}: SidebarProps) {
               isActive={isCurrentRoute('/mes-rendezvous')}
               href='/mes-rendezvous'
               label='Rendez-vous'
-              iconName='rendezvous'
+              iconName={IconName.RendezVous}
             />
           )}
 
           {isSuperviseur && (
             <>
               <NavbarLink
-                iconName='supervision'
+                iconName={IconName.Supervision}
                 label='Supervision'
                 href='/supervision'
                 isActive={isCurrentRoute('/supervision')}
@@ -80,18 +80,18 @@ export default function Sidebar({}: SidebarProps) {
             className='hover:bg-primary_darken'
           >
             <IconComponent
-              name='aide'
-              aria-hidden='true'
-              focusable='false'
+              name={IconName.Aide}
+              aria-hidden={true}
+              focusable={false}
               className='mr-2 fill-blanc'
             />
             <span className='text-md text-blanc text-center layout_m:sr-only'>
               Aide
             </span>
             <IconComponent
-              name='launch'
+              name={IconName.Launch}
               aria-hidden={true}
-              focusable='false'
+              focusable={false}
               className='mx-2 fill-blanc layout_m:hidden'
             />
           </a>
@@ -101,7 +101,7 @@ export default function Sidebar({}: SidebarProps) {
             isActive={isCurrentRoute('/profil')}
             href='/profil'
             label={session.user.name}
-            iconName='profil'
+            iconName={IconName.Profil}
             className='break-all'
           />
         )}
@@ -112,7 +112,7 @@ export default function Sidebar({}: SidebarProps) {
         <NavbarLink
           href='/api/logout'
           label='Déconnexion'
-          iconName='logout'
+          iconName={IconName.Logout}
           onClick={handleLogout}
         />
       </div>

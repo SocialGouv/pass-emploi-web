@@ -1,4 +1,3 @@
-
 .text-md {
   font-size: 16px;
   font-style: normal;
@@ -12,7 +11,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 21px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 
 .text-xs {
@@ -20,7 +19,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 18px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 
 .text-md-semi {
@@ -36,7 +35,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 21px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 
 .text-xs-semi {
@@ -44,7 +43,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: 18px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 
 .text-xxs-italic {
@@ -52,7 +51,7 @@
   font-style: italic;
   font-weight: 500;
   line-height: 13px;
-  letter-spacing: 0em;
+  letter-spacing: 0;
   text-align: right;
 }
 /*new à implémenter avec la nouvelle nomenclature et mettre en rem*/
@@ -61,8 +60,7 @@
   font-style: normal;
   font-weight: 600;
   line-height: 21px;
-  letter-spacing: 0px;
-  text-align: left;
+  letter-spacing: 0;
 }
 
 .text-xs-regular {
@@ -70,16 +68,14 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
-  text-align: left;
 }
 
 .text-s-medium {
   font-size: 14px;
   font-style: normal;
   font-weight: bold;
-  line-height: 21px;
-  letter-spacing: 0px;
-  text-align: left;
+  line-height: 24px;
+  letter-spacing: 0;
 }
 
 .text-s-regular {
@@ -87,17 +83,15 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
-  letter-spacing: 0em;
-  text-align: left;
+  letter-spacing: 0;
 }
-
 
 .text-base-medium {
   font-size: 16px;
   font-style: normal;
   font-weight: bold;
   line-height: 21px;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 
 .text-base-regular {
@@ -105,8 +99,15 @@
   font-style: normal;
   font-weight: 400;
   line-height: 22px;
-  letter-spacing: 0em;
-  text-align: left;
+  letter-spacing: 0;
+}
+
+.text-m-regular {
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+  letter-spacing: 0;
 }
 
 .text-m-medium {
@@ -114,7 +115,7 @@
   font-style: normal;
   font-weight: bold;
   line-height: 26px;
-  letter-spacing: 0em;
+  letter-spacing: 0;
 }
 
 .text-l-medium {
@@ -122,8 +123,7 @@
   font-style: normal;
   font-weight: bold;
   line-height: 32px;
-  letter-spacing: 0em;
-  text-align: left;
+  letter-spacing: 0;
 }
 
 .text-l-regular {
@@ -131,7 +131,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 32px;
-  letter-spacing: 0em;
+  letter-spacing: 0;
 }
 
 .text-xl-medium {
@@ -140,8 +140,3 @@
   font-weight: 500;
   line-height: 40px;
 }
-
-
-
-
-

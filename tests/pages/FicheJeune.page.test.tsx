@@ -1,11 +1,10 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { DetailsJeune } from '../../components/jeune/DetailsJeune'
 import renderWithSession from '../renderWithSession'
 
 import { uneAction, uneListeDActions } from 'fixtures/action'
@@ -26,7 +25,11 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
+import {
+  ConseillerHistorique,
+  CategorieSituation,
+  EtatSituation,
+} from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
@@ -78,13 +81,44 @@ describe('Fiche Jeune', () => {
 
       it('affiche la liste des rendez-vous du jeune', async () => {
         // Then
+        expect(
+          screen.getByRole('tab', { selected: true })
+        ).toHaveAccessibleName('Rendez-vous 2')
         rdvs.forEach((rdv) => {
           expect(screen.getByText(rdv.type)).toBeInTheDocument()
           expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         })
+        expect(() =>
+          screen.getByRole('table', { name: /Liste des actions de/ })
+        ).toThrow()
+      })
+
+      it('affiche les actions du jeune', async () => {
+        // When
+        const tabActions = screen.getByRole('tab', { name: 'Actions 4' })
+        await act(async () => {
+          tabActions.click()
+        })
+
+        // Then
+        actions.slice(0, 3).forEach((action) => {
+          expect(screen.getByText(action.content)).toBeInTheDocument()
+        })
+        expect(
+          screen.getByRole('tab', { selected: true })
+        ).toHaveAccessibleName('Actions 4')
+        expect(() =>
+          screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
+        ).toThrow()
       })
 
       it('affiche un lien vers les actions du jeune', async () => {
+        // When
+        const tabActions = screen.getByRole('tab', { name: 'Actions 4' })
+        await act(async () => {
+          tabActions.click()
+        })
+
         // Then
         const lienActions = screen.getByRole('link', {
           name: 'Voir la liste des actions du jeune',
@@ -94,12 +128,6 @@ describe('Fiche Jeune', () => {
           'href',
           `/mes-jeunes/${jeune.id}/actions`
         )
-      })
-
-      it('affiche les actions du jeune', async () => {
-        actions.forEach((action) => {
-          expect(screen.getByText(action.content)).toBeInTheDocument()
-        })
       })
 
       it('permet la prise de rendez-vous', async () => {
@@ -216,7 +244,17 @@ describe('Fiche Jeune', () => {
         ).toBeInTheDocument()
       })
 
+      it('ne permet pas la prise de rendez-vous', async () => {
+        // Then
+        expect(() => screen.getByText('Fixer un rendez-vous')).toThrow()
+      })
+
       it("n'affiche pas de lien vers les actions du jeune", async () => {
+        // Given
+        await act(async () => {
+          screen.getByRole('tab', { name: /Actions/ }).click()
+        })
+
         // Then
         expect(() =>
           screen.getByRole('link', {
@@ -229,57 +267,143 @@ describe('Fiche Jeune', () => {
           )
         ).toBeInTheDocument()
       })
+    })
 
-      it('ne permet pas la prise de rendez-vous', async () => {
-        // Then
-        expect(() => screen.getByText('Fixer un rendez-vous')).toThrow()
+    describe('quand l’utilisateur est un conseiller MILO', () => {
+      describe('quand le jeune n’a aucune situation', () => {
+        it('affiche les informations concernant la situation du jeune', () => {
+          // Given
+          renderWithSession(
+            <DIProvider dependances={{ jeunesService, rendezVousService }}>
+              <CurrentJeuneProvider>
+                <FicheJeune
+                  jeune={jeune}
+                  rdvs={[]}
+                  actions={actions}
+                  conseillers={[]}
+                  pageTitle={''}
+                />
+              </CurrentJeuneProvider>
+            </DIProvider>,
+            {
+              user: {
+                id: 'idConseiller',
+                name: 'Tavernier',
+                email: 'fake@email.fr',
+                structure: UserStructure.MILO,
+                estConseiller: true,
+                estSuperviseur: false,
+              },
+            }
+          )
+
+          // Then
+          expect(screen.getByText('Situation')).toBeInTheDocument()
+          expect(screen.getByText('Sans situation')).toBeInTheDocument()
+        })
+      })
+      describe('quand le jeune a une liste de situations', () => {
+        it('affiche les informations concernant la situation du jeune ', () => {
+          // Given
+          const situations = [
+            {
+              etat: EtatSituation.EN_COURS,
+              categorie: CategorieSituation.EMPLOI,
+            },
+            {
+              etat: EtatSituation.PREVU,
+              categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
+            },
+          ]
+          renderWithSession(
+            <DIProvider dependances={{ jeunesService, rendezVousService }}>
+              <CurrentJeuneProvider>
+                <FicheJeune
+                  jeune={unJeune({ situations: situations })}
+                  rdvs={[]}
+                  actions={actions}
+                  conseillers={[]}
+                  pageTitle={''}
+                />
+              </CurrentJeuneProvider>
+            </DIProvider>,
+            {
+              user: {
+                id: 'idConseiller',
+                name: 'Tavernier',
+                email: 'fake@email.fr',
+                structure: UserStructure.MILO,
+                estConseiller: true,
+                estSuperviseur: false,
+              },
+            }
+          )
+
+          // Then
+          expect(screen.getByText('Situation')).toBeInTheDocument()
+          expect(screen.getByText('Emploi')).toBeInTheDocument()
+          expect(screen.getByText('en cours')).toBeInTheDocument()
+          expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
+        })
       })
     })
 
-    it('affiche un lien d acces à la page d action quand le jeune n a pas d action', async () => {
-      renderWithSession(
-        <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <CurrentJeuneProvider>
-            <FicheJeune
-              jeune={jeune}
-              rdvs={rdvs}
-              actions={[]}
-              conseillers={[]}
-              pageTitle={''}
-            />
-          </CurrentJeuneProvider>
-        </DIProvider>
-      )
-      expect(
-        screen.getByRole('link', {
-          name: 'Accédez à cette page pour créer une action',
+    describe("quand le jeune n'a pas d'action", () => {
+      it('affiche un lien d acces à la page d action', async () => {
+        // Given
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
+            <CurrentJeuneProvider>
+              <FicheJeune
+                jeune={jeune}
+                rdvs={rdvs}
+                actions={[]}
+                conseillers={[]}
+                pageTitle={''}
+              />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
+
+        // When
+        await act(async () => {
+          screen.getByRole('tab', { name: /Actions/ }).click()
         })
-      ).toBeInTheDocument()
+
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Accédez à cette page pour créer une action',
+          })
+        ).toBeInTheDocument()
+      })
     })
 
-    it("permet de supprimer un jeune qui ne s'est jamais connecté", async () => {
-      // When
-      renderWithSession(
-        <DIProvider dependances={{ jeunesService, rendezVousService }}>
-          <CurrentJeuneProvider>
-            <FicheJeune
-              jeune={{ ...jeune, isActivated: false }}
-              rdvs={rdvs}
-              actions={[]}
-              conseillers={[]}
-              pageTitle={''}
-            />
-          </CurrentJeuneProvider>
-        </DIProvider>
-      )
+    describe("quand le jeune ne s'est jamais connecté", () => {
+      it('permet de supprimer le jeune', async () => {
+        // When
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
+            <CurrentJeuneProvider>
+              <FicheJeune
+                jeune={{ ...jeune, isActivated: false }}
+                rdvs={rdvs}
+                actions={[]}
+                conseillers={[]}
+                pageTitle={''}
+              />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
 
-      // Then
-      const link = screen.getByText('Supprimer ce compte')
-      expect(link).toBeInTheDocument()
-      expect(link).toHaveAttribute(
-        'href',
-        `/mes-jeunes/${jeune.id}/suppression`
-      )
+        // Then
+        const link = screen.getByText('Supprimer ce compte')
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute(
+          'href',
+          `/mes-jeunes/${jeune.id}/suppression`
+        )
+      })
     })
 
     describe('quand la création de rdv est réussie', () => {
@@ -479,7 +603,7 @@ describe('Fiche Jeune', () => {
         })
       })
 
-      it('récupère les 3 premieres actions du jeune', async () => {
+      it('récupère les actions du jeune', async () => {
         // Then
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
           'id-jeune',
@@ -491,6 +615,7 @@ describe('Fiche Jeune', () => {
               uneAction({ creationDate: dateFutureLoin.toISOString() }),
               uneAction({ creationDate: dateFuture.toISOString() }),
               uneAction({ creationDate: now.toISOString() }),
+              uneAction({ creationDate: datePasseeLoin.toISOString() }),
             ],
           },
         })

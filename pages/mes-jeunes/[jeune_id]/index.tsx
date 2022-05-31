@@ -4,17 +4,18 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { ButtonStyle } from '../../../components/ui/Button'
-
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
+import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import { IconName } from 'components/ui/IconComponent'
+import Tab from 'components/ui/Tab'
+import TabList from 'components/ui/TabList'
 import { Action, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
@@ -36,6 +37,7 @@ interface FicheJeuneProps extends PageProps {
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
+  rdvSuppressionSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
 
@@ -46,31 +48,37 @@ function FicheJeune({
   conseillers,
   rdvCreationSuccess,
   rdvModificationSuccess,
+  rdvSuppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
-
   const [, setCurrentJeune] = useCurrentJeune()
+
   const listeConseillersReduite = conseillers.slice(0, 5)
   const [conseillersAffiches, setConseillersAffiches] = useState<
     ConseillerHistorique[]
   >(listeConseillersReduite)
-  const [rdvsAVenir, setRdvsAVenir] = useState<RdvListItem[]>(rdvs)
+  const [expandListeConseillers, setExpandListeConseillers] =
+    useState<boolean>(false)
 
-  const [selectedRdv, setSelectedRdv] = useState<RdvListItem | undefined>(
-    undefined
-  )
+  enum Onglet {
+    RDVS = 'RDVS',
+    ACTIONS = 'ACTIONS',
+  }
+  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.RDVS)
+
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
   const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
     useState<boolean>(rdvModificationSuccess ?? false)
 
+  const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
+    useState<boolean>(rdvSuppressionSuccess ?? false)
+
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
-
-  const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -78,35 +86,19 @@ function FicheJeune({
   let initialTracking = pageTracking
   if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
   if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
+  if (rdvSuppressionSuccess) initialTracking += ' - Suppression rdv succès'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  async function closeRdvEditionMessage() {
+  async function closeRdvMessage() {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
+    setShowRdvSuppressionSuccess(false)
     await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
       shallow: true,
     })
-  }
-
-  function deleteRdv(deletedRdv: RdvListItem) {
-    setRdvsAVenir((prevRdvs) => {
-      const index = rdvsAVenir.indexOf(deletedRdv)
-      prevRdvs.splice(index, 1)
-      return prevRdvs
-    })
-  }
-
-  function openDeleteRdvModal(rdv: RdvListItem) {
-    setSelectedRdv(rdv)
-    setTrackingLabel(pageTracking + ' - Modale suppression rdv')
-  }
-
-  function closeDeleteRdvModal() {
-    setSelectedRdv(undefined)
-    setTrackingLabel(pageTracking)
   }
 
   async function closeMessageGroupeEnvoiSuccess() {
@@ -117,12 +109,22 @@ function FicheJeune({
   }
 
   function toggleListeConseillers(): void {
-    setIsExpanded(!isExpanded)
-    if (!isExpanded) {
+    setExpandListeConseillers(!expandListeConseillers)
+    if (!expandListeConseillers) {
       setConseillersAffiches(conseillers)
     } else {
       setConseillersAffiches(listeConseillersReduite)
     }
+  }
+
+  function trackDossierMiloClick() {
+    setTrackingLabel(pageTracking + ' - Dossier i-Milo')
+  }
+
+  function switchTab(tab: Onglet): void {
+    setCurrentTab(tab)
+    const tabLabel = tab === Onglet.ACTIONS ? 'Actions' : 'Événements'
+    setTrackingLabel(pageTracking + ' - Consultation ' + tabLabel)
   }
 
   useMatomo(trackingLabel)
@@ -154,16 +156,24 @@ function FicheJeune({
       {showRdvCreationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
 
       {showRdvModificationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvEditionMessage}
+          onAcknowledge={closeRdvMessage}
         />
       )}
+
+      {showRdvSuppressionSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été supprimé'}
+          onAcknowledge={closeRdvMessage}
+        />
+      )}
+
       {showMessageGroupeEnvoiSuccess && (
         <SuccessMessage
           label={
@@ -172,7 +182,11 @@ function FicheJeune({
           onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
       )}
-      <DetailsJeune jeune={jeune} />
+      <DetailsJeune
+        jeune={jeune}
+        withSituations={session?.user.structure === UserStructure.MILO}
+        onDossierMiloClick={trackDossierMiloClick}
+      />
 
       <div className='mt-8'>
         <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
@@ -186,69 +200,92 @@ function FicheJeune({
         <div className='flex justify-center mt-8'>
           <CollapseButton
             controlledId='liste-conseillers'
-            isOpen={isExpanded}
+            isOpen={expandListeConseillers}
             onClick={toggleListeConseillers}
           />
         </div>
       )}
 
-      <div className='mt-10 border-b border-primary_lighten'>
-        <h2 className='text-l-regular text-primary_darken mb-4'>
-          Rendez-vous {!isPoleEmploi && `(${rdvs?.length})`}
-        </h2>
+      <TabList className='mt-10'>
+        <Tab
+          label='Rendez-vous'
+          count={!isPoleEmploi ? rdvs.length : undefined}
+          selected={currentTab === Onglet.RDVS}
+          controls='liste-rdvs'
+          onSelectTab={() => switchTab(Onglet.RDVS)}
+          iconName={IconName.Calendar}
+        />
+        <Tab
+          label='Actions'
+          count={!isPoleEmploi ? actions.length : undefined}
+          selected={currentTab === Onglet.ACTIONS}
+          controls='liste-actions'
+          onSelectTab={() => switchTab(Onglet.ACTIONS)}
+          iconName={IconName.Actions}
+        />
+      </TabList>
 
-        {!isPoleEmploi ? (
-          <RdvList
-            rdvs={rdvsAVenir}
-            idConseiller={session?.user.id ?? ''}
-            onDelete={openDeleteRdvModal}
-            withNameJeune={false}
-          />
-        ) : (
-          <IntegrationPoleEmploi label='convocations' />
-        )}
-      </div>
-      <div className='mt-8 border-b border-primary_lighten pb-8'>
-        <h2 className='text-l-regular text-primary_darken mb-4'>Actions</h2>
-
-        {isPoleEmploi && <IntegrationPoleEmploi label='actions et démarches' />}
-
-        {!isPoleEmploi && actions.length !== 0 && (
-          <>
-            <TableauActionsJeune
-              jeune={jeune}
-              actions={actions}
-              hideTableHead={true}
+      {currentTab === Onglet.RDVS && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-rdvs--tab'
+          tabIndex={0}
+          id='liste-rdvs'
+          className='mt-10 border-b border-primary_lighten'
+        >
+          {!isPoleEmploi ? (
+            <RdvList
+              rdvs={rdvs}
+              idConseiller={session?.user.id ?? ''}
+              withNameJeune={false}
             />
-            <div className='flex justify-center mt-8'>
+          ) : (
+            <IntegrationPoleEmploi label='convocations' />
+          )}
+        </div>
+      )}
+      {currentTab === Onglet.ACTIONS && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-actions--tab'
+          tabIndex={0}
+          id='liste-actions'
+          className='mt-8 border-b border-primary_lighten pb-8'
+        >
+          {isPoleEmploi && (
+            <IntegrationPoleEmploi label='actions et démarches' />
+          )}
+
+          {!isPoleEmploi && actions.length !== 0 && (
+            <>
+              <TableauActionsJeune
+                jeune={jeune}
+                actions={actions.slice(0, 3)}
+                hideTableHead={true}
+              />
+              <div className='flex justify-center mt-8'>
+                <Link href={`/mes-jeunes/${jeune.id}/actions`}>
+                  <a className='text-sm text-primary_darken underline'>
+                    Voir la liste des actions du jeune
+                  </a>
+                </Link>
+              </div>
+            </>
+          )}
+
+          {!isPoleEmploi && actions.length === 0 && (
+            <>
+              <p className='text-md mb-2'>
+                {jeune.firstName} n&apos;a pas encore d&apos;action
+              </p>
               <Link href={`/mes-jeunes/${jeune.id}/actions`}>
                 <a className='text-sm text-primary_darken underline'>
-                  Voir la liste des actions du jeune
+                  Accédez à cette page pour créer une action
                 </a>
               </Link>
-            </div>
-          </>
-        )}
-
-        {!isPoleEmploi && actions.length === 0 && (
-          <>
-            <p className='text-md mb-2'>
-              {jeune.firstName} n&apos;a pas encore d&apos;action
-            </p>
-            <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-              <a className='text-sm text-primary_darken underline'>
-                Accédez à cette page pour créer une action
-              </a>
-            </Link>
-          </>
-        )}
-      </div>
-      {selectedRdv && (
-        <DeleteRdvModal
-          onClose={closeDeleteRdvModal}
-          onDelete={deleteRdv}
-          rdv={selectedRdv}
-        />
+            </>
+          )}
+        </div>
       )}
     </>
   )
@@ -305,7 +342,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
-    actions: [...actions].sort(compareActionsDatesDesc).slice(0, 3),
+    actions: [...actions].sort(compareActionsDatesDesc),
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.firstName} ${jeune.lastName}`,
     pageHeader: `${jeune.firstName} ${jeune.lastName}`,
@@ -315,6 +352,9 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   if (context.query.modificationRdv)
     props.rdvModificationSuccess = context.query.modificationRdv === 'succes'
+
+  if (context.query.suppressionRdv)
+    props.rdvSuppressionSuccess = context.query.suppressionRdv === 'succes'
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query?.envoiMessage === 'succes'

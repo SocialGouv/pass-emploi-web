@@ -1,3 +1,5 @@
+import { FakeApiClient } from '../utils/fakeApiClient'
+
 import { ApiClient } from 'clients/api.client'
 import {
   uneAction,
@@ -7,16 +9,14 @@ import {
 } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 import { ActionsApiService } from 'services/actions.service'
-import { RequestError } from 'utils/fetchJson'
-
-jest.mock('clients/api.client')
+import { RequestError } from 'utils/httpClient'
 
 describe('ActionsApiService', () => {
   let apiClient: ApiClient
   let actionsService: ActionsApiService
   beforeEach(async () => {
     // Given
-    apiClient = new ApiClient()
+    apiClient = new FakeApiClient()
     actionsService = new ActionsApiService(apiClient)
   })
 

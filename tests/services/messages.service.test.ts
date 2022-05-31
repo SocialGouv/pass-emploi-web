@@ -1,3 +1,5 @@
+import { FakeApiClient } from '../utils/fakeApiClient'
+
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { desJeunes, unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
@@ -8,19 +10,14 @@ import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 
-jest.mock('clients/api.client')
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
 
-beforeEach(async () => {
-  jest.useFakeTimers()
-})
-
-afterEach(() => {
-  jest.useRealTimers()
-})
-
 describe('MessagesFirebaseAndApiService', () => {
+  beforeEach(async () => {
+    jest.useFakeTimers()
+  })
+
   let firebaseClient: FirebaseClient
   let apiClient: ApiClient
   let messagesService: MessagesFirebaseAndApiService
@@ -30,7 +27,7 @@ describe('MessagesFirebaseAndApiService', () => {
   beforeEach(async () => {
     // Given
     firebaseClient = new FirebaseClient()
-    apiClient = new ApiClient()
+    apiClient = new FakeApiClient()
     messagesService = new MessagesFirebaseAndApiService(
       firebaseClient,
       new ChatCrypto(),

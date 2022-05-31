@@ -1,12 +1,14 @@
-import { ApiClient } from 'clients/api.client'
-import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
-import { Conseiller } from 'interfaces/conseiller'
-import { RequestError } from 'utils/fetchJson'
 import ErrorCodes from './error-codes'
+
+import { ApiClient } from 'clients/api.client'
+import { Conseiller } from 'interfaces/conseiller'
+import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
+import { JeuneJson, jsonToJeune } from 'interfaces/json/jeune'
+import { RequestError } from 'utils/httpClient'
 
 export interface JeunesService {
   getJeunesDuConseiller(
@@ -38,7 +40,7 @@ export interface JeunesService {
     newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
     accessToken: string
-  ): Promise<Jeune>
+  ): Promise<{ id: string }>
 
   reaffecter(
     idConseillerInitial: string,
@@ -53,14 +55,15 @@ export interface JeunesService {
 export class JeunesApiService implements JeunesService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  getJeunesDuConseiller(
+  async getJeunesDuConseiller(
     idConseiller: string,
     accessToken: string
   ): Promise<Jeune[]> {
-    return this.apiClient.get<Jeune[]>(
+    const jeunes = await this.apiClient.get<JeuneJson[]>(
       `/conseillers/${idConseiller}/jeunes`,
       accessToken
     )
+    return jeunes.map(jsonToJeune)
   }
 
   async getJeuneDetails(
@@ -68,7 +71,11 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<Jeune | undefined> {
     try {
-      return await this.apiClient.get<Jeune>(`/jeunes/${idJeune}`, accessToken)
+      const jeune = await this.apiClient.get<JeuneJson>(
+        `/jeunes/${idJeune}`,
+        accessToken
+      )
+      return jsonToJeune(jeune)
     } catch (e) {
       if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
         return undefined
@@ -101,8 +108,8 @@ export class JeunesApiService implements JeunesService {
     newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
     accessToken: string
-  ): Promise<Jeune> {
-    return this.apiClient.post<Jeune>(
+  ): Promise<{ id: string }> {
+    return this.apiClient.post<{ id: string }>(
       `/conseillers/pole-emploi/jeunes`,
       { ...newJeune, idConseiller: idConseiller },
       accessToken
@@ -129,7 +136,7 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<string | undefined> {
     try {
-      const { id } = await this.apiClient.get<Jeune>(
+      const { id } = await this.apiClient.get<{ id: string }>(
         `/conseillers/milo/jeunes/${numeroDossier}`,
         accessToken
       )

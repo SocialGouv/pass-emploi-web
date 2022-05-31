@@ -1,12 +1,12 @@
 import Link from 'next/link'
 
-import IconComponent from './IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface NavLinkProps {
   isActive?: boolean
   href: string
   label: string | null
-  iconName: string
+  iconName: IconName
   className?: string
   onClick?: any
 }

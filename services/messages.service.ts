@@ -1,7 +1,6 @@
-import { UserStructure } from '../interfaces/conseiller'
-
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
+import { UserStructure, UserType } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import {
   ChatCredentials,
@@ -182,7 +181,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,
         lastMessageSentAt: now,
-        lastMessageSentBy: 'conseiller',
+        lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
         newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
         seenByConseiller: true,
         lastConseillerReading: now,
@@ -226,7 +225,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
             lastMessageContent: encryptedMessage.encryptedText,
             lastMessageIv: encryptedMessage.iv,
             lastMessageSentAt: now,
-            lastMessageSentBy: 'conseiller',
+            lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
             newConseillerMessageCount: chat.newConseillerMessageCount + 1,
             seenByConseiller: false,
             lastConseillerReading: new Date(0),
@@ -267,7 +266,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       {
         type: 'MESSAGE_ENVOYE',
         emetteur: {
-          type: 'CONSEILLER',
+          type: UserType.CONSEILLER,
           structure: structure,
           id: idConseiller,
         },
@@ -286,7 +285,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       {
         type: 'MESSAGE_ENVOYE_MULTIPLE',
         emetteur: {
-          type: 'CONSEILLER',
+          type: UserType.CONSEILLER,
           structure: structure,
           id: idConseiller,
         },

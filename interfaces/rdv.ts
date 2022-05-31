@@ -12,7 +12,6 @@ export interface RdvListItem {
   modality: string
   date: string
   duration: number
-  hasComment: boolean
   idCreateur: string | null
 }
 
@@ -40,12 +39,11 @@ export function rdvToListItem(rdv: Rdv): RdvListItem {
     modality: rdv.modality,
     date: rdv.date,
     duration: rdv.duration,
-    hasComment: Boolean(rdv.comment),
     idCreateur: rdv.createur?.id ?? null,
   }
 }
 
-function getBeneficiaires(jeunes: BaseJeune[]) {
+export function getBeneficiaires(jeunes: BaseJeune[]) {
   if (jeunes.length > 1) return 'Bénéficiaires multiples'
   if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
   return ''
