@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { ExternalLink } from 'components/ui/ExternalLink'
+import ExternalLink from 'components/ui/ExternalLink'
 import { liens } from 'referentiel/liens'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'

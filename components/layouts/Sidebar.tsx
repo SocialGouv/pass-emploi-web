@@ -83,7 +83,7 @@ export default function Sidebar({}: SidebarProps) {
               name={IconName.Aide}
               aria-hidden={true}
               focusable={false}
-              className='mr-2 fill-blanc'
+              className='mr-2 fill-blanc w-6 h-6'
             />
             <span className='text-md text-blanc text-center layout_m:sr-only'>
               Aide
@@ -92,7 +92,7 @@ export default function Sidebar({}: SidebarProps) {
               name={IconName.Launch}
               aria-hidden={true}
               focusable={false}
-              className='mx-2 fill-blanc layout_m:hidden'
+              className='mx-2 w-3 h-3 fill-blanc layout_m:hidden'
             />
           </a>
         </div>

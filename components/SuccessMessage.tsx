@@ -1,7 +1,8 @@
 import { ReactElement } from 'react'
 
-import CloseIcon from '../assets/icons/close.svg'
 import SuccessIcon from '../assets/icons/done.svg'
+
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface SuccessMessageProps {
   label: string
@@ -31,10 +32,11 @@ export default function SuccessMessage({
             onClick={onAcknowledge}
             className='border-none'
           >
-            <CloseIcon
+            <IconComponent
+              name={IconName.Close}
               focusable='false'
               aria-hidden='true'
-              className='fill-success'
+              className='h-6 w-6 fill-success'
             />
           </button>
         )}

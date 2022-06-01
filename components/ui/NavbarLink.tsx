@@ -35,7 +35,7 @@ function NavbarLink({
         <IconComponent
           focusable='false'
           aria-hidden='true'
-          className={`mr-2 ${isActive ? 'fill-primary' : 'fill-blanc'}`}
+          className={`mr-2 w-6 h-6 ${isActive ? 'fill-primary' : 'fill-blanc'}`}
           name={iconName}
         />
         <span

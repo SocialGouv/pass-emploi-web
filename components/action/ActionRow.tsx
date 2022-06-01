@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
 
-import ChevronIcon from '../../assets/icons/chevron_right.svg'
 import NoteIcon from '../../assets/icons/note_outline.svg'
+import IconComponent, { IconName } from '../ui/IconComponent'
 
 import StatusTag from 'components/action/StatusTag'
 import { Action } from 'interfaces/action'
@@ -53,10 +53,11 @@ export default function ActionRow({
         <div role='cell' className={`table-cell relative ${borderStyle}`}>
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
-            <ChevronIcon
+            <IconComponent
+              name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
-              className='mr-1 fill-primary'
+              className='mr-1 w-6 h-6 fill-primary'
             />
           </span>
         </div>

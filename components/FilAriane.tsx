@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-import ChevronIcon from '../assets/icons/chevron_right.svg'
+import IconComponent, { IconName } from './ui/IconComponent'
 
 interface FilArianeProps {
   currentPath: string
@@ -40,10 +40,11 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
                     {fragment}
                   </a>
                 </Link>
-                <ChevronIcon
+                <IconComponent
+                  name={IconName.ChevronRight}
                   aria-hidden={true}
                   focusable={false}
-                  className='mx-2 fill-content_color'
+                  className='mx-2 w-6 h-6 fill-content_color'
                 />
               </>
             )}

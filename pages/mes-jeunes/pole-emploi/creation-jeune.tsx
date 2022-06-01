@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
-import { SuccessAddJeunePoleEmploi } from 'components/jeune/SuccessAddJeunePoleEmploi'
+import SuccessAddJeunePoleEmploi from 'components/jeune/SuccessAddJeunePoleEmploi'
 import { UserStructure } from 'interfaces/conseiller'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'

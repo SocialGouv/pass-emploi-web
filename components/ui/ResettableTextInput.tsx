@@ -1,6 +1,6 @@
 import React, { ChangeEvent, ForwardedRef, forwardRef, MouseEvent } from 'react'
 
-import CloseIcon from '../../assets/icons/close.svg'
+import IconComponent, { IconName } from './IconComponent'
 
 interface ResettableTextInputProps {
   id: string
@@ -62,7 +62,13 @@ const ResettableTextInput = forwardRef(
           disabled={disabled}
         >
           <span className='sr-only'>Effacer le champ de saisie</span>
-          <CloseIcon focusable={false} aria-hidden={true} fill='currentColor' />
+          <IconComponent
+            name={IconName.Close}
+            focusable={false}
+            aria-hidden={true}
+            className='w-6 h-6'
+            fill='currentColor'
+          />
         </button>
       </div>
     )
