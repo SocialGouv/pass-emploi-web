@@ -281,6 +281,6 @@ describe('<Layout />', () => {
   })
 
   function FakeComponent(_: PageProps) {
-    return <></>
+    return null
   }
 })

@@ -7,14 +7,16 @@ import renderWithSession from '../renderWithSession'
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import Supervision, { getServerSideProps } from 'pages/supervision'
+import Reaffectation, {
+  getServerSideProps,
+} from 'pages/supervision/reaffectation'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
-describe('Supervision', () => {
+describe('Reaffectation', () => {
   describe('client side', () => {
     let jeunesService: JeunesService
     beforeEach(async () => {
@@ -23,7 +25,7 @@ describe('Supervision', () => {
       // When
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
-          <Supervision withoutChat={true} pageTitle='' />
+          <Reaffectation withoutChat={true} pageTitle='' />
         </DIProvider>,
         {
           user: {
@@ -199,7 +201,7 @@ describe('Supervision', () => {
       // Then
       expect(actual).toEqual({
         props: {
-          pageTitle: 'Supervision',
+          pageTitle: 'Réaffectation',
           pageHeader: 'Réaffectation des jeunes',
         },
       })

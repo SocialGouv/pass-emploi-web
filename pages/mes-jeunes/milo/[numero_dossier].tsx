@@ -7,7 +7,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import withDependance from 'utils/injectionDependances/withDependance'
 
 function MiloFicheJeune() {
-  return <></>
+  return null
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
