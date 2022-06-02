@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
+import FileIcon from '../assets/icons/attach_file.svg'
+
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { UserType } from 'interfaces/conseiller'
@@ -41,6 +43,7 @@ export default function Conversation({
     undefined
   )
   const inputFocused = useRef<boolean>(false)
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
 
   function scrollToRef(message: HTMLLIElement | null) {
     if (message) message.scrollIntoView({ behavior: 'smooth' })
@@ -113,6 +116,16 @@ export default function Conversation({
     },
     [messagesService]
   )
+
+  function handleClick() {
+    hiddenFileInput.current.click()
+    console.log('dans le click')
+  }
+
+  function handleChange(event: MouseEvent) {
+    const fileUploaded = event.target.files[0]
+    console.log(fileUploaded)
+  }
 
   useEffect(() => {
     const unsubscribe = observerMessages(jeuneChat.chatId)
@@ -218,20 +231,56 @@ export default function Conversation({
           minRows={3}
           maxRows={7}
         />
-
-        <button
-          type='submit'
-          aria-label='Envoyer le message'
-          disabled={!newMessage}
-          className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0'
-        >
-          <IconComponent
+        <div className='flex flex-col'>
+          <button
+            type='submit'
+            aria-label='Envoyer le message'
+            disabled={!newMessage}
+            className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+          >
+            <IconComponent
             name={IconName.Send}
             aria-hidden='true'
             focusable='false'
             className='m-auto w-6 h-6 fill-blanc'
           />
-        </button>
+          </button>
+
+          <button
+            type='button'
+            aria-label='Attacher une pièce jointe'
+            aria-controls='fileupload'
+            className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+            onClick={handleClick}
+          >
+            <FileIcon
+              aria-hidden='true'
+              focusable='false'
+              className='m-auto w-6 h-6 fill-blanc'
+            />
+            <label htmlFor='fileupload'></label>
+            <input
+              id='fileupload'
+              type='file'
+              ref={hiddenFileInput}
+              onChange={handleChange}
+              style={{ display: 'none' }}
+            />
+          </button>
+
+          <button
+            type='submit'
+            aria-label='Envoyer le message'
+            disabled={!newMessage}
+            className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0'
+          >
+            <FileIcon
+              aria-hidden='true'
+              focusable='false'
+              className='m-auto w-6 h-6 fill-blanc'
+            />
+          </button>
+        </div>
       </form>
     </div>
   )
