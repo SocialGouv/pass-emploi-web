@@ -1,4 +1,5 @@
-import Modal from 'components/Modal'
+import WarningIcon from 'assets/icons/warning_blue.svg'
+import ModalV2 from 'components/ModalV2'
 import Button, { ButtonStyle } from 'components/ui/Button'
 
 interface DeleteRdvModalProps {
@@ -15,34 +16,45 @@ export default function DeleteRdvModal({
   }
 
   return (
-    <Modal
-      title='Vous allez supprimer un rendez-vous'
+    <ModalV2
+      title='Suppression du rendez-vous'
       onClose={handleCloseModal}
-      customHeight='300px'
-      customWidth='800px'
+      customHeight='468px'
+      customWidth='639px'
     >
-      <p className='text-md text-primary_darken mb-[48px]'>
+      <WarningIcon
+        focusable={false}
+        aria-hidden={true}
+        className='m-auto mb-16'
+      />
+
+      <p className='text-base-medium text-content_color text-center'>
         L’ensemble des bénéficiaires sera notifié de la suppression
       </p>
 
-      <div className='flex'>
+      <p className='text-base-regular text-content_color text-center mt-12'>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+
+      <div className='flex justify-center mt-12'>
         <Button
           type='button'
           className='mr-[16px]'
-          style={ButtonStyle.WARNING}
-          onClick={performDelete}
-        >
-          <span className='px-[40px]'>Supprimer</span>
-        </Button>
-
-        <Button
-          type='button'
           style={ButtonStyle.SECONDARY}
           onClick={handleCloseModal}
         >
           <span className='px-[40px]'>Annuler</span>
         </Button>
+
+        <Button
+          type='button'
+          style={ButtonStyle.PRIMARY}
+          onClick={performDelete}
+        >
+          <span className='px-[40px]'>Confirmer</span>
+        </Button>
       </div>
-    </Modal>
+    </ModalV2>
   )
 }
