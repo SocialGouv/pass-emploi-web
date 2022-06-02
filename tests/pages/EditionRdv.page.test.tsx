@@ -796,27 +796,45 @@ describe('EditionRdv', () => {
         )
       })
 
-      it('permet la suppression du rendez-vous, et retourne à la page précédente', async () => {
-        // Given
-        const deleteButtonFromPage = screen.getByText('Supprimer')
-        await act(async () => {
-          deleteButtonFromPage.click()
-        })
-        const deleteButtonFromModal = screen.getByText('Confirmer')
+      describe('Supprimer', () => {
+        beforeEach(async () => {
+          // Given
+          const deleteButtonFromPage = screen.getByText('Supprimer')
 
-        // When
-        await act(async () => {
-          deleteButtonFromModal.click()
+          // When
+          await act(async () => {
+            deleteButtonFromPage.click()
+          })
         })
 
-        // Then
-        expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
-          rdv.id,
-          'accessToken'
-        )
-        expect(push).toHaveBeenCalledWith(
-          '/mes-rendezvous?suppressionRdv=succes'
-        )
+        it('affiche une modale avec les bonnes informations', async () => {
+          // Then
+          expect(
+            screen.getByText(
+              'L’ensemble des bénéficiaires sera notifié de la suppression'
+            )
+          ).toBeInTheDocument()
+          expect(screen.getByText('Confirmer')).toBeInTheDocument()
+        })
+
+        it('lors de la confirmation, supprime bien le rendez-vous et retourne à la page précédente', async () => {
+          // Given
+          const deleteButtonFromModal = screen.getByText('Confirmer')
+
+          // When
+          await act(async () => {
+            deleteButtonFromModal.click()
+          })
+
+          // Then
+          expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
+            rdv.id,
+            'accessToken'
+          )
+          expect(push).toHaveBeenCalledWith(
+            '/mes-rendezvous?suppressionRdv=succes'
+          )
+        })
       })
 
       it('sélectionne les jeunes du rendez-vous', () => {
@@ -1120,6 +1138,24 @@ describe('EditionRdv', () => {
           screen.getByText(
             "Le rendez-vous a été créé par un autre conseiller : Gaëlle Hermet. Vous ne recevrez pas d'invitation dans votre agenda"
           )
+        ).toBeInTheDocument()
+      })
+
+      it("contient un message spécial lors de la suppression pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
+        // When
+        const deleteButtonFromPage = screen.getByText('Supprimer')
+        await act(async () => {
+          deleteButtonFromPage.click()
+        })
+
+        // Then
+        expect(
+          screen.getByText(
+            /concerne des jeunes qui ne sont pas dans votre portefeuille/
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(/Le créateur recevra un email de suppression/)
         ).toBeInTheDocument()
       })
 
