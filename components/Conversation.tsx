@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import FileIcon from '../assets/icons/attach_file.svg'
+import { FilesService } from '../services/files.services'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
@@ -35,6 +36,7 @@ export default function Conversation({
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
+  const filesService = useDependance<FilesService>('filesService')
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
@@ -124,7 +126,10 @@ export default function Conversation({
 
   function handleChange(event: MouseEvent) {
     const fileUploaded = event.target.files[0]
-    console.log(fileUploaded)
+    // passer idJeune
+
+    filesService.postFile([], fileUploaded, session!.accessToken)
+    console.log('le fichier', fileUploaded)
   }
 
   useEffect(() => {
@@ -265,19 +270,6 @@ export default function Conversation({
               ref={hiddenFileInput}
               onChange={handleChange}
               style={{ display: 'none' }}
-            />
-          </button>
-
-          <button
-            type='submit'
-            aria-label='Envoyer le message'
-            disabled={!newMessage}
-            className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0'
-          >
-            <FileIcon
-              aria-hidden='true'
-              focusable='false'
-              className='m-auto w-6 h-6 fill-blanc'
             />
           </button>
         </div>
