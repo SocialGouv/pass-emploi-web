@@ -802,9 +802,7 @@ describe('EditionRdv', () => {
         await act(async () => {
           deleteButtonFromPage.click()
         })
-        const deleteButtonFromModal = within(
-          screen.getByTestId('fake-modal')
-        ).getByText('Supprimer')
+        const deleteButtonFromModal = screen.getByText('Confirmer')
 
         // When
         await act(async () => {

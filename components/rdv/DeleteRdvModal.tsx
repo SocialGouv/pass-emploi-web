@@ -1,13 +1,15 @@
 import WarningIcon from 'assets/icons/warning_blue.svg'
-import ModalV2 from 'components/ModalV2'
+import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 
 interface DeleteRdvModalProps {
+  aDesJeunesDUnAutrePortefeuille: boolean
   onClose: () => void
   performDelete: () => Promise<void>
 }
 
 export default function DeleteRdvModal({
+  aDesJeunesDUnAutrePortefeuille,
   onClose,
   performDelete,
 }: DeleteRdvModalProps) {
@@ -15,12 +17,16 @@ export default function DeleteRdvModal({
     onClose()
   }
 
+  const message = aDesJeunesDUnAutrePortefeuille
+    ? 'Vous allez supprimer un rendez-vous qui concerne des jeunes qui ne sont pas dans votre portefeuille'
+    : 'L’ensemble des bénéficiaires sera notifié de la suppression'
+
   return (
-    <ModalV2
+    <Modal
       title='Suppression du rendez-vous'
       onClose={handleCloseModal}
-      customHeight='468px'
-      customWidth='639px'
+      customHeight={aDesJeunesDUnAutrePortefeuille ? '560px' : '400px'}
+      customWidth='640px'
     >
       <WarningIcon
         focusable={false}
@@ -28,14 +34,16 @@ export default function DeleteRdvModal({
         className='m-auto mb-16'
       />
 
-      <p className='text-base-medium text-content_color text-center'>
-        L’ensemble des bénéficiaires sera notifié de la suppression
+      <p className='text-base-medium text-content_color text-center mx-28'>
+        {message}
       </p>
 
-      <p className='text-base-regular text-content_color text-center mt-12'>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
-      </p>
+      {aDesJeunesDUnAutrePortefeuille && (
+        <div className='text-base-regular text-content_color text-center mx-28 mt-12'>
+          <p>Le créateur recevra un email de suppression du rendez-vous.</p>
+          <p>Les bénéficiaires seront notifiés sur l’application CEJ.</p>
+        </div>
+      )}
 
       <div className='flex justify-center mt-12'>
         <Button
@@ -55,6 +63,6 @@ export default function DeleteRdvModal({
           <span className='px-[40px]'>Confirmer</span>
         </Button>
       </div>
-    </ModalV2>
+    </Modal>
   )
 }
