@@ -7,9 +7,7 @@ import renderWithSession from '../renderWithSession'
 import { desJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
-import Reaffectation, {
-  getServerSideProps,
-} from 'pages/supervision/reaffectation'
+import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'

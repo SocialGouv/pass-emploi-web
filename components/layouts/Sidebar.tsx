@@ -62,8 +62,8 @@ export default function Sidebar({}: SidebarProps) {
               <NavbarLink
                 iconName={IconName.Reaffectation}
                 label='Réaffectation'
-                href='/supervision/reaffectation'
-                isActive={isCurrentRoute('/supervision/reaffectation')}
+                href='/reaffectation'
+                isActive={isCurrentRoute('/reaffectation')}
               />
             </>
           )}
