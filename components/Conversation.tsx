@@ -8,6 +8,7 @@ import React, {
 
 import FileIcon from '../assets/icons/attach_file.svg'
 import { FilesService } from '../services/files.services'
+import { FichierResponse } from '../interfaces/json/fichier'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
@@ -46,6 +47,7 @@ export default function Conversation({
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
+  const [fileUploadedName, setFileUploadName] = useState<string>('')
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
@@ -127,26 +129,24 @@ export default function Conversation({
 
   function handleClick() {
     hiddenFileInput.current!.click()
-    console.log('dans le click')
   }
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  async function handleChange(event: ChangeEvent<HTMLInputElement>) {
     if (!event.target.files || !event.target.files[0]) return
 
     const fileSelected = event.target.files[0]
-    // const fileReader = new FileReader()
-    // fileReader.addEventListener('load', () => {
-    //   // TODO passer idJeune
-    console.log('le fichier', fileSelected)
-    // console.log('le fichier en binaire', fileReader.result)
-    const resp = filesService.postFile(
-      ['hermione'],
-      // fileReader.result as string,
+
+    const resp: FichierResponse | undefined = await filesService.postFile(
+      [jeuneChat.id],
       fileSelected,
       session!.accessToken
     )
-    // })
-    // fileReader.readAsBinaryString(fileSelected)
+
+    if (resp && resp.nom) {
+      setFileUploadName(resp.nom)
+
+      // Todo insertion fireBase
+    }
   }
 
   useEffect(() => {
@@ -238,57 +238,71 @@ export default function Conversation({
       <form
         data-testid='newMessageForm'
         onSubmit={sendNouveauMessage}
-        className='w-full bg-grey_100 p-3 flex items-end'
+        className='py-3'
       >
-        <label htmlFor='input-new-message' className='sr-only'>
-          Message à envoyer
-        </label>
-        <ResizingMultilineInput
-          id='input-new-message'
-          className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
-          onFocus={onInputFocused}
-          onBlur={() => (inputFocused.current = false)}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder='Écrivez votre message ici...'
-          minRows={3}
-          maxRows={7}
-        />
-        <div className='flex flex-col'>
-          <button
-            type='submit'
-            aria-label='Envoyer le message'
-            disabled={!newMessage}
-            className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
-          >
-            <IconComponent
-            name={IconName.Send}
-            aria-hidden='true'
-            focusable='false'
-            className='m-auto w-6 h-6 fill-blanc'
-          />
-          </button>
-
-          <button
-            type='button'
-            aria-label='Attacher une pièce jointe'
-            aria-controls='fileupload'
-            data-testid='newFile'
-            className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
-            onClick={handleClick}
-          >
+        {fileUploadedName && (
+          <div className='px-3 flex flex-row'>
             <FileIcon
               aria-hidden='true'
               focusable='false'
-              className='m-auto w-6 h-6 fill-blanc'
+              className='w-6 h-6'
             />
-            <input
-              id='fileupload'
-              type='file'
-              ref={hiddenFileInput}
-              onChange={handleChange}
-              style={{ display: 'none' }}
-            />
-          </button>
+            <label htmlFor='fileupload' className='font-bold'>
+              {fileUploadedName}
+            </label>
+          </div>
+        )}
+        <div className='w-full bg-grey_100 px-3 flex items-end'>
+          <label htmlFor='input-new-message' className='sr-only'>
+            Message à envoyer
+          </label>
+          <ResizingMultilineInput
+            id='input-new-message'
+            className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
+            onFocus={onInputFocused}
+            onBlur={() => (inputFocused.current = false)}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder='Écrivez votre message ici...'
+            minRows={3}
+            maxRows={7}
+          />
+          <div className='flex flex-col'>
+            <button
+              type='submit'
+              aria-label='Envoyer le message'
+              disabled={!newMessage}
+              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+            >
+              <IconComponent
+            name={IconName.Send}
+                aria-hidden='true'
+                focusable='false'
+                className='m-autow-6 h-6 fill-blanc'
+              />
+            </button>
+
+            <button
+              type='button'
+              aria-label='Attacher une pièce jointe'
+              aria-controls='fileupload'
+              data-testid='newFile'
+              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+              onClick={handleClick}
+            >
+              <FileIcon
+                aria-hidden='true'
+                focusable='false'
+                className='m-auto w-6 h-6 fill-blanc'
+              />
+              <input
+                id='fileupload'
+                type='file'
+                ref={hiddenFileInput}
+                onChange={handleChange}
+                className='hidden'
+              />
+            </button>
+          </div>
         </div>
       </form>
     </div>

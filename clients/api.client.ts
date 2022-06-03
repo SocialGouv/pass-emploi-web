@@ -63,7 +63,6 @@ export class ApiHttpClient implements ApiClient {
   ): Promise<T> {
     const headers = new Headers({
       Authorization: `Bearer ${accessToken}`,
-      // 'content-type': 'multipart/form-data',
     })
 
     const reqInit: RequestInit = {

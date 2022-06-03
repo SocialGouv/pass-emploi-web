@@ -1,12 +1,13 @@
+import { FichierResponse } from '../interfaces/json/fichier'
+
 import { ApiClient } from 'clients/api.client'
 
 export interface FilesService {
   postFile(
     idJeunes: string[],
-    // file: string,
     file: File,
     accessToken: string
-  ): Promise<void>
+  ): Promise<FichierResponse | undefined>
 }
 
 export class FilesApiService implements FilesService {
@@ -14,19 +15,15 @@ export class FilesApiService implements FilesService {
 
   async postFile(
     idJeunes: string[],
-    // file: string,
     file: File,
     accessToken: string
-  ): Promise<void> {
+  ): Promise<FichierResponse | undefined> {
     const formData = new FormData()
     idJeunes.forEach((idJeune) => {
       formData.append('jeunesIds', idJeune)
     })
     formData.append('fichier', file)
 
-    // return this.apiClient.postFile(`/files`, formData, accessToken)
-
-    console.log(formData)
     return this.apiClient.postFile(`/fichiers`, formData, accessToken)
   }
 }
