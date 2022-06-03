@@ -3,10 +3,9 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import FailureMessage from '../../../../../components/FailureMessage'
-
 import InfoAction from 'components/action/InfoAction'
 import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
+import FailureMessage from 'components/FailureMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { Action, StatutAction } from 'interfaces/action'
@@ -104,7 +103,7 @@ function PageAction({
         </Button>
       )}
 
-      {!showEchecMessage && (
+      {showEchecMessage && (
         <FailureMessage
           label="Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
           onAcknowledge={() => setShowEchecMessage(false)}

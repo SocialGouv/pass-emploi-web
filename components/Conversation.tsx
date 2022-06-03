@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import BackIcon from '../assets/icons/arrow_back.svg'
-import SendIcon from '../assets/icons/send.svg'
-
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -131,11 +129,16 @@ export default function Conversation({
   return (
     <div className='h-full flex flex-col bg-grey_100'>
       <div className='flex items-center mx-4 my-6'>
-        <button className='border-none mr-2' onClick={onBack}>
-          <BackIcon
+        <button
+          className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
+          onClick={onBack}
+        >
+          <IconComponent
+            name={IconName.ChevronLeft}
             role='img'
             focusable='false'
             aria-label='Retour sur ma messagerie'
+            className='w-6 h-6 fill-primary'
           />
         </button>
         <h2 className='w-full text-center text-primary text-m-medium'>
@@ -222,7 +225,12 @@ export default function Conversation({
           disabled={!newMessage}
           className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0'
         >
-          <SendIcon aria-hidden='true' focusable='false' className='m-auto' />
+          <IconComponent
+            name={IconName.Send}
+            aria-hidden='true'
+            focusable='false'
+            className='m-auto w-6 h-6 fill-blanc'
+          />
         </button>
       </form>
     </div>

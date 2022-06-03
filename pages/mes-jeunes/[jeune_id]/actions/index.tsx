@@ -3,10 +3,6 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import IconComponent, {
-  IconName,
-} from '../../../../components/ui/IconComponent'
-
 import FiltresActionsTabList, {
   LABELS_FILTRES,
   TOUTES_LES_ACTIONS_LABEL,
@@ -14,6 +10,7 @@ import FiltresActionsTabList, {
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   Action,
   ActionsParStatut,

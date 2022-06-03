@@ -1,7 +1,5 @@
 import { ReactElement } from 'react'
 
-import SuccessIcon from '../assets/icons/done.svg'
-
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface SuccessMessageProps {
@@ -19,7 +17,8 @@ export default function SuccessMessage({
     <div className='flex-col items-center text-success bg-success_lighten p-6 rounded-medium mb-8'>
       <div className='flex justify-between'>
         <div className='flex items-center'>
-          <SuccessIcon
+          <IconComponent
+            name={IconName.CheckRounded}
             aria-hidden={true}
             focusable={false}
             className='w-6 h-6 mr-2'

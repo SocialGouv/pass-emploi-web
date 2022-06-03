@@ -2,11 +2,11 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 
-import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
 import RefreshIcon from '../../assets/icons/refresh.svg'
 
 import Button from 'components/ui/Button'
 import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DossierMilo } from 'interfaces/jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -137,8 +137,9 @@ const DossierJeuneMilo = ({
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'}>
           <a className='flex items-center text-s-medium text-primary_darken mr-6'>
-            <ArrowLeftIcon
-              className='mr-2.5'
+            <IconComponent
+              name={IconName.ArrowLeft}
+              className='mr-2.5 w-3 h-3'
               role='img'
               focusable='false'
               aria-label="Retour Création d'un compte jeune étape 1"

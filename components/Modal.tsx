@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 
-import CloseIcon from '../assets/icons/close_modal.svg'
+import IconComponent, { IconName } from './ui/IconComponent'
 
 import styles from 'styles/components/Modal.module.css'
 
@@ -110,11 +110,18 @@ const Modal = forwardRef((props: ModalProps, ref) => {
             {title}
           </h1>
         )}
-        <button type='button' onClick={handleClose} ref={focusOnRender}>
-          <CloseIcon
+        <button
+          type='button'
+          onClick={handleClose}
+          ref={focusOnRender}
+          className='p-3 border-none rounded-full bg-primary_lighten'
+        >
+          <IconComponent
+            name={IconName.Close}
             role='img'
             focusable='false'
             aria-label='Fermer la fenêtre'
+            className='w-6 h-6 fill-primary'
           />
         </button>
       </div>

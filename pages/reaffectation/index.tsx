@@ -3,7 +3,6 @@ import { GetServerSideProps } from 'next'
 import React, { FormEvent, useState } from 'react'
 
 import ImportantIcon from '../../assets/icons/important.svg'
-import SearchIcon from '../../assets/icons/search.svg'
 
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
@@ -212,10 +211,13 @@ function Index(_: ReaffectationProps) {
               disabled={!isRechercheJeunesEnabled}
             >
               <span className='sr-only'>Rechercher conseiller initial</span>
-              <SearchIcon
+              <IconComponent
+                name={IconName.Search}
                 focusable='false'
                 aria-hidden={true}
-                className={isRechercheJeunesEnabled ? '' : 'fill-disabled'}
+                className={`w-4 h-4 ${
+                  isRechercheJeunesEnabled ? '' : 'fill-disabled'
+                }`}
               />
             </button>
           </div>

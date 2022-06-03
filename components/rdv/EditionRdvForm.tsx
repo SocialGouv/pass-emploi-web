@@ -1,10 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import Etape1Icon from '../../assets/icons/etape_1.svg'
-import Etape2Icon from '../../assets/icons/etape_2.svg'
-import Etape3Icon from '../../assets/icons/etape_3.svg'
-import Etape4Icon from '../../assets/icons/etape_4.svg'
-
 import InformationMessage from 'components/InformationMessage'
 import JeunesMultiselectAutocomplete, {
   jeuneToOption,
@@ -13,6 +8,7 @@ import JeunesMultiselectAutocomplete, {
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
 import { Jeune } from 'interfaces/jeune'
@@ -285,11 +281,12 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col mb-8'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape1Icon
+          <IconComponent
+            name={IconName.Chiffre1}
             role='img'
             focusable='false'
             aria-label='Étape 1'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Bénéficiaires :
         </legend>
@@ -305,11 +302,12 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape2Icon
+          <IconComponent
+            name={IconName.Chiffre2}
             role='img'
             focusable='false'
             aria-label='Étape 2'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Type de rendez-vous :
         </legend>
@@ -390,11 +388,12 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape3Icon
+          <IconComponent
+            name={IconName.Chiffre3}
             role='img'
             focusable='false'
             aria-label='Étape 3'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Lieu et date :
         </legend>
@@ -506,11 +505,12 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape4Icon
+          <IconComponent
+            name={IconName.Chiffre4}
             role='img'
             focusable='false'
             aria-label='Étape 4'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Informations conseiller :
         </legend>

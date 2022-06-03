@@ -15,7 +15,7 @@ export default function SuccessAddJeunePoleEmploi({
   return (
     <div className='flex flex-col items-center mt-11 p-6 p-12 border border-primary_lighten rounded-large text-center'>
       <IconComponent
-        name={IconName.CheckSuccess}
+        name={IconName.CheckRounded}
         role='img'
         focusable='false'
         aria-label='Compte jeune créé avec succès'
