@@ -1,12 +1,10 @@
-import { RdvFormData } from '../interfaces/json/rdv'
-
 import { ApiClient } from 'clients/api.client'
 
 export interface FilesService {
   postFile(
-    idConseiller: string[],
-    //TODO a re typer
-    file: any,
+    idJeunes: string[],
+    // file: string,
+    file: File,
     accessToken: string
   ): Promise<void>
 }
@@ -14,11 +12,21 @@ export interface FilesService {
 export class FilesApiService implements FilesService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  postFile(
+  async postFile(
     idJeunes: string[],
-    file: RdvFormData,
+    // file: string,
+    file: File,
     accessToken: string
   ): Promise<void> {
-    return this.apiClient.post(`/files`, file, accessToken)
+    const formData = new FormData()
+    idJeunes.forEach((idJeune) => {
+      formData.append('jeunesIds', idJeune)
+    })
+    formData.append('fichier', file)
+
+    // return this.apiClient.postFile(`/files`, formData, accessToken)
+
+    console.log(formData)
+    return this.apiClient.postFile(`/fichiers`, formData, accessToken)
   }
 }

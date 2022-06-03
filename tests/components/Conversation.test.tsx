@@ -2,6 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import { Session } from 'next-auth'
 import React from 'react'
 
+import { FilesService } from '../../services/files.services'
 import renderWithSession from '../renderWithSession'
 
 import Conversation from 'components/Conversation'
@@ -19,6 +20,7 @@ describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
+  let filesService: FilesService
   let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
   const messagesParJour = desMessagesParJour()
@@ -44,6 +46,10 @@ describe('<Conversation />', () => {
         return Promise.resolve()
       }),
     })
+    filesService = {
+      ...filesService,
+      postFile: jest.fn().mockReturnValue('id-file'),
+    }
 
     conseiller = {
       id: 'idConseiller',
@@ -158,6 +164,26 @@ describe('<Conversation />', () => {
           newMessage,
           'accessToken',
           'cleChiffrement'
+        )
+      })
+    })
+  })
+
+  describe('when sending file', () => {
+    it('send file', async () => {
+      // Given
+      const uploadFile = screen.getByTestId('newFile')
+
+      // When
+      fireEvent.click(uploadFile)
+      //TODO upload un file
+
+      // Then
+      await act(async () => {
+        expect(filesService.postFile).toHaveBeenCalledWith(
+          [1],
+          'monFichier', // TODO a modif
+          'accessToken'
         )
       })
     })

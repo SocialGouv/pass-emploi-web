@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import FileIcon from '../assets/icons/attach_file.svg'
 import { FilesService } from '../services/files.services'
@@ -120,16 +126,27 @@ export default function Conversation({
   )
 
   function handleClick() {
-    hiddenFileInput.current.click()
+    hiddenFileInput.current!.click()
     console.log('dans le click')
   }
 
-  function handleChange(event: MouseEvent) {
-    const fileUploaded = event.target.files[0]
-    // passer idJeune
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files || !event.target.files[0]) return
 
-    filesService.postFile([], fileUploaded, session!.accessToken)
-    console.log('le fichier', fileUploaded)
+    const fileSelected = event.target.files[0]
+    // const fileReader = new FileReader()
+    // fileReader.addEventListener('load', () => {
+    //   // TODO passer idJeune
+    console.log('le fichier', fileSelected)
+    // console.log('le fichier en binaire', fileReader.result)
+    const resp = filesService.postFile(
+      ['hermione'],
+      // fileReader.result as string,
+      fileSelected,
+      session!.accessToken
+    )
+    // })
+    // fileReader.readAsBinaryString(fileSelected)
   }
 
   useEffect(() => {
@@ -255,6 +272,7 @@ export default function Conversation({
             type='button'
             aria-label='Attacher une pièce jointe'
             aria-controls='fileupload'
+            data-testid='newFile'
             className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
             onClick={handleClick}
           >
@@ -263,7 +281,6 @@ export default function Conversation({
               focusable='false'
               className='m-auto w-6 h-6 fill-blanc'
             />
-            <label htmlFor='fileupload'></label>
             <input
               id='fileupload'
               type='file'
