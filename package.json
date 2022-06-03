@@ -65,7 +65,7 @@
     "jest": "^28.0.0",
     "jest-environment-jsdom": "^28.0.2",
     "node-mocks-http": "^1.11.0",
-    "pino-pretty": "^7.5.1",
+    "pino-pretty": "^8.0.0",
     "postcss": "^8.4.7",
     "prettier": "^2.4.1",
     "style-loader": "^3.3.1",
