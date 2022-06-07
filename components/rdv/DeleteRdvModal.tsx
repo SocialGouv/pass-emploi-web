@@ -22,12 +22,7 @@ export default function DeleteRdvModal({
     : 'L’ensemble des bénéficiaires sera notifié de la suppression'
 
   return (
-    <Modal
-      title='Suppression du rendez-vous'
-      onClose={handleCloseModal}
-      customHeight={aDesJeunesDUnAutrePortefeuille ? '520px' : '420px'}
-      customWidth='640px'
-    >
+    <Modal title='Suppression du rendez-vous' onClose={handleCloseModal}>
       <WarningIcon
         focusable={false}
         aria-hidden={true}
