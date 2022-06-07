@@ -1,4 +1,4 @@
-import WarningIcon from 'assets/icons/warning_blue.svg'
+import WarningIcon from 'assets/icons/warning.svg'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 
@@ -25,13 +25,13 @@ export default function DeleteRdvModal({
     <Modal
       title='Suppression du rendez-vous'
       onClose={handleCloseModal}
-      customHeight={aDesJeunesDUnAutrePortefeuille ? '560px' : '400px'}
+      customHeight={aDesJeunesDUnAutrePortefeuille ? '520px' : '420px'}
       customWidth='640px'
     >
       <WarningIcon
         focusable={false}
         aria-hidden={true}
-        className='m-auto mb-16'
+        className='w-[100px] h-[91px] m-auto mb-16 fill-primary'
       />
 
       <p className='text-base-medium text-content_color text-center mx-28'>

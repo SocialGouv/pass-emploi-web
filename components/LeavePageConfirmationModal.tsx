@@ -29,7 +29,11 @@ export default function LeavePageConfirmationModal({
   return (
     <Modal title='Quitter la page ?' onClose={onCancel} ref={modalRef}>
       <div className='px-20 text-center'>
-        <WarningIcon focusable={false} aria-hidden={true} className='m-auto' />
+        <WarningIcon
+          focusable={false}
+          aria-hidden={true}
+          className='w-[54px] h-[57px] m-auto'
+        />
         <p className='mt-6 text-base-medium'>{message}</p>
         <p className='mt-6'>
           Toutes les informations{' '}
