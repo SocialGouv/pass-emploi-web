@@ -41,3 +41,6 @@ node_modules/
 
 # Storybook
 storybook-static
+
+# Mac
+.DS_Store

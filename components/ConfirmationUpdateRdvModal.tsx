@@ -26,7 +26,11 @@ export default function ConfirmationUpdateRdvModal({
       ref={modalRef}
     >
       <div className='px-20 text-center'>
-        <WarningIcon focusable={false} aria-hidden={true} className='m-auto' />
+        <WarningIcon
+          focusable={false}
+          aria-hidden={true}
+          className='w-[54px] h-[57px] m-auto'
+        />
         <p className='mt-6 text-base-medium'>
           Vous avez modifié un rendez-vous dont vous n’êtes pas le créateur
         </p>

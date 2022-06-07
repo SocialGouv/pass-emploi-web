@@ -25,6 +25,7 @@ interface EditionRdvFormProps {
   jeunes: Jeune[]
   typesRendezVous: TypeRendezVous[]
   redirectTo: string
+  aDesJeunesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
   conseillerEmail: string
   soumettreRendezVous: (payload: RdvFormData) => Promise<void>
@@ -39,6 +40,7 @@ export function EditionRdvForm({
   jeunes,
   typesRendezVous,
   redirectTo,
+  aDesJeunesDUnAutrePortefeuille,
   conseillerIsCreator,
   conseillerEmail,
   soumettreRendezVous,
@@ -82,16 +84,6 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
-
-  // fonctions
-  function aDesJeunesDUnAutrePortefeuille(): boolean {
-    if (rdv) {
-      return rdv.jeunes.some(
-        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
-      )
-    }
-    return false
-  }
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -285,7 +277,7 @@ export function EditionRdvForm({
         Tous les champs avec * sont obligatoires
       </div>
 
-      {aDesJeunesDUnAutrePortefeuille() && (
+      {aDesJeunesDUnAutrePortefeuille && (
         <div className='mb-6'>
           <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>

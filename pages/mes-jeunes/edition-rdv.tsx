@@ -97,6 +97,15 @@ function EditionRdv({
     setTrackingTitle(initialTracking)
   }
 
+  function aDesJeunesDUnAutrePortefeuille(): boolean {
+    if (rdv) {
+      return rdv.jeunes.some(
+        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
+      )
+    }
+    return false
+  }
+
   async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!rdv) {
@@ -161,6 +170,7 @@ function EditionRdv({
         idJeune={idJeune}
         rdv={rdv}
         redirectTo={returnTo}
+        aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
         conseillerIsCreator={!rdv || session?.user.id === rdv.createur?.id}
         conseillerEmail={session?.user.email ?? ''}
         onChanges={setHasChanges}
@@ -189,6 +199,7 @@ function EditionRdv({
       )}
       {showDeleteRdvModal && (
         <DeleteRdvModal
+          aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={deleteRendezVous}
         />
