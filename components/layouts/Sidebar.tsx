@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
-import IconComponent, { IconName } from '../ui/IconComponent'
-import NavbarLink from '../ui/NavbarLink'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import NavbarLink from 'components/ui/NavbarLink'
 import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -60,7 +60,7 @@ export default function Sidebar({}: SidebarProps) {
           {isSuperviseur && (
             <>
               <NavbarLink
-                iconName={IconName.Reaffectation}
+                iconName={IconName.ArrowRight}
                 label='Réaffectation'
                 href='/reaffectation'
                 isActive={isCurrentRoute('/reaffectation')}
@@ -83,7 +83,7 @@ export default function Sidebar({}: SidebarProps) {
               name={IconName.Aide}
               aria-hidden={true}
               focusable={false}
-              className='mr-2 fill-blanc'
+              className='mr-2 fill-blanc w-6 h-6'
             />
             <span className='text-md text-blanc text-center layout_m:sr-only'>
               Aide
@@ -92,7 +92,7 @@ export default function Sidebar({}: SidebarProps) {
               name={IconName.Launch}
               aria-hidden={true}
               focusable={false}
-              className='mx-2 fill-blanc layout_m:hidden'
+              className='mx-2 w-3 h-3 fill-blanc layout_m:hidden'
             />
           </a>
         </div>

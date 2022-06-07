@@ -3,8 +3,6 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import AddIcon from '../../../../assets/icons/add.svg'
-
 import FiltresActionsTabList, {
   LABELS_FILTRES,
   TOUTES_LES_ACTIONS_LABEL,
@@ -12,6 +10,7 @@ import FiltresActionsTabList, {
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import SuccessMessage from 'components/SuccessMessage'
 import ButtonLink from 'components/ui/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   Action,
   ActionsParStatut,
@@ -140,7 +139,12 @@ function Actions({
         href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
         className='mb-4 w-fit'
       >
-        <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+        <IconComponent
+          name={IconName.Add}
+          focusable='false'
+          aria-hidden='true'
+          className='mr-2 w-4 h-4'
+        />
         Créer une nouvelle action
       </ButtonLink>
       {showCreationSuccess && (

@@ -1,7 +1,6 @@
 import { FormEvent, useState } from 'react'
 
-import SearchIcon from '../../assets/icons/search.svg'
-
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
 
 interface RechercheJeuneProps {
@@ -42,7 +41,12 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
           className='flex p-3 items-center text-base-medium text-primary border border-primary rounded-r-medium hover:bg-primary_lighten'
           type='submit'
         >
-          <SearchIcon focusable='false' aria-hidden={true} />
+          <IconComponent
+            name={IconName.Search}
+            focusable='false'
+            aria-hidden={true}
+            className='w-4 h-4'
+          />
           <span className='ml-1'>Rechercher</span>
         </button>
       </div>

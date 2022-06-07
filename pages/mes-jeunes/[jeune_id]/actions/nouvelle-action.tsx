@@ -5,6 +5,7 @@ import { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { PageProps } from 'interfaces/pageProps'
@@ -182,6 +183,12 @@ function EditionAction({ idJeune }: EditionActionProps) {
             disabled={!formulaireEstValide()}
             className='ml-6'
           >
+            <IconComponent
+              name={IconName.Send}
+              focusable='false'
+              aria-hidden='true'
+              className='mr-2 w-4 h-4 fill-blanc'
+            />
             Envoyer
           </Button>
         </div>

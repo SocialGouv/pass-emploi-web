@@ -108,7 +108,7 @@ function FormulaireJeunePoleEmploi({
         </div>
 
         <label className='block text-md-semi' htmlFor='jeune-prenom'>
-          *Prénom
+          * Prénom
         </label>
         <input
           type='text'
@@ -127,7 +127,7 @@ function FormulaireJeunePoleEmploi({
         )}
 
         <label className='block text-md-semi' htmlFor='jeune-nom'>
-          *Nom
+          * Nom
         </label>
         <input
           type='text'
@@ -144,7 +144,7 @@ function FormulaireJeunePoleEmploi({
         )}
 
         <label className='block mb-4 text-md-semi' htmlFor='jeune-email'>
-          *E-mail{' '}
+          * E-mail{' '}
           <span className='text-s-regular'>(ex : monemail@exemple.com)</span>
         </label>
         <span className='text-s-regular'>

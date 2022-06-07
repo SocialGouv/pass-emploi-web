@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
-import DoneIcon from '../../assets/icons/done.svg'
 import KoIcon from '../../assets/icons/ko.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 
 import { HeaderCell } from 'components/rdv/HeaderCell'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { RdvTypeTag } from 'components/ui/RdvTypeTag'
 import { RdvListItem } from 'interfaces/rdv'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
@@ -89,10 +89,11 @@ const RdvList = ({
                       {rdv.idCreateur === idConseiller && (
                         <>
                           <span className='sr-only'>oui</span>
-                          <DoneIcon
+                          <IconComponent
+                            name={IconName.CheckRounded}
                             aria-hidden='true'
                             focusable='false'
-                            className='fill-primary h-3'
+                            className='fill-primary h-3 w-3'
                           />
                         </>
                       )}

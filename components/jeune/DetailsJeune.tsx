@@ -1,10 +1,10 @@
 import React from 'react'
 
 import EmailIcon from '../../assets/icons/email.svg'
-import LaunchIcon from '../../assets/icons/launch.svg'
 
 import SituationTag from 'components/jeune/SituationTag'
-import { Jeune, CategorieSituation } from 'interfaces/jeune'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { CategorieSituation, Jeune } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
@@ -50,11 +50,12 @@ export const DetailsJeune = ({
                 rel='noopener noreferrer'
               >
                 Dossier jeune i-Milo
-                <LaunchIcon
+                <IconComponent
+                  name={IconName.Launch}
                   focusable='false'
                   role='img'
                   title='ouvrir'
-                  className='ml-2'
+                  className='ml-2 w-3 h-3'
                 />
               </a>
             </dd>

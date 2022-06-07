@@ -2,12 +2,11 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { FormEvent, useState } from 'react'
 
-import ArrowIcon from '../../assets/icons/arrow-right.svg'
 import ImportantIcon from '../../assets/icons/important.svg'
-import SearchIcon from '../../assets/icons/search.svg'
 
 import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
 import {
   compareJeunesByLastName,
@@ -212,10 +211,13 @@ function Index(_: ReaffectationProps) {
               disabled={!isRechercheJeunesEnabled}
             >
               <span className='sr-only'>Rechercher conseiller initial</span>
-              <SearchIcon
+              <IconComponent
+                name={IconName.Search}
                 focusable='false'
                 aria-hidden={true}
-                className={isRechercheJeunesEnabled ? '' : 'fill-disabled'}
+                className={`w-4 h-4 ${
+                  isRechercheJeunesEnabled ? '' : 'fill-disabled'
+                }`}
               />
             </button>
           </div>
@@ -281,12 +283,11 @@ function Index(_: ReaffectationProps) {
             isReaffectationEnCours
           }
         >
-          <ArrowIcon
-            className='fill-blanc mr-2'
+          <IconComponent
+            name={IconName.ArrowRight}
+            className='w-4 h-4 fill-blanc mr-2'
             focusable='false'
             aria-hidden={true}
-            width='16px'
-            height='16px'
           />
           R&eacute;affecter les jeunes
         </Button>

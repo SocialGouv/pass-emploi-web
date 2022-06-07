@@ -1,21 +1,24 @@
-import CheckSuccessIcon from '../../assets/icons/check_success.svg'
-
 import ButtonLink from 'components/ui/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface SuccessAddJeuneMiloProps {
   idJeune: string
 }
 
-export const SuccessAddJeuneMilo = ({ idJeune }: SuccessAddJeuneMiloProps) => {
+export default function SuccessAddJeuneMilo({
+  idJeune,
+}: SuccessAddJeuneMiloProps) {
   useMatomo('Création jeune SIMILO – Etape 3 - Compte créé')
 
   return (
     <div className='flex flex-col items-center mt-11 p-6 p-12 border border-primary_lighten rounded-large text-center'>
-      <CheckSuccessIcon
+      <IconComponent
+        name={IconName.CheckRounded}
         role='img'
         focusable='false'
         aria-label='Compte jeune créé avec succès'
+        className='w-20 h-20'
       />
       <div className='mt-12 mb-10'>
         <h2 className='text-base-medium text-primary mb-4'>

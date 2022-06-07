@@ -18,7 +18,7 @@ describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
   let page: RenderResult
   let submitButton: HTMLElement
-  const emailLabel: string = '*E-mail (ex : monemail@exemple.com)'
+  const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
     page = renderWithSession(
@@ -41,17 +41,17 @@ describe('PoleEmploiCreationJeune', () => {
           'Saisissez les coordonnées du jeune pour lequel vous voulez créer un compte'
         )
       ).toBeInTheDocument()
-      expect(screen.getByLabelText('*Prénom')).toBeInTheDocument()
-      expect(screen.getByLabelText('*Nom')).toBeInTheDocument()
+      expect(screen.getByLabelText('* Prénom')).toBeInTheDocument()
+      expect(screen.getByLabelText('* Nom')).toBeInTheDocument()
       expect(screen.getByLabelText(emailLabel)).toBeInTheDocument()
     })
 
     describe('quand on soumet le formulaire avec un champ incorrect', () => {
       beforeEach(async () => {
         // Given
-        const inputFirstname = screen.getByLabelText('*Prénom')
+        const inputFirstname = screen.getByLabelText('* Prénom')
         fireEvent.change(inputFirstname, { target: { value: 'Nadia' } })
-        const inputName = screen.getByLabelText('*Nom')
+        const inputName = screen.getByLabelText('* Nom')
         fireEvent.change(inputName, { target: { value: 'Sanfamiye' } })
         const inputEmail = screen.getByLabelText(emailLabel)
         fireEvent.change(inputEmail, {
@@ -61,7 +61,7 @@ describe('PoleEmploiCreationJeune', () => {
 
       it('demande le remplissage du prénom', async () => {
         // Given
-        const inputFirstname = screen.getByLabelText('*Prénom')
+        const inputFirstname = screen.getByLabelText('* Prénom')
         fireEvent.change(inputFirstname, { target: { value: '' } })
 
         // When
@@ -80,7 +80,7 @@ describe('PoleEmploiCreationJeune', () => {
 
       it('demande le remplissage du nom', async () => {
         // Given
-        const inputName = screen.getByLabelText('*Nom')
+        const inputName = screen.getByLabelText('* Nom')
         fireEvent.change(inputName, { target: { value: '' } })
 
         // When
@@ -121,9 +121,9 @@ describe('PoleEmploiCreationJeune', () => {
   describe('quand le formulaire a été soumis', () => {
     beforeEach(() => {
       // Given
-      const inputFirstname = screen.getByLabelText('*Prénom')
+      const inputFirstname = screen.getByLabelText('* Prénom')
       fireEvent.change(inputFirstname, { target: { value: 'Nadia' } })
-      const inputName = screen.getByLabelText('*Nom')
+      const inputName = screen.getByLabelText('* Nom')
       fireEvent.change(inputName, { target: { value: 'Sanfamiye' } })
       const inputEmail = screen.getByLabelText(emailLabel)
       fireEvent.change(inputEmail, {

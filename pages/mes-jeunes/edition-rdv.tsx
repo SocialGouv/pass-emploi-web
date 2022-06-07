@@ -3,8 +3,8 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import DeleteIcon from '../../assets/icons/delete.svg'
 import FailureMessage from '../../components/FailureMessage'
+import IconComponent, { IconName } from '../../components/ui/IconComponent'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
@@ -159,7 +159,12 @@ function EditionRdv({
           aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
           className='mb-4'
         >
-          <DeleteIcon aria-hidden='true' focusable='false' className='mr-2' />
+          <IconComponent
+            name={IconName.Delete}
+            aria-hidden='true'
+            focusable='false'
+            className='mr-2 w-4 h-4'
+          />
           Supprimer
         </Button>
       )}
