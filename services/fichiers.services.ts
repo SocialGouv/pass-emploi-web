@@ -2,27 +2,27 @@ import { FichierResponse } from '../interfaces/json/fichier'
 
 import { ApiClient } from 'clients/api.client'
 
-export interface FilesService {
-  postFile(
+export interface FichiersService {
+  postFichier(
     idJeunes: string[],
-    file: File,
+    fichier: File,
     accessToken: string
   ): Promise<FichierResponse | undefined>
 }
 
-export class FilesApiService implements FilesService {
+export class FichiersApiService implements FichiersService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async postFile(
+  async postFichier(
     idJeunes: string[],
-    file: File,
+    fichier: File,
     accessToken: string
   ): Promise<FichierResponse | undefined> {
     const formData = new FormData()
     idJeunes.forEach((idJeune) => {
       formData.append('jeunesIds', idJeune)
     })
-    formData.append('fichier', file)
+    formData.append('fichier', fichier)
 
     return this.apiClient.postFile(`/fichiers`, formData, accessToken)
   }

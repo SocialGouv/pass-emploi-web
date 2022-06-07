@@ -2,7 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import { Session } from 'next-auth'
 import React from 'react'
 
-import { FilesService } from '../../services/files.services'
+import { FichiersService } from '../../services/fichiers.services'
 import renderWithSession from '../renderWithSession'
 
 import Conversation from 'components/Conversation'
@@ -20,7 +20,7 @@ describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
-  let filesService: FilesService
+  let fichiersService: FichiersService
   let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
   const messagesParJour = desMessagesParJour()
@@ -46,9 +46,9 @@ describe('<Conversation />', () => {
         return Promise.resolve()
       }),
     })
-    filesService = {
-      ...filesService,
-      postFile: jest.fn().mockReturnValue('id-file'),
+    fichiersService = {
+      ...fichiersService,
+      postFichier: jest.fn().mockReturnValue('id-file'),
     }
 
     conseiller = {
@@ -180,7 +180,7 @@ describe('<Conversation />', () => {
 
       // Then
       await act(async () => {
-        expect(filesService.postFile).toHaveBeenCalledWith(
+        expect(fichiersService.postFichier).toHaveBeenCalledWith(
           [1],
           'monFichier', // TODO a modif
           'accessToken'

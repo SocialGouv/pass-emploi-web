@@ -6,7 +6,7 @@ import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
-import { FilesApiService, FilesService } from 'services/files.services'
+import { FichiersApiService, FichiersService } from 'services/fichiers.services'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import {
   MessagesFirebaseAndApiService,
@@ -26,7 +26,7 @@ export interface Dependencies {
   jeunesService: JeunesService
   messagesService: MessagesService
   rendezVousService: RendezVousService
-  filesService: FilesService
+  fichiersService: FichiersService
 }
 
 export class Container {
@@ -54,7 +54,7 @@ export class Container {
         apiClient
       ),
       rendezVousService: new RendezVousApiService(apiClient),
-      filesService: new FilesApiService(apiClient),
+      fichiersService: new FichiersApiService(apiClient),
     })
   }
 }

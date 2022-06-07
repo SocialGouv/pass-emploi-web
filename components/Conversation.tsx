@@ -7,8 +7,8 @@ import React, {
 } from 'react'
 
 import FileIcon from '../assets/icons/attach_file.svg'
-import { FilesService } from '../services/files.services'
 import { FichierResponse } from '../interfaces/json/fichier'
+import { FichiersService } from '../services/fichiers.services'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
@@ -43,7 +43,7 @@ export default function Conversation({
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
-  const filesService = useDependance<FilesService>('filesService')
+  const fichiersService = useDependance<FichiersService>('fichiersService')
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
@@ -136,7 +136,7 @@ export default function Conversation({
 
     const fileSelected = event.target.files[0]
 
-    const resp: FichierResponse | undefined = await filesService.postFile(
+    const resp: FichierResponse | undefined = await fichiersService.postFichier(
       [jeuneChat.id],
       fileSelected,
       session!.accessToken
@@ -286,8 +286,11 @@ export default function Conversation({
               aria-label='Attacher une pièce jointe'
               aria-controls='fileupload'
               data-testid='newFile'
-              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+              className={`w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 ${
+                Boolean(fileUploadedName) ? 'bg-grey_500' : 'bg-primary'
+              }`}
               onClick={handleClick}
+              disabled={Boolean(fileUploadedName)}
             >
               <FileIcon
                 aria-hidden='true'
