@@ -247,9 +247,7 @@ export default function Conversation({
               focusable='false'
               className='w-6 h-6'
             />
-            <label htmlFor='fileupload' className='font-bold'>
-              {fileUploadedName}
-            </label>
+            <span className='font-bold'>{fileUploadedName}</span>
           </div>
         )}
         <div className='w-full bg-grey_100 px-3 flex items-end'>
@@ -283,7 +281,6 @@ export default function Conversation({
 
             <button
               type='button'
-              aria-label='Attacher une pièce jointe'
               aria-controls='fileupload'
               data-testid='newFile'
               className={`w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 ${
@@ -297,12 +294,16 @@ export default function Conversation({
                 focusable='false'
                 className='m-auto w-6 h-6 fill-blanc'
               />
+              <label htmlFor='fileupload' className='sr-only'>
+                Attacher une pièce jointe
+              </label>
               <input
                 id='fileupload'
                 type='file'
                 ref={hiddenFileInput}
                 onChange={handleChange}
                 className='hidden'
+                accept='.pdf, .png, .jpeg'
               />
             </button>
           </div>

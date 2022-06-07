@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { Session } from 'next-auth'
 import React from 'react'
 
@@ -48,7 +48,9 @@ describe('<Conversation />', () => {
     })
     fichiersService = {
       ...fichiersService,
-      postFichier: jest.fn().mockReturnValue('id-file'),
+      postFichier: jest
+        .fn()
+        .mockReturnValue({ id: 'id-file', nom: 'imageupload.png' }),
     }
 
     conseiller = {
@@ -62,7 +64,7 @@ describe('<Conversation />', () => {
 
     await act(async () => {
       await renderWithSession(
-        <DIProvider dependances={{ messagesService }}>
+        <DIProvider dependances={{ messagesService, fichiersService }}>
           <Conversation
             jeuneChat={jeuneChat}
             conseillers={conseillersJeunes}
@@ -74,7 +76,7 @@ describe('<Conversation />', () => {
     })
   })
 
-  it('subscribes to chat messages', async () => {
+  it('s’abonne au message de la conversation', async () => {
     // Then
     expect(messagesService.observeMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
@@ -83,14 +85,14 @@ describe('<Conversation />', () => {
     )
   })
 
-  it('marks the conversation as read', async () => {
+  it('marque la conversation en "lu"', async () => {
     // Then
     expect(messagesService.setReadByConseiller).toHaveBeenCalledWith(
       jeuneChat.chatId
     )
   })
 
-  it('subscribes to jeune reading', async () => {
+  it('s’abonne à "jeuneReading"', async () => {
     // Then
     expect(messagesService.observeJeuneReadingDate).toHaveBeenCalledWith(
       jeuneChat.chatId,
@@ -99,8 +101,8 @@ describe('<Conversation />', () => {
   })
 
   const cases = messagesParJour.map((messagesDUnJour) => [messagesDUnJour])
-  describe.each(cases)('For each day with messages', (messagesDUnJour) => {
-    it(`displays the date (${formatDayDate(messagesDUnJour.date)})`, () => {
+  describe.each(cases)('Pour chaque jour avec message', (messagesDUnJour) => {
+    it(`affiche la date (${formatDayDate(messagesDUnJour.date)})`, () => {
       // Then
       expect(
         screen.getByText(`Le ${formatDayDate(messagesDUnJour.date)}`)
@@ -108,33 +110,36 @@ describe('<Conversation />', () => {
     })
 
     const casesMessages = messagesDUnJour.messages.map((message) => [message])
-    it.each(casesMessages)(`displays message content`, (message) => {
+    it.each(casesMessages)(`affiche le contenu du message`, (message) => {
       // Then
       expect(screen.getByText(message.content)).toBeInTheDocument()
     })
 
-    it.each(casesMessages)(`displays conseiller full name`, (message) => {
-      // Then
-      const messageItem = screen.getByTestId(message.id)
-      const conseiller = conseillersJeunes.find(
-        (conseiller) => conseiller.id === message.conseillerId
-      )
-      expect(
-        within(messageItem).getByText(
-          `${conseiller?.prenom} ${conseiller?.nom}`,
-          { exact: false }
+    it.each(casesMessages)(
+      `affiche le nom complet du conseiller`,
+      (message) => {
+        // Then
+        const messageItem = screen.getByTestId(message.id)
+        const conseiller = conseillersJeunes.find(
+          (conseiller) => conseiller.id === message.conseillerId
         )
-      ).toBeInTheDocument()
-    })
+        expect(
+          within(messageItem).getByText(
+            `${conseiller?.prenom} ${conseiller?.nom}`,
+            { exact: false }
+          )
+        ).toBeInTheDocument()
+      }
+    )
   })
 
-  describe('when sending message', () => {
+  describe('quand on envoie un message', () => {
     let messageInput: HTMLInputElement
     beforeEach(() => {
       messageInput = screen.getByPlaceholderText('Écrivez votre message ici...')
     })
 
-    it('marks the conversation as read', async () => {
+    it('marque la conversation en "lu"', async () => {
       // When
       fireEvent.focus(messageInput)
 
@@ -144,7 +149,7 @@ describe('<Conversation />', () => {
       )
     })
 
-    it('sends new message', async () => {
+    it('envoie un nouveau message', async () => {
       // Given
       const newMessage = 'Ceci est un nouveau message du conseiller'
       const form = screen.getByTestId('newMessageForm')
@@ -169,22 +174,29 @@ describe('<Conversation />', () => {
     })
   })
 
-  describe('when sending file', () => {
-    it('send file', async () => {
+  describe('quand on téléverse un fichier', () => {
+    it('téléverse un fichier et affiche son nom en cas de succes', async () => {
       // Given
+      const file: File = new File(['un contenu'], 'imageupload.png', {
+        type: 'image/png',
+      })
       const uploadFile = screen.getByTestId('newFile')
+      const fileInput = within(uploadFile).getByLabelText(
+        'Attacher une pièce jointe'
+      )
 
       // When
-      fireEvent.click(uploadFile)
-      //TODO upload un file
+      await waitFor(() =>
+        fireEvent.change(fileInput, {
+          target: { files: [file] },
+        })
+      )
 
       // Then
-      await act(async () => {
-        expect(fichiersService.postFichier).toHaveBeenCalledWith(
-          [1],
-          'monFichier', // TODO a modif
-          'accessToken'
-        )
+      await waitFor(() => {
+        expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
+        expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+        expect(uploadFile).toHaveAttribute('disabled', '')
       })
     })
   })
