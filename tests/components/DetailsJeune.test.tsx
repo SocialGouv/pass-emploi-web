@@ -50,22 +50,4 @@ describe('<DetailsJeune>', () => {
     // Then
     expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
   })
-
-  describe("quand le jeune ne s'est jamais connecté", () => {
-    let jeune: Jeune
-    beforeEach(() => {
-      // Given
-      jeune = unJeune({ isActivated: false })
-
-      // When
-      render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
-    })
-
-    it("affiche l'information", () => {
-      // Then
-      expect(
-        screen.getByText('pas encore connecté', { exact: false })
-      ).toBeInTheDocument()
-    })
-  })
 })

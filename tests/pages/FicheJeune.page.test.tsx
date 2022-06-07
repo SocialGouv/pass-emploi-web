@@ -380,8 +380,8 @@ describe('Fiche Jeune', () => {
     })
 
     describe("quand le jeune ne s'est jamais connecté", () => {
-      it('permet de supprimer le jeune', async () => {
-        // When
+      beforeEach(() => {
+        // Given
         renderWithSession(
           <DIProvider dependances={{ jeunesService, rendezVousService }}>
             <CurrentJeuneProvider>
@@ -395,7 +395,15 @@ describe('Fiche Jeune', () => {
             </CurrentJeuneProvider>
           </DIProvider>
         )
+      })
+      it("affiche l'information", () => {
+        // Then
+        expect(
+          screen.getByText('pas encore connecté', { exact: false })
+        ).toBeInTheDocument()
+      })
 
+      it('permet de supprimer le jeune', async () => {
         // Then
         const link = screen.getByText('Supprimer ce compte')
         expect(link).toBeInTheDocument()

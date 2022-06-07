@@ -63,15 +63,6 @@ export const DetailsJeune = ({
         )}
       </dl>
 
-      {!jeune.isActivated && (
-        <p className='mt-4 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
-          <span className='text-sm-semi text-warning'>
-            Ce jeune ne s&apos;est pas encore connect&eacute; &agrave;
-            l&apos;application.
-          </span>
-        </p>
-      )}
-
       {withSituations && (
         <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
           <h2 className='text-base-medium'>Situation</h2>
