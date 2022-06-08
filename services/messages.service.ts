@@ -1,3 +1,5 @@
+import { FichierResponse } from '../interfaces/json/fichier'
+
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { UserStructure, UserType } from 'interfaces/conseiller'
@@ -22,6 +24,14 @@ export interface MessagesService {
     conseiller: { id: string; structure: string },
     jeuneChat: JeuneChat,
     newMessage: string,
+    accessToken: string,
+    cleChiffrement: string
+  ): void
+
+  sendFichier(
+    conseiller: { id: string; structure: string },
+    jeuneChat: JeuneChat,
+    piecesJointes: FichierResponse,
     accessToken: string,
     cleChiffrement: string
   ): void
@@ -159,6 +169,46 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
       return mappedCounts
     }, {} as { [idJeune: string]: number })
+  }
+
+  async sendFichier(
+    conseiller: { id: string; structure: UserStructure },
+    jeuneChat: JeuneChat,
+    piecesJointes: FichierResponse,
+    accessToken: string,
+    cleChiffrement: string
+  ) {
+    const now = new Date()
+    const encryptedMessage = this.chatCrypto.encrypt(
+      'Création d’une nouvelle pièce jointe',
+      cleChiffrement
+    )
+    await Promise.all([
+      this.firebaseClient.addFichier(
+        jeuneChat.chatId,
+        conseiller.id,
+        encryptedMessage,
+        piecesJointes,
+        now
+      ),
+      this.firebaseClient.updateChat(jeuneChat.chatId, {
+        lastMessageContent: encryptedMessage.encryptedText,
+        lastMessageIv: encryptedMessage.iv,
+        lastMessageSentAt: now,
+        lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
+        newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
+        seenByConseiller: true,
+        lastConseillerReading: now,
+      }),
+    ])
+    await Promise.all([
+      this.notifierNouveauMessage(conseiller.id, [jeuneChat.id], accessToken),
+      this.evenementNouveauMessage(
+        conseiller.structure,
+        conseiller.id,
+        accessToken
+      ),
+    ])
   }
 
   async sendNouveauMessage(

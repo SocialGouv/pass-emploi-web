@@ -42,6 +42,9 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
+      sendFichier: jest.fn(() => {
+        return Promise.resolve()
+      }),
       sendNouveauMessage: jest.fn(() => {
         return Promise.resolve()
       }),
@@ -195,6 +198,7 @@ describe('<Conversation />', () => {
       // Then
       await waitFor(() => {
         expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
+        expect(messagesService.sendFichier).toHaveBeenCalledTimes(1)
         expect(screen.getByText('imageupload.png')).toBeInTheDocument()
         expect(uploadFile).toHaveAttribute('disabled', '')
       })

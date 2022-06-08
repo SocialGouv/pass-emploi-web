@@ -20,17 +20,20 @@ import {
   where,
 } from 'firebase/firestore'
 
+import { FichierResponse } from '../interfaces/json/fichier'
+
 import { UserType } from 'interfaces/conseiller'
 import { Chat } from 'interfaces/jeune'
 import { Message, TypeMessage } from 'interfaces/message'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
-type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE'
+type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE' | 'MESSAGE_PJ'
 interface FirebaseMessage {
   creationDate: Timestamp
   sentBy: string
   content: string
   iv: string | undefined
+  piecesJointes?: FichierResponse
   conseillerId: string | undefined
   type: TypeMessageFirebase | undefined
 }
@@ -84,6 +87,37 @@ class FirebaseClient {
           sentBy: UserType.CONSEILLER.toLowerCase(),
           creationDate: Timestamp.fromDate(date),
           type: 'MESSAGE',
+        }
+      )
+    } catch (e) {
+      console.error(e)
+      captureRUMError(e as Error)
+      throw e
+    }
+  }
+
+  async addFichier(
+    idChat: string,
+    idConseiller: string,
+    message: { encryptedText: string; iv: string },
+    piecesJointes: FichierResponse,
+    date: Date
+  ): Promise<void> {
+    const { encryptedText: content, iv } = message
+    try {
+      await addDoc<FirebaseMessage>(
+        collection(
+          this.getChatReference(idChat),
+          'messages'
+        ) as CollectionReference<FirebaseMessage>,
+        {
+          content,
+          iv,
+          piecesJointes: piecesJointes,
+          conseillerId: idConseiller,
+          sentBy: UserType.CONSEILLER.toLowerCase(),
+          creationDate: Timestamp.fromDate(date),
+          type: 'MESSAGE_PJ',
         }
       )
     } catch (e) {

@@ -136,16 +136,26 @@ export default function Conversation({
 
     const fileSelected = event.target.files[0]
 
-    const resp: FichierResponse | undefined = await fichiersService.postFichier(
-      [jeuneChat.id],
-      fileSelected,
-      session!.accessToken
-    )
+    const fichierResponse: FichierResponse | undefined =
+      await fichiersService.postFichier(
+        [jeuneChat.id],
+        fileSelected,
+        session!.accessToken
+      )
 
-    if (resp && resp.nom) {
-      setFileUploadName(resp.nom)
+    if (fichierResponse && fichierResponse.nom) {
+      setFileUploadName(fichierResponse.nom)
 
-      // Todo insertion fireBase
+      messagesService.sendFichier(
+        {
+          id: session!.user.id,
+          structure: session!.user.structure,
+        },
+        jeuneChat,
+        fichierResponse,
+        session!.accessToken,
+        chatCredentials!.cleChiffrement
+      )
     }
   }
 
