@@ -299,7 +299,8 @@ describe('MessagesFirebaseAndApiService', () => {
     let newMessage: string
     let piecesJointes: FichierResponse
     const now = new Date()
-    beforeEach(async () => {
+
+    it('création d’une pièce jointe dans firebase', async () => {
       // Given
       jest.setSystemTime(now)
       jeuneChat = unJeuneChat()
@@ -315,8 +316,7 @@ describe('MessagesFirebaseAndApiService', () => {
         accessToken,
         cleChiffrement
       )
-    })
-    it('adds a new message to firebase', async () => {
+
       // Then
       expect(firebaseClient.addFichier).toHaveBeenCalledWith(
         jeuneChat.chatId,

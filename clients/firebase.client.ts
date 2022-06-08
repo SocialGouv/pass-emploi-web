@@ -20,10 +20,9 @@ import {
   where,
 } from 'firebase/firestore'
 
-import { FichierResponse } from '../interfaces/json/fichier'
-
 import { UserType } from 'interfaces/conseiller'
 import { Chat } from 'interfaces/jeune'
+import { FichierResponse } from 'interfaces/json/fichier'
 import { Message, TypeMessage } from 'interfaces/message'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 

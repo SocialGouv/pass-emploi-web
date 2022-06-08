@@ -178,7 +178,7 @@ describe('<Conversation />', () => {
   })
 
   describe('quand on téléverse un fichier', () => {
-    it('téléverse un fichier et affiche son nom en cas de succes', async () => {
+    it('téléverse un fichier et affiche son nom en cas de succès', async () => {
       // Given
       const file: File = new File(['un contenu'], 'imageupload.png', {
         type: 'image/png',

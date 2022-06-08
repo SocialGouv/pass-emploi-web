@@ -6,15 +6,14 @@ import React, {
   useState,
 } from 'react'
 
-import FileIcon from '../assets/icons/attach_file.svg'
-import { FichierResponse } from '../interfaces/json/fichier'
-import { FichiersService } from '../services/fichiers.services'
-
+import FileIcon from 'assets/icons/attach_file.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { FichierResponse } from 'interfaces/json/fichier'
 import { Message, MessagesOfADay } from 'interfaces/message'
+import { FichiersService } from 'services/fichiers.services'
 import { MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -283,10 +282,10 @@ export default function Conversation({
               className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
             >
               <IconComponent
-            name={IconName.Send}
+                name={IconName.Send}
                 aria-hidden='true'
                 focusable='false'
-                className='m-autow-6 h-6 fill-blanc'
+                className='m-auto w-6 h-6 fill-blanc'
               />
             </button>
 
