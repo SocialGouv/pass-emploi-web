@@ -34,10 +34,10 @@ export default function DeleteRdvModal({
       </p>
 
       {aDesJeunesDUnAutrePortefeuille && (
-        <p className='text-base-regular text-content_color text-center mx-28 mt-12'>
-          Le créateur et les bénéficiaires recevront un email de suppression du
-          rendez-vous.
-        </p>
+        <div className='text-base-regular text-content_color text-center mx-28 mt-12'>
+          <p>Le créateur recevra un email de suppression du rendez-vous.</p>
+          <p>Les bénéficiaires seront notifiés sur l’application CEJ.</p>
+        </div>
       )}
 
       <div className='flex justify-center mt-12'>
