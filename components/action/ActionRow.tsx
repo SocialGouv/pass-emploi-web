@@ -11,14 +11,9 @@ import { formatDayDate } from 'utils/date'
 interface ActionRowProps {
   action: Action
   jeuneId: string
-  borderStyle: string
 }
 
-export default function ActionRow({
-  action,
-  jeuneId,
-  borderStyle,
-}: ActionRowProps) {
+export default function ActionRow({ action, jeuneId }: ActionRowProps) {
   return (
     <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
       <a
@@ -26,12 +21,9 @@ export default function ActionRow({
         aria-label={`Détail de l'action ${action.content}`}
         className='table-row hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'
       >
-        <div
-          role='cell'
-          className={`table-cell relative pl-4 py-4 ${borderStyle}`}
-        >
+        <div role='cell' className={`table-cell relative pl-4 py-4`}>
           <span className='flex items-center'>
-            <span className='text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
+            <span className='text-base-medium text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
             {action.comment && (
@@ -44,20 +36,17 @@ export default function ActionRow({
             )}
           </span>
         </div>
-        <div
-          role='cell'
-          className={`table-cell relative text-primary_darken ${borderStyle}`}
-        >
+        <div role='cell' className={`table-cell relative`}>
           {formatDayDate(new Date(action.creationDate))}
         </div>
-        <div role='cell' className={`table-cell relative ${borderStyle}`}>
+        <div role='cell' className={`table-cell relative`}>
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
             <IconComponent
               name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
-              className='mr-1 w-6 h-6 fill-primary'
+              className='mr-1 w-6 h-6'
             />
           </span>
         </div>
