@@ -13,7 +13,7 @@ import RdvList from 'components/rdv/RdvList'
 import SuccessMessage from 'components/SuccessMessage'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, compareActionsDatesDesc } from 'interfaces/action'
@@ -38,6 +38,7 @@ interface FicheJeuneProps extends PageProps {
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   rdvSuppressionSuccess?: boolean
+  actionCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
 
@@ -49,6 +50,7 @@ function FicheJeune({
   rdvCreationSuccess,
   rdvModificationSuccess,
   rdvSuppressionSuccess,
+  actionCreationSuccess,
   messageEnvoiGroupeSuccess,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
@@ -66,6 +68,7 @@ function FicheJeune({
     RDVS = 'RDVS',
     ACTIONS = 'ACTIONS',
   }
+
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.RDVS)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
@@ -77,6 +80,9 @@ function FicheJeune({
   const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
     useState<boolean>(rdvSuppressionSuccess ?? false)
 
+  const [showActionCreationSuccess, setShowActionCreationSuccess] =
+    useState<boolean>(actionCreationSuccess ?? false)
+
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
@@ -87,21 +93,17 @@ function FicheJeune({
   if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
   if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
   if (rdvSuppressionSuccess) initialTracking += ' - Suppression rdv succès'
+  if (actionCreationSuccess) initialTracking += ' - Succès envoi message' // TODO 684 proper tracking
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  async function closeRdvMessage() {
+  async function closeMessage() {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
     setShowRdvSuppressionSuccess(false)
-    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
-      shallow: true,
-    })
-  }
-
-  async function closeMessageGroupeEnvoiSuccess() {
+    setShowActionCreationSuccess(false)
     setShowMessageGroupeEnvoiSuccess(false)
     await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
       shallow: true,
@@ -150,6 +152,21 @@ function FicheJeune({
           </ButtonLink>
         )}
 
+        {!isPoleEmploi && (
+          <ButtonLink
+            href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+            className='mb-4 ml-8 w-fit'
+          >
+            <IconComponent
+              name={IconName.Add}
+              focusable='false'
+              aria-hidden='true'
+              className='mr-2 w-4 h-4'
+            />
+            Créer une nouvelle action
+          </ButtonLink>
+        )}
+
         {!jeune.isActivated && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
@@ -164,21 +181,28 @@ function FicheJeune({
       {showRdvCreationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvMessage}
+          onAcknowledge={closeMessage}
         />
       )}
 
       {showRdvModificationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvMessage}
+          onAcknowledge={closeMessage}
         />
       )}
 
       {showRdvSuppressionSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeRdvMessage}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showActionCreationSuccess && (
+        <SuccessMessage
+          label={"L'action a bien été créée"}
+          onAcknowledge={closeMessage}
         />
       )}
 
@@ -187,7 +211,7 @@ function FicheJeune({
           label={
             'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
           }
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+          onAcknowledge={closeMessage}
         />
       )}
       <DetailsJeune
@@ -265,20 +289,7 @@ function FicheJeune({
           )}
 
           {!isPoleEmploi && actions.length !== 0 && (
-            <>
-              <TableauActionsJeune
-                jeune={jeune}
-                actions={actions.slice(0, 3)}
-                hideTableHead={true}
-              />
-              <div className='flex justify-center mt-8'>
-                <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                  <a className='text-sm text-primary_darken underline hover:text-primary'>
-                    Voir la liste des actions du jeune
-                  </a>
-                </Link>
-              </div>
-            </>
+            <TableauActionsJeune jeune={jeune} actions={actions} />
           )}
 
           {!isPoleEmploi && actions.length === 0 && (
@@ -363,6 +374,9 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   if (context.query.suppressionRdv)
     props.rdvSuppressionSuccess = context.query.suppressionRdv === 'succes'
+
+  if (context.query.creationAction)
+    props.actionCreationSuccess = context.query.creationAction === 'succes'
 
   if (context.query?.envoiMessage) {
     props.messageEnvoiGroupeSuccess = context.query?.envoiMessage === 'succes'

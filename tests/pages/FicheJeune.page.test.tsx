@@ -93,7 +93,7 @@ describe('Fiche Jeune', () => {
         ).toThrow()
       })
 
-      it('affiche les actions du jeune', async () => {
+      it('affiche toutes les actions du jeune', async () => {
         // When
         const tabActions = screen.getByRole('tab', { name: 'Actions 4' })
         await act(async () => {
@@ -101,7 +101,7 @@ describe('Fiche Jeune', () => {
         })
 
         // Then
-        actions.slice(0, 3).forEach((action) => {
+        actions.forEach((action) => {
           expect(screen.getByText(action.content)).toBeInTheDocument()
         })
         expect(
@@ -110,24 +110,6 @@ describe('Fiche Jeune', () => {
         expect(() =>
           screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
         ).toThrow()
-      })
-
-      it('affiche un lien vers les actions du jeune', async () => {
-        // When
-        const tabActions = screen.getByRole('tab', { name: 'Actions 4' })
-        await act(async () => {
-          tabActions.click()
-        })
-
-        // Then
-        const lienActions = screen.getByRole('link', {
-          name: 'Voir la liste des actions du jeune',
-        })
-        expect(lienActions).toBeInTheDocument()
-        expect(lienActions).toHaveAttribute(
-          'href',
-          `/mes-jeunes/${jeune.id}/actions`
-        )
       })
 
       it('permet la prise de rendez-vous', async () => {

@@ -9,8 +9,6 @@ import FiltresActionsTabList, {
 } from 'components/action/FiltresActionsTabList'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import SuccessMessage from 'components/SuccessMessage'
-import ButtonLink from 'components/ui/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   Action,
   ActionsParStatut,
@@ -135,18 +133,6 @@ function Actions({
 
   return (
     <>
-      <ButtonLink
-        href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-        className='mb-4 w-fit'
-      >
-        <IconComponent
-          name={IconName.Add}
-          focusable='false'
-          aria-hidden='true'
-          className='mr-2 w-4 h-4'
-        />
-        Créer une nouvelle action
-      </ButtonLink>
       {showCreationSuccess && (
         <SuccessMessage
           label={"L'action a bien été créée"}

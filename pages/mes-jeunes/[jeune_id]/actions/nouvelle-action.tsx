@@ -65,8 +65,8 @@ function EditionAction({ idJeune }: EditionActionProps) {
       session!.accessToken
     )
     await router.push({
-      pathname: `/mes-jeunes/${idJeune}/actions`,
-      query: { creation: 'succes' },
+      pathname: `/mes-jeunes/${idJeune}`,
+      query: { creationAction: 'succes' },
     })
   }
 
