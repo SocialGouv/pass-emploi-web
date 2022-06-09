@@ -1,9 +1,8 @@
-import { FichierResponse } from '../interfaces/json/fichier'
-
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { UserStructure, UserType } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { FichierResponse } from 'interfaces/json/fichier'
 import {
   ChatCredentials,
   Message,

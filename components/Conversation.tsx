@@ -126,19 +126,19 @@ export default function Conversation({
     [messagesService]
   )
 
-  function handleClick() {
+  function handleFileUploadClick() {
     hiddenFileInput.current!.click()
   }
 
-  async function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  async function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>) {
     if (!event.target.files || !event.target.files[0]) return
 
-    const fileSelected = event.target.files[0]
+    const fichierSelectionne = event.target.files[0]
 
     const fichierResponse: FichierResponse | undefined =
       await fichiersService.postFichier(
         [jeuneChat.id],
-        fileSelected,
+        fichierSelectionne,
         session!.accessToken
       )
 
@@ -251,29 +251,34 @@ export default function Conversation({
         className='py-3'
       >
         {fileUploadedName && (
-          <div className='px-3 flex flex-row'>
+          <div className='px-3 pb-3 flex flex-row'>
             <FileIcon
               aria-hidden='true'
               focusable='false'
               className='w-6 h-6'
             />
-            <span className='font-bold'>{fileUploadedName}</span>
+            <span className='font-bold break-words'>{fileUploadedName}</span>
           </div>
         )}
         <div className='w-full bg-grey_100 px-3 flex items-end'>
-          <label htmlFor='input-new-message' className='sr-only'>
-            Message à envoyer
-          </label>
-          <ResizingMultilineInput
-            id='input-new-message'
-            className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
-            onFocus={onInputFocused}
-            onBlur={() => (inputFocused.current = false)}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder='Écrivez votre message ici...'
-            minRows={3}
-            maxRows={7}
-          />
+          <div className='flex flex-col w-full'>
+            <label htmlFor='input-new-message' className='sr-only'>
+              Message à envoyer
+            </label>
+            <ResizingMultilineInput
+              id='input-new-message'
+              className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
+              onFocus={onInputFocused}
+              onBlur={() => (inputFocused.current = false)}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder='Écrivez votre message ici...'
+              minRows={3}
+              maxRows={7}
+            />
+            <span className='px-4 pt-2 text-xs text-grey_800'>
+              Formats acceptés de pièce jointe : .PDF, .JPG, .PNG (5 Mo maximum)
+            </span>
+          </div>
           <div className='flex flex-col'>
             <button
               type='submit'
@@ -294,12 +299,15 @@ export default function Conversation({
               aria-controls='fileupload'
               data-testid='newFile'
               className={`w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 ${
-                Boolean(fileUploadedName) ? 'bg-grey_500' : 'bg-primary'
+                Boolean(fileUploadedName)
+                  ? 'bg-grey_500 cursor-not-allowed'
+                  : 'bg-primary'
               }`}
-              onClick={handleClick}
+              onClick={handleFileUploadClick}
               disabled={Boolean(fileUploadedName)}
             >
-              <FileIcon
+              <IconComponent
+                name={IconName.File}
                 aria-hidden='true'
                 focusable='false'
                 className='m-auto w-6 h-6 fill-blanc'
@@ -311,7 +319,7 @@ export default function Conversation({
                 id='fileupload'
                 type='file'
                 ref={hiddenFileInput}
-                onChange={handleChange}
+                onChange={handleFileUploadChange}
                 className='hidden'
                 accept='.pdf, .png, .jpeg'
               />

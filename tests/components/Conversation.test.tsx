@@ -53,7 +53,7 @@ describe('<Conversation />', () => {
       ...fichiersService,
       postFichier: jest
         .fn()
-        .mockReturnValue({ id: 'id-file', nom: 'imageupload.png' }),
+        .mockReturnValue({ id: 'id-fichier', nom: 'imageupload.png' }),
     }
 
     conseiller = {

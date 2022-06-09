@@ -1,9 +1,7 @@
-import { ApiClient } from '../../clients/api.client'
-import {
-  FichiersApiService,
-  FichiersService,
-} from '../../services/fichiers.services'
 import { FakeApiClient } from '../utils/fakeApiClient'
+
+import { ApiClient } from 'clients/api.client'
+import { FichiersApiService, FichiersService } from 'services/fichiers.services'
 
 describe('FichierApiService', () => {
   let apiClient: ApiClient
