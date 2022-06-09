@@ -75,12 +75,6 @@ describe("Page Liste des actions d'un jeune", () => {
       })
     })
 
-    it('a un lien pour créer une action', () => {
-      expect(
-        screen.getByRole('link', { name: 'Créer une nouvelle action' })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
-    })
-
     it("affiche le succès de la création d'une action", () => {
       // Then
       expect(screen.getByText("L'action a bien été créée")).toBeInTheDocument()

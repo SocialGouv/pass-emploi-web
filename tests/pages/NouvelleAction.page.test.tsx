@@ -180,8 +180,8 @@ describe('NouvelleAction', () => {
           it('redirige vers la fiche du jeune', () => {
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: `/mes-jeunes/id-jeune/actions`,
-              query: { creation: 'succes' },
+              pathname: `/mes-jeunes/id-jeune`,
+              query: { creationAction: 'succes' },
             })
           })
         })
@@ -262,8 +262,8 @@ describe('NouvelleAction', () => {
           it('redirige vers la fiche du jeune', () => {
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: `/mes-jeunes/id-jeune/actions`,
-              query: { creation: 'succes' },
+              pathname: `/mes-jeunes/id-jeune`,
+              query: { creationAction: 'succes' },
             })
           })
         })

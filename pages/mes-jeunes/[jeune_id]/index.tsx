@@ -1,6 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
@@ -201,7 +200,7 @@ function FicheJeune({
 
       {showActionCreationSuccess && (
         <SuccessMessage
-          label={"L'action a bien été créée"}
+          label={'L’action a bien été créée'}
           onAcknowledge={closeMessage}
         />
       )}
@@ -293,16 +292,9 @@ function FicheJeune({
           )}
 
           {!isPoleEmploi && actions.length === 0 && (
-            <>
-              <p className='text-md mb-2'>
-                {jeune.firstName} n&apos;a pas encore d&apos;action
-              </p>
-              <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                <a className='text-sm text-primary_darken underline'>
-                  Accédez à cette page pour créer une action
-                </a>
-              </Link>
-            </>
+            <p className='text-md mb-2'>
+              {jeune.firstName} n’a pas encore d’action
+            </p>
           )}
         </div>
       )}

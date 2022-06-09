@@ -26,8 +26,8 @@ import {
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import {
-  ConseillerHistorique,
   CategorieSituation,
+  ConseillerHistorique,
   EtatSituation,
 } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
@@ -114,7 +114,16 @@ describe('Fiche Jeune', () => {
 
       it('permet la prise de rendez-vous', async () => {
         // Then
-        expect(screen.getByText('Fixer un rendez-vous')).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', { name: 'Fixer un rendez-vous' })
+        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
+      })
+
+      it('permet la création d’une action', async () => {
+        // Then
+        expect(
+          screen.getByRole('link', { name: 'Créer une nouvelle action' })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
       })
 
       it('affiche la liste des 5 premiers conseillers du jeune', () => {
@@ -249,6 +258,11 @@ describe('Fiche Jeune', () => {
           )
         ).toBeInTheDocument()
       })
+
+      it('ne permet pas la création d’action', async () => {
+        // Then
+        expect(() => screen.getByText('Créer une nouvelle action')).toThrow()
+      })
     })
 
     describe('quand l’utilisateur est un conseiller MILO', () => {
@@ -331,7 +345,7 @@ describe('Fiche Jeune', () => {
     })
 
     describe("quand le jeune n'a pas d'action", () => {
-      it('affiche un lien d acces à la page d action', async () => {
+      it('affiche un message qui le précise', async () => {
         // Given
         renderWithSession(
           <DIProvider dependances={{ jeunesService, rendezVousService }}>
@@ -353,11 +367,7 @@ describe('Fiche Jeune', () => {
         })
 
         // Then
-        expect(
-          screen.getByRole('link', {
-            name: 'Accédez à cette page pour créer une action',
-          })
-        ).toBeInTheDocument()
+        expect(screen.getByText(/n’a pas encore d’action/)).toBeInTheDocument()
       })
     })
 
@@ -492,6 +502,56 @@ describe('Fiche Jeune', () => {
         expect(() =>
           screen.getByText('Le rendez-vous a bien été modifié')
         ).toThrow()
+        expect(replace).toHaveBeenCalledWith(
+          { pathname: '/mes-jeunes/jeune-1' },
+          undefined,
+          { shallow: true }
+        )
+      })
+    })
+
+    describe('quand la création d’une action est réussie', () => {
+      let replace: jest.Mock
+      beforeEach(() => {
+        // Given
+        replace = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+        // When
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
+            <CurrentJeuneProvider>
+              <FicheJeune
+                jeune={jeune}
+                rdvs={rdvs}
+                actions={actions}
+                actionCreationSuccess={true}
+                conseillers={[]}
+                pageTitle={''}
+              />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
+      })
+
+      it('affiche un message de succès', () => {
+        // Then
+        expect(
+          screen.getByText('L’action a bien été créée')
+        ).toBeInTheDocument()
+      })
+
+      it('permet de cacher le message de succès', async () => {
+        // Given
+        const fermerMessage = screen.getByRole('button', {
+          name: "J'ai compris",
+        })
+
+        // When
+        await act(async () => fermerMessage.click())
+
+        // Then
+        expect(() => screen.getByText('L’action a bien été créée')).toThrow()
         expect(replace).toHaveBeenCalledWith(
           { pathname: '/mes-jeunes/jeune-1' },
           undefined,
@@ -678,6 +738,24 @@ describe('Fiche Jeune', () => {
         expect(actual).toMatchObject({
           props: { messageEnvoiGroupeSuccess: true },
         })
+      })
+    })
+
+    describe('Quand on vient de créer une action', () => {
+      it('récupère le statut de la création', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          validSession: true,
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { creationAction: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({ props: { actionCreationSuccess: true } })
       })
     })
 
