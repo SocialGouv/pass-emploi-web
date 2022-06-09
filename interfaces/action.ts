@@ -23,9 +23,6 @@ export enum StatutAction {
   Annulee = 'Annulee',
 }
 
-export type ActionsParStatut = { [key in StatutAction]: Action[] }
-export type NombreActionsParStatut = { [key in StatutAction]: number }
-
 export function compareActionsDatesDesc(
   action1: Action,
   action2: Action
