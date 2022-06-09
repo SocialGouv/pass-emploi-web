@@ -275,7 +275,7 @@ export default function Conversation({
               minRows={3}
               maxRows={7}
             />
-            <span className='px-4 pt-2 text-xs text-grey_800'>
+            <span className='px-4 pt-2 text-xs'>
               Formats acceptés de pièce jointe : .PDF, .JPG, .PNG (5 Mo maximum)
             </span>
           </div>
