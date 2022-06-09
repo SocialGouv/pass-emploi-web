@@ -270,7 +270,13 @@ export default function Conversation({
                             className='w-6 h-6'
                           />
                           <span className='font-bold break-words'>
-                            {message.piecesJointes![0].nom}
+                            <a
+                              href={`/api/fichiers/${
+                                message.piecesJointes![0].id
+                              }`}
+                            >
+                              {message.piecesJointes![0].nom}
+                            </a>
                           </span>
                         </div>
                       </div>
