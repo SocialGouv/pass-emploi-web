@@ -287,14 +287,8 @@ function FicheJeune({
             <IntegrationPoleEmploi label='actions et démarches' />
           )}
 
-          {!isPoleEmploi && actions.length !== 0 && (
+          {!isPoleEmploi && (
             <TableauActionsJeune jeune={jeune} actions={actions} />
-          )}
-
-          {!isPoleEmploi && actions.length === 0 && (
-            <p className='text-md mb-2'>
-              {jeune.firstName} n’a pas encore d’action
-            </p>
           )}
         </div>
       )}
