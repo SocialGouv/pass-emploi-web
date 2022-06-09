@@ -365,12 +365,18 @@ function docSnapshotToMessage(
   docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
 ): Message {
   const firebaseMessage = docSnapshot.data()
-  return {
+  let message: Message = {
     ...firebaseMessage,
     creationDate: firebaseMessage.creationDate.toDate(),
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
   }
+
+  if (firebaseMessage.type === TypeMessage.MESSAGE_PJ) {
+    message = { ...message, piecesJointes: firebaseMessage.piecesJointes }
+  }
+
+  return message
 }
 
 function firebaseToMessageType(
@@ -379,6 +385,8 @@ function firebaseToMessageType(
   switch (type) {
     case 'NOUVEAU_CONSEILLER':
       return TypeMessage.NOUVEAU_CONSEILLER
+    case 'MESSAGE_PJ':
+      return TypeMessage.MESSAGE_PJ
     case 'MESSAGE':
     case undefined:
       return TypeMessage.MESSAGE

@@ -12,7 +12,7 @@ import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { FichierResponse } from 'interfaces/json/fichier'
-import { Message, MessagesOfADay } from 'interfaces/message'
+import { Message, MessagesOfADay, TypeMessage } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.services'
 import { MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
@@ -202,42 +202,98 @@ export default function Conversation({
 
             <ul>
               {messagesOfADay.messages.map((message: Message) => (
-                <li
-                  key={message.id}
-                  className='mb-5'
-                  ref={scrollToRef}
-                  data-testid={message.id}
-                >
-                  <div
-                    className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
-                      isSentByConseiller(message)
-                        ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
-                        : 'text-left text-blanc bg-primary_darken mb-1'
-                    }`}
-                  >
-                    {isSentByConseiller(message) && (
-                      <p className='text-s-regular capitalize mb-1'>
-                        {getConseillerNomComplet(message)}
+                <>
+                  {message.type === TypeMessage.MESSAGE && (
+                    <li
+                      key={message.id}
+                      className='mb-5'
+                      ref={scrollToRef}
+                      data-testid={message.id}
+                    >
+                      <div
+                        className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
+                          isSentByConseiller(message)
+                            ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
+                            : 'text-left text-blanc bg-primary_darken mb-1'
+                        }`}
+                      >
+                        {isSentByConseiller(message) && (
+                          <p className='text-s-regular capitalize mb-1'>
+                            {getConseillerNomComplet(message)}
+                          </p>
+                        )}
+                        <p className='whitespace-pre-wrap'>{message.content}</p>
+                      </div>
+                      <p
+                        className={`text-xs text-grey_800 ${
+                          isSentByConseiller(message)
+                            ? 'text-right'
+                            : 'text-left'
+                        }`}
+                      >
+                        {formatHourMinuteDate(message.creationDate)}
+                        {isSentByConseiller(message) && (
+                          <span>
+                            {!lastSeenByJeune ||
+                            isDateOlder(lastSeenByJeune, message.creationDate)
+                              ? ' · Envoyé'
+                              : ' · Lu'}
+                          </span>
+                        )}
                       </p>
-                    )}
-                    <p className='whitespace-pre-wrap'>{message.content}</p>
-                  </div>
-                  <p
-                    className={`text-xs text-grey_800 ${
-                      isSentByConseiller(message) ? 'text-right' : 'text-left'
-                    }`}
-                  >
-                    {formatHourMinuteDate(message.creationDate)}
-                    {isSentByConseiller(message) && (
-                      <span>
-                        {!lastSeenByJeune ||
-                        isDateOlder(lastSeenByJeune, message.creationDate)
-                          ? ' · Envoyé'
-                          : ' · Lu'}
-                      </span>
-                    )}
-                  </p>
-                </li>
+                    </li>
+                  )}
+                  {message.type === TypeMessage.MESSAGE_PJ && (
+                    <li
+                      key={message.id}
+                      className='mb-5'
+                      ref={scrollToRef}
+                      data-testid={message.id}
+                    >
+                      <div
+                        className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
+                          isSentByConseiller(message)
+                            ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
+                            : 'text-left text-blanc bg-primary_darken mb-1'
+                        }`}
+                      >
+                        {isSentByConseiller(message) && (
+                          <p className='text-s-regular capitalize mb-1'>
+                            {getConseillerNomComplet(message)}
+                          </p>
+                        )}
+                        <p className='whitespace-pre-wrap'>{message.content}</p>
+                        <div className='px-3 pb-3 flex flex-row'>
+                          <FileIcon
+                            aria-hidden='true'
+                            focusable='false'
+                            className='w-6 h-6'
+                          />
+                          <span className='font-bold break-words'>
+                            {message.piecesJointes![0].nom}
+                          </span>
+                        </div>
+                      </div>
+                      <p
+                        className={`text-xs text-grey_800 ${
+                          isSentByConseiller(message)
+                            ? 'text-right'
+                            : 'text-left'
+                        }`}
+                      >
+                        {formatHourMinuteDate(message.creationDate)}
+                        {isSentByConseiller(message) && (
+                          <span>
+                            {!lastSeenByJeune ||
+                            isDateOlder(lastSeenByJeune, message.creationDate)
+                              ? ' · Envoyé'
+                              : ' · Lu'}
+                          </span>
+                        )}
+                      </p>
+                    </li>
+                  )}
+                </>
               ))}
             </ul>
           </li>
