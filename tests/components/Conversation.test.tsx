@@ -1,7 +1,8 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { Session } from 'next-auth'
 import React from 'react'
 
+import { FichiersService } from '../../services/fichiers.services'
 import renderWithSession from '../renderWithSession'
 
 import Conversation from 'components/Conversation'
@@ -19,6 +20,7 @@ describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
   let onBack: () => void
   let messagesService: MessagesService
+  let fichiersService: FichiersService
   let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
   const messagesParJour = desMessagesParJour()
@@ -40,10 +42,19 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
+      sendFichier: jest.fn(() => {
+        return Promise.resolve()
+      }),
       sendNouveauMessage: jest.fn(() => {
         return Promise.resolve()
       }),
     })
+    fichiersService = {
+      ...fichiersService,
+      postFichier: jest
+        .fn()
+        .mockReturnValue({ id: 'id-fichier', nom: 'imageupload.png' }),
+    }
 
     conseiller = {
       id: 'idConseiller',
@@ -56,7 +67,7 @@ describe('<Conversation />', () => {
 
     await act(async () => {
       await renderWithSession(
-        <DIProvider dependances={{ messagesService }}>
+        <DIProvider dependances={{ messagesService, fichiersService }}>
           <Conversation
             jeuneChat={jeuneChat}
             conseillers={conseillersJeunes}
@@ -68,7 +79,7 @@ describe('<Conversation />', () => {
     })
   })
 
-  it('subscribes to chat messages', async () => {
+  it('s’abonne au message de la conversation', async () => {
     // Then
     expect(messagesService.observeMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
@@ -77,14 +88,14 @@ describe('<Conversation />', () => {
     )
   })
 
-  it('marks the conversation as read', async () => {
+  it('marque la conversation en "lu"', async () => {
     // Then
     expect(messagesService.setReadByConseiller).toHaveBeenCalledWith(
       jeuneChat.chatId
     )
   })
 
-  it('subscribes to jeune reading', async () => {
+  it('s’abonne à "jeuneReading"', async () => {
     // Then
     expect(messagesService.observeJeuneReadingDate).toHaveBeenCalledWith(
       jeuneChat.chatId,
@@ -93,8 +104,8 @@ describe('<Conversation />', () => {
   })
 
   const cases = messagesParJour.map((messagesDUnJour) => [messagesDUnJour])
-  describe.each(cases)('For each day with messages', (messagesDUnJour) => {
-    it(`displays the date (${formatDayDate(messagesDUnJour.date)})`, () => {
+  describe.each(cases)('Pour chaque jour avec message', (messagesDUnJour) => {
+    it(`affiche la date (${formatDayDate(messagesDUnJour.date)})`, () => {
       // Then
       expect(
         screen.getByText(`Le ${formatDayDate(messagesDUnJour.date)}`)
@@ -102,33 +113,36 @@ describe('<Conversation />', () => {
     })
 
     const casesMessages = messagesDUnJour.messages.map((message) => [message])
-    it.each(casesMessages)(`displays message content`, (message) => {
+    it.each(casesMessages)(`affiche le contenu du message`, (message) => {
       // Then
       expect(screen.getByText(message.content)).toBeInTheDocument()
     })
 
-    it.each(casesMessages)(`displays conseiller full name`, (message) => {
-      // Then
-      const messageItem = screen.getByTestId(message.id)
-      const conseiller = conseillersJeunes.find(
-        (conseiller) => conseiller.id === message.conseillerId
-      )
-      expect(
-        within(messageItem).getByText(
-          `${conseiller?.prenom} ${conseiller?.nom}`,
-          { exact: false }
+    it.each(casesMessages)(
+      `affiche le nom complet du conseiller`,
+      (message) => {
+        // Then
+        const messageItem = screen.getByTestId(message.id)
+        const conseiller = conseillersJeunes.find(
+          (conseiller) => conseiller.id === message.conseillerId
         )
-      ).toBeInTheDocument()
-    })
+        expect(
+          within(messageItem).getByText(
+            `${conseiller?.prenom} ${conseiller?.nom}`,
+            { exact: false }
+          )
+        ).toBeInTheDocument()
+      }
+    )
   })
 
-  describe('when sending message', () => {
+  describe('quand on envoie un message', () => {
     let messageInput: HTMLInputElement
     beforeEach(() => {
       messageInput = screen.getByPlaceholderText('Écrivez votre message ici...')
     })
 
-    it('marks the conversation as read', async () => {
+    it('marque la conversation en "lu"', async () => {
       // When
       fireEvent.focus(messageInput)
 
@@ -138,7 +152,7 @@ describe('<Conversation />', () => {
       )
     })
 
-    it('sends new message', async () => {
+    it('envoie un nouveau message', async () => {
       // Given
       const newMessage = 'Ceci est un nouveau message du conseiller'
       const form = screen.getByTestId('newMessageForm')
@@ -159,6 +173,35 @@ describe('<Conversation />', () => {
           'accessToken',
           'cleChiffrement'
         )
+      })
+    })
+  })
+
+  describe('quand on téléverse un fichier', () => {
+    it('téléverse un fichier et affiche son nom en cas de succès', async () => {
+      // Given
+      const file: File = new File(['un contenu'], 'imageupload.png', {
+        type: 'image/png',
+      })
+      const uploadFile = screen.getByTestId('newFile')
+      const fileInput = within(uploadFile).getByLabelText(
+        'Attacher une pièce jointe'
+      )
+
+      // When
+      await waitFor(() =>
+        fireEvent.change(fileInput, {
+          target: { files: [file] },
+        })
+      )
+
+      // Then
+      await waitFor(() => {
+        expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
+        // TODO us-674 erreur PO : a décommenté dans l’us-676
+        //expect(messagesService.sendFichier).toHaveBeenCalledTimes(1)
+        expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+        expect(uploadFile).toHaveAttribute('disabled', '')
       })
     })
   })

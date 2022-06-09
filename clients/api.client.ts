@@ -7,6 +7,11 @@ export interface ApiClient {
     payload: { [key: string]: any },
     accessToken: string
   ): Promise<T>
+  postFile<T>(
+    path: string,
+    payload: { [key: string]: any },
+    accessToken: string
+  ): Promise<T>
   put(
     path: string,
     payload: { [key: string]: any },
@@ -47,6 +52,24 @@ export class ApiHttpClient implements ApiClient {
       headers,
     }
     if (payload) reqInit.body = JSON.stringify(payload)
+
+    return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
+  }
+
+  async postFile<T = void>(
+    path: string,
+    payload: any,
+    accessToken: string
+  ): Promise<T> {
+    const headers = new Headers({
+      Authorization: `Bearer ${accessToken}`,
+    })
+
+    const reqInit: RequestInit = {
+      method: 'POST',
+      headers,
+    }
+    if (payload) reqInit.body = payload
 
     return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
   }

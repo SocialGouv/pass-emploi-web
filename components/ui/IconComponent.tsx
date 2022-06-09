@@ -7,6 +7,7 @@ import ArrowDoubleIcon from '../../assets/icons/arrow_double.svg'
 import ArrowDownIcon from '../../assets/icons/arrow_down.svg'
 import ArrowLeftIcon from '../../assets/icons/arrow_left.svg'
 import ArrowRightIcon from '../../assets/icons/arrow_right.svg'
+import FileIcon from '../../assets/icons/attach_file.svg'
 import CalendarIcon from '../../assets/icons/calendar.svg'
 import CancelIcon from '../../assets/icons/cancel.svg'
 import CheckIcon from '../../assets/icons/check.svg'
@@ -52,6 +53,7 @@ export enum IconName {
   Chiffre4 = 'Chiffre4',
   Close = 'Close',
   Delete = 'Delete',
+  File = 'File',
   Info = 'Info',
   Launch = 'Launch',
   Logout = 'Logout',
@@ -84,6 +86,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Chiffre4]: Chiffre4Icon,
   [IconName.Close]: CloseIcon,
   [IconName.Delete]: DeleteIcon,
+  [IconName.File]: FileIcon,
   [IconName.Info]: InfoIcon,
   [IconName.Launch]: LaunchIcon,
   [IconName.Logout]: LogoutIcon,

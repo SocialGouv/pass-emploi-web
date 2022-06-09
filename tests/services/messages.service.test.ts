@@ -1,3 +1,4 @@
+import { FichierResponse } from '../../interfaces/json/fichier'
 import { FakeApiClient } from '../utils/fakeApiClient'
 
 import { ApiClient } from 'clients/api.client'
@@ -288,6 +289,44 @@ describe('MessagesFirebaseAndApiService', () => {
           },
         },
         accessToken
+      )
+    })
+  })
+
+  describe('.sendFichier', () => {
+    let conseiller: { id: string; structure: UserStructure }
+    let jeuneChat: JeuneChat
+    let newMessage: string
+    let piecesJointes: FichierResponse
+    const now = new Date()
+
+    it('création d’une pièce jointe dans firebase', async () => {
+      // Given
+      jest.setSystemTime(now)
+      jeuneChat = unJeuneChat()
+      newMessage = ''
+      piecesJointes = { id: 'fake-id', nom: 'fake-nom' }
+
+      // When
+      conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
+      await messagesService.sendFichier(
+        conseiller,
+        jeuneChat,
+        piecesJointes,
+        accessToken,
+        cleChiffrement
+      )
+
+      // Then
+      expect(firebaseClient.addFichier).toHaveBeenCalledWith(
+        jeuneChat.chatId,
+        conseiller.id,
+        {
+          encryptedText: `Encrypted: Création d’une nouvelle pièce jointe`,
+          iv: `IV: Création d’une nouvelle pièce jointe`,
+        },
+        piecesJointes,
+        now
       )
     })
   })

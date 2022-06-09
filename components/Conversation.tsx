@@ -1,10 +1,19 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
+import FileIcon from 'assets/icons/attach_file.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { FichierResponse } from 'interfaces/json/fichier'
 import { Message, MessagesOfADay } from 'interfaces/message'
+import { FichiersService } from 'services/fichiers.services'
 import { MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -33,14 +42,17 @@ export default function Conversation({
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
+  const fichiersService = useDependance<FichiersService>('fichiersService')
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
+  const [fileUploadedName, setFileUploadName] = useState<string>('')
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
   )
   const inputFocused = useRef<boolean>(false)
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
 
   function scrollToRef(message: HTMLLIElement | null) {
     if (message) message.scrollIntoView({ behavior: 'smooth' })
@@ -113,6 +125,39 @@ export default function Conversation({
     },
     [messagesService]
   )
+
+  function handleFileUploadClick() {
+    hiddenFileInput.current!.click()
+  }
+
+  async function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files || !event.target.files[0]) return
+
+    const fichierSelectionne = event.target.files[0]
+
+    const fichierResponse: FichierResponse | undefined =
+      await fichiersService.postFichier(
+        [jeuneChat.id],
+        fichierSelectionne,
+        session!.accessToken
+      )
+
+    if (fichierResponse && fichierResponse.nom) {
+      setFileUploadName(fichierResponse.nom)
+
+      // TODO us-674 erreur PO : a décommenté dans l’us-676
+      // messagesService.sendFichier(
+      //   {
+      //     id: session!.user.id,
+      //     structure: session!.user.structure,
+      //   },
+      //   jeuneChat,
+      //   fichierResponse,
+      //   session!.accessToken,
+      //   chatCredentials!.cleChiffrement
+      // )
+    }
+  }
 
   useEffect(() => {
     const unsubscribe = observerMessages(jeuneChat.chatId)
@@ -203,35 +248,84 @@ export default function Conversation({
       <form
         data-testid='newMessageForm'
         onSubmit={sendNouveauMessage}
-        className='w-full bg-grey_100 p-3 flex items-end'
+        className='py-3'
       >
-        <label htmlFor='input-new-message' className='sr-only'>
-          Message à envoyer
-        </label>
-        <ResizingMultilineInput
-          id='input-new-message'
-          className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
-          onFocus={onInputFocused}
-          onBlur={() => (inputFocused.current = false)}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder='Écrivez votre message ici...'
-          minRows={3}
-          maxRows={7}
-        />
+        {fileUploadedName && (
+          <div className='px-3 pb-3 flex flex-row'>
+            <FileIcon
+              aria-hidden='true'
+              focusable='false'
+              className='w-6 h-6'
+            />
+            <span className='font-bold break-words'>{fileUploadedName}</span>
+          </div>
+        )}
+        <div className='w-full bg-grey_100 px-3 flex items-end'>
+          <div className='flex flex-col w-full'>
+            <label htmlFor='input-new-message' className='sr-only'>
+              Message à envoyer
+            </label>
+            <ResizingMultilineInput
+              id='input-new-message'
+              className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
+              onFocus={onInputFocused}
+              onBlur={() => (inputFocused.current = false)}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder='Écrivez votre message ici...'
+              minRows={3}
+              maxRows={7}
+            />
+            <span className='px-4 pt-2 text-xs text-grey_800'>
+              Formats acceptés de pièce jointe : .PDF, .JPG, .PNG (5 Mo maximum)
+            </span>
+          </div>
+          <div className='flex flex-col'>
+            <button
+              type='submit'
+              aria-label='Envoyer le message'
+              disabled={!newMessage}
+              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+            >
+              <IconComponent
+                name={IconName.Send}
+                aria-hidden='true'
+                focusable='false'
+                className='m-auto w-6 h-6 fill-blanc'
+              />
+            </button>
 
-        <button
-          type='submit'
-          aria-label='Envoyer le message'
-          disabled={!newMessage}
-          className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0'
-        >
-          <IconComponent
-            name={IconName.Send}
-            aria-hidden='true'
-            focusable='false'
-            className='m-auto w-6 h-6 fill-blanc'
-          />
-        </button>
+            <button
+              type='button'
+              aria-controls='fileupload'
+              data-testid='newFile'
+              className={`w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 ${
+                Boolean(fileUploadedName)
+                  ? 'bg-grey_500 cursor-not-allowed'
+                  : 'bg-primary'
+              }`}
+              onClick={handleFileUploadClick}
+              disabled={Boolean(fileUploadedName)}
+            >
+              <IconComponent
+                name={IconName.File}
+                aria-hidden='true'
+                focusable='false'
+                className='m-auto w-6 h-6 fill-blanc'
+              />
+              <label htmlFor='fileupload' className='sr-only'>
+                Attacher une pièce jointe
+              </label>
+              <input
+                id='fileupload'
+                type='file'
+                ref={hiddenFileInput}
+                onChange={handleFileUploadChange}
+                className='hidden'
+                accept='.pdf, .png, .jpeg'
+              />
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   )

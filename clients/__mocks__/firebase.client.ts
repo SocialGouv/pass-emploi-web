@@ -1,11 +1,12 @@
 import { unChat } from 'fixtures/jeune'
-import { Message } from 'interfaces/message'
 import { Chat } from 'interfaces/jeune'
+import { Message } from 'interfaces/message'
 
 export const FirebaseClient = jest.fn(() => ({
   signIn: jest.fn(),
   signOut: jest.fn(),
   addMessage: jest.fn(),
+  addFichier: jest.fn(),
   updateChat: jest.fn(),
   findAndObserveChatDuJeune: jest.fn(
     (_idConseiller: string, _idJeune: string, fn: (chat: Chat) => void) =>
