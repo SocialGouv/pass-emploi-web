@@ -179,7 +179,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   ) {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(
-      'Création d’une nouvelle pièce jointe',
+      'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
       cleChiffrement
     )
     await Promise.all([

@@ -145,17 +145,16 @@ export default function Conversation({
     if (fichierResponse && fichierResponse.nom) {
       setFileUploadName(fichierResponse.nom)
 
-      // TODO us-674 erreur PO : a décommenté dans l’us-676
-      // messagesService.sendFichier(
-      //   {
-      //     id: session!.user.id,
-      //     structure: session!.user.structure,
-      //   },
-      //   jeuneChat,
-      //   fichierResponse,
-      //   session!.accessToken,
-      //   chatCredentials!.cleChiffrement
-      // )
+      messagesService.sendFichier(
+        {
+          id: session!.user.id,
+          structure: session!.user.structure,
+        },
+        jeuneChat,
+        fichierResponse,
+        session!.accessToken,
+        chatCredentials!.cleChiffrement
+      )
     }
   }
 

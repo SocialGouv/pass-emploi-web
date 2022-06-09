@@ -198,8 +198,7 @@ describe('<Conversation />', () => {
       // Then
       await waitFor(() => {
         expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
-        // TODO us-674 erreur PO : a décommenté dans l’us-676
-        //expect(messagesService.sendFichier).toHaveBeenCalledTimes(1)
+        expect(messagesService.sendFichier).toHaveBeenCalledTimes(1)
         expect(screen.getByText('imageupload.png')).toBeInTheDocument()
         expect(uploadFile).toHaveAttribute('disabled', '')
       })

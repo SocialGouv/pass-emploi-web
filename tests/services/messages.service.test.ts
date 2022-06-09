@@ -322,8 +322,8 @@ describe('MessagesFirebaseAndApiService', () => {
         jeuneChat.chatId,
         conseiller.id,
         {
-          encryptedText: `Encrypted: Création d’une nouvelle pièce jointe`,
-          iv: `IV: Création d’une nouvelle pièce jointe`,
+          encryptedText: `Encrypted: Votre conseiller vous a transmis une nouvelle pièce jointe : `,
+          iv: `IV: Votre conseiller vous a transmis une nouvelle pièce jointe : `,
         },
         piecesJointes,
         now

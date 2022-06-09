@@ -32,7 +32,7 @@ interface FirebaseMessage {
   sentBy: string
   content: string
   iv: string | undefined
-  piecesJointes?: FichierResponse
+  piecesJointes?: FichierResponse[]
   conseillerId: string | undefined
   type: TypeMessageFirebase | undefined
 }
@@ -112,7 +112,7 @@ class FirebaseClient {
         {
           content,
           iv,
-          piecesJointes: piecesJointes,
+          piecesJointes: [piecesJointes],
           conseillerId: idConseiller,
           sentBy: UserType.CONSEILLER.toLowerCase(),
           creationDate: Timestamp.fromDate(date),
