@@ -92,7 +92,7 @@ function FicheJeune({
   if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
   if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
   if (rdvSuppressionSuccess) initialTracking += ' - Suppression rdv succès'
-  if (actionCreationSuccess) initialTracking += ' - Succès envoi message' // TODO 684 proper tracking
+  if (actionCreationSuccess) initialTracking += ' - Succès creation action'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
