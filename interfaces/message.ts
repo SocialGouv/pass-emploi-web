@@ -1,3 +1,4 @@
+import { JeuneChat } from './jeune'
 import { FichierResponse } from './json/fichier'
 
 export enum TypeMessage {
@@ -14,6 +15,15 @@ export interface Message {
   conseillerId: string | undefined
   type: TypeMessage
   piecesJointes?: FichierResponse[]
+}
+
+export interface FormNouveauMessage {
+  conseiller: { id: string; structure: string }
+  jeuneChat: JeuneChat
+  newMessage: string
+  piecesJointes?: FichierResponse
+  accessToken: string
+  cleChiffrement: string
 }
 
 export interface MessagesOfADay {

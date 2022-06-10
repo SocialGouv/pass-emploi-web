@@ -5,6 +5,7 @@ import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { FichierResponse } from 'interfaces/json/fichier'
 import {
   ChatCredentials,
+  FormNouveauMessage,
   Message,
   MessagesOfADay,
   TypeMessage,
@@ -19,22 +20,23 @@ export interface MessagesService {
 
   signOut(): Promise<void>
 
-  sendNouveauMessage(
-    conseiller: { id: string; structure: string },
-    jeuneChat: JeuneChat,
-    newMessage: string,
-    accessToken: string,
-    cleChiffrement: string
-  ): void
+  sendNouveauMessage({
+    conseiller,
+    jeuneChat,
+    newMessage,
+    piecesJointes,
+    accessToken,
+    cleChiffrement,
+  }: FormNouveauMessage): void
 
-  sendFichier(
-    conseiller: { id: string; structure: string },
-    jeuneChat: JeuneChat,
-    newMessage: string,
-    piecesJointes: FichierResponse,
-    accessToken: string,
-    cleChiffrement: string
-  ): void
+  sendFichier({
+    conseiller,
+    jeuneChat,
+    newMessage,
+    piecesJointes,
+    accessToken,
+    cleChiffrement,
+  }: FormNouveauMessage): void
 
   sendNouveauMessageGroupe(
     conseiller: { id: string; structure: string },
@@ -171,14 +173,14 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     }, {} as { [idJeune: string]: number })
   }
 
-  async sendFichier(
-    conseiller: { id: string; structure: UserStructure },
-    jeuneChat: JeuneChat,
-    newMessage: string,
-    piecesJointes: FichierResponse,
-    accessToken: string,
-    cleChiffrement: string
-  ) {
+  async sendFichier({
+    conseiller,
+    jeuneChat,
+    newMessage,
+    piecesJointes,
+    accessToken,
+    cleChiffrement,
+  }: FormNouveauMessage) {
     const message = newMessage
       ? newMessage
       : 'Votre conseiller vous a transmis une nouvelle pièce jointe : '
@@ -213,13 +215,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     ])
   }
 
-  async sendNouveauMessage(
-    conseiller: { id: string; structure: UserStructure },
-    jeuneChat: JeuneChat,
-    newMessage: string,
-    accessToken: string,
-    cleChiffrement: string
-  ) {
+  async sendNouveauMessage({
+    conseiller,
+    jeuneChat,
+    newMessage,
+    accessToken,
+    cleChiffrement,
+  }: FormNouveauMessage) {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
     await Promise.all([
