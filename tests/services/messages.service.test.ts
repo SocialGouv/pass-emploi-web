@@ -318,7 +318,7 @@ describe('MessagesFirebaseAndApiService', () => {
       )
 
       // Then
-      expect(firebaseClient.addFichier).toHaveBeenCalledWith(
+      expect(firebaseClient.addMessage).toHaveBeenCalledWith(
         jeuneChat.chatId,
         conseiller.id,
         {

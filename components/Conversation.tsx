@@ -42,7 +42,7 @@ export default function Conversation({
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
-  const [fileUploadedName, setFileUploadName] = useState<string>('')
+  const [fileUploaded, setFileUpload] = useState<FichierResponse | null>(null)
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
@@ -61,17 +61,32 @@ export default function Conversation({
 
   async function sendNouveauMessage(event: any) {
     event.preventDefault()
-    messagesService.sendNouveauMessage(
-      {
-        id: session!.user.id,
-        structure: session!.user.structure,
-      },
-      jeuneChat,
-      newMessage,
-      session!.accessToken,
-      chatCredentials!.cleChiffrement
-    )
+    if (fileUploaded) {
+      messagesService.sendFichier(
+        {
+          id: session!.user.id,
+          structure: session!.user.structure,
+        },
+        jeuneChat,
+        newMessage,
+        fileUploaded,
+        session!.accessToken,
+        chatCredentials!.cleChiffrement
+      )
+    } else {
+      messagesService.sendNouveauMessage(
+        {
+          id: session!.user.id,
+          structure: session!.user.structure,
+        },
+        jeuneChat,
+        newMessage,
+        session!.accessToken,
+        chatCredentials!.cleChiffrement
+      )
+    }
 
+    setFileUpload(null)
     setNewMessage('')
   }
 
@@ -135,18 +150,7 @@ export default function Conversation({
       )
 
     if (fichierResponse && fichierResponse.nom) {
-      setFileUploadName(fichierResponse.nom)
-
-      messagesService.sendFichier(
-        {
-          id: session!.user.id,
-          structure: session!.user.structure,
-        },
-        jeuneChat,
-        fichierResponse,
-        session!.accessToken,
-        chatCredentials!.cleChiffrement
-      )
+      setFileUpload(fichierResponse)
     }
   }
 
@@ -212,14 +216,14 @@ export default function Conversation({
         onSubmit={sendNouveauMessage}
         className='py-3'
       >
-        {fileUploadedName && (
+        {fileUploaded && (
           <div className='px-3 pb-3 flex flex-row'>
             <FileIcon
               aria-hidden='true'
               focusable='false'
               className='w-6 h-6'
             />
-            <span className='font-bold break-words'>{fileUploadedName}</span>
+            <span className='font-bold break-words'>{fileUploaded.nom}</span>
           </div>
         )}
         <div className='w-full bg-grey_100 px-3 flex items-end'>
@@ -245,7 +249,7 @@ export default function Conversation({
             <button
               type='submit'
               aria-label='Envoyer le message'
-              disabled={!newMessage}
+              disabled={!(newMessage || Boolean(fileUploaded))}
               className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
             >
               <IconComponent
@@ -261,12 +265,12 @@ export default function Conversation({
               aria-controls='fileupload'
               data-testid='newFile'
               className={`w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 ${
-                Boolean(fileUploadedName)
+                Boolean(fileUploaded)
                   ? 'bg-grey_500 cursor-not-allowed'
                   : 'bg-primary'
               }`}
               onClick={handleFileUploadClick}
-              disabled={Boolean(fileUploadedName)}
+              disabled={Boolean(fileUploaded)}
             >
               <IconComponent
                 name={IconName.File}

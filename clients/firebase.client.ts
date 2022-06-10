@@ -37,6 +37,21 @@ interface FirebaseMessage {
   type: TypeMessageFirebase | undefined
 }
 
+interface AddMessage {
+  idChat: string
+  idConseiller: string
+  message: { encryptedText: string; iv: string }
+  piecesJointes?: FichierResponse
+  date: Date
+}
+
+interface CreateFirebaseMessage {
+  idConseiller: string
+  message: { encryptedText: string; iv: string }
+  piecesJointes?: FichierResponse
+  date: Date
+}
+
 class FirebaseClient {
   private readonly firebaseApp: FirebaseApp
   private readonly auth: Auth
@@ -66,58 +81,48 @@ class FirebaseClient {
     await signOut(this.auth)
   }
 
-  async addMessage(
-    idChat: string,
-    idConseiller: string,
-    message: { encryptedText: string; iv: string },
-    date: Date
-  ): Promise<void> {
-    const { encryptedText: content, iv } = message
-    try {
-      await addDoc<FirebaseMessage>(
-        collection(
-          this.getChatReference(idChat),
-          'messages'
-        ) as CollectionReference<FirebaseMessage>,
-        {
-          content,
-          iv,
-          conseillerId: idConseiller,
-          sentBy: UserType.CONSEILLER.toLowerCase(),
-          creationDate: Timestamp.fromDate(date),
-          type: 'MESSAGE',
-        }
-      )
-    } catch (e) {
-      console.error(e)
-      captureRUMError(e as Error)
-      throw e
+  createFirebaseMessage({
+    message,
+    piecesJointes,
+    idConseiller,
+    date,
+  }: CreateFirebaseMessage): FirebaseMessage {
+    const type = piecesJointes ? TypeMessage.MESSAGE_PJ : TypeMessage.MESSAGE
+    let firebaseFichier: FirebaseMessage = {
+      content: message.encryptedText,
+      iv: message.iv,
+      conseillerId: idConseiller,
+      sentBy: UserType.CONSEILLER.toLowerCase(),
+      creationDate: Timestamp.fromDate(date),
+      type: type,
     }
+
+    if (piecesJointes)
+      firebaseFichier = { ...firebaseFichier, piecesJointes: [piecesJointes] }
+
+    return firebaseFichier
   }
 
-  async addFichier(
-    idChat: string,
-    idConseiller: string,
-    message: { encryptedText: string; iv: string },
-    piecesJointes: FichierResponse,
-    date: Date
-  ): Promise<void> {
-    const { encryptedText: content, iv } = message
+  async addMessage({
+    idChat,
+    idConseiller,
+    message,
+    piecesJointes,
+    date,
+  }: AddMessage): Promise<void> {
+    const firebaseMessage = this.createFirebaseMessage({
+      message,
+      piecesJointes,
+      idConseiller,
+      date,
+    })
     try {
       await addDoc<FirebaseMessage>(
         collection(
           this.getChatReference(idChat),
           'messages'
         ) as CollectionReference<FirebaseMessage>,
-        {
-          content,
-          iv,
-          piecesJointes: [piecesJointes],
-          conseillerId: idConseiller,
-          sentBy: UserType.CONSEILLER.toLowerCase(),
-          creationDate: Timestamp.fromDate(date),
-          type: 'MESSAGE_PJ',
-        }
+        firebaseMessage
       )
     } catch (e) {
       console.error(e)

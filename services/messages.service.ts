@@ -30,6 +30,7 @@ export interface MessagesService {
   sendFichier(
     conseiller: { id: string; structure: string },
     jeuneChat: JeuneChat,
+    newMessage: string,
     piecesJointes: FichierResponse,
     accessToken: string,
     cleChiffrement: string
@@ -173,23 +174,25 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   async sendFichier(
     conseiller: { id: string; structure: UserStructure },
     jeuneChat: JeuneChat,
+    newMessage: string,
     piecesJointes: FichierResponse,
     accessToken: string,
     cleChiffrement: string
   ) {
+    const message = newMessage
+      ? newMessage
+      : 'Votre conseiller vous a transmis une nouvelle pièce jointe : '
+
     const now = new Date()
-    const encryptedMessage = this.chatCrypto.encrypt(
-      'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
-      cleChiffrement
-    )
+    const encryptedMessage = this.chatCrypto.encrypt(message, cleChiffrement)
     await Promise.all([
-      this.firebaseClient.addFichier(
-        jeuneChat.chatId,
-        conseiller.id,
-        encryptedMessage,
-        piecesJointes,
-        now
-      ),
+      this.firebaseClient.addMessage({
+        idChat: jeuneChat.chatId,
+        idConseiller: conseiller.id,
+        message: encryptedMessage,
+        piecesJointes: piecesJointes,
+        date: now,
+      }),
       this.firebaseClient.updateChat(jeuneChat.chatId, {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,
@@ -220,12 +223,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
     await Promise.all([
-      this.firebaseClient.addMessage(
-        jeuneChat.chatId,
-        conseiller.id,
-        encryptedMessage,
-        now
-      ),
+      this.firebaseClient.addMessage({
+        idChat: jeuneChat.chatId,
+        idConseiller: conseiller.id,
+        message: encryptedMessage,
+        date: now,
+      }),
       this.firebaseClient.updateChat(jeuneChat.chatId, {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,
@@ -264,12 +267,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await Promise.all([
       Object.values(mappedChats).map((chat) => {
         return Promise.all([
-          this.firebaseClient.addMessage(
-            chat.chatId,
-            conseiller.id,
-            encryptedMessage,
-            now
-          ),
+          this.firebaseClient.addMessage({
+            idChat: chat.chatId,
+            idConseiller: conseiller.id,
+            message: encryptedMessage,
+            date: now,
+          }),
           this.firebaseClient.updateChat(chat.chatId, {
             lastMessageContent: encryptedMessage.encryptedText,
             lastMessageIv: encryptedMessage.iv,
