@@ -6,22 +6,43 @@ interface InfoActionProps {
   label: string
   children: ReactNode
   isForm?: boolean
+  isInline?: boolean
 }
 
-function InfoAction({ label, children, isForm = false }: InfoActionProps) {
+function InfoAction({
+  label,
+  children,
+  isForm = false,
+  isInline = false,
+}: InfoActionProps) {
   const styles = 'text-m-medium pb-6 text-sm-regular flex items-center'
+
   return (
     <>
-      <dt className={`${styles}`}>
-        <IconComponent
-          name={IconName.DecorativePoint}
-          aria-hidden={true}
-          focusable={false}
-          className='w-2 h-2 mr-4'
-        />
+      <dt
+        className={`${
+          isInline
+            ? 'text-base-medium py-4 border-0 border-t border-solid border-t-primary_lighten'
+            : styles
+        }`}
+      >
+        {!isInline && (
+          <IconComponent
+            name={IconName.DecorativePoint}
+            aria-hidden={true}
+            focusable={false}
+            className='w-2 h-2 mr-4'
+          />
+        )}
         <span>{label}</span>
       </dt>
-      <dd className={`text-base-regular pb-10`}>
+      <dd
+        className={`${
+          isInline
+            ? 'py-4 border-0 border-t border-solid border-t-primary_lighten'
+            : 'text-base-regular pb-10'
+        } pl-6`}
+      >
         {isForm && (
           <form
             onSubmit={(e) => {

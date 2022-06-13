@@ -89,8 +89,6 @@ function PageAction({
       ? `${pageTracking} - Succès envoi message`
       : pageTracking
   )
-  const styles = 'py-4 border-0 border-t border-solid border-t-primary_lighten'
-  //TODO: mutualiser avec InfoAction, refacto
 
   return (
     <>
@@ -140,23 +138,22 @@ function PageAction({
         <InfoAction label='Intitulé de l’action'>{action.content}</InfoAction>
         {action.comment && (
           <InfoAction label='Commentaire à destination du jeune'>
-            {action.comment}
+            <span className='inline-block bg-primary_lighten p-4 rounded-large'>
+              {action.comment}
+            </span>
           </InfoAction>
         )}
       </dl>
       <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-        <dt className={`${styles} text-base-medium`}>Date d’actualisation</dt>
-        <dd className={`${styles} pl-6`}>
+        <InfoAction label='Date d’actualisation' isInline={true}>
           {formatDayDate(new Date(action.lastUpdate))}
-        </dd>
-
-        <dt className={`${styles} text-base-medium`}>Date de création</dt>
-        <dd className={`${styles} pl-6`}>
+        </InfoAction>
+        <InfoAction label='Date de création' isInline={true}>
           {formatDayDate(new Date(action.creationDate))}
-        </dd>
-
-        <dt className={`${styles} text-base-medium`}>Créateur</dt>
-        <dd className={`${styles} pl-6`}>{action.creator}</dd>
+        </InfoAction>
+        <InfoAction label='Créateur' isInline={true}>
+          {action.creator}
+        </InfoAction>
       </dl>
     </>
   )

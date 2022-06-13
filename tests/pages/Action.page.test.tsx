@@ -137,7 +137,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             action,
             jeune,
             pageTitle,
-            pageHeader: action.content,
+            pageHeader: 'Détails de l’action',
             messageEnvoiGroupeSuccess: true,
           },
         })
