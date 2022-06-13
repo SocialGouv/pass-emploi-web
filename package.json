@@ -23,7 +23,7 @@
     "crypto-js": "4.1.1",
     "dotenv": "16.0.1",
     "elastic-apm-node": "3.35.0",
-    "firebase": "9.8.2",
+    "firebase": "9.8.3",
     "jsonwebtoken": "8.5.1",
     "luxon": "2.4.0",
     "matomo-tracker": "2.2.4",
