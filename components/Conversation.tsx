@@ -13,12 +13,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { FichierResponse } from 'interfaces/json/fichier'
-import {
-  FormNouveauMessage,
-  Message,
-  MessagesOfADay,
-  TypeMessage,
-} from 'interfaces/message'
+import { FormNouveauMessage, Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.services'
 import { MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
@@ -84,7 +79,7 @@ export default function Conversation({
     if (fileUploaded) {
       formNouveauMessage = {
         ...formNouveauMessage,
-        piecesJointes: fileUploaded,
+        pieceJointe: fileUploaded,
       }
     }
 

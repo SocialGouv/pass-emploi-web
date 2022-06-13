@@ -2,7 +2,6 @@ import { ApiClient } from 'clients/api.client'
 import { AddMessage, FirebaseClient } from 'clients/firebase.client'
 import { UserStructure, UserType } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
-import { FichierResponse } from 'interfaces/json/fichier'
 import {
   ChatCredentials,
   FormNouveauMessage,
@@ -24,7 +23,7 @@ export interface MessagesService {
     conseiller,
     jeuneChat,
     newMessage,
-    piecesJointes,
+    pieceJointe,
     accessToken,
     cleChiffrement,
   }: FormNouveauMessage): void
@@ -168,7 +167,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     conseiller,
     jeuneChat,
     newMessage,
-    piecesJointes,
+    pieceJointe,
     accessToken,
     cleChiffrement,
   }: FormNouveauMessage) {
@@ -182,7 +181,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       date: now,
     }
 
-    if (piecesJointes) nouveauMessage.piecesJointes = piecesJointes
+    if (pieceJointe) {
+      nouveauMessage.pieceJointe = {
+        ...pieceJointe,
+        nom: this.chatCrypto.encryptWithCustomIv(
+          pieceJointe.nom,
+          cleChiffrement,
+          encryptedMessage.iv
+        ),
+      }
+    }
 
     await Promise.all([
       this.firebaseClient.addMessage(nouveauMessage),

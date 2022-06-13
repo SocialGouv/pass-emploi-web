@@ -41,14 +41,14 @@ export interface AddMessage {
   idChat: string
   idConseiller: string
   message: { encryptedText: string; iv: string }
-  piecesJointes?: FichierResponse
+  pieceJointe?: FichierResponse
   date: Date
 }
 
 interface CreateFirebaseMessage {
   idConseiller: string
   message: { encryptedText: string; iv: string }
-  piecesJointes?: FichierResponse
+  pieceJointe?: FichierResponse
   date: Date
 }
 
@@ -83,12 +83,12 @@ class FirebaseClient {
 
   createFirebaseMessage({
     message,
-    piecesJointes,
+    pieceJointe,
     idConseiller,
     date,
   }: CreateFirebaseMessage): FirebaseMessage {
-    const type = piecesJointes ? TypeMessage.MESSAGE_PJ : TypeMessage.MESSAGE
-    let firebaseFichier: FirebaseMessage = {
+    const type = pieceJointe ? TypeMessage.MESSAGE_PJ : TypeMessage.MESSAGE
+    const firebaseFichier: FirebaseMessage = {
       content: message.encryptedText,
       iv: message.iv,
       conseillerId: idConseiller,
@@ -97,8 +97,9 @@ class FirebaseClient {
       type: type,
     }
 
-    if (piecesJointes)
-      firebaseFichier = { ...firebaseFichier, piecesJointes: [piecesJointes] }
+    if (pieceJointe) {
+      firebaseFichier.piecesJointes = [pieceJointe]
+    }
 
     return firebaseFichier
   }
@@ -107,12 +108,12 @@ class FirebaseClient {
     idChat,
     idConseiller,
     message,
-    piecesJointes,
+    pieceJointe,
     date,
   }: AddMessage): Promise<void> {
     const firebaseMessage = this.createFirebaseMessage({
       message,
-      piecesJointes,
+      pieceJointe,
       idConseiller,
       date,
     })

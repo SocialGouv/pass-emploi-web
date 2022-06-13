@@ -297,7 +297,7 @@ describe('MessagesFirebaseAndApiService', () => {
     let conseiller: { id: string; structure: UserStructure }
     let jeuneChat: JeuneChat
     let newMessage: string
-    let piecesJointes: FichierResponse
+    let pieceJointe: FichierResponse
     const now = new Date()
 
     it('création d’une pièce jointe dans firebase', async () => {
@@ -305,14 +305,14 @@ describe('MessagesFirebaseAndApiService', () => {
       jest.setSystemTime(now)
       jeuneChat = unJeuneChat()
       newMessage = 'Un petit message pour accompagner ma PJ'
-      piecesJointes = { id: 'fake-id', nom: 'fake-nom' }
+      pieceJointe = { id: 'fake-id', nom: 'fake-nom' }
 
       // When
       conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
       await messagesService.sendNouveauMessage({
         conseiller,
         jeuneChat,
-        piecesJointes,
+        pieceJointe,
         newMessage,
         accessToken,
         cleChiffrement,
@@ -326,7 +326,7 @@ describe('MessagesFirebaseAndApiService', () => {
           encryptedText: `Encrypted: Un petit message pour accompagner ma PJ`,
           iv: `IV: Un petit message pour accompagner ma PJ`,
         },
-        piecesJointes: piecesJointes,
+        pieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
         date: now,
       })
     })

@@ -21,9 +21,9 @@ export interface FormNouveauMessage {
   conseiller: { id: string; structure: string }
   jeuneChat: JeuneChat
   newMessage: string
-  piecesJointes?: FichierResponse
   accessToken: string
   cleChiffrement: string
+  pieceJointe?: FichierResponse
 }
 
 export interface MessagesOfADay {
