@@ -6,14 +6,14 @@ import { Message, TypeMessage } from '../../interfaces/message'
 import { formatHourMinuteDate, isDateOlder } from '../../utils/date'
 
 interface DisplayMessageProps {
-  ref: (message: HTMLLIElement | null) => void
+  onRef: (message: HTMLLIElement | null) => void
   message: Message
   conseillerNomComplet: string | undefined
   lastSeenByJeune: Date | undefined
 }
 
 export default function DisplayMessage({
-  ref,
+  onRef,
   message,
   conseillerNomComplet,
   lastSeenByJeune,
@@ -23,7 +23,7 @@ export default function DisplayMessage({
   }
 
   return (
-    <li className='mb-5' ref={ref} data-testid={message.id}>
+    <li className='mb-5' ref={onRef} data-testid={message.id}>
       <div
         className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
           isSentByConseiller(message)

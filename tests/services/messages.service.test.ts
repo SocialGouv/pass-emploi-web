@@ -233,25 +233,25 @@ describe('MessagesFirebaseAndApiService', () => {
       newMessage = 'nouveauMessage'
       // When
       conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
-      await messagesService.sendNouveauMessage(
+      await messagesService.sendNouveauMessage({
         conseiller,
         jeuneChat,
         newMessage,
         accessToken,
-        cleChiffrement
-      )
+        cleChiffrement,
+      })
     })
     it('adds a new message to firebase', async () => {
       // Then
-      expect(firebaseClient.addMessage).toHaveBeenCalledWith(
-        jeuneChat.chatId,
-        conseiller.id,
-        {
+      expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+        idChat: jeuneChat.chatId,
+        idConseiller: conseiller.id,
+        message: {
           encryptedText: `Encrypted: ${newMessage}`,
           iv: `IV: ${newMessage}`,
         },
-        now
-      )
+        date: now,
+      })
     })
 
     it('updates chat in firebase', async () => {
@@ -304,30 +304,31 @@ describe('MessagesFirebaseAndApiService', () => {
       // Given
       jest.setSystemTime(now)
       jeuneChat = unJeuneChat()
-      newMessage = ''
+      newMessage = 'Un petit message pour accompagner ma PJ'
       piecesJointes = { id: 'fake-id', nom: 'fake-nom' }
 
       // When
       conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
-      await messagesService.sendFichier(
+      await messagesService.sendNouveauMessage({
         conseiller,
         jeuneChat,
         piecesJointes,
+        newMessage,
         accessToken,
-        cleChiffrement
-      )
+        cleChiffrement,
+      })
 
       // Then
-      expect(firebaseClient.addMessage).toHaveBeenCalledWith(
-        jeuneChat.chatId,
-        conseiller.id,
-        {
-          encryptedText: `Encrypted: Votre conseiller vous a transmis une nouvelle pièce jointe : `,
-          iv: `IV: Votre conseiller vous a transmis une nouvelle pièce jointe : `,
+      expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+        idChat: jeuneChat.chatId,
+        idConseiller: conseiller.id,
+        message: {
+          encryptedText: `Encrypted: Un petit message pour accompagner ma PJ`,
+          iv: `IV: Un petit message pour accompagner ma PJ`,
         },
-        piecesJointes,
-        now
-      )
+        piecesJointes: piecesJointes,
+        date: now,
+      })
     })
   })
 
@@ -369,15 +370,15 @@ describe('MessagesFirebaseAndApiService', () => {
       )
 
       Object.values(chats).forEach((chat) => {
-        expect(firebaseClient.addMessage).toHaveBeenCalledWith(
-          chat.chatId,
-          'id-conseiller',
-          {
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+          idChat: chat.chatId,
+          idConseiller: 'id-conseiller',
+          message: {
             encryptedText: `Encrypted: ${newMessageGroupe}`,
             iv: `IV: ${newMessageGroupe}`,
           },
-          now
-        )
+          date: now,
+        })
       })
     })
 

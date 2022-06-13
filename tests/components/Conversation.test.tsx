@@ -42,9 +42,6 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
-      sendFichier: jest.fn(() => {
-        return Promise.resolve()
-      }),
       sendNouveauMessage: jest.fn(() => {
         return Promise.resolve()
       }),
@@ -163,44 +160,59 @@ describe('<Conversation />', () => {
 
       // Then
       await act(async () => {
-        expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
-          {
+        expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
+          conseiller: {
             id: conseiller.id,
             structure: conseiller.structure,
           },
-          jeuneChat,
-          newMessage,
-          'accessToken',
-          'cleChiffrement'
-        )
+          jeuneChat: jeuneChat,
+          newMessage: newMessage,
+          accessToken: 'accessToken',
+          cleChiffrement: 'cleChiffrement',
+        })
       })
     })
-  })
 
-  describe('quand on téléverse un fichier', () => {
-    it('téléverse un fichier et affiche son nom en cas de succès', async () => {
-      // Given
-      const file: File = new File(['un contenu'], 'imageupload.png', {
-        type: 'image/png',
-      })
-      const uploadFile = screen.getByTestId('newFile')
-      const fileInput = within(uploadFile).getByLabelText(
-        'Attacher une pièce jointe'
-      )
-
-      // When
-      await waitFor(() =>
-        fireEvent.change(fileInput, {
-          target: { files: [file] },
+    describe('quand on créer un message avec une pièce jointe', () => {
+      let file: File
+      let uploadFile: HTMLInputElement
+      let form: HTMLFormElement
+      beforeEach(async () => {
+        // Given
+        file = new File(['un contenu'], 'imageupload.png', {
+          type: 'image/png',
         })
-      )
+        uploadFile = screen.getByTestId('newFile')
+        const fileInput = within(uploadFile).getByLabelText(
+          'Attacher une pièce jointe'
+        )
+        form = screen.getByTestId('newMessageForm')
 
-      // Then
-      await waitFor(() => {
-        expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
-        expect(messagesService.sendFichier).toHaveBeenCalledTimes(1)
-        expect(screen.getByText('imageupload.png')).toBeInTheDocument()
-        expect(uploadFile).toHaveAttribute('disabled', '')
+        // When
+        await waitFor(() => {
+          fireEvent.change(fileInput, {
+            target: { files: [file] },
+          })
+        })
+      })
+      it('téléverse un fichier et affiche son nom en cas de succès', async () => {
+        // Then
+        await waitFor(() => {
+          expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+          expect(uploadFile).toHaveAttribute('disabled', '')
+          expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
+        })
+      })
+      it('création d’un message avec une pièce jointe', async () => {
+        await waitFor(() => {
+          expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+          fireEvent.submit(form)
+        })
+
+        // Then
+        await waitFor(() => {
+          expect(messagesService.sendNouveauMessage).toHaveBeenCalledTimes(1)
+        })
       })
     })
   })

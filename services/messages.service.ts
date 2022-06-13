@@ -1,5 +1,5 @@
 import { ApiClient } from 'clients/api.client'
-import { FirebaseClient } from 'clients/firebase.client'
+import { AddMessage, FirebaseClient } from 'clients/firebase.client'
 import { UserStructure, UserType } from 'interfaces/conseiller'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { FichierResponse } from 'interfaces/json/fichier'
@@ -21,15 +21,6 @@ export interface MessagesService {
   signOut(): Promise<void>
 
   sendNouveauMessage({
-    conseiller,
-    jeuneChat,
-    newMessage,
-    piecesJointes,
-    accessToken,
-    cleChiffrement,
-  }: FormNouveauMessage): void
-
-  sendFichier({
     conseiller,
     jeuneChat,
     newMessage,
@@ -173,7 +164,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     }, {} as { [idJeune: string]: number })
   }
 
-  async sendFichier({
+  async sendNouveauMessage({
     conseiller,
     jeuneChat,
     newMessage,
@@ -181,56 +172,20 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     accessToken,
     cleChiffrement,
   }: FormNouveauMessage) {
-    const message = newMessage
-      ? newMessage
-      : 'Votre conseiller vous a transmis une nouvelle pièce jointe : '
-
-    const now = new Date()
-    const encryptedMessage = this.chatCrypto.encrypt(message, cleChiffrement)
-    await Promise.all([
-      this.firebaseClient.addMessage({
-        idChat: jeuneChat.chatId,
-        idConseiller: conseiller.id,
-        message: encryptedMessage,
-        piecesJointes: piecesJointes,
-        date: now,
-      }),
-      this.firebaseClient.updateChat(jeuneChat.chatId, {
-        lastMessageContent: encryptedMessage.encryptedText,
-        lastMessageIv: encryptedMessage.iv,
-        lastMessageSentAt: now,
-        lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
-        newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
-        seenByConseiller: true,
-        lastConseillerReading: now,
-      }),
-    ])
-    await Promise.all([
-      this.notifierNouveauMessage(conseiller.id, [jeuneChat.id], accessToken),
-      this.evenementNouveauMessage(
-        conseiller.structure,
-        conseiller.id,
-        accessToken
-      ),
-    ])
-  }
-
-  async sendNouveauMessage({
-    conseiller,
-    jeuneChat,
-    newMessage,
-    accessToken,
-    cleChiffrement,
-  }: FormNouveauMessage) {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
+
+    const nouveauMessage: AddMessage = {
+      idChat: jeuneChat.chatId,
+      idConseiller: conseiller.id,
+      message: encryptedMessage,
+      date: now,
+    }
+
+    if (piecesJointes) nouveauMessage.piecesJointes = piecesJointes
+
     await Promise.all([
-      this.firebaseClient.addMessage({
-        idChat: jeuneChat.chatId,
-        idConseiller: conseiller.id,
-        message: encryptedMessage,
-        date: now,
-      }),
+      this.firebaseClient.addMessage(nouveauMessage),
       this.firebaseClient.updateChat(jeuneChat.chatId, {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,

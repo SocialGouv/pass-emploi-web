@@ -66,13 +66,17 @@ export default function Conversation({
 
   async function sendNouveauMessage(event: any) {
     event.preventDefault()
+    if (!newMessage && !Boolean(fileUploaded)) return
+
     let formNouveauMessage: FormNouveauMessage = {
       conseiller: {
         id: session!.user.id,
         structure: session!.user.structure,
       },
       jeuneChat,
-      newMessage,
+      newMessage:
+        newMessage ||
+        'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
       accessToken: session!.accessToken,
       cleChiffrement: chatCredentials!.cleChiffrement,
     }
@@ -83,13 +87,8 @@ export default function Conversation({
         piecesJointes: fileUploaded,
       }
     }
-    if (fileUploaded) {
-      messagesService.sendFichier(formNouveauMessage)
-    } else {
-      messagesService.sendNouveauMessage(formNouveauMessage)
-    }
-    {
-    }
+
+    messagesService.sendNouveauMessage(formNouveauMessage)
 
     setFileUpload(null)
     setNewMessage('')
@@ -205,7 +204,7 @@ export default function Conversation({
               {messagesOfADay.messages.map((message: Message) => (
                 <DisplayMessage
                   key={message.id}
-                  ref={scrollToRef}
+                  onRef={scrollToRef}
                   message={message}
                   conseillerNomComplet={getConseillerNomComplet(message)}
                   lastSeenByJeune={lastSeenByJeune}

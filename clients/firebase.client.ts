@@ -37,7 +37,7 @@ interface FirebaseMessage {
   type: TypeMessageFirebase | undefined
 }
 
-interface AddMessage {
+export interface AddMessage {
   idChat: string
   idConseiller: string
   message: { encryptedText: string; iv: string }
