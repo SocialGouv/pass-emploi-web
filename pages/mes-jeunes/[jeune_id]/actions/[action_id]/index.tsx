@@ -8,6 +8,7 @@ import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import FailureMessage from 'components/FailureMessage'
 import SuccessMessage from 'components/SuccessMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
 import { UserStructure, UserType } from 'interfaces/conseiller'
 import { Jeune } from 'interfaces/jeune'
@@ -95,21 +96,25 @@ function PageAction({
         <Button
           label="Supprimer l'action"
           onClick={() => deleteAction()}
-          style={ButtonStyle.WARNING}
+          style={ButtonStyle.SECONDARY}
           disabled={deleteDisabled}
-          className='mb-4'
+          className='mb-6'
         >
+          <IconComponent
+            name={IconName.TrashCan}
+            aria-hidden={true}
+            focusable={false}
+            className='w-2.5 h-3 mr-4'
+          />
           Supprimer l&apos;action
         </Button>
       )}
-
       {showEchecMessage && (
         <FailureMessage
           label="Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
-
       {showMessageGroupeEnvoiSuccess && (
         <SuccessMessage
           label={
@@ -118,44 +123,37 @@ function PageAction({
           onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
       )}
-
       <dl>
+        <InfoAction label='Statut' isForm={true}>
+          {Object.values(StatutAction).map((status: StatutAction) => (
+            <RadioButtonStatus
+              key={status.toLowerCase()}
+              status={status}
+              isSelected={statut === status}
+              onChange={updateAction}
+            />
+          ))}
+        </InfoAction>
+
+        <InfoAction label='Intitulé de l’action'>{action.content}</InfoAction>
         {action.comment && (
-          <>
-            <dt className='text-sm-semi'>Commentaire</dt>
-            <dd className='mt-4 text-primary_darken text-base-regular'>
+          <InfoAction label='Commentaire à destination du jeune'>
+            <span className='inline-block bg-primary_lighten p-4 rounded-large'>
               {action.comment}
-            </dd>
-          </>
+            </span>
+          </InfoAction>
         )}
-
-        <dt className={`text-sm-semi ${action.comment ? 'mt-8' : ''}`}>
-          Informations
-        </dt>
-        <dd>
-          <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-            <InfoAction label='Statut' isForm={true}>
-              {Object.values(StatutAction).map((status: StatutAction) => (
-                <RadioButtonStatus
-                  key={status.toLowerCase()}
-                  status={status}
-                  isSelected={statut === status}
-                  onChange={updateAction}
-                />
-              ))}
-            </InfoAction>
-
-            <InfoAction label="Date d'actualisation">
-              {formatDayDate(new Date(action.lastUpdate))}
-            </InfoAction>
-
-            <InfoAction label='Date de création'>
-              {formatDayDate(new Date(action.creationDate))}
-            </InfoAction>
-
-            <InfoAction label='Créateur'>{action.creator}</InfoAction>
-          </dl>
-        </dd>
+      </dl>
+      <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+        <InfoAction label='Date d’actualisation' isInline={true}>
+          {formatDayDate(new Date(action.lastUpdate))}
+        </InfoAction>
+        <InfoAction label='Date de création' isInline={true}>
+          {formatDayDate(new Date(action.creationDate))}
+        </InfoAction>
+        <InfoAction label='Créateur' isInline={true}>
+          {action.creator}
+        </InfoAction>
       </dl>
     </>
   )
@@ -188,7 +186,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     action,
     jeune,
     pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`,
-    pageHeader: action.content,
+    pageHeader: 'Détails de l’action',
   }
 
   if (context.query?.envoiMessage) {

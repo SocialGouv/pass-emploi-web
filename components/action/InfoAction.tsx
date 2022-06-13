@@ -1,24 +1,48 @@
 import { ReactNode } from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+
 interface InfoActionProps {
   label: string
   children: ReactNode
   isForm?: boolean
+  isInline?: boolean
 }
 
-function InfoAction({ label, children, isForm = false }: InfoActionProps) {
-  const styles =
-    'py-4 border-0 border-b border-solid border-b-primary_lighten text-sm-regular'
+function InfoAction({
+  label,
+  children,
+  isForm = false,
+  isInline = false,
+}: InfoActionProps) {
+  const styles = 'text-m-medium pb-6 text-sm-regular flex items-center'
+
   return (
     <>
       <dt
-        className={`${styles} ${
-          isForm ? 'flex items-center' : ''
-        } whitespace-nowrap`}
+        className={`${
+          isInline
+            ? 'text-base-medium py-4 border-0 border-t border-solid border-t-primary_lighten'
+            : styles
+        }`}
       >
-        {label}
+        {!isInline && (
+          <IconComponent
+            name={IconName.DecorativePoint}
+            aria-hidden={true}
+            focusable={false}
+            className='w-2 h-2 mr-4'
+          />
+        )}
+        <span>{label}</span>
       </dt>
-      <dd className={`${styles} pl-6`}>
+      <dd
+        className={`${
+          isInline
+            ? 'py-4 border-0 border-t border-solid border-t-primary_lighten'
+            : 'text-base-regular pb-10'
+        } pl-6`}
+      >
         {isForm && (
           <form
             onSubmit={(e) => {

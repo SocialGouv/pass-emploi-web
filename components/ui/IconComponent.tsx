@@ -21,6 +21,7 @@ import Chiffre2Icon from '../../assets/icons/chiffre_2.svg'
 import Chiffre3Icon from '../../assets/icons/chiffre_3.svg'
 import Chiffre4Icon from '../../assets/icons/chiffre_4.svg'
 import CloseIcon from '../../assets/icons/close.svg'
+import DecorativePointIcon from '../../assets/icons/decorative_point.svg'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import InfoIcon from '../../assets/icons/information.svg'
 import LaunchIcon from '../../assets/icons/launch.svg'
@@ -30,6 +31,7 @@ import ProfilIcon from '../../assets/icons/profil.svg'
 import RendezVousIcon from '../../assets/icons/rendez-vous.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 import SendIcon from '../../assets/icons/send.svg'
+import TrashCanIcon from '../../assets/icons/trash_can.svg'
 
 export enum IconName {
   Actions = 'Actions',
@@ -52,6 +54,7 @@ export enum IconName {
   Chiffre3 = 'Chiffre3',
   Chiffre4 = 'Chiffre4',
   Close = 'Close',
+  DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
   File = 'File',
   Info = 'Info',
@@ -62,6 +65,7 @@ export enum IconName {
   RendezVous = 'RendezVous',
   Search = 'Search',
   Send = 'Send',
+  TrashCan = 'TrashCan',
 }
 
 const iconsByName: { [key in IconName]: any } = {
@@ -85,6 +89,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Chiffre3]: Chiffre3Icon,
   [IconName.Chiffre4]: Chiffre4Icon,
   [IconName.Close]: CloseIcon,
+  [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
   [IconName.File]: FileIcon,
   [IconName.Info]: InfoIcon,
@@ -95,6 +100,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.RendezVous]: RendezVousIcon,
   [IconName.Search]: SearchIcon,
   [IconName.Send]: SendIcon,
+  [IconName.TrashCan]: TrashCanIcon,
 }
 
 interface IconComponentProps extends ComponentPropsWithoutRef<any> {
