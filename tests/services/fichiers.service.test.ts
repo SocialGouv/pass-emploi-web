@@ -19,7 +19,7 @@ describe('FichierApiService', () => {
         type: 'image/png',
       })
       // When
-      await fichiersService.postFichier(['id-jeune'], file, 'accessToken')
+      await fichiersService.uploadFichier(['id-jeune'], file, 'accessToken')
 
       // THEN
       expect(apiClient.postFile).toHaveBeenCalledWith(

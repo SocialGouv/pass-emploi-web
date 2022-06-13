@@ -6,16 +6,15 @@ import React, {
   useState,
 } from 'react'
 
-import DisplayMessage from './ui/DisplayMessage'
-
 import FileIcon from 'assets/icons/attach_file.svg'
+import DisplayMessage from 'components/DisplayMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
+import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { FichierResponse } from 'interfaces/json/fichier'
-import { FormNouveauMessage, Message, MessagesOfADay } from 'interfaces/message'
+import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.services'
-import { MessagesService } from 'services/messages.service'
+import { FormNouveauMessage, MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
@@ -42,17 +41,15 @@ export default function Conversation({
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
-  const [fileUploaded, setFileUpload] = useState<FichierResponse | null>(null)
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<InfoFichier | null>(
+    null
+  )
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
   )
   const inputFocused = useRef<boolean>(false)
   const hiddenFileInput = useRef<HTMLInputElement>(null)
-
-  function scrollToRef(message: HTMLLIElement | null) {
-    if (message) message.scrollIntoView({ behavior: 'smooth' })
-  }
 
   function onInputFocused() {
     inputFocused.current = true
@@ -61,9 +58,9 @@ export default function Conversation({
 
   async function sendNouveauMessage(event: any) {
     event.preventDefault()
-    if (!newMessage && !Boolean(fileUploaded)) return
+    if (!newMessage && !Boolean(uploadedFileInfo)) return
 
-    let formNouveauMessage: FormNouveauMessage = {
+    const formNouveauMessage: FormNouveauMessage = {
       conseiller: {
         id: session!.user.id,
         structure: session!.user.structure,
@@ -76,16 +73,11 @@ export default function Conversation({
       cleChiffrement: chatCredentials!.cleChiffrement,
     }
 
-    if (fileUploaded) {
-      formNouveauMessage = {
-        ...formNouveauMessage,
-        pieceJointe: fileUploaded,
-      }
-    }
+    if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
 
     messagesService.sendNouveauMessage(formNouveauMessage)
 
-    setFileUpload(null)
+    setUploadedFileInfo(null)
     setNewMessage('')
   }
 
@@ -141,15 +133,15 @@ export default function Conversation({
 
     const fichierSelectionne = event.target.files[0]
 
-    const fichierResponse: FichierResponse | undefined =
-      await fichiersService.postFichier(
+    const infoFichier: InfoFichier | undefined =
+      await fichiersService.uploadFichier(
         [jeuneChat.id],
         fichierSelectionne,
         session!.accessToken
       )
 
-    if (fichierResponse && fichierResponse.nom) {
-      setFileUpload(fichierResponse)
+    if (infoFichier) {
+      setUploadedFileInfo(infoFichier)
     }
   }
 
@@ -199,7 +191,6 @@ export default function Conversation({
               {messagesOfADay.messages.map((message: Message) => (
                 <DisplayMessage
                   key={message.id}
-                  onRef={scrollToRef}
                   message={message}
                   conseillerNomComplet={getConseillerNomComplet(message)}
                   lastSeenByJeune={lastSeenByJeune}
@@ -215,14 +206,16 @@ export default function Conversation({
         onSubmit={sendNouveauMessage}
         className='py-3'
       >
-        {fileUploaded && (
+        {uploadedFileInfo && (
           <div className='px-3 pb-3 flex flex-row'>
             <FileIcon
               aria-hidden='true'
               focusable='false'
               className='w-6 h-6'
             />
-            <span className='font-bold break-words'>{fileUploaded.nom}</span>
+            <span className='font-bold break-words'>
+              {uploadedFileInfo.nom}
+            </span>
           </div>
         )}
         <div className='w-full bg-grey_100 px-3 flex items-end'>
@@ -248,8 +241,8 @@ export default function Conversation({
             <button
               type='submit'
               aria-label='Envoyer le message'
-              disabled={!(newMessage || Boolean(fileUploaded))}
-              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+              disabled={!newMessage && !Boolean(uploadedFileInfo)}
+              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
             >
               <IconComponent
                 name={IconName.Send}
@@ -261,15 +254,10 @@ export default function Conversation({
 
             <button
               type='button'
-              aria-controls='fileupload'
-              data-testid='newFile'
-              className={`w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 ${
-                Boolean(fileUploaded)
-                  ? 'bg-grey_500 cursor-not-allowed'
-                  : 'bg-primary'
-              }`}
+              aria-controls='piece-jointe'
+              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
               onClick={handleFileUploadClick}
-              disabled={Boolean(fileUploaded)}
+              disabled={Boolean(uploadedFileInfo)}
             >
               <IconComponent
                 name={IconName.File}
@@ -277,16 +265,16 @@ export default function Conversation({
                 focusable='false'
                 className='m-auto w-6 h-6 fill-blanc'
               />
-              <label htmlFor='fileupload' className='sr-only'>
+              <label htmlFor='piece-jointe' className='sr-only'>
                 Attacher une pièce jointe
               </label>
               <input
-                id='fileupload'
+                id='piece-jointe'
                 type='file'
                 ref={hiddenFileInput}
                 onChange={handleFileUploadChange}
                 className='hidden'
-                accept='.pdf, .png, .jpeg'
+                accept='.pdf, .png, .jpeg, .jpg'
               />
             </button>
           </div>

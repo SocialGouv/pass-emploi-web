@@ -48,7 +48,7 @@ describe('<Conversation />', () => {
     })
     fichiersService = {
       ...fichiersService,
-      postFichier: jest
+      uploadFichier: jest
         .fn()
         .mockReturnValue({ id: 'id-fichier', nom: 'imageupload.png' }),
     }
@@ -155,65 +155,65 @@ describe('<Conversation />', () => {
       const form = screen.getByTestId('newMessageForm')
 
       // When
-      fireEvent.input(messageInput, { target: { value: newMessage } })
-      fireEvent.submit(form)
+      await act(() => {
+        fireEvent.input(messageInput, { target: { value: newMessage } })
+        fireEvent.submit(form)
+      })
 
       // Then
+      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
+        conseiller: {
+          id: conseiller.id,
+          structure: conseiller.structure,
+        },
+        jeuneChat: jeuneChat,
+        newMessage: newMessage,
+        accessToken: 'accessToken',
+        cleChiffrement: 'cleChiffrement',
+      })
+    })
+  })
+
+  describe('quand on crée un message avec une pièce jointe', () => {
+    let uploadFileButton: HTMLButtonElement
+    let form: HTMLFormElement
+    let file: File
+    beforeEach(async () => {
+      // Given
+      file = new File(['un contenu'], 'imageupload.png', {
+        type: 'image/png',
+      })
+
+      const fileInput = screen.getByLabelText('Attacher une pièce jointe')
+      uploadFileButton = fileInput.closest('button')!
+      form = screen.getByTestId('newMessageForm')
+
+      // When
       await act(async () => {
-        expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
-          conseiller: {
-            id: conseiller.id,
-            structure: conseiller.structure,
-          },
-          jeuneChat: jeuneChat,
-          newMessage: newMessage,
-          accessToken: 'accessToken',
-          cleChiffrement: 'cleChiffrement',
-        })
+        fireEvent.change(fileInput, { target: { files: [file] } })
       })
     })
 
-    describe('quand on créer un message avec une pièce jointe', () => {
-      let file: File
-      let uploadFile: HTMLInputElement
-      let form: HTMLFormElement
-      beforeEach(async () => {
-        // Given
-        file = new File(['un contenu'], 'imageupload.png', {
-          type: 'image/png',
-        })
-        uploadFile = screen.getByTestId('newFile')
-        const fileInput = within(uploadFile).getByLabelText(
-          'Attacher une pièce jointe'
-        )
-        form = screen.getByTestId('newMessageForm')
+    it('téléverse un fichier et affiche son nom en cas de succès', async () => {
+      // Then
+      expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+      expect(uploadFileButton).toHaveAttribute('disabled', '')
+      expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
+        ['jeune-1'],
+        file,
+        'accessToken'
+      )
+    })
 
-        // When
-        await waitFor(() => {
-          fireEvent.change(fileInput, {
-            target: { files: [file] },
-          })
-        })
-      })
-      it('téléverse un fichier et affiche son nom en cas de succès', async () => {
-        // Then
-        await waitFor(() => {
-          expect(screen.getByText('imageupload.png')).toBeInTheDocument()
-          expect(uploadFile).toHaveAttribute('disabled', '')
-          expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
-        })
-      })
-      it('création d’un message avec une pièce jointe', async () => {
-        await waitFor(() => {
-          expect(screen.getByText('imageupload.png')).toBeInTheDocument()
-          fireEvent.submit(form)
-        })
+    it('création d’un message avec une pièce jointe', async () => {
+      fireEvent.submit(form)
 
-        // Then
-        await waitFor(() => {
-          expect(messagesService.sendNouveauMessage).toHaveBeenCalledTimes(1)
+      // Then
+      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          infoPieceJointe: { id: 'id-fichier', nom: 'imageupload.png' },
         })
-      })
+      )
     })
   })
 })

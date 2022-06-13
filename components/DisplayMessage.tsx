@@ -1,64 +1,65 @@
 import React from 'react'
 
-import FileIcon from '../../assets/icons/attach_file.svg'
-import { UserType } from '../../interfaces/conseiller'
-import { Message, TypeMessage } from '../../interfaces/message'
-import { formatHourMinuteDate, isDateOlder } from '../../utils/date'
+import IconComponent, { IconName } from './ui/IconComponent'
+
+import { UserType } from 'interfaces/conseiller'
+import { Message } from 'interfaces/message'
+import { formatHourMinuteDate, isDateOlder } from 'utils/date'
 
 interface DisplayMessageProps {
-  onRef: (message: HTMLLIElement | null) => void
   message: Message
   conseillerNomComplet: string | undefined
   lastSeenByJeune: Date | undefined
 }
 
 export default function DisplayMessage({
-  onRef,
   message,
   conseillerNomComplet,
   lastSeenByJeune,
 }: DisplayMessageProps) {
-  function isSentByConseiller(message: Message): boolean {
-    return message.sentBy === UserType.CONSEILLER.toLowerCase()
+  const isSentByConseiller =
+    message.sentBy === UserType.CONSEILLER.toLowerCase()
+
+  function scrollToRef(element: HTMLLIElement | null) {
+    if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <li className='mb-5' ref={onRef} data-testid={message.id}>
+    <li className='mb-5' ref={scrollToRef} data-testid={message.id}>
       <div
         className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
-          isSentByConseiller(message)
+          isSentByConseiller
             ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
             : 'text-left text-blanc bg-primary_darken mb-1'
         }`}
       >
-        {isSentByConseiller(message) && (
+        {isSentByConseiller && (
           <p className='text-s-regular capitalize mb-1'>
             {conseillerNomComplet}
           </p>
         )}
         <p className='whitespace-pre-wrap'>{message.content}</p>
-        {message.type === TypeMessage.MESSAGE_PJ && (
-          <div className='px-3 pb-3 flex flex-row'>
-            <FileIcon
+        {message.infoPiecesJointes.map(({ id, nom }) => (
+          <div key={id} className='flex flex-row flex flex-row justify-end'>
+            <IconComponent
+              name={IconName.File}
               aria-hidden='true'
               focusable='false'
               className='w-6 h-6'
             />
             <span className='font-bold break-words'>
-              <a href={`/api/fichiers/${message.piecesJointes![0].id}`}>
-                {message.piecesJointes![0].nom}
-              </a>
+              <a href={`/api/fichiers/${id}`}>{nom}</a>
             </span>
           </div>
-        )}
+        ))}
       </div>
       <p
         className={`text-xs text-grey_800 ${
-          isSentByConseiller(message) ? 'text-right' : 'text-left'
+          isSentByConseiller ? 'text-right' : 'text-left'
         }`}
       >
         {formatHourMinuteDate(message.creationDate)}
-        {isSentByConseiller(message) && (
+        {isSentByConseiller && (
           <span>
             {!lastSeenByJeune ||
             isDateOlder(lastSeenByJeune, message.creationDate)
