@@ -5,6 +5,7 @@ const ChatCrypto = jest.fn(() => ({
     encryptedText: `Encrypted: ${message}`,
     iv: `IV: ${message}`,
   })),
+  encryptWithCustomIv: jest.fn((message: string) => `Encrypted: ${message}`),
   decrypt: jest.fn(
     ({ encryptedText }: EncryptedTextWithInitializationVector) =>
       `Decrypted: ${encryptedText}`

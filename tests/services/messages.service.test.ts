@@ -1,4 +1,3 @@
-import { FichierResponse } from '../../interfaces/json/fichier'
 import { FakeApiClient } from '../utils/fakeApiClient'
 
 import { ApiClient } from 'clients/api.client'
@@ -6,6 +5,7 @@ import { FirebaseClient } from 'clients/firebase.client'
 import { desJeunes, unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
 import { UserStructure } from 'interfaces/conseiller'
+import { InfoFichier } from 'interfaces/fichier'
 import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
@@ -233,25 +233,28 @@ describe('MessagesFirebaseAndApiService', () => {
       newMessage = 'nouveauMessage'
       // When
       conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
-      await messagesService.sendNouveauMessage(
+      await messagesService.sendNouveauMessage({
         conseiller,
         jeuneChat,
         newMessage,
+        infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
         accessToken,
-        cleChiffrement
-      )
+        cleChiffrement,
+      })
     })
+
     it('adds a new message to firebase', async () => {
       // Then
-      expect(firebaseClient.addMessage).toHaveBeenCalledWith(
-        jeuneChat.chatId,
-        conseiller.id,
-        {
+      expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+        idChat: jeuneChat.chatId,
+        idConseiller: conseiller.id,
+        message: {
           encryptedText: `Encrypted: ${newMessage}`,
           iv: `IV: ${newMessage}`,
         },
-        now
-      )
+        infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
+        date: now,
+      })
     })
 
     it('updates chat in firebase', async () => {
@@ -289,44 +292,6 @@ describe('MessagesFirebaseAndApiService', () => {
           },
         },
         accessToken
-      )
-    })
-  })
-
-  describe('.sendFichier', () => {
-    let conseiller: { id: string; structure: UserStructure }
-    let jeuneChat: JeuneChat
-    let newMessage: string
-    let piecesJointes: FichierResponse
-    const now = new Date()
-
-    it('création d’une pièce jointe dans firebase', async () => {
-      // Given
-      jest.setSystemTime(now)
-      jeuneChat = unJeuneChat()
-      newMessage = ''
-      piecesJointes = { id: 'fake-id', nom: 'fake-nom' }
-
-      // When
-      conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
-      await messagesService.sendFichier(
-        conseiller,
-        jeuneChat,
-        piecesJointes,
-        accessToken,
-        cleChiffrement
-      )
-
-      // Then
-      expect(firebaseClient.addFichier).toHaveBeenCalledWith(
-        jeuneChat.chatId,
-        conseiller.id,
-        {
-          encryptedText: `Encrypted: Création d’une nouvelle pièce jointe`,
-          iv: `IV: Création d’une nouvelle pièce jointe`,
-        },
-        piecesJointes,
-        now
       )
     })
   })
@@ -369,15 +334,15 @@ describe('MessagesFirebaseAndApiService', () => {
       )
 
       Object.values(chats).forEach((chat) => {
-        expect(firebaseClient.addMessage).toHaveBeenCalledWith(
-          chat.chatId,
-          'id-conseiller',
-          {
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+          idChat: chat.chatId,
+          idConseiller: 'id-conseiller',
+          message: {
             encryptedText: `Encrypted: ${newMessageGroupe}`,
             iv: `IV: ${newMessageGroupe}`,
           },
-          now
-        )
+          date: now,
+        })
       })
     })
 

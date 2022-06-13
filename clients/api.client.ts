@@ -7,11 +7,7 @@ export interface ApiClient {
     payload: { [key: string]: any },
     accessToken: string
   ): Promise<T>
-  postFile<T>(
-    path: string,
-    payload: { [key: string]: any },
-    accessToken: string
-  ): Promise<T>
+  postFile<T>(path: string, payload: FormData, accessToken: string): Promise<T>
   put(
     path: string,
     payload: { [key: string]: any },
@@ -58,7 +54,7 @@ export class ApiHttpClient implements ApiClient {
 
   async postFile<T = void>(
     path: string,
-    payload: any,
+    payload: FormData,
     accessToken: string
   ): Promise<T> {
     const headers = new Headers({

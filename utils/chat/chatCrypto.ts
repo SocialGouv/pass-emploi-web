@@ -23,6 +23,18 @@ export class ChatCrypto {
     }
   }
 
+  encryptWithCustomIv(
+    message: string,
+    cleChiffrement: string,
+    customIv: string
+  ): string {
+    const key = Utf8.parse(cleChiffrement)
+    const iv = Base64.parse(customIv)
+    const encrypted = AES.encrypt(message, key, { iv })
+
+    return encrypted.ciphertext.toString(Base64)
+  }
+
   decrypt(
     encryptedText: EncryptedTextWithInitializationVector,
     cleChiffrement: string

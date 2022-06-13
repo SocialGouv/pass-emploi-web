@@ -9,6 +9,7 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     iv: 'iv',
     conseillerId: 'conseiller-1',
     type: TypeMessage.MESSAGE,
+    infoPiecesJointes: [],
   }
 
   return { ...defaults, ...args }

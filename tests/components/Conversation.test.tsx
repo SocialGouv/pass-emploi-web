@@ -42,16 +42,13 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
-      sendFichier: jest.fn(() => {
-        return Promise.resolve()
-      }),
       sendNouveauMessage: jest.fn(() => {
         return Promise.resolve()
       }),
     })
     fichiersService = {
       ...fichiersService,
-      postFichier: jest
+      uploadFichier: jest
         .fn()
         .mockReturnValue({ id: 'id-fichier', nom: 'imageupload.png' }),
     }
@@ -158,51 +155,65 @@ describe('<Conversation />', () => {
       const form = screen.getByTestId('newMessageForm')
 
       // When
-      fireEvent.input(messageInput, { target: { value: newMessage } })
-      fireEvent.submit(form)
+      await act(() => {
+        fireEvent.input(messageInput, { target: { value: newMessage } })
+        fireEvent.submit(form)
+      })
 
       // Then
-      await act(async () => {
-        expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
-          {
-            id: conseiller.id,
-            structure: conseiller.structure,
-          },
-          jeuneChat,
-          newMessage,
-          'accessToken',
-          'cleChiffrement'
-        )
+      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
+        conseiller: {
+          id: conseiller.id,
+          structure: conseiller.structure,
+        },
+        jeuneChat: jeuneChat,
+        newMessage: newMessage,
+        accessToken: 'accessToken',
+        cleChiffrement: 'cleChiffrement',
       })
     })
   })
 
-  describe('quand on téléverse un fichier', () => {
-    it('téléverse un fichier et affiche son nom en cas de succès', async () => {
+  describe('quand on crée un message avec une pièce jointe', () => {
+    let uploadFileButton: HTMLButtonElement
+    let form: HTMLFormElement
+    let file: File
+    beforeEach(async () => {
       // Given
-      const file: File = new File(['un contenu'], 'imageupload.png', {
+      file = new File(['un contenu'], 'imageupload.png', {
         type: 'image/png',
       })
-      const uploadFile = screen.getByTestId('newFile')
-      const fileInput = within(uploadFile).getByLabelText(
-        'Attacher une pièce jointe'
-      )
+
+      const fileInput = screen.getByLabelText('Attacher une pièce jointe')
+      uploadFileButton = fileInput.closest('button')!
+      form = screen.getByTestId('newMessageForm')
 
       // When
-      await waitFor(() =>
-        fireEvent.change(fileInput, {
-          target: { files: [file] },
-        })
+      await act(async () => {
+        fireEvent.change(fileInput, { target: { files: [file] } })
+      })
+    })
+
+    it('téléverse un fichier et affiche son nom en cas de succès', async () => {
+      // Then
+      expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+      expect(uploadFileButton).toHaveAttribute('disabled', '')
+      expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
+        ['jeune-1'],
+        file,
+        'accessToken'
       )
+    })
+
+    it('création d’un message avec une pièce jointe', async () => {
+      fireEvent.submit(form)
 
       // Then
-      await waitFor(() => {
-        expect(fichiersService.postFichier).toHaveBeenCalledTimes(1)
-        // TODO us-674 erreur PO : a décommenté dans l’us-676
-        //expect(messagesService.sendFichier).toHaveBeenCalledTimes(1)
-        expect(screen.getByText('imageupload.png')).toBeInTheDocument()
-        expect(uploadFile).toHaveAttribute('disabled', '')
-      })
+      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          infoPieceJointe: { id: 'id-fichier', nom: 'imageupload.png' },
+        })
+      )
     })
   })
 })

@@ -7,22 +7,17 @@ import React, {
 } from 'react'
 
 import FileIcon from 'assets/icons/attach_file.svg'
+import DisplayMessage from 'components/DisplayMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
-import { UserType } from 'interfaces/conseiller'
+import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { FichierResponse } from 'interfaces/json/fichier'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.services'
-import { MessagesService } from 'services/messages.service'
+import { FormNouveauMessage, MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
-import {
-  dateIsToday,
-  formatDayDate,
-  formatHourMinuteDate,
-  isDateOlder,
-} from 'utils/date'
+import { dateIsToday, formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 const todayOrDate = (date: Date) =>
@@ -46,17 +41,15 @@ export default function Conversation({
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
-  const [fileUploadedName, setFileUploadName] = useState<string>('')
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<InfoFichier | null>(
+    null
+  )
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
   )
   const inputFocused = useRef<boolean>(false)
   const hiddenFileInput = useRef<HTMLInputElement>(null)
-
-  function scrollToRef(message: HTMLLIElement | null) {
-    if (message) message.scrollIntoView({ behavior: 'smooth' })
-  }
 
   function onInputFocused() {
     inputFocused.current = true
@@ -65,17 +58,26 @@ export default function Conversation({
 
   async function sendNouveauMessage(event: any) {
     event.preventDefault()
-    messagesService.sendNouveauMessage(
-      {
+    if (!newMessage && !Boolean(uploadedFileInfo)) return
+
+    const formNouveauMessage: FormNouveauMessage = {
+      conseiller: {
         id: session!.user.id,
         structure: session!.user.structure,
       },
       jeuneChat,
-      newMessage,
-      session!.accessToken,
-      chatCredentials!.cleChiffrement
-    )
+      newMessage:
+        newMessage ||
+        'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
+      accessToken: session!.accessToken,
+      cleChiffrement: chatCredentials!.cleChiffrement,
+    }
 
+    if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
+
+    messagesService.sendNouveauMessage(formNouveauMessage)
+
+    setUploadedFileInfo(null)
     setNewMessage('')
   }
 
@@ -84,10 +86,6 @@ export default function Conversation({
     if (conseiller) {
       return `${conseiller?.prenom.toLowerCase()} ${conseiller?.nom.toLowerCase()}`
     }
-  }
-
-  function isSentByConseiller(message: Message): boolean {
-    return message.sentBy === UserType.CONSEILLER.toLowerCase()
   }
 
   const setReadByConseiller = useCallback(
@@ -135,27 +133,15 @@ export default function Conversation({
 
     const fichierSelectionne = event.target.files[0]
 
-    const fichierResponse: FichierResponse | undefined =
-      await fichiersService.postFichier(
+    const infoFichier: InfoFichier | undefined =
+      await fichiersService.uploadFichier(
         [jeuneChat.id],
         fichierSelectionne,
         session!.accessToken
       )
 
-    if (fichierResponse && fichierResponse.nom) {
-      setFileUploadName(fichierResponse.nom)
-
-      // TODO us-674 erreur PO : a décommenté dans l’us-676
-      // messagesService.sendFichier(
-      //   {
-      //     id: session!.user.id,
-      //     structure: session!.user.structure,
-      //   },
-      //   jeuneChat,
-      //   fichierResponse,
-      //   session!.accessToken,
-      //   chatCredentials!.cleChiffrement
-      // )
+    if (infoFichier) {
+      setUploadedFileInfo(infoFichier)
     }
   }
 
@@ -203,42 +189,12 @@ export default function Conversation({
 
             <ul>
               {messagesOfADay.messages.map((message: Message) => (
-                <li
+                <DisplayMessage
                   key={message.id}
-                  className='mb-5'
-                  ref={scrollToRef}
-                  data-testid={message.id}
-                >
-                  <div
-                    className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
-                      isSentByConseiller(message)
-                        ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
-                        : 'text-left text-blanc bg-primary_darken mb-1'
-                    }`}
-                  >
-                    {isSentByConseiller(message) && (
-                      <p className='text-s-regular capitalize mb-1'>
-                        {getConseillerNomComplet(message)}
-                      </p>
-                    )}
-                    <p className='whitespace-pre-wrap'>{message.content}</p>
-                  </div>
-                  <p
-                    className={`text-xs text-grey_800 ${
-                      isSentByConseiller(message) ? 'text-right' : 'text-left'
-                    }`}
-                  >
-                    {formatHourMinuteDate(message.creationDate)}
-                    {isSentByConseiller(message) && (
-                      <span>
-                        {!lastSeenByJeune ||
-                        isDateOlder(lastSeenByJeune, message.creationDate)
-                          ? ' · Envoyé'
-                          : ' · Lu'}
-                      </span>
-                    )}
-                  </p>
-                </li>
+                  message={message}
+                  conseillerNomComplet={getConseillerNomComplet(message)}
+                  lastSeenByJeune={lastSeenByJeune}
+                />
               ))}
             </ul>
           </li>
@@ -250,14 +206,16 @@ export default function Conversation({
         onSubmit={sendNouveauMessage}
         className='py-3'
       >
-        {fileUploadedName && (
+        {uploadedFileInfo && (
           <div className='px-3 pb-3 flex flex-row'>
             <FileIcon
               aria-hidden='true'
               focusable='false'
               className='w-6 h-6'
             />
-            <span className='font-bold break-words'>{fileUploadedName}</span>
+            <span className='font-bold break-words'>
+              {uploadedFileInfo.nom}
+            </span>
           </div>
         )}
         <div className='w-full bg-grey_100 px-3 flex items-end'>
@@ -283,8 +241,8 @@ export default function Conversation({
             <button
               type='submit'
               aria-label='Envoyer le message'
-              disabled={!newMessage}
-              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3'
+              disabled={!newMessage && !Boolean(uploadedFileInfo)}
+              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
             >
               <IconComponent
                 name={IconName.Send}
@@ -296,15 +254,10 @@ export default function Conversation({
 
             <button
               type='button'
-              aria-controls='fileupload'
-              data-testid='newFile'
-              className={`w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 ${
-                Boolean(fileUploadedName)
-                  ? 'bg-grey_500 cursor-not-allowed'
-                  : 'bg-primary'
-              }`}
+              aria-controls='piece-jointe'
+              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
               onClick={handleFileUploadClick}
-              disabled={Boolean(fileUploadedName)}
+              disabled={Boolean(uploadedFileInfo)}
             >
               <IconComponent
                 name={IconName.File}
@@ -312,16 +265,16 @@ export default function Conversation({
                 focusable='false'
                 className='m-auto w-6 h-6 fill-blanc'
               />
-              <label htmlFor='fileupload' className='sr-only'>
+              <label htmlFor='piece-jointe' className='sr-only'>
                 Attacher une pièce jointe
               </label>
               <input
-                id='fileupload'
+                id='piece-jointe'
                 type='file'
                 ref={hiddenFileInput}
                 onChange={handleFileUploadChange}
                 className='hidden'
-                accept='.pdf, .png, .jpeg'
+                accept='.pdf, .png, .jpeg, .jpg'
               />
             </button>
           </div>
