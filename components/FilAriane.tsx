@@ -12,7 +12,7 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
 
   useEffect(() => {
     const crumbs: { fragment: string; href: string }[] = []
-    currentPath
+    getCurrentPathSansLesPathsANePasAfficher(currentPath)
       .split('/')
       .slice(1)
       .forEach((fragment, index) => {
@@ -63,4 +63,8 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
       </ol>
     </nav>
   )
+}
+
+function getCurrentPathSansLesPathsANePasAfficher(currentPath: string) {
+  return currentPath.replace('/actions', '')
 }

@@ -1,4 +1,4 @@
-import { act, waitFor, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
@@ -213,6 +213,36 @@ describe('<Layout />', () => {
       await waitFor(() => {
         expect(mockAudio).toHaveBeenCalledTimes(0)
       })
+    })
+  })
+
+  describe('cas particuliers du fil d’ariane', () => {
+    it("n'affiche pas le path '/actions' dans le fil d'ariane", async () => {
+      // Given
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/jeune/id-jeune/actions/id-action',
+      })
+
+      // When
+      await act(async () => {
+        await renderWithSession(
+          <DIProvider
+            dependances={{ jeunesService, conseillerService, messagesService }}
+          >
+            <ConseillerProvider conseiller={unConseiller()}>
+              <Layout>
+                <FakeComponent
+                  pageTitle='un titre'
+                  pageHeader='Titre de la page'
+                />
+              </Layout>
+            </ConseillerProvider>
+          </DIProvider>
+        )
+      })
+
+      // Then
+      expect(() => screen.getByRole('link', { name: 'actions' })).toThrow()
     })
   })
 
