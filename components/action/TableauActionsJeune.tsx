@@ -8,13 +8,11 @@ import { Jeune } from 'interfaces/jeune'
 interface TableauActionsJeuneProps {
   jeune: Jeune
   actions: Action[]
-  hideTableHead?: boolean
 }
 
 export const TableauActionsJeune = ({
   jeune,
   actions,
-  hideTableHead = false,
 }: TableauActionsJeuneProps) => {
   return (
     <>
@@ -30,10 +28,7 @@ export const TableauActionsJeune = ({
           className='table w-full'
           aria-label={`Liste des actions de ${jeune.firstName} ${jeune.lastName}`}
         >
-          <div
-            role='rowgroup'
-            className={`table-header-group ${hideTableHead ? 'sr-only' : ''}`}
-          >
+          <div role='rowgroup' className='table-header-group '>
             <div role='row' className='table-row text-s-regular'>
               <div role='columnheader' className={`table-cell pl-4 py-4`}>
                 Intitulé de l&apos;action

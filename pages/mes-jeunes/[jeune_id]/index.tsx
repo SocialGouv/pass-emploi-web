@@ -3,13 +3,14 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import SuccessMessage from '../../../components/SuccessMessage'
+
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import RdvList from 'components/rdv/RdvList'
-import SuccessMessage from 'components/SuccessMessage'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -136,6 +137,43 @@ function FicheJeune({
 
   return (
     <>
+      {showRdvCreationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été créé'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showRdvModificationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été modifié'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showRdvSuppressionSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été supprimé'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showActionCreationSuccess && (
+        <SuccessMessage
+          label={'L’action a bien été créée'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessage}
+        />
+      )}
+
       {!jeune.isActivated && (
         <p className='mb-6 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
           <span className='text-sm-semi text-warning'>
@@ -177,42 +215,6 @@ function FicheJeune({
         )}
       </div>
 
-      {showRdvCreationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showRdvModificationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showRdvSuppressionSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showActionCreationSuccess && (
-        <SuccessMessage
-          label={'L’action a bien été créée'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-          }
-          onAcknowledge={closeMessage}
-        />
-      )}
       <DetailsJeune
         jeune={jeune}
         withSituations={session?.user.structure === UserStructure.MILO}
