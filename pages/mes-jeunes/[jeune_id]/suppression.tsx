@@ -144,7 +144,7 @@ export const getServerSideProps: GetServerSideProps<
 
   if (jeune.isActivated) {
     return {
-      redirect: { destination: `/mes-jeunes/${jeune.id}`, permanent: true },
+      redirect: { destination: `/mes-jeunes/${jeune.id}`, permanent: false },
     }
   }
   return {

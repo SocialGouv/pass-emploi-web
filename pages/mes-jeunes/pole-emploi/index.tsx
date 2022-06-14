@@ -8,7 +8,7 @@ export const getServerSideProps = () => {
   return {
     redirect: {
       destination: '/mes-jeunes',
-      permanent: true,
+      permanent: false,
     },
   }
 }
