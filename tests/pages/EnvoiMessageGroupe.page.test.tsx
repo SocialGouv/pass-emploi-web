@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
@@ -112,9 +112,7 @@ describe('EnvoiMessageGroupe', () => {
       it('envoi un message à plusieurs destinataires', async () => {
         // When
         await userEvent.type(inputMessage, newMessage)
-        await act(() => {
-          submitButton.click()
-        })
+        await userEvent.click(submitButton)
 
         // Then
         await waitFor(() => {
@@ -133,9 +131,7 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.type(inputMessage, newMessage)
 
         // When
-        await act(() => {
-          submitButton.click()
-        })
+        await userEvent.click(submitButton)
 
         // Then
         await waitFor(() => {
@@ -151,7 +147,7 @@ describe('EnvoiMessageGroupe', () => {
       //   )
       //
       //   // When
-      //   await act(async () => previousButton.click())
+      //   await userEvent.click(previousButton)
       //
       //   // Then
       //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -169,7 +165,7 @@ describe('EnvoiMessageGroupe', () => {
         const cancelButton = screen.getByText('Annuler')
 
         // When
-        await act(async () => cancelButton.click())
+        await userEvent.click(cancelButton)
 
         // Then
         expect(cancelButton).not.toHaveAttribute('href')
@@ -194,9 +190,7 @@ describe('EnvoiMessageGroupe', () => {
         // When
         await userEvent.type(inputSearchJeune, 'Jirac Kenji')
         await userEvent.type(inputMessage, 'un message')
-        await act(() => {
-          submitButton.click()
-        })
+        await userEvent.click(submitButton)
 
         // Then
         await waitFor(() => {

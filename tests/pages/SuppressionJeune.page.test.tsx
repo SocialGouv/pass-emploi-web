@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/dom'
-import { act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -181,7 +181,7 @@ describe('Suppression Jeune', () => {
 
       describe('quand tout se passe bien', () => {
         beforeEach(async () => {
-          await act(async () => button.click())
+          await userEvent.click(button)
         })
 
         it('supprime le compte', () => {
@@ -206,7 +206,7 @@ describe('Suppression Jeune', () => {
           )
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(
@@ -222,7 +222,7 @@ describe('Suppression Jeune', () => {
           )
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(screen.getByText("Message d'erreur")).toBeInTheDocument()
@@ -236,7 +236,7 @@ describe('Suppression Jeune', () => {
           )
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(

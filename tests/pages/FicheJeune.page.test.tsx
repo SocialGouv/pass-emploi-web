@@ -1,4 +1,5 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
@@ -102,9 +103,7 @@ describe('Fiche Jeune', () => {
       it('affiche toutes les actions du jeune', async () => {
         // When
         const tabActions = screen.getByRole('tab', { name: 'Actions 4' })
-        await act(async () => {
-          tabActions.click()
-        })
+        await userEvent.click(tabActions)
 
         // Then
         actions.forEach((action) => {
@@ -163,9 +162,7 @@ describe('Fiche Jeune', () => {
         })
 
         // When
-        act(() => {
-          button.click()
-        })
+        await userEvent.click(button)
 
         //Then
         listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
@@ -253,9 +250,7 @@ describe('Fiche Jeune', () => {
 
       it("n'affiche pas de lien vers les actions du jeune", async () => {
         // Given
-        await act(async () => {
-          screen.getByRole('tab', { name: /Actions/ }).click()
-        })
+        await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
 
         // Then
         expect(() =>
@@ -373,9 +368,7 @@ describe('Fiche Jeune', () => {
         )
 
         // When
-        await act(async () => {
-          screen.getByRole('tab', { name: /Actions/ }).click()
-        })
+        await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
 
         // Then
         expect(screen.getByText(/n’a pas encore d’action/)).toBeInTheDocument()
@@ -450,7 +443,7 @@ describe('Fiche Jeune', () => {
         })
 
         // When
-        await act(async () => fermerMessage.click())
+        await userEvent.click(fermerMessage)
 
         // Then
         expect(() =>
@@ -497,7 +490,7 @@ describe('Fiche Jeune', () => {
         })
 
         // When
-        await act(async () => fermerMessage.click())
+        await userEvent.click(fermerMessage)
 
         // Then
         expect(() =>
@@ -544,7 +537,7 @@ describe('Fiche Jeune', () => {
         })
 
         // When
-        await act(async () => fermerMessage.click())
+        await userEvent.click(fermerMessage)
 
         // Then
         expect(() => screen.getByText('L’action a bien été créée')).toThrow()

@@ -1,10 +1,10 @@
 import {
-  act,
   fireEvent,
   RenderResult,
   screen,
   waitFor,
 } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 
 import renderWithSession from '../renderWithSession'
@@ -65,7 +65,7 @@ describe('PoleEmploiCreationJeune', () => {
         fireEvent.change(inputFirstname, { target: { value: '' } })
 
         // When
-        fireEvent.click(submitButton)
+        await userEvent.click(submitButton)
 
         // Then
         expect(
@@ -84,7 +84,7 @@ describe('PoleEmploiCreationJeune', () => {
         fireEvent.change(inputName, { target: { value: '' } })
 
         // When
-        fireEvent.click(submitButton)
+        await userEvent.click(submitButton)
 
         // Then
         expect(
@@ -103,7 +103,7 @@ describe('PoleEmploiCreationJeune', () => {
         fireEvent.change(inputEmail, { target: { value: '' } })
 
         // When
-        fireEvent.click(submitButton)
+        await userEvent.click(submitButton)
 
         // Then
         expect(
@@ -142,9 +142,7 @@ describe('PoleEmploiCreationJeune', () => {
       })
 
       // When
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
+      await userEvent.click(submitButton)
 
       // Then
       expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
@@ -199,9 +197,7 @@ describe('PoleEmploiCreationJeune', () => {
       })
 
       // When
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
+      await userEvent.click(submitButton)
 
       // Then
       expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)

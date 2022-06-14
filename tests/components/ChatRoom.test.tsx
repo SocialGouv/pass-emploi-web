@@ -1,4 +1,5 @@
 import { act, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import renderWithSession from '../renderWithSession'
@@ -84,7 +85,7 @@ describe('<ChatRoom />', () => {
           .closest('button')
 
         // When
-        await act(async () => goToConversation!.click())
+        await userEvent.click(goToConversation!)
       })
 
       it('affiche la conversation du jeune', async () => {
