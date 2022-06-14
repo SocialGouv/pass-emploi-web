@@ -78,7 +78,7 @@ describe('Suppression Jeune', () => {
           expect(actual).toEqual({
             redirect: {
               destination: `/mes-jeunes/${jeune.id}`,
-              permanent: true,
+              permanent: false,
             },
           })
         })

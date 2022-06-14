@@ -64,7 +64,7 @@ describe('withMandatorySessionOrRedirect', () => {
       expect(actual).toEqual({
         redirect: {
           destination: '/api/auth/federated-logout',
-          permanent: true,
+          permanent: false,
         },
         validSession: false,
       })

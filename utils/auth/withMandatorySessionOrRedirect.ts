@@ -30,7 +30,7 @@ export async function withMandatorySessionOrRedirect({
     return {
       redirect: {
         destination: '/api/auth/federated-logout',
-        permanent: true,
+        permanent: false,
       },
       validSession: false,
     }

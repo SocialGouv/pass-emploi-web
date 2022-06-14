@@ -293,7 +293,7 @@ describe('Home', () => {
 
         //Then
         expect(actual).toEqual({
-          redirect: { destination: '/mes-jeunes', permanent: true },
+          redirect: { destination: '/mes-jeunes', permanent: false },
         })
       })
       it('redirige vers l’url renseignée', async () => {
@@ -304,7 +304,7 @@ describe('Home', () => {
 
         //Then
         expect(actual).toEqual({
-          redirect: { destination: '/mes-rendezvous', permanent: true },
+          redirect: { destination: '/mes-rendezvous', permanent: false },
         })
       })
     })
