@@ -145,6 +145,14 @@ export default function Conversation({
     }
   }
 
+  async function handleFileDeleteClick() {
+    await fichiersService.deleteFichier(
+      uploadedFileInfo!.id,
+      session!.accessToken
+    )
+    setUploadedFileInfo(null)
+  }
+
   useEffect(() => {
     const unsubscribe = observerMessages(jeuneChat.chatId)
     setReadByConseiller(jeuneChat.chatId)
@@ -216,6 +224,18 @@ export default function Conversation({
             <span className='font-bold break-words'>
               {uploadedFileInfo.nom}
             </span>
+            <button
+              type='button'
+              aria-label='Supprimer la pièce jointe'
+              onClick={handleFileDeleteClick}
+            >
+              <IconComponent
+                name={IconName.RoundedClose}
+                aria-hidden='false'
+                focusable='false'
+                className='w-6 h-6 ml-2'
+              />
+            </button>
           </div>
         )}
         <div className='w-full bg-grey_100 px-3 flex items-end'>

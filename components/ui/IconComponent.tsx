@@ -29,6 +29,7 @@ import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
 import ProfilIcon from '../../assets/icons/profil.svg'
 import RendezVousIcon from '../../assets/icons/rendez-vous.svg'
+import RoundedCloseIcon from '../../assets/icons/rounded_close.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 import SendIcon from '../../assets/icons/send.svg'
 import TrashCanIcon from '../../assets/icons/trash_can.svg'
@@ -63,6 +64,7 @@ export enum IconName {
   People = 'People',
   Profil = 'Profil',
   RendezVous = 'RendezVous',
+  RoundedClose = 'RoundedClose',
   Search = 'Search',
   Send = 'Send',
   TrashCan = 'TrashCan',
@@ -98,6 +100,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.RendezVous]: RendezVousIcon,
+  [IconName.RoundedClose]: RoundedCloseIcon,
   [IconName.Search]: SearchIcon,
   [IconName.Send]: SendIcon,
   [IconName.TrashCan]: TrashCanIcon,
