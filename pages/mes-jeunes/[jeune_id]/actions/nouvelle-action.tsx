@@ -212,7 +212,7 @@ export const getServerSideProps: GetServerSideProps<
       withoutChat: true,
       pageTitle: 'Actions jeune – Création action',
       pageHeader: 'Créer une nouvelle action',
-      returnTo: `/mes-jeunes/${idJeune}/actions`,
+      returnTo: `/mes-jeunes/${idJeune}`,
     },
   }
 }

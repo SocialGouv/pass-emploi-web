@@ -54,7 +54,7 @@ describe('NouvelleAction', () => {
             withoutChat: true,
             pageTitle: 'Actions jeune – Création action',
             pageHeader: 'Créer une nouvelle action',
-            returnTo: '/mes-jeunes/id-jeune/actions',
+            returnTo: '/mes-jeunes/id-jeune',
           },
         })
       })
