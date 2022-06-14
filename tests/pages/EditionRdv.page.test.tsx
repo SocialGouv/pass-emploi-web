@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -567,26 +567,21 @@ describe('EditionRdv', () => {
 
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
           // When
-          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
+          await userEvent.selectOptions(selectType, 'AUTRE')
 
           // Then
-          await waitFor(() => {
-            expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
-          })
+          expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
         })
 
         it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
-          let inputTypePrecision: HTMLInputElement
+          await userEvent.selectOptions(selectType, 'AUTRE')
+          const inputTypePrecision: HTMLInputElement =
+            screen.getByLabelText('* Préciser')
 
           // When
-          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-          inputTypePrecision = screen.getByLabelText('* Préciser')
-
-          await waitFor(() => {
-            expect(inputTypePrecision).toBeInTheDocument()
-            fireEvent.blur(inputTypePrecision)
-          })
+          expect(inputTypePrecision).toBeInTheDocument()
+          fireEvent.blur(inputTypePrecision)
 
           // Then
           expect(inputTypePrecision.value).toEqual('')

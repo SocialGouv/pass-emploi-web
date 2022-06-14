@@ -1,9 +1,4 @@
-import {
-  fireEvent,
-  RenderResult,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { fireEvent, RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 
@@ -62,7 +57,7 @@ describe('PoleEmploiCreationJeune', () => {
       it('demande le remplissage du prénom', async () => {
         // Given
         const inputFirstname = screen.getByLabelText('* Prénom')
-        fireEvent.change(inputFirstname, { target: { value: '' } })
+        await userEvent.clear(inputFirstname)
 
         // When
         await userEvent.click(submitButton)
@@ -71,17 +66,15 @@ describe('PoleEmploiCreationJeune', () => {
         expect(
           screen.getByText('Veuillez renseigner le prénom du jeune')
         ).toBeInTheDocument()
-        await waitFor(() => {
-          expect(
-            jeunesService.createCompteJeunePoleEmploi
-          ).toHaveBeenCalledTimes(0)
-        })
+        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
+          0
+        )
       })
 
       it('demande le remplissage du nom', async () => {
         // Given
         const inputName = screen.getByLabelText('* Nom')
-        fireEvent.change(inputName, { target: { value: '' } })
+        await userEvent.clear(inputName)
 
         // When
         await userEvent.click(submitButton)
@@ -90,17 +83,15 @@ describe('PoleEmploiCreationJeune', () => {
         expect(
           screen.getByText('Veuillez renseigner le nom du jeune')
         ).toBeInTheDocument()
-        await waitFor(() => {
-          expect(
-            jeunesService.createCompteJeunePoleEmploi
-          ).toHaveBeenCalledTimes(0)
-        })
+        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
+          0
+        )
       })
 
       it("demande le remplissage de l'email", async () => {
         // Given
         const inputEmail = screen.getByLabelText(emailLabel)
-        fireEvent.change(inputEmail, { target: { value: '' } })
+        await userEvent.clear(inputEmail)
 
         // When
         await userEvent.click(submitButton)
@@ -109,11 +100,9 @@ describe('PoleEmploiCreationJeune', () => {
         expect(
           screen.getByText("Veuillez renseigner l'e-mail du jeune")
         ).toBeInTheDocument()
-        await waitFor(() => {
-          expect(
-            jeunesService.createCompteJeunePoleEmploi
-          ).toHaveBeenCalledTimes(0)
-        })
+        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
+          0
+        )
       })
     })
   })

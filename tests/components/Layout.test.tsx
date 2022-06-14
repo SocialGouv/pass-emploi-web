@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
@@ -153,25 +153,21 @@ describe('<Layout />', () => {
 
     it('paramètre la balise head en fonction des messages non lus', async () => {
       // Then
-      await waitFor(() => {
-        expect(AppHead).toHaveBeenCalledWith(
-          {
-            hasMessageNonLu: true,
-            titre: 'un titre',
-          },
-          {}
-        )
-      })
+      expect(AppHead).toHaveBeenCalledWith(
+        {
+          hasMessageNonLu: true,
+          titre: 'un titre',
+        },
+        {}
+      )
     })
 
     it('affiche la ChatRoom avec les jeunes avec un message non lu en premier', async () => {
       // Then
-      await waitFor(() => {
-        expect(ChatRoom).toHaveBeenCalledWith(
-          { jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]] },
-          {}
-        )
-      })
+      expect(ChatRoom).toHaveBeenCalledWith(
+        { jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]] },
+        {}
+      )
     })
 
     it("notifie quand un nouveau message d'un jeune arrive", async () => {
@@ -189,9 +185,7 @@ describe('<Layout />', () => {
       })
 
       // Then
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalled()
-      })
+      expect(mockAudio).toHaveBeenCalled()
     })
 
     it("ne notifie pas quand c'est un évènement de chat qui ne correspond pas à un nouveau message", async () => {
@@ -210,9 +204,7 @@ describe('<Layout />', () => {
       })
 
       // Then
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(0)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -247,9 +239,7 @@ describe('<Layout />', () => {
       })
 
       // Then
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(0)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(0)
     })
   })
 

@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
 import Layout from 'components/layouts/Layout'
@@ -71,18 +71,14 @@ describe('Intégration notifications sonores', () => {
         )
       })
       await unNouveauMessageArrive(updateChatRef, jeunes)
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(0)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(0)
 
       // When
       await toggleNotifications()
       await unNouveauMessageArrive(updateChatRef, jeunes)
 
       // Then
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(1)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -98,18 +94,14 @@ describe('Intégration notifications sonores', () => {
         )
       })
       await unNouveauMessageArrive(updateChatRef, jeunes)
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(1)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(1)
 
       // When
       await toggleNotifications()
       await unNouveauMessageArrive(updateChatRef, jeunes)
 
       // Then
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(1)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(1)
     })
   })
 })

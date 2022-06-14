@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -90,11 +90,9 @@ describe('<ChatRoom />', () => {
 
       it('affiche la conversation du jeune', async () => {
         // Then
-        await waitFor(() =>
-          expect(
-            screen.getByText(`conversation-${jeuneSelectionne.id}`)
-          ).toBeInTheDocument()
-        )
+        expect(
+          screen.getByText(`conversation-${jeuneSelectionne.id}`)
+        ).toBeInTheDocument()
       })
 
       it("n'affiche pas les autres chats", async () => {

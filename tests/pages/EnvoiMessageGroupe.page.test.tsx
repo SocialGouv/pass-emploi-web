@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
@@ -115,15 +115,13 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        await waitFor(() => {
-          expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
-            { id: '1', structure: UserStructure.MILO },
-            [jeunes[0].id, jeunes[1].id],
-            newMessage,
-            'accessToken',
-            'cleChiffrement'
-          )
-        })
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
+          { id: '1', structure: UserStructure.MILO },
+          [jeunes[0].id, jeunes[1].id],
+          newMessage,
+          'accessToken',
+          'cleChiffrement'
+        )
       })
 
       it('redirige vers la page précédente', async () => {
@@ -134,9 +132,7 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        await waitFor(() => {
-          expect(push).toHaveBeenCalledWith('/mes-jeunes?envoiMessage=succes')
-        })
+        expect(push).toHaveBeenCalledWith('/mes-jeunes?envoiMessage=succes')
       })
 
       // FIXME trouver comment tester
@@ -193,11 +189,9 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        await waitFor(() => {
-          expect(
-            messagesService.sendNouveauMessageGroupe
-          ).toHaveBeenCalledTimes(1)
-        })
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
+          1
+        )
         expect(screen.getByText(messageErreur)).toBeInTheDocument()
       })
     })
