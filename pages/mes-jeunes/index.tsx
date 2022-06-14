@@ -8,7 +8,7 @@ import EmptyStateImage from '../../assets/images/empty_state.svg'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
-import SuccessMessage from 'components/SuccessMessage'
+import SuccessMessage from 'components/ui/SuccessMessage'
 import { TotalActions } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {

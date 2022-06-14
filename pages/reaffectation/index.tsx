@@ -4,10 +4,10 @@ import React, { FormEvent, useState } from 'react'
 
 import ImportantIcon from '../../assets/icons/important.svg'
 
-import SuccessMessage from 'components/SuccessMessage'
 import Button from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
+import SuccessMessage from 'components/ui/SuccessMessage'
 import {
   compareJeunesByLastName,
   getJeuneFullname,
