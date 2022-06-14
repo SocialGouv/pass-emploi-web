@@ -282,7 +282,7 @@ function FicheJeune({
           aria-labelledby='liste-actions--tab'
           tabIndex={0}
           id='liste-actions'
-          className='mt-8 border-b border-primary_lighten pb-8'
+          className='mt-8 pb-8'
         >
           {isPoleEmploi && (
             <IntegrationPoleEmploi label='actions et démarches' />

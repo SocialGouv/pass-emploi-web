@@ -44,7 +44,10 @@ export const TableauActionsJeune = ({
 
           <div role='rowgroup' className='table-row-group'>
             {actions.map((action: Action) => (
-              <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
+              <>
+                <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
+                <div className='mb-2' />
+              </>
             ))}
           </div>
         </div>

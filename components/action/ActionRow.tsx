@@ -19,9 +19,12 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       <a
         role='row'
         aria-label={`Détail de l'action ${action.content}`}
-        className='table-row hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'
+        className={`table-row cursor-pointer focus-within:primary_lighten rounded-[6px] shadow-[0_6px_25px_-10px_rgba(0,0,0,0.3)] hover:bg-primary_lighten`}
       >
-        <div role='cell' className={`table-cell relative pl-4 py-4`}>
+        <div
+          role='cell'
+          className={`table-cell relative p-4 hover:rounded-l-[6px]`}
+        >
           <span className='flex items-center'>
             <span className='text-base-medium text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
@@ -36,8 +39,10 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
             )}
           </span>
         </div>
-        <div role='cell' className={`table-cell relative`}>
-          {formatDayDate(new Date(action.creationDate))}
+        <div role='cell' className={`table-cell relative py-4 pr-4`}>
+          <span className='flex items-center border-r border-primary_lighten'>
+            <span>{formatDayDate(new Date(action.creationDate))}</span>
+          </span>
         </div>
         <div role='cell' className={`table-cell relative`}>
           <span className='flex items-center justify-between'>
