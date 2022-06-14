@@ -7,6 +7,8 @@ export interface FichiersService {
     fichier: File,
     accessToken: string
   ): Promise<InfoFichier | undefined>
+
+  deleteFichier(idFichier: string, accessToken: string): Promise<void>
 }
 
 export class FichiersApiService implements FichiersService {
@@ -24,5 +26,9 @@ export class FichiersApiService implements FichiersService {
     formData.append('fichier', fichier)
 
     return this.apiClient.postFile(`/fichiers`, formData, accessToken)
+  }
+
+  async deleteFichier(idFichier: string, accessToken: string): Promise<void> {
+    return this.apiClient.delete(`/fichiers/${idFichier}`, accessToken)
   }
 }

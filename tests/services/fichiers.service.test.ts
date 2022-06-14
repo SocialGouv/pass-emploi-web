@@ -29,4 +29,16 @@ describe('FichierApiService', () => {
       )
     })
   })
+  describe('.deleteFichier', () => {
+    it("supprime l'action", async () => {
+      // WHEN
+      await fichiersService.deleteFichier('id-fichier', 'accessToken')
+
+      // THEN
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        '/fichier/id-fichier',
+        'accessToken'
+      )
+    })
+  })
 })
