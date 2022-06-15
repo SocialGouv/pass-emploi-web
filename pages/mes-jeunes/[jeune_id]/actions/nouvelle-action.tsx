@@ -65,8 +65,8 @@ function EditionAction({ idJeune }: EditionActionProps) {
       session!.accessToken
     )
     await router.push({
-      pathname: `/mes-jeunes/${idJeune}/actions`,
-      query: { creation: 'succes' },
+      pathname: `/mes-jeunes/${idJeune}`,
+      query: { creationAction: 'succes' },
     })
   }
 
@@ -212,7 +212,7 @@ export const getServerSideProps: GetServerSideProps<
       withoutChat: true,
       pageTitle: 'Actions jeune – Création action',
       pageHeader: 'Créer une nouvelle action',
-      returnTo: `/mes-jeunes/${idJeune}/actions`,
+      returnTo: `/mes-jeunes/${idJeune}`,
     },
   }
 }

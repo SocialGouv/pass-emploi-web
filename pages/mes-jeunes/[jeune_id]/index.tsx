@@ -1,6 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
@@ -10,10 +9,10 @@ import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import RdvList from 'components/rdv/RdvList'
-import SuccessMessage from 'components/SuccessMessage'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, compareActionsDatesDesc } from 'interfaces/action'
@@ -30,6 +29,16 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
+export enum Onglet {
+  RDVS = 'RDVS',
+  ACTIONS = 'ACTIONS',
+}
+
+const ongletProps: { [key in Onglet]: string } = {
+  RDVS: 'rdvs',
+  ACTIONS: 'actions',
+}
+
 interface FicheJeuneProps extends PageProps {
   jeune: Jeune
   rdvs: RdvListItem[]
@@ -38,7 +47,9 @@ interface FicheJeuneProps extends PageProps {
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   rdvSuppressionSuccess?: boolean
+  actionCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
+  onglet?: Onglet
 }
 
 function FicheJeune({
@@ -49,7 +60,9 @@ function FicheJeune({
   rdvCreationSuccess,
   rdvModificationSuccess,
   rdvSuppressionSuccess,
+  actionCreationSuccess,
   messageEnvoiGroupeSuccess,
+  onglet,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
@@ -62,11 +75,7 @@ function FicheJeune({
   const [expandListeConseillers, setExpandListeConseillers] =
     useState<boolean>(false)
 
-  enum Onglet {
-    RDVS = 'RDVS',
-    ACTIONS = 'ACTIONS',
-  }
-  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.RDVS)
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -76,6 +85,9 @@ function FicheJeune({
 
   const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
     useState<boolean>(rdvSuppressionSuccess ?? false)
+
+  const [showActionCreationSuccess, setShowActionCreationSuccess] =
+    useState<boolean>(actionCreationSuccess ?? false)
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
@@ -87,21 +99,17 @@ function FicheJeune({
   if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
   if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
   if (rdvSuppressionSuccess) initialTracking += ' - Suppression rdv succès'
+  if (actionCreationSuccess) initialTracking += ' - Succès creation action'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
-  async function closeRdvMessage() {
+  async function closeMessage() {
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
     setShowRdvSuppressionSuccess(false)
-    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
-      shallow: true,
-    })
-  }
-
-  async function closeMessageGroupeEnvoiSuccess() {
+    setShowActionCreationSuccess(false)
     setShowMessageGroupeEnvoiSuccess(false)
     await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
       shallow: true,
@@ -121,10 +129,20 @@ function FicheJeune({
     setTrackingLabel(pageTracking + ' - Dossier i-Milo')
   }
 
-  function switchTab(tab: Onglet): void {
+  async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
     const tabLabel = tab === Onglet.ACTIONS ? 'Actions' : 'Événements'
     setTrackingLabel(pageTracking + ' - Consultation ' + tabLabel)
+    await router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}`,
+        query: { onglet: ongletProps[tab] },
+      },
+      undefined,
+      {
+        shallow: true,
+      }
+    )
   }
 
   useMatomo(trackingLabel)
@@ -135,6 +153,43 @@ function FicheJeune({
 
   return (
     <>
+      {showRdvCreationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été créé'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showRdvModificationSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été modifié'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showRdvSuppressionSuccess && (
+        <SuccessMessage
+          label={'Le rendez-vous a bien été supprimé'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showActionCreationSuccess && (
+        <SuccessMessage
+          label={'L’action a bien été créée'}
+          onAcknowledge={closeMessage}
+        />
+      )}
+
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessage}
+        />
+      )}
+
       {!jeune.isActivated && (
         <p className='mb-6 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
           <span className='text-sm-semi text-warning'>
@@ -150,6 +205,21 @@ function FicheJeune({
           </ButtonLink>
         )}
 
+        {!isPoleEmploi && (
+          <ButtonLink
+            href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+            className='mb-4 ml-8 w-fit'
+          >
+            <IconComponent
+              name={IconName.Add}
+              focusable='false'
+              aria-hidden='true'
+              className='mr-2 w-4 h-4'
+            />
+            Créer une nouvelle action
+          </ButtonLink>
+        )}
+
         {!jeune.isActivated && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
@@ -161,35 +231,6 @@ function FicheJeune({
         )}
       </div>
 
-      {showRdvCreationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvMessage}
-        />
-      )}
-
-      {showRdvModificationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvMessage}
-        />
-      )}
-
-      {showRdvSuppressionSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeRdvMessage}
-        />
-      )}
-
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-          }
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
-        />
-      )}
       <DetailsJeune
         jeune={jeune}
         withSituations={session?.user.structure === UserStructure.MILO}
@@ -258,40 +299,14 @@ function FicheJeune({
           aria-labelledby='liste-actions--tab'
           tabIndex={0}
           id='liste-actions'
-          className='mt-8 border-b border-primary_lighten pb-8'
+          className='mt-8 pb-8'
         >
           {isPoleEmploi && (
             <IntegrationPoleEmploi label='actions et démarches' />
           )}
 
-          {!isPoleEmploi && actions.length !== 0 && (
-            <>
-              <TableauActionsJeune
-                jeune={jeune}
-                actions={actions.slice(0, 3)}
-                hideTableHead={true}
-              />
-              <div className='flex justify-center mt-8'>
-                <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                  <a className='text-sm text-primary_darken underline hover:text-primary'>
-                    Voir la liste des actions du jeune
-                  </a>
-                </Link>
-              </div>
-            </>
-          )}
-
-          {!isPoleEmploi && actions.length === 0 && (
-            <>
-              <p className='text-md mb-2'>
-                {jeune.firstName} n&apos;a pas encore d&apos;action
-              </p>
-              <Link href={`/mes-jeunes/${jeune.id}/actions`}>
-                <a className='text-sm text-primary_darken underline'>
-                  Accédez à cette page pour créer une action
-                </a>
-              </Link>
-            </>
+          {!isPoleEmploi && (
+            <TableauActionsJeune jeune={jeune} actions={actions} />
           )}
         </div>
       )}
@@ -364,8 +379,15 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   if (context.query.suppressionRdv)
     props.rdvSuppressionSuccess = context.query.suppressionRdv === 'succes'
 
-  if (context.query?.envoiMessage) {
-    props.messageEnvoiGroupeSuccess = context.query?.envoiMessage === 'succes'
+  if (context.query.creationAction)
+    props.actionCreationSuccess = context.query.creationAction === 'succes'
+
+  if (context.query.envoiMessage)
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+
+  if (context.query.onglet) {
+    props.onglet =
+      context.query.onglet === 'actions' ? Onglet.ACTIONS : Onglet.RDVS
   }
 
   return {

@@ -1,4 +1,4 @@
-import { act, waitFor, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
