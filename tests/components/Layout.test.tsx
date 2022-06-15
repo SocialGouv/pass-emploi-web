@@ -216,36 +216,6 @@ describe('<Layout />', () => {
     })
   })
 
-  describe('cas particuliers du fil d’ariane', () => {
-    it("n'affiche pas le path '/actions' dans le fil d'ariane", async () => {
-      // Given
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/jeune/id-jeune/actions/id-action',
-      })
-
-      // When
-      await act(async () => {
-        await renderWithSession(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Layout>
-                <FakeComponent
-                  pageTitle='un titre'
-                  pageHeader='Titre de la page'
-                />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
-        )
-      })
-
-      // Then
-      expect(() => screen.getByRole('link', { name: 'actions' })).toThrow()
-    })
-  })
-
   describe('quand le conseiller a désactivé ses notifications', () => {
     it("ne notifie pas quand un nouveau message d'un jeune arrive", async () => {
       // Given

@@ -31,7 +31,10 @@ import {
   EtatSituation,
 } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
-import FicheJeune, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]'
+import FicheJeune, {
+  getServerSideProps,
+  Onglet,
+} from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -52,9 +55,12 @@ describe('Fiche Jeune', () => {
 
     let jeunesService: JeunesService
     let rendezVousService: RendezVousService
+    let replace: jest.Mock
     beforeEach(async () => {
       jeunesService = mockedJeunesService()
       rendezVousService = mockedRendezVousService()
+      replace = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ replace })
     })
 
     describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
@@ -110,6 +116,11 @@ describe('Fiche Jeune', () => {
         expect(() =>
           screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
         ).toThrow()
+        expect(replace).toHaveBeenCalledWith(
+          { pathname: '/mes-jeunes/jeune-1', query: { onglet: 'actions' } },
+          undefined,
+          { shallow: true }
+        )
       })
 
       it('permet la prise de rendez-vous', async () => {
@@ -407,12 +418,7 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand la création de rdv est réussie', () => {
-      let replace: jest.Mock
       beforeEach(() => {
-        // Given
-        replace = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ replace })
-
         // When
         renderWithSession(
           <DIProvider dependances={{ jeunesService, rendezVousService }}>
@@ -459,12 +465,7 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand la modification de rdv est réussie', () => {
-      let replace: jest.Mock
       beforeEach(() => {
-        // Given
-        replace = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ replace })
-
         // When
         renderWithSession(
           <DIProvider dependances={{ jeunesService, rendezVousService }}>
@@ -511,12 +512,7 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand la création d’une action est réussie', () => {
-      let replace: jest.Mock
       beforeEach(() => {
-        // Given
-        replace = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ replace })
-
         // When
         renderWithSession(
           <DIProvider dependances={{ jeunesService, rendezVousService }}>
@@ -557,6 +553,31 @@ describe('Fiche Jeune', () => {
           undefined,
           { shallow: true }
         )
+      })
+    })
+
+    describe('quand on revient sur la page depuis le détail d’une action', () => {
+      it('ouvre l’onglet des actions', () => {
+        // Given
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
+            <CurrentJeuneProvider>
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actions={actions}
+                conseillers={[]}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+              />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
+
+        // Then
+        expect(
+          screen.getByRole('tab', { selected: true })
+        ).toHaveAccessibleName('Actions 4')
       })
     })
   })
@@ -756,6 +777,24 @@ describe('Fiche Jeune', () => {
 
         // Then
         expect(actual).toMatchObject({ props: { actionCreationSuccess: true } })
+      })
+    })
+
+    describe('Quand on vient du détail d’une action', () => {
+      it('récupère l’onglet sur lequel ouvrir la page', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          validSession: true,
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { onglet: 'actions' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({ props: { onglet: Onglet.ACTIONS } })
       })
     })
 

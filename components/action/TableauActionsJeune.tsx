@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 
 import ActionRow from './ActionRow'
 
@@ -44,10 +44,10 @@ export const TableauActionsJeune = ({
 
           <div role='rowgroup' className='table-row-group'>
             {actions.map((action: Action) => (
-              <>
-                <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
+              <Fragment key={action.id}>
+                <ActionRow action={action} jeuneId={jeune.id} />
                 <div className='mb-2' />
-              </>
+              </Fragment>
             ))}
           </div>
         </div>

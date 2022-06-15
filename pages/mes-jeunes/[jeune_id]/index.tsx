@@ -29,6 +29,16 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
+export enum Onglet {
+  RDVS = 'RDVS',
+  ACTIONS = 'ACTIONS',
+}
+
+const ongletProps: { [key in Onglet]: string } = {
+  RDVS: 'rdvs',
+  ACTIONS: 'actions',
+}
+
 interface FicheJeuneProps extends PageProps {
   jeune: Jeune
   rdvs: RdvListItem[]
@@ -39,6 +49,7 @@ interface FicheJeuneProps extends PageProps {
   rdvSuppressionSuccess?: boolean
   actionCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
+  onglet?: Onglet
 }
 
 function FicheJeune({
@@ -51,6 +62,7 @@ function FicheJeune({
   rdvSuppressionSuccess,
   actionCreationSuccess,
   messageEnvoiGroupeSuccess,
+  onglet,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
@@ -63,12 +75,7 @@ function FicheJeune({
   const [expandListeConseillers, setExpandListeConseillers] =
     useState<boolean>(false)
 
-  enum Onglet {
-    RDVS = 'RDVS',
-    ACTIONS = 'ACTIONS',
-  }
-
-  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.RDVS)
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -122,10 +129,20 @@ function FicheJeune({
     setTrackingLabel(pageTracking + ' - Dossier i-Milo')
   }
 
-  function switchTab(tab: Onglet): void {
+  async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
     const tabLabel = tab === Onglet.ACTIONS ? 'Actions' : 'Événements'
     setTrackingLabel(pageTracking + ' - Consultation ' + tabLabel)
+    await router.replace(
+      {
+        pathname: `/mes-jeunes/${jeune.id}`,
+        query: { onglet: ongletProps[tab] },
+      },
+      undefined,
+      {
+        shallow: true,
+      }
+    )
   }
 
   useMatomo(trackingLabel)
@@ -365,8 +382,12 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   if (context.query.creationAction)
     props.actionCreationSuccess = context.query.creationAction === 'succes'
 
-  if (context.query?.envoiMessage) {
-    props.messageEnvoiGroupeSuccess = context.query?.envoiMessage === 'succes'
+  if (context.query.envoiMessage)
+    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+
+  if (context.query.onglet) {
+    props.onglet =
+      context.query.onglet === 'actions' ? Onglet.ACTIONS : Onglet.RDVS
   }
 
   return {
