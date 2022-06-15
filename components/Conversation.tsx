@@ -8,7 +8,6 @@ import React, {
 
 import { InputError } from './ui/InputError'
 
-import FileIcon from 'assets/icons/attach_file.svg'
 import DisplayMessage from 'components/DisplayMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
@@ -54,13 +53,8 @@ export default function Conversation({
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
   )
-  const inputFocused = useRef<boolean>(false)
   const hiddenFileInput = useRef<HTMLInputElement>(null)
-
-  function onInputFocused() {
-    inputFocused.current = true
-    setReadByConseiller(jeuneChat.chatId)
-  }
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   async function sendNouveauMessage(event: any) {
     event.preventDefault()
@@ -111,7 +105,7 @@ export default function Conversation({
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
-          if (inputFocused.current) {
+          if (document.activeElement === inputRef.current) {
             setReadByConseiller(idChatToObserve)
           }
         }
@@ -263,7 +257,10 @@ export default function Conversation({
             />
           </button>
 
-          <div className='p-4 bg-blanc rounded-x_large border text-md border-primary focus-within:outline focus-within:outline-2'>
+          <div
+            className='p-4 bg-blanc rounded-x_large border text-md border-primary focus-within:outline focus-within:outline-2'
+            onClick={() => inputRef.current!.focus()}
+          >
             {uploadedFileInfo && (
               <div className='flex px-2 py-1 rounded-medium bg-primary_lighten w-fit mb-4'>
                 <span className='font-bold break-words'>
@@ -288,10 +285,10 @@ export default function Conversation({
               Message à envoyer
             </label>
             <ResizingMultilineInput
+              inputRef={inputRef}
               id='input-new-message'
               className='w-full outline-none'
-              onFocus={onInputFocused}
-              onBlur={() => (inputFocused.current = false)}
+              onFocus={() => setReadByConseiller(jeuneChat.chatId)}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Écrivez votre message ici...'
               minRows={3}
