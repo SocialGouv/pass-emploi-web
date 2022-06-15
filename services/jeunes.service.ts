@@ -166,6 +166,7 @@ export class JeunesApiService implements JeunesService {
         idConseillerSource: idConseillerInitial,
         idConseillerCible: conseillerDestination.id,
         idsJeune: idsJeunes,
+        estTemporaire: false,
       },
       accessToken
     )

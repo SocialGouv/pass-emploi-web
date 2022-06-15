@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
 
 import ImportantIcon from '../../assets/icons/important.svg'
 
@@ -49,6 +49,7 @@ function Index(_: ReaffectationProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >(undefined)
+  const [isSelected, setIsSelected] = useState<boolean>(false)
   const [trackingTitle, setTrackingTitle] = useState<string>(
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
   )
@@ -160,6 +161,14 @@ function Index(_: ReaffectationProps) {
 
   useMatomo(trackingTitle)
 
+  function handleTypeReaffectation(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.value === 'DEFINITIF') {
+      setIsSelected(false)
+    } else {
+      setIsSelected(true)
+    }
+  }
+
   return (
     <>
       {isReaffectationSuccess && (
@@ -183,12 +192,48 @@ function Index(_: ReaffectationProps) {
         </ol>
       </div>
 
-      <div className='grid w-full grid-cols-[1fr_1fr_auto] items-end gap-x-12 gap-y-4'>
+      <p className='mb-6'>
+        Les champs marqués d’une{' '}
+        <span aria-hidden='true' className='text-warning'>
+          *
+        </span>{' '}
+        sont obligatoires
+      </p>
+
+      <fieldset className='pb-6'>
+        <legend className='text-base-medium pb-2'>
+          <span aria-hidden='true'>*</span> Type de réaffectation
+        </legend>
+
+        <input
+          type='radio'
+          name='type-reaffectation'
+          id='type-reaffectation--definitif'
+          value='DEFINITIF'
+          onChange={handleTypeReaffectation}
+          required
+          className='mr-2'
+        />
+        <label htmlFor='type-reaffectation--definitif'>Définitif</label>
+
+        <input
+          type='radio'
+          name='type-reaffectation'
+          id='type-reaffectation--temporaire'
+          value='TEMPORAIRE'
+          onChange={handleTypeReaffectation}
+          required
+          className='mr-2 ml-2'
+        />
+        <label htmlFor='type-reaffectation--temporaire'>Temporaire</label>
+      </fieldset>
+
+      <div className='grid w-full grid-cols-[1fr_1fr_auto] items-center gap-x-12'>
         <label
           htmlFor='email-conseiller-initial'
           className='text-base-medium text-content_color row-start-1 row-start-1'
         >
-          E-mail conseiller initial
+          <span aria-hidden='true'>*</span> E-mail conseiller initial
         </label>
 
         <form
@@ -204,6 +249,7 @@ function Index(_: ReaffectationProps) {
               onReset={resetAll}
               type={'email'}
               className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
+              required={true}
             />
             <button
               className={`flex p-3 items-center text-base-medium text-primary_darken border border-solid border-content_color rounded-r-medium ${
@@ -245,7 +291,7 @@ function Index(_: ReaffectationProps) {
               : 'text-disabled'
           }`}
         >
-          E-mail conseiller de destination
+          <span aria-hidden='true'>*</span> E-mail conseiller de destination
         </label>
 
         <form
@@ -261,6 +307,7 @@ function Index(_: ReaffectationProps) {
             disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
             type={'email'}
             className='flex-1 border border-solid border-grey_700 rounded-medium text-base-medium text-bleu_nuit'
+            required={true}
           />
         </form>
 
@@ -286,12 +333,6 @@ function Index(_: ReaffectationProps) {
             isReaffectationEnCours
           }
         >
-          <IconComponent
-            name={IconName.ArrowRight}
-            className='w-4 h-4 fill-blanc mr-2'
-            focusable='false'
-            aria-hidden={true}
-          />
           R&eacute;affecter les jeunes
         </Button>
 
