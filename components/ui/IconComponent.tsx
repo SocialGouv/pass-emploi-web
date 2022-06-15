@@ -32,6 +32,7 @@ import RendezVousIcon from '../../assets/icons/rendez-vous.svg'
 import RoundedCloseIcon from '../../assets/icons/rounded_close.svg'
 import SearchIcon from '../../assets/icons/search.svg'
 import SendIcon from '../../assets/icons/send.svg'
+import SpinnerIcon from '../../assets/icons/spinner.svg'
 import TrashCanIcon from '../../assets/icons/trash_can.svg'
 
 export enum IconName {
@@ -67,6 +68,7 @@ export enum IconName {
   RoundedClose = 'RoundedClose',
   Search = 'Search',
   Send = 'Send',
+  Spinner = 'Spinner',
   TrashCan = 'TrashCan',
 }
 
@@ -103,6 +105,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.RoundedClose]: RoundedCloseIcon,
   [IconName.Search]: SearchIcon,
   [IconName.Send]: SendIcon,
+  [IconName.Spinner]: SpinnerIcon,
   [IconName.TrashCan]: TrashCanIcon,
 }
 

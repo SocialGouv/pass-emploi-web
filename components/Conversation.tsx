@@ -49,6 +49,7 @@ export default function Conversation({
   const [uploadedFileError, setUploadedFileError] = useState<
     string | undefined
   >(undefined)
+  const [fileUploading, setFileUploading] = useState<boolean>(false)
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
@@ -63,7 +64,7 @@ export default function Conversation({
 
   async function sendNouveauMessage(event: any) {
     event.preventDefault()
-    if (!newMessage && !Boolean(uploadedFileInfo)) return
+    if (!(newMessage || Boolean(uploadedFileInfo)) || fileUploading) return
 
     const formNouveauMessage: FormNouveauMessage = {
       conseiller: {
@@ -139,6 +140,7 @@ export default function Conversation({
 
     const fichierSelectionne = event.target.files[0]
     try {
+      setFileUploading(true)
       const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
         fichierSelectionne,
@@ -147,6 +149,8 @@ export default function Conversation({
       setUploadedFileInfo(infoFichier)
     } catch (error) {
       setUploadedFileError((error as Error).message)
+    } finally {
+      setFileUploading(false)
     }
   }
 
@@ -287,13 +291,15 @@ export default function Conversation({
               aria-controls='piece-jointe'
               className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
               onClick={handleFileUploadClick}
-              disabled={Boolean(uploadedFileInfo)}
+              disabled={Boolean(uploadedFileInfo) || fileUploading}
             >
               <IconComponent
-                name={IconName.File}
+                name={fileUploading ? IconName.Spinner : IconName.File}
                 aria-hidden='true'
                 focusable='false'
-                className='m-auto w-6 h-6 fill-blanc'
+                className={`m-auto w-6 h-6 fill-blanc ${
+                  fileUploading ? 'animate-spin' : ''
+                }`}
               />
               <label htmlFor='piece-jointe' className='sr-only'>
                 Attacher une pièce jointe
