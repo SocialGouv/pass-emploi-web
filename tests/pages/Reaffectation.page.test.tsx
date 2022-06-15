@@ -38,6 +38,24 @@ describe('Reaffectation', () => {
       )
     })
 
+    it('affiche les 4 étapes de réaffectation', async () => {
+      // THEN
+      expect(
+        screen.getByText(
+          '1. Préciser s’il s’agit d’une réaffectation définitive ou temporaire'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('2. Renseigner l’adresse e-mail du conseiller initial')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('3. Sélectionner les jeunes à réaffecter')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('4. Renseigner le mail du conseiller de destination')
+      ).toBeInTheDocument()
+    })
+
     it("affiche un champ de recherche d'un conseiller", async () => {
       // THEN
       expect(

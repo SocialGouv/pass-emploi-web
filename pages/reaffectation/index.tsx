@@ -173,10 +173,13 @@ function Index(_: ReaffectationProps) {
         </p>
         <ol className='flex text-s-medium'>
           <li className='mr-8'>
-            1. Renseigner l’adresse e-mail du conseiller initial
+            1. Préciser s’il s’agit d’une réaffectation définitive ou temporaire
           </li>
-          <li className='mr-8'>2. Sélectionner les jeunes à réaffecter</li>
-          <li>3. Renseigner le mail du conseiller de destination</li>
+          <li className='mr-8'>
+            2. Renseigner l’adresse e-mail du conseiller initial
+          </li>
+          <li className='mr-8'>3. Sélectionner les jeunes à réaffecter</li>
+          <li>4. Renseigner le mail du conseiller de destination</li>
         </ol>
       </div>
 
