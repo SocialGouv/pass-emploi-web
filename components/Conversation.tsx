@@ -223,43 +223,73 @@ export default function Conversation({
         onSubmit={sendNouveauMessage}
         className='p-3'
       >
-        {uploadedFileInfo && (
-          <div className='pb-3 flex flex-row'>
-            <FileIcon
+        {uploadedFileError && (
+          <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
+        )}
+        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-1'>
+          <span id='piece-jointe--desc' className='self-center text-xs'>
+            Formats acceptés de pièce jointe : .PDF, .JPG, .PNG (5 Mo maximum)
+          </span>
+          <button
+            type='button'
+            aria-controls='piece-jointe'
+            aria-describedby='piece-jointe--desc'
+            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+            onClick={handleFileUploadClick}
+            disabled={Boolean(uploadedFileInfo) || fileUploading}
+          >
+            <IconComponent
+              name={fileUploading ? IconName.Spinner : IconName.File}
               aria-hidden='true'
               focusable='false'
-              className='w-6 h-6'
+              className={`m-auto w-6 h-6 fill-blanc ${
+                fileUploading ? 'animate-spin' : ''
+              }`}
             />
-            <span className='font-bold break-words'>
-              {uploadedFileInfo.nom}
-            </span>
-            <button
-              type='button'
-              aria-label='Supprimer la pièce jointe'
-              onClick={handleFileDeleteClick}
-            >
-              <IconComponent
-                name={IconName.RoundedClose}
-                aria-hidden='false'
-                focusable='false'
-                className='w-6 h-6 ml-2'
-              />
-            </button>
-          </div>
-        )}
-        {uploadedFileError && (
-          <InputError id='piece-jointe--error' className='mb-3'>
-            {uploadedFileError}
-          </InputError>
-        )}
-        <div className='w-full bg-grey_100  flex items-end'>
-          <div className='flex flex-col w-full'>
+            <label htmlFor='piece-jointe' className='sr-only'>
+              Attacher une pièce jointe
+            </label>
+            <input
+              id='piece-jointe'
+              type='file'
+              aria-describedby={
+                uploadedFileError ? 'piece-jointe--error' : undefined
+              }
+              aria-invalid={uploadedFileError ? true : undefined}
+              ref={hiddenFileInput}
+              onChange={handleFileUploadChange}
+              className='hidden'
+              accept='.pdf, .png, .jpeg, .jpg'
+            />
+          </button>
+
+          <div className='p-4 bg-blanc rounded-x_large border text-md border-primary focus-within:outline focus-within:outline-2'>
+            {uploadedFileInfo && (
+              <div className='flex px-2 py-1 rounded-medium bg-primary_lighten w-fit mb-4'>
+                <span className='font-bold break-words'>
+                  {uploadedFileInfo.nom}
+                </span>
+                <button
+                  type='button'
+                  aria-label='Supprimer la pièce jointe'
+                  onClick={handleFileDeleteClick}
+                >
+                  <IconComponent
+                    name={IconName.RoundedClose}
+                    aria-hidden='false'
+                    focusable='false'
+                    className='w-6 h-6 ml-2'
+                  />
+                </button>
+              </div>
+            )}
+
             <label htmlFor='input-new-message' className='sr-only'>
               Message à envoyer
             </label>
             <ResizingMultilineInput
               id='input-new-message'
-              className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
+              className='w-full outline-none'
               onFocus={onInputFocused}
               onBlur={() => (inputFocused.current = false)}
               onChange={(e) => setNewMessage(e.target.value)}
@@ -267,57 +297,21 @@ export default function Conversation({
               minRows={3}
               maxRows={7}
             />
-            <span className='px-4 pt-2 text-xs'>
-              Formats acceptés de pièce jointe : .PDF, .JPG, .PNG (5 Mo maximum)
-            </span>
           </div>
-          <div className='flex flex-col'>
-            <button
-              type='submit'
-              aria-label='Envoyer le message'
-              disabled={!newMessage && !Boolean(uploadedFileInfo)}
-              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
-            >
-              <IconComponent
-                name={IconName.Send}
-                aria-hidden='true'
-                focusable='false'
-                className='m-auto w-6 h-6 fill-blanc'
-              />
-            </button>
 
-            <button
-              type='button'
-              aria-controls='piece-jointe'
-              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
-              onClick={handleFileUploadClick}
-              disabled={Boolean(uploadedFileInfo) || fileUploading}
-            >
-              <IconComponent
-                name={fileUploading ? IconName.Spinner : IconName.File}
-                aria-hidden='true'
-                focusable='false'
-                className={`m-auto w-6 h-6 fill-blanc ${
-                  fileUploading ? 'animate-spin' : ''
-                }`}
-              />
-              <label htmlFor='piece-jointe' className='sr-only'>
-                Attacher une pièce jointe
-              </label>
-              <input
-                id='piece-jointe'
-                type='file'
-                aria-describedby={
-                  uploadedFileError ? 'piece-joine--error' : undefined
-                }
-                aria-invalid={uploadedFileError ? true : undefined}
-                ref={hiddenFileInput}
-                onChange={handleFileUploadChange}
-                className='hidden'
-                accept='.pdf, .png, .jpeg, .jpg'
-              />
-            </button>
-          </div>
+          <button
+            type='submit'
+            aria-label='Envoyer le message'
+            disabled={!newMessage && !Boolean(uploadedFileInfo)}
+            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+          >
+            <IconComponent
+              name={IconName.Send}
+              aria-hidden='true'
+              focusable='false'
+              className='m-auto w-6 h-6 fill-blanc'
+            />
+          </button>
         </div>
       </form>
     </div>
