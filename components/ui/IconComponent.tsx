@@ -24,6 +24,7 @@ import CloseIcon from '../../assets/icons/close.svg'
 import DecorativePointIcon from '../../assets/icons/decorative_point.svg'
 import DeleteIcon from '../../assets/icons/delete.svg'
 import InfoIcon from '../../assets/icons/information.svg'
+import InfoOutlineIcon from '../../assets/icons/information_outline.svg'
 import LaunchIcon from '../../assets/icons/launch.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
@@ -60,6 +61,7 @@ export enum IconName {
   Delete = 'Delete',
   File = 'File',
   Info = 'Info',
+  InfoOutline = 'InfoOutline',
   Launch = 'Launch',
   Logout = 'Logout',
   People = 'People',
@@ -97,6 +99,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Delete]: DeleteIcon,
   [IconName.File]: FileIcon,
   [IconName.Info]: InfoIcon,
+  [IconName.InfoOutline]: InfoOutlineIcon,
   [IconName.Launch]: LaunchIcon,
   [IconName.Logout]: LogoutIcon,
   [IconName.People]: PeopleIcon,

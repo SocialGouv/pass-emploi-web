@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 
 import DisplayMessage from 'components/DisplayMessage'
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
@@ -311,6 +312,9 @@ export default function Conversation({
               className='m-auto w-6 h-6 fill-blanc'
             />
           </button>
+          <span>
+            <BulleMessageSensible />
+          </span>
         </div>
       </form>
     </div>

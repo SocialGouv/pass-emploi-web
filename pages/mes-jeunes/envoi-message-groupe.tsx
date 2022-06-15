@@ -3,6 +3,8 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { MouseEvent, useState } from 'react'
 
+import BulleMessageSensible from '../../components/ui/BulleMessageSensible'
+
 import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
@@ -156,8 +158,11 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             Écrivez votre message
           </legend>
 
-          <label htmlFor='message' className='text-base-medium'>
+          <label htmlFor='message' className='flex text-base-medium'>
             <span aria-hidden='true'>*</span> Message
+            <span className='ml-2'>
+              <BulleMessageSensible />
+            </span>
           </label>
 
           <textarea
