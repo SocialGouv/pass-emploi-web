@@ -1,8 +1,8 @@
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import { Session } from 'next-auth'
 import React from 'react'
 
-import { FichiersService } from '../../services/fichiers.services'
+import { FichiersService } from '../../services/fichiers.service'
 import renderWithSession from '../renderWithSession'
 
 import Conversation from 'components/Conversation'
@@ -47,10 +47,10 @@ describe('<Conversation />', () => {
       }),
     })
     fichiersService = {
-      ...fichiersService,
       uploadFichier: jest
         .fn()
-        .mockReturnValue({ id: 'id-fichier', nom: 'imageupload.png' }),
+        .mockResolvedValue({ id: 'id-fichier', nom: 'imageupload.png' }),
+      deleteFichier: jest.fn().mockResolvedValue(undefined),
     }
 
     conseiller = {
@@ -195,14 +195,35 @@ describe('<Conversation />', () => {
     })
 
     it('téléverse un fichier et affiche son nom en cas de succès', async () => {
+      // Given
       // Then
       expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+      expect(
+        screen.getByLabelText('Supprimer la pièce jointe')
+      ).toBeInTheDocument()
       expect(uploadFileButton).toHaveAttribute('disabled', '')
       expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
         ['jeune-1'],
         file,
         'accessToken'
       )
+    })
+
+    it('on peut supprimer la pièce jointe ', async () => {
+      // Given
+      const boutonDeleteFichier = screen.getByLabelText(
+        'Supprimer la pièce jointe'
+      )
+      // When
+      await act(() => {
+        fireEvent.click(boutonDeleteFichier)
+      })
+      // Then
+      expect(fichiersService.deleteFichier).toHaveBeenCalledWith(
+        'id-fichier',
+        'accessToken'
+      )
+      expect(() => screen.getByText('imageupload.png')).toThrow()
     })
 
     it('création d’un message avec une pièce jointe', async () => {

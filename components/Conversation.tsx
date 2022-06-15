@@ -6,6 +6,8 @@ import React, {
   useState,
 } from 'react'
 
+import { InputError } from './ui/InputError'
+
 import FileIcon from 'assets/icons/attach_file.svg'
 import DisplayMessage from 'components/DisplayMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -13,7 +15,7 @@ import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
-import { FichiersService } from 'services/fichiers.services'
+import { FichiersService } from 'services/fichiers.service'
 import { FormNouveauMessage, MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -41,9 +43,12 @@ export default function Conversation({
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
-  const [uploadedFileInfo, setUploadedFileInfo] = useState<InfoFichier | null>(
-    null
-  )
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<
+    InfoFichier | undefined
+  >(undefined)
+  const [uploadedFileError, setUploadedFileError] = useState<
+    string | undefined
+  >(undefined)
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
@@ -77,7 +82,7 @@ export default function Conversation({
 
     messagesService.sendNouveauMessage(formNouveauMessage)
 
-    setUploadedFileInfo(null)
+    setUploadedFileInfo(undefined)
     setNewMessage('')
   }
 
@@ -129,19 +134,19 @@ export default function Conversation({
   }
 
   async function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>) {
+    setUploadedFileError(undefined)
     if (!event.target.files || !event.target.files[0]) return
 
     const fichierSelectionne = event.target.files[0]
-
-    const infoFichier: InfoFichier | undefined =
-      await fichiersService.uploadFichier(
+    try {
+      const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
         fichierSelectionne,
         session!.accessToken
       )
-
-    if (infoFichier) {
       setUploadedFileInfo(infoFichier)
+    } catch (error) {
+      setUploadedFileError((error as Error).message)
     }
   }
 
@@ -150,7 +155,7 @@ export default function Conversation({
       uploadedFileInfo!.id,
       session!.accessToken
     )
-    setUploadedFileInfo(null)
+    setUploadedFileInfo(undefined)
   }
 
   useEffect(() => {
@@ -212,10 +217,10 @@ export default function Conversation({
       <form
         data-testid='newMessageForm'
         onSubmit={sendNouveauMessage}
-        className='py-3'
+        className='p-3'
       >
         {uploadedFileInfo && (
-          <div className='px-3 pb-3 flex flex-row'>
+          <div className='pb-3 flex flex-row'>
             <FileIcon
               aria-hidden='true'
               focusable='false'
@@ -238,7 +243,12 @@ export default function Conversation({
             </button>
           </div>
         )}
-        <div className='w-full bg-grey_100 px-3 flex items-end'>
+        {uploadedFileError && (
+          <InputError id='piece-jointe--error' className='mb-3'>
+            {uploadedFileError}
+          </InputError>
+        )}
+        <div className='w-full bg-grey_100  flex items-end'>
           <div className='flex flex-col w-full'>
             <label htmlFor='input-new-message' className='sr-only'>
               Message à envoyer
@@ -291,6 +301,10 @@ export default function Conversation({
               <input
                 id='piece-jointe'
                 type='file'
+                aria-describedby={
+                  uploadedFileError ? 'piece-joine--error' : undefined
+                }
+                aria-invalid={uploadedFileError ? true : undefined}
                 ref={hiddenFileInput}
                 onChange={handleFileUploadChange}
                 className='hidden'

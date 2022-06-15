@@ -6,7 +6,7 @@ import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
-import { FichiersApiService, FichiersService } from 'services/fichiers.services'
+import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import {
   MessagesFirebaseAndApiService,

@@ -1,7 +1,7 @@
 import { FakeApiClient } from '../utils/fakeApiClient'
 
 import { ApiClient } from 'clients/api.client'
-import { FichiersApiService, FichiersService } from 'services/fichiers.services'
+import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 
 describe('FichierApiService', () => {
   let apiClient: ApiClient
@@ -36,7 +36,7 @@ describe('FichierApiService', () => {
 
       // THEN
       expect(apiClient.delete).toHaveBeenCalledWith(
-        '/fichier/id-fichier',
+        '/fichiers/id-fichier',
         'accessToken'
       )
     })
