@@ -7,10 +7,9 @@ import React, {
   useState,
 } from 'react'
 
-import { InputError } from './ui/InputError'
-
 import DisplayMessage from 'components/DisplayMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { InputError } from 'components/ui/InputError'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -49,7 +48,7 @@ export default function Conversation({
   const [uploadedFileError, setUploadedFileError] = useState<
     string | undefined
   >(undefined)
-  const [fileUploading, setFileUploading] = useState<boolean>(false)
+  const [isFileUploading, setIsFileUploading] = useState<boolean>(false)
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
@@ -59,7 +58,7 @@ export default function Conversation({
 
   async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!(newMessage || Boolean(uploadedFileInfo)) || fileUploading) return
+    if (!(newMessage || Boolean(uploadedFileInfo)) || isFileUploading) return
 
     const formNouveauMessage: FormNouveauMessage = {
       conseiller: {
@@ -136,7 +135,7 @@ export default function Conversation({
 
     const fichierSelectionne = event.target.files[0]
     try {
-      setFileUploading(true)
+      setIsFileUploading(true)
       const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
         fichierSelectionne,
@@ -146,7 +145,7 @@ export default function Conversation({
     } catch (error) {
       setUploadedFileError((error as Error).message)
     } finally {
-      setFileUploading(false)
+      setIsFileUploading(false)
     }
   }
 
@@ -224,7 +223,8 @@ export default function Conversation({
         )}
         <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-1'>
           <span id='piece-jointe--desc' className='self-center text-xs'>
-            Formats acceptés de pièce jointe : .PDF, .JPG, .PNG (5 Mo maximum)
+            Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
+            maximum)
           </span>
           <button
             type='button'
@@ -232,14 +232,14 @@ export default function Conversation({
             aria-describedby='piece-jointe--desc'
             className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
             onClick={handleFileUploadClick}
-            disabled={Boolean(uploadedFileInfo) || fileUploading}
+            disabled={Boolean(uploadedFileInfo) || isFileUploading}
           >
             <IconComponent
-              name={fileUploading ? IconName.Spinner : IconName.File}
+              name={isFileUploading ? IconName.Spinner : IconName.File}
               aria-hidden='true'
               focusable='false'
               className={`m-auto w-6 h-6 fill-blanc ${
-                fileUploading ? 'animate-spin' : ''
+                isFileUploading ? 'animate-spin' : ''
               }`}
             />
             <label htmlFor='piece-jointe' className='sr-only'>
@@ -260,7 +260,7 @@ export default function Conversation({
           </button>
 
           <div
-            className='p-4 bg-blanc rounded-x_large border text-md border-primary focus-within:outline focus-within:outline-2'
+            className='p-4 bg-blanc rounded-x_large border text-md border-primary focus-within:outline focus-within:outline-1'
             onClick={() => inputRef.current!.focus()}
           >
             {uploadedFileInfo && (

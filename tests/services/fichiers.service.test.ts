@@ -30,7 +30,7 @@ describe('FichierApiService', () => {
     })
   })
   describe('.deleteFichier', () => {
-    it("supprime l'action", async () => {
+    it('supprime le fichier', async () => {
       // WHEN
       await fichiersService.deleteFichier('id-fichier', 'accessToken')
 
