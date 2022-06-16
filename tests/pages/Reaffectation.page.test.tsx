@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -38,10 +38,36 @@ describe('Reaffectation', () => {
       )
     })
 
+    it('affiche les 4 étapes de réaffectation', async () => {
+      const listeEtapesReaffectation = screen.getByRole('list', {
+        name: 'Étapes pour la réaffectation',
+      })
+      // THEN
+      expect(listeEtapesReaffectation).toBeInTheDocument()
+      const { getAllByRole } = within(listeEtapesReaffectation)
+      const items = getAllByRole('listitem')
+      expect(items.length).toBe(4)
+    })
+
+    it('contient un champ pour sélectionner le type de réaffectation', () => {
+      // When
+      const typeReaffectation = screen.getByRole('group', {
+        name: 'Type de réaffectation',
+      })
+      const typeReaffectionDefinitiveRadio = screen.getByLabelText('Définitif')
+      const typeReaffectationTemporaireRadio =
+        screen.getByLabelText('Temporaire')
+
+      // Then
+      expect(typeReaffectation).toBeInTheDocument()
+      expect(typeReaffectionDefinitiveRadio).toBeInTheDocument()
+      expect(typeReaffectationTemporaireRadio).toBeInTheDocument()
+    })
+
     it("affiche un champ de recherche d'un conseiller", async () => {
       // THEN
       expect(
-        screen.getByLabelText('E-mail conseiller initial')
+        screen.getByLabelText('* E-mail conseiller initial')
       ).toBeInTheDocument()
     })
 
@@ -53,7 +79,7 @@ describe('Reaffectation', () => {
     it('affiche un champ de saisie du conseiller de destination', async () => {
       // THEN
       const inputDestination: HTMLElement = screen.getByLabelText(
-        'E-mail conseiller de destination'
+        '* E-mail conseiller de destination'
       )
       expect(inputDestination).toBeInTheDocument()
       expect(inputDestination).toHaveAttribute('disabled')
@@ -71,8 +97,25 @@ describe('Reaffectation', () => {
     it("affiche un champ de recherche des jeunes d'un conseiller", async () => {
       // THEN
       expect(
-        screen.getByLabelText('E-mail conseiller initial')
+        screen.getByLabelText('* E-mail conseiller initial')
       ).toBeInTheDocument()
+    })
+
+    describe('au clic sur un type de réaffectation', () => {
+      it('déclenche le changement de type de réaffectation', async () => {
+        // Given
+        const typeReaffectationRadio = screen.getByLabelText('Définitif')
+        expect(
+          screen.getByRole('group', { name: 'Type de réaffectation' })
+        ).toBeInTheDocument()
+        expect(typeReaffectationRadio).not.toBeChecked()
+
+        // When
+        fireEvent.click(typeReaffectationRadio)
+
+        // Then
+        expect(typeReaffectationRadio).toBeChecked()
+      })
     })
 
     describe('au clique pour rechercher le conseiller initial', () => {
@@ -82,7 +125,7 @@ describe('Reaffectation', () => {
       const jeunes = desJeunes()
       beforeEach(async () => {
         // GIVEN
-        emailInput = screen.getByLabelText('E-mail conseiller initial')
+        emailInput = screen.getByLabelText('* E-mail conseiller initial')
         const submitRecherche = screen.getByTitle('Rechercher')
         ;(
           jeunesService.getJeunesDuConseillerParEmail as jest.Mock
@@ -136,8 +179,10 @@ describe('Reaffectation', () => {
           // GIVEN
           const emailConseillerDestination = 'destination@email.com'
           const destinationInput = screen.getByLabelText(
-            'E-mail conseiller de destination'
+            '* E-mail conseiller de destination'
           )
+          const typeReaffectationRadio = screen.getByLabelText('Définitif')
+          const estTemporaire = false
           const submitReaffecter = screen.getByText('Réaffecter les jeunes')
 
           // WHEN
@@ -152,6 +197,7 @@ describe('Reaffectation', () => {
           await act(async () =>
             screen.getByText(jeunes[2].firstName, { exact: false }).click()
           )
+          await act(async () => typeReaffectationRadio.click())
           await act(async () => submitReaffecter.click())
 
           // THEN
@@ -159,6 +205,7 @@ describe('Reaffectation', () => {
             idConseillerInitial,
             emailConseillerDestination,
             [jeunes[0].id, jeunes[2].id],
+            estTemporaire,
             'accessToken'
           )
         })

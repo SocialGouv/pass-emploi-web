@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
 
 import ImportantIcon from '../../assets/icons/important.svg'
 
@@ -49,6 +49,9 @@ function Index(_: ReaffectationProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >(undefined)
+  const [isReaffectationTemporaire, setIsReaffectationTemporaire] = useState<
+    boolean | undefined
+  >(undefined)
   const [trackingTitle, setTrackingTitle] = useState<string>(
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
   )
@@ -71,6 +74,7 @@ function Index(_: ReaffectationProps) {
   function resetAll() {
     editEmailConseillerInitial('')
     setEmailConseillerDestination({ value: '' })
+    setIsReaffectationTemporaire(undefined)
   }
 
   function toggleJeune(_event: FormEvent, jeune: Jeune) {
@@ -124,7 +128,8 @@ function Index(_: ReaffectationProps) {
       !conseillerInitial.id ||
       !isEmailValid(emailConseillerDestination.value) ||
       idsJeunesSelected.length === 0 ||
-      isReaffectationEnCours
+      isReaffectationEnCours ||
+      isReaffectationTemporaire === undefined
     ) {
       return
     }
@@ -135,6 +140,7 @@ function Index(_: ReaffectationProps) {
         conseillerInitial.id,
         emailConseillerDestination.value,
         idsJeunesSelected,
+        isReaffectationTemporaire,
         session!.accessToken
       )
       resetAll()
@@ -158,6 +164,19 @@ function Index(_: ReaffectationProps) {
     }
   }
 
+  const TYPE_REAFFECTATION = {
+    Definitif: 'DEFINITIF',
+    Temporaire: 'TEMPORAIRE',
+  }
+
+  function handleTypeReaffectation(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.value === TYPE_REAFFECTATION.Temporaire) {
+      setIsReaffectationTemporaire(true)
+    } else {
+      setIsReaffectationTemporaire(false)
+    }
+  }
+
   useMatomo(trackingTitle)
 
   return (
@@ -171,21 +190,60 @@ function Index(_: ReaffectationProps) {
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
         </p>
-        <ol className='flex text-s-medium'>
-          <li className='mr-8'>
-            1. Renseigner l’adresse e-mail du conseiller initial
+        <ol
+          className='flex text-s-regular'
+          aria-label='Étapes pour la réaffectation'
+        >
+          <li>
+            1. Préciser s’il s’agit d’une réaffectation définitive ou temporaire
           </li>
-          <li className='mr-8'>2. Sélectionner les jeunes à réaffecter</li>
-          <li>3. Renseigner le mail du conseiller de destination</li>
+          <li>2. Renseigner l’adresse e-mail du conseiller initial</li>
+          <li>3. Sélectionner les jeunes à réaffecter</li>
+          <li>4. Renseigner le mail du conseiller de destination</li>
         </ol>
       </div>
 
-      <div className='grid w-full grid-cols-[1fr_1fr_auto] items-end gap-x-12 gap-y-4'>
+      <p className='mb-6'>
+        Les champs avec <span className='text-warning'>*</span> sont
+        obligatoires
+      </p>
+
+      <fieldset className='pb-6'>
+        <legend className='text-base-medium pb-2'>
+          <span aria-hidden='true'>*</span> Type de réaffectation
+        </legend>
+
+        <input
+          className='mr-2'
+          type='radio'
+          name='type-reaffectation'
+          id='type-reaffectation--definitif'
+          value={TYPE_REAFFECTATION.Definitif}
+          onChange={handleTypeReaffectation}
+          checked={isReaffectationTemporaire === false}
+          required
+        />
+        <label htmlFor='type-reaffectation--definitif'>Définitif</label>
+
+        <input
+          className='mr-2 ml-2'
+          type='radio'
+          name='type-reaffectation'
+          id='type-reaffectation--temporaire'
+          value={TYPE_REAFFECTATION.Temporaire}
+          onChange={handleTypeReaffectation}
+          checked={isReaffectationTemporaire === true}
+          required
+        />
+        <label htmlFor='type-reaffectation--temporaire'>Temporaire</label>
+      </fieldset>
+
+      <div className='grid w-full grid-cols-[1fr_1fr_auto] items-center gap-x-12'>
         <label
           htmlFor='email-conseiller-initial'
           className='text-base-medium text-content_color row-start-1 row-start-1'
         >
-          E-mail conseiller initial
+          <span aria-hidden='true'>*</span> E-mail conseiller initial
         </label>
 
         <form
@@ -201,6 +259,7 @@ function Index(_: ReaffectationProps) {
               onReset={resetAll}
               type={'email'}
               className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
+              required={true}
             />
             <button
               className={`flex p-3 items-center text-base-medium text-primary_darken border border-solid border-content_color rounded-r-medium ${
@@ -242,7 +301,7 @@ function Index(_: ReaffectationProps) {
               : 'text-disabled'
           }`}
         >
-          E-mail conseiller de destination
+          <span aria-hidden='true'>*</span> E-mail conseiller de destination
         </label>
 
         <form
@@ -258,6 +317,7 @@ function Index(_: ReaffectationProps) {
             disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
             type={'email'}
             className='flex-1 border border-solid border-grey_700 rounded-medium text-base-medium text-bleu_nuit'
+            required={true}
           />
         </form>
 
@@ -280,15 +340,10 @@ function Index(_: ReaffectationProps) {
           disabled={
             idsJeunesSelected.length === 0 ||
             !isEmailValid(emailConseillerDestination.value) ||
-            isReaffectationEnCours
+            isReaffectationEnCours ||
+            isReaffectationTemporaire === undefined
           }
         >
-          <IconComponent
-            name={IconName.ArrowRight}
-            className='w-4 h-4 fill-blanc mr-2'
-            focusable='false'
-            aria-hidden={true}
-          />
           R&eacute;affecter les jeunes
         </Button>
 

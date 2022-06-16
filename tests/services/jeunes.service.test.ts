@@ -174,6 +174,7 @@ describe('JeunesApiService', () => {
       const emailConseillerDestination = 'conseiller@email.com'
       const idConseillerDestination = 'idConseillerDestination'
       const idsJeunes = ['id-jeune-1', 'id-jeune-2']
+      const estTemporaire = false
       ;(apiClient.get as jest.Mock).mockImplementation((url) => {
         if (url === `/conseillers?email=${emailConseillerDestination}`)
           return unConseiller({ id: idConseillerDestination })
@@ -185,6 +186,7 @@ describe('JeunesApiService', () => {
         idConseillerInitial,
         emailConseillerDestination,
         idsJeunes,
+        estTemporaire,
         accessToken
       )
 
@@ -194,6 +196,7 @@ describe('JeunesApiService', () => {
         {
           idConseillerSource: idConseillerInitial,
           idConseillerCible: idConseillerDestination,
+          estTemporaire: false,
           idsJeune: idsJeunes,
         },
         accessToken
