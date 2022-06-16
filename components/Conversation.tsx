@@ -1,5 +1,6 @@
 import React, {
   ChangeEvent,
+  FormEvent,
   useCallback,
   useEffect,
   useRef,
@@ -56,7 +57,7 @@ export default function Conversation({
   const hiddenFileInput = useRef<HTMLInputElement>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-  async function sendNouveauMessage(event: any) {
+  async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!(newMessage || Boolean(uploadedFileInfo)) || fileUploading) return
 
@@ -79,6 +80,7 @@ export default function Conversation({
 
     setUploadedFileInfo(undefined)
     setNewMessage('')
+    event.currentTarget.reset()
   }
 
   function getConseillerNomComplet(message: Message) {
