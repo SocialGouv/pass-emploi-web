@@ -80,7 +80,6 @@ export default function Conversation({
 
     setUploadedFileInfo(undefined)
     setNewMessage('')
-    event.currentTarget.reset()
   }
 
   function getConseillerNomComplet(message: Message) {
@@ -146,6 +145,7 @@ export default function Conversation({
     } catch (error) {
       setUploadedFileError((error as Error).message)
     } finally {
+      hiddenFileInput.current!.value = ''
       setIsFileUploading(false)
     }
   }
