@@ -1,19 +1,20 @@
 import React, {
   ChangeEvent,
+  FormEvent,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react'
 
-import FileIcon from 'assets/icons/attach_file.svg'
 import DisplayMessage from 'components/DisplayMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { InputError } from 'components/ui/InputError'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
-import { FichiersService } from 'services/fichiers.services'
+import { FichiersService } from 'services/fichiers.service'
 import { FormNouveauMessage, MessagesService } from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -41,24 +42,23 @@ export default function Conversation({
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
-  const [uploadedFileInfo, setUploadedFileInfo] = useState<InfoFichier | null>(
-    null
-  )
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<
+    InfoFichier | undefined
+  >(undefined)
+  const [uploadedFileError, setUploadedFileError] = useState<
+    string | undefined
+  >(undefined)
+  const [isFileUploading, setIsFileUploading] = useState<boolean>(false)
 
   const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
     undefined
   )
-  const inputFocused = useRef<boolean>(false)
   const hiddenFileInput = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-  function onInputFocused() {
-    inputFocused.current = true
-    setReadByConseiller(jeuneChat.chatId)
-  }
-
-  async function sendNouveauMessage(event: any) {
+  async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!newMessage && !Boolean(uploadedFileInfo)) return
+    if (!(newMessage || Boolean(uploadedFileInfo)) || isFileUploading) return
 
     const formNouveauMessage: FormNouveauMessage = {
       conseiller: {
@@ -77,8 +77,9 @@ export default function Conversation({
 
     messagesService.sendNouveauMessage(formNouveauMessage)
 
-    setUploadedFileInfo(null)
+    setUploadedFileInfo(undefined)
     setNewMessage('')
+    event.currentTarget.reset()
   }
 
   function getConseillerNomComplet(message: Message) {
@@ -105,7 +106,7 @@ export default function Conversation({
         (messagesGroupesParJour: MessagesOfADay[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
-          if (inputFocused.current) {
+          if (document.activeElement === inputRef.current) {
             setReadByConseiller(idChatToObserve)
           }
         }
@@ -129,20 +130,31 @@ export default function Conversation({
   }
 
   async function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>) {
+    setUploadedFileError(undefined)
     if (!event.target.files || !event.target.files[0]) return
 
     const fichierSelectionne = event.target.files[0]
-
-    const infoFichier: InfoFichier | undefined =
-      await fichiersService.uploadFichier(
+    try {
+      setIsFileUploading(true)
+      const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
         fichierSelectionne,
         session!.accessToken
       )
-
-    if (infoFichier) {
       setUploadedFileInfo(infoFichier)
+    } catch (error) {
+      setUploadedFileError((error as Error).message)
+    } finally {
+      setIsFileUploading(false)
     }
+  }
+
+  async function handleFileDeleteClick() {
+    await fichiersService.deleteFichier(
+      uploadedFileInfo!.id,
+      session!.accessToken
+    )
+    setUploadedFileInfo(undefined)
   }
 
   useEffect(() => {
@@ -204,80 +216,101 @@ export default function Conversation({
       <form
         data-testid='newMessageForm'
         onSubmit={sendNouveauMessage}
-        className='py-3'
+        className='p-3'
       >
-        {uploadedFileInfo && (
-          <div className='px-3 pb-3 flex flex-row'>
-            <FileIcon
+        {uploadedFileError && (
+          <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
+        )}
+        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-1'>
+          <span id='piece-jointe--desc' className='self-center text-xs'>
+            Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
+            maximum)
+          </span>
+          <button
+            type='button'
+            aria-controls='piece-jointe'
+            aria-describedby='piece-jointe--desc'
+            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+            onClick={handleFileUploadClick}
+            disabled={Boolean(uploadedFileInfo) || isFileUploading}
+          >
+            <IconComponent
+              name={isFileUploading ? IconName.Spinner : IconName.File}
               aria-hidden='true'
               focusable='false'
-              className='w-6 h-6'
+              className={`m-auto w-6 h-6 fill-blanc ${
+                isFileUploading ? 'animate-spin' : ''
+              }`}
             />
-            <span className='font-bold break-words'>
-              {uploadedFileInfo.nom}
-            </span>
-          </div>
-        )}
-        <div className='w-full bg-grey_100 px-3 flex items-end'>
-          <div className='flex flex-col w-full'>
+            <label htmlFor='piece-jointe' className='sr-only'>
+              Attacher une pièce jointe
+            </label>
+            <input
+              id='piece-jointe'
+              type='file'
+              aria-describedby={
+                uploadedFileError ? 'piece-jointe--error' : undefined
+              }
+              aria-invalid={uploadedFileError ? true : undefined}
+              ref={hiddenFileInput}
+              onChange={handleFileUploadChange}
+              className='hidden'
+              accept='.pdf, .png, .jpeg, .jpg'
+            />
+          </button>
+
+          <div
+            className='p-4 bg-blanc rounded-x_large border text-md border-primary focus-within:outline focus-within:outline-1'
+            onClick={() => inputRef.current!.focus()}
+          >
+            {uploadedFileInfo && (
+              <div className='flex px-2 py-1 rounded-medium bg-primary_lighten w-fit mb-4'>
+                <span className='font-bold break-words'>
+                  {uploadedFileInfo.nom}
+                </span>
+                <button
+                  type='button'
+                  aria-label='Supprimer la pièce jointe'
+                  onClick={handleFileDeleteClick}
+                >
+                  <IconComponent
+                    name={IconName.RoundedClose}
+                    aria-hidden='false'
+                    focusable='false'
+                    className='w-6 h-6 ml-2'
+                  />
+                </button>
+              </div>
+            )}
+
             <label htmlFor='input-new-message' className='sr-only'>
               Message à envoyer
             </label>
             <ResizingMultilineInput
+              inputRef={inputRef}
               id='input-new-message'
-              className='flex-grow p-4 bg-blanc mr-2 rounded-x_large border-0 text-md border-none'
-              onFocus={onInputFocused}
-              onBlur={() => (inputFocused.current = false)}
+              className='w-full outline-none'
+              onFocus={() => setReadByConseiller(jeuneChat.chatId)}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Écrivez votre message ici...'
               minRows={3}
               maxRows={7}
             />
-            <span className='px-4 pt-2 text-xs'>
-              Formats acceptés de pièce jointe : .PDF, .JPG, .PNG (5 Mo maximum)
-            </span>
           </div>
-          <div className='flex flex-col'>
-            <button
-              type='submit'
-              aria-label='Envoyer le message'
-              disabled={!newMessage && !Boolean(uploadedFileInfo)}
-              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
-            >
-              <IconComponent
-                name={IconName.Send}
-                aria-hidden='true'
-                focusable='false'
-                className='m-auto w-6 h-6 fill-blanc'
-              />
-            </button>
 
-            <button
-              type='button'
-              aria-controls='piece-jointe'
-              className='bg-primary w-12 h-12 border-none rounded-[50%] shrink-0 mb-3 disabled:bg-grey_500 disabled:cursor-not-allowed'
-              onClick={handleFileUploadClick}
-              disabled={Boolean(uploadedFileInfo)}
-            >
-              <IconComponent
-                name={IconName.File}
-                aria-hidden='true'
-                focusable='false'
-                className='m-auto w-6 h-6 fill-blanc'
-              />
-              <label htmlFor='piece-jointe' className='sr-only'>
-                Attacher une pièce jointe
-              </label>
-              <input
-                id='piece-jointe'
-                type='file'
-                ref={hiddenFileInput}
-                onChange={handleFileUploadChange}
-                className='hidden'
-                accept='.pdf, .png, .jpeg, .jpg'
-              />
-            </button>
-          </div>
+          <button
+            type='submit'
+            aria-label='Envoyer le message'
+            disabled={!newMessage && !Boolean(uploadedFileInfo)}
+            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+          >
+            <IconComponent
+              name={IconName.Send}
+              aria-hidden='true'
+              focusable='false'
+              className='m-auto w-6 h-6 fill-blanc'
+            />
+          </button>
         </div>
       </form>
     </div>

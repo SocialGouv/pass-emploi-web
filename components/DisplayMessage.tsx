@@ -47,9 +47,14 @@ export default function DisplayMessage({
               focusable='false'
               className='w-6 h-6'
             />
-            <span className='font-bold break-words'>
-              <a href={`/api/fichiers/${id}`}>{nom}</a>
-            </span>
+            <a
+              href={`/api/fichiers/${id}`}
+              aria-label='Télécharger la pièce jointe'
+              title='Télécharger la pièce jointe'
+              className='font-bold break-words'
+            >
+              {nom}
+            </a>
           </div>
         ))}
       </div>

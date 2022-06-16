@@ -4,15 +4,14 @@ import {
   CSSProperties,
   MutableRefObject,
   useEffect,
-  useRef,
   useState,
 } from 'react'
 
 interface ResizingMultilineInputProps {
   onChange: ChangeEventHandler<HTMLTextAreaElement>
+  inputRef: MutableRefObject<HTMLTextAreaElement | null>
   id?: string
   name?: string
-  ref?: MutableRefObject<HTMLTextAreaElement>
   minRows?: number
   maxRows?: number
   className?: string
@@ -26,7 +25,7 @@ export default function ResizingMultilineInput({
   onChange,
   id,
   name,
-  ref,
+  inputRef,
   minRows = 1,
   maxRows,
   className,
@@ -35,9 +34,6 @@ export default function ResizingMultilineInput({
   onFocus,
   onBlur,
 }: ResizingMultilineInputProps) {
-  const inputRef = useRef<HTMLTextAreaElement>(null)
-  const actualRef = ref ?? inputRef
-
   const [height, setHeight] = useState<number | undefined>(undefined)
   const [minHeight, setMinHeight] = useState<number>(0)
 
@@ -64,12 +60,14 @@ export default function ResizingMultilineInput({
   }
 
   useEffect(() => {
+    if (!inputRef) return
+
     const clearInput = () => {
-      actualRef.current!.value = ''
+      inputRef.current!.value = ''
       setHeight(minHeight)
     }
 
-    const form = actualRef.current!.form
+    const form = inputRef.current!.form
     if (!form) {
       console.warn('ResizingMultilineInput should be in a <form>')
       return
@@ -77,13 +75,13 @@ export default function ResizingMultilineInput({
 
     if (minHeight > 0) form.addEventListener('submit', clearInput)
     return () => form.removeEventListener('submit', clearInput)
-  }, [actualRef, minHeight])
+  }, [inputRef, minHeight])
 
   return (
     <textarea
       id={id ?? undefined}
       name={name ?? undefined}
-      ref={actualRef}
+      ref={inputRef}
       aria-multiline={true}
       rows={minRows}
       className={className ?? undefined}
