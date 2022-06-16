@@ -403,7 +403,7 @@ describe('EditionRdv', () => {
 
           // Then
           const inputCommentaires = within(etape).getByRole('textbox', {
-            name: 'Notes Commentaire à destination des jeunes',
+            name: /Commentaire à destination des jeunes/,
           })
           expect(inputCommentaires).toBeInTheDocument()
           expect(inputCommentaires).not.toHaveAttribute('required')
@@ -441,7 +441,7 @@ describe('EditionRdv', () => {
           inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
           inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
           inputCommentaires = screen.getByRole('textbox', {
-            name: 'Notes Commentaire à destination des jeunes',
+            name: /Commentaire à destination des jeunes/,
           })
 
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
@@ -944,7 +944,7 @@ describe('EditionRdv', () => {
           const inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
           const inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
           const inputCommentaires = screen.getByRole('textbox', {
-            name: 'Notes Commentaire à destination des jeunes',
+            name: /Commentaire à destination des jeunes/,
           })
 
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })

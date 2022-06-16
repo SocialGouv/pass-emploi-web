@@ -337,7 +337,7 @@ export function EditionRdvForm({
           <>
             <label
               htmlFor='typeRendezVous-autre'
-              className='flex text-base-medium mb-2'
+              className='flex text-base-medium mb-2 items-center'
             >
               <span aria-hidden={true}>* </span>Préciser
               <span className='ml-2'>
@@ -572,7 +572,7 @@ export function EditionRdvForm({
         </div>
 
         <label htmlFor='commentaire' className='text-base-regular mb-2'>
-          <span className='flex'>
+          <span className='flex items-center'>
             Notes
             <span className='ml-2'>
               <BulleMessageSensible />

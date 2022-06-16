@@ -3,7 +3,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 export default function BulleMessageSensible() {
   return (
     <span
-      aria-hidden='true'
+      aria-label='Attention à nos propos. Ne sont pas autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.'
       title='Attention à nos propos. Ne sont pas autorisés, ni les commentaires insultants ou excessifs, ni les données trop personnelles ou sensibles.'
     >
       <IconComponent

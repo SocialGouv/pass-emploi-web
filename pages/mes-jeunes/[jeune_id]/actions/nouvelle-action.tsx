@@ -3,8 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 
-import BulleMessageSensible from '../../../../components/ui/BulleMessageSensible'
-
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -121,7 +120,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
             <label
               htmlFor='commentaire-action-predefinie'
-              className='flex mt-10 text-md text-content_color'
+              className='flex mt-10 text-md text-content_color items-center'
             >
               Commentaire de l&apos;action
               <span className='ml-2'>
