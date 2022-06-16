@@ -14,8 +14,9 @@ describe('<RdvList>', () => {
 
     // Then
     expect(
-      screen.getByText("Vous n'avez pas de rendez-vous pour le moment")
+      screen.getByText(/n’a pas encore de rendez-vous/)
     ).toBeInTheDocument()
+
     expect(() => screen.getByRole('table')).toThrow()
   })
 

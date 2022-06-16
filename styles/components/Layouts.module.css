@@ -51,7 +51,7 @@
 .content {
   flex-grow: 1;
   width: 100%;
-  padding: 40px 48px;
+  padding: 1.5rem;
 }
 
 .content.content_without_chat {
@@ -74,6 +74,12 @@
   background-color: theme('colors.grey_100');
 }
 
+@media screen and (max-width: theme('screens.layout_s')) {
+  .sidebar {
+    width: 61px;
+  }
+}
+
 @media screen and (max-width: theme('screens.layout_m.max')) {
   .container {
     grid-template-columns: 10vw 90vw;
@@ -88,10 +94,19 @@
   .sidebar svg {
     margin-right: 0;
   }
+  .content {
+    padding: 1.5rem;
+  }
 }
 
 @media screen and (max-width: theme('screens.layout_base.max')) {
   .footer ul {
     flex-direction: column;
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_xl')) {
+  .content {
+    padding: 2rem;
   }
 }

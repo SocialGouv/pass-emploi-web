@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import FailureMessage from 'components/FailureMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
@@ -191,12 +192,7 @@ function FicheJeune({
       )}
 
       {!jeune.isActivated && (
-        <p className='mb-6 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
-          <span className='text-sm-semi text-warning'>
-            Ce jeune ne s&apos;est pas encore connect&eacute; &agrave;
-            l&apos;application.
-          </span>
-        </p>
+        <FailureMessage label='Ce jeune ne s’est pas encore connecté à l’application' />
       )}
       <div className='flex'>
         {!isPoleEmploi && (
@@ -223,7 +219,7 @@ function FicheJeune({
         {!jeune.isActivated && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
-            style={ButtonStyle.WARNING}
+            style={ButtonStyle.SECONDARY}
             className='ml-8'
           >
             Supprimer ce compte
@@ -246,7 +242,7 @@ function FicheJeune({
       </div>
 
       {conseillers.length > 5 && (
-        <div className='flex justify-center mt-8'>
+        <div className='flex justify-start mt-8'>
           <CollapseButton
             controlledId='liste-conseillers'
             isOpen={expandListeConseillers}
@@ -280,13 +276,14 @@ function FicheJeune({
           aria-labelledby='liste-rdvs--tab'
           tabIndex={0}
           id='liste-rdvs'
-          className='mt-10 border-b border-primary_lighten'
+          className='mt-8 pb-8 border-b border-primary_lighten'
         >
           {!isPoleEmploi ? (
             <RdvList
               rdvs={rdvs}
               idConseiller={session?.user.id ?? ''}
               withNameJeune={false}
+              jeune={jeune}
             />
           ) : (
             <IntegrationPoleEmploi label='convocations' />

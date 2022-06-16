@@ -92,23 +92,6 @@ function PageAction({
 
   return (
     <>
-      {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
-        <Button
-          label="Supprimer l'action"
-          onClick={() => deleteAction()}
-          style={ButtonStyle.SECONDARY}
-          disabled={deleteDisabled}
-          className='mb-6'
-        >
-          <IconComponent
-            name={IconName.TrashCan}
-            aria-hidden={true}
-            focusable={false}
-            className='w-2.5 h-3 mr-4'
-          />
-          Supprimer l&apos;action
-        </Button>
-      )}
       {showEchecMessage && (
         <FailureMessage
           label="Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
@@ -122,6 +105,23 @@ function PageAction({
           }
           onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
+      )}
+      {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
+        <Button
+          label="Supprimer l'action"
+          onClick={() => deleteAction()}
+          style={ButtonStyle.SECONDARY}
+          disabled={deleteDisabled}
+          className='mb-6 justify-end'
+        >
+          <IconComponent
+            name={IconName.TrashCan}
+            aria-hidden={true}
+            focusable={false}
+            className='w-2.5 h-3 mr-4'
+          />
+          Supprimer l&apos;action
+        </Button>
       )}
       <dl>
         <InfoAction label='Statut' isForm={true}>

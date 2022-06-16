@@ -185,10 +185,8 @@ export default function Conversation({
             className='w-6 h-6 fill-primary'
           />
         </button>
-        <h2 className='w-full text-center text-primary text-m-medium'>
-          Discuter avec
-          <br />
-          {jeuneChat.firstName} {jeuneChat.lastName}
+        <h2 className='w-full text-left text-primary text-m-medium'>
+          Discuter avec {jeuneChat.firstName} {jeuneChat.lastName}
         </h2>
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6'></span>

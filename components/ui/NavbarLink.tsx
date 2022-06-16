@@ -35,13 +35,15 @@ function NavbarLink({
         <IconComponent
           focusable='false'
           aria-hidden='true'
-          className={`mr-2 w-6 h-6 ${isActive ? 'fill-primary' : 'fill-blanc'}`}
+          className={`mr-2 w-6 h-6 layout_s:w-4 layout_s:h-4 ${
+            isActive ? 'fill-primary' : 'fill-blanc'
+          }`}
           name={iconName}
         />
         <span
-          className={`text-md layout_m:sr-only break-words ${className ?? ''} ${
-            isActive ? 'text-primary' : 'text-blanc'
-          }`}
+          className={`text-md text-left layout_m:sr-only break-words ${
+            className ?? ''
+          } ${isActive ? 'text-primary' : 'text-blanc'}`}
         >
           {label}
         </span>

@@ -85,10 +85,6 @@ function MesRendezvous({
 
   return (
     <>
-      <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-4 w-fit'>
-        Fixer un rendez-vous
-      </ButtonLink>
-
       {showRdvCreationSuccess && (
         <SuccessMessage
           label={'Le rendez-vous a bien été créé'}
@@ -118,6 +114,9 @@ function MesRendezvous({
           onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
       )}
+      <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-4 w-fit'>
+        Fixer un rendez-vous
+      </ButtonLink>
 
       <TabList className='mb-[40px]'>
         <Tab

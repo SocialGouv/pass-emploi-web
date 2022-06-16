@@ -226,7 +226,7 @@ function Index(_: ReaffectationProps) {
         <label htmlFor='type-reaffectation--definitif'>Définitif</label>
 
         <input
-          className='mr-2 ml-2'
+          className='mr-2 ml-10'
           type='radio'
           name='type-reaffectation'
           id='type-reaffectation--temporaire'

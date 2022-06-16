@@ -19,13 +19,13 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       <a
         role='row'
         aria-label={`Détail de l'action ${action.content}`}
-        className={`table-row cursor-pointer focus-within:primary_lighten rounded-[6px] shadow-[0_6px_25px_-10px_rgba(0,0,0,0.3)] hover:bg-primary_lighten group`}
+        className={`table-row cursor-pointer focus-within:primary_lighten rounded-[6px] shadow-[0_6px_25px_0px_rgba(0,0,0,0.1)] hover:bg-primary_lighten group`}
       >
         <div
           role='cell'
           className={`table-cell relative p-4 group-hover:rounded-l-[6px]`}
         >
-          <span className='flex items-center border-r border-primary_lighten group-hover:border-blanc'>
+          <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
             <span className='text-base-medium text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
@@ -40,7 +40,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
           </span>
         </div>
         <div role='cell' className={`table-cell relative py-4 pr-4`}>
-          <span className='flex items-center border-r border-primary_lighten group-hover:border-blanc'>
+          <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
             <span>{formatDayDate(new Date(action.creationDate))}</span>
           </span>
         </div>
@@ -54,7 +54,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
-              className='mr-1 w-6 h-6'
+              className='mr-6 w-6 h-6'
             />
           </span>
         </div>

@@ -312,7 +312,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la date', () => {
           // Then
           const inputDate = within(etape).getByLabelText(
-            '* Date Format : JJ/MM/AAAA'
+            '* Date (format : JJ/MM/AAAA)'
           )
           expect(inputDate).toBeInTheDocument()
           expect(inputDate).toHaveAttribute('required', '')
@@ -322,7 +322,7 @@ describe('EditionRdv', () => {
         it("contient un champ pour choisir l'horaire", () => {
           // Then
           const inputHoraire = within(etape).getByLabelText(
-            '* Heure Format : HH:MM'
+            '* Heure (format : HH:MM)'
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
@@ -332,7 +332,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la durée', () => {
           // Then
           const inputDuree = within(etape).getByLabelText(
-            '* Durée Format : HH:MM'
+            '* Durée (format : HH:MM)'
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
@@ -351,7 +351,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer un organisme si besoin', () => {
           // Then
           const inputOrganisme = within(etape).getByLabelText(
-            'OrganismeEx: prestataire, entreprise, etc.'
+            'Organisme Ex: prestataire, entreprise, etc.'
           )
           expect(inputOrganisme).toBeInTheDocument()
           expect(inputOrganisme).toHaveAttribute('type', 'text')
@@ -437,9 +437,9 @@ describe('EditionRdv', () => {
           selectType = screen.getByRole('combobox', {
             name: 'Type',
           })
-          inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
-          inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
-          inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
+          inputDate = screen.getByLabelText('* Date (format : JJ/MM/AAAA)')
+          inputHoraire = screen.getByLabelText('* Heure (format : HH:MM)')
+          inputDuree = screen.getByLabelText('* Durée (format : HH:MM)')
           inputCommentaires = screen.getByRole('textbox', {
             name: /Commentaire à destination des jeunes/,
           })
@@ -940,9 +940,11 @@ describe('EditionRdv', () => {
           const selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
-          const inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
-          const inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
-          const inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
+          const inputDate = screen.getByLabelText(
+            '* Date (format : JJ/MM/AAAA)'
+          )
+          const inputHoraire = screen.getByLabelText('* Heure (format : HH:MM)')
+          const inputDuree = screen.getByLabelText('* Durée (format : HH:MM)')
           const inputCommentaires = screen.getByRole('textbox', {
             name: /Commentaire à destination des jeunes/,
           })

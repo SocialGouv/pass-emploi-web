@@ -18,7 +18,7 @@ export const TableauActionsJeune = ({
     <>
       {actions.length === 0 && (
         <p className='text-md mb-2'>
-          {jeune.firstName} n’a pas encore d’action
+          {jeune.firstName} {jeune.lastName} n’a pas encore d’action
         </p>
       )}
 
