@@ -123,7 +123,7 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir un commentaire', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: "Commentaire de l'action" })
+          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
         ).not.toHaveAttribute('required')
       })
 
@@ -209,7 +209,7 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir un commentaire', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: "Commentaire de l'action" })
+          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
         ).not.toHaveAttribute('required')
       })
 

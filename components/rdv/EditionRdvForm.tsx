@@ -6,6 +6,7 @@ import JeunesMultiselectAutocomplete, {
   OptionJeune,
 } from 'components/jeune/JeunesMultiselectAutocomplete'
 import { RequiredValue } from 'components/RequiredValue'
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -336,9 +337,12 @@ export function EditionRdvForm({
           <>
             <label
               htmlFor='typeRendezVous-autre'
-              className='text-base-medium mb-2'
+              className='flex text-base-medium mb-2 items-center'
             >
               <span aria-hidden={true}>* </span>Préciser
+              <span className='ml-2'>
+                <BulleMessageSensible />
+              </span>
             </label>
             {precisionType.error && (
               <InputError id='typeRendezVous-autre--error' className='mb-2'>
@@ -568,7 +572,12 @@ export function EditionRdvForm({
         </div>
 
         <label htmlFor='commentaire' className='text-base-regular mb-2'>
-          Notes
+          <span className='flex items-center'>
+            Notes
+            <span className='ml-2'>
+              <BulleMessageSensible />
+            </span>
+          </span>
           <span className='block text-s-regular'>
             Commentaire à destination des jeunes
           </span>

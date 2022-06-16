@@ -6,6 +6,7 @@ import React, { MouseEvent, useState } from 'react'
 import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -156,8 +157,14 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             Écrivez votre message
           </legend>
 
-          <label htmlFor='message' className='text-base-medium'>
+          <label
+            htmlFor='message'
+            className='flex text-base-medium items-center'
+          >
             <span aria-hidden='true'>*</span> Message
+            <span className='ml-2'>
+              <BulleMessageSensible />
+            </span>
           </label>
 
           <textarea

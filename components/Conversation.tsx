@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 
 import DisplayMessage from 'components/DisplayMessage'
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
@@ -297,20 +298,24 @@ export default function Conversation({
               maxRows={7}
             />
           </div>
-
-          <button
-            type='submit'
-            aria-label='Envoyer le message'
-            disabled={!newMessage && !Boolean(uploadedFileInfo)}
-            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
-          >
-            <IconComponent
-              name={IconName.Send}
-              aria-hidden='true'
-              focusable='false'
-              className='m-auto w-6 h-6 fill-blanc'
-            />
-          </button>
+          <div>
+            <button
+              type='submit'
+              aria-label='Envoyer le message'
+              disabled={!newMessage && !Boolean(uploadedFileInfo)}
+              className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+            >
+              <IconComponent
+                name={IconName.Send}
+                aria-hidden='true'
+                focusable='false'
+                className='m-auto w-6 h-6 fill-blanc'
+              />
+            </button>
+            <span className='flex justify-center mt-3'>
+              <BulleMessageSensible />
+            </span>
+          </div>
         </div>
       </form>
     </div>
