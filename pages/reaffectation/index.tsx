@@ -49,7 +49,9 @@ function Index(_: ReaffectationProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >(undefined)
-  const [isSelected, setIsSelected] = useState<boolean>(false)
+  const [isReaffectationTemporaire, setIsReaffectationTemporaire] = useState<
+    boolean | undefined
+  >(undefined)
   const [trackingTitle, setTrackingTitle] = useState<string>(
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
   )
@@ -72,6 +74,7 @@ function Index(_: ReaffectationProps) {
   function resetAll() {
     editEmailConseillerInitial('')
     setEmailConseillerDestination({ value: '' })
+    setIsReaffectationTemporaire(undefined)
   }
 
   function toggleJeune(_event: FormEvent, jeune: Jeune) {
@@ -125,7 +128,8 @@ function Index(_: ReaffectationProps) {
       !conseillerInitial.id ||
       !isEmailValid(emailConseillerDestination.value) ||
       idsJeunesSelected.length === 0 ||
-      isReaffectationEnCours
+      isReaffectationEnCours ||
+      isReaffectationTemporaire === undefined
     ) {
       return
     }
@@ -136,6 +140,7 @@ function Index(_: ReaffectationProps) {
         conseillerInitial.id,
         emailConseillerDestination.value,
         idsJeunesSelected,
+        isReaffectationTemporaire,
         session!.accessToken
       )
       resetAll()
@@ -159,15 +164,20 @@ function Index(_: ReaffectationProps) {
     }
   }
 
-  useMatomo(trackingTitle)
+  const TYPE_REAFFECTATION = {
+    Definitif: 'DEFINITIF',
+    Temporaire: 'TEMPORAIRE',
+  }
 
   function handleTypeReaffectation(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.value === 'DEFINITIF') {
-      setIsSelected(false)
+    if (e.target.value === TYPE_REAFFECTATION.Temporaire) {
+      setIsReaffectationTemporaire(true)
     } else {
-      setIsSelected(true)
+      setIsReaffectationTemporaire(false)
     }
   }
+
+  useMatomo(trackingTitle)
 
   return (
     <>
@@ -180,24 +190,22 @@ function Index(_: ReaffectationProps) {
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
         </p>
-        <ol className='flex text-s-medium'>
-          <li className='mr-8'>
+        <ol
+          className='flex text-s-regular'
+          aria-label='Étapes pour la réaffectation'
+        >
+          <li>
             1. Préciser s’il s’agit d’une réaffectation définitive ou temporaire
           </li>
-          <li className='mr-8'>
-            2. Renseigner l’adresse e-mail du conseiller initial
-          </li>
-          <li className='mr-8'>3. Sélectionner les jeunes à réaffecter</li>
+          <li>2. Renseigner l’adresse e-mail du conseiller initial</li>
+          <li>3. Sélectionner les jeunes à réaffecter</li>
           <li>4. Renseigner le mail du conseiller de destination</li>
         </ol>
       </div>
 
       <p className='mb-6'>
-        Les champs marqués d’une{' '}
-        <span aria-hidden='true' className='text-warning'>
-          *
-        </span>{' '}
-        sont obligatoires
+        Les champs avec <span className='text-warning'>*</span> sont
+        obligatoires
       </p>
 
       <fieldset className='pb-6'>
@@ -206,24 +214,26 @@ function Index(_: ReaffectationProps) {
         </legend>
 
         <input
+          className='mr-2'
           type='radio'
           name='type-reaffectation'
           id='type-reaffectation--definitif'
-          value='DEFINITIF'
+          value={TYPE_REAFFECTATION.Definitif}
           onChange={handleTypeReaffectation}
+          checked={isReaffectationTemporaire === false}
           required
-          className='mr-2'
         />
         <label htmlFor='type-reaffectation--definitif'>Définitif</label>
 
         <input
+          className='mr-2 ml-2'
           type='radio'
           name='type-reaffectation'
           id='type-reaffectation--temporaire'
-          value='TEMPORAIRE'
+          value={TYPE_REAFFECTATION.Temporaire}
           onChange={handleTypeReaffectation}
+          checked={isReaffectationTemporaire === true}
           required
-          className='mr-2 ml-2'
         />
         <label htmlFor='type-reaffectation--temporaire'>Temporaire</label>
       </fieldset>
@@ -330,7 +340,8 @@ function Index(_: ReaffectationProps) {
           disabled={
             idsJeunesSelected.length === 0 ||
             !isEmailValid(emailConseillerDestination.value) ||
-            isReaffectationEnCours
+            isReaffectationEnCours ||
+            isReaffectationTemporaire === undefined
           }
         >
           R&eacute;affecter les jeunes

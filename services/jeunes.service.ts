@@ -46,6 +46,7 @@ export interface JeunesService {
     idConseillerInitial: string,
     emailConseillerDestination: string,
     idsJeunes: string[],
+    estTemporaire: boolean,
     accessToken: string
   ): Promise<void>
 
@@ -153,20 +154,20 @@ export class JeunesApiService implements JeunesService {
     idConseillerInitial: string,
     emailConseillerDestination: string,
     idsJeunes: string[],
+    estTemporaire: boolean,
     accessToken: string
   ): Promise<void> {
     const conseillerDestination = await this.apiClient.get<Conseiller>(
       `/conseillers?email=${emailConseillerDestination}`,
       accessToken
     )
-
     return this.apiClient.post(
       '/jeunes/transferer',
       {
         idConseillerSource: idConseillerInitial,
         idConseillerCible: conseillerDestination.id,
         idsJeune: idsJeunes,
-        estTemporaire: false,
+        estTemporaire: estTemporaire,
       },
       accessToken
     )
