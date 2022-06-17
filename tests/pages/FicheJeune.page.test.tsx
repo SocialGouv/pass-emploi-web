@@ -410,6 +410,28 @@ describe('Fiche Jeune', () => {
       })
     })
 
+    describe('quand le jeune a été réaffecté temporairement', () => {
+      it("affiche l'information", () => {
+        // Given
+        renderWithSession(
+          <DIProvider dependances={{ jeunesService, rendezVousService }}>
+            <CurrentJeuneProvider>
+              <FicheJeune
+                jeune={{ ...jeune, isReaffectationTemporaire: true }}
+                rdvs={rdvs}
+                actions={[]}
+                conseillers={[]}
+                pageTitle={''}
+              />
+            </CurrentJeuneProvider>
+          </DIProvider>
+        )
+
+        // Then
+        expect(screen.getByText(/ajouté temporairement/)).toBeInTheDocument()
+      })
+    })
+
     describe('quand la création de rdv est réussie', () => {
       beforeEach(() => {
         // When

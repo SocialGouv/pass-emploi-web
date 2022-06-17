@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import FailureMessage from 'components/FailureMessage'
+import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
@@ -194,6 +195,16 @@ function FicheJeune({
       {!jeune.isActivated && (
         <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
       )}
+
+      {jeune.isReaffectationTemporaire && (
+        <div className='mb-6'>
+          <InformationMessage
+            iconName={IconName.Clock}
+            content='Ce bénéficiaire a été ajouté temporairement à votre portefeuille en attendant le retour de son conseiller initial.'
+          />
+        </div>
+      )}
+
       <div className='flex justify-between'>
         <div className='flex'>
           {!isPoleEmploi && (

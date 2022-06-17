@@ -15,7 +15,8 @@ export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
     firstName: 'Kenji',
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
-    isActivated: false,
+    isActivated: true,
+    isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     lastActivity: '2021-12-07T17:30:07.756Z',
     conseillerPrecedent: {
@@ -57,7 +58,8 @@ export const unJeuneJson = (overrides: Partial<JeuneJson> = {}): JeuneJson => {
     firstName: 'Kenji',
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
-    isActivated: false,
+    isActivated: true,
+    isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     lastActivity: '2021-12-07T17:30:07.756Z',
     conseillerPrecedent: {
@@ -109,7 +111,7 @@ export const desJeunesAvecActionsNonTerminees =
       firstName: 'Nadia',
       lastName: 'Sanfamiye',
       email: 'nadia.sanfamiye@mail.com',
-      isActivated: true,
+      isActivated: false,
       creationDate: '2022-01-07T17:30:07.756Z',
       lastActivity: '2022-01-30T17:30:07.756Z',
       nbActionsNonTerminees: 0,
@@ -121,7 +123,7 @@ export const desJeunesAvecActionsNonTerminees =
       email: 'nadia.sanfamiye@mail.com',
       creationDate: '2021-12-28T17:30:07.756Z',
       lastActivity: '2022-02-07T17:30:07.756Z',
-      isActivated: true,
+      isReaffectationTemporaire: true,
       nbActionsNonTerminees: 8,
     }),
   ]

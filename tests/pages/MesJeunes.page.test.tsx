@@ -114,17 +114,6 @@ describe('Mes Jeunes', () => {
 
       describe("affiche le statut d'activation du compte d'un jeune", () => {
         it("si le compte n'a pas été activé", () => {
-          const row1 = within(
-            screen
-              .getByText('Jirac Kenji')
-              .closest('[role="row"]') as HTMLElement
-          )
-
-          //THEN
-          expect(row1.getByText('Compte non activé')).toBeInTheDocument()
-        })
-
-        it('si le compte a été activé', () => {
           const row2 = within(
             screen
               .getByText('Sanfamiye Nadia')
@@ -132,7 +121,42 @@ describe('Mes Jeunes', () => {
           )
 
           //THEN
-          expect(row2.getByText('Le 30/01/2022 à 18:30')).toBeInTheDocument()
+          expect(row2.getByText('Compte non activé')).toBeInTheDocument()
+        })
+
+        it('si le compte a été activé', () => {
+          const row1 = within(
+            screen
+              .getByText('Jirac Kenji')
+              .closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(row1.getByText('Le 07/12/2021 à 18:30')).toBeInTheDocument()
+        })
+      })
+
+      describe("affiche la réaffectation temporaire d'un jeune", () => {
+        it('si le compte a été réaffecté temporairement', () => {
+          const row3 = within(
+            screen.getByText(/Maria/).closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(
+            row3.getByLabelText('bénéficiaire temporaire')
+          ).toBeInTheDocument()
+        })
+
+        it("si le compte n'a pas été réaffecté temporairement", () => {
+          const row2 = within(
+            screen
+              .getByText('Sanfamiye Nadia')
+              .closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(() => row2.getByText('bénéficiaire temporaire')).toThrow()
         })
       })
     })

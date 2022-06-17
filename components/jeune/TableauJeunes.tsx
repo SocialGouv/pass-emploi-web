@@ -5,6 +5,7 @@ import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 import SituationTag from 'components/jeune/SituationTag'
 import { Badge } from 'components/ui/Badge'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SortIcon from 'components/ui/SortIcon'
 import {
   compareJeuneByLastActivity,
@@ -289,7 +290,23 @@ export const TableauJeunes = ({
                   className={`table-row text-sm  items-center hover:bg-primary_lighten`}
                 >
                   <span role='cell' className='table-cell p-4'>
-                    {getJeuneFullname(jeune)}
+                    <span className='flex items-baseline'>
+                      {jeune.isReaffectationTemporaire && (
+                        <span
+                          title='bénéficiaire temporaire'
+                          aria-label='bénéficiaire temporaire'
+                          className='self-center mr-2'
+                        >
+                          <IconComponent
+                            name={IconName.Clock}
+                            aria-hidden={true}
+                            focusable={false}
+                            className='w-4 h-4'
+                          />
+                        </span>
+                      )}
+                      {getJeuneFullname(jeune)}
+                    </span>
                   </span>
 
                   {withSituations && (

@@ -11,8 +11,9 @@ export interface JeuneJson {
   lastName: string
   creationDate: string
   lastActivity: string
+  isActivated: boolean
+  isReaffectationTemporaire: boolean
   email?: string
-  isActivated?: boolean
   urlDossier?: string
   conseillerPrecedent?: {
     nom: string
