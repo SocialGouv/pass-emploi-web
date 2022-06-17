@@ -223,7 +223,9 @@ function Index(_: ReaffectationProps) {
           checked={isReaffectationTemporaire === false}
           required
         />
-        <label htmlFor='type-reaffectation--definitif'>Définitif</label>
+        <label htmlFor='type-reaffectation--definitif' className='mr-6'>
+          Définitif
+        </label>
 
         <input
           className='mr-2 ml-10'
