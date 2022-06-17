@@ -25,35 +25,35 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
-  const [currentJeune, setCurrentJeune] = useCurrentJeune()
+  const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
   useEffect(() => {
-    if (currentJeune?.id && session) {
+    if (idCurrentJeune && session) {
       jeunesService
-        .getConseillersDuJeune(currentJeune.id, session.accessToken)
+        .getConseillersDuJeune(idCurrentJeune, session.accessToken)
         .then((conseillersJeunes) => setConseillers(conseillersJeunes))
     }
-  }, [jeunesService, currentJeune?.id, session])
+  }, [jeunesService, idCurrentJeune, session])
 
   useEffect(() => {
-    if (currentJeune?.id) {
+    if (idCurrentJeune) {
       setCurrentChat(
-        jeunesChats.find((jeuneChat) => jeuneChat.id === currentJeune.id)
+        jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
       )
     } else {
       setCurrentChat(undefined)
     }
-  }, [jeunesChats, currentJeune?.id])
+  }, [jeunesChats, idCurrentJeune])
 
   return (
     <article className={styles.chatRoom}>
       {currentChat && (
         <Conversation
-          onBack={() => setCurrentJeune(undefined)}
+          onBack={() => setIdCurrentJeune(undefined)}
           jeuneChat={currentChat}
           conseillers={conseillers}
         />
@@ -82,7 +82,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                   <li key={`chat-${jeuneChat.id}`} className='mb-2'>
                     <button
                       className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-[6px]'
-                      onClick={() => setCurrentJeune(jeuneChat)}
+                      onClick={() => setIdCurrentJeune(jeuneChat.id)}
                     >
                       {!jeuneChat.seenByConseiller &&
                         jeuneChat.lastMessageContent && (
@@ -92,14 +92,14 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                           </p>
                         )}
                       <span className='text-md-semi text-primary_darken mb-2 w-full flex justify-between'>
-                        {jeuneChat.firstName} {jeuneChat.lastName}
+                        {jeuneChat.prenom} {jeuneChat.nom}
                       </span>
                       <span className='text-sm text-grey_800 mb-[8px]'>
                         {' '}
                         {jeuneChat.lastMessageSentBy ===
                         UserType.CONSEILLER.toLowerCase()
                           ? 'Vous'
-                          : jeuneChat.firstName}{' '}
+                          : jeuneChat.prenom}{' '}
                         : {jeuneChat.lastMessageContent}
                       </span>
                       <span className='text-xxs-italic text-content_color self-end flex'>

@@ -5,10 +5,10 @@ import RemoveIcon from '../../assets/icons/remove.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import SelectAutocomplete from 'components/ui/SelectAutocomplete'
-import { getJeuneFullname, Jeune } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   typeSelection: string
   onUpdate: (selectedIds: string[]) => void
   defaultJeunes?: OptionJeune[]
@@ -172,9 +172,9 @@ export default function JeunesMultiselectAutocomplete({
   )
 }
 
-export function jeuneToOption(jeune: Jeune): OptionJeune {
+export function jeuneToOption(jeune: BaseJeune): OptionJeune {
   return {
     id: jeune.id,
-    value: getJeuneFullname(jeune),
+    value: getNomJeuneComplet(jeune),
   }
 }

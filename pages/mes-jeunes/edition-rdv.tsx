@@ -10,7 +10,7 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
@@ -24,7 +24,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EditionRdvProps extends PageProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   typesRendezVous: TypeRendezVous[]
   returnTo: string
   idJeune?: string
@@ -235,7 +235,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const redirectTo =
     referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   const props: EditionRdvProps = {
-    jeunes: [...jeunes].sort(compareJeunesByLastName),
+    jeunes: [...jeunes].sort(compareJeunesByNom),
     typesRendezVous: typesRendezVous,
     withoutChat: true,
     returnTo: redirectTo,

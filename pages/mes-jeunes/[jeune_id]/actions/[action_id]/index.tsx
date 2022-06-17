@@ -11,7 +11,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import { Action, StatutAction } from 'interfaces/action'
 import { UserStructure, UserType } from 'interfaces/conseiller'
-import { Jeune } from 'interfaces/jeune'
+import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -23,7 +23,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface PageActionProps extends PageProps {
   action: Action
-  jeune: Jeune
+  jeune: BaseJeune
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
 }
@@ -187,7 +187,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const props: PageActionProps = {
     action,
     jeune,
-    pageTitle: `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`,
+    pageTitle: `Mes jeunes - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
     pageHeader: 'Détails de l’action',
   }
 

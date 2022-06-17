@@ -1,18 +1,18 @@
 import { act, screen } from '@testing-library/react'
-import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
-import { desJeunes, unJeuneChat } from 'fixtures/jeune'
+import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
 import {
   mockedConseillerService,
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { useRouter } from 'next/router'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -35,7 +35,7 @@ describe('<Layout />', () => {
   })
 
   let updateChatRef: (jeuneChat: JeuneChat) => void
-  const jeunes: Jeune[] = desJeunes()
+  const jeunes: JeuneFromListe[] = desItemsJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
   let conseillerService: ConseillerService

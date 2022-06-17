@@ -13,7 +13,7 @@ import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import {
   desConseillersJeune,
   unConseillerHistorique,
-  unJeune,
+  unDetailJeune,
 } from 'fixtures/jeune'
 import {
   desRdvListItems,
@@ -49,7 +49,7 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Fiche Jeune', () => {
   describe('client side', () => {
-    const jeune = unJeune()
+    const jeune = unDetailJeune()
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
@@ -65,15 +65,15 @@ describe('Fiche Jeune', () => {
     })
 
     describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
-      let setJeune: () => void
+      let setIdJeune: (id: string | undefined) => void
       beforeEach(async () => {
         // Given
-        setJeune = jest.fn()
+        setIdJeune = jest.fn()
 
         // When
         renderWithSession(
           <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider setJeune={setJeune}>
+            <CurrentJeuneProvider setIdJeune={setIdJeune}>
               <FicheJeune
                 jeune={jeune}
                 rdvs={rdvs}
@@ -172,7 +172,7 @@ describe('Fiche Jeune', () => {
 
       it('modifie le currentJeune', () => {
         // Then
-        expect(setJeune).toHaveBeenCalledWith(jeune)
+        expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
       })
     })
 
@@ -186,7 +186,7 @@ describe('Fiche Jeune', () => {
         // Given
         renderWithSession(
           <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider setJeune={setJeune}>
+            <CurrentJeuneProvider setIdJeune={setJeune}>
               <FicheJeune
                 jeune={jeune}
                 rdvs={rdvs}
@@ -321,7 +321,7 @@ describe('Fiche Jeune', () => {
             <DIProvider dependances={{ jeunesService, rendezVousService }}>
               <CurrentJeuneProvider>
                 <FicheJeune
-                  jeune={unJeune({ situations: situations })}
+                  jeune={unDetailJeune({ situations: situations })}
                   rdvs={[]}
                   actions={actions}
                   conseillers={[]}
@@ -606,7 +606,7 @@ describe('Fiche Jeune', () => {
     let actionsService: ActionsService
     beforeEach(() => {
       jeunesService = mockedJeunesService({
-        getJeuneDetails: jest.fn(async () => unJeune()),
+        getJeuneDetails: jest.fn(async () => unDetailJeune()),
         getConseillersDuJeune: jest.fn(async () => desConseillersJeune()),
       })
       rendezVousService = mockedRendezVousService({
@@ -668,7 +668,7 @@ describe('Fiche Jeune', () => {
         )
         expect(actual).toEqual({
           props: {
-            jeune: unJeune(),
+            jeune: unDetailJeune(),
             pageTitle: 'Mes jeunes - Kenji Jirac',
             pageHeader: 'Kenji Jirac',
             rdvs: expect.arrayContaining([]),

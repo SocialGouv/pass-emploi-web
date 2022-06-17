@@ -1,20 +1,28 @@
-import ErrorCodes from './error-codes'
-
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
-import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
+import {
+  ConseillerHistorique,
+  DetailJeune,
+  JeuneFromListe,
+} from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
-import { JeuneJson, jsonToJeune } from 'interfaces/json/jeune'
+import {
+  DetailJeuneJson,
+  ItemJeuneJson,
+  jsonToDetailJeune,
+  jsonToItemJeune,
+} from 'interfaces/json/jeune'
 import { RequestError } from 'utils/httpClient'
+import ErrorCodes from './error-codes'
 
 export interface JeunesService {
   getJeunesDuConseiller(
     idConseiller: string,
     accessToken: string
-  ): Promise<Jeune[]>
+  ): Promise<JeuneFromListe[]>
 
   getConseillersDuJeune(
     idConseiller: string,
@@ -24,12 +32,12 @@ export interface JeunesService {
   getJeunesDuConseillerParEmail(
     emailConseiller: string,
     accessToken: string
-  ): Promise<{ idConseiller: string; jeunes: Jeune[] }>
+  ): Promise<{ idConseiller: string; jeunes: JeuneFromListe[] }>
 
   getJeuneDetails(
     idJeune: string,
     accessToken: string
-  ): Promise<Jeune | undefined>
+  ): Promise<DetailJeune | undefined>
 
   getIdJeuneMilo(
     numeroDossier: string,
@@ -59,24 +67,24 @@ export class JeunesApiService implements JeunesService {
   async getJeunesDuConseiller(
     idConseiller: string,
     accessToken: string
-  ): Promise<Jeune[]> {
-    const jeunes = await this.apiClient.get<JeuneJson[]>(
+  ): Promise<JeuneFromListe[]> {
+    const jeunes = await this.apiClient.get<ItemJeuneJson[]>(
       `/conseillers/${idConseiller}/jeunes`,
       accessToken
     )
-    return jeunes.map(jsonToJeune)
+    return jeunes.map(jsonToItemJeune)
   }
 
   async getJeuneDetails(
     idJeune: string,
     accessToken: string
-  ): Promise<Jeune | undefined> {
+  ): Promise<DetailJeune | undefined> {
     try {
-      const jeune = await this.apiClient.get<JeuneJson>(
+      const jeune = await this.apiClient.get<DetailJeuneJson>(
         `/jeunes/${idJeune}`,
         accessToken
       )
-      return jsonToJeune(jeune)
+      return jsonToDetailJeune(jeune)
     } catch (e) {
       if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
         return undefined
@@ -120,7 +128,7 @@ export class JeunesApiService implements JeunesService {
   async getJeunesDuConseillerParEmail(
     emailConseiller: string,
     accessToken: string
-  ): Promise<{ idConseiller: string; jeunes: Jeune[] }> {
+  ): Promise<{ idConseiller: string; jeunes: JeuneFromListe[] }> {
     const conseiller = await this.apiClient.get<Conseiller>(
       `/conseillers?email=${emailConseiller}`,
       accessToken

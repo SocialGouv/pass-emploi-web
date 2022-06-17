@@ -7,10 +7,9 @@ import React from 'react'
 import renderWithSession from '../renderWithSession'
 
 import { uneAction } from 'fixtures/action'
-import { unJeune } from 'fixtures/jeune'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
-import { Jeune } from 'interfaces/jeune'
+import { BaseJeune } from 'interfaces/jeune'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
@@ -25,7 +24,11 @@ jest.mock('utils/injectionDependances/withDependance')
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client-side', () => {
     const action = uneAction()
-    const jeune = unJeune()
+    const jeune: BaseJeune = {
+      id: 'jeune-1',
+      prenom: 'Nadia',
+      nom: 'Sanfamiye',
+    }
     let actionsService: ActionsService
     let page: RenderResult
     beforeEach(() => {
@@ -116,7 +119,11 @@ describe("Page Détail d'une action d'un jeune", () => {
           },
         })
         const action: Action = uneAction()
-        const jeune: Jeune = unJeune()
+        const jeune: BaseJeune = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+        }
         const actionsService: ActionsService = mockedActionsService({
           getAction: jest.fn(async () => ({ action, jeune })),
         })
@@ -130,7 +137,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           'id-action',
           'accessToken'
         )
-        const pageTitle = `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`
+        const pageTitle = `Mes jeunes - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`
         expect(actual).toEqual({
           props: {
             action,

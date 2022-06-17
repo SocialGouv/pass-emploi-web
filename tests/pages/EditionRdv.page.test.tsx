@@ -1,15 +1,13 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 
-import renderWithSession from '../renderWithSession'
-
-import { desJeunes } from 'fixtures/jeune'
+import { desItemsJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
-import { getJeuneFullname, Jeune } from 'interfaces/jeune'
+import { getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
@@ -18,6 +16,8 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+
+import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -28,7 +28,7 @@ describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
     let rendezVousService: RendezVousService
-    let jeunes: Jeune[]
+    let jeunes: JeuneFromListe[]
     let typesRendezVous: TypeRendezVous[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
@@ -59,7 +59,7 @@ describe('EditionRdv', () => {
           },
         })
 
-        jeunes = desJeunes()
+        jeunes = desItemsJeunes()
         typesRendezVous = typesDeRendezVous()
 
         jeunesService = mockedJeunesService({
@@ -186,12 +186,12 @@ describe('EditionRdv', () => {
   })
 
   describe('client side', () => {
-    let jeunes: Jeune[]
+    let jeunes: JeuneFromListe[]
     let rendezVousService: RendezVousService
     let typesRendezVous: TypeRendezVous[]
     let push: Function
     beforeEach(() => {
-      jeunes = desJeunes()
+      jeunes = desItemsJeunes()
       rendezVousService = mockedRendezVousService({
         deleteRendezVous: jest.fn(async () => undefined),
       })
@@ -242,7 +242,7 @@ describe('EditionRdv', () => {
           expect(selectJeune).toHaveAttribute('aria-required', 'true')
           for (const jeune of jeunes) {
             const jeuneOption = within(options).getByRole('option', {
-              name: `${jeune.lastName} ${jeune.firstName}`,
+              name: `${jeune.nom} ${jeune.prenom}`,
               hidden: true,
             })
             expect(jeuneOption).toBeInTheDocument()
@@ -449,10 +449,10 @@ describe('EditionRdv', () => {
 
           // Given
           fireEvent.input(selectJeunes, {
-            target: { value: getJeuneFullname(jeunes[0]) },
+            target: { value: getNomJeuneComplet(jeunes[0]) },
           })
           fireEvent.input(selectJeunes, {
-            target: { value: getJeuneFullname(jeunes[2]) },
+            target: { value: getNomJeuneComplet(jeunes[2]) },
           })
           fireEvent.change(selectModalite, { target: { value: modalites[0] } })
           fireEvent.change(selectType, {
@@ -718,7 +718,7 @@ describe('EditionRdv', () => {
       it('initialise et fige le destinataire', () => {
         // Given
         const idJeune = jeunes[2].id
-        const jeuneFullname = getJeuneFullname(jeunes[2])
+        const jeuneFullname = getNomJeuneComplet(jeunes[2])
 
         // When
         renderWithSession(
@@ -758,13 +758,13 @@ describe('EditionRdv', () => {
         // Given
         const jeune0 = {
           id: jeunes[0].id,
-          prenom: jeunes[0].firstName,
-          nom: jeunes[0].lastName,
+          prenom: jeunes[0].prenom,
+          nom: jeunes[0].nom,
         }
         const jeune2 = {
           id: jeunes[2].id,
-          prenom: jeunes[2].firstName,
-          nom: jeunes[2].lastName,
+          prenom: jeunes[2].prenom,
+          nom: jeunes[2].nom,
         }
 
         rdv = unRendezVous({ jeunes: [jeune0, jeune2] })
@@ -822,8 +822,8 @@ describe('EditionRdv', () => {
       })
 
       it('sélectionne les jeunes du rendez-vous', () => {
-        const jeune0Fullname = getJeuneFullname(jeunes[0])
-        const jeune2Fullname = getJeuneFullname(jeunes[2])
+        const jeune0Fullname = getNomJeuneComplet(jeunes[0])
+        const jeune2Fullname = getNomJeuneComplet(jeunes[2])
         expect(() =>
           screen.getByRole('option', {
             name: jeune0Fullname,
@@ -915,7 +915,7 @@ describe('EditionRdv', () => {
             name: /Bénéficiaires/,
           })
           const jeuneSelectionne = within(beneficiaires).getByText(
-            getJeuneFullname(jeunes[2])
+            getNomJeuneComplet(jeunes[2])
           )
           const enleverJeune = within(jeuneSelectionne).getByRole('button', {
             name: /Enlever/,
@@ -938,7 +938,7 @@ describe('EditionRdv', () => {
           // Given
           await act(async () => {
             fireEvent.input(searchJeune, {
-              target: { value: getJeuneFullname(jeunes[1]) },
+              target: { value: getNomJeuneComplet(jeunes[1]) },
             })
             enleverJeune.click()
             fireEvent.change(selectModalite, {
@@ -1037,8 +1037,8 @@ describe('EditionRdv', () => {
         ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         const jeune = {
           id: jeunes[0].id,
-          prenom: jeunes[0].firstName,
-          nom: jeunes[0].lastName,
+          prenom: jeunes[0].prenom,
+          nom: jeunes[0].nom,
         }
         const jeuneAutreConseiller = {
           id: 'jeune-autre-conseiller',
@@ -1081,7 +1081,7 @@ describe('EditionRdv', () => {
 
         // Then
         const jeune = within(beneficiaires).getByText(
-          getJeuneFullname(jeunes[0])
+          getNomJeuneComplet(jeunes[0])
         )
         expect(() =>
           within(jeune).getByLabelText(
@@ -1090,7 +1090,7 @@ describe('EditionRdv', () => {
         ).toThrow()
         expect(() =>
           screen.getByRole('option', {
-            name: getJeuneFullname(jeunes[0]),
+            name: getNomJeuneComplet(jeunes[0]),
             hidden: true,
           })
         ).toThrow()

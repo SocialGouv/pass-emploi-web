@@ -186,7 +186,7 @@ export default function Conversation({
           />
         </button>
         <h2 className='w-full text-left text-primary text-m-medium'>
-          Discuter avec {jeuneChat.firstName} {jeuneChat.lastName}
+          Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
         </h2>
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6'></span>

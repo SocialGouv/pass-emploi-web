@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
 
-import { Jeune } from 'interfaces/jeune'
-
-type MaybeJeune = Jeune | undefined
-type CurrentJeuneState = [MaybeJeune, (currentJeune: MaybeJeune) => void]
+type CurrentJeuneState = [
+  string | undefined,
+  (currentJeuneId: string | undefined) => void
+]
 
 const CurrentJeuneContext = createContext<CurrentJeuneState | undefined>(
   undefined
@@ -11,19 +11,20 @@ const CurrentJeuneContext = createContext<CurrentJeuneState | undefined>(
 
 export function CurrentJeuneProvider({
   children,
-  jeune,
-  setJeune,
+  idJeune,
+  setIdJeune,
 }: {
   children: ReactNode
-  jeune?: Jeune
-  setJeune?: (currentJeune: MaybeJeune) => void
+  idJeune?: string
+  setIdJeune?: (idCurrentJeune: string | undefined) => void
 }) {
-  const [currentJeune, setCurrentJeune]: CurrentJeuneState =
-    useState<MaybeJeune>(jeune)
-  const setter = setJeune ?? setCurrentJeune
+  const [idCurrentJeune, setIdCurrentJeune]: CurrentJeuneState = useState<
+    string | undefined
+  >(idJeune)
+  const setter = setIdJeune ?? setIdCurrentJeune
   const value: CurrentJeuneState = useMemo(
-    () => [currentJeune, setter],
-    [currentJeune, setter]
+    () => [idCurrentJeune, setter],
+    [idCurrentJeune, setter]
   )
   return (
     <CurrentJeuneContext.Provider value={value}>

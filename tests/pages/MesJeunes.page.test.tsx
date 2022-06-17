@@ -9,7 +9,7 @@ import React from 'react'
 import renderWithSession from '../renderWithSession'
 
 import {
-  desJeunes,
+  desItemsJeunes,
   desJeunesAvecActionsNonTerminees,
   unJeuneAvecActionsNonTerminees,
 } from 'fixtures/jeune'
@@ -21,7 +21,7 @@ import {
 import { UserStructure } from 'interfaces/conseiller'
 import {
   CategorieSituation,
-  compareJeunesByLastName,
+  compareJeunesByNom,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { getServerSideProps } from 'pages/mes-jeunes'
@@ -393,7 +393,7 @@ describe('Mes Jeunes', () => {
     let jeunesService: JeunesService
     let actionsService: ActionsService
     beforeEach(() => {
-      const jeunes = desJeunes()
+      const jeunes = desItemsJeunes()
       jeunesService = mockedJeunesService({
         getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
       })
@@ -521,12 +521,12 @@ describe('Mes Jeunes', () => {
         // Then
         expect(actual).toMatchObject({
           props: {
-            conseillerJeunes: desJeunes()
+            conseillerJeunes: desItemsJeunes()
               .map((jeune) => ({
                 ...jeune,
                 nbActionsNonTerminees: 0,
               }))
-              .sort(compareJeunesByLastName),
+              .sort(compareJeunesByNom),
           },
         })
       })
@@ -562,12 +562,12 @@ describe('Mes Jeunes', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            conseillerJeunes: desJeunes()
+            conseillerJeunes: desItemsJeunes()
               .map((jeune) => ({
                 ...jeune,
                 nbActionsNonTerminees: 7,
               }))
-              .sort(compareJeunesByLastName),
+              .sort(compareJeunesByNom),
             structureConseiller: 'MILO',
             pageTitle: 'Mes jeunes',
             isFromEmail: false,

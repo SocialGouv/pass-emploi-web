@@ -1,12 +1,11 @@
 import React, { Fragment } from 'react'
 
-import ActionRow from './ActionRow'
-
+import ActionRow from 'components/action/ActionRow'
 import { Action } from 'interfaces/action'
-import { Jeune } from 'interfaces/jeune'
+import { DetailJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
-  jeune: Jeune
+  jeune: DetailJeune
   actions: Action[]
 }
 
@@ -18,7 +17,7 @@ export const TableauActionsJeune = ({
     <>
       {actions.length === 0 && (
         <p className='text-md mb-2'>
-          {jeune.firstName} {jeune.lastName} n’a pas encore d’action
+          {jeune.prenom} {jeune.nom} n’a pas encore d’action
         </p>
       )}
 
@@ -26,7 +25,7 @@ export const TableauActionsJeune = ({
         <div
           role='table'
           className='table w-full'
-          aria-label={`Liste des actions de ${jeune.firstName} ${jeune.lastName}`}
+          aria-label={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
         >
           <div role='rowgroup' className='table-header-group '>
             <div role='row' className='table-row text-s-regular'>

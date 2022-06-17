@@ -1,19 +1,20 @@
 import { ApiClient } from 'clients/api.client'
 import { Action, StatutAction, TotalActions } from 'interfaces/action'
-import { Jeune } from 'interfaces/jeune'
+import { BaseJeune } from 'interfaces/jeune'
 import {
   ActionJson,
   ActionsCountJson,
   actionStatusToJson,
   jsonToAction,
 } from 'interfaces/json/action'
+import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
 import { RequestError } from 'utils/httpClient'
 
 export interface ActionsService {
   getAction(
     idAction: string,
     accessToken: string
-  ): Promise<{ action: Action; jeune: Jeune } | undefined>
+  ): Promise<{ action: Action; jeune: BaseJeune } | undefined>
 
   countActionsJeunes(
     idConseiller: string,
@@ -44,12 +45,15 @@ export class ActionsApiService implements ActionsService {
   async getAction(
     idAction: string,
     accessToken: string
-  ): Promise<{ action: Action; jeune: Jeune } | undefined> {
+  ): Promise<{ action: Action; jeune: BaseJeune } | undefined> {
     try {
       const { jeune, ...actionJson } = await this.apiClient.get<
-        ActionJson & { jeune: Jeune }
+        ActionJson & { jeune: BaseJeuneJson }
       >(`/actions/${idAction}`, accessToken)
-      return { action: jsonToAction(actionJson), jeune }
+      return {
+        action: jsonToAction(actionJson),
+        jeune: jsonToBaseJeune(jeune),
+      }
     } catch (e) {
       if (e instanceof RequestError) return undefined
       throw e

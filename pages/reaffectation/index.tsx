@@ -9,9 +9,9 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import {
-  compareJeunesByLastName,
-  getJeuneFullname,
-  Jeune,
+  compareJeunesByNom,
+  getNomJeuneComplet,
+  JeuneFromListe,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
@@ -36,7 +36,7 @@ function Index(_: ReaffectationProps) {
     useState<boolean>(false)
   const [isRechercheJeunesSubmitted, setRechercheJeunesSubmitted] =
     useState<boolean>(false)
-  const [jeunes, setJeunes] = useState<Jeune[]>([])
+  const [jeunes, setJeunes] = useState<JeuneFromListe[]>([])
   const [idsJeunesSelected, setIdsJeunesSelected] = useState<string[]>([])
   const [emailConseillerDestination, setEmailConseillerDestination] = useState<{
     value: string
@@ -77,7 +77,7 @@ function Index(_: ReaffectationProps) {
     setIsReaffectationTemporaire(undefined)
   }
 
-  function toggleJeune(_event: FormEvent, jeune: Jeune) {
+  function toggleJeune(_event: FormEvent, jeune: JeuneFromListe) {
     setErreurReaffectation(undefined)
     if (idsJeunesSelected.includes(jeune.id)) {
       setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
@@ -99,7 +99,7 @@ function Index(_: ReaffectationProps) {
         )
       setRechercheJeunesSubmitted(true)
       if (jeunesDuConseiller.length > 0) {
-        setJeunes([...jeunesDuConseiller].sort(compareJeunesByLastName))
+        setJeunes([...jeunesDuConseiller].sort(compareJeunesByNom))
         setConseillerInitial({
           ...conseillerInitial,
           id: idConseiller,
@@ -404,7 +404,7 @@ function Index(_: ReaffectationProps) {
               </tr>
             </thead>
             <tbody>
-              {jeunes.map((jeune: Jeune) => (
+              {jeunes.map((jeune: JeuneFromListe) => (
                 <tr
                   key={jeune.id}
                   onClick={(e) => toggleJeune(e, jeune)}
@@ -418,7 +418,7 @@ function Index(_: ReaffectationProps) {
                     />
                   </td>
                   <td className='pt-6 pb-6 pl-4 pr-4 text-md-semi'>
-                    {getJeuneFullname(jeune)}
+                    {getNomJeuneComplet(jeune)}
                   </td>
                   <td className='pt-6 pb-6 pl-4 pr-4'>
                     {jeune.conseillerPrecedent

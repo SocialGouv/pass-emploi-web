@@ -1,14 +1,18 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
-import { desJeunes, unChat, unJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  desItemsJeunes,
+  unChat,
+  uneBaseJeune,
+  unJeuneChat,
+} from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
 import { UserStructure } from 'interfaces/conseiller'
-import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { BaseJeune, Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
+import { FakeApiClient } from '../utils/fakeApiClient'
 
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
@@ -80,19 +84,19 @@ describe('MessagesFirebaseAndApiService', () => {
 
   describe('.observeJeuneChat', () => {
     let idConseiller: string
-    let jeune: Jeune
+    let jeune: BaseJeune
     let onJeuneChat: (chat: Chat) => void
     beforeEach(async () => {
       // Given
       jest.setSystemTime(new Date())
       idConseiller = 'idConseiller'
-      jeune = unJeune()
+      jeune = uneBaseJeune()
       onJeuneChat = jest.fn()
 
       // When
       messagesService.observeJeuneChat(
         idConseiller,
-        jeune,
+        { ...uneBaseJeune(), isActivated: true },
         cleChiffrement,
         onJeuneChat
       )
@@ -111,6 +115,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(onJeuneChat).toHaveBeenCalledWith({
         ...jeune,
+        isActivated: true,
         ...unChat(),
       })
     })
@@ -343,7 +348,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.sendNouveauMessageGroupe', () => {
-    let destinataires: Jeune[]
+    let destinataires: JeuneFromListe[]
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
     let newMessageGroupe: string
@@ -352,7 +357,7 @@ describe('MessagesFirebaseAndApiService', () => {
     beforeEach(async () => {
       // Given
       jest.setSystemTime(now)
-      destinataires = desJeunes()
+      destinataires = desItemsJeunes()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'nouveau message groupé'
 

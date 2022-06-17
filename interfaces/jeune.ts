@@ -21,28 +21,31 @@ export enum CategorieSituation {
   DEMANDEUR_D_EMPLOI = "Demandeur d'emploi",
   SANS_SITUATION = 'Sans situation',
 }
+
 export interface BaseJeune {
   id: string
   prenom: string
   nom: string
 }
 
-export interface Jeune {
-  id: string
-  firstName: string
-  lastName: string
-  creationDate: string
+export interface JeuneFromListe extends BaseJeune {
   lastActivity: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
-  email?: string
-  urlDossier?: string
   conseillerPrecedent?: {
     nom: string
     prenom: string
     email?: string
   }
   situationCourante: CategorieSituation
+}
+
+export interface DetailJeune extends BaseJeune {
+  creationDate: string
+  isActivated: boolean
+  isReaffectationTemporaire: boolean
+  email?: string
+  urlDossier?: string
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
@@ -50,7 +53,7 @@ export interface Jeune {
   }>
 }
 
-export type JeuneAvecNbActionsNonTerminees = Jeune & {
+export type JeuneAvecNbActionsNonTerminees = JeuneFromListe & {
   nbActionsNonTerminees: number
 }
 
@@ -70,7 +73,7 @@ export interface Chat {
   lastMessageIv: string | undefined
 }
 
-export type JeuneChat = Jeune & Chat
+export type JeuneChat = BaseJeune & { isActivated: boolean } & Chat
 
 export interface DossierMilo {
   id: string
@@ -95,34 +98,43 @@ export interface ConseillerHistorique {
   depuis: string
 }
 
-export function compareJeunesByLastName(jeune1: Jeune, jeune2: Jeune): number {
-  return `${jeune1.lastName}${jeune1.firstName}`.localeCompare(
-    `${jeune2.lastName}${jeune2.firstName}`
+export function compareJeunesByNom(
+  jeune1: BaseJeune,
+  jeune2: BaseJeune
+): number {
+  return `${jeune1.nom}${jeune1.prenom}`.localeCompare(
+    `${jeune2.nom}${jeune2.prenom}`
   )
 }
 
 export function compareJeunesByLastNameDesc(
-  jeune1: Jeune,
-  jeune2: Jeune
+  jeune1: BaseJeune,
+  jeune2: BaseJeune
 ): number {
-  return -compareJeunesByLastName(jeune1, jeune2)
+  return -compareJeunesByNom(jeune1, jeune2)
 }
 
-export function compareJeunesByFirstname(jeune1: Jeune, jeune2: Jeune): number {
-  return `${jeune1.firstName}${jeune1.lastName}`.localeCompare(
-    `${jeune2.firstName}${jeune2.lastName}`
+export function compareJeunesByPrenom(
+  jeune1: BaseJeune,
+  jeune2: BaseJeune
+): number {
+  return `${jeune1.prenom}${jeune1.nom}`.localeCompare(
+    `${jeune2.prenom}${jeune2.nom}`
   )
 }
 
-export function compareJeunesBySituation(jeune1: Jeune, jeune2: Jeune): number {
+export function compareJeunesBySituation(
+  jeune1: JeuneFromListe,
+  jeune2: JeuneFromListe
+): number {
   return `${jeune1.situationCourante}`.localeCompare(
     `${jeune2.situationCourante}`
   )
 }
 
 export function compareJeunesBySituationDesc(
-  jeune1: Jeune,
-  jeune2: Jeune
+  jeune1: JeuneFromListe,
+  jeune2: JeuneFromListe
 ): number {
   return -compareJeunesBySituation(jeune1, jeune2)
 }
@@ -130,12 +142,12 @@ export function compareJeunesBySituationDesc(
 export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {
   if (a.seenByConseiller !== b.seenByConseiller)
     return a.seenByConseiller ? 1 : -1
-  return compareJeunesByFirstname(a, b)
+  return compareJeunesByPrenom(a, b)
 }
 
 export function compareJeuneByLastActivity(
-  jeune1: Jeune,
-  jeune2: Jeune,
+  jeune1: JeuneFromListe,
+  jeune2: JeuneFromListe,
   sortStatutCompteActif: number
 ) {
   const date1 = jeune1.lastActivity ? new Date(jeune1.lastActivity) : undefined
@@ -144,8 +156,8 @@ export function compareJeuneByLastActivity(
 }
 
 export function compareJeuneByLastActivityDesc(
-  jeune1: Jeune,
-  jeune2: Jeune,
+  jeune1: JeuneFromListe,
+  jeune2: JeuneFromListe,
   sortStatutCompteActif: number
 ) {
   const date1 = jeune1.lastActivity ? new Date(jeune1.lastActivity) : undefined
@@ -153,6 +165,6 @@ export function compareJeuneByLastActivityDesc(
   return compareDatesDesc(date1, date2) || -sortStatutCompteActif
 }
 
-export function getJeuneFullname(j: Jeune): string {
-  return `${j.lastName} ${j.firstName}`
+export function getNomJeuneComplet(j: BaseJeune): string {
+  return `${j.nom} ${j.prenom}`
 }

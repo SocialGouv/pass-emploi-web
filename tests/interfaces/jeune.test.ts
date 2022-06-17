@@ -1,24 +1,18 @@
-import { uneAction } from 'fixtures/action'
-import {
-  dateFuture,
-  dateFutureLoin,
-  datePassee,
-  datePasseeLoin,
-  now,
-} from 'fixtures/date'
-import { unJeune } from 'fixtures/jeune'
-import { compareJeunesBySituation } from 'interfaces/jeune'
+import { unItemJeune } from 'fixtures/jeune'
+import { CategorieSituation, compareJeunesBySituation } from 'interfaces/jeune'
 
 describe('Jeune', () => {
   describe('.compareJeunesBySituation', () => {
     it('trie les jeunes par situation par ordre alphabétique', () => {
       // Given
-      const unJeuneSituationBenevolat = unJeune({
-        situationCourante: 'Bénévolat',
+      const unJeuneSituationBenevolat = unItemJeune({
+        situationCourante: CategorieSituation.CONTRAT_DE_VOLONTARIAT_BENEVOLAT,
       })
-      const unJeuneSituationEmploi = unJeune({ situationCourante: 'Emploi' })
-      const unJeuneSansSituation = unJeune()
-      const unJeuneSansSituationAussi = unJeune()
+      const unJeuneSituationEmploi = unItemJeune({
+        situationCourante: CategorieSituation.EMPLOI,
+      })
+      const unJeuneSansSituation = unItemJeune()
+      const unJeuneSansSituationAussi = unItemJeune()
 
       // When
       const actual = [

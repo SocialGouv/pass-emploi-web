@@ -5,9 +5,9 @@ import { GetServerSidePropsContext } from 'next/types'
 
 import renderWithSession from '../renderWithSession'
 
-import { unJeune } from 'fixtures/jeune'
+import { unDetailJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
-import { Jeune } from 'interfaces/jeune'
+import { DetailJeune } from 'interfaces/jeune'
 import SuppressionJeune, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
@@ -52,11 +52,11 @@ describe('Suppression Jeune', () => {
       })
 
       describe("quand le jeune s'est déjà connecté", () => {
-        let jeune: Jeune
+        let jeune: DetailJeune
         let actual: any
         beforeEach(async () => {
           // Given
-          jeune = unJeune({ isActivated: true })
+          jeune = unDetailJeune({ isActivated: true })
           ;(jeunesService.getJeuneDetails as jest.Mock).mockResolvedValue(jeune)
 
           // When
@@ -87,7 +87,7 @@ describe('Suppression Jeune', () => {
       describe("quand le jeune ne s'est jamais connecté", () => {
         it('fournit le jeune à la page', async () => {
           // Given
-          const jeune = unJeune({ isActivated: false })
+          const jeune = unDetailJeune({ isActivated: false })
           ;(jeunesService.getJeuneDetails as jest.Mock).mockResolvedValue(jeune)
 
           // When
@@ -98,7 +98,7 @@ describe('Suppression Jeune', () => {
           // Then
           expect(actual).toEqual({
             props: {
-              jeune,
+              idJeune: jeune.id,
               structureConseiller: 'MILO',
               withoutChat: true,
               pageTitle: 'Suppression - Kenji Jirac',
@@ -129,13 +129,13 @@ describe('Suppression Jeune', () => {
   })
 
   describe('client side', () => {
-    let jeune: Jeune
+    let jeune: DetailJeune
     let jeunesService: JeunesService
     let push: Function
     beforeEach(() => {
-      jeune = unJeune({
-        firstName: 'Nadia',
-        lastName: 'Sanfamiye',
+      jeune = unDetailJeune({
+        prenom: 'Nadia',
+        nom: 'Sanfamiye',
         email: 'nadia.sanfamiye@email.fr',
       })
       jeunesService = mockedJeunesService()
@@ -145,7 +145,7 @@ describe('Suppression Jeune', () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
           <SuppressionJeune
-            jeune={jeune}
+            idJeune={jeune.id}
             withoutChat={true}
             pageTitle=''
             structureConseiller='MILO'

@@ -1,26 +1,36 @@
-import { Jeune, CategorieSituation, EtatSituation } from 'interfaces/jeune'
+import {
+  BaseJeune,
+  CategorieSituation,
+  DetailJeune,
+  EtatSituation,
+  JeuneFromListe,
+} from 'interfaces/jeune'
+
 interface Situation {
   etat: string
   categorie: string
   dateFin?: string
 }
 
-export interface JeuneJson {
+export interface BaseJeuneJson {
   id: string
   firstName: string
   lastName: string
-  creationDate: string
+}
+
+export interface ItemJeuneJson extends BaseJeuneJson {
   lastActivity: string
+  isActivated: boolean
+  isReaffectationTemporaire: boolean
+  situationCourante?: Situation
+}
+
+export interface DetailJeuneJson extends BaseJeuneJson {
+  creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
   email?: string
   urlDossier?: string
-  conseillerPrecedent?: {
-    nom: string
-    prenom: string
-    email?: string
-  }
-  situationCourante?: Situation
   situations?: Situation[]
 }
 
@@ -60,10 +70,36 @@ function toCategorieSituation(categorie?: string): CategorieSituation {
   }
 }
 
-export function jsonToJeune(jeune: JeuneJson): Jeune {
+export function jsonToBaseJeune(jeune: BaseJeuneJson): BaseJeune {
+  return {
+    id: jeune.id,
+    prenom: jeune.firstName,
+    nom: jeune.lastName,
+  }
+}
+
+export function jsonToItemJeune({
+  firstName,
+  lastName,
+  ...jeune
+}: ItemJeuneJson): JeuneFromListe {
   return {
     ...jeune,
+    prenom: firstName,
+    nom: lastName,
     situationCourante: toCategorieSituation(jeune.situationCourante?.categorie),
+  }
+}
+
+export function jsonToDetailJeune({
+  firstName,
+  lastName,
+  ...jeune
+}: DetailJeuneJson): DetailJeune {
+  return {
+    ...jeune,
+    prenom: firstName,
+    nom: lastName,
     situations:
       jeune.situations?.map((situation) => ({
         ...situation,

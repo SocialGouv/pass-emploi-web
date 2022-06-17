@@ -19,7 +19,7 @@ import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, compareActionsDatesDesc } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique, Jeune } from 'interfaces/jeune'
+import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { ActionsService } from 'services/actions.service'
@@ -42,7 +42,7 @@ const ongletProps: { [key in Onglet]: string } = {
 }
 
 interface FicheJeuneProps extends PageProps {
-  jeune: Jeune
+  jeune: DetailJeune
   rdvs: RdvListItem[]
   actions: Action[]
   conseillers: ConseillerHistorique[]
@@ -68,7 +68,7 @@ function FicheJeune({
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
-  const [, setCurrentJeune] = useCurrentJeune()
+  const [, setIdCurrentJeune] = useCurrentJeune()
 
   const listeConseillersReduite = conseillers.slice(0, 5)
   const [conseillersAffiches, setConseillersAffiches] = useState<
@@ -150,8 +150,8 @@ function FicheJeune({
   useMatomo(trackingLabel)
 
   useEffect(() => {
-    setCurrentJeune(jeune)
-  }, [jeune, setCurrentJeune])
+    setIdCurrentJeune(jeune.id)
+  }, [jeune, setIdCurrentJeune])
 
   return (
     <>
@@ -376,8 +376,8 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actions: [...actions].sort(compareActionsDatesDesc),
     conseillers,
-    pageTitle: `Mes jeunes - ${jeune.firstName} ${jeune.lastName}`,
-    pageHeader: `${jeune.firstName} ${jeune.lastName}`,
+    pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
+    pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
   if (context.query.creationRdv)
     props.rdvCreationSuccess = context.query.creationRdv === 'succes'
