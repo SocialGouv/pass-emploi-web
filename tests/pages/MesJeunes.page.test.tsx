@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -19,6 +20,7 @@ import {
 } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import {
+  CategorieSituation,
   compareJeunesByLastName,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
@@ -141,7 +143,7 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         //GIVEN
         jeune = unJeuneAvecActionsNonTerminees({
-          situationCourante: "Demandeur d'emploi",
+          situationCourante: CategorieSituation.DEMANDEUR_D_EMPLOI,
         })
 
         await act(async () => {
@@ -158,14 +160,14 @@ describe('Mes Jeunes', () => {
         })
       })
 
-      it('redirige vers la page de création jeune MILO', () => {
+      it('redirige vers la page de création jeune MILO', async () => {
         // GIVEN
         const addButton = screen.getByRole('button', {
           name: 'Ajouter un jeune',
         })
 
         //WHEN
-        fireEvent.click(addButton)
+        await userEvent.click(addButton)
 
         //THEN
         expect(push).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
@@ -236,14 +238,14 @@ describe('Mes Jeunes', () => {
         })
       })
 
-      it('redirige vers la page de création jeune PE', () => {
+      it('redirige vers la page de création jeune PE', async () => {
         // GIVEN
         const addButton = screen.getByRole('button', {
           name: 'Ajouter un jeune',
         })
 
         //WHEN
-        fireEvent.click(addButton)
+        await userEvent.click(addButton)
 
         //THEN
         expect(push).toHaveBeenCalledWith(

@@ -1,4 +1,5 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -56,7 +57,7 @@ describe('MesRendezvous', () => {
           name: 'Rendez-vous passés',
         })
 
-        await fireEvent.click(oldRdvsButton)
+        await userEvent.click(oldRdvsButton)
 
         const table = screen.getByRole('table')
 
@@ -99,7 +100,7 @@ describe('MesRendezvous', () => {
         })
 
         // When
-        await act(async () => fermerMessage.click())
+        await userEvent.click(fermerMessage)
 
         // Then
         expect(() =>
@@ -141,7 +142,7 @@ describe('MesRendezvous', () => {
         })
 
         // When
-        await act(async () => fermerMessage.click())
+        await userEvent.click(fermerMessage)
 
         // Then
         expect(() =>

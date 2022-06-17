@@ -1,4 +1,5 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import renderWithSession from '../renderWithSession'
@@ -84,16 +85,14 @@ describe('<ChatRoom />', () => {
           .closest('button')
 
         // When
-        await act(async () => goToConversation!.click())
+        await userEvent.click(goToConversation!)
       })
 
       it('affiche la conversation du jeune', async () => {
         // Then
-        await waitFor(() =>
-          expect(
-            screen.getByText(`conversation-${jeuneSelectionne.id}`)
-          ).toBeInTheDocument()
-        )
+        expect(
+          screen.getByText(`conversation-${jeuneSelectionne.id}`)
+        ).toBeInTheDocument()
       })
 
       it("n'affiche pas les autres chats", async () => {

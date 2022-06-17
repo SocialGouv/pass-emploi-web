@@ -1,4 +1,5 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -135,9 +136,7 @@ describe('Reaffectation', () => {
         })
 
         // WHEN
-        await act(async () => {
-          submitRecherche.click()
-        })
+        await userEvent.click(submitRecherche)
       })
 
       it('récupère les jeunes du conseiller', async () => {
@@ -191,14 +190,14 @@ describe('Reaffectation', () => {
               target: { value: emailConseillerDestination },
             })
           })
-          await act(async () =>
-            screen.getByText(jeunes[0].firstName, { exact: false }).click()
+          await userEvent.click(
+            screen.getByText(jeunes[0].firstName, { exact: false })
           )
-          await act(async () =>
-            screen.getByText(jeunes[2].firstName, { exact: false }).click()
+          await userEvent.click(
+            screen.getByText(jeunes[2].firstName, { exact: false })
           )
           await act(async () => typeReaffectationRadio.click())
-          await act(async () => submitReaffecter.click())
+          await userEvent.click(submitReaffecter)
 
           // THEN
           expect(jeunesService.reaffecter).toHaveBeenCalledWith(

@@ -1,4 +1,5 @@
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -468,9 +469,7 @@ describe('EditionRdv', () => {
         describe('quand le formulaire est validé', () => {
           it('crée un rendez-vous de type Generique', async () => {
             // When
-            await act(async () => {
-              buttonValider.click()
-            })
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
@@ -502,9 +501,7 @@ describe('EditionRdv', () => {
             })
 
             // When
-            await act(async () => {
-              buttonValider.click()
-            })
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
@@ -528,9 +525,7 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            await act(async () => {
-              buttonValider.click()
-            })
+            await userEvent.click(buttonValider)
 
             // Then
             expect(push).toHaveBeenCalledWith(
@@ -550,9 +545,7 @@ describe('EditionRdv', () => {
 
           // When
           for (const bouton of enleverJeunes) {
-            await act(async () => {
-              bouton.click()
-            })
+            await userEvent.click(bouton)
           }
 
           // Then
@@ -574,26 +567,21 @@ describe('EditionRdv', () => {
 
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
           // When
-          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
+          await userEvent.selectOptions(selectType, 'AUTRE')
 
           // Then
-          await waitFor(() => {
-            expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
-          })
+          expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
         })
 
         it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
-          let inputTypePrecision: HTMLInputElement
+          await userEvent.selectOptions(selectType, 'AUTRE')
+          const inputTypePrecision: HTMLInputElement =
+            screen.getByLabelText('* Préciser')
 
           // When
-          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-          inputTypePrecision = screen.getByLabelText('* Préciser')
-
-          await waitFor(() => {
-            expect(inputTypePrecision).toBeInTheDocument()
-            fireEvent.blur(inputTypePrecision)
-          })
+          expect(inputTypePrecision).toBeInTheDocument()
+          fireEvent.blur(inputTypePrecision)
 
           // Then
           expect(inputTypePrecision.value).toEqual('')
@@ -694,7 +682,7 @@ describe('EditionRdv', () => {
         //   const button = screen.getByText('Quitter la création du rendez-vous')
         //
         //   // When
-        //   await act(async () => button.click())
+        //   await userEvent.click(button)
         //
         //   // Then
         //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -712,7 +700,7 @@ describe('EditionRdv', () => {
           const button = screen.getByText('Annuler')
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(button).not.toHaveAttribute('href')
@@ -802,9 +790,7 @@ describe('EditionRdv', () => {
           const deleteButtonFromPage = screen.getByText('Supprimer')
 
           // When
-          await act(async () => {
-            deleteButtonFromPage.click()
-          })
+          await userEvent.click(deleteButtonFromPage)
         })
 
         it('affiche une modale avec les bonnes informations', async () => {
@@ -822,9 +808,7 @@ describe('EditionRdv', () => {
           const deleteButtonFromModal = screen.getByText('Confirmer')
 
           // When
-          await act(async () => {
-            deleteButtonFromModal.click()
-          })
+          await userEvent.click(deleteButtonFromModal)
 
           // Then
           expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
@@ -975,7 +959,7 @@ describe('EditionRdv', () => {
         //   )
         //
         //   // When
-        //   await act(async () => button.click())
+        //   await userEvent.click(button)
         //
         //   // Then
         //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -993,7 +977,7 @@ describe('EditionRdv', () => {
           const button = screen.getByText('Annuler')
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(button).not.toHaveAttribute('href')
@@ -1008,7 +992,7 @@ describe('EditionRdv', () => {
         describe('quand le formulaire est validé', () => {
           it('modifie le rendez-vous', async () => {
             // When
-            await act(async () => buttonValider.click())
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
@@ -1032,7 +1016,7 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            await act(async () => buttonValider.click())
+            await userEvent.click(buttonValider)
 
             // Then
             expect(push).toHaveBeenCalledWith(
@@ -1144,9 +1128,7 @@ describe('EditionRdv', () => {
       it("contient un message spécial lors de la suppression pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
         // When
         const deleteButtonFromPage = screen.getByText('Supprimer')
-        await act(async () => {
-          deleteButtonFromPage.click()
-        })
+        await userEvent.click(deleteButtonFromPage)
 
         // Then
         expect(
@@ -1169,7 +1151,7 @@ describe('EditionRdv', () => {
           const buttonSubmit = screen.getByText('Envoyer')
 
           // When
-          await act(async () => buttonSubmit.click())
+          await userEvent.click(buttonSubmit)
         })
 
         it('affiche une modal de verification', () => {
@@ -1189,9 +1171,7 @@ describe('EditionRdv', () => {
           })
 
           // When
-          await act(async () => {
-            boutonConfirmer.click()
-          })
+          await userEvent.click(boutonConfirmer)
 
           // Then
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(

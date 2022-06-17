@@ -1,4 +1,5 @@
-import { RenderResult, screen, waitFor } from '@testing-library/react'
+import { RenderResult, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -56,16 +57,14 @@ describe("Page Détail d'une action d'un jeune", () => {
         const statutRadio = screen.getByText('Commencée')
 
         // When
-        statutRadio.click()
+        await userEvent.click(statutRadio)
 
         // Then
-        await waitFor(() => {
-          expect(actionsService.updateAction).toHaveBeenCalledWith(
-            action.id,
-            StatutAction.Commencee,
-            'accessToken'
-          )
-        })
+        expect(actionsService.updateAction).toHaveBeenCalledWith(
+          action.id,
+          StatutAction.Commencee,
+          'accessToken'
+        )
       })
     })
 

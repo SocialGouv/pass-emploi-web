@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -73,7 +73,7 @@ describe('Recherche', () => {
       await userEvent.type(inputSearch, 'muñoz')
 
       //WHEN
-      fireEvent.click(submitButton)
+      await userEvent.click(submitButton)
 
       const result = screen.getByRole('row', {
         name: /muñoz/i,
@@ -90,12 +90,10 @@ describe('Recherche', () => {
       await userEvent.type(inputSearch, "D'Aböville-Muñoz")
 
       //WHEN
-      fireEvent.click(submitButton)
+      await userEvent.click(submitButton)
 
       //THEN
-      await waitFor(() => {
-        expect(result).toBeInTheDocument()
-      })
+      expect(result).toBeInTheDocument()
     })
     it("quand on recherche un nom composé d'une apostrophe", async () => {
       const result = screen.getByRole('row', {
@@ -105,12 +103,10 @@ describe('Recherche', () => {
       await userEvent.type(inputSearch, 'D aböville-Muñoz')
 
       //WHEN
-      fireEvent.click(submitButton)
+      await userEvent.click(submitButton)
 
       //THEN
-      await waitFor(() => {
-        expect(result).toBeInTheDocument()
-      })
+      expect(result).toBeInTheDocument()
     })
   })
 })

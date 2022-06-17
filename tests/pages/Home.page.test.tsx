@@ -1,8 +1,8 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { ConseillerProvider } from '../../utils/conseiller/conseillerContext'
 import renderWithSession from '../renderWithSession'
 
 import {
@@ -16,6 +16,7 @@ import Home, { getServerSideProps } from 'pages/index'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -82,9 +83,7 @@ describe('Home', () => {
         const annuler = screen.getByRole('button', { name: 'Annuler' })
 
         // When
-        await act(async () => {
-          annuler.click()
-        })
+        await userEvent.click(annuler)
 
         // Then
         expect(replace).toHaveBeenCalledWith('/mes-jeunes')
@@ -100,9 +99,7 @@ describe('Home', () => {
 
         // When
         fireEvent.input(searchAgence, { target: { value: agence.nom } })
-        await act(async () => {
-          submit.click()
-        })
+        await userEvent.click(submit)
 
         // Then
         expect(conseillerService.modifierAgence).toHaveBeenCalledWith(
@@ -122,9 +119,7 @@ describe('Home', () => {
 
         // When
         fireEvent.input(searchAgence, { target: { value: 'pouet' } })
-        await act(async () => {
-          submit.click()
-        })
+        await userEvent.click(submit)
 
         // Then
         expect(
@@ -147,9 +142,7 @@ describe('Home', () => {
           const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
             name: /n’apparaît pas/,
           })
-          await act(async () => {
-            checkAgenceNonTrouvee.click()
-          })
+          await userEvent.click(checkAgenceNonTrouvee)
 
           agenceLibre = screen.getByRole('textbox', {
             name: /Saisir le nom de votre agence/,
@@ -160,9 +153,7 @@ describe('Home', () => {
           // When
           fireEvent.input(agenceLibre, { target: { value: 'Agence libre' } })
           const submit = screen.getByRole('button', { name: 'Ajouter' })
-          await act(async () => {
-            submit.click()
-          })
+          await userEvent.click(submit)
 
           // Then
           expect(conseillerService.modifierAgence).toHaveBeenCalledWith(
@@ -181,9 +172,7 @@ describe('Home', () => {
         it("prévient si l'agence n'est pas renseignée", async () => {
           // When
           const submit = screen.getByRole('button', { name: 'Ajouter' })
-          await act(async () => {
-            submit.click()
-          })
+          await userEvent.click(submit)
 
           // Then
           expect(screen.getByText('Saisir une agence')).toBeInTheDocument()
@@ -215,9 +204,7 @@ describe('Home', () => {
 
         // When
         fireEvent.input(searchMission, { target: { value: 'pouet' } })
-        await act(async () => {
-          submit.click()
-        })
+        await userEvent.click(submit)
 
         // Then
         expect(
@@ -231,9 +218,7 @@ describe('Home', () => {
         const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
           name: /Ma Mission locale n’apparaît pas/,
         })
-        await act(async () => {
-          checkAgenceNonTrouvee.click()
-        })
+        await userEvent.click(checkAgenceNonTrouvee)
 
         // Then
         expect(

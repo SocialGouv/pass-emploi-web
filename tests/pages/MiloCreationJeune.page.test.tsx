@@ -1,4 +1,5 @@
-import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
+import { fireEvent, RenderResult, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import renderWithSession from '../renderWithSession'
 
@@ -32,7 +33,7 @@ describe('MiloCreationJeune', () => {
       expect(screen.getByLabelText('Numéro de dossier')).toBeInTheDocument()
     })
 
-    it("quand on soumet la recherche avec une valeur vide, affiche un message d'erreur", () => {
+    it("quand on soumet la recherche avec une valeur vide, affiche un message d'erreur", async () => {
       //GIVEN
       const submitButton = screen.getByRole('button', {
         name: 'Valider le numéro',
@@ -41,7 +42,7 @@ describe('MiloCreationJeune', () => {
       fireEvent.change(inputSearch, { target: { value: '' } })
 
       //WHEN
-      fireEvent.click(submitButton)
+      await userEvent.click(submitButton)
 
       //THEN
       expect(
@@ -95,9 +96,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      await act(async () => {
-        fireEvent.click(createCompteButton)
-      })
+      await userEvent.click(createCompteButton)
 
       //THEN
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
@@ -160,9 +159,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      await act(async () => {
-        fireEvent.click(createCompteButton)
-      })
+      await userEvent.click(createCompteButton)
 
       //THEN
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)

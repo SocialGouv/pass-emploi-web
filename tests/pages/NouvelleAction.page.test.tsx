@@ -1,4 +1,5 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -148,10 +149,10 @@ describe('NouvelleAction', () => {
           })
         })
 
-        it("requiert la sélection d'une action", () => {
+        it("requiert la sélection d'une action", async () => {
           // When
           fireEvent.change(selectAction, { target: { value: '' } })
-          submit.click()
+          await userEvent.click(submit)
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
@@ -159,9 +160,9 @@ describe('NouvelleAction', () => {
         })
 
         describe('formulaire valide', () => {
-          beforeEach(() => {
+          beforeEach(async () => {
             // When
-            submit.click()
+            await userEvent.click(submit)
           })
 
           it("crée l'action", () => {
@@ -194,7 +195,7 @@ describe('NouvelleAction', () => {
         const switchTab = screen.getByRole('tab', {
           name: 'Action personnalisée',
         })
-        await act(async () => switchTab.click())
+        await userEvent.click(switchTab)
       })
 
       it("contient un champ pour saisir l'intitule de l'action", () => {
@@ -230,10 +231,10 @@ describe('NouvelleAction', () => {
           })
         })
 
-        it("requiert l'intitulé de l'action", () => {
+        it("requiert l'intitulé de l'action", async () => {
           // When
           fireEvent.change(intitule, { target: { value: '' } })
-          submit.click()
+          await userEvent.click(submit)
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
@@ -241,9 +242,9 @@ describe('NouvelleAction', () => {
         })
 
         describe('formulaire valide', () => {
-          beforeEach(() => {
+          beforeEach(async () => {
             // When
-            submit.click()
+            await userEvent.click(submit)
           })
 
           it("crée l'action", () => {

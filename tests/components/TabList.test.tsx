@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
+import { fireEvent, render, screen, act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
@@ -42,9 +42,9 @@ describe('Tab & TabList', () => {
         expect(getTab()).toHaveAttribute('aria-controls', 'controlled-id')
       })
 
-      it('reacts to selection', () => {
+      it('reacts to selection', async () => {
         // When
-        getTab().click()
+        await userEvent.click(getTab())
 
         // Then
         expect(onSelectTab).toHaveBeenCalled()
