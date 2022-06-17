@@ -24,6 +24,7 @@ export class FichiersApiService implements FichiersService {
       formData.append('jeunesIds', idJeune)
     })
     formData.append('fichier', fichier)
+    formData.append('nom', fichier.name)
 
     return this.apiClient.postFile(`/fichiers`, formData, accessToken)
   }
