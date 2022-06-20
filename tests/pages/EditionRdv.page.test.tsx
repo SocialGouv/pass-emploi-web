@@ -312,7 +312,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la date', () => {
           // Then
           const inputDate = within(etape).getByLabelText(
-            '* Date (format : JJ/MM/AAAA)'
+            '* Date (format : jj/mm/aaaa)'
           )
           expect(inputDate).toBeInTheDocument()
           expect(inputDate).toHaveAttribute('required', '')
@@ -322,7 +322,7 @@ describe('EditionRdv', () => {
         it("contient un champ pour choisir l'horaire", () => {
           // Then
           const inputHoraire = within(etape).getByLabelText(
-            '* Heure (format : HH:MM)'
+            '* Heure (format : hh:mm)'
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
@@ -332,7 +332,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la durée', () => {
           // Then
           const inputDuree = within(etape).getByLabelText(
-            '* Durée (format : HH:MM)'
+            '* Durée (format : hh:mm)'
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
@@ -437,9 +437,9 @@ describe('EditionRdv', () => {
           selectType = screen.getByRole('combobox', {
             name: 'Type',
           })
-          inputDate = screen.getByLabelText('* Date (format : JJ/MM/AAAA)')
-          inputHoraire = screen.getByLabelText('* Heure (format : HH:MM)')
-          inputDuree = screen.getByLabelText('* Durée (format : HH:MM)')
+          inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
+          inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
+          inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
           inputCommentaires = screen.getByRole('textbox', {
             name: /Commentaire à destination des jeunes/,
           })
@@ -613,7 +613,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA"
+              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
             )
           ).toBeInTheDocument()
         })
@@ -627,7 +627,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA"
+              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
             )
           ).toBeInTheDocument()
         })
@@ -655,7 +655,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ heure n'est pas valide. Veuillez respecter le format HH:MM"
+              "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm"
             )
           ).toBeInTheDocument()
         })
@@ -683,7 +683,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ durée n'est pas valide. Veuillez respecter le format HH:MM"
+              "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm"
             )
           ).toBeInTheDocument()
         })
@@ -941,10 +941,10 @@ describe('EditionRdv', () => {
             name: 'Modalité',
           })
           const inputDate = screen.getByLabelText(
-            '* Date (format : JJ/MM/AAAA)'
+            '* Date (format : jj/mm/aaaa)'
           )
-          const inputHoraire = screen.getByLabelText('* Heure (format : HH:MM)')
-          const inputDuree = screen.getByLabelText('* Durée (format : HH:MM)')
+          const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
+          const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
           const inputCommentaires = screen.getByRole('textbox', {
             name: /Commentaire à destination des jeunes/,
           })

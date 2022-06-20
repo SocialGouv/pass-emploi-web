@@ -158,7 +158,7 @@ export function EditionRdvForm({
       setDate({
         ...date,
         error:
-          "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA",
+          "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa",
       })
     }
   }
@@ -178,7 +178,7 @@ export function EditionRdvForm({
       setHoraire({
         ...horaire,
         error:
-          "Le champ heure n'est pas valide. Veuillez respecter le format HH:MM",
+          "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm",
       })
     }
   }
@@ -198,7 +198,7 @@ export function EditionRdvForm({
       setDuree({
         ...duree,
         error:
-          "Le champ durée n'est pas valide. Veuillez respecter le format HH:MM",
+          "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm",
       })
     }
   }
@@ -265,8 +265,6 @@ export function EditionRdvForm({
       return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."
     }
   }
-
-  // JSX
 
   return (
     <form onSubmit={handleSoumettreRdv}>
@@ -404,7 +402,7 @@ export function EditionRdvForm({
 
         <label htmlFor='date' className='text-base-medium mb-2'>
           <span aria-hidden={true}>* </span>Date
-          <span className='text-s-regular'> (format : JJ/MM/AAAA)</span>
+          <span className='text-s-regular'> (format : jj/mm/aaaa)</span>
         </label>
         {date.error && (
           <InputError id='date-error' className='mb-2'>
@@ -428,7 +426,7 @@ export function EditionRdvForm({
 
         <label htmlFor='horaire' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Heure
-          <span className='text-s-regular'> (format : HH:MM)</span>
+          <span className='text-s-regular'> (format : hh:mm)</span>
         </label>
         {horaire.error && (
           <InputError id='horaire-error' className='mb-2'>
@@ -454,7 +452,7 @@ export function EditionRdvForm({
 
         <label htmlFor='duree' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Durée
-          <span className='text-s-regular'> (format : HH:MM)</span>
+          <span className='text-s-regular'> (format : hh:mm)</span>
         </label>
         {duree.error && (
           <InputError id='duree-error' className='mb-2'>
