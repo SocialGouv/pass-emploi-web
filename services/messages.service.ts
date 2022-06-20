@@ -214,11 +214,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       }),
     ])
 
+    const avecPieceJointe = Boolean(infoPieceJointe)
     await Promise.all([
       this.notifierNouveauMessage(conseiller.id, [jeuneChat.id], accessToken),
       this.evenementNouveauMessage(
         conseiller.structure,
         conseiller.id,
+        avecPieceJointe,
         accessToken
       ),
     ])
@@ -286,12 +288,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   private async evenementNouveauMessage(
     structure: string,
     idConseiller: string,
+    avecPieceJointe: boolean,
     accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
       '/evenements',
       {
-        type: 'MESSAGE_ENVOYE',
+        type: avecPieceJointe ? 'MESSAGE_ENVOYE_PJ' : 'MESSAGE_ENVOYE',
         emetteur: {
           type: UserType.CONSEILLER,
           structure: structure,

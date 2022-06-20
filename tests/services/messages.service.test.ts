@@ -233,66 +233,113 @@ describe('MessagesFirebaseAndApiService', () => {
       newMessage = 'nouveauMessage'
       // When
       conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
-      await messagesService.sendNouveauMessage({
-        conseiller,
-        jeuneChat,
-        newMessage,
-        infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
-        accessToken,
-        cleChiffrement,
+    })
+
+    describe('sans piece jointe', () => {
+      beforeEach(async () => {
+        await messagesService.sendNouveauMessage({
+          conseiller,
+          jeuneChat,
+          newMessage,
+          accessToken,
+          cleChiffrement,
+        })
       })
-    })
-
-    it('adds a new message to firebase', async () => {
-      // Then
-      expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-        idChat: jeuneChat.chatId,
-        idConseiller: conseiller.id,
-        message: {
-          encryptedText: `Encrypted: ${newMessage}`,
-          iv: `IV: ${newMessage}`,
-        },
-        infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
-        date: now,
-      })
-    })
-
-    it('updates chat in firebase', async () => {
-      // Then
-      expect(firebaseClient.updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
-        lastMessageContent: `Encrypted: ${newMessage}`,
-        lastMessageIv: `IV: ${newMessage}`,
-        lastMessageSentAt: now,
-        lastMessageSentBy: 'conseiller',
-        newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
-        seenByConseiller: true,
-        lastConseillerReading: now,
-      })
-    })
-
-    it('notifies of a new message', async () => {
-      // Then
-      expect(apiClient.post).toHaveBeenCalledWith(
-        `/conseillers/${conseiller.id}/jeunes/notify-messages`,
-        { idsJeunes: [jeuneChat.id] },
-        accessToken
-      )
-    })
-
-    it('tracks new message', async () => {
-      // Then
-      expect(apiClient.post).toHaveBeenCalledWith(
-        '/evenements',
-        {
-          type: 'MESSAGE_ENVOYE',
-          emetteur: {
-            type: 'CONSEILLER',
-            structure: conseiller.structure,
-            id: conseiller.id,
+      it('adds a new message to firebase', async () => {
+        // Then
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+          idChat: jeuneChat.chatId,
+          idConseiller: conseiller.id,
+          message: {
+            encryptedText: `Encrypted: ${newMessage}`,
+            iv: `IV: ${newMessage}`,
           },
-        },
-        accessToken
-      )
+          date: now,
+        })
+      })
+
+      it('updates chat in firebase', async () => {
+        // Then
+        expect(firebaseClient.updateChat).toHaveBeenCalledWith(
+          jeuneChat.chatId,
+          {
+            lastMessageContent: `Encrypted: ${newMessage}`,
+            lastMessageIv: `IV: ${newMessage}`,
+            lastMessageSentAt: now,
+            lastMessageSentBy: 'conseiller',
+            newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
+            seenByConseiller: true,
+            lastConseillerReading: now,
+          }
+        )
+      })
+
+      it('notifies of a new message', async () => {
+        // Then
+        expect(apiClient.post).toHaveBeenCalledWith(
+          `/conseillers/${conseiller.id}/jeunes/notify-messages`,
+          { idsJeunes: [jeuneChat.id] },
+          accessToken
+        )
+      })
+
+      it('tracks new message', async () => {
+        // Then
+        expect(apiClient.post).toHaveBeenCalledWith(
+          '/evenements',
+          {
+            type: 'MESSAGE_ENVOYE',
+            emetteur: {
+              type: 'CONSEILLER',
+              structure: conseiller.structure,
+              id: conseiller.id,
+            },
+          },
+          accessToken
+        )
+      })
+    })
+
+    describe('avec piece jointe', () => {
+      beforeEach(async () => {
+        await messagesService.sendNouveauMessage({
+          conseiller,
+          jeuneChat,
+          newMessage,
+          infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
+          accessToken,
+          cleChiffrement,
+        })
+      })
+      it('adds a new message to firebase', async () => {
+        // Then
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+          idChat: jeuneChat.chatId,
+          idConseiller: conseiller.id,
+          message: {
+            encryptedText: `Encrypted: ${newMessage}`,
+            iv: `IV: ${newMessage}`,
+          },
+          infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
+          date: now,
+        })
+      })
+
+      it('tracks new message', async () => {
+        // Then
+        expect(apiClient.post).toHaveBeenCalledWith(
+          '/evenements',
+          {
+            type: 'MESSAGE_ENVOYE_PJ',
+            emetteur: {
+              type: 'CONSEILLER',
+              structure: conseiller.structure,
+              id: conseiller.id,
+            },
+          },
+          accessToken
+        )
+      })
     })
   })
 
