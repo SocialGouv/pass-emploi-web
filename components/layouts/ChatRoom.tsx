@@ -61,7 +61,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
       {!currentChat && (
         <>
-          <h2 className={`text-m-medium text-primary text-center m-3`}>
+          <h2 className={`text-m-medium text-primary text-left m-3`}>
             Messagerie
           </h2>
           <span className='border-b border-grey_500 mx-4 mb-6'></span>

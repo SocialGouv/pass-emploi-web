@@ -76,7 +76,16 @@
 
 @media screen and (max-width: theme('screens.layout_s')) {
   .sidebar {
-    width: 61px;
+    --sidebar-width: 64px;
+  }
+}
+
+@media screen and (max-width: theme('screens.layout_base.max')) {
+  .sidebar {
+    padding: 24px 12px;
+  }
+  .content {
+    padding: 1rem;
   }
 }
 
@@ -90,12 +99,8 @@
   .sidebar a {
     justify-content: center;
   }
-
   .sidebar svg {
     margin-right: 0;
-  }
-  .content {
-    padding: 1.5rem;
   }
 }
 
