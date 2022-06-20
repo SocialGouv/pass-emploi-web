@@ -27,7 +27,7 @@ import { Message, TypeMessage } from 'interfaces/message'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
-type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE' | 'MESSAGE_PJ'
+type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE' | 'MESSAGE_PJ' | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 interface FirebaseMessage {
   creationDate: Timestamp
   sentBy: string
@@ -388,6 +388,7 @@ function firebaseToMessageType(
 ): TypeMessage {
   switch (type) {
     case 'NOUVEAU_CONSEILLER':
+    case 'NOUVEAU_CONSEILLER_TEMPORAIRE':
       return TypeMessage.NOUVEAU_CONSEILLER
     case 'MESSAGE_PJ':
       return TypeMessage.MESSAGE_PJ
