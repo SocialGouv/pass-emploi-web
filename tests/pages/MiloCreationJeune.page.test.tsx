@@ -1,4 +1,4 @@
-import { fireEvent, RenderResult, screen } from '@testing-library/react'
+import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import renderWithSession from '../renderWithSession'
@@ -96,7 +96,10 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      await userEvent.click(createCompteButton)
+      // FIXME use userEvent.click
+      await act(async () => {
+        createCompteButton.click()
+      })
 
       //THEN
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
