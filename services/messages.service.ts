@@ -2,7 +2,7 @@ import { ApiClient } from 'clients/api.client'
 import { AddMessage, FirebaseClient } from 'clients/firebase.client'
 import { UserStructure, UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
-import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
 import {
   ChatCredentials,
   Message,
@@ -49,7 +49,7 @@ export interface MessagesService {
 
   observeJeuneChat(
     idConseiller: string,
-    jeune: Jeune,
+    jeune: BaseJeune & { isActivated: boolean },
     cleChiffrement: string,
     updateChat: (chat: JeuneChat) => void
   ): () => void
@@ -104,9 +104,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   observeJeuneChat(
     idConseiller: string,
-    jeune: Jeune,
+    jeune: BaseJeune & { isActivated: boolean },
     cleChiffrement: string,
-    onJeuneChat: (chat: JeuneChat) => void
+    updateChat: (chat: JeuneChat) => void
   ): () => void {
     return this.firebaseClient.findAndObserveChatDuJeune(
       idConseiller,
@@ -126,7 +126,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
             : chat.lastMessageContent,
         }
 
-        onJeuneChat(newJeuneChat)
+        updateChat(newJeuneChat)
       }
     )
   }

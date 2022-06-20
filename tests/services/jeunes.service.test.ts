@@ -1,18 +1,17 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import { unConseiller } from 'fixtures/conseiller'
 import {
   desConseillersJeune,
   desConseillersJeuneJson,
-  desJeunes,
-  desJeunesJson,
-  unJeune,
-  unJeuneJson,
+  desItemsJeunes,
+  desItemsJeunesJson,
+  unDetailJeune,
+  unDetailJeuneJson,
 } from 'fixtures/jeune'
-import { Jeune } from 'interfaces/jeune'
+import { JeuneFromListe } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { RequestError } from 'utils/httpClient'
+import { FakeApiClient } from '../utils/fakeApiClient'
 
 describe('JeunesApiService', () => {
   let apiClient: ApiClient
@@ -28,7 +27,7 @@ describe('JeunesApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
-      const jeunesJson = desJeunesJson()
+      const jeunesJson = desItemsJeunesJson()
       ;(apiClient.get as jest.Mock).mockResolvedValue(jeunesJson)
 
       // When
@@ -42,7 +41,7 @@ describe('JeunesApiService', () => {
         `/conseillers/${idConseiller}/jeunes`,
         accessToken
       )
-      expect(actual).toEqual(desJeunes())
+      expect(actual).toEqual(desItemsJeunes())
     })
   })
 
@@ -50,8 +49,8 @@ describe('JeunesApiService', () => {
     const email = 'conseiller@email.com'
     const accessToken = 'accessToken'
     const conseiller = unConseiller()
-    const jeunes = desJeunesJson()
-    let actual: { idConseiller: string; jeunes: Jeune[] }
+    const jeunes = desItemsJeunesJson()
+    let actual: { idConseiller: string; jeunes: JeuneFromListe[] }
     beforeEach(async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockImplementation((url) => {
@@ -82,7 +81,7 @@ describe('JeunesApiService', () => {
       )
       expect(actual).toEqual({
         idConseiller: conseiller.id,
-        jeunes: desJeunes(),
+        jeunes: desItemsJeunes(),
       })
     })
   })
@@ -91,7 +90,7 @@ describe('JeunesApiService', () => {
     it('renvoie les détails du jeune', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue(
-        unJeuneJson({
+        unDetailJeuneJson({
           urlDossier: 'url-dossier',
         })
       )
@@ -108,7 +107,7 @@ describe('JeunesApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(
-        unJeune({
+        unDetailJeune({
           urlDossier: 'url-dossier',
         })
       )

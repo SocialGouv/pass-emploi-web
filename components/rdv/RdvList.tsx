@@ -6,7 +6,6 @@ import LocationIcon from '../../assets/icons/location.svg'
 import { HeaderCell } from 'components/rdv/HeaderCell'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { RdvTypeTag } from 'components/ui/RdvTypeTag'
-import { Jeune } from 'interfaces/jeune'
 import { RdvListItem } from 'interfaces/rdv'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 

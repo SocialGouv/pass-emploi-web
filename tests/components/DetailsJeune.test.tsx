@@ -2,12 +2,12 @@ import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { unJeune } from 'fixtures/jeune'
+import { unDetailJeune } from 'fixtures/jeune'
 
 describe('<DetailsJeune>', () => {
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     // Given
-    const jeune = unJeune({
+    const jeune = unDetailJeune({
       isActivated: true,
       urlDossier: 'https://dossier-milo.fr',
     })
@@ -29,7 +29,7 @@ describe('<DetailsJeune>', () => {
 
   it("n'affiche pas le mail si le jeune n'en a pas", () => {
     // Given
-    const jeune = unJeune()
+    const jeune = unDetailJeune()
     delete jeune.email
 
     // When
@@ -41,7 +41,7 @@ describe('<DetailsJeune>', () => {
 
   it("n'affiche pas le lien vers le dossier si le jeune n'en a pas", () => {
     // Given
-    const jeune = unJeune({ urlDossier: undefined })
+    const jeune = unDetailJeune({ urlDossier: undefined })
 
     // When
     render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)

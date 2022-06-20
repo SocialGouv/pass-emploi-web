@@ -28,7 +28,7 @@ describe('ActionsApiService', () => {
         if (url.includes(action.id))
           return {
             ...uneActionJson({ id: action.id, status: 'not_started' }),
-            jeune: 'jeune',
+            jeune: { id: 'jeune-1', firstName: 'Nadia', lastName: 'Sanfamiye' },
           }
       })
 
@@ -36,7 +36,10 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
     })
 
     it('renvoie une action commencée', async () => {
@@ -46,7 +49,7 @@ describe('ActionsApiService', () => {
         if (url.includes(action.id))
           return {
             ...uneActionJson({ id: action.id, status: 'in_progress' }),
-            jeune: 'jeune',
+            jeune: { id: 'jeune-1', firstName: 'Nadia', lastName: 'Sanfamiye' },
           }
       })
 
@@ -54,7 +57,10 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
     })
 
     it('renvoie une action terminée', async () => {
@@ -64,7 +70,7 @@ describe('ActionsApiService', () => {
         if (url === `/actions/${action.id}`)
           return {
             ...uneActionJson({ id: action.id, status: 'done' }),
-            jeune: 'jeune',
+            jeune: { id: 'jeune-1', firstName: 'Nadia', lastName: 'Sanfamiye' },
           }
       })
 
@@ -72,7 +78,10 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
     })
 
     it('ne renvoie pas une action inexistante', async () => {

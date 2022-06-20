@@ -4,11 +4,11 @@ import EmailIcon from '../../assets/icons/email.svg'
 
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { CategorieSituation, Jeune } from 'interfaces/jeune'
+import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
-  jeune: Jeune
+  jeune: DetailJeune
   withSituations?: boolean
   onDossierMiloClick: () => void
 }

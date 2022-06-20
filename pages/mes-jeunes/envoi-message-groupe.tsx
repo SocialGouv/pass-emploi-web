@@ -10,7 +10,7 @@ import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -24,7 +24,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EnvoiMessageGroupeProps extends PageProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   returnTo: string
 }
 
@@ -247,7 +247,7 @@ export const getServerSideProps: GetServerSideProps<
     referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   return {
     props: {
-      jeunes: [...jeunes].sort(compareJeunesByLastName),
+      jeunes: [...jeunes].sort(compareJeunesByNom),
       withoutChat: true,
       pageTitle: 'Message multi-destinataires',
       returnTo: previousUrl,

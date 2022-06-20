@@ -12,7 +12,7 @@ import SuccessMessage from 'components/ui/SuccessMessage'
 import { TotalActions } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
-  compareJeunesByLastName,
+  compareJeunesByNom,
   JeuneAvecInfosComplementaires,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
@@ -104,9 +104,7 @@ function MesJeunes({
       const querySplit = query.toLowerCase().split(/-|\s/)
       if (query) {
         const jeunesFiltresResult = jeunes.filter((jeune) => {
-          const jeuneLastName = jeune.lastName
-            .replace(/’/i, "'")
-            .toLocaleLowerCase()
+          const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
           for (const item of querySplit) {
             if (jeuneLastName.includes(item)) {
               return true
@@ -285,7 +283,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   const props: MesJeunesProps = {
     structureConseiller: user.structure,
     conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
-      compareJeunesByLastName
+      compareJeunesByNom
     ),
     isFromEmail: Boolean(context.query?.source),
     pageTitle: 'Mes jeunes',

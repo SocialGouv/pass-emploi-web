@@ -8,7 +8,6 @@ import InformationMessage from 'components/InformationMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { UserStructure } from 'interfaces/conseiller'
-import { Jeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -19,12 +18,12 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface SuppressionJeuneProps extends PageProps {
-  jeune: Jeune
+  idJeune: string
   structureConseiller: string
 }
 
 function SuppressionJeune({
-  jeune,
+  idJeune,
   structureConseiller,
 }: SuppressionJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
@@ -38,7 +37,7 @@ function SuppressionJeune({
   async function supprimerJeune() {
     setLoading(true)
     try {
-      await jeunesService.supprimerJeune(jeune.id, session!.accessToken)
+      await jeunesService.supprimerJeune(idJeune, session!.accessToken)
       await router.push('/mes-jeunes?suppression=succes')
     } catch (e) {
       setTracking('Détail jeune - Erreur suppr. compte')
@@ -98,7 +97,7 @@ function SuppressionJeune({
         <div className='mt-8 flex'>
           {!loading && (
             <ButtonLink
-              href={`/mes-jeunes/${jeune.id}`}
+              href={`/mes-jeunes/${idJeune}`}
               style={ButtonStyle.SECONDARY}
             >
               Annuler
@@ -149,11 +148,11 @@ export const getServerSideProps: GetServerSideProps<
   }
   return {
     props: {
-      jeune,
+      idJeune: jeune.id,
       structureConseiller: user.structure,
       withoutChat: true,
-      pageTitle: `Suppression - ${jeune.firstName} ${jeune.lastName}`,
-      pageHeader: `Suppression de ${jeune.firstName} ${jeune.lastName}`,
+      pageTitle: `Suppression - ${jeune.prenom} ${jeune.nom}`,
+      pageHeader: `Suppression de ${jeune.prenom} ${jeune.nom}`,
       returnTo: `/mes-jeunes/${jeune.id}`,
     },
   }

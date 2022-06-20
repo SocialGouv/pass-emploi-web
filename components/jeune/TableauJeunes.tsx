@@ -5,15 +5,16 @@ import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 import SituationTag from 'components/jeune/SituationTag'
 import { Badge } from 'components/ui/Badge'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SortIcon from 'components/ui/SortIcon'
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
-  compareJeunesByLastName,
+  compareJeunesByNom,
   compareJeunesByLastNameDesc,
   compareJeunesBySituation,
   compareJeunesBySituationDesc,
-  getJeuneFullname,
+  getNomJeuneComplet,
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -87,7 +88,7 @@ export const TableauJeunes = ({
       if (isName)
         return sortDesc
           ? compareJeunesByLastNameDesc(jeune1, jeune2)
-          : compareJeunesByLastName(jeune1, jeune2)
+          : compareJeunesByNom(jeune1, jeune2)
 
       if (isSituation)
         return sortDesc
@@ -285,11 +286,27 @@ export const TableauJeunes = ({
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
                   role='row'
-                  aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
+                  aria-label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
                   className={`table-row text-sm  items-center hover:bg-primary_lighten`}
                 >
                   <span role='cell' className='table-cell p-4'>
-                    {getJeuneFullname(jeune)}
+                    <span className='flex items-baseline'>
+                      {jeune.isReaffectationTemporaire && (
+                        <span
+                          title='bénéficiaire temporaire'
+                          aria-label='bénéficiaire temporaire'
+                          className='self-center mr-2'
+                        >
+                          <IconComponent
+                            name={IconName.Clock}
+                            aria-hidden={true}
+                            focusable={false}
+                            className='w-4 h-4'
+                          />
+                        </span>
+                      )}
+                      {getNomJeuneComplet(jeune)}
+                    </span>
                   </span>
 
                   {withSituations && (

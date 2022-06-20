@@ -5,7 +5,7 @@ import React from 'react'
 
 import renderWithSession from '../renderWithSession'
 
-import { desJeunes } from 'fixtures/jeune'
+import { desItemsJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
@@ -123,7 +123,7 @@ describe('Reaffectation', () => {
       const emailConseillerInitial = 'conseiller@email.com'
       const idConseillerInitial = 'id-conseiller-initial'
       let emailInput: HTMLInputElement
-      const jeunes = desJeunes()
+      const jeunes = desItemsJeunes()
       beforeEach(async () => {
         // GIVEN
         emailInput = screen.getByLabelText('* E-mail conseiller initial')
@@ -150,7 +150,7 @@ describe('Reaffectation', () => {
         // THEN
         for (const jeune of jeunes) {
           expect(
-            screen.getByText(`${jeune.lastName} ${jeune.firstName}`)
+            screen.getByText(`${jeune.nom} ${jeune.prenom}`)
           ).toBeInTheDocument()
         }
       })
@@ -167,7 +167,7 @@ describe('Reaffectation', () => {
           // THEN
           for (const jeune of jeunes) {
             expect(() =>
-              screen.getByText(`${jeune.firstName} ${jeune.lastName}`)
+              screen.getByText(`${jeune.prenom} ${jeune.nom}`)
             ).toThrow()
           }
         })
@@ -191,10 +191,10 @@ describe('Reaffectation', () => {
             })
           })
           await userEvent.click(
-            screen.getByText(jeunes[0].firstName, { exact: false })
+            screen.getByText(jeunes[0].prenom, { exact: false })
           )
           await userEvent.click(
-            screen.getByText(jeunes[2].firstName, { exact: false })
+            screen.getByText(jeunes[2].prenom, { exact: false })
           )
           await act(async () => typeReaffectationRadio.click())
           await userEvent.click(submitReaffecter)

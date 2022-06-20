@@ -9,7 +9,7 @@ import React from 'react'
 import renderWithSession from '../renderWithSession'
 
 import {
-  desJeunes,
+  desItemsJeunes,
   desJeunesAvecActionsNonTerminees,
   unJeuneAvecActionsNonTerminees,
 } from 'fixtures/jeune'
@@ -21,7 +21,7 @@ import {
 import { UserStructure } from 'interfaces/conseiller'
 import {
   CategorieSituation,
-  compareJeunesByLastName,
+  compareJeunesByNom,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { getServerSideProps } from 'pages/mes-jeunes'
@@ -114,17 +114,6 @@ describe('Mes Jeunes', () => {
 
       describe("affiche le statut d'activation du compte d'un jeune", () => {
         it("si le compte n'a pas été activé", () => {
-          const row1 = within(
-            screen
-              .getByText('Jirac Kenji')
-              .closest('[role="row"]') as HTMLElement
-          )
-
-          //THEN
-          expect(row1.getByText('Compte non activé')).toBeInTheDocument()
-        })
-
-        it('si le compte a été activé', () => {
           const row2 = within(
             screen
               .getByText('Sanfamiye Nadia')
@@ -132,7 +121,42 @@ describe('Mes Jeunes', () => {
           )
 
           //THEN
-          expect(row2.getByText('Le 30/01/2022 à 18:30')).toBeInTheDocument()
+          expect(row2.getByText('Compte non activé')).toBeInTheDocument()
+        })
+
+        it('si le compte a été activé', () => {
+          const row1 = within(
+            screen
+              .getByText('Jirac Kenji')
+              .closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(row1.getByText('Le 07/12/2021 à 18:30')).toBeInTheDocument()
+        })
+      })
+
+      describe("affiche la réaffectation temporaire d'un jeune", () => {
+        it('si le compte a été réaffecté temporairement', () => {
+          const row3 = within(
+            screen.getByText(/Maria/).closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(
+            row3.getByLabelText('bénéficiaire temporaire')
+          ).toBeInTheDocument()
+        })
+
+        it("si le compte n'a pas été réaffecté temporairement", () => {
+          const row2 = within(
+            screen
+              .getByText('Sanfamiye Nadia')
+              .closest('[role="row"]') as HTMLElement
+          )
+
+          //THEN
+          expect(() => row2.getByText('bénéficiaire temporaire')).toThrow()
         })
       })
     })
@@ -369,7 +393,7 @@ describe('Mes Jeunes', () => {
     let jeunesService: JeunesService
     let actionsService: ActionsService
     beforeEach(() => {
-      const jeunes = desJeunes()
+      const jeunes = desItemsJeunes()
       jeunesService = mockedJeunesService({
         getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
       })
@@ -497,12 +521,12 @@ describe('Mes Jeunes', () => {
         // Then
         expect(actual).toMatchObject({
           props: {
-            conseillerJeunes: desJeunes()
+            conseillerJeunes: desItemsJeunes()
               .map((jeune) => ({
                 ...jeune,
                 nbActionsNonTerminees: 0,
               }))
-              .sort(compareJeunesByLastName),
+              .sort(compareJeunesByNom),
           },
         })
       })
@@ -538,12 +562,12 @@ describe('Mes Jeunes', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            conseillerJeunes: desJeunes()
+            conseillerJeunes: desItemsJeunes()
               .map((jeune) => ({
                 ...jeune,
                 nbActionsNonTerminees: 7,
               }))
-              .sort(compareJeunesByLastName),
+              .sort(compareJeunesByNom),
             structureConseiller: 'MILO',
             pageTitle: 'Mes jeunes',
             isFromEmail: false,

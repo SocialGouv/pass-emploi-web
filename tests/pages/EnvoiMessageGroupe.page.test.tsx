@@ -1,15 +1,13 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
+import { desItemsJeunes } from 'fixtures/jeune'
+import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
+import { UserStructure } from 'interfaces/conseiller'
+import { JeuneFromListe } from 'interfaces/jeune'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
-
-import renderWithSession from '../renderWithSession'
-
-import { desJeunes } from 'fixtures/jeune'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
-import { Jeune } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
@@ -19,13 +17,15 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
+import renderWithSession from '../renderWithSession'
+
 jest.mock('components/Modal')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
-    let jeunes: Jeune[]
+    let jeunes: JeuneFromListe[]
     let jeunesService: JeunesService
     let messagesService: MessagesService
     let inputSearchJeune: HTMLSelectElement
@@ -33,7 +33,7 @@ describe('EnvoiMessageGroupe', () => {
     let submitButton: HTMLButtonElement
 
     beforeEach(async () => {
-      jeunes = desJeunes()
+      jeunes = desItemsJeunes()
 
       jeunesService = mockedJeunesService()
 
@@ -229,7 +229,7 @@ describe('EnvoiMessageGroupe', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
-      let jeunes: Jeune[]
+      let jeunes: JeuneFromListe[]
       beforeEach(() => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -239,7 +239,7 @@ describe('EnvoiMessageGroupe', () => {
             accessToken: 'accessToken',
           },
         })
-        jeunes = desJeunes()
+        jeunes = desItemsJeunes()
         const jeunesService = mockedJeunesService({
           getJeunesDuConseiller: jest.fn(async () => jeunes),
         })

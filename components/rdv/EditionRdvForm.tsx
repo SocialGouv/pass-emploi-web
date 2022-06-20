@@ -12,14 +12,14 @@ import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
-import { Jeune } from 'interfaces/jeune'
+import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 
 interface EditionRdvFormProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   typesRendezVous: TypeRendezVous[]
   redirectTo: string
   aDesJeunesDUnAutrePortefeuille: boolean

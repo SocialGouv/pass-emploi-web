@@ -20,6 +20,7 @@ import Chiffre1Icon from '../../assets/icons/chiffre_1.svg'
 import Chiffre2Icon from '../../assets/icons/chiffre_2.svg'
 import Chiffre3Icon from '../../assets/icons/chiffre_3.svg'
 import Chiffre4Icon from '../../assets/icons/chiffre_4.svg'
+import ClockIcon from '../../assets/icons/clock.svg'
 import CloseIcon from '../../assets/icons/close.svg'
 import DecorativePointIcon from '../../assets/icons/decorative_point.svg'
 import DeleteIcon from '../../assets/icons/delete.svg'
@@ -56,6 +57,7 @@ export enum IconName {
   Chiffre2 = 'Chiffre2',
   Chiffre3 = 'Chiffre3',
   Chiffre4 = 'Chiffre4',
+  Clock = 'Clock',
   Close = 'Close',
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
@@ -95,6 +97,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Chiffre3]: Chiffre3Icon,
   [IconName.Chiffre4]: Chiffre4Icon,
   [IconName.Close]: CloseIcon,
+  [IconName.Clock]: ClockIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
   [IconName.File]: FileIcon,
