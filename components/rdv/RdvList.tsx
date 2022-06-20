@@ -13,14 +13,12 @@ import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 type RdvListProps = {
   rdvs: RdvListItem[]
   idConseiller: string
-  jeune?: Jeune
   withNameJeune?: boolean
 }
 
 const RdvList = ({
   rdvs,
   idConseiller,
-  jeune,
   withNameJeune = true,
 }: RdvListProps) => {
   const dayHourCells = (rdvDate: Date, duration: number) => {
@@ -33,7 +31,7 @@ const RdvList = ({
     <>
       {rdvs.length === 0 && (
         <p className='text-md mb-2'>
-          {jeune?.firstName} {jeune?.lastName} n’a pas encore de rendez-vous
+          Vous n’avez pas de rendez-vous pour le moment
         </p>
       )}
 

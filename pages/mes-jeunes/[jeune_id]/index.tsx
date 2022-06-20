@@ -192,35 +192,37 @@ function FicheJeune({
       )}
 
       {!jeune.isActivated && (
-        <FailureMessage label='Ce jeune ne s’est pas encore connecté à l’application' />
+        <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
       )}
-      <div className='flex'>
-        {!isPoleEmploi && (
-          <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4 w-fit'>
-            Fixer un rendez-vous
-          </ButtonLink>
-        )}
+      <div className='flex justify-between'>
+        <div className='flex'>
+          {!isPoleEmploi && (
+            <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4'>
+              Fixer un rendez-vous
+            </ButtonLink>
+          )}
 
-        {!isPoleEmploi && (
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-            className='mb-4 ml-8 w-fit'
-          >
-            <IconComponent
-              name={IconName.Add}
-              focusable='false'
-              aria-hidden='true'
-              className='mr-2 w-4 h-4'
-            />
-            Créer une nouvelle action
-          </ButtonLink>
-        )}
+          {!isPoleEmploi && (
+            <ButtonLink
+              href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+              className='mb-4 ml-4'
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Créer une nouvelle action
+            </ButtonLink>
+          )}
+        </div>
 
         {!jeune.isActivated && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
             style={ButtonStyle.SECONDARY}
-            className='ml-8'
+            className='w-fit'
           >
             Supprimer ce compte
           </ButtonLink>
@@ -283,7 +285,6 @@ function FicheJeune({
               rdvs={rdvs}
               idConseiller={session?.user.id ?? ''}
               withNameJeune={false}
-              jeune={jeune}
             />
           ) : (
             <IntegrationPoleEmploi label='convocations' />

@@ -19,7 +19,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       <a
         role='row'
         aria-label={`Détail de l'action ${action.content}`}
-        className={`table-row cursor-pointer focus-within:primary_lighten rounded-[6px] shadow-[0_6px_25px_0px_rgba(0,0,0,0.1)] hover:bg-primary_lighten group`}
+        className={`table-row cursor-pointer focus-within:primary_lighten rounded-[6px] shadow-s hover:bg-primary_lighten group`}
       >
         <div
           role='cell'

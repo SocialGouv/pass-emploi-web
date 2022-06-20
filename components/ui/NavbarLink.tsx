@@ -23,7 +23,7 @@ function NavbarLink({
     <Link href={href}>
       <a
         onClick={onClick}
-        className={`flex mb-6 p-2 layout_base:p-0 ${
+        className={`flex mb-6 p-2 items-center layout_base:p-0 ${
           isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
         }`}
       >

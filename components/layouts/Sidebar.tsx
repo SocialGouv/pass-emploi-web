@@ -96,26 +96,25 @@ export default function Sidebar({}: SidebarProps) {
             />
           </a>
         </div>
-        {session && (
+        <div className='flex flex-col'>
+          {session && (
+            <NavbarLink
+              isActive={isCurrentRoute('/profil')}
+              href='/profil'
+              label={session.user.name}
+              iconName={IconName.Profil}
+              className='break-all'
+            />
+          )}
+          <span className='border-b border-blanc mx-4 mb-8'></span>
           <NavbarLink
-            isActive={isCurrentRoute('/profil')}
-            href='/profil'
-            label={session.user.name}
-            iconName={IconName.Profil}
-            className='break-all'
+            href='/api/logout'
+            label='Déconnexion'
+            iconName={IconName.Logout}
+            onClick={handleLogout}
           />
-        )}
+        </div>
       </nav>
-
-      <span className='border-b border-blanc mx-4 mb-8'></span>
-      <div className='flex flex-col justify-between'>
-        <NavbarLink
-          href='/api/logout'
-          label='Déconnexion'
-          iconName={IconName.Logout}
-          onClick={handleLogout}
-        />
-      </div>
     </div>
   )
 }
