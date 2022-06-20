@@ -13,9 +13,8 @@ describe('<RdvList>', () => {
     render(<RdvList rdvs={[]} idConseiller='1' />)
 
     // Then
-    expect(
-      screen.getByText("Vous n'avez pas de rendez-vous pour le moment")
-    ).toBeInTheDocument()
+    expect(screen.getByText(/pas de rendez-vous/)).toBeInTheDocument()
+
     expect(() => screen.getByRole('table')).toThrow()
   })
 

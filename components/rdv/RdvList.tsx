@@ -6,6 +6,7 @@ import LocationIcon from '../../assets/icons/location.svg'
 import { HeaderCell } from 'components/rdv/HeaderCell'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { RdvTypeTag } from 'components/ui/RdvTypeTag'
+import { Jeune } from 'interfaces/jeune'
 import { RdvListItem } from 'interfaces/rdv'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
@@ -29,8 +30,8 @@ const RdvList = ({
   return (
     <>
       {rdvs.length === 0 && (
-        <p className='text-md mb-8'>
-          Vous n&apos;avez pas de rendez-vous pour le moment
+        <p className='text-md mb-2'>
+          Vous n’avez pas de rendez-vous pour le moment
         </p>
       )}
 

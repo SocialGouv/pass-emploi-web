@@ -167,58 +167,57 @@ function MesJeunes({
   return (
     <>
       <div className={`flex flex-wrap justify-between items-end mb-6`}>
+        {showDeletionSuccess && structureConseiller !== UserStructure.MILO && (
+          <SuccessMessage
+            label='Le compte du jeune a bien été supprimé.'
+            onAcknowledge={closeDeletionSuccess}
+          />
+        )}
+
+        {showDeletionSuccess && structureConseiller === UserStructure.MILO && (
+          <SuccessMessage
+            label='Le compte du jeune a bien été supprimé.'
+            onAcknowledge={closeDeletionSuccess}
+          >
+            <>
+              Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
+              transmettre en amont le numéro de dossier technique à l’adresse{' '}
+              <a
+                className='underline hover:text-primary_darken'
+                href='mailto:support@pass-emploi.beta.gouv.fr'
+              >
+                support@pass-emploi.beta.gouv.fr
+              </a>
+              .
+            </>
+          </SuccessMessage>
+        )}
+
+        {showMessageGroupeEnvoiSuccess && (
+          <SuccessMessage
+            label={
+              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+            }
+            onAcknowledge={closeMessageGroupeEnvoiSuccess}
+          />
+        )}
+
+        {showAjoutAgenceSuccess && (
+          <SuccessMessage
+            label={`Votre ${
+              structureConseiller === UserStructure.MILO
+                ? 'Mission locale'
+                : 'agence'
+            } a été ajoutée à votre profil`}
+            onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
+          />
+        )}
         <RechercheJeune onSearchFilterBy={onSearch} />
         {(structureConseiller === UserStructure.MILO ||
           structureConseiller === UserStructure.POLE_EMPLOI) && (
           <AjouterJeuneButton handleAddJeune={handleAddJeune} />
         )}
       </div>
-
-      {showDeletionSuccess && structureConseiller !== UserStructure.MILO && (
-        <SuccessMessage
-          label='Le compte du jeune a bien été supprimé.'
-          onAcknowledge={closeDeletionSuccess}
-        />
-      )}
-
-      {showDeletionSuccess && structureConseiller === UserStructure.MILO && (
-        <SuccessMessage
-          label='Le compte du jeune a bien été supprimé.'
-          onAcknowledge={closeDeletionSuccess}
-        >
-          <>
-            Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
-            transmettre en amont le numéro de dossier technique à l’adresse{' '}
-            <a
-              className='underline hover:text-primary_darken'
-              href='mailto:support@pass-emploi.beta.gouv.fr'
-            >
-              support@pass-emploi.beta.gouv.fr
-            </a>
-            .
-          </>
-        </SuccessMessage>
-      )}
-
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-          }
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
-        />
-      )}
-
-      {showAjoutAgenceSuccess && (
-        <SuccessMessage
-          label={`Votre ${
-            structureConseiller === UserStructure.MILO
-              ? 'Mission locale'
-              : 'agence'
-          } a été ajoutée à votre profil`}
-          onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
-        />
-      )}
 
       {conseillerJeunes.length === 0 && (
         <div className='mx-auto my-0 flex flex-col items-center'>

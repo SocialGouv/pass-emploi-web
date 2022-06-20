@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import FailureMessage from 'components/FailureMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
@@ -191,40 +192,37 @@ function FicheJeune({
       )}
 
       {!jeune.isActivated && (
-        <p className='mb-6 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
-          <span className='text-sm-semi text-warning'>
-            Ce jeune ne s&apos;est pas encore connect&eacute; &agrave;
-            l&apos;application.
-          </span>
-        </p>
+        <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
       )}
-      <div className='flex'>
-        {!isPoleEmploi && (
-          <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4 w-fit'>
-            Fixer un rendez-vous
-          </ButtonLink>
-        )}
+      <div className='flex justify-between'>
+        <div className='flex'>
+          {!isPoleEmploi && (
+            <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4'>
+              Fixer un rendez-vous
+            </ButtonLink>
+          )}
 
-        {!isPoleEmploi && (
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-            className='mb-4 ml-8 w-fit'
-          >
-            <IconComponent
-              name={IconName.Add}
-              focusable='false'
-              aria-hidden='true'
-              className='mr-2 w-4 h-4'
-            />
-            Créer une nouvelle action
-          </ButtonLink>
-        )}
+          {!isPoleEmploi && (
+            <ButtonLink
+              href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+              className='mb-4 ml-4'
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Créer une nouvelle action
+            </ButtonLink>
+          )}
+        </div>
 
         {!jeune.isActivated && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
-            style={ButtonStyle.WARNING}
-            className='ml-8'
+            style={ButtonStyle.SECONDARY}
+            className='w-fit'
           >
             Supprimer ce compte
           </ButtonLink>
@@ -246,7 +244,7 @@ function FicheJeune({
       </div>
 
       {conseillers.length > 5 && (
-        <div className='flex justify-center mt-8'>
+        <div className='flex justify-start mt-8'>
           <CollapseButton
             controlledId='liste-conseillers'
             isOpen={expandListeConseillers}
@@ -280,7 +278,7 @@ function FicheJeune({
           aria-labelledby='liste-rdvs--tab'
           tabIndex={0}
           id='liste-rdvs'
-          className='mt-10 border-b border-primary_lighten'
+          className='mt-8 pb-8 border-b border-primary_lighten'
         >
           {!isPoleEmploi ? (
             <RdvList
