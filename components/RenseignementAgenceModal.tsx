@@ -32,6 +32,9 @@ export default function RenseignementAgenceModal({
   const labelAgence =
     structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
 
+  const labelAgencePluriel =
+    structureConseiller === UserStructure.MILO ? 'Missions locales' : 'agences'
+
   function selectAgence(nomAgence: string) {
     const agence = referentielAgences.find((a) => a.nom === nomAgence)
     if (agence) {
@@ -81,8 +84,13 @@ export default function RenseignementAgenceModal({
       onClose={onClose}
     >
       <InformationMessage
-        content={`Afin d’améliorer la qualité du service, nous avons besoin de connaître votre ${labelAgence} de rattachement.`}
+        content={`La liste des ${labelAgencePluriel} a été mise à jour et les accents sont pris en compte.`}
       />
+      <div className='mt-2'>
+        <InformationMessage
+          content={`Une fois votre ${labelAgence} renseignée, ce message n'apparaitra plus.`}
+        />
+      </div>
 
       <form onSubmit={submitAgenceSelectionnee} className='px-10 pt-6'>
         <label htmlFor='search-agence' className='text-base-medium'>
