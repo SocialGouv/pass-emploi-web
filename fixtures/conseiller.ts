@@ -9,6 +9,7 @@ export const unConseiller = (
     firstName: 'Nils',
     lastName: 'Tavernier',
     notificationsSonores: false,
+    aDesBeneficiairesARecuperer: false,
   }
   return { ...defaults, ...overrides }
 }
@@ -21,6 +22,7 @@ export const unConseillerJson = (
     firstName: 'Nils',
     lastName: 'Tavernier',
     notificationsSonores: false,
+    aDesBeneficiairesARecuperer: false,
   }
   return { ...defaults, ...overrides }
 }

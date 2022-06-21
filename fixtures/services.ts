@@ -76,6 +76,7 @@ export function mockedConseillerService(
     modifierNotificationsSonores: jest.fn(),
     getDossierJeune: jest.fn(),
     createCompteJeuneMilo: jest.fn(),
+    recupererBeneficiaires: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

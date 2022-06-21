@@ -37,6 +37,11 @@ export interface ConseillerService {
     },
     accessToken: string
   ): Promise<{ id: string }>
+
+  recupererBeneficiaires(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<void>
 }
 
 export class ConseillerApiService implements ConseillerService {
@@ -109,6 +114,17 @@ export class ConseillerApiService implements ConseillerService {
     return this.apiClient.post<{ id: string }>(
       `/conseillers/milo/jeunes`,
       newJeune,
+      accessToken
+    )
+  }
+
+  recupererBeneficiaires(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<void> {
+    return this.apiClient.post(
+      `/conseillers/${idConseiller}/recuperer-mes-jeunes`,
+      {},
       accessToken
     )
   }

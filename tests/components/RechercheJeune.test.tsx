@@ -4,15 +4,22 @@ import React from 'react'
 
 import renderWithSession from '../renderWithSession'
 
+import { unConseiller } from 'fixtures/conseiller'
 import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
-import { mockedMessagesService } from 'fixtures/services'
+import {
+  mockedConseillerService,
+  mockedMessagesService,
+} from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import MesJeunes from 'pages/mes-jeunes'
+import { ConseillerService } from 'services/conseiller.service'
 import { MessagesService } from 'services/messages.service'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('Recherche', () => {
   let messagesService: MessagesService
+  let conseillerService: ConseillerService
 
   beforeEach(async () => {
     //GIVEN
@@ -22,16 +29,19 @@ describe('Recherche', () => {
       signIn: jest.fn(() => Promise.resolve()),
       countMessagesNotRead: jest.fn(() => Promise.resolve({})),
     })
+    conseillerService = mockedConseillerService()
 
     await act(async () => {
       await renderWithSession(
-        <DIProvider dependances={{ messagesService }}>
-          <MesJeunes
-            structureConseiller={UserStructure.MILO}
-            conseillerJeunes={jeunes}
-            isFromEmail
-            pageTitle=''
-          />
+        <DIProvider dependances={{ messagesService, conseillerService }}>
+          <ConseillerProvider conseiller={unConseiller()}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />
+          </ConseillerProvider>
         </DIProvider>
       )
     })

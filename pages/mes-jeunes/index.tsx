@@ -8,6 +8,7 @@ import EmptyStateImage from '../../assets/images/empty_state.svg'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
+import Button from 'components/ui/Button'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import { TotalActions } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
@@ -18,12 +19,14 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -31,37 +34,44 @@ interface MesJeunesProps extends PageProps {
   structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
-  messageEnvoiGroupeSuccess?: boolean
+  recuperationSuccess?: boolean
   deletionSuccess?: boolean
   ajoutAgenceSuccess?: boolean
+  messageEnvoiGroupeSuccess?: boolean
 }
 
 function MesJeunes({
   structureConseiller,
   conseillerJeunes,
   isFromEmail,
-  messageEnvoiGroupeSuccess,
   deletionSuccess,
+  recuperationSuccess,
   ajoutAgenceSuccess,
+  messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
   const router = useRouter()
 
-  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
-    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
-
+  const [conseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
   const [listeJeunesFiltres, setListJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
   >([])
+
+  const [showRecuperationSuccess, setShowRecuperationSuccess] =
+    useState<boolean>(recuperationSuccess ?? false)
   const [showDeletionSuccess, setShowDeletionSuccess] = useState<boolean>(
     deletionSuccess ?? false
   )
   const [showAjoutAgenceSuccess, setShowAjoutAgenceSuccess] = useState<boolean>(
     ajoutAgenceSuccess ?? false
   )
+  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
+    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
@@ -82,9 +92,16 @@ function MesJeunes({
     }
   }
 
+  async function closeRecuperationSuccess(): Promise<void> {
+    setShowRecuperationSuccess(false)
+    await router.replace('mes-jeunes', undefined, {
+      shallow: true,
+    })
+  }
+
   async function closeDeletionSuccess(): Promise<void> {
     setShowDeletionSuccess(false)
-    await router.replace({ pathname: `/mes-jeunes` }, undefined, {
+    await router.replace('mes-jeunes', undefined, {
       shallow: true,
     })
   }
@@ -97,6 +114,17 @@ function MesJeunes({
   async function closeAjoutAgenceSuccessMessage(): Promise<void> {
     setShowAjoutAgenceSuccess(false)
     await router.replace('/mes-jeunes', undefined, { shallow: true })
+  }
+
+  async function recupererBeneficiaires(): Promise<void> {
+    await conseillerService.recupererBeneficiaires(
+      session!.user.id,
+      session!.accessToken
+    )
+    await router.replace({
+      pathname: '/mes-jeunes',
+      query: { recuperation: 'succes' },
+    })
   }
 
   const onSearch = useCallback(
@@ -154,8 +182,8 @@ function MesJeunes({
         setListJeunesFiltres(jeunesAvecMessagesNonLus)
       })
   }, [chatCredentials, conseillerJeunes, messagesService, session])
-
   useMatomo(trackingTitle)
+
   useMatomo(
     showMessageGroupeEnvoiSuccess
       ? 'Mes jeunes - Succès envoi message'
@@ -164,52 +192,75 @@ function MesJeunes({
 
   return (
     <>
+      {showRecuperationSuccess && (
+        <SuccessMessage
+          label='Vous avez récupéré vos bénéficiaires avec succès'
+          onAcknowledge={closeRecuperationSuccess}
+        />
+      )}
+
+      {showDeletionSuccess && structureConseiller !== UserStructure.MILO && (
+        <SuccessMessage
+          label='Le compte du jeune a bien été supprimé.'
+          onAcknowledge={closeDeletionSuccess}
+        />
+      )}
+
+      {showDeletionSuccess && structureConseiller === UserStructure.MILO && (
+        <SuccessMessage
+          label='Le compte du jeune a bien été supprimé.'
+          onAcknowledge={closeDeletionSuccess}
+        >
+          <>
+            Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
+            transmettre en amont le numéro de dossier technique à l’adresse{' '}
+            <a
+              className='underline hover:text-primary_darken'
+              href='mailto:support@pass-emploi.beta.gouv.fr'
+            >
+              support@pass-emploi.beta.gouv.fr
+            </a>
+            .
+          </>
+        </SuccessMessage>
+      )}
+
+      {showMessageGroupeEnvoiSuccess && (
+        <SuccessMessage
+          label={
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+          }
+          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
+
+      {showAjoutAgenceSuccess && (
+        <SuccessMessage
+          label={`Votre ${
+            structureConseiller === UserStructure.MILO
+              ? 'Mission locale'
+              : 'agence'
+          } a été ajoutée à votre profil`}
+          onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
+        />
+      )}
+
+      {conseiller?.aDesBeneficiairesARecuperer && (
+        <div className='bg-primary_lighten rounded-medium p-6 mb-6 text-center'>
+          <p className='text-base-medium text-primary'>
+            {conseillerJeunes.length > 0 &&
+              'Certains de vos bénéficiaires ont été transférés temporairement.'}
+            {conseillerJeunes.length === 0 &&
+              'Vos bénéficiaires ont été transférés temporairement vers un autre conseiller.'}
+          </p>
+          <Button onClick={recupererBeneficiaires} className='m-auto mt-4'>
+            {conseillerJeunes.length > 0 && 'Récupérer ces bénéficiaires'}
+            {conseillerJeunes.length === 0 && 'Récupérer les bénéficiaires'}
+          </Button>
+        </div>
+      )}
+
       <div className={`flex flex-wrap justify-between items-end mb-6`}>
-        {showDeletionSuccess && structureConseiller !== UserStructure.MILO && (
-          <SuccessMessage
-            label='Le compte du jeune a bien été supprimé.'
-            onAcknowledge={closeDeletionSuccess}
-          />
-        )}
-
-        {showDeletionSuccess && structureConseiller === UserStructure.MILO && (
-          <SuccessMessage
-            label='Le compte du jeune a bien été supprimé.'
-            onAcknowledge={closeDeletionSuccess}
-          >
-            <>
-              Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
-              transmettre en amont le numéro de dossier technique à l’adresse{' '}
-              <a
-                className='underline hover:text-primary_darken'
-                href='mailto:support@pass-emploi.beta.gouv.fr'
-              >
-                support@pass-emploi.beta.gouv.fr
-              </a>
-              .
-            </>
-          </SuccessMessage>
-        )}
-
-        {showMessageGroupeEnvoiSuccess && (
-          <SuccessMessage
-            label={
-              'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-            }
-            onAcknowledge={closeMessageGroupeEnvoiSuccess}
-          />
-        )}
-
-        {showAjoutAgenceSuccess && (
-          <SuccessMessage
-            label={`Votre ${
-              structureConseiller === UserStructure.MILO
-                ? 'Mission locale'
-                : 'agence'
-            } a été ajoutée à votre profil`}
-            onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
-          />
-        )}
         <RechercheJeune onSearchFilterBy={onSearch} />
         {(structureConseiller === UserStructure.MILO ||
           structureConseiller === UserStructure.POLE_EMPLOI) && (
@@ -217,20 +268,21 @@ function MesJeunes({
         )}
       </div>
 
-      {conseillerJeunes.length === 0 && (
-        <div className='mx-auto my-0 flex flex-col items-center'>
-          <EmptyStateImage
-            aria-hidden='true'
-            focusable='false'
-            className='mb-16'
-          />
-          <p className='text-base-medium mb-12'>
-            Vous n&apos;avez pas encore intégré de jeunes.
-          </p>
+      {conseillerJeunes.length === 0 &&
+        !conseiller?.aDesBeneficiairesARecuperer && (
+          <div className='mx-auto my-0 flex flex-col items-center'>
+            <EmptyStateImage
+              aria-hidden='true'
+              focusable='false'
+              className='mb-16'
+            />
+            <p className='text-base-medium mb-12'>
+              Vous n&apos;avez pas encore intégré de jeunes.
+            </p>
 
-          <AjouterJeuneButton handleAddJeune={handleAddJeune} />
-        </div>
-      )}
+            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
+          </div>
+        )}
 
       {conseillerJeunes.length > 0 && (
         <TableauJeunes
@@ -288,6 +340,9 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     isFromEmail: Boolean(context.query?.source),
     pageTitle: 'Mes jeunes',
   }
+
+  if (context.query.recuperation)
+    props.recuperationSuccess = context.query.recuperation === 'succes'
 
   if (context.query.suppression)
     props.deletionSuccess = context.query.suppression === 'succes'

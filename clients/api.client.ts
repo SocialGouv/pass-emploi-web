@@ -47,7 +47,8 @@ export class ApiHttpClient implements ApiClient {
       method: 'POST',
       headers,
     }
-    if (payload) reqInit.body = JSON.stringify(payload)
+    if (payload && Object.keys(payload).length !== 0)
+      reqInit.body = JSON.stringify(payload)
 
     return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
   }
