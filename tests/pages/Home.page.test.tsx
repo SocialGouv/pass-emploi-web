@@ -53,7 +53,12 @@ describe('Home', () => {
 
       it("contient un message pour demander l'agence du conseiller", () => {
         // Then
-        expect(screen.getByText(/agence de rattachement/)).toBeInTheDocument()
+        expect(
+          screen.getByText(/La liste des agences a été mise à jour/)
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(/Une fois votre agence renseignée/)
+        ).toBeInTheDocument()
       })
 
       it('contient un input pour choisir une agence', () => {
@@ -208,7 +213,10 @@ describe('Home', () => {
 
         // Then
         expect(
-          screen.getByText(/Mission locale de rattachement/)
+          screen.getByText(/La liste des Missions locales a été mise à jour/)
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(/Une fois votre Mission locale renseignée/)
         ).toBeInTheDocument()
         expect(
           screen.getByText(/Sélectionner une Mission locale/)
