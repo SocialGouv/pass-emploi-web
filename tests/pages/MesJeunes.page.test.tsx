@@ -6,6 +6,8 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import renderPage from '../renderPage'
+
 import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsJeunes,
@@ -28,7 +30,6 @@ import { getServerSideProps } from 'pages/mes-jeunes'
 import MesJeunes from 'pages/mes-jeunes/index'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
-import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
@@ -72,17 +73,14 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // WHEN
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={jeunes}
-                  isFromEmail
-                  pageTitle=''
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
           )
         })
       })
@@ -158,17 +156,14 @@ describe('Mes Jeunes', () => {
         // Given
         await act(async () => {
           conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={conseiller}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={jeunes}
-                  isFromEmail
-                  pageTitle=''
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances, customConseiller: conseiller }
           )
         })
       })
@@ -212,18 +207,15 @@ describe('Mes Jeunes', () => {
         })
 
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={[jeune]}
-                  isFromEmail
-                  pageTitle=''
-                  deletionSuccess={true}
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[jeune]}
+              isFromEmail
+              pageTitle=''
+              deletionSuccess={true}
+            />,
+            { customDependances: dependances }
           )
         })
       })
@@ -280,18 +272,15 @@ describe('Mes Jeunes', () => {
         const jeune = unJeuneAvecActionsNonTerminees()
 
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.POLE_EMPLOI}
-                  conseillerJeunes={[jeune]}
-                  isFromEmail
-                  pageTitle=''
-                  deletionSuccess={true}
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.POLE_EMPLOI}
+              conseillerJeunes={[jeune]}
+              isFromEmail
+              pageTitle=''
+              deletionSuccess={true}
+            />,
+            { customDependances: dependances }
           )
         })
       })
@@ -337,17 +326,14 @@ describe('Mes Jeunes', () => {
       it('affiche un message invitant à ajouter des jeunes', async () => {
         // GIVEN
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={[]}
-                  isFromEmail
-                  pageTitle=''
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[]}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
           )
         })
 
@@ -361,22 +347,18 @@ describe('Mes Jeunes', () => {
       describe('quand le conseiller a des bénéficiaires à récupérer', () => {
         beforeEach(async () => {
           // GIVEN
+          const conseiller = unConseiller({
+            aDesBeneficiairesARecuperer: true,
+          })
           await act(async () => {
-            renderWithSession(
-              <DIProvider dependances={dependances}>
-                <ConseillerProvider
-                  conseiller={unConseiller({
-                    aDesBeneficiairesARecuperer: true,
-                  })}
-                >
-                  <MesJeunes
-                    structureConseiller={UserStructure.MILO}
-                    conseillerJeunes={[]}
-                    isFromEmail
-                    pageTitle=''
-                  />
-                </ConseillerProvider>
-              </DIProvider>
+            renderPage(
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={[]}
+                isFromEmail
+                pageTitle=''
+              />,
+              { customDependances: dependances, customConseiller: conseiller }
             )
           })
         })
@@ -404,18 +386,15 @@ describe('Mes Jeunes', () => {
       it('affiche le message de succès de suppression de jeune', async () => {
         //WHEN
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={jeunes}
-                  isFromEmail
-                  deletionSuccess={true}
-                  pageTitle={''}
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              deletionSuccess={true}
+              pageTitle={''}
+            />,
+            { customDependances: dependances }
           )
         })
 
@@ -435,17 +414,14 @@ describe('Mes Jeunes', () => {
 
         // WHEN
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={jeunes}
-                  isFromEmail
-                  pageTitle=''
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
           )
         })
 
@@ -458,18 +434,15 @@ describe('Mes Jeunes', () => {
       it('affiche un message de succès', async () => {
         // When
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={jeunes}
-                  isFromEmail
-                  pageTitle=''
-                  ajoutAgenceSuccess={true}
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+              ajoutAgenceSuccess={true}
+            />,
+            { customDependances: dependances }
           )
         })
 
@@ -484,18 +457,15 @@ describe('Mes Jeunes', () => {
       it('affiche un message de succès', async () => {
         // When
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={dependances}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <MesJeunes
-                  structureConseiller={UserStructure.MILO}
-                  conseillerJeunes={jeunes}
-                  isFromEmail
-                  pageTitle=''
-                  recuperationSuccess={true}
-                />
-              </ConseillerProvider>
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+              recuperationSuccess={true}
+            />,
+            { customDependances: dependances }
           )
         })
 
