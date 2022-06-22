@@ -56,7 +56,7 @@ function MesJeunes({
     useDependance<ConseillerService>('conseillerService')
   const router = useRouter()
 
-  const [conseiller] = useConseiller()
+  const [conseiller, setConseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
   const [listeJeunesFiltres, setListJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
@@ -121,6 +121,7 @@ function MesJeunes({
       session!.user.id,
       session!.accessToken
     )
+    setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
     await router.replace({
       pathname: '/mes-jeunes',
       query: { recuperation: 'succes' },
@@ -155,6 +156,10 @@ function MesJeunes({
   )
 
   useEffect(() => {
+    setShowRecuperationSuccess(recuperationSuccess ?? false)
+  }, [recuperationSuccess])
+
+  useEffect(() => {
     if (!session || !chatCredentials) return
 
     messagesService
@@ -182,6 +187,7 @@ function MesJeunes({
         setListJeunesFiltres(jeunesAvecMessagesNonLus)
       })
   }, [chatCredentials, conseillerJeunes, messagesService, session])
+
   useMatomo(trackingTitle)
 
   useMatomo(
@@ -341,8 +347,9 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     pageTitle: 'Mes jeunes',
   }
 
-  if (context.query.recuperation)
+  if (context.query.recuperation) {
     props.recuperationSuccess = context.query.recuperation === 'succes'
+  }
 
   if (context.query.suppression)
     props.deletionSuccess = context.query.suppression === 'succes'
