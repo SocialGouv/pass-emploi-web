@@ -21,7 +21,11 @@ export interface ActionsService {
     accessToken: string
   ): Promise<TotalActions[]>
 
-  getActionsJeune(idJeune: string, accessToken: string): Promise<Action[]>
+  getActionsJeune(
+    idJeune: string,
+    page: number,
+    accessToken: string
+  ): Promise<Action[]>
 
   createAction(
     action: { intitule: string; commentaire: string },
@@ -77,10 +81,11 @@ export class ActionsApiService implements ActionsService {
 
   async getActionsJeune(
     idJeune: string,
+    page: number,
     accessToken: string
   ): Promise<Action[]> {
     const actionsJson: ActionJson[] = await this.apiClient.get<ActionJson[]>(
-      `/jeunes/${idJeune}/actions`,
+      `/jeunes/${idJeune}/actions?page=${page}`,
       accessToken
     )
     return actionsJson.map(jsonToAction)

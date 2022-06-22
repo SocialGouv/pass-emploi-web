@@ -689,10 +689,11 @@ describe('Fiche Jeune', () => {
         })
       })
 
-      it('récupère les actions du jeune', async () => {
+      it('récupère la première page des actions du jeune', async () => {
         // Then
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
           'id-jeune',
+          1,
           'accessToken'
         )
         expect(actual).toMatchObject({
@@ -716,6 +717,21 @@ describe('Fiche Jeune', () => {
         expect(actual).toMatchObject({
           props: { conseillers: desConseillersJeune() },
         })
+      })
+    })
+
+    describe('Quand on demande une page d’actions spécifique', () => {
+      it('récupère la page demandée des actions du jeune', async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: { jeune_id: 'id-jeune', page: 3 },
+        } as unknown as GetServerSidePropsContext)
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          'id-jeune',
+          3,
+          'accessToken'
+        )
       })
     })
 

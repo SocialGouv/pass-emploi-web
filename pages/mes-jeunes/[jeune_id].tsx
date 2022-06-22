@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
@@ -205,6 +206,60 @@ function FicheJeune({
         </div>
       )}
 
+      <nav aria-label='pagination actions'>
+        <ul className='flex justify-between'>
+          <li>
+            <Link href='#'>
+              <button aria-label='Première page' title='Première page'>
+                Première page
+              </button>
+            </Link>
+          </li>
+          <li>
+            <Link href='#'>
+              <button aria-label='Page précédente' title='Page précédente'>
+                Page précédente
+              </button>
+            </Link>
+          </li>
+          <li>
+            <Link href='#'>
+              <button aria-label='Page 1' title='Page 1'>
+                1
+              </button>
+            </Link>
+          </li>
+          <li>
+            <Link href='#'>
+              <button aria-label='Page 2' title='Page 2'>
+                2
+              </button>
+            </Link>
+          </li>
+          <li>
+            <Link href='#'>
+              <button aria-label='Page 3' title='Page 3'>
+                3
+              </button>
+            </Link>
+          </li>
+          <li>
+            <Link href='#'>
+              <button aria-label='Page suivante' title='Page suivante'>
+                Page suivante
+              </button>
+            </Link>
+          </li>
+          <li>
+            <Link href='#'>
+              <button aria-label='Dernière page' title='Dernière page'>
+                Dernière page
+              </button>
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
       <div className='flex justify-between'>
         <div className='flex'>
           {!isPoleEmploi && (
@@ -362,6 +417,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       ? []
       : actionsService.getActionsJeune(
           context.query.jeune_id as string,
+          parseInt(context.query.page as string, 10) || 1,
           accessToken
         ),
   ])
