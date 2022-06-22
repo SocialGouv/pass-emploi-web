@@ -61,6 +61,10 @@ function MesJeunes({
   const [listeJeunesFiltres, setListJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
   >([])
+  const [
+    isRecuperationBeneficiairesLoading,
+    setIsRecuperationBeneficiairesLoading,
+  ] = useState<boolean>(false)
 
   const [showRecuperationSuccess, setShowRecuperationSuccess] =
     useState<boolean>(recuperationSuccess ?? false)
@@ -117,15 +121,20 @@ function MesJeunes({
   }
 
   async function recupererBeneficiaires(): Promise<void> {
-    await conseillerService.recupererBeneficiaires(
-      session!.user.id,
-      session!.accessToken
-    )
-    setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
-    await router.replace({
-      pathname: '/mes-jeunes',
-      query: { recuperation: 'succes' },
-    })
+    setIsRecuperationBeneficiairesLoading(true)
+    try {
+      await conseillerService.recupererBeneficiaires(
+        session!.user.id,
+        session!.accessToken
+      )
+      await router.replace({
+        pathname: '/mes-jeunes',
+        query: { recuperation: 'succes' },
+      })
+      setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
+    } finally {
+      setIsRecuperationBeneficiairesLoading(false)
+    }
   }
 
   const onSearch = useCallback(
@@ -259,20 +268,26 @@ function MesJeunes({
             {conseillerJeunes.length === 0 &&
               'Vos bénéficiaires ont été transférés temporairement vers un autre conseiller.'}
           </p>
-          <Button onClick={recupererBeneficiaires} className='m-auto mt-4'>
+          <Button
+            onClick={recupererBeneficiaires}
+            className='m-auto mt-4'
+            isLoading={isRecuperationBeneficiairesLoading}
+          >
             {conseillerJeunes.length > 0 && 'Récupérer ces bénéficiaires'}
             {conseillerJeunes.length === 0 && 'Récupérer les bénéficiaires'}
           </Button>
         </div>
       )}
 
-      <div className={`flex flex-wrap justify-between items-end mb-6`}>
-        <RechercheJeune onSearchFilterBy={onSearch} />
-        {(structureConseiller === UserStructure.MILO ||
-          structureConseiller === UserStructure.POLE_EMPLOI) && (
-          <AjouterJeuneButton handleAddJeune={handleAddJeune} />
-        )}
-      </div>
+      {conseillerJeunes.length > 0 && (
+        <div className={`flex flex-wrap justify-between items-end mb-6`}>
+          <RechercheJeune onSearchFilterBy={onSearch} />
+          {(structureConseiller === UserStructure.MILO ||
+            structureConseiller === UserStructure.POLE_EMPLOI) && (
+            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
+          )}
+        </div>
+      )}
 
       {conseillerJeunes.length === 0 &&
         !conseiller?.aDesBeneficiairesARecuperer && (

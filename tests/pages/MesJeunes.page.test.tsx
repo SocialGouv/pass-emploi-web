@@ -31,8 +31,6 @@ import MesJeunes from 'pages/mes-jeunes/index'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
 import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -323,6 +321,26 @@ describe('Mes Jeunes', () => {
     })
 
     describe("quand le conseiller n'a pas de jeune", () => {
+      it("n'affiche pas la recherche de jeune", async () => {
+        // GIVEN
+        await act(async () => {
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[]}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
+          )
+        })
+
+        // Then
+        expect(() =>
+          screen.getByLabelText(/Rechercher un jeune par son nom de famille/)
+        ).toThrow()
+      })
+
       it('affiche un message invitant à ajouter des jeunes', async () => {
         // GIVEN
         await act(async () => {
