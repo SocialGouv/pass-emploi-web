@@ -103,12 +103,14 @@ describe('ActionsApiService', () => {
       // GIVEN
       const actions = uneListeDActions()
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/jeunes/whatever/actions`) return uneListeDActionsJson()
+        if (url === `/jeunes/whatever/actions?page=1&tri=date_decroissante`)
+          return uneListeDActionsJson()
       })
 
       // WHEN
       const actual = await actionsService.getActionsJeune(
         'whatever',
+        1,
         'accessToken'
       )
 

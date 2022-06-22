@@ -6,8 +6,6 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
-
 import { uneAction, uneListeDActions } from 'fixtures/action'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import {
@@ -39,6 +37,7 @@ import FicheJeune, {
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
@@ -54,12 +53,8 @@ describe('Fiche Jeune', () => {
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
 
-    let jeunesService: JeunesService
-    let rendezVousService: RendezVousService
     let replace: jest.Mock
     beforeEach(async () => {
-      jeunesService = mockedJeunesService()
-      rendezVousService = mockedRendezVousService()
       replace = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ replace })
     })
@@ -71,18 +66,15 @@ describe('Fiche Jeune', () => {
         setIdJeune = jest.fn()
 
         // When
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider setIdJeune={setIdJeune}>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={rdvs}
-                actions={actions}
-                conseillers={listeConseillers}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={actions}
+            conseillers={listeConseillers}
+            pageTitle={''}
+          />,
+          { idJeuneSetter: setIdJeune }
         )
       })
 
@@ -177,29 +169,19 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand il y a moins de 5 conseillers dans l’historique', () => {
-      const conseillers = [unConseillerHistorique()]
-      let setJeune: () => void
-
-      beforeEach(() => {
-        setJeune = jest.fn()
-
-        // Given
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider setIdJeune={setJeune}>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={rdvs}
-                actions={actions}
-                conseillers={conseillers}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
-        )
-      })
-
       it('n’affiche pas de bouton pour dérouler', async () => {
+        const conseillers = [unConseillerHistorique()]
+        // Given
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={actions}
+            conseillers={conseillers}
+            pageTitle={''}
+          />
+        )
+
         // Then
         expect(conseillers.length).toEqual(1)
         expect(() => screen.getByText('Voir l’historique complet')).toThrow()
@@ -209,26 +191,24 @@ describe('Fiche Jeune', () => {
     describe("quand l'utilisateur est un conseiller Pole emploi", () => {
       beforeEach(async () => {
         // When
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actions={actions}
-                conseillers={[]}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>,
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={[]}
+            actionsInitiales={actions}
+            conseillers={[]}
+            pageTitle={''}
+          />,
           {
-            user: {
-              id: 'idConseiller',
-              name: 'Tavernier',
-              email: 'fake@email.fr',
-              structure: UserStructure.POLE_EMPLOI,
-              estConseiller: true,
-              estSuperviseur: false,
+            customSession: {
+              user: {
+                id: 'idConseiller',
+                name: 'Tavernier',
+                email: 'fake@email.fr',
+                structure: UserStructure.POLE_EMPLOI,
+                estConseiller: true,
+                estSuperviseur: false,
+              },
             },
           }
         )
@@ -275,26 +255,24 @@ describe('Fiche Jeune', () => {
       describe('quand le jeune n’a aucune situation', () => {
         it('affiche les informations concernant la situation du jeune', () => {
           // Given
-          renderWithSession(
-            <DIProvider dependances={{ jeunesService, rendezVousService }}>
-              <CurrentJeuneProvider>
-                <FicheJeune
-                  jeune={jeune}
-                  rdvs={[]}
-                  actions={actions}
-                  conseillers={[]}
-                  pageTitle={''}
-                />
-              </CurrentJeuneProvider>
-            </DIProvider>,
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={actions}
+              conseillers={[]}
+              pageTitle={''}
+            />,
             {
-              user: {
-                id: 'idConseiller',
-                name: 'Tavernier',
-                email: 'fake@email.fr',
-                structure: UserStructure.MILO,
-                estConseiller: true,
-                estSuperviseur: false,
+              customSession: {
+                user: {
+                  id: 'idConseiller',
+                  name: 'Tavernier',
+                  email: 'fake@email.fr',
+                  structure: UserStructure.MILO,
+                  estConseiller: true,
+                  estSuperviseur: false,
+                },
               },
             }
           )
@@ -317,26 +295,24 @@ describe('Fiche Jeune', () => {
               categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
             },
           ]
-          renderWithSession(
-            <DIProvider dependances={{ jeunesService, rendezVousService }}>
-              <CurrentJeuneProvider>
-                <FicheJeune
-                  jeune={unDetailJeune({ situations: situations })}
-                  rdvs={[]}
-                  actions={actions}
-                  conseillers={[]}
-                  pageTitle={''}
-                />
-              </CurrentJeuneProvider>
-            </DIProvider>,
+          renderPage(
+            <FicheJeune
+              jeune={unDetailJeune({ situations: situations })}
+              rdvs={[]}
+              actionsInitiales={actions}
+              conseillers={[]}
+              pageTitle={''}
+            />,
             {
-              user: {
-                id: 'idConseiller',
-                name: 'Tavernier',
-                email: 'fake@email.fr',
-                structure: UserStructure.MILO,
-                estConseiller: true,
-                estSuperviseur: false,
+              customSession: {
+                user: {
+                  id: 'idConseiller',
+                  name: 'Tavernier',
+                  email: 'fake@email.fr',
+                  structure: UserStructure.MILO,
+                  estConseiller: true,
+                  estSuperviseur: false,
+                },
               },
             }
           )
@@ -353,18 +329,14 @@ describe('Fiche Jeune', () => {
     describe("quand le jeune n'a pas d'action", () => {
       it('affiche un message qui le précise', async () => {
         // Given
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={rdvs}
-                actions={[]}
-                conseillers={[]}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={[]}
+            conseillers={[]}
+            pageTitle={''}
+          />
         )
 
         // When
@@ -378,20 +350,17 @@ describe('Fiche Jeune', () => {
     describe("quand le jeune ne s'est jamais connecté", () => {
       beforeEach(() => {
         // Given
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={{ ...jeune, isActivated: false }}
-                rdvs={rdvs}
-                actions={[]}
-                conseillers={[]}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={{ ...jeune, isActivated: false }}
+            rdvs={rdvs}
+            actionsInitiales={[]}
+            conseillers={[]}
+            pageTitle={''}
+          />
         )
       })
+
       it("affiche l'information", () => {
         // Then
         expect(
@@ -413,18 +382,14 @@ describe('Fiche Jeune', () => {
     describe('quand le jeune a été réaffecté temporairement', () => {
       it("affiche l'information", () => {
         // Given
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={{ ...jeune, isReaffectationTemporaire: true }}
-                rdvs={rdvs}
-                actions={[]}
-                conseillers={[]}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={{ ...jeune, isReaffectationTemporaire: true }}
+            rdvs={rdvs}
+            actionsInitiales={[]}
+            conseillers={[]}
+            pageTitle={''}
+          />
         )
 
         // Then
@@ -435,19 +400,15 @@ describe('Fiche Jeune', () => {
     describe('quand la création de rdv est réussie', () => {
       beforeEach(() => {
         // When
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={rdvs}
-                actions={actions}
-                rdvCreationSuccess={true}
-                conseillers={[]}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={actions}
+            rdvCreationSuccess={true}
+            conseillers={[]}
+            pageTitle={''}
+          />
         )
       })
 
@@ -482,19 +443,15 @@ describe('Fiche Jeune', () => {
     describe('quand la modification de rdv est réussie', () => {
       beforeEach(() => {
         // When
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={rdvs}
-                conseillers={[]}
-                actions={actions}
-                rdvModificationSuccess={true}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            conseillers={[]}
+            actionsInitiales={actions}
+            rdvModificationSuccess={true}
+            pageTitle={''}
+          />
         )
       })
 
@@ -529,19 +486,15 @@ describe('Fiche Jeune', () => {
     describe('quand la création d’une action est réussie', () => {
       beforeEach(() => {
         // When
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={rdvs}
-                actions={actions}
-                actionCreationSuccess={true}
-                conseillers={[]}
-                pageTitle={''}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={actions}
+            actionCreationSuccess={true}
+            conseillers={[]}
+            pageTitle={''}
+          />
         )
       })
 
@@ -574,25 +527,54 @@ describe('Fiche Jeune', () => {
     describe('quand on revient sur la page depuis le détail d’une action', () => {
       it('ouvre l’onglet des actions', () => {
         // Given
-        renderWithSession(
-          <DIProvider dependances={{ jeunesService, rendezVousService }}>
-            <CurrentJeuneProvider>
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actions={actions}
-                conseillers={[]}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-              />
-            </CurrentJeuneProvider>
-          </DIProvider>
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={[]}
+            actionsInitiales={actions}
+            conseillers={[]}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+          />
         )
 
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
         ).toHaveAccessibleName('Actions 4')
+      })
+    })
+
+    describe('pagination action', () => {
+      it('met à jour les actions avec la page demandée ', async () => {
+        // Given
+        const actionsService = mockedActionsService({
+          getActionsJeune: jest.fn(async () => [
+            uneAction({ content: 'Action page 2' }),
+          ]),
+        })
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={actions}
+            conseillers={listeConseillers}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+          />,
+          { customDependances: { actionsService } }
+        )
+
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          2,
+          'accessToken'
+        )
+        expect(screen.getByText('Action page 2')).toBeInTheDocument()
       })
     })
   })
@@ -672,7 +654,7 @@ describe('Fiche Jeune', () => {
             pageTitle: 'Mes jeunes - Kenji Jirac',
             pageHeader: 'Kenji Jirac',
             rdvs: expect.arrayContaining([]),
-            actions: expect.arrayContaining([]),
+            actionsInitiales: expect.arrayContaining([]),
             conseillers: expect.arrayContaining([]),
           },
         })
@@ -698,11 +680,11 @@ describe('Fiche Jeune', () => {
         )
         expect(actual).toMatchObject({
           props: {
-            actions: [
-              uneAction({ creationDate: dateFutureLoin.toISOString() }),
-              uneAction({ creationDate: dateFuture.toISOString() }),
+            actionsInitiales: [
               uneAction({ creationDate: now.toISOString() }),
               uneAction({ creationDate: datePasseeLoin.toISOString() }),
+              uneAction({ creationDate: dateFuture.toISOString() }),
+              uneAction({ creationDate: dateFutureLoin.toISOString() }),
             ],
           },
         })
@@ -853,7 +835,7 @@ describe('Fiche Jeune', () => {
       it('ne recupère pas les actions', async () => {
         // Then
         expect(actionsService.getActionsJeune).not.toHaveBeenCalled()
-        expect(actual).toMatchObject({ props: { actions: [] } })
+        expect(actual).toMatchObject({ props: { actionsInitiales: [] } })
       })
     })
   })

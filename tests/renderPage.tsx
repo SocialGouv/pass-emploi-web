@@ -28,9 +28,11 @@ export default function renderPage(
     customSession?: Partial<Session>
     customDependances?: Partial<Dependencies>
     customConseiller?: Partial<Conseiller>
+    idJeuneSetter?: (id: string | undefined) => void
   } = {}
 ): RenderResult {
-  const { customSession, customDependances, customConseiller } = options
+  const { customSession, customDependances, customConseiller, idJeuneSetter } =
+    options
   const defaultSession: Session = {
     user: {
       id: '1',
@@ -68,7 +70,10 @@ export default function renderPage(
           }}
         >
           <ConseillerProvider conseiller={unConseiller(customConseiller)}>
-            <CurrentJeuneProvider idJeune={uneBaseJeune().id}>
+            <CurrentJeuneProvider
+              idJeune={uneBaseJeune().id}
+              setIdJeune={idJeuneSetter}
+            >
               {children}
             </CurrentJeuneProvider>
           </ConseillerProvider>
