@@ -26,8 +26,7 @@ import {
   compareJeunesByNom,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
-import { getServerSideProps } from 'pages/mes-jeunes'
-import MesJeunes from 'pages/mes-jeunes/index'
+import MesJeunes, { getServerSideProps } from 'pages/mes-jeunes'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'

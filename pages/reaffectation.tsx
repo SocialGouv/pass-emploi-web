@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 
-import ImportantIcon from '../../assets/icons/important.svg'
+import ImportantIcon from '../assets/icons/important.svg'
 
 import Button from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'

@@ -12,7 +12,7 @@ import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import PageAction, {
   getServerSideProps,
-} from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
+} from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
