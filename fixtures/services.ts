@@ -1,3 +1,6 @@
+import { AgencesApiService, AgencesService } from '../services/agences.service'
+import { FichiersService } from '../services/fichiers.service'
+
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -76,6 +79,26 @@ export function mockedConseillerService(
     modifierNotificationsSonores: jest.fn(),
     getDossierJeune: jest.fn(),
     createCompteJeuneMilo: jest.fn(),
+    recupererBeneficiaires: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedAgencesService(
+  overrides: Partial<AgencesApiService> = {}
+): AgencesService {
+  const defaults: AgencesService = {
+    getAgences: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedFichiersService(
+  overrides: Partial<FichiersService> = {}
+): FichiersService {
+  const defaults: FichiersService = {
+    uploadFichier: jest.fn(),
+    deleteFichier: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

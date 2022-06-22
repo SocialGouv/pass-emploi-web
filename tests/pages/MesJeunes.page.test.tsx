@@ -6,8 +6,9 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
+import renderPage from '../renderPage'
 
+import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsJeunes,
   desJeunesAvecActionsNonTerminees,
@@ -15,10 +16,11 @@ import {
 } from 'fixtures/jeune'
 import {
   mockedActionsService,
+  mockedConseillerService,
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
+import { Conseiller, UserStructure } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   compareJeunesByNom,
@@ -28,9 +30,8 @@ import { getServerSideProps } from 'pages/mes-jeunes'
 import MesJeunes from 'pages/mes-jeunes/index'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { DIProvider } from 'utils/injectionDependances'
+import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -38,39 +39,46 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {
   describe('client side', () => {
-    let push: Function
-    let messagesService: MessagesService
+    let routerPush: Function
+    let routerReplace: Function
+    let dependances: Pick<Dependencies, 'messagesService' | 'conseillerService'>
     const jeunes = desJeunesAvecActionsNonTerminees()
     beforeEach(() => {
-      push = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({ push })
-
-      messagesService = mockedMessagesService({
-        signIn: jest.fn(() => Promise.resolve()),
-        countMessagesNotRead: jest.fn((_, ids: string[]) =>
-          Promise.resolve(
-            ids.reduce(
-              (mapped, id) => ({ ...mapped, [id]: 2 }),
-              {} as { [id: string]: number }
-            )
-          )
-        ),
+      routerPush = jest.fn()
+      routerReplace = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        push: routerPush,
+        replace: routerReplace,
       })
+
+      dependances = {
+        messagesService: mockedMessagesService({
+          signIn: jest.fn(() => Promise.resolve()),
+          countMessagesNotRead: jest.fn((_, ids: string[]) =>
+            Promise.resolve(
+              ids.reduce(
+                (mapped, id) => ({ ...mapped, [id]: 2 }),
+                {} as { [id: string]: number }
+              )
+            )
+          ),
+        }),
+        conseillerService: mockedConseillerService(),
+      }
     })
 
     describe('Contenu de page', () => {
       beforeEach(async () => {
         // WHEN
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={jeunes}
-                isFromEmail
-                pageTitle=''
-              />
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
           )
         })
       })
@@ -88,28 +96,7 @@ describe('Mes Jeunes', () => {
         expect(() =>
           screen.getByText("Vous n'avez pas encore intégré de jeunes.")
         ).toThrow()
-      })
-
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //WHEN
-        await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={jeunes}
-                isFromEmail
-                deletionSuccess={true}
-                pageTitle={''}
-              />
-            </DIProvider>
-          )
-        })
-
-        //THEN
-        expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
-        ).toBeInTheDocument()
+        expect(() => screen.getByText(/transférés temporairement/)).toThrow()
       })
 
       describe("affiche le statut d'activation du compte d'un jeune", () => {
@@ -161,6 +148,53 @@ describe('Mes Jeunes', () => {
       })
     })
 
+    describe('quand le conseiller a des bénéficiaires à récupérer', () => {
+      let conseiller: Conseiller
+      beforeEach(async () => {
+        // Given
+        await act(async () => {
+          conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances, customConseiller: conseiller }
+          )
+        })
+      })
+
+      it('affiche un message d’information', () => {
+        // Then
+        expect(
+          screen.getByText(
+            'Certains de vos bénéficiaires ont été transférés temporairement.'
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('permet de récupérer les bénéficiaires', async () => {
+        // Given
+        const boutonRecuperationBeneficiaires = screen.getByRole('button', {
+          name: 'Récupérer ces bénéficiaires',
+        })
+
+        // When
+        await userEvent.click(boutonRecuperationBeneficiaires)
+
+        // Then
+        expect(
+          dependances.conseillerService.recupererBeneficiaires
+        ).toHaveBeenCalledWith(conseiller.id, 'accessToken')
+        expect(routerReplace).toHaveBeenCalledWith({
+          pathname: '/mes-jeunes',
+          query: { recuperation: 'succes' },
+        })
+      })
+    })
+
     describe('quand le conseiller est MILO', () => {
       let jeune: JeuneAvecNbActionsNonTerminees
 
@@ -171,15 +205,15 @@ describe('Mes Jeunes', () => {
         })
 
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={[jeune]}
-                isFromEmail
-                pageTitle=''
-              />
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[jeune]}
+              isFromEmail
+              pageTitle=''
+              deletionSuccess={true}
+            />,
+            { customDependances: dependances }
           )
         })
       })
@@ -194,7 +228,9 @@ describe('Mes Jeunes', () => {
         await userEvent.click(addButton)
 
         //THEN
-        expect(push).toHaveBeenCalledWith('/mes-jeunes/milo/creation-jeune')
+        expect(routerPush).toHaveBeenCalledWith(
+          '/mes-jeunes/milo/creation-jeune'
+        )
       })
 
       it("affiche la colonne nombre d'actions des jeunes", () => {
@@ -216,21 +252,6 @@ describe('Mes Jeunes', () => {
       })
 
       it('affiche le message de succès de suppression de jeune', async () => {
-        //WHEN
-        await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={jeunes}
-                isFromEmail
-                deletionSuccess={true}
-                pageTitle={''}
-              />
-            </DIProvider>
-          )
-        })
-
         //THEN
         expect(
           screen.getByText('Le compte du jeune a bien été supprimé.')
@@ -249,15 +270,15 @@ describe('Mes Jeunes', () => {
         const jeune = unJeuneAvecActionsNonTerminees()
 
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.POLE_EMPLOI}
-                conseillerJeunes={[jeune]}
-                isFromEmail
-                pageTitle=''
-              />
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.POLE_EMPLOI}
+              conseillerJeunes={[jeune]}
+              isFromEmail
+              pageTitle=''
+              deletionSuccess={true}
+            />,
+            { customDependances: dependances }
           )
         })
       })
@@ -272,7 +293,7 @@ describe('Mes Jeunes', () => {
         await userEvent.click(addButton)
 
         //THEN
-        expect(push).toHaveBeenCalledWith(
+        expect(routerPush).toHaveBeenCalledWith(
           '/mes-jeunes/pole-emploi/creation-jeune'
         )
       })
@@ -292,18 +313,106 @@ describe('Mes Jeunes', () => {
       })
 
       it('affiche le message de succès de suppression de jeune', async () => {
+        //THEN
+        expect(
+          screen.getByText('Le compte du jeune a bien été supprimé.')
+        ).toBeInTheDocument()
+      })
+    })
+
+    describe("quand le conseiller n'a pas de jeune", () => {
+      it("n'affiche pas la recherche de jeune", async () => {
+        // GIVEN
+        await act(async () => {
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[]}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
+          )
+        })
+
+        // Then
+        expect(() =>
+          screen.getByLabelText(/Rechercher un jeune par son nom de famille/)
+        ).toThrow()
+      })
+
+      it('affiche un message invitant à ajouter des jeunes', async () => {
+        // GIVEN
+        await act(async () => {
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={[]}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
+          )
+        })
+
+        //THEN
+        expect(
+          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+        ).toBeInTheDocument()
+        expect(() => screen.getAllByRole('row')).toThrow()
+      })
+
+      describe('quand le conseiller a des bénéficiaires à récupérer', () => {
+        beforeEach(async () => {
+          // GIVEN
+          const conseiller = unConseiller({
+            aDesBeneficiairesARecuperer: true,
+          })
+          await act(async () => {
+            renderPage(
+              <MesJeunes
+                structureConseiller={UserStructure.MILO}
+                conseillerJeunes={[]}
+                isFromEmail
+                pageTitle=''
+              />,
+              { customDependances: dependances, customConseiller: conseiller }
+            )
+          })
+        })
+
+        it("n'affiche pas de message invitant à ajouter des jeunes", () => {
+          //THEN
+          expect(() =>
+            screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+          ).toThrow()
+          expect(() => screen.getAllByRole('row')).toThrow()
+        })
+
+        it('permet de recupérer les bénéficiaires', () => {
+          expect(
+            screen.getByText(/Vos bénéficiaires ont été transférés/)
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Récupérer les bénéficiaires' })
+          ).toBeInTheDocument()
+        })
+      })
+    })
+
+    describe('quand on vient de supprimer un jeune', () => {
+      it('affiche le message de succès de suppression de jeune', async () => {
         //WHEN
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.POLE_EMPLOI}
-                conseillerJeunes={jeunes}
-                isFromEmail
-                deletionSuccess={true}
-                pageTitle={''}
-              />
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              deletionSuccess={true}
+              pageTitle={''}
+            />,
+            { customDependances: dependances }
           )
         })
 
@@ -314,48 +423,23 @@ describe('Mes Jeunes', () => {
       })
     })
 
-    describe("quand le conseiller n'a pas de jeune", () => {
-      it('affiche un message invitant à ajouter des jeunes', async () => {
-        // GIVEN
-        await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={[]}
-                isFromEmail
-                pageTitle=''
-              />
-            </DIProvider>
-          )
-        })
-
-        //THEN
-        expect(
-          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
-        ).toBeInTheDocument()
-        expect(() => screen.getAllByRole('row')).toThrow()
-      })
-    })
-
     describe('quand la récupération des messages non lus échoue', () => {
       it('affiche la liste des jeunes', async () => {
         // GIVEN
-        ;(messagesService.countMessagesNotRead as jest.Mock).mockRejectedValue(
-          new Error()
-        )
+        ;(
+          dependances.messagesService.countMessagesNotRead as jest.Mock
+        ).mockRejectedValue(new Error())
 
         // WHEN
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={jeunes}
-                isFromEmail
-                pageTitle=''
-              />
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />,
+            { customDependances: dependances }
           )
         })
 
@@ -368,22 +452,44 @@ describe('Mes Jeunes', () => {
       it('affiche un message de succès', async () => {
         // When
         await act(async () => {
-          renderWithSession(
-            <DIProvider dependances={{ messagesService }}>
-              <MesJeunes
-                structureConseiller={UserStructure.MILO}
-                conseillerJeunes={jeunes}
-                isFromEmail
-                pageTitle=''
-                ajoutAgenceSuccess={true}
-              />
-            </DIProvider>
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+              ajoutAgenceSuccess={true}
+            />,
+            { customDependances: dependances }
           )
         })
 
         // Then
         expect(
           screen.getByText('Votre Mission locale a été ajoutée à votre profil')
+        ).toBeInTheDocument()
+      })
+    })
+
+    describe('quand on vient de récupérer des bénéficiaires', () => {
+      it('affiche un message de succès', async () => {
+        // When
+        await act(async () => {
+          renderPage(
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+              recuperationSuccess={true}
+            />,
+            { customDependances: dependances }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByText('Vous avez récupéré vos bénéficiaires avec succès')
         ).toBeInTheDocument()
       })
     })
@@ -467,6 +573,29 @@ describe('Mes Jeunes', () => {
       expect(actual).toMatchObject({
         props: {
           deletionSuccess: true,
+        },
+      })
+    })
+
+    it("traite la réussite d'une récupération de bénéficiaires", async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+          accessToken: 'accessToken',
+        },
+      })
+
+      // When
+      const actual = await getServerSideProps({
+        query: { recuperation: 'succes' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(actual).toMatchObject({
+        props: {
+          recuperationSuccess: true,
         },
       })
     })

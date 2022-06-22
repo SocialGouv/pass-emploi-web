@@ -1,5 +1,6 @@
 import { MouseEventHandler, ReactNode } from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/Button.module.css'
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
   form?: string
   id?: string
   tabIndex?: number
+  isLoading?: boolean
 }
 
 export enum ButtonStyle {
@@ -38,6 +40,7 @@ export default function Button({
   label,
   disabled,
   selected,
+  isLoading = false,
 }: Props) {
   return (
     <>
@@ -53,11 +56,17 @@ export default function Button({
         type={type ?? undefined}
         aria-controls={controls ?? undefined}
         aria-label={label ?? undefined}
-        disabled={disabled}
+        disabled={disabled || isLoading}
         aria-disabled={disabled}
         aria-selected={selected}
       >
-        {children}
+        {isLoading && (
+          <IconComponent
+            name={IconName.Spinner}
+            className='w-6 h-6 fill-blanc animate-spin'
+          />
+        )}
+        {!isLoading && children}
       </button>
     </>
   )
