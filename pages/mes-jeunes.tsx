@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import EmptyStateImage from '../../assets/images/empty_state.svg'
+import EmptyStateImage from '../assets/images/empty_state.svg'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
