@@ -55,6 +55,36 @@ interface FicheJeuneProps extends PageProps {
   onglet?: Onglet
 }
 
+interface PaginationItemProps {
+  page: number
+  label: string
+  onClick: (page: number) => Promise<void>
+  disabled: boolean
+  children: string
+}
+
+function PaginationItem({
+  children,
+  disabled,
+  label,
+  onClick,
+  page,
+}: PaginationItemProps) {
+  return (
+    <li>
+      <button
+        onClick={() => onClick(page)}
+        aria-label={label}
+        title={label}
+        disabled={disabled}
+        className='disabled:cursor-not-allowed disabled:text-grey_700'
+      >
+        {children}
+      </button>
+    </li>
+  )
+}
+
 function FicheJeune({
   jeune,
   rdvs,
@@ -84,7 +114,9 @@ function FicheJeune({
   const [actionsDeLaPage, setActionsDeLaPage] = useState<Action[]>(
     actionsInitiales.actions
   )
-
+  const [pageCourante, setPageCourante] = useState<number>(
+    actionsInitiales.page
+  )
   const lastPage = Math.ceil(actionsInitiales.total / 10)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
@@ -156,12 +188,15 @@ function FicheJeune({
   }
 
   async function goToActionPage(page: number) {
+    if (page < 1 || page > lastPage) return
+
     const { actions } = await actionsService.getActionsJeune(
       jeune.id,
       page,
       session!.accessToken
     )
     setActionsDeLaPage(actions)
+    setPageCourante(page)
   }
 
   useMatomo(trackingLabel)
@@ -224,65 +259,62 @@ function FicheJeune({
 
       <nav aria-label='pagination actions'>
         <ul className='flex justify-between'>
-          <li>
-            <button
-              onClick={() => goToActionPage(1)}
-              aria-label='Première page'
-              title='Première page'
-            >
-              Première page
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => goToActionPage(actionsInitiales.page - 1)}
-              aria-label='Page précédente'
-              title='Page précédente'
-            >
-              Page précédente
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => goToActionPage(1)}
-              aria-label='Page 1'
-              title='Page 1'
-            >
-              1
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => goToActionPage(2)}
-              aria-label='Page 2'
-              title='Page 2'
-            >
-              2
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => goToActionPage(3)}
-              aria-label='Page 3'
-              title='Page 3'
-            >
-              3
-            </button>
-          </li>
-          <li>
-            <button aria-label='Page suivante' title='Page suivante'>
-              Page suivante
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => goToActionPage(lastPage)}
-              aria-label='Dernière page'
-              title='Dernière page'
-            >
-              Dernière page
-            </button>
-          </li>
+          <PaginationItem
+            page={1}
+            label='Première page'
+            onClick={goToActionPage}
+            disabled={pageCourante <= 1}
+          >
+            Première page
+          </PaginationItem>
+          <PaginationItem
+            page={pageCourante - 1}
+            label='Page précédente'
+            onClick={goToActionPage}
+            disabled={pageCourante <= 1}
+          >
+            Page précédente
+          </PaginationItem>
+          <PaginationItem
+            page={1}
+            label='Page 1'
+            onClick={goToActionPage}
+            disabled={pageCourante === 1}
+          >
+            1
+          </PaginationItem>
+          <PaginationItem
+            page={2}
+            label='Page 2'
+            onClick={goToActionPage}
+            disabled={pageCourante === 2}
+          >
+            2
+          </PaginationItem>
+          <PaginationItem
+            page={3}
+            label='Page 3'
+            onClick={goToActionPage}
+            disabled={pageCourante === 3}
+          >
+            3
+          </PaginationItem>
+          <PaginationItem
+            page={pageCourante + 1}
+            label='Page suivante'
+            onClick={goToActionPage}
+            disabled={pageCourante >= lastPage}
+          >
+            Page suivante
+          </PaginationItem>
+          <PaginationItem
+            page={lastPage}
+            label='Dernière page'
+            onClick={goToActionPage}
+            disabled={pageCourante >= lastPage}
+          >
+            Dernière page
+          </PaginationItem>
         </ul>
       </nav>
 

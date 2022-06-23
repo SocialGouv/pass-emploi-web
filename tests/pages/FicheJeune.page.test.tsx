@@ -543,9 +543,8 @@ describe('Fiche Jeune', () => {
       })
     })
 
-    describe('pagination action', () => {
+    describe('pagination actions', () => {
       let actionsService: ActionsService
-
       beforeEach(() => {
         // Given
         actionsService = mockedActionsService({
@@ -554,6 +553,7 @@ describe('Fiche Jeune', () => {
             total: 1,
           })),
         })
+
         renderPage(
           <FicheJeune
             jeune={jeune}
@@ -566,6 +566,7 @@ describe('Fiche Jeune', () => {
           { customDependances: { actionsService } }
         )
       })
+
       it('met à jour les actions avec la page demandée ', async () => {
         // When
         await userEvent.click(screen.getByLabelText('Page 2'))
@@ -589,6 +590,9 @@ describe('Fiche Jeune', () => {
           1,
           'accessToken'
         )
+        expect(screen.getByLabelText('Première page')).toHaveAttribute(
+          'disabled'
+        )
       })
 
       it('permet d’aller à la dernière page des actions', async () => {
@@ -601,6 +605,9 @@ describe('Fiche Jeune', () => {
           7,
           'accessToken'
         )
+        expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
+          'disabled'
+        )
       })
 
       it('permet de revenir à la page précédente', async () => {
@@ -612,6 +619,64 @@ describe('Fiche Jeune', () => {
           jeune.id,
           3,
           'accessToken'
+        )
+      })
+
+      it("permet d'aller à la page suivante", async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page suivante'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          5,
+          'accessToken'
+        )
+      })
+
+      it('met à jour la page courante', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page précédente'))
+        await userEvent.click(screen.getByLabelText('Page précédente'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          3,
+          'accessToken'
+        )
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          2,
+          'accessToken'
+        )
+      })
+
+      it('ne permet pas de revenir avant la première page', async () => {
+        // Given
+        await userEvent.click(screen.getByLabelText('Première page'))
+
+        // When
+        await userEvent.click(screen.getByLabelText('Page précédente'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+        expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
+          'disabled'
+        )
+      })
+
+      it("ne permet pas d'aller après la dernière page", async () => {
+        // Given
+        await userEvent.click(screen.getByLabelText('Dernière page'))
+
+        // When
+        await userEvent.click(screen.getByLabelText('Page suivante'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+        expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
+          'disabled'
         )
       })
     })
