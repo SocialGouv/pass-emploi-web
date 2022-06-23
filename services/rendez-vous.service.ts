@@ -47,11 +47,12 @@ export class RendezVousApiService implements RendezVousService {
     idConseiller: string,
     accessToken: string
   ): Promise<{ passes: Rdv[]; futurs: Rdv[] }> {
-    const { passes: rdvsPassesJson, futurs: rdvsFutursJson } =
-      await this.apiClient.get<{
-        passes: RdvJson[]
-        futurs: RdvJson[]
-      }>(`/conseillers/${idConseiller}/rendezvous`, accessToken)
+    const {
+      content: { passes: rdvsPassesJson, futurs: rdvsFutursJson },
+    } = await this.apiClient.get<{
+      passes: RdvJson[]
+      futurs: RdvJson[]
+    }>(`/conseillers/${idConseiller}/rendezvous`, accessToken)
     return {
       passes: rdvsPassesJson.map(jsonToRdv),
       futurs: rdvsFutursJson.map(jsonToRdv),
@@ -62,7 +63,7 @@ export class RendezVousApiService implements RendezVousService {
     idJeune: string,
     accessToken: string
   ): Promise<Rdv[]> {
-    const rdvsJson = await this.apiClient.get<RdvJeuneJson[]>(
+    const { content: rdvsJson } = await this.apiClient.get<RdvJeuneJson[]>(
       `/jeunes/${idJeune}/rendezvous`,
       accessToken
     )
@@ -74,7 +75,7 @@ export class RendezVousApiService implements RendezVousService {
     accessToken: string
   ): Promise<Rdv | undefined> {
     try {
-      const rdvJson = await this.apiClient.get<RdvJson>(
+      const { content: rdvJson } = await this.apiClient.get<RdvJson>(
         `/rendezvous/${idRdv}`,
         accessToken
       )
@@ -87,19 +88,20 @@ export class RendezVousApiService implements RendezVousService {
     }
   }
 
-  getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]> {
-    return this.apiClient.get<TypeRendezVous[]>(
+  async getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]> {
+    const { content: types } = await this.apiClient.get<TypeRendezVous[]>(
       '/referentiels/types-rendezvous',
       accessToken
     )
+    return types
   }
 
-  postNewRendezVous(
+  async postNewRendezVous(
     idConseiller: string,
     newRDV: RdvFormData,
     accessToken: string
   ): Promise<void> {
-    return this.apiClient.post(
+    await this.apiClient.post(
       `/conseillers/${idConseiller}/rendezvous`,
       newRDV,
       accessToken

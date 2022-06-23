@@ -51,9 +51,12 @@ export class ActionsApiService implements ActionsService {
     accessToken: string
   ): Promise<{ action: Action; jeune: BaseJeune } | undefined> {
     try {
-      const { jeune, ...actionJson } = await this.apiClient.get<
-        ActionJson & { jeune: BaseJeuneJson }
-      >(`/actions/${idAction}`, accessToken)
+      const {
+        content: { jeune, ...actionJson },
+      } = await this.apiClient.get<ActionJson & { jeune: BaseJeuneJson }>(
+        `/actions/${idAction}`,
+        accessToken
+      )
       return {
         action: jsonToAction(actionJson),
         jeune: jsonToBaseJeune(jeune),
@@ -68,7 +71,7 @@ export class ActionsApiService implements ActionsService {
     idConseiller: string,
     accessToken: string
   ): Promise<TotalActions[]> {
-    const counts = await this.apiClient.get<ActionsCountJson[]>(
+    const { content: counts } = await this.apiClient.get<ActionsCountJson[]>(
       `/conseillers/${idConseiller}/actions`,
       accessToken
     )
@@ -84,7 +87,7 @@ export class ActionsApiService implements ActionsService {
     page: number,
     accessToken: string
   ): Promise<Action[]> {
-    const actionsJson: ActionJson[] = await this.apiClient.get<ActionJson[]>(
+    const { content: actionsJson } = await this.apiClient.get<ActionJson[]>(
       `/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante`,
       accessToken
     )

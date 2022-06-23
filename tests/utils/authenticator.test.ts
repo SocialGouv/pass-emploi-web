@@ -86,9 +86,11 @@ describe('Authenticator', () => {
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
           ;(httpClient.fetchJson as jest.Mock).mockResolvedValueOnce({
-            access_token: nouvelAccessToken,
-            refresh_token: nouveauRefreshToken,
-            expires_in: cinqMnEnS,
+            content: {
+              access_token: nouvelAccessToken,
+              refresh_token: nouveauRefreshToken,
+              expires_in: cinqMnEnS,
+            },
           })
 
           // When
@@ -121,9 +123,11 @@ describe('Authenticator', () => {
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
           ;(httpClient.fetchJson as jest.Mock).mockResolvedValueOnce({
-            access_token: nouvelAccessToken,
-            refresh_token: nouveauRefreshToken,
-            expires_in: cinqMnEnS,
+            content: {
+              access_token: nouvelAccessToken,
+              refresh_token: nouveauRefreshToken,
+              expires_in: cinqMnEnS,
+            },
           })
 
           // When

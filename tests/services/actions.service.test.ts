@@ -27,8 +27,14 @@ describe('ActionsApiService', () => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
-            ...uneActionJson({ id: action.id, status: 'not_started' }),
-            jeune: { id: 'jeune-1', firstName: 'Nadia', lastName: 'Sanfamiye' },
+            content: {
+              ...uneActionJson({ id: action.id, status: 'not_started' }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
           }
       })
 
@@ -48,8 +54,14 @@ describe('ActionsApiService', () => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
-            ...uneActionJson({ id: action.id, status: 'in_progress' }),
-            jeune: { id: 'jeune-1', firstName: 'Nadia', lastName: 'Sanfamiye' },
+            content: {
+              ...uneActionJson({ id: action.id, status: 'in_progress' }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
           }
       })
 
@@ -69,8 +81,14 @@ describe('ActionsApiService', () => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/actions/${action.id}`)
           return {
-            ...uneActionJson({ id: action.id, status: 'done' }),
-            jeune: { id: 'jeune-1', firstName: 'Nadia', lastName: 'Sanfamiye' },
+            content: {
+              ...uneActionJson({ id: action.id, status: 'done' }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
           }
       })
 
@@ -104,7 +122,7 @@ describe('ActionsApiService', () => {
       const actions = uneListeDActions()
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/jeunes/whatever/actions?page=1&tri=date_decroissante`)
-          return uneListeDActionsJson()
+          return { content: uneListeDActionsJson() }
       })
 
       // WHEN

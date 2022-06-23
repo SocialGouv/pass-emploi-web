@@ -22,9 +22,9 @@ describe('AgencesApiService', () => {
     beforeEach(() => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/referentiels/agences?structure=MILO`)
-          return uneListeDAgencesMILO()
+          return { content: uneListeDAgencesMILO() }
         if (url === `/referentiels/agences?structure=POLE_EMPLOI`)
-          return uneListeDAgencesPoleEmploi()
+          return { content: uneListeDAgencesPoleEmploi() }
       })
     })
 

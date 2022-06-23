@@ -1,12 +1,12 @@
 import { uneAction } from 'fixtures/action'
 import {
-  datePasseeLoin,
-  datePassee,
   dateFuture,
   dateFutureLoin,
+  datePassee,
+  datePasseeLoin,
   now,
 } from 'fixtures/date'
-import { compareActionsDatesDesc } from '../../interfaces/action'
+import { compareActionsDatesDesc } from 'interfaces/action'
 
 describe('Action', () => {
   describe('.compareActionsDatesDesc', () => {

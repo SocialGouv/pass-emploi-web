@@ -15,8 +15,8 @@ import {
   jsonToDetailJeune,
   jsonToItemJeune,
 } from 'interfaces/json/jeune'
+import ErrorCodes from 'services/error-codes'
 import { RequestError } from 'utils/httpClient'
-import ErrorCodes from './error-codes'
 
 export interface JeunesService {
   getJeunesDuConseiller(
@@ -68,7 +68,7 @@ export class JeunesApiService implements JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<JeuneFromListe[]> {
-    const jeunes = await this.apiClient.get<ItemJeuneJson[]>(
+    const { content: jeunes } = await this.apiClient.get<ItemJeuneJson[]>(
       `/conseillers/${idConseiller}/jeunes`,
       accessToken
     )
@@ -80,7 +80,7 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<DetailJeune | undefined> {
     try {
-      const jeune = await this.apiClient.get<DetailJeuneJson>(
+      const { content: jeune } = await this.apiClient.get<DetailJeuneJson>(
         `/jeunes/${idJeune}`,
         accessToken
       )
@@ -99,10 +99,9 @@ export class JeunesApiService implements JeunesService {
   ): Promise<ConseillerHistorique[]> {
     {
       try {
-        const historique = await this.apiClient.get<ConseillerHistoriqueJson[]>(
-          `/jeunes/${idJeune}/conseillers`,
-          accessToken
-        )
+        const { content: historique } = await this.apiClient.get<
+          ConseillerHistoriqueJson[]
+        >(`/jeunes/${idJeune}/conseillers`, accessToken)
         return historique.map(toConseillerHistorique)
       } catch (e) {
         if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
@@ -113,23 +112,26 @@ export class JeunesApiService implements JeunesService {
     }
   }
 
-  createCompteJeunePoleEmploi(
+  async createCompteJeunePoleEmploi(
     newJeune: { firstName: string; lastName: string; email: string },
     idConseiller: string,
     accessToken: string
   ): Promise<{ id: string }> {
-    return this.apiClient.post<{ id: string }>(
+    const {
+      content: { id },
+    } = await this.apiClient.post<{ id: string }>(
       `/conseillers/pole-emploi/jeunes`,
       { ...newJeune, idConseiller: idConseiller },
       accessToken
     )
+    return { id }
   }
 
   async getJeunesDuConseillerParEmail(
     emailConseiller: string,
     accessToken: string
   ): Promise<{ idConseiller: string; jeunes: JeuneFromListe[] }> {
-    const conseiller = await this.apiClient.get<Conseiller>(
+    const { content: conseiller } = await this.apiClient.get<Conseiller>(
       `/conseillers?email=${emailConseiller}`,
       accessToken
     )
@@ -145,7 +147,9 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<string | undefined> {
     try {
-      const { id } = await this.apiClient.get<{ id: string }>(
+      const {
+        content: { id },
+      } = await this.apiClient.get<{ id: string }>(
         `/conseillers/milo/jeunes/${numeroDossier}`,
         accessToken
       )
@@ -165,11 +169,12 @@ export class JeunesApiService implements JeunesService {
     estTemporaire: boolean,
     accessToken: string
   ): Promise<void> {
-    const conseillerDestination = await this.apiClient.get<Conseiller>(
-      `/conseillers?email=${emailConseillerDestination}`,
-      accessToken
-    )
-    return this.apiClient.post(
+    const { content: conseillerDestination } =
+      await this.apiClient.get<Conseiller>(
+        `/conseillers?email=${emailConseillerDestination}`,
+        accessToken
+      )
+    await this.apiClient.post(
       '/jeunes/transferer',
       {
         idConseillerSource: idConseillerInitial,

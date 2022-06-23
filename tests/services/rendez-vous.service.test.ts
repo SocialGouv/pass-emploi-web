@@ -28,7 +28,9 @@ describe('RendezVousApiService', () => {
       // Given
       const accessToken = 'accessToken'
       const typesRendezVous = typesDeRendezVous()
-      ;(apiClient.get as jest.Mock).mockResolvedValue(typesRendezVous)
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: typesRendezVous,
+      })
 
       // When
       const actual = await rendezVousService.getTypesRendezVous(accessToken)
@@ -45,7 +47,9 @@ describe('RendezVousApiService', () => {
   describe('.getDetailRendezVous', () => {
     it('renvoie les détails du rdv', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue(unRendezVousJson())
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unRendezVousJson(),
+      })
 
       // When
       const actual = await rendezVousService.getDetailsRendezVous(
@@ -65,7 +69,7 @@ describe('RendezVousApiService', () => {
       // Given
       const rdvJson = unRendezVousJson()
       delete rdvJson.createur
-      ;(apiClient.get as jest.Mock).mockResolvedValue(rdvJson)
+      ;(apiClient.get as jest.Mock).mockResolvedValue({ content: rdvJson })
 
       // When
       const actual = await rendezVousService.getDetailsRendezVous(
