@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
+import { number } from 'prop-types'
 import React, { useEffect, useState } from 'react'
 
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
@@ -205,6 +206,24 @@ function FicheJeune({
     setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
+  const getPages = () => {
+    const pages = []
+    for (let count = 1; count <= lastPage; count++) {
+      pages.push(
+        <PaginationItem
+          key={`Page-${count}`}
+          page={count}
+          label={`Page ${count}`}
+          onClick={goToActionPage}
+          disabled={pageCourante === count}
+        >
+          {count.toString()}
+        </PaginationItem>
+      )
+    }
+    return pages
+  }
+
   return (
     <>
       {showRdvCreationSuccess && (
@@ -275,30 +294,7 @@ function FicheJeune({
           >
             Page précédente
           </PaginationItem>
-          <PaginationItem
-            page={1}
-            label='Page 1'
-            onClick={goToActionPage}
-            disabled={pageCourante === 1}
-          >
-            1
-          </PaginationItem>
-          <PaginationItem
-            page={2}
-            label='Page 2'
-            onClick={goToActionPage}
-            disabled={pageCourante === 2}
-          >
-            2
-          </PaginationItem>
-          <PaginationItem
-            page={3}
-            label='Page 3'
-            onClick={goToActionPage}
-            disabled={pageCourante === 3}
-          >
-            3
-          </PaginationItem>
+          {getPages()}
           <PaginationItem
             page={pageCourante + 1}
             label='Page suivante'

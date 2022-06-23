@@ -567,6 +567,17 @@ describe('Fiche Jeune', () => {
         )
       })
 
+      it('affiche un certain nombre de page selon le nombre d’actions ', () => {
+        // Then
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 7')).toBeInTheDocument()
+      })
+
       it('met à jour les actions avec la page demandée ', async () => {
         // When
         await userEvent.click(screen.getByLabelText('Page 2'))
