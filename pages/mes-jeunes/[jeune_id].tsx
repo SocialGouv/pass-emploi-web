@@ -60,25 +60,30 @@ interface PaginationItemProps {
   page: number
   label: string
   onClick: (page: number) => Promise<void>
-  disabled: boolean
   children: string
+  disabled?: boolean
+  isActive?: boolean
 }
 
 function PaginationItem({
   children,
-  disabled,
   label,
   onClick,
   page,
+  disabled,
+  isActive,
 }: PaginationItemProps) {
   return (
     <li>
       <button
         onClick={() => onClick(page)}
         aria-label={label}
+        aria-current={isActive && 'page'}
         title={label}
         disabled={disabled}
-        className='disabled:cursor-not-allowed disabled:text-grey_700'
+        className={`disabled:cursor-not-allowed disabled:text-grey_700 ${
+          isActive ? 'bg-primary text-blanc rounded-full px-3 py-1' : ''
+        }`}
       >
         {children}
       </button>
@@ -189,7 +194,7 @@ function FicheJeune({
   }
 
   async function goToActionPage(page: number) {
-    if (page < 1 || page > lastPage) return
+    if (page < 1 || page > lastPage || page === pageCourante) return
 
     const { actions } = await actionsService.getActionsJeune(
       jeune.id,
@@ -215,7 +220,7 @@ function FicheJeune({
           page={count}
           label={`Page ${count}`}
           onClick={goToActionPage}
-          disabled={pageCourante === count}
+          isActive={pageCourante === count}
         >
           {count.toString()}
         </PaginationItem>
