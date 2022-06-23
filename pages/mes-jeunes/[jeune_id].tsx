@@ -86,6 +86,8 @@ function FicheJeune({
     actionsInitiales.actions
   )
 
+  const lastPage = Math.ceil(actionsInitiales.total / 10)
+
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
   )
@@ -224,18 +226,18 @@ function FicheJeune({
       <nav aria-label='pagination actions'>
         <ul className='flex justify-between'>
           <li>
-            <Link href='#'>
-              <button aria-label='Première page' title='Première page'>
-                Première page
-              </button>
-            </Link>
+            <button
+              onClick={() => goToActionPage(1)}
+              aria-label='Première page'
+              title='Première page'
+            >
+              Première page
+            </button>
           </li>
           <li>
-            <Link href='#'>
-              <button aria-label='Page précédente' title='Page précédente'>
-                Page précédente
-              </button>
-            </Link>
+            <button aria-label='Page précédente' title='Page précédente'>
+              Page précédente
+            </button>
           </li>
           <li>
             <button
@@ -265,18 +267,18 @@ function FicheJeune({
             </button>
           </li>
           <li>
-            <Link href='#'>
-              <button aria-label='Page suivante' title='Page suivante'>
-                Page suivante
-              </button>
-            </Link>
+            <button aria-label='Page suivante' title='Page suivante'>
+              Page suivante
+            </button>
           </li>
           <li>
-            <Link href='#'>
-              <button aria-label='Dernière page' title='Dernière page'>
-                Dernière page
-              </button>
-            </Link>
+            <button
+              onClick={() => goToActionPage(lastPage)}
+              aria-label='Dernière page'
+              title='Dernière page'
+            >
+              Dernière page
+            </button>
           </li>
         </ul>
       </nav>

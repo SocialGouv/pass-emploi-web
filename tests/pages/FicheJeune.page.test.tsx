@@ -90,7 +90,7 @@ describe('Fiche Jeune', () => {
         ).toThrow()
       })
 
-      it('affiche toutes les actions du jeune', async () => {
+      it('affiche les actions du jeune', async () => {
         // When
         const tabActions = screen.getByRole('tab', { name: 'Actions 14' })
         await userEvent.click(tabActions)
@@ -544,9 +544,11 @@ describe('Fiche Jeune', () => {
     })
 
     describe('pagination action', () => {
-      it('met à jour les actions avec la page demandée ', async () => {
+      let actionsService: ActionsService
+
+      beforeEach(() => {
         // Given
-        const actionsService = mockedActionsService({
+        actionsService = mockedActionsService({
           getActionsJeune: jest.fn(async () => ({
             actions: [uneAction({ content: 'Action page 2' })],
             total: 1,
@@ -556,14 +558,15 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 62 }}
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
           />,
           { customDependances: { actionsService } }
         )
-
+      })
+      it('met à jour les actions avec la page demandée ', async () => {
         // When
         await userEvent.click(screen.getByLabelText('Page 2'))
 
@@ -574,6 +577,30 @@ describe('Fiche Jeune', () => {
           'accessToken'
         )
         expect(screen.getByText('Action page 2')).toBeInTheDocument()
+      })
+
+      it('permet d’aller à la première page des actions', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Première page'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          1,
+          'accessToken'
+        )
+      })
+
+      it('permet d’aller à la dernière page des actions', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Dernière page'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          7,
+          'accessToken'
+        )
       })
     })
   })
