@@ -46,7 +46,7 @@ const ongletProps: { [key in Onglet]: string } = {
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
   rdvs: RdvListItem[]
-  actionsInitiales: Action[]
+  actionsInitiales: { actions: Action[]; total: number }
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -82,8 +82,9 @@ function FicheJeune({
     useState<boolean>(false)
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
-  const [actionsDeLaPage, setActionsDeLaPage] =
-    useState<Action[]>(actionsInitiales)
+  const [actionsDeLaPage, setActionsDeLaPage] = useState<Action[]>(
+    actionsInitiales.actions
+  )
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -154,7 +155,7 @@ function FicheJeune({
   }
 
   async function goToActionPage(page: number) {
-    const actions = await actionsService.getActionsJeune(
+    const { actions } = await actionsService.getActionsJeune(
       jeune.id,
       page,
       session!.accessToken
@@ -350,7 +351,7 @@ function FicheJeune({
         />
         <Tab
           label='Actions'
-          count={!isPoleEmploi ? actionsInitiales.length : undefined}
+          count={!isPoleEmploi ? actionsInitiales.total : undefined}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
@@ -434,7 +435,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
           accessToken
         ),
     isPoleEmploi
-      ? []
+      ? { actions: [], total: 0 }
       : actionsService.getActionsJeune(
           context.query.jeune_id as string,
           parseInt(context.query.page as string, 10) || 1,

@@ -122,7 +122,10 @@ describe('ActionsApiService', () => {
       const actions = uneListeDActions()
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/jeunes/whatever/actions?page=1&tri=date_decroissante`)
-          return { content: uneListeDActionsJson() }
+          return {
+            content: uneListeDActionsJson(),
+            headers: new Headers({ 'x-total-count': '82' }),
+          }
       })
 
       // WHEN
@@ -133,7 +136,7 @@ describe('ActionsApiService', () => {
       )
 
       // THEN
-      expect(actual).toStrictEqual(actions)
+      expect(actual).toStrictEqual({ actions, total: 82 })
     })
   })
 

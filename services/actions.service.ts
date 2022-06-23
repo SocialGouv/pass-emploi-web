@@ -25,7 +25,7 @@ export interface ActionsService {
     idJeune: string,
     page: number,
     accessToken: string
-  ): Promise<Action[]>
+  ): Promise<{ actions: Action[]; total: number }>
 
   createAction(
     action: { intitule: string; commentaire: string },
@@ -86,12 +86,21 @@ export class ActionsApiService implements ActionsService {
     idJeune: string,
     page: number,
     accessToken: string
-  ): Promise<Action[]> {
-    const { content: actionsJson } = await this.apiClient.get<ActionJson[]>(
+  ): Promise<{ actions: Action[]; total: number }> {
+    const { content: actionsJson, headers } = await this.apiClient.get<
+      ActionJson[]
+    >(
       `/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante`,
       accessToken
     )
-    return actionsJson.map(jsonToAction)
+    const total = headers.has('x-total-count')
+      ? parseInt(headers.get('x-total-count')!)
+      : actionsJson.length
+
+    return {
+      actions: actionsJson.map(jsonToAction),
+      total,
+    }
   }
 
   async createAction(

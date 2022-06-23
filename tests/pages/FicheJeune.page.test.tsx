@@ -39,8 +39,6 @@ import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -70,7 +68,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             conseillers={listeConseillers}
             pageTitle={''}
           />,
@@ -94,7 +92,7 @@ describe('Fiche Jeune', () => {
 
       it('affiche toutes les actions du jeune', async () => {
         // When
-        const tabActions = screen.getByRole('tab', { name: 'Actions 4' })
+        const tabActions = screen.getByRole('tab', { name: 'Actions 14' })
         await userEvent.click(tabActions)
 
         // Then
@@ -103,7 +101,7 @@ describe('Fiche Jeune', () => {
         })
         expect(
           screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Actions 4')
+        ).toHaveAccessibleName('Actions 14')
         expect(() =>
           screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
         ).toThrow()
@@ -176,7 +174,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             conseillers={conseillers}
             pageTitle={''}
           />
@@ -195,7 +193,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             conseillers={[]}
             pageTitle={''}
           />,
@@ -259,7 +257,7 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={actions}
+              actionsInitiales={{ actions, total: 14 }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -299,7 +297,7 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={unDetailJeune({ situations: situations })}
               rdvs={[]}
-              actionsInitiales={actions}
+              actionsInitiales={{ actions, total: 14 }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -333,7 +331,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={[]}
+            actionsInitiales={{ actions: [], total: 0 }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -354,7 +352,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isActivated: false }}
             rdvs={rdvs}
-            actionsInitiales={[]}
+            actionsInitiales={{ actions: [], total: 0 }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -386,7 +384,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isReaffectationTemporaire: true }}
             rdvs={rdvs}
-            actionsInitiales={[]}
+            actionsInitiales={{ actions: [], total: 0 }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -404,7 +402,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             rdvCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
@@ -448,7 +446,7 @@ describe('Fiche Jeune', () => {
             jeune={jeune}
             rdvs={rdvs}
             conseillers={[]}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             rdvModificationSuccess={true}
             pageTitle={''}
           />
@@ -490,7 +488,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             actionCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
@@ -531,7 +529,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
@@ -549,15 +547,16 @@ describe('Fiche Jeune', () => {
       it('met à jour les actions avec la page demandée ', async () => {
         // Given
         const actionsService = mockedActionsService({
-          getActionsJeune: jest.fn(async () => [
-            uneAction({ content: 'Action page 2' }),
-          ]),
+          getActionsJeune: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action page 2' })],
+            total: 1,
+          })),
         })
         renderPage(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={actions}
+            actionsInitiales={{ actions, total: 14 }}
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
@@ -597,12 +596,15 @@ describe('Fiche Jeune', () => {
         ),
       })
       actionsService = mockedActionsService({
-        getActionsJeune: jest.fn(async () => [
-          uneAction({ creationDate: now.toISOString() }),
-          uneAction({ creationDate: datePasseeLoin.toISOString() }),
-          uneAction({ creationDate: dateFuture.toISOString() }),
-          uneAction({ creationDate: dateFutureLoin.toISOString() }),
-        ]),
+        getActionsJeune: jest.fn(async () => ({
+          actions: [
+            uneAction({ creationDate: now.toISOString() }),
+            uneAction({ creationDate: datePasseeLoin.toISOString() }),
+            uneAction({ creationDate: dateFuture.toISOString() }),
+            uneAction({ creationDate: dateFutureLoin.toISOString() }),
+          ],
+          total: 14,
+        })),
       })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
         if (dependance === 'jeunesService') return jeunesService
@@ -680,12 +682,15 @@ describe('Fiche Jeune', () => {
         )
         expect(actual).toMatchObject({
           props: {
-            actionsInitiales: [
-              uneAction({ creationDate: now.toISOString() }),
-              uneAction({ creationDate: datePasseeLoin.toISOString() }),
-              uneAction({ creationDate: dateFuture.toISOString() }),
-              uneAction({ creationDate: dateFutureLoin.toISOString() }),
-            ],
+            actionsInitiales: {
+              actions: [
+                uneAction({ creationDate: now.toISOString() }),
+                uneAction({ creationDate: datePasseeLoin.toISOString() }),
+                uneAction({ creationDate: dateFuture.toISOString() }),
+                uneAction({ creationDate: dateFutureLoin.toISOString() }),
+              ],
+              total: 14,
+            },
           },
         })
       })
@@ -835,7 +840,9 @@ describe('Fiche Jeune', () => {
       it('ne recupère pas les actions', async () => {
         // Then
         expect(actionsService.getActionsJeune).not.toHaveBeenCalled()
-        expect(actual).toMatchObject({ props: { actionsInitiales: [] } })
+        expect(actual).toMatchObject({
+          props: { actionsInitiales: { actions: [] } },
+        })
       })
     })
   })
