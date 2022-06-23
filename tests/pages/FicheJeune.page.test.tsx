@@ -68,7 +68,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 14, page: 1 }}
             conseillers={listeConseillers}
             pageTitle={''}
           />,
@@ -174,7 +174,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 14, page: 1 }}
             conseillers={conseillers}
             pageTitle={''}
           />
@@ -193,7 +193,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 14, page: 1 }}
             conseillers={[]}
             pageTitle={''}
           />,
@@ -257,7 +257,7 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions, total: 14 }}
+              actionsInitiales={{ actions, total: 14, page: 1 }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -297,7 +297,7 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={unDetailJeune({ situations: situations })}
               rdvs={[]}
-              actionsInitiales={{ actions, total: 14 }}
+              actionsInitiales={{ actions, total: 14, page: 1 }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -331,7 +331,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0 }}
+            actionsInitiales={{ actions: [], total: 0, page: 1 }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -352,7 +352,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isActivated: false }}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0 }}
+            actionsInitiales={{ actions: [], total: 0, page: 1 }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -384,7 +384,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isReaffectationTemporaire: true }}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0 }}
+            actionsInitiales={{ actions: [], total: 0, page: 1 }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -402,7 +402,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 14, page: 1 }}
             rdvCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
@@ -446,7 +446,7 @@ describe('Fiche Jeune', () => {
             jeune={jeune}
             rdvs={rdvs}
             conseillers={[]}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 14, page: 1 }}
             rdvModificationSuccess={true}
             pageTitle={''}
           />
@@ -488,7 +488,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 14, page: 1 }}
             actionCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
@@ -529,7 +529,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={{ actions, total: 14 }}
+            actionsInitiales={{ actions, total: 14, page: 1 }}
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
@@ -539,7 +539,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Actions 4')
+        ).toHaveAccessibleName('Actions 14')
       })
     })
 
@@ -558,7 +558,7 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 62 }}
+            actionsInitiales={{ actions, total: 62, page: 4 }}
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
@@ -599,6 +599,18 @@ describe('Fiche Jeune', () => {
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
           jeune.id,
           7,
+          'accessToken'
+        )
+      })
+
+      it('permet de revenir à la page précédente', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page précédente'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          3,
           'accessToken'
         )
       })
@@ -717,6 +729,7 @@ describe('Fiche Jeune', () => {
                 uneAction({ creationDate: dateFutureLoin.toISOString() }),
               ],
               total: 14,
+              page: 1,
             },
           },
         })
@@ -746,6 +759,13 @@ describe('Fiche Jeune', () => {
           3,
           'accessToken'
         )
+        expect(actual).toMatchObject({
+          props: {
+            actionsInitiales: {
+              page: 3,
+            },
+          },
+        })
       })
     })
 

@@ -1,6 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
@@ -46,7 +45,7 @@ const ongletProps: { [key in Onglet]: string } = {
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
   rdvs: RdvListItem[]
-  actionsInitiales: { actions: Action[]; total: number }
+  actionsInitiales: { actions: Action[]; total: number; page: number }
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -235,7 +234,11 @@ function FicheJeune({
             </button>
           </li>
           <li>
-            <button aria-label='Page précédente' title='Page précédente'>
+            <button
+              onClick={() => goToActionPage(actionsInitiales.page - 1)}
+              aria-label='Page précédente'
+              title='Page précédente'
+            >
               Page précédente
             </button>
           </li>
@@ -421,6 +424,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   } = sessionOrRedirect
 
   const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
+  const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, conseillers, rdvs, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,
@@ -440,7 +444,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       ? { actions: [], total: 0 }
       : actionsService.getActionsJeune(
           context.query.jeune_id as string,
-          parseInt(context.query.page as string, 10) || 1,
+          page,
           accessToken
         ),
   ])
@@ -453,7 +457,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
-    actionsInitiales: actions,
+    actionsInitiales: { ...actions, page },
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
