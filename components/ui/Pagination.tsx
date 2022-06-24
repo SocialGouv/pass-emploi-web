@@ -33,44 +33,24 @@ export default function Pagination({
     return <span key={`ellipse-${position}`}>&#8230;</span>
   }
 
-  function getPages() {
+  function renderPagination() {
     const pages = []
 
-    if (nombreDePages <= 6) {
-      for (let page = 1; page <= nombreDePages; page++) {
-        pages.push(renderPaginationPage(page))
-      }
-      return pages
-    }
+    const debutGroupe = Math.max(
+      1,
+      Math.min(nombreDePages - 4, pageCourante - 2)
+    )
+    const finGroupe = Math.min(nombreDePages, debutGroupe + 4)
 
-    if (pageCourante > 3) {
-      pages.push(renderPaginationPage(1))
-    }
-
-    if (pageCourante > 4) {
-      pages.push(renderEllipse('debut'))
-    }
-
-    let groupStart: number = Math.max(1, pageCourante - 2)
-    if (pageCourante >= nombreDePages - 1) {
-      groupStart = nombreDePages - 4
-    }
-
-    for (
-      let page = groupStart;
-      page <= Math.min(groupStart + 4, nombreDePages);
-      page++
-    ) {
+    for (let page = debutGroupe; page <= finGroupe; page++) {
       pages.push(renderPaginationPage(page))
     }
 
-    if (nombreDePages > 6 && pageCourante < nombreDePages - 3) {
-      pages.push(renderEllipse('fin'))
-    }
-
-    if (nombreDePages > 5 && pageCourante < nombreDePages - 2) {
+    if (debutGroupe > 2) pages.unshift(renderEllipse('debut'))
+    if (debutGroupe > 1) pages.unshift(renderPaginationPage(1))
+    if (finGroupe < nombreDePages - 1) pages.push(renderEllipse('fin'))
+    if (finGroupe < nombreDePages)
       pages.push(renderPaginationPage(nombreDePages))
-    }
 
     return pages
   }
@@ -100,7 +80,7 @@ export default function Pagination({
             className='fill-inherit w-6 h-6'
           />
         </PaginationItem>
-        {getPages()}
+        {renderPagination()}
         <PaginationItem
           page={pageCourante + 1}
           label='Page suivante'
