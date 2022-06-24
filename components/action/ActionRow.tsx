@@ -54,7 +54,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
-              className='mr-6 w-6 h-6'
+              className='mr-6 w-6 h-6 fill-content_color'
             />
           </span>
         </div>

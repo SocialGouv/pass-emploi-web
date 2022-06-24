@@ -1,8 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import { number } from 'prop-types'
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import FailureMessage from 'components/FailureMessage'
@@ -60,7 +59,7 @@ interface PaginationItemProps {
   page: number
   label: string
   onClick: (page: number) => Promise<void>
-  children: string
+  children: ReactNode
   disabled?: boolean
   isActive?: boolean
 }
@@ -73,6 +72,10 @@ function PaginationItem({
   disabled,
   isActive,
 }: PaginationItemProps) {
+  const isActiveStyle = isActive && 'bg-primary text-blanc'
+  const hoverStyle =
+    !disabled && !isActive && 'hover:bg-primary_lighten hover:text-primary'
+
   return (
     <li>
       <button
@@ -81,9 +84,7 @@ function PaginationItem({
         aria-current={isActive && 'page'}
         title={label}
         disabled={disabled}
-        className={`disabled:cursor-not-allowed disabled:text-grey_700 ${
-          isActive ? 'bg-primary text-blanc rounded-full px-3 py-1' : ''
-        }`}
+        className={`rounded-full px-3 py-1 fill-primary disabled:cursor-not-allowed disabled:fill-grey_700 disabled:text-grey_700 ${isActiveStyle} ${hoverStyle}`}
       >
         {children}
       </button>
@@ -211,7 +212,7 @@ function FicheJeune({
     setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
-  const getPages = () => {
+  function getPages() {
     const pages = []
     for (let count = 1; count <= lastPage; count++) {
       pages.push(
@@ -222,7 +223,7 @@ function FicheJeune({
           onClick={goToActionPage}
           isActive={pageCourante === count}
         >
-          {count.toString()}
+          {count}
         </PaginationItem>
       )
     }
@@ -289,7 +290,10 @@ function FicheJeune({
             onClick={goToActionPage}
             disabled={pageCourante <= 1}
           >
-            Première page
+            <IconComponent
+              name={IconName.ChevronFirst}
+              className={`fill-inherit w-6 h-6`}
+            />
           </PaginationItem>
           <PaginationItem
             page={pageCourante - 1}
@@ -297,7 +301,10 @@ function FicheJeune({
             onClick={goToActionPage}
             disabled={pageCourante <= 1}
           >
-            Page précédente
+            <IconComponent
+              name={IconName.ChevronLeft}
+              className='fill-inherit w-6 h-6'
+            />
           </PaginationItem>
           {getPages()}
           <PaginationItem
@@ -306,7 +313,10 @@ function FicheJeune({
             onClick={goToActionPage}
             disabled={pageCourante >= lastPage}
           >
-            Page suivante
+            <IconComponent
+              name={IconName.ChevronRight}
+              className={`fill-inherit w-6 h-6`}
+            />
           </PaginationItem>
           <PaginationItem
             page={lastPage}
@@ -314,7 +324,10 @@ function FicheJeune({
             onClick={goToActionPage}
             disabled={pageCourante >= lastPage}
           >
-            Dernière page
+            <IconComponent
+              name={IconName.ChevronLast}
+              className={`fill-inherit w-6 h-6`}
+            />
           </PaginationItem>
         </ul>
       </nav>
