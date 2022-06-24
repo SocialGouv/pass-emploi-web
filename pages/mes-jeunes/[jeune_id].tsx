@@ -355,56 +355,6 @@ function FicheJeune({
         </div>
       )}
 
-      <nav aria-label='pagination actions'>
-        <ul className='flex justify-between'>
-          <PaginationItem
-            page={1}
-            label='Première page'
-            onClick={goToActionPage}
-            disabled={pageCourante <= 1}
-          >
-            <IconComponent
-              name={IconName.ChevronFirst}
-              className={`fill-inherit w-6 h-6`}
-            />
-          </PaginationItem>
-          <PaginationItem
-            page={pageCourante - 1}
-            label='Page précédente'
-            onClick={goToActionPage}
-            disabled={pageCourante <= 1}
-          >
-            <IconComponent
-              name={IconName.ChevronLeft}
-              className='fill-inherit w-6 h-6'
-            />
-          </PaginationItem>
-          {getPages()}
-          <PaginationItem
-            page={pageCourante + 1}
-            label='Page suivante'
-            onClick={goToActionPage}
-            disabled={pageCourante >= pageCount}
-          >
-            <IconComponent
-              name={IconName.ChevronRight}
-              className={`fill-inherit w-6 h-6`}
-            />
-          </PaginationItem>
-          <PaginationItem
-            page={pageCount}
-            label='Dernière page'
-            onClick={goToActionPage}
-            disabled={pageCourante >= pageCount}
-          >
-            <IconComponent
-              name={IconName.ChevronLast}
-              className={`fill-inherit w-6 h-6`}
-            />
-          </PaginationItem>
-        </ul>
-      </nav>
-
       <div className='flex justify-between'>
         <div className='flex'>
           {!isPoleEmploi && (
@@ -515,7 +465,58 @@ function FicheJeune({
           )}
 
           {!isPoleEmploi && (
-            <TableauActionsJeune jeune={jeune} actions={actionsDeLaPage} />
+            <>
+              <TableauActionsJeune jeune={jeune} actions={actionsDeLaPage} />
+              <nav aria-label='pagination actions' className='mt-2'>
+                <ul className='flex justify-center'>
+                  <PaginationItem
+                    page={1}
+                    label='Première page'
+                    onClick={goToActionPage}
+                    disabled={pageCourante <= 1}
+                  >
+                    <IconComponent
+                      name={IconName.ChevronFirst}
+                      className={`fill-inherit w-6 h-6`}
+                    />
+                  </PaginationItem>
+                  <PaginationItem
+                    page={pageCourante - 1}
+                    label='Page précédente'
+                    onClick={goToActionPage}
+                    disabled={pageCourante <= 1}
+                  >
+                    <IconComponent
+                      name={IconName.ChevronLeft}
+                      className='fill-inherit w-6 h-6'
+                    />
+                  </PaginationItem>
+                  {getPages()}
+                  <PaginationItem
+                    page={pageCourante + 1}
+                    label='Page suivante'
+                    onClick={goToActionPage}
+                    disabled={pageCourante >= pageCount}
+                  >
+                    <IconComponent
+                      name={IconName.ChevronRight}
+                      className={`fill-inherit w-6 h-6`}
+                    />
+                  </PaginationItem>
+                  <PaginationItem
+                    page={pageCount}
+                    label='Dernière page'
+                    onClick={goToActionPage}
+                    disabled={pageCourante >= pageCount}
+                  >
+                    <IconComponent
+                      name={IconName.ChevronLast}
+                      className={`fill-inherit w-6 h-6`}
+                    />
+                  </PaginationItem>
+                </ul>
+              </nav>
+            </>
           )}
         </div>
       )}
