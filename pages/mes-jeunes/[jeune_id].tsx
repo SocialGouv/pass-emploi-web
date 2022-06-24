@@ -124,7 +124,7 @@ function FicheJeune({
   const [pageCourante, setPageCourante] = useState<number>(
     actionsInitiales.page
   )
-  const lastPage = Math.ceil(actionsInitiales.total / 10)
+  const pageCount = Math.ceil(actionsInitiales.total / 10)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -195,7 +195,7 @@ function FicheJeune({
   }
 
   async function goToActionPage(page: number) {
-    if (page < 1 || page > lastPage || page === pageCourante) return
+    if (page < 1 || page > pageCount || page === pageCourante) return
 
     const { actions } = await actionsService.getActionsJeune(
       jeune.id,
@@ -214,7 +214,61 @@ function FicheJeune({
 
   function getPages() {
     const pages = []
-    for (let count = 1; count <= lastPage; count++) {
+
+    if (pageCount <= 6) {
+      for (let count = 1; count <= pageCount; count++) {
+        pages.push(
+          <PaginationItem
+            key={`Page-${count}`}
+            page={count}
+            label={`Page ${count}`}
+            onClick={goToActionPage}
+            isActive={pageCourante === count}
+          >
+            {count}
+          </PaginationItem>
+        )
+      }
+      return pages
+    }
+
+    function truncate(count: number) {
+      return (
+        // FIXME afficher les pages cachées ?
+        <span key={`truncate-${count}`} aria-label='pages cachées'>
+          &#8230;
+        </span>
+      )
+    }
+
+    if (pageCourante > 3) {
+      pages.push(
+        <PaginationItem
+          key={`Page-1`}
+          page={1}
+          label={`Page 1`}
+          onClick={goToActionPage}
+          isActive={pageCourante === 1}
+        >
+          1
+        </PaginationItem>
+      )
+    }
+
+    if (pageCourante > 4) {
+      pages.push(truncate(1))
+    }
+
+    let groupStart: number = Math.max(1, pageCourante - 2)
+    if (pageCourante >= pageCount - 1) {
+      groupStart = pageCount - 4
+    }
+
+    for (
+      let count = groupStart;
+      count <= Math.min(groupStart + 4, pageCount);
+      count++
+    ) {
       pages.push(
         <PaginationItem
           key={`Page-${count}`}
@@ -227,6 +281,25 @@ function FicheJeune({
         </PaginationItem>
       )
     }
+
+    if (pageCount > 6 && pageCourante < pageCount - 3) {
+      pages.push(truncate(2))
+    }
+
+    if (pageCount > 5 && pageCourante < pageCount - 2) {
+      pages.push(
+        <PaginationItem
+          key={`Page-${pageCount}`}
+          page={pageCount}
+          label={`Page ${pageCount}`}
+          onClick={goToActionPage}
+          isActive={pageCourante === pageCount}
+        >
+          {pageCount}
+        </PaginationItem>
+      )
+    }
+
     return pages
   }
 
@@ -311,7 +384,7 @@ function FicheJeune({
             page={pageCourante + 1}
             label='Page suivante'
             onClick={goToActionPage}
-            disabled={pageCourante >= lastPage}
+            disabled={pageCourante >= pageCount}
           >
             <IconComponent
               name={IconName.ChevronRight}
@@ -319,10 +392,10 @@ function FicheJeune({
             />
           </PaginationItem>
           <PaginationItem
-            page={lastPage}
+            page={pageCount}
             label='Dernière page'
             onClick={goToActionPage}
-            disabled={pageCourante >= lastPage}
+            disabled={pageCourante >= pageCount}
           >
             <IconComponent
               name={IconName.ChevronLast}

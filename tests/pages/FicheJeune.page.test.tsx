@@ -544,151 +544,336 @@ describe('Fiche Jeune', () => {
     })
 
     describe('pagination actions', () => {
-      let actionsService: ActionsService
-      beforeEach(() => {
-        // Given
-        actionsService = mockedActionsService({
-          getActionsJeune: jest.fn(async () => ({
-            actions: [uneAction({ content: 'Action page 2' })],
-            total: 1,
-          })),
+      describe('navigation', () => {
+        let actionsService: ActionsService
+        beforeEach(() => {
+          // Given
+          actionsService = mockedActionsService({
+            getActionsJeune: jest.fn(async () => ({
+              actions: [uneAction({ content: 'Action page 2' })],
+              total: 1,
+            })),
+          })
+
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{ actions, total: 52, page: 4 }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />,
+            { customDependances: { actionsService } }
+          )
         })
 
-        renderPage(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{ actions, total: 62, page: 4 }}
-            conseillers={listeConseillers}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-          />,
-          { customDependances: { actionsService } }
-        )
+        it('met à jour les actions avec la page demandée ', async () => {
+          // When
+          await userEvent.click(screen.getByLabelText('Page 2'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+            jeune.id,
+            2,
+            'accessToken'
+          )
+          expect(screen.getByText('Action page 2')).toBeInTheDocument()
+        })
+
+        it('permet d’aller à la première page des actions', async () => {
+          // When
+          await userEvent.click(screen.getByLabelText('Première page'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+            jeune.id,
+            1,
+            'accessToken'
+          )
+          expect(screen.getByLabelText('Première page')).toHaveAttribute(
+            'disabled'
+          )
+        })
+
+        it('permet d’aller à la dernière page des actions', async () => {
+          // When
+          await userEvent.click(screen.getByLabelText('Dernière page'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+            jeune.id,
+            6,
+            'accessToken'
+          )
+          expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
+            'disabled'
+          )
+        })
+
+        it('permet de revenir à la page précédente', async () => {
+          // When
+          await userEvent.click(screen.getByLabelText('Page précédente'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+            jeune.id,
+            3,
+            'accessToken'
+          )
+        })
+
+        it("permet d'aller à la page suivante", async () => {
+          // When
+          await userEvent.click(screen.getByLabelText('Page suivante'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+            jeune.id,
+            5,
+            'accessToken'
+          )
+        })
+
+        it('met à jour la page courante', async () => {
+          // When
+          await userEvent.click(screen.getByLabelText('Page précédente'))
+          await userEvent.click(screen.getByLabelText('Page précédente'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+            jeune.id,
+            3,
+            'accessToken'
+          )
+          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+            jeune.id,
+            2,
+            'accessToken'
+          )
+        })
+
+        it('ne permet pas de revenir avant la première page', async () => {
+          // Given
+          await userEvent.click(screen.getByLabelText('Première page'))
+
+          // When
+          await userEvent.click(screen.getByLabelText('Page précédente'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
+            'disabled'
+          )
+        })
+
+        it("ne permet pas d'aller après la dernière page", async () => {
+          // Given
+          await userEvent.click(screen.getByLabelText('Dernière page'))
+
+          // When
+          await userEvent.click(screen.getByLabelText('Page suivante'))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
+            'disabled'
+          )
+        })
       })
 
-      it('affiche un certain nombre de page selon le nombre d’actions ', () => {
-        // Then
-        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 7')).toBeInTheDocument()
-      })
+      describe('troncature', () => {
+        it('1 2 -3-', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 22, page: 3 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-      it('met à jour les actions avec la page demandée ', async () => {
-        // When
-        await userEvent.click(screen.getByLabelText('Page 2'))
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+          expect(() => screen.getByLabelText(/caché/)).toThrow()
+        })
 
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-          jeune.id,
-          2,
-          'accessToken'
-        )
-        expect(screen.getByText('Action page 2')).toBeInTheDocument()
-      })
+        it('1 2 -3- 4 5 6', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 52, page: 3 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-      it('permet d’aller à la première page des actions', async () => {
-        // When
-        await userEvent.click(screen.getByLabelText('Première page'))
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
+          expect(() => screen.getByLabelText(/caché/)).toThrow()
+        })
 
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-          jeune.id,
-          1,
-          'accessToken'
-        )
-        expect(screen.getByLabelText('Première page')).toHaveAttribute(
-          'disabled'
-        )
-      })
+        it('-1- 2 3 4 5 ... 20', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 195, page: 1 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-      it('permet d’aller à la dernière page des actions', async () => {
-        // When
-        await userEvent.click(screen.getByLabelText('Dernière page'))
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
+          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+        })
 
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-          jeune.id,
-          7,
-          'accessToken'
-        )
-        expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
-          'disabled'
-        )
-      })
+        it('1 ... 9 10 -11- 12 13 ... 20', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 195, page: 11 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-      it('permet de revenir à la page précédente', async () => {
-        // When
-        await userEvent.click(screen.getByLabelText('Page précédente'))
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 9')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 10')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 11')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 12')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 13')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
+          expect(screen.getAllByLabelText(/caché/)).toHaveLength(2)
+        })
 
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-          jeune.id,
-          3,
-          'accessToken'
-        )
-      })
+        it('1 2 3 -4- 5 6 ... 20', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 195, page: 4 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-      it("permet d'aller à la page suivante", async () => {
-        // When
-        await userEvent.click(screen.getByLabelText('Page suivante'))
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
+          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+        })
 
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-          jeune.id,
-          5,
-          'accessToken'
-        )
-      })
+        it('1 ... 15 16 -17- 18 19 20', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 195, page: 17 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-      it('met à jour la page courante', async () => {
-        // When
-        await userEvent.click(screen.getByLabelText('Page précédente'))
-        await userEvent.click(screen.getByLabelText('Page précédente'))
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 15')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
+          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+        })
 
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-          jeune.id,
-          3,
-          'accessToken'
-        )
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
-          jeune.id,
-          2,
-          'accessToken'
-        )
-      })
+        it('1 ... 16 17 -18- 19 20', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 195, page: 18 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-      it('ne permet pas de revenir avant la première page', async () => {
-        // Given
-        await userEvent.click(screen.getByLabelText('Première page'))
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
+          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+        })
 
-        // When
-        await userEvent.click(screen.getByLabelText('Page précédente'))
+        it('1 ... 16 17 18 19 -20-', () => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{ actions: [], total: 195, page: 20 }}
+              conseillers={[]}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />
+          )
 
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
-        expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
-          'disabled'
-        )
-      })
-
-      it("ne permet pas d'aller après la dernière page", async () => {
-        // Given
-        await userEvent.click(screen.getByLabelText('Dernière page'))
-
-        // When
-        await userEvent.click(screen.getByLabelText('Page suivante'))
-
-        // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
-        expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
-          'disabled'
-        )
+          // Then
+          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
+          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
+          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
+          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+        })
       })
     })
   })

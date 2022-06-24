@@ -1,3 +1,5 @@
+import { uneActionJson } from '../fixtures/action'
+
 import { ApiClient } from 'clients/api.client'
 import { Action, StatutAction, TotalActions } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
@@ -87,19 +89,29 @@ export class ActionsApiService implements ActionsService {
     page: number,
     accessToken: string
   ): Promise<{ actions: Action[]; total: number }> {
-    const { content: actionsJson, headers } = await this.apiClient.get<
-      ActionJson[]
-    >(
-      `/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante`,
-      accessToken
-    )
-    const total = headers.has('x-total-count')
-      ? parseInt(headers.get('x-total-count')!)
-      : actionsJson.length
+    // FIXME c'est pour les tests
+    // const { content: actionsJson, headers } = await this.apiClient.get<
+    //   ActionJson[]
+    // >(
+    //   `/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante`,
+    //   accessToken
+    // )
+    // const total = headers.has('x-total-count')
+    //   ? parseInt(headers.get('x-total-count')!)
+    //   : actionsJson.length
+    //
+    // return {
+    //   actions: actionsJson.map(jsonToAction),
+    //   total,
+    // }
 
+    let actionsJson: ActionJson[] = []
+    for (let i = 0; i < 9; i++) {
+      actionsJson.push(uneActionJson({ id: `action-${i}` }))
+    }
     return {
       actions: actionsJson.map(jsonToAction),
-      total,
+      total: 207,
     }
   }
 
