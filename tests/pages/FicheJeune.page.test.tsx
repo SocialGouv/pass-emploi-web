@@ -701,7 +701,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(() => screen.getByLabelText(/caché/)).toThrow()
+          expect(() => screen.getByText('…')).toThrow()
         })
 
         it('1 2 -3- 4 5 6', () => {
@@ -725,7 +725,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
-          expect(() => screen.getByLabelText(/caché/)).toThrow()
+          expect(() => screen.getByText('…')).toThrow()
         })
 
         it('-1- 2 3 4 5 ... 20', () => {
@@ -749,7 +749,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+          expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
         it('1 ... 9 10 -11- 12 13 ... 20', () => {
@@ -774,7 +774,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 12')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 13')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByLabelText(/caché/)).toHaveLength(2)
+          expect(screen.getAllByText('…')).toHaveLength(2)
         })
 
         it('1 2 3 -4- 5 6 ... 20', () => {
@@ -799,7 +799,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+          expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
         it('1 ... 15 16 -17- 18 19 20', () => {
@@ -824,7 +824,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+          expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
         it('1 ... 16 17 -18- 19 20', () => {
@@ -848,7 +848,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+          expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
         it('1 ... 16 17 18 19 -20-', () => {
@@ -872,7 +872,7 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByLabelText(/caché/)).toHaveLength(1)
+          expect(screen.getAllByText('…')).toHaveLength(1)
         })
       })
     })

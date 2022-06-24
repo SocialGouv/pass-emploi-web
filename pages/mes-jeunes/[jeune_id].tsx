@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import FailureMessage from 'components/FailureMessage'
@@ -14,6 +14,7 @@ import RdvList from 'components/rdv/RdvList'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import Pagination from 'components/ui/Pagination'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
@@ -53,43 +54,6 @@ interface FicheJeuneProps extends PageProps {
   actionCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
   onglet?: Onglet
-}
-
-interface PaginationItemProps {
-  page: number
-  label: string
-  onClick: (page: number) => Promise<void>
-  children: ReactNode
-  disabled?: boolean
-  isActive?: boolean
-}
-
-function PaginationItem({
-  children,
-  label,
-  onClick,
-  page,
-  disabled,
-  isActive,
-}: PaginationItemProps) {
-  const isActiveStyle = isActive && 'bg-primary text-blanc'
-  const hoverStyle =
-    !disabled && !isActive && 'hover:bg-primary_lighten hover:text-primary'
-
-  return (
-    <li>
-      <button
-        onClick={() => onClick(page)}
-        aria-label={label}
-        aria-current={isActive && 'page'}
-        title={label}
-        disabled={disabled}
-        className={`rounded-full px-3 py-1 fill-primary disabled:cursor-not-allowed disabled:fill-grey_700 disabled:text-grey_700 ${isActiveStyle} ${hoverStyle}`}
-      >
-        {children}
-      </button>
-    </li>
-  )
 }
 
 function FicheJeune({
@@ -211,97 +175,6 @@ function FicheJeune({
   useEffect(() => {
     setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
-
-  function getPages() {
-    const pages = []
-
-    if (pageCount <= 6) {
-      for (let count = 1; count <= pageCount; count++) {
-        pages.push(
-          <PaginationItem
-            key={`Page-${count}`}
-            page={count}
-            label={`Page ${count}`}
-            onClick={goToActionPage}
-            isActive={pageCourante === count}
-          >
-            {count}
-          </PaginationItem>
-        )
-      }
-      return pages
-    }
-
-    function truncate(count: number) {
-      return (
-        // FIXME afficher les pages cachées ?
-        <span key={`truncate-${count}`} aria-label='pages cachées'>
-          &#8230;
-        </span>
-      )
-    }
-
-    if (pageCourante > 3) {
-      pages.push(
-        <PaginationItem
-          key={`Page-1`}
-          page={1}
-          label={`Page 1`}
-          onClick={goToActionPage}
-          isActive={pageCourante === 1}
-        >
-          1
-        </PaginationItem>
-      )
-    }
-
-    if (pageCourante > 4) {
-      pages.push(truncate(1))
-    }
-
-    let groupStart: number = Math.max(1, pageCourante - 2)
-    if (pageCourante >= pageCount - 1) {
-      groupStart = pageCount - 4
-    }
-
-    for (
-      let count = groupStart;
-      count <= Math.min(groupStart + 4, pageCount);
-      count++
-    ) {
-      pages.push(
-        <PaginationItem
-          key={`Page-${count}`}
-          page={count}
-          label={`Page ${count}`}
-          onClick={goToActionPage}
-          isActive={pageCourante === count}
-        >
-          {count}
-        </PaginationItem>
-      )
-    }
-
-    if (pageCount > 6 && pageCourante < pageCount - 3) {
-      pages.push(truncate(2))
-    }
-
-    if (pageCount > 5 && pageCourante < pageCount - 2) {
-      pages.push(
-        <PaginationItem
-          key={`Page-${pageCount}`}
-          page={pageCount}
-          label={`Page ${pageCount}`}
-          onClick={goToActionPage}
-          isActive={pageCourante === pageCount}
-        >
-          {pageCount}
-        </PaginationItem>
-      )
-    }
-
-    return pages
-  }
 
   return (
     <>
@@ -467,55 +340,14 @@ function FicheJeune({
           {!isPoleEmploi && (
             <>
               <TableauActionsJeune jeune={jeune} actions={actionsDeLaPage} />
-              <nav aria-label='pagination actions' className='mt-2'>
-                <ul className='flex justify-between items-center'>
-                  <PaginationItem
-                    page={1}
-                    label='Première page'
-                    onClick={goToActionPage}
-                    disabled={pageCourante <= 1}
-                  >
-                    <IconComponent
-                      name={IconName.ChevronFirst}
-                      className={`fill-inherit w-6 h-6`}
-                    />
-                  </PaginationItem>
-                  <PaginationItem
-                    page={pageCourante - 1}
-                    label='Page précédente'
-                    onClick={goToActionPage}
-                    disabled={pageCourante <= 1}
-                  >
-                    <IconComponent
-                      name={IconName.ChevronLeft}
-                      className='fill-inherit w-6 h-6'
-                    />
-                  </PaginationItem>
-                  {getPages()}
-                  <PaginationItem
-                    page={pageCourante + 1}
-                    label='Page suivante'
-                    onClick={goToActionPage}
-                    disabled={pageCourante >= pageCount}
-                  >
-                    <IconComponent
-                      name={IconName.ChevronRight}
-                      className={`fill-inherit w-6 h-6`}
-                    />
-                  </PaginationItem>
-                  <PaginationItem
-                    page={pageCount}
-                    label='Dernière page'
-                    onClick={goToActionPage}
-                    disabled={pageCourante >= pageCount}
-                  >
-                    <IconComponent
-                      name={IconName.ChevronLast}
-                      className={`fill-inherit w-6 h-6`}
-                    />
-                  </PaginationItem>
-                </ul>
-              </nav>
+              <div className='mt-2'>
+                <Pagination
+                  nomListe='actions'
+                  nombreDePages={pageCount}
+                  pageCourante={pageCourante}
+                  allerALaPage={goToActionPage}
+                />
+              </div>
             </>
           )}
         </div>
