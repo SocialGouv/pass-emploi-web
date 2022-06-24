@@ -468,7 +468,7 @@ function FicheJeune({
             <>
               <TableauActionsJeune jeune={jeune} actions={actionsDeLaPage} />
               <nav aria-label='pagination actions' className='mt-2'>
-                <ul className='flex justify-center'>
+                <ul className='flex justify-between items-center'>
                   <PaginationItem
                     page={1}
                     label='Première page'
