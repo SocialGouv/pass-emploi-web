@@ -1,5 +1,3 @@
-import { uneActionJson } from '../fixtures/action'
-
 import { ApiClient } from 'clients/api.client'
 import { Action, StatutAction, TotalActions } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
