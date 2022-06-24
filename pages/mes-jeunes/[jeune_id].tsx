@@ -88,6 +88,8 @@ function FicheJeune({
   const [pageCourante, setPageCourante] = useState<number>(
     actionsInitiales.page
   )
+  const [isPageActionsLoading, setIsPageActionsLoading] =
+    useState<boolean>(false)
   const pageCount = Math.ceil(actionsInitiales.total / 10)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
@@ -161,13 +163,15 @@ function FicheJeune({
   async function goToActionPage(page: number) {
     if (page < 1 || page > pageCount || page === pageCourante) return
 
+    setPageCourante(page)
+    setIsPageActionsLoading(true)
     const { actions } = await actionsService.getActionsJeune(
       jeune.id,
       page,
       session!.accessToken
     )
     setActionsDeLaPage(actions)
-    setPageCourante(page)
+    setIsPageActionsLoading(false)
   }
 
   useMatomo(trackingLabel)
@@ -339,7 +343,11 @@ function FicheJeune({
 
           {!isPoleEmploi && (
             <>
-              <TableauActionsJeune jeune={jeune} actions={actionsDeLaPage} />
+              <TableauActionsJeune
+                jeune={jeune}
+                actions={actionsDeLaPage}
+                isLoading={isPageActionsLoading}
+              />
               <div className='mt-2'>
                 <Pagination
                   nomListe='actions'
