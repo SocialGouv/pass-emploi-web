@@ -39,14 +39,14 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
             )}
           </span>
         </div>
-        <div role='cell' className={`table-cell relative py-4 pr-4`}>
+        <div role='cell' className='table-cell relative py-4 pr-4 w-[120px]'>
           <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
             <span>{formatDayDate(new Date(action.creationDate))}</span>
           </span>
         </div>
         <div
           role='cell'
-          className={`table-cell relative group-hover:rounded-r-[6px]`}
+          className={`table-cell relative group-hover:rounded-r-[6px] w-[160px]`}
         >
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />

@@ -348,7 +348,7 @@ function FicheJeune({
                 actions={actionsDeLaPage}
                 isLoading={isPageActionsLoading}
               />
-              <div className='mt-2'>
+              <div className='mt-6'>
                 <Pagination
                   nomListe='actions'
                   nombreDePages={pageCount}
