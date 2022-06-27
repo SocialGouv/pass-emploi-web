@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
-import { Action } from 'interfaces/action'
-import { DetailJeune } from 'interfaces/jeune'
+import { Action, StatutAction } from 'interfaces/action'
+import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
-  jeune: DetailJeune
+  jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
 }
@@ -15,6 +15,8 @@ export const TableauActionsJeune = ({
   actions,
   isLoading,
 }: TableauActionsJeuneProps) => {
+  const [afficherStatut, setAfficherStatut] = useState<boolean>(false)
+
   return (
     <div className={isLoading ? 'animate-pulse' : ''}>
       {actions.length === 0 && (
@@ -37,8 +39,59 @@ export const TableauActionsJeune = ({
               <div role='columnheader' className={`table-cell`}>
                 Créée le
               </div>
-              <div role='columnheader' className={`table-cell`}>
+              <div
+                role='columnheader'
+                className='table-cell relative'
+                onClick={() => setAfficherStatut(!afficherStatut)}
+                aria-controls='filtres-statut'
+                aria-expanded={afficherStatut}
+              >
                 Statut
+                {afficherStatut && (
+                  <form
+                    className='absolute z-10 bg-blanc rounded-medium shadow-s'
+                    id='filtres-statut'
+                    onBlur={() => console.log('laal')}
+                  >
+                    <fieldset className='flex flex-col'>
+                      <legend className='sr-only'>
+                        Choisir un statut à filtrer
+                      </legend>
+                      <label htmlFor='statut-commencee'>
+                        <input
+                          type='checkbox'
+                          value={StatutAction.Commencee}
+                          id='statut-commencee'
+                        />
+                        Commencée
+                      </label>
+                      <label htmlFor='statut-a-realiser'>
+                        <input
+                          type='checkbox'
+                          value={StatutAction.ARealiser}
+                          id='statut-a-realiser'
+                        />
+                        À réaliser
+                      </label>
+                      <label htmlFor='statut-terminee'>
+                        <input
+                          type='checkbox'
+                          value={StatutAction.Terminee}
+                          id='statut-terminee'
+                        />
+                        Terminée
+                      </label>
+                      <label htmlFor='statut-annulee'>
+                        <input
+                          type='checkbox'
+                          value={StatutAction.Annulee}
+                          id='statut-annulee'
+                        />
+                        Annulée
+                      </label>
+                    </fieldset>
+                  </form>
+                )}
               </div>
             </div>
           </div>
