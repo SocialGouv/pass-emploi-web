@@ -7,7 +7,7 @@ import { uneBaseJeune } from 'fixtures/jeune'
 
 describe('TableauActionsJeune', () => {
   describe('Filtre statut', () => {
-    it('affiche une liste de statut', async () => {
+    it('affiche une liste de statuts', async () => {
       // Given
       render(
         <TableauActionsJeune
@@ -21,10 +21,33 @@ describe('TableauActionsJeune', () => {
       await userEvent.click(screen.getByText('Statut'))
 
       // Then
+      expect(
+        screen.getByRole('group', { name: 'Choisir un statut à filtrer' })
+      ).toBeInTheDocument()
       expect(screen.getByLabelText('Commencée')).toBeInTheDocument()
       expect(screen.getByLabelText('À réaliser')).toBeInTheDocument()
       expect(screen.getByLabelText('Terminée')).toBeInTheDocument()
       expect(screen.getByLabelText('Annulée')).toBeInTheDocument()
+    })
+
+    it('cache la liste de statuts', async () => {
+      // Given
+      render(
+        <TableauActionsJeune
+          jeune={uneBaseJeune()}
+          actions={uneListeDActions()}
+          isLoading={false}
+        />
+      )
+      await userEvent.click(screen.getByText('Statut'))
+
+      // When
+      await userEvent.click(screen.getByText('Statut'))
+
+      // Then
+      expect(() =>
+        screen.getByRole('group', { name: 'Choisir un statut à filtrer' })
+      ).toThrow()
     })
   })
 })

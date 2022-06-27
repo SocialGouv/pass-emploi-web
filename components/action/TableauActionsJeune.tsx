@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
@@ -39,19 +40,26 @@ export const TableauActionsJeune = ({
               <div role='columnheader' className={`table-cell`}>
                 Créée le
               </div>
-              <div
-                role='columnheader'
-                className='table-cell relative'
-                onClick={() => setAfficherStatut(!afficherStatut)}
-                aria-controls='filtres-statut'
-                aria-expanded={afficherStatut}
-              >
-                Statut
-                {true && (
+              <div role='columnheader' className='table-cell relative'>
+                <button
+                  aria-controls='filtres-statut'
+                  aria-expanded={afficherStatut}
+                  onClick={() => setAfficherStatut(!afficherStatut)}
+                  className='w-full flex items-center'
+                >
+                  Statut
+                  <IconComponent
+                    name={IconName.ChevronDown}
+                    className={`h-4 w-4 fill-primary ${
+                      afficherStatut ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                {afficherStatut && (
                   <form
                     className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 text-base-regular'
                     id='filtres-statut'
-                    onBlur={() => console.log('laal')}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <fieldset className='flex flex-col'>
                       <legend className='sr-only'>
