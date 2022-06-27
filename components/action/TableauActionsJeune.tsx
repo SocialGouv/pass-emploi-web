@@ -7,14 +7,16 @@ import { DetailJeune } from 'interfaces/jeune'
 interface TableauActionsJeuneProps {
   jeune: DetailJeune
   actions: Action[]
+  isLoading: boolean
 }
 
 export const TableauActionsJeune = ({
   jeune,
   actions,
+  isLoading,
 }: TableauActionsJeuneProps) => {
   return (
-    <>
+    <div className={isLoading ? 'animate-pulse' : ''}>
       {actions.length === 0 && (
         <p className='text-md mb-2'>
           {jeune.prenom} {jeune.nom} n’a pas encore d’action
@@ -51,6 +53,6 @@ export const TableauActionsJeune = ({
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }

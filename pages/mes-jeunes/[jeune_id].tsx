@@ -14,10 +14,11 @@ import RdvList from 'components/rdv/RdvList'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import Pagination from 'components/ui/Pagination'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
-import { Action, compareActionsDatesDesc } from 'interfaces/action'
+import { Action } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -29,6 +30,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 export enum Onglet {
@@ -44,7 +46,7 @@ const ongletProps: { [key in Onglet]: string } = {
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
   rdvs: RdvListItem[]
-  actions: Action[]
+  actionsInitiales: { actions: Action[]; total: number; page: number }
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -57,7 +59,7 @@ interface FicheJeuneProps extends PageProps {
 function FicheJeune({
   jeune,
   rdvs,
-  actions,
+  actionsInitiales,
   conseillers,
   rdvCreationSuccess,
   rdvModificationSuccess,
@@ -67,6 +69,8 @@ function FicheJeune({
   onglet,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
+
+  const actionsService = useDependance<ActionsService>('actionsService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
 
@@ -78,6 +82,15 @@ function FicheJeune({
     useState<boolean>(false)
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
+  const [actionsDeLaPage, setActionsDeLaPage] = useState<Action[]>(
+    actionsInitiales.actions
+  )
+  const [pageCourante, setPageCourante] = useState<number>(
+    actionsInitiales.page
+  )
+  const [isPageActionsLoading, setIsPageActionsLoading] =
+    useState<boolean>(false)
+  const pageCount = Math.ceil(actionsInitiales.total / 10)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -145,6 +158,20 @@ function FicheJeune({
         shallow: true,
       }
     )
+  }
+
+  async function goToActionPage(page: number) {
+    if (page < 1 || page > pageCount || page === pageCourante) return
+
+    setPageCourante(page)
+    setIsPageActionsLoading(true)
+    const { actions } = await actionsService.getActionsJeune(
+      jeune.id,
+      page,
+      session!.accessToken
+    )
+    setActionsDeLaPage(actions)
+    setIsPageActionsLoading(false)
   }
 
   useMatomo(trackingLabel)
@@ -275,7 +302,7 @@ function FicheJeune({
         />
         <Tab
           label='Actions'
-          count={!isPoleEmploi ? actions.length : undefined}
+          count={!isPoleEmploi ? actionsInitiales.total : undefined}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
@@ -315,7 +342,21 @@ function FicheJeune({
           )}
 
           {!isPoleEmploi && (
-            <TableauActionsJeune jeune={jeune} actions={actions} />
+            <>
+              <TableauActionsJeune
+                jeune={jeune}
+                actions={actionsDeLaPage}
+                isLoading={isPageActionsLoading}
+              />
+              <div className='mt-2'>
+                <Pagination
+                  nomListe='actions'
+                  nombreDePages={pageCount}
+                  pageCourante={pageCourante}
+                  allerALaPage={goToActionPage}
+                />
+              </div>
+            </>
           )}
         </div>
       )}
@@ -343,6 +384,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   } = sessionOrRedirect
 
   const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
+  const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, conseillers, rdvs, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,
@@ -359,9 +401,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
           accessToken
         ),
     isPoleEmploi
-      ? []
+      ? { actions: [], total: 0 }
       : actionsService.getActionsJeune(
           context.query.jeune_id as string,
+          page,
           accessToken
         ),
   ])
@@ -374,7 +417,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
-    actions: [...actions].sort(compareActionsDatesDesc),
+    actionsInitiales: { ...actions, page },
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,

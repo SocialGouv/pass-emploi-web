@@ -21,7 +21,11 @@ export interface ActionsService {
     accessToken: string
   ): Promise<TotalActions[]>
 
-  getActionsJeune(idJeune: string, accessToken: string): Promise<Action[]>
+  getActionsJeune(
+    idJeune: string,
+    page: number,
+    accessToken: string
+  ): Promise<{ actions: Action[]; total: number }>
 
   createAction(
     action: { intitule: string; commentaire: string },
@@ -47,9 +51,12 @@ export class ActionsApiService implements ActionsService {
     accessToken: string
   ): Promise<{ action: Action; jeune: BaseJeune } | undefined> {
     try {
-      const { jeune, ...actionJson } = await this.apiClient.get<
-        ActionJson & { jeune: BaseJeuneJson }
-      >(`/actions/${idAction}`, accessToken)
+      const {
+        content: { jeune, ...actionJson },
+      } = await this.apiClient.get<ActionJson & { jeune: BaseJeuneJson }>(
+        `/actions/${idAction}`,
+        accessToken
+      )
       return {
         action: jsonToAction(actionJson),
         jeune: jsonToBaseJeune(jeune),
@@ -64,7 +71,7 @@ export class ActionsApiService implements ActionsService {
     idConseiller: string,
     accessToken: string
   ): Promise<TotalActions[]> {
-    const counts = await this.apiClient.get<ActionsCountJson[]>(
+    const { content: counts } = await this.apiClient.get<ActionsCountJson[]>(
       `/conseillers/${idConseiller}/actions`,
       accessToken
     )
@@ -77,13 +84,23 @@ export class ActionsApiService implements ActionsService {
 
   async getActionsJeune(
     idJeune: string,
+    page: number,
     accessToken: string
-  ): Promise<Action[]> {
-    const actionsJson: ActionJson[] = await this.apiClient.get<ActionJson[]>(
-      `/jeunes/${idJeune}/actions`,
+  ): Promise<{ actions: Action[]; total: number }> {
+    const { content: actionsJson, headers } = await this.apiClient.get<
+      ActionJson[]
+    >(
+      `/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante`,
       accessToken
     )
-    return actionsJson.map(jsonToAction)
+    const total = headers.has('x-total-count')
+      ? parseInt(headers.get('x-total-count')!)
+      : actionsJson.length
+
+    return {
+      actions: actionsJson.map(jsonToAction),
+      total,
+    }
   }
 
   async createAction(

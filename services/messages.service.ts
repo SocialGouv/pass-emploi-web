@@ -79,7 +79,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   ) {}
 
   async getChatCredentials(accessToken: string): Promise<ChatCredentials> {
-    const { token, cle: cleChiffrement } = await this.apiClient.post<{
+    const {
+      content: { token, cle: cleChiffrement },
+    } = await this.apiClient.post<{
       token: string
       cle: string
     }>('/auth/firebase/token', {}, accessToken)

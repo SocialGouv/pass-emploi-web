@@ -13,6 +13,8 @@ import CancelIcon from '../../assets/icons/cancel.svg'
 import CheckIcon from '../../assets/icons/check.svg'
 import CheckRoundedIcon from '../../assets/icons/check_rounded.svg'
 import ChevronDownIcon from '../../assets/icons/chevron_down.svg'
+import ChevronFirstIcon from '../../assets/icons/chevron_first.svg'
+import ChevronLastIcon from '../../assets/icons/chevron_last.svg'
 import ChevronLeftIcon from '../../assets/icons/chevron_left.svg'
 import ChevronRightIcon from '../../assets/icons/chevron_right.svg'
 import ChevronUpIcon from '../../assets/icons/chevron_up.svg'
@@ -41,7 +43,6 @@ export enum IconName {
   Actions = 'Actions',
   Add = 'Add',
   Aide = 'Aide',
-  ChevronLeft = 'ChevronLeft',
   ArrowDouble = 'ArrowDouble',
   ArrowDown = 'ArrowDown',
   ArrowLeft = 'ArrowLeft',
@@ -51,6 +52,9 @@ export enum IconName {
   CheckRounded = 'CheckRounded',
   Check = 'Check',
   ChevronDown = 'ChevronDown',
+  ChevronFirst = 'ChevronFirst',
+  ChevronLast = 'ChevronLast',
+  ChevronLeft = 'ChevronLeft',
   ChevronRight = 'ChevronRight',
   ChevronUp = 'ChevronUp',
   Chiffre1 = 'Chiffre1',
@@ -81,7 +85,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Add]: AddIcon,
   [IconName.Aide]: AideIcon,
   [IconName.ArrowDouble]: ArrowDoubleIcon,
-  [IconName.ChevronLeft]: ChevronLeftIcon,
   [IconName.ArrowDown]: ArrowDownIcon,
   [IconName.ArrowLeft]: ArrowLeftIcon,
   [IconName.ArrowRight]: ArrowRightIcon,
@@ -90,6 +93,9 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.CheckRounded]: CheckRoundedIcon,
   [IconName.Check]: CheckIcon,
   [IconName.ChevronDown]: ChevronDownIcon,
+  [IconName.ChevronFirst]: ChevronFirstIcon,
+  [IconName.ChevronLast]: ChevronLastIcon,
+  [IconName.ChevronLeft]: ChevronLeftIcon,
   [IconName.ChevronRight]: ChevronRightIcon,
   [IconName.ChevronUp]: ChevronUpIcon,
   [IconName.Chiffre1]: Chiffre1Icon,

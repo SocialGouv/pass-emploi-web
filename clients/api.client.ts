@@ -1,13 +1,21 @@
+import { InfoFichier } from 'interfaces/fichier'
 import HttpClient from 'utils/httpClient'
 
 export interface ApiClient {
-  get<T>(path: string, accessToken: string): Promise<T>
+  get<T>(
+    path: string,
+    accessToken: string
+  ): Promise<{ content: T; headers: Headers }>
   post<T>(
     path: string,
     payload: { [key: string]: any },
     accessToken: string
-  ): Promise<T>
-  postFile<T>(path: string, payload: FormData, accessToken: string): Promise<T>
+  ): Promise<{ content: T; headers: Headers }>
+  postFile(
+    path: string,
+    payload: FormData,
+    accessToken: string
+  ): Promise<InfoFichier>
   put(
     path: string,
     payload: { [key: string]: any },
@@ -23,7 +31,10 @@ export class ApiHttpClient implements ApiClient {
     this.apiPrefix = process.env.API_ENDPOINT
   }
 
-  async get<T>(path: string, accessToken: string): Promise<T> {
+  async get<T>(
+    path: string,
+    accessToken: string
+  ): Promise<{ content: T; headers: Headers }> {
     const headers = new Headers({
       Authorization: `Bearer ${accessToken}`,
     })
@@ -37,7 +48,7 @@ export class ApiHttpClient implements ApiClient {
     path: string,
     payload: { [key: string]: any },
     accessToken: string
-  ): Promise<T> {
+  ): Promise<{ content: T; headers: Headers }> {
     const headers = new Headers({
       Authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
@@ -53,11 +64,11 @@ export class ApiHttpClient implements ApiClient {
     return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
   }
 
-  async postFile<T = void>(
+  async postFile(
     path: string,
     payload: FormData,
     accessToken: string
-  ): Promise<T> {
+  ): Promise<InfoFichier> {
     const headers = new Headers({
       Authorization: `Bearer ${accessToken}`,
     })
@@ -68,7 +79,9 @@ export class ApiHttpClient implements ApiClient {
     }
     if (payload) reqInit.body = payload
 
-    return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
+    const { content }: { content: InfoFichier } =
+      await this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
+    return content
   }
 
   async put(

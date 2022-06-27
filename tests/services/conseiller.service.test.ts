@@ -18,14 +18,14 @@ describe('ConseillerApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
-      ;(apiClient.get as jest.Mock).mockResolvedValue(
-        unConseillerJson({
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unConseillerJson({
           agence: {
             nom: 'Milo Marseille',
             id: 'ID',
           },
-        })
-      )
+        }),
+      })
 
       // When
       const actual = await conseillerService.getConseiller(
