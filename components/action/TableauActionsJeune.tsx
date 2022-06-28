@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
+import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
@@ -39,6 +40,23 @@ export const TableauActionsJeune = ({
     e.preventDefault()
     setAfficherStatut(false)
     filtrerActions(statutsSelectionnes)
+  }
+
+  function renderStatutInput(statut: StatutAction): JSX.Element {
+    const id = `statut-${statut.toLowerCase()}`
+    return (
+      <label key={id} htmlFor={id} className='flex pb-8'>
+        <input
+          type='checkbox'
+          value={statut}
+          id={id}
+          className='h-5 w-5'
+          checked={statutsSelectionnes.includes(statut)}
+          onChange={actionnerStatut}
+        />
+        <span className='pl-5'>{propsStatutsActions[statut].label}</span>
+      </label>
+    )
   }
 
   return (
@@ -89,58 +107,9 @@ export const TableauActionsJeune = ({
                       <legend className='sr-only'>
                         Choisir un statut à filtrer
                       </legend>
-                      <label htmlFor='statut-commencee' className='flex'>
-                        <input
-                          type='checkbox'
-                          value={StatutAction.Commencee}
-                          id='statut-commencee'
-                          className='h-5 w-5'
-                          checked={statutsSelectionnes.includes(
-                            StatutAction.Commencee
-                          )}
-                          onChange={actionnerStatut}
-                        />
-                        <span className='pl-5'>Commencée</span>
-                      </label>
-                      <label htmlFor='statut-a-realiser' className='flex pt-8'>
-                        <input
-                          type='checkbox'
-                          value={StatutAction.ARealiser}
-                          id='statut-a-realiser'
-                          className=' h-5 w-5'
-                          checked={statutsSelectionnes.includes(
-                            StatutAction.ARealiser
-                          )}
-                          onChange={actionnerStatut}
-                        />
-                        <span className='pl-5'>À réaliser</span>
-                      </label>
-                      <label htmlFor='statut-terminee' className='flex pt-8'>
-                        <input
-                          type='checkbox'
-                          value={StatutAction.Terminee}
-                          id='statut-terminee'
-                          className='h-5 w-5'
-                          checked={statutsSelectionnes.includes(
-                            StatutAction.Terminee
-                          )}
-                          onChange={actionnerStatut}
-                        />
-                        <span className='pl-5'>Terminée</span>
-                      </label>
-                      <label htmlFor='statut-annulee' className='flex pt-8'>
-                        <input
-                          type='checkbox'
-                          value={StatutAction.Annulee}
-                          id='statut-annulee'
-                          className='h-5 w-5'
-                          checked={statutsSelectionnes.includes(
-                            StatutAction.Annulee
-                          )}
-                          onChange={actionnerStatut}
-                        />
-                        <span className='pl-5'>Annulée</span>
-                      </label>
+                      {Object.keys(StatutAction).map((statut) =>
+                        renderStatutInput(statut as StatutAction)
+                      )}
                     </fieldset>
                     <Button type='submit'>Valider</Button>
                   </form>
