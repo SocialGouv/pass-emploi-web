@@ -1,5 +1,3 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import {
   uneAction,
@@ -9,6 +7,7 @@ import {
 } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 import { ActionsApiService } from 'services/actions.service'
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { RequestError } from 'utils/httpClient'
 
 describe('ActionsApiService', () => {
@@ -123,14 +122,14 @@ describe('ActionsApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
-          metadonnees: { nombreTotal: 82 },
+          metadonnees: { nombreTotal: 82, nombreActionsParPage: 10 },
         },
       })
 
       // WHEN
       const actual = await actionsService.getActionsJeune(
         'whatever',
-        1,
+        { page: 1, statuts: [] },
         'accessToken'
       )
 
@@ -139,7 +138,47 @@ describe('ActionsApiService', () => {
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante',
         'accessToken'
       )
-      expect(actual).toStrictEqual({ actions, total: 82 })
+      expect(actual).toStrictEqual({
+        actions,
+        metadonnees: { nombrePages: 9, nombreTotal: 82 },
+      })
+    })
+
+    it('parse le paramètre pour filtrer les actions par statut et compte le nombre de pages', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          actions: uneListeDActionsJson(),
+          metadonnees: {
+            nombreTotal: 82,
+            nombreEnCours: 42,
+            nombreTerminees: 30,
+            nombreAnnulees: 1,
+            nombrePasCommencees: 9,
+            nombreActionsParPage: 10,
+          },
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.getActionsJeune(
+        'whatever',
+        { page: 1, statuts: [StatutAction.Commencee, StatutAction.ARealiser] },
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions: expect.arrayContaining([]),
+        metadonnees: {
+          nombreTotal: 82,
+          nombrePages: 6,
+        },
+      })
     })
   })
 

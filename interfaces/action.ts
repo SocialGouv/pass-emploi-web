@@ -12,6 +12,7 @@ export interface Action {
 }
 
 export interface MetadonneesActions {
+  nombrePages: number
   nombreTotal: number
 }
 

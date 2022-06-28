@@ -1,6 +1,7 @@
-import React, { Fragment, useState } from 'react'
+import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
 
 import ActionRow from 'components/action/ActionRow'
+import Button from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
@@ -9,14 +10,36 @@ interface TableauActionsJeuneProps {
   jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
+  filtrerActions: (statutsSelectionnes: StatutAction[]) => void
 }
 
 export const TableauActionsJeune = ({
   jeune,
   actions,
   isLoading,
+  filtrerActions,
 }: TableauActionsJeuneProps) => {
   const [afficherStatut, setAfficherStatut] = useState<boolean>(false)
+  const [statutsSelectionnes, setStatutsSelectionnes] = useState<
+    StatutAction[]
+  >([])
+
+  function actionnerStatut(e: ChangeEvent<HTMLInputElement>) {
+    const statut = e.target.value as StatutAction
+    if (statutsSelectionnes.includes(statut)) {
+      setStatutsSelectionnes(statutsSelectionnes.filter((s) => s !== statut))
+    } else {
+      setStatutsSelectionnes(
+        statutsSelectionnes.concat(e.target.value as StatutAction)
+      )
+    }
+  }
+
+  function submitFiltres(e: FormEvent) {
+    e.preventDefault()
+    setAfficherStatut(false)
+    filtrerActions(statutsSelectionnes)
+  }
 
   return (
     <div className={isLoading ? 'animate-pulse' : ''}>
@@ -59,6 +82,7 @@ export const TableauActionsJeune = ({
                   <form
                     className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 text-base-regular'
                     id='filtres-statut'
+                    onSubmit={submitFiltres}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <fieldset className='flex flex-col'>
@@ -71,6 +95,10 @@ export const TableauActionsJeune = ({
                           value={StatutAction.Commencee}
                           id='statut-commencee'
                           className='h-5 w-5'
+                          checked={statutsSelectionnes.includes(
+                            StatutAction.Commencee
+                          )}
+                          onChange={actionnerStatut}
                         />
                         <span className='pl-5'>Commencée</span>
                       </label>
@@ -80,6 +108,10 @@ export const TableauActionsJeune = ({
                           value={StatutAction.ARealiser}
                           id='statut-a-realiser'
                           className=' h-5 w-5'
+                          checked={statutsSelectionnes.includes(
+                            StatutAction.ARealiser
+                          )}
+                          onChange={actionnerStatut}
                         />
                         <span className='pl-5'>À réaliser</span>
                       </label>
@@ -89,6 +121,10 @@ export const TableauActionsJeune = ({
                           value={StatutAction.Terminee}
                           id='statut-terminee'
                           className='h-5 w-5'
+                          checked={statutsSelectionnes.includes(
+                            StatutAction.Terminee
+                          )}
+                          onChange={actionnerStatut}
                         />
                         <span className='pl-5'>Terminée</span>
                       </label>
@@ -98,10 +134,15 @@ export const TableauActionsJeune = ({
                           value={StatutAction.Annulee}
                           id='statut-annulee'
                           className='h-5 w-5'
+                          checked={statutsSelectionnes.includes(
+                            StatutAction.Annulee
+                          )}
+                          onChange={actionnerStatut}
                         />
                         <span className='pl-5'>Annulée</span>
                       </label>
                     </fieldset>
+                    <Button type='submit'>Valider</Button>
                   </form>
                 )}
               </div>

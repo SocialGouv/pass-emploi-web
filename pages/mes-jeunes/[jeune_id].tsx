@@ -18,7 +18,7 @@ import Pagination from 'components/ui/Pagination'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
-import { Action } from 'interfaces/action'
+import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -46,7 +46,11 @@ const ongletProps: { [key in Onglet]: string } = {
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
   rdvs: RdvListItem[]
-  actionsInitiales: { actions: Action[]; total: number; page: number }
+  actionsInitiales: {
+    actions: Action[]
+    metadonnees: MetadonneesActions
+    page: number
+  }
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -82,15 +86,21 @@ function FicheJeune({
     useState<boolean>(false)
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
+  const [totalActions, setTotalActions] = useState<number>(
+    actionsInitiales.metadonnees.nombreTotal
+  )
+  const [statutsActions, setStatutsActions] = useState<StatutAction[]>([])
   const [actionsDeLaPage, setActionsDeLaPage] = useState<Action[]>(
     actionsInitiales.actions
+  )
+  const [nombrePages, setNombrePages] = useState<number>(
+    actionsInitiales.metadonnees.nombrePages
   )
   const [pageCourante, setPageCourante] = useState<number>(
     actionsInitiales.page
   )
   const [isPageActionsLoading, setIsPageActionsLoading] =
     useState<boolean>(false)
-  const pageCount = Math.ceil(actionsInitiales.total / 10)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -160,17 +170,27 @@ function FicheJeune({
     )
   }
 
-  async function goToActionPage(page: number) {
-    if (page < 1 || page > pageCount || page === pageCourante) return
+  async function rechargerActions(page: number, statuts: StatutAction[]) {
+    if (page < 1 || page > nombrePages) return
+    if (
+      page === pageCourante &&
+      statuts.every((statut) => statutsActions.includes(statut)) &&
+      statutsActions.every((statut) => statuts.includes(statut))
+    )
+      return
 
     setPageCourante(page)
     setIsPageActionsLoading(true)
-    const { actions } = await actionsService.getActionsJeune(
+    const { actions, metadonnees } = await actionsService.getActionsJeune(
       jeune.id,
-      page,
+      { page, statuts },
       session!.accessToken
     )
+
     setActionsDeLaPage(actions)
+    setTotalActions(metadonnees.nombreTotal)
+    setNombrePages(metadonnees.nombrePages)
+    setStatutsActions(statuts)
     setIsPageActionsLoading(false)
   }
 
@@ -302,7 +322,7 @@ function FicheJeune({
         />
         <Tab
           label='Actions'
-          count={!isPoleEmploi ? actionsInitiales.total : undefined}
+          count={!isPoleEmploi ? totalActions : undefined}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
@@ -347,15 +367,20 @@ function FicheJeune({
                 jeune={jeune}
                 actions={actionsDeLaPage}
                 isLoading={isPageActionsLoading}
+                filtrerActions={(statuts) => rechargerActions(1, statuts)}
               />
-              <div className='mt-6'>
-                <Pagination
-                  nomListe='actions'
-                  nombreDePages={pageCount}
-                  pageCourante={pageCourante}
-                  allerALaPage={goToActionPage}
-                />
-              </div>
+              {nombrePages > 1 && (
+                <div className='mt-6'>
+                  <Pagination
+                    nomListe='actions'
+                    nombreDePages={nombrePages}
+                    pageCourante={pageCourante}
+                    allerALaPage={(page) =>
+                      rechargerActions(page, statutsActions)
+                    }
+                  />
+                </div>
+              )}
             </>
           )}
         </div>
@@ -401,10 +426,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
           accessToken
         ),
     isPoleEmploi
-      ? { actions: [], total: 0 }
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
       : actionsService.getActionsJeune(
           context.query.jeune_id as string,
-          page,
+          { page, statuts: [] },
           accessToken
         ),
   ])

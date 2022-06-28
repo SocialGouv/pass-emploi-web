@@ -11,6 +11,7 @@ import {
   ActionsCountJson,
   actionStatusToJson,
   jsonToAction,
+  MetadonneesActionsJson,
 } from 'interfaces/json/action'
 import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
 import { RequestError } from 'utils/httpClient'
@@ -28,9 +29,9 @@ export interface ActionsService {
 
   getActionsJeune(
     idJeune: string,
-    page: number,
+    options: { page: number; statuts: StatutAction[] },
     accessToken: string
-  ): Promise<{ actions: Action[]; total: number }>
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   createAction(
     action: { intitule: string; commentaire: string },
@@ -89,24 +90,32 @@ export class ActionsApiService implements ActionsService {
 
   async getActionsJeune(
     idJeune: string,
-    page: number,
+    { page, statuts }: { page: number; statuts: StatutAction[] },
     accessToken: string
-  ): Promise<{ actions: Action[]; total: number }> {
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const filtresStatuts = statuts
+      .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
+      .join('')
+    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante${filtresStatuts}`
+
     const {
-      content: {
-        actions: actionsJson,
-        metadonnees: { nombreTotal },
-      },
+      content: { actions: actionsJson, metadonnees },
     } = await this.apiClient.get<{
       actions: ActionJson[]
-      metadonnees: MetadonneesActions
-    }>(
-      `/v2/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante`,
-      accessToken
+      metadonnees: MetadonneesActionsJson
+    }>(url, accessToken)
+
+    const nombreActions =
+      statuts.length === 0
+        ? metadonnees.nombreTotal
+        : calculeNombreActionsFiltrees(statuts, metadonnees)
+    const nombrePages = Math.ceil(
+      nombreActions / metadonnees.nombreActionsParPage
     )
+
     return {
       actions: actionsJson.map(jsonToAction),
-      total: nombreTotal,
+      metadonnees: { nombreTotal: metadonnees.nombreTotal, nombrePages },
     }
   }
 
@@ -139,5 +148,34 @@ export class ActionsApiService implements ActionsService {
 
   async deleteAction(idAction: string, accessToken: string): Promise<void> {
     await this.apiClient.delete(`/actions/${idAction}`, accessToken)
+  }
+}
+
+function calculeNombreActionsFiltrees(
+  statuts: StatutAction[],
+  metadonnees: MetadonneesActionsJson
+): number {
+  let total = 0
+  statuts.forEach((statut) => {
+    total += extraireNombreActionsAvecStatut(metadonnees, statut)
+  })
+  return total
+}
+
+function extraireNombreActionsAvecStatut(
+  metadonnees: MetadonneesActionsJson,
+  statut: StatutAction
+): number {
+  switch (statut) {
+    case StatutAction.ARealiser:
+      return metadonnees.nombrePasCommencees
+    case StatutAction.Commencee:
+      return metadonnees.nombreEnCours
+    case StatutAction.Terminee:
+      return metadonnees.nombreTerminees
+    case StatutAction.Annulee:
+      return metadonnees.nombreAnnulees
+    default:
+      return 0
   }
 }
