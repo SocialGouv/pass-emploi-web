@@ -21,13 +21,19 @@ import {
 } from 'firebase/firestore'
 
 import { UserType } from 'interfaces/conseiller'
-import { Chat } from 'interfaces/jeune'
 import { InfoFichier } from 'interfaces/fichier'
+import { Chat } from 'interfaces/jeune'
 import { Message, TypeMessage } from 'interfaces/message'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
-type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE' | 'MESSAGE_PJ' | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
+type TypeMessageFirebase =
+  | 'NOUVEAU_CONSEILLER'
+  | 'MESSAGE'
+  | 'MESSAGE_PJ'
+  | 'MESSAGE_OFFRE'
+  | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
+
 interface FirebaseMessage {
   creationDate: Timestamp
   sentBy: string
@@ -36,6 +42,8 @@ interface FirebaseMessage {
   piecesJointes?: InfoFichier[]
   conseillerId: string | undefined
   type: TypeMessageFirebase | undefined
+  titreOffre?: string
+  lienOffre?: string
 }
 
 export interface AddMessage extends CreateFirebaseMessage {
@@ -374,10 +382,18 @@ function docSnapshotToMessage(
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
     infoPiecesJointes: [],
+    infoOffre: undefined,
   }
 
   if (firebaseMessage.type === TypeMessage.MESSAGE_PJ) {
     message.infoPiecesJointes = firebaseMessage.piecesJointes ?? []
+  }
+
+  if (firebaseMessage.type === TypeMessage.MESSAGE_OFFRE) {
+    message.infoOffre = {
+      titre: firebaseMessage.titreOffre!,
+      lien: firebaseMessage.lienOffre!,
+    }
   }
 
   return message
@@ -392,6 +408,8 @@ function firebaseToMessageType(
       return TypeMessage.NOUVEAU_CONSEILLER
     case 'MESSAGE_PJ':
       return TypeMessage.MESSAGE_PJ
+    case 'MESSAGE_OFFRE':
+      return TypeMessage.MESSAGE_OFFRE
     case 'MESSAGE':
       return TypeMessage.MESSAGE
     case undefined:

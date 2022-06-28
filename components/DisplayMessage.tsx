@@ -1,9 +1,10 @@
 import React from 'react'
 
+import ExternalLink from './ui/ExternalLink'
 import IconComponent, { IconName } from './ui/IconComponent'
 
 import { UserType } from 'interfaces/conseiller'
-import { Message } from 'interfaces/message'
+import { Message, TypeMessage } from 'interfaces/message'
 import { formatHourMinuteDate, isDateOlder } from 'utils/date'
 
 interface DisplayMessageProps {
@@ -39,6 +40,21 @@ export default function DisplayMessage({
           </p>
         )}
         <p className='whitespace-pre-wrap'>{message.content}</p>
+        {message.type === TypeMessage.MESSAGE_OFFRE && (
+          <div className='p-4 rounded-medium bg-blanc mt-4'>
+            <p className='text-base-medium text-content_color'>
+              {message.infoOffre!.titre}
+            </p>
+            <div className='mt-4 w-max ml-auto text-primary_darken fill-primary_darken hover:text-primary hover:fill-primary'>
+              <ExternalLink
+                key={message.infoOffre!.lien}
+                href={message.infoOffre!.lien}
+                label='Voir l’offre'
+                onClick={() => console.log('TODO-764')}
+              />
+            </div>
+          </div>
+        )}
         {message.infoPiecesJointes.map(({ id, nom }) => (
           <div key={id} className='flex flex-row flex flex-row justify-end'>
             <IconComponent

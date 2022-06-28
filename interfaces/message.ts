@@ -4,6 +4,7 @@ export enum TypeMessage {
   NOUVEAU_CONSEILLER = 'NOUVEAU_CONSEILLER',
   MESSAGE = 'MESSAGE',
   MESSAGE_PJ = 'MESSAGE_PJ',
+  MESSAGE_OFFRE = 'MESSAGE_OFFRE',
 }
 
 export interface Message {
@@ -15,6 +16,7 @@ export interface Message {
   conseillerId: string | undefined
   type: TypeMessage
   infoPiecesJointes: InfoFichier[]
+  infoOffre: InfoOffre | undefined
 }
 
 export interface MessagesOfADay {
@@ -25,4 +27,9 @@ export interface MessagesOfADay {
 export interface ChatCredentials {
   token: string
   cleChiffrement: string
+}
+
+export interface InfoOffre {
+  titre: string
+  lien: string
 }
