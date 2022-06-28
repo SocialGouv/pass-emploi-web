@@ -7,7 +7,6 @@ import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
-import { UserStructure } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -19,13 +18,9 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface SuppressionJeuneProps extends PageProps {
   idJeune: string
-  structureConseiller: string
 }
 
-function SuppressionJeune({
-  idJeune,
-  structureConseiller,
-}: SuppressionJeuneProps) {
+function SuppressionJeune({ idJeune }: SuppressionJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
@@ -77,21 +72,7 @@ function SuppressionJeune({
           Confirmez la suppression du compte jeune
         </p>
         <div className='mt-8'>
-          <InformationMessage content='Une fois confirmée toutes les informations liées à ce compte jeune seront supprimées'>
-            {structureConseiller === UserStructure.MILO && (
-              <p>
-                Si vous souhaitez <b>recréer le compte de ce jeune</b>, merci de
-                transmettre en amont le numéro de dossier technique à l’adresse{' '}
-                <a
-                  className='underline hover:text-primary_darken'
-                  href='mailto:support@pass-emploi.beta.gouv.fr'
-                >
-                  support@pass-emploi.beta.gouv.fr
-                </a>
-                .
-              </p>
-            )}
-          </InformationMessage>
+          <InformationMessage content='Une fois confirmée toutes les informations liées à ce compte jeune seront supprimées' />
         </div>
 
         <div className='mt-8 flex'>
@@ -134,7 +115,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const {
-    session: { user, accessToken },
+    session: { accessToken },
   } = sessionOrRedirect
   const idJeune = context.query.jeune_id as string
 
@@ -149,7 +130,6 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       idJeune: jeune.id,
-      structureConseiller: user.structure,
       withoutChat: true,
       pageTitle: `Suppression - ${jeune.prenom} ${jeune.nom}`,
       pageHeader: `Suppression de ${jeune.prenom} ${jeune.nom}`,

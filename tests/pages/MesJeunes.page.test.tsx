@@ -255,11 +255,6 @@ describe('Mes Jeunes', () => {
         expect(
           screen.getByText('Le compte du jeune a bien été supprimé.')
         ).toBeInTheDocument()
-        expect(
-          screen.getByRole('link', {
-            name: 'support@pass-emploi.beta.gouv.fr',
-          })
-        ).toBeInTheDocument()
       })
     })
 

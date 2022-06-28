@@ -99,7 +99,6 @@ describe('Suppression Jeune', () => {
           expect(actual).toEqual({
             props: {
               idJeune: jeune.id,
-              structureConseiller: 'MILO',
               withoutChat: true,
               pageTitle: 'Suppression - Kenji Jirac',
               pageHeader: 'Suppression de Kenji Jirac',
@@ -148,7 +147,6 @@ describe('Suppression Jeune', () => {
             idJeune={jeune.id}
             withoutChat={true}
             pageTitle=''
-            structureConseiller='MILO'
           />
         </DIProvider>
       )
