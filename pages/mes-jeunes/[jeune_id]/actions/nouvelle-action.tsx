@@ -3,8 +3,10 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { PageProps } from 'interfaces/pageProps'
@@ -64,8 +66,8 @@ function EditionAction({ idJeune }: EditionActionProps) {
       session!.accessToken
     )
     await router.push({
-      pathname: `/mes-jeunes/${idJeune}/actions`,
-      query: { creation: 'succes' },
+      pathname: `/mes-jeunes/${idJeune}`,
+      query: { creationAction: 'succes' },
     })
   }
 
@@ -118,9 +120,12 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
             <label
               htmlFor='commentaire-action-predefinie'
-              className='mt-10 text-md text-content_color block'
+              className='flex mt-10 text-md text-content_color items-center'
             >
               Commentaire de l&apos;action
+              <span className='ml-2'>
+                <BulleMessageSensible />
+              </span>
             </label>
             <textarea
               id='commentaire-action-predefinie'
@@ -182,6 +187,12 @@ function EditionAction({ idJeune }: EditionActionProps) {
             disabled={!formulaireEstValide()}
             className='ml-6'
           >
+            <IconComponent
+              name={IconName.Send}
+              focusable='false'
+              aria-hidden='true'
+              className='mr-2 w-4 h-4 fill-blanc'
+            />
             Envoyer
           </Button>
         </div>
@@ -205,7 +216,7 @@ export const getServerSideProps: GetServerSideProps<
       withoutChat: true,
       pageTitle: 'Actions jeune – Création action',
       pageHeader: 'Créer une nouvelle action',
-      returnTo: `/mes-jeunes/${idJeune}/actions`,
+      returnTo: `/mes-jeunes/${idJeune}`,
     },
   }
 }

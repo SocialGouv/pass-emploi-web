@@ -1,18 +1,25 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import renderWithSession from '../renderWithSession'
 
+import { unConseiller } from 'fixtures/conseiller'
 import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
-import { mockedMessagesService } from 'fixtures/services'
+import {
+  mockedConseillerService,
+  mockedMessagesService,
+} from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import MesJeunes from 'pages/mes-jeunes'
+import { ConseillerService } from 'services/conseiller.service'
 import { MessagesService } from 'services/messages.service'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('Recherche', () => {
   let messagesService: MessagesService
+  let conseillerService: ConseillerService
 
   beforeEach(async () => {
     //GIVEN
@@ -22,16 +29,19 @@ describe('Recherche', () => {
       signIn: jest.fn(() => Promise.resolve()),
       countMessagesNotRead: jest.fn(() => Promise.resolve({})),
     })
+    conseillerService = mockedConseillerService()
 
     await act(async () => {
       await renderWithSession(
-        <DIProvider dependances={{ messagesService }}>
-          <MesJeunes
-            structureConseiller={UserStructure.MILO}
-            conseillerJeunes={jeunes}
-            isFromEmail
-            pageTitle=''
-          />
+        <DIProvider dependances={{ messagesService, conseillerService }}>
+          <ConseillerProvider conseiller={unConseiller()}>
+            <MesJeunes
+              structureConseiller={UserStructure.MILO}
+              conseillerJeunes={jeunes}
+              isFromEmail
+              pageTitle=''
+            />
+          </ConseillerProvider>
         </DIProvider>
       )
     })
@@ -73,7 +83,7 @@ describe('Recherche', () => {
       await userEvent.type(inputSearch, 'muñoz')
 
       //WHEN
-      fireEvent.click(submitButton)
+      await userEvent.click(submitButton)
 
       const result = screen.getByRole('row', {
         name: /muñoz/i,
@@ -90,12 +100,10 @@ describe('Recherche', () => {
       await userEvent.type(inputSearch, "D'Aböville-Muñoz")
 
       //WHEN
-      fireEvent.click(submitButton)
+      await userEvent.click(submitButton)
 
       //THEN
-      await waitFor(() => {
-        expect(result).toBeInTheDocument()
-      })
+      expect(result).toBeInTheDocument()
     })
     it("quand on recherche un nom composé d'une apostrophe", async () => {
       const result = screen.getByRole('row', {
@@ -105,12 +113,10 @@ describe('Recherche', () => {
       await userEvent.type(inputSearch, 'D aböville-Muñoz')
 
       //WHEN
-      fireEvent.click(submitButton)
+      await userEvent.click(submitButton)
 
       //THEN
-      await waitFor(() => {
-        expect(result).toBeInTheDocument()
-      })
+      expect(result).toBeInTheDocument()
     })
   })
 })

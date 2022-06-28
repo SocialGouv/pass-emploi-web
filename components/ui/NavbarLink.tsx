@@ -23,7 +23,7 @@ function NavbarLink({
     <Link href={href}>
       <a
         onClick={onClick}
-        className={`flex mb-6 p-2 layout_base:p-0 ${
+        className={`flex mb-6 p-2 items-center layout_base:p-0 ${
           isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
         }`}
       >
@@ -35,13 +35,15 @@ function NavbarLink({
         <IconComponent
           focusable='false'
           aria-hidden='true'
-          className={`mr-2 ${isActive ? 'fill-primary' : 'fill-blanc'}`}
+          className={`mr-2 w-6 h-6 layout_s:w-4 layout_s:h-4 ${
+            isActive ? 'fill-primary' : 'fill-blanc'
+          }`}
           name={iconName}
         />
         <span
-          className={`text-md layout_m:sr-only break-words ${className ?? ''} ${
-            isActive ? 'text-primary' : 'text-blanc'
-          }`}
+          className={`text-md text-left layout_m:sr-only break-words ${
+            className ?? ''
+          } ${isActive ? 'text-primary' : 'text-blanc'}`}
         >
           {label}
         </span>

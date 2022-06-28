@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
-import IconComponent, { IconName } from '../ui/IconComponent'
-import NavbarLink from '../ui/NavbarLink'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import NavbarLink from 'components/ui/NavbarLink'
 import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -60,10 +60,10 @@ export default function Sidebar({}: SidebarProps) {
           {isSuperviseur && (
             <>
               <NavbarLink
-                iconName={IconName.Supervision}
-                label='Supervision'
-                href='/supervision'
-                isActive={isCurrentRoute('/supervision')}
+                iconName={IconName.ArrowRight}
+                label='Réaffectation'
+                href='/reaffectation'
+                isActive={isCurrentRoute('/reaffectation')}
               />
             </>
           )}
@@ -83,7 +83,7 @@ export default function Sidebar({}: SidebarProps) {
               name={IconName.Aide}
               aria-hidden={true}
               focusable={false}
-              className='mr-2 fill-blanc'
+              className='mr-2 fill-blanc w-6 h-6'
             />
             <span className='text-md text-blanc text-center layout_m:sr-only'>
               Aide
@@ -92,30 +92,29 @@ export default function Sidebar({}: SidebarProps) {
               name={IconName.Launch}
               aria-hidden={true}
               focusable={false}
-              className='mx-2 fill-blanc layout_m:hidden'
+              className='mx-2 w-3 h-3 fill-blanc layout_m:hidden'
             />
           </a>
         </div>
-        {session && (
+        <div className='flex flex-col'>
+          {session && (
+            <NavbarLink
+              isActive={isCurrentRoute('/profil')}
+              href='/profil'
+              label={session.user.name}
+              iconName={IconName.Profil}
+              className='break-all'
+            />
+          )}
+          <span className='border-b border-blanc mx-4 mb-8'></span>
           <NavbarLink
-            isActive={isCurrentRoute('/profil')}
-            href='/profil'
-            label={session.user.name}
-            iconName={IconName.Profil}
-            className='break-all'
+            href='/api/logout'
+            label='Déconnexion'
+            iconName={IconName.Logout}
+            onClick={handleLogout}
           />
-        )}
+        </div>
       </nav>
-
-      <span className='border-b border-blanc mx-4 mb-8'></span>
-      <div className='flex flex-col justify-between'>
-        <NavbarLink
-          href='/api/logout'
-          label='Déconnexion'
-          iconName={IconName.Logout}
-          onClick={handleLogout}
-        />
-      </div>
     </div>
   )
 }

@@ -1,5 +1,6 @@
-import CloseIcon from '../assets/icons/close.svg'
 import FailureIcon from '../assets/icons/important_outline.svg'
+
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type FailureMessageProps = {
   label: string
@@ -27,10 +28,11 @@ export default function FailureMessage({
           onClick={onAcknowledge}
           className='border-none shrink-0'
         >
-          <CloseIcon
+          <IconComponent
+            name={IconName.Close}
             focusable='false'
             aria-hidden='true'
-            className='fill-warning'
+            className='h-6 w-6 fill-warning'
           />
         </button>
       )}

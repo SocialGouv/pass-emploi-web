@@ -80,7 +80,10 @@ function Profil({ structureConseiller }: ProfilProps) {
           </section>
           <section className='mb-8'>
             <h2 className='text-l-medium mb-4'>Notifications</h2>
-            <label htmlFor='notificationSonore' className='flex items-center'>
+            <label
+              htmlFor='notificationSonore'
+              className='flex items-center layout_m:flex-wrap'
+            >
               <span className='mr-4'>
                 Recevoir des notifications sonores pour la réception de nouveaux
                 messages

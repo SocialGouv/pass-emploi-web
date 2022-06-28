@@ -1,6 +1,5 @@
-import AddIcon from '../../assets/icons/add_person.svg'
-
 import Button from 'components/ui/Button'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface AjouterJeuneButtonProps {
   handleAddJeune: () => void
@@ -11,7 +10,12 @@ export const AjouterJeuneButton = ({
 }: AjouterJeuneButtonProps) => {
   return (
     <Button onClick={handleAddJeune}>
-      <AddIcon focusable='false' aria-hidden='true' className='mr-2' />
+      <IconComponent
+        name={IconName.Add}
+        focusable='false'
+        aria-hidden='true'
+        className='mr-2 w-4 h-4'
+      />
       Ajouter un jeune
     </Button>
   )

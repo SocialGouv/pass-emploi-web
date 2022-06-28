@@ -3,16 +3,14 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { MouseEvent, useState } from 'react'
 
-import Etape1Icon from '../../assets/icons/etape_1.svg'
-import Etape2Icon from '../../assets/icons/etape_2.svg'
-import SendIcon from '../../assets/icons/send.svg'
-
 import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -26,7 +24,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EnvoiMessageGroupeProps extends PageProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   returnTo: string
 }
 
@@ -131,11 +129,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
         <fieldset className='border-none mb-10'>
           <legend className='flex items-center text-m-medium mb-4'>
-            <Etape1Icon
+            <IconComponent
+              name={IconName.Chiffre1}
               role='img'
               focusable='false'
               aria-label='Étape 1'
-              className='mr-2'
+              className='mr-2 w-8 h-8'
             />
             Destinataires
           </legend>
@@ -148,24 +147,31 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
         <fieldset className='border-none'>
           <legend className='flex items-center text-m-medium mb-4'>
-            <Etape2Icon
+            <IconComponent
+              name={IconName.Chiffre2}
               role='img'
               focusable='false'
               aria-label='Étape 2'
-              className='mr-2'
+              className='mr-2 w-8 h-8'
             />
             Écrivez votre message
           </legend>
 
-          <label htmlFor='message' className='text-base-medium'>
+          <label
+            htmlFor='message'
+            className='flex text-base-medium items-center'
+          >
             <span aria-hidden='true'>*</span> Message
+            <span className='ml-2'>
+              <BulleMessageSensible />
+            </span>
           </label>
 
           <textarea
             id='message'
             name='message'
             rows={10}
-            className={`w-full text-sm text-primary_darken p-4  border border-solid border-black rounded-medium mt-4 ${
+            className={`w-full text-sm p-4  border border-solid border-black rounded-medium mt-4 ${
               erreurMessage ? 'mb-[8px]' : 'mb-14'
             }`}
             onChange={(e) => setMessage(e.target.value)}
@@ -200,7 +206,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             className='flex items-center p-2'
             onClick={envoyerMessageGroupe}
           >
-            <SendIcon aria-hidden='true' focusable='false' className='mr-2' />
+            <IconComponent
+              name={IconName.Send}
+              aria-hidden='true'
+              focusable='false'
+              className='mr-2 h-4 w-4 fill-blanc'
+            />
             Envoyer
           </Button>
         </div>
@@ -236,7 +247,7 @@ export const getServerSideProps: GetServerSideProps<
     referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   return {
     props: {
-      jeunes: [...jeunes].sort(compareJeunesByLastName),
+      jeunes: [...jeunes].sort(compareJeunesByNom),
       withoutChat: true,
       pageTitle: 'Message multi-destinataires',
       returnTo: previousUrl,

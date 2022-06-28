@@ -1,6 +1,6 @@
 import React, { ChangeEvent, ForwardedRef, forwardRef, MouseEvent } from 'react'
 
-import CloseIcon from '../../assets/icons/close.svg'
+import IconComponent, { IconName } from './IconComponent'
 
 interface ResettableTextInputProps {
   id: string
@@ -10,6 +10,7 @@ interface ResettableTextInputProps {
   disabled?: boolean
   type?: string
   className?: string
+  required?: boolean
 }
 
 const ResettableTextInput = forwardRef(
@@ -22,6 +23,7 @@ const ResettableTextInput = forwardRef(
       disabled = false,
       type = 'text',
       className,
+      required = false,
     }: ResettableTextInputProps,
     ref: ForwardedRef<HTMLInputElement>
   ) => {
@@ -53,6 +55,7 @@ const ResettableTextInput = forwardRef(
           onChange={applyChange}
           className={`flex-1 p-3 bg-blanc rounded-l-medium`}
           disabled={disabled}
+          required={required}
         />
         <button
           type='reset'
@@ -62,7 +65,13 @@ const ResettableTextInput = forwardRef(
           disabled={disabled}
         >
           <span className='sr-only'>Effacer le champ de saisie</span>
-          <CloseIcon focusable={false} aria-hidden={true} fill='currentColor' />
+          <IconComponent
+            name={IconName.Close}
+            focusable={false}
+            aria-hidden={true}
+            className='w-6 h-6'
+            fill='currentColor'
+          />
         </button>
       </div>
     )

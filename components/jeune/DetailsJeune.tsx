@@ -1,14 +1,14 @@
 import React from 'react'
 
 import EmailIcon from '../../assets/icons/email.svg'
-import LaunchIcon from '../../assets/icons/launch.svg'
 
 import SituationTag from 'components/jeune/SituationTag'
-import { Jeune, CategorieSituation } from 'interfaces/jeune'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
-  jeune: Jeune
+  jeune: DetailJeune
   withSituations?: boolean
   onDossierMiloClick: () => void
 }
@@ -50,26 +50,18 @@ export const DetailsJeune = ({
                 rel='noopener noreferrer'
               >
                 Dossier jeune i-Milo
-                <LaunchIcon
+                <IconComponent
+                  name={IconName.Launch}
                   focusable='false'
                   role='img'
                   title='ouvrir'
-                  className='ml-2'
+                  className='ml-2 w-3 h-3'
                 />
               </a>
             </dd>
           </>
         )}
       </dl>
-
-      {!jeune.isActivated && (
-        <p className='mt-4 bg-warning_lighten py-4 px-7 rounded-medium max-w-md text-center'>
-          <span className='text-sm-semi text-warning'>
-            Ce jeune ne s&apos;est pas encore connect&eacute; &agrave;
-            l&apos;application.
-          </span>
-        </p>
-      )}
 
       {withSituations && (
         <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>

@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -182,10 +183,9 @@ describe('Page Profil conseiller', () => {
         const toggleNotifications = getToggleNotifications()
 
         // When
-        await act(async () => {
-          await toggleNotifications.click()
-        })
+        await userEvent.click(toggleNotifications)
       })
+
       it('met à jour côté API', async () => {
         // Then
         expect(

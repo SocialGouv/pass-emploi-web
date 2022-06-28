@@ -24,4 +24,5 @@ export interface Conseiller {
   email?: string
   agence?: string
   notificationsSonores: boolean
+  aDesBeneficiairesARecuperer: boolean
 }

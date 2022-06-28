@@ -1,10 +1,17 @@
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
 export default class HttpClient {
-  async fetchJson(reqInfo: RequestInfo, reqInit?: RequestInit): Promise<any> {
+  async fetchJson(
+    reqInfo: RequestInfo,
+    reqInit?: RequestInit
+  ): Promise<{ content: any; headers: Headers }> {
     const response = await HttpClient.callFetch(reqInfo, reqInit)
+
     const contentType = response.headers.get('content-type')
-    if (contentType?.includes('application/json')) return response.json()
+    if (contentType?.includes('application/json')) {
+      return { content: await response.json(), headers: response.headers }
+    }
+    return { content: undefined, headers: response.headers }
   }
 
   async fetchNoContent(

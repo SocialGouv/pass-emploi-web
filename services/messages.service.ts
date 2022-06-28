@@ -1,7 +1,8 @@
 import { ApiClient } from 'clients/api.client'
-import { FirebaseClient } from 'clients/firebase.client'
+import { AddMessage, FirebaseClient } from 'clients/firebase.client'
 import { UserStructure, UserType } from 'interfaces/conseiller'
-import { Chat, Jeune, JeuneChat } from 'interfaces/jeune'
+import { InfoFichier } from 'interfaces/fichier'
+import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
 import {
   ChatCredentials,
   Message,
@@ -11,6 +12,15 @@ import {
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
 
+export interface FormNouveauMessage {
+  conseiller: { id: string; structure: string }
+  jeuneChat: JeuneChat
+  newMessage: string
+  accessToken: string
+  cleChiffrement: string
+  infoPieceJointe?: InfoFichier
+}
+
 export interface MessagesService {
   getChatCredentials(accessToken: string): Promise<ChatCredentials>
 
@@ -18,13 +28,14 @@ export interface MessagesService {
 
   signOut(): Promise<void>
 
-  sendNouveauMessage(
-    conseiller: { id: string; structure: string },
-    jeuneChat: JeuneChat,
-    newMessage: string,
-    accessToken: string,
-    cleChiffrement: string
-  ): void
+  sendNouveauMessage({
+    conseiller,
+    jeuneChat,
+    newMessage,
+    infoPieceJointe,
+    accessToken,
+    cleChiffrement,
+  }: FormNouveauMessage): void
 
   sendNouveauMessageGroupe(
     conseiller: { id: string; structure: string },
@@ -38,7 +49,7 @@ export interface MessagesService {
 
   observeJeuneChat(
     idConseiller: string,
-    jeune: Jeune,
+    jeune: BaseJeune & { isActivated: boolean },
     cleChiffrement: string,
     updateChat: (chat: JeuneChat) => void
   ): () => void
@@ -68,7 +79,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   ) {}
 
   async getChatCredentials(accessToken: string): Promise<ChatCredentials> {
-    const { token, cle: cleChiffrement } = await this.apiClient.post<{
+    const {
+      content: { token, cle: cleChiffrement },
+    } = await this.apiClient.post<{
       token: string
       cle: string
     }>('/auth/firebase/token', {}, accessToken)
@@ -93,9 +106,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   observeJeuneChat(
     idConseiller: string,
-    jeune: Jeune,
+    jeune: BaseJeune & { isActivated: boolean },
     cleChiffrement: string,
-    onJeuneChat: (chat: JeuneChat) => void
+    updateChat: (chat: JeuneChat) => void
   ): () => void {
     return this.firebaseClient.findAndObserveChatDuJeune(
       idConseiller,
@@ -115,7 +128,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
             : chat.lastMessageContent,
         }
 
-        onJeuneChat(newJeuneChat)
+        updateChat(newJeuneChat)
       }
     )
   }
@@ -161,22 +174,37 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     }, {} as { [idJeune: string]: number })
   }
 
-  async sendNouveauMessage(
-    conseiller: { id: string; structure: UserStructure },
-    jeuneChat: JeuneChat,
-    newMessage: string,
-    accessToken: string,
-    cleChiffrement: string
-  ) {
+  async sendNouveauMessage({
+    conseiller,
+    jeuneChat,
+    newMessage,
+    infoPieceJointe,
+    accessToken,
+    cleChiffrement,
+  }: FormNouveauMessage) {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
+
+    const nouveauMessage: AddMessage = {
+      idChat: jeuneChat.chatId,
+      idConseiller: conseiller.id,
+      message: encryptedMessage,
+      date: now,
+    }
+
+    if (infoPieceJointe) {
+      nouveauMessage.infoPieceJointe = {
+        ...infoPieceJointe,
+        nom: this.chatCrypto.encryptWithCustomIv(
+          infoPieceJointe.nom,
+          cleChiffrement,
+          encryptedMessage.iv
+        ),
+      }
+    }
+
     await Promise.all([
-      this.firebaseClient.addMessage(
-        jeuneChat.chatId,
-        conseiller.id,
-        encryptedMessage,
-        now
-      ),
+      this.firebaseClient.addMessage(nouveauMessage),
       this.firebaseClient.updateChat(jeuneChat.chatId, {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,
@@ -187,11 +215,14 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         lastConseillerReading: now,
       }),
     ])
+
+    const avecPieceJointe = Boolean(infoPieceJointe)
     await Promise.all([
       this.notifierNouveauMessage(conseiller.id, [jeuneChat.id], accessToken),
       this.evenementNouveauMessage(
         conseiller.structure,
         conseiller.id,
+        avecPieceJointe,
         accessToken
       ),
     ])
@@ -215,12 +246,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await Promise.all([
       Object.values(mappedChats).map((chat) => {
         return Promise.all([
-          this.firebaseClient.addMessage(
-            chat.chatId,
-            conseiller.id,
-            encryptedMessage,
-            now
-          ),
+          this.firebaseClient.addMessage({
+            idChat: chat.chatId,
+            idConseiller: conseiller.id,
+            message: encryptedMessage,
+            date: now,
+          }),
           this.firebaseClient.updateChat(chat.chatId, {
             lastMessageContent: encryptedMessage.encryptedText,
             lastMessageIv: encryptedMessage.iv,
@@ -259,12 +290,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   private async evenementNouveauMessage(
     structure: string,
     idConseiller: string,
+    avecPieceJointe: boolean,
     accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
       '/evenements',
       {
-        type: 'MESSAGE_ENVOYE',
+        type: avecPieceJointe ? 'MESSAGE_ENVOYE_PJ' : 'MESSAGE_ENVOYE',
         emetteur: {
           type: UserType.CONSEILLER,
           structure: structure,
@@ -303,15 +335,10 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     messages
       .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
       .forEach((message) => {
-        message.content = message.iv
-          ? this.chatCrypto.decrypt(
-              {
-                encryptedText: message.content,
-                iv: message.iv,
-              },
-              cleChiffrement
-            )
-          : message.content
+        if (message.iv) {
+          message = this.decryptMessageAndFilename(message, cleChiffrement)
+        }
+
         const day = formatDayDate(message.creationDate)
         const messagesOfDay = messagesByDay[day] ?? {
           date: message.creationDate,
@@ -322,5 +349,33 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       })
 
     return Object.values(messagesByDay)
+  }
+
+  private decryptMessageAndFilename(
+    message: Message,
+    cleChiffrement: string
+  ): Message {
+    const iv = message.iv!
+    const decryptedMessage: Message = {
+      ...message,
+      content: this.chatCrypto.decrypt(
+        { encryptedText: message.content, iv },
+        cleChiffrement
+      ),
+    }
+
+    if (message.infoPiecesJointes?.length) {
+      decryptedMessage.infoPiecesJointes = message.infoPiecesJointes.map(
+        ({ id, nom }) => ({
+          id,
+          nom: this.chatCrypto.decrypt(
+            { encryptedText: nom, iv },
+            cleChiffrement
+          ),
+        })
+      )
+    }
+
+    return decryptedMessage
   }
 }

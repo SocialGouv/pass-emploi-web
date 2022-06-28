@@ -1,6 +1,6 @@
 import React from 'react'
 
-import LaunchIcon from '../../assets/icons/launch.svg'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface ExternalLinkProps {
   href: string
@@ -8,7 +8,11 @@ interface ExternalLinkProps {
   onClick: () => void
 }
 
-export const ExternalLink = ({ href, label, onClick }: ExternalLinkProps) => {
+export default function ExternalLink({
+  href,
+  label,
+  onClick,
+}: ExternalLinkProps) {
   return (
     <a
       href={href}
@@ -19,8 +23,9 @@ export const ExternalLink = ({ href, label, onClick }: ExternalLinkProps) => {
       onClick={onClick}
     >
       {label}
-      <LaunchIcon
-        className='ml-1.5 fill-[inherit]'
+      <IconComponent
+        name={IconName.Launch}
+        className='ml-1.5 w-3 h-3 fill-[inherit]'
         focusable='false'
         aria-hidden={true}
       />

@@ -1,21 +1,13 @@
-import { userEvent } from '@storybook/testing-library'
-import {
-  act,
-  fireEvent,
-  RenderResult,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+import { desItemsJeunes } from 'fixtures/jeune'
+import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
+import { UserStructure } from 'interfaces/conseiller'
+import { JeuneFromListe } from 'interfaces/jeune'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
-
-import renderWithSession from '../renderWithSession'
-
-import { desJeunes } from 'fixtures/jeune'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
-import { Jeune } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
@@ -25,22 +17,23 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
+import renderWithSession from '../renderWithSession'
+
 jest.mock('components/Modal')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
-    let jeunes: Jeune[]
+    let jeunes: JeuneFromListe[]
     let jeunesService: JeunesService
     let messagesService: MessagesService
-    let page: RenderResult
     let inputSearchJeune: HTMLSelectElement
     let inputMessage: HTMLInputElement
     let submitButton: HTMLButtonElement
 
     beforeEach(async () => {
-      jeunes = desJeunes()
+      jeunes = desItemsJeunes()
 
       jeunesService = mockedJeunesService()
 
@@ -50,7 +43,7 @@ describe('EnvoiMessageGroupe', () => {
         }),
       })
 
-      page = renderWithSession(
+      renderWithSession(
         <DIProvider dependances={{ jeunesService, messagesService }}>
           <EnvoiMessageGroupe
             pageTitle={''}
@@ -84,9 +77,9 @@ describe('EnvoiMessageGroupe', () => {
         ).toBeInTheDocument()
       })
 
-      it('ne devrait pas pouvoir cliquer sur le bouton envoyer avec un champ du formulaire vide', () => {
+      it('ne devrait pas pouvoir cliquer sur le bouton envoyer avec un champ du formulaire vide', async () => {
         // Given
-        fireEvent.change(inputMessage, { target: { value: 'Un message' } })
+        await userEvent.type(inputMessage, 'Un message')
 
         // Then
         expect(inputSearchJeune.selectedOptions).toBe(undefined)
@@ -98,15 +91,15 @@ describe('EnvoiMessageGroupe', () => {
     describe('quand on remplit le formulaire', () => {
       let push: Function
       let newMessage: string
-      beforeEach(() => {
+      beforeEach(async () => {
         push = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ push })
 
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
 
-        userEvent.type(inputSearchJeune, 'Jirac Kenji')
-        userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+        await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
       })
 
       it('sélectionne plusieurs jeunes dans la liste', () => {
@@ -118,32 +111,28 @@ describe('EnvoiMessageGroupe', () => {
 
       it('envoi un message à plusieurs destinataires', async () => {
         // When
-        fireEvent.change(inputMessage, { target: { value: newMessage } })
-        fireEvent.click(submitButton)
+        await userEvent.type(inputMessage, newMessage)
+        await userEvent.click(submitButton)
 
         // Then
-        await waitFor(() => {
-          expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
-            { id: '1', structure: UserStructure.MILO },
-            [jeunes[0].id, jeunes[1].id],
-            newMessage,
-            'accessToken',
-            'cleChiffrement'
-          )
-        })
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
+          { id: '1', structure: UserStructure.MILO },
+          [jeunes[0].id, jeunes[1].id],
+          newMessage,
+          'accessToken',
+          'cleChiffrement'
+        )
       })
 
       it('redirige vers la page précédente', async () => {
         // Given
-        fireEvent.change(inputMessage, { target: { value: newMessage } })
+        await userEvent.type(inputMessage, newMessage)
 
         // When
-        fireEvent.click(submitButton)
+        await userEvent.click(submitButton)
 
         // Then
-        await waitFor(() => {
-          expect(push).toHaveBeenCalledWith('/mes-jeunes?envoiMessage=succes')
-        })
+        expect(push).toHaveBeenCalledWith('/mes-jeunes?envoiMessage=succes')
       })
 
       // FIXME trouver comment tester
@@ -154,7 +143,7 @@ describe('EnvoiMessageGroupe', () => {
       //   )
       //
       //   // When
-      //   await act(async () => previousButton.click())
+      //   await userEvent.click(previousButton)
       //
       //   // Then
       //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -172,7 +161,7 @@ describe('EnvoiMessageGroupe', () => {
         const cancelButton = screen.getByText('Annuler')
 
         // When
-        await act(async () => cancelButton.click())
+        await userEvent.click(cancelButton)
 
         // Then
         expect(cancelButton).not.toHaveAttribute('href')
@@ -195,24 +184,22 @@ describe('EnvoiMessageGroupe', () => {
         })
 
         // When
-        userEvent.type(inputSearchJeune, 'Jirac Kenji')
-        fireEvent.change(inputMessage, { target: { value: 'un message' } })
-        fireEvent.click(submitButton)
+        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+        await userEvent.type(inputMessage, 'un message')
+        await userEvent.click(submitButton)
 
         // Then
-        await waitFor(() => {
-          expect(
-            messagesService.sendNouveauMessageGroupe
-          ).toHaveBeenCalledTimes(1)
-        })
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
+          1
+        )
         expect(screen.getByText(messageErreur)).toBeInTheDocument()
       })
     })
 
     describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
-      it('sélectionne tout les jeunes dans la liste', () => {
+      it('sélectionne tout les jeunes dans la liste', async () => {
         // When
-        userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+        await userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
 
         // Then
         expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
@@ -242,7 +229,7 @@ describe('EnvoiMessageGroupe', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
-      let jeunes: Jeune[]
+      let jeunes: JeuneFromListe[]
       beforeEach(() => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -252,7 +239,7 @@ describe('EnvoiMessageGroupe', () => {
             accessToken: 'accessToken',
           },
         })
-        jeunes = desJeunes()
+        jeunes = desItemsJeunes()
         const jeunesService = mockedJeunesService({
           getJeunesDuConseiller: jest.fn(async () => jeunes),
         })

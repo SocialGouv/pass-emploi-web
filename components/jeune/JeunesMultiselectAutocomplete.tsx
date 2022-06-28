@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react'
 
-import InfoIcon from '../../assets/icons/information.svg'
 import RemoveIcon from '../../assets/icons/remove.svg'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import SelectAutocomplete from 'components/ui/SelectAutocomplete'
-import { getJeuneFullname, Jeune } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   typeSelection: string
   onUpdate: (selectedIds: string[]) => void
   defaultJeunes?: OptionJeune[]
@@ -144,10 +144,11 @@ export default function JeunesMultiselectAutocomplete({
                     aria-label="Ce jeune n'est pas dans votre portefeuille"
                     className='mr-2'
                   >
-                    <InfoIcon
+                    <IconComponent
+                      name={IconName.Info}
                       focusable={false}
                       aria-hidden={true}
-                      className='fill-accent_3'
+                      className='w-6 h-6 fill-accent_3'
                     />
                   </div>
                   {value}
@@ -171,9 +172,9 @@ export default function JeunesMultiselectAutocomplete({
   )
 }
 
-export function jeuneToOption(jeune: Jeune): OptionJeune {
+export function jeuneToOption(jeune: BaseJeune): OptionJeune {
   return {
     id: jeune.id,
-    value: getJeuneFullname(jeune),
+    value: getNomJeuneComplet(jeune),
   }
 }

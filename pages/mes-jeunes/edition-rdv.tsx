@@ -3,15 +3,14 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import DeleteIcon from '../../assets/icons/delete.svg'
-import FailureMessage from '../../components/FailureMessage'
-
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
+import FailureMessage from 'components/FailureMessage'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import { compareJeunesByLastName, Jeune } from 'interfaces/jeune'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
@@ -25,7 +24,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EditionRdvProps extends PageProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   typesRendezVous: TypeRendezVous[]
   returnTo: string
   idJeune?: string
@@ -97,6 +96,15 @@ function EditionRdv({
     setTrackingTitle(initialTracking)
   }
 
+  function aDesJeunesDUnAutrePortefeuille(): boolean {
+    if (rdv) {
+      return rdv.jeunes.some(
+        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
+      )
+    }
+    return false
+  }
+
   async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!rdv) {
@@ -150,7 +158,12 @@ function EditionRdv({
           aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
           className='mb-4'
         >
-          <DeleteIcon aria-hidden='true' focusable='false' className='mr-2' />
+          <IconComponent
+            name={IconName.Delete}
+            aria-hidden='true'
+            focusable='false'
+            className='mr-2 w-4 h-4'
+          />
           Supprimer
         </Button>
       )}
@@ -161,6 +174,7 @@ function EditionRdv({
         idJeune={idJeune}
         rdv={rdv}
         redirectTo={returnTo}
+        aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
         conseillerIsCreator={!rdv || session?.user.id === rdv.createur?.id}
         conseillerEmail={session?.user.email ?? ''}
         onChanges={setHasChanges}
@@ -189,6 +203,7 @@ function EditionRdv({
       )}
       {showDeleteRdvModal && (
         <DeleteRdvModal
+          aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={deleteRendezVous}
         />
@@ -220,7 +235,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const redirectTo =
     referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   const props: EditionRdvProps = {
-    jeunes: [...jeunes].sort(compareJeunesByLastName),
+    jeunes: [...jeunes].sort(compareJeunesByNom),
     typesRendezVous: typesRendezVous,
     withoutChat: true,
     returnTo: redirectTo,

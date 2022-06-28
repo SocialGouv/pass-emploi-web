@@ -47,7 +47,7 @@ describe('Fiche Jeune MiLo', () => {
 
           // Then
           expect(actual).toEqual({
-            redirect: { destination: '/mes-jeunes', permanent: true },
+            redirect: { destination: '/mes-jeunes', permanent: false },
           })
         })
       })
@@ -87,7 +87,7 @@ describe('Fiche Jeune MiLo', () => {
             expect(actual).toEqual({
               redirect: {
                 destination: '/mes-jeunes/id-jeune',
-                permanent: true,
+                permanent: false,
               },
             })
           })
@@ -114,7 +114,7 @@ describe('Fiche Jeune MiLo', () => {
               refererUrl: 'referer-url',
             })
             expect(actual).toEqual({
-              redirect: { destination: '/mes-jeunes', permanent: true },
+              redirect: { destination: '/mes-jeunes', permanent: false },
             })
           })
         })

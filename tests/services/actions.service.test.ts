@@ -27,8 +27,14 @@ describe('ActionsApiService', () => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
-            ...uneActionJson({ id: action.id, status: 'not_started' }),
-            jeune: 'jeune',
+            content: {
+              ...uneActionJson({ id: action.id, status: 'not_started' }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
           }
       })
 
@@ -36,7 +42,10 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
     })
 
     it('renvoie une action commencée', async () => {
@@ -45,8 +54,14 @@ describe('ActionsApiService', () => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
-            ...uneActionJson({ id: action.id, status: 'in_progress' }),
-            jeune: 'jeune',
+            content: {
+              ...uneActionJson({ id: action.id, status: 'in_progress' }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
           }
       })
 
@@ -54,7 +69,10 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
     })
 
     it('renvoie une action terminée', async () => {
@@ -63,8 +81,14 @@ describe('ActionsApiService', () => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/actions/${action.id}`)
           return {
-            ...uneActionJson({ id: action.id, status: 'done' }),
-            jeune: 'jeune',
+            content: {
+              ...uneActionJson({ id: action.id, status: 'done' }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
           }
       })
 
@@ -72,7 +96,10 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.getAction(action.id, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual({ action, jeune: 'jeune' })
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
     })
 
     it('ne renvoie pas une action inexistante', async () => {
@@ -94,17 +121,22 @@ describe('ActionsApiService', () => {
       // GIVEN
       const actions = uneListeDActions()
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/jeunes/whatever/actions`) return uneListeDActionsJson()
+        if (url === `/jeunes/whatever/actions?page=1&tri=date_decroissante`)
+          return {
+            content: uneListeDActionsJson(),
+            headers: new Headers({ 'x-total-count': '82' }),
+          }
       })
 
       // WHEN
       const actual = await actionsService.getActionsJeune(
         'whatever',
+        1,
         'accessToken'
       )
 
       // THEN
-      expect(actual).toStrictEqual(actions)
+      expect(actual).toStrictEqual({ actions, total: 82 })
     })
   })
 

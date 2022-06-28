@@ -99,7 +99,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     return {
       redirect: {
         destination: `${redirectUrl}`,
-        permanent: true,
+        permanent: false,
       },
     }
   }

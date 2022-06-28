@@ -22,17 +22,31 @@ import {
 
 import { UserType } from 'interfaces/conseiller'
 import { Chat } from 'interfaces/jeune'
+import { InfoFichier } from 'interfaces/fichier'
 import { Message, TypeMessage } from 'interfaces/message'
+import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
-type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE'
+type TypeMessageFirebase = 'NOUVEAU_CONSEILLER' | 'MESSAGE' | 'MESSAGE_PJ' | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 interface FirebaseMessage {
   creationDate: Timestamp
   sentBy: string
   content: string
   iv: string | undefined
+  piecesJointes?: InfoFichier[]
   conseillerId: string | undefined
   type: TypeMessageFirebase | undefined
+}
+
+export interface AddMessage extends CreateFirebaseMessage {
+  idChat: string
+}
+
+interface CreateFirebaseMessage {
+  idConseiller: string
+  message: EncryptedTextWithInitializationVector
+  infoPieceJointe?: InfoFichier
+  date: Date
 }
 
 class FirebaseClient {
@@ -64,27 +78,26 @@ class FirebaseClient {
     await signOut(this.auth)
   }
 
-  async addMessage(
-    idChat: string,
-    idConseiller: string,
-    message: { encryptedText: string; iv: string },
-    date: Date
-  ): Promise<void> {
-    const { encryptedText: content, iv } = message
+  async addMessage({
+    idChat,
+    idConseiller,
+    message,
+    infoPieceJointe,
+    date,
+  }: AddMessage): Promise<void> {
+    const firebaseMessage = createFirebaseMessage({
+      message,
+      infoPieceJointe: infoPieceJointe,
+      idConseiller,
+      date,
+    })
     try {
       await addDoc<FirebaseMessage>(
         collection(
           this.getChatReference(idChat),
           'messages'
         ) as CollectionReference<FirebaseMessage>,
-        {
-          content,
-          iv,
-          conseillerId: idConseiller,
-          sentBy: UserType.CONSEILLER.toLowerCase(),
-          creationDate: Timestamp.fromDate(date),
-          type: 'MESSAGE',
-        }
+        firebaseMessage
       )
     } catch (e) {
       console.error(e)
@@ -266,6 +279,29 @@ class FirebaseClient {
   }
 }
 
+function createFirebaseMessage({
+  message: { encryptedText, iv },
+  infoPieceJointe,
+  idConseiller,
+  date,
+}: CreateFirebaseMessage): FirebaseMessage {
+  const type = infoPieceJointe ? TypeMessage.MESSAGE_PJ : TypeMessage.MESSAGE
+  const firebaseFichier: FirebaseMessage = {
+    content: encryptedText,
+    iv,
+    conseillerId: idConseiller,
+    sentBy: UserType.CONSEILLER.toLowerCase(),
+    creationDate: Timestamp.fromDate(date),
+    type,
+  }
+
+  if (infoPieceJointe) {
+    firebaseFichier.piecesJointes = [infoPieceJointe]
+  }
+
+  return firebaseFichier
+}
+
 interface FirebaseChat {
   jeuneId: string
   seenByConseiller: boolean | undefined
@@ -332,12 +368,19 @@ function docSnapshotToMessage(
   docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
 ): Message {
   const firebaseMessage = docSnapshot.data()
-  return {
+  const message: Message = {
     ...firebaseMessage,
     creationDate: firebaseMessage.creationDate.toDate(),
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
+    infoPiecesJointes: [],
   }
+
+  if (firebaseMessage.type === TypeMessage.MESSAGE_PJ) {
+    message.infoPiecesJointes = firebaseMessage.piecesJointes ?? []
+  }
+
+  return message
 }
 
 function firebaseToMessageType(
@@ -345,10 +388,13 @@ function firebaseToMessageType(
 ): TypeMessage {
   switch (type) {
     case 'NOUVEAU_CONSEILLER':
+    case 'NOUVEAU_CONSEILLER_TEMPORAIRE':
       return TypeMessage.NOUVEAU_CONSEILLER
+    case 'MESSAGE_PJ':
+      return TypeMessage.MESSAGE_PJ
     case 'MESSAGE':
-    case undefined:
       return TypeMessage.MESSAGE
+    case undefined:
     default:
       console.warn(`Type message ${type} incorrect, traité comme Message`)
       return TypeMessage.MESSAGE

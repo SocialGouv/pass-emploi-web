@@ -41,3 +41,15 @@ node_modules/
 
 # Storybook
 storybook-static
+
+# Mac
+.DS_Store
+
+# yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

@@ -1,20 +1,20 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
-import ArrowDouble from '../../assets/icons/arrow_double.svg'
-import ArrowDown from '../../assets/icons/arrow_down.svg'
 import MessageIcon from '../../assets/icons/note_outline_big.svg'
 
 import SituationTag from 'components/jeune/SituationTag'
 import { Badge } from 'components/ui/Badge'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import SortIcon from 'components/ui/SortIcon'
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
-  compareJeunesByLastName,
+  compareJeunesByNom,
   compareJeunesByLastNameDesc,
   compareJeunesBySituation,
   compareJeunesBySituationDesc,
-  getJeuneFullname,
+  getNomJeuneComplet,
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -88,7 +88,7 @@ export const TableauJeunes = ({
       if (isName)
         return sortDesc
           ? compareJeunesByLastNameDesc(jeune1, jeune2)
-          : compareJeunesByLastName(jeune1, jeune2)
+          : compareJeunesByNom(jeune1, jeune2)
 
       if (isSituation)
         return sortDesc
@@ -188,16 +188,7 @@ export const TableauJeunes = ({
                   }`}
                 >
                   <span className='mr-1'>Nom du jeune</span>
-                  {isName && (
-                    <ArrowDown
-                      focusable='false'
-                      aria-hidden='true'
-                      className={sortDesc ? 'rotate-180' : ''}
-                    />
-                  )}
-                  {!isName && (
-                    <ArrowDouble focusable='false' aria-hidden='true' />
-                  )}
+                  <SortIcon isSorted={isName} isDesc={sortDesc} />
                 </button>
               </span>
               {withSituations && (
@@ -216,16 +207,7 @@ export const TableauJeunes = ({
                     }`}
                   >
                     <span className='mr-1'>Situation</span>
-                    {isSituation && (
-                      <ArrowDown
-                        focusable='false'
-                        aria-hidden='true'
-                        className={sortDesc ? 'rotate-180' : ''}
-                      />
-                    )}
-                    {!isSituation && (
-                      <ArrowDouble focusable='false' aria-hidden='true' />
-                    )}
+                    <SortIcon isSorted={isSituation} isDesc={sortDesc} />
                   </button>
                 </span>
               )}
@@ -248,16 +230,7 @@ export const TableauJeunes = ({
                     <br />
                     du jeune
                   </span>
-                  {isDate && (
-                    <ArrowDown
-                      focusable='false'
-                      aria-hidden='true'
-                      className={sortDesc ? 'rotate-180' : ''}
-                    />
-                  )}
-                  {!isDate && (
-                    <ArrowDouble focusable='false' aria-hidden='true' />
-                  )}
+                  <SortIcon isSorted={isDate} isDesc={sortDesc} />
                 </button>
               </span>
 
@@ -279,16 +252,7 @@ export const TableauJeunes = ({
                     }`}
                   >
                     <span className='mr-1'>Actions</span>
-                    {isAction && (
-                      <ArrowDown
-                        focusable='false'
-                        aria-hidden='true'
-                        className={sortDesc ? 'rotate-180' : ''}
-                      />
-                    )}
-                    {!isAction && (
-                      <ArrowDouble focusable='false' aria-hidden='true' />
-                    )}
+                    <SortIcon isSorted={isAction} isDesc={sortDesc} />
                   </button>
                 </span>
               )}
@@ -311,16 +275,7 @@ export const TableauJeunes = ({
                     Messages non lus
                     <br /> par le jeune
                   </span>
-                  {isMessage && (
-                    <ArrowDown
-                      focusable='false'
-                      aria-hidden='true'
-                      className={sortDesc ? 'rotate-180' : ''}
-                    />
-                  )}
-                  {!isMessage && (
-                    <ArrowDouble focusable='false' aria-hidden='true' />
-                  )}
+                  <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                 </button>
               </span>
             </div>
@@ -331,11 +286,27 @@ export const TableauJeunes = ({
               <Link href={`/mes-jeunes/${jeune.id}`} key={jeune.id}>
                 <a
                   role='row'
-                  aria-label={`Accéder à la fiche de ${jeune.firstName} ${jeune.lastName}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
+                  aria-label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
                   className={`table-row text-sm  items-center hover:bg-primary_lighten`}
                 >
                   <span role='cell' className='table-cell p-4'>
-                    {getJeuneFullname(jeune)}
+                    <span className='flex items-baseline'>
+                      {jeune.isReaffectationTemporaire && (
+                        <span
+                          title='bénéficiaire temporaire'
+                          aria-label='bénéficiaire temporaire'
+                          className='self-center mr-2'
+                        >
+                          <IconComponent
+                            name={IconName.Clock}
+                            aria-hidden={true}
+                            focusable={false}
+                            className='w-4 h-4'
+                          />
+                        </span>
+                      )}
+                      {getNomJeuneComplet(jeune)}
+                    </span>
                   </span>
 
                   {withSituations && (

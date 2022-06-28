@@ -1,14 +1,13 @@
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
+import { act, fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
-import renderWithSession from '../renderWithSession'
-
-import { desJeunes } from 'fixtures/jeune'
+import { desItemsJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
-import { getJeuneFullname, Jeune } from 'interfaces/jeune'
+import { getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
@@ -17,6 +16,8 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+
+import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -27,7 +28,7 @@ describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
     let rendezVousService: RendezVousService
-    let jeunes: Jeune[]
+    let jeunes: JeuneFromListe[]
     let typesRendezVous: TypeRendezVous[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
@@ -58,7 +59,7 @@ describe('EditionRdv', () => {
           },
         })
 
-        jeunes = desJeunes()
+        jeunes = desItemsJeunes()
         typesRendezVous = typesDeRendezVous()
 
         jeunesService = mockedJeunesService({
@@ -185,12 +186,12 @@ describe('EditionRdv', () => {
   })
 
   describe('client side', () => {
-    let jeunes: Jeune[]
+    let jeunes: JeuneFromListe[]
     let rendezVousService: RendezVousService
     let typesRendezVous: TypeRendezVous[]
     let push: Function
     beforeEach(() => {
-      jeunes = desJeunes()
+      jeunes = desItemsJeunes()
       rendezVousService = mockedRendezVousService({
         deleteRendezVous: jest.fn(async () => undefined),
       })
@@ -241,7 +242,7 @@ describe('EditionRdv', () => {
           expect(selectJeune).toHaveAttribute('aria-required', 'true')
           for (const jeune of jeunes) {
             const jeuneOption = within(options).getByRole('option', {
-              name: `${jeune.lastName} ${jeune.firstName}`,
+              name: `${jeune.nom} ${jeune.prenom}`,
               hidden: true,
             })
             expect(jeuneOption).toBeInTheDocument()
@@ -312,7 +313,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la date', () => {
           // Then
           const inputDate = within(etape).getByLabelText(
-            '* Date Format : JJ/MM/AAAA'
+            '* Date (format : jj/mm/aaaa)'
           )
           expect(inputDate).toBeInTheDocument()
           expect(inputDate).toHaveAttribute('required', '')
@@ -322,7 +323,7 @@ describe('EditionRdv', () => {
         it("contient un champ pour choisir l'horaire", () => {
           // Then
           const inputHoraire = within(etape).getByLabelText(
-            '* Heure Format : HH:MM'
+            '* Heure (format : hh:mm)'
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
@@ -332,7 +333,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la durée', () => {
           // Then
           const inputDuree = within(etape).getByLabelText(
-            '* Durée Format : HH:MM'
+            '* Durée (format : hh:mm)'
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
@@ -351,7 +352,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer un organisme si besoin', () => {
           // Then
           const inputOrganisme = within(etape).getByLabelText(
-            'OrganismeEx: prestataire, entreprise, etc.'
+            'Organisme Ex: prestataire, entreprise, etc.'
           )
           expect(inputOrganisme).toBeInTheDocument()
           expect(inputOrganisme).toHaveAttribute('type', 'text')
@@ -403,7 +404,7 @@ describe('EditionRdv', () => {
 
           // Then
           const inputCommentaires = within(etape).getByRole('textbox', {
-            name: 'Notes Commentaire à destination des jeunes',
+            name: /Commentaire à destination des jeunes/,
           })
           expect(inputCommentaires).toBeInTheDocument()
           expect(inputCommentaires).not.toHaveAttribute('required')
@@ -437,21 +438,21 @@ describe('EditionRdv', () => {
           selectType = screen.getByRole('combobox', {
             name: 'Type',
           })
-          inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
-          inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
-          inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
+          inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
+          inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
+          inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
           inputCommentaires = screen.getByRole('textbox', {
-            name: 'Notes Commentaire à destination des jeunes',
+            name: /Commentaire à destination des jeunes/,
           })
 
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
           // Given
           fireEvent.input(selectJeunes, {
-            target: { value: getJeuneFullname(jeunes[0]) },
+            target: { value: getNomJeuneComplet(jeunes[0]) },
           })
           fireEvent.input(selectJeunes, {
-            target: { value: getJeuneFullname(jeunes[2]) },
+            target: { value: getNomJeuneComplet(jeunes[2]) },
           })
           fireEvent.change(selectModalite, { target: { value: modalites[0] } })
           fireEvent.change(selectType, {
@@ -468,9 +469,7 @@ describe('EditionRdv', () => {
         describe('quand le formulaire est validé', () => {
           it('crée un rendez-vous de type Generique', async () => {
             // When
-            await act(async () => {
-              buttonValider.click()
-            })
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
@@ -502,9 +501,7 @@ describe('EditionRdv', () => {
             })
 
             // When
-            await act(async () => {
-              buttonValider.click()
-            })
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
@@ -528,9 +525,7 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            await act(async () => {
-              buttonValider.click()
-            })
+            await userEvent.click(buttonValider)
 
             // Then
             expect(push).toHaveBeenCalledWith(
@@ -550,9 +545,7 @@ describe('EditionRdv', () => {
 
           // When
           for (const bouton of enleverJeunes) {
-            await act(async () => {
-              bouton.click()
-            })
+            await userEvent.click(bouton)
           }
 
           // Then
@@ -574,26 +567,21 @@ describe('EditionRdv', () => {
 
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
           // When
-          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
+          await userEvent.selectOptions(selectType, 'AUTRE')
 
           // Then
-          await waitFor(() => {
-            expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
-          })
+          expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
         })
 
         it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
-          let inputTypePrecision: HTMLInputElement
+          await userEvent.selectOptions(selectType, 'AUTRE')
+          const inputTypePrecision: HTMLInputElement =
+            screen.getByLabelText('* Préciser')
 
           // When
-          fireEvent.change(selectType, { target: { value: 'AUTRE' } })
-          inputTypePrecision = screen.getByLabelText('* Préciser')
-
-          await waitFor(() => {
-            expect(inputTypePrecision).toBeInTheDocument()
-            fireEvent.blur(inputTypePrecision)
-          })
+          expect(inputTypePrecision).toBeInTheDocument()
+          fireEvent.blur(inputTypePrecision)
 
           // Then
           expect(inputTypePrecision.value).toEqual('')
@@ -613,7 +601,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA"
+              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
             )
           ).toBeInTheDocument()
         })
@@ -627,7 +615,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA"
+              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
             )
           ).toBeInTheDocument()
         })
@@ -655,7 +643,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ heure n'est pas valide. Veuillez respecter le format HH:MM"
+              "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm"
             )
           ).toBeInTheDocument()
         })
@@ -683,7 +671,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ durée n'est pas valide. Veuillez respecter le format HH:MM"
+              "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm"
             )
           ).toBeInTheDocument()
         })
@@ -694,7 +682,7 @@ describe('EditionRdv', () => {
         //   const button = screen.getByText('Quitter la création du rendez-vous')
         //
         //   // When
-        //   await act(async () => button.click())
+        //   await userEvent.click(button)
         //
         //   // Then
         //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -712,7 +700,7 @@ describe('EditionRdv', () => {
           const button = screen.getByText('Annuler')
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(button).not.toHaveAttribute('href')
@@ -730,7 +718,7 @@ describe('EditionRdv', () => {
       it('initialise et fige le destinataire', () => {
         // Given
         const idJeune = jeunes[2].id
-        const jeuneFullname = getJeuneFullname(jeunes[2])
+        const jeuneFullname = getNomJeuneComplet(jeunes[2])
 
         // When
         renderWithSession(
@@ -770,13 +758,13 @@ describe('EditionRdv', () => {
         // Given
         const jeune0 = {
           id: jeunes[0].id,
-          prenom: jeunes[0].firstName,
-          nom: jeunes[0].lastName,
+          prenom: jeunes[0].prenom,
+          nom: jeunes[0].nom,
         }
         const jeune2 = {
           id: jeunes[2].id,
-          prenom: jeunes[2].firstName,
-          nom: jeunes[2].lastName,
+          prenom: jeunes[2].prenom,
+          nom: jeunes[2].nom,
         }
 
         rdv = unRendezVous({ jeunes: [jeune0, jeune2] })
@@ -796,34 +784,46 @@ describe('EditionRdv', () => {
         )
       })
 
-      it('permet la suppression du rendez-vous, et retourne à la page précédente', async () => {
-        // Given
-        const deleteButtonFromPage = screen.getByText('Supprimer')
-        await act(async () => {
-          deleteButtonFromPage.click()
-        })
-        const deleteButtonFromModal = within(
-          screen.getByTestId('fake-modal')
-        ).getByText('Supprimer')
+      describe('Supprimer', () => {
+        beforeEach(async () => {
+          // Given
+          const deleteButtonFromPage = screen.getByText('Supprimer')
 
-        // When
-        await act(async () => {
-          deleteButtonFromModal.click()
+          // When
+          await userEvent.click(deleteButtonFromPage)
         })
 
-        // Then
-        expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
-          rdv.id,
-          'accessToken'
-        )
-        expect(push).toHaveBeenCalledWith(
-          '/mes-rendezvous?suppressionRdv=succes'
-        )
+        it('affiche une modale avec les bonnes informations', async () => {
+          // Then
+          expect(
+            screen.getByText(
+              'L’ensemble des bénéficiaires sera notifié de la suppression'
+            )
+          ).toBeInTheDocument()
+          expect(screen.getByText('Confirmer')).toBeInTheDocument()
+        })
+
+        it('lors de la confirmation, supprime bien le rendez-vous et retourne à la page précédente', async () => {
+          // Given
+          const deleteButtonFromModal = screen.getByText('Confirmer')
+
+          // When
+          await userEvent.click(deleteButtonFromModal)
+
+          // Then
+          expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
+            rdv.id,
+            'accessToken'
+          )
+          expect(push).toHaveBeenCalledWith(
+            '/mes-rendezvous?suppressionRdv=succes'
+          )
+        })
       })
 
       it('sélectionne les jeunes du rendez-vous', () => {
-        const jeune0Fullname = getJeuneFullname(jeunes[0])
-        const jeune2Fullname = getJeuneFullname(jeunes[2])
+        const jeune0Fullname = getNomJeuneComplet(jeunes[0])
+        const jeune2Fullname = getNomJeuneComplet(jeunes[2])
         expect(() =>
           screen.getByRole('option', {
             name: jeune0Fullname,
@@ -915,7 +915,7 @@ describe('EditionRdv', () => {
             name: /Bénéficiaires/,
           })
           const jeuneSelectionne = within(beneficiaires).getByText(
-            getJeuneFullname(jeunes[2])
+            getNomJeuneComplet(jeunes[2])
           )
           const enleverJeune = within(jeuneSelectionne).getByRole('button', {
             name: /Enlever/,
@@ -924,11 +924,13 @@ describe('EditionRdv', () => {
           const selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
-          const inputDate = screen.getByLabelText('* Date Format : JJ/MM/AAAA')
-          const inputHoraire = screen.getByLabelText('* Heure Format : HH:MM')
-          const inputDuree = screen.getByLabelText('* Durée Format : HH:MM')
+          const inputDate = screen.getByLabelText(
+            '* Date (format : jj/mm/aaaa)'
+          )
+          const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
+          const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
           const inputCommentaires = screen.getByRole('textbox', {
-            name: 'Notes Commentaire à destination des jeunes',
+            name: /Commentaire à destination des jeunes/,
           })
 
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
@@ -936,7 +938,7 @@ describe('EditionRdv', () => {
           // Given
           await act(async () => {
             fireEvent.input(searchJeune, {
-              target: { value: getJeuneFullname(jeunes[1]) },
+              target: { value: getNomJeuneComplet(jeunes[1]) },
             })
             enleverJeune.click()
             fireEvent.change(selectModalite, {
@@ -959,7 +961,7 @@ describe('EditionRdv', () => {
         //   )
         //
         //   // When
-        //   await act(async () => button.click())
+        //   await userEvent.click(button)
         //
         //   // Then
         //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -977,7 +979,7 @@ describe('EditionRdv', () => {
           const button = screen.getByText('Annuler')
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(button).not.toHaveAttribute('href')
@@ -992,7 +994,7 @@ describe('EditionRdv', () => {
         describe('quand le formulaire est validé', () => {
           it('modifie le rendez-vous', async () => {
             // When
-            await act(async () => buttonValider.click())
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
@@ -1016,7 +1018,7 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            await act(async () => buttonValider.click())
+            await userEvent.click(buttonValider)
 
             // Then
             expect(push).toHaveBeenCalledWith(
@@ -1035,8 +1037,8 @@ describe('EditionRdv', () => {
         ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         const jeune = {
           id: jeunes[0].id,
-          prenom: jeunes[0].firstName,
-          nom: jeunes[0].lastName,
+          prenom: jeunes[0].prenom,
+          nom: jeunes[0].nom,
         }
         const jeuneAutreConseiller = {
           id: 'jeune-autre-conseiller',
@@ -1079,7 +1081,7 @@ describe('EditionRdv', () => {
 
         // Then
         const jeune = within(beneficiaires).getByText(
-          getJeuneFullname(jeunes[0])
+          getNomJeuneComplet(jeunes[0])
         )
         expect(() =>
           within(jeune).getByLabelText(
@@ -1088,7 +1090,7 @@ describe('EditionRdv', () => {
         ).toThrow()
         expect(() =>
           screen.getByRole('option', {
-            name: getJeuneFullname(jeunes[0]),
+            name: getNomJeuneComplet(jeunes[0]),
             hidden: true,
           })
         ).toThrow()
@@ -1125,6 +1127,22 @@ describe('EditionRdv', () => {
         ).toBeInTheDocument()
       })
 
+      it("contient un message spécial lors de la suppression pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
+        // When
+        const deleteButtonFromPage = screen.getByText('Supprimer')
+        await userEvent.click(deleteButtonFromPage)
+
+        // Then
+        expect(
+          screen.getByText(
+            /concerne des jeunes qui ne sont pas dans votre portefeuille/
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(/Le créateur recevra un email de suppression/)
+        ).toBeInTheDocument()
+      })
+
       describe('quand on modifie le rendez-vous', () => {
         beforeEach(async () => {
           const inputCommentaire =
@@ -1135,7 +1153,7 @@ describe('EditionRdv', () => {
           const buttonSubmit = screen.getByText('Envoyer')
 
           // When
-          await act(async () => buttonSubmit.click())
+          await userEvent.click(buttonSubmit)
         })
 
         it('affiche une modal de verification', () => {
@@ -1155,9 +1173,7 @@ describe('EditionRdv', () => {
           })
 
           // When
-          await act(async () => {
-            boutonConfirmer.click()
-          })
+          await userEvent.click(boutonConfirmer)
 
           // Then
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(

@@ -1,30 +1,28 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import Etape1Icon from '../../assets/icons/etape_1.svg'
-import Etape2Icon from '../../assets/icons/etape_2.svg'
-import Etape3Icon from '../../assets/icons/etape_3.svg'
-import Etape4Icon from '../../assets/icons/etape_4.svg'
-
 import InformationMessage from 'components/InformationMessage'
 import JeunesMultiselectAutocomplete, {
   jeuneToOption,
   OptionJeune,
 } from 'components/jeune/JeunesMultiselectAutocomplete'
 import { RequiredValue } from 'components/RequiredValue'
+import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
-import { Jeune } from 'interfaces/jeune'
+import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 
 interface EditionRdvFormProps {
-  jeunes: Jeune[]
+  jeunes: BaseJeune[]
   typesRendezVous: TypeRendezVous[]
   redirectTo: string
+  aDesJeunesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
   conseillerEmail: string
   soumettreRendezVous: (payload: RdvFormData) => Promise<void>
@@ -39,6 +37,7 @@ export function EditionRdvForm({
   jeunes,
   typesRendezVous,
   redirectTo,
+  aDesJeunesDUnAutrePortefeuille,
   conseillerIsCreator,
   conseillerEmail,
   soumettreRendezVous,
@@ -82,16 +81,6 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
-
-  // fonctions
-  function aDesJeunesDUnAutrePortefeuille(): boolean {
-    if (rdv) {
-      return rdv.jeunes.some(
-        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
-      )
-    }
-    return false
-  }
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -169,7 +158,7 @@ export function EditionRdvForm({
       setDate({
         ...date,
         error:
-          "Le champ date n'est pas valide. Veuillez respecter le format JJ/MM/AAAA",
+          "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa",
       })
     }
   }
@@ -189,7 +178,7 @@ export function EditionRdvForm({
       setHoraire({
         ...horaire,
         error:
-          "Le champ heure n'est pas valide. Veuillez respecter le format HH:MM",
+          "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm",
       })
     }
   }
@@ -209,7 +198,7 @@ export function EditionRdvForm({
       setDuree({
         ...duree,
         error:
-          "Le champ durée n'est pas valide. Veuillez respecter le format HH:MM",
+          "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm",
       })
     }
   }
@@ -277,15 +266,13 @@ export function EditionRdvForm({
     }
   }
 
-  // JSX
-
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <div className='text-s-medium mb-6'>
+      <p className='text-s-medium mb-6'>
         Tous les champs avec * sont obligatoires
-      </div>
+      </p>
 
-      {aDesJeunesDUnAutrePortefeuille() && (
+      {aDesJeunesDUnAutrePortefeuille && (
         <div className='mb-6'>
           <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
@@ -293,11 +280,12 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col mb-8'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape1Icon
+          <IconComponent
+            name={IconName.Chiffre1}
             role='img'
             focusable='false'
             aria-label='Étape 1'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Bénéficiaires :
         </legend>
@@ -313,11 +301,12 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape2Icon
+          <IconComponent
+            name={IconName.Chiffre2}
             role='img'
             focusable='false'
             aria-label='Étape 2'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Type de rendez-vous :
         </legend>
@@ -346,9 +335,12 @@ export function EditionRdvForm({
           <>
             <label
               htmlFor='typeRendezVous-autre'
-              className='text-base-medium mb-2'
+              className='flex text-base-medium mb-2 items-center'
             >
               <span aria-hidden={true}>* </span>Préciser
+              <span className='ml-2'>
+                <BulleMessageSensible />
+              </span>
             </label>
             {precisionType.error && (
               <InputError id='typeRendezVous-autre--error' className='mb-2'>
@@ -398,18 +390,19 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape3Icon
+          <IconComponent
+            name={IconName.Chiffre3}
             role='img'
             focusable='false'
             aria-label='Étape 3'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Lieu et date :
         </legend>
 
         <label htmlFor='date' className='text-base-medium mb-2'>
           <span aria-hidden={true}>* </span>Date
-          <span className='ml-8 text-s-regular'> Format : JJ/MM/AAAA</span>
+          <span className='text-s-regular'> (format : jj/mm/aaaa)</span>
         </label>
         {date.error && (
           <InputError id='date-error' className='mb-2'>
@@ -433,7 +426,7 @@ export function EditionRdvForm({
 
         <label htmlFor='horaire' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Heure
-          <span className='ml-8 text-s-regular'> Format : HH:MM</span>
+          <span className='text-s-regular'> (format : hh:mm)</span>
         </label>
         {horaire.error && (
           <InputError id='horaire-error' className='mb-2'>
@@ -459,7 +452,7 @@ export function EditionRdvForm({
 
         <label htmlFor='duree' className='text-base-medium mb-2'>
           <span aria-hidden='true'>* </span>Durée
-          <span className='ml-8 text-s-regular'> Format : HH:MM</span>
+          <span className='text-s-regular'> (format : hh:mm)</span>
         </label>
         {duree.error && (
           <InputError id='duree-error' className='mb-2'>
@@ -483,7 +476,7 @@ export function EditionRdvForm({
 
         <label htmlFor='adresse' className='text-base-medium mb-2'>
           Adresse
-          <span className='ml-8 text-s-regular'> Ex: 12 rue duc, Brest</span>
+          <span className='text-s-regular'> Ex: 12 rue duc, Brest</span>
         </label>
         <input
           type='text'
@@ -498,7 +491,8 @@ export function EditionRdvForm({
 
         <label htmlFor='organisme' className='text-base-medium mb-2'>
           Organisme
-          <span className='ml-8 text-s-regular'>
+          <span className='text-s-regular'>
+            {' '}
             Ex: prestataire, entreprise, etc.
           </span>
         </label>
@@ -514,11 +508,12 @@ export function EditionRdvForm({
 
       <fieldset className='border-none flex flex-col'>
         <legend className='flex items-center text-m-medium mb-4'>
-          <Etape4Icon
+          <IconComponent
+            name={IconName.Chiffre4}
             role='img'
             focusable='false'
             aria-label='Étape 4'
-            className='mr-2'
+            className='mr-2 w-8 h-8'
           />
           Informations conseiller :
         </legend>
@@ -576,7 +571,12 @@ export function EditionRdvForm({
         </div>
 
         <label htmlFor='commentaire' className='text-base-regular mb-2'>
-          Notes
+          <span className='flex items-center'>
+            Notes
+            <span className='ml-2'>
+              <BulleMessageSensible />
+            </span>
+          </span>
           <span className='block text-s-regular'>
             Commentaire à destination des jeunes
           </span>

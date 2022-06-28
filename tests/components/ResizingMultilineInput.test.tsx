@@ -1,5 +1,7 @@
 import { fireEvent, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createRef } from 'react'
+
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 
 describe('<ResizingMultilineInput/>', () => {
@@ -8,8 +10,10 @@ describe('<ResizingMultilineInput/>', () => {
   let handleFocus: jest.Mock
   let handleBlur: jest.Mock
   let handleChange: jest.Mock
+  let inputRef
   beforeEach(() => {
     // GIVEN
+    inputRef = createRef<HTMLTextAreaElement>()
     handleFocus = jest.fn()
     handleBlur = jest.fn()
     handleChange = jest.fn()
@@ -17,6 +21,7 @@ describe('<ResizingMultilineInput/>', () => {
     const { container } = render(
       <form>
         <ResizingMultilineInput
+          inputRef={inputRef}
           style={{ padding: '10px', lineHeight: '20px', width: '1px' }}
           minRows={3}
           maxRows={7}

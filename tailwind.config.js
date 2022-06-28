@@ -76,19 +76,23 @@ module.exports = {
       table_large: '28% 2fr 3fr auto',
     },
     extend: {
-      screens: {
-        layout_base: { max: '900px' },
-        layout_m: { max: '1024px' },
-        layout_l: { max: '1200px' },
-        layout_xl: '1425px',
-      },
-      fontFamily: {
-        sans: ['Marianne'],
-      },
       backgroundImage: {
         // path relative to globals.css
         clock: "url('../assets/icons/clock.svg')",
         location: "url('../assets/icons/location_big.svg')",
+      },
+      boxShadow: {
+        s: '0 6px 25px 0px rgba(0,0,0,0.1)',
+      },
+      fontFamily: {
+        sans: ['Marianne'],
+      },
+      screens: {
+        layout_s: '600px',
+        layout_base: { max: '900px' },
+        layout_m: { max: '1024px' },
+        layout_l: { max: '1200px' },
+        layout_xl: '1425px',
       },
     },
   },

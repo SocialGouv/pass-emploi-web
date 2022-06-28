@@ -13,6 +13,7 @@ describe('HttpClient', () => {
   describe('fetchJson', () => {
     let reqInfo: RequestInfo
     let reqInit: RequestInit
+    let responseHeaders: Headers
     let actual: any
     beforeEach(async () => {
       // Given
@@ -24,9 +25,14 @@ describe('HttpClient', () => {
           Authorization: `Bearer accessToken`,
         },
       }
+      responseHeaders = new Headers({
+        'content-type': 'application/json',
+        'default-header-1': 'defaultHeader',
+        'x-custom-header-1': 'customHeader1',
+      })
       ;(fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        headers: new Headers({ 'content-type': 'application/json' }),
+        headers: responseHeaders,
         json: jest.fn(async () => ({ some: 'response' })),
       })
 
@@ -41,7 +47,10 @@ describe('HttpClient', () => {
 
     it('returns response json', async () => {
       // Then
-      expect(actual).toEqual({ some: 'response' })
+      expect(actual).toEqual({
+        content: { some: 'response' },
+        headers: responseHeaders,
+      })
     })
 
     describe('when response has no content', () => {
@@ -57,7 +66,7 @@ describe('HttpClient', () => {
         actual = await httpClient.fetchJson(reqInfo, reqInit)
 
         // Then
-        expect(actual).toBeUndefined()
+        expect(actual).toEqual({ content: undefined, headers: new Headers() })
       })
     })
 

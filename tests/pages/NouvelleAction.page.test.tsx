@@ -1,4 +1,5 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -54,7 +55,7 @@ describe('NouvelleAction', () => {
             withoutChat: true,
             pageTitle: 'Actions jeune – Création action',
             pageHeader: 'Créer une nouvelle action',
-            returnTo: '/mes-jeunes/id-jeune/actions',
+            returnTo: '/mes-jeunes/id-jeune',
           },
         })
       })
@@ -123,7 +124,7 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir un commentaire', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: "Commentaire de l'action" })
+          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
         ).not.toHaveAttribute('required')
       })
 
@@ -148,10 +149,10 @@ describe('NouvelleAction', () => {
           })
         })
 
-        it("requiert la sélection d'une action", () => {
+        it("requiert la sélection d'une action", async () => {
           // When
           fireEvent.change(selectAction, { target: { value: '' } })
-          submit.click()
+          await userEvent.click(submit)
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
@@ -159,9 +160,9 @@ describe('NouvelleAction', () => {
         })
 
         describe('formulaire valide', () => {
-          beforeEach(() => {
+          beforeEach(async () => {
             // When
-            submit.click()
+            await userEvent.click(submit)
           })
 
           it("crée l'action", () => {
@@ -180,8 +181,8 @@ describe('NouvelleAction', () => {
           it('redirige vers la fiche du jeune', () => {
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: `/mes-jeunes/id-jeune/actions`,
-              query: { creation: 'succes' },
+              pathname: `/mes-jeunes/id-jeune`,
+              query: { creationAction: 'succes' },
             })
           })
         })
@@ -194,7 +195,7 @@ describe('NouvelleAction', () => {
         const switchTab = screen.getByRole('tab', {
           name: 'Action personnalisée',
         })
-        await act(async () => switchTab.click())
+        await userEvent.click(switchTab)
       })
 
       it("contient un champ pour saisir l'intitule de l'action", () => {
@@ -209,7 +210,7 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir un commentaire', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: "Commentaire de l'action" })
+          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
         ).not.toHaveAttribute('required')
       })
 
@@ -230,10 +231,10 @@ describe('NouvelleAction', () => {
           })
         })
 
-        it("requiert l'intitulé de l'action", () => {
+        it("requiert l'intitulé de l'action", async () => {
           // When
           fireEvent.change(intitule, { target: { value: '' } })
-          submit.click()
+          await userEvent.click(submit)
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
@@ -241,9 +242,9 @@ describe('NouvelleAction', () => {
         })
 
         describe('formulaire valide', () => {
-          beforeEach(() => {
+          beforeEach(async () => {
             // When
-            submit.click()
+            await userEvent.click(submit)
           })
 
           it("crée l'action", () => {
@@ -262,8 +263,8 @@ describe('NouvelleAction', () => {
           it('redirige vers la fiche du jeune', () => {
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: `/mes-jeunes/id-jeune/actions`,
-              query: { creation: 'succes' },
+              pathname: `/mes-jeunes/id-jeune`,
+              query: { creationAction: 'succes' },
             })
           })
         })

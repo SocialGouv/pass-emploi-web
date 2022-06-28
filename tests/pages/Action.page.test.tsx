@@ -1,4 +1,5 @@
-import { RenderResult, screen, waitFor } from '@testing-library/react'
+import { RenderResult, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -6,13 +7,12 @@ import React from 'react'
 import renderWithSession from '../renderWithSession'
 
 import { uneAction } from 'fixtures/action'
-import { unJeune } from 'fixtures/jeune'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
-import { Jeune } from 'interfaces/jeune'
+import { BaseJeune } from 'interfaces/jeune'
 import PageAction, {
   getServerSideProps,
-} from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/index'
+} from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
@@ -24,7 +24,11 @@ jest.mock('utils/injectionDependances/withDependance')
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client-side', () => {
     const action = uneAction()
-    const jeune = unJeune()
+    const jeune: BaseJeune = {
+      id: 'jeune-1',
+      prenom: 'Nadia',
+      nom: 'Sanfamiye',
+    }
     let actionsService: ActionsService
     let page: RenderResult
     beforeEach(() => {
@@ -56,16 +60,14 @@ describe("Page Détail d'une action d'un jeune", () => {
         const statutRadio = screen.getByText('Commencée')
 
         // When
-        statutRadio.click()
+        await userEvent.click(statutRadio)
 
         // Then
-        await waitFor(() => {
-          expect(actionsService.updateAction).toHaveBeenCalledWith(
-            action.id,
-            StatutAction.Commencee,
-            'accessToken'
-          )
-        })
+        expect(actionsService.updateAction).toHaveBeenCalledWith(
+          action.id,
+          StatutAction.Commencee,
+          'accessToken'
+        )
       })
     })
 
@@ -117,7 +119,11 @@ describe("Page Détail d'une action d'un jeune", () => {
           },
         })
         const action: Action = uneAction()
-        const jeune: Jeune = unJeune()
+        const jeune: BaseJeune = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+        }
         const actionsService: ActionsService = mockedActionsService({
           getAction: jest.fn(async () => ({ action, jeune })),
         })
@@ -131,13 +137,13 @@ describe("Page Détail d'une action d'un jeune", () => {
           'id-action',
           'accessToken'
         )
-        const pageTitle = `Mes jeunes - Actions de ${jeune.firstName} ${jeune.lastName} - ${action.content}`
+        const pageTitle = `Mes jeunes - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`
         expect(actual).toEqual({
           props: {
             action,
             jeune,
             pageTitle,
-            pageHeader: action.content,
+            pageHeader: 'Détails de l’action',
             messageEnvoiGroupeSuccess: true,
           },
         })

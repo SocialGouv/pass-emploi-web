@@ -28,9 +28,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
           : '/'
         await signIn(
           'keycloak',
-          {
-            callbackUrl: callbackUrl,
-          },
+          { callbackUrl },
           { kc_idp_hint: provider ?? '' }
         )
       } catch (error) {
@@ -56,6 +54,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   }
 
   useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
+
   return (
     <div className={`${styles.login} w-full h-screen relative`}>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
@@ -104,7 +103,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 
   if (session) {
     const redirectUrl: string =
-      (context.query.redirectUrl as string) ?? `/${querySource || ''}`
+      (context.query.redirectUrl as string) ?? `/index${querySource || ''}`
 
     return {
       redirect: {

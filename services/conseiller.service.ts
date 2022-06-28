@@ -37,6 +37,11 @@ export interface ConseillerService {
     },
     accessToken: string
   ): Promise<{ id: string }>
+
+  recupererBeneficiaires(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<void>
 }
 
 export class ConseillerApiService implements ConseillerService {
@@ -47,10 +52,11 @@ export class ConseillerApiService implements ConseillerService {
     accessToken: string
   ): Promise<Conseiller | undefined> {
     try {
-      const conseillerJson = await this.apiClient.get<ConseillerJson>(
-        `/conseillers/${idConseiller}`,
-        accessToken
-      )
+      const { content: conseillerJson } =
+        await this.apiClient.get<ConseillerJson>(
+          `/conseillers/${idConseiller}`,
+          accessToken
+        )
 
       return jsonToConseiller(conseillerJson)
     } catch (e) {
@@ -86,17 +92,17 @@ export class ConseillerApiService implements ConseillerService {
     )
   }
 
-  getDossierJeune(
+  async getDossierJeune(
     idDossier: string,
     accessToken: string
   ): Promise<DossierMilo | undefined> {
-    return this.apiClient.get<DossierMilo | undefined>(
-      `/conseillers/milo/dossiers/${idDossier}`,
-      accessToken
-    )
+    const { content: dossier } = await this.apiClient.get<
+      DossierMilo | undefined
+    >(`/conseillers/milo/dossiers/${idDossier}`, accessToken)
+    return dossier
   }
 
-  createCompteJeuneMilo(
+  async createCompteJeuneMilo(
     newJeune: {
       idDossier: string
       nom: string
@@ -106,9 +112,23 @@ export class ConseillerApiService implements ConseillerService {
     },
     accessToken: string
   ): Promise<{ id: string }> {
-    return this.apiClient.post<{ id: string }>(
+    const {
+      content: { id },
+    } = await this.apiClient.post<{ id: string }>(
       `/conseillers/milo/jeunes`,
       newJeune,
+      accessToken
+    )
+    return { id }
+  }
+
+  async recupererBeneficiaires(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/conseillers/${idConseiller}/recuperer-mes-jeunes`,
+      {},
       accessToken
     )
   }

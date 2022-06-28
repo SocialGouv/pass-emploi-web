@@ -9,9 +9,10 @@ export class AgencesApiService implements AgencesService {
   constructor(private readonly apiClient: ApiClient) {}
 
   async getAgences(structure: string, accessToken: string): Promise<Agence[]> {
-    return this.apiClient.get<Agence[]>(
+    const { content: agences } = await this.apiClient.get<Agence[]>(
       `/referentiels/agences?structure=${structure}`,
       accessToken
     )
+    return agences
   }
 }

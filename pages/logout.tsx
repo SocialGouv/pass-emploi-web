@@ -25,7 +25,7 @@ function Logout() {
     logout()
   }, [messagesService, router])
 
-  return <></>
+  return null
 }
 
 export default withTransaction(Logout.name, 'page')(Logout)

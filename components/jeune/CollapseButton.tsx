@@ -1,7 +1,6 @@
 import React from 'react'
 
-import ChevronDownIcon from '../../assets/icons/chevron_down.svg'
-import ChevronUpIcon from '../../assets/icons/chevron_up.svg'
+import IconComponent, { IconName } from '../ui/IconComponent'
 
 interface CollapseButtonProps {
   controlledId: string
@@ -24,13 +23,23 @@ export function CollapseButton({
       {isOpen && (
         <span className='flex'>
           Réduire la liste{' '}
-          <ChevronUpIcon focusable='false' aria-hidden='true' />
+          <IconComponent
+            name={IconName.ChevronUp}
+            focusable='false'
+            aria-hidden='true'
+            className='h-6 w-6'
+          />
         </span>
       )}
       {!isOpen && (
         <span className='flex'>
           Voir l’historique complet{' '}
-          <ChevronDownIcon focusable='false' aria-hidden='true' />
+          <IconComponent
+            name={IconName.ChevronDown}
+            focusable='false'
+            aria-hidden='true'
+            className='h-6 w-6'
+          />
         </span>
       )}
     </button>

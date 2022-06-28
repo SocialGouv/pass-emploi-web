@@ -1,15 +1,15 @@
-import { act, screen, waitFor } from '@testing-library/react'
-import { useRouter } from 'next/router'
+import { act, screen } from '@testing-library/react'
 
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
-import { desJeunes, unJeuneChat } from 'fixtures/jeune'
+import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
 import {
   mockedConseillerService,
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { Jeune, JeuneChat } from 'interfaces/jeune'
+import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import { useRouter } from 'next/router'
 import Profil from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -29,7 +29,7 @@ global.Audio = jest.fn().mockImplementation(() => ({
 
 describe('Intégration notifications sonores', () => {
   let updateChatRef: (jeuneChat: JeuneChat) => void
-  const jeunes: Jeune[] = desJeunes()
+  const jeunes: JeuneFromListe[] = desItemsJeunes()
   let jeunesService: JeunesService
   let conseillerService: ConseillerService
   let messagesService: MessagesService
@@ -71,18 +71,14 @@ describe('Intégration notifications sonores', () => {
         )
       })
       await unNouveauMessageArrive(updateChatRef, jeunes)
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(0)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(0)
 
       // When
       await toggleNotifications()
       await unNouveauMessageArrive(updateChatRef, jeunes)
 
       // Then
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(1)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -98,18 +94,14 @@ describe('Intégration notifications sonores', () => {
         )
       })
       await unNouveauMessageArrive(updateChatRef, jeunes)
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(1)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(1)
 
       // When
       await toggleNotifications()
       await unNouveauMessageArrive(updateChatRef, jeunes)
 
       // Then
-      await waitFor(() => {
-        expect(mockAudio).toHaveBeenCalledTimes(1)
-      })
+      expect(mockAudio).toHaveBeenCalledTimes(1)
     })
   })
 })
@@ -148,7 +140,7 @@ async function toggleNotifications() {
 
 async function unNouveauMessageArrive(
   updateChatRef: (jeuneChat: JeuneChat) => void,
-  jeunes: Jeune[]
+  jeunes: JeuneFromListe[]
 ) {
   await act(async () => {
     updateChatRef(

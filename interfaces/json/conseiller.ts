@@ -31,6 +31,7 @@ export interface ConseillerJson {
     nom: string
   }
   notificationsSonores: boolean
+  aDesBeneficiairesARecuperer: boolean
 }
 
 export function jsonToConseiller(conseillerJson: ConseillerJson): Conseiller {

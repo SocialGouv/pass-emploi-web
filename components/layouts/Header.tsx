@@ -1,8 +1,7 @@
 import Link from 'next/link'
 
-import BackIcon from '../../assets/icons/arrow_back.svg'
-
 import FilAriane from 'components/FilAriane'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/Layouts.module.css'
 
 interface HeaderProps {
@@ -24,8 +23,13 @@ export function Header({ currentPath, pageHeader, returnTo }: HeaderProps) {
       {returnTo && (
         <div className='flex items-center'>
           <Link href={returnTo}>
-            <a>
-              <BackIcon aria-hidden={true} focusable={false} />
+            <a className='p-3 border-none rounded-full bg-primary_lighten'>
+              <IconComponent
+                name={IconName.ChevronLeft}
+                aria-hidden={true}
+                focusable={false}
+                className='w-6 h-6 fill-primary'
+              />
               <span className='sr-only'>Page précédente</span>
             </a>
           </Link>

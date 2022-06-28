@@ -1,91 +1,112 @@
 import {
+  BaseJeune,
+  CategorieSituation,
   Chat,
   ConseillerHistorique,
-  Jeune,
+  DetailJeune,
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
-  CategorieSituation,
+  JeuneFromListe,
 } from 'interfaces/jeune'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
-import { JeuneJson } from 'interfaces/json/jeune'
+import { DetailJeuneJson, ItemJeuneJson } from 'interfaces/json/jeune'
 
-export const unJeune = (overrides: Partial<Jeune> = {}): Jeune => {
-  const defaults: Jeune = {
+export const uneBaseJeune = (overrides: Partial<BaseJeune> = {}): BaseJeune => {
+  const defaults: BaseJeune = {
     id: 'jeune-1',
-    firstName: 'Kenji',
-    lastName: 'Jirac',
+    prenom: 'Kenji',
+    nom: 'Jirac',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const unDetailJeune = (
+  overrides: Partial<DetailJeune> = {}
+): DetailJeune => {
+  const defaults: DetailJeune = {
+    ...uneBaseJeune(),
     email: 'kenji.jirac@email.fr',
-    isActivated: false,
+    isActivated: true,
+    isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
-    lastActivity: '2021-12-07T17:30:07.756Z',
-    conseillerPrecedent: {
-      prenom: 'Nils',
-      nom: 'Tavernier',
-      email: 'conseiller@email.com',
-    },
-    situationCourante: CategorieSituation.SANS_SITUATION,
     situations: [],
   }
   return { ...defaults, ...overrides }
 }
 
-export const desJeunes = (): Jeune[] => [
-  unJeune(),
-  unJeune({
+export const unItemJeune = (
+  overrides: Partial<JeuneFromListe> = {}
+): JeuneFromListe => {
+  const defaults: JeuneFromListe = {
+    ...uneBaseJeune(),
+    isActivated: true,
+    isReaffectationTemporaire: false,
+    lastActivity: '2021-12-07T17:30:07.756Z',
+    situationCourante: CategorieSituation.SANS_SITUATION,
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const desItemsJeunes = (): JeuneFromListe[] => [
+  unItemJeune(),
+  unItemJeune({
     id: 'jeune-2',
-    firstName: 'Nadia',
-    lastName: 'Sanfamiye',
-    email: 'nadia.sanfamiye@mail.com',
-    creationDate: '2022-01-07T17:30:07.756Z',
+    prenom: 'Nadia',
+    nom: 'Sanfamiye',
     lastActivity: '2022-01-30T17:30:07.756Z',
     isActivated: true,
   }),
-  unJeune({
+  unItemJeune({
     id: 'jeune-3',
-    firstName: 'Maria',
-    lastName: "D'Aböville-Muñoz François",
-    email: 'nadia.sanfamiye@mail.com',
-    creationDate: '2021-12-28T17:30:07.756Z',
+    prenom: 'Maria',
+    nom: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
     isActivated: true,
   }),
 ]
 
-export const unJeuneJson = (overrides: Partial<JeuneJson> = {}): JeuneJson => {
-  const defaults: JeuneJson = {
+export const unDetailJeuneJson = (
+  overrides: Partial<DetailJeuneJson> = {}
+): DetailJeuneJson => {
+  const defaults: DetailJeuneJson = {
     id: 'jeune-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
-    isActivated: false,
+    isActivated: true,
+    isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
-    lastActivity: '2021-12-07T17:30:07.756Z',
-    conseillerPrecedent: {
-      prenom: 'Nils',
-      nom: 'Tavernier',
-      email: 'conseiller@email.com',
-    },
   }
   return { ...defaults, ...overrides }
 }
 
-export const desJeunesJson = (): JeuneJson[] => [
-  unJeuneJson(),
-  unJeuneJson({
+export const unItemJeuneJson = (
+  overrides: Partial<ItemJeuneJson> = {}
+): ItemJeuneJson => {
+  const defaults: ItemJeuneJson = {
+    id: 'jeune-1',
+    firstName: 'Kenji',
+    lastName: 'Jirac',
+    isActivated: true,
+    isReaffectationTemporaire: false,
+    lastActivity: '2021-12-07T17:30:07.756Z',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const desItemsJeunesJson = (): ItemJeuneJson[] => [
+  unItemJeuneJson(),
+  unItemJeuneJson({
     id: 'jeune-2',
     firstName: 'Nadia',
     lastName: 'Sanfamiye',
-    email: 'nadia.sanfamiye@mail.com',
-    creationDate: '2022-01-07T17:30:07.756Z',
     lastActivity: '2022-01-30T17:30:07.756Z',
     isActivated: true,
   }),
-  unJeuneJson({
+  unItemJeuneJson({
     id: 'jeune-3',
     firstName: 'Maria',
     lastName: "D'Aböville-Muñoz François",
-    email: 'nadia.sanfamiye@mail.com',
-    creationDate: '2021-12-28T17:30:07.756Z',
     lastActivity: '2022-02-07T17:30:07.756Z',
     isActivated: true,
   }),
@@ -95,7 +116,7 @@ export const unJeuneAvecActionsNonTerminees = (
   overrides: Partial<JeuneAvecNbActionsNonTerminees> = {}
 ): JeuneAvecNbActionsNonTerminees => {
   const defaults: JeuneAvecNbActionsNonTerminees = {
-    ...unJeune(),
+    ...unItemJeune(),
     nbActionsNonTerminees: 5,
   }
   return { ...defaults, ...overrides }
@@ -106,22 +127,18 @@ export const desJeunesAvecActionsNonTerminees =
     unJeuneAvecActionsNonTerminees(),
     unJeuneAvecActionsNonTerminees({
       id: 'jeune-2',
-      firstName: 'Nadia',
-      lastName: 'Sanfamiye',
-      email: 'nadia.sanfamiye@mail.com',
-      isActivated: true,
-      creationDate: '2022-01-07T17:30:07.756Z',
+      prenom: 'Nadia',
+      nom: 'Sanfamiye',
+      isActivated: false,
       lastActivity: '2022-01-30T17:30:07.756Z',
       nbActionsNonTerminees: 0,
     }),
     unJeuneAvecActionsNonTerminees({
       id: 'jeune-3',
-      firstName: 'Maria',
-      lastName: "D'Aböville-Muñoz François",
-      email: 'nadia.sanfamiye@mail.com',
-      creationDate: '2021-12-28T17:30:07.756Z',
+      prenom: 'Maria',
+      nom: "D'Aböville-Muñoz François",
       lastActivity: '2022-02-07T17:30:07.756Z',
-      isActivated: true,
+      isReaffectationTemporaire: true,
       nbActionsNonTerminees: 8,
     }),
   ]
@@ -143,7 +160,10 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
 
 export const unJeuneChat = (overrides: Partial<JeuneChat> = {}): JeuneChat => {
   const defaults: JeuneChat = {
-    ...unJeune(),
+    id: 'jeune-1',
+    prenom: 'Kenji',
+    nom: 'Jirac',
+    isActivated: true,
     ...unChat(),
     chatId: 'idChat',
   }
@@ -210,4 +230,8 @@ export const desConseillersJeuneJson = (): ConseillerHistoriqueJson[] => {
     prenom: conseiller.prenom,
     date: conseiller.depuis,
   }))
+}
+
+export function extractBaseJeune(base: BaseJeune): BaseJeune {
+  return { id: base.id, nom: base.nom, prenom: base.prenom }
 }

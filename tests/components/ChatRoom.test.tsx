@@ -1,12 +1,13 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import renderWithSession from '../renderWithSession'
 
 import ChatRoom from 'components/layouts/ChatRoom'
-import { desJeunes, unJeuneChat } from 'fixtures/jeune'
+import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
-import { ConseillerHistorique, Jeune, JeuneChat } from 'interfaces/jeune'
+import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
@@ -16,7 +17,7 @@ jest.mock('components/Conversation', () =>
 )
 
 describe('<ChatRoom />', () => {
-  const jeunes: Jeune[] = desJeunes()
+  const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
   let conseillers: ConseillerHistorique[]
@@ -68,7 +69,7 @@ describe('<ChatRoom />', () => {
       it.each(cases)('affiche le chat de %j', (jeune) => {
         // Then
         expect(
-          screen.getByText(`${jeune.firstName} ${jeune.lastName}`)
+          screen.getByText(`${jeune.prenom} ${jeune.nom}`)
         ).toBeInTheDocument()
       })
     })
@@ -78,22 +79,20 @@ describe('<ChatRoom />', () => {
       beforeEach(async () => {
         // Given
         const goToConversation = screen
-          .getByText(jeuneSelectionne.firstName, {
+          .getByText(jeuneSelectionne.prenom, {
             exact: false,
           })
           .closest('button')
 
         // When
-        await act(async () => goToConversation!.click())
+        await userEvent.click(goToConversation!)
       })
 
       it('affiche la conversation du jeune', async () => {
         // Then
-        await waitFor(() =>
-          expect(
-            screen.getByText(`conversation-${jeuneSelectionne.id}`)
-          ).toBeInTheDocument()
-        )
+        expect(
+          screen.getByText(`conversation-${jeuneSelectionne.id}`)
+        ).toBeInTheDocument()
       })
 
       it("n'affiche pas les autres chats", async () => {
@@ -111,7 +110,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         await renderWithSession(
           <DIProvider dependances={{ jeunesService }}>
-            <CurrentJeuneProvider jeune={jeunes[2]}>
+            <CurrentJeuneProvider idJeune={jeunes[2].id}>
               <ChatRoom jeunesChats={jeunesChats} />
             </CurrentJeuneProvider>
           </DIProvider>

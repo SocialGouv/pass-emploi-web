@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
 
-import ChevronIcon from '../../assets/icons/chevron_right.svg'
 import NoteIcon from '../../assets/icons/note_outline.svg'
+import IconComponent, { IconName } from '../ui/IconComponent'
 
 import StatusTag from 'components/action/StatusTag'
 import { Action } from 'interfaces/action'
@@ -11,27 +11,22 @@ import { formatDayDate } from 'utils/date'
 interface ActionRowProps {
   action: Action
   jeuneId: string
-  borderStyle: string
 }
 
-export default function ActionRow({
-  action,
-  jeuneId,
-  borderStyle,
-}: ActionRowProps) {
+export default function ActionRow({ action, jeuneId }: ActionRowProps) {
   return (
     <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
       <a
         role='row'
         aria-label={`Détail de l'action ${action.content}`}
-        className='table-row hover:bg-primary_lighten hover:outline-0 cursor-pointer focus-within:primary_lighten'
+        className={`table-row cursor-pointer focus-within:primary_lighten rounded-[6px] shadow-s hover:bg-primary_lighten group`}
       >
         <div
           role='cell'
-          className={`table-cell relative pl-4 py-4 ${borderStyle}`}
+          className={`table-cell relative p-4 group-hover:rounded-l-[6px]`}
         >
-          <span className='flex items-center'>
-            <span className='text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
+          <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
+            <span className='text-base-medium text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
             {action.comment && (
@@ -44,19 +39,22 @@ export default function ActionRow({
             )}
           </span>
         </div>
+        <div role='cell' className='table-cell relative py-4 pr-4 w-[120px]'>
+          <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
+            <span>{formatDayDate(new Date(action.creationDate))}</span>
+          </span>
+        </div>
         <div
           role='cell'
-          className={`table-cell relative text-primary_darken ${borderStyle}`}
+          className={`table-cell relative group-hover:rounded-r-[6px] w-[160px]`}
         >
-          {formatDayDate(new Date(action.creationDate))}
-        </div>
-        <div role='cell' className={`table-cell relative ${borderStyle}`}>
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
-            <ChevronIcon
+            <IconComponent
+              name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
-              className='mr-1 fill-primary'
+              className='mr-6 w-6 h-6 fill-content_color'
             />
           </span>
         </div>

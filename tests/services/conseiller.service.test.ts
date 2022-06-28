@@ -18,14 +18,14 @@ describe('ConseillerApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
-      ;(apiClient.get as jest.Mock).mockResolvedValue(
-        unConseillerJson({
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unConseillerJson({
           agence: {
             nom: 'Milo Marseille',
             id: 'ID',
           },
-        })
-      )
+        }),
+      })
 
       // When
       const actual = await conseillerService.getConseiller(
@@ -47,7 +47,7 @@ describe('ConseillerApiService', () => {
       // When
       await conseillerService.modifierAgence(
         'id-conseiller',
-        { id: 'id-agence' },
+        { id: 'id-agence', nom: 'Agence' },
         'accessToken'
       )
 
@@ -89,6 +89,23 @@ describe('ConseillerApiService', () => {
       expect(apiClient.put).toHaveBeenCalledWith(
         '/conseillers/id-conseiller',
         { notificationsSonores: true },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.recupererBeneficiaires', () => {
+    it('récupère les bénéficiaires transférés temporairement', async () => {
+      // When
+      await conseillerService.recupererBeneficiaires(
+        'id-conseiller',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/recuperer-mes-jeunes',
+        {},
         'accessToken'
       )
     })

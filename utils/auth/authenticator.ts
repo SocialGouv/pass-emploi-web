@@ -74,13 +74,14 @@ export default class Authenticator {
       refresh_token: `${refreshToken}`,
     })
 
-    return this.httpClient.fetchJson(url, {
+    const { content: tokens } = await this.httpClient.fetchJson(url, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       method: 'POST',
       body,
     })
+    return tokens
   }
 
   private static async hydrateJwtAtFirstSignin(

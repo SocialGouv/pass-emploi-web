@@ -7,7 +7,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import withDependance from 'utils/injectionDependances/withDependance'
 
 function MiloFicheJeune() {
-  return <></>
+  return null
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const { user, accessToken } = sessionOrRedirect.session
   if (user.structure !== UserStructure.MILO) {
-    return { redirect: { destination: '/mes-jeunes', permanent: true } }
+    return { redirect: { destination: '/mes-jeunes', permanent: false } }
   }
 
   const numeroDossier = context.query.numero_dossier as string
@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     pathname: `/mes-jeunes/milo/${numeroDossier}`,
     refererUrl: context.req.headers.referer,
   })
-  return { redirect: { destination, permanent: true } }
+  return { redirect: { destination, permanent: false } }
 }
 
 export default MiloFicheJeune

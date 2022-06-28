@@ -1,13 +1,13 @@
 import { screen } from '@testing-library/dom'
-import { act } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import renderWithSession from '../renderWithSession'
 
-import { unJeune } from 'fixtures/jeune'
+import { unDetailJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
-import { Jeune } from 'interfaces/jeune'
+import { DetailJeune } from 'interfaces/jeune'
 import SuppressionJeune, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
@@ -52,11 +52,11 @@ describe('Suppression Jeune', () => {
       })
 
       describe("quand le jeune s'est déjà connecté", () => {
-        let jeune: Jeune
+        let jeune: DetailJeune
         let actual: any
         beforeEach(async () => {
           // Given
-          jeune = unJeune({ isActivated: true })
+          jeune = unDetailJeune({ isActivated: true })
           ;(jeunesService.getJeuneDetails as jest.Mock).mockResolvedValue(jeune)
 
           // When
@@ -78,7 +78,7 @@ describe('Suppression Jeune', () => {
           expect(actual).toEqual({
             redirect: {
               destination: `/mes-jeunes/${jeune.id}`,
-              permanent: true,
+              permanent: false,
             },
           })
         })
@@ -87,7 +87,7 @@ describe('Suppression Jeune', () => {
       describe("quand le jeune ne s'est jamais connecté", () => {
         it('fournit le jeune à la page', async () => {
           // Given
-          const jeune = unJeune({ isActivated: false })
+          const jeune = unDetailJeune({ isActivated: false })
           ;(jeunesService.getJeuneDetails as jest.Mock).mockResolvedValue(jeune)
 
           // When
@@ -98,8 +98,7 @@ describe('Suppression Jeune', () => {
           // Then
           expect(actual).toEqual({
             props: {
-              jeune,
-              structureConseiller: 'MILO',
+              idJeune: jeune.id,
               withoutChat: true,
               pageTitle: 'Suppression - Kenji Jirac',
               pageHeader: 'Suppression de Kenji Jirac',
@@ -129,13 +128,13 @@ describe('Suppression Jeune', () => {
   })
 
   describe('client side', () => {
-    let jeune: Jeune
+    let jeune: DetailJeune
     let jeunesService: JeunesService
     let push: Function
     beforeEach(() => {
-      jeune = unJeune({
-        firstName: 'Nadia',
-        lastName: 'Sanfamiye',
+      jeune = unDetailJeune({
+        prenom: 'Nadia',
+        nom: 'Sanfamiye',
         email: 'nadia.sanfamiye@email.fr',
       })
       jeunesService = mockedJeunesService()
@@ -145,10 +144,9 @@ describe('Suppression Jeune', () => {
       renderWithSession(
         <DIProvider dependances={{ jeunesService }}>
           <SuppressionJeune
-            jeune={jeune}
+            idJeune={jeune.id}
             withoutChat={true}
             pageTitle=''
-            structureConseiller='MILO'
           />
         </DIProvider>
       )
@@ -181,7 +179,7 @@ describe('Suppression Jeune', () => {
 
       describe('quand tout se passe bien', () => {
         beforeEach(async () => {
-          await act(async () => button.click())
+          await userEvent.click(button)
         })
 
         it('supprime le compte', () => {
@@ -206,7 +204,7 @@ describe('Suppression Jeune', () => {
           )
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(
@@ -222,7 +220,7 @@ describe('Suppression Jeune', () => {
           )
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(screen.getByText("Message d'erreur")).toBeInTheDocument()
@@ -236,7 +234,7 @@ describe('Suppression Jeune', () => {
           )
 
           // When
-          await act(async () => button.click())
+          await userEvent.click(button)
 
           // Then
           expect(
