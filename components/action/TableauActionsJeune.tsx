@@ -116,7 +116,7 @@ export const TableauActionsJeune = ({
                     onSubmit={submitFiltres}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <fieldset className='flex flex-col'>
+                    <fieldset className='flex flex-col p-2'>
                       <legend className='sr-only'>
                         Choisir un statut à filtrer
                       </legend>
@@ -124,7 +124,9 @@ export const TableauActionsJeune = ({
                         renderStatutInput(statut as StatutAction)
                       )}
                     </fieldset>
-                    <Button type='submit'>Valider</Button>
+                    <Button className='w-full justify-center' type='submit'>
+                      Valider
+                    </Button>
                   </form>
                 )}
               </div>
