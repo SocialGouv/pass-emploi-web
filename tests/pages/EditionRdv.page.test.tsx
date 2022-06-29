@@ -539,7 +539,7 @@ describe('EditionRdv', () => {
           const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
             'button',
             {
-              name: 'Enlever le jeune',
+              name: 'Enlever jeune',
             }
           )
 
@@ -715,7 +715,7 @@ describe('EditionRdv', () => {
     })
 
     describe('quand un id de jeune est spécifié', () => {
-      it('initialise et fige le destinataire', () => {
+      it('initialise le destinataire', () => {
         // Given
         const idJeune = jeunes[2].id
         const jeuneFullname = getNomJeuneComplet(jeunes[2])
