@@ -237,4 +237,17 @@ describe('<Conversation />', () => {
       )
     })
   })
+
+  describe("quand on reçoit un message de partage d'offre", () => {
+    it("affiche le titre de l'offre", async () => {
+      // Then
+      expect(screen.getByText('Une offre')).toBeInTheDocument()
+    })
+    it("affiche le lien de l'offre", async () => {
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Voir l’offre (nouvelle fenêtre)' })
+      ).toBeInTheDocument()
+    })
+  })
 })
