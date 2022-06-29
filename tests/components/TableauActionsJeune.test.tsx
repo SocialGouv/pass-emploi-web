@@ -47,6 +47,22 @@ describe('TableauActionsJeune', () => {
       ).toThrow()
     })
 
+    it('réinitialise les statuts non validés', async () => {
+      // Given
+      await userEvent.click(screen.getByLabelText('À réaliser'))
+      await userEvent.click(screen.getByLabelText('Terminée'))
+      await userEvent.click(screen.getByText('Statut'))
+
+      // When
+      await userEvent.click(screen.getByText('Statut'))
+
+      // Then
+      expect(screen.getByLabelText('Terminée')).not.toHaveAttribute('checked')
+      expect(screen.getByLabelText('Commencée')).not.toHaveAttribute('checked')
+      expect(screen.getByLabelText('À réaliser')).not.toHaveAttribute('checked')
+      expect(screen.getByLabelText('Annulée')).not.toHaveAttribute('checked')
+    })
+
     describe('quand on valide les statuts sélectionnés', () => {
       beforeEach(async () => {
         // Given

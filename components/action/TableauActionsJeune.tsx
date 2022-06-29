@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FormEvent, Fragment, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  Fragment,
+  useEffect,
+  useState,
+} from 'react'
 
 import ActionRow from 'components/action/ActionRow'
 import propsStatutsActions from 'components/action/propsStatutsActions'
@@ -24,6 +30,7 @@ export const TableauActionsJeune = ({
   const [statutsSelectionnes, setStatutsSelectionnes] = useState<
     StatutAction[]
   >([])
+  const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
 
   function actionnerStatut(e: ChangeEvent<HTMLInputElement>) {
     const statut = e.target.value as StatutAction
@@ -38,8 +45,10 @@ export const TableauActionsJeune = ({
 
   function submitFiltres(e: FormEvent) {
     e.preventDefault()
-    setAfficherStatut(false)
     filtrerActions(statutsSelectionnes)
+
+    setAfficherStatut(false)
+    setStatutsValides(statutsSelectionnes)
   }
 
   function renderStatutInput(statut: StatutAction): JSX.Element {
@@ -58,6 +67,10 @@ export const TableauActionsJeune = ({
       </label>
     )
   }
+
+  useEffect(() => {
+    setStatutsSelectionnes(statutsValides)
+  }, [afficherStatut, statutsValides])
 
   return (
     <div className={isLoading ? 'animate-pulse' : ''}>
