@@ -12,7 +12,7 @@ import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -36,14 +36,10 @@ function SuppressionJeune({ idJeune }: SuppressionJeuneProps) {
       await router.push('/mes-jeunes?suppression=succes')
     } catch (e) {
       setTracking('Détail jeune - Erreur suppr. compte')
-      if (e instanceof RequestError) {
-        if (e.code === 'JEUNE_PAS_INACTIF') {
-          setError(
-            'Le jeune a activé son compte. Vous ne pouvez pas supprimer un compte jeune activé.'
-          )
-        } else {
-          setError(e.message)
-        }
+      if (e instanceof ApiError) {
+        setError(
+          'Le jeune a activé son compte. Vous ne pouvez pas supprimer un compte jeune activé.'
+        )
       } else {
         setError(
           'Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'

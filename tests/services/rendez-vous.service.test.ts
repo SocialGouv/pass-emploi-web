@@ -12,7 +12,7 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 describe('RendezVousApiService', () => {
   let apiClient: ApiClient
@@ -88,7 +88,7 @@ describe('RendezVousApiService', () => {
     it("renvoie undefined si le rdv n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Rdv non trouvé', 'Not Found')
+        new ApiError(404, 'Rdv non trouvé')
       )
 
       // When

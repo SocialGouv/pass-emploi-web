@@ -18,7 +18,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
@@ -92,7 +92,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     } catch (error) {
       setConfirmBeforeLeaving(true)
       setErreurMessage(
-        error instanceof RequestError
+        error instanceof ApiError
           ? error.message
           : "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
       )
