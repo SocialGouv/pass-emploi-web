@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
 
+import Multiselection from '../../components/ui/Multiselection'
 import { FichiersService } from '../../services/fichiers.service'
 
 import FailureMessage from 'components/FailureMessage'
@@ -201,6 +202,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             onChange={(e) => setMessage(e.target.value)}
             required
           />
+
           <div>
             <div id='piece-jointe-multi--desc' className='self-center text-xs'>
               <p>
@@ -211,6 +213,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                 personnelles ou de santé.
               </p>
             </div>
+
             <div className='my-4'>
               <Button
                 type='button'
@@ -230,6 +233,22 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                 />
               </Button>
             </div>
+
+            {fileSelected && (
+              <div className='mb-4'>
+                <Multiselection
+                  selection={[
+                    {
+                      id: fileSelected.name,
+                      value: fileSelected.name,
+                      withInfo: false,
+                    },
+                  ]}
+                  typeSelection={'fichier'}
+                  unselect={() => undefined}
+                />
+              </div>
+            )}
           </div>
         </fieldset>
 

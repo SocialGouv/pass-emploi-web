@@ -123,6 +123,7 @@ describe('EnvoiMessageGroupe', () => {
 
         await userEvent.type(inputSearchJeune, 'Jirac Kenji')
         await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        await userEvent.type(inputMessage, newMessage)
       })
 
       it('sélectionne plusieurs jeunes dans la liste', () => {
@@ -134,38 +135,10 @@ describe('EnvoiMessageGroupe', () => {
 
       it('envoi un message à plusieurs destinataires', async () => {
         // When
-        await userEvent.type(inputMessage, newMessage)
         await userEvent.click(submitButton)
 
         // Then
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
-          { id: '1', structure: UserStructure.MILO },
-          [jeunes[0].id, jeunes[1].id],
-          newMessage,
-          'accessToken',
-          'cleChiffrement'
-        )
-      })
-
-      it('envoi un message à plusieurs destinataires avec pièce jointe', async () => {
-        //Given
-        const file = new File(['un contenu'], 'imageupload.png', {
-          type: 'image/png',
-        })
-
-        // When
-        await userEvent.type(inputMessage, newMessage)
-        await act(async () => {
-          await fireEvent.change(fileInput, { target: { files: [file] } })
-        })
-        await userEvent.click(submitButton)
-
-        // Then
-        expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
-          [jeunes[0].id, jeunes[1].id],
-          file,
-          'accessToken'
-        )
+        expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
           { id: '1', structure: UserStructure.MILO },
           [jeunes[0].id, jeunes[1].id],
@@ -176,9 +149,6 @@ describe('EnvoiMessageGroupe', () => {
       })
 
       it('redirige vers la page précédente', async () => {
-        // Given
-        await userEvent.type(inputMessage, newMessage)
-
         // When
         await userEvent.click(submitButton)
 
@@ -244,6 +214,54 @@ describe('EnvoiMessageGroupe', () => {
           1
         )
         expect(screen.getByText(messageErreur)).toBeInTheDocument()
+      })
+    })
+
+    describe('quand on remplit le formulaire avec une pièce jointe', () => {
+      let push: Function
+      let newMessage: string
+      let file: File
+      beforeEach(async () => {
+        push = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ push })
+
+        // Given
+        newMessage = 'Un nouveau message pour plusieurs destinataires'
+
+        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+        await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        await userEvent.type(inputMessage, newMessage)
+
+        file = new File(['un contenu'], 'imageupload.png', {
+          type: 'image/png',
+        })
+        await act(() => {
+          fireEvent.change(fileInput, { target: { files: [file] } })
+        })
+      })
+
+      it('affiche le nom du fichier sélectionné', () => {
+        // Then
+        expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+      })
+
+      it('envoi un message à plusieurs destinataires avec pièce jointe', async () => {
+        // When
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
+          [jeunes[0].id, jeunes[1].id],
+          file,
+          'accessToken'
+        )
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
+          { id: '1', structure: UserStructure.MILO },
+          [jeunes[0].id, jeunes[1].id],
+          newMessage,
+          'accessToken',
+          'cleChiffrement'
+        )
       })
     })
 
