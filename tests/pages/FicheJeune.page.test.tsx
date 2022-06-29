@@ -633,6 +633,10 @@ describe('Fiche Jeune', () => {
             { page: 2, statuts: [] },
             'accessToken'
           )
+          expect(screen.getByLabelText('Page 2')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByText('Action page 2')).toBeInTheDocument()
         })
 
@@ -645,6 +649,10 @@ describe('Fiche Jeune', () => {
             jeune.id,
             { page: 1, statuts: [] },
             'accessToken'
+          )
+          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
+            'aria-current',
+            'page'
           )
           expect(screen.getByLabelText('Première page')).toHaveAttribute(
             'disabled'
@@ -661,6 +669,10 @@ describe('Fiche Jeune', () => {
             { page: 6, statuts: [] },
             'accessToken'
           )
+          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
             'disabled'
           )
@@ -676,6 +688,9 @@ describe('Fiche Jeune', () => {
             { page: pageCourante - 1, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante - 1}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it("permet d'aller à la page suivante", async () => {
@@ -688,6 +703,9 @@ describe('Fiche Jeune', () => {
             { page: pageCourante + 1, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante + 1}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it('met à jour la page courante', async () => {
@@ -706,6 +724,9 @@ describe('Fiche Jeune', () => {
             { page: pageCourante - 2, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante - 2}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it('ne permet pas de revenir avant la première page', async () => {
@@ -717,6 +738,10 @@ describe('Fiche Jeune', () => {
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
             'disabled'
           )
@@ -731,6 +756,10 @@ describe('Fiche Jeune', () => {
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
             'disabled'
           )
