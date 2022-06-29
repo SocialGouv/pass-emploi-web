@@ -2,9 +2,9 @@ import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-export function MessagePieceJointe(props: { id: string; nom: string }) {
+export function LienPieceJointe(props: { id: string; nom: string }) {
   return (
-    <div className='flex flex-row flex flex-row justify-end'>
+    <div className='flex flex-row justify-end'>
       <IconComponent
         name={IconName.File}
         aria-hidden='true'

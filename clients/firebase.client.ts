@@ -381,20 +381,17 @@ function docSnapshotToMessage(
     creationDate: firebaseMessage.creationDate.toDate(),
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
-    infoPiecesJointes: [],
-    infoOffre: {
-      titre: '',
-      lien: '',
-    },
   }
 
-  if (firebaseMessage.type === TypeMessage.MESSAGE_PJ) {
+  if (message.type === TypeMessage.MESSAGE_PJ) {
     message.infoPiecesJointes = firebaseMessage.piecesJointes ?? []
   }
 
-  if (firebaseMessage.type === TypeMessage.MESSAGE_OFFRE) {
-    message.infoOffre.lien = firebaseMessage.lienOffre!
-    message.infoOffre.titre = firebaseMessage.titreOffre!
+  if (message.type === TypeMessage.MESSAGE_OFFRE) {
+    message.infoOffre = {
+      titre: firebaseMessage.titreOffre!,
+      lien: firebaseMessage.lienOffre!,
+    }
   }
 
   return message

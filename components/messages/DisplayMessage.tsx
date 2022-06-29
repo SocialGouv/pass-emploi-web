@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { MessageOffre } from 'components/messages/MessageOffre'
-import { MessagePieceJointe } from 'components/messages/MessagePieceJointe'
+import { LienOffre } from 'components/messages/LienOffre'
+import { LienPieceJointe } from 'components/messages/LienPieceJointe'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
 import { formatHourMinuteDate, isDateOlder } from 'utils/date'
@@ -39,12 +39,13 @@ export default function DisplayMessage({
           </p>
         )}
         <p className='whitespace-pre-wrap'>{message.content}</p>
-        {message.type === TypeMessage.MESSAGE_OFFRE && (
-          <MessageOffre infoOffre={message.infoOffre} />
+        {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
+          <LienOffre infoOffre={message.infoOffre} />
         )}
         {message.type === TypeMessage.MESSAGE_PJ &&
+          message.infoPiecesJointes &&
           message.infoPiecesJointes.map(({ id, nom }) => (
-            <MessagePieceJointe key={id} id={id} nom={nom} />
+            <LienPieceJointe key={id} id={id} nom={nom} />
           ))}
       </div>
       <p

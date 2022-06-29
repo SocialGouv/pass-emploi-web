@@ -4,10 +4,12 @@ import ExternalLink from 'components/ui/ExternalLink'
 import { InfoOffre } from 'interfaces/message'
 import useMatomo from 'utils/analytics/useMatomo'
 
-export function MessageOffre(props: { infoOffre: InfoOffre }) {
-  const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
+export function LienOffre(props: { infoOffre: InfoOffre }) {
+  const [trackingLabel, setLabelMatomo] = useState<string | undefined>(
+    undefined
+  )
 
-  useMatomo(labelMatomo)
+  useMatomo(trackingLabel)
 
   const label = 'Voir l’offre'
 
