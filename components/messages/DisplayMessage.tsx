@@ -1,9 +1,9 @@
 import React from 'react'
 
-import IconComponent, { IconName } from './ui/IconComponent'
-
+import { LienOffre } from 'components/messages/LienOffre'
+import { LienPieceJointe } from 'components/messages/LienPieceJointe'
 import { UserType } from 'interfaces/conseiller'
-import { Message } from 'interfaces/message'
+import { Message, TypeMessage } from 'interfaces/message'
 import { formatHourMinuteDate, isDateOlder } from 'utils/date'
 
 interface DisplayMessageProps {
@@ -39,24 +39,14 @@ export default function DisplayMessage({
           </p>
         )}
         <p className='whitespace-pre-wrap'>{message.content}</p>
-        {message.infoPiecesJointes.map(({ id, nom }) => (
-          <div key={id} className='flex flex-row flex flex-row justify-end'>
-            <IconComponent
-              name={IconName.File}
-              aria-hidden='true'
-              focusable='false'
-              className='w-6 h-6'
-            />
-            <a
-              href={`/api/fichiers/${id}`}
-              aria-label='Télécharger la pièce jointe'
-              title='Télécharger la pièce jointe'
-              className='font-bold break-words'
-            >
-              {nom}
-            </a>
-          </div>
-        ))}
+        {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
+          <LienOffre infoOffre={message.infoOffre} />
+        )}
+        {message.type === TypeMessage.MESSAGE_PJ &&
+          message.infoPiecesJointes &&
+          message.infoPiecesJointes.map(({ id, nom }) => (
+            <LienPieceJointe key={id} id={id} nom={nom} />
+          ))}
       </div>
       <p
         className={`text-xs text-grey_800 ${

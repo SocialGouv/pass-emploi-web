@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react'
 
-import DisplayMessage from 'components/DisplayMessage'
+import DisplayMessage from 'components/messages/DisplayMessage'
 import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
