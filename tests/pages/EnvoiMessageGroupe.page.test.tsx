@@ -4,9 +4,6 @@ import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { FichiersService } from '../../services/fichiers.service'
-import renderPage from '../renderPage'
-
 import { desItemsJeunes } from 'fixtures/jeune'
 import {
   mockedFichiersService,
@@ -18,8 +15,9 @@ import { JeuneFromListe } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
-import { JeunesService } from 'services/jeunes.service'
+import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
+import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -139,13 +137,16 @@ describe('EnvoiMessageGroupe', () => {
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
-          { id: '1', structure: UserStructure.MILO },
-          [jeunes[0].id, jeunes[1].id],
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
+          conseiller: {
+            id: '1',
+            structure: UserStructure.MILO,
+          },
+          idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage,
-          'accessToken',
-          'cleChiffrement'
-        )
+          accessToken: 'accessToken',
+          cleChiffrement: 'cleChiffrement',
+        })
       })
 
       it('redirige vers la page précédente', async () => {
@@ -224,6 +225,10 @@ describe('EnvoiMessageGroupe', () => {
       beforeEach(async () => {
         push = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ push })
+        ;(fichiersService.uploadFichier as jest.Mock).mockResolvedValue({
+          id: 'id-fichier',
+          nom: 'nom-fichier.png',
+        })
 
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
@@ -255,13 +260,17 @@ describe('EnvoiMessageGroupe', () => {
           file,
           'accessToken'
         )
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
-          { id: '1', structure: UserStructure.MILO },
-          [jeunes[0].id, jeunes[1].id],
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
+          conseiller: {
+            id: '1',
+            structure: UserStructure.MILO,
+          },
+          idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage,
-          'accessToken',
-          'cleChiffrement'
-        )
+          accessToken: 'accessToken',
+          cleChiffrement: 'cleChiffrement',
+          infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
+        })
       })
     })
 

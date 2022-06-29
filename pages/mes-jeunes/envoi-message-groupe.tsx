@@ -3,9 +3,6 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
 
-import Multiselection from '../../components/ui/Multiselection'
-import { FichiersService } from '../../services/fichiers.service'
-
 import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
@@ -13,10 +10,16 @@ import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import Multiselection from 'components/ui/Multiselection'
+import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
+import {
+  FormNouveauMessageGroupe,
+  MessagesService,
+} from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -87,21 +90,31 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
     setConfirmBeforeLeaving(false)
     try {
+      let fileInfo: InfoFichier | undefined
       if (fileSelected) {
-        await fichiersService.uploadFichier(
+        fileInfo = await fichiersService.uploadFichier(
           selectedJeunesIds,
           fileSelected,
           session!.accessToken
         )
       }
+
+      const formNouveauMessage: FormNouveauMessageGroupe = {
+        conseiller: {
+          id: session!.user.id,
+          structure: session!.user.structure,
+        },
+        idsDestinataires: selectedJeunesIds,
+        newMessage:
+          message ||
+          'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
+        accessToken: session!.accessToken,
+        cleChiffrement: chatCredentials!.cleChiffrement,
+      }
+      if (fileInfo) formNouveauMessage.infoPieceJointe = fileInfo
+
       await messagesService.signIn(chatCredentials!.token)
-      await messagesService.sendNouveauMessageGroupe(
-        { id: session!.user.id, structure: session!.user.structure },
-        selectedJeunesIds,
-        message,
-        session!.accessToken,
-        chatCredentials!.cleChiffrement
-      )
+      await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
       await router.push(`${returnTo}?envoiMessage=succes`)
     } catch (error) {
       setConfirmBeforeLeaving(true)
@@ -316,6 +329,8 @@ export const getServerSideProps: GetServerSideProps<
   const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
 
   const referer: string | undefined = context.req.headers.referer
+
+  // FIXME hard refresh breaks referer
   const previousUrl =
     referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   return {
