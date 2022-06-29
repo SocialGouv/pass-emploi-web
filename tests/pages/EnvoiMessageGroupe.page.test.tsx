@@ -1,23 +1,27 @@
-import { screen } from '@testing-library/react'
+import { act, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
-import { desItemsJeunes } from 'fixtures/jeune'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
-import { JeuneFromListe } from 'interfaces/jeune'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
+
+import { FichiersService } from '../../services/fichiers.service'
+import renderPage from '../renderPage'
+
+import { desItemsJeunes } from 'fixtures/jeune'
+import {
+  mockedFichiersService,
+  mockedJeunesService,
+  mockedMessagesService,
+} from 'fixtures/services'
+import { UserStructure } from 'interfaces/conseiller'
+import { JeuneFromListe } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-
-import renderWithSession from '../renderWithSession'
 
 jest.mock('components/Modal')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -26,38 +30,48 @@ jest.mock('utils/injectionDependances/withDependance')
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
     let jeunes: JeuneFromListe[]
-    let jeunesService: JeunesService
     let messagesService: MessagesService
+    let fichiersService: FichiersService
     let inputSearchJeune: HTMLSelectElement
     let inputMessage: HTMLInputElement
+    let fileInput: HTMLInputElement
     let submitButton: HTMLButtonElement
 
     beforeEach(async () => {
       jeunes = desItemsJeunes()
-
-      jeunesService = mockedJeunesService()
 
       messagesService = mockedMessagesService({
         sendNouveauMessageGroupe: jest.fn(() => {
           return Promise.resolve()
         }),
       })
+      fichiersService = mockedFichiersService({
+        uploadFichier: jest
+          .fn()
+          .mockResolvedValue({ id: 'id-fichier', nom: 'imageupload.png' }),
+      })
 
-      renderWithSession(
-        <DIProvider dependances={{ jeunesService, messagesService }}>
-          <EnvoiMessageGroupe
-            pageTitle={''}
-            jeunes={jeunes}
-            withoutChat={true}
-            returnTo='/mes-jeunes'
-          />
-        </DIProvider>
+      renderPage(
+        <EnvoiMessageGroupe
+          pageTitle={''}
+          jeunes={jeunes}
+          withoutChat={true}
+          returnTo='/mes-jeunes'
+        />,
+        {
+          customDependances: {
+            messagesService,
+            fichiersService,
+          },
+        }
       )
 
       inputSearchJeune = screen.getByRole('combobox', {
         name: 'Rechercher et ajouter des jeunes Nom et prénom',
       })
       inputMessage = screen.getByLabelText('* Message')
+      fileInput = screen.getByLabelText('Ajouter une pièce jointe')
+
       submitButton = screen.getByRole('button', {
         name: 'Envoyer',
       })
@@ -74,6 +88,15 @@ describe('EnvoiMessageGroupe', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('link', { name: 'Annuler' })
+        ).toBeInTheDocument()
+      })
+
+      it('permet l’ajout d’une pièce jointe', () => {
+        // Then
+        expect(fileInput).toBeInTheDocument()
+        expect(screen.getByText(/Taille maximum autorisé/)).toBeInTheDocument()
+        expect(
+          screen.getByText(/Attention à ne pas partager de données sensibles/)
         ).toBeInTheDocument()
       })
 
@@ -115,6 +138,34 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
+          { id: '1', structure: UserStructure.MILO },
+          [jeunes[0].id, jeunes[1].id],
+          newMessage,
+          'accessToken',
+          'cleChiffrement'
+        )
+      })
+
+      it('envoi un message à plusieurs destinataires avec pièce jointe', async () => {
+        //Given
+        const file = new File(['un contenu'], 'imageupload.png', {
+          type: 'image/png',
+        })
+
+        // When
+        await userEvent.type(inputMessage, newMessage)
+        await act(async () => {
+          await fireEvent.change(fileInput, { target: { files: [file] } })
+        })
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
+          [jeunes[0].id, jeunes[1].id],
+          file,
+          'accessToken'
+        )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith(
           { id: '1', structure: UserStructure.MILO },
           [jeunes[0].id, jeunes[1].id],

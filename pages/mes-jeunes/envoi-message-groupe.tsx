@@ -1,7 +1,9 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { MouseEvent, useState } from 'react'
+import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
+
+import { FichiersService } from '../../services/fichiers.service'
 
 import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
@@ -33,12 +35,16 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
+  const fichiersService = useDependance<FichiersService>('fichiersService')
 
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string | undefined>(
     undefined
   )
+  const [fileSelected, setFileSelected] = useState<File | undefined>()
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
+
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
@@ -80,6 +86,13 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
     setConfirmBeforeLeaving(false)
     try {
+      if (fileSelected) {
+        await fichiersService.uploadFichier(
+          selectedJeunesIds,
+          fileSelected,
+          session!.accessToken
+        )
+      }
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(
         { id: session!.user.id, structure: session!.user.structure },
@@ -112,6 +125,17 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     formHasChanges() && confirmBeforeLeaving,
     openLeavePageConfirmationModal
   )
+
+  function handleFileUploadClick() {
+    hiddenFileInput.current!.click()
+  }
+
+  function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files || !event.target.files[0]) return
+
+    const fichierSelectionne = event.target.files[0]
+    setFileSelected(fichierSelectionne)
+  }
 
   return (
     <>
@@ -177,6 +201,36 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             onChange={(e) => setMessage(e.target.value)}
             required
           />
+          <div>
+            <div id='piece-jointe-multi--desc' className='self-center text-xs'>
+              <p>
+                Taille maximum autorisée : 5 Mo aux formats .PDF, .JPG, .PNG
+              </p>
+              <p>
+                Attention à ne pas partager de données sensibles, à caractères
+                personnelles ou de santé.
+              </p>
+            </div>
+            <div className='my-4'>
+              <Button
+                type='button'
+                style={ButtonStyle.SECONDARY}
+                onClick={handleFileUploadClick}
+              >
+                <label htmlFor='piece-jointe-multi'>
+                  Ajouter une pièce jointe
+                </label>
+                <input
+                  id='piece-jointe-multi'
+                  type='file'
+                  ref={hiddenFileInput}
+                  onChange={handleFileUploadChange}
+                  className='hidden'
+                  accept='.pdf, .png, .jpeg, .jpg'
+                />
+              </Button>
+            </div>
+          </div>
         </fieldset>
 
         <div className='flex justify-center'>
