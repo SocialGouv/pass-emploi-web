@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import ExternalLink from './ui/ExternalLink'
-import IconComponent, { IconName } from './ui/IconComponent'
-
+import ExternalLink from 'components/ui/ExternalLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
+import useMatomo from 'utils/analytics/useMatomo'
 import { formatHourMinuteDate, isDateOlder } from 'utils/date'
 
 interface DisplayMessageProps {
@@ -20,6 +20,10 @@ export default function DisplayMessage({
 }: DisplayMessageProps) {
   const isSentByConseiller =
     message.sentBy === UserType.CONSEILLER.toLowerCase()
+
+  const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
+
+  useMatomo(labelMatomo)
 
   function scrollToRef(element: HTMLLIElement | null) {
     if (element) element.scrollIntoView({ behavior: 'smooth' })
@@ -50,7 +54,7 @@ export default function DisplayMessage({
                 key={message.infoOffre!.lien}
                 href={message.infoOffre!.lien}
                 label='Voir l’offre'
-                onClick={() => console.log('TODO-764')}
+                onClick={() => setLabelMatomo('Voir l’offre')}
               />
             </div>
           </div>
