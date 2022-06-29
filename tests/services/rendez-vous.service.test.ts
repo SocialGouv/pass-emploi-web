@@ -88,7 +88,7 @@ describe('RendezVousApiService', () => {
     it("renvoie undefined si le rdv n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Rdv non trouvé', 'NON_TROUVE')
+        new RequestError('Rdv non trouvé', 'Not Found')
       )
 
       // When
