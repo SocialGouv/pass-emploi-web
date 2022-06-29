@@ -99,6 +99,7 @@ export const TableauActionsJeune = ({
                   aria-controls='filtres-statut'
                   aria-expanded={afficherStatut}
                   onClick={() => setAfficherStatut(!afficherStatut)}
+                  aria-label='Statut - Filtrer les actions'
                   className='w-full flex items-center'
                 >
                   Statut
