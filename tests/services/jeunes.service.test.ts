@@ -118,7 +118,7 @@ describe('JeunesApiService', () => {
     it("renvoie undefined si le jeune n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Jeune non trouvé', 'NON_TROUVE')
+        new RequestError('Jeune non trouvé', 'Not Found')
       )
 
       // When
@@ -156,7 +156,7 @@ describe('JeunesApiService', () => {
     it("renvoie undefined si le jeune n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Numero dossier non trouvé', 'NON_TROUVE')
+        new RequestError('Numero dossier non trouvé', 'Not Found')
       )
 
       // When
