@@ -16,7 +16,7 @@ export function MessageOffre(props: { infoOffre: InfoOffre }) {
       <p className='text-base-medium text-content_color'>
         {props.infoOffre!.titre}
       </p>
-      <div className='mt-4 w-max ml-auto text-primary_darken fill-primary_darken hover:text-primary hover:fill-primary'>
+      <div className='mt-4 w-max ml-auto'>
         <ExternalLink
           href={props.infoOffre!.lien}
           label={label}
