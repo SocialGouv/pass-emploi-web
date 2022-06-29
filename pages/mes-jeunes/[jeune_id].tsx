@@ -3,18 +3,16 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import RdvList from 'components/rdv/RdvList'
+import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import Pagination from 'components/ui/Pagination'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
@@ -89,18 +87,6 @@ function FicheJeune({
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
-  const [statutsActions, setStatutsActions] = useState<StatutAction[]>([])
-  const [actionsDeLaPage, setActionsDeLaPage] = useState<Action[]>(
-    actionsInitiales.actions
-  )
-  const [nombrePages, setNombrePages] = useState<number>(
-    actionsInitiales.metadonnees.nombrePages
-  )
-  const [pageCourante, setPageCourante] = useState<number>(
-    actionsInitiales.page
-  )
-  const [isPageActionsLoading, setIsPageActionsLoading] =
-    useState<boolean>(false)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -170,28 +156,18 @@ function FicheJeune({
     )
   }
 
-  async function rechargerActions(page: number, statuts: StatutAction[]) {
-    if (page < 1 || page > nombrePages) return
-    if (
-      page === pageCourante &&
-      statuts.every((statut) => statutsActions.includes(statut)) &&
-      statutsActions.every((statut) => statuts.includes(statut))
-    )
-      return
-
-    setPageCourante(page)
-    setIsPageActionsLoading(true)
-    const { actions, metadonnees } = await actionsService.getActionsJeune(
+  async function chargerActions(
+    page: number,
+    statuts: StatutAction[]
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const result = await actionsService.getActionsJeune(
       jeune.id,
       { page, statuts },
       session!.accessToken
     )
 
-    setActionsDeLaPage(actions)
-    setTotalActions(metadonnees.nombreTotal)
-    setNombrePages(metadonnees.nombrePages)
-    setStatutsActions(statuts)
-    setIsPageActionsLoading(false)
+    setTotalActions(result.metadonnees.nombreTotal)
+    return result
   }
 
   useMatomo(trackingLabel)
@@ -338,15 +314,11 @@ function FicheJeune({
           id='liste-rdvs'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          {!isPoleEmploi ? (
-            <RdvList
-              rdvs={rdvs}
-              idConseiller={session?.user.id ?? ''}
-              withNameJeune={false}
-            />
-          ) : (
-            <IntegrationPoleEmploi label='convocations' />
-          )}
+          <OngletRdvs
+            poleEmploi={isPoleEmploi}
+            rdvs={rdvs}
+            idConseiller={session?.user.id ?? ''}
+          />
         </div>
       )}
       {currentTab === Onglet.ACTIONS && (
@@ -357,32 +329,12 @@ function FicheJeune({
           id='liste-actions'
           className='mt-8 pb-8'
         >
-          {isPoleEmploi && (
-            <IntegrationPoleEmploi label='actions et démarches' />
-          )}
-
-          {!isPoleEmploi && (
-            <>
-              <TableauActionsJeune
-                jeune={jeune}
-                actions={actionsDeLaPage}
-                isLoading={isPageActionsLoading}
-                filtrerActions={(statuts) => rechargerActions(1, statuts)}
-              />
-              {nombrePages > 1 && (
-                <div className='mt-6'>
-                  <Pagination
-                    nomListe='actions'
-                    nombreDePages={nombrePages}
-                    pageCourante={pageCourante}
-                    allerALaPage={(page) =>
-                      rechargerActions(page, statutsActions)
-                    }
-                  />
-                </div>
-              )}
-            </>
-          )}
+          <OngletActions
+            poleEmploi={isPoleEmploi}
+            jeune={jeune}
+            actionsInitiales={actionsInitiales}
+            getActions={chargerActions}
+          />
         </div>
       )}
     </>
