@@ -3,22 +3,20 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import RdvList from 'components/rdv/RdvList'
+import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import Pagination from 'components/ui/Pagination'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
-import { Action } from 'interfaces/action'
+import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -46,7 +44,11 @@ const ongletProps: { [key in Onglet]: string } = {
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
   rdvs: RdvListItem[]
-  actionsInitiales: { actions: Action[]; total: number; page: number }
+  actionsInitiales: {
+    actions: Action[]
+    metadonnees: MetadonneesActions
+    page: number
+  }
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -82,15 +84,9 @@ function FicheJeune({
     useState<boolean>(false)
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
-  const [actionsDeLaPage, setActionsDeLaPage] = useState<Action[]>(
-    actionsInitiales.actions
+  const [totalActions, setTotalActions] = useState<number>(
+    actionsInitiales.metadonnees.nombreTotal
   )
-  const [pageCourante, setPageCourante] = useState<number>(
-    actionsInitiales.page
-  )
-  const [isPageActionsLoading, setIsPageActionsLoading] =
-    useState<boolean>(false)
-  const pageCount = Math.ceil(actionsInitiales.total / 10)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -160,18 +156,18 @@ function FicheJeune({
     )
   }
 
-  async function goToActionPage(page: number) {
-    if (page < 1 || page > pageCount || page === pageCourante) return
-
-    setPageCourante(page)
-    setIsPageActionsLoading(true)
-    const { actions } = await actionsService.getActionsJeune(
+  async function chargerActions(
+    page: number,
+    statuts: StatutAction[]
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const result = await actionsService.getActionsJeune(
       jeune.id,
-      page,
+      { page, statuts },
       session!.accessToken
     )
-    setActionsDeLaPage(actions)
-    setIsPageActionsLoading(false)
+
+    setTotalActions(result.metadonnees.nombreTotal)
+    return result
   }
 
   useMatomo(trackingLabel)
@@ -302,7 +298,7 @@ function FicheJeune({
         />
         <Tab
           label='Actions'
-          count={!isPoleEmploi ? actionsInitiales.total : undefined}
+          count={!isPoleEmploi ? totalActions : undefined}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
@@ -318,15 +314,11 @@ function FicheJeune({
           id='liste-rdvs'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          {!isPoleEmploi ? (
-            <RdvList
-              rdvs={rdvs}
-              idConseiller={session?.user.id ?? ''}
-              withNameJeune={false}
-            />
-          ) : (
-            <IntegrationPoleEmploi label='convocations' />
-          )}
+          <OngletRdvs
+            poleEmploi={isPoleEmploi}
+            rdvs={rdvs}
+            idConseiller={session?.user.id ?? ''}
+          />
         </div>
       )}
       {currentTab === Onglet.ACTIONS && (
@@ -337,27 +329,12 @@ function FicheJeune({
           id='liste-actions'
           className='mt-8 pb-8'
         >
-          {isPoleEmploi && (
-            <IntegrationPoleEmploi label='actions et démarches' />
-          )}
-
-          {!isPoleEmploi && (
-            <>
-              <TableauActionsJeune
-                jeune={jeune}
-                actions={actionsDeLaPage}
-                isLoading={isPageActionsLoading}
-              />
-              <div className='mt-6'>
-                <Pagination
-                  nomListe='actions'
-                  nombreDePages={pageCount}
-                  pageCourante={pageCourante}
-                  allerALaPage={goToActionPage}
-                />
-              </div>
-            </>
-          )}
+          <OngletActions
+            poleEmploi={isPoleEmploi}
+            jeune={jeune}
+            actionsInitiales={actionsInitiales}
+            getActions={chargerActions}
+          />
         </div>
       )}
     </>
@@ -401,10 +378,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
           accessToken
         ),
     isPoleEmploi
-      ? { actions: [], total: 0 }
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
       : actionsService.getActionsJeune(
           context.query.jeune_id as string,
-          page,
+          { page, statuts: [] },
           accessToken
         ),
   ])

@@ -23,6 +23,7 @@ import {
   mockedJeunesService,
   mockedRendezVousService,
 } from 'fixtures/services'
+import { StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
   CategorieSituation,
@@ -68,7 +69,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={listeConseillers}
             pageTitle={''}
           />,
@@ -174,7 +179,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={conseillers}
             pageTitle={''}
           />
@@ -193,7 +202,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />,
@@ -257,7 +270,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions, total: 14, page: 1 }}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -297,7 +314,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={unDetailJeune({ situations: situations })}
               rdvs={[]}
-              actionsInitiales={{ actions, total: 14, page: 1 }}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -331,7 +352,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0, page: 1 }}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -352,7 +377,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isActivated: false }}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0, page: 1 }}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -384,7 +413,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isReaffectationTemporaire: true }}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0, page: 1 }}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -402,7 +435,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             rdvCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
@@ -446,7 +483,11 @@ describe('Fiche Jeune', () => {
             jeune={jeune}
             rdvs={rdvs}
             conseillers={[]}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             rdvModificationSuccess={true}
             pageTitle={''}
           />
@@ -488,7 +529,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             actionCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
@@ -529,7 +574,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
@@ -546,20 +595,26 @@ describe('Fiche Jeune', () => {
     describe('pagination actions', () => {
       describe('navigation', () => {
         let actionsService: ActionsService
+        let pageCourante: number
         beforeEach(() => {
           // Given
           actionsService = mockedActionsService({
-            getActionsJeune: jest.fn(async () => ({
-              actions: [uneAction({ content: 'Action page 2' })],
-              total: 1,
+            getActionsJeune: jest.fn(async (_, { page }) => ({
+              actions: [uneAction({ content: `Action page ${page}` })],
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
             })),
           })
 
+          pageCourante = 4
           renderPage(
             <FicheJeune
               jeune={jeune}
               rdvs={rdvs}
-              actionsInitiales={{ actions, total: 52, page: 4 }}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
               conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -575,8 +630,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            2,
+            { page: 2, statuts: [] },
             'accessToken'
+          )
+          expect(screen.getByLabelText('Page 2')).toHaveAttribute(
+            'aria-current',
+            'page'
           )
           expect(screen.getByText('Action page 2')).toBeInTheDocument()
         })
@@ -588,8 +647,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            1,
+            { page: 1, statuts: [] },
             'accessToken'
+          )
+          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
+            'aria-current',
+            'page'
           )
           expect(screen.getByLabelText('Première page')).toHaveAttribute(
             'disabled'
@@ -603,8 +666,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            6,
+            { page: 6, statuts: [] },
             'accessToken'
+          )
+          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
+            'aria-current',
+            'page'
           )
           expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
             'disabled'
@@ -618,9 +685,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            3,
+            { page: pageCourante - 1, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante - 1}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it("permet d'aller à la page suivante", async () => {
@@ -630,9 +700,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            5,
+            { page: pageCourante + 1, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante + 1}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it('met à jour la page courante', async () => {
@@ -643,14 +716,17 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            3,
+            { page: pageCourante - 1, statuts: [] },
             'accessToken'
           )
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            2,
+            { page: pageCourante - 2, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante - 2}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it('ne permet pas de revenir avant la première page', async () => {
@@ -662,6 +738,10 @@ describe('Fiche Jeune', () => {
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
             'disabled'
           )
@@ -676,9 +756,21 @@ describe('Fiche Jeune', () => {
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
             'disabled'
           )
+        })
+
+        it('ne recharge pas la page courante', async () => {
+          // When
+          await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(0)
         })
       })
 
@@ -689,7 +781,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 22, page: 3 }}
+              actionsInitiales={{
+                actions: [],
+                page: 3,
+                metadonnees: { nombreTotal: 22, nombrePages: 3 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -710,7 +806,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 52, page: 3 }}
+              actionsInitiales={{
+                actions: [],
+                page: 3,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -734,7 +834,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 1 }}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -758,7 +862,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 11 }}
+              actionsInitiales={{
+                actions: [],
+                page: 11,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -783,7 +891,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 4 }}
+              actionsInitiales={{
+                actions: [],
+                page: 4,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -808,7 +920,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 17 }}
+              actionsInitiales={{
+                actions: [],
+                page: 17,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -833,7 +949,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 18 }}
+              actionsInitiales={{
+                actions: [],
+                page: 18,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -857,7 +977,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 20 }}
+              actionsInitiales={{
+                actions: [],
+                page: 20,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -874,6 +998,78 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
           expect(screen.getAllByText('…')).toHaveLength(1)
         })
+      })
+    })
+
+    describe('filtrer les actions par status', () => {
+      let actionsService: ActionsService
+      let pageCourante: number
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeune: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action filtrée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })),
+        })
+
+        pageCourante = 1
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions,
+              page: pageCourante,
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
+            }}
+            conseillers={listeConseillers}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+          />,
+          { customDependances: { actionsService } }
+        )
+
+        // When
+        await userEvent.click(screen.getByText('Statut'))
+        await userEvent.click(screen.getByLabelText('Commencée'))
+        await userEvent.click(screen.getByLabelText('À réaliser'))
+        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+      })
+
+      it('filtre les actions', () => {
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          },
+          'accessToken'
+        )
+        expect(screen.getByText('Action filtrée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', () => {
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve les filtres de statut', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          },
+          'accessToken'
+        )
       })
     })
   })
@@ -903,7 +1099,7 @@ describe('Fiche Jeune', () => {
             uneAction({ creationDate: dateFuture.toISOString() }),
             uneAction({ creationDate: dateFutureLoin.toISOString() }),
           ],
-          total: 14,
+          metadonnees: { nombreTotal: 14, nombrePages: 2 },
         })),
       })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
@@ -977,7 +1173,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
           'id-jeune',
-          1,
+          { page: 1, statuts: [] },
           'accessToken'
         )
         expect(actual).toMatchObject({
@@ -989,8 +1185,8 @@ describe('Fiche Jeune', () => {
                 uneAction({ creationDate: dateFuture.toISOString() }),
                 uneAction({ creationDate: dateFutureLoin.toISOString() }),
               ],
-              total: 14,
               page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
             },
           },
         })
@@ -1017,7 +1213,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
           'id-jeune',
-          3,
+          { page: 3, statuts: [] },
           'accessToken'
         )
         expect(actual).toMatchObject({

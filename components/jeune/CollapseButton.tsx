@@ -38,7 +38,7 @@ export function CollapseButton({
             name={IconName.ChevronDown}
             focusable='false'
             aria-hidden='true'
-            className='h-6 w-6'
+            className='h-6 w-6 fill-primary'
           />
         </span>
       )}
