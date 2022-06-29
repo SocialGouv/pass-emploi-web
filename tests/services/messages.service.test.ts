@@ -11,8 +11,8 @@ import { UserStructure } from 'interfaces/conseiller'
 import { BaseJeune, Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
-import { FakeApiClient } from '../utils/fakeApiClient'
 
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
