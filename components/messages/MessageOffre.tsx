@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
-import { InfoOffre } from '../../interfaces/message'
-import useMatomo from '../../utils/analytics/useMatomo'
-import ExternalLink from '../ui/ExternalLink'
+import ExternalLink from 'components/ui/ExternalLink'
+import { InfoOffre } from 'interfaces/message'
+import useMatomo from 'utils/analytics/useMatomo'
 
 export function MessageOffre(props: { infoOffre: InfoOffre }) {
   const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)

@@ -1,8 +1,7 @@
 import React from 'react'
 
-import { MessageOffre } from './MessageOffre'
-import { MessagePieceJointe } from './MessagePieceJointe'
-
+import { MessageOffre } from 'components/messages/MessageOffre'
+import { MessagePieceJointe } from 'components/messages/MessagePieceJointe'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
 import { formatHourMinuteDate, isDateOlder } from 'utils/date'

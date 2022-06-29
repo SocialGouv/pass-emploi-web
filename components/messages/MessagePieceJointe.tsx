@@ -1,6 +1,6 @@
 import React from 'react'
 
-import IconComponent, { IconName } from '../ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export function MessagePieceJointe(props: { id: string; nom: string }) {
   return (
