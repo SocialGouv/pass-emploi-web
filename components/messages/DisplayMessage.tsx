@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import ExternalLink from 'components/ui/ExternalLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { MessageOffre } from './MessageOffre'
+import { MessagePieceJointe } from './MessagePieceJointe'
+
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
-import useMatomo from 'utils/analytics/useMatomo'
 import { formatHourMinuteDate, isDateOlder } from 'utils/date'
 
 interface DisplayMessageProps {
@@ -20,10 +20,6 @@ export default function DisplayMessage({
 }: DisplayMessageProps) {
   const isSentByConseiller =
     message.sentBy === UserType.CONSEILLER.toLowerCase()
-
-  const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
-
-  useMatomo(labelMatomo)
 
   function scrollToRef(element: HTMLLIElement | null) {
     if (element) element.scrollIntoView({ behavior: 'smooth' })
@@ -45,38 +41,12 @@ export default function DisplayMessage({
         )}
         <p className='whitespace-pre-wrap'>{message.content}</p>
         {message.type === TypeMessage.MESSAGE_OFFRE && (
-          <div className='p-4 rounded-medium bg-blanc mt-4'>
-            <p className='text-base-medium text-content_color'>
-              {message.infoOffre!.titre}
-            </p>
-            <div className='mt-4 w-max ml-auto text-primary_darken fill-primary_darken hover:text-primary hover:fill-primary'>
-              <ExternalLink
-                key={message.infoOffre!.lien}
-                href={message.infoOffre!.lien}
-                label='Voir l’offre'
-                onClick={() => setLabelMatomo('Voir l’offre')}
-              />
-            </div>
-          </div>
+          <MessageOffre infoOffre={message.infoOffre!} />
         )}
-        {message.infoPiecesJointes.map(({ id, nom }) => (
-          <div key={id} className='flex flex-row flex flex-row justify-end'>
-            <IconComponent
-              name={IconName.File}
-              aria-hidden='true'
-              focusable='false'
-              className='w-6 h-6'
-            />
-            <a
-              href={`/api/fichiers/${id}`}
-              aria-label='Télécharger la pièce jointe'
-              title='Télécharger la pièce jointe'
-              className='font-bold break-words'
-            >
-              {nom}
-            </a>
-          </div>
-        ))}
+        {message.type === TypeMessage.MESSAGE_PJ &&
+          message.infoPiecesJointes.map(({ id, nom }) => (
+            <MessagePieceJointe key={id} id={id} nom={nom} />
+          ))}
       </div>
       <p
         className={`text-xs text-grey_800 ${
