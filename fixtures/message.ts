@@ -10,7 +10,10 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     conseillerId: 'conseiller-1',
     type: TypeMessage.MESSAGE,
     infoPiecesJointes: [],
-    infoOffre: undefined,
+    infoOffre: {
+      titre: '',
+      lien: '',
+    },
   }
 
   return { ...defaults, ...args }

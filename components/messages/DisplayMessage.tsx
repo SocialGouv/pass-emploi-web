@@ -41,7 +41,7 @@ export default function DisplayMessage({
         )}
         <p className='whitespace-pre-wrap'>{message.content}</p>
         {message.type === TypeMessage.MESSAGE_OFFRE && (
-          <MessageOffre infoOffre={message.infoOffre!} />
+          <MessageOffre infoOffre={message.infoOffre} />
         )}
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes.map(({ id, nom }) => (

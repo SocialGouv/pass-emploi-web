@@ -382,7 +382,10 @@ function docSnapshotToMessage(
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
     infoPiecesJointes: [],
-    infoOffre: undefined,
+    infoOffre: {
+      titre: '',
+      lien: '',
+    },
   }
 
   if (firebaseMessage.type === TypeMessage.MESSAGE_PJ) {
@@ -390,10 +393,8 @@ function docSnapshotToMessage(
   }
 
   if (firebaseMessage.type === TypeMessage.MESSAGE_OFFRE) {
-    message.infoOffre = {
-      titre: firebaseMessage.titreOffre!,
-      lien: firebaseMessage.lienOffre!,
-    }
+    message.infoOffre.lien = firebaseMessage.lienOffre!
+    message.infoOffre.titre = firebaseMessage.titreOffre!
   }
 
   return message

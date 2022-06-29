@@ -16,7 +16,7 @@ export interface Message {
   conseillerId: string | undefined
   type: TypeMessage
   infoPiecesJointes: InfoFichier[]
-  infoOffre: InfoOffre | undefined
+  infoOffre: InfoOffre
 }
 
 export interface MessagesOfADay {
