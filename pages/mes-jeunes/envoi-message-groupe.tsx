@@ -140,15 +140,17 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     openLeavePageConfirmationModal
   )
 
-  function handleFileUploadClick() {
+  function ouvrirSelectionFichier() {
     hiddenFileInput.current!.click()
   }
 
-  function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>) {
+  function ajouterFichier(event: ChangeEvent<HTMLInputElement>) {
     if (!event.target.files || !event.target.files[0]) return
 
     const fichierSelectionne = event.target.files[0]
     setFileSelected(fichierSelectionne)
+
+    hiddenFileInput.current!.value = ''
   }
 
   function enleverFichier() {
@@ -235,16 +237,20 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
               <Button
                 type='button'
                 style={ButtonStyle.SECONDARY}
-                onClick={handleFileUploadClick}
+                onClick={ouvrirSelectionFichier}
               >
-                <label htmlFor='piece-jointe-multi'>
+                <label
+                  htmlFor='piece-jointe-multi'
+                  onClick={(e) => e.preventDefault()}
+                  className='cursor-pointer'
+                >
                   Ajouter une pièce jointe
                 </label>
                 <input
                   id='piece-jointe-multi'
                   type='file'
                   ref={hiddenFileInput}
-                  onChange={handleFileUploadChange}
+                  onChange={ajouterFichier}
                   className='hidden'
                   accept='.pdf, .png, .jpeg, .jpg'
                 />
