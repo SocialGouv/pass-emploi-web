@@ -46,15 +46,15 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const [erreurMessage, setErreurMessage] = useState<string | undefined>(
     undefined
   )
-  const [fileSelected, setFileSelected] = useState<File | undefined>()
+  const [pieceJointe, setPieceJointe] = useState<File | undefined>()
   const hiddenFileInput = useRef<HTMLInputElement>(null)
+  const [isSending, setIsSending] = useState<boolean>(false)
 
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
 
   const initialTracking = 'Message - Rédaction'
-
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   function formIsValid(): boolean {
@@ -62,7 +62,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   }
 
   function formHasChanges(): boolean {
-    return Boolean(selectedJeunesIds.length || message)
+    return Boolean(selectedJeunesIds.length || message || pieceJointe)
   }
 
   function openLeavePageConfirmationModal(e?: MouseEvent) {
@@ -89,12 +89,13 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     if (!formIsValid()) return
 
     setConfirmBeforeLeaving(false)
+    setIsSending(true)
     try {
       let fileInfo: InfoFichier | undefined
-      if (fileSelected) {
+      if (pieceJointe) {
         fileInfo = await fichiersService.uploadFichier(
           selectedJeunesIds,
-          fileSelected,
+          pieceJointe,
           session!.accessToken
         )
       }
@@ -124,6 +125,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           : "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
       )
       setTrackingLabel('Message - Échec envoi message')
+    } finally {
+      setIsSending(false)
     }
   }
 
@@ -144,17 +147,17 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     hiddenFileInput.current!.click()
   }
 
-  function ajouterFichier(event: ChangeEvent<HTMLInputElement>) {
+  function ajouterPieceJointe(event: ChangeEvent<HTMLInputElement>) {
     if (!event.target.files || !event.target.files[0]) return
 
     const fichierSelectionne = event.target.files[0]
-    setFileSelected(fichierSelectionne)
+    setPieceJointe(fichierSelectionne)
 
     hiddenFileInput.current!.value = ''
   }
 
   function enleverFichier() {
-    setFileSelected(undefined)
+    setPieceJointe(undefined)
   }
 
   return (
@@ -236,13 +239,22 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             <div className='my-4'>
               <Button
                 type='button'
+                aria-controls='piece-jointe-multi'
+                aria-describedby='piece-jointe-multi--desc'
                 style={ButtonStyle.SECONDARY}
                 onClick={ouvrirSelectionFichier}
+                disabled={Boolean(pieceJointe)}
               >
+                <IconComponent
+                  name={IconName.File}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='h-4 w-4 mr-2'
+                />
                 <label
                   htmlFor='piece-jointe-multi'
-                  onClick={(e) => e.preventDefault()}
                   className='cursor-pointer'
+                  onClick={(e) => e.preventDefault()}
                 >
                   Ajouter une pièce jointe
                 </label>
@@ -250,24 +262,24 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                   id='piece-jointe-multi'
                   type='file'
                   ref={hiddenFileInput}
-                  onChange={ajouterFichier}
+                  onChange={ajouterPieceJointe}
                   className='hidden'
                   accept='.pdf, .png, .jpeg, .jpg'
                 />
               </Button>
             </div>
 
-            {fileSelected && (
+            {pieceJointe && (
               <div className='mb-4'>
                 <Multiselection
                   selection={[
                     {
-                      id: fileSelected.name,
-                      value: fileSelected.name,
+                      id: pieceJointe.name,
+                      value: pieceJointe.name,
                       withInfo: false,
                     },
                   ]}
-                  typeSelection={'fichier'}
+                  typeSelection='fichier'
                   unselect={enleverFichier}
                 />
               </div>
@@ -301,6 +313,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             disabled={!formIsValid()}
             className='flex items-center p-2'
             onClick={envoyerMessageGroupe}
+            isLoading={isSending}
           >
             <IconComponent
               name={IconName.Send}
