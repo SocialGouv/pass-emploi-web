@@ -276,11 +276,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       }),
     ])
 
+    const avecPieceJointe = Boolean(infoPieceJointe)
     await Promise.all([
       this.notifierNouveauMessage(conseiller.id, idsDestinataires, accessToken),
       this.evenementNouveauMessageMultiple(
         conseiller.structure,
         conseiller.id,
+        avecPieceJointe,
         accessToken
       ),
     ])
@@ -321,12 +323,15 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   private async evenementNouveauMessageMultiple(
     structure: string,
     idConseiller: string,
+    avecPieceJointe: boolean,
     accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
       '/evenements',
       {
-        type: 'MESSAGE_ENVOYE_MULTIPLE',
+        type: avecPieceJointe
+          ? 'MESSAGE_ENVOYE_MULTIPLE_PJ'
+          : 'MESSAGE_ENVOYE_MULTIPLE',
         emetteur: {
           type: UserType.CONSEILLER,
           structure: structure,

@@ -484,13 +484,12 @@ describe('MessagesFirebaseAndApiService', () => {
         })
       })
 
-      xit('tracks nouveau message groupé avec piece jointe', () => {
+      it('tracks nouveau message groupé avec piece jointe', () => {
         // Then
-        expect(true).toEqual(false)
         expect(apiClient.post).toHaveBeenCalledWith(
           '/evenements',
           {
-            type: 'MESSAGE_ENVOYE_MULTIPLE',
+            type: 'MESSAGE_ENVOYE_MULTIPLE_PJ',
             emetteur: {
               type: 'CONSEILLER',
               structure: UserStructure.MILO,
