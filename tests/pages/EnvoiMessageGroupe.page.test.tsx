@@ -280,6 +280,35 @@ describe('EnvoiMessageGroupe', () => {
           infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
         })
       })
+
+      it('envoi une pièce jointe à plusieurs destinataires avec un message par défaut', async () => {
+        // Given
+        await act(() => {
+          fireEvent.change(inputMessage, { target: { value: '' } })
+        })
+
+        // When
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
+          [jeunes[0].id, jeunes[1].id],
+          file,
+          'accessToken'
+        )
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
+          conseiller: {
+            id: '1',
+            structure: UserStructure.MILO,
+          },
+          idsDestinataires: [jeunes[0].id, jeunes[1].id],
+          newMessage:
+            'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
+          accessToken: 'accessToken',
+          cleChiffrement: 'cleChiffrement',
+          infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
+        })
+      })
     })
 
     describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {

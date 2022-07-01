@@ -58,7 +58,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   function formIsValid(): boolean {
-    return Boolean(selectedJeunesIds.length && message)
+    return Boolean(selectedJeunesIds.length && (message || pieceJointe))
   }
 
   function formHasChanges(): boolean {
@@ -353,7 +353,6 @@ export const getServerSideProps: GetServerSideProps<
 
   const referer: string | undefined = context.req.headers.referer
 
-  // FIXME hard refresh breaks referer
   const previousUrl =
     referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   return {
