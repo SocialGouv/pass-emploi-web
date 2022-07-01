@@ -151,6 +151,10 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     setFileSelected(fichierSelectionne)
   }
 
+  function enleverFichier() {
+    setFileSelected(undefined)
+  }
+
   return (
     <>
       {erreurMessage && (
@@ -258,7 +262,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                     },
                   ]}
                   typeSelection={'fichier'}
-                  unselect={() => undefined}
+                  unselect={enleverFichier}
                 />
               </div>
             )}

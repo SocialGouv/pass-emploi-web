@@ -250,6 +250,14 @@ describe('EnvoiMessageGroupe', () => {
         expect(screen.getByText('imageupload.png')).toBeInTheDocument()
       })
 
+      it('permet la suppression de la pièce jointe', async () => {
+        // When
+        await userEvent.click(screen.getByText('Enlever fichier'))
+
+        // Then
+        expect(() => screen.getByText('imageupload.png')).toThrow()
+      })
+
       it('envoi un message à plusieurs destinataires avec pièce jointe', async () => {
         // When
         await userEvent.click(submitButton)
