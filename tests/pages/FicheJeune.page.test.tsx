@@ -58,6 +58,40 @@ describe('Fiche Jeune', () => {
       ;(useRouter as jest.Mock).mockReturnValue({ replace })
     })
 
+    describe('pour tous les conseillers', () => {
+      let setIdJeune: (id: string | undefined) => void
+      beforeEach(async () => {
+        // Given
+        setIdJeune = jest.fn()
+
+        // When
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={[]}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
+            conseillers={[]}
+            pageTitle={''}
+          />,
+          { idJeuneSetter: setIdJeune }
+        )
+      })
+
+      it('permet de supprimer le jeune', async () => {
+        // Then
+        const link = screen.getByText('Supprimer ce compte')
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute(
+          'href',
+          `/mes-jeunes/${jeune.id}/suppression`
+        )
+      })
+    })
+
     describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
       let setIdJeune: (id: string | undefined) => void
       beforeEach(async () => {
@@ -393,16 +427,6 @@ describe('Fiche Jeune', () => {
         expect(
           screen.getByText('pas encore connecté', { exact: false })
         ).toBeInTheDocument()
-      })
-
-      it('permet de supprimer le jeune', async () => {
-        // Then
-        const link = screen.getByText('Supprimer ce compte')
-        expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute(
-          'href',
-          `/mes-jeunes/${jeune.id}/suppression`
-        )
       })
     })
 

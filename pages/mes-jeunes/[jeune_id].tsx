@@ -253,15 +253,13 @@ function FicheJeune({
           )}
         </div>
 
-        {!jeune.isActivated && (
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/suppression`}
-            style={ButtonStyle.SECONDARY}
-            className='w-fit'
-          >
-            Supprimer ce compte
-          </ButtonLink>
-        )}
+        <ButtonLink
+          href={`/mes-jeunes/${jeune.id}/suppression`}
+          style={ButtonStyle.SECONDARY}
+          className='w-fit'
+        >
+          Supprimer ce compte
+        </ButtonLink>
       </div>
 
       <DetailsJeune

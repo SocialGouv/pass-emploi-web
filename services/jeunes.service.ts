@@ -57,7 +57,13 @@ export interface JeunesService {
     accessToken: string
   ): Promise<void>
 
-  supprimerJeune(idJeune: string, accessToken: string): Promise<void>
+  supprimerJeuneInactif(idJeune: string, accessToken: string): Promise<void>
+  archiverJeune(
+    idJeune: string,
+    motif: string,
+    accessToken: string,
+    commentaire?: string
+  ): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -185,7 +191,26 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
-  async supprimerJeune(idJeune: string, accessToken: string): Promise<void> {
+  async supprimerJeuneInactif(
+    idJeune: string,
+    accessToken: string
+  ): Promise<void> {
     await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
+  }
+
+  async archiverJeune(
+    idJeune: string,
+    motif: string,
+    accessToken: string,
+    commentaire?: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/jeunes/archiver/${idJeune}`,
+      {
+        motif,
+        commentaire,
+      },
+      accessToken
+    )
   }
 }

@@ -207,13 +207,13 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.supprimerJeune', () => {
+  describe('.supprimerJeuneInactif', () => {
     it('supprime le jeune', async () => {
       // Given
       const accessToken = 'accessToken'
 
       // When
-      await jeunesService.supprimerJeune('id-jeune', accessToken)
+      await jeunesService.supprimerJeuneInactif('id-jeune', accessToken)
 
       // Then
       expect(apiClient.delete).toHaveBeenCalledWith(
@@ -222,6 +222,23 @@ describe('JeunesApiService', () => {
       )
     })
   })
+  describe('.archiverJeune', () => {
+    it('archive le jeune', async () => {
+      // Given
+      const accessToken = 'accessToken'
+
+      // When
+      await jeunesService.archiverJeune('id-jeune', 'test', accessToken)
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        `/jeunes/archiver/id-jeune`,
+        { motif: 'test', commentaire: undefined },
+        accessToken
+      )
+    })
+  })
+
   describe('.getConseillersDuJeune', () => {
     it('renvoie les conseillers du jeune', async () => {
       // Given
