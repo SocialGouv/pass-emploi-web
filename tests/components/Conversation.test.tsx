@@ -1,5 +1,5 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
-import userEvent  from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 import { Session } from 'next-auth'
 import React from 'react'
 
@@ -24,7 +24,7 @@ describe('<Conversation />', () => {
   let fichiersService: FichiersService
   let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
-  let rerender: (children : JSX.Element) => void
+  let rerender: (children: JSX.Element) => void
   const messagesParJour = desMessagesParJour()
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
@@ -75,7 +75,7 @@ describe('<Conversation />', () => {
         </DIProvider>,
         { user: conseiller }
       )
-      rerender = renderResult.rerender;
+      rerender = renderResult.rerender
     })
   })
 
@@ -109,12 +109,14 @@ describe('<Conversation />', () => {
       type: 'image/png',
     })
     const fileInput = screen.getByLabelText('Attacher une pièce jointe')
-    const messageInput = screen.getByPlaceholderText('Écrivez votre message ici...')
+    const messageInput = screen.getByPlaceholderText(
+      'Écrivez votre message ici...'
+    )
     await act(() => {
       fireEvent.change(fileInput, { target: { files: [file] } })
     })
-    await userEvent.type(messageInput,'TOTO');
-    
+    await userEvent.type(messageInput, 'TOTO')
+
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
       <DIProvider dependances={{ messagesService, fichiersService }}>
@@ -128,8 +130,9 @@ describe('<Conversation />', () => {
     // Then
     expect(() => screen.getByText('imageupload.png')).toThrow()
     expect(screen.getByLabelText('Message à envoyer')).toHaveValue('')
-    expect(screen.getByRole('button', {name : 'Envoyer le message'})).toHaveAttribute('disabled')
-
+    expect(
+      screen.getByRole('button', { name: 'Envoyer le message' })
+    ).toHaveAttribute('disabled')
   })
 
   const cases = messagesParJour.map((messagesDUnJour) => [messagesDUnJour])
