@@ -209,7 +209,7 @@ function FicheJeune({
       {showMessageGroupeEnvoiSuccess && (
         <SuccessMessage
           label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
+            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires'
           }
           onAcknowledge={closeMessage}
         />

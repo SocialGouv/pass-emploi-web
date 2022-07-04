@@ -1,9 +1,7 @@
 import { useRef, useState } from 'react'
 
-import RemoveIcon from '../../assets/icons/remove.svg'
-
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
+import Multiselection from 'components/ui/Multiselection'
 import SelectAutocomplete from 'components/ui/SelectAutocomplete'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 
@@ -123,50 +121,16 @@ export default function JeunesMultiselectAutocomplete({
         {typeSelection} ({selectedJeunes.length})
       </p>
       {selectedJeunes.length > 0 && (
-        <ul
-          aria-labelledby='selected-jeunes--title'
-          id='selected-jeunes'
-          role='region'
-          className='bg-grey_100 rounded-[12px] px-2 py-4 max-h-96 overflow-y-auto'
-          aria-live='polite'
-          aria-relevant='additions removals'
-        >
-          {selectedJeunes.map(({ id, value }) => (
-            <li
-              key={id}
-              className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
-              aria-atomic={true}
-            >
-              {estJeuneDUnAutrePortefeuille(id) && (
-                <div className='flex items-center text-base-medium text-accent_3'>
-                  <div
-                    title="Ce jeune n'est pas dans votre portefeuille"
-                    aria-label="Ce jeune n'est pas dans votre portefeuille"
-                    className='mr-2'
-                  >
-                    <IconComponent
-                      name={IconName.Info}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='w-6 h-6 fill-accent_3'
-                    />
-                  </div>
-                  {value}
-                </div>
-              )}
-              {!estJeuneDUnAutrePortefeuille(id) && value}
-
-              <button
-                type='reset'
-                title='Enlever'
-                onClick={() => unselectJeune(id)}
-              >
-                <span className='sr-only'>Enlever le jeune</span>
-                <RemoveIcon focusable={false} aria-hidden={true} />
-              </button>
-            </li>
-          ))}
-        </ul>
+        <Multiselection
+          selection={selectedJeunes.map(({ id, value }) => ({
+            id,
+            value,
+            withInfo: estJeuneDUnAutrePortefeuille(id),
+          }))}
+          typeSelection='jeune'
+          infoLabel={`Ce jeune n'est pas dans votre portefeuille`}
+          unselect={unselectJeune}
+        />
       )}
     </>
   )

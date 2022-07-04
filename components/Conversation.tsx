@@ -16,7 +16,10 @@ import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
-import { FormNouveauMessage, MessagesService } from 'services/messages.service'
+import {
+  FormNouveauMessageIndividuel,
+  MessagesService,
+} from 'services/messages.service'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
@@ -61,7 +64,7 @@ export default function Conversation({
     event.preventDefault()
     if (!(newMessage || Boolean(uploadedFileInfo)) || isFileUploading) return
 
-    const formNouveauMessage: FormNouveauMessage = {
+    const formNouveauMessage: FormNouveauMessageIndividuel = {
       conseiller: {
         id: session!.user.id,
         structure: session!.user.structure,

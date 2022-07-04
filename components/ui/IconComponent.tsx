@@ -32,6 +32,7 @@ import LaunchIcon from '../../assets/icons/launch.svg'
 import LogoutIcon from '../../assets/icons/logout.svg'
 import PeopleIcon from '../../assets/icons/people.svg'
 import ProfilIcon from '../../assets/icons/profil.svg'
+import RemoveIcon from '../../assets/icons/remove.svg'
 import RendezVousIcon from '../../assets/icons/rendez-vous.svg'
 import RoundedCloseIcon from '../../assets/icons/rounded_close.svg'
 import SearchIcon from '../../assets/icons/search.svg'
@@ -72,6 +73,7 @@ export enum IconName {
   Logout = 'Logout',
   People = 'People',
   Profil = 'Profil',
+  Remove = 'Remove',
   RendezVous = 'RendezVous',
   RoundedClose = 'RoundedClose',
   Search = 'Search',
@@ -113,6 +115,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Logout]: LogoutIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
+  [IconName.Remove]: RemoveIcon,
   [IconName.RendezVous]: RendezVousIcon,
   [IconName.RoundedClose]: RoundedCloseIcon,
   [IconName.Search]: SearchIcon,
