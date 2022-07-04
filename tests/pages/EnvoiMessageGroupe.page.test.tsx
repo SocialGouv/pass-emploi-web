@@ -1,6 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -19,6 +18,7 @@ import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
 import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { ApiError } from 'utils/httpClient'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('components/Modal')
@@ -195,12 +195,12 @@ describe('EnvoiMessageGroupe', () => {
         ).toBeInTheDocument()
       })
 
-      it("devrait afficher un message d'erreur en cas d'échec de l'envoi du message", async () => {
+      it("affiche un message d'erreur en cas d'échec de l'envoi du message", async () => {
         // Given
         const messageErreur =
           "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
         ;(
-          messagesService.sendNouveauMessageGroupe as Mock<any>
+          messagesService.sendNouveauMessageGroupe as jest.Mock
         ).mockRejectedValue({
           message: 'whatever',
         })
@@ -308,6 +308,24 @@ describe('EnvoiMessageGroupe', () => {
           cleChiffrement: 'cleChiffrement',
           infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
         })
+      })
+
+      it("affiche un message d'erreur en cas d'échec de l'upload de la pièce jointe", async () => {
+        // Given
+        const messageErreur = 'Le poids du document dépasse 5Mo'
+        ;(fichiersService.uploadFichier as jest.Mock).mockRejectedValue(
+          new ApiError(400, messageErreur)
+        )
+
+        // When
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(1)
+        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
+          0
+        )
+        expect(screen.getByText(messageErreur)).toBeInTheDocument()
       })
     })
 

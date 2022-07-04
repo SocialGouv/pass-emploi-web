@@ -10,6 +10,7 @@ import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { InputError } from 'components/ui/InputError'
 import Multiselection from 'components/ui/Multiselection'
 import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
@@ -43,12 +44,13 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
-  const [erreurMessage, setErreurMessage] = useState<string | undefined>(
-    undefined
-  )
   const [pieceJointe, setPieceJointe] = useState<File | undefined>()
   const hiddenFileInput = useRef<HTMLInputElement>(null)
   const [isSending, setIsSending] = useState<boolean>(false)
+  const [erreurUploadPieceJointe, setErreurUploadPieceJointe] = useState<
+    string | undefined
+  >(undefined)
+  const [erreurEnvoi, setErreurEnvoi] = useState<string | undefined>(undefined)
 
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
@@ -90,8 +92,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
     setConfirmBeforeLeaving(false)
     setIsSending(true)
+
+    let fileInfo: InfoFichier | undefined
     try {
-      let fileInfo: InfoFichier | undefined
       if (pieceJointe) {
         fileInfo = await fichiersService.uploadFichier(
           selectedJeunesIds,
@@ -99,7 +102,19 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           session!.accessToken
         )
       }
+    } catch (error) {
+      setErreurUploadPieceJointe(
+        error instanceof ApiError
+          ? error.message
+          : 'Suite à un problème inconnu le téléversement de la pièce jointe a échoué. Vous pouvez réessayer.'
+      )
+      setTrackingLabel('Message - Échec upload pièce jointe')
+      setConfirmBeforeLeaving(true)
+      setIsSending(false)
+      return
+    }
 
+    try {
       const formNouveauMessage: FormNouveauMessageGroupe = {
         conseiller: {
           id: session!.user.id,
@@ -118,12 +133,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
       await router.push(`${returnTo}?envoiMessage=succes`)
     } catch (error) {
-      setConfirmBeforeLeaving(true)
-      setErreurMessage(
+      setErreurEnvoi(
         error instanceof ApiError
           ? error.message
           : "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
       )
+      setConfirmBeforeLeaving(true)
       setTrackingLabel('Message - Échec envoi message')
     } finally {
       setIsSending(false)
@@ -131,7 +146,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   }
 
   function clearDeletionError(): void {
-    setErreurMessage(undefined)
+    setErreurEnvoi(undefined)
     setTrackingLabel(initialTracking)
   }
 
@@ -162,9 +177,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
   return (
     <>
-      {erreurMessage && (
+      {erreurEnvoi && (
         <FailureMessage
-          label={erreurMessage}
+          label={erreurEnvoi}
           onAcknowledge={clearDeletionError}
         />
       )}
@@ -219,7 +234,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             name='message'
             rows={10}
             className={`w-full text-sm p-4  border border-solid border-black rounded-medium mt-4 ${
-              erreurMessage ? 'mb-[8px]' : 'mb-8'
+              erreurEnvoi ? 'mb-[8px]' : 'mb-8'
             }`}
             onChange={(e) => setMessage(e.target.value)}
             required
@@ -262,6 +277,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                   id='piece-jointe-multi'
                   type='file'
                   ref={hiddenFileInput}
+                  aria-describedby={
+                    erreurUploadPieceJointe
+                      ? 'piece-jointe-multi--error'
+                      : undefined
+                  }
+                  aria-invalid={erreurUploadPieceJointe ? true : undefined}
                   onChange={ajouterPieceJointe}
                   className='hidden'
                   accept='.pdf, .png, .jpeg, .jpg'
@@ -283,6 +304,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                   unselect={enleverFichier}
                 />
               </div>
+            )}
+
+            {erreurUploadPieceJointe && (
+              <InputError id='piece-jointe-multi--error' className='mb-4'>
+                {erreurUploadPieceJointe}
+              </InputError>
             )}
           </div>
         </fieldset>
@@ -327,6 +354,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         {showLeavePageModal && (
           <LeavePageConfirmationModal
             message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
+            commentaire='Toutes les informations saisies seront perdues ainsi que les pièces jointes attachées.'
             onCancel={closeLeavePageConfirmationModal}
             destination={returnTo}
           />
