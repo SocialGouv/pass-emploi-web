@@ -29,6 +29,7 @@
   background-color: theme('colors.primary');
 }
 
+/*TODO remettre au bon endroit */
 .sidebar nav a {
   display: flex;
   align-items: center;
@@ -51,7 +52,7 @@
 .content {
   flex-grow: 1;
   width: 100%;
-  padding: 1.5rem;
+  padding: 2rem;
 }
 
 .content.content_without_chat {
@@ -74,22 +75,13 @@
   background-color: theme('colors.grey_100');
 }
 
-@media screen and (max-width: theme('screens.layout_s')) {
-  .sidebar {
-    --sidebar-width: 64px;
+@media screen and (max-width: theme('screens.layout_l.max')) {
+  .content {
+    padding: 1.5rem;
   }
 }
 
 @media screen and (max-width: theme('screens.layout_base.max')) {
-  .sidebar {
-    padding: 24px 12px;
-  }
-  .content {
-    padding: 1rem;
-  }
-}
-
-@media screen and (max-width: theme('screens.layout_m.max')) {
   .container {
     grid-template-columns: 10vw 90vw;
   }
@@ -104,14 +96,20 @@
   }
 }
 
-@media screen and (max-width: theme('screens.layout_base.max')) {
+@media screen and (max-width: theme('screens.layout_s.max')) {
+  .sidebar {
+    padding: 24px 12px;
+  }
+  .content {
+    padding: 1rem;
+  }
   .footer ul {
     flex-direction: column;
   }
 }
 
-@media screen and (min-width: theme('screens.layout_xl')) {
-  .content {
-    padding: 2rem;
+@media screen and (max-width: theme('screens.layout_xs.max')) {
+  .sidebar {
+    --sidebar-width: 64px;
   }
 }
