@@ -8,7 +8,8 @@ const customJestConfig = {
   clearMocks: true,
   moduleDirectories: ['node_modules', '<rootDir>/'],
   moduleNameMapper: {
-    '\\.svg$': '<rootDir>/assets/__mocks__/SvgrMock.jsx',
+    // https://github.com/vercel/next.js/pull/36787
+    '^.+\\.(svg)$': '<rootDir>/assets/__mocks__/SvgrMock.jsx',
   },
   restoreMocks: true,
   setupFilesAfterEnv: ['./setupTests.js'],
