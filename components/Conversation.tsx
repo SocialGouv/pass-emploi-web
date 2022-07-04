@@ -172,10 +172,10 @@ export default function Conversation({
 
   useEffect(() => {
     if (uploadedFileInfo) {
-      deleteFile();
+      deleteFile()
     }
-    inputRef.current!.value = "";
-    setNewMessage('');
+    inputRef.current!.value = ''
+    setNewMessage('')
   }, [jeuneChat.chatId])
 
   return (
