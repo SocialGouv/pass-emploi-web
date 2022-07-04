@@ -14,7 +14,7 @@ import {
   MetadonneesActionsJson,
 } from 'interfaces/json/action'
 import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 export interface ActionsService {
   getAction(
@@ -68,7 +68,7 @@ export class ActionsApiService implements ActionsService {
         jeune: jsonToBaseJeune(jeune),
       }
     } catch (e) {
-      if (e instanceof RequestError) return undefined
+      if (e instanceof ApiError) return undefined
       throw e
     }
   }

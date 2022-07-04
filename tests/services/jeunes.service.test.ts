@@ -11,7 +11,7 @@ import {
 import { JeuneFromListe } from 'interfaces/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 describe('JeunesApiService', () => {
   let apiClient: ApiClient
@@ -118,7 +118,7 @@ describe('JeunesApiService', () => {
     it("renvoie undefined si le jeune n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Jeune non trouvé', 'Not Found')
+        new ApiError(404, 'Jeune non trouvé')
       )
 
       // When
@@ -156,7 +156,7 @@ describe('JeunesApiService', () => {
     it("renvoie undefined si le jeune n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Numero dossier non trouvé', 'Not Found')
+        new ApiError(404, 'Numero dossier non trouvé')
       )
 
       // When

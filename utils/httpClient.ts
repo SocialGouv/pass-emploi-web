@@ -54,26 +54,17 @@ export default class HttpClient {
 
     const json: any = await response.json()
     const message = json?.message || response.statusText
-    const error =
-      response.status < 500
-        ? new RequestError(message, json?.code ?? response.statusText)
-        : new ServerError(message)
+    const error = new ApiError(response.status, message)
     console.error('fetchJson error', error)
     captureRUMError(error)
     throw error
   }
 }
 
-export class RequestError implements Error {
-  name = 'REQUEST_ERROR'
+export class ApiError implements Error {
+  name = 'API_ERROR'
 
-  constructor(readonly message: string, readonly code?: string) {}
-}
-
-export class ServerError implements Error {
-  name = 'SERVER_ERROR'
-
-  constructor(readonly message: string) {}
+  constructor(readonly status: number, readonly message: string) {}
 }
 
 export class UnexpectedError implements Error {

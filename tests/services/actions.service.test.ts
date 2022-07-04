@@ -8,7 +8,7 @@ import {
 import { StatutAction } from 'interfaces/action'
 import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 describe('ActionsApiService', () => {
   let apiClient: ApiClient
@@ -104,7 +104,7 @@ describe('ActionsApiService', () => {
     it('ne renvoie pas une action inexistante', async () => {
       // GIVEN
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Action non trouvée', 'NON_TROUVE')
+        new ApiError(404, 'Action non trouvée')
       )
 
       // WHEN

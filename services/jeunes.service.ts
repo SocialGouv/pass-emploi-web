@@ -15,8 +15,7 @@ import {
   jsonToDetailJeune,
   jsonToItemJeune,
 } from 'interfaces/json/jeune'
-import ErrorCodes from 'services/error-codes'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 export interface JeunesService {
   getJeunesDuConseiller(
@@ -86,7 +85,7 @@ export class JeunesApiService implements JeunesService {
       )
       return jsonToDetailJeune(jeune)
     } catch (e) {
-      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+      if (e instanceof ApiError && e.status === 404) {
         return undefined
       }
       throw e
@@ -104,7 +103,7 @@ export class JeunesApiService implements JeunesService {
         >(`/jeunes/${idJeune}/conseillers`, accessToken)
         return historique.map(toConseillerHistorique)
       } catch (e) {
-        if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+        if (e instanceof ApiError && e.status === 404) {
           return []
         }
         throw e
@@ -155,7 +154,7 @@ export class JeunesApiService implements JeunesService {
       )
       return id
     } catch (e) {
-      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+      if (e instanceof ApiError && e.status === 404) {
         return undefined
       }
       throw e

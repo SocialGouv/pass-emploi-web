@@ -7,8 +7,7 @@ import {
   RdvJson,
 } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-import ErrorCodes from 'services/error-codes'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 export interface RendezVousService {
   getRendezVousConseiller(
@@ -81,7 +80,7 @@ export class RendezVousApiService implements RendezVousService {
       )
       return jsonToRdv(rdvJson)
     } catch (e) {
-      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+      if (e instanceof ApiError && e.status === 404) {
         return undefined
       }
       throw e
