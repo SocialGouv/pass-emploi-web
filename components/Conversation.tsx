@@ -150,12 +150,12 @@ export default function Conversation({
     }
   }
 
-  async function handleFileDeleteClick() {
+  async function deleteFile() {
+    setUploadedFileInfo(undefined)
     await fichiersService.deleteFichier(
       uploadedFileInfo!.id,
       session!.accessToken
     )
-    setUploadedFileInfo(undefined)
   }
 
   useEffect(() => {
@@ -169,6 +169,14 @@ export default function Conversation({
     const unsubscribe = observerLastJeuneReadingDate(jeuneChat.chatId)
     return () => unsubscribe()
   }, [jeuneChat.chatId, observerLastJeuneReadingDate])
+
+  useEffect(() => {
+    if (uploadedFileInfo) {
+      deleteFile();
+    }
+    inputRef.current!.value = "";
+    setNewMessage('');
+  }, [jeuneChat.chatId])
 
   return (
     <div className='h-full flex flex-col bg-grey_100'>
@@ -270,7 +278,7 @@ export default function Conversation({
                 <button
                   type='button'
                   aria-label='Supprimer la pièce jointe'
-                  onClick={handleFileDeleteClick}
+                  onClick={deleteFile}
                 >
                   <IconComponent
                     name={IconName.RoundedClose}

@@ -1,4 +1,5 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
+import userEvent  from '@testing-library/user-event'
 import { Session } from 'next-auth'
 import React from 'react'
 
@@ -23,6 +24,7 @@ describe('<Conversation />', () => {
   let fichiersService: FichiersService
   let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
+  let rerender: (children : JSX.Element) => void
   const messagesParJour = desMessagesParJour()
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
@@ -63,7 +65,7 @@ describe('<Conversation />', () => {
     }
 
     await act(async () => {
-      await renderWithSession(
+      const renderResult = await renderWithSession(
         <DIProvider dependances={{ messagesService, fichiersService }}>
           <Conversation
             jeuneChat={jeuneChat}
@@ -73,6 +75,7 @@ describe('<Conversation />', () => {
         </DIProvider>,
         { user: conseiller }
       )
+      rerender = renderResult.rerender;
     })
   })
 
@@ -98,6 +101,37 @@ describe('<Conversation />', () => {
       jeuneChat.chatId,
       expect.any(Function)
     )
+  })
+
+  it('supprime les inputs qui ont commencé a étre saisis (fichier et texte) quand il est rechanger', async () => {
+    // Given
+    let file = new File(['un contenu'], 'imageupload.png', {
+      type: 'image/png',
+    })
+    const fileInput = screen.getByLabelText('Attacher une pièce jointe')
+    const messageInput = screen.getByPlaceholderText('Écrivez votre message ici...')
+    await act(() => {
+      fireEvent.change(fileInput, { target: { files: [file] } })
+    })
+    await userEvent.type(messageInput,'TOTO');
+    expect(screen.getByText('imageupload.png')).toBeInTheDocument()
+    expect(screen.getByLabelText('Message à envoyer')).toHaveValue('TOTO')
+    
+    const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
+    rerender(
+      <DIProvider dependances={{ messagesService, fichiersService }}>
+        <Conversation
+          jeuneChat={newJeuneChat}
+          conseillers={conseillersJeunes}
+          onBack={onBack}
+        />
+      </DIProvider>
+    )
+    // Then
+    expect(() => screen.getByText('imageupload.png')).toThrow()
+    expect(screen.getByLabelText('Message à envoyer')).toHaveValue('')
+    expect(screen.getByRole('button', {name : 'Envoyer le message'})).toHaveAttribute('disabled')
+
   })
 
   const cases = messagesParJour.map((messagesDUnJour) => [messagesDUnJour])

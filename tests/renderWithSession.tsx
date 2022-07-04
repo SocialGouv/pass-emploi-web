@@ -25,7 +25,7 @@ export default function renderWithSession(
 
   const session = { ...defaultSession, ...customSession }
 
-  return render(
+  const renderResult = render(
     <SessionProvider session={session}>
       <ChatCredentialsProvider
         credentials={{
@@ -37,4 +37,21 @@ export default function renderWithSession(
       </ChatCredentialsProvider>
     </SessionProvider>
   )
+
+  const rerender = renderResult.rerender
+  renderResult.rerender = (rerenderChildren: JSX.Element) =>
+    rerender(
+      <SessionProvider session={session}>
+        <ChatCredentialsProvider
+          credentials={{
+            token: 'firebaseToken',
+            cleChiffrement: 'cleChiffrement',
+          }}
+        >
+          {rerenderChildren}
+        </ChatCredentialsProvider>
+      </SessionProvider>
+    )
+
+  return renderResult
 }
