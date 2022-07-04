@@ -188,7 +188,9 @@ function EditionRdv({
           message={`Vous allez quitter la ${
             rdv ? 'modification du' : 'création d’un nouveau'
           } rendez-vous`}
-          source={rdv ? 'edition' : 'creation'}
+          commentaire={`Toutes les informations ${
+            rdv ? 'modifiées' : 'saisies'
+          } seront perdues`}
           onCancel={closeLeavePageModal}
           destination={returnTo}
         />
