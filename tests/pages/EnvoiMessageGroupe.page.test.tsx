@@ -92,7 +92,7 @@ describe('EnvoiMessageGroupe', () => {
       it('permet l’ajout d’une pièce jointe', () => {
         // Then
         expect(fileInput).toBeInTheDocument()
-        expect(screen.getByText(/Taille maximum autorisé/)).toBeInTheDocument()
+        expect(screen.getByText(/Taille maximum autorisée/)).toBeInTheDocument()
         expect(
           screen.getByText(/Attention à ne pas partager de données sensibles/)
         ).toBeInTheDocument()

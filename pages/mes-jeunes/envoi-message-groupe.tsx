@@ -208,7 +208,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             htmlFor='message'
             className='flex text-base-medium items-center'
           >
-            <span aria-hidden='true'>*</span> Message
+            <span aria-hidden='true'>*</span>&nbsp;Message
             <span className='ml-2'>
               <BulleMessageSensible />
             </span>
@@ -219,7 +219,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             name='message'
             rows={10}
             className={`w-full text-sm p-4  border border-solid border-black rounded-medium mt-4 ${
-              erreurMessage ? 'mb-[8px]' : 'mb-14'
+              erreurMessage ? 'mb-[8px]' : 'mb-8'
             }`}
             onChange={(e) => setMessage(e.target.value)}
             required
