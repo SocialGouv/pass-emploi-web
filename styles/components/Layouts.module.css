@@ -1,8 +1,8 @@
 .container {
   --sidebar-width: 15vw;
-  --page-width: 85vw;
-  --page-width-with-chat: calc(var(--page-width) - var(--chat-width));
+  --page-width: calc(100vw - var(--sidebar-width));
   --chat-width: 24vw;
+  --page-width-when-chat: calc(var(--page-width) - var(--chat-width));
 
   display: grid;
   grid-template-areas: 'sidebar page';
@@ -13,7 +13,7 @@
 
 .container.container_with_chat {
   grid-template-areas: 'sidebar page chat';
-  grid-template-columns: var(--sidebar-width) var(--page-width-with-chat) var(
+  grid-template-columns: var(--sidebar-width) var(--page-width-when-chat) var(
       --chat-width
     );
 }
@@ -83,10 +83,8 @@
 
 @media screen and (max-width: theme('screens.layout_base.max')) {
   .container {
-    grid-template-columns: 10vw 90vw;
-  }
-  .container.container_with_chat {
-    grid-template-columns: 10vw 70vw 20vw;
+    --sidebar-width: 10vw;
+    --chat-width: 20vw;
   }
   .sidebar a {
     justify-content: center;
@@ -109,7 +107,13 @@
 }
 
 @media screen and (max-width: theme('screens.layout_xs.max')) {
+  .container {
+    --sidebar-width: 0;
+    --page-width-when-chat: 0;
+    --chat-width: 100vw;
+  }
+
   .sidebar {
-    --sidebar-width: 64px;
+    display: none;
   }
 }
