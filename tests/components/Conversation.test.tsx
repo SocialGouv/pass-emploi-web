@@ -105,7 +105,7 @@ describe('<Conversation />', () => {
 
   it('supprime les inputs qui ont commencé a étre saisis (fichier et texte) quand il est rechanger', async () => {
     // Given
-    let file = new File(['un contenu'], 'imageupload.png', {
+    const file = new File(['un contenu'], 'imageupload.png', {
       type: 'image/png',
     })
     const fileInput = screen.getByLabelText('Attacher une pièce jointe')
@@ -114,8 +114,6 @@ describe('<Conversation />', () => {
       fireEvent.change(fileInput, { target: { files: [file] } })
     })
     await userEvent.type(messageInput,'TOTO');
-    expect(screen.getByText('imageupload.png')).toBeInTheDocument()
-    expect(screen.getByLabelText('Message à envoyer')).toHaveValue('TOTO')
     
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
