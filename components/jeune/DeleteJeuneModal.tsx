@@ -4,17 +4,11 @@ import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { DetailJeune } from 'interfaces/jeune'
-import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-//todo: exporter
-export enum TypesMotifsSuppression {
-  SORTIE_POSITIVE_DU_CEJ = 'Sortie positive du CEJ',
-  RADIATION_DU_CEJ = 'Radiation du CEJ',
-  RECREATION_D_UN_COMPTE_JEUNE = "Recréation d'un compte jeune",
-  AUTRE = 'Autre',
-}
-
-export type MotifsSuppression = TypesMotifsSuppression[]
+import {
+  DetailJeune,
+  MotifsSuppression,
+  TypesMotifsSuppression,
+} from 'interfaces/jeune'
 
 interface DeleteJeuneModalProps {
   jeune: DetailJeune
@@ -121,7 +115,9 @@ export default function DeleteJeuneModal({
             >
               <option aria-hidden hidden disabled value={''} />
               {motifs?.map((motif) => (
-                <option value={motif}>{motif}</option>
+                <option key='lala' value={motif}>
+                  {motif}
+                </option>
               ))}
             </select>
 

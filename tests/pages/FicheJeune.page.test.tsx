@@ -77,6 +77,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
           />,
           { idJeuneSetter: setIdJeune }
         )
@@ -137,6 +138,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
+            motifsSuppression={[]}
           />,
           { idJeuneSetter: setIdJeune }
         )
@@ -247,6 +249,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={conseillers}
             pageTitle={''}
+            motifsSuppression={[]}
           />
         )
 
@@ -270,6 +273,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
           />,
           {
             customSession: {
@@ -338,6 +342,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
             />,
             {
               customSession: {
@@ -382,6 +387,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
             />,
             {
               customSession: {
@@ -420,6 +426,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
           />
         )
 
@@ -445,6 +452,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
           />
         )
       })
@@ -471,6 +479,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
           />
         )
 
@@ -494,6 +503,7 @@ describe('Fiche Jeune', () => {
             rdvCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
           />
         )
       })
@@ -541,6 +551,7 @@ describe('Fiche Jeune', () => {
             }}
             rdvModificationSuccess={true}
             pageTitle={''}
+            motifsSuppression={[]}
           />
         )
       })
@@ -588,6 +599,7 @@ describe('Fiche Jeune', () => {
             actionCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
           />
         )
       })
@@ -632,6 +644,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            motifsSuppression={[]}
             onglet={Onglet.ACTIONS}
           />
         )
@@ -668,6 +681,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />,
             { customDependances: { actionsService } }
@@ -839,6 +853,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -864,6 +879,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -892,6 +908,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -920,6 +937,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -949,6 +967,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -978,6 +997,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1007,6 +1027,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1035,6 +1056,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1076,6 +1098,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
+            motifsSuppression={[]}
             onglet={Onglet.ACTIONS}
           />,
           { customDependances: { actionsService } }
