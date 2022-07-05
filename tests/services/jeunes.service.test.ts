@@ -1,3 +1,8 @@
+import {
+  MotifsSuppression,
+  TypesMotifsSuppression,
+} from '../../components/jeune/DeleteJeuneModal'
+
 import { ApiClient } from 'clients/api.client'
 import { unConseiller } from 'fixtures/conseiller'
 import {
@@ -258,6 +263,32 @@ describe('JeunesApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(desConseillersJeune())
+    })
+  })
+  describe('.getMotifsSuppression', () => {
+    it('renvoie les motifs de suppression', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      const motifs: MotifsSuppression = [
+        TypesMotifsSuppression.SORTIE_POSITIVE_DU_CEJ,
+        TypesMotifsSuppression.RADIATION_DU_CEJ,
+        TypesMotifsSuppression.RECREATION_D_UN_COMPTE_JEUNE,
+        TypesMotifsSuppression.AUTRE,
+      ]
+
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: motifs,
+      })
+
+      // When
+      const actual = await jeunesService.getMotifsSuppression(accessToken)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/referentiels/motifs-suppression-jeune',
+        accessToken
+      )
+      expect(actual).toEqual(motifs)
     })
   })
 })

@@ -102,7 +102,7 @@ describe('Fiche Jeune', () => {
           ).toBeInTheDocument()
         })
 
-        it('affiche la seconde modale pour confirmer la suppression du compte d`un bénéficiare actif', async () => {
+        it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
           // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
           await userEvent.click(deleteButton)

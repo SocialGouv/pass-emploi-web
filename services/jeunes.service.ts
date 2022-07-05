@@ -1,3 +1,5 @@
+import { MotifsSuppression } from '../components/jeune/DeleteJeuneModal'
+
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import {
@@ -58,12 +60,15 @@ export interface JeunesService {
   ): Promise<void>
 
   supprimerJeuneInactif(idJeune: string, accessToken: string): Promise<void>
+
   archiverJeune(
     idJeune: string,
     motif: string,
     accessToken: string,
     commentaire?: string
   ): Promise<void>
+
+  getMotifsSuppression(accessToken: string): Promise<MotifsSuppression[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -212,5 +217,15 @@ export class JeunesApiService implements JeunesService {
       },
       accessToken
     )
+  }
+
+  async getMotifsSuppression(
+    accessToken: string
+  ): Promise<MotifsSuppression[]> {
+    const { content: motifs } = await this.apiClient.get<MotifsSuppression[]>(
+      '/referentiels/motifs-suppression-jeune',
+      accessToken
+    )
+    return motifs
   }
 }

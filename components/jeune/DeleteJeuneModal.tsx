@@ -6,33 +6,46 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DetailJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
+//todo: exporter
+export enum TypesMotifsSuppression {
+  SORTIE_POSITIVE_DU_CEJ = 'Sortie positive du CEJ',
+  RADIATION_DU_CEJ = 'Radiation du CEJ',
+  RECREATION_D_UN_COMPTE_JEUNE = "Recréation d'un compte jeune",
+  AUTRE = 'Autre',
+}
+
+export type MotifsSuppression = TypesMotifsSuppression[]
 
 interface DeleteJeuneModalProps {
   jeune: DetailJeune
+  motifs: MotifsSuppression[]
   onClose: () => void
+  submitDelete?: () => Promise<void>
 }
 
 export default function DeleteJeuneModal({
   jeune,
+  motifs,
   onClose,
 }: DeleteJeuneModalProps) {
   const [showModal1, setShowModal1] = useState<boolean>(true)
   const [showModal2, setShowModal2] = useState<boolean>(false)
 
+  const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<string>('')
   function openModal2() {
     setShowModal1(false)
     setShowModal2(true)
   }
 
-  // function handleSelectedMotifSuppressionJeune(
-  //   e: ChangeEvent<HTMLSelectElement>
-  // ) {
-  //   setMotifSuppressionJeune(e.target.value)
-  // }
+  function handleSelectedMotifSuppressionJeune(
+    e: ChangeEvent<HTMLSelectElement>
+  ) {
+    setMotifSuppressionJeune(e.target.value)
+  }
 
   // function handleSoumettreSuppression(e: FormEvent) {
   //   e.preventDefault()
-
+  //
   //   const payload: SuppressionJeuneFormData = {
   //     motif: motifSuppressionJeune,
   //   }
@@ -91,7 +104,7 @@ export default function DeleteJeuneModal({
           />
           <InformationMessage content='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
 
-          {/* <form onSubmit={handleSoumettreSuppression}>
+          <form>
             <label htmlFor='motifSuppression'>Motif de suppression</label>
             <select
               id='motifSuppression'
@@ -102,17 +115,15 @@ export default function DeleteJeuneModal({
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
             >
               <option aria-hidden hidden disabled value={''} />
-              {['motfi', 'Autre'].map((motif) => (
-                <option key={motif} value={motif}>
-                  {motif}
-                </option>
+              {motifs?.map((motif) => (
+                <option value={motif}>{motif}</option>
               ))}
             </select>
-          </form> */}
+          </form>
           <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
             Annuler
           </Button>
-          <Button type='button' style={ButtonStyle.PRIMARY}>
+          <Button type='submit' style={ButtonStyle.PRIMARY}>
             Confirmer
           </Button>
         </Modal>

@@ -7,7 +7,9 @@ import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
-import DeleteJeuneModal from 'components/jeune/DeleteJeuneModal'
+import DeleteJeuneModal, {
+  MotifsSuppression,
+} from 'components/jeune/DeleteJeuneModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
@@ -58,6 +60,7 @@ interface FicheJeuneProps extends PageProps {
   actionCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
   onglet?: Onglet
+  motifsSuppression: MotifsSuppression[]
 }
 
 function FicheJeune({
@@ -71,6 +74,7 @@ function FicheJeune({
   actionCreationSuccess,
   messageEnvoiGroupeSuccess,
   onglet,
+  motifsSuppression,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
 
@@ -234,7 +238,11 @@ function FicheJeune({
       )}
 
       {showDeleteJeuneModal && (
-        <DeleteJeuneModal jeune={jeune} onClose={closeDeleteJeuneModal} />
+        <DeleteJeuneModal
+          jeune={jeune}
+          onClose={closeDeleteJeuneModal}
+          motifs={motifsSuppression}
+        />
       )}
 
       {!jeune.isActivated && (
@@ -382,29 +390,31 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, conseillers, rdvs, actions] = await Promise.all([
-    jeunesService.getJeuneDetails(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    jeunesService.getConseillersDuJeune(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    isPoleEmploi
-      ? []
-      : rendezVousService.getRendezVousJeune(
-          context.query.jeune_id as string,
-          accessToken
-        ),
-    isPoleEmploi
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : actionsService.getActionsJeune(
-          context.query.jeune_id as string,
-          { page, statuts: [] },
-          accessToken
-        ),
-  ])
+  const [jeune, conseillers, rdvs, actions, motifsSuppression] =
+    await Promise.all([
+      jeunesService.getJeuneDetails(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getConseillersDuJeune(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      isPoleEmploi
+        ? []
+        : rendezVousService.getRendezVousJeune(
+            context.query.jeune_id as string,
+            accessToken
+          ),
+      isPoleEmploi
+        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+        : actionsService.getActionsJeune(
+            context.query.jeune_id as string,
+            { page, statuts: [] },
+            accessToken
+          ),
+      jeunesService.getMotifsSuppression(accessToken),
+    ])
 
   if (!jeune) {
     return { notFound: true }
@@ -418,6 +428,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
+    motifsSuppression,
   }
 
   if (context.query[QueryParams.creationRdv])
