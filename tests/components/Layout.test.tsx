@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/layouts/ChatRoom'
@@ -12,7 +13,6 @@ import {
 } from 'fixtures/services'
 import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { useRouter } from 'next/router'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -267,6 +267,38 @@ describe('<Layout />', () => {
       expect(
         screen.getByRole('link', { name: 'Page précédente' })
       ).toHaveAttribute('href', '/path/to/previous/page')
+    })
+  })
+
+  describe('quand on est redirigé après l’envoie d’un message groupé', () => {
+    it('L’information du message de succes est transmise au chat', async () => {
+      // Given
+      await act(async () => {
+        await renderWithSession(
+          <DIProvider
+            dependances={{ jeunesService, conseillerService, messagesService }}
+          >
+            <ConseillerProvider conseiller={unConseiller()}>
+              <Layout>
+                <FakeComponent
+                  pageTitle='un titre'
+                  pageHeader='Titre de la page'
+                  messageEnvoiGroupeSuccess={true}
+                />
+              </Layout>
+            </ConseillerProvider>
+          </DIProvider>
+        )
+      })
+      // When
+      // Then
+      expect(ChatRoom).toHaveBeenCalledWith(
+        {
+          jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]],
+          messageEnvoiGroupeSuccess: true,
+        },
+        {}
+      )
     })
   })
 

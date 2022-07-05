@@ -3,4 +3,5 @@ export interface PageProps {
   pageHeader?: string
   returnTo?: string
   withoutChat?: true
+  messageEnvoiGroupeSuccess?: boolean
 }

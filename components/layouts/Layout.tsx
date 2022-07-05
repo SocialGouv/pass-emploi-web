@@ -29,7 +29,13 @@ const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
 export default function Layout({ children }: LayoutProps) {
   const {
-    props: { pageTitle, pageHeader, returnTo, withoutChat },
+    props: {
+      pageTitle,
+      pageHeader,
+      returnTo,
+      withoutChat,
+      messageEnvoiGroupeSuccess,
+    },
   } = children
 
   const router = useRouter()
@@ -188,7 +194,12 @@ export default function Layout({ children }: LayoutProps) {
 
           <Footer />
         </div>
-        {withChat && <ChatRoom jeunesChats={chats} />}
+        {withChat && (
+          <ChatRoom
+            jeunesChats={chats}
+            messageEnvoiGroupeSuccess={messageEnvoiGroupeSuccess}
+          />
+        )}
       </div>
       <div id='modal-root' />
     </>
