@@ -9,6 +9,7 @@ interface NavLinkProps {
   iconName: IconName
   className?: string
   onClick?: any
+  isExternal?: boolean
 }
 
 function NavbarLink({
@@ -18,37 +19,64 @@ function NavbarLink({
   iconName,
   className,
   onClick,
+  isExternal = false,
 }: NavLinkProps) {
-  return (
-    <Link href={href}>
-      <a
-        onClick={onClick}
-        className={`flex mb-6 p-2 items-center layout_base:p-0 ${
-          isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
+  const linkStyle = `flex p-2 mb-6 items-center justify-center rounded-medium layout_l:justify-start ${
+    isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
+  }`
+
+  const linkContent: JSX.Element = (
+    <>
+      {isActive && (
+        <span className='text-[24px] font-bold leading-6 text-primary'>·</span>
+      )}
+
+      <IconComponent
+        focusable='false'
+        aria-hidden='true'
+        className={`mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 ${
+          isActive ? 'fill-primary' : 'fill-blanc'
         }`}
+        name={iconName}
+      />
+
+      <span
+        className={`text-md text-left sr-only layout_l:not-sr-only break-words ${
+          className ?? ''
+        } ${isActive ? 'text-primary' : 'text-blanc'}`}
       >
-        {isActive && (
-          <span className='text-[24px] font-bold leading-6 text-primary'>
-            ·
-          </span>
-        )}
-        <IconComponent
-          focusable='false'
-          aria-hidden='true'
-          className={`mr-2 w-6 h-6 layout_s:w-4 layout_s:h-4 ${
-            isActive ? 'fill-primary' : 'fill-blanc'
-          }`}
-          name={iconName}
-        />
-        <span
-          className={`text-md text-left layout_m:sr-only break-words ${
-            className ?? ''
-          } ${isActive ? 'text-primary' : 'text-blanc'}`}
+        {label}
+      </span>
+    </>
+  )
+  return (
+    <>
+      {!isExternal && (
+        <Link href={href}>
+          <a onClick={onClick} className={linkStyle}>
+            {linkContent}
+          </a>
+        </Link>
+      )}
+
+      {isExternal && (
+        <a
+          href={href}
+          target='_blank'
+          rel='noreferrer noopener'
+          aria-label={`${label} (nouvel onglet)`}
+          className={linkStyle}
         >
-          {label}
-        </span>
-      </a>
-    </Link>
+          {linkContent}
+          <IconComponent
+            name={IconName.Launch}
+            aria-hidden={true}
+            focusable={false}
+            className='mx-2 w-3 h-3 fill-blanc hidden layout_l:block'
+          />
+        </a>
+      )}
+    </>
   )
 }
 

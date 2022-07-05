@@ -82,12 +82,13 @@ function Profil({ structureConseiller }: ProfilProps) {
             <h2 className='text-l-medium mb-4'>Notifications</h2>
             <label
               htmlFor='notificationSonore'
-              className='flex items-center layout_m:flex-wrap'
+              className='flex items-center flex-wrap layout_m:flex-nowrap'
             >
               <span className='mr-4'>
                 Recevoir des notifications sonores pour la réception de nouveaux
                 messages
               </span>
+              {/*FIXME Switch dans le label ?*/}
               <Switch
                 id='notificationSonore'
                 checkedLabel='Activé'

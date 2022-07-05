@@ -48,6 +48,8 @@ export default function Layout({ children }: LayoutProps) {
   const mainRef = useRef<HTMLDivElement>(null)
   const destructorsRef = useRef<(() => void)[]>([])
 
+  const withChat = !withoutChat
+
   function hasMessageNonLu(): boolean {
     return chats.some(
       (chat) => !chat.seenByConseiller && chat.lastMessageContent
@@ -146,7 +148,7 @@ export default function Layout({ children }: LayoutProps) {
       <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
       <div
         className={`${styles.container} ${
-          !withoutChat ? styles.container_with_chat : ''
+          withChat ? styles.container_with_chat : ''
         }`}
       >
         <Sidebar />
@@ -160,7 +162,7 @@ export default function Layout({ children }: LayoutProps) {
           <main
             role='main'
             className={`${styles.content} ${
-              withoutChat ? styles.content_without_chat : ''
+              withChat ? styles.content_when_chat : ''
             }`}
           >
             {children}
@@ -168,7 +170,7 @@ export default function Layout({ children }: LayoutProps) {
 
           <Footer />
         </div>
-        {!withoutChat && <ChatRoom jeunesChats={chats} />}
+        {withChat && <ChatRoom jeunesChats={chats} />}
       </div>
       <div id='modal-root' />
     </>

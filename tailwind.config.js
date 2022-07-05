@@ -60,6 +60,7 @@ module.exports = {
     }),
 
     placeholderColor: (theme) => theme('colors'),
+
     screenSize: (theme) => theme('screens'),
 
     borderRadius: {
@@ -71,10 +72,21 @@ module.exports = {
       x_large: '24px',
       full: '9999px',
     },
+
     gridTemplateColumns: {
       // Complex site-specific column configuration
       table_large: '28% 2fr 3fr auto',
     },
+
+    screens: {
+      layout_xs: '375px',
+      layout_s: '600px',
+      layout_base: '900px',
+      layout_m: '1024px',
+      layout_l: '1200px',
+      layout_xl: '1425px',
+    },
+
     extend: {
       backgroundImage: {
         // path relative to globals.css
@@ -86,13 +98,6 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Marianne'],
-      },
-      screens: {
-        layout_s: '600px',
-        layout_base: { max: '900px' },
-        layout_m: { max: '1024px' },
-        layout_l: { max: '1200px' },
-        layout_xl: '1425px',
       },
     },
   },
