@@ -92,6 +92,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
     setConfirmBeforeLeaving(false)
     setIsSending(true)
+    setErreurEnvoi(undefined)
 
     let fileInfo: InfoFichier | undefined
     try {
@@ -172,6 +173,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   }
 
   function enleverFichier() {
+    setErreurUploadPieceJointe(undefined)
     setPieceJointe(undefined)
   }
 
