@@ -44,6 +44,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/Modal')
 
 describe('Fiche Jeune', () => {
   describe('client side', () => {
@@ -83,12 +84,19 @@ describe('Fiche Jeune', () => {
 
       it('permet de supprimer le jeune', async () => {
         // Then
-        const link = screen.getByText('Supprimer ce compte')
-        expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute(
-          'href',
-          `/mes-jeunes/${jeune.id}/suppression`
-        )
+        const deleteButton = screen.getByText('Supprimer ce compte')
+        expect(deleteButton).toBeInTheDocument()
+      })
+
+      it('affiche la modale de suppression du compte d`un bénéficiare', async () => {
+        // Given
+        const deleteButton = screen.getByText('Supprimer ce compte')
+
+        // When
+        await userEvent.click(deleteButton)
+
+        // Then
+        expect('plop').toBeInTheDocument()
       })
     })
 

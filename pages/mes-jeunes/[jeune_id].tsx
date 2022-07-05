@@ -9,8 +9,9 @@ import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
+import Modal from 'components/Modal'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
-import { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SuccessMessage from 'components/ui/SuccessMessage'
@@ -88,6 +89,9 @@ function FicheJeune({
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
+
+  const [showDeleteJeuneModal, setShowDeleteJeuneModal] =
+    useState<boolean>(false)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -171,6 +175,19 @@ function FicheJeune({
     return result
   }
 
+  function handleDelete(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    openDeleteJeuneModal()
+  }
+
+  function openDeleteJeuneModal() {
+    setShowDeleteJeuneModal(true)
+  }
+  function closeDeleteJeuneModal() {
+    setShowDeleteJeuneModal(false)
+  }
+
   useMatomo(trackingLabel)
 
   useEffect(() => {
@@ -216,6 +233,15 @@ function FicheJeune({
         />
       )}
 
+      {showDeleteJeuneModal && (
+        <Modal
+          title='Suppression du compte bénéficiaire'
+          onClose={closeDeleteJeuneModal}
+        >
+          <p>plop</p>
+        </Modal>
+      )}
+
       {!jeune.isActivated && (
         <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
       )}
@@ -253,13 +279,13 @@ function FicheJeune({
           )}
         </div>
 
-        <ButtonLink
-          href={`/mes-jeunes/${jeune.id}/suppression`}
+        <Button
+          onClick={handleDelete}
           style={ButtonStyle.SECONDARY}
           className='w-fit'
         >
           Supprimer ce compte
-        </ButtonLink>
+        </Button>
       </div>
 
       <DetailsJeune
