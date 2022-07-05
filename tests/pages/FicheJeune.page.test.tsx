@@ -88,15 +88,34 @@ describe('Fiche Jeune', () => {
         expect(deleteButton).toBeInTheDocument()
       })
 
-      it('affiche la modale de suppression du compte d`un bénéficiare', async () => {
-        // Given
-        const deleteButton = screen.getByText('Supprimer ce compte')
+      describe('Supprimer un compte actif', () => {
+        it('affiche la premiere modale de suppression du compte d`un bénéficiare actif', async () => {
+          // Given
+          const deleteButton = screen.getByText('Supprimer ce compte')
 
-        // When
-        await userEvent.click(deleteButton)
+          // When
+          await userEvent.click(deleteButton)
 
-        // Then
-        expect('plop').toBeInTheDocument()
+          // Then
+          expect(
+            screen.getByText('Souhaitez-vous continuer la suppression ?')
+          ).toBeInTheDocument()
+        })
+
+        it('affiche la seconde modale pour confirmer la suppression du compte d`un bénéficiare actif', async () => {
+          // Given
+          const deleteButton = screen.getByText('Supprimer ce compte')
+          await userEvent.click(deleteButton)
+          const continuerButton = screen.getByText('Continuer')
+
+          // When
+          await userEvent.click(continuerButton)
+
+          // Then
+          expect(
+            screen.getByLabelText('Motif de suppression')
+          ).toBeInTheDocument()
+        })
       })
     })
 

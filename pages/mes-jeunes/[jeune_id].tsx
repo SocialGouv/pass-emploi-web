@@ -7,9 +7,9 @@ import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
+import DeleteJeuneModal from 'components/jeune/DeleteJeuneModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import Modal from 'components/Modal'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
@@ -234,12 +234,7 @@ function FicheJeune({
       )}
 
       {showDeleteJeuneModal && (
-        <Modal
-          title='Suppression du compte bénéficiaire'
-          onClose={closeDeleteJeuneModal}
-        >
-          <p>plop</p>
-        </Modal>
+        <DeleteJeuneModal jeune={jeune} onClose={closeDeleteJeuneModal} />
       )}
 
       {!jeune.isActivated && (

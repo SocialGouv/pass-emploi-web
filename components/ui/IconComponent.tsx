@@ -39,6 +39,7 @@ import SearchIcon from '../../assets/icons/search.svg'
 import SendIcon from '../../assets/icons/send.svg'
 import SpinnerIcon from '../../assets/icons/spinner.svg'
 import TrashCanIcon from '../../assets/icons/trash_can.svg'
+import WarningIcon from '../../assets/icons/warning.svg'
 
 export enum IconName {
   Actions = 'Actions',
@@ -80,6 +81,7 @@ export enum IconName {
   Send = 'Send',
   Spinner = 'Spinner',
   TrashCan = 'TrashCan',
+  Warning = 'Warning',
 }
 
 const iconsByName: { [key in IconName]: any } = {
@@ -122,6 +124,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Send]: SendIcon,
   [IconName.Spinner]: SpinnerIcon,
   [IconName.TrashCan]: TrashCanIcon,
+  [IconName.Warning]: WarningIcon,
 }
 
 interface IconComponentProps extends ComponentPropsWithoutRef<any> {
