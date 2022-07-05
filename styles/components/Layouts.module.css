@@ -43,14 +43,15 @@
 
 .content {
   flex-grow: 1;
+  margin: auto;
   width: 100%;
-  padding: 1rem;
+  max-width: 500px;
+  padding: 40px 1rem;
 }
 
-.content.content_without_chat {
-  max-width: 500px;
-  padding: 40px 0;
-  margin: auto;
+.content.content_when_chat {
+  max-width: 100%;
+  padding: 1rem;
 }
 
 .footer {
@@ -77,13 +78,13 @@
   .sidebar {
     display: flex;
   }
+
+  .content {
+    padding: 40px 0;
+  }
 }
 
 @media screen and (min-width: theme('screens.layout_base')) {
-  .content {
-    padding: 2rem;
-  }
-
   .sidebar {
     padding: 24px 16px;
   }
@@ -95,13 +96,13 @@
     --chat-width: 24vw;
   }
 
-  .content {
+  .content.content_when_chat {
     padding: 1.5rem;
   }
 }
 
 @media screen and (min-width: theme('screens.layout_xl')) {
-  .content {
+  .content.content_when_chat {
     padding: 2rem;
   }
 }
