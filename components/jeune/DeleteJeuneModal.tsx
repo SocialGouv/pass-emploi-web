@@ -1,4 +1,7 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
+
+import { RequiredValue } from '../RequiredValue'
+import { InputError } from '../ui/InputError'
 
 import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
@@ -26,7 +29,9 @@ export default function DeleteJeuneModal({
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
   const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<string>('')
-  const [commentaireMotif, setCommentaireMotif] = useState<string>('')
+  const [commentaireMotif, setCommentaireMotif] = useState<RequiredValue>({
+    value: '',
+  })
   const [showCommentaireMotif, setShowCommentaireMotif] =
     useState<boolean>(false)
 
@@ -54,62 +59,75 @@ export default function DeleteJeuneModal({
     onClose()
   }
 
+  function valideMotifSuppressionAutre() {
+    if (!commentaireMotif.value) {
+      setCommentaireMotif({
+        value: commentaireMotif.value,
+        error:
+          "Le champ Autre n'est pas renseigné. Veuillez préciser le motif de supression.",
+      })
+    }
+  }
+
   return (
     <>
       {showModalEtape1 && (
         <Modal
           title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
+          iconHead
+          iconName={IconName.Warning}
           onClose={handleCloseModal}
         >
-          <IconComponent
-            name={IconName.Warning}
-            focusable={false}
-            aria-hidden={true}
-            className='w-6 h-6 fill-primary'
-          />
-          <p>
+          <p className='mb-12 text-base-regular text-content_color text-center'>
             Le bénéficiaire sera prévenu de la suppression de son compte et sa
             possibilité de demander un accès à ses données pour une période de 2
             ans avant qu’elles soient supprimées.
           </p>
-          <p>Souhaitez-vous continuer la suppression ?</p>
-          <Button
-            type='button'
-            style={ButtonStyle.SECONDARY}
-            onClick={handleCloseModal}
-          >
-            Annuler
-          </Button>
-          <Button
-            type='button'
-            style={ButtonStyle.PRIMARY}
-            onClick={openModal2}
-          >
-            Continuer
-          </Button>
+          <p className='mb-12 text-base-regular text-content_color text-center'>
+            Souhaitez-vous continuer la suppression ?
+          </p>
+          <div className='flex justify-center'>
+            <Button
+              type='button'
+              style={ButtonStyle.SECONDARY}
+              onClick={handleCloseModal}
+            >
+              Annuler
+            </Button>
+            <Button
+              type='button'
+              style={ButtonStyle.PRIMARY}
+              onClick={openModal2}
+              className='ml-6'
+            >
+              Continuer
+            </Button>
+          </div>
         </Modal>
       )}
 
       {showModalEtape2 && (
         <Modal
           title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
+          iconHead
+          iconName={IconName.Warning}
           onClose={handleCloseModal}
         >
-          <IconComponent
-            name={IconName.Warning}
-            focusable={false}
-            aria-hidden={true}
-            className='w-6 h-6 fill-primary'
-          />
           <InformationMessage content='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
 
-          <form>
-            <label htmlFor='motifSuppression'>Motif de suppression</label>
+          <form className='mt-8'>
+            <label htmlFor='motifSuppression' className='text-base-medium mb-2'>
+              <span aria-hidden={true}>* </span>Motif de suppression
+              <span className='text-s-regular block mb-3'>
+                {' '}
+                Veuillez sélectionner un motif de suppression de compte
+              </span>
+            </label>
             <select
               id='motifSuppression'
               name='motifSuppression'
               defaultValue={motifSuppressionJeune}
-              required={true}
+              required
               onChange={handleSelectedMotifSuppressionJeune}
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
             >
@@ -126,23 +144,51 @@ export default function DeleteJeuneModal({
                 <label htmlFor='motifSuppression-autre'>
                   Veuillez préciser le motif de la suppression du compte
                 </label>
+                {commentaireMotif.error && (
+                  <InputError
+                    id='motifSuppression-autre--error'
+                    className='mb-2'
+                  >
+                    {commentaireMotif.error}
+                  </InputError>
+                )}
                 <textarea
                   id='motifSuppression-autre'
                   name='motifSuppression-autre'
-                  defaultValue={commentaireMotif}
+                  required
+                  defaultValue={commentaireMotif.value}
+                  onChange={(e) =>
+                    setCommentaireMotif({ value: e.target.value })
+                  }
+                  onBlur={valideMotifSuppressionAutre}
                   rows={3}
-                  onChange={(e) => setCommentaireMotif(e.target.value)}
-                  className='border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8'
+                  aria-invalid={commentaireMotif.error ? true : undefined}
+                  aria-describedby={
+                    commentaireMotif.error
+                      ? 'motifSuppression-autre--error'
+                      : undefined
+                  }
+                  className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 mt-3 ${
+                    commentaireMotif.error
+                      ? 'border-warning text-warning'
+                      : 'border-content_color'
+                  }`}
                 />
               </>
             )}
           </form>
-          <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
-            Annuler
-          </Button>
-          <Button type='submit' style={ButtonStyle.PRIMARY}>
-            Confirmer
-          </Button>
+          <div className='flex justify-center'>
+            <Button
+              type='button'
+              style={ButtonStyle.SECONDARY}
+              onClick={onClose}
+            >
+              Annuler
+            </Button>
+            <Button type='submit' style={ButtonStyle.PRIMARY} className='ml-6'>
+              Confirmer
+            </Button>
+          </div>
         </Modal>
       )}
     </>
