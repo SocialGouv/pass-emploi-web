@@ -28,19 +28,24 @@ export default function DeleteJeuneModal({
   motifs,
   onClose,
 }: DeleteJeuneModalProps) {
-  const [showModal1, setShowModal1] = useState<boolean>(true)
-  const [showModal2, setShowModal2] = useState<boolean>(false)
+  const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
+  const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
   const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<string>('')
+  const [commentaireMotif, setCommentaireMotif] = useState<string>('')
+  const [showCommentaireMotif, setShowCommentaireMotif] =
+    useState<boolean>(false)
+
   function openModal2() {
-    setShowModal1(false)
-    setShowModal2(true)
+    setShowModalEtape1(false)
+    setShowModalEtape2(true)
   }
 
   function handleSelectedMotifSuppressionJeune(
     e: ChangeEvent<HTMLSelectElement>
   ) {
     setMotifSuppressionJeune(e.target.value)
+    setShowCommentaireMotif(e.target.value === TypesMotifsSuppression.AUTRE)
   }
 
   // function handleSoumettreSuppression(e: FormEvent) {
@@ -57,7 +62,7 @@ export default function DeleteJeuneModal({
 
   return (
     <>
-      {showModal1 && (
+      {showModalEtape1 && (
         <Modal
           title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
           onClose={handleCloseModal}
@@ -91,7 +96,7 @@ export default function DeleteJeuneModal({
         </Modal>
       )}
 
-      {showModal2 && (
+      {showModalEtape2 && (
         <Modal
           title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
           onClose={handleCloseModal}
@@ -119,6 +124,22 @@ export default function DeleteJeuneModal({
                 <option value={motif}>{motif}</option>
               ))}
             </select>
+
+            {showCommentaireMotif && (
+              <>
+                <label htmlFor='motifSuppression-autre'>
+                  Veuillez préciser le motif de la suppression du compte
+                </label>
+                <textarea
+                  id='motifSuppression-autre'
+                  name='motifSuppression-autre'
+                  defaultValue={commentaireMotif}
+                  rows={3}
+                  onChange={(e) => setCommentaireMotif(e.target.value)}
+                  className='border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8'
+                />
+              </>
+            )}
           </form>
           <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
             Annuler
