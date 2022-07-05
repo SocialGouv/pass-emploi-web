@@ -1,7 +1,7 @@
 .container {
-  --sidebar-width: 15vw;
-  --page-width: calc(100vw - var(--sidebar-width));
-  --chat-width: 24vw;
+  --sidebar-width: 0;
+  --page-width: 100vw;
+  --chat-width: 100vw;
   --page-width-when-chat: calc(var(--page-width) - var(--chat-width));
 
   display: grid;
@@ -20,21 +20,13 @@
 
 .sidebar {
   grid-area: sidebar;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: space-between;
   overflow-x: hidden; /* Disable horizontal scroll */
-  padding: 24px 16px;
+  padding: 24px 12px;
   text-align: center;
   background-color: theme('colors.primary');
-}
-
-/*TODO remettre au bon endroit */
-.sidebar nav a {
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  border-radius: 8px;
 }
 
 .page {
@@ -52,7 +44,7 @@
 .content {
   flex-grow: 1;
   width: 100%;
-  padding: 2rem;
+  padding: 1rem;
 }
 
 .content.content_without_chat {
@@ -75,45 +67,41 @@
   background-color: theme('colors.grey_100');
 }
 
-@media screen and (max-width: theme('screens.layout_l.max')) {
+@media screen and (min-width: theme('screens.layout_s')) {
+  .container {
+    --sidebar-width: 10vw;
+    --chat-width: 20vw;
+    --page-width: calc(100vw - var(--sidebar-width));
+  }
+
+  .sidebar {
+    display: flex;
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_base')) {
+  .content {
+    padding: 2rem;
+  }
+
+  .sidebar {
+    padding: 24px 16px;
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_l')) {
+  .container {
+    --sidebar-width: 15vw;
+    --chat-width: 24vw;
+  }
+
   .content {
     padding: 1.5rem;
   }
 }
 
-@media screen and (max-width: theme('screens.layout_base.max')) {
-  .container {
-    --sidebar-width: 10vw;
-    --chat-width: 20vw;
-  }
-  .sidebar a {
-    justify-content: center;
-  }
-  .sidebar svg {
-    margin-right: 0;
-  }
-}
-
-@media screen and (max-width: theme('screens.layout_s.max')) {
-  .sidebar {
-    padding: 24px 12px;
-  }
+@media screen and (min-width: theme('screens.layout_xl')) {
   .content {
-    padding: 1rem;
-  }
-  .footer ul {
-    flex-direction: column;
-  }
-}
-
-@media screen and (max-width: theme('screens.layout_xs.max')) {
-  .container {
-    --sidebar-width: 0;
-    --page-width-when-chat: 0;
-    --chat-width: 100vw;
-  }
-
-  .sidebar {
-    display: none;
+    padding: 2rem;
   }
 }

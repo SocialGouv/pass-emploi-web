@@ -12,7 +12,7 @@ export const Footer = () => {
 
   return (
     <footer role='contentinfo' className={styles.footer}>
-      <ul className='flex px-4 flex-wrap'>
+      <ul className='flex px-4 flex-wrap flex-col layout_base:flex-row'>
         {liens.map(({ url, label }) => (
           <li key={label.toLowerCase().replace(/\s/g, '-')} className={`mr-4`}>
             <ExternalLink

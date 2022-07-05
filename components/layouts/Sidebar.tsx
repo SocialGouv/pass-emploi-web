@@ -77,22 +77,22 @@ export default function Sidebar({}: SidebarProps) {
             }
             target='_blank'
             rel='noreferrer noopener'
-            className='hover:bg-primary_darken'
+            className='p-2 flex items-center justify-center rounded-medium layout_l:justify-start hover:bg-primary_darken'
           >
             <IconComponent
               name={IconName.Aide}
               aria-hidden={true}
               focusable={false}
-              className='mr-2 fill-blanc w-6 h-6 layout_s:w-4 layout_s:h-4'
+              className='mr-0 fill-blanc w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2'
             />
-            <span className='text-md text-blanc text-center layout_base:sr-only'>
+            <span className='text-md text-blanc text-center sr-only layout_l:not-sr-only'>
               Aide
             </span>
             <IconComponent
               name={IconName.Launch}
               aria-hidden={true}
               focusable={false}
-              className='mx-2 w-3 h-3 fill-blanc layout_base:hidden'
+              className='mx-2 w-3 h-3 fill-blanc hidden layout_l:block'
             />
           </a>
         </div>

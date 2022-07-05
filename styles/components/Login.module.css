@@ -1,6 +1,6 @@
 .login {
   background: linear-gradient(
-    26deg,
+    36deg,
     theme('colors.primary_darken'),
     theme('colors.primary_darken') 50%,
     theme('colors.primary') 50%,
@@ -8,10 +8,10 @@
   );
 }
 
-@media screen and (max-width: theme('screens.layout_s.max')) {
+@media screen and (min-width: theme('screens.layout_base')) {
   .login {
     background: linear-gradient(
-      36deg,
+      26deg,
       theme('colors.primary_darken'),
       theme('colors.primary_darken') 50%,
       theme('colors.primary') 50%,

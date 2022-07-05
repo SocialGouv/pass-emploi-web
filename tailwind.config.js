@@ -79,11 +79,12 @@ module.exports = {
     },
 
     screens: {
-      layout_l: { max: '1424px' },
-      layout_m: { max: '1199px' },
-      layout_base: { max: '1023px' },
-      layout_s: { max: '899px' },
-      layout_xs: { max: '599px' },
+      layout_xs: '375px',
+      layout_s: '600px',
+      layout_base: '900px',
+      layout_m: '1024px',
+      layout_l: '1200px',
+      layout_xl: '1425px',
     },
 
     extend: {
