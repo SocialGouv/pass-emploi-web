@@ -20,6 +20,8 @@ interface ModalProps {
   showTitle?: boolean
   customHeight?: string
   customWidth?: string
+  iconName?: any
+  iconHead?: boolean
 }
 
 const Modal = forwardRef((props: ModalProps, ref) => {
@@ -30,6 +32,8 @@ const Modal = forwardRef((props: ModalProps, ref) => {
     onClose,
     showTitle = true,
     title,
+    iconHead,
+    iconName,
   } = props
 
   useImperativeHandle(ref, () => ({
@@ -101,31 +105,41 @@ const Modal = forwardRef((props: ModalProps, ref) => {
       }}
       ref={modalRef}
     >
-      <div className='text-primary_darken flex justify-end items-center p-5'>
-        {showTitle && (
-          <h1
-            id='modal-title'
-            className='text-base-medium text-content_color text-center flex-auto'
-          >
-            {title}
-          </h1>
-        )}
+      <div className='flex justify-end p-5'>
         <button
           type='button'
           onClick={handleClose}
           ref={focusOnRender}
-          className='p-3 border-none rounded-full bg-primary_lighten'
+          className='p-3 border-none hover:bg-primary_lighten hover:rounded-full'
         >
           <IconComponent
             name={IconName.Close}
             role='img'
             focusable='false'
             aria-label='Fermer la fenêtre'
-            className='w-6 h-6 fill-primary'
+            className='w-6 h-6 fill-content_color'
           />
         </button>
       </div>
-      <div className='px-5 pt-3 pb-8'>{modalContent}</div>
+      <div className='px-5 pt-3 pb-8'>
+        {iconHead && (
+          <IconComponent
+            name={iconName}
+            focusable={false}
+            aria-hidden={true}
+            className='w-[100px] h-[91px] m-auto mb-8 fill-primary'
+          />
+        )}
+        {showTitle && (
+          <h1
+            id='modal-title'
+            className='text-base-medium text-content_color text-center flex-auto mb-4'
+          >
+            {title}
+          </h1>
+        )}
+        {modalContent}
+      </div>
     </div>
   )
 

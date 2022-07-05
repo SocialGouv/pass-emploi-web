@@ -1,11 +1,10 @@
-import { MotifsSuppression } from '../components/jeune/DeleteJeuneModal'
-
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import {
   ConseillerHistorique,
   DetailJeune,
   JeuneFromListe,
+  MotifsSuppression,
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
