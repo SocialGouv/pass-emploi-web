@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -90,13 +90,15 @@ describe('Fiche Jeune', () => {
       })
 
       describe('Supprimer un compte actif', () => {
-        it('affiche la premiere modale de suppression du compte d`un bénéficiare actif', async () => {
+        beforeEach(async () => {
           // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
 
           // When
           await userEvent.click(deleteButton)
+        })
 
+        it('affiche la premiere modale de suppression du compte d’un bénéficiare actif', async () => {
           // Then
           expect(
             screen.getByText('Souhaitez-vous continuer la suppression ?')
@@ -105,8 +107,6 @@ describe('Fiche Jeune', () => {
 
         it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
           // Given
-          const deleteButton = screen.getByText('Supprimer ce compte')
-          await userEvent.click(deleteButton)
           const continuerButton = screen.getByText('Continuer')
 
           // When
@@ -114,7 +114,47 @@ describe('Fiche Jeune', () => {
 
           // Then
           expect(
-            screen.getByLabelText('Motif de suppression')
+            screen.getByText(/Une fois confirmé toutes les informations liées/)
+          ).toBeInTheDocument()
+        })
+
+        it('contient un champ de sélection d’un motif', async () => {
+          // Given
+          const continuerButton = screen.getByText('Continuer')
+          await userEvent.click(continuerButton)
+
+          const selectMotif = screen.getByRole('combobox', {
+            name: 'Motif de suppression',
+          })
+
+          // Then
+          userEvent.selectOptions(
+            screen.getByLabelText('Motif de suppression'),
+            'Radiation du CEJ'
+          )
+
+          expect(selectMotif).toBeInTheDocument()
+          expect(selectMotif).toHaveAttribute('required', '')
+        })
+
+        it('lorsque le motif est AUTRE', async () => {
+          // Given
+          const continuerButton = screen.getByText('Continuer')
+          await userEvent.click(continuerButton)
+          const selectMotif = screen.getByRole('combobox', {
+            name: 'Motif de suppression',
+          })
+
+          // When
+          fireEvent.change(selectMotif, {
+            target: { value: 'Autre' },
+          })
+
+          // Then
+          expect(
+            screen.getByText(
+              'Veuillez préciser le motif de la suppression du compte'
+            )
           ).toBeInTheDocument()
         })
       })
