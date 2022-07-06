@@ -182,8 +182,8 @@ export default function Conversation({
   }, [jeuneChat.chatId])
 
   return (
-    <div className='h-full flex flex-col bg-grey_100'>
-      <div className='flex items-center mx-4 my-6'>
+    <div className='h-full flex flex-col bg-grey_100 '>
+      <div className='flex items-center mx-4 my-6 short:hidden'>
         <button
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
           onClick={onBack}
@@ -200,9 +200,9 @@ export default function Conversation({
           Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
         </h2>
       </div>
-      <span className='border-b border-grey_500 mx-4 mb-6'></span>
+      <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 
-      <ul className='p-4 flex-grow overflow-y-auto'>
+      <ul className='p-4 flex-grow overflow-y-auto short:hidden'>
         {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
           <li key={messagesOfADay.date.getTime()} className='mb-5'>
             <div className={`text-md text-center mb-3`}>
@@ -232,7 +232,10 @@ export default function Conversation({
           <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
         )}
         <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-1'>
-          <span id='piece-jointe--desc' className='self-center text-xs'>
+          <span
+            id='piece-jointe--desc'
+            className='self-center text-xs short:hidden'
+          >
             Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
             maximum)
           </span>
@@ -240,7 +243,7 @@ export default function Conversation({
             type='button'
             aria-controls='piece-jointe'
             aria-describedby='piece-jointe--desc'
-            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed short:hidden'
             onClick={handleFileUploadClick}
             disabled={Boolean(uploadedFileInfo) || isFileUploading}
           >

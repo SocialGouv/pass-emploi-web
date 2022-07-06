@@ -45,6 +45,7 @@ export default function Layout({ children }: LayoutProps) {
   const [chats, setChats] = useState<JeuneChat[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
+  const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const destructorsRef = useRef<(() => void)[]>([])
 
@@ -140,6 +141,22 @@ export default function Layout({ children }: LayoutProps) {
   ])
 
   useEffect(() => {
+    // https://dev.to/admitkard/mobile-issue-with-100vh-height-100-100vh-3-solutions-3nae
+
+    function resizeContainerToInnerHeight() {
+      if (containerRef.current) {
+        containerRef.current.style.height = `${window.innerHeight}px`
+        containerRef.current.style.gridTemplateRows = `${window.innerHeight}px`
+      }
+    }
+
+    resizeContainerToInnerHeight()
+    window.addEventListener('resize', resizeContainerToInnerHeight, true)
+    return () =>
+      window.removeEventListener('resize', resizeContainerToInnerHeight, true)
+  }, [])
+
+  useEffect(() => {
     if (mainRef.current) mainRef.current.scrollTo(0, 0)
   }, [router.asPath, mainRef])
 
@@ -147,6 +164,7 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
       <div
+        ref={containerRef}
         className={`${styles.container} ${
           withChat ? styles.container_with_chat : ''
         }`}
