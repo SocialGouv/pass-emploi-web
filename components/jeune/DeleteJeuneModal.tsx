@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 
 import { RequiredValue } from '../RequiredValue'
 import { InputError } from '../ui/InputError'
@@ -6,24 +6,27 @@ import { InputError } from '../ui/InputError'
 import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import {
   DetailJeune,
   MotifsSuppression,
   TypesMotifsSuppression,
 } from 'interfaces/jeune'
+import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
+import useMatomo from 'utils/analytics/useMatomo'
 
 interface DeleteJeuneModalProps {
   jeune: DetailJeune
-  motifs: MotifsSuppression[]
+  motifsSuppression: MotifsSuppression[]
   onClose: () => void
-  submitDelete?: () => Promise<void>
+  submitDelete: (payload: SuppressionJeuneFormData) => Promise<void>
 }
 
 export default function DeleteJeuneModal({
   jeune,
-  motifs,
+  motifsSuppression,
   onClose,
+  submitDelete,
 }: DeleteJeuneModalProps) {
   const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
@@ -35,9 +38,18 @@ export default function DeleteJeuneModal({
   const [showCommentaireMotif, setShowCommentaireMotif] =
     useState<boolean>(false)
 
-  function openModal2() {
+  const [trackingLabel, setTrackingLabel] = useState<string>(
+    'Détail Jeune - Pop-in confirmation suppression'
+  )
+
+  function handleCloseModal() {
+    onClose()
+  }
+
+  function openModalEtape2() {
     setShowModalEtape1(false)
     setShowModalEtape2(true)
+    setTrackingLabel('Détail Jeune - Pop-in sélection motif')
   }
 
   function handleSelectedMotifSuppressionJeune(
@@ -47,27 +59,39 @@ export default function DeleteJeuneModal({
     setShowCommentaireMotif(e.target.value === TypesMotifsSuppression.AUTRE)
   }
 
-  // function handleSoumettreSuppression(e: FormEvent) {
-  //   e.preventDefault()
-  //
-  //   const payload: SuppressionJeuneFormData = {
-  //     motif: motifSuppressionJeune,
-  //   }
-  // }
-
-  function handleCloseModal() {
-    onClose()
-  }
-
-  function valideMotifSuppressionAutre() {
+  function validateMotifSuppressionAutre() {
     if (!commentaireMotif.value) {
       setCommentaireMotif({
         value: commentaireMotif.value,
         error:
-          "Le champ Autre n'est pas renseigné. Veuillez préciser le motif de supression.",
+          "Le champ Autre n'est pas renseigné. Veuillez préciser le motif de suppression.",
       })
     }
   }
+
+  function motifIsValid(): boolean {
+    if (!motifSuppressionJeune) return false
+    if (motifSuppressionJeune === TypesMotifsSuppression.AUTRE)
+      return Boolean(commentaireMotif.value)
+    return true
+  }
+
+  async function handleSoumettreSuppression(e: FormEvent) {
+    e.preventDefault()
+    if (motifIsValid()) {
+      const payload: SuppressionJeuneFormData = {
+        motif: motifSuppressionJeune,
+        commentaire:
+          motifSuppressionJeune === TypesMotifsSuppression.AUTRE
+            ? commentaireMotif.value
+            : undefined,
+      }
+
+      submitDelete(payload)
+    }
+  }
+
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -97,7 +121,7 @@ export default function DeleteJeuneModal({
             <Button
               type='button'
               style={ButtonStyle.PRIMARY}
-              onClick={openModal2}
+              onClick={openModalEtape2}
               className='ml-6'
             >
               Continuer
@@ -115,7 +139,7 @@ export default function DeleteJeuneModal({
         >
           <InformationMessage content='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
 
-          <form className='mt-8'>
+          <form className='mt-8' onSubmit={handleSoumettreSuppression}>
             <label htmlFor='motifSuppression' className='text-base-medium mb-2'>
               <span aria-hidden={true}>* </span>Motif de suppression
               <span className='text-s-regular block mb-3'>
@@ -132,8 +156,8 @@ export default function DeleteJeuneModal({
               className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
             >
               <option aria-hidden hidden disabled value={''} />
-              {motifs?.map((motif) => (
-                <option key='lala' value={motif}>
+              {motifsSuppression?.map((motif) => (
+                <option key={motif.toString()} value={motif}>
                   {motif}
                 </option>
               ))}
@@ -141,7 +165,11 @@ export default function DeleteJeuneModal({
 
             {showCommentaireMotif && (
               <>
-                <label htmlFor='motifSuppression-autre'>
+                <label
+                  htmlFor='motifSuppression-autre'
+                  className='text-base-medium'
+                >
+                  <span aria-hidden={true}>* </span>
                   Veuillez préciser le motif de la suppression du compte
                 </label>
                 {commentaireMotif.error && (
@@ -160,7 +188,7 @@ export default function DeleteJeuneModal({
                   onChange={(e) =>
                     setCommentaireMotif({ value: e.target.value })
                   }
-                  onBlur={valideMotifSuppressionAutre}
+                  onBlur={validateMotifSuppressionAutre}
                   rows={3}
                   aria-invalid={commentaireMotif.error ? true : undefined}
                   aria-describedby={
@@ -185,7 +213,12 @@ export default function DeleteJeuneModal({
             >
               Annuler
             </Button>
-            <Button type='submit' style={ButtonStyle.PRIMARY} className='ml-6'>
+            <Button
+              type='submit'
+              disabled={!motifIsValid()}
+              style={ButtonStyle.PRIMARY}
+              className='ml-6'
+            >
               Confirmer
             </Button>
           </div>

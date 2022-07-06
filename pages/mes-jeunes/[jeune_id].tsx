@@ -3,13 +3,13 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import DeleteJeuneModal from '../../components/jeune/DeleteJeuneModal'
+import { SuppressionJeuneFormData } from '../../interfaces/json/jeune'
+
 import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
-import DeleteJeuneModal, {
-  MotifsSuppression,
-} from 'components/jeune/DeleteJeuneModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
@@ -21,7 +21,11 @@ import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
+import {
+  ConseillerHistorique,
+  DetailJeune,
+  MotifsSuppression,
+} from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { QueryParams, QueryValues } from 'referentiel/queryParams'
@@ -79,6 +83,7 @@ function FicheJeune({
   const { data: session } = useSession<true>({ required: true })
 
   const actionsService = useDependance<ActionsService>('actionsService')
+  const jeunesServices = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
 
@@ -241,7 +246,8 @@ function FicheJeune({
         <DeleteJeuneModal
           jeune={jeune}
           onClose={closeDeleteJeuneModal}
-          motifs={motifsSuppression}
+          motifsSuppression={motifsSuppression}
+          submitDelete={archiverJeuneCompteActif}
         />
       )}
 

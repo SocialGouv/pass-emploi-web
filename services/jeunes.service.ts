@@ -15,6 +15,7 @@ import {
   ItemJeuneJson,
   jsonToDetailJeune,
   jsonToItemJeune,
+  SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
 
@@ -62,9 +63,8 @@ export interface JeunesService {
 
   archiverJeune(
     idJeune: string,
-    motif: string,
-    accessToken: string,
-    commentaire?: string
+    payload: SuppressionJeuneFormData,
+    accessToken: string
   ): Promise<void>
 
   getMotifsSuppression(accessToken: string): Promise<MotifsSuppression[]>
@@ -204,16 +204,12 @@ export class JeunesApiService implements JeunesService {
 
   async archiverJeune(
     idJeune: string,
-    motif: string,
-    accessToken: string,
-    commentaire?: string
+    payload: SuppressionJeuneFormData,
+    accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
       `/jeunes/archiver/${idJeune}`,
-      {
-        motif,
-        commentaire,
-      },
+      payload,
       accessToken
     )
   }

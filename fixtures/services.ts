@@ -19,6 +19,8 @@ export function mockedJeunesService(
     createCompteJeunePoleEmploi: jest.fn(),
     reaffecter: jest.fn(),
     supprimerJeuneInactif: jest.fn(),
+    archiverJeune: jest.fn(),
+    getMotifsSuppression: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

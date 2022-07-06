@@ -83,7 +83,7 @@ describe('Fiche Jeune', () => {
         )
       })
 
-      it('permet de supprimer le jeune', async () => {
+      it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
         // Then
         const deleteButton = screen.getByText('Supprimer ce compte')
         expect(deleteButton).toBeInTheDocument()
@@ -98,7 +98,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(deleteButton)
         })
 
-        it('affiche la premiere modale de suppression du compte d’un bénéficiare actif', async () => {
+        it('affiche la première modale de suppression du compte d’un bénéficiaire actif', async () => {
           // Then
           expect(
             screen.getByText('Souhaitez-vous continuer la suppression ?')

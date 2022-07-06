@@ -1,8 +1,3 @@
-import {
-  MotifsSuppression,
-  TypesMotifsSuppression,
-} from '../../components/jeune/DeleteJeuneModal'
-
 import { ApiClient } from 'clients/api.client'
 import { unConseiller } from 'fixtures/conseiller'
 import {
@@ -13,7 +8,12 @@ import {
   unDetailJeune,
   unDetailJeuneJson,
 } from 'fixtures/jeune'
-import { JeuneFromListe } from 'interfaces/jeune'
+import {
+  JeuneFromListe,
+  MotifsSuppression,
+  TypesMotifsSuppression,
+} from 'interfaces/jeune'
+import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -230,15 +230,23 @@ describe('JeunesApiService', () => {
   describe('.archiverJeune', () => {
     it('archive le jeune', async () => {
       // Given
+      const payloadFormData: SuppressionJeuneFormData = {
+        motif: 'Radiation du CEJ',
+        commentaire: undefined,
+      }
       const accessToken = 'accessToken'
 
       // When
-      await jeunesService.archiverJeune('id-jeune', 'test', accessToken)
+      await jeunesService.archiverJeune(
+        'id-jeune',
+        payloadFormData,
+        accessToken
+      )
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
         `/jeunes/archiver/id-jeune`,
-        { motif: 'test', commentaire: undefined },
+        { motif: 'Radiation du CEJ', commentaire: undefined },
         accessToken
       )
     })
