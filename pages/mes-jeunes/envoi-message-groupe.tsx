@@ -28,6 +28,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { parseUrl, setQueryParams } from 'utils/urlParser'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EnvoiMessageGroupeProps extends PageProps {
@@ -132,7 +133,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
-      await router.push(`${returnTo}?envoiMessage=succes`)
+
+      const { pathname, query } = parseUrl(returnTo)
+      await router.push({
+        pathname,
+        query: setQueryParams(query, { envoiMessage: 'succes' }),
+      })
     } catch (error) {
       setErreurEnvoi(
         error instanceof ApiError
