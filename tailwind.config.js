@@ -85,6 +85,8 @@ module.exports = {
       layout_m: '1024px',
       layout_l: '1200px',
       layout_xl: '1425px',
+      // short breakpoint on mobile when keyboard is visible
+      short: { raw: '(max-height: 350px)' },
     },
 
     extend: {
