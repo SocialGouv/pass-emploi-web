@@ -245,7 +245,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
-        `/jeunes/archiver/id-jeune`,
+        '/jeunes/id-jeune/archiver',
         { motif: 'Radiation du CEJ', commentaire: undefined },
         accessToken
       )

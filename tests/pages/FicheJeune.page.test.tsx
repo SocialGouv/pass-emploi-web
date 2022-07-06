@@ -128,73 +128,74 @@ describe('Fiche Jeune', () => {
           ).toBeInTheDocument()
         })
 
-        it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
-          // Given
-          const continuerButton = screen.getByText('Continuer')
+        describe('Seconde étape suppresion modale', () => {
+          beforeEach(async () => {
+            // Given
+            const continuerButton = screen.getByText('Continuer')
 
-          // When
-          await userEvent.click(continuerButton)
-
-          // Then
-          expect(
-            screen.getByText(/Une fois confirmé toutes les informations liées/)
-          ).toBeInTheDocument()
-        })
-
-        it('contient un champ de sélection d’un motif', async () => {
-          // Given
-          const continuerButton = screen.getByText('Continuer')
-          await userEvent.click(continuerButton)
-
-          const selectMotif = screen.getByRole('combobox', {
-            name: /Motif de suppression/,
+            // When
+            await userEvent.click(continuerButton)
           })
 
-          // Then
-          expect(selectMotif).toBeInTheDocument()
-          expect(selectMotif).toHaveAttribute('required', '')
-        })
-
-        it('affiche le champ de saisie pour préciser le motif Autre', async () => {
-          // Given
-          const continuerButton = screen.getByText('Continuer')
-          await userEvent.click(continuerButton)
-          const selectMotif = screen.getByRole('combobox', {
-            name: /Motif de suppression/,
+          it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
+            // Then
+            expect(
+              screen.getByText(
+                /Une fois confirmé toutes les informations liées/
+              )
+            ).toBeInTheDocument()
           })
 
-          // When
-          await userEvent.selectOptions(selectMotif, 'Autre')
+          it('contient un champ de sélection d’un motif', async () => {
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
 
-          // Then
-          expect(
-            screen.getByText(
-              /Veuillez préciser le motif de la suppression du compte/
+            // Then
+            expect(selectMotif).toBeInTheDocument()
+            expect(selectMotif).toHaveAttribute('required', '')
+          })
+
+          it('affiche le champ de saisie pour préciser le motif Autre', async () => {
+            // Given
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
+
+            // When
+            await userEvent.selectOptions(selectMotif, 'Autre')
+
+            // Then
+            expect(
+              screen.getByText(
+                /Veuillez préciser le motif de la suppression du compte/
+              )
+            ).toBeInTheDocument()
+          })
+
+          it('lors de la confirmation, supprime le bénéficiaire', async () => {
+            // Given
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
+            const supprimerButtonModal = screen.getByText('Confirmer')
+            await userEvent.selectOptions(selectMotif, 'Radiation du CEJ')
+
+            // When
+            await userEvent.click(supprimerButtonModal)
+
+            // Then
+            expect(
+              dependances.jeunesService.archiverJeune
+            ).toHaveBeenCalledWith(
+              jeune.id,
+              { motif: 'Radiation du CEJ', commentaire: undefined },
+              'accessToken'
             )
-          ).toBeInTheDocument()
-        })
-        it('lors de la confirmation, supprime le bénéficiaire', async () => {
-          // Given
-          const continuerButton = screen.getByText('Continuer')
-          await userEvent.click(continuerButton)
-          const selectMotif = screen.getByRole('combobox', {
-            name: /Motif de suppression/,
+            expect(push).toHaveBeenCalledWith(
+              '/mes-jeunes?suppressionCompteJeuneActif=succes'
+            )
           })
-          const supprimerButtonModal = screen.getByText('Confirmer')
-          await userEvent.selectOptions(selectMotif, 'Radiation du CEJ')
-
-          // When
-          await userEvent.click(supprimerButtonModal)
-
-          // Then
-          expect(dependances.jeunesService.archiverJeune).toHaveBeenCalledWith(
-            jeune.id,
-            { motif: 'Radiation du CEJ', commentaire: undefined },
-            'accessToken'
-          )
-          expect(push).toHaveBeenCalledWith(
-            '/mes-jeunes?suppressionCompteJeuneActif=succes'
-          )
         })
       })
     })

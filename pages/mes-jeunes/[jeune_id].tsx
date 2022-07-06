@@ -3,13 +3,11 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import DeleteJeuneModal from '../../components/jeune/DeleteJeuneModal'
-import { SuppressionJeuneFormData } from '../../interfaces/json/jeune'
-
 import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
+import DeleteJeuneModal from 'components/jeune/DeleteJeuneModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
@@ -26,6 +24,7 @@ import {
   DetailJeune,
   MotifsSuppression,
 } from 'interfaces/jeune'
+import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { QueryParams, QueryValues } from 'referentiel/queryParams'
@@ -205,9 +204,18 @@ function FicheJeune({
   async function archiverJeuneCompteActif(
     payload: SuppressionJeuneFormData
   ): Promise<void> {
-    await jeunesServices.archiverJeune(jeune.id, payload, session!.accessToken)
-    setShowDeleteJeuneModal(false)
-    await router.push('/mes-jeunes?suppressionCompteJeuneActif=succes')
+    try {
+      await jeunesServices.archiverJeune(
+        jeune.id,
+        payload,
+        session!.accessToken
+      )
+      setShowDeleteJeuneModal(false)
+      await router.push('/mes-jeunes?suppressionCompteJeuneActif=succes')
+    } catch (e) {
+      setShowSuppressionCompteJeuneActifError(true)
+      setTrackingLabel('Détail jeune- Erreur suppr. compte')
+    }
   }
 
   useMatomo(trackingLabel)
