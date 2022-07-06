@@ -117,6 +117,11 @@ function FicheJeune({
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
+  const [
+    showSuppressionCompteJeuneActifError,
+    setShowSuppressionCompteJeuneActifError,
+  ] = useState<boolean>(false)
+
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
@@ -197,6 +202,14 @@ function FicheJeune({
     setShowDeleteJeuneModal(false)
   }
 
+  async function archiverJeuneCompteActif(
+    payload: SuppressionJeuneFormData
+  ): Promise<void> {
+    await jeunesServices.archiverJeune(jeune.id, payload, session!.accessToken)
+    setShowDeleteJeuneModal(false)
+    await router.push('/mes-jeunes?suppressionCompteJeuneActif=succes')
+  }
+
   useMatomo(trackingLabel)
 
   useEffect(() => {
@@ -242,12 +255,19 @@ function FicheJeune({
         />
       )}
 
+      {showSuppressionCompteJeuneActifError && (
+        <FailureMessage
+          label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
+          onAcknowledge={() => setShowSuppressionCompteJeuneActifError(false)}
+        />
+      )}
+
       {showDeleteJeuneModal && (
         <DeleteJeuneModal
           jeune={jeune}
           onClose={closeDeleteJeuneModal}
           motifsSuppression={motifsSuppression}
-          submitDelete={archiverJeuneCompteActif}
+          soumettreSuppression={archiverJeuneCompteActif}
         />
       )}
 

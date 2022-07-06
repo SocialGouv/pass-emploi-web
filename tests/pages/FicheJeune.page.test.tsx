@@ -1,4 +1,4 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -29,6 +29,8 @@ import {
   CategorieSituation,
   ConseillerHistorique,
   EtatSituation,
+  MotifsSuppression,
+  TypesMotifsSuppression,
 } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, {
@@ -40,6 +42,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -52,11 +55,24 @@ describe('Fiche Jeune', () => {
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
+    let motifsSuppression: MotifsSuppression[]
+    let dependances: Pick<Dependencies, 'jeunesService'>
 
     let replace: jest.Mock
+    let push: jest.Mock
     beforeEach(async () => {
       replace = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ replace })
+      push = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        replace: replace,
+        push: push,
+      })
+
+      dependances = {
+        jeunesService: mockedJeunesService({
+          archiverJeune: jest.fn(() => Promise.resolve()),
+        }),
+      }
     })
 
     describe('pour tous les conseillers', () => {
@@ -64,6 +80,13 @@ describe('Fiche Jeune', () => {
       beforeEach(async () => {
         // Given
         setIdJeune = jest.fn()
+
+        motifsSuppression = [
+          TypesMotifsSuppression.SORTIE_POSITIVE_DU_CEJ,
+          TypesMotifsSuppression.RADIATION_DU_CEJ,
+          TypesMotifsSuppression.RECREATION_D_UN_COMPTE_JEUNE,
+          TypesMotifsSuppression.AUTRE,
+        ]
 
         // When
         renderPage(
@@ -77,9 +100,9 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
+            motifsSuppression={motifsSuppression}
           />,
-          { idJeuneSetter: setIdJeune }
+          { idJeuneSetter: setIdJeune, customDependances: dependances }
         )
       })
 
@@ -124,38 +147,54 @@ describe('Fiche Jeune', () => {
           await userEvent.click(continuerButton)
 
           const selectMotif = screen.getByRole('combobox', {
-            name: 'Motif de suppression',
+            name: /Motif de suppression/,
           })
 
           // Then
-          userEvent.selectOptions(
-            screen.getByLabelText('Motif de suppression'),
-            'Radiation du CEJ'
-          )
-
           expect(selectMotif).toBeInTheDocument()
           expect(selectMotif).toHaveAttribute('required', '')
         })
 
-        it('lorsque le motif est AUTRE', async () => {
+        it('affiche le champ de saisie pour préciser le motif Autre', async () => {
           // Given
           const continuerButton = screen.getByText('Continuer')
           await userEvent.click(continuerButton)
           const selectMotif = screen.getByRole('combobox', {
-            name: 'Motif de suppression',
+            name: /Motif de suppression/,
           })
 
           // When
-          fireEvent.change(selectMotif, {
-            target: { value: 'Autre' },
-          })
+          await userEvent.selectOptions(selectMotif, 'Autre')
 
           // Then
           expect(
             screen.getByText(
-              'Veuillez préciser le motif de la suppression du compte'
+              /Veuillez préciser le motif de la suppression du compte/
             )
           ).toBeInTheDocument()
+        })
+        it('lors de la confirmation, supprime le bénéficiaire', async () => {
+          // Given
+          const continuerButton = screen.getByText('Continuer')
+          await userEvent.click(continuerButton)
+          const selectMotif = screen.getByRole('combobox', {
+            name: /Motif de suppression/,
+          })
+          const supprimerButtonModal = screen.getByText('Confirmer')
+          await userEvent.selectOptions(selectMotif, 'Radiation du CEJ')
+
+          // When
+          await userEvent.click(supprimerButtonModal)
+
+          // Then
+          expect(dependances.jeunesService.archiverJeune).toHaveBeenCalledWith(
+            jeune.id,
+            { motif: 'Radiation du CEJ', commentaire: undefined },
+            'accessToken'
+          )
+          expect(push).toHaveBeenCalledWith(
+            '/mes-jeunes?suppressionCompteJeuneActif=succes'
+          )
         })
       })
     })

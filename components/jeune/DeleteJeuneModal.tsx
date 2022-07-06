@@ -19,14 +19,14 @@ interface DeleteJeuneModalProps {
   jeune: DetailJeune
   motifsSuppression: MotifsSuppression[]
   onClose: () => void
-  submitDelete: (payload: SuppressionJeuneFormData) => Promise<void>
+  soumettreSuppression: (payload: SuppressionJeuneFormData) => Promise<void>
 }
 
 export default function DeleteJeuneModal({
   jeune,
   motifsSuppression,
   onClose,
-  submitDelete,
+  soumettreSuppression,
 }: DeleteJeuneModalProps) {
   const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
@@ -78,17 +78,16 @@ export default function DeleteJeuneModal({
 
   async function handleSoumettreSuppression(e: FormEvent) {
     e.preventDefault()
-    if (motifIsValid()) {
-      const payload: SuppressionJeuneFormData = {
-        motif: motifSuppressionJeune,
-        commentaire:
-          motifSuppressionJeune === TypesMotifsSuppression.AUTRE
-            ? commentaireMotif.value
-            : undefined,
-      }
-
-      submitDelete(payload)
+    const payload: SuppressionJeuneFormData = {
+      motif: motifSuppressionJeune,
+      commentaire:
+        motifSuppressionJeune === TypesMotifsSuppression.AUTRE
+          ? commentaireMotif.value
+          : undefined,
     }
+    if (!motifIsValid()) return Promise.resolve()
+
+    await soumettreSuppression(payload)
   }
 
   useMatomo(trackingLabel)
@@ -140,88 +139,96 @@ export default function DeleteJeuneModal({
           <InformationMessage content='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
 
           <form className='mt-8' onSubmit={handleSoumettreSuppression}>
-            <label htmlFor='motifSuppression' className='text-base-medium mb-2'>
-              <span aria-hidden={true}>* </span>Motif de suppression
-              <span className='text-s-regular block mb-3'>
-                {' '}
-                Veuillez sélectionner un motif de suppression de compte
-              </span>
-            </label>
-            <select
-              id='motifSuppression'
-              name='motifSuppression'
-              defaultValue={motifSuppressionJeune}
-              required
-              onChange={handleSelectedMotifSuppressionJeune}
-              className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
-            >
-              <option aria-hidden hidden disabled value={''} />
-              {motifsSuppression?.map((motif) => (
-                <option key={motif.toString()} value={motif}>
-                  {motif}
-                </option>
-              ))}
-            </select>
+            <fieldset>
+              <legend className='sr-only'>
+                Choisir un motif de suppression
+              </legend>
+              <label
+                htmlFor='motifSuppression'
+                className='text-base-medium mb-2'
+              >
+                <span aria-hidden={true}>* </span>Motif de suppression
+                <span className='text-s-regular block mb-3'>
+                  {' '}
+                  Veuillez sélectionner un motif de suppression de compte
+                </span>
+              </label>
+              <select
+                id='motifSuppression'
+                name='motifSuppression'
+                defaultValue={motifSuppressionJeune}
+                required
+                onChange={handleSelectedMotifSuppressionJeune}
+                className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
+              >
+                <option hidden value={''} />
+                {motifsSuppression?.map((motif) => (
+                  <option key={motif.toString()} value={motif}>
+                    {motif}
+                  </option>
+                ))}
+              </select>
 
-            {showCommentaireMotif && (
-              <>
-                <label
-                  htmlFor='motifSuppression-autre'
-                  className='text-base-medium'
-                >
-                  <span aria-hidden={true}>* </span>
-                  Veuillez préciser le motif de la suppression du compte
-                </label>
-                {commentaireMotif.error && (
-                  <InputError
-                    id='motifSuppression-autre--error'
-                    className='mb-2'
+              {showCommentaireMotif && (
+                <>
+                  <label
+                    htmlFor='motifSuppression-autre'
+                    className='text-base-medium'
                   >
-                    {commentaireMotif.error}
-                  </InputError>
-                )}
-                <textarea
-                  id='motifSuppression-autre'
-                  name='motifSuppression-autre'
-                  required
-                  defaultValue={commentaireMotif.value}
-                  onChange={(e) =>
-                    setCommentaireMotif({ value: e.target.value })
-                  }
-                  onBlur={validateMotifSuppressionAutre}
-                  rows={3}
-                  aria-invalid={commentaireMotif.error ? true : undefined}
-                  aria-describedby={
-                    commentaireMotif.error
-                      ? 'motifSuppression-autre--error'
-                      : undefined
-                  }
-                  className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 mt-3 ${
-                    commentaireMotif.error
-                      ? 'border-warning text-warning'
-                      : 'border-content_color'
-                  }`}
-                />
-              </>
-            )}
+                    <span aria-hidden={true}>* </span>
+                    Veuillez préciser le motif de la suppression du compte
+                  </label>
+                  {commentaireMotif.error && (
+                    <InputError
+                      id='motifSuppression-autre--error'
+                      className='mb-2'
+                    >
+                      {commentaireMotif.error}
+                    </InputError>
+                  )}
+                  <textarea
+                    id='motifSuppression-autre'
+                    name='motifSuppression-autre'
+                    required
+                    defaultValue={commentaireMotif.value}
+                    onChange={(e) =>
+                      setCommentaireMotif({ value: e.target.value })
+                    }
+                    onBlur={validateMotifSuppressionAutre}
+                    rows={3}
+                    aria-invalid={commentaireMotif.error ? true : undefined}
+                    aria-describedby={
+                      commentaireMotif.error
+                        ? 'motifSuppression-autre--error'
+                        : undefined
+                    }
+                    className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 mt-3 ${
+                      commentaireMotif.error
+                        ? 'border-warning text-warning'
+                        : 'border-content_color'
+                    }`}
+                  />
+                </>
+              )}
+            </fieldset>
+            <div className='flex justify-center'>
+              <Button
+                type='button'
+                style={ButtonStyle.SECONDARY}
+                onClick={onClose}
+              >
+                Annuler
+              </Button>
+              <Button
+                type='submit'
+                disabled={!motifIsValid()}
+                style={ButtonStyle.PRIMARY}
+                className='ml-6'
+              >
+                Confirmer
+              </Button>
+            </div>
           </form>
-          <div className='flex justify-center'>
-            <Button
-              type='button'
-              style={ButtonStyle.SECONDARY}
-              onClick={onClose}
-            >
-              Annuler
-            </Button>
-            <Button
-              type='submit'
-              disabled={!motifIsValid()}
-              style={ButtonStyle.PRIMARY}
-              className='ml-6'
-            >
-              Confirmer
-            </Button>
-          </div>
         </Modal>
       )}
     </>

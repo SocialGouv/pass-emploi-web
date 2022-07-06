@@ -208,7 +208,7 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
-      `/jeunes/archiver/${idJeune}`,
+      `/jeunes/${idJeune}/archiver`,
       payload,
       accessToken
     )

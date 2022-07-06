@@ -39,6 +39,7 @@ interface MesJeunesProps extends PageProps {
   deletionSuccess?: boolean
   ajoutAgenceSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
+  suppressionCompteJeuneActifSuccess?: boolean
 }
 
 function MesJeunes({
@@ -49,6 +50,7 @@ function MesJeunes({
   recuperationSuccess,
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
+  suppressionCompteJeuneActifSuccess,
 }: MesJeunesProps) {
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
@@ -77,6 +79,11 @@ function MesJeunes({
   )
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+
+  const [
+    showSuppressionCompteJeuneActifSuccess,
+    setShowSuppressionCompteJeuneActifSuccess,
+  ] = useState<boolean>(suppressionCompteJeuneActifSuccess ?? false)
 
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
@@ -118,6 +125,11 @@ function MesJeunes({
 
   async function closeAjoutAgenceSuccessMessage(): Promise<void> {
     setShowAjoutAgenceSuccess(false)
+    await router.replace('/mes-jeunes', undefined, { shallow: true })
+  }
+
+  async function closeSuppressionCompteJeuneActifSuccess() {
+    setShowSuppressionCompteJeuneActifSuccess(false)
     await router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
@@ -206,6 +218,12 @@ function MesJeunes({
       : 'Mes jeunes'
   )
 
+  useMatomo(
+    showSuppressionCompteJeuneActifSuccess
+      ? 'Mes jeunes - Succès suppr. compte'
+      : 'Mes jeunes'
+  )
+
   return (
     <>
       {showRecuperationSuccess && (
@@ -239,6 +257,13 @@ function MesJeunes({
               : 'agence'
           } a été ajoutée à votre profil`}
           onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
+        />
+      )}
+
+      {showSuppressionCompteJeuneActifSuccess && (
+        <SuccessMessage
+          label='Le compte bénéficiaire a bien été supprimé'
+          onAcknowledge={() => closeSuppressionCompteJeuneActifSuccess()}
         />
       )}
 
@@ -362,6 +387,11 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   if (context.query[QueryParams.choixAgence]) {
     props.ajoutAgenceSuccess =
       context.query[QueryParams.choixAgence] === QueryValues.succes
+  }
+
+  if (context.query.suppressionCompteJeuneActif) {
+    props.suppressionCompteJeuneActifSuccess =
+      context.query.suppressionCompteJeuneActif === 'succes'
   }
 
   return { props }
