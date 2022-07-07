@@ -11,6 +11,7 @@ import TabList from 'components/ui/TabList'
 import { UserStructure } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
@@ -191,17 +192,21 @@ export const getServerSideProps: GetServerSideProps<
     pageHeader: 'Rendez-vous',
   }
 
-  if (context.query.creationRdv)
-    props.creationSuccess = context.query.creationRdv === 'succes'
+  if (context.query[QueryParams.creationRdv])
+    props.creationSuccess =
+      context.query[QueryParams.creationRdv] === QueryValues.succes
 
-  if (context.query.modificationRdv)
-    props.modificationSuccess = context.query.modificationRdv === 'succes'
+  if (context.query[QueryParams.modificationRdv])
+    props.modificationSuccess =
+      context.query[QueryParams.modificationRdv] === QueryValues.succes
 
-  if (context.query.suppressionRdv)
-    props.suppressionSuccess = context.query.suppressionRdv === 'succes'
+  if (context.query[QueryParams.suppressionRdv])
+    props.suppressionSuccess =
+      context.query[QueryParams.suppressionRdv] === QueryValues.succes
 
-  if (context.query?.envoiMessage) {
-    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  if (context.query[QueryParams.envoiMessage]) {
+    props.messageEnvoiGroupeSuccess =
+      context.query[QueryParams.envoiMessage] === QueryValues.succes
   }
   return { props }
 }

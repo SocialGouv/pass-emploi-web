@@ -154,7 +154,10 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(push).toHaveBeenCalledWith('/mes-jeunes?envoiMessage=succes')
+        expect(push).toHaveBeenCalledWith({
+          pathname: '/mes-jeunes',
+          query: { envoiMessage: 'succes' },
+        })
       })
 
       // FIXME trouver comment tester

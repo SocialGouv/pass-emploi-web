@@ -15,6 +15,7 @@ import Multiselection from 'components/ui/Multiselection'
 import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import {
@@ -28,6 +29,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { parseUrl, setQueryParams } from 'utils/urlParser'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EnvoiMessageGroupeProps extends PageProps {
@@ -132,7 +134,14 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
-      await router.push(`${returnTo}?envoiMessage=succes`)
+
+      const { pathname, query } = parseUrl(returnTo)
+      await router.push({
+        pathname,
+        query: setQueryParams(query, {
+          [QueryParams.envoiMessage]: QueryValues.succes,
+        }),
+      })
     } catch (error) {
       setErreurEnvoi(
         error instanceof ApiError

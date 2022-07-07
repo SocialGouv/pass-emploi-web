@@ -1,23 +1,22 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
 import { getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-
-import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -528,9 +527,10 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(push).toHaveBeenCalledWith(
-              '/mes-rendezvous?creationRdv=succes'
-            )
+            expect(push).toHaveBeenCalledWith({
+              pathname: '/mes-rendezvous',
+              query: { creationRdv: 'succes' },
+            })
           })
         })
 
@@ -815,9 +815,10 @@ describe('EditionRdv', () => {
             rdv.id,
             'accessToken'
           )
-          expect(push).toHaveBeenCalledWith(
-            '/mes-rendezvous?suppressionRdv=succes'
-          )
+          expect(push).toHaveBeenCalledWith({
+            pathname: '/mes-rendezvous',
+            query: { suppressionRdv: 'succes' },
+          })
         })
       })
 
@@ -1021,9 +1022,10 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(push).toHaveBeenCalledWith(
-              '/mes-rendezvous?modificationRdv=succes'
-            )
+            expect(push).toHaveBeenCalledWith({
+              pathname: '/mes-rendezvous',
+              query: { modificationRdv: 'succes' },
+            })
           })
         })
       })

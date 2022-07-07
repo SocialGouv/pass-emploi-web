@@ -14,6 +14,7 @@ import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -21,6 +22,7 @@ import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
 import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EditionRdvProps extends PageProps {
@@ -121,9 +123,14 @@ function EditionRdv({
       )
     }
 
-    const [redirectPath] = returnTo.split('?')
-    const queryParam = rdv ? 'modificationRdv' : 'creationRdv'
-    await router.push(`${redirectPath}?${queryParam}=succes`)
+    const { pathname, query } = getCleanUrlObject(returnTo)
+    const queryParam = rdv
+      ? QueryParams.modificationRdv
+      : QueryParams.creationRdv
+    await router.push({
+      pathname,
+      query: setQueryParams(query, { [queryParam]: QueryValues.succes }),
+    })
   }
 
   async function deleteRendezVous(): Promise<void> {
@@ -131,8 +138,13 @@ function EditionRdv({
     setShowDeleteRdvModal(false)
     try {
       await rendezVousService.deleteRendezVous(rdv!.id, session!.accessToken)
-      const [redirectPath] = returnTo.split('?')
-      await router.push(`${redirectPath}?suppressionRdv=succes`)
+      const { pathname, query } = getCleanUrlObject(returnTo)
+      await router.push({
+        pathname,
+        query: setQueryParams(query, {
+          [QueryParams.suppressionRdv]: QueryValues.succes,
+        }),
+      })
     } catch (e) {
       setShowDeleteRdvError(true)
     }
@@ -265,4 +277,19 @@ export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
 
 function comingFromHome(referer: string): boolean {
   return referer.split('?')[0].endsWith('/index')
+}
+
+function getCleanUrlObject(url: string): {
+  pathname: string
+  query: Record<string, string | string[]>
+} {
+  const { pathname, query } = parseUrl(url)
+  return {
+    pathname,
+    query: deleteQueryParams(query, [
+      QueryParams.modificationRdv,
+      QueryParams.creationRdv,
+      QueryParams.suppressionRdv,
+    ]),
+  }
 }

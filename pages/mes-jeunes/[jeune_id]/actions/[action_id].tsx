@@ -13,6 +13,7 @@ import { Action, StatutAction } from 'interfaces/action'
 import { UserStructure, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
@@ -61,7 +62,7 @@ function PageAction({
       .then(() => {
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,
-          query: { suppression: 'succes' },
+          query: { [QueryParams.suppressionAction]: QueryValues.succes },
         })
       })
       .catch((error: Error) => {
@@ -191,8 +192,9 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     pageHeader: 'Détails de l’action',
   }
 
-  if (context.query?.envoiMessage) {
-    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  if (context.query[QueryParams.envoiMessage]) {
+    props.messageEnvoiGroupeSuccess =
+      context.query[QueryParams.envoiMessage] === QueryValues.succes
   }
 
   return { props }
