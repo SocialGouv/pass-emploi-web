@@ -255,11 +255,7 @@ export default function Conversation({
         ))}
       </ul>
 
-      <form
-        data-testid='newMessageForm'
-        onSubmit={sendNouveauMessage}
-        className='p-3'
-      >
+      <form onSubmit={sendNouveauMessage} className='p-3'>
         {uploadedFileError && (
           <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
         )}

@@ -273,16 +273,17 @@ describe('EditionRdv', () => {
         })
 
         describe('lorsque le type de rendez-vous est de type ENTRETIEN INDIVIDUEL CONSEILLER', () => {
-          it('présence du conseiller est requise et non modifiable', () => {
+          it('présence du conseiller est requise et non modifiable', async () => {
             // Given
             const inputPresenceConseiller = screen.getByLabelText(
               /Informer les bénéficiaires qu’un conseiller sera présent au rendez-vous/i
             )
 
             // When
-            fireEvent.change(selectType, {
-              target: { value: 'ENTRETIEN_INDIVIDUEL_CONSEILLER' },
-            })
+            await userEvent.selectOptions(
+              selectType,
+              'ENTRETIEN_INDIVIDUEL_CONSEILLER'
+            )
 
             // Then
             expect(inputPresenceConseiller).toBeDisabled()
@@ -447,22 +448,14 @@ describe('EditionRdv', () => {
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
           // Given
-          fireEvent.input(selectJeunes, {
-            target: { value: getNomJeuneComplet(jeunes[0]) },
-          })
-          fireEvent.input(selectJeunes, {
-            target: { value: getNomJeuneComplet(jeunes[2]) },
-          })
-          fireEvent.change(selectModalite, { target: { value: modalites[0] } })
-          fireEvent.change(selectType, {
-            target: { value: typesRendezVous[0].code },
-          })
-          fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
-          fireEvent.input(inputHoraire, { target: { value: '10:30' } })
-          fireEvent.input(inputDuree, { target: { value: '02:37' } })
-          fireEvent.input(inputCommentaires, {
-            target: { value: 'Lorem ipsum dolor sit amet' },
-          })
+          await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[0]))
+          await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[2]))
+          await userEvent.selectOptions(selectModalite, modalites[0])
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
+          await userEvent.type(inputDate, '2022-03-03')
+          await userEvent.type(inputHoraire, '10:30')
+          await userEvent.type(inputDuree, '02:37')
+          await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
         })
 
         describe('quand le formulaire est validé', () => {
@@ -492,12 +485,10 @@ describe('EditionRdv', () => {
 
           it('crée un rendez-vous de type AUTRE', async () => {
             // Given
-            fireEvent.change(selectType, { target: { value: 'AUTRE' } })
+            await userEvent.selectOptions(selectType, 'AUTRE')
 
             const inputTypePrecision = screen.getByLabelText('* Préciser')
-            fireEvent.change(inputTypePrecision, {
-              target: { value: 'un texte de précision' },
-            })
+            await userEvent.type(inputTypePrecision, 'un texte de précision')
 
             // When
             await userEvent.click(buttonValider)
@@ -557,9 +548,11 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand aucun type de rendez-vous n'est sélectionné", () => {
+        it("est désactivé quand aucun type de rendez-vous n'est sélectionné", async () => {
           // When
-          fireEvent.change(selectType, { target: { value: '' } })
+          await act(() => {
+            fireEvent.change(selectType, { target: { value: '' } })
+          })
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -581,7 +574,8 @@ describe('EditionRdv', () => {
 
           // When
           expect(inputTypePrecision).toBeInTheDocument()
-          fireEvent.blur(inputTypePrecision)
+          await userEvent.click(inputTypePrecision)
+          await userEvent.tab()
 
           // Then
           expect(inputTypePrecision.value).toEqual('')
@@ -592,10 +586,10 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand aucune date n'est sélectionnée", () => {
+        it("est désactivé quand aucune date n'est sélectionnée", async () => {
           // When
-          fireEvent.change(inputDate, { target: { value: '' } })
-          fireEvent.blur(inputDate)
+          await userEvent.clear(inputDate)
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -606,10 +600,10 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it('est désactivé quand la date est incorrecte', () => {
+        it('est désactivé quand la date est incorrecte', async () => {
           // When
-          fireEvent.input(inputDate, { target: { value: 'yyyy-06-06' } })
-          fireEvent.blur(inputDate)
+          await userEvent.type(inputDate, 'yyyy-06-06')
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -620,10 +614,10 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand aucune horaire n'est renseignée", () => {
+        it("est désactivé quand aucune horaire n'est renseignée", async () => {
           // When
-          fireEvent.input(inputHoraire, { target: { value: '' } })
-          fireEvent.blur(inputHoraire)
+          await userEvent.clear(inputHoraire)
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -634,10 +628,10 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand l'horaire est incorrecte", () => {
+        it("est désactivé quand l'horaire est incorrecte", async () => {
           // When
-          fireEvent.input(inputHoraire, { target: { value: '123:45' } })
-          fireEvent.blur(inputHoraire)
+          await userEvent.type(inputHoraire, '123:45')
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -648,10 +642,10 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand aucune durée n'est renseignée", () => {
+        it("est désactivé quand aucune durée n'est renseignée", async () => {
           // When
-          fireEvent.input(inputDuree, { target: { value: '' } })
-          fireEvent.blur(inputDuree)
+          await userEvent.clear(inputDuree)
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -662,10 +656,10 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it('est désactivé quand la durée est incorrecte', () => {
+        it('est désactivé quand la durée est incorrecte', async () => {
           // When
-          fireEvent.input(inputDuree, { target: { value: '123:45' } })
-          fireEvent.blur(inputDuree)
+          await userEvent.type(inputDuree, '123:45')
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -937,21 +931,18 @@ describe('EditionRdv', () => {
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
           // Given
-          await act(async () => {
-            fireEvent.input(searchJeune, {
-              target: { value: getNomJeuneComplet(jeunes[1]) },
-            })
-            enleverJeune.click()
-            fireEvent.change(selectModalite, {
-              target: { value: modalites[0] },
-            })
-            fireEvent.change(inputDate, { target: { value: '2022-03-03' } })
-            fireEvent.input(inputHoraire, { target: { value: '10:30' } })
-            fireEvent.input(inputDuree, { target: { value: '02:37' } })
-            fireEvent.input(inputCommentaires, {
-              target: { value: 'Lorem ipsum dolor sit amet' },
-            })
-          })
+          await userEvent.type(searchJeune, getNomJeuneComplet(jeunes[1]))
+          await userEvent.click(enleverJeune)
+          await userEvent.selectOptions(selectModalite, modalites[0])
+
+          await userEvent.clear(inputDate)
+          await userEvent.type(inputDate, '2022-03-03')
+          await userEvent.clear(inputHoraire)
+          await userEvent.type(inputHoraire, '10:30')
+          await userEvent.clear(inputDuree)
+          await userEvent.type(inputDuree, '02:37')
+          await userEvent.clear(inputCommentaires)
+          await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
         })
 
         // FIXME trouver comment tester
@@ -1149,9 +1140,8 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           const inputCommentaire =
             screen.getByLabelText<HTMLInputElement>(/Commentaire/)
-          fireEvent.input(inputCommentaire, {
-            target: { value: 'modification du commentaire' },
-          })
+          await userEvent.clear(inputCommentaire)
+          await userEvent.type(inputCommentaire, 'modification du commentaire')
           const buttonSubmit = screen.getByText('Envoyer')
 
           // When

@@ -1,12 +1,11 @@
-import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
+import { RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
-import renderWithSession from '../renderWithSession'
 
 import { unDossierMilo } from 'fixtures/milo'
 import { mockedConseillerService } from 'fixtures/services'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
+import renderWithSession from 'tests/renderWithSession'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('MiloCreationJeune', () => {
@@ -39,7 +38,7 @@ describe('MiloCreationJeune', () => {
         name: 'Valider le numéro',
       })
       const inputSearch = screen.getByLabelText('Numéro de dossier')
-      fireEvent.change(inputSearch, { target: { value: '' } })
+      await userEvent.clear(inputSearch)
 
       //WHEN
       await userEvent.click(submitButton)
@@ -96,10 +95,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      // FIXME use userEvent.click
-      await act(async () => {
-        createCompteButton.click()
-      })
+      await userEvent.click(createCompteButton)
 
       //THEN
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)

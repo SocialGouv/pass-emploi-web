@@ -1,12 +1,11 @@
-import { fireEvent, RenderResult, screen } from '@testing-library/react'
+import { RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
-
-import renderWithSession from '../renderWithSession'
 
 import { mockedJeunesService } from 'fixtures/services'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { JeunesService } from 'services/jeunes.service'
+import renderWithSession from 'tests/renderWithSession'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('PoleEmploiCreationJeune', () => {
@@ -45,13 +44,11 @@ describe('PoleEmploiCreationJeune', () => {
       beforeEach(async () => {
         // Given
         const inputFirstname = screen.getByLabelText('* Prénom')
-        fireEvent.change(inputFirstname, { target: { value: 'Nadia' } })
+        await userEvent.type(inputFirstname, 'Nadia')
         const inputName = screen.getByLabelText('* Nom')
-        fireEvent.change(inputName, { target: { value: 'Sanfamiye' } })
+        await userEvent.type(inputName, 'Sanfamiye')
         const inputEmail = screen.getByLabelText(emailLabel)
-        fireEvent.change(inputEmail, {
-          target: { value: 'nadia.sanfamiye@poleemploi.fr' },
-        })
+        await userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
       })
 
       it('demande le remplissage du prénom', async () => {
@@ -108,16 +105,14 @@ describe('PoleEmploiCreationJeune', () => {
   })
 
   describe('quand le formulaire a été soumis', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       // Given
       const inputFirstname = screen.getByLabelText('* Prénom')
-      fireEvent.change(inputFirstname, { target: { value: 'Nadia' } })
+      await userEvent.type(inputFirstname, 'Nadia')
       const inputName = screen.getByLabelText('* Nom')
-      fireEvent.change(inputName, { target: { value: 'Sanfamiye' } })
+      await userEvent.type(inputName, 'Sanfamiye')
       const inputEmail = screen.getByLabelText(emailLabel)
-      fireEvent.change(inputEmail, {
-        target: { value: 'nadia.sanfamiye@poleemploi.fr' },
-      })
+      await userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
     })
 
     it("devrait afficher les informations de succès de création d'un compte", async () => {

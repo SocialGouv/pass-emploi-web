@@ -23,7 +23,7 @@ import isEmailValid from 'utils/isEmailValid'
 
 interface ReaffectationProps extends PageProps {}
 
-function Index(_: ReaffectationProps) {
+function Reaffectation(_: ReaffectationProps) {
   const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
@@ -461,4 +461,4 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default withTransaction(Index.name, 'page')(Index)
+export default withTransaction(Reaffectation.name, 'page')(Reaffectation)

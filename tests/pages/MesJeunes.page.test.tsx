@@ -68,7 +68,7 @@ describe('Mes Jeunes', () => {
     describe('Contenu de page', () => {
       beforeEach(async () => {
         // WHEN
-        await act(async () => {
+        await act(() => {
           renderPage(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
@@ -150,7 +150,7 @@ describe('Mes Jeunes', () => {
       let conseiller: Conseiller
       beforeEach(async () => {
         // Given
-        await act(async () => {
+        await act(() => {
           conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
           renderPage(
             <MesJeunes
@@ -202,7 +202,7 @@ describe('Mes Jeunes', () => {
           situationCourante: CategorieSituation.DEMANDEUR_D_EMPLOI,
         })
 
-        await act(async () => {
+        await act(() => {
           renderPage(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
@@ -254,7 +254,7 @@ describe('Mes Jeunes', () => {
         //GIVEN
         const jeune = unJeuneAvecActionsNonTerminees()
 
-        await act(async () => {
+        await act(() => {
           renderPage(
             <MesJeunes
               structureConseiller={UserStructure.POLE_EMPLOI}
@@ -300,7 +300,7 @@ describe('Mes Jeunes', () => {
     describe("quand le conseiller n'a pas de jeune", () => {
       it("n'affiche pas la recherche de jeune", async () => {
         // GIVEN
-        await act(async () => {
+        await act(() => {
           renderPage(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
@@ -320,7 +320,7 @@ describe('Mes Jeunes', () => {
 
       it('affiche un message invitant à ajouter des jeunes', async () => {
         // GIVEN
-        await act(async () => {
+        await act(() => {
           renderPage(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
@@ -345,7 +345,7 @@ describe('Mes Jeunes', () => {
           const conseiller = unConseiller({
             aDesBeneficiairesARecuperer: true,
           })
-          await act(async () => {
+          await act(() => {
             renderPage(
               <MesJeunes
                 structureConseiller={UserStructure.MILO}
@@ -385,7 +385,7 @@ describe('Mes Jeunes', () => {
         ).mockRejectedValue(new Error())
 
         // WHEN
-        await act(async () => {
+        await act(() => {
           renderPage(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
@@ -405,7 +405,7 @@ describe('Mes Jeunes', () => {
     describe('quand on vient de selectionner une agence', () => {
       it('affiche un message de succès', async () => {
         // When
-        await act(async () => {
+        await act(() => {
           renderPage(
             <MesJeunes
               structureConseiller={UserStructure.MILO}

@@ -1,11 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { StatutAction } from '../../interfaces/action'
-
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { uneListeDActions } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
+import { StatutAction } from 'interfaces/action'
 
 describe('TableauActionsJeune', () => {
   describe('Filtre statut', () => {

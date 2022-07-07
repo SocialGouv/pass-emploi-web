@@ -1,9 +1,7 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Session } from 'next-auth'
 import React from 'react'
-
-import renderWithSession from '../renderWithSession'
 
 import Conversation from 'components/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
@@ -14,6 +12,7 @@ import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
+import renderWithSession from 'tests/renderWithSession'
 import { formatDayDate } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -112,9 +111,7 @@ describe('<Conversation />', () => {
     const messageInput = screen.getByPlaceholderText(
       'Écrivez votre message ici...'
     )
-    await act(() => {
-      fireEvent.change(fileInput, { target: { files: [file] } })
-    })
+    await userEvent.upload(fileInput, file, { applyAccept: false })
     await userEvent.type(messageInput, 'TOTO')
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
@@ -176,7 +173,9 @@ describe('<Conversation />', () => {
 
     it('marque la conversation en "lu"', async () => {
       // When
-      fireEvent.focus(messageInput)
+      await act(() => {
+        messageInput.focus()
+      })
 
       // Then
       expect(messagesService.setReadByConseiller).toHaveBeenCalledWith(
@@ -187,13 +186,11 @@ describe('<Conversation />', () => {
     it('envoie un nouveau message', async () => {
       // Given
       const newMessage = 'Ceci est un nouveau message du conseiller'
-      const form = screen.getByTestId('newMessageForm')
+      const submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
-      await act(() => {
-        fireEvent.input(messageInput, { target: { value: newMessage } })
-        fireEvent.submit(form)
-      })
+      await userEvent.type(messageInput, newMessage)
+      await userEvent.click(submitButton)
 
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
@@ -211,22 +208,18 @@ describe('<Conversation />', () => {
 
   describe('quand on crée un message avec une pièce jointe', () => {
     let uploadFileButton: HTMLButtonElement
-    let form: HTMLFormElement
     let file: File
+    let submitButton: HTMLButtonElement
     beforeEach(async () => {
       // Given
-      file = new File(['un contenu'], 'imageupload.png', {
-        type: 'image/png',
-      })
+      file = new File(['un contenu'], 'imageupload.png')
 
       const fileInput = screen.getByLabelText('Attacher une pièce jointe')
       uploadFileButton = fileInput.closest('button')!
-      form = screen.getByTestId('newMessageForm')
+      submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
-      await act(async () => {
-        fireEvent.change(fileInput, { target: { files: [file] } })
-      })
+      await userEvent.upload(fileInput, file, { applyAccept: false })
     })
 
     it('téléverse un fichier et affiche son nom en cas de succès', async () => {
@@ -250,9 +243,7 @@ describe('<Conversation />', () => {
         'Supprimer la pièce jointe'
       )
       // When
-      await act(() => {
-        fireEvent.click(boutonDeleteFichier)
-      })
+      await userEvent.click(boutonDeleteFichier)
       // Then
       expect(fichiersService.deleteFichier).toHaveBeenCalledWith(
         'id-fichier',
@@ -262,7 +253,7 @@ describe('<Conversation />', () => {
     })
 
     it('création d’un message avec une pièce jointe', async () => {
-      fireEvent.submit(form)
+      await userEvent.click(submitButton)
 
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
