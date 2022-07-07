@@ -18,22 +18,16 @@ interface ModalProps {
   onClose: () => void
   children: ReactNode
   showTitle?: boolean
-  customHeight?: string
-  customWidth?: string
-  iconName?: any
-  iconHead?: boolean
+  titleIcon?: IconName
 }
 
 const Modal = forwardRef((props: ModalProps, ref) => {
   const {
     children: modalContent,
-    customHeight,
-    customWidth,
     onClose,
     showTitle = true,
     title,
-    iconHead,
-    iconName,
+    titleIcon,
   } = props
 
   useImperativeHandle(ref, () => ({
@@ -97,14 +91,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   }, [])
 
   const modalTemplate = (
-    <div
-      className='rounded-x_large bg-blanc max-w-[620px]'
-      style={{
-        height: customHeight,
-        width: customWidth,
-      }}
-      ref={modalRef}
-    >
+    <div className='rounded-x_large bg-blanc max-w-[620px]' ref={modalRef}>
       <div className='flex justify-end p-5'>
         <button
           type='button'
@@ -122,9 +109,9 @@ const Modal = forwardRef((props: ModalProps, ref) => {
         </button>
       </div>
       <div className='px-5 pt-3 pb-8'>
-        {iconHead && (
+        {titleIcon && (
           <IconComponent
-            name={iconName}
+            name={titleIcon}
             focusable={false}
             aria-hidden={true}
             className='w-[100px] h-[91px] m-auto mb-8 fill-primary'

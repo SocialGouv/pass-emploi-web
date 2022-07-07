@@ -105,8 +105,6 @@ export enum TypesMotifsSuppression {
   AUTRE = 'Autre',
 }
 
-export type MotifsSuppression = TypesMotifsSuppression[]
-
 export function compareJeunesByNom(
   jeune1: BaseJeune,
   jeune2: BaseJeune

@@ -4,7 +4,6 @@ import {
   ConseillerHistorique,
   DetailJeune,
   JeuneFromListe,
-  MotifsSuppression,
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
@@ -67,7 +66,7 @@ export interface JeunesService {
     accessToken: string
   ): Promise<void>
 
-  getMotifsSuppression(accessToken: string): Promise<MotifsSuppression[]>
+  getMotifsSuppression(accessToken: string): Promise<string[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -214,10 +213,8 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
-  async getMotifsSuppression(
-    accessToken: string
-  ): Promise<MotifsSuppression[]> {
-    const { content: motifs } = await this.apiClient.get<MotifsSuppression[]>(
+  async getMotifsSuppression(accessToken: string): Promise<string[]> {
+    const { content: motifs } = await this.apiClient.get<string[]>(
       '/referentiels/motifs-suppression-jeune',
       accessToken
     )

@@ -2,10 +2,9 @@ import { UrlObject } from 'url'
 
 import { MouseEvent, useRef } from 'react'
 
-import WarningIcon from '../assets/icons/warning.svg'
-
 import Modal from './Modal'
 import ButtonLink from './ui/ButtonLink'
+import IconComponent, { IconName } from './ui/IconComponent'
 
 import Button, { ButtonStyle } from 'components/ui/Button'
 
@@ -29,10 +28,11 @@ export default function LeavePageConfirmationModal({
   return (
     <Modal title='Quitter la page ?' onClose={onCancel} ref={modalRef}>
       <div className='px-20 text-center'>
-        <WarningIcon
+        <IconComponent
+          name={IconName.Warning}
           focusable={false}
           aria-hidden={true}
-          className='w-[54px] h-[57px] m-auto'
+          className='w-[54px] h-[57px] m-auto fill-primary'
         />
         <p className='mt-6 text-base-medium'>{message}</p>
         <p className='mt-6'>{commentaire}</p>

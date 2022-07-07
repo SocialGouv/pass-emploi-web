@@ -19,11 +19,7 @@ import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
-import {
-  ConseillerHistorique,
-  DetailJeune,
-  MotifsSuppression,
-} from 'interfaces/jeune'
+import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -63,7 +59,6 @@ interface FicheJeuneProps extends PageProps {
   actionCreationSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
   onglet?: Onglet
-  motifsSuppression: MotifsSuppression[]
 }
 
 function FicheJeune({
@@ -77,7 +72,6 @@ function FicheJeune({
   actionCreationSuccess,
   messageEnvoiGroupeSuccess,
   onglet,
-  motifsSuppression,
 }: FicheJeuneProps) {
   const { data: session } = useSession<true>({ required: true })
 
@@ -92,6 +86,8 @@ function FicheJeune({
   >(listeConseillersReduite)
   const [expandListeConseillers, setExpandListeConseillers] =
     useState<boolean>(false)
+
+  const [motifsSuppression, setMotifsSuppression] = useState<string[]>([])
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
   const [totalActions, setTotalActions] = useState<number>(
@@ -117,8 +113,8 @@ function FicheJeune({
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
   const [
-    showSuppressionCompteJeuneActifError,
-    setShowSuppressionCompteJeuneActifError,
+    showSuppressionCompteBeneficiaireError,
+    setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
 
   const pageTracking: string = jeune.isActivated
@@ -188,17 +184,14 @@ function FicheJeune({
     return result
   }
 
-  function handleDelete(e: React.MouseEvent<HTMLElement>) {
+  async function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
     e.stopPropagation()
-    openDeleteJeuneModal()
-  }
-
-  function openDeleteJeuneModal() {
     setShowDeleteJeuneModal(true)
-  }
-  function closeDeleteJeuneModal() {
-    setShowDeleteJeuneModal(false)
+    const result = await jeunesServices.getMotifsSuppression(
+      session!.accessToken
+    )
+    setMotifsSuppression(result)
   }
 
   async function archiverJeuneCompteActif(
@@ -210,11 +203,14 @@ function FicheJeune({
         payload,
         session!.accessToken
       )
-      setShowDeleteJeuneModal(false)
-      await router.push('/mes-jeunes?suppressionCompteJeuneActif=succes')
+      await router.push(
+        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+      )
     } catch (e) {
-      setShowSuppressionCompteJeuneActifError(true)
+      setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel('Détail jeune- Erreur suppr. compte')
+    } finally {
+      setShowDeleteJeuneModal(false)
     }
   }
 
@@ -263,17 +259,17 @@ function FicheJeune({
         />
       )}
 
-      {showSuppressionCompteJeuneActifError && (
+      {showSuppressionCompteBeneficiaireError && (
         <FailureMessage
           label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
-          onAcknowledge={() => setShowSuppressionCompteJeuneActifError(false)}
+          onAcknowledge={() => setShowSuppressionCompteBeneficiaireError(false)}
         />
       )}
 
       {showDeleteJeuneModal && (
         <DeleteJeuneModal
           jeune={jeune}
-          onClose={closeDeleteJeuneModal}
+          onClose={() => setShowDeleteJeuneModal(false)}
           motifsSuppression={motifsSuppression}
           soumettreSuppression={archiverJeuneCompteActif}
         />
@@ -315,14 +311,25 @@ function FicheJeune({
             </ButtonLink>
           )}
         </div>
+        {!jeune.isActivated && (
+          <ButtonLink
+            href={`/mes-jeunes/${jeune.id}/suppression`}
+            style={ButtonStyle.SECONDARY}
+            className='w-fit'
+          >
+            Supprimer ce compte
+          </ButtonLink>
+        )}
 
-        <Button
-          onClick={handleDelete}
-          style={ButtonStyle.SECONDARY}
-          className='w-fit'
-        >
-          Supprimer ce compte
-        </Button>
+        {jeune.isActivated && (
+          <Button
+            onClick={handleDelete}
+            style={ButtonStyle.SECONDARY}
+            className='w-fit'
+          >
+            Supprimer ce compte
+          </Button>
+        )}
       </div>
 
       <DetailsJeune
@@ -424,31 +431,29 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, conseillers, rdvs, actions, motifsSuppression] =
-    await Promise.all([
-      jeunesService.getJeuneDetails(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      jeunesService.getConseillersDuJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      isPoleEmploi
-        ? []
-        : rendezVousService.getRendezVousJeune(
-            context.query.jeune_id as string,
-            accessToken
-          ),
-      isPoleEmploi
-        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : actionsService.getActionsJeune(
-            context.query.jeune_id as string,
-            { page, statuts: [] },
-            accessToken
-          ),
-      jeunesService.getMotifsSuppression(accessToken),
-    ])
+  const [jeune, conseillers, rdvs, actions] = await Promise.all([
+    jeunesService.getJeuneDetails(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    jeunesService.getConseillersDuJeune(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    isPoleEmploi
+      ? []
+      : rendezVousService.getRendezVousJeune(
+          context.query.jeune_id as string,
+          accessToken
+        ),
+    isPoleEmploi
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+      : actionsService.getActionsJeune(
+          context.query.jeune_id as string,
+          { page, statuts: [] },
+          accessToken
+        ),
+  ])
 
   if (!jeune) {
     return { notFound: true }
@@ -462,7 +467,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     conseillers,
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
-    motifsSuppression,
   }
 
   if (context.query[QueryParams.creationRdv])

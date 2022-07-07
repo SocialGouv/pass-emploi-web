@@ -8,11 +8,7 @@ import {
   unDetailJeune,
   unDetailJeuneJson,
 } from 'fixtures/jeune'
-import {
-  JeuneFromListe,
-  MotifsSuppression,
-  TypesMotifsSuppression,
-} from 'interfaces/jeune'
+import { JeuneFromListe } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
@@ -277,11 +273,11 @@ describe('JeunesApiService', () => {
     it('renvoie les motifs de suppression', async () => {
       // Given
       const accessToken = 'accessToken'
-      const motifs: MotifsSuppression = [
-        TypesMotifsSuppression.SORTIE_POSITIVE_DU_CEJ,
-        TypesMotifsSuppression.RADIATION_DU_CEJ,
-        TypesMotifsSuppression.RECREATION_D_UN_COMPTE_JEUNE,
-        TypesMotifsSuppression.AUTRE,
+      const motifs: string[] = [
+        'Sortie positive du CEJ',
+        'Radiation du CEJ',
+        'Recréation d’un compte jeune',
+        'Autre',
       ]
 
       ;(apiClient.get as jest.Mock).mockResolvedValue({

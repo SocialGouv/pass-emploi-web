@@ -7,17 +7,13 @@ import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { IconName } from 'components/ui/IconComponent'
-import {
-  DetailJeune,
-  MotifsSuppression,
-  TypesMotifsSuppression,
-} from 'interfaces/jeune'
+import { DetailJeune, TypesMotifsSuppression } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface DeleteJeuneModalProps {
   jeune: DetailJeune
-  motifsSuppression: MotifsSuppression[]
+  motifsSuppression: string[]
   onClose: () => void
   soumettreSuppression: (payload: SuppressionJeuneFormData) => Promise<void>
 }
@@ -35,16 +31,10 @@ export default function DeleteJeuneModal({
   const [commentaireMotif, setCommentaireMotif] = useState<RequiredValue>({
     value: '',
   })
-  const [showCommentaireMotif, setShowCommentaireMotif] =
-    useState<boolean>(false)
 
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Détail Jeune - Pop-in confirmation suppression'
   )
-
-  function handleCloseModal() {
-    onClose()
-  }
 
   function openModalEtape2() {
     setShowModalEtape1(false)
@@ -52,14 +42,11 @@ export default function DeleteJeuneModal({
     setTrackingLabel('Détail Jeune - Pop-in sélection motif')
   }
 
-  function handleSelectedMotifSuppressionJeune(
-    e: ChangeEvent<HTMLSelectElement>
-  ) {
+  function selectMotifSuppression(e: ChangeEvent<HTMLSelectElement>) {
     setMotifSuppressionJeune(e.target.value)
-    setShowCommentaireMotif(e.target.value === TypesMotifsSuppression.AUTRE)
   }
 
-  function validateMotifSuppressionAutre() {
+  function validateCommentaireMotif() {
     if (!commentaireMotif.value) {
       setCommentaireMotif({
         value: commentaireMotif.value,
@@ -78,6 +65,7 @@ export default function DeleteJeuneModal({
 
   async function handleSoumettreSuppression(e: FormEvent) {
     e.preventDefault()
+    if (!motifIsValid()) return
     const payload: SuppressionJeuneFormData = {
       motif: motifSuppressionJeune,
       commentaire:
@@ -85,7 +73,6 @@ export default function DeleteJeuneModal({
           ? commentaireMotif.value
           : undefined,
     }
-    if (!motifIsValid()) return Promise.resolve()
 
     await soumettreSuppression(payload)
   }
@@ -97,9 +84,8 @@ export default function DeleteJeuneModal({
       {showModalEtape1 && (
         <Modal
           title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
-          iconHead
-          iconName={IconName.Warning}
-          onClose={handleCloseModal}
+          titleIcon={IconName.Warning}
+          onClose={onClose}
         >
           <p className='mb-12 text-base-regular text-content_color text-center'>
             Le bénéficiaire sera prévenu de la suppression de son compte et sa
@@ -113,7 +99,7 @@ export default function DeleteJeuneModal({
             <Button
               type='button'
               style={ButtonStyle.SECONDARY}
-              onClick={handleCloseModal}
+              onClick={onClose}
             >
               Annuler
             </Button>
@@ -132,9 +118,8 @@ export default function DeleteJeuneModal({
       {showModalEtape2 && (
         <Modal
           title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
-          iconHead
-          iconName={IconName.Warning}
-          onClose={handleCloseModal}
+          titleIcon={IconName.Warning}
+          onClose={onClose}
         >
           <InformationMessage content='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
 
@@ -144,7 +129,7 @@ export default function DeleteJeuneModal({
                 Choisir un motif de suppression
               </legend>
               <label
-                htmlFor='motifSuppression'
+                htmlFor='motif-suppression'
                 className='text-base-medium mb-2'
               >
                 <span aria-hidden={true}>* </span>Motif de suppression
@@ -154,52 +139,47 @@ export default function DeleteJeuneModal({
                 </span>
               </label>
               <select
-                id='motifSuppression'
-                name='motifSuppression'
-                defaultValue={motifSuppressionJeune}
+                id='motif-suppression'
+                name='motif-suppression'
                 required
-                onChange={handleSelectedMotifSuppressionJeune}
+                onChange={selectMotifSuppression}
                 className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
               >
                 <option hidden value={''} />
                 {motifsSuppression?.map((motif) => (
-                  <option key={motif.toString()} value={motif}>
+                  <option key={motif} value={motif}>
                     {motif}
                   </option>
                 ))}
               </select>
 
-              {showCommentaireMotif && (
+              {motifSuppressionJeune === TypesMotifsSuppression.AUTRE && (
                 <>
                   <label
-                    htmlFor='motifSuppression-autre'
+                    htmlFor='commentaire-motif'
                     className='text-base-medium'
                   >
                     <span aria-hidden={true}>* </span>
                     Veuillez préciser le motif de la suppression du compte
                   </label>
                   {commentaireMotif.error && (
-                    <InputError
-                      id='motifSuppression-autre--error'
-                      className='mb-2'
-                    >
+                    <InputError id='commentaire-motif--error' className='mb-2'>
                       {commentaireMotif.error}
                     </InputError>
                   )}
                   <textarea
-                    id='motifSuppression-autre'
-                    name='motifSuppression-autre'
+                    id='commentaire-motif'
+                    name='commentaire-motif'
                     required
-                    defaultValue={commentaireMotif.value}
                     onChange={(e) =>
                       setCommentaireMotif({ value: e.target.value })
                     }
-                    onBlur={validateMotifSuppressionAutre}
+                    onBlur={validateCommentaireMotif}
                     rows={3}
                     aria-invalid={commentaireMotif.error ? true : undefined}
                     aria-describedby={
                       commentaireMotif.error
-                        ? 'motifSuppression-autre--error'
+                        ? 'commentaire-motif--error'
                         : undefined
                     }
                     className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 mt-3 ${

@@ -29,8 +29,6 @@ import {
   CategorieSituation,
   ConseillerHistorique,
   EtatSituation,
-  MotifsSuppression,
-  TypesMotifsSuppression,
 } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, {
@@ -55,7 +53,7 @@ describe('Fiche Jeune', () => {
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
-    let motifsSuppression: MotifsSuppression[]
+    let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
 
     let replace: jest.Mock
@@ -82,10 +80,10 @@ describe('Fiche Jeune', () => {
         setIdJeune = jest.fn()
 
         motifsSuppression = [
-          TypesMotifsSuppression.SORTIE_POSITIVE_DU_CEJ,
-          TypesMotifsSuppression.RADIATION_DU_CEJ,
-          TypesMotifsSuppression.RECREATION_D_UN_COMPTE_JEUNE,
-          TypesMotifsSuppression.AUTRE,
+          'Sortie positive du CEJ',
+          'Radiation du CEJ',
+          'Recréation d’un compte jeune',
+          'Autre',
         ]
 
         // When
@@ -98,12 +96,50 @@ describe('Fiche Jeune', () => {
               page: 1,
               metadonnees: { nombreTotal: 0, nombrePages: 0 },
             }}
-            conseillers={[]}
+            conseillers={listeConseillers}
             pageTitle={''}
-            motifsSuppression={motifsSuppression}
           />,
           { idJeuneSetter: setIdJeune, customDependances: dependances }
         )
+      })
+
+      it('affiche la liste des 5 premiers conseillers du jeune', () => {
+        // Then
+        listeConseillers
+          .slice(0, 5)
+          .forEach(({ nom, prenom }: ConseillerHistorique) => {
+            expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+          })
+        expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
+      })
+
+      it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
+        // Then
+        const button = screen.getByRole('button', {
+          name: 'Voir l’historique complet',
+        })
+        expect(listeConseillers.length).toEqual(6)
+        expect(button).toBeInTheDocument()
+      })
+
+      it('permet d’afficher la liste complète des conseillers du jeune', async () => {
+        // Given
+        const button = screen.getByRole('button', {
+          name: 'Voir l’historique complet',
+        })
+
+        // When
+        await userEvent.click(button)
+
+        //Then
+        listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
+          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+        })
+      })
+
+      it('modifie le currentJeune', () => {
+        // Then
+        expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
       })
 
       it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
@@ -128,7 +164,7 @@ describe('Fiche Jeune', () => {
           ).toBeInTheDocument()
         })
 
-        describe('Seconde étape suppresion modale', () => {
+        describe('Seconde étape suppression modale', () => {
           beforeEach(async () => {
             // Given
             const continuerButton = screen.getByText('Continuer')
@@ -218,7 +254,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
-            motifsSuppression={[]}
           />,
           { idJeuneSetter: setIdJeune }
         )
@@ -273,45 +308,6 @@ describe('Fiche Jeune', () => {
           screen.getByRole('link', { name: 'Créer une nouvelle action' })
         ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
       })
-
-      it('affiche la liste des 5 premiers conseillers du jeune', () => {
-        // Then
-        listeConseillers
-          .slice(0, 5)
-          .forEach(({ nom, prenom }: ConseillerHistorique) => {
-            expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-          })
-        expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
-      })
-
-      it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
-        // Then
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
-        })
-        expect(listeConseillers.length).toEqual(6)
-        expect(button).toBeInTheDocument()
-      })
-
-      it('permet d’afficher la liste complète des conseillers du jeune', async () => {
-        // Given
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
-        })
-
-        // When
-        await userEvent.click(button)
-
-        //Then
-        listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-        })
-      })
-
-      it('modifie le currentJeune', () => {
-        // Then
-        expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
-      })
     })
 
     describe('quand il y a moins de 5 conseillers dans l’historique', () => {
@@ -329,7 +325,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={conseillers}
             pageTitle={''}
-            motifsSuppression={[]}
           />
         )
 
@@ -353,7 +348,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
           />,
           {
             customSession: {
@@ -422,7 +416,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
             />,
             {
               customSession: {
@@ -467,7 +460,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
             />,
             {
               customSession: {
@@ -506,7 +498,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
           />
         )
 
@@ -532,7 +523,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
           />
         )
       })
@@ -542,6 +532,16 @@ describe('Fiche Jeune', () => {
         expect(
           screen.getByText('pas encore connecté', { exact: false })
         ).toBeInTheDocument()
+      })
+
+      it('permet de supprimer le jeune', async () => {
+        // Then
+        const link = screen.getByText('Supprimer ce compte')
+        expect(link).toBeInTheDocument()
+        expect(link).toHaveAttribute(
+          'href',
+          `/mes-jeunes/${jeune.id}/suppression`
+        )
       })
     })
 
@@ -559,7 +559,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
           />
         )
 
@@ -583,7 +582,6 @@ describe('Fiche Jeune', () => {
             rdvCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
           />
         )
       })
@@ -631,7 +629,6 @@ describe('Fiche Jeune', () => {
             }}
             rdvModificationSuccess={true}
             pageTitle={''}
-            motifsSuppression={[]}
           />
         )
       })
@@ -679,7 +676,6 @@ describe('Fiche Jeune', () => {
             actionCreationSuccess={true}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
           />
         )
       })
@@ -724,7 +720,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            motifsSuppression={[]}
             onglet={Onglet.ACTIONS}
           />
         )
@@ -761,7 +756,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />,
             { customDependances: { actionsService } }
@@ -933,7 +927,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -959,7 +952,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -988,7 +980,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1017,7 +1008,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1047,7 +1037,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1077,7 +1066,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1107,7 +1095,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1136,7 +1123,6 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              motifsSuppression={[]}
               onglet={Onglet.ACTIONS}
             />
           )
@@ -1178,7 +1164,6 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
-            motifsSuppression={[]}
             onglet={Onglet.ACTIONS}
           />,
           { customDependances: { actionsService } }

@@ -262,7 +262,7 @@ function MesJeunes({
 
       {showSuppressionCompteJeuneActifSuccess && (
         <SuccessMessage
-          label='Le compte bénéficiaire a bien été supprimé'
+          label='Le compte du bénéficiaire a bien été supprimé'
           onAcknowledge={() => closeSuppressionCompteJeuneActifSuccess()}
         />
       )}
@@ -387,11 +387,6 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   if (context.query[QueryParams.choixAgence]) {
     props.ajoutAgenceSuccess =
       context.query[QueryParams.choixAgence] === QueryValues.succes
-  }
-
-  if (context.query.suppressionCompteJeuneActif) {
-    props.suppressionCompteJeuneActifSuccess =
-      context.query.suppressionCompteJeuneActif === 'succes'
   }
 
   return { props }
