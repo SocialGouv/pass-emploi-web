@@ -15,6 +15,7 @@ import Multiselection from 'components/ui/Multiselection'
 import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import {
@@ -137,7 +138,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       const { pathname, query } = parseUrl(returnTo)
       await router.push({
         pathname,
-        query: setQueryParams(query, { envoiMessage: 'succes' }),
+        query: setQueryParams(query, {
+          [QueryParams.envoiMessage]: QueryValues.succes,
+        }),
       })
     } catch (error) {
       setErreurEnvoi(

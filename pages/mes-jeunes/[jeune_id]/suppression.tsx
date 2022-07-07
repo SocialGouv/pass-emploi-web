@@ -8,6 +8,7 @@ import InformationMessage from 'components/InformationMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
@@ -33,7 +34,9 @@ function SuppressionJeune({ idJeune }: SuppressionJeuneProps) {
     setLoading(true)
     try {
       await jeunesService.supprimerJeune(idJeune, session!.accessToken)
-      await router.push('/mes-jeunes?suppression=succes')
+      await router.push(
+        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+      )
     } catch (e) {
       setTracking('Détail jeune - Erreur suppr. compte')
       if (e instanceof ApiError) {

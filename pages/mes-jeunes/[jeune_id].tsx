@@ -21,6 +21,7 @@ import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -399,20 +400,26 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
-  if (context.query.creationRdv)
-    props.rdvCreationSuccess = context.query.creationRdv === 'succes'
 
-  if (context.query.modificationRdv)
-    props.rdvModificationSuccess = context.query.modificationRdv === 'succes'
+  if (context.query[QueryParams.creationRdv])
+    props.rdvCreationSuccess =
+      context.query[QueryParams.creationRdv] === QueryValues.succes
 
-  if (context.query.suppressionRdv)
-    props.rdvSuppressionSuccess = context.query.suppressionRdv === 'succes'
+  if (context.query[QueryParams.modificationRdv])
+    props.rdvModificationSuccess =
+      context.query[QueryParams.modificationRdv] === QueryValues.succes
 
-  if (context.query.creationAction)
-    props.actionCreationSuccess = context.query.creationAction === 'succes'
+  if (context.query[QueryParams.suppressionRdv])
+    props.rdvSuppressionSuccess =
+      context.query[QueryParams.suppressionRdv] === QueryValues.succes
 
-  if (context.query.envoiMessage)
-    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  if (context.query[QueryParams.creationAction])
+    props.actionCreationSuccess =
+      context.query[QueryParams.creationAction] === QueryValues.succes
+
+  if (context.query[QueryParams.envoiMessage])
+    props.messageEnvoiGroupeSuccess =
+      context.query[QueryParams.envoiMessage] === QueryValues.succes
 
   if (context.query.onglet) {
     props.onglet =

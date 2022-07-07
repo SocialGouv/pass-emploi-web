@@ -14,6 +14,7 @@ import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -123,10 +124,12 @@ function EditionRdv({
     }
 
     const { pathname, query } = getCleanUrlObject(returnTo)
-    const queryParam = rdv ? 'modificationRdv' : 'creationRdv'
+    const queryParam = rdv
+      ? QueryParams.modificationRdv
+      : QueryParams.creationRdv
     await router.push({
       pathname,
-      query: setQueryParams(query, { [queryParam]: 'succes' }),
+      query: setQueryParams(query, { [queryParam]: QueryValues.succes }),
     })
   }
 
@@ -138,7 +141,9 @@ function EditionRdv({
       const { pathname, query } = getCleanUrlObject(returnTo)
       await router.push({
         pathname,
-        query: setQueryParams(query, { suppressionRdv: 'succes' }),
+        query: setQueryParams(query, {
+          [QueryParams.suppressionRdv]: QueryValues.succes,
+        }),
       })
     } catch (e) {
       setShowDeleteRdvError(true)
@@ -282,9 +287,9 @@ function getCleanUrlObject(url: string): {
   return {
     pathname,
     query: deleteQueryParams(query, [
-      'modificationRdv',
-      'creationRdv',
-      'suppressionRdv',
+      QueryParams.modificationRdv,
+      QueryParams.creationRdv,
+      QueryParams.suppressionRdv,
     ]),
   }
 }

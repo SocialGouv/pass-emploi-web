@@ -18,6 +18,7 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -129,7 +130,7 @@ function MesJeunes({
       )
       await router.replace({
         pathname: '/mes-jeunes',
-        query: { recuperation: 'succes' },
+        query: { [QueryParams.recuperationBeneficiaires]: QueryValues.succes },
       })
       setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
     } finally {
@@ -343,19 +344,24 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     pageTitle: 'Mes jeunes',
   }
 
-  if (context.query.recuperation) {
-    props.recuperationSuccess = context.query.recuperation === 'succes'
+  if (context.query[QueryParams.recuperationBeneficiaires]) {
+    props.recuperationSuccess =
+      context.query[QueryParams.recuperationBeneficiaires] ===
+      QueryValues.succes
   }
 
-  if (context.query.suppression)
-    props.deletionSuccess = context.query.suppression === 'succes'
+  if (context.query[QueryParams.suppressionBeneficiaire])
+    props.deletionSuccess =
+      context.query[QueryParams.suppressionBeneficiaire] === QueryValues.succes
 
-  if (context.query.envoiMessage) {
-    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  if (context.query[QueryParams.envoiMessage]) {
+    props.messageEnvoiGroupeSuccess =
+      context.query[QueryParams.envoiMessage] === QueryValues.succes
   }
 
-  if (context.query.choixAgence) {
-    props.ajoutAgenceSuccess = context.query.choixAgence === 'succes'
+  if (context.query[QueryParams.choixAgence]) {
+    props.ajoutAgenceSuccess =
+      context.query[QueryParams.choixAgence] === QueryValues.succes
   }
 
   return { props }
