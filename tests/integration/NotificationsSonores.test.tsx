@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import { useRouter } from 'next/router'
 
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
@@ -9,7 +10,6 @@ import {
   mockedMessagesService,
 } from 'fixtures/services'
 import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
-import { useRouter } from 'next/router'
 import Profil from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -20,6 +20,7 @@ import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
+jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()

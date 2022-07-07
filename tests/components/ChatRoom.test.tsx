@@ -2,19 +2,20 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
-
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
+import renderWithSession from 'tests/renderWithSession'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/Conversation', () =>
   jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
 )
+jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
 
 describe('<ChatRoom />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
@@ -57,7 +58,14 @@ describe('<ChatRoom />', () => {
       })
     })
 
-    it('devrait avoir le lien multidestination', () => {
+    it('affiche les alertes sur petit écran', () => {
+      expect(AlertDisplayer).toHaveBeenCalledWith(
+        { hideOnLargeScreen: true },
+        {}
+      )
+    })
+
+    it('devrait avoir le lien message multidestinataires', () => {
       // Then
       expect(
         screen.getByRole('link', { name: 'Message multi-destinataires' })

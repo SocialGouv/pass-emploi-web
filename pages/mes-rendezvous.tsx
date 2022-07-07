@@ -48,9 +48,6 @@ function MesRendezvous({
   const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
     useState<boolean>(suppressionSuccess ?? false)
 
-  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
-    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
-
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
 
   const pageTracking = `Mes rendez-vous`
@@ -74,11 +71,6 @@ function MesRendezvous({
     setShowRdvCreationSuccess(false)
     setShowRdvModificationSuccess(false)
     setShowRdvSuppressionSuccess(false)
-    router.replace('', undefined, { shallow: true })
-  }
-
-  function closeMessageGroupeEnvoiSuccess(): void {
-    setShowMessageGroupeEnvoiSuccess(false)
     router.replace('', undefined, { shallow: true })
   }
 
@@ -107,14 +99,6 @@ function MesRendezvous({
         />
       )}
 
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires'
-          }
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
-        />
-      )}
       <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-4 w-fit'>
         Fixer un rendez-vous
       </ButtonLink>

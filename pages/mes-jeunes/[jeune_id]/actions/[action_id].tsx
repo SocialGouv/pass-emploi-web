@@ -8,7 +8,6 @@ import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
 import FailureMessage from 'components/FailureMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import SuccessMessage from 'components/ui/SuccessMessage'
 import { Action, StatutAction } from 'interfaces/action'
 import { UserStructure, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
@@ -40,10 +39,6 @@ function PageAction({
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
-
-  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
-    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
-
   const pageTracking = 'Détail Action'
 
   async function updateAction(statutChoisi: StatutAction): Promise<void> {
@@ -74,19 +69,8 @@ function PageAction({
       })
   }
 
-  function closeMessageGroupeEnvoiSuccess(): void {
-    setShowMessageGroupeEnvoiSuccess(false)
-    router.replace(
-      {
-        pathname: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
   useMatomo(
-    showMessageGroupeEnvoiSuccess
+    messageEnvoiGroupeSuccess
       ? `${pageTracking} - Succès envoi message`
       : pageTracking
   )
@@ -97,14 +81,6 @@ function PageAction({
         <FailureMessage
           label="Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
           onAcknowledge={() => setShowEchecMessage(false)}
-        />
-      )}
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires'
-          }
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
       )}
       <div className='flex flex-col items-end'>

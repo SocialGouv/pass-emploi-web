@@ -109,9 +109,6 @@ function FicheJeune({
   const [showActionCreationSuccess, setShowActionCreationSuccess] =
     useState<boolean>(actionCreationSuccess ?? false)
 
-  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
-    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
-
   const [
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
@@ -135,7 +132,6 @@ function FicheJeune({
     setShowRdvModificationSuccess(false)
     setShowRdvSuppressionSuccess(false)
     setShowActionCreationSuccess(false)
-    setShowMessageGroupeEnvoiSuccess(false)
     await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
       shallow: true,
     })
@@ -249,15 +245,6 @@ function FicheJeune({
       {showActionCreationSuccess && (
         <SuccessMessage
           label={'L’action a bien été créée'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires'
-          }
           onAcknowledge={closeMessage}
         />
       )}

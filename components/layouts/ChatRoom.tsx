@@ -5,9 +5,9 @@ import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
 import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import EmptyMessagesImage from '../../assets/images/empty_state.svg'
-import SuccessMessage from '../ui/SuccessMessage'
 
 import Conversation from 'components/Conversation'
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
@@ -20,13 +20,9 @@ import { useDependance } from 'utils/injectionDependances'
 
 interface ChatRoomProps {
   jeunesChats: JeuneChat[]
-  messageEnvoiGroupeSuccess?: boolean
 }
 
-export default function ChatRoom({
-  jeunesChats,
-  messageEnvoiGroupeSuccess,
-}: ChatRoomProps) {
+export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
@@ -71,18 +67,16 @@ export default function ChatRoom({
           </h2>
           <span className='border-b border-grey_500 mx-4 mb-6'></span>
 
+          <div className='mx-3'>
+            <AlertDisplayer hideOnLargeScreen={true} />
+          </div>
+
           {!jeunesChats.length && (
             <div className='h-full overflow-y-auto bg-grey_100 flex flex-col justify-center items-center'>
               <EmptyMessagesImage focusable='false' aria-hidden='true' />
               <p className='mt-4 text-md-semi w-2/3 text-center'>
                 Vous devriez avoir des jeunes inscrits pour discuter avec eux
               </p>
-            </div>
-          )}
-
-          {messageEnvoiGroupeSuccess && (
-            <div className='px-4 layout_s:hidden'>
-              <SuccessMessage label='Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires' />
             </div>
           )}
 

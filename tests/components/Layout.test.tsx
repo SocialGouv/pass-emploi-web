@@ -2,6 +2,7 @@ import { act, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
@@ -22,6 +23,7 @@ import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
+jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()
@@ -122,6 +124,11 @@ describe('<Layout />', () => {
         'href',
         '/path/to/current'
       )
+    })
+
+    it("affiche les messages d'alerte", () => {
+      // Then
+      expect(AlertDisplayer).toHaveBeenCalledWith({}, {})
     })
 
     it('signs into chat', () => {
@@ -267,38 +274,6 @@ describe('<Layout />', () => {
       expect(
         screen.getByRole('link', { name: 'Page précédente' })
       ).toHaveAttribute('href', '/path/to/previous/page')
-    })
-  })
-
-  describe('quand on est redirigé après l’envoie d’un message groupé', () => {
-    it('L’information du message de succes est transmise au chat', async () => {
-      // Given
-      await act(async () => {
-        await renderWithSession(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Layout>
-                <FakeComponent
-                  pageTitle='un titre'
-                  pageHeader='Titre de la page'
-                  messageEnvoiGroupeSuccess={true}
-                />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
-        )
-      })
-      // When
-      // Then
-      expect(ChatRoom).toHaveBeenCalledWith(
-        {
-          jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]],
-          messageEnvoiGroupeSuccess: true,
-        },
-        {}
-      )
     })
   })
 

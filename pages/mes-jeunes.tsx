@@ -75,13 +75,12 @@ function MesJeunes({
   const [showAjoutAgenceSuccess, setShowAjoutAgenceSuccess] = useState<boolean>(
     ajoutAgenceSuccess ?? false
   )
-  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
-    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
   if (showDeletionSuccess) initialTracking += ' - Succès suppr. compte'
+  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = async () => {
@@ -109,11 +108,6 @@ function MesJeunes({
     await router.replace('mes-jeunes', undefined, {
       shallow: true,
     })
-  }
-
-  async function closeMessageGroupeEnvoiSuccess(): Promise<void> {
-    setShowMessageGroupeEnvoiSuccess(false)
-    await router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
   async function closeAjoutAgenceSuccessMessage(): Promise<void> {
@@ -200,12 +194,6 @@ function MesJeunes({
 
   useMatomo(trackingTitle)
 
-  useMatomo(
-    showMessageGroupeEnvoiSuccess
-      ? 'Mes jeunes - Succès envoi message'
-      : 'Mes jeunes'
-  )
-
   return (
     <>
       {showRecuperationSuccess && (
@@ -219,15 +207,6 @@ function MesJeunes({
         <SuccessMessage
           label='Le compte du bénéficiaire a bien été supprimé'
           onAcknowledge={closeDeletionSuccess}
-        />
-      )}
-
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires'
-          }
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
         />
       )}
 

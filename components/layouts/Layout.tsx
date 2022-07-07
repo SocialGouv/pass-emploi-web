@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import { Footer } from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
@@ -29,13 +30,7 @@ const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
 export default function Layout({ children }: LayoutProps) {
   const {
-    props: {
-      pageTitle,
-      pageHeader,
-      returnTo,
-      withoutChat,
-      messageEnvoiGroupeSuccess,
-    },
+    props: { pageTitle, pageHeader, returnTo, withoutChat },
   } = children
 
   const router = useRouter()
@@ -189,17 +184,13 @@ export default function Layout({ children }: LayoutProps) {
               withChat ? styles.content_when_chat : ''
             }`}
           >
+            <AlertDisplayer />
             {children}
           </main>
 
           <Footer />
         </div>
-        {withChat && (
-          <ChatRoom
-            jeunesChats={chats}
-            messageEnvoiGroupeSuccess={messageEnvoiGroupeSuccess}
-          />
-        )}
+        {withChat && <ChatRoom jeunesChats={chats} />}
       </div>
       <div id='modal-root' />
     </>
