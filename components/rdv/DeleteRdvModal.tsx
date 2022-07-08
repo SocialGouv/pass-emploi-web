@@ -1,4 +1,5 @@
-import WarningIcon from 'assets/icons/warning.svg'
+import IconComponent, { IconName } from '../ui/IconComponent'
+
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 
@@ -23,7 +24,8 @@ export default function DeleteRdvModal({
 
   return (
     <Modal title='Suppression du rendez-vous' onClose={handleCloseModal}>
-      <WarningIcon
+      <IconComponent
+        name={IconName.Warning}
         focusable={false}
         aria-hidden={true}
         className='w-[100px] h-[91px] m-auto mb-16 fill-primary'

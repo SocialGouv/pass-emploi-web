@@ -7,10 +7,11 @@ import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
+import DeleteJeuneModal from 'components/jeune/DeleteJeuneModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
-import { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SuccessMessage from 'components/ui/SuccessMessage'
@@ -19,6 +20,7 @@ import TabList from 'components/ui/TabList'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
+import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { QueryParams, QueryValues } from 'referentiel/queryParams'
@@ -74,6 +76,7 @@ function FicheJeune({
   const { data: session } = useSession<true>({ required: true })
 
   const actionsService = useDependance<ActionsService>('actionsService')
+  const jeunesServices = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
 
@@ -84,10 +87,15 @@ function FicheJeune({
   const [expandListeConseillers, setExpandListeConseillers] =
     useState<boolean>(false)
 
+  const [motifsSuppression, setMotifsSuppression] = useState<string[]>([])
+
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
+
+  const [showDeleteJeuneModal, setShowDeleteJeuneModal] =
+    useState<boolean>(false)
 
   const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
     rdvCreationSuccess ?? false
@@ -103,6 +111,11 @@ function FicheJeune({
 
   const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
     useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+
+  const [
+    showSuppressionCompteBeneficiaireError,
+    setShowSuppressionCompteBeneficiaireError,
+  ] = useState<boolean>(false)
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -171,6 +184,39 @@ function FicheJeune({
     return result
   }
 
+  async function handleDelete(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowDeleteJeuneModal(true)
+
+    if (motifsSuppression.length === 0) {
+      const result = await jeunesServices.getMotifsSuppression(
+        session!.accessToken
+      )
+      setMotifsSuppression(result)
+    }
+  }
+
+  async function archiverJeuneCompteActif(
+    payload: SuppressionJeuneFormData
+  ): Promise<void> {
+    try {
+      await jeunesServices.archiverJeune(
+        jeune.id,
+        payload,
+        session!.accessToken
+      )
+      await router.push(
+        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+      )
+    } catch (e) {
+      setShowSuppressionCompteBeneficiaireError(true)
+      setTrackingLabel('Détail jeune- Erreur suppr. compte')
+    } finally {
+      setShowDeleteJeuneModal(false)
+    }
+  }
+
   useMatomo(trackingLabel)
 
   useEffect(() => {
@@ -216,6 +262,22 @@ function FicheJeune({
         />
       )}
 
+      {showSuppressionCompteBeneficiaireError && (
+        <FailureMessage
+          label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
+          onAcknowledge={() => setShowSuppressionCompteBeneficiaireError(false)}
+        />
+      )}
+
+      {showDeleteJeuneModal && (
+        <DeleteJeuneModal
+          jeune={jeune}
+          onClose={() => setShowDeleteJeuneModal(false)}
+          motifsSuppression={motifsSuppression}
+          soumettreSuppression={archiverJeuneCompteActif}
+        />
+      )}
+
       {!jeune.isActivated && (
         <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
       )}
@@ -252,7 +314,6 @@ function FicheJeune({
             </ButtonLink>
           )}
         </div>
-
         {!jeune.isActivated && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
@@ -261,6 +322,16 @@ function FicheJeune({
           >
             Supprimer ce compte
           </ButtonLink>
+        )}
+
+        {jeune.isActivated && (
+          <Button
+            onClick={handleDelete}
+            style={ButtonStyle.SECONDARY}
+            className='w-fit'
+          >
+            Supprimer ce compte
+          </Button>
         )}
       </div>
 

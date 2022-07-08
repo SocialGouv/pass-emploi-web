@@ -14,6 +14,7 @@ import {
   ItemJeuneJson,
   jsonToDetailJeune,
   jsonToItemJeune,
+  SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
 
@@ -57,7 +58,15 @@ export interface JeunesService {
     accessToken: string
   ): Promise<void>
 
-  supprimerJeune(idJeune: string, accessToken: string): Promise<void>
+  supprimerJeuneInactif(idJeune: string, accessToken: string): Promise<void>
+
+  archiverJeune(
+    idJeune: string,
+    payload: SuppressionJeuneFormData,
+    accessToken: string
+  ): Promise<void>
+
+  getMotifsSuppression(accessToken: string): Promise<string[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -185,7 +194,30 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
-  async supprimerJeune(idJeune: string, accessToken: string): Promise<void> {
+  async supprimerJeuneInactif(
+    idJeune: string,
+    accessToken: string
+  ): Promise<void> {
     await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
+  }
+
+  async archiverJeune(
+    idJeune: string,
+    payload: SuppressionJeuneFormData,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/jeunes/${idJeune}/archiver`,
+      payload,
+      accessToken
+    )
+  }
+
+  async getMotifsSuppression(accessToken: string): Promise<string[]> {
+    const { content: motifs } = await this.apiClient.get<string[]>(
+      '/referentiels/motifs-suppression-jeune',
+      accessToken
+    )
+    return motifs
   }
 }

@@ -46,7 +46,7 @@ describe('Suppression Jeune', () => {
         })
 
         jeunesService = mockedJeunesService({
-          supprimerJeune: jest.fn(() => Promise.resolve()),
+          supprimerJeuneInactif: jest.fn(() => Promise.resolve()),
         })
         ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
       })
@@ -184,7 +184,7 @@ describe('Suppression Jeune', () => {
 
         it('supprime le compte', () => {
           // Then
-          expect(jeunesService.supprimerJeune).toHaveBeenCalledWith(
+          expect(jeunesService.supprimerJeuneInactif).toHaveBeenCalledWith(
             jeune.id,
             'accessToken'
           )
@@ -199,7 +199,7 @@ describe('Suppression Jeune', () => {
       describe('quand il y a une erreur', () => {
         it('affiche un message spécifique', async () => {
           // Given
-          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
+          ;(jeunesService.supprimerJeuneInactif as jest.Mock).mockRejectedValue(
             new ApiError(403, "Message d'erreur")
           )
 
@@ -215,7 +215,7 @@ describe('Suppression Jeune', () => {
 
         it("affiche un message d'erreur générique", async () => {
           // Given
-          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
+          ;(jeunesService.supprimerJeuneInactif as jest.Mock).mockRejectedValue(
             new UnexpectedError("Message d'erreur")
           )
 

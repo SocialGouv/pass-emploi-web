@@ -33,7 +33,7 @@ function SuppressionJeune({ idJeune }: SuppressionJeuneProps) {
   async function supprimerJeune() {
     setLoading(true)
     try {
-      await jeunesService.supprimerJeune(idJeune, session!.accessToken)
+      await jeunesService.supprimerJeuneInactif(idJeune, session!.accessToken)
       await router.push(
         `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
       )

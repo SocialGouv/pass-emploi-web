@@ -217,7 +217,7 @@ function MesJeunes({
 
       {showDeletionSuccess && (
         <SuccessMessage
-          label='Le compte du jeune a bien été supprimé.'
+          label='Le compte du bénéficiaire a bien été supprimé'
           onAcknowledge={closeDeletionSuccess}
         />
       )}
