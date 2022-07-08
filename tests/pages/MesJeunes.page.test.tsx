@@ -6,8 +6,6 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import renderPage from '../renderPage'
-
 import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsJeunes,
@@ -29,6 +27,7 @@ import {
 import MesJeunes, { getServerSideProps } from 'pages/mes-jeunes'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
+import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -210,7 +209,6 @@ describe('Mes Jeunes', () => {
               conseillerJeunes={[jeune]}
               isFromEmail
               pageTitle=''
-              deletionSuccess={true}
             />,
             { customDependances: dependances }
           )
@@ -249,13 +247,6 @@ describe('Mes Jeunes', () => {
       it('affiche la situation courante du jeune', () => {
         expect(screen.getByText(jeune.situationCourante!)).toBeInTheDocument()
       })
-
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //THEN
-        expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
-        ).toBeInTheDocument()
-      })
     })
 
     describe('quand le conseiller est Pole emploi', () => {
@@ -270,7 +261,6 @@ describe('Mes Jeunes', () => {
               conseillerJeunes={[jeune]}
               isFromEmail
               pageTitle=''
-              deletionSuccess={true}
             />,
             { customDependances: dependances }
           )
@@ -304,13 +294,6 @@ describe('Mes Jeunes', () => {
         expect(() =>
           screen.getByRole('columnheader', { name: 'Situation' })
         ).toThrow()
-      })
-
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //THEN
-        expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
-        ).toBeInTheDocument()
       })
     })
 
@@ -412,7 +395,7 @@ describe('Mes Jeunes', () => {
 
         //THEN
         expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
+          screen.getByText('Le compte du bénéficiaire a bien été supprimé')
         ).toBeInTheDocument()
       })
     })

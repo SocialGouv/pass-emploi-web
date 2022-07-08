@@ -188,10 +188,13 @@ function FicheJeune({
     e.preventDefault()
     e.stopPropagation()
     setShowDeleteJeuneModal(true)
-    const result = await jeunesServices.getMotifsSuppression(
-      session!.accessToken
-    )
-    setMotifsSuppression(result)
+
+    if (motifsSuppression.length === 0) {
+      const result = await jeunesServices.getMotifsSuppression(
+        session!.accessToken
+      )
+      setMotifsSuppression(result)
+    }
   }
 
   async function archiverJeuneCompteActif(

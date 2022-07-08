@@ -7,7 +7,7 @@ import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { IconName } from 'components/ui/IconComponent'
-import { DetailJeune, TypesMotifsSuppression } from 'interfaces/jeune'
+import { DetailJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 
@@ -27,7 +27,10 @@ export default function DeleteJeuneModal({
   const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
-  const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<string>('')
+  const MOTIF_SUPPRESSION_AUTRE = 'Autre'
+  const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<
+    string | undefined
+  >(undefined)
   const [commentaireMotif, setCommentaireMotif] = useState<RequiredValue>({
     value: '',
   })
@@ -58,7 +61,7 @@ export default function DeleteJeuneModal({
 
   function motifIsValid(): boolean {
     if (!motifSuppressionJeune) return false
-    if (motifSuppressionJeune === TypesMotifsSuppression.AUTRE)
+    if (motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE)
       return Boolean(commentaireMotif.value)
     return true
   }
@@ -66,10 +69,11 @@ export default function DeleteJeuneModal({
   async function handleSoumettreSuppression(e: FormEvent) {
     e.preventDefault()
     if (!motifIsValid()) return
+
     const payload: SuppressionJeuneFormData = {
-      motif: motifSuppressionJeune,
+      motif: motifSuppressionJeune!,
       commentaire:
-        motifSuppressionJeune === TypesMotifsSuppression.AUTRE
+        motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE
           ? commentaireMotif.value
           : undefined,
     }
@@ -146,14 +150,14 @@ export default function DeleteJeuneModal({
                 className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
               >
                 <option hidden value={''} />
-                {motifsSuppression?.map((motif) => (
+                {motifsSuppression.map((motif) => (
                   <option key={motif} value={motif}>
                     {motif}
                   </option>
                 ))}
               </select>
 
-              {motifSuppressionJeune === TypesMotifsSuppression.AUTRE && (
+              {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
                 <>
                   <label
                     htmlFor='commentaire-motif'

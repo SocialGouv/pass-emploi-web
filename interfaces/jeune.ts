@@ -98,13 +98,6 @@ export interface ConseillerHistorique {
   depuis: string
 }
 
-export enum TypesMotifsSuppression {
-  SORTIE_POSITIVE_DU_CEJ = 'Sortie positive du CEJ',
-  RADIATION_DU_CEJ = 'Radiation du CEJ',
-  RECREATION_D_UN_COMPTE_JEUNE = "Recréation d'un compte jeune",
-  AUTRE = 'Autre',
-}
-
 export function compareJeunesByNom(
   jeune1: BaseJeune,
   jeune2: BaseJeune
