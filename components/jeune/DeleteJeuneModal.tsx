@@ -92,9 +92,9 @@ export default function DeleteJeuneModal({
           onClose={onClose}
         >
           <p className='mb-12 text-base-regular text-content_color text-center'>
-            Le bénéficiaire sera prévenu de la suppression de son compte et sa
-            possibilité de demander un accès à ses données pour une période de 2
-            ans avant qu’elles soient supprimées.
+            Le bénéficiaire sera prévenu de la suppression de son compte et de
+            la possibilité de demander un accès à ses données pendant une
+            période de 2 ans avant que celles-ci ne soient supprimées.
           </p>
           <p className='mb-12 text-base-regular text-content_color text-center'>
             Souhaitez-vous continuer la suppression ?
