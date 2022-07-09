@@ -62,10 +62,23 @@ export default function AlertDisplayer({
     )
   }
 
+  async function closeCreationActionSuccess(): Promise<void> {
+    const { pathname, query } = parseUrl(router.asPath)
+    await router.push(
+      {
+        pathname,
+        query: deleteQueryParams(query, [QueryParams.creationAction]),
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
   //envoiMessage
   //creationRdv
   //modificationRdv
   //suppressionRdv
+  //creationAction
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
       {router.query[QueryParams.envoiMessage] === QueryValues.succes && (
@@ -90,6 +103,12 @@ export default function AlertDisplayer({
         <SuccessMessage
           label='Le rendez-vous a bien été supprimé'
           onAcknowledge={closeSuppressionRdvSuccess}
+        />
+      )}
+      {router.query[QueryParams.creationAction] === QueryValues.succes && (
+        <SuccessMessage
+          label='L’action a bien été créée'
+          onAcknowledge={closeCreationActionSuccess}
         />
       )}
     </div>

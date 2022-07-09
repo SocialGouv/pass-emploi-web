@@ -97,9 +97,6 @@ function FicheJeune({
   const [showDeleteJeuneModal, setShowDeleteJeuneModal] =
     useState<boolean>(false)
 
-  const [showActionCreationSuccess, setShowActionCreationSuccess] =
-    useState<boolean>(actionCreationSuccess ?? false)
-
   const [
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
@@ -117,13 +114,6 @@ function FicheJeune({
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
-
-  async function closeMessage() {
-    setShowActionCreationSuccess(false)
-    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
-      shallow: true,
-    })
-  }
 
   function toggleListeConseillers(): void {
     setExpandListeConseillers(!expandListeConseillers)
@@ -209,13 +199,6 @@ function FicheJeune({
 
   return (
     <>
-      {showActionCreationSuccess && (
-        <SuccessMessage
-          label={'L’action a bien été créée'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
       {showSuppressionCompteBeneficiaireError && (
         <FailureMessage
           label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
