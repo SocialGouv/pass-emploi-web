@@ -14,92 +14,20 @@ export default function AlertDisplayer({
 }: AlertDisplayerProps) {
   const router = useRouter()
 
-  async function closeMessageGroupeEnvoiSuccess(): Promise<void> {
+  // TODO peut etre definir un autre type que string pour le queryParam
+  async function closeSuccessAlert(queryParam: string): Promise<void> {
     const { pathname, query } = parseUrl(router.asPath)
     await router.push(
       {
         pathname,
-        query: deleteQueryParams(query, [QueryParams.envoiMessage]),
+        query: deleteQueryParams(query, [queryParam]),
       },
       undefined,
       { shallow: true }
     )
   }
 
-  async function closeCreationRdvSuccess(): Promise<void> {
-    const { pathname, query } = parseUrl(router.asPath)
-    await router.push(
-      {
-        pathname,
-        query: deleteQueryParams(query, [QueryParams.creationRdv]),
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
-  async function closeModificationRdvSuccess(): Promise<void> {
-    const { pathname, query } = parseUrl(router.asPath)
-    await router.push(
-      {
-        pathname,
-        query: deleteQueryParams(query, [QueryParams.modificationRdv]),
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
-  async function closeSuppressionRdvSuccess(): Promise<void> {
-    const { pathname, query } = parseUrl(router.asPath)
-    await router.push(
-      {
-        pathname,
-        query: deleteQueryParams(query, [QueryParams.suppressionRdv]),
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
-  async function closeCreationActionSuccess(): Promise<void> {
-    const { pathname, query } = parseUrl(router.asPath)
-    await router.push(
-      {
-        pathname,
-        query: deleteQueryParams(query, [QueryParams.creationAction]),
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
-  async function closeRecuperationBeneficiaireSuccess(): Promise<void> {
-    const { pathname, query } = parseUrl(router.asPath)
-    await router.push(
-      {
-        pathname,
-        query: deleteQueryParams(query, [
-          QueryParams.recuperationBeneficiaires,
-        ]),
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
-  async function closeSuppressionBeneficiaireSuccess(): Promise<void> {
-    const { pathname, query } = parseUrl(router.asPath)
-    await router.push(
-      {
-        pathname,
-        query: deleteQueryParams(query, [QueryParams.suppressionBeneficiaire]),
-      },
-      undefined,
-      { shallow: true }
-    )
-  }
-
+  // TODO Alert gérer // a supprimer
   //envoiMessage
   //creationRdv
   //modificationRdv
@@ -113,45 +41,49 @@ export default function AlertDisplayer({
       {router.query[QueryParams.envoiMessage] === QueryValues.succes && (
         <SuccessMessage
           label='Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires'
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
+          onAcknowledge={() => closeSuccessAlert(QueryParams.envoiMessage)}
         />
       )}
       {router.query[QueryParams.creationRdv] === QueryValues.succes && (
         <SuccessMessage
           label='Le rendez-vous a bien été créé'
-          onAcknowledge={closeCreationRdvSuccess}
+          onAcknowledge={() => closeSuccessAlert(QueryParams.creationRdv)}
         />
       )}
       {router.query[QueryParams.modificationRdv] === QueryValues.succes && (
         <SuccessMessage
           label='Le rendez-vous a bien été modifié'
-          onAcknowledge={closeModificationRdvSuccess}
+          onAcknowledge={() => closeSuccessAlert(QueryParams.modificationRdv)}
         />
       )}
       {router.query[QueryParams.suppressionRdv] === QueryValues.succes && (
         <SuccessMessage
           label='Le rendez-vous a bien été supprimé'
-          onAcknowledge={closeSuppressionRdvSuccess}
+          onAcknowledge={() => closeSuccessAlert(QueryParams.suppressionRdv)}
         />
       )}
       {router.query[QueryParams.creationAction] === QueryValues.succes && (
         <SuccessMessage
           label='L’action a bien été créée'
-          onAcknowledge={closeCreationActionSuccess}
+          onAcknowledge={() => closeSuccessAlert(QueryParams.creationAction)}
         />
       )}
       {router.query[QueryParams.recuperationBeneficiaires] ===
         QueryValues.succes && (
         <SuccessMessage
           label='Vous avez récupéré vos bénéficiaires avec succès'
-          onAcknowledge={closeRecuperationBeneficiaireSuccess}
+          onAcknowledge={() =>
+            closeSuccessAlert(QueryParams.recuperationBeneficiaires)
+          }
         />
       )}
       {router.query[QueryParams.suppressionBeneficiaire] ===
         QueryValues.succes && (
         <SuccessMessage
           label='Le compte du bénéficiaire a bien été supprimé'
-          onAcknowledge={closeSuppressionBeneficiaireSuccess}
+          onAcknowledge={() =>
+            closeSuccessAlert(QueryParams.suppressionBeneficiaire)
+          }
         />
       )}
     </div>
