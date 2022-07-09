@@ -26,12 +26,70 @@ export default function AlertDisplayer({
     )
   }
 
+  async function closeCreationRdvSuccess(): Promise<void> {
+    const { pathname, query } = parseUrl(router.asPath)
+    await router.push(
+      {
+        pathname,
+        query: deleteQueryParams(query, [QueryParams.creationRdv]),
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  async function closeModificationRdvSuccess(): Promise<void> {
+    const { pathname, query } = parseUrl(router.asPath)
+    await router.push(
+      {
+        pathname,
+        query: deleteQueryParams(query, [QueryParams.modificationRdv]),
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  async function closeSuppressionRdvSuccess(): Promise<void> {
+    const { pathname, query } = parseUrl(router.asPath)
+    await router.push(
+      {
+        pathname,
+        query: deleteQueryParams(query, [QueryParams.suppressionRdv]),
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  //envoiMessage
+  //creationRdv
+  //modificationRdv
+  //suppressionRdv
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
       {router.query[QueryParams.envoiMessage] === QueryValues.succes && (
         <SuccessMessage
           label='Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires'
           onAcknowledge={closeMessageGroupeEnvoiSuccess}
+        />
+      )}
+      {router.query[QueryParams.creationRdv] === QueryValues.succes && (
+        <SuccessMessage
+          label='Le rendez-vous a bien été créé'
+          onAcknowledge={closeCreationRdvSuccess}
+        />
+      )}
+      {router.query[QueryParams.modificationRdv] === QueryValues.succes && (
+        <SuccessMessage
+          label='Le rendez-vous a bien été modifié'
+          onAcknowledge={closeModificationRdvSuccess}
+        />
+      )}
+      {router.query[QueryParams.suppressionRdv] === QueryValues.succes && (
+        <SuccessMessage
+          label='Le rendez-vous a bien été supprimé'
+          onAcknowledge={closeSuppressionRdvSuccess}
         />
       )}
     </div>

@@ -39,15 +39,6 @@ function MesRendezvous({
   const router = useRouter()
   const { data: session } = useSession<true>({ required: true })
 
-  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
-    creationSuccess ?? false
-  )
-  const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
-    useState<boolean>(modificationSuccess ?? false)
-
-  const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
-    useState<boolean>(suppressionSuccess ?? false)
-
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
 
   const pageTracking = `Mes rendez-vous`
@@ -67,38 +58,10 @@ function MesRendezvous({
     }
   }
 
-  function closeRdvMessage(): void {
-    setShowRdvCreationSuccess(false)
-    setShowRdvModificationSuccess(false)
-    setShowRdvSuppressionSuccess(false)
-    router.replace('', undefined, { shallow: true })
-  }
-
   useMatomo(trackingTitle)
 
   return (
     <>
-      {showRdvCreationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeRdvMessage}
-        />
-      )}
-
-      {showRdvModificationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeRdvMessage}
-        />
-      )}
-
-      {showRdvSuppressionSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeRdvMessage}
-        />
-      )}
-
       <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-4 w-fit'>
         Fixer un rendez-vous
       </ButtonLink>

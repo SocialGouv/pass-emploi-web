@@ -97,15 +97,6 @@ function FicheJeune({
   const [showDeleteJeuneModal, setShowDeleteJeuneModal] =
     useState<boolean>(false)
 
-  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
-    rdvCreationSuccess ?? false
-  )
-  const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
-    useState<boolean>(rdvModificationSuccess ?? false)
-
-  const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
-    useState<boolean>(rdvSuppressionSuccess ?? false)
-
   const [showActionCreationSuccess, setShowActionCreationSuccess] =
     useState<boolean>(actionCreationSuccess ?? false)
 
@@ -128,9 +119,6 @@ function FicheJeune({
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
 
   async function closeMessage() {
-    setShowRdvCreationSuccess(false)
-    setShowRdvModificationSuccess(false)
-    setShowRdvSuppressionSuccess(false)
     setShowActionCreationSuccess(false)
     await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
       shallow: true,
@@ -221,27 +209,6 @@ function FicheJeune({
 
   return (
     <>
-      {showRdvCreationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showRdvModificationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showRdvSuppressionSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
       {showActionCreationSuccess && (
         <SuccessMessage
           label={'L’action a bien été créée'}
