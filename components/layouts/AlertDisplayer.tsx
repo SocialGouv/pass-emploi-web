@@ -74,11 +74,40 @@ export default function AlertDisplayer({
     )
   }
 
+  async function closeRecuperationBeneficiaireSuccess(): Promise<void> {
+    const { pathname, query } = parseUrl(router.asPath)
+    await router.push(
+      {
+        pathname,
+        query: deleteQueryParams(query, [
+          QueryParams.recuperationBeneficiaires,
+        ]),
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  async function closeSuppressionBeneficiaireSuccess(): Promise<void> {
+    const { pathname, query } = parseUrl(router.asPath)
+    await router.push(
+      {
+        pathname,
+        query: deleteQueryParams(query, [QueryParams.suppressionBeneficiaire]),
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
   //envoiMessage
   //creationRdv
   //modificationRdv
   //suppressionRdv
   //creationAction
+  //suppressionAction
+  //recuperationBeneficiaire
+  //suppressionBeneficiaire
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
       {router.query[QueryParams.envoiMessage] === QueryValues.succes && (
@@ -109,6 +138,20 @@ export default function AlertDisplayer({
         <SuccessMessage
           label='L’action a bien été créée'
           onAcknowledge={closeCreationActionSuccess}
+        />
+      )}
+      {router.query[QueryParams.recuperationBeneficiaires] ===
+        QueryValues.succes && (
+        <SuccessMessage
+          label='Vous avez récupéré vos bénéficiaires avec succès'
+          onAcknowledge={closeRecuperationBeneficiaireSuccess}
+        />
+      )}
+      {router.query[QueryParams.suppressionBeneficiaire] ===
+        QueryValues.succes && (
+        <SuccessMessage
+          label='Le compte du bénéficiaire a bien été supprimé'
+          onAcknowledge={closeSuppressionBeneficiaireSuccess}
         />
       )}
     </div>

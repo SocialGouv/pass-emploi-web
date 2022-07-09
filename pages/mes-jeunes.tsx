@@ -46,7 +46,7 @@ function MesJeunes({
   conseillerJeunes,
   isFromEmail,
   deletionSuccess,
-  recuperationSuccess,
+  recuperationSuccess, // FIXME actuellement on ne track pas la récuperation d'un beneficiaire / mettre en place ou suppression du passage de props comme obsolète
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
@@ -67,11 +67,6 @@ function MesJeunes({
     setIsRecuperationBeneficiairesLoading,
   ] = useState<boolean>(false)
 
-  const [showRecuperationSuccess, setShowRecuperationSuccess] =
-    useState<boolean>(recuperationSuccess ?? false)
-  const [showDeletionSuccess, setShowDeletionSuccess] = useState<boolean>(
-    deletionSuccess ?? false
-  )
   const [showAjoutAgenceSuccess, setShowAjoutAgenceSuccess] = useState<boolean>(
     ajoutAgenceSuccess ?? false
   )
@@ -79,7 +74,7 @@ function MesJeunes({
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
-  if (showDeletionSuccess) initialTracking += ' - Succès suppr. compte'
+  if (deletionSuccess) initialTracking += ' - Succès suppr. compte'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -94,20 +89,6 @@ function MesJeunes({
       default:
         break
     }
-  }
-
-  async function closeRecuperationSuccess(): Promise<void> {
-    setShowRecuperationSuccess(false)
-    await router.replace('mes-jeunes', undefined, {
-      shallow: true,
-    })
-  }
-
-  async function closeDeletionSuccess(): Promise<void> {
-    setShowDeletionSuccess(false)
-    await router.replace('mes-jeunes', undefined, {
-      shallow: true,
-    })
   }
 
   async function closeAjoutAgenceSuccessMessage(): Promise<void> {
@@ -160,10 +141,6 @@ function MesJeunes({
   )
 
   useEffect(() => {
-    setShowRecuperationSuccess(recuperationSuccess ?? false)
-  }, [recuperationSuccess])
-
-  useEffect(() => {
     if (!session || !chatCredentials) return
 
     messagesService
@@ -196,20 +173,6 @@ function MesJeunes({
 
   return (
     <>
-      {showRecuperationSuccess && (
-        <SuccessMessage
-          label='Vous avez récupéré vos bénéficiaires avec succès'
-          onAcknowledge={closeRecuperationSuccess}
-        />
-      )}
-
-      {showDeletionSuccess && (
-        <SuccessMessage
-          label='Le compte du bénéficiaire a bien été supprimé'
-          onAcknowledge={closeDeletionSuccess}
-        />
-      )}
-
       {showAjoutAgenceSuccess && (
         <SuccessMessage
           label={`Votre ${
