@@ -5,6 +5,12 @@ import { useRouter } from 'next/router'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 
 describe('AlertDisplayer', () => {
+  describe('quand la création de rdv est réussie', () => {})
+  describe('quand la modification de rdv est réussie', () => {})
+  describe('quand la suppression de rdv est réussie', () => {})
+  describe('quand la création d’une action est réussie', () => {})
+  describe('quand on vient de récupérer des bénéficiaires', () => {})
+  describe('quand on vient de supprimer un jeune', () => {})
   describe('envoie de message multi-destinataire', () => {
     let routerPush: Function
     beforeEach(() => {
