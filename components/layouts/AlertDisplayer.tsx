@@ -27,15 +27,6 @@ export default function AlertDisplayer({
     )
   }
 
-  // TODO Alert gérer // a supprimer
-  //envoiMessage
-  //creationRdv
-  //modificationRdv
-  //suppressionRdv
-  //creationAction
-  //suppressionAction
-  //recuperationBeneficiaire
-  //suppressionBeneficiaire
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
       {Alerts.map((alert) => (

@@ -5,12 +5,238 @@ import { useRouter } from 'next/router'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 
 describe('AlertDisplayer', () => {
-  describe('quand la création de rdv est réussie', () => {})
-  describe('quand la modification de rdv est réussie', () => {})
-  describe('quand la suppression de rdv est réussie', () => {})
-  describe('quand la création d’une action est réussie', () => {})
-  describe('quand on vient de récupérer des bénéficiaires', () => {})
-  describe('quand on vient de supprimer un jeune', () => {})
+  describe('quand la création de rdv est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-rendezvous?creationRdv=succes',
+        query: { creationRdv: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      render(<AlertDisplayer />)
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/Le rendez-vous a bien été créé/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-rendezvous',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+  describe('quand la modification de rdv est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-rendezvous?modificationRdv=succes',
+        query: { modificationRdv: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      render(<AlertDisplayer />)
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/rendez-vous a bien été modifié/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-rendezvous',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+  describe('quand la suppression de rdv est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-rendezvous?suppressionRdv=succes',
+        query: { suppressionRdv: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      render(<AlertDisplayer />)
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/rendez-vous a bien été supprimé/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-rendezvous',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+  describe('quand on vient de récupérer des bénéficiaires', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes?recuperation=succes',
+        query: { recuperation: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      render(<AlertDisplayer />)
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/Vous avez récupéré vos bénéficiaires avec succès/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-jeunes',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+  describe('quand on vient de supprimer un jeune', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes?suppression=succes',
+        query: { suppression: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      render(<AlertDisplayer />)
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/compte du bénéficiaire a bien été supprimé/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-jeunes',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+  describe('quand la création d’une action est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes/jeune-1?creationAction=succes',
+        query: { creationAction: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      render(<AlertDisplayer />)
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(screen.getByText(/L’action a bien été créée/)).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-jeunes/jeune-1',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
   describe('envoie de message multi-destinataire', () => {
     let routerPush: Function
     beforeEach(() => {

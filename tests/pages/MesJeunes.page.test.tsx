@@ -377,29 +377,6 @@ describe('Mes Jeunes', () => {
       })
     })
 
-    describe('quand on vient de supprimer un jeune', () => {
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //WHEN
-        await act(async () => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              deletionSuccess={true}
-              pageTitle={''}
-            />,
-            { customDependances: dependances }
-          )
-        })
-
-        //THEN
-        expect(
-          screen.getByText('Le compte du bénéficiaire a bien été supprimé')
-        ).toBeInTheDocument()
-      })
-    })
-
     describe('quand la récupération des messages non lus échoue', () => {
       it('affiche la liste des jeunes', async () => {
         // GIVEN
@@ -444,29 +421,6 @@ describe('Mes Jeunes', () => {
         // Then
         expect(
           screen.getByText('Votre Mission locale a été ajoutée à votre profil')
-        ).toBeInTheDocument()
-      })
-    })
-
-    describe('quand on vient de récupérer des bénéficiaires', () => {
-      it('affiche un message de succès', async () => {
-        // When
-        await act(async () => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-              recuperationSuccess={true}
-            />,
-            { customDependances: dependances }
-          )
-        })
-
-        // Then
-        expect(
-          screen.getByText('Vous avez récupéré vos bénéficiaires avec succès')
         ).toBeInTheDocument()
       })
     })
