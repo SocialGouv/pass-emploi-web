@@ -1,8 +1,8 @@
-export function parseUrl(returnTo: string): {
+export function parseUrl(url: string): {
   pathname: string
   query: Record<string, string | string[]>
 } {
-  const [pathname, queryString] = returnTo.split('?')
+  const [pathname, queryString] = url.split('?')
   const query = queryString
     ? queryString.split('&').reduce((dict, param) => {
         const [key, value] = param.split('=')

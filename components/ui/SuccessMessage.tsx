@@ -21,7 +21,7 @@ export default function SuccessMessage({
             name={IconName.CheckRounded}
             aria-hidden={true}
             focusable={false}
-            className='w-6 h-6 mr-2'
+            className='w-6 h-6 mr-2 shrink-0'
           />
           <p className='text-base-medium'>{label}</p>
         </div>
@@ -35,7 +35,7 @@ export default function SuccessMessage({
               name={IconName.Close}
               focusable='false'
               aria-hidden='true'
-              className='h-6 w-6 fill-success'
+              className='h-6 w-6 fill-success shrink-0'
             />
           </button>
         )}

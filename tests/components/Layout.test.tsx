@@ -1,6 +1,8 @@
 import { act, screen } from '@testing-library/react'
+import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
@@ -12,7 +14,6 @@ import {
 } from 'fixtures/services'
 import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { useRouter } from 'next/router'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -22,6 +23,7 @@ import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
+jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()
@@ -122,6 +124,11 @@ describe('<Layout />', () => {
         'href',
         '/path/to/current'
       )
+    })
+
+    it("affiche les messages d'alerte", () => {
+      // Then
+      expect(AlertDisplayer).toHaveBeenCalledWith({}, {})
     })
 
     it('signs into chat', () => {
