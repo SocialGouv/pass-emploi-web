@@ -40,6 +40,8 @@ export interface MessagesService {
 
   setReadByConseiller(idChat: string): void
 
+  toggleFlag(idChat: string, flagged: boolean): void
+
   observeJeuneChat(
     idConseiller: string,
     jeune: BaseJeune & { isActivated: boolean },
@@ -94,6 +96,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await this.firebaseClient.updateChat(idChat, {
       seenByConseiller: true,
       lastConseillerReading: now,
+    })
+  }
+
+  async toggleFlag(idChat: string, flagged: boolean): Promise<void> {
+    await this.firebaseClient.updateChat(idChat, {
+      flaggedByConseiller: flagged,
     })
   }
 

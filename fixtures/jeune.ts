@@ -154,6 +154,7 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
     lastConseillerReading: new Date(),
     lastJeuneReading: undefined,
     lastMessageIv: undefined,
+    flaggedByConseiller: true,
   }
   return { ...defaults, ...overrides }
 }
