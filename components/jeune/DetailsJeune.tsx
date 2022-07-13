@@ -3,7 +3,7 @@ import React from 'react'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
-import { formatDayDate } from 'utils/date'
+import { formatDayDate, formatDayDateLongMonth } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
@@ -24,7 +24,7 @@ export const DetailsJeune = ({
         <dd aria-label={formatDayDate(new Date(jeune.creationDate))}>
           <span className='text-base-regular'>Ajouté le : </span>
           <span className='text-md-semi'>
-            {formatDayDate(new Date(jeune.creationDate))}
+            {formatDayDateLongMonth(new Date(jeune.creationDate))}
           </span>
         </dd>
         {jeune.email && (
