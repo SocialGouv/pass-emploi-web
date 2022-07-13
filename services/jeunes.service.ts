@@ -14,9 +14,9 @@ import {
   ItemJeuneJson,
   jsonToDetailJeune,
   jsonToItemJeune,
+  SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
-import ErrorCodes from 'services/error-codes'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 export interface JeunesService {
   getJeunesDuConseiller(
@@ -58,7 +58,15 @@ export interface JeunesService {
     accessToken: string
   ): Promise<void>
 
-  supprimerJeune(idJeune: string, accessToken: string): Promise<void>
+  supprimerJeuneInactif(idJeune: string, accessToken: string): Promise<void>
+
+  archiverJeune(
+    idJeune: string,
+    payload: SuppressionJeuneFormData,
+    accessToken: string
+  ): Promise<void>
+
+  getMotifsSuppression(accessToken: string): Promise<string[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -86,7 +94,7 @@ export class JeunesApiService implements JeunesService {
       )
       return jsonToDetailJeune(jeune)
     } catch (e) {
-      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+      if (e instanceof ApiError && e.status === 404) {
         return undefined
       }
       throw e
@@ -104,7 +112,7 @@ export class JeunesApiService implements JeunesService {
         >(`/jeunes/${idJeune}/conseillers`, accessToken)
         return historique.map(toConseillerHistorique)
       } catch (e) {
-        if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+        if (e instanceof ApiError && e.status === 404) {
           return []
         }
         throw e
@@ -155,7 +163,7 @@ export class JeunesApiService implements JeunesService {
       )
       return id
     } catch (e) {
-      if (e instanceof RequestError && e.code === ErrorCodes.NON_TROUVE) {
+      if (e instanceof ApiError && e.status === 404) {
         return undefined
       }
       throw e
@@ -186,7 +194,30 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
-  async supprimerJeune(idJeune: string, accessToken: string): Promise<void> {
+  async supprimerJeuneInactif(
+    idJeune: string,
+    accessToken: string
+  ): Promise<void> {
     await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
+  }
+
+  async archiverJeune(
+    idJeune: string,
+    payload: SuppressionJeuneFormData,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      `/jeunes/${idJeune}/archiver`,
+      payload,
+      accessToken
+    )
+  }
+
+  async getMotifsSuppression(accessToken: string): Promise<string[]> {
+    const { content: motifs } = await this.apiClient.get<string[]>(
+      '/referentiels/motifs-suppression-jeune',
+      accessToken
+    )
+    return motifs
   }
 }

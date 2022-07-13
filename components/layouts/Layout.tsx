@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import { Footer } from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
@@ -45,8 +46,11 @@ export default function Layout({ children }: LayoutProps) {
   const [chats, setChats] = useState<JeuneChat[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
+  const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const destructorsRef = useRef<(() => void)[]>([])
+
+  const withChat = !withoutChat
 
   function hasMessageNonLu(): boolean {
     return chats.some(
@@ -138,6 +142,22 @@ export default function Layout({ children }: LayoutProps) {
   ])
 
   useEffect(() => {
+    // https://dev.to/admitkard/mobile-issue-with-100vh-height-100-100vh-3-solutions-3nae
+
+    function resizeContainerToInnerHeight() {
+      if (containerRef.current) {
+        containerRef.current.style.height = `${window.innerHeight}px`
+        containerRef.current.style.gridTemplateRows = `${window.innerHeight}px`
+      }
+    }
+
+    resizeContainerToInnerHeight()
+    window.addEventListener('resize', resizeContainerToInnerHeight, true)
+    return () =>
+      window.removeEventListener('resize', resizeContainerToInnerHeight, true)
+  }, [])
+
+  useEffect(() => {
     if (mainRef.current) mainRef.current.scrollTo(0, 0)
   }, [router.asPath, mainRef])
 
@@ -145,8 +165,9 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu()} titre={pageTitle} />
       <div
+        ref={containerRef}
         className={`${styles.container} ${
-          !withoutChat ? styles.container_with_chat : ''
+          withChat ? styles.container_with_chat : ''
         }`}
       >
         <Sidebar />
@@ -160,15 +181,16 @@ export default function Layout({ children }: LayoutProps) {
           <main
             role='main'
             className={`${styles.content} ${
-              withoutChat ? styles.content_without_chat : ''
+              withChat ? styles.content_when_chat : ''
             }`}
           >
+            <AlertDisplayer />
             {children}
           </main>
 
           <Footer />
         </div>
-        {!withoutChat && <ChatRoom jeunesChats={chats} />}
+        {withChat && <ChatRoom jeunesChats={chats} />}
       </div>
       <div id='modal-root' />
     </>

@@ -1,8 +1,4 @@
-import HttpClient, {
-  RequestError,
-  ServerError,
-  UnexpectedError,
-} from 'utils/httpClient'
+import HttpClient, { ApiError, UnexpectedError } from 'utils/httpClient'
 
 describe('HttpClient', () => {
   let httpClient: HttpClient
@@ -91,7 +87,7 @@ describe('HttpClient', () => {
     })
 
     describe('when response is a request error', () => {
-      it('throws a RequestError', async () => {
+      it('throws a ApiError', async () => {
         // Given
         ;(fetch as jest.Mock).mockResolvedValue({
           ok: false,
@@ -114,16 +110,16 @@ describe('HttpClient', () => {
 
         // Then
         expect(error).toEqual(
-          new RequestError(
-            "La ressource ConseillerForJeune n'est pas autorisée",
-            'Forbidden'
+          new ApiError(
+            403,
+            "La ressource ConseillerForJeune n'est pas autorisée"
           )
         )
       })
     })
 
     describe('when response is a server error', () => {
-      it('throws a ServerError', async () => {
+      it('throws a ApiError', async () => {
         // Given
         ;(fetch as jest.Mock).mockResolvedValue({
           ok: false,
@@ -144,7 +140,7 @@ describe('HttpClient', () => {
         }
 
         // Then
-        expect(error).toEqual(new ServerError('Internal server error'))
+        expect(error).toEqual(new ApiError(500, 'Internal server error'))
       })
     })
 
@@ -210,7 +206,7 @@ describe('HttpClient', () => {
     })
 
     describe('when response is a request error', () => {
-      it('throws a RequestError', async () => {
+      it('throws a ApiError', async () => {
         // Given
         ;(fetch as jest.Mock).mockResolvedValue({
           ok: false,
@@ -233,16 +229,16 @@ describe('HttpClient', () => {
 
         // Then
         expect(error).toEqual(
-          new RequestError(
-            "La ressource ConseillerForJeune n'est pas autorisée",
-            'Forbidden'
+          new ApiError(
+            403,
+            "La ressource ConseillerForJeune n'est pas autorisée"
           )
         )
       })
     })
 
     describe('when response is a server error', () => {
-      it('throws a ServerError', async () => {
+      it('throws a ApiError', async () => {
         // Given
         ;(fetch as jest.Mock).mockResolvedValue({
           ok: false,
@@ -263,7 +259,7 @@ describe('HttpClient', () => {
         }
 
         // Then
-        expect(error).toEqual(new ServerError('Internal server error'))
+        expect(error).toEqual(new ApiError(500, 'Internal server error'))
       })
     })
 

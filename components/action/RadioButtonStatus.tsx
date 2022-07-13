@@ -1,37 +1,13 @@
 import { MouseEvent } from 'react'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import propsStatutsActions from 'components/action/propsStatutsActions'
+import IconComponent from 'components/ui/IconComponent'
 import { StatutAction } from 'interfaces/action'
 
 interface RadioButtonStatusProps {
   status: StatutAction
   isSelected: boolean
   onChange: (statutChoisi: StatutAction) => void
-}
-
-const mappedStatus: {
-  [key in StatutAction]: { label: string; color: string; iconName: IconName }
-} = {
-  ARealiser: {
-    label: 'À réaliser',
-    color: 'accent_1',
-    iconName: IconName.Check,
-  },
-  Commencee: {
-    label: 'Commencée',
-    color: 'accent_3',
-    iconName: IconName.Check,
-  },
-  Terminee: {
-    label: 'Terminée',
-    color: 'accent_2',
-    iconName: IconName.Check,
-  },
-  Annulee: {
-    label: 'Annulée',
-    color: 'warning',
-    iconName: IconName.Cancel,
-  },
 }
 
 export const RadioButtonStatus = ({
@@ -44,7 +20,7 @@ export const RadioButtonStatus = ({
     onChange(status)
   }
 
-  const { label, color, iconName } = mappedStatus[status]
+  const { label, color, iconName } = propsStatutsActions[status]
   const id = `option-statut--${label.toLowerCase()}`
   const selectedStyle = `border-${color} bg-${color}_lighten text-${color}`
 

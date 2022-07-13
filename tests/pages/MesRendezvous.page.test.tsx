@@ -67,90 +67,6 @@ describe('MesRendezvous', () => {
         expect(rows.length - 1).toBe(rendezVousPasses.length)
       })
     })
-
-    describe('quand la création de rdv est réussie', () => {
-      let replace: jest.Mock
-      beforeEach(() => {
-        // Given
-        replace = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ replace })
-
-        // When
-        renderWithSession(
-          <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
-            creationSuccess={true}
-            pageTitle=''
-          />
-        )
-      })
-
-      it('affiche un message de succès', () => {
-        // Then
-        expect(
-          screen.getByText('Le rendez-vous a bien été créé')
-        ).toBeInTheDocument()
-      })
-
-      it('permet de cacher le message de succès', async () => {
-        // Given
-        const fermerMessage = screen.getByRole('button', {
-          name: "J'ai compris",
-        })
-
-        // When
-        await userEvent.click(fermerMessage)
-
-        // Then
-        expect(() =>
-          screen.getByText('Le rendez-vous a bien été créé')
-        ).toThrow()
-        expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
-      })
-    })
-
-    describe('quand la modification de rdv est réussie', () => {
-      let replace: jest.Mock
-      beforeEach(() => {
-        // Given
-        replace = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ replace })
-
-        // When
-        renderWithSession(
-          <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
-            modificationSuccess={true}
-            pageTitle=''
-          />
-        )
-      })
-
-      it('affiche un message de succès', () => {
-        // Then
-        expect(
-          screen.getByText('Le rendez-vous a bien été modifié')
-        ).toBeInTheDocument()
-      })
-
-      it('permet de cacher le message de succès', async () => {
-        // Given
-        const fermerMessage = screen.getByRole('button', {
-          name: "J'ai compris",
-        })
-
-        // When
-        await userEvent.click(fermerMessage)
-
-        // Then
-        expect(() =>
-          screen.getByText('Le rendez-vous a bien été modifié')
-        ).toThrow()
-        expect(replace).toHaveBeenCalledWith('', undefined, { shallow: true })
-      })
-    })
   })
 
   describe('server side', () => {
@@ -229,6 +145,86 @@ describe('MesRendezvous', () => {
             pageTitle: 'Tableau de bord - Mes rendez-vous',
             pageHeader: 'Rendez-vous',
           },
+        })
+      })
+    })
+
+    describe('Quand on vient de créer un rdv', () => {
+      it('récupère le statut de la création', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: { user: { structure: 'MILO' } },
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { creationRdv: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: { creationSuccess: true },
+        })
+      })
+    })
+
+    describe('Quand on vient de modifier un rdv', () => {
+      it('récupère le statut de la modification', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: { user: { structure: 'MILO' } },
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { modificationRdv: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: { modificationSuccess: true },
+        })
+      })
+    })
+
+    describe('Quand on vient de supprimer un rdv', () => {
+      it('récupère le statut de la suppression', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: { user: { structure: 'MILO' } },
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { suppressionRdv: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: { suppressionSuccess: true },
+        })
+      })
+    })
+
+    describe("Quand on vient d'envoyer un message groupé", () => {
+      it("récupère le statut de l'envoi", async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: { user: { structure: 'MILO' } },
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { envoiMessage: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: { messageEnvoiGroupeSuccess: true },
         })
       })
     })

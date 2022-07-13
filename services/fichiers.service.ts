@@ -6,7 +6,7 @@ export interface FichiersService {
     idJeunes: string[],
     fichier: File,
     accessToken: string
-  ): Promise<InfoFichier | undefined>
+  ): Promise<InfoFichier>
 
   deleteFichier(idFichier: string, accessToken: string): Promise<void>
 }
@@ -18,7 +18,7 @@ export class FichiersApiService implements FichiersService {
     idJeunes: string[],
     fichier: File,
     accessToken: string
-  ): Promise<InfoFichier | undefined> {
+  ): Promise<InfoFichier> {
     const formData = new FormData()
     idJeunes.forEach((idJeune) => {
       formData.append('jeunesIds', idJeune)

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import FbCheckIcon from '../../assets/icons/fb_check.svg'
 import FbCheckFillIcon from '../../assets/icons/fb_check_fill.svg'
@@ -7,6 +7,7 @@ import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
 import EmptyMessagesImage from '../../assets/images/empty_state.svg'
 
 import Conversation from 'components/Conversation'
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import { UserType } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
@@ -65,6 +66,10 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             Messagerie
           </h2>
           <span className='border-b border-grey_500 mx-4 mb-6'></span>
+
+          <div className='mx-3'>
+            <AlertDisplayer hideOnLargeScreen={true} />
+          </div>
 
           {!jeunesChats.length && (
             <div className='h-full overflow-y-auto bg-grey_100 flex flex-col justify-center items-center'>

@@ -12,6 +12,15 @@ export interface ActionJson {
   creatorType: string
 }
 
+export interface MetadonneesActionsJson {
+  nombreTotal: number
+  nombreEnCours: number
+  nombreTerminees: number
+  nombreAnnulees: number
+  nombrePasCommencees: number
+  nombreActionsParPage: number
+}
+
 export interface ActionsCountJson {
   jeuneId: string
   todoActionsCount: number

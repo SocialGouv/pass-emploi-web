@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import NavbarLink from 'components/ui/NavbarLink'
 import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
@@ -68,33 +68,16 @@ export default function Sidebar({}: SidebarProps) {
             </>
           )}
 
-          <a
-            aria-label='Aide (nouvel onglet)'
+          <NavbarLink
             href={
               isMilo
-                ? process.env.FAQ_MILO_EXTERNAL_LINK
-                : process.env.FAQ_PE_EXTERNAL_LINK
+                ? process.env.FAQ_MILO_EXTERNAL_LINK ?? ''
+                : process.env.FAQ_PE_EXTERNAL_LINK ?? ''
             }
-            target='_blank'
-            rel='noreferrer noopener'
-            className='hover:bg-primary_darken'
-          >
-            <IconComponent
-              name={IconName.Aide}
-              aria-hidden={true}
-              focusable={false}
-              className='mr-2 fill-blanc w-6 h-6'
-            />
-            <span className='text-md text-blanc text-center layout_m:sr-only'>
-              Aide
-            </span>
-            <IconComponent
-              name={IconName.Launch}
-              aria-hidden={true}
-              focusable={false}
-              className='mx-2 w-3 h-3 fill-blanc layout_m:hidden'
-            />
-          </a>
+            label='Aide'
+            iconName={IconName.Aide}
+            isExternal={true}
+          />
         </div>
         <div className='flex flex-col'>
           {session && (

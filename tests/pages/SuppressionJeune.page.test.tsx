@@ -13,7 +13,7 @@ import SuppressionJeune, {
 } from 'pages/mes-jeunes/[jeune_id]/suppression'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { RequestError, UnexpectedError } from 'utils/httpClient'
+import { ApiError, UnexpectedError } from 'utils/httpClient'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -46,7 +46,7 @@ describe('Suppression Jeune', () => {
         })
 
         jeunesService = mockedJeunesService({
-          supprimerJeune: jest.fn(() => Promise.resolve()),
+          supprimerJeuneInactif: jest.fn(() => Promise.resolve()),
         })
         ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
       })
@@ -184,7 +184,7 @@ describe('Suppression Jeune', () => {
 
         it('supprime le compte', () => {
           // Then
-          expect(jeunesService.supprimerJeune).toHaveBeenCalledWith(
+          expect(jeunesService.supprimerJeuneInactif).toHaveBeenCalledWith(
             jeune.id,
             'accessToken'
           )
@@ -197,10 +197,10 @@ describe('Suppression Jeune', () => {
       })
 
       describe('quand il y a une erreur', () => {
-        it('affiche un message spécifique si la jeune a activé son compte', async () => {
+        it('affiche un message spécifique', async () => {
           // Given
-          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
-            new RequestError("Message d'erreur", 'JEUNE_PAS_INACTIF')
+          ;(jeunesService.supprimerJeuneInactif as jest.Mock).mockRejectedValue(
+            new ApiError(403, "Message d'erreur")
           )
 
           // When
@@ -213,23 +213,9 @@ describe('Suppression Jeune', () => {
           expect(push).not.toHaveBeenCalled()
         })
 
-        it("affiche le message d'une erreur de requête", async () => {
-          // Given
-          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
-            new RequestError("Message d'erreur")
-          )
-
-          // When
-          await userEvent.click(button)
-
-          // Then
-          expect(screen.getByText("Message d'erreur")).toBeInTheDocument()
-          expect(push).not.toHaveBeenCalled()
-        })
-
         it("affiche un message d'erreur générique", async () => {
           // Given
-          ;(jeunesService.supprimerJeune as jest.Mock).mockRejectedValue(
+          ;(jeunesService.supprimerJeuneInactif as jest.Mock).mockRejectedValue(
             new UnexpectedError("Message d'erreur")
           )
 

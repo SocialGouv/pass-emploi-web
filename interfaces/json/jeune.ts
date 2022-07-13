@@ -34,6 +34,11 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   situations?: Situation[]
 }
 
+export interface SuppressionJeuneFormData {
+  motif: string
+  commentaire?: string
+}
+
 function toEtatSituation(etat: string): EtatSituation | undefined {
   switch (etat) {
     case 'EN_COURS':

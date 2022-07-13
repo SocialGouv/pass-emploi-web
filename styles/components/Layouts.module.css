@@ -1,8 +1,8 @@
 .container {
-  --sidebar-width: 15vw;
-  --page-width: 85vw;
-  --page-width-with-chat: calc(var(--page-width) - var(--chat-width));
-  --chat-width: 24vw;
+  --sidebar-width: 0;
+  --page-width: 100vw;
+  --chat-width: 100vw;
+  --page-width-when-chat: calc(var(--page-width) - var(--chat-width));
 
   display: grid;
   grid-template-areas: 'sidebar page';
@@ -13,27 +13,20 @@
 
 .container.container_with_chat {
   grid-template-areas: 'sidebar page chat';
-  grid-template-columns: var(--sidebar-width) var(--page-width-with-chat) var(
+  grid-template-columns: var(--sidebar-width) var(--page-width-when-chat) var(
       --chat-width
     );
 }
 
 .sidebar {
   grid-area: sidebar;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: space-between;
   overflow-x: hidden; /* Disable horizontal scroll */
-  padding: 24px 16px;
+  padding: 24px 12px;
   text-align: center;
   background-color: theme('colors.primary');
-}
-
-.sidebar nav a {
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  border-radius: 8px;
 }
 
 .page {
@@ -50,14 +43,15 @@
 
 .content {
   flex-grow: 1;
+  margin: auto;
   width: 100%;
-  padding: 1.5rem;
+  max-width: 500px;
+  padding: 40px 1rem;
 }
 
-.content.content_without_chat {
-  max-width: 500px;
-  padding: 40px 0;
-  margin: auto;
+.content.content_when_chat {
+  max-width: 100%;
+  padding: 1rem;
 }
 
 .footer {
@@ -74,44 +68,41 @@
   background-color: theme('colors.grey_100');
 }
 
-@media screen and (max-width: theme('screens.layout_s')) {
-  .sidebar {
-    --sidebar-width: 64px;
-  }
-}
-
-@media screen and (max-width: theme('screens.layout_base.max')) {
-  .sidebar {
-    padding: 24px 12px;
-  }
-  .content {
-    padding: 1rem;
-  }
-}
-
-@media screen and (max-width: theme('screens.layout_m.max')) {
+@media screen and (min-width: theme('screens.layout_s')) {
   .container {
-    grid-template-columns: 10vw 90vw;
+    --sidebar-width: 10vw;
+    --chat-width: 20vw;
+    --page-width: calc(100vw - var(--sidebar-width));
   }
-  .container.container_with_chat {
-    grid-template-columns: 10vw 70vw 20vw;
+
+  .sidebar {
+    display: flex;
   }
-  .sidebar a {
-    justify-content: center;
-  }
-  .sidebar svg {
-    margin-right: 0;
+
+  .content {
+    padding: 40px 0;
   }
 }
 
-@media screen and (max-width: theme('screens.layout_base.max')) {
-  .footer ul {
-    flex-direction: column;
+@media screen and (min-width: theme('screens.layout_base')) {
+  .sidebar {
+    padding: 24px 16px;
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_l')) {
+  .container {
+    --sidebar-width: 15vw;
+    --chat-width: 24vw;
+  }
+
+  .content.content_when_chat {
+    padding: 1.5rem;
   }
 }
 
 @media screen and (min-width: theme('screens.layout_xl')) {
-  .content {
+  .content.content_when_chat {
     padding: 2rem;
   }
 }

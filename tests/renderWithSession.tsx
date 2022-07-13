@@ -25,7 +25,17 @@ export default function renderWithSession(
 
   const session = { ...defaultSession, ...customSession }
 
-  return render(
+  const renderResult = render(provideSession(children, session))
+
+  const rerender = renderResult.rerender
+  renderResult.rerender = (rerenderChildren: JSX.Element) =>
+    rerender(provideSession(rerenderChildren, session))
+
+  return renderResult
+}
+
+function provideSession(children: JSX.Element, session: Session) {
+  return (
     <SessionProvider session={session}>
       <ChatCredentialsProvider
         credentials={{

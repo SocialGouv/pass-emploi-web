@@ -6,8 +6,6 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import renderPage from '../renderPage'
-
 import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsJeunes,
@@ -29,6 +27,7 @@ import {
 import MesJeunes, { getServerSideProps } from 'pages/mes-jeunes'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
+import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -210,7 +209,6 @@ describe('Mes Jeunes', () => {
               conseillerJeunes={[jeune]}
               isFromEmail
               pageTitle=''
-              deletionSuccess={true}
             />,
             { customDependances: dependances }
           )
@@ -249,13 +247,6 @@ describe('Mes Jeunes', () => {
       it('affiche la situation courante du jeune', () => {
         expect(screen.getByText(jeune.situationCourante!)).toBeInTheDocument()
       })
-
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //THEN
-        expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
-        ).toBeInTheDocument()
-      })
     })
 
     describe('quand le conseiller est Pole emploi', () => {
@@ -270,7 +261,6 @@ describe('Mes Jeunes', () => {
               conseillerJeunes={[jeune]}
               isFromEmail
               pageTitle=''
-              deletionSuccess={true}
             />,
             { customDependances: dependances }
           )
@@ -304,13 +294,6 @@ describe('Mes Jeunes', () => {
         expect(() =>
           screen.getByRole('columnheader', { name: 'Situation' })
         ).toThrow()
-      })
-
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //THEN
-        expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
-        ).toBeInTheDocument()
       })
     })
 
@@ -394,29 +377,6 @@ describe('Mes Jeunes', () => {
       })
     })
 
-    describe('quand on vient de supprimer un jeune', () => {
-      it('affiche le message de succès de suppression de jeune', async () => {
-        //WHEN
-        await act(async () => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              deletionSuccess={true}
-              pageTitle={''}
-            />,
-            { customDependances: dependances }
-          )
-        })
-
-        //THEN
-        expect(
-          screen.getByText('Le compte du jeune a bien été supprimé.')
-        ).toBeInTheDocument()
-      })
-    })
-
     describe('quand la récupération des messages non lus échoue', () => {
       it('affiche la liste des jeunes', async () => {
         // GIVEN
@@ -461,29 +421,6 @@ describe('Mes Jeunes', () => {
         // Then
         expect(
           screen.getByText('Votre Mission locale a été ajoutée à votre profil')
-        ).toBeInTheDocument()
-      })
-    })
-
-    describe('quand on vient de récupérer des bénéficiaires', () => {
-      it('affiche un message de succès', async () => {
-        // When
-        await act(async () => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={UserStructure.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-              recuperationSuccess={true}
-            />,
-            { customDependances: dependances }
-          )
-        })
-
-        // Then
-        expect(
-          screen.getByText('Vous avez récupéré vos bénéficiaires avec succès')
         ).toBeInTheDocument()
       })
     })

@@ -55,16 +55,13 @@
   border: 1px solid theme('colors.primary');
 }
 
+.buttonSecondary svg {
+  fill: theme('colors.primary');
+}
+
 .buttonSecondary:hover,
 .buttonSecondary:active {
   background-color: theme('colors.primary_lighten');
-  color: theme('colors.primary');
-  border: 1px solid theme('colors.primary');
-}
-
-.buttonSecondary:hover svg,
-.buttonSecondary:active svg {
-  fill: theme('colors.primary');
 }
 
 .buttonSecondary[disabled] {
@@ -75,12 +72,7 @@
   color: theme('colors.blanc');
 }
 
-.buttonSecondary[disabled]:hover {
-  color: theme('colors.blanc');
-  border: 1px solid transparent;
-}
-
-.buttonSecondary[disabled]:hover svg {
+.buttonSecondary[disabled] svg {
   fill: theme('colors.blanc');
 }
 

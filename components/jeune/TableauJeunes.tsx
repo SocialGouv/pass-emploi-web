@@ -313,7 +313,7 @@ export const TableauJeunes = ({
                     <span role='cell' className='table-cell p-4'>
                       <SituationTag
                         className={
-                          'max-w-[180px] layout_l:max-w-[100px] truncate text-ellipsis'
+                          'max-w-[100px] layout_l:max-w-[180px] truncate text-ellipsis'
                         }
                         situation={jeune.situationCourante}
                       ></SituationTag>

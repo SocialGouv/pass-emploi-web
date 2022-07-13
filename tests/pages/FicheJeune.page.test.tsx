@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -23,6 +23,7 @@ import {
   mockedJeunesService,
   mockedRendezVousService,
 } from 'fixtures/services'
+import { StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import {
   CategorieSituation,
@@ -39,10 +40,12 @@ import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import renderPage from 'tests/renderPage'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/Modal')
 
 describe('Fiche Jeune', () => {
   describe('client side', () => {
@@ -50,11 +53,192 @@ describe('Fiche Jeune', () => {
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
+    let motifsSuppression: string[]
+    let dependances: Pick<Dependencies, 'jeunesService'>
 
     let replace: jest.Mock
+    let push: jest.Mock
     beforeEach(async () => {
       replace = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ replace })
+      push = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        replace: replace,
+        push: push,
+      })
+
+      motifsSuppression = [
+        'Sortie positive du CEJ',
+        'Radiation du CEJ',
+        'Recréation d’un compte jeune',
+        'Autre',
+      ]
+
+      dependances = {
+        jeunesService: mockedJeunesService({
+          getMotifsSuppression: jest.fn(async () => motifsSuppression),
+        }),
+      }
+    })
+
+    describe('pour tous les conseillers', () => {
+      let setIdJeune: (id: string | undefined) => void
+      beforeEach(async () => {
+        // Given
+        setIdJeune = jest.fn()
+
+        // When
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={[]}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
+            conseillers={listeConseillers}
+            pageTitle={''}
+          />,
+          { idJeuneSetter: setIdJeune, customDependances: dependances }
+        )
+      })
+
+      it('affiche la liste des 5 premiers conseillers du jeune', () => {
+        // Then
+        listeConseillers
+          .slice(0, 5)
+          .forEach(({ nom, prenom }: ConseillerHistorique) => {
+            expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+          })
+        expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
+      })
+
+      it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
+        // Then
+        const button = screen.getByRole('button', {
+          name: 'Voir l’historique complet',
+        })
+        expect(listeConseillers.length).toEqual(6)
+        expect(button).toBeInTheDocument()
+      })
+
+      it('permet d’afficher la liste complète des conseillers du jeune', async () => {
+        // Given
+        const button = screen.getByRole('button', {
+          name: 'Voir l’historique complet',
+        })
+
+        // When
+        await act(() => userEvent.click(button))
+
+        //Then
+        listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
+          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+        })
+      })
+
+      it('modifie le currentJeune', () => {
+        // Then
+        expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
+      })
+
+      it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
+        // Then
+        const deleteButton = screen.getByText('Supprimer ce compte')
+        expect(deleteButton).toBeInTheDocument()
+      })
+
+      describe('Supprimer un compte actif', () => {
+        beforeEach(async () => {
+          // Given
+          const deleteButton = screen.getByText('Supprimer ce compte')
+
+          // When
+          await act(() => userEvent.click(deleteButton))
+        })
+
+        it('affiche la première modale de suppression du compte d’un bénéficiaire actif', async () => {
+          // Then
+          expect(
+            screen.getByText('Souhaitez-vous continuer la suppression ?')
+          ).toBeInTheDocument()
+        })
+
+        describe('Seconde étape suppression modale', () => {
+          beforeEach(async () => {
+            // Given
+            const continuerButton = screen.getByText('Continuer')
+
+            // When
+            await act(() => userEvent.click(continuerButton))
+          })
+
+          it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
+            // Then
+            expect(
+              screen.getByText(
+                /Une fois confirmé toutes les informations liées/
+              )
+            ).toBeInTheDocument()
+          })
+
+          it('contient un champ de sélection d’un motif', async () => {
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
+
+            // Then
+            expect(selectMotif).toHaveAttribute('required', '')
+
+            const options: HTMLOptionElement[] =
+              within(selectMotif).getAllByRole('option')
+            expect(options.map((option) => option.value)).toEqual(
+              motifsSuppression
+            )
+          })
+
+          it('affiche le champ de saisie pour préciser le motif Autre', async () => {
+            // Given
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
+
+            // When
+            await act(() => userEvent.selectOptions(selectMotif, 'Autre'))
+
+            // Then
+            expect(
+              screen.getByText(
+                /Veuillez préciser le motif de la suppression du compte/
+              )
+            ).toBeInTheDocument()
+          })
+
+          it('lors de la confirmation, supprime le bénéficiaire', async () => {
+            // Given
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
+            const supprimerButtonModal = screen.getByText('Confirmer')
+            await act(() =>
+              userEvent.selectOptions(selectMotif, 'Radiation du CEJ')
+            )
+
+            // When
+            await act(() => userEvent.click(supprimerButtonModal))
+
+            // Then
+            expect(
+              dependances.jeunesService.archiverJeune
+            ).toHaveBeenCalledWith(
+              jeune.id,
+              { motif: 'Radiation du CEJ', commentaire: undefined },
+              'accessToken'
+            )
+            expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
+          })
+        })
+      })
     })
 
     describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
@@ -68,7 +252,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={listeConseillers}
             pageTitle={''}
           />,
@@ -93,7 +281,7 @@ describe('Fiche Jeune', () => {
       it('affiche les actions du jeune', async () => {
         // When
         const tabActions = screen.getByRole('tab', { name: 'Actions 14' })
-        await userEvent.click(tabActions)
+        await act(() => userEvent.click(tabActions))
 
         // Then
         actions.forEach((action) => {
@@ -125,45 +313,6 @@ describe('Fiche Jeune', () => {
           screen.getByRole('link', { name: 'Créer une nouvelle action' })
         ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
       })
-
-      it('affiche la liste des 5 premiers conseillers du jeune', () => {
-        // Then
-        listeConseillers
-          .slice(0, 5)
-          .forEach(({ nom, prenom }: ConseillerHistorique) => {
-            expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-          })
-        expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
-      })
-
-      it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
-        // Then
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
-        })
-        expect(listeConseillers.length).toEqual(6)
-        expect(button).toBeInTheDocument()
-      })
-
-      it('permet d’afficher la liste complète des conseillers du jeune', async () => {
-        // Given
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
-        })
-
-        // When
-        await userEvent.click(button)
-
-        //Then
-        listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-        })
-      })
-
-      it('modifie le currentJeune', () => {
-        // Then
-        expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
-      })
     })
 
     describe('quand il y a moins de 5 conseillers dans l’historique', () => {
@@ -174,7 +323,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={conseillers}
             pageTitle={''}
           />
@@ -193,7 +346,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />,
@@ -228,7 +385,9 @@ describe('Fiche Jeune', () => {
 
       it("n'affiche pas de lien vers les actions du jeune", async () => {
         // Given
-        await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
+        await act(() =>
+          userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
+        )
 
         // Then
         expect(() =>
@@ -257,7 +416,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions, total: 14, page: 1 }}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -297,7 +460,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={unDetailJeune({ situations: situations })}
               rdvs={[]}
-              actionsInitiales={{ actions, total: 14, page: 1 }}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
               conseillers={[]}
               pageTitle={''}
             />,
@@ -331,14 +498,20 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0, page: 1 }}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />
         )
 
         // When
-        await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
+        await act(() =>
+          userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
+        )
 
         // Then
         expect(screen.getByText(/n’a pas encore d’action/)).toBeInTheDocument()
@@ -352,7 +525,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isActivated: false }}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0, page: 1 }}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -384,7 +561,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={{ ...jeune, isReaffectationTemporaire: true }}
             rdvs={rdvs}
-            actionsInitiales={{ actions: [], total: 0, page: 1 }}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
             conseillers={[]}
             pageTitle={''}
           />
@@ -395,133 +576,6 @@ describe('Fiche Jeune', () => {
       })
     })
 
-    describe('quand la création de rdv est réussie', () => {
-      beforeEach(() => {
-        // When
-        renderPage(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
-            rdvCreationSuccess={true}
-            conseillers={[]}
-            pageTitle={''}
-          />
-        )
-      })
-
-      it('affiche un message de succès', () => {
-        // Then
-        expect(
-          screen.getByText('Le rendez-vous a bien été créé')
-        ).toBeInTheDocument()
-      })
-
-      it('permet de cacher le message de succès', async () => {
-        // Given
-        const fermerMessage = screen.getByRole('button', {
-          name: "J'ai compris",
-        })
-
-        // When
-        await userEvent.click(fermerMessage)
-
-        // Then
-        expect(() =>
-          screen.getByText('Le rendez-vous a bien été créé')
-        ).toThrow()
-        expect(replace).toHaveBeenCalledWith(
-          { pathname: '/mes-jeunes/jeune-1' },
-          undefined,
-          { shallow: true }
-        )
-      })
-    })
-
-    describe('quand la modification de rdv est réussie', () => {
-      beforeEach(() => {
-        // When
-        renderPage(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            conseillers={[]}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
-            rdvModificationSuccess={true}
-            pageTitle={''}
-          />
-        )
-      })
-
-      it('affiche un message de succès', () => {
-        // Then
-        expect(
-          screen.getByText('Le rendez-vous a bien été modifié')
-        ).toBeInTheDocument()
-      })
-
-      it('permet de cacher le message de succès', async () => {
-        // Given
-        const fermerMessage = screen.getByRole('button', {
-          name: "J'ai compris",
-        })
-
-        // When
-        await userEvent.click(fermerMessage)
-
-        // Then
-        expect(() =>
-          screen.getByText('Le rendez-vous a bien été modifié')
-        ).toThrow()
-        expect(replace).toHaveBeenCalledWith(
-          { pathname: '/mes-jeunes/jeune-1' },
-          undefined,
-          { shallow: true }
-        )
-      })
-    })
-
-    describe('quand la création d’une action est réussie', () => {
-      beforeEach(() => {
-        // When
-        renderPage(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
-            actionCreationSuccess={true}
-            conseillers={[]}
-            pageTitle={''}
-          />
-        )
-      })
-
-      it('affiche un message de succès', () => {
-        // Then
-        expect(
-          screen.getByText('L’action a bien été créée')
-        ).toBeInTheDocument()
-      })
-
-      it('permet de cacher le message de succès', async () => {
-        // Given
-        const fermerMessage = screen.getByRole('button', {
-          name: "J'ai compris",
-        })
-
-        // When
-        await userEvent.click(fermerMessage)
-
-        // Then
-        expect(() => screen.getByText('L’action a bien été créée')).toThrow()
-        expect(replace).toHaveBeenCalledWith(
-          { pathname: '/mes-jeunes/jeune-1' },
-          undefined,
-          { shallow: true }
-        )
-      })
-    })
-
     describe('quand on revient sur la page depuis le détail d’une action', () => {
       it('ouvre l’onglet des actions', () => {
         // Given
@@ -529,7 +583,11 @@ describe('Fiche Jeune', () => {
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
-            actionsInitiales={{ actions, total: 14, page: 1 }}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
@@ -546,20 +604,26 @@ describe('Fiche Jeune', () => {
     describe('pagination actions', () => {
       describe('navigation', () => {
         let actionsService: ActionsService
+        let pageCourante: number
         beforeEach(() => {
           // Given
           actionsService = mockedActionsService({
-            getActionsJeune: jest.fn(async () => ({
-              actions: [uneAction({ content: 'Action page 2' })],
-              total: 1,
+            getActionsJeune: jest.fn(async (_, { page }) => ({
+              actions: [uneAction({ content: `Action page ${page}` })],
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
             })),
           })
 
+          pageCourante = 4
           renderPage(
             <FicheJeune
               jeune={jeune}
               rdvs={rdvs}
-              actionsInitiales={{ actions, total: 52, page: 4 }}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
               conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -570,26 +634,36 @@ describe('Fiche Jeune', () => {
 
         it('met à jour les actions avec la page demandée ', async () => {
           // When
-          await userEvent.click(screen.getByLabelText('Page 2'))
+          await act(() => userEvent.click(screen.getByLabelText('Page 2')))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            2,
+            { page: 2, statuts: [] },
             'accessToken'
+          )
+          expect(screen.getByLabelText('Page 2')).toHaveAttribute(
+            'aria-current',
+            'page'
           )
           expect(screen.getByText('Action page 2')).toBeInTheDocument()
         })
 
         it('permet d’aller à la première page des actions', async () => {
           // When
-          await userEvent.click(screen.getByLabelText('Première page'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Première page'))
+          )
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            1,
+            { page: 1, statuts: [] },
             'accessToken'
+          )
+          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
+            'aria-current',
+            'page'
           )
           expect(screen.getByLabelText('Première page')).toHaveAttribute(
             'disabled'
@@ -598,13 +672,19 @@ describe('Fiche Jeune', () => {
 
         it('permet d’aller à la dernière page des actions', async () => {
           // When
-          await userEvent.click(screen.getByLabelText('Dernière page'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Dernière page'))
+          )
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            6,
+            { page: 6, statuts: [] },
             'accessToken'
+          )
+          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
+            'aria-current',
+            'page'
           )
           expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
             'disabled'
@@ -613,55 +693,80 @@ describe('Fiche Jeune', () => {
 
         it('permet de revenir à la page précédente', async () => {
           // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Page précédente'))
+          )
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            3,
+            { page: pageCourante - 1, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante - 1}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it("permet d'aller à la page suivante", async () => {
           // When
-          await userEvent.click(screen.getByLabelText('Page suivante'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Page suivante'))
+          )
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            5,
+            { page: pageCourante + 1, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante + 1}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it('met à jour la page courante', async () => {
           // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-          await userEvent.click(screen.getByLabelText('Page précédente'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Page précédente'))
+          )
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Page précédente'))
+          )
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            3,
+            { page: pageCourante - 1, statuts: [] },
             'accessToken'
           )
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            2,
+            { page: pageCourante - 2, statuts: [] },
             'accessToken'
           )
+          expect(
+            screen.getByLabelText(`Page ${pageCourante - 2}`)
+          ).toHaveAttribute('aria-current', 'page')
         })
 
         it('ne permet pas de revenir avant la première page', async () => {
           // Given
-          await userEvent.click(screen.getByLabelText('Première page'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Première page'))
+          )
 
           // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Page précédente'))
+          )
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
             'disabled'
           )
@@ -669,16 +774,34 @@ describe('Fiche Jeune', () => {
 
         it("ne permet pas d'aller après la dernière page", async () => {
           // Given
-          await userEvent.click(screen.getByLabelText('Dernière page'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Dernière page'))
+          )
 
           // When
-          await userEvent.click(screen.getByLabelText('Page suivante'))
+          await act(() =>
+            userEvent.click(screen.getByLabelText('Page suivante'))
+          )
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
           expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
             'disabled'
           )
+        })
+
+        it('ne recharge pas la page courante', async () => {
+          // When
+          await act(() =>
+            userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
+          )
+
+          // Then
+          expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(0)
         })
       })
 
@@ -689,7 +812,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 22, page: 3 }}
+              actionsInitiales={{
+                actions: [],
+                page: 3,
+                metadonnees: { nombreTotal: 22, nombrePages: 3 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -710,7 +837,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 52, page: 3 }}
+              actionsInitiales={{
+                actions: [],
+                page: 3,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -734,7 +865,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 1 }}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -758,7 +893,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 11 }}
+              actionsInitiales={{
+                actions: [],
+                page: 11,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -783,7 +922,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 4 }}
+              actionsInitiales={{
+                actions: [],
+                page: 4,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -808,7 +951,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 17 }}
+              actionsInitiales={{
+                actions: [],
+                page: 17,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -833,7 +980,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 18 }}
+              actionsInitiales={{
+                actions: [],
+                page: 18,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -857,7 +1008,11 @@ describe('Fiche Jeune', () => {
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
-              actionsInitiales={{ actions: [], total: 195, page: 20 }}
+              actionsInitiales={{
+                actions: [],
+                page: 20,
+                metadonnees: { nombreTotal: 195, nombrePages: 20 },
+              }}
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
@@ -874,6 +1029,80 @@ describe('Fiche Jeune', () => {
           expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
           expect(screen.getAllByText('…')).toHaveLength(1)
         })
+      })
+    })
+
+    describe('filtrer les actions par status', () => {
+      let actionsService: ActionsService
+      let pageCourante: number
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeune: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action filtrée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })),
+        })
+
+        pageCourante = 1
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions,
+              page: pageCourante,
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
+            }}
+            conseillers={listeConseillers}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+          />,
+          { customDependances: { actionsService } }
+        )
+
+        // When
+        await act(() => userEvent.click(screen.getByText('Statut')))
+        await act(() => userEvent.click(screen.getByLabelText('Commencée')))
+        await act(() => userEvent.click(screen.getByLabelText('À réaliser')))
+        await act(() =>
+          userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+        )
+      })
+
+      it('filtre les actions', () => {
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          },
+          'accessToken'
+        )
+        expect(screen.getByText('Action filtrée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', () => {
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve les filtres de statut', async () => {
+        // When
+        await act(() => userEvent.click(screen.getByLabelText('Page 2')))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          },
+          'accessToken'
+        )
       })
     })
   })
@@ -903,7 +1132,7 @@ describe('Fiche Jeune', () => {
             uneAction({ creationDate: dateFuture.toISOString() }),
             uneAction({ creationDate: dateFutureLoin.toISOString() }),
           ],
-          total: 14,
+          metadonnees: { nombreTotal: 14, nombrePages: 2 },
         })),
       })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
@@ -977,7 +1206,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
           'id-jeune',
-          1,
+          { page: 1, statuts: [] },
           'accessToken'
         )
         expect(actual).toMatchObject({
@@ -989,8 +1218,8 @@ describe('Fiche Jeune', () => {
                 uneAction({ creationDate: dateFuture.toISOString() }),
                 uneAction({ creationDate: dateFutureLoin.toISOString() }),
               ],
-              total: 14,
               page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
             },
           },
         })
@@ -1017,7 +1246,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
           'id-jeune',
-          3,
+          { page: 3, statuts: [] },
           'accessToken'
         )
         expect(actual).toMatchObject({

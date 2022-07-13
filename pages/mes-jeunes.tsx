@@ -18,6 +18,7 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -45,7 +46,7 @@ function MesJeunes({
   conseillerJeunes,
   isFromEmail,
   deletionSuccess,
-  recuperationSuccess,
+  recuperationSuccess, // FIXME actuellement on ne track pas la récuperation d'un beneficiaire / mettre en place ou suppression du passage de props comme obsolète
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
@@ -66,21 +67,15 @@ function MesJeunes({
     setIsRecuperationBeneficiairesLoading,
   ] = useState<boolean>(false)
 
-  const [showRecuperationSuccess, setShowRecuperationSuccess] =
-    useState<boolean>(recuperationSuccess ?? false)
-  const [showDeletionSuccess, setShowDeletionSuccess] = useState<boolean>(
-    deletionSuccess ?? false
-  )
   const [showAjoutAgenceSuccess, setShowAjoutAgenceSuccess] = useState<boolean>(
     ajoutAgenceSuccess ?? false
   )
-  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
-    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
 
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
-  if (showDeletionSuccess) initialTracking += ' - Succès suppr. compte'
+  if (deletionSuccess) initialTracking += ' - Succès suppr. compte'
+  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = async () => {
@@ -94,25 +89,6 @@ function MesJeunes({
       default:
         break
     }
-  }
-
-  async function closeRecuperationSuccess(): Promise<void> {
-    setShowRecuperationSuccess(false)
-    await router.replace('mes-jeunes', undefined, {
-      shallow: true,
-    })
-  }
-
-  async function closeDeletionSuccess(): Promise<void> {
-    setShowDeletionSuccess(false)
-    await router.replace('mes-jeunes', undefined, {
-      shallow: true,
-    })
-  }
-
-  async function closeMessageGroupeEnvoiSuccess(): Promise<void> {
-    setShowMessageGroupeEnvoiSuccess(false)
-    await router.replace('/mes-jeunes', undefined, { shallow: true })
   }
 
   async function closeAjoutAgenceSuccessMessage(): Promise<void> {
@@ -129,7 +105,7 @@ function MesJeunes({
       )
       await router.replace({
         pathname: '/mes-jeunes',
-        query: { recuperation: 'succes' },
+        query: { [QueryParams.recuperationBeneficiaires]: QueryValues.succes },
       })
       setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
     } finally {
@@ -165,10 +141,6 @@ function MesJeunes({
   )
 
   useEffect(() => {
-    setShowRecuperationSuccess(recuperationSuccess ?? false)
-  }, [recuperationSuccess])
-
-  useEffect(() => {
     if (!session || !chatCredentials) return
 
     messagesService
@@ -199,37 +171,8 @@ function MesJeunes({
 
   useMatomo(trackingTitle)
 
-  useMatomo(
-    showMessageGroupeEnvoiSuccess
-      ? 'Mes jeunes - Succès envoi message'
-      : 'Mes jeunes'
-  )
-
   return (
     <>
-      {showRecuperationSuccess && (
-        <SuccessMessage
-          label='Vous avez récupéré vos bénéficiaires avec succès'
-          onAcknowledge={closeRecuperationSuccess}
-        />
-      )}
-
-      {showDeletionSuccess && (
-        <SuccessMessage
-          label='Le compte du jeune a bien été supprimé.'
-          onAcknowledge={closeDeletionSuccess}
-        />
-      )}
-
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-          }
-          onAcknowledge={closeMessageGroupeEnvoiSuccess}
-        />
-      )}
-
       {showAjoutAgenceSuccess && (
         <SuccessMessage
           label={`Votre ${
@@ -343,19 +286,24 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     pageTitle: 'Mes jeunes',
   }
 
-  if (context.query.recuperation) {
-    props.recuperationSuccess = context.query.recuperation === 'succes'
+  if (context.query[QueryParams.recuperationBeneficiaires]) {
+    props.recuperationSuccess =
+      context.query[QueryParams.recuperationBeneficiaires] ===
+      QueryValues.succes
   }
 
-  if (context.query.suppression)
-    props.deletionSuccess = context.query.suppression === 'succes'
+  if (context.query[QueryParams.suppressionBeneficiaire])
+    props.deletionSuccess =
+      context.query[QueryParams.suppressionBeneficiaire] === QueryValues.succes
 
-  if (context.query.envoiMessage) {
-    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  if (context.query[QueryParams.envoiMessage]) {
+    props.messageEnvoiGroupeSuccess =
+      context.query[QueryParams.envoiMessage] === QueryValues.succes
   }
 
-  if (context.query.choixAgence) {
-    props.ajoutAgenceSuccess = context.query.choixAgence === 'succes'
+  if (context.query[QueryParams.choixAgence]) {
+    props.ajoutAgenceSuccess =
+      context.query[QueryParams.choixAgence] === QueryValues.succes
   }
 
   return { props }

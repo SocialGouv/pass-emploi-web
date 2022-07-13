@@ -3,26 +3,27 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
+import DeleteJeuneModal from 'components/jeune/DeleteJeuneModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import RdvList from 'components/rdv/RdvList'
-import { ButtonStyle } from 'components/ui/Button'
+import { OngletRdvs } from 'components/rdv/OngletRdvs'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import Pagination from 'components/ui/Pagination'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
-import { Action } from 'interfaces/action'
+import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
+import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -46,7 +47,11 @@ const ongletProps: { [key in Onglet]: string } = {
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
   rdvs: RdvListItem[]
-  actionsInitiales: { actions: Action[]; total: number; page: number }
+  actionsInitiales: {
+    actions: Action[]
+    metadonnees: MetadonneesActions
+    page: number
+  }
   conseillers: ConseillerHistorique[]
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -71,6 +76,7 @@ function FicheJeune({
   const { data: session } = useSession<true>({ required: true })
 
   const actionsService = useDependance<ActionsService>('actionsService')
+  const jeunesServices = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
 
@@ -81,31 +87,20 @@ function FicheJeune({
   const [expandListeConseillers, setExpandListeConseillers] =
     useState<boolean>(false)
 
+  const [motifsSuppression, setMotifsSuppression] = useState<string[]>([])
+
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
-  const [actionsDeLaPage, setActionsDeLaPage] = useState<Action[]>(
-    actionsInitiales.actions
+  const [totalActions, setTotalActions] = useState<number>(
+    actionsInitiales.metadonnees.nombreTotal
   )
-  const [pageCourante, setPageCourante] = useState<number>(
-    actionsInitiales.page
-  )
-  const [isPageActionsLoading, setIsPageActionsLoading] =
+
+  const [showDeleteJeuneModal, setShowDeleteJeuneModal] =
     useState<boolean>(false)
-  const pageCount = Math.ceil(actionsInitiales.total / 10)
 
-  const [showRdvCreationSuccess, setShowRdvCreationSuccess] = useState<boolean>(
-    rdvCreationSuccess ?? false
-  )
-  const [showRdvModificationSuccess, setShowRdvModificationSuccess] =
-    useState<boolean>(rdvModificationSuccess ?? false)
-
-  const [showRdvSuppressionSuccess, setShowRdvSuppressionSuccess] =
-    useState<boolean>(rdvSuppressionSuccess ?? false)
-
-  const [showActionCreationSuccess, setShowActionCreationSuccess] =
-    useState<boolean>(actionCreationSuccess ?? false)
-
-  const [showMessageGroupeEnvoiSuccess, setShowMessageGroupeEnvoiSuccess] =
-    useState<boolean>(messageEnvoiGroupeSuccess ?? false)
+  const [
+    showSuppressionCompteBeneficiaireError,
+    setShowSuppressionCompteBeneficiaireError,
+  ] = useState<boolean>(false)
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -119,17 +114,6 @@ function FicheJeune({
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
-
-  async function closeMessage() {
-    setShowRdvCreationSuccess(false)
-    setShowRdvModificationSuccess(false)
-    setShowRdvSuppressionSuccess(false)
-    setShowActionCreationSuccess(false)
-    setShowMessageGroupeEnvoiSuccess(false)
-    await router.replace({ pathname: `/mes-jeunes/${jeune.id}` }, undefined, {
-      shallow: true,
-    })
-  }
 
   function toggleListeConseillers(): void {
     setExpandListeConseillers(!expandListeConseillers)
@@ -160,18 +144,51 @@ function FicheJeune({
     )
   }
 
-  async function goToActionPage(page: number) {
-    if (page < 1 || page > pageCount || page === pageCourante) return
-
-    setPageCourante(page)
-    setIsPageActionsLoading(true)
-    const { actions } = await actionsService.getActionsJeune(
+  async function chargerActions(
+    page: number,
+    statuts: StatutAction[]
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const result = await actionsService.getActionsJeune(
       jeune.id,
-      page,
+      { page, statuts },
       session!.accessToken
     )
-    setActionsDeLaPage(actions)
-    setIsPageActionsLoading(false)
+
+    setTotalActions(result.metadonnees.nombreTotal)
+    return result
+  }
+
+  async function handleDelete(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowDeleteJeuneModal(true)
+
+    if (motifsSuppression.length === 0) {
+      const result = await jeunesServices.getMotifsSuppression(
+        session!.accessToken
+      )
+      setMotifsSuppression(result)
+    }
+  }
+
+  async function archiverJeuneCompteActif(
+    payload: SuppressionJeuneFormData
+  ): Promise<void> {
+    try {
+      await jeunesServices.archiverJeune(
+        jeune.id,
+        payload,
+        session!.accessToken
+      )
+      await router.push(
+        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+      )
+    } catch (e) {
+      setShowSuppressionCompteBeneficiaireError(true)
+      setTrackingLabel('Détail jeune- Erreur suppr. compte')
+    } finally {
+      setShowDeleteJeuneModal(false)
+    }
   }
 
   useMatomo(trackingLabel)
@@ -182,40 +199,19 @@ function FicheJeune({
 
   return (
     <>
-      {showRdvCreationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été créé'}
-          onAcknowledge={closeMessage}
+      {showSuppressionCompteBeneficiaireError && (
+        <FailureMessage
+          label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
+          onAcknowledge={() => setShowSuppressionCompteBeneficiaireError(false)}
         />
       )}
 
-      {showRdvModificationSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été modifié'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showRdvSuppressionSuccess && (
-        <SuccessMessage
-          label={'Le rendez-vous a bien été supprimé'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showActionCreationSuccess && (
-        <SuccessMessage
-          label={'L’action a bien été créée'}
-          onAcknowledge={closeMessage}
-        />
-      )}
-
-      {showMessageGroupeEnvoiSuccess && (
-        <SuccessMessage
-          label={
-            'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des jeunes'
-          }
-          onAcknowledge={closeMessage}
+      {showDeleteJeuneModal && (
+        <DeleteJeuneModal
+          jeune={jeune}
+          onClose={() => setShowDeleteJeuneModal(false)}
+          motifsSuppression={motifsSuppression}
+          soumettreSuppression={archiverJeuneCompteActif}
         />
       )}
 
@@ -255,7 +251,6 @@ function FicheJeune({
             </ButtonLink>
           )}
         </div>
-
         {!jeune.isActivated && (
           <ButtonLink
             href={`/mes-jeunes/${jeune.id}/suppression`}
@@ -264,6 +259,16 @@ function FicheJeune({
           >
             Supprimer ce compte
           </ButtonLink>
+        )}
+
+        {jeune.isActivated && (
+          <Button
+            onClick={handleDelete}
+            style={ButtonStyle.SECONDARY}
+            className='w-fit'
+          >
+            Supprimer ce compte
+          </Button>
         )}
       </div>
 
@@ -302,7 +307,7 @@ function FicheJeune({
         />
         <Tab
           label='Actions'
-          count={!isPoleEmploi ? actionsInitiales.total : undefined}
+          count={!isPoleEmploi ? totalActions : undefined}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
@@ -318,15 +323,11 @@ function FicheJeune({
           id='liste-rdvs'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          {!isPoleEmploi ? (
-            <RdvList
-              rdvs={rdvs}
-              idConseiller={session?.user.id ?? ''}
-              withNameJeune={false}
-            />
-          ) : (
-            <IntegrationPoleEmploi label='convocations' />
-          )}
+          <OngletRdvs
+            poleEmploi={isPoleEmploi}
+            rdvs={rdvs}
+            idConseiller={session?.user.id ?? ''}
+          />
         </div>
       )}
       {currentTab === Onglet.ACTIONS && (
@@ -337,27 +338,12 @@ function FicheJeune({
           id='liste-actions'
           className='mt-8 pb-8'
         >
-          {isPoleEmploi && (
-            <IntegrationPoleEmploi label='actions et démarches' />
-          )}
-
-          {!isPoleEmploi && (
-            <>
-              <TableauActionsJeune
-                jeune={jeune}
-                actions={actionsDeLaPage}
-                isLoading={isPageActionsLoading}
-              />
-              <div className='mt-6'>
-                <Pagination
-                  nomListe='actions'
-                  nombreDePages={pageCount}
-                  pageCourante={pageCourante}
-                  allerALaPage={goToActionPage}
-                />
-              </div>
-            </>
-          )}
+          <OngletActions
+            poleEmploi={isPoleEmploi}
+            jeune={jeune}
+            actionsInitiales={actionsInitiales}
+            getActions={chargerActions}
+          />
         </div>
       )}
     </>
@@ -401,10 +387,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
           accessToken
         ),
     isPoleEmploi
-      ? { actions: [], total: 0 }
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
       : actionsService.getActionsJeune(
           context.query.jeune_id as string,
-          page,
+          { page, statuts: [] },
           accessToken
         ),
   ])
@@ -422,20 +408,26 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
-  if (context.query.creationRdv)
-    props.rdvCreationSuccess = context.query.creationRdv === 'succes'
 
-  if (context.query.modificationRdv)
-    props.rdvModificationSuccess = context.query.modificationRdv === 'succes'
+  if (context.query[QueryParams.creationRdv])
+    props.rdvCreationSuccess =
+      context.query[QueryParams.creationRdv] === QueryValues.succes
 
-  if (context.query.suppressionRdv)
-    props.rdvSuppressionSuccess = context.query.suppressionRdv === 'succes'
+  if (context.query[QueryParams.modificationRdv])
+    props.rdvModificationSuccess =
+      context.query[QueryParams.modificationRdv] === QueryValues.succes
 
-  if (context.query.creationAction)
-    props.actionCreationSuccess = context.query.creationAction === 'succes'
+  if (context.query[QueryParams.suppressionRdv])
+    props.rdvSuppressionSuccess =
+      context.query[QueryParams.suppressionRdv] === QueryValues.succes
 
-  if (context.query.envoiMessage)
-    props.messageEnvoiGroupeSuccess = context.query.envoiMessage === 'succes'
+  if (context.query[QueryParams.creationAction])
+    props.actionCreationSuccess =
+      context.query[QueryParams.creationAction] === QueryValues.succes
+
+  if (context.query[QueryParams.envoiMessage])
+    props.messageEnvoiGroupeSuccess =
+      context.query[QueryParams.envoiMessage] === QueryValues.succes
 
   if (context.query.onglet) {
     props.onglet =

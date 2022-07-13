@@ -9,9 +9,10 @@ import {
   unDetailJeuneJson,
 } from 'fixtures/jeune'
 import { JeuneFromListe } from 'interfaces/jeune'
+import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 describe('JeunesApiService', () => {
   let apiClient: ApiClient
@@ -118,7 +119,7 @@ describe('JeunesApiService', () => {
     it("renvoie undefined si le jeune n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Jeune non trouvé', 'NON_TROUVE')
+        new ApiError(404, 'Jeune non trouvé')
       )
 
       // When
@@ -156,7 +157,7 @@ describe('JeunesApiService', () => {
     it("renvoie undefined si le jeune n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new RequestError('Numero dossier non trouvé', 'NON_TROUVE')
+        new ApiError(404, 'Numero dossier non trouvé')
       )
 
       // When
@@ -207,13 +208,13 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.supprimerJeune', () => {
+  describe('.supprimerJeuneInactif', () => {
     it('supprime le jeune', async () => {
       // Given
       const accessToken = 'accessToken'
 
       // When
-      await jeunesService.supprimerJeune('id-jeune', accessToken)
+      await jeunesService.supprimerJeuneInactif('id-jeune', accessToken)
 
       // Then
       expect(apiClient.delete).toHaveBeenCalledWith(
@@ -222,6 +223,31 @@ describe('JeunesApiService', () => {
       )
     })
   })
+  describe('.archiverJeune', () => {
+    it('archive le jeune', async () => {
+      // Given
+      const payloadFormData: SuppressionJeuneFormData = {
+        motif: 'Radiation du CEJ',
+        commentaire: undefined,
+      }
+      const accessToken = 'accessToken'
+
+      // When
+      await jeunesService.archiverJeune(
+        'id-jeune',
+        payloadFormData,
+        accessToken
+      )
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/jeunes/id-jeune/archiver',
+        { motif: 'Radiation du CEJ', commentaire: undefined },
+        accessToken
+      )
+    })
+  })
+
   describe('.getConseillersDuJeune', () => {
     it('renvoie les conseillers du jeune', async () => {
       // Given
@@ -241,6 +267,32 @@ describe('JeunesApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(desConseillersJeune())
+    })
+  })
+  describe('.getMotifsSuppression', () => {
+    it('renvoie les motifs de suppression', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      const motifs: string[] = [
+        'Sortie positive du CEJ',
+        'Radiation du CEJ',
+        'Recréation d’un compte jeune',
+        'Autre',
+      ]
+
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: motifs,
+      })
+
+      // When
+      const actual = await jeunesService.getMotifsSuppression(accessToken)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/referentiels/motifs-suppression-jeune',
+        accessToken
+      )
+      expect(actual).toEqual(motifs)
     })
   })
 })

@@ -43,32 +43,30 @@ export default function Button({
   isLoading = false,
 }: Props) {
   return (
-    <>
-      <button
-        onClick={onClick}
-        className={`${className ? className : ''} text-sm ${
-          styles.button
-        } ${getColorStyleClassName(style)}`}
-        form={form ?? undefined}
-        id={id ?? undefined}
-        tabIndex={tabIndex ?? undefined}
-        role={role ?? undefined}
-        type={type ?? undefined}
-        aria-controls={controls ?? undefined}
-        aria-label={label ?? undefined}
-        disabled={disabled || isLoading}
-        aria-disabled={disabled}
-        aria-selected={selected}
-      >
-        {isLoading && (
-          <IconComponent
-            name={IconName.Spinner}
-            className='w-6 h-6 fill-blanc animate-spin'
-          />
-        )}
-        {!isLoading && children}
-      </button>
-    </>
+    <button
+      onClick={onClick}
+      className={`${className ? className : ''} text-sm ${
+        styles.button
+      } ${getColorStyleClassName(style)}`}
+      form={form ?? undefined}
+      id={id ?? undefined}
+      tabIndex={tabIndex ?? undefined}
+      role={role ?? undefined}
+      type={type ?? undefined}
+      aria-controls={controls ?? undefined}
+      aria-label={label ?? undefined}
+      disabled={disabled || isLoading}
+      aria-disabled={disabled}
+      aria-selected={selected}
+    >
+      {isLoading && (
+        <IconComponent
+          name={IconName.Spinner}
+          className='w-6 h-6 fill-blanc animate-spin'
+        />
+      )}
+      {!isLoading && children}
+    </button>
   )
 }
 

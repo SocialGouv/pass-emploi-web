@@ -8,11 +8,12 @@ import InformationMessage from 'components/InformationMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -32,18 +33,16 @@ function SuppressionJeune({ idJeune }: SuppressionJeuneProps) {
   async function supprimerJeune() {
     setLoading(true)
     try {
-      await jeunesService.supprimerJeune(idJeune, session!.accessToken)
-      await router.push('/mes-jeunes?suppression=succes')
+      await jeunesService.supprimerJeuneInactif(idJeune, session!.accessToken)
+      await router.push(
+        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+      )
     } catch (e) {
       setTracking('Détail jeune - Erreur suppr. compte')
-      if (e instanceof RequestError) {
-        if (e.code === 'JEUNE_PAS_INACTIF') {
-          setError(
-            'Le jeune a activé son compte. Vous ne pouvez pas supprimer un compte jeune activé.'
-          )
-        } else {
-          setError(e.message)
-        }
+      if (e instanceof ApiError) {
+        setError(
+          'Le jeune a activé son compte. Vous ne pouvez pas supprimer un compte jeune activé.'
+        )
       } else {
         setError(
           'Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'

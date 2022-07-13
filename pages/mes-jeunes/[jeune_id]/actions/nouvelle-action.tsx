@@ -11,6 +11,7 @@ import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { PageProps } from 'interfaces/pageProps'
 import { actionsPredefinies } from 'referentiel/action'
+import { QueryParams, QueryValues } from 'referentiel/queryParams'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
@@ -67,7 +68,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
     )
     await router.push({
       pathname: `/mes-jeunes/${idJeune}`,
-      query: { creationAction: 'succes' },
+      query: { [QueryParams.creationAction]: QueryValues.succes },
     })
   }
 

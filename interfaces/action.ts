@@ -11,6 +11,11 @@ export interface Action {
   status: StatutAction
 }
 
+export interface MetadonneesActions {
+  nombrePages: number
+  nombreTotal: number
+}
+
 export interface TotalActions {
   idJeune: string
   nbActionsNonTerminees: number

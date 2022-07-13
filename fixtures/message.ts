@@ -10,6 +10,10 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     conseillerId: 'conseiller-1',
     type: TypeMessage.MESSAGE,
     infoPiecesJointes: [],
+    infoOffre: {
+      titre: '',
+      lien: '',
+    },
   }
 
   return { ...defaults, ...args }
@@ -43,6 +47,16 @@ export const desMessages = (): Message[] => [
     content: 'Changement de conseiller',
     creationDate: new Date(2022, 0, 14),
     type: TypeMessage.NOUVEAU_CONSEILLER,
+  }),
+  unMessage({
+    id: 'message-6',
+    content: 'Je vous partage cette offre',
+    creationDate: new Date(2022, 0, 15),
+    type: TypeMessage.MESSAGE_OFFRE,
+    infoOffre: {
+      titre: 'Une offre',
+      lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
+    },
   }),
 ]
 
@@ -81,6 +95,21 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         id: 'message-4',
         content: 'Decrypted: Message du 13/1/2022 10h',
         creationDate: new Date(2022, 0, 13, 10),
+      }),
+    ],
+  },
+  {
+    date: new Date(2022, 0, 15),
+    messages: [
+      unMessage({
+        id: 'message-6',
+        content: 'Decrypted: Je vous partage cette offre',
+        creationDate: new Date(2022, 0, 15),
+        type: TypeMessage.MESSAGE_OFFRE,
+        infoOffre: {
+          titre: 'Une offre',
+          lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
+        },
       }),
     ],
   },

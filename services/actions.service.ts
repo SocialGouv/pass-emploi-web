@@ -1,14 +1,20 @@
 import { ApiClient } from 'clients/api.client'
-import { Action, StatutAction, TotalActions } from 'interfaces/action'
+import {
+  Action,
+  MetadonneesActions,
+  StatutAction,
+  TotalActions,
+} from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import {
   ActionJson,
   ActionsCountJson,
   actionStatusToJson,
   jsonToAction,
+  MetadonneesActionsJson,
 } from 'interfaces/json/action'
 import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
-import { RequestError } from 'utils/httpClient'
+import { ApiError } from 'utils/httpClient'
 
 export interface ActionsService {
   getAction(
@@ -23,9 +29,9 @@ export interface ActionsService {
 
   getActionsJeune(
     idJeune: string,
-    page: number,
+    options: { page: number; statuts: StatutAction[] },
     accessToken: string
-  ): Promise<{ actions: Action[]; total: number }>
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   createAction(
     action: { intitule: string; commentaire: string },
@@ -62,7 +68,7 @@ export class ActionsApiService implements ActionsService {
         jeune: jsonToBaseJeune(jeune),
       }
     } catch (e) {
-      if (e instanceof RequestError) return undefined
+      if (e instanceof ApiError) return undefined
       throw e
     }
   }
@@ -84,22 +90,32 @@ export class ActionsApiService implements ActionsService {
 
   async getActionsJeune(
     idJeune: string,
-    page: number,
+    { page, statuts }: { page: number; statuts: StatutAction[] },
     accessToken: string
-  ): Promise<{ actions: Action[]; total: number }> {
-    const { content: actionsJson, headers } = await this.apiClient.get<
-      ActionJson[]
-    >(
-      `/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante`,
-      accessToken
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const filtresStatuts = statuts
+      .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
+      .join('')
+    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante${filtresStatuts}`
+
+    const {
+      content: { actions: actionsJson, metadonnees },
+    } = await this.apiClient.get<{
+      actions: ActionJson[]
+      metadonnees: MetadonneesActionsJson
+    }>(url, accessToken)
+
+    const nombreActions =
+      statuts.length === 0
+        ? metadonnees.nombreTotal
+        : calculeNombreActionsFiltrees(statuts, metadonnees)
+    const nombrePages = Math.ceil(
+      nombreActions / metadonnees.nombreActionsParPage
     )
-    const total = headers.has('x-total-count')
-      ? parseInt(headers.get('x-total-count')!)
-      : actionsJson.length
 
     return {
       actions: actionsJson.map(jsonToAction),
-      total,
+      metadonnees: { nombreTotal: metadonnees.nombreTotal, nombrePages },
     }
   }
 
@@ -132,5 +148,34 @@ export class ActionsApiService implements ActionsService {
 
   async deleteAction(idAction: string, accessToken: string): Promise<void> {
     await this.apiClient.delete(`/actions/${idAction}`, accessToken)
+  }
+}
+
+function calculeNombreActionsFiltrees(
+  statuts: StatutAction[],
+  metadonnees: MetadonneesActionsJson
+): number {
+  let total = 0
+  statuts.forEach((statut) => {
+    total += extraireNombreActionsAvecStatut(metadonnees, statut)
+  })
+  return total
+}
+
+function extraireNombreActionsAvecStatut(
+  metadonnees: MetadonneesActionsJson,
+  statut: StatutAction
+): number {
+  switch (statut) {
+    case StatutAction.ARealiser:
+      return metadonnees.nombrePasCommencees
+    case StatutAction.Commencee:
+      return metadonnees.nombreEnCours
+    case StatutAction.Terminee:
+      return metadonnees.nombreTerminees
+    case StatutAction.Annulee:
+      return metadonnees.nombreAnnulees
+    default:
+      return 0
   }
 }
