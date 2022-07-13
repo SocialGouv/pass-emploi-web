@@ -1,7 +1,5 @@
 import React from 'react'
 
-import EmailIcon from '../../assets/icons/email.svg'
-
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
@@ -20,19 +18,24 @@ export const DetailsJeune = ({
 }: DetailsJeuneProps) => {
   return (
     <>
-      <dl className='text-sm-semi'>
-        <dt className='sr-only'>Ajouté le</dt>
+      <dl className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
+        <h2 className='text-base-medium mb-4'>Informations</h2>
+        <dt className='text-base-regular sr-only'>Ajouté le</dt>
         <dd aria-label={formatDayDate(new Date(jeune.creationDate))}>
-          Ajouté le : {formatDayDate(new Date(jeune.creationDate))}
+          <span className='text-base-regular'>Ajouté le : </span>
+          <span className='text-md-semi'>
+            {formatDayDate(new Date(jeune.creationDate))}
+          </span>
         </dd>
         {jeune.email && (
           <>
             <dt className='sr-only'>e-mail</dt>
-            <dd className='flex items-center mt-2'>
-              <EmailIcon
+            <dd className='text-primary flex items-center mt-2'>
+              <IconComponent
+                name={IconName.Email}
                 aria-hidden={true}
-                focusable='false'
-                className='mr-2'
+                focusable={false}
+                className='w-[15px] h-[13px] mr-2'
               />
               {jeune.email}
             </dd>

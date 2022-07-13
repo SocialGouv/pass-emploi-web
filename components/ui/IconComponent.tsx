@@ -26,6 +26,7 @@ import ClockIcon from 'assets/icons/clock.svg'
 import CloseIcon from 'assets/icons/close.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
 import DeleteIcon from 'assets/icons/delete.svg'
+import EmailIcon from 'assets/icons/email.svg'
 import InfoIcon from 'assets/icons/information.svg'
 import InfoOutlineIcon from 'assets/icons/information_outline.svg'
 import LaunchIcon from 'assets/icons/launch.svg'
@@ -67,6 +68,7 @@ export enum IconName {
   Close = 'Close',
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
+  Email = 'Email',
   File = 'File',
   Info = 'Info',
   InfoOutline = 'InfoOutline',
@@ -110,6 +112,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Clock]: ClockIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
+  [IconName.Email]: EmailIcon,
   [IconName.File]: FileIcon,
   [IconName.Info]: InfoIcon,
   [IconName.InfoOutline]: InfoOutlineIcon,
