@@ -2,10 +2,12 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
+import { MessagesService } from '../../services/messages.service'
+
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatRoom from 'components/layouts/ChatRoom'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
+import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithSession from 'tests/renderWithSession'
@@ -21,11 +23,13 @@ describe('<ChatRoom />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
+  let messagesService: MessagesService
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
     jeunesService = mockedJeunesService({
       getConseillersDuJeune: jest.fn((_) => Promise.resolve(conseillers)),
     })
+    messagesService = mockedMessagesService()
     jeunesChats = [
       unJeuneChat({
         ...jeunes[0],
@@ -49,7 +53,7 @@ describe('<ChatRoom />', () => {
     beforeEach(async () => {
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService }}>
+          <DIProvider dependances={{ jeunesService, messagesService }}>
             <CurrentJeuneProvider>
               <ChatRoom jeunesChats={jeunesChats} />
             </CurrentJeuneProvider>
@@ -117,7 +121,7 @@ describe('<ChatRoom />', () => {
       // When
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService }}>
+          <DIProvider dependances={{ jeunesService, messagesService }}>
             <CurrentJeuneProvider idJeune={jeunes[2].id}>
               <ChatRoom jeunesChats={jeunesChats} />
             </CurrentJeuneProvider>
@@ -137,7 +141,7 @@ describe('<ChatRoom />', () => {
       // When
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService }}>
+          <DIProvider dependances={{ jeunesService, messagesService }}>
             <CurrentJeuneProvider>
               <ChatRoom jeunesChats={[]} />
             </CurrentJeuneProvider>

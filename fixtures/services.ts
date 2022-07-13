@@ -53,6 +53,7 @@ export function mockedMessagesService(
     signOut: jest.fn(),
     sendNouveauMessage: jest.fn(),
     sendNouveauMessageGroupe: jest.fn(),
+    toggleFlag: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

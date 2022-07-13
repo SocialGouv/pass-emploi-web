@@ -82,6 +82,21 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
+  describe('.toggleFlag', () => {
+    it('updates chat in firebase', async () => {
+      // Given
+      const jeuneChat = unJeuneChat()
+
+      // When
+      await messagesService.toggleFlag(jeuneChat.chatId, false)
+
+      // Then
+      expect(firebaseClient.updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+        flaggedByConseiller: false,
+      })
+    })
+  })
+
   describe('.observeJeuneChat', () => {
     let idConseiller: string
     let jeune: BaseJeune

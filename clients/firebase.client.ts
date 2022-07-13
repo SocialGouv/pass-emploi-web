@@ -312,6 +312,7 @@ function createFirebaseMessage({
 interface FirebaseChat {
   jeuneId: string
   seenByConseiller: boolean | undefined
+  flaggedByConseiller: boolean | undefined
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
   lastMessageSentAt: Timestamp | undefined
@@ -354,6 +355,11 @@ function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
   if (chat.lastMessageIv) {
     firebaseChatToUpdate.lastMessageIv = chat.lastMessageIv
   }
+
+  if (chat.flaggedByConseiller !== undefined) {
+    firebaseChatToUpdate.flaggedByConseiller = chat.flaggedByConseiller
+  }
+
   return firebaseChatToUpdate
 }
 
@@ -368,6 +374,7 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
     lastConseillerReading: firebaseChat.lastConseillerReading?.toDate(),
     lastJeuneReading: firebaseChat.lastJeuneReading?.toDate(),
     lastMessageIv: firebaseChat.lastMessageIv,
+    flaggedByConseiller: Boolean(firebaseChat.flaggedByConseiller),
   }
 }
 

@@ -99,6 +99,13 @@ export default function Conversation({
     [messagesService]
   )
 
+  const toggleFlag = useCallback(
+    (idChatToUpdate: string, flagged: boolean) => {
+      messagesService.toggleFlag(idChatToUpdate, flagged)
+    },
+    [messagesService]
+  )
+
   const observerMessages = useCallback(
     (idChatToObserve: string) => {
       if (!chatCredentials) return () => {}
@@ -199,6 +206,31 @@ export default function Conversation({
         <h2 className='w-full text-left text-primary text-m-medium'>
           Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
         </h2>
+        <button
+          aria-label={
+            jeuneChat.flaggedByConseiller
+              ? 'Ne plus suivre la conversation'
+              : 'Suivre la conversation'
+          }
+          title={
+            jeuneChat.flaggedByConseiller
+              ? 'Ne plus suivre la conversation'
+              : 'Suivre la conversation'
+          }
+          className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
+          onClick={() =>
+            toggleFlag(jeuneChat.chatId, !jeuneChat.flaggedByConseiller)
+          }
+        >
+          <IconComponent
+            name={
+              jeuneChat.flaggedByConseiller
+                ? IconName.FlagFilled
+                : IconName.Flag
+            }
+            className='w-6 h-6 fill-primary'
+          />
+        </button>
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 
