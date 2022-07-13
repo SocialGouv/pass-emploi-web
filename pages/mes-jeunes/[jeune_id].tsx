@@ -14,7 +14,6 @@ import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
@@ -278,23 +277,22 @@ function FicheJeune({
         onDossierMiloClick={trackDossierMiloClick}
       />
 
-      <div className='mt-8'>
-        <h2 className='text-base-medium mb-2'>Historique des conseillers</h2>
+      <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
+        <h2 className='text-base-medium mb-4'>Historique des conseillers</h2>
         <ListeConseillersJeune
           id='liste-conseillers'
           conseillers={conseillersAffiches}
         />
+        {conseillers.length > 5 && (
+          <div className='flex justify-end mt-8'>
+            <CollapseButton
+              controlledId='liste-conseillers'
+              isOpen={expandListeConseillers}
+              onClick={toggleListeConseillers}
+            />
+          </div>
+        )}
       </div>
-
-      {conseillers.length > 5 && (
-        <div className='flex justify-start mt-8'>
-          <CollapseButton
-            controlledId='liste-conseillers'
-            isOpen={expandListeConseillers}
-            onClick={toggleListeConseillers}
-          />
-        </div>
-      )}
 
       <TabList className='mt-10'>
         <Tab

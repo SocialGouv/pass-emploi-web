@@ -18,7 +18,7 @@ export const DetailsJeune = ({
 }: DetailsJeuneProps) => {
   return (
     <>
-      <dl className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
+      <dl className='border border-solid rounded-medium w-full p-3 mt-6 border-grey_100'>
         <h2 className='text-base-medium mb-4'>Informations</h2>
         <dt className='text-base-regular sr-only'>Ajouté le</dt>
         <dd aria-label={formatDayDate(new Date(jeune.creationDate))}>
@@ -68,7 +68,7 @@ export const DetailsJeune = ({
 
       {withSituations && (
         <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
-          <h2 className='text-base-medium'>Situation</h2>
+          <h2 className='text-base-medium mb-1'>Situation</h2>
           {!(jeune.situations && jeune.situations.length) && (
             <ol>
               <li className='mt-3'>
