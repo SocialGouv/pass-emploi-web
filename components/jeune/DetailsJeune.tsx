@@ -76,10 +76,10 @@ export const DetailsJeune = ({
                   <SituationTag situation={CategorieSituation.SANS_SITUATION} />
                 </div>
                 <div className='mb-3'>
-                  Etat : <span className='text-base-medium'>--</span>
+                  Etat : <span className='text-md-semi'>--</span>
                 </div>
                 <div>
-                  Fin le : <span className='text-base-medium'>--</span>
+                  Fin le : <span className='text-md-semi'>--</span>
                 </div>
               </li>
             </ol>
@@ -97,13 +97,13 @@ export const DetailsJeune = ({
                   </div>
                   <div className='mb-3'>
                     Etat :{' '}
-                    <span className='text-base-medium'>
+                    <span className='text-md-semi'>
                       {situation.etat ?? '--'}
                     </span>
                   </div>
                   <div className=''>
                     Fin le :{' '}
-                    <span className='text-base-medium'>
+                    <span className='text-md-semi'>
                       {situation.dateFin ?? '--'}
                     </span>
                   </div>
