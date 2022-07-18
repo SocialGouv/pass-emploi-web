@@ -61,7 +61,7 @@
     "eslint-config-next": "^12.2.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-storybook": "^0.5.13",
+    "eslint-plugin-storybook": "^0.6.0",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.2",
     "node-mocks-http": "^1.11.0",
