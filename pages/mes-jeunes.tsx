@@ -46,7 +46,7 @@ function MesJeunes({
   conseillerJeunes,
   isFromEmail,
   deletionSuccess,
-  recuperationSuccess, // FIXME actuellement on ne track pas la récuperation d'un beneficiaire / mettre en place ou suppression du passage de props comme obsolète
+  recuperationSuccess,
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
@@ -75,6 +75,7 @@ function MesJeunes({
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
   if (deletionSuccess) initialTracking += ' - Succès suppr. compte'
+  if (recuperationSuccess) initialTracking += ' - Succès récupération'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
