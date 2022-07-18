@@ -2,7 +2,8 @@ import React from 'react'
 
 import FbCheckIcon from 'assets/icons/fb_check.svg'
 import FbCheckFillIcon from 'assets/icons/fb_check_fill.svg'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import IconCheckbox from 'components/ui/IconCheckbox'
+import { IconName } from 'components/ui/IconComponent'
 import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'
 import { MessagesService } from 'services/messages.service'
@@ -64,30 +65,16 @@ export function ChatRoomTile(props: ChatRoomTileProps) {
           )}
         </span>
       </button>
-      <button
-        type='button'
-        aria-label={
-          props.jeuneChat.flaggedByConseiller
-            ? 'Ne plus suivre la conversation'
-            : 'Suivre la conversation'
-        }
-        title={
-          props.jeuneChat.flaggedByConseiller
-            ? 'Ne plus suivre la conversation'
-            : 'Suivre la conversation'
-        }
-        onClick={toggleFollowMessage}
-        className='absolute top-3 right-3'
-      >
-        <IconComponent
-          name={
-            props.jeuneChat.flaggedByConseiller
-              ? IconName.FlagFilled
-              : IconName.Flag
-          }
-          className='w-4 h-4 fill-primary'
-        />
-      </button>
+      <IconCheckbox
+        id='flag-chat'
+        checked={props.jeuneChat.flaggedByConseiller}
+        checkedIconName={IconName.FlagFilled}
+        uncheckedIconName={IconName.Flag}
+        checkedLabel='Ne plus suivre la conversation'
+        uncheckedLabel='Suivre la conversation'
+        onChange={toggleFollowMessage}
+        className='absolute top-3 right-3 w-4 h-4 fill-primary'
+      />
     </div>
   )
 }
