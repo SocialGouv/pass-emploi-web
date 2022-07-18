@@ -1,5 +1,9 @@
-import { unItemJeune } from 'fixtures/jeune'
-import { CategorieSituation, compareJeunesBySituation } from 'interfaces/jeune'
+import { unItemJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  CategorieSituation,
+  compareJeuneChat,
+  compareJeunesBySituation,
+} from 'interfaces/jeune'
 
 describe('Jeune', () => {
   describe('.compareJeunesBySituation', () => {
@@ -28,6 +32,53 @@ describe('Jeune', () => {
         unJeuneSituationEmploi,
         unJeuneSansSituationAussi,
         unJeuneSansSituation,
+      ])
+    })
+  })
+
+  describe('.compareJeuneChat', () => {
+    it('trie d’abord par messages non lus, puis suivis, puis anté-chrnonologique', () => {
+      // Given
+      const unJeuneChatNonLu = unJeuneChat({
+        id: 'jeune-1',
+        seenByConseiller: false,
+        flaggedByConseiller: false,
+      })
+
+      const unJeuneChatSuivi = unJeuneChat({
+        id: 'jeune-2',
+        seenByConseiller: true,
+        flaggedByConseiller: true,
+      })
+
+      const unJeuneChatRecent = unJeuneChat({
+        id: 'jeune-3',
+        seenByConseiller: true,
+        flaggedByConseiller: false,
+        lastMessageSentAt: new Date(2022, 0, 10),
+      })
+
+      const unJeuneChatVieux = unJeuneChat({
+        id: 'jeune-4',
+        seenByConseiller: true,
+        flaggedByConseiller: false,
+        lastMessageSentAt: new Date(2022, 0, 1),
+      })
+
+      // When
+      const actual = [
+        unJeuneChatVieux,
+        unJeuneChatNonLu,
+        unJeuneChatRecent,
+        unJeuneChatSuivi,
+      ].sort(compareJeuneChat)
+
+      // Then
+      expect(actual).toStrictEqual([
+        unJeuneChatNonLu,
+        unJeuneChatSuivi,
+        unJeuneChatRecent,
+        unJeuneChatVieux,
       ])
     })
   })
