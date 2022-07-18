@@ -132,14 +132,11 @@ export function compareJeunesBySituationDesc(
 }
 
 export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {
-  if (a.seenByConseiller && !b.seenByConseiller) return 1
-  if (!a.seenByConseiller && b.seenByConseiller) return -1
-  if (a.flaggedByConseiller && !b.flaggedByConseiller) return -1
-  if (!a.flaggedByConseiller && b.flaggedByConseiller) return 1
-  if (a.lastMessageSentAt && b.lastMessageSentAt) {
-    return a.lastMessageSentAt <= b.lastMessageSentAt ? 1 : -1
-  }
-  return 0
+  return (
+    trierParMessageNonLu(a, b) ||
+    trierParConversationSuivie(a, b) ||
+    trierParDate(a, b)
+  )
 }
 
 export function compareJeuneByLastActivity(
@@ -164,4 +161,24 @@ export function compareJeuneByLastActivityDesc(
 
 export function getNomJeuneComplet(j: BaseJeune): string {
   return `${j.nom} ${j.prenom}`
+}
+
+function trierParMessageNonLu(a: JeuneChat, b: JeuneChat): number | undefined {
+  if (a.seenByConseiller && !b.seenByConseiller) return 1
+  if (!a.seenByConseiller && b.seenByConseiller) return -1
+}
+
+function trierParConversationSuivie(
+  a: JeuneChat,
+  b: JeuneChat
+): number | undefined {
+  if (a.flaggedByConseiller && !b.flaggedByConseiller) return -1
+  if (!a.flaggedByConseiller && b.flaggedByConseiller) return 1
+}
+
+function trierParDate(a: JeuneChat, b: JeuneChat): number {
+  if (a.lastMessageSentAt && b.lastMessageSentAt) {
+    return a.lastMessageSentAt <= b.lastMessageSentAt ? 1 : -1
+  }
+  return 0
 }
