@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { Fragment } from 'react'
 
 import SuccessMessage from 'components/ui/SuccessMessage'
-import { Alerts, QueryParams, QueryValues } from 'referentiel/queryParams'
+import { Alerts, QueryValues } from 'referentiel/queryParams'
 import { deleteQueryParams, parseUrl } from 'utils/urlParser'
 
 interface AlertDisplayerProps {
@@ -30,14 +30,14 @@ export default function AlertDisplayer({
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
       {Alerts.map((alert) => (
-        <>
+        <Fragment key={`alerte-${alert.nom}`}>
           {router.query[alert.nom] === QueryValues.succes && (
             <SuccessMessage
               label={alert.message}
               onAcknowledge={() => closeSuccessAlert(alert.nom)}
             />
           )}
-        </>
+        </Fragment>
       ))}
     </div>
   )
