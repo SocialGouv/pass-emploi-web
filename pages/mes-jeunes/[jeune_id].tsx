@@ -145,11 +145,12 @@ function FicheJeune({
 
   async function chargerActions(
     page: number,
-    statuts: StatutAction[]
+    statuts: StatutAction[],
+    tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
     const result = await actionsService.getActionsJeune(
       jeune.id,
-      { page, statuts },
+      { page, statuts, tri },
       session!.accessToken
     )
 

@@ -29,7 +29,7 @@ export interface ActionsService {
 
   getActionsJeune(
     idJeune: string,
-    options: { page: number; statuts: StatutAction[] },
+    options: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
@@ -90,13 +90,18 @@ export class ActionsApiService implements ActionsService {
 
   async getActionsJeune(
     idJeune: string,
-    { page, statuts }: { page: number; statuts: StatutAction[] },
+    {
+      page,
+      statuts,
+      tri,
+    }: { page: number; statuts: StatutAction[]; tri: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const triActions = tri ?? 'date_decroissante'
     const filtresStatuts = statuts
       .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
       .join('')
-    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=date_decroissante${filtresStatuts}`
+    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}`
 
     const {
       content: { actions: actionsJson, metadonnees },
