@@ -7,7 +7,8 @@ import { OngletActions } from 'components/action/OngletActions'
 import FailureMessage from 'components/FailureMessage'
 import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
-import DeleteJeuneModal from 'components/jeune/DeleteJeuneModal'
+import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
+import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
@@ -93,7 +94,9 @@ function FicheJeune({
     actionsInitiales.metadonnees.nombreTotal
   )
 
-  const [showDeleteJeuneModal, setShowDeleteJeuneModal] =
+  const [showModaleDeleteJeuneActif, setShowModaleDeleteJeuneActif] =
+    useState<boolean>(false)
+  const [showModaleDeleteJeuneInactif, setShowModaleDeleteJeuneInactif] =
     useState<boolean>(false)
 
   const [
@@ -158,20 +161,27 @@ function FicheJeune({
     return result
   }
 
-  async function handleDelete(e: React.MouseEvent<HTMLElement>) {
+  async function openDeleteJeuneModal(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
     e.stopPropagation()
-    setShowDeleteJeuneModal(true)
 
-    if (motifsSuppression.length === 0) {
-      const result = await jeunesServices.getMotifsSuppression(
-        session!.accessToken
-      )
-      setMotifsSuppression(result)
+    if (jeune.isActivated) {
+      setShowModaleDeleteJeuneActif(true)
+
+      if (motifsSuppression.length === 0) {
+        const result = await jeunesServices.getMotifsSuppression(
+          session!.accessToken
+        )
+        setMotifsSuppression(result)
+      }
+    }
+
+    if (!jeune.isActivated) {
+      setShowModaleDeleteJeuneInactif(true)
     }
   }
 
-  async function archiverJeuneCompteActif(
+  async function archiverJeuneActif(
     payload: SuppressionJeuneFormData
   ): Promise<void> {
     try {
@@ -185,9 +195,23 @@ function FicheJeune({
       )
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
-      setTrackingLabel('Détail jeune- Erreur suppr. compte')
+      setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
     } finally {
-      setShowDeleteJeuneModal(false)
+      setShowModaleDeleteJeuneActif(false)
+    }
+  }
+
+  async function supprimerJeuneInactif(): Promise<void> {
+    try {
+      await jeunesServices.supprimerJeuneInactif(jeune.id, session!.accessToken)
+      await router.push(
+        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+      )
+    } catch (e) {
+      setShowSuppressionCompteBeneficiaireError(true)
+      setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
+    } finally {
+      setShowModaleDeleteJeuneInactif(false)
     }
   }
 
@@ -206,12 +230,20 @@ function FicheJeune({
         />
       )}
 
-      {showDeleteJeuneModal && (
-        <DeleteJeuneModal
+      {showModaleDeleteJeuneActif && (
+        <DeleteJeuneActifModal
           jeune={jeune}
-          onClose={() => setShowDeleteJeuneModal(false)}
+          onClose={() => setShowModaleDeleteJeuneActif(false)}
           motifsSuppression={motifsSuppression}
-          soumettreSuppression={archiverJeuneCompteActif}
+          soumettreSuppression={archiverJeuneActif}
+        />
+      )}
+
+      {showModaleDeleteJeuneInactif && (
+        <DeleteJeuneInactifModal
+          jeune={jeune}
+          onClose={() => setShowModaleDeleteJeuneInactif(false)}
+          onDelete={supprimerJeuneInactif}
         />
       )}
 
@@ -251,25 +283,13 @@ function FicheJeune({
             </ButtonLink>
           )}
         </div>
-        {!jeune.isActivated && (
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/suppression`}
-            style={ButtonStyle.SECONDARY}
-            className='w-fit'
-          >
-            Supprimer ce compte
-          </ButtonLink>
-        )}
-
-        {jeune.isActivated && (
-          <Button
-            onClick={handleDelete}
-            style={ButtonStyle.SECONDARY}
-            className='w-fit'
-          >
-            Supprimer ce compte
-          </Button>
-        )}
+        <Button
+          onClick={openDeleteJeuneModal}
+          style={ButtonStyle.SECONDARY}
+          className='w-fit'
+        >
+          Supprimer ce compte
+        </Button>
       </div>
 
       <DetailsJeune

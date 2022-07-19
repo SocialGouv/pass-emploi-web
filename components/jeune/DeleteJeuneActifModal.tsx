@@ -1,29 +1,28 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 
-import { RequiredValue } from '../RequiredValue'
-import { InputError } from '../ui/InputError'
-
 import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
+import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { IconName } from 'components/ui/IconComponent'
-import { DetailJeune } from 'interfaces/jeune'
+import { InputError } from 'components/ui/InputError'
+import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 
-interface DeleteJeuneModalProps {
-  jeune: DetailJeune
+interface DeleteJeuneActifModalProps {
+  jeune: BaseJeune
   motifsSuppression: string[]
   onClose: () => void
   soumettreSuppression: (payload: SuppressionJeuneFormData) => Promise<void>
 }
 
-export default function DeleteJeuneModal({
+export default function DeleteJeuneActifModal({
   jeune,
   motifsSuppression,
   onClose,
   soumettreSuppression,
-}: DeleteJeuneModalProps) {
+}: DeleteJeuneActifModalProps) {
   const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
