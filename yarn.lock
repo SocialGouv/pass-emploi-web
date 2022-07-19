@@ -13569,9 +13569,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-auth@npm:4.10.0":
-  version: 4.10.0
-  resolution: "next-auth@npm:4.10.0"
+"next-auth@npm:4.10.1":
+  version: 4.10.1
+  resolution: "next-auth@npm:4.10.1"
   dependencies:
     "@babel/runtime": ^7.16.3
     "@panva/hkdf": ^1.0.1
@@ -13589,7 +13589,7 @@ __metadata:
   peerDependenciesMeta:
     nodemailer:
       optional: true
-  checksum: 840afaa90a0e76856d4ef3dba3ba915a9a3673438fbeb9f9bcb901763301d24746b341e31d89e850aa9eb179341db9024ed6240544c77c4db1d94b6ac00fe3ff
+  checksum: 3f09fcac0058b5a74b4a8895f9162a559bb884ad2ac88939213b9ee5b5ac14a7dfd43b8540a0d20fd5f023eb14a6acc16d382d43c36e78ba05c4fef1146a25d3
   languageName: node
   linkType: hard
 
@@ -14547,7 +14547,7 @@ __metadata:
     luxon: 3.0.1
     matomo-tracker: 2.2.4
     next: 12.2.2
-    next-auth: 4.10.0
+    next-auth: 4.10.1
     next-logger: 3.0.1
     node-mocks-http: ^1.11.0
     pino: 8.2.0
