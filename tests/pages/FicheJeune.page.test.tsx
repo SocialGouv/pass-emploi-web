@@ -1062,7 +1062,7 @@ describe('Fiche Jeune', () => {
         expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
       })
 
-      it('conserve les filtres de statut', async () => {
+      it('conserve les filtres de statut en changeant de page', async () => {
         // When
         await userEvent.click(screen.getByLabelText('Page 2'))
 
@@ -1073,6 +1073,95 @@ describe('Fiche Jeune', () => {
             page: 2,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
             tri: 'date_decroissante',
+          },
+          'accessToken'
+        )
+      })
+    })
+
+    describe('trier les actions par date de création', () => {
+      let actionsService: ActionsService
+      let pageCourante: number
+      let headerColonneDate: HTMLButtonElement
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeune: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action triée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })),
+        })
+
+        pageCourante = 1
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions,
+              page: pageCourante,
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
+            }}
+            conseillers={listeConseillers}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+          />,
+          { customDependances: { actionsService } }
+        )
+
+        headerColonneDate = screen.getByRole('button', { name: /Créée le/ })
+      })
+
+      it('tri les actions par ordre croissant puis decroissant', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+        await userEvent.click(headerColonneDate)
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            tri: 'date_croissante',
+          },
+          'accessToken'
+        )
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            tri: 'date_decroissante',
+          },
+          'accessToken'
+        )
+        expect(screen.getByText('Action triée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+
+        // Then
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve le tri en changeant de page', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [],
+            tri: 'date_croissante',
           },
           'accessToken'
         )

@@ -101,7 +101,7 @@ export const TableauActionsJeune = ({
                 <button
                   aria-controls='sort-createdAt'
                   onClick={onTri}
-                  aria-label='Créee le - trier les actions'
+                  aria-label='Créée le - trier les actions'
                   className='w-full flex items-center'
                 >
                   Créée le
