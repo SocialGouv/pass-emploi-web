@@ -45,16 +45,24 @@ export function OngletActions({
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const isMounted = useRef<boolean>(false)
+  const stateChanged = useRef<boolean>(false)
 
   function changerPage(page: number) {
     if (page < 1 || page > nombrePages) return
     setPageCourante(page)
+    stateChanged.current = true
   }
 
   function filtrerActions(statutsSelectionnes: StatutAction[]) {
+    if (
+      statutsSelectionnes.every((statut) => filtres.includes(statut)) &&
+      filtres.every((filtre) => statutsSelectionnes.includes(filtre))
+    )
+      return
+
     setFiltres(statutsSelectionnes)
     setPageCourante(1)
+    stateChanged.current = true
   }
 
   function trierActions() {
@@ -62,13 +70,11 @@ export function OngletActions({
       tri === TRI.dateDecroissante ? TRI.dateCroissante : TRI.dateDecroissante
     )
     setPageCourante(1)
+    stateChanged.current = true
   }
 
   useEffect(() => {
-    if (isMounted.current) {
-      console.log('plop')
-      console.log(tri, filtres, pageCourante)
-      console.log(getActions)
+    if (stateChanged.current) {
       setIsLoading(true)
 
       getActions(pageCourante, filtres, tri).then(
@@ -78,10 +84,8 @@ export function OngletActions({
           setIsLoading(false)
         }
       )
-    } else {
-      isMounted.current = true
     }
-  }, [tri, filtres, pageCourante, getActions])
+  }, [tri, filtres, pageCourante])
 
   return (
     <>
