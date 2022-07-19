@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -52,7 +53,7 @@ describe('Login', () => {
       })
 
       // When
-      fireEvent.submit(peButton)
+      await userEvent.click(peButton)
 
       // Then
       expect(signIn).toHaveBeenCalledWith(
@@ -69,7 +70,7 @@ describe('Login', () => {
       })
 
       // When
-      fireEvent.submit(miloButton)
+      await userEvent.click(miloButton)
 
       // Then
       expect(signIn).toHaveBeenCalledWith(
@@ -115,7 +116,7 @@ describe('Login', () => {
       })
 
       // When
-      fireEvent.submit(peButton)
+      await userEvent.click(peButton)
 
       // Then
       expect(signIn).toHaveBeenCalledWith(

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import Tab from 'components/ui/Tab'
@@ -127,41 +127,31 @@ describe('Tab & TabList', () => {
       expect(onSelectTab).toHaveBeenCalledTimes(0)
 
       // Next
-      await act(async () => {
-        fireEvent.keyDown(document.activeElement!, { key: 'ArrowRight' })
-      })
+      await userEvent.keyboard('{ArrowRight}')
       expect(screen.getByText('Tab 2')).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(1)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-2')
 
       // Next
-      await act(async () => {
-        fireEvent.keyDown(document.activeElement!, { key: 'ArrowRight' })
-      })
+      await userEvent.keyboard('{ArrowRight}')
       expect(screen.getByText('Tab 3')).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(2)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-3')
 
       // Next when last
-      await act(async () => {
-        fireEvent.keyDown(document.activeElement!, { key: 'ArrowRight' })
-      })
+      await userEvent.keyboard('{ArrowRight}')
       expect(screen.getByText('Tab 1')).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(3)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-1')
 
       // Previous when first
-      await act(async () => {
-        fireEvent.keyDown(document.activeElement!, { key: 'ArrowLeft' })
-      })
+      await userEvent.keyboard('{ArrowLeft}')
       expect(screen.getByText('Tab 3')).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(4)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-3')
 
       // Previous
-      await act(async () => {
-        fireEvent.keyDown(document.activeElement!, { key: 'ArrowLeft' })
-      })
+      await userEvent.keyboard('{ArrowLeft}')
       expect(screen.getByText('Tab 2')).toHaveFocus()
       expect(onSelectTab).toHaveBeenCalledTimes(5)
       expect(onSelectTab).toHaveBeenCalledWith('controlled-2')

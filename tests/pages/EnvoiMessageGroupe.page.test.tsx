@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -243,9 +243,7 @@ describe('EnvoiMessageGroupe', () => {
         file = new File(['un contenu'], 'imageupload.png', {
           type: 'image/png',
         })
-        await act(() => {
-          fireEvent.change(fileInput, { target: { files: [file] } })
-        })
+        await userEvent.upload(fileInput, file, { applyAccept: false })
       })
 
       it('affiche le nom du fichier sélectionné', () => {
@@ -286,9 +284,7 @@ describe('EnvoiMessageGroupe', () => {
 
       it('envoi une pièce jointe à plusieurs destinataires avec un message par défaut', async () => {
         // Given
-        await act(() => {
-          fireEvent.change(inputMessage, { target: { value: '' } })
-        })
+        await userEvent.clear(inputMessage)
 
         // When
         await userEvent.click(submitButton)

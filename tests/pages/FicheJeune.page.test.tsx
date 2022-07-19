@@ -1133,7 +1133,10 @@ describe('Fiche Jeune', () => {
       beforeEach(async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1233,7 +1236,10 @@ describe('Fiche Jeune', () => {
       it('récupère le statut de la création', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1251,7 +1257,10 @@ describe('Fiche Jeune', () => {
       it('récupère le statut de la modification', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1271,7 +1280,10 @@ describe('Fiche Jeune', () => {
       it("récupère le statut de l'envoi", async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1291,7 +1303,10 @@ describe('Fiche Jeune', () => {
       it('récupère le statut de la création', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1301,7 +1316,9 @@ describe('Fiche Jeune', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(actual).toMatchObject({ props: { actionCreationSuccess: true } })
+        expect(actual).toMatchObject({
+          props: { actionCreationSuccess: true },
+        })
       })
     })
 
@@ -1309,7 +1326,10 @@ describe('Fiche Jeune', () => {
       it('récupère l’onglet sur lequel ouvrir la page', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 

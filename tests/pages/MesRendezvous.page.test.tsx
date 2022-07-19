@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 

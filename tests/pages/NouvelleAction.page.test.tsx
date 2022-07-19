@@ -3,14 +3,13 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import renderWithSession from '../renderWithSession'
-
 import { mockedActionsService } from 'fixtures/services'
 import NouvelleAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
+import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -131,7 +130,7 @@ describe('NouvelleAction', () => {
       describe('action prédéfinie remplie', () => {
         let selectAction: HTMLSelectElement
         let submit: HTMLButtonElement
-        beforeEach(() => {
+        beforeEach(async () => {
           // Given
           selectAction = screen.getByRole('combobox', {
             name: /Choisir une action/,
@@ -141,12 +140,11 @@ describe('NouvelleAction', () => {
           })
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
-          fireEvent.change(selectAction, {
-            target: { value: actionsPredefinies[3].content },
-          })
-          fireEvent.change(commentaire, {
-            target: { value: 'Commentaire action' },
-          })
+          await userEvent.selectOptions(
+            selectAction,
+            actionsPredefinies[3].content
+          )
+          await userEvent.type(commentaire, 'Commentaire action')
         })
 
         it("requiert la sélection d'une action", async () => {
@@ -217,7 +215,7 @@ describe('NouvelleAction', () => {
       describe('action personnalisée remplie', () => {
         let intitule: HTMLInputElement
         let submit: HTMLButtonElement
-        beforeEach(() => {
+        beforeEach(async () => {
           // Given
           intitule = screen.getByRole('textbox', { name: /Intitulé/ })
           const commentaire = screen.getByRole('textbox', {
@@ -225,15 +223,13 @@ describe('NouvelleAction', () => {
           })
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
-          fireEvent.change(intitule, { target: { value: 'Intitulé action' } })
-          fireEvent.change(commentaire, {
-            target: { value: 'Commentaire action' },
-          })
+          await userEvent.type(intitule, 'Intitulé action')
+          await userEvent.type(commentaire, 'Commentaire action')
         })
 
         it("requiert l'intitulé de l'action", async () => {
           // When
-          fireEvent.change(intitule, { target: { value: '' } })
+          await userEvent.clear(intitule)
           await userEvent.click(submit)
 
           // Then

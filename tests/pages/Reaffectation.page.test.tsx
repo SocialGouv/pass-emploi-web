@@ -1,15 +1,14 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
-
-import renderWithSession from '../renderWithSession'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { UserStructure } from 'interfaces/conseiller'
 import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
 import { JeunesService } from 'services/jeunes.service'
+import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -112,7 +111,7 @@ describe('Reaffectation', () => {
         expect(typeReaffectationRadio).not.toBeChecked()
 
         // When
-        fireEvent.click(typeReaffectationRadio)
+        await userEvent.click(typeReaffectationRadio)
 
         // Then
         expect(typeReaffectationRadio).toBeChecked()
@@ -131,9 +130,7 @@ describe('Reaffectation', () => {
         ;(
           jeunesService.getJeunesDuConseillerParEmail as jest.Mock
         ).mockResolvedValue({ idConseiller: idConseillerInitial, jeunes })
-        fireEvent.input(emailInput, {
-          target: { value: emailConseillerInitial },
-        })
+        await userEvent.type(emailInput, emailConseillerInitial)
 
         // WHEN
         await userEvent.click(submitRecherche)
@@ -158,11 +155,7 @@ describe('Reaffectation', () => {
       describe('à la modification du mail du conseiller initial', () => {
         it('reset la recherche', async () => {
           // WHEN
-          await act(async () => {
-            fireEvent.change(emailInput, {
-              target: { value: 'whatever' },
-            })
-          })
+          await userEvent.type(emailInput, 'whatever')
 
           // THEN
           for (const jeune of jeunes) {
@@ -185,18 +178,14 @@ describe('Reaffectation', () => {
           const submitReaffecter = screen.getByText('Réaffecter les jeunes')
 
           // WHEN
-          await act(async () => {
-            fireEvent.input(destinationInput, {
-              target: { value: emailConseillerDestination },
-            })
-          })
+          await userEvent.type(destinationInput, emailConseillerDestination)
           await userEvent.click(
             screen.getByText(jeunes[0].prenom, { exact: false })
           )
           await userEvent.click(
             screen.getByText(jeunes[2].prenom, { exact: false })
           )
-          await act(async () => typeReaffectationRadio.click())
+          await userEvent.click(typeReaffectationRadio)
           await userEvent.click(submitReaffecter)
 
           // THEN
