@@ -633,7 +633,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: 2, statuts: [] },
+            { page: 2, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(screen.getByLabelText('Page 2')).toHaveAttribute(
@@ -650,7 +650,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: 1, statuts: [] },
+            { page: 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(screen.getByLabelText('Page 1')).toHaveAttribute(
@@ -669,7 +669,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: 6, statuts: [] },
+            { page: 6, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(screen.getByLabelText('Page 6')).toHaveAttribute(
@@ -688,7 +688,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 1, statuts: [] },
+            { page: pageCourante - 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(
@@ -703,7 +703,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante + 1, statuts: [] },
+            { page: pageCourante + 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(
@@ -719,12 +719,13 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 1, statuts: [] },
+            { page: pageCourante - 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
+
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 2, statuts: [] },
+            { page: pageCourante - 2, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(
@@ -1047,6 +1048,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            tri: 'date_decroissante',
           },
           'accessToken'
         )
@@ -1070,6 +1072,7 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            tri: 'date_decroissante',
           },
           'accessToken'
         )

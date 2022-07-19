@@ -93,7 +93,6 @@ export interface JeunePoleEmploiFormData {
 
 export interface ConseillerHistorique {
   id: string
-  email: string
   nom: string
   prenom: string
   depuis: string
