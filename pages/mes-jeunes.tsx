@@ -3,8 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import EmptyStateImage from '../assets/images/empty_state.svg'
-
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
@@ -220,7 +219,7 @@ function MesJeunes({
             <EmptyStateImage
               aria-hidden='true'
               focusable='false'
-              className='mb-16'
+              className='w-[360px] h-[200px] mb-16'
             />
             <p className='text-base-medium mb-12'>
               Vous n&apos;avez pas encore intégré de jeunes.
