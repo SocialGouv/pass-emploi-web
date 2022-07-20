@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
-import EmptyMessagesImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import Conversation from 'components/Conversation'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import { ChatRoomTile } from 'components/messages/ChatRoomTile'
@@ -71,7 +71,11 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
           {!jeunesChats.length && (
             <div className='h-full overflow-y-auto bg-grey_100 flex flex-col justify-center items-center'>
-              <EmptyMessagesImage focusable='false' aria-hidden='true' />
+              <EmptyStateImage
+                focusable='false'
+                aria-hidden='true'
+                className='w-[360px] h-[200px]'
+              />
               <p className='mt-4 text-md-semi w-2/3 text-center'>
                 Vous devriez avoir des jeunes inscrits pour discuter avec eux
               </p>

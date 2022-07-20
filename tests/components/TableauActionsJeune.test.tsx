@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { TRI } from 'components/action/OngletActions'
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { uneListeDActions } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
@@ -18,6 +19,8 @@ describe('TableauActionsJeune', () => {
           actions={uneListeDActions()}
           isLoading={false}
           onFiltres={filtrerActions}
+          onTri={jest.fn()}
+          tri={TRI.dateDecroissante}
         />
       )
 

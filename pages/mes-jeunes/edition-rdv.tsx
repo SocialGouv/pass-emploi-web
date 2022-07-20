@@ -167,7 +167,7 @@ function EditionRdv({
         <Button
           style={ButtonStyle.SECONDARY}
           onClick={handleDelete}
-          aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+          label={`Supprimer le rendez-vous du ${rdv.date}`}
           className='mb-4'
         >
           <IconComponent
