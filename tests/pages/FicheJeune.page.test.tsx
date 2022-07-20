@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -82,74 +82,92 @@ describe('Fiche Jeune', () => {
 
     describe('pour tous les conseillers', () => {
       let setIdJeune: (id: string | undefined) => void
-      beforeEach(async () => {
-        // Given
-        setIdJeune = jest.fn()
 
-        // When
-        renderPage(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={[]}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            conseillers={listeConseillers}
-            pageTitle={''}
-          />,
-          { idJeuneSetter: setIdJeune, customDependances: dependances }
-        )
-      })
+      describe('render', () => {
+        beforeEach(async () => {
+          // Given
+          setIdJeune = jest.fn()
 
-      it('affiche la liste des 5 premiers conseillers du jeune', () => {
-        // Then
-        listeConseillers
-          .slice(0, 5)
-          .forEach(({ nom, prenom }: ConseillerHistorique) => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+            />,
+            { idJeuneSetter: setIdJeune, customDependances: dependances }
+          )
+        })
+
+        it('affiche la liste des 5 premiers conseillers du jeune', () => {
+          // Then
+          listeConseillers
+            .slice(0, 5)
+            .forEach(({ nom, prenom }: ConseillerHistorique) => {
+              expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+            })
+          expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
+        })
+
+        it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
+          // Then
+          const button = screen.getByRole('button', {
+            name: 'Voir l’historique complet',
+          })
+          expect(listeConseillers.length).toEqual(6)
+          expect(button).toBeInTheDocument()
+        })
+
+        it('permet d’afficher la liste complète des conseillers du jeune', async () => {
+          // Given
+          const button = screen.getByRole('button', {
+            name: 'Voir l’historique complet',
+          })
+
+          // When
+          await userEvent.click(button)
+
+          //Then
+          listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
             expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
           })
-        expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
-      })
-
-      it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
-        // Then
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
-        })
-        expect(listeConseillers.length).toEqual(6)
-        expect(button).toBeInTheDocument()
-      })
-
-      it('permet d’afficher la liste complète des conseillers du jeune', async () => {
-        // Given
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
         })
 
-        // When
-        await userEvent.click(button)
-
-        //Then
-        listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+        it('modifie le currentJeune', () => {
+          // Then
+          expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
         })
-      })
 
-      it('modifie le currentJeune', () => {
-        // Then
-        expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
-      })
-
-      it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
-        // Then
-        const deleteButton = screen.getByText('Supprimer ce compte')
-        expect(deleteButton).toBeInTheDocument()
+        it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
+          // Then
+          const deleteButton = screen.getByText('Supprimer ce compte')
+          expect(deleteButton).toBeInTheDocument()
+        })
       })
 
       describe('Supprimer un compte actif', () => {
         beforeEach(async () => {
+          // Given
+          renderPage(
+            <FicheJeune
+              jeune={unDetailJeune({ isActivated: true })}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+            />,
+            { customDependances: dependances }
+          )
           // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
 
@@ -235,6 +253,59 @@ describe('Fiche Jeune', () => {
             )
             expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
           })
+        })
+      })
+
+      describe('Supprimer un compte inactif', () => {
+        beforeEach(async () => {
+          // Given
+          renderPage(
+            <FicheJeune
+              jeune={unDetailJeune({ isActivated: false })}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+            />,
+            { customDependances: dependances }
+          )
+          // Given
+          const deleteButton = screen.getByText('Supprimer ce compte')
+
+          // When
+          await userEvent.click(deleteButton)
+        })
+
+        it("affiche l'information", () => {
+          // Then
+          expect(
+            screen.getByText('pas encore connecté', { exact: false })
+          ).toBeInTheDocument()
+        })
+
+        it('affiche la modale de suppression du compte d’un bénéficiaire inactif', async () => {
+          // Then
+          expect(
+            screen.getByText(/toutes les informations liées à ce compte/)
+          ).toBeInTheDocument()
+        })
+
+        it('lors de la confirmation, supprime le bénéficiaire', async () => {
+          // Given
+          const supprimerButtonModal = screen.getByText('Confirmer')
+
+          // When
+          await userEvent.click(supprimerButtonModal)
+
+          // Then
+          expect(
+            dependances.jeunesService.supprimerJeuneInactif
+          ).toHaveBeenCalledWith(jeune.id, 'accessToken')
+          expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
         })
       })
     })
@@ -509,42 +580,6 @@ describe('Fiche Jeune', () => {
 
         // Then
         expect(screen.getByText(/n’a pas encore d’action/)).toBeInTheDocument()
-      })
-    })
-
-    describe("quand le jeune ne s'est jamais connecté", () => {
-      beforeEach(() => {
-        // Given
-        renderPage(
-          <FicheJeune
-            jeune={{ ...jeune, isActivated: false }}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            conseillers={[]}
-            pageTitle={''}
-          />
-        )
-      })
-
-      it("affiche l'information", () => {
-        // Then
-        expect(
-          screen.getByText('pas encore connecté', { exact: false })
-        ).toBeInTheDocument()
-      })
-
-      it('permet de supprimer le jeune', async () => {
-        // Then
-        const link = screen.getByText('Supprimer ce compte')
-        expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute(
-          'href',
-          `/mes-jeunes/${jeune.id}/suppression`
-        )
       })
     })
 
