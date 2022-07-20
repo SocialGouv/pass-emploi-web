@@ -1,8 +1,11 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
+import { UserStructure } from '../../interfaces/conseiller'
+
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import renderWithSession from 'tests/renderWithSession'
 
 describe('AlertDisplayer', () => {
   describe('quand la création de rdv est réussie', () => {
@@ -17,7 +20,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      render(<AlertDisplayer />)
+      renderWithSession(<AlertDisplayer />)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -44,6 +47,7 @@ describe('AlertDisplayer', () => {
       )
     })
   })
+
   describe('quand la modification de rdv est réussie', () => {
     let routerPush: Function
     beforeEach(() => {
@@ -56,7 +60,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      render(<AlertDisplayer />)
+      renderWithSession(<AlertDisplayer />)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -83,6 +87,7 @@ describe('AlertDisplayer', () => {
       )
     })
   })
+
   describe('quand la suppression de rdv est réussie', () => {
     let routerPush: Function
     beforeEach(() => {
@@ -95,7 +100,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      render(<AlertDisplayer />)
+      renderWithSession(<AlertDisplayer />)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -122,6 +127,7 @@ describe('AlertDisplayer', () => {
       )
     })
   })
+
   describe('quand on vient de récupérer des bénéficiaires', () => {
     let routerPush: Function
     beforeEach(() => {
@@ -134,7 +140,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      render(<AlertDisplayer />)
+      renderWithSession(<AlertDisplayer />)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -161,6 +167,7 @@ describe('AlertDisplayer', () => {
       )
     })
   })
+
   describe('quand on vient de supprimer un jeune', () => {
     let routerPush: Function
     beforeEach(() => {
@@ -173,7 +180,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      render(<AlertDisplayer />)
+      renderWithSession(<AlertDisplayer />)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -200,6 +207,7 @@ describe('AlertDisplayer', () => {
       )
     })
   })
+
   describe('quand la création d’une action est réussie', () => {
     let routerPush: Function
     beforeEach(() => {
@@ -212,7 +220,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      render(<AlertDisplayer />)
+      renderWithSession(<AlertDisplayer />)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -237,6 +245,7 @@ describe('AlertDisplayer', () => {
       )
     })
   })
+
   describe('envoie de message multi-destinataire', () => {
     let routerPush: Function
     beforeEach(() => {
@@ -249,7 +258,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      render(<AlertDisplayer />)
+      renderWithSession(<AlertDisplayer />)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -257,6 +266,98 @@ describe('AlertDisplayer', () => {
       expect(
         screen.getByText(/Votre message multi-destinataires/)
       ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-jeunes',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+
+  describe('quand on renseigne une agence Milo', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes?choixAgence=succes',
+        query: { choixAgence: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      const conseillerMilo = {
+        id: 'idConseiller',
+        name: 'Taverner',
+        structure: UserStructure.MILO,
+        estSuperviseur: false,
+        email: 'mail@mail.com',
+        estConseiller: true,
+      }
+      renderWithSession(<AlertDisplayer />, { user: conseillerMilo })
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(screen.getByText(/Votre Mission locale/)).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-jeunes',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+
+  describe('quand on renseigne une agence Pole emploi', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes?choixAgence=succes',
+        query: { choixAgence: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      const conseillerPoleEmploi = {
+        id: 'idConseiller',
+        name: 'Taverner',
+        structure: UserStructure.POLE_EMPLOI,
+        estSuperviseur: false,
+        email: 'mail@mail.com',
+        estConseiller: true,
+      }
+      renderWithSession(<AlertDisplayer />, { user: conseillerPoleEmploi })
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(screen.getByText(/Votre agence/)).toBeInTheDocument()
     })
 
     it("permet de fermer l'alerte du succès", async () => {

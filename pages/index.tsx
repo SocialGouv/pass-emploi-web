@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { Agence, UserStructure } from 'interfaces/conseiller'
-import { QueryParams, QueryValues } from 'referentiel/queryParams'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -48,7 +48,7 @@ function Home({
     setConseiller({ ...conseiller!, agence: agence.nom })
     setTrackingLabel('Succès ajout agence')
     await router.replace(
-      `${redirectUrl}?${QueryParams.choixAgence}=${QueryValues.succes}`
+      `${redirectUrl}?${QueryParam.choixAgence}=${QueryValue.succes}`
     )
   }
 

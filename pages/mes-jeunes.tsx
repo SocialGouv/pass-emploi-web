@@ -17,7 +17,7 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParams, QueryValues } from 'referentiel/queryParams'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -105,7 +105,7 @@ function MesJeunes({
       )
       await router.replace({
         pathname: '/mes-jeunes',
-        query: { [QueryParams.recuperationBeneficiaires]: QueryValues.succes },
+        query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
       })
       setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
     } finally {
@@ -286,24 +286,23 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     pageTitle: 'Mes jeunes',
   }
 
-  if (context.query[QueryParams.recuperationBeneficiaires]) {
+  if (context.query[QueryParam.recuperationBeneficiaires]) {
     props.recuperationSuccess =
-      context.query[QueryParams.recuperationBeneficiaires] ===
-      QueryValues.succes
+      context.query[QueryParam.recuperationBeneficiaires] === QueryValue.succes
   }
 
-  if (context.query[QueryParams.suppressionBeneficiaire])
+  if (context.query[QueryParam.suppressionBeneficiaire])
     props.deletionSuccess =
-      context.query[QueryParams.suppressionBeneficiaire] === QueryValues.succes
+      context.query[QueryParam.suppressionBeneficiaire] === QueryValue.succes
 
-  if (context.query[QueryParams.envoiMessage]) {
+  if (context.query[QueryParam.envoiMessage]) {
     props.messageEnvoiGroupeSuccess =
-      context.query[QueryParams.envoiMessage] === QueryValues.succes
+      context.query[QueryParam.envoiMessage] === QueryValue.succes
   }
 
-  if (context.query[QueryParams.choixAgence]) {
+  if (context.query[QueryParam.choixAgence]) {
     props.ajoutAgenceSuccess =
-      context.query[QueryParams.choixAgence] === QueryValues.succes
+      context.query[QueryParam.choixAgence] === QueryValue.succes
   }
 
   return { props }

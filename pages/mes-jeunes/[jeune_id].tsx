@@ -23,7 +23,7 @@ import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import { QueryParams, QueryValues } from 'referentiel/queryParams'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -191,7 +191,7 @@ function FicheJeune({
         session!.accessToken
       )
       await router.push(
-        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+        `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
@@ -205,7 +205,7 @@ function FicheJeune({
     try {
       await jeunesServices.supprimerJeuneInactif(jeune.id, session!.accessToken)
       await router.push(
-        `/mes-jeunes?${QueryParams.suppressionBeneficiaire}=${QueryValues.succes}`
+        `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
@@ -428,25 +428,25 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
 
-  if (context.query[QueryParams.creationRdv])
+  if (context.query[QueryParam.creationRdv])
     props.rdvCreationSuccess =
-      context.query[QueryParams.creationRdv] === QueryValues.succes
+      context.query[QueryParam.creationRdv] === QueryValue.succes
 
-  if (context.query[QueryParams.modificationRdv])
+  if (context.query[QueryParam.modificationRdv])
     props.rdvModificationSuccess =
-      context.query[QueryParams.modificationRdv] === QueryValues.succes
+      context.query[QueryParam.modificationRdv] === QueryValue.succes
 
-  if (context.query[QueryParams.suppressionRdv])
+  if (context.query[QueryParam.suppressionRdv])
     props.rdvSuppressionSuccess =
-      context.query[QueryParams.suppressionRdv] === QueryValues.succes
+      context.query[QueryParam.suppressionRdv] === QueryValue.succes
 
-  if (context.query[QueryParams.creationAction])
+  if (context.query[QueryParam.creationAction])
     props.actionCreationSuccess =
-      context.query[QueryParams.creationAction] === QueryValues.succes
+      context.query[QueryParam.creationAction] === QueryValue.succes
 
-  if (context.query[QueryParams.envoiMessage])
+  if (context.query[QueryParam.envoiMessage])
     props.messageEnvoiGroupeSuccess =
-      context.query[QueryParams.envoiMessage] === QueryValues.succes
+      context.query[QueryParam.envoiMessage] === QueryValue.succes
 
   if (context.query.onglet) {
     props.onglet =
