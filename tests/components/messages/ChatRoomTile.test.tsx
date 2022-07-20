@@ -1,46 +1,65 @@
 import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import { ChatRoomTile } from 'components/messages/ChatRoomTile'
-import { unItemJeune, unJeuneChat } from 'fixtures/jeune'
-import { mockedMessagesService } from 'fixtures/services'
-import { JeuneChat } from 'interfaces/jeune'
-import { MessagesService } from 'services/messages.service'
+import { unJeuneChat } from 'fixtures/jeune'
 import renderWithSession from 'tests/renderWithSession'
-import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
-import { DIProvider } from 'utils/injectionDependances'
 
 describe('<ChatRoomTile />', () => {
-  let messagesService: MessagesService
-  const unJeune = unItemJeune()
-  let jeuneChat: JeuneChat
+  let toggleFlag: (flagged: boolean) => void
 
   beforeEach(async () => {
-    messagesService = mockedMessagesService()
-    jeuneChat = unJeuneChat({
-      ...unJeune,
-      chatId: `chat-${unJeune.id}`,
-      seenByConseiller: true,
-    })
+    toggleFlag = jest.fn()
   })
 
   describe('quand la conversation est suivie', () => {
-    it('affiche un flag et permet de ne plus la suivre', async () => {
-      // When
+    it('permet de ne plus la suivre', async () => {
+      // Given
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ messagesService }}>
-            <CurrentJeuneProvider idJeune={unJeune.id}>
-              <ChatRoomTile jeuneChat={jeuneChat} />
-            </CurrentJeuneProvider>
-          </DIProvider>
+          <ChatRoomTile
+            jeuneChat={unJeuneChat({
+              flaggedByConseiller: true,
+            })}
+            id='whatever'
+            onClick={jest.fn()}
+            onToggleFlag={toggleFlag}
+          />
         )
       })
 
+      await userEvent.click(
+        screen.getByRole('checkbox', { name: 'Ne plus suivre la conversation' })
+      )
+
       // Then
-      expect(
-        screen.getByTitle(`Ne plus suivre la conversation`)
-      ).toBeInTheDocument()
+      expect(toggleFlag).toHaveBeenCalledWith(false)
+    })
+  })
+
+  describe("quand la conversation n'est pas suivie", () => {
+    it('permet de la suivre', async () => {
+      // Given
+      await act(async () => {
+        await renderWithSession(
+          <ChatRoomTile
+            jeuneChat={unJeuneChat({
+              flaggedByConseiller: false,
+            })}
+            id='whatever'
+            onClick={jest.fn()}
+            onToggleFlag={toggleFlag}
+          />
+        )
+      })
+
+      await userEvent.click(
+        screen.getByRole('checkbox', { name: 'Suivre la conversation' })
+      )
+
+      // Then
+      expect(toggleFlag).toHaveBeenCalledWith(true)
     })
   })
 })

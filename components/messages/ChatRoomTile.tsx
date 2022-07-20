@@ -6,59 +6,55 @@ import IconCheckbox from 'components/ui/IconCheckbox'
 import { IconName } from 'components/ui/IconComponent'
 import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'
-import { MessagesService } from 'services/messages.service'
-import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { formatDayAndHourDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 
 interface ChatRoomTileProps {
+  id: string
   jeuneChat: JeuneChat
+  onClick: () => void
+  onToggleFlag: (flagged: boolean) => void
 }
 
-export function ChatRoomTile(props: ChatRoomTileProps) {
-  const messagesService = useDependance<MessagesService>('messagesService')
-  const [, setIdCurrentJeune] = useCurrentJeune()
-
+export function ChatRoomTile({
+  id,
+  jeuneChat,
+  onClick,
+  onToggleFlag,
+}: ChatRoomTileProps) {
   function toggleFollowMessage() {
-    messagesService.toggleFlag(
-      props.jeuneChat.chatId,
-      !props.jeuneChat.flaggedByConseiller
-    )
+    onToggleFlag(!jeuneChat.flaggedByConseiller)
   }
 
   return (
     <div className='relative'>
       <button
         className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-[6px]'
-        onClick={() => setIdCurrentJeune(props.jeuneChat.id)}
+        onClick={onClick}
       >
-        {!props.jeuneChat.seenByConseiller &&
-          props.jeuneChat.lastMessageContent && (
-            <p className='flex items-center text-accent_1 text-s-regular mb-2'>
-              <span className='text-[48px] mr-1'>·</span>
-              Nouveau message
-            </p>
-          )}
+        {!jeuneChat.seenByConseiller && jeuneChat.lastMessageContent && (
+          <p className='flex items-center text-accent_1 text-s-regular mb-2'>
+            <span className='text-[48px] mr-1'>·</span>
+            Nouveau message
+          </p>
+        )}
         <span className='text-md-semi text-primary_darken mb-2 w-full flex justify-between'>
-          {props.jeuneChat.prenom} {props.jeuneChat.nom}
+          {jeuneChat.prenom} {jeuneChat.nom}
         </span>
         <span className='text-sm text-grey_800 mb-[8px]'>
           {' '}
-          {props.jeuneChat.lastMessageSentBy ===
-          UserType.CONSEILLER.toLowerCase()
+          {jeuneChat.lastMessageSentBy === UserType.CONSEILLER.toLowerCase()
             ? 'Vous'
-            : props.jeuneChat.prenom}{' '}
-          : {props.jeuneChat.lastMessageContent}
+            : jeuneChat.prenom}{' '}
+          : {jeuneChat.lastMessageContent}
         </span>
         <span className='text-xxs-italic text-content_color self-end flex'>
-          {props.jeuneChat.lastMessageContent && (
+          {jeuneChat.lastMessageContent && (
             <span className='mr-[7px]'>
-              {formatDayAndHourDate(props.jeuneChat.lastMessageSentAt!)}{' '}
+              {formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}
             </span>
           )}
-          {(props.jeuneChat.seenByConseiller &&
-            props.jeuneChat.lastMessageContent) ||
-          !props.jeuneChat.isActivated ? (
+          {(jeuneChat.seenByConseiller && jeuneChat.lastMessageContent) ||
+          !jeuneChat.isActivated ? (
             <FbCheckIcon focusable='false' aria-hidden='true' />
           ) : (
             <FbCheckFillIcon focusable='false' aria-hidden='true' />
@@ -66,8 +62,8 @@ export function ChatRoomTile(props: ChatRoomTileProps) {
         </span>
       </button>
       <IconCheckbox
-        id='flag-chat'
-        checked={props.jeuneChat.flaggedByConseiller}
+        id={`${id}--flag`}
+        checked={jeuneChat.flaggedByConseiller}
         checkedIconName={IconName.FlagFilled}
         uncheckedIconName={IconName.Flag}
         checkedLabel='Ne plus suivre la conversation'

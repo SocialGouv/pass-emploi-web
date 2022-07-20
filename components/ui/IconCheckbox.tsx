@@ -25,10 +25,6 @@ export default function IconCheckbox({
 }: IconCheckboxProps) {
   return (
     <div title={checked ? checkedLabel : uncheckedLabel} {...props}>
-      <label htmlFor={id} className='sr-only'>
-        {checked ? checkedLabel : uncheckedLabel}
-      </label>
-
       <input
         type='checkbox'
         id={id}
@@ -37,12 +33,17 @@ export default function IconCheckbox({
         onChange={onChange}
       />
 
-      <IconComponent
-        name={checked ? checkedIconName : uncheckedIconName}
-        aria-hidden={true}
-        focusable={false}
-        className='cursor-pointer w-full h-full fill-inherit'
-      />
+      <label htmlFor={id}>
+        <span className='sr-only'>
+          {checked ? checkedLabel : uncheckedLabel}
+        </span>
+        <IconComponent
+          name={checked ? checkedIconName : uncheckedIconName}
+          aria-hidden={true}
+          focusable={false}
+          className='cursor-pointer w-full h-full fill-inherit'
+        />
+      </label>
     </div>
   )
 }
