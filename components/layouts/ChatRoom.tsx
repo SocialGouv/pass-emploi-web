@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
-import MessageGroupeIcon from '../../assets/icons/forward_to_inbox.svg'
-import EmptyMessagesImage from '../../assets/images/empty_state.svg'
-
+import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
+import EmptyMessagesImage from 'assets/images/empty_state.svg'
 import Conversation from 'components/Conversation'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import { ChatRoomTile } from 'components/messages/ChatRoomTile'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import linkStyle from 'styles/components/Link.module.css'
 import useSession from 'utils/auth/useSession'
@@ -22,6 +22,7 @@ interface ChatRoomProps {
 export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const messagesService = useDependance<MessagesService>('messagesService')
 
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
@@ -82,7 +83,14 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               <ul className='h-full overflow-y-auto px-4 pb-24'>
                 {jeunesChats.map((jeuneChat: JeuneChat) => (
                   <li key={`chat-${jeuneChat.id}`} className='mb-2'>
-                    <ChatRoomTile jeuneChat={jeuneChat} />
+                    <ChatRoomTile
+                      jeuneChat={jeuneChat}
+                      id={`chat-${jeuneChat.id}`}
+                      onClick={() => setIdCurrentJeune(jeuneChat.id)}
+                      onToggleFlag={(flagged) =>
+                        messagesService.toggleFlag(jeuneChat.chatId, flagged)
+                      }
+                    />
                   </li>
                 ))}
               </ul>

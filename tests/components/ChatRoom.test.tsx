@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -112,6 +112,31 @@ describe('<ChatRoom />', () => {
         expect(() =>
           screen.getByText(`conversation-${jeunePasSelectionne.id}`)
         ).toThrow()
+      })
+    })
+
+    describe("quand on clique sur le flag d'une conversation", () => {
+      it('change son suivi', async () => {
+        // Given
+        const [jeune] = jeunes
+        const conversationCard = screen
+          .getByText(jeune.prenom, {
+            exact: false,
+          })
+          .closest('div')
+        const flagConversation = within(conversationCard!).getByRole(
+          'checkbox',
+          { name: /Ne plus suivre/ }
+        )
+
+        // When
+        await userEvent.click(flagConversation!)
+
+        // Then
+        expect(messagesService.toggleFlag).toHaveBeenCalledWith(
+          `chat-${jeune.id}`,
+          false
+        )
       })
     })
   })
