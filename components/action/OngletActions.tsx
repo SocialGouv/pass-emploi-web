@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
@@ -16,8 +16,14 @@ interface OngletActionsProps {
   }
   getActions: (
     page: number,
-    statuts: StatutAction[]
+    statuts: StatutAction[],
+    tri: string
   ) => Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
+}
+
+export enum TRI {
+  dateDecroissante = 'date_decroissante',
+  dateCroissante = 'date_croissante',
 }
 
 export function OngletActions({
@@ -27,6 +33,7 @@ export function OngletActions({
   poleEmploi,
 }: OngletActionsProps) {
   const [filtres, setFiltres] = useState<StatutAction[]>([])
+  const [tri, setTri] = useState<TRI>(TRI.dateDecroissante)
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions
   )
@@ -38,24 +45,47 @@ export function OngletActions({
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  async function rechargerActions(page: number, statuts: StatutAction[]) {
+  const stateChanged = useRef<boolean>(false)
+
+  function changerPage(page: number) {
     if (page < 1 || page > nombrePages) return
+    setPageCourante(page)
+    stateChanged.current = true
+  }
+
+  function filtrerActions(statutsSelectionnes: StatutAction[]) {
     if (
-      page === pageCourante &&
-      statuts.every((statut) => filtres.includes(statut)) &&
-      filtres.every((filtre) => statuts.includes(filtre))
+      statutsSelectionnes.every((statut) => filtres.includes(statut)) &&
+      filtres.every((filtre) => statutsSelectionnes.includes(filtre))
     )
       return
 
-    setPageCourante(page)
-    setIsLoading(true)
-    const { actions, metadonnees } = await getActions(page, statuts)
-
-    setActionsAffichees(actions)
-    setNombrePages(metadonnees.nombrePages)
-    setFiltres(statuts)
-    setIsLoading(false)
+    setFiltres(statutsSelectionnes)
+    setPageCourante(1)
+    stateChanged.current = true
   }
+
+  function trierActions() {
+    setTri(
+      tri === TRI.dateDecroissante ? TRI.dateCroissante : TRI.dateDecroissante
+    )
+    setPageCourante(1)
+    stateChanged.current = true
+  }
+
+  useEffect(() => {
+    if (stateChanged.current) {
+      setIsLoading(true)
+
+      getActions(pageCourante, filtres, tri).then(
+        ({ actions, metadonnees }) => {
+          setActionsAffichees(actions)
+          setNombrePages(metadonnees.nombrePages)
+          setIsLoading(false)
+        }
+      )
+    }
+  }, [tri, filtres, pageCourante])
 
   return (
     <>
@@ -67,7 +97,9 @@ export function OngletActions({
             jeune={jeune}
             actions={actionsAffichees}
             isLoading={isLoading}
-            filtrerActions={(statuts) => rechargerActions(1, statuts)}
+            onFiltres={filtrerActions}
+            onTri={trierActions}
+            tri={tri}
           />
           {nombrePages > 1 && (
             <div className='mt-6'>
@@ -75,9 +107,7 @@ export function OngletActions({
                 nomListe='actions'
                 nombreDePages={nombrePages}
                 pageCourante={pageCourante}
-                allerALaPage={(pageCible) =>
-                  rechargerActions(pageCible, filtres)
-                }
+                allerALaPage={changerPage}
               />
             </div>
           )}

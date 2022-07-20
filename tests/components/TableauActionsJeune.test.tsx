@@ -17,7 +17,7 @@ describe('TableauActionsJeune', () => {
           jeune={uneBaseJeune()}
           actions={uneListeDActions()}
           isLoading={false}
-          filtrerActions={filtrerActions}
+          onFiltres={filtrerActions}
         />
       )
 

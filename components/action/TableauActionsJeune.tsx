@@ -6,6 +6,8 @@ import React, {
   useState,
 } from 'react'
 
+import { TRI } from './OngletActions'
+
 import ActionRow from 'components/action/ActionRow'
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button from 'components/ui/Button'
@@ -17,14 +19,18 @@ interface TableauActionsJeuneProps {
   jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
-  filtrerActions: (statutsSelectionnes: StatutAction[]) => void
+  onFiltres: (statutsSelectionnes: StatutAction[]) => void
+  onTri: () => void
+  tri: TRI
 }
 
 export const TableauActionsJeune = ({
   jeune,
   actions,
   isLoading,
-  filtrerActions,
+  onFiltres,
+  onTri,
+  tri,
 }: TableauActionsJeuneProps) => {
   const [afficherStatut, setAfficherStatut] = useState<boolean>(false)
   const [statutsSelectionnes, setStatutsSelectionnes] = useState<
@@ -45,7 +51,7 @@ export const TableauActionsJeune = ({
 
   function submitFiltres(e: FormEvent) {
     e.preventDefault()
-    filtrerActions(statutsSelectionnes)
+    onFiltres(statutsSelectionnes)
 
     setAfficherStatut(false)
     setStatutsValides(statutsSelectionnes)
@@ -91,8 +97,21 @@ export const TableauActionsJeune = ({
               <div role='columnheader' className={`table-cell pl-4 py-4`}>
                 Intitulé de l&apos;action
               </div>
-              <div role='columnheader' className={`table-cell`}>
-                Créée le
+              <div role='columnheader' className={`table-cell relative`}>
+                <button
+                  aria-controls='sort-createdAt'
+                  onClick={onTri}
+                  aria-label='Créée le - trier les actions'
+                  className='w-full flex items-center'
+                >
+                  Créée le
+                  <IconComponent
+                    name={IconName.ChevronDown}
+                    className={`h-4 w-4 fill-primary ${
+                      tri === TRI.dateDecroissante ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
               </div>
               <div role='columnheader' className='table-cell relative'>
                 <button
