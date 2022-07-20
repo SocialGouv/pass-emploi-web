@@ -265,8 +265,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             <div className='my-4'>
               <Button
                 type='button'
-                aria-controls='piece-jointe-multi'
-                aria-describedby='piece-jointe-multi--desc'
+                controls='piece-jointe-multi'
+                describedBy='piece-jointe-multi--desc'
                 style={ButtonStyle.SECONDARY}
                 onClick={ouvrirSelectionFichier}
                 disabled={Boolean(pieceJointe)}
@@ -337,7 +337,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           )}
           {formHasChanges() && (
             <Button
-              aria-label='Quitter la rédaction du message groupé'
+              label='Quitter la rédaction du message groupé'
               onClick={openLeavePageConfirmationModal}
               style={ButtonStyle.SECONDARY}
               className='mr-3 p-2'
