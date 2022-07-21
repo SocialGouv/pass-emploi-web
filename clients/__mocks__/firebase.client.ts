@@ -8,9 +8,9 @@ export const FirebaseClient = jest.fn(() => ({
   addMessage: jest.fn(),
   addFichier: jest.fn(),
   updateChat: jest.fn(),
-  findAndObserveChatDuJeune: jest.fn(
-    (_idConseiller: string, _idJeune: string, fn: (chat: Chat) => void) =>
-      fn(unChat())
+  findAndObserveChatsDuConseiller: jest.fn(
+    (_idConseiller: string, fn: (chats: { [idJeune: string]: Chat }) => void) =>
+      fn({ 'jeune-1': unChat(), 'jeune-2': unChat(), 'jeune-3': unChat() })
   ),
   observeChat: jest.fn((_idChat: string, fn: (chat: Chat) => void) =>
     fn(unChat())
@@ -18,13 +18,10 @@ export const FirebaseClient = jest.fn(() => ({
   observeMessagesDuChat: jest.fn(
     (_idChat: string, fn: (messages: Message[]) => void) => fn([])
   ),
-  getChatsDesJeunes: jest.fn((_idConseiller, idsJeunes: string[]) =>
-    idsJeunes.reduce((mappedChats, idJeune) => {
-      return {
-        ...mappedChats,
-        [idJeune]: unChat({ chatId: `chat-id-${idJeune}` }),
-      }
-    }, {} as { [idJeune: string]: Chat })
-  ),
+  getChatsDuConseiller: jest.fn((_idConseiller) => ({
+    'jeune-1': unChat({ chatId: `chat-jeune-1` }),
+    'jeune-2': unChat({ chatId: `chat-jeune-2` }),
+    'jeune-3': unChat({ chatId: `chat-jeune-3` }),
+  })),
   countMessagesNotRead: jest.fn(),
 }))

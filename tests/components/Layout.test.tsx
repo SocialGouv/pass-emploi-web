@@ -36,7 +36,7 @@ describe('<Layout />', () => {
     jest.useFakeTimers()
   })
 
-  let updateChatRef: (jeuneChat: JeuneChat) => void
+  let updateChatsRef: (chats: JeuneChat[]) => void
   const jeunes: JeuneFromListe[] = desItemsJeunes()
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
@@ -71,11 +71,9 @@ describe('<Layout />', () => {
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
-        updateChatRef = fn
-        updateChatRef(
-          jeunesChats.find((jeuneChat) => jeuneChat.id === jeune.id)!
-        )
+      observeConseillerChats: jest.fn((_, jeune, _cle, fn) => {
+        updateChatsRef = fn
+        updateChatsRef(jeunesChats)
         return () => {}
       }),
     })
@@ -144,19 +142,16 @@ describe('<Layout />', () => {
       )
     })
 
-    describe('pour chaque jeune', () => {
-      const cases = jeunes.map((jeune) => [jeune])
-
-      it.each(cases)('subscribes to chat', async (jeune) => {
-        // Then
-        expect(messagesService.observeJeuneChat).toHaveBeenCalledWith(
-          '1',
-          jeune,
-          'cleChiffrement',
-          expect.any(Function)
-        )
-      })
+    it('subscribes to chats', () => {
+      // Then
+      expect(messagesService.observeConseillerChats).toHaveBeenCalledWith(
+        '1',
+        'cleChiffrement',
+        jeunes,
+        expect.any(Function)
+      )
     })
+    // })
 
     it('paramètre la balise head en fonction des messages non lus', async () => {
       // Then
@@ -188,7 +183,7 @@ describe('<Layout />', () => {
 
       // When
       await act(async () => {
-        updateChatRef(unJeuneChatNonLu)
+        updateChatsRef([unJeuneChatNonLu])
       })
 
       // Then
@@ -207,7 +202,7 @@ describe('<Layout />', () => {
 
       // When
       await act(async () => {
-        updateChatRef(unJeuneChatNonLu)
+        updateChatsRef([unJeuneChatNonLu])
       })
 
       // Then
@@ -242,7 +237,7 @@ describe('<Layout />', () => {
         lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
       })
       await act(async () => {
-        updateChatRef(unJeuneChatNonLu)
+        updateChatsRef([unJeuneChatNonLu])
       })
 
       // Then

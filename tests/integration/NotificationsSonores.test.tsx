@@ -29,7 +29,7 @@ global.Audio = jest.fn().mockImplementation(() => ({
 }))
 
 describe('Intégration notifications sonores', () => {
-  let updateChatRef: (jeuneChat: JeuneChat) => void
+  let updateChatsRef: (chats: JeuneChat[]) => void
   const jeunes: JeuneFromListe[] = desItemsJeunes()
   let jeunesService: JeunesService
   let conseillerService: ConseillerService
@@ -43,17 +43,21 @@ describe('Intégration notifications sonores', () => {
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeJeuneChat: jest.fn((_, jeune, _cle, fn) => {
-        updateChatRef = fn
-        updateChatRef(
-          unJeuneChat({
-            ...jeunes[0],
-            chatId: `chat-${jeunes[0].id}`,
-            seenByConseiller: true,
-          })
-        )
-        return () => {}
-      }),
+      observeConseillerChats: jest.fn(
+        (_idConseiller, _cleChiffrement, jeunes, fn) => {
+          updateChatsRef = fn
+          updateChatsRef(
+            jeunes.map((jeune) =>
+              unJeuneChat({
+                ...jeune,
+                chatId: `chat-${jeune.id}`,
+                seenByConseiller: true,
+              })
+            )
+          )
+          return () => {}
+        }
+      ),
     })
     ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
       jeunes
@@ -71,12 +75,12 @@ describe('Intégration notifications sonores', () => {
           false
         )
       })
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(updateChatsRef, jeunes)
       expect(mockAudio).toHaveBeenCalledTimes(0)
 
       // When
       await toggleNotifications()
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(updateChatsRef, jeunes)
 
       // Then
       expect(mockAudio).toHaveBeenCalledTimes(1)
@@ -94,12 +98,12 @@ describe('Intégration notifications sonores', () => {
           true
         )
       })
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(updateChatsRef, jeunes)
       expect(mockAudio).toHaveBeenCalledTimes(1)
 
       // When
       await toggleNotifications()
-      await unNouveauMessageArrive(updateChatRef, jeunes)
+      await unNouveauMessageArrive(updateChatsRef, jeunes)
 
       // Then
       expect(mockAudio).toHaveBeenCalledTimes(1)
@@ -140,17 +144,25 @@ async function toggleNotifications() {
 }
 
 async function unNouveauMessageArrive(
-  updateChatRef: (jeuneChat: JeuneChat) => void,
+  updateChatsRef: (chat: JeuneChat[]) => void,
   jeunes: JeuneFromListe[]
 ) {
   await act(async () => {
-    updateChatRef(
+    const [first, ...autres] = jeunes
+    updateChatsRef([
       unJeuneChat({
-        ...jeunes[0],
+        ...first,
         lastMessageSentBy: 'jeune',
-        chatId: `chat-${jeunes[0].id}`,
+        chatId: `chat-${first.id}`,
         lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
-      })
-    )
+      }),
+      ...autres.map((jeune) =>
+        unJeuneChat({
+          ...jeune,
+          chatId: `chat-${jeune.id}`,
+          seenByConseiller: true,
+        })
+      ),
+    ])
   })
 }

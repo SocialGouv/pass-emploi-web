@@ -48,7 +48,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
-  const destructorsRef = useRef<(() => void)[]>([])
+  const destructorRef = useRef<() => void>(() => undefined)
 
   const withChat = !withoutChat
 
@@ -93,36 +93,33 @@ export default function Layout({ children }: LayoutProps) {
       .signIn(chatCredentials.token)
       .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
       .then((jeunes) =>
-        jeunes.map((jeune) =>
-          messagesService.observeJeuneChat(
-            user.id,
-            jeune,
-            chatCredentials.cleChiffrement,
-            updateChats
-          )
+        messagesService.observeConseillerChats(
+          user.id,
+          chatCredentials.cleChiffrement,
+          jeunes,
+          updateChats
         )
       )
-      .then((destructors) => (destructorsRef.current = destructors))
+      .then((destructor) => (destructorRef.current = destructor))
 
-    return () => destructorsRef.current.forEach((destructor) => destructor())
+    return () => destructorRef.current()
 
-    function updateChats(updatedChat: JeuneChat) {
+    function updateChats(updatedChats: JeuneChat[]) {
       setChats((prevChats) => {
-        const chatIndex = prevChats.findIndex(
-          (chat) => chat.chatId === updatedChat.chatId
-        )
-        const updatedChats = [...prevChats]
+        updatedChats.forEach((updatedChat) => {
+          const chatIndex = prevChats.findIndex(
+            (chat) => chat.chatId === updatedChat.chatId
+          )
 
-        if (chatIndex !== -1) {
-          if (doitEmettreUnSon(prevChats[chatIndex], updatedChat)) {
+          if (
+            chatIndex !== -1 &&
+            doitEmettreUnSon(prevChats[chatIndex], updatedChat)
+          ) {
             audio?.play()
           }
-          updatedChats[chatIndex] = updatedChat
-        } else {
-          updatedChats.push(updatedChat)
-        }
-        updatedChats.sort(compareJeuneChat)
-        return updatedChats
+        })
+
+        return [...updatedChats].sort(compareJeuneChat)
       })
     }
 
