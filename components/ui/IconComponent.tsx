@@ -33,6 +33,7 @@ import InfoIcon from 'assets/icons/information.svg'
 import InfoOutlineIcon from 'assets/icons/information_outline.svg'
 import LaunchIcon from 'assets/icons/launch.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
+import MenuIcon from 'assets/icons/menu.svg'
 import PeopleIcon from 'assets/icons/people.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
 import RemoveIcon from 'assets/icons/remove.svg'
@@ -78,6 +79,7 @@ export enum IconName {
   InfoOutline = 'InfoOutline',
   Launch = 'Launch',
   Logout = 'Logout',
+  Menu = 'Menu',
   People = 'People',
   Profil = 'Profil',
   Remove = 'Remove',
@@ -124,6 +126,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.InfoOutline]: InfoOutlineIcon,
   [IconName.Launch]: LaunchIcon,
   [IconName.Logout]: LogoutIcon,
+  [IconName.Menu]: MenuIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.Remove]: RemoveIcon,

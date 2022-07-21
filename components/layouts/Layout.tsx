@@ -61,7 +61,10 @@ export default function Layout({ children }: LayoutProps) {
         }`}
       >
         <Sidebar />
-        <div ref={mainRef} className={styles.page}>
+        <div
+          ref={mainRef}
+          className={`${styles.page} ${withChat ? styles.page_when_chat : ''}`}
+        >
           <Header
             currentPath={router.asPath}
             returnTo={returnTo}

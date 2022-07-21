@@ -1,11 +1,14 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
+import Sidebar, { SidebarNav } from './Sidebar'
+
 import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import Conversation from 'components/Conversation'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import { ChatRoomTile } from 'components/messages/ChatRoomTile'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -60,10 +63,15 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
       {!currentChat && (
         <>
-          <h2 className={`text-m-medium text-primary text-left m-3`}>
-            Messagerie
-          </h2>
-          <span className='border-b border-grey_500 mx-4 mb-6'></span>
+          <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
+            <IconComponent
+              name={IconName.Menu}
+              className='absolute left-2 top-[calc(50%-1.25rem)] w-10 h-10 fill-primary layout_s:hidden'
+            />
+            <h2 className='text-m-medium text-primary text-center layout_s:text-left my-3 grow'>
+              Messagerie
+            </h2>
+          </div>
 
           <div className='mx-3'>
             <AlertDisplayer hideOnLargeScreen={true} />

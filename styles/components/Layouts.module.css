@@ -36,6 +36,10 @@
   overflow: auto;
 }
 
+.page.page_when_chat {
+  display: none;
+}
+
 .header {
   padding: 32px 48px;
   border-bottom: 1px solid theme('colors.primary_lighten');
@@ -76,6 +80,10 @@
   }
 
   .sidebar {
+    display: flex;
+  }
+
+  .page.page_when_chat {
     display: flex;
   }
 
