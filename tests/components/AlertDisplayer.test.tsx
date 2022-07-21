@@ -2,9 +2,8 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
-import { UserStructure } from '../../interfaces/conseiller'
-
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import { UserStructure } from 'interfaces/conseiller'
 import renderWithSession from 'tests/renderWithSession'
 
 describe('AlertDisplayer', () => {

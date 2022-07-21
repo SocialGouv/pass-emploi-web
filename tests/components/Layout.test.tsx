@@ -143,9 +143,6 @@ describe('<Layout />', () => {
     })
 
     it('subscribes to chats', () => {
-      // const cases = jeunes.map((jeune) => [jeune])
-
-      // it.each(cases)('subscribes to chat', async (jeune) => {
       // Then
       expect(messagesService.observeConseillerChats).toHaveBeenCalledWith(
         '1',

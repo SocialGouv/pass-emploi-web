@@ -43,19 +43,21 @@ describe('Intégration notifications sonores', () => {
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeConseillerChats: jest.fn((_, _cle, jeunes, fn) => {
-        updateChatsRef = fn
-        updateChatsRef(
-          jeunes.map((jeune) =>
-            unJeuneChat({
-              ...jeune,
-              chatId: `chat-${jeune.id}`,
-              seenByConseiller: true,
-            })
+      observeConseillerChats: jest.fn(
+        (_idConseiller, _cleChiffrement, jeunes, fn) => {
+          updateChatsRef = fn
+          updateChatsRef(
+            jeunes.map((jeune) =>
+              unJeuneChat({
+                ...jeune,
+                chatId: `chat-${jeune.id}`,
+                seenByConseiller: true,
+              })
+            )
           )
-        )
-        return () => {}
-      }),
+          return () => {}
+        }
+      ),
     })
     ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
       jeunes
