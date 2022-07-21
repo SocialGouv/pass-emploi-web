@@ -45,7 +45,7 @@ export function mockedMessagesService(
   const defaults: MessagesService = {
     getChatCredentials: jest.fn(),
     countMessagesNotRead: jest.fn(),
-    observeJeuneChat: jest.fn(),
+    observeConseillerChats: jest.fn(),
     observeJeuneReadingDate: jest.fn(),
     observeMessages: jest.fn(),
     setReadByConseiller: jest.fn(),
