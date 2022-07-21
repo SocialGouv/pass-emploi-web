@@ -1,12 +1,11 @@
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
-
-import Sidebar, { SidebarNav } from './Sidebar'
+import React, { useEffect, useRef, useState } from 'react'
 
 import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import Conversation from 'components/Conversation'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import Menu, { MenuItem } from 'components/Menu'
 import { ChatRoomTile } from 'components/messages/ChatRoomTile'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -33,6 +32,17 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
+  const [showMenu, setShowMenu] = useState<boolean>(false)
+  const closeMenuRef = useRef<HTMLButtonElement>(null)
+
+  function fermerMenu(): void {
+    setShowMenu(false)
+  }
+
+  function ouvrirMenu(): void {
+    setShowMenu(true)
+  }
+
   useEffect(() => {
     if (idCurrentJeune && session) {
       jeunesService
@@ -51,23 +61,65 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     }
   }, [jeunesChats, idCurrentJeune])
 
+  useEffect(() => {
+    if (showMenu) {
+      closeMenuRef.current!.focus()
+    }
+  }, [showMenu])
+
   return (
-    <article className={styles.chatRoom}>
+    <>
       {currentChat && (
-        <Conversation
-          onBack={() => setIdCurrentJeune(undefined)}
-          jeuneChat={currentChat}
-          conseillers={conseillers}
-        />
+        <article className={styles.chatRoom}>
+          <Conversation
+            onBack={() => setIdCurrentJeune(undefined)}
+            jeuneChat={currentChat}
+            conseillers={conseillers}
+          />
+        </article>
+      )}
+
+      {!currentChat && showMenu && (
+        <div
+          id='menu-mobile'
+          className='w-[50vw] flex flex-col bg-primary z-10 layout_s:hidden'
+        >
+          <button
+            ref={closeMenuRef}
+            type='button'
+            aria-controls='menu-mobile'
+            onClick={fermerMenu}
+            aria-label='Fermer menu'
+            className='m-7 w-fit'
+          >
+            <IconComponent
+              name={IconName.Close}
+              className='w-10 h-10 fill-blanc'
+              aria-hidden={true}
+              focusable={false}
+            />
+          </button>
+          <Menu forceLabels={true} items={[MenuItem.Aide]} />
+        </div>
       )}
 
       {!currentChat && (
-        <>
+        <article className={styles.chatRoom}>
           <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
-            <IconComponent
-              name={IconName.Menu}
-              className='absolute left-2 top-[calc(50%-1.25rem)] w-10 h-10 fill-primary layout_s:hidden'
-            />
+            <button
+              type='button'
+              onClick={ouvrirMenu}
+              aria-label='Ouvrir menu'
+              aria-controls='menu-mobile'
+              className='absolute left-2 top-[calc(50%-1.25rem)]'
+            >
+              <IconComponent
+                name={IconName.Menu}
+                className='w-10 h-10 fill-primary layout_s:hidden'
+                aria-hidden={true}
+                focusable={false}
+              />
+            </button>
             <h2 className='text-m-medium text-primary text-center layout_s:text-left my-3 grow'>
               Messagerie
             </h2>
@@ -122,8 +174,8 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               </Link>
             </>
           )}
-        </>
+        </article>
       )}
-    </article>
+    </>
   )
 }

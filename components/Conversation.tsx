@@ -316,7 +316,7 @@ export default function Conversation({
                 >
                   <IconComponent
                     name={IconName.RoundedClose}
-                    aria-hidden='false'
+                    aria-hidden='true'
                     focusable='false'
                     className='w-6 h-6 ml-2'
                   />

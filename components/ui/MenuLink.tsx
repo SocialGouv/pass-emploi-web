@@ -3,16 +3,17 @@ import Link from 'next/link'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface NavLinkProps {
-  isActive?: boolean
   href: string
   label: string | null
   iconName: IconName
+  forceLabel: boolean
+  isActive?: boolean
   className?: string
   onClick?: any
   isExternal?: boolean
 }
 
-function NavbarLink({
+function MenuLink({
   isActive,
   href,
   label,
@@ -20,6 +21,7 @@ function NavbarLink({
   className,
   onClick,
   isExternal = false,
+  forceLabel = false,
 }: NavLinkProps) {
   const linkStyle = `flex p-2 mb-6 items-center justify-center rounded-medium layout_l:justify-start ${
     isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
@@ -31,22 +33,47 @@ function NavbarLink({
         <span className='text-[24px] font-bold leading-6 text-primary'>·</span>
       )}
 
-      <IconComponent
-        focusable='false'
-        aria-hidden='true'
-        className={`mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 ${
-          isActive ? 'fill-primary' : 'fill-blanc'
-        }`}
-        name={iconName}
-      />
+      {forceLabel && (
+        <>
+          <IconComponent
+            focusable='false'
+            aria-hidden='true'
+            className={`w-6 h-6 mr-2 ${
+              isActive ? 'fill-primary' : 'fill-blanc'
+            }`}
+            name={iconName}
+          />
 
-      <span
-        className={`text-md text-left sr-only layout_l:not-sr-only break-words ${
-          className ?? ''
-        } ${isActive ? 'text-primary' : 'text-blanc'}`}
-      >
-        {label}
-      </span>
+          <span
+            className={`text-md text-left break-words ${className ?? ''} ${
+              isActive ? 'text-primary' : 'text-blanc'
+            }`}
+          >
+            {label}
+          </span>
+        </>
+      )}
+
+      {!forceLabel && (
+        <>
+          <IconComponent
+            focusable='false'
+            aria-hidden='true'
+            className={`mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 ${
+              isActive ? 'fill-primary' : 'fill-blanc'
+            }`}
+            name={iconName}
+          />
+
+          <span
+            className={`text-md text-left sr-only layout_l:not-sr-only break-words ${
+              className ?? ''
+            } ${isActive ? 'text-primary' : 'text-blanc'}`}
+          >
+            {label}
+          </span>
+        </>
+      )}
     </>
   )
   return (
@@ -80,4 +107,4 @@ function NavbarLink({
   )
 }
 
-export default NavbarLink
+export default MenuLink
