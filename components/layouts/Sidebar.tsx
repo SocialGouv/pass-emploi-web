@@ -2,8 +2,9 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import Logo from '../../assets/images/logo_app_cej.svg'
+import { useLeanBeWidget } from '../../utils/useLeanBeWidget'
 
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import NavbarLink from 'components/ui/NavbarLink'
 import { UserStructure } from 'interfaces/conseiller'
 import styles from 'styles/components/Layouts.module.css'
@@ -29,6 +30,7 @@ export default function Sidebar({}: SidebarProps) {
     window.location.href = '/api/auth/federated-logout'
   }
 
+  useLeanBeWidget()
   useMatomo(isLoggedOut ? 'Clic déconnexion' : undefined)
 
   return (
@@ -78,6 +80,17 @@ export default function Sidebar({}: SidebarProps) {
             iconName={IconName.Aide}
             isExternal={true}
           />
+          <div className='SGBF-open-62d9a8c109e8ad0013a04752'>
+            <IconComponent
+              focusable='false'
+              aria-hidden='true'
+              className='mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 fill-blanc'
+              name={IconName.InfoOutline}
+            />
+            <span className='text-md text-left sr-only layout_l:not-sr-only break-words text-blanc'>
+              Nouveautés
+            </span>
+          </div>
         </div>
         <div className='flex flex-col'>
           {session && (
