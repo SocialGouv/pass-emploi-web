@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import ChatRoom from './ChatRoom'
-
+import ChatRoom from 'components/layouts/ChatRoom'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -14,10 +13,10 @@ import { useDependance } from 'utils/injectionDependances'
 const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
 export default function ChatContainer({
-  withChat,
+  displayChat,
   setHasMessageNonLu,
 }: {
-  withChat: boolean
+  displayChat: boolean
   setHasMessageNonLu: (value: boolean) => void
 }) {
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -33,13 +32,11 @@ export default function ChatContainer({
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const destructorRef = useRef<() => void>(() => undefined)
 
-  function hasMessageNonLu(): boolean {
-    return chats.some(
+  function hasMessageNonLu(updatedChats: JeuneChat[]): boolean {
+    return updatedChats.some(
       (chat) => !chat.seenByConseiller && chat.lastMessageContent
     )
   }
-
-  setHasMessageNonLu(hasMessageNonLu())
 
   function aUnNouveauMessage(previousChat: JeuneChat, updatedChat: JeuneChat) {
     return (
@@ -90,17 +87,18 @@ export default function ChatContainer({
     function updateChats(updatedChats: JeuneChat[]) {
       setChats((prevChats) => {
         updatedChats.forEach((updatedChat) => {
-          const chatIndex = prevChats.findIndex(
+          const prevChat = prevChats.find(
             (chat) => chat.chatId === updatedChat.chatId
           )
 
-          if (chatIndex !== -1) {
-            if (doitEmettreUnSon(prevChats[chatIndex], updatedChat)) {
+          if (prevChat) {
+            if (doitEmettreUnSon(prevChat, updatedChat)) {
               audio?.play()
             }
           }
         })
 
+        setHasMessageNonLu(hasMessageNonLu(updatedChats))
         return [...updatedChats].sort(compareJeuneChat)
       })
     }
@@ -118,7 +116,8 @@ export default function ChatContainer({
     chatCredentials,
     audio,
     conseiller,
+    setHasMessageNonLu,
   ])
 
-  return withChat ? <ChatRoom jeunesChats={chats} /> : <></>
+  return displayChat ? <ChatRoom jeunesChats={chats} /> : <></>
 }

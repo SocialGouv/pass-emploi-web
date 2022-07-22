@@ -34,7 +34,6 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     // https://dev.to/admitkard/mobile-issue-with-100vh-height-100-100vh-3-solutions-3nae
-
     function resizeContainerToInnerHeight() {
       if (containerRef.current) {
         containerRef.current.style.height = `${window.innerHeight}px`
@@ -82,10 +81,8 @@ export default function Layout({ children }: LayoutProps) {
           <Footer />
         </div>
         <ChatContainer
-          withChat={withChat}
-          setHasMessageNonLu={(value) => {
-            setHasMessageNonLu(value)
-          }}
+          displayChat={withChat}
+          setHasMessageNonLu={setHasMessageNonLu}
         />
       </div>
       <div id='modal-root' />
