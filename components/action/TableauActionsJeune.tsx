@@ -24,14 +24,14 @@ interface TableauActionsJeuneProps {
   tri: TRI
 }
 
-export const TableauActionsJeune = ({
+export default function TableauActionsJeune({
   jeune,
   actions,
   isLoading,
   onFiltres,
   onTri,
   tri,
-}: TableauActionsJeuneProps) => {
+}: TableauActionsJeuneProps) {
   const [afficherStatut, setAfficherStatut] = useState<boolean>(false)
   const [statutsSelectionnes, setStatutsSelectionnes] = useState<
     StatutAction[]
@@ -160,7 +160,7 @@ export const TableauActionsJeune = ({
                 <EmptyStateImage
                   focusable='false'
                   aria-hidden='true'
-                  className='m-auto w-[150px] h-[150px]'
+                  className='m-auto w-[200px] h-[200px]'
                 />
                 <p className='text-md-semi text-center'>
                   Aucune action ne correspondant aux filtres.
@@ -169,7 +169,7 @@ export const TableauActionsJeune = ({
                   type='button'
                   style={ButtonStyle.PRIMARY}
                   onClick={reinitialiserFiltres}
-                  className='m-auto mt-2'
+                  className='m-auto mt-8'
                 >
                   Réinitialiser les filtres
                 </Button>
