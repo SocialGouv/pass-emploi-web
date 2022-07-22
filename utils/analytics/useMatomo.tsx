@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 
 import { UserStructure } from 'interfaces/conseiller'
-import { track } from 'utils/analytics/matomo'
+import { trackPage } from 'utils/analytics/matomo'
 import useSession from 'utils/auth/useSession'
 
-function userStructureDimensionString(loginMode: string): string {
+export function userStructureDimensionString(loginMode: string): string {
   switch (loginMode) {
     case UserStructure.MILO:
       return 'Mission Locale'
@@ -26,7 +26,7 @@ function useMatomo(title: string | undefined) {
       ? 'visiteur'
       : userStructureDimensionString(session.user.structure)
 
-    track({
+    trackPage({
       structure: structure,
       customTitle: title,
     })

@@ -20,6 +20,7 @@ import {
   FormNouveauMessageIndividuel,
   MessagesService,
 } from 'services/messages.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
@@ -218,9 +219,15 @@ export default function Conversation({
               : 'Suivre la conversation'
           }
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={() =>
+          onClick={() => {
             toggleFlag(jeuneChat.chatId, !jeuneChat.flaggedByConseiller)
-          }
+            trackEvent({
+              session: session,
+              categorie: 'Conversation suivie',
+              action: 'Conversation',
+              nom: (!jeuneChat.flaggedByConseiller).toString(),
+            })
+          }}
         >
           <IconComponent
             name={
