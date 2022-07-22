@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { TRI } from 'components/action/OngletActions'
-import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import { uneListeDActions } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { StatutAction } from 'interfaces/action'
