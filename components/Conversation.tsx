@@ -9,6 +9,7 @@ import React, {
 
 import DisplayMessage from 'components/messages/DisplayMessage'
 import BulleMessageSensible from 'components/ui/BulleMessageSensible'
+import IconCheckbox from 'components/ui/IconCheckbox'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
@@ -32,12 +33,14 @@ type ConversationProps = {
   conseillers: ConseillerHistorique[]
   jeuneChat: JeuneChat
   onBack: () => void
+  onToggleFlag: (flagged: boolean) => void
 }
 
 export default function Conversation({
   jeuneChat,
   conseillers,
   onBack,
+  onToggleFlag,
 }: ConversationProps) {
   const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
@@ -99,12 +102,9 @@ export default function Conversation({
     [messagesService]
   )
 
-  const toggleFlag = useCallback(
-    (idChatToUpdate: string, flagged: boolean) => {
-      messagesService.toggleFlag(idChatToUpdate, flagged)
-    },
-    [messagesService]
-  )
+  function toggleFlag() {
+    onToggleFlag(!jeuneChat.flaggedByConseiller)
+  }
 
   const observerMessages = useCallback(
     (idChatToObserve: string) => {
@@ -206,31 +206,16 @@ export default function Conversation({
         <h2 className='w-full text-left text-primary text-m-medium'>
           Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
         </h2>
-        <button
-          aria-label={
-            jeuneChat.flaggedByConseiller
-              ? 'Ne plus suivre la conversation'
-              : 'Suivre la conversation'
-          }
-          title={
-            jeuneChat.flaggedByConseiller
-              ? 'Ne plus suivre la conversation'
-              : 'Suivre la conversation'
-          }
-          className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={() =>
-            toggleFlag(jeuneChat.chatId, !jeuneChat.flaggedByConseiller)
-          }
-        >
-          <IconComponent
-            name={
-              jeuneChat.flaggedByConseiller
-                ? IconName.FlagFilled
-                : IconName.Flag
-            }
-            className='w-6 h-6 fill-primary'
-          />
-        </button>
+        <IconCheckbox
+          id={`${jeuneChat.id}--flag`}
+          checked={jeuneChat.flaggedByConseiller}
+          checkedIconName={IconName.FlagFilled}
+          uncheckedIconName={IconName.Flag}
+          checkedLabel='Ne plus suivre la conversation'
+          uncheckedLabel='Suivre la conversation'
+          onChange={toggleFlag}
+          className='w-6 h-6 fill-primary'
+        />
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 

@@ -30,6 +30,10 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
+  function toggleSuiviConversation(idChat: string, flagged: boolean): void {
+    messagesService.toggleFlag(idChat, flagged)
+  }
+
   useEffect(() => {
     if (idCurrentJeune && session) {
       jeunesService
@@ -52,9 +56,12 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     <article className={styles.chatRoom}>
       {currentChat && (
         <Conversation
-          onBack={() => setIdCurrentJeune(undefined)}
           jeuneChat={currentChat}
           conseillers={conseillers}
+          onBack={() => setIdCurrentJeune(undefined)}
+          onToggleFlag={(flagged) =>
+            toggleSuiviConversation(currentChat.id, flagged)
+          }
         />
       )}
 
@@ -92,7 +99,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                       id={`chat-${jeuneChat.id}`}
                       onClick={() => setIdCurrentJeune(jeuneChat.id)}
                       onToggleFlag={(flagged) =>
-                        messagesService.toggleFlag(jeuneChat.chatId, flagged)
+                        toggleSuiviConversation(jeuneChat.chatId, flagged)
                       }
                     />
                   </li>

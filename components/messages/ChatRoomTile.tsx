@@ -69,7 +69,7 @@ export function ChatRoomTile({
         checkedLabel='Ne plus suivre la conversation'
         uncheckedLabel='Suivre la conversation'
         onChange={toggleFollowMessage}
-        className='absolute top-3 right-3 w-4 h-4 fill-primary'
+        className='absolute top-3 right-3 w-6 h-6 fill-primary'
       />
     </div>
   )
