@@ -4,6 +4,8 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { RefreshAccessTokenError } from 'utils/auth/authenticator'
+
 export async function withMandatorySessionOrRedirect({
   req,
   resolvedUrl,
@@ -36,7 +38,7 @@ export async function withMandatorySessionOrRedirect({
     }
   }
 
-  if (session.error === 'RefreshAccessTokenError') {
+  if (session.error === RefreshAccessTokenError) {
     return {
       redirect: {
         destination: `/api/auth/federated-logout`,
