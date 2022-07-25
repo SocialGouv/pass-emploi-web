@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -12,8 +12,8 @@ import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
 import { ActionsService } from 'services/actions.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -31,11 +31,11 @@ describe("Page Détail d'une action d'un jeune", () => {
     beforeEach(() => {
       actionsService = mockedActionsService({
         updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
+        deleteAction: jest.fn(),
       })
-      render(
-        <DIProvider dependances={{ actionsService }}>
-          <PageAction action={action} jeune={jeune} pageTitle='' />
-        </DIProvider>
+      renderWithContexts(
+        <PageAction action={action} jeune={jeune} pageTitle='' />,
+        { customDependances: { actionsService } }
       )
     })
 

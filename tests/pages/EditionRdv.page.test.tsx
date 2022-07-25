@@ -1,9 +1,8 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
@@ -13,10 +12,9 @@ import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -203,20 +201,18 @@ describe('EditionRdv', () => {
     describe('contenu', () => {
       beforeEach(() => {
         // When
-        render(
-          <DIProvider dependances={{ rendezVousService }}>
-            <ConseillerProvider
-              conseiller={unConseiller({ email: 'fake@email.com' })}
-            >
-              <EditionRdv
-                jeunes={jeunes}
-                typesRendezVous={typesRendezVous}
-                withoutChat={true}
-                returnTo={'/mes-rendezvous'}
-                pageTitle={''}
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous'}
+            pageTitle={''}
+          />,
+          {
+            customDependances: { rendezVousService },
+            customConseiller: { email: 'fake@email.com' },
+          }
         )
       })
 
@@ -711,19 +707,16 @@ describe('EditionRdv', () => {
         const jeuneFullname = getNomJeuneComplet(jeunes[2])
 
         // When
-        render(
-          <DIProvider dependances={{ rendezVousService }}>
-            <ConseillerProvider conseiller={unConseiller()}>
-              <EditionRdv
-                jeunes={jeunes}
-                typesRendezVous={typesRendezVous}
-                withoutChat={true}
-                returnTo={'/mes-rendezvous'}
-                idJeune={idJeune}
-                pageTitle={''}
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous'}
+            idJeune={idJeune}
+            pageTitle={''}
+          />,
+          { customDependances: { rendezVousService } }
         )
 
         // Then
@@ -762,19 +755,16 @@ describe('EditionRdv', () => {
         rdv = unRendezVous({ jeunes: [jeune0, jeune2] })
 
         // When
-        render(
-          <DIProvider dependances={{ rendezVousService }}>
-            <ConseillerProvider conseiller={unConseiller()}>
-              <EditionRdv
-                jeunes={jeunes}
-                typesRendezVous={typesRendezVous}
-                withoutChat={true}
-                returnTo={'/mes-rendezvous?creationRdv=succes'}
-                rdv={rdv}
-                pageTitle={''}
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            rdv={rdv}
+            pageTitle={''}
+          />,
+          { customDependances: { rendezVousService } }
         )
       })
 
@@ -1043,19 +1033,16 @@ describe('EditionRdv', () => {
         })
 
         // When
-        render(
-          <DIProvider dependances={{ rendezVousService }}>
-            <ConseillerProvider conseiller={unConseiller()}>
-              <EditionRdv
-                jeunes={jeunes}
-                typesRendezVous={typesRendezVous}
-                withoutChat={true}
-                returnTo={'/mes-rendezvous?creationRdv=succes'}
-                rdv={rdv}
-                pageTitle={''}
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            rdv={rdv}
+            pageTitle={''}
+          />,
+          { customDependances: { rendezVousService } }
         )
       })
 

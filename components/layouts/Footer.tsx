@@ -5,7 +5,7 @@ import { liens } from 'referentiel/liens'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 
-export const Footer = () => {
+export default function Footer() {
   const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
 
   useMatomo(labelMatomo)

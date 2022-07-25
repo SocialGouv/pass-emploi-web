@@ -10,10 +10,12 @@ import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDoss
 import SuccessAddJeuneMilo from 'components/jeune/SuccessAddJeuneMilo'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
+import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { Container } from 'utils/injectionDependances'
+import { Container, useDependance } from 'utils/injectionDependances'
 
 interface MiloCreationJeuneProps extends PageProps {
   dossierId: string
@@ -26,11 +28,23 @@ function MiloCreationJeune({
   dossier,
   erreurMessageHttpMilo,
 }: MiloCreationJeuneProps) {
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
+
   const [etape, setEtape] = useState(1)
   const [createdSucessId, setCreatedSucessId] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string>(
     erreurMessageHttpMilo
   )
+
+  async function creerCompteJeune(newJeune: JeuneMiloFormData) {
+    try {
+      const { id } = await conseillerService.createCompteJeuneMilo(newJeune)
+      setCreatedSucessId(id)
+    } catch (error) {
+      setErreurMessage((error as Error).message)
+    }
+  }
 
   useMatomo(
     erreurMessageHttpMilo
@@ -109,8 +123,7 @@ function MiloCreationJeune({
         {dossier && (
           <DossierJeuneMilo
             dossier={dossier}
-            onCreatedSuccess={(id) => setCreatedSucessId(id)}
-            onCreatedError={(message) => setErreurMessage(message)}
+            onCreateCompte={creerCompteJeune}
             erreurMessageHttpPassEmploi={erreurMessage || ''}
           />
         )}

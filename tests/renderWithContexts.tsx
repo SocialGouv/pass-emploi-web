@@ -2,7 +2,6 @@ import { render, RenderResult } from '@testing-library/react'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
-import { uneBaseJeune } from 'fixtures/jeune'
 import {
   mockedActionsService,
   mockedAgencesService,
@@ -19,17 +18,19 @@ import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 import { Dependencies } from 'utils/injectionDependances/container'
 
-export default function renderPage(
+export default function renderWithContexts(
   children: JSX.Element,
   options: {
     customDependances?: Partial<Dependencies>
     customConseiller?: Partial<Conseiller>
-    idJeuneSetter?: (id: string | undefined) => void
+    customCurrentJeune?: Partial<{
+      id: string
+      idSetter: (id: string | undefined) => void
+    }>
   } = {}
 ): RenderResult {
-  const { customDependances, customConseiller, idJeuneSetter } = options
-
-  const defaultDependances: Dependencies = {
+  const { customDependances, customConseiller, customCurrentJeune } = options
+  const dependances: Dependencies = {
     actionsService: mockedActionsService(),
     agencesService: mockedAgencesService(),
     conseillerService: mockedConseillerService(),
@@ -37,13 +38,37 @@ export default function renderPage(
     jeunesService: mockedJeunesService(),
     messagesService: mockedMessagesService(),
     rendezVousService: mockedRendezVousService(),
+    ...customDependances,
   }
 
-  const dependances = { ...defaultDependances, ...customDependances }
+  const conseiller = unConseiller(customConseiller)
 
-  return render(
+  const currentJeune = { ...customCurrentJeune }
+
+  const withContexts = (element: JSX.Element) =>
+    provideContexts(element, dependances, conseiller, currentJeune)
+
+  const renderResult: RenderResult = render(withContexts(children))
+
+  const rerender = renderResult.rerender
+  renderResult.rerender = (rerenderChildren: JSX.Element) =>
+    rerender(withContexts(rerenderChildren))
+
+  return renderResult
+}
+
+function provideContexts(
+  children: JSX.Element,
+  dependances: Dependencies,
+  conseiller: Conseiller,
+  currentJeune: Partial<{
+    id: string
+    idSetter: (id: string | undefined) => void
+  }>
+) {
+  return (
     <DIProvider dependances={dependances}>
-      <ConseillerProvider conseiller={unConseiller(customConseiller)}>
+      <ConseillerProvider conseiller={conseiller}>
         <ChatCredentialsProvider
           credentials={{
             token: 'firebaseToken',
@@ -51,8 +76,8 @@ export default function renderPage(
           }}
         >
           <CurrentJeuneProvider
-            idJeune={uneBaseJeune().id}
-            setIdJeune={idJeuneSetter}
+            idJeune={currentJeune.id}
+            setIdJeune={currentJeune.idSetter}
           >
             {children}
           </CurrentJeuneProvider>
