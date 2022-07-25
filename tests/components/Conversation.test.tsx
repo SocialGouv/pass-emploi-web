@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { Session } from 'next-auth'
 import React from 'react'
 
-import Conversation from 'components/Conversation'
+import Conversation from 'components/chat/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'

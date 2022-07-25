@@ -2,19 +2,18 @@ import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import { MessagesService } from '../../services/messages.service'
-
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import ChatRoom from 'components/layouts/ChatRoom'
+import ChatRoom from 'components/chat/ChatRoom'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import renderWithSession from 'tests/renderWithSession'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 
-jest.mock('components/Conversation', () =>
+jest.mock('components/chat/Conversation', () =>
   jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
 )
 jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))

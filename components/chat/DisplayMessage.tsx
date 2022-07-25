@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { LienOffre } from 'components/messages/LienOffre'
-import { LienPieceJointe } from 'components/messages/LienPieceJointe'
+import { LienOffre } from 'components/chat/LienOffre'
+import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
 import { formatHourMinuteDate, isDateOlder } from 'utils/date'

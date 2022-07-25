@@ -2,8 +2,8 @@ import { act, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
 import AppHead from 'components/AppHead'
+import ChatRoom from 'components/chat/ChatRoom'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import ChatRoom from 'components/layouts/ChatRoom'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
@@ -22,7 +22,7 @@ import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
-jest.mock('components/layouts/ChatRoom', () => jest.fn(() => <></>))
+jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 

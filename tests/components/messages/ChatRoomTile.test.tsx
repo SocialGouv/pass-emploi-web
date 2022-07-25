@@ -2,7 +2,7 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import { ChatRoomTile } from 'components/messages/ChatRoomTile'
+import { ChatRoomTile } from 'components/chat/ChatRoomTile'
 import { unJeuneChat } from 'fixtures/jeune'
 import renderWithSession from 'tests/renderWithSession'
 

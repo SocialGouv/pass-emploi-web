@@ -1,18 +1,14 @@
-import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 
-import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
-import EmptyStateImage from 'assets/images/empty_state.svg'
-import Conversation from 'components/Conversation'
+import Conversation from 'components/chat/Conversation'
+import ListeConversations from 'components/chat/ListeConversations'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import Menu, { MenuItem } from 'components/Menu'
-import { ChatRoomTile } from 'components/messages/ChatRoomTile'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
-import linkStyle from 'styles/components/Link.module.css'
 import useSession from 'utils/auth/useSession'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useDependance } from 'utils/injectionDependances'
@@ -129,51 +125,11 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <AlertDisplayer hideOnLargeScreen={true} />
           </div>
 
-          {!jeunesChats.length && (
-            <div className='h-full overflow-y-auto bg-grey_100 flex flex-col justify-center items-center'>
-              <EmptyStateImage
-                focusable='false'
-                aria-hidden='true'
-                className='w-[360px] h-[200px]'
-              />
-              <p className='mt-4 text-md-semi w-2/3 text-center'>
-                Vous devriez avoir des jeunes inscrits pour discuter avec eux
-              </p>
-            </div>
-          )}
-
-          {jeunesChats.length > 0 && (
-            <>
-              <ul className='h-full overflow-y-auto px-4 pb-24'>
-                {jeunesChats.map((jeuneChat: JeuneChat) => (
-                  <li key={`chat-${jeuneChat.id}`} className='mb-2'>
-                    <ChatRoomTile
-                      jeuneChat={jeuneChat}
-                      id={`chat-${jeuneChat.id}`}
-                      onClick={() => setIdCurrentJeune(jeuneChat.id)}
-                      onToggleFlag={(flagged) =>
-                        messagesService.toggleFlag(jeuneChat.chatId, flagged)
-                      }
-                    />
-                  </li>
-                ))}
-              </ul>
-              {/*FIXME : use <ButtonLink/> but causes problem with tailwind and style order*/}
-
-              <Link href={'/mes-jeunes/envoi-message-groupe'}>
-                <a
-                  className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
-                >
-                  <MessageGroupeIcon
-                    aria-hidden='true'
-                    focusable='false'
-                    className='mr-2'
-                  />
-                  Message multi-destinataires
-                </a>
-              </Link>
-            </>
-          )}
+          <ListeConversations
+            conversations={jeunesChats}
+            onToggleFlag={messagesService.toggleFlag}
+            onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
+          />
         </article>
       )}
     </>
