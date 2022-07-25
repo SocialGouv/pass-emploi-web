@@ -2,19 +2,15 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import { unConseiller } from 'fixtures/conseiller'
 import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
 import {
   mockedConseillerService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { StructureConseiller } from 'interfaces/conseiller'
 import MesJeunes from 'pages/mes-jeunes'
 import { ConseillerService } from 'services/conseiller.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithChatCredentials from 'tests/renderWithChatCredentials'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Recherche', () => {
   let messagesService: MessagesService
@@ -30,18 +26,12 @@ describe('Recherche', () => {
     })
     conseillerService = mockedConseillerService()
 
-    await act(async () => {
-      await renderWithChatCredentials(
-        <DIProvider dependances={{ messagesService, conseillerService }}>
-          <ConseillerProvider conseiller={unConseiller()}>
-            <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-            />
-          </ConseillerProvider>
-        </DIProvider>
+    await act(() => {
+      renderWithContexts(
+        <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
+        {
+          customDependances: { messagesService, conseillerService },
+        }
       )
     })
   })
@@ -78,43 +68,37 @@ describe('Recherche', () => {
     })
 
     it('quand on recherche un nom avec des caractères spéciaux', async () => {
-      //GIVEN
-      await userEvent.type(inputSearch, 'muñoz')
-
       //WHEN
+      await userEvent.type(inputSearch, 'muñoz')
       await userEvent.click(submitButton)
 
+      //THEN
       const result = screen.getByRole('row', {
         name: /muñoz/i,
       })
-
-      //THEN
       expect(result).toBeInTheDocument()
     })
+
     it("quand on recherche un nom composé d'un espace et/ou avec tiret", async () => {
-      const result = screen.getByRole('row', {
-        name: /D'Aböville-Muñoz François/i,
-      })
-
-      await userEvent.type(inputSearch, "D'Aböville-Muñoz")
-
       //WHEN
+      await userEvent.type(inputSearch, "D'Aböville-Muñoz")
       await userEvent.click(submitButton)
 
       //THEN
+      const result = screen.getByRole('row', {
+        name: /D'Aböville-Muñoz François/i,
+      })
       expect(result).toBeInTheDocument()
     })
     it("quand on recherche un nom composé d'une apostrophe", async () => {
-      const result = screen.getByRole('row', {
-        name: /D'Aböville-Muñoz François/i,
-      })
-
-      await userEvent.type(inputSearch, 'D aböville-Muñoz')
-
       //WHEN
+      await userEvent.type(inputSearch, 'D aböville-Muñoz')
       await userEvent.click(submitButton)
 
       //THEN
+      const result = screen.getByRole('row', {
+        name: /D'Aböville-Muñoz François/i,
+      })
       expect(result).toBeInTheDocument()
     })
   })

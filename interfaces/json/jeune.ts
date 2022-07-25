@@ -160,3 +160,16 @@ export function jsonToMetadonneesFavoris({
     },
   }
 }
+
+export interface JeunePoleEmploiFormData {
+  prenom: string
+  nom: string
+  email: string
+}
+
+export interface JeuneMiloFormData {
+  idDossier: string
+  nom: string
+  prenom: string
+  email?: string
+}

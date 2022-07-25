@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { unConseiller } from 'fixtures/conseiller'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -20,14 +20,12 @@ describe('MesRendezvous', () => {
     const rendezVousFuturs = desRdvListItems()
     describe('contenu', () => {
       beforeEach(() => {
-        render(
-          <ConseillerProvider conseiller={unConseiller()}>
-            <MesRendezvous
-              rendezVousFuturs={rendezVousFuturs}
-              rendezVousPasses={rendezVousPasses}
-              pageTitle=''
-            />
-          </ConseillerProvider>
+        renderWithContexts(
+          <MesRendezvous
+            rendezVousFuturs={rendezVousFuturs}
+            rendezVousPasses={rendezVousPasses}
+            pageTitle=''
+          />
         )
       })
 

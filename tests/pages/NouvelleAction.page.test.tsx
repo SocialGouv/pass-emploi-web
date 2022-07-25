@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -9,8 +9,8 @@ import NouvelleAction, {
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
@@ -70,17 +70,10 @@ describe('NouvelleAction', () => {
       actionsService = mockedActionsService()
 
       // When
-      await act(async () => {
-        render(
-          <DIProvider dependances={{ actionsService }}>
-            <NouvelleAction
-              idJeune='id-jeune'
-              withoutChat={true}
-              pageTitle=''
-            />
-          </DIProvider>
-        )
-      })
+      renderWithContexts(
+        <NouvelleAction idJeune='id-jeune' withoutChat={true} pageTitle='' />,
+        { customDependances: { actionsService } }
+      )
     })
 
     it("permet d'annuler la création de l'action", () => {

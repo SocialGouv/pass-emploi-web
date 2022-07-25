@@ -14,9 +14,7 @@ import Profil from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithChatCredentials from 'tests/renderWithChatCredentials'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
+import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
@@ -65,8 +63,8 @@ describe('Intégration notifications sonores', () => {
   describe('quand le conseiller active ses notification', () => {
     it("il reçoit bien une notification lors d'un nouveau message.", async () => {
       // Given
-      await act(async () => {
-        await renderWithNotificationsSonores(
+      await act(() => {
+        renderWithNotificationsSonores(
           jeunesService,
           conseillerService,
           messagesService,
@@ -88,8 +86,8 @@ describe('Intégration notifications sonores', () => {
   describe('quand le conseiller désactive ses notification', () => {
     it("il ne reçoit pas de notification lors d'un nouveau message.", async () => {
       // Given
-      await act(async () => {
-        await renderWithNotificationsSonores(
+      await act(() => {
+        renderWithNotificationsSonores(
           jeunesService,
           conseillerService,
           messagesService,
@@ -109,26 +107,22 @@ describe('Intégration notifications sonores', () => {
   })
 })
 
-async function renderWithNotificationsSonores(
+function renderWithNotificationsSonores(
   jeunesService: JeunesService,
   conseillerService: ConseillerService,
   messagesService: MessagesService,
   notificationsSonores: boolean
 ) {
-  await renderWithChatCredentials(
-    <DIProvider
-      dependances={{ jeunesService, conseillerService, messagesService }}
-    >
-      <ConseillerProvider
-        conseiller={unConseiller({
-          notificationsSonores: notificationsSonores,
-        })}
-      >
-        <Layout>
-          <Profil pageTitle={'Profil'} />
-        </Layout>
-      </ConseillerProvider>
-    </DIProvider>
+  renderWithContexts(
+    <Layout>
+      <Profil pageTitle={'Profil'} />
+    </Layout>,
+    {
+      customDependances: { jeunesService, conseillerService, messagesService },
+      customConseiller: unConseiller({
+        notificationsSonores: notificationsSonores,
+      }),
+    }
   )
 }
 

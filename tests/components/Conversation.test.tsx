@@ -1,21 +1,17 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 
 import Conversation from 'components/chat/Conversation'
-import { unConseiller } from 'fixtures/conseiller'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { MessagesOfADay } from 'interfaces/message'
+import React from 'react'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithChatCredentials from 'tests/renderWithChatCredentials'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import renderWithContexts from 'tests/renderWithContexts'
 import { formatDayDate } from 'utils/date'
-import { DIProvider } from 'utils/injectionDependances'
-import { Dependencies } from 'utils/injectionDependances/container'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
@@ -52,12 +48,13 @@ describe('<Conversation />', () => {
     }
 
     await act(async () => {
-      const renderResult = await renderWithChatCredentials(
-        buildConversation(
-          { messagesService, fichiersService },
-          jeuneChat,
-          conseillersJeunes
-        )
+      const renderResult = renderWithContexts(
+        <Conversation
+          jeuneChat={jeuneChat}
+          conseillers={conseillersJeunes}
+          onBack={jest.fn()}
+        />,
+        { customDependances: { messagesService, fichiersService } }
       )
       rerender = renderResult.rerender
     })
@@ -101,11 +98,11 @@ describe('<Conversation />', () => {
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
-      buildConversation(
-        { messagesService, fichiersService },
-        newJeuneChat,
-        conseillersJeunes
-      )
+      <Conversation
+        jeuneChat={newJeuneChat}
+        conseillers={conseillersJeunes}
+        onBack={jest.fn()}
+      />
     )
     // Then
     expect(() => screen.getByText('imageupload.png')).toThrow()
@@ -251,21 +248,3 @@ describe('<Conversation />', () => {
     })
   })
 })
-
-function buildConversation(
-  dependances: Partial<Dependencies>,
-  jeuneChat: JeuneChat,
-  conseillersJeunes: ConseillerHistorique[]
-): JSX.Element {
-  return (
-    <DIProvider dependances={dependances}>
-      <ConseillerProvider conseiller={unConseiller()}>
-        <Conversation
-          jeuneChat={jeuneChat}
-          conseillers={conseillersJeunes}
-          onBack={jest.fn()}
-        />
-      </ConseillerProvider>
-    </DIProvider>
-  )
-}

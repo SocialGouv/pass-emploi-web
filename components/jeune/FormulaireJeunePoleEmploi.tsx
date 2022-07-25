@@ -1,14 +1,13 @@
 import { FormEvent, useEffect, useState } from 'react'
 
-import { RequiredValue } from '../RequiredValue'
-
+import { RequiredValue } from 'components/RequiredValue'
 import Button from 'components/ui/Button'
 import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
-import { JeunePoleEmploiFormData } from 'interfaces/jeune'
+import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import isEmailValid from 'utils/isEmailValid'
 
 type FormulaireJeunePoleEmploiProps = {
-  creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => Promise<void>
+  creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => void
   creationError: string
   creationEnCours: boolean
 }
@@ -66,7 +65,7 @@ function FormulaireJeunePoleEmploi({
     return isValid
   }
 
-  const handleJeuneSubmit = (e: FormEvent<HTMLFormElement>) => {
+  function handleJeuneSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const isValid = validate()
     if (isValid && !creationEnCours) {
