@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import ChatRoom from 'components/layouts/ChatRoom'
+import ChatRoom from 'components/chat/ChatRoom'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'

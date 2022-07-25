@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react'
 
-import DisplayMessage from 'components/messages/DisplayMessage'
+import DisplayMessage from 'components/chat/DisplayMessage'
 import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
@@ -316,7 +316,7 @@ export default function Conversation({
                 >
                   <IconComponent
                     name={IconName.RoundedClose}
-                    aria-hidden='false'
+                    aria-hidden='true'
                     focusable='false'
                     className='w-6 h-6 ml-2'
                   />
