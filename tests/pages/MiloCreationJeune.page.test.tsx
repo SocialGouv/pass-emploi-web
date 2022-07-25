@@ -1,4 +1,4 @@
-import { RenderResult, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { unDossierMilo } from 'fixtures/milo'
@@ -69,7 +69,6 @@ describe('MiloCreationJeune', () => {
   })
 
   describe('quand on clique sur le bouton créer un compte', () => {
-    let page: RenderResult
     let conseillerService: ConseillerService
     it("devrait afficher les informations de succès de création d'un compte", async () => {
       //GIVEN
@@ -79,7 +78,7 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo()
 
-      page = renderWithSession(
+      renderWithSession(
         <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'
@@ -142,7 +141,7 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo({ email: 'incorrectemail' })
 
-      page = renderWithSession(
+      renderWithSession(
         <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'
