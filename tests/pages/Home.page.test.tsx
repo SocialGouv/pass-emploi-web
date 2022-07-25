@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -13,9 +13,8 @@ import { Agence, StructureConseiller } from 'interfaces/conseiller'
 import Home, { getServerSideProps } from 'pages/index'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -36,16 +35,9 @@ describe('Home', () => {
         conseillerService = mockedConseillerService()
 
         // When
-        render(
-          <DIProvider dependances={{ conseillerService }}>
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Home
-                structureConseiller={StructureConseiller.POLE_EMPLOI}
-                referentielAgences={agences}
-                redirectUrl='/mes-jeunes'
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
+          { customDependances: { conseillerService } }
         )
       })
 
@@ -184,18 +176,9 @@ describe('Home', () => {
     describe('quand le conseiller est Mission locale', () => {
       it("affiche 'Mission locale' au lieu de 'agence'", async () => {
         // Given
-        render(
-          <DIProvider
-            dependances={{ conseillerService: mockedConseillerService() }}
-          >
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Home
-                structureConseiller={StructureConseiller.MILO}
-                referentielAgences={[]}
-                redirectUrl='/mes-jeunes'
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Home referentielAgences={[]} redirectUrl='/mes-jeunes' />,
+          { customConseiller: { structure: StructureConseiller.MILO } }
         )
         const searchMission = screen.getByRole('combobox', {
           name: /votre Mission locale/,
@@ -333,7 +316,6 @@ describe('Home', () => {
         expect(actual).toEqual({
           props: {
             redirectUrl: '/mes-jeunes',
-            structureConseiller: StructureConseiller.MILO,
             referentielAgences: uneListeDAgencesMILO(),
           },
         })
@@ -348,7 +330,6 @@ describe('Home', () => {
         expect(actual).toEqual({
           props: {
             redirectUrl: '/mes-rendezvous',
-            structureConseiller: StructureConseiller.MILO,
             referentielAgences: uneListeDAgencesMILO(),
           },
         })

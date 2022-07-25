@@ -1,11 +1,12 @@
 import { screen } from '@testing-library/dom'
-import { render, within } from '@testing-library/react'
+import { within } from '@testing-library/react'
 import { useRouter } from 'next/router'
 import React from 'react'
 
 import Sidebar from 'components/layouts/Sidebar'
 import { unConseiller } from 'fixtures/conseiller'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import renderWithContexts from 'tests/renderWithContexts'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 describe('<Sidebar/>', () => {
@@ -44,7 +45,7 @@ describe('<Sidebar/>', () => {
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
     // WHEN
-    renderSidebar(unConseiller({ structure: StructureConseiller.POLE_EMPLOI }))
+    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
     // THEN
     expect(() => screen.getByText('Rendez-vous')).toThrow()
@@ -52,7 +53,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche le lien de réaffectation des jeunes lorsque le conseiller est superviseur', () => {
     // WHEN
-    renderSidebar(unConseiller({ estSuperviseur: true }))
+    renderSidebar({ estSuperviseur: true })
 
     // THEN
     expect(screen.getByRole('link', { name: 'Réaffectation' })).toHaveAttribute(
@@ -62,9 +63,9 @@ describe('<Sidebar/>', () => {
   })
 })
 
-function renderSidebar(conseiller?: Conseiller) {
-  return render(
-    <ConseillerProvider conseiller={conseiller ?? unConseiller()}>
+function renderSidebar(conseiller?: Partial<Conseiller>) {
+  return renderWithContexts(
+    <ConseillerProvider conseiller={unConseiller({ ...conseiller })}>
       <Sidebar />
     </ConseillerProvider>
   )

@@ -1,20 +1,11 @@
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDossierMilo } from 'fixtures/milo'
-import { mockedConseillerService } from 'fixtures/services'
-import { ConseillerService } from 'services/conseiller.service'
+import React from 'react'
 import getByDefinitionTerm from 'tests/querySelector'
-import { DIProvider } from 'utils/injectionDependances'
 
 describe('<DossierMilo', () => {
-  let conseillerService: ConseillerService
-
-  beforeEach(() => {
-    conseillerService = mockedConseillerService()
-  })
-
   describe("quand l'e-mail du jeune est renseigné", () => {
     it("devrait afficher les informations d'un dossier jeune avec e-mail", () => {
       //GIVEN
@@ -22,14 +13,12 @@ describe('<DossierMilo', () => {
 
       //WHEN
       render(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+        <DossierJeuneMilo
+          dossier={dossier}
+          idConseiller='1'
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
 
       //THEN
@@ -52,14 +41,12 @@ describe('<DossierMilo', () => {
 
       //WHEN
       render(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+        <DossierJeuneMilo
+          dossier={dossier}
+          idConseiller='1'
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
 
       //THEN
@@ -72,14 +59,12 @@ describe('<DossierMilo', () => {
 
       //WHEN
       render(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+        <DossierJeuneMilo
+          dossier={dossier}
+          idConseiller='1'
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
 
       //THEN

@@ -3,7 +3,7 @@ import { AppProps as NextAppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
-import { Footer } from 'components/layouts/Footer'
+import Footer from 'components/layouts/Footer'
 import Layout from 'components/layouts/Layout'
 import 'styles/globals.css'
 import 'styles/typography.css'

@@ -30,7 +30,6 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesJeunesProps extends PageProps {
-  structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
   recuperationSuccess?: boolean
@@ -40,7 +39,6 @@ interface MesJeunesProps extends PageProps {
 }
 
 function MesJeunes({
-  structureConseiller,
   conseillerJeunes,
   isFromEmail,
   deletionSuccess,
@@ -77,7 +75,7 @@ function MesJeunes({
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = async () => {
-    switch (structureConseiller) {
+    switch (conseiller?.structure) {
       case StructureConseiller.MILO:
         await router.push('/mes-jeunes/milo/creation-jeune')
         break
@@ -168,7 +166,7 @@ function MesJeunes({
       {showAjoutAgenceSuccess && (
         <SuccessMessage
           label={`Votre ${
-            structureConseiller === StructureConseiller.MILO
+            conseiller?.structure === StructureConseiller.MILO
               ? 'Mission locale'
               : 'agence'
           } a été ajoutée à votre profil`}
@@ -198,8 +196,8 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <div className={`flex flex-wrap justify-between items-end mb-6`}>
           <RechercheJeune onSearchFilterBy={onSearch} />
-          {(structureConseiller === StructureConseiller.MILO ||
-            structureConseiller === StructureConseiller.POLE_EMPLOI) && (
+          {(conseiller?.structure === StructureConseiller.MILO ||
+            conseiller?.structure === StructureConseiller.POLE_EMPLOI) && (
             <AjouterJeuneButton handleAddJeune={handleAddJeune} />
           )}
         </div>
@@ -224,8 +222,10 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <TableauJeunes
           jeunes={listeJeunesFiltres}
-          withActions={structureConseiller !== StructureConseiller.POLE_EMPLOI}
-          withSituations={structureConseiller === StructureConseiller.MILO}
+          withActions={
+            conseiller?.structure !== StructureConseiller.POLE_EMPLOI
+          }
+          withSituations={conseiller?.structure === StructureConseiller.MILO}
         />
       )}
     </>
@@ -273,7 +273,6 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   }
 
   const props: MesJeunesProps = {
-    structureConseiller: user.structure,
     conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
       compareJeunesByNom
     ),
