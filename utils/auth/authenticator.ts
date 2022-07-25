@@ -15,6 +15,8 @@ interface RefreshedTokens {
   expires_in: number | undefined
 }
 
+export const RefreshAccessTokenError = 'RefreshAccessTokenError'
+
 export default class Authenticator {
   private readonly issuerPrefix?: string
 
@@ -58,7 +60,7 @@ export default class Authenticator {
     } catch (error) {
       return {
         ...jwt,
-        error: 'RefreshAccessTokenError',
+        error: RefreshAccessTokenError,
       }
     }
   }

@@ -1,9 +1,13 @@
 import { apm } from '@elastic/apm-rum'
 import {
   SessionContextValue,
+  signIn,
   useSession as _useSession,
   UseSessionOptions,
 } from 'next-auth/react'
+import { useEffect } from 'react'
+
+import { RefreshAccessTokenError } from 'utils/auth/authenticator'
 
 export default function useSession<R extends boolean>({
   required,
@@ -21,6 +25,13 @@ export default function useSession<R extends boolean>({
     }
     apm.setUserContext(userAPM)
   }
+
+  // https://next-auth.js.org/tutorials/refresh-token-rotation
+  useEffect(() => {
+    if (sessionContext.data?.error === RefreshAccessTokenError) {
+      signIn() // Force sign in to hopefully resolve error
+    }
+  }, [sessionContext.data?.error])
 
   return sessionContext
 }
