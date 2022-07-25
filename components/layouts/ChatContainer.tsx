@@ -98,9 +98,9 @@ export default function ChatContainer({
           }
         })
 
-        setHasMessageNonLu(hasMessageNonLu(updatedChats))
         return [...updatedChats].sort(compareJeuneChat)
       })
+      setHasMessageNonLu(hasMessageNonLu(updatedChats))
     }
 
     function doitEmettreUnSon(previousChat: JeuneChat, updatedChat: JeuneChat) {
