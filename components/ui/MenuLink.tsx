@@ -6,7 +6,7 @@ interface NavLinkProps {
   href: string
   label: string | null
   iconName: IconName
-  forceLabel: boolean
+  showLabelOnSmallScreen: boolean
   isActive?: boolean
   className?: string
   onClick?: any
@@ -21,7 +21,7 @@ function MenuLink({
   className,
   onClick,
   isExternal = false,
-  forceLabel = false,
+  showLabelOnSmallScreen = false,
 }: NavLinkProps) {
   const linkStyle = `flex p-2 mb-6 items-center justify-center rounded-medium layout_l:justify-start ${
     isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
@@ -33,7 +33,7 @@ function MenuLink({
         <span className='text-[24px] font-bold leading-6 text-primary'>·</span>
       )}
 
-      {forceLabel && (
+      {showLabelOnSmallScreen && (
         <>
           <IconComponent
             focusable='false'
@@ -54,7 +54,7 @@ function MenuLink({
         </>
       )}
 
-      {!forceLabel && (
+      {!showLabelOnSmallScreen && (
         <>
           <IconComponent
             focusable='false'

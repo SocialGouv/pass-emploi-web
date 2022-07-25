@@ -9,7 +9,7 @@ export default function Sidebar() {
     <div className={styles.sidebar}>
       <Logo focusable='false' aria-hidden={true} className='mb-8 mx-auto' />
       <Menu
-        forceLabels={false}
+        showLabelsOnSmallScreen={false}
         items={[
           MenuItem.Jeunes,
           MenuItem.Rdvs,

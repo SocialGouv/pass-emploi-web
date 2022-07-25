@@ -99,7 +99,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               focusable={false}
             />
           </button>
-          <Menu forceLabels={true} items={[MenuItem.Aide]} />
+          <Menu showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
         </div>
       )}
 

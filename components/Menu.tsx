@@ -14,9 +14,9 @@ export enum MenuItem {
   Aide = 'Aide',
   Profil = 'Profil',
 }
-type SidebarProps = { forceLabels: boolean; items: MenuItem[] }
+type SidebarProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
 
-export default function Menu({ forceLabels, items }: SidebarProps) {
+export default function Menu({ showLabelsOnSmallScreen, items }: SidebarProps) {
   const router = useRouter()
   const [isLoggedOut, setIsLoggedOut] = useState(false)
   const { data: session } = useSession<true>({ required: true })
@@ -48,7 +48,7 @@ export default function Menu({ forceLabels, items }: SidebarProps) {
             href='/mes-jeunes'
             label='Mes jeunes'
             iconName={IconName.People}
-            forceLabel={forceLabels}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
 
@@ -58,7 +58,7 @@ export default function Menu({ forceLabels, items }: SidebarProps) {
             href='/mes-rendezvous'
             label='Rendez-vous'
             iconName={IconName.RendezVous}
-            forceLabel={forceLabels}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
 
@@ -69,7 +69,7 @@ export default function Menu({ forceLabels, items }: SidebarProps) {
               label='Réaffectation'
               href='/reaffectation'
               isActive={isCurrentRoute('/reaffectation')}
-              forceLabel={forceLabels}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
             />
           </>
         )}
@@ -84,7 +84,7 @@ export default function Menu({ forceLabels, items }: SidebarProps) {
             label='Aide'
             iconName={IconName.Aide}
             isExternal={true}
-            forceLabel={forceLabels}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
       </div>
@@ -96,7 +96,7 @@ export default function Menu({ forceLabels, items }: SidebarProps) {
             label={session.user.name}
             iconName={IconName.Profil}
             className='break-all'
-            forceLabel={forceLabels}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
         <span className='border-b border-blanc mx-4 mb-8'></span>
@@ -105,7 +105,7 @@ export default function Menu({ forceLabels, items }: SidebarProps) {
           label='Déconnexion'
           iconName={IconName.Logout}
           onClick={handleLogout}
-          forceLabel={forceLabels}
+          showLabelOnSmallScreen={showLabelsOnSmallScreen}
         />
       </div>
     </nav>
