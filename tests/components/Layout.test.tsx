@@ -17,9 +17,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithSession from 'tests/renderWithSession'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
+import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
@@ -82,21 +80,18 @@ describe('<Layout />', () => {
   describe('cas nominal', () => {
     beforeEach(async () => {
       await act(async () => {
-        await renderWithSession(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider
-              conseiller={unConseiller({ notificationsSonores: true })}
-            >
-              <Layout>
-                <FakeComponent
-                  pageTitle='un titre'
-                  pageHeader='Titre de la page'
-                />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Layout>
+            <FakeComponent pageTitle='un titre' pageHeader='Titre de la page' />
+          </Layout>,
+          {
+            customDependances: {
+              jeunesService,
+              conseillerService,
+              messagesService,
+            },
+            customConseiller: unConseiller({ notificationsSonores: true }),
+          }
         )
       })
     })
@@ -214,18 +209,18 @@ describe('<Layout />', () => {
     it("ne notifie pas quand un nouveau message d'un jeune arrive", async () => {
       // Given
       await act(async () => {
-        await renderWithSession(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider
-              conseiller={unConseiller({ notificationsSonores: false })}
-            >
-              <Layout>
-                <FakeComponent pageTitle='un titre' />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Layout>
+            <FakeComponent pageTitle='un titre' />
+          </Layout>,
+          {
+            customDependances: {
+              jeunesService,
+              conseillerService,
+              messagesService,
+            },
+            customConseiller: unConseiller({ notificationsSonores: false }),
+          }
         )
       })
 
@@ -249,19 +244,20 @@ describe('<Layout />', () => {
     it('affiche un bouton "retour"', async () => {
       // When
       await act(async () => {
-        await renderWithSession(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Layout>
-                <FakeComponent
-                  pageTitle='un titre'
-                  returnTo='/path/to/previous/page'
-                />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Layout>
+            <FakeComponent
+              pageTitle='un titre'
+              returnTo='/path/to/previous/page'
+            />
+          </Layout>,
+          {
+            customDependances: {
+              jeunesService,
+              conseillerService,
+              messagesService,
+            },
+          }
         )
       })
 

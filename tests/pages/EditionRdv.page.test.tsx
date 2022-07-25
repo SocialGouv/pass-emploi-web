@@ -12,10 +12,9 @@ import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import renderWithSession from 'tests/renderWithSession'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -203,16 +202,15 @@ describe('EditionRdv', () => {
     describe('contenu', () => {
       beforeEach(() => {
         // When
-        renderWithSession(
-          <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous'}
-              pageTitle={''}
-            />
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous'}
+            pageTitle={''}
+          />,
+          { customDependances: { rendezVousService } }
         )
       })
 
@@ -715,17 +713,16 @@ describe('EditionRdv', () => {
         const jeuneFullname = getNomJeuneComplet(jeunes[2])
 
         // When
-        renderWithSession(
-          <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous'}
-              idJeune={idJeune}
-              pageTitle={''}
-            />
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous'}
+            idJeune={idJeune}
+            pageTitle={''}
+          />,
+          { customDependances: { rendezVousService } }
         )
 
         // Then
@@ -764,17 +761,16 @@ describe('EditionRdv', () => {
         rdv = unRendezVous({ jeunes: [jeune0, jeune2] })
 
         // When
-        renderWithSession(
-          <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous?creationRdv=succes'}
-              rdv={rdv}
-              pageTitle={''}
-            />
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            rdv={rdv}
+            pageTitle={''}
+          />,
+          { customDependances: { rendezVousService } }
         )
       })
 
@@ -1045,17 +1041,16 @@ describe('EditionRdv', () => {
         })
 
         // When
-        renderWithSession(
-          <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous?creationRdv=succes'}
-              rdv={rdv}
-              pageTitle={''}
-            />
-          </DIProvider>
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            rdv={rdv}
+            pageTitle={''}
+          />,
+          { customDependances: { rendezVousService } }
         )
       })
 

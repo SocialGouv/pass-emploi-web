@@ -1,25 +1,21 @@
-import { RenderResult, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 
 import { mockedJeunesService } from 'fixtures/services'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { JeunesService } from 'services/jeunes.service'
-import renderWithSession from 'tests/renderWithSession'
-import { DIProvider } from 'utils/injectionDependances'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
-  let page: RenderResult
   let submitButton: HTMLElement
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
-    page = renderWithSession(
-      <DIProvider dependances={{ jeunesService }}>
-        <PoleEmploiCreationJeune />
-      </DIProvider>
-    )
+    renderWithContexts(<PoleEmploiCreationJeune />, {
+      customDependances: { jeunesService },
+    })
 
     submitButton = screen.getByRole('button', {
       name: 'Créer le compte',

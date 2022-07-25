@@ -9,7 +9,7 @@ import ChatContainer from './ChatContainer'
 
 import AppHead from 'components/AppHead'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import { Footer } from 'components/layouts/Footer'
+import Footer from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
 import { PageProps } from 'interfaces/pageProps'

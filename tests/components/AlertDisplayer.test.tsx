@@ -1,10 +1,10 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/router'
 
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import { UserStructure } from 'interfaces/conseiller'
-import renderWithSession from 'tests/renderWithSession'
 
 describe('AlertDisplayer', () => {
   describe('quand la création de rdv est réussie', () => {
@@ -19,7 +19,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      renderWithSession(<AlertDisplayer />)
+      renderWithSession()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -59,7 +59,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      renderWithSession(<AlertDisplayer />)
+      renderWithSession()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -99,7 +99,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      renderWithSession(<AlertDisplayer />)
+      renderWithSession()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -139,7 +139,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      renderWithSession(<AlertDisplayer />)
+      renderWithSession()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -179,7 +179,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      renderWithSession(<AlertDisplayer />)
+      renderWithSession()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -219,7 +219,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      renderWithSession(<AlertDisplayer />)
+      renderWithSession()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -257,7 +257,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      renderWithSession(<AlertDisplayer />)
+      renderWithSession()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -297,15 +297,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      const conseillerMilo = {
-        id: 'idConseiller',
-        name: 'Taverner',
-        structure: UserStructure.MILO,
-        estSuperviseur: false,
-        email: 'mail@mail.com',
-        estConseiller: true,
-      }
-      renderWithSession(<AlertDisplayer />, { user: conseillerMilo })
+      renderWithSession(UserStructure.MILO)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -343,15 +335,7 @@ describe('AlertDisplayer', () => {
       })
 
       // When
-      const conseillerPoleEmploi = {
-        id: 'idConseiller',
-        name: 'Taverner',
-        structure: UserStructure.POLE_EMPLOI,
-        estSuperviseur: false,
-        email: 'mail@mail.com',
-        estConseiller: true,
-      }
-      renderWithSession(<AlertDisplayer />, { user: conseillerPoleEmploi })
+      renderWithSession(UserStructure.POLE_EMPLOI)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -377,3 +361,24 @@ describe('AlertDisplayer', () => {
     })
   })
 })
+
+function renderWithSession(structure?: UserStructure) {
+  return render(
+    <SessionProvider
+      session={{
+        user: {
+          id: '1',
+          name: 'Nils Tavernier',
+          email: 'fake@email.com',
+          structure: structure ?? UserStructure.MILO,
+          estConseiller: true,
+          estSuperviseur: false,
+        },
+        accessToken: 'accessToken',
+        expires: new Date(Date.now() + 300000).toISOString(),
+      }}
+    >
+      <AlertDisplayer />
+    </SessionProvider>
+  )
+}

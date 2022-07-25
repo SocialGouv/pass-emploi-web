@@ -2,35 +2,28 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 
-import RefreshIcon from '../../assets/icons/refresh.svg'
-
+import RefreshIcon from 'assets/icons/refresh.svg'
 import Button from 'components/ui/Button'
 import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DossierMilo } from 'interfaces/jeune'
-import { ConseillerService } from 'services/conseiller.service'
+import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
-import { useDependance } from 'utils/injectionDependances'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
-  onCreatedSuccess: (idJeune: string) => void
-  onCreatedError: (erreurMessage: string) => void
+  idConseiller: string
+  onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
   erreurMessageHttpPassEmploi: string
 }
 
-const DossierJeuneMilo = ({
+export default function DossierJeuneMilo({
   dossier,
-  onCreatedSuccess,
-  onCreatedError,
+  idConseiller,
+  onCreateCompte,
   erreurMessageHttpPassEmploi,
-}: DossierJeuneMiloProps) => {
-  const { data: session } = useSession<true>({ required: true })
+}: DossierJeuneMiloProps) {
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
-
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
 
   const addJeune = async () => {
     if (!creationEnCours) {
@@ -39,19 +32,13 @@ const DossierJeuneMilo = ({
         nom: dossier.nom,
         prenom: dossier.prenom,
         email: dossier.email ?? undefined,
-        idConseiller: session!.user.id,
+        idConseiller,
       }
+
       setCreationEnCours(true)
-      conseillerService
-        .createCompteJeuneMilo(newJeune, session!.accessToken)
-        .then(({ id }) => {
-          setCreationEnCours(false)
-          onCreatedSuccess(id)
-        })
-        .catch((error: Error) => {
-          setCreationEnCours(false)
-          onCreatedError(error.message)
-        })
+      onCreateCompte(newJeune).finally(() => {
+        setCreationEnCours(false)
+      })
     }
   }
   useMatomo(
@@ -171,5 +158,3 @@ function actionButtons(
     </Button>
   )
 }
-
-export default DossierJeuneMilo

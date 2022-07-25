@@ -1,36 +1,24 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDossierMilo } from 'fixtures/milo'
-import { mockedConseillerService } from 'fixtures/services'
-import { ConseillerService } from 'services/conseiller.service'
 import getByDefinitionTerm from 'tests/querySelector'
-import renderWithSession from 'tests/renderWithSession'
-import { DIProvider } from 'utils/injectionDependances'
 
 describe('<DossierMilo', () => {
-  let conseillerService: ConseillerService
-
-  beforeEach(() => {
-    conseillerService = mockedConseillerService()
-  })
-
   describe("quand l'e-mail du jeune est renseigné", () => {
     it("devrait afficher les informations d'un dossier jeune avec e-mail", () => {
       //GIVEN
       const dossier = unDossierMilo()
 
       //WHEN
-      renderWithSession(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+      render(
+        <DossierJeuneMilo
+          dossier={dossier}
+          idConseiller='1'
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
 
       //THEN
@@ -52,15 +40,13 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo({ email: undefined })
 
       //WHEN
-      renderWithSession(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+      render(
+        <DossierJeuneMilo
+          dossier={dossier}
+          idConseiller='1'
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
 
       //THEN
@@ -72,15 +58,13 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo({ email: '' })
 
       //WHEN
-      renderWithSession(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+      render(
+        <DossierJeuneMilo
+          dossier={dossier}
+          idConseiller='1'
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
 
       //THEN

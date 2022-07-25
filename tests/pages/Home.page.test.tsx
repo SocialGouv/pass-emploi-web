@@ -13,10 +13,8 @@ import { Agence, UserStructure } from 'interfaces/conseiller'
 import Home, { getServerSideProps } from 'pages/index'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
-import renderWithSession from 'tests/renderWithSession'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -37,16 +35,13 @@ describe('Home', () => {
         conseillerService = mockedConseillerService()
 
         // When
-        renderWithSession(
-          <DIProvider dependances={{ conseillerService }}>
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Home
-                structureConseiller={UserStructure.POLE_EMPLOI}
-                referentielAgences={agences}
-                redirectUrl='/mes-jeunes'
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Home
+            structureConseiller={UserStructure.POLE_EMPLOI}
+            referentielAgences={agences}
+            redirectUrl='/mes-jeunes'
+          />,
+          { customDependances: { conseillerService } }
         )
       })
 
@@ -188,18 +183,12 @@ describe('Home', () => {
     describe('quand le conseiller est Mission locale', () => {
       it("affiche 'Mission locale' au lieu de 'agence'", async () => {
         // Given
-        renderWithSession(
-          <DIProvider
-            dependances={{ conseillerService: mockedConseillerService() }}
-          >
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Home
-                structureConseiller={UserStructure.MILO}
-                referentielAgences={[]}
-                redirectUrl='/mes-jeunes'
-              />
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Home
+            structureConseiller={UserStructure.MILO}
+            referentielAgences={[]}
+            redirectUrl='/mes-jeunes'
+          />
         )
         const searchMission = screen.getByRole('combobox', {
           name: /votre Mission locale/,

@@ -16,7 +16,7 @@ import EnvoiMessageGroupe, {
 } from 'pages/mes-jeunes/envoi-message-groupe'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
-import renderPage from 'tests/renderPage'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -49,7 +49,7 @@ describe('EnvoiMessageGroupe', () => {
           .mockResolvedValue({ id: 'id-fichier', nom: 'imageupload.png' }),
       })
 
-      renderPage(
+      renderWithContexts(
         <EnvoiMessageGroupe
           pageTitle={''}
           jeunes={jeunes}

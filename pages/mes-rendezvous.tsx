@@ -1,11 +1,9 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import RdvList from 'components/rdv/RdvList'
 import ButtonLink from 'components/ui/ButtonLink'
-import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { UserStructure } from 'interfaces/conseiller'
@@ -36,7 +34,6 @@ function MesRendezvous({
   suppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) {
-  const router = useRouter()
   const { data: session } = useSession<true>({ required: true })
 
   const [displayOldRdv, setDisplayOldRdv] = useState(false)

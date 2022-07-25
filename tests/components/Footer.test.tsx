@@ -1,16 +1,14 @@
 import { screen } from '@testing-library/dom'
-import { RenderResult } from '@testing-library/react'
+import { render, RenderResult } from '@testing-library/react'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
-
-import { Footer } from 'components/layouts/Footer'
+import Footer from 'components/layouts/Footer'
 
 describe('<Footer/>', () => {
   let component: RenderResult
   it('affiche les liens du footer', () => {
     // GIVEN
-    component = renderWithSession(<Footer />)
+    component = render(<Footer />)
 
     // WHEN
 

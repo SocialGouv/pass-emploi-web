@@ -3,11 +3,10 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
-
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -20,7 +19,7 @@ describe('MesRendezvous', () => {
     const rendezVousFuturs = desRdvListItems()
     describe('contenu', () => {
       beforeEach(() => {
-        renderWithSession(
+        renderWithContexts(
           <MesRendezvous
             rendezVousFuturs={rendezVousFuturs}
             rendezVousPasses={rendezVousPasses}

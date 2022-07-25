@@ -2,16 +2,14 @@ import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatRoom from 'components/chat/ChatRoom'
+import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithSession from 'tests/renderWithSession'
-import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
-import { DIProvider } from 'utils/injectionDependances'
+import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('components/chat/Conversation', () =>
   jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
@@ -50,14 +48,8 @@ describe('<ChatRoom />', () => {
 
   describe('quand le conseiller a des jeunes', () => {
     beforeEach(async () => {
-      await act(async () => {
-        await renderWithSession(
-          <DIProvider dependances={{ jeunesService, messagesService }}>
-            <CurrentJeuneProvider>
-              <ChatRoom jeunesChats={jeunesChats} />
-            </CurrentJeuneProvider>
-          </DIProvider>
-        )
+      renderWithContexts(<ChatRoom jeunesChats={jeunesChats} />, {
+        customDependances: { jeunesService, messagesService },
       })
     })
 
@@ -144,13 +136,10 @@ describe('<ChatRoom />', () => {
     it('affiche le chat du jeune courant', async () => {
       // When
       await act(async () => {
-        await renderWithSession(
-          <DIProvider dependances={{ jeunesService, messagesService }}>
-            <CurrentJeuneProvider idJeune={jeunes[2].id}>
-              <ChatRoom jeunesChats={jeunesChats} />
-            </CurrentJeuneProvider>
-          </DIProvider>
-        )
+        renderWithContexts(<ChatRoom jeunesChats={jeunesChats} />, {
+          customDependances: { jeunesService, messagesService },
+          customCurrentJeune: { id: jeunes[2].id },
+        })
       })
 
       // Then
@@ -163,14 +152,8 @@ describe('<ChatRoom />', () => {
   describe("quand le conseiller n'a pas de jeunes", () => {
     it('affiche un message informatif', async () => {
       // When
-      await act(async () => {
-        await renderWithSession(
-          <DIProvider dependances={{ jeunesService, messagesService }}>
-            <CurrentJeuneProvider>
-              <ChatRoom jeunesChats={[]} />
-            </CurrentJeuneProvider>
-          </DIProvider>
-        )
+      renderWithContexts(<ChatRoom jeunesChats={[]} />, {
+        customDependances: { jeunesService, messagesService },
       })
 
       // Then

@@ -2,6 +2,7 @@ import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
+import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
 
 export interface ConseillerService {
@@ -28,13 +29,7 @@ export interface ConseillerService {
   ): Promise<DossierMilo | undefined>
 
   createCompteJeuneMilo(
-    newJeune: {
-      idDossier: string
-      nom: string
-      prenom: string
-      email: string | undefined
-      idConseiller: string
-    },
+    newJeune: JeuneMiloFormData,
     accessToken: string
   ): Promise<{ id: string }>
 
@@ -103,13 +98,7 @@ export class ConseillerApiService implements ConseillerService {
   }
 
   async createCompteJeuneMilo(
-    newJeune: {
-      idDossier: string
-      nom: string
-      prenom: string
-      email: string | undefined
-      idConseiller: string
-    },
+    newJeune: JeuneMiloFormData,
     accessToken: string
   ): Promise<{ id: string }> {
     const {

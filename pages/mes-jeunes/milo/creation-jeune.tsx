@@ -10,10 +10,13 @@ import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDoss
 import SuccessAddJeuneMilo from 'components/jeune/SuccessAddJeuneMilo'
 import { UserStructure } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
+import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
+import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { Container } from 'utils/injectionDependances'
+import { Container, useDependance } from 'utils/injectionDependances'
 
 interface MiloCreationJeuneProps extends PageProps {
   dossierId: string
@@ -26,11 +29,27 @@ function MiloCreationJeune({
   dossier,
   erreurMessageHttpMilo,
 }: MiloCreationJeuneProps) {
+  const { data: session } = useSession<true>({ required: true })
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
+
   const [etape, setEtape] = useState(1)
   const [createdSucessId, setCreatedSucessId] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string>(
     erreurMessageHttpMilo
   )
+
+  async function creerCompteJeune(newJeune: JeuneMiloFormData) {
+    try {
+      const { id } = await conseillerService.createCompteJeuneMilo(
+        newJeune,
+        session!.accessToken
+      )
+      setCreatedSucessId(id)
+    } catch (error) {
+      setErreurMessage((error as Error).message)
+    }
+  }
 
   useMatomo(
     erreurMessageHttpMilo
@@ -109,8 +128,8 @@ function MiloCreationJeune({
         {dossier && (
           <DossierJeuneMilo
             dossier={dossier}
-            onCreatedSuccess={(id) => setCreatedSucessId(id)}
-            onCreatedError={(message) => setErreurMessage(message)}
+            idConseiller={session!.user.id}
+            onCreateCompte={creerCompteJeune}
             erreurMessageHttpPassEmploi={erreurMessage || ''}
           />
         )}

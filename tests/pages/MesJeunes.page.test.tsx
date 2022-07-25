@@ -27,7 +27,7 @@ import {
 import MesJeunes, { getServerSideProps } from 'pages/mes-jeunes'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
-import renderPage from 'tests/renderPage'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -69,7 +69,7 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // WHEN
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
               conseillerJeunes={jeunes}
@@ -152,7 +152,7 @@ describe('Mes Jeunes', () => {
         // Given
         await act(() => {
           conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
               conseillerJeunes={jeunes}
@@ -203,7 +203,7 @@ describe('Mes Jeunes', () => {
         })
 
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
               conseillerJeunes={[jeune]}
@@ -255,7 +255,7 @@ describe('Mes Jeunes', () => {
         const jeune = unJeuneAvecActionsNonTerminees()
 
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.POLE_EMPLOI}
               conseillerJeunes={[jeune]}
@@ -301,7 +301,7 @@ describe('Mes Jeunes', () => {
       it("n'affiche pas la recherche de jeune", async () => {
         // GIVEN
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
               conseillerJeunes={[]}
@@ -321,7 +321,7 @@ describe('Mes Jeunes', () => {
       it('affiche un message invitant à ajouter des jeunes', async () => {
         // GIVEN
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
               conseillerJeunes={[]}
@@ -346,7 +346,7 @@ describe('Mes Jeunes', () => {
             aDesBeneficiairesARecuperer: true,
           })
           await act(() => {
-            renderPage(
+            renderWithContexts(
               <MesJeunes
                 structureConseiller={UserStructure.MILO}
                 conseillerJeunes={[]}
@@ -386,7 +386,7 @@ describe('Mes Jeunes', () => {
 
         // WHEN
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
               conseillerJeunes={jeunes}
@@ -406,7 +406,7 @@ describe('Mes Jeunes', () => {
       it('affiche un message de succès', async () => {
         // When
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
               structureConseiller={UserStructure.MILO}
               conseillerJeunes={jeunes}

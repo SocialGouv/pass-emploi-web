@@ -22,18 +22,25 @@ import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
-export default function renderPage(
+export default function renderWithContexts(
   children: JSX.Element,
   options: {
     customSession?: Partial<Session>
     customDependances?: Partial<Dependencies>
     customConseiller?: Partial<Conseiller>
-    idJeuneSetter?: (id: string | undefined) => void
+    customCurrentJeune?: Partial<{
+      id: string
+      idSetter: (id: string | undefined) => void
+    }>
   } = {}
 ): RenderResult {
-  const { customSession, customDependances, customConseiller, idJeuneSetter } =
-    options
-  const defaultSession: Session = {
+  const {
+    customSession,
+    customDependances,
+    customConseiller,
+    customCurrentJeune,
+  } = options
+  const session: Session = {
     user: {
       id: '1',
       name: 'Nils Tavernier',
@@ -44,11 +51,10 @@ export default function renderPage(
     },
     accessToken: 'accessToken',
     expires: new Date(Date.now() + 300000).toISOString(),
+    ...customSession,
   }
 
-  const session = { ...defaultSession, ...customSession }
-
-  const defaultDependances: Dependencies = {
+  const dependances: Dependencies = {
     actionsService: mockedActionsService(),
     agencesService: mockedAgencesService(),
     conseillerService: mockedConseillerService(),
@@ -56,11 +62,36 @@ export default function renderPage(
     jeunesService: mockedJeunesService(),
     messagesService: mockedMessagesService(),
     rendezVousService: mockedRendezVousService(),
+    ...customDependances,
   }
 
-  const dependances = { ...defaultDependances, ...customDependances }
+  const conseiller = unConseiller(customConseiller)
 
-  return render(
+  const currentJeune = { ...customCurrentJeune }
+
+  const withContexts = (element: JSX.Element) =>
+    provideContexts(element, session, dependances, conseiller, currentJeune)
+
+  const renderResult: RenderResult = render(withContexts(children))
+
+  const rerender = renderResult.rerender
+  renderResult.rerender = (rerenderChildren: JSX.Element) =>
+    rerender(withContexts(rerenderChildren))
+
+  return renderResult
+}
+
+function provideContexts(
+  children: JSX.Element,
+  session: Session,
+  dependances: Dependencies,
+  conseiller: Conseiller,
+  currentJeune: Partial<{
+    id: string
+    idSetter: (id: string | undefined) => void
+  }>
+) {
+  return (
     <SessionProvider session={session}>
       <DIProvider dependances={dependances}>
         <ChatCredentialsProvider
@@ -69,10 +100,10 @@ export default function renderPage(
             cleChiffrement: 'cleChiffrement',
           }}
         >
-          <ConseillerProvider conseiller={unConseiller(customConseiller)}>
+          <ConseillerProvider conseiller={conseiller}>
             <CurrentJeuneProvider
-              idJeune={uneBaseJeune().id}
-              setIdJeune={idJeuneSetter}
+              idJeune={currentJeune.id}
+              setIdJeune={currentJeune.idSetter}
             >
               {children}
             </CurrentJeuneProvider>

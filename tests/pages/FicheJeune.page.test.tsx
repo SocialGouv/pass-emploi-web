@@ -38,7 +38,7 @@ import FicheJeune, {
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import renderPage from 'tests/renderPage'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -89,7 +89,7 @@ describe('Fiche Jeune', () => {
           setIdJeune = jest.fn()
 
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -101,7 +101,10 @@ describe('Fiche Jeune', () => {
               conseillers={listeConseillers}
               pageTitle={''}
             />,
-            { idJeuneSetter: setIdJeune, customDependances: dependances }
+            {
+              customCurrentJeune: { idSetter: setIdJeune },
+              customDependances: dependances,
+            }
           )
         })
 
@@ -154,7 +157,7 @@ describe('Fiche Jeune', () => {
       describe('Supprimer un compte actif', () => {
         beforeEach(async () => {
           // Given
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={unDetailJeune({ isActivated: true })}
               rdvs={[]}
@@ -259,7 +262,7 @@ describe('Fiche Jeune', () => {
       describe('Supprimer un compte inactif', () => {
         beforeEach(async () => {
           // Given
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={unDetailJeune({ isActivated: false })}
               rdvs={[]}
@@ -317,7 +320,7 @@ describe('Fiche Jeune', () => {
         setIdJeune = jest.fn()
 
         // When
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -329,7 +332,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
           />,
-          { idJeuneSetter: setIdJeune }
+          { customCurrentJeune: { idSetter: setIdJeune } }
         )
       })
 
@@ -388,7 +391,7 @@ describe('Fiche Jeune', () => {
       it('n’affiche pas de bouton pour dérouler', async () => {
         const conseillers = [unConseillerHistorique()]
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -411,7 +414,7 @@ describe('Fiche Jeune', () => {
     describe("quand l'utilisateur est un conseiller Pole emploi", () => {
       beforeEach(async () => {
         // When
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
@@ -479,7 +482,7 @@ describe('Fiche Jeune', () => {
       describe('quand le jeune n’a aucune situation', () => {
         it('affiche les informations concernant la situation du jeune', () => {
           // Given
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -523,7 +526,7 @@ describe('Fiche Jeune', () => {
               categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
             },
           ]
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={unDetailJeune({ situations: situations })}
               rdvs={[]}
@@ -561,7 +564,7 @@ describe('Fiche Jeune', () => {
     describe("quand le jeune n'a pas d'action", () => {
       it('affiche un message qui le précise', async () => {
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -586,7 +589,7 @@ describe('Fiche Jeune', () => {
     describe('quand le jeune a été réaffecté temporairement', () => {
       it("affiche l'information", () => {
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={{ ...jeune, isReaffectationTemporaire: true }}
             rdvs={rdvs}
@@ -608,7 +611,7 @@ describe('Fiche Jeune', () => {
     describe('quand on revient sur la page depuis le détail d’une action', () => {
       it('ouvre l’onglet des actions', () => {
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
@@ -644,7 +647,7 @@ describe('Fiche Jeune', () => {
           })
 
           pageCourante = 4
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={rdvs}
@@ -816,7 +819,7 @@ describe('Fiche Jeune', () => {
       describe('troncature', () => {
         it('1 2 -3-', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -841,7 +844,7 @@ describe('Fiche Jeune', () => {
 
         it('1 2 -3- 4 5 6', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -869,7 +872,7 @@ describe('Fiche Jeune', () => {
 
         it('-1- 2 3 4 5 ... 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -897,7 +900,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 9 10 -11- 12 13 ... 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -926,7 +929,7 @@ describe('Fiche Jeune', () => {
 
         it('1 2 3 -4- 5 6 ... 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -955,7 +958,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 15 16 -17- 18 19 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -984,7 +987,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 16 17 -18- 19 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -1012,7 +1015,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 16 17 18 19 -20-', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -1053,7 +1056,7 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -1128,7 +1131,7 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}

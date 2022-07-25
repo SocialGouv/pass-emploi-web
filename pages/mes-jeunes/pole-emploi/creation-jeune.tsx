@@ -7,13 +7,13 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
 import SuccessAddJeunePoleEmploi from 'components/jeune/SuccessAddJeunePoleEmploi'
 import { UserStructure } from 'interfaces/conseiller'
-import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
+import { JeunePoleEmploiFormData } from '../../../interfaces/json/jeune'
 
 interface PoleEmploiCreationJeuneProps extends PageProps {}
 

@@ -1,6 +1,5 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Session } from 'next-auth'
 import React from 'react'
 
 import Conversation from 'components/chat/Conversation'
@@ -12,7 +11,7 @@ import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithSession from 'tests/renderWithSession'
+import renderWithContexts from 'tests/renderWithContexts'
 import { formatDayDate } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -21,7 +20,6 @@ describe('<Conversation />', () => {
   let onBack: () => void
   let messagesService: MessagesService
   let fichiersService: FichiersService
-  let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
   let rerender: (children: JSX.Element) => void
   const messagesParJour = desMessagesParJour()
@@ -30,7 +28,6 @@ describe('<Conversation />', () => {
     conseillersJeunes = desConseillersJeune()
     onBack = jest.fn()
     messagesService = mockedMessagesService({
-      observeJeuneChat: jest.fn(),
       observeJeuneReadingDate: jest.fn(
         (idChat: string, fn: (date: Date) => void) => {
           fn(new Date())
@@ -54,17 +51,8 @@ describe('<Conversation />', () => {
       deleteFichier: jest.fn().mockResolvedValue(undefined),
     }
 
-    conseiller = {
-      id: 'idConseiller',
-      name: 'Taverner',
-      structure: UserStructure.POLE_EMPLOI,
-      estSuperviseur: false,
-      email: 'mail@mail.com',
-      estConseiller: true,
-    }
-
     await act(async () => {
-      const renderResult = await renderWithSession(
+      const renderResult = renderWithContexts(
         <DIProvider dependances={{ messagesService, fichiersService }}>
           <Conversation
             jeuneChat={jeuneChat}
@@ -72,7 +60,7 @@ describe('<Conversation />', () => {
             onBack={onBack}
           />
         </DIProvider>,
-        { user: conseiller }
+        { customDependances: { messagesService, fichiersService } }
       )
       rerender = renderResult.rerender
     })
@@ -116,13 +104,11 @@ describe('<Conversation />', () => {
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
-      <DIProvider dependances={{ messagesService, fichiersService }}>
-        <Conversation
-          jeuneChat={newJeuneChat}
-          conseillers={conseillersJeunes}
-          onBack={onBack}
-        />
-      </DIProvider>
+      <Conversation
+        jeuneChat={newJeuneChat}
+        conseillers={conseillersJeunes}
+        onBack={onBack}
+      />
     )
     // Then
     expect(() => screen.getByText('imageupload.png')).toThrow()
@@ -195,8 +181,8 @@ describe('<Conversation />', () => {
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
         conseiller: {
-          id: conseiller.id,
-          structure: conseiller.structure,
+          id: '1',
+          structure: UserStructure.MILO,
         },
         jeuneChat: jeuneChat,
         newMessage: newMessage,
