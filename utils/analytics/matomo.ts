@@ -1,6 +1,6 @@
 import MatomoTracker from 'matomo-tracker'
 
-import { userStructureDimensionString } from 'utils/analytics/useMatomo'
+import { UserStructure } from 'interfaces/conseiller'
 
 interface InitSettings {
   url: string
@@ -137,4 +137,14 @@ function trackSSR({
   })
 }
 
-export { init, trackPage, trackSSR, trackEvent }
+function userStructureDimensionString(loginMode: string): string {
+  switch (loginMode) {
+    case UserStructure.MILO:
+      return 'Mission Locale'
+    case UserStructure.POLE_EMPLOI:
+      return 'Pôle emploi'
+  }
+  return 'pass emploi'
+}
+
+export { init, trackPage, trackSSR, trackEvent, userStructureDimensionString }
