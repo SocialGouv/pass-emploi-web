@@ -127,7 +127,9 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
           <ListeConversations
             conversations={jeunesChats}
-            onToggleFlag={messagesService.toggleFlag}
+            onToggleFlag={(idChat: string, flagged: boolean) =>
+              messagesService.toggleFlag(idChat, flagged)
+            }
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />
         </article>
