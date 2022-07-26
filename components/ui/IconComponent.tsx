@@ -27,6 +27,7 @@ import CloseIcon from 'assets/icons/close.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
 import DeleteIcon from 'assets/icons/delete.svg'
 import EmailIcon from 'assets/icons/email.svg'
+import FavoriteIcon from 'assets/icons/favorite.svg'
 import FlagIcon from 'assets/icons/flag.svg'
 import FlagFilledIcon from 'assets/icons/flag_filled.svg'
 import ImportantOutlineIcon from 'assets/icons/important_outline.svg'
@@ -74,6 +75,7 @@ export enum IconName {
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
   Email = 'Email',
+  Favorite = 'Favorite',
   File = 'File',
   Flag = 'Flag',
   FlagFilled = 'FlagFilled',
@@ -123,6 +125,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
   [IconName.Email]: EmailIcon,
+  [IconName.Favorite]: FavoriteIcon,
   [IconName.File]: FileIcon,
   [IconName.Flag]: FlagIcon,
   [IconName.FlagFilled]: FlagFilledIcon,

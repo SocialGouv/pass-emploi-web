@@ -1,9 +1,13 @@
+import Link from 'next/link'
 import React from 'react'
+
+import { Badge } from '../ui/Badge'
+import { InlineDefinition } from '../ui/InlineDefinition'
 
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
-import { formatDayDate, formatDayDateLongMonth } from 'utils/date'
+import { formatDayDateLongMonth } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
@@ -18,15 +22,17 @@ export const DetailsJeune = ({
 }: DetailsJeuneProps) => {
   return (
     <>
+      <h2 className='text-base-medium mb-4'>Informations</h2>
       <dl className='border border-solid rounded-medium w-full p-3 mt-6 border-grey_100'>
-        <h2 className='text-base-medium mb-4'>Informations</h2>
-        <dt className='text-base-regular sr-only'>Ajouté le</dt>
-        <dd aria-label={formatDayDate(new Date(jeune.creationDate))}>
-          <span className='text-base-regular'>Ajouté le : </span>
-          <span className='text-md-semi'>
-            {formatDayDateLongMonth(new Date(jeune.creationDate))}
-          </span>
-        </dd>
+        <div className='flex'>
+          <dt className='text-base-regular'>Ajouté le :</dt>
+          <dd>
+            <span className='text-md-semi ml-1'>
+              {formatDayDateLongMonth(new Date(jeune.creationDate))}
+            </span>
+          </dd>
+        </div>
+
         {jeune.email && (
           <>
             <dt className='sr-only'>e-mail</dt>
@@ -113,6 +119,54 @@ export const DetailsJeune = ({
           )}
         </div>
       )}
+
+      <div className='border border-solid rounded-medium w-full p-3 mt-6 border-grey_100'>
+        <div className='flex items-center mb-4'>
+          <IconComponent
+            name={IconName.Favorite}
+            className='h-4 w-3 mr-2 fill-favorite_heart'
+            aria-hidden={true}
+          />
+          <h2 className='text-base-medium mr-2'>Favoris</h2>
+
+          <Badge count={10} bgColor='favorite_heart' />
+        </div>
+        <dl>
+          <div className='flex items-center mb-2'>
+            <dt className='text-base-medium'>Offres :</dt>
+            <dd>
+              <span className='text-base-medium ml-1'>12</span>
+            </dd>
+          </div>
+          <div className='ml-4 mb-4'>
+            <InlineDefinition definition='Offre d’emploi' description={10} />
+            <InlineDefinition definition='Alternance' description={2} />
+            <InlineDefinition definition='Service civique' description={2} />
+            <InlineDefinition definition='Immersion' description={2} />
+          </div>
+
+          <div className='flex items-center'>
+            <dt className='text-base-medium'>Recherches sauvegardées :</dt>
+            <dd>
+              <span className='text-base-medium ml-1'>12</span>
+            </dd>
+          </div>
+
+          <div className='flex justify-end mt-8'>
+            <Link href={`/mes-jeunes/${jeune.id}/favoris`}>
+              <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
+                Voir la liste des favoris
+                <IconComponent
+                  name={IconName.ChevronRight}
+                  className='w-4 h-5 fill-[inherit]'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+              </a>
+            </Link>
+          </div>
+        </dl>
+      </div>
     </>
   )
 }

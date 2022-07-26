@@ -335,7 +335,10 @@ export const TableauJeunes = ({
                       className='table-cell text-primary_darken p-4'
                     >
                       <div className='mx-auto w-fit'>
-                        <Badge count={jeune.nbActionsNonTerminees} />
+                        <Badge
+                          count={jeune.nbActionsNonTerminees}
+                          bgColor='primary'
+                        />
                       </div>
                     </span>
                   )}
