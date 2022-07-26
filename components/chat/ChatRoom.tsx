@@ -40,7 +40,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     setShowMenu(true)
   }
 
-  function onToggleFlag(idChat: string, flagged: boolean): void {
+  function toggleFlag(idChat: string, flagged: boolean): void {
     messagesService.toggleFlag(idChat, flagged)
     trackEvent({
       structure: session!.user.structure,
@@ -138,9 +138,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
           <ListeConversations
             conversations={jeunesChats}
-            onToggleFlag={(idChat: string, flagged: boolean) =>
-              onToggleFlag(idChat, flagged)
-            }
+            onToggleFlag={toggleFlag}
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />
         </article>
