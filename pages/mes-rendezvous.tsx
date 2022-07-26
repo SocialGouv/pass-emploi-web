@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 
 import RdvList from 'components/rdv/RdvList'
 import ButtonLink from 'components/ui/ButtonLink'
-import SuccessMessage from 'components/ui/SuccessMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
