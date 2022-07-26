@@ -1,3 +1,4 @@
+import { getSession } from 'next-auth/react'
 import React, {
   ChangeEvent,
   FormEvent,
@@ -21,7 +22,6 @@ import {
   MessagesService,
 } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
-import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
@@ -40,7 +40,6 @@ export default function Conversation({
   conseillers,
   onBack,
 }: ConversationProps) {
-  const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
@@ -66,15 +65,10 @@ export default function Conversation({
     if (!(newMessage || Boolean(uploadedFileInfo)) || isFileUploading) return
 
     const formNouveauMessage: FormNouveauMessageIndividuel = {
-      conseiller: {
-        id: session!.user.id,
-        structure: session!.user.structure,
-      },
       jeuneChat,
       newMessage:
         newMessage ||
         'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
-      accessToken: session!.accessToken,
       cleChiffrement: chatCredentials!.cleChiffrement,
     }
 
@@ -142,8 +136,7 @@ export default function Conversation({
       setIsFileUploading(true)
       const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
-        fichierSelectionne,
-        session!.accessToken
+        fichierSelectionne
       )
       setUploadedFileInfo(infoFichier)
     } catch (error) {
@@ -156,15 +149,14 @@ export default function Conversation({
 
   async function deleteFile() {
     setUploadedFileInfo(undefined)
-    await fichiersService.deleteFichier(
-      uploadedFileInfo!.id,
-      session!.accessToken
-    )
+    await fichiersService.deleteFichier(uploadedFileInfo!.id)
   }
 
-  function toggleFlag(): void {
+  async function toggleFlag() {
     const flagged = !jeuneChat.flaggedByConseiller
     messagesService.toggleFlag(jeuneChat.chatId, flagged)
+    // FIXME use conseiller for structure
+    const session = await getSession()
     trackEvent({
       structure: session!.user.structure,
       categorie: 'Conversation suivie',

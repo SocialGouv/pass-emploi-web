@@ -67,6 +67,7 @@ export default function ChatContainer({
   }, [session, conseiller, conseillerService, setConseiller])
 
   useEffect(() => {
+    console.log('ChatContainer useEffect')
     if (!session || !chatCredentials || !conseiller || !audio) return
     const { user, accessToken } = session
     messagesService

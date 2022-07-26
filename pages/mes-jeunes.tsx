@@ -19,11 +19,9 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
-import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -49,14 +47,11 @@ function MesJeunes({
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
-  const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
   const router = useRouter()
 
-  const [conseiller, setConseiller] = useConseiller()
+  const [conseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
   const [listeJeunesFiltres, setListJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
@@ -98,19 +93,19 @@ function MesJeunes({
 
   async function recupererBeneficiaires(): Promise<void> {
     setIsRecuperationBeneficiairesLoading(true)
-    try {
-      await conseillerService.recupererBeneficiaires(
-        session!.user.id,
-        session!.accessToken
-      )
-      await router.replace({
-        pathname: '/mes-jeunes',
-        query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
-      })
-      setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
-    } finally {
-      setIsRecuperationBeneficiairesLoading(false)
-    }
+    // try {
+    //   await conseillerService.recupererBeneficiaires(
+    //     session!.user.id,
+    //     session!.accessToken
+    //   )
+    //   await router.replace({
+    //     pathname: '/mes-jeunes',
+    //     query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
+    //   })
+    //   setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
+    // } finally {
+    setIsRecuperationBeneficiairesLoading(false)
+    // }
   }
 
   const onSearch = useCallback(
@@ -141,15 +136,12 @@ function MesJeunes({
   )
 
   useEffect(() => {
-    if (!session || !chatCredentials) return
+    if (!chatCredentials) return
 
     messagesService
       .signIn(chatCredentials.token)
       .then(() =>
-        messagesService.countMessagesNotRead(
-          session.user.id,
-          conseillerJeunes.map((j) => j.id)
-        )
+        messagesService.countMessagesNotRead(conseillerJeunes.map((j) => j.id))
       )
       .catch(() =>
         conseillerJeunes.reduce(
@@ -167,7 +159,7 @@ function MesJeunes({
         setJeunes(jeunesAvecMessagesNonLus)
         setListJeunesFiltres(jeunesAvecMessagesNonLus)
       })
-  }, [chatCredentials, conseillerJeunes, messagesService, session])
+  }, [chatCredentials, conseillerJeunes, messagesService])
 
   useMatomo(trackingTitle)
 

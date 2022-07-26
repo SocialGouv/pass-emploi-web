@@ -34,9 +34,10 @@ export default class Authenticator {
     if (account) return Authenticator.hydrateJwtAtFirstSignin(account, jwt)
 
     const hydratedJWT = jwt as HydratedJWT
-    const safetyRefreshBuffer: number = 15
+    const safetyRefreshBuffer15Seconds: number = 15000
     const tokenIsExpired = hydratedJWT.expiresAtTimestamp
-      ? Date.now() > hydratedJWT.expiresAtTimestamp - safetyRefreshBuffer * 1000
+      ? Date.now() >
+        hydratedJWT.expiresAtTimestamp - safetyRefreshBuffer15Seconds
       : false
 
     if (tokenIsExpired) {
