@@ -1,3 +1,5 @@
+import { getSession } from 'next-auth/react'
+
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import {
@@ -27,10 +29,7 @@ export interface JeunesService {
     accessToken: string
   ): Promise<JeuneFromListe[]>
 
-  getConseillersDuJeune(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<ConseillerHistorique[]>
+  getConseillersDuJeune(idConseiller: string): Promise<ConseillerHistorique[]>
 
   getJeunesDuConseillerParEmail(
     emailConseiller: string,
@@ -111,14 +110,15 @@ export class JeunesApiService implements JeunesService {
   }
 
   async getConseillersDuJeune(
-    idJeune: string,
-    accessToken: string
+    idJeune: string
   ): Promise<ConseillerHistorique[]> {
     {
+      const session = await getSession()
+
       try {
         const { content: historique } = await this.apiClient.get<
           ConseillerHistoriqueJson[]
-        >(`/jeunes/${idJeune}/conseillers`, accessToken)
+        >(`/jeunes/${idJeune}/conseillers`, session!.accessToken)
         return historique.map(toConseillerHistorique)
       } catch (e) {
         if (e instanceof ApiError && e.status === 404) {

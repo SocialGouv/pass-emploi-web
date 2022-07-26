@@ -1,3 +1,5 @@
+import { getSession } from 'next-auth/react'
+
 import { ApiClient } from 'clients/api.client'
 import { AddMessage, FirebaseClient } from 'clients/firebase.client'
 import { UserType } from 'interfaces/conseiller'
@@ -20,7 +22,15 @@ interface FormNouveauMessage {
   infoPieceJointe?: InfoFichier
 }
 
-export type FormNouveauMessageIndividuel = FormNouveauMessage & {
+interface TempFormNouveauMessage {
+  // conseiller: { id: string; structure: string }
+  newMessage: string
+  // accessToken: string
+  cleChiffrement: string
+  infoPieceJointe?: InfoFichier
+}
+
+export type FormNouveauMessageIndividuel = TempFormNouveauMessage & {
   jeuneChat: JeuneChat
 }
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
@@ -61,7 +71,6 @@ export interface MessagesService {
   ): () => void
 
   countMessagesNotRead(
-    idConseiller: string,
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }>
 }
@@ -167,10 +176,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async countMessagesNotRead(
-    idConseiller: string,
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }> {
-    const chats = await this.firebaseClient.getChatsDuConseiller(idConseiller)
+    const session = await getSession()
+
+    const chats = await this.firebaseClient.getChatsDuConseiller(
+      session!.user.id
+    )
     return idsJeunes.reduce((mappedCounts, idJeune) => {
       mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
       return mappedCounts
@@ -178,19 +190,18 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async sendNouveauMessage({
-    accessToken,
     cleChiffrement,
-    conseiller,
     infoPieceJointe,
     jeuneChat,
     newMessage,
   }: FormNouveauMessageIndividuel) {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
+    const session = await getSession()
 
     const nouveauMessage: AddMessage = {
       idChat: jeuneChat.chatId,
-      idConseiller: conseiller.id,
+      idConseiller: session!.user.id,
       message: encryptedMessage,
       date: now,
     }
@@ -221,12 +232,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
     const avecPieceJointe = Boolean(infoPieceJointe)
     await Promise.all([
-      this.notifierNouveauMessage(conseiller.id, [jeuneChat.id], accessToken),
+      this.notifierNouveauMessage(
+        session!.user.id,
+        [jeuneChat.id],
+        session!.accessToken
+      ),
       this.evenementNouveauMessage(
-        conseiller.structure,
-        conseiller.id,
+        session!.user.structure,
+        session!.user.id,
         avecPieceJointe,
-        accessToken
+        session!.accessToken
       ),
     ])
   }
