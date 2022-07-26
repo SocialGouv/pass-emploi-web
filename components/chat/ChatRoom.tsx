@@ -9,6 +9,7 @@ import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
+import { trackEvent } from 'utils/analytics/matomo'
 import useSession from 'utils/auth/useSession'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useDependance } from 'utils/injectionDependances'
@@ -37,6 +38,16 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
   function ouvrirMenu(): void {
     setShowMenu(true)
+  }
+
+  function toggleFlag(idChat: string, flagged: boolean): void {
+    messagesService.toggleFlag(idChat, flagged)
+    trackEvent({
+      structure: session!.user.structure,
+      categorie: 'Conversation suivie',
+      action: 'ChatRoom',
+      nom: flagged.toString(),
+    })
   }
 
   useEffect(() => {
@@ -127,9 +138,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
           <ListeConversations
             conversations={jeunesChats}
-            onToggleFlag={(idChat: string, flagged: boolean) =>
-              messagesService.toggleFlag(idChat, flagged)
-            }
+            onToggleFlag={toggleFlag}
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />
         </article>

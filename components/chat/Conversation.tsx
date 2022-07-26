@@ -20,6 +20,7 @@ import {
   FormNouveauMessageIndividuel,
   MessagesService,
 } from 'services/messages.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
@@ -99,13 +100,6 @@ export default function Conversation({
     [messagesService]
   )
 
-  const toggleFlag = useCallback(
-    (idChatToUpdate: string, flagged: boolean) => {
-      messagesService.toggleFlag(idChatToUpdate, flagged)
-    },
-    [messagesService]
-  )
-
   const observerMessages = useCallback(
     (idChatToObserve: string) => {
       if (!chatCredentials) return () => {}
@@ -168,6 +162,17 @@ export default function Conversation({
     )
   }
 
+  function toggleFlag(): void {
+    const flagged = !jeuneChat.flaggedByConseiller
+    messagesService.toggleFlag(jeuneChat.chatId, flagged)
+    trackEvent({
+      structure: session!.user.structure,
+      categorie: 'Conversation suivie',
+      action: 'Conversation',
+      nom: flagged.toString(),
+    })
+  }
+
   useEffect(() => {
     const unsubscribe = observerMessages(jeuneChat.chatId)
     setReadByConseiller(jeuneChat.chatId)
@@ -218,9 +223,7 @@ export default function Conversation({
               : 'Suivre la conversation'
           }
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={() =>
-            toggleFlag(jeuneChat.chatId, !jeuneChat.flaggedByConseiller)
-          }
+          onClick={toggleFlag}
         >
           <IconComponent
             name={
