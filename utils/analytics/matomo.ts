@@ -1,5 +1,4 @@
 import MatomoTracker from 'matomo-tracker'
-import { Session } from 'next-auth'
 
 import { userStructureDimensionString } from 'utils/analytics/useMatomo'
 
@@ -17,7 +16,7 @@ interface TrackPageSettings {
 }
 
 interface TrackEventSettings {
-  session: Session | null
+  structure: string
   categorie: string
   action: string
   nom: string
@@ -92,12 +91,12 @@ function trackPage({ structure, customTitle }: TrackPageSettings): void {
 }
 
 function trackEvent(trackEventSettings: TrackEventSettings): void {
-  const structure = !trackEventSettings.session
-    ? 'visiteur'
-    : userStructureDimensionString(trackEventSettings.session.user.structure)
-
   push(['setCustomDimension', 1, 'conseiller'])
-  push(['setCustomDimension', 2, structure])
+  push([
+    'setCustomDimension',
+    2,
+    userStructureDimensionString(trackEventSettings.structure),
+  ])
   push([
     'trackEvent',
     trackEventSettings.categorie,

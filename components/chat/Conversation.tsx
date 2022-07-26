@@ -169,6 +169,16 @@ export default function Conversation({
     )
   }
 
+  function onToggleFlag(): void {
+    toggleFlag(jeuneChat.chatId, !jeuneChat.flaggedByConseiller)
+    trackEvent({
+      structure: session!.user.structure,
+      categorie: 'Conversation suivie',
+      action: 'Conversation',
+      nom: (!jeuneChat.flaggedByConseiller).toString(),
+    })
+  }
+
   useEffect(() => {
     const unsubscribe = observerMessages(jeuneChat.chatId)
     setReadByConseiller(jeuneChat.chatId)
@@ -219,15 +229,7 @@ export default function Conversation({
               : 'Suivre la conversation'
           }
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={() => {
-            toggleFlag(jeuneChat.chatId, !jeuneChat.flaggedByConseiller)
-            trackEvent({
-              session: session,
-              categorie: 'Conversation suivie',
-              action: 'Conversation',
-              nom: (!jeuneChat.flaggedByConseiller).toString(),
-            })
-          }}
+          onClick={onToggleFlag}
         >
           <IconComponent
             name={
