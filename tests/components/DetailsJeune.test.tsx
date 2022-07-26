@@ -49,4 +49,14 @@ describe('<DetailsJeune>', () => {
     // Then
     expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
   })
+  it('affiche les informations des favoris', () => {
+    // Given
+    const jeune = unDetailJeune({})
+
+    // When
+
+    // Then
+    expect(screen.getByText('Offres')).toBeInTheDocument()
+    expect(screen.getByText('Recherche sauvegardées')).toBeInTheDocument()
+  })
 })

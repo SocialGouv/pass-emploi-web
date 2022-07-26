@@ -45,6 +45,7 @@ module.exports = {
       grey_500: '#B2B2B2',
       grey_100: '#F1F1F1',
       disabled: '#73758D',
+      favorite_heart: '#A44C66',
     },
 
     fill: (theme) => ({
