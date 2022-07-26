@@ -100,13 +100,6 @@ export default function Conversation({
     [messagesService]
   )
 
-  const toggleFlag = useCallback(
-    (idChatToUpdate: string, flagged: boolean) => {
-      messagesService.toggleFlag(idChatToUpdate, flagged)
-    },
-    [messagesService]
-  )
-
   const observerMessages = useCallback(
     (idChatToObserve: string) => {
       if (!chatCredentials) return () => {}
@@ -169,13 +162,14 @@ export default function Conversation({
     )
   }
 
-  function onToggleFlag(): void {
-    toggleFlag(jeuneChat.chatId, !jeuneChat.flaggedByConseiller)
+  function toggleFlag(): void {
+    const flagged = !jeuneChat.flaggedByConseiller
+    messagesService.toggleFlag(jeuneChat.chatId, flagged)
     trackEvent({
       structure: session!.user.structure,
       categorie: 'Conversation suivie',
       action: 'Conversation',
-      nom: (!jeuneChat.flaggedByConseiller).toString(),
+      nom: flagged.toString(),
     })
   }
 
@@ -229,7 +223,7 @@ export default function Conversation({
               : 'Suivre la conversation'
           }
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={onToggleFlag}
+          onClick={toggleFlag}
         >
           <IconComponent
             name={
