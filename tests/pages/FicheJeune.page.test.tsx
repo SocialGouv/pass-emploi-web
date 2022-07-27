@@ -12,6 +12,7 @@ import {
   desConseillersJeune,
   unConseillerHistorique,
   unDetailJeune,
+  uneRechercheSauvegardee,
 } from 'fixtures/jeune'
 import {
   desRdvListItems,
@@ -53,6 +54,7 @@ describe('Fiche Jeune', () => {
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
+    const recherchesSauvegardees = uneRechercheSauvegardee()
     let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
 
@@ -100,6 +102,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              recherchesSauvegardees={recherchesSauvegardees}
             />,
             { idJeuneSetter: setIdJeune, customDependances: dependances }
           )
@@ -165,6 +168,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              recherchesSauvegardees={recherchesSauvegardees}
             />,
             { customDependances: dependances }
           )
@@ -269,6 +273,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              recherchesSauvegardees={recherchesSauvegardees}
             />,
             { customDependances: dependances }
           )
@@ -327,6 +332,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
+            recherchesSauvegardees={recherchesSauvegardees}
           />,
           { idJeuneSetter: setIdJeune }
         )
@@ -398,6 +404,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={conseillers}
             pageTitle={''}
+            recherchesSauvegardees={recherchesSauvegardees}
           />
         )
 
@@ -421,6 +428,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            recherchesSauvegardees={recherchesSauvegardees}
           />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -480,6 +488,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              recherchesSauvegardees={recherchesSauvegardees}
             />,
             { customConseiller: { structure: StructureConseiller.MILO } }
           )
@@ -514,6 +523,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              recherchesSauvegardees={recherchesSauvegardees}
             />,
             { customConseiller: { structure: StructureConseiller.MILO } }
           )
@@ -541,6 +551,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            recherchesSauvegardees={recherchesSauvegardees}
           />
         )
 
@@ -566,6 +577,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            recherchesSauvegardees={recherchesSauvegardees}
           />
         )
 
@@ -589,6 +601,7 @@ describe('Fiche Jeune', () => {
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            recherchesSauvegardees={recherchesSauvegardees}
           />
         )
 
@@ -625,6 +638,7 @@ describe('Fiche Jeune', () => {
               conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />,
             { customDependances: { actionsService } }
           )
@@ -812,6 +826,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -837,6 +852,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -865,6 +881,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -893,6 +910,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -922,6 +940,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -951,6 +970,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -980,6 +1000,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -1008,6 +1029,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              recherchesSauvegardees={recherchesSauvegardees}
             />
           )
 
@@ -1049,6 +1071,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            recherchesSauvegardees={recherchesSauvegardees}
           />,
           { customDependances: { actionsService } }
         )
@@ -1208,6 +1231,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            recherchesSauvegardees={recherchesSauvegardees}
           />,
           { customDependances: { actionsService } }
         )

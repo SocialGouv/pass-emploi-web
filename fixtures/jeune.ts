@@ -7,9 +7,14 @@ import {
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
   JeuneFromListe,
+  RecherchesSauvegardees,
 } from 'interfaces/jeune'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
-import { DetailJeuneJson, ItemJeuneJson } from 'interfaces/json/jeune'
+import {
+  DetailJeuneJson,
+  ItemJeuneJson,
+  RecherchesSauvegardeesJson,
+} from 'interfaces/json/jeune'
 
 export const uneBaseJeune = (overrides: Partial<BaseJeune> = {}): BaseJeune => {
   const defaults: BaseJeune = {
@@ -30,6 +35,56 @@ export const unDetailJeune = (
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     situations: [],
+  }
+  return { ...defaults, ...overrides }
+}
+//TODO: décommenter quand API prête pour recherches
+export const uneRechercheSauvegardee = (
+  overrides: Partial<RecherchesSauvegardees> = {}
+): RecherchesSauvegardees => {
+  const defaults: RecherchesSauvegardees = {
+    favoris: {
+      autoriseLePartage: true,
+      offres: {
+        total: 12,
+        nombreOffresEmploi: 3,
+        nombreOffresAlternance: 3,
+        nombreOffresImmersion: 3,
+        nombreOffresServiceCivique: 3,
+      },
+      // recherches: {
+      //   total: 8,
+      //   nombreRecherchesOffresEmploi: 2,
+      //   nombreRecherchesOffresAlternance: 4,
+      //   nombreRecherchesOffresImmersion: 2,
+      //   nombreRecherchesOffresServiceCivique: 2,
+      // },
+    },
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const uneRechercheSauvegardeeJson = (
+  overrides: Partial<RecherchesSauvegardeesJson> = {}
+): RecherchesSauvegardeesJson => {
+  const defaults: RecherchesSauvegardeesJson = {
+    favoris: {
+      autoriseLePartage: true,
+      offres: {
+        total: 12,
+        nombreOffresEmploi: 3,
+        nombreOffresAlternance: 3,
+        nombreOffresImmersion: 3,
+        nombreOffresServiceCivique: 3,
+      },
+      // recherches: {
+      //   total: 8,
+      //   nombreRecherchesOffresEmploi: 2,
+      //   nombreRecherchesOffresAlternance: 4,
+      //   nombreRecherchesOffresImmersion: 2,
+      //   nombreRecherchesOffresServiceCivique: 2,
+      // },
+    },
   }
   return { ...defaults, ...overrides }
 }

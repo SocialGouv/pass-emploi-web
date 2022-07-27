@@ -1,10 +1,15 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
+import { RecherchesSauvegardees } from '../../interfaces/jeune'
+import getByDefinitionTerm from '../querySelector'
+
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { unDetailJeune } from 'fixtures/jeune'
+import { unDetailJeune, uneRechercheSauvegardee } from 'fixtures/jeune'
 
 describe('<DetailsJeune>', () => {
+  const recherchesSauvegardees = uneRechercheSauvegardee()
+
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     // Given
     const jeune = unDetailJeune({
@@ -13,7 +18,13 @@ describe('<DetailsJeune>', () => {
     })
 
     // When
-    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        recherchesSauvegardees={recherchesSauvegardees}
+      />
+    )
 
     // Then
     expect(() =>
@@ -24,7 +35,7 @@ describe('<DetailsJeune>', () => {
       'href',
       'https://dossier-milo.fr'
     )
-    expect(screen.getByLabelText('07/12/2021')).toBeInTheDocument()
+    expect(screen.getByText('07/12/2021')).toBeInTheDocument()
   })
 
   it("n'affiche pas le mail si le jeune n'en a pas", () => {
@@ -33,7 +44,13 @@ describe('<DetailsJeune>', () => {
     delete jeune.email
 
     // When
-    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        recherchesSauvegardees={recherchesSauvegardees}
+      />
+    )
 
     // Then
     expect(screen.queryByTitle('e-mail')).toBeNull()
@@ -44,19 +61,35 @@ describe('<DetailsJeune>', () => {
     const jeune = unDetailJeune({ urlDossier: undefined })
 
     // When
-    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        recherchesSauvegardees={recherchesSauvegardees}
+      />
+    )
 
     // Then
     expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
   })
+
   it('affiche les informations des favoris', () => {
     // Given
-    const jeune = unDetailJeune({})
+    const jeune = unDetailJeune()
+    const recherchesSauvegardees = uneRechercheSauvegardee()
 
     // When
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        recherchesSauvegardees={recherchesSauvegardees}
+      />
+    )
 
     // Then
-    expect(screen.getByText('Offres')).toBeInTheDocument()
-    expect(screen.getByText('Recherche sauvegardées')).toBeInTheDocument()
+    expect(screen.getByText(/Offres/)).toBeInTheDocument()
+    expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
+    expect(getByDefinitionTerm('Offres :')).toHaveTextContent('12')
   })
 })

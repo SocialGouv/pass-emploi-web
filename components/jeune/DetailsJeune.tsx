@@ -2,22 +2,28 @@ import Link from 'next/link'
 import React from 'react'
 
 import { Badge } from '../ui/Badge'
-import { InlineDefinition } from '../ui/InlineDefinition'
+import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
-import { formatDayDateLongMonth } from 'utils/date'
+import {
+  CategorieSituation,
+  DetailJeune,
+  RecherchesSauvegardees,
+} from 'interfaces/jeune'
+import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
   withSituations?: boolean
+  recherchesSauvegardees: RecherchesSauvegardees
   onDossierMiloClick: () => void
 }
 
 export const DetailsJeune = ({
   jeune,
   withSituations,
+  recherchesSauvegardees: { favoris },
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
   return (
@@ -28,7 +34,7 @@ export const DetailsJeune = ({
           <dt className='text-base-regular'>Ajouté le :</dt>
           <dd>
             <span className='text-md-semi ml-1'>
-              {formatDayDateLongMonth(new Date(jeune.creationDate))}
+              {formatDayDate(new Date(jeune.creationDate))}
             </span>
           </dd>
         </div>
@@ -129,42 +135,54 @@ export const DetailsJeune = ({
           />
           <h2 className='text-base-medium mr-2'>Favoris</h2>
 
-          <Badge count={10} bgColor='favorite_heart' />
+          <Badge count={favoris.offres.total} bgColor='favorite_heart' />
         </div>
         <dl>
           <div className='flex items-center mb-2'>
             <dt className='text-base-medium'>Offres :</dt>
-            <dd>
-              <span className='text-base-medium ml-1'>12</span>
-            </dd>
+            <dd className='text-base-medium ml-1'>{favoris.offres.total}</dd>
           </div>
           <div className='ml-4 mb-4'>
-            <InlineDefinition definition='Offre d’emploi' description={10} />
-            <InlineDefinition definition='Alternance' description={2} />
-            <InlineDefinition definition='Service civique' description={2} />
-            <InlineDefinition definition='Immersion' description={2} />
+            <InlineDefinitionItem
+              definition='Offre d’emploi :'
+              description={favoris.offres.nombreOffresEmploi}
+            />
+            <InlineDefinitionItem
+              definition='Alternance :'
+              description={favoris.offres.nombreOffresAlternance}
+            />
+            <InlineDefinitionItem
+              definition='Service civique :'
+              description={favoris.offres.nombreOffresServiceCivique}
+            />
+            <InlineDefinitionItem
+              definition='Immersion :'
+              description={favoris.offres.nombreOffresImmersion}
+            />
           </div>
 
           <div className='flex items-center'>
             <dt className='text-base-medium'>Recherches sauvegardées :</dt>
-            <dd>
-              <span className='text-base-medium ml-1'>12</span>
+            <dd className='text-base-medium ml-1'>
+              {/*{favoris?.recherches.total ?? ''}*/}
             </dd>
           </div>
 
-          <div className='flex justify-end mt-8'>
-            <Link href={`/mes-jeunes/${jeune.id}/favoris`}>
-              <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
-                Voir la liste des favoris
-                <IconComponent
-                  name={IconName.ChevronRight}
-                  className='w-4 h-5 fill-[inherit]'
-                  aria-hidden={true}
-                  focusable={false}
-                />
-              </a>
-            </Link>
-          </div>
+          {favoris.autoriseLePartage && (
+            <div className='flex justify-end mt-8'>
+              <Link href={`/mes-jeunes/${jeune.id}/favoris`}>
+                <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
+                  Voir la liste des favoris
+                  <IconComponent
+                    name={IconName.ChevronRight}
+                    className='w-4 h-5 fill-[inherit]'
+                    aria-hidden={true}
+                    focusable={false}
+                  />
+                </a>
+              </Link>
+            </div>
+          )}
         </dl>
       </div>
     </>
