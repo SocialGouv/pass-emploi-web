@@ -19,6 +19,7 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -49,9 +50,11 @@ function MesJeunes({
 }: MesJeunesProps) {
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
   const router = useRouter()
 
-  const [conseiller] = useConseiller()
+  const [conseiller, setConseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
   const [listeJeunesFiltres, setListJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
@@ -93,19 +96,16 @@ function MesJeunes({
 
   async function recupererBeneficiaires(): Promise<void> {
     setIsRecuperationBeneficiairesLoading(true)
-    // try {
-    //   await conseillerService.recupererBeneficiaires(
-    //     session!.user.id,
-    //     session!.accessToken
-    //   )
-    //   await router.replace({
-    //     pathname: '/mes-jeunes',
-    //     query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
-    //   })
-    //   setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
-    // } finally {
-    setIsRecuperationBeneficiairesLoading(false)
-    // }
+    try {
+      await conseillerService.recupererBeneficiaires()
+      await router.replace({
+        pathname: '/mes-jeunes',
+        query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
+      })
+      setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
+    } finally {
+      setIsRecuperationBeneficiairesLoading(false)
+    }
   }
 
   const onSearch = useCallback(

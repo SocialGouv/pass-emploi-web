@@ -2,13 +2,14 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
 import { ApiError } from 'utils/httpClient'
 
 export interface ConseillerService {
-  getConseiller(
+  getConseillerClientSide(): Promise<Conseiller | undefined>
+  getConseillerServerSide(
     user: Session.HydratedUser,
     accessToken: string
   ): Promise<Conseiller | undefined>
@@ -32,16 +33,13 @@ export interface ConseillerService {
     email: string | undefined
   }): Promise<{ id: string }>
 
-  recupererBeneficiaires(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<void>
+  recupererBeneficiaires(): Promise<void>
 }
 
 export class ConseillerApiService implements ConseillerService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getConseiller(
+  private async getConseiller(
     user: Session.HydratedUser,
     accessToken: string
   ): Promise<Conseiller | undefined> {
@@ -59,6 +57,18 @@ export class ConseillerApiService implements ConseillerService {
       }
       throw e
     }
+  }
+
+  async getConseillerClientSide(): Promise<Conseiller | undefined> {
+    const session = await getSession()
+    return this.getConseiller(session!.user, session!.accessToken)
+  }
+
+  getConseillerServerSide(
+    user: Session.HydratedUser,
+    accessToken: string
+  ): Promise<Conseiller | undefined> {
+    return this.getConseiller(user, accessToken)
   }
 
   async modifierAgence({
@@ -116,14 +126,12 @@ export class ConseillerApiService implements ConseillerService {
     return { id }
   }
 
-  async recupererBeneficiaires(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<void> {
+  async recupererBeneficiaires(): Promise<void> {
+    const session = await getSession()
     await this.apiClient.post(
-      `/conseillers/${idConseiller}/recuperer-mes-jeunes`,
+      `/conseillers/${session!.user.id}/recuperer-mes-jeunes`,
       {},
-      accessToken
+      session!.accessToken
     )
   }
 }

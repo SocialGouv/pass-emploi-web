@@ -1,11 +1,10 @@
-import { apm } from '@elastic/apm-rum'
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import { Agence, Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Agence, StructureConseiller } from 'interfaces/conseiller'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
@@ -17,29 +16,30 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface HomePageProps {
   redirectUrl: string
-  tutu: Conseiller
+  structureConseiller: string
   referentielAgences: Agence[]
 }
 
-function Home({ redirectUrl, tutu, referentielAgences }: HomePageProps) {
+function Home({
+  redirectUrl,
+  structureConseiller,
+  referentielAgences,
+}: HomePageProps) {
   const router = useRouter()
-  const [_, setConseiller] = useConseiller()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const [conseiller, setConseiller] = useConseiller()
 
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Pop-in sélection agence'
   )
-
-  const doitChoisirAgence =
-    !tutu.agence && tutu.structure !== StructureConseiller.PASS_EMPLOI
 
   async function selectAgence(agence: {
     id?: string
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...tutu!, agence: agence.nom })
+    setConseiller({ ...conseiller!, agence: agence.nom })
     setTrackingLabel('Succès ajout agence')
     await router.replace(
       `${redirectUrl}?${QueryParam.choixAgence}=${QueryValue.succes}`
@@ -50,32 +50,18 @@ function Home({ redirectUrl, tutu, referentielAgences }: HomePageProps) {
     await router.replace(redirectUrl)
   }
 
-  useEffect(() => {
-    setConseiller(tutu)
-    const userAPM = {
-      id: tutu.id,
-      username: `${tutu.firstName} ${tutu.lastName}`,
-      email: tutu.email ?? '',
-    }
-    apm.setUserContext(userAPM)
-
-    if (!doitChoisirAgence) {
-      redirectToUrl()
-    }
-  }, [])
-
   useMatomo(trackingLabel)
 
-  return doitChoisirAgence ? (
+  return (
     <>
       <RenseignementAgenceModal
-        structureConseiller={tutu.structure}
+        structureConseiller={structureConseiller}
         referentielAgences={referentielAgences}
         onAgenceChoisie={selectAgence}
         onClose={redirectToUrl}
       />
     </>
-  ) : null
+  )
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
@@ -96,13 +82,27 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
   const conseillerService =
     withDependance<ConseillerService>('conseillerService')
-  const conseiller = await conseillerService.getConseiller(user, accessToken)
+  const conseiller = await conseillerService.getConseillerServerSide(
+    user,
+    accessToken
+  )
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
   }
 
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
+  if (
+    Boolean(conseiller.agence) ||
+    user.structure === StructureConseiller.PASS_EMPLOI
+  ) {
+    return {
+      redirect: {
+        destination: `${redirectUrl}`,
+        permanent: false,
+      },
+    }
+  }
 
   const agenceService = withDependance<AgencesService>('agencesService')
   const referentielAgences = await agenceService.getAgences(
@@ -112,7 +112,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   return {
     props: {
       redirectUrl,
-      tutu: conseiller,
+      structureConseiller: user.structure,
       referentielAgences,
     },
   }

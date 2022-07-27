@@ -12,7 +12,9 @@ export function mockedJeunesService(
 ): JeunesService {
   const defaults: JeunesService = {
     getJeunesDuConseillerServerSide: jest.fn(),
+    getJeunesDuConseillerClientSide: jest.fn(),
     getConseillersDuJeuneServerSide: jest.fn(),
+    getConseillersDuJeuneClientSide: jest.fn(),
     getJeunesDuConseillerParEmail: jest.fn(),
     getJeuneDetails: jest.fn(),
     getIdJeuneMilo: jest.fn(),
@@ -35,6 +37,7 @@ export function mockedActionsService(
     getAction: jest.fn(),
     countActionsJeunes: jest.fn(),
     getActionsJeuneServerSide: jest.fn(),
+    getActionsJeuneClientSide: jest.fn(),
     updateAction: jest.fn(),
   }
   return { ...defaults, ...overrides }
@@ -78,7 +81,8 @@ export function mockedConseillerService(
   overrides: Partial<ConseillerService> = {}
 ): ConseillerService {
   const defaults: ConseillerService = {
-    getConseiller: jest.fn(),
+    getConseillerServerSide: jest.fn(),
+    getConseillerClientSide: jest.fn(),
     modifierAgence: jest.fn(),
     modifierNotificationsSonores: jest.fn(),
     getDossierJeune: jest.fn(),

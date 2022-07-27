@@ -28,7 +28,7 @@ describe('ConseillerApiService', () => {
       })
 
       // When
-      const actual = await conseillerService.getConseiller()
+      const actual = await conseillerService.getConseillerClientSide()
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -40,7 +40,7 @@ describe('ConseillerApiService', () => {
   })
 
   describe('.modifierAgence', () => {
-    it("modifie le conseiller avec l'id de l'agence", ;async () => {
+    it("modifie le conseiller avec l'id de l'agence", async () => {
       // When
       await conseillerService.modifierAgence({ id: 'id-agence', nom: 'Agence' })
 
@@ -82,10 +82,7 @@ describe('ConseillerApiService', () => {
   describe('.recupererBeneficiaires', () => {
     it('récupère les bénéficiaires transférés temporairement', async () => {
       // When
-      await conseillerService.recupererBeneficiaires(
-        'id-conseiller',
-        'accessToken'
-      )
+      await conseillerService.recupererBeneficiaires()
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(

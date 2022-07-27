@@ -2,18 +2,21 @@
  * Shared Layout, see: https://nextjs.org/docs/basic-features/layouts
  */
 
+import { apm } from '@elastic/apm-rum'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
-import ChatContainer from './ChatContainer'
-
 import AppHead from 'components/AppHead'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import ChatContainer from 'components/layouts/ChatContainer'
 import { Footer } from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
 import { PageProps } from 'interfaces/pageProps'
+import { ConseillerService } from 'services/conseiller.service'
 import styles from 'styles/components/Layouts.module.css'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useDependance } from 'utils/injectionDependances'
 
 interface LayoutProps {
   children: ReactElement<PageProps>
@@ -25,6 +28,9 @@ export default function Layout({ children }: LayoutProps) {
   } = children
 
   const router = useRouter()
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
+  const [conseiller, setConseiller] = useConseiller()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
@@ -50,6 +56,19 @@ export default function Layout({ children }: LayoutProps) {
   useEffect(() => {
     if (mainRef.current) mainRef.current.scrollTo(0, 0)
   }, [router.asPath, mainRef])
+
+  useEffect(() => {
+    if (!conseiller) {
+      conseillerService.getConseillerClientSide().then(setConseiller)
+    } else {
+      const userAPM = {
+        id: conseiller.id,
+        username: `${conseiller.firstName} ${conseiller.lastName}`,
+        email: conseiller.email ?? '',
+      }
+      apm.setUserContext(userAPM)
+    }
+  }, [conseiller])
 
   return (
     <>

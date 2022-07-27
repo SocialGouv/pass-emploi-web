@@ -271,7 +271,7 @@ describe('Home', () => {
           agence: 'MLS3F SAINT-LOUIS',
         }
         conseillerService = mockedConseillerService({
-          getConseiller: jest.fn(async () => conseillerAvecAgence),
+          getConseillerClientSide: jest.fn(async () => conseillerAvecAgence),
         })
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'conseillerService') return conseillerService
@@ -314,7 +314,7 @@ describe('Home', () => {
         const conseiller = unConseiller()
 
         conseillerService = mockedConseillerService({
-          getConseiller: jest.fn(async () => conseiller),
+          getConseillerClientSide: jest.fn(async () => conseiller),
         })
 
         agencesService = {
