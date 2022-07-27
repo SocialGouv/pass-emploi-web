@@ -23,6 +23,7 @@ export function mockedJeunesService(
     supprimerJeuneInactif: jest.fn(),
     archiverJeune: jest.fn(),
     getMotifsSuppression: jest.fn(),
+    getJeuneRecherchesSauvegardees: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

@@ -1,11 +1,14 @@
 import { getSession } from 'next-auth/react'
 
+import { uneRechercheSauvegardeeJson } from '../fixtures/jeune'
+
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import {
   ConseillerHistorique,
   DetailJeune,
   JeuneFromListe,
+  RecherchesSauvegardees,
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
@@ -16,6 +19,8 @@ import {
   ItemJeuneJson,
   jsonToDetailJeune,
   jsonToItemJeune,
+  jsonToRecherchesSauvegardees,
+  RecherchesSauvegardeesJson,
   SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
@@ -70,6 +75,12 @@ export interface JeunesService {
   ): Promise<void>
 
   getMotifsSuppression(): Promise<string[]>
+
+  getJeuneRecherchesSauvegardees(
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<RecherchesSauvegardees | undefined>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -249,5 +260,26 @@ export class JeunesApiService implements JeunesService {
       session!.accessToken
     )
     return motifs
+  }
+
+  async getJeuneRecherchesSauvegardees(
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<RecherchesSauvegardees | undefined> {
+    try {
+      const { content: recherchesSauvegardees } =
+        await this.apiClient.get<RecherchesSauvegardeesJson>(
+          `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
+          accessToken
+        )
+      return jsonToRecherchesSauvegardees(recherchesSauvegardees)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+
+      throw e
+    }
   }
 }
