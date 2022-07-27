@@ -16,7 +16,7 @@ import { Dependencies } from '../utils/injectionDependances/container'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
-import { Conseiller, UserStructure } from 'interfaces/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
@@ -38,7 +38,7 @@ export default function renderPage(
       id: '1',
       name: 'Nils Tavernier',
       email: 'fake@email.com',
-      structure: UserStructure.MILO,
+      structure: StructureConseiller.MILO,
       estConseiller: true,
       estSuperviseur: false,
     },

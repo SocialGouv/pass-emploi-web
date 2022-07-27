@@ -1,15 +1,15 @@
+import { apm } from '@elastic/apm-rum'
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import { Agence, UserStructure } from 'interfaces/conseiller'
+import { Agence, Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
@@ -17,18 +17,13 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface HomePageProps {
   redirectUrl: string
-  structureConseiller: string
+  tutu: Conseiller
   referentielAgences: Agence[]
 }
 
-function Home({
-  redirectUrl,
-  structureConseiller,
-  referentielAgences,
-}: HomePageProps) {
+function Home({ redirectUrl, tutu, referentielAgences }: HomePageProps) {
   const router = useRouter()
-  const { data: session } = useSession<true>({ required: true })
-  const [conseiller, setConseiller] = useConseiller()
+  const [_, setConseiller] = useConseiller()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
 
@@ -36,16 +31,15 @@ function Home({
     'Pop-in sélection agence'
   )
 
+  const doitChoisirAgence =
+    !tutu.agence && tutu.structure !== StructureConseiller.PASS_EMPLOI
+
   async function selectAgence(agence: {
     id?: string
     nom: string
   }): Promise<void> {
-    await conseillerService.modifierAgence(
-      session!.user.id,
-      agence,
-      session!.accessToken
-    )
-    setConseiller({ ...conseiller!, agence: agence.nom })
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...tutu!, agence: agence.nom })
     setTrackingLabel('Succès ajout agence')
     await router.replace(
       `${redirectUrl}?${QueryParam.choixAgence}=${QueryValue.succes}`
@@ -56,18 +50,32 @@ function Home({
     await router.replace(redirectUrl)
   }
 
+  useEffect(() => {
+    setConseiller(tutu)
+    const userAPM = {
+      id: tutu.id,
+      username: `${tutu.firstName} ${tutu.lastName}`,
+      email: tutu.email ?? '',
+    }
+    apm.setUserContext(userAPM)
+
+    if (!doitChoisirAgence) {
+      redirectToUrl()
+    }
+  }, [])
+
   useMatomo(trackingLabel)
 
-  return (
+  return doitChoisirAgence ? (
     <>
       <RenseignementAgenceModal
-        structureConseiller={structureConseiller}
+        structureConseiller={tutu.structure}
         referentielAgences={referentielAgences}
         onAgenceChoisie={selectAgence}
         onClose={redirectToUrl}
       />
     </>
-  )
+  ) : null
 }
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
@@ -88,24 +96,13 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
   const conseillerService =
     withDependance<ConseillerService>('conseillerService')
-  const conseiller = await conseillerService.getConseiller(user.id, accessToken)
+  const conseiller = await conseillerService.getConseiller(user, accessToken)
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
   }
 
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
-  if (
-    Boolean(conseiller.agence) ||
-    user.structure === UserStructure.PASS_EMPLOI
-  ) {
-    return {
-      redirect: {
-        destination: `${redirectUrl}`,
-        permanent: false,
-      },
-    }
-  }
 
   const agenceService = withDependance<AgencesService>('agencesService')
   const referentielAgences = await agenceService.getAgences(
@@ -115,7 +112,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   return {
     props: {
       redirectUrl,
-      structureConseiller: user.structure,
+      tutu: conseiller,
       referentielAgences,
     },
   }

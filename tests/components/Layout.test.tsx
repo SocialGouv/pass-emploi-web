@@ -66,7 +66,7 @@ describe('<Layout />', () => {
       asPath: '/path/to/current/page',
     })
     jeunesService = mockedJeunesService({
-      getJeunesDuConseiller: jest.fn(async () => jeunes),
+      getJeunesDuConseillerServerSide: jest.fn(async () => jeunes),
     })
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
@@ -136,7 +136,7 @@ describe('<Layout />', () => {
 
     it('récupère la liste des jeunes du conseiller', () => {
       // Then
-      expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
+      expect(jeunesService.getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
         '1',
         'accessToken'
       )

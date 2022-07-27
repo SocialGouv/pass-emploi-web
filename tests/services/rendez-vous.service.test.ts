@@ -103,7 +103,7 @@ describe('RendezVousApiService', () => {
   })
 
   describe('updateRendezVous', () => {
-    it('met à jour un rendez vous déja existant', async () => {
+    it('met à jour un rendez vous déja existant', ;async () => {
       // Given
       const rdvFormData: RdvFormData = {
         jeunesIds: ['jeune-1', 'jeune-2'],
@@ -120,11 +120,7 @@ describe('RendezVousApiService', () => {
       }
 
       // When
-      await rendezVousService.updateRendezVous(
-        'id-rdv',
-        rdvFormData,
-        'accessToken'
-      )
+      await rendezVousService.updateRendezVous('id-rdv', rdvFormData)
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(

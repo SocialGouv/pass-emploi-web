@@ -1,20 +1,19 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import RdvList from 'components/rdv/RdvList'
 import ButtonLink from 'components/ui/ButtonLink'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesRendezvousProps extends PageProps {
@@ -35,9 +34,7 @@ function MesRendezvous({
   suppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) {
-  const router = useRouter()
-  const { data: session } = useSession<true>({ required: true })
-
+  const [conseiller] = useConseiller()
   const [displayOldRdv, setDisplayOldRdv] = useState(false)
 
   const pageTracking = `Mes rendez-vous`
@@ -88,7 +85,7 @@ function MesRendezvous({
           tabIndex={0}
         >
           <RdvList
-            idConseiller={session?.user.id ?? ''}
+            idConseiller={conseiller?.id ?? ''}
             rdvs={rendezVousPasses}
           />
         </div>
@@ -100,7 +97,7 @@ function MesRendezvous({
           tabIndex={0}
         >
           <RdvList
-            idConseiller={session?.user.id ?? ''}
+            idConseiller={conseiller?.id ?? ''}
             rdvs={rendezVousFuturs}
           />
         </div>
@@ -120,7 +117,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (user.structure === UserStructure.POLE_EMPLOI) {
+  if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
 

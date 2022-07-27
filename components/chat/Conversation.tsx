@@ -1,4 +1,3 @@
-import { getSession } from 'next-auth/react'
 import React, {
   ChangeEvent,
   FormEvent,
@@ -23,6 +22,7 @@ import {
 } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -43,6 +43,7 @@ export default function Conversation({
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
+  const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
@@ -81,9 +82,9 @@ export default function Conversation({
   }
 
   function getConseillerNomComplet(message: Message) {
-    const conseiller = conseillers.find((c) => c.id === message.conseillerId)
-    if (conseiller) {
-      return `${conseiller?.prenom.toLowerCase()} ${conseiller?.nom.toLowerCase()}`
+    const found = conseillers.find((c) => c.id === message.conseillerId)
+    if (found) {
+      return `${found?.prenom.toLowerCase()} ${found?.nom.toLowerCase()}`
     }
   }
 
@@ -155,10 +156,8 @@ export default function Conversation({
   async function toggleFlag() {
     const flagged = !jeuneChat.flaggedByConseiller
     messagesService.toggleFlag(jeuneChat.chatId, flagged)
-    // FIXME use conseiller for structure
-    const session = await getSession()
     trackEvent({
-      structure: session!.user.structure,
+      structure: conseiller!.structure,
       categorie: 'Conversation suivie',
       action: 'Conversation',
       nom: flagged.toString(),

@@ -3,7 +3,7 @@ import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import React from 'react'
 
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 
 export default function renderWithSession(
@@ -15,7 +15,7 @@ export default function renderWithSession(
       id: '1',
       name: 'Nils Tavernier',
       email: 'fake@email.com',
-      structure: UserStructure.MILO,
+      structure: StructureConseiller.MILO,
       estConseiller: true,
       estSuperviseur: false,
     },

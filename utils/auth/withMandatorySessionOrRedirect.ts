@@ -13,6 +13,7 @@ export async function withMandatorySessionOrRedirect({
   | { validSession: false; redirect: Redirect }
   | { validSession: true; session: Session }
 > {
+  // FIXME https://next-auth.js.org/configuration/nextjs#unstable_getserversession
   const session = await getSession({ req })
   if (!session) {
     const redirectQueryParam =

@@ -10,7 +10,7 @@ import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import Button from 'components/ui/Button'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import { TotalActions } from 'interfaces/action'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   compareJeunesByNom,
   JeuneAvecInfosComplementaires,
@@ -75,10 +75,10 @@ function MesJeunes({
 
   const handleAddJeune = async () => {
     switch (structureConseiller) {
-      case UserStructure.MILO:
+      case StructureConseiller.MILO:
         await router.push('/mes-jeunes/milo/creation-jeune')
         break
-      case UserStructure.POLE_EMPLOI:
+      case StructureConseiller.POLE_EMPLOI:
         await router.push('/mes-jeunes/pole-emploi/creation-jeune')
         break
       default:
@@ -168,7 +168,7 @@ function MesJeunes({
       {showAjoutAgenceSuccess && (
         <SuccessMessage
           label={`Votre ${
-            structureConseiller === UserStructure.MILO
+            structureConseiller === StructureConseiller.MILO
               ? 'Mission locale'
               : 'agence'
           } a été ajoutée à votre profil`}
@@ -198,8 +198,8 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <div className={`flex flex-wrap justify-between items-end mb-6`}>
           <RechercheJeune onSearchFilterBy={onSearch} />
-          {(structureConseiller === UserStructure.MILO ||
-            structureConseiller === UserStructure.POLE_EMPLOI) && (
+          {(structureConseiller === StructureConseiller.MILO ||
+            structureConseiller === StructureConseiller.POLE_EMPLOI) && (
             <AjouterJeuneButton handleAddJeune={handleAddJeune} />
           )}
         </div>
@@ -224,8 +224,8 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <TableauJeunes
           jeunes={listeJeunesFiltres}
-          withActions={structureConseiller !== UserStructure.POLE_EMPLOI}
-          withSituations={structureConseiller === UserStructure.MILO}
+          withActions={structureConseiller !== StructureConseiller.POLE_EMPLOI}
+          withSituations={structureConseiller === StructureConseiller.MILO}
         />
       )}
     </>
@@ -245,10 +245,13 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   } = sessionOrRedirect
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const actionsService = withDependance<ActionsService>('actionsService')
-  const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
+    user.id,
+    accessToken
+  )
 
   let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
-  if (user.structure === UserStructure.POLE_EMPLOI) {
+  if (user.structure === StructureConseiller.POLE_EMPLOI) {
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
       ...jeune,
       nbActionsNonTerminees: 0,

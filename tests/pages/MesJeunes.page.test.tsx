@@ -18,7 +18,7 @@ import {
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { Conseiller, UserStructure } from 'interfaces/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   compareJeunesByNom,
@@ -71,7 +71,7 @@ describe('Mes Jeunes', () => {
         await act(() => {
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={jeunes}
               isFromEmail
               pageTitle=''
@@ -154,7 +154,7 @@ describe('Mes Jeunes', () => {
           conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={jeunes}
               isFromEmail
               pageTitle=''
@@ -205,7 +205,7 @@ describe('Mes Jeunes', () => {
         await act(() => {
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={[jeune]}
               isFromEmail
               pageTitle=''
@@ -257,7 +257,7 @@ describe('Mes Jeunes', () => {
         await act(() => {
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.POLE_EMPLOI}
+              structureConseiller={StructureConseiller.POLE_EMPLOI}
               conseillerJeunes={[jeune]}
               isFromEmail
               pageTitle=''
@@ -303,7 +303,7 @@ describe('Mes Jeunes', () => {
         await act(() => {
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={[]}
               isFromEmail
               pageTitle=''
@@ -323,7 +323,7 @@ describe('Mes Jeunes', () => {
         await act(() => {
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={[]}
               isFromEmail
               pageTitle=''
@@ -348,7 +348,7 @@ describe('Mes Jeunes', () => {
           await act(() => {
             renderPage(
               <MesJeunes
-                structureConseiller={UserStructure.MILO}
+                structureConseiller={StructureConseiller.MILO}
                 conseillerJeunes={[]}
                 isFromEmail
                 pageTitle=''
@@ -388,7 +388,7 @@ describe('Mes Jeunes', () => {
         await act(() => {
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={jeunes}
               isFromEmail
               pageTitle=''
@@ -408,7 +408,7 @@ describe('Mes Jeunes', () => {
         await act(() => {
           renderPage(
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={jeunes}
               isFromEmail
               pageTitle=''
@@ -432,7 +432,7 @@ describe('Mes Jeunes', () => {
     beforeEach(() => {
       const jeunes = desItemsJeunes()
       jeunesService = mockedJeunesService({
-        getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
+        getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
       })
       actionsService = mockedActionsService({
         countActionsJeunes: jest.fn().mockResolvedValue(
@@ -479,7 +479,7 @@ describe('Mes Jeunes', () => {
       await getServerSideProps({ query: {} } as GetServerSidePropsContext)
 
       // Then
-      expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
+      expect(jeunesService.getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
         'id-conseiller',
         'accessToken'
       )

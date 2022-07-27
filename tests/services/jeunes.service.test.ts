@@ -34,10 +34,7 @@ describe('JeunesApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
-      const actual = await jeunesService.getJeunesDuConseiller(
-        idConseiller,
-        accessToken
-      )
+      const actual = await jeunesService.getJeunesDuConseillerServerSide()
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -64,10 +61,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      actual = await jeunesService.getJeunesDuConseillerParEmail(
-        email,
-        accessToken
-      )
+      actual = await jeunesService.getJeunesDuConseillerParEmail(email)
     })
 
     it('récupère le conseiller par son email', async () => {
@@ -188,13 +182,7 @@ describe('JeunesApiService', () => {
       const accessToken = 'accessToken'
 
       // WHEN
-      await jeunesService.reaffecter(
-        idConseillerInitial,
-        emailConseillerDestination,
-        idsJeunes,
-        estTemporaire,
-        accessToken
-      )
+      await jeunesService.reaffecter(idConseillerInitial, emailConseillerDestination, idsJeunes, estTemporaire)
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -216,7 +204,7 @@ describe('JeunesApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await jeunesService.supprimerJeuneInactif('id-jeune', accessToken)
+      await jeunesService.supprimerJeuneInactif('id-jeune')
 
       // Then
       expect(apiClient.delete).toHaveBeenCalledWith(
@@ -235,11 +223,7 @@ describe('JeunesApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await jeunesService.archiverJeune(
-        'id-jeune',
-        payloadFormData,
-        accessToken
-      )
+      await jeunesService.archiverJeune('id-jeune', payloadFormData)
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -258,7 +242,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await jeunesService.getConseillersDuJeune(
+      const actual = await jeunesService.getConseillersDuJeuneServerSide(
         'id-jeune',
         'accessToken'
       )
@@ -272,7 +256,7 @@ describe('JeunesApiService', () => {
     })
   })
   describe('.getMotifsSuppression', () => {
-    it('renvoie les motifs de suppression', async () => {
+    it('renvoie les motifs de suppression', ;async () => {
       // Given
       const accessToken = 'accessToken'
       const motifs: string[] = [
@@ -287,7 +271,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await jeunesService.getMotifsSuppression(accessToken)
+      const actual = await jeunesService.getMotifsSuppression()
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(

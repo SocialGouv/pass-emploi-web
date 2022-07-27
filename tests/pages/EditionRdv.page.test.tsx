@@ -62,7 +62,7 @@ describe('EditionRdv', () => {
         typesRendezVous = typesDeRendezVous()
 
         jeunesService = mockedJeunesService({
-          getJeunesDuConseiller: jest.fn().mockResolvedValue(jeunes),
+          getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
         })
         rendezVousService = mockedRendezVousService({
           getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
@@ -81,7 +81,7 @@ describe('EditionRdv', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
+        expect(jeunesService.getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
           'id-conseiller',
           'accessToken'
         )

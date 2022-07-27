@@ -26,7 +26,7 @@ describe('<ChatRoom />', () => {
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
     jeunesService = mockedJeunesService({
-      getConseillersDuJeune: jest.fn((_) => Promise.resolve(conseillers)),
+      getConseillersDuJeuneServerSide: jest.fn((_) => Promise.resolve(conseillers)),
     })
     messagesService = mockedMessagesService()
     jeunesChats = [

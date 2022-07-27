@@ -35,7 +35,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       actionsService = {
         getAction: jest.fn(),
         countActionsJeunes: jest.fn(),
-        getActionsJeune: jest.fn(),
+        getActionsJeuneServerSide: jest.fn(),
         createAction: jest.fn(),
         updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
         deleteAction: jest.fn(),

@@ -24,16 +24,22 @@ import {
 import { ApiError } from 'utils/httpClient'
 
 export interface JeunesService {
-  getJeunesDuConseiller(
+  getJeunesDuConseillerServerSide(
     idConseiller: string,
     accessToken: string
   ): Promise<JeuneFromListe[]>
+  getJeunesDuConseillerClientSide(): Promise<JeuneFromListe[]>
 
-  getConseillersDuJeune(idConseiller: string): Promise<ConseillerHistorique[]>
+  getConseillersDuJeuneServerSide(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<ConseillerHistorique[]>
+  getConseillersDuJeuneClientSide(
+    idConseiller: string
+  ): Promise<ConseillerHistorique[]>
 
   getJeunesDuConseillerParEmail(
-    emailConseiller: string,
-    accessToken: string
+    emailConseiller: string
   ): Promise<{ idConseiller: string; jeunes: JeuneFromListe[] }>
 
   getJeuneDetails(
@@ -46,29 +52,27 @@ export interface JeunesService {
     accessToken: string
   ): Promise<string | undefined>
 
-  createCompteJeunePoleEmploi(
-    newJeune: { firstName: string; lastName: string; email: string },
-    idConseiller: string,
-    accessToken: string
-  ): Promise<{ id: string }>
+  createCompteJeunePoleEmploi(newJeune: {
+    firstName: string
+    lastName: string
+    email: string
+  }): Promise<{ id: string }>
 
   reaffecter(
     idConseillerInitial: string,
     emailConseillerDestination: string,
     idsJeunes: string[],
-    estTemporaire: boolean,
-    accessToken: string
+    estTemporaire: boolean
   ): Promise<void>
 
-  supprimerJeuneInactif(idJeune: string, accessToken: string): Promise<void>
+  supprimerJeuneInactif(idJeune: string): Promise<void>
 
   archiverJeune(
     idJeune: string,
-    payload: SuppressionJeuneFormData,
-    accessToken: string
+    payload: SuppressionJeuneFormData
   ): Promise<void>
 
-  getMotifsSuppression(accessToken: string): Promise<string[]>
+  getMotifsSuppression(): Promise<string[]>
 
   getMetadonneesFavorisJeune(
     idConseiller: string,
@@ -80,15 +84,27 @@ export interface JeunesService {
 export class JeunesApiService implements JeunesService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getJeunesDuConseiller(
+  private async getJeunesDuConseiller(
     idConseiller: string,
     accessToken: string
-  ): Promise<JeuneFromListe[]> {
+  ) {
     const { content: jeunes } = await this.apiClient.get<ItemJeuneJson[]>(
       `/conseillers/${idConseiller}/jeunes`,
       accessToken
     )
     return jeunes.map(jsonToItemJeune)
+  }
+
+  async getJeunesDuConseillerServerSide(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<JeuneFromListe[]> {
+    return this.getJeunesDuConseiller(idConseiller, accessToken)
+  }
+
+  async getJeunesDuConseillerClientSide(): Promise<JeuneFromListe[]> {
+    const session = await getSession()
+    return this.getJeunesDuConseiller(session!.user.id, session!.accessToken)
   }
 
   async getJeuneDetails(
@@ -109,16 +125,15 @@ export class JeunesApiService implements JeunesService {
     }
   }
 
-  async getConseillersDuJeune(
-    idJeune: string
+  private async getConseillersDuJeune(
+    idJeune: string,
+    accessToken: string
   ): Promise<ConseillerHistorique[]> {
     {
-      const session = await getSession()
-
       try {
         const { content: historique } = await this.apiClient.get<
           ConseillerHistoriqueJson[]
-        >(`/jeunes/${idJeune}/conseillers`, session!.accessToken)
+        >(`/jeunes/${idJeune}/conseillers`, accessToken)
         return historique.map(toConseillerHistorique)
       } catch (e) {
         if (e instanceof ApiError && e.status === 404) {
@@ -129,33 +144,49 @@ export class JeunesApiService implements JeunesService {
     }
   }
 
-  async createCompteJeunePoleEmploi(
-    newJeune: { firstName: string; lastName: string; email: string },
-    idConseiller: string,
+  async getConseillersDuJeuneServerSide(
+    idJeune: string,
     accessToken: string
-  ): Promise<{ id: string }> {
+  ): Promise<ConseillerHistorique[]> {
+    {
+      return this.getConseillersDuJeune(idJeune, accessToken)
+    }
+  }
+
+  async getConseillersDuJeuneClientSide(
+    idJeune: string
+  ): Promise<ConseillerHistorique[]> {
+    {
+      const session = await getSession()
+      return this.getConseillersDuJeune(idJeune, session!.accessToken)
+    }
+  }
+
+  async createCompteJeunePoleEmploi(newJeune: {
+    firstName: string
+    lastName: string
+    email: string
+  }): Promise<{ id: string }> {
+    const session = await getSession()
     const {
       content: { id },
     } = await this.apiClient.post<{ id: string }>(
       `/conseillers/pole-emploi/jeunes`,
-      { ...newJeune, idConseiller: idConseiller },
-      accessToken
+      { ...newJeune, idConseiller: session!.user.id },
+      session!.accessToken
     )
     return { id }
   }
 
   async getJeunesDuConseillerParEmail(
-    emailConseiller: string,
-    accessToken: string
+    emailConseiller: string
   ): Promise<{ idConseiller: string; jeunes: JeuneFromListe[] }> {
+    const session = await getSession()
     const { content: conseiller } = await this.apiClient.get<Conseiller>(
       `/conseillers?email=${emailConseiller}`,
-      accessToken
+      session!.accessToken
     )
-    const jeunesDuConseiller = await this.getJeunesDuConseiller(
-      conseiller.id,
-      accessToken
-    )
+    const jeunesDuConseiller = await this.getJeunesDuConseillerClientSide()
     return { idConseiller: conseiller.id, jeunes: jeunesDuConseiller }
   }
 
@@ -183,13 +214,13 @@ export class JeunesApiService implements JeunesService {
     idConseillerInitial: string,
     emailConseillerDestination: string,
     idsJeunes: string[],
-    estTemporaire: boolean,
-    accessToken: string
+    estTemporaire: boolean
   ): Promise<void> {
+    const session = await getSession()
     const { content: conseillerDestination } =
       await this.apiClient.get<Conseiller>(
         `/conseillers?email=${emailConseillerDestination}`,
-        accessToken
+        session!.accessToken
       )
     await this.apiClient.post(
       '/jeunes/transferer',
@@ -199,33 +230,32 @@ export class JeunesApiService implements JeunesService {
         idsJeune: idsJeunes,
         estTemporaire: estTemporaire,
       },
-      accessToken
+      session!.accessToken
     )
   }
 
-  async supprimerJeuneInactif(
-    idJeune: string,
-    accessToken: string
-  ): Promise<void> {
-    await this.apiClient.delete(`/jeunes/${idJeune}`, accessToken)
+  async supprimerJeuneInactif(idJeune: string): Promise<void> {
+    const session = await getSession()
+    await this.apiClient.delete(`/jeunes/${idJeune}`, session!.accessToken)
   }
 
   async archiverJeune(
     idJeune: string,
-    payload: SuppressionJeuneFormData,
-    accessToken: string
+    payload: SuppressionJeuneFormData
   ): Promise<void> {
+    const session = await getSession()
     await this.apiClient.post(
       `/jeunes/${idJeune}/archiver`,
       payload,
-      accessToken
+      session!.accessToken
     )
   }
 
-  async getMotifsSuppression(accessToken: string): Promise<string[]> {
+  async getMotifsSuppression(): Promise<string[]> {
+    const session = await getSession()
     const { content: motifs } = await this.apiClient.get<string[]>(
       '/referentiels/motifs-suppression-jeune',
-      accessToken
+      session!.accessToken
     )
     return motifs
   }

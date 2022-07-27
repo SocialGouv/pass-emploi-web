@@ -10,7 +10,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DossierMilo } from 'interfaces/jeune'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { useDependance } from 'utils/injectionDependances'
 
 interface DossierJeuneMiloProps {
@@ -26,7 +25,6 @@ const DossierJeuneMilo = ({
   onCreatedError,
   erreurMessageHttpPassEmploi,
 }: DossierJeuneMiloProps) => {
-  const { data: session } = useSession<true>({ required: true })
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
   const conseillerService =
@@ -39,11 +37,10 @@ const DossierJeuneMilo = ({
         nom: dossier.nom,
         prenom: dossier.prenom,
         email: dossier.email ?? undefined,
-        idConseiller: session!.user.id,
       }
       setCreationEnCours(true)
       conseillerService
-        .createCompteJeuneMilo(newJeune, session!.accessToken)
+        .createCompteJeuneMilo(newJeune)
         .then(({ id }) => {
           setCreationEnCours(false)
           onCreatedSuccess(id)

@@ -1,4 +1,6 @@
-import { Conseiller } from 'interfaces/conseiller'
+import { Session } from 'next-auth'
+
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { ConseillerHistorique } from 'interfaces/jeune'
 
 export interface ConseillerHistoriqueJson {
@@ -32,14 +34,20 @@ export interface ConseillerJson {
   aDesBeneficiairesARecuperer: boolean
 }
 
-export function jsonToConseiller(conseillerJson: ConseillerJson): Conseiller {
-  const { agence, ...conseiller } = conseillerJson
-  if (agence) {
-    return {
-      ...conseiller,
-      agence: agence.nom,
-    }
-  } else {
-    return conseiller
+export function jsonToConseiller(
+  conseillerJson: ConseillerJson,
+  { structure, estSuperviseur }: Session.HydratedUser
+): Conseiller {
+  const { agence, ...json } = conseillerJson
+  const conseiller: Conseiller = {
+    ...json,
+    structure: structure as StructureConseiller,
+    estSuperviseur,
   }
+
+  if (agence) {
+    conseiller.agence = agence.nom
+  }
+
+  return conseiller
 }

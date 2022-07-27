@@ -25,7 +25,7 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { StatutAction } from 'interfaces/action'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
@@ -441,7 +441,7 @@ describe('Fiche Jeune', () => {
                 id: 'idConseiller',
                 name: 'Tavernier',
                 email: 'fake@email.fr',
-                structure: UserStructure.POLE_EMPLOI,
+                structure: StructureConseiller.POLE_EMPLOI,
                 estConseiller: true,
                 estSuperviseur: false,
               },
@@ -510,7 +510,7 @@ describe('Fiche Jeune', () => {
                   id: 'idConseiller',
                   name: 'Tavernier',
                   email: 'fake@email.fr',
-                  structure: UserStructure.MILO,
+                  structure: StructureConseiller.MILO,
                   estConseiller: true,
                   estSuperviseur: false,
                 },
@@ -555,7 +555,7 @@ describe('Fiche Jeune', () => {
                   id: 'idConseiller',
                   name: 'Tavernier',
                   email: 'fake@email.fr',
-                  structure: UserStructure.MILO,
+                  structure: StructureConseiller.MILO,
                   estConseiller: true,
                   estSuperviseur: false,
                 },
@@ -654,7 +654,7 @@ describe('Fiche Jeune', () => {
         beforeEach(() => {
           // Given
           actionsService = mockedActionsService({
-            getActionsJeune: jest.fn(async (_, { page }) => ({
+            getActionsJeuneServerSide: jest.fn(async (_, { page }) => ({
               actions: [uneAction({ content: `Action page ${page}` })],
               metadonnees: { nombreTotal: 52, nombrePages: 6 },
             })),
@@ -684,7 +684,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Page 2'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
             jeune.id,
             { page: 2, statuts: [], tri: 'date_echeance_decroissante' },
             'accessToken'
@@ -701,7 +701,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Première page'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
             jeune.id,
             { page: 1, statuts: [], tri: 'date_echeance_decroissante' },
             'accessToken'
@@ -720,7 +720,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Dernière page'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
             jeune.id,
             { page: 6, statuts: [], tri: 'date_echeance_decroissante' },
             'accessToken'
@@ -739,7 +739,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Page précédente'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
             jeune.id,
             {
               page: pageCourante - 1,
@@ -758,7 +758,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Page suivante'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
             jeune.id,
             {
               page: pageCourante + 1,
@@ -778,7 +778,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Page précédente'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
             jeune.id,
             {
               page: pageCourante - 1,
@@ -788,7 +788,7 @@ describe('Fiche Jeune', () => {
             'accessToken'
           )
 
-          expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
             jeune.id,
             {
               page: pageCourante - 2,
@@ -810,7 +810,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Page précédente'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledTimes(1)
           expect(screen.getByLabelText('Page 1')).toHaveAttribute(
             'aria-current',
             'page'
@@ -828,7 +828,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText('Page suivante'))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledTimes(1)
           expect(screen.getByLabelText('Page 6')).toHaveAttribute(
             'aria-current',
             'page'
@@ -843,7 +843,7 @@ describe('Fiche Jeune', () => {
           await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
 
           // Then
-          expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(0)
+          expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledTimes(0)
         })
       })
 
@@ -1088,7 +1088,7 @@ describe('Fiche Jeune', () => {
       beforeEach(async () => {
         // Given
         actionsService = mockedActionsService({
-          getActionsJeune: jest.fn(async () => ({
+          getActionsJeuneServerSide: jest.fn(async () => ({
             actions: [uneAction({ content: 'Action filtrée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
           })),
@@ -1121,7 +1121,7 @@ describe('Fiche Jeune', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           jeune.id,
           {
             page: 1,
@@ -1145,7 +1145,7 @@ describe('Fiche Jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           jeune.id,
           {
             page: 2,
@@ -1164,7 +1164,7 @@ describe('Fiche Jeune', () => {
       beforeEach(async () => {
         // Given
         actionsService = mockedActionsService({
-          getActionsJeune: jest.fn(async () => ({
+          getActionsJeuneServerSide: jest.fn(async () => ({
             actions: [uneAction({ content: 'Action triée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
           })),
@@ -1197,7 +1197,7 @@ describe('Fiche Jeune', () => {
         await userEvent.click(headerColonneDate)
 
         // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           jeune.id,
           {
             page: 1,
@@ -1206,7 +1206,7 @@ describe('Fiche Jeune', () => {
           },
           'accessToken'
         )
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           jeune.id,
           {
             page: 1,
@@ -1235,7 +1235,7 @@ describe('Fiche Jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           jeune.id,
           {
             page: 2,
@@ -1347,7 +1347,7 @@ describe('Fiche Jeune', () => {
     beforeEach(() => {
       jeunesService = mockedJeunesService({
         getJeuneDetails: jest.fn(async () => unDetailJeune()),
-        getConseillersDuJeune: jest.fn(async () => desConseillersJeune()),
+        getConseillersDuJeuneServerSide: jest.fn(async () => desConseillersJeune()),
         getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
       })
       rendezVousService = mockedRendezVousService({
@@ -1356,7 +1356,7 @@ describe('Fiche Jeune', () => {
         ),
       })
       actionsService = mockedActionsService({
-        getActionsJeune: jest.fn(async () => ({
+        getActionsJeuneServerSide: jest.fn(async () => ({
           actions: [
             uneAction({ creationDate: now.toISOString() }),
             uneAction({ creationDate: datePasseeLoin.toISOString() }),
@@ -1451,7 +1451,7 @@ describe('Fiche Jeune', () => {
 
       it('récupère la première page des actions du jeune', async () => {
         // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
           { page: 1, statuts: [] },
           'accessToken'
@@ -1474,7 +1474,7 @@ describe('Fiche Jeune', () => {
 
       it('récupère les conseillers du jeune', async () => {
         // Then
-        expect(jeunesService.getConseillersDuJeune).toHaveBeenCalledWith(
+        expect(jeunesService.getConseillersDuJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
           'accessToken'
         )
@@ -1491,7 +1491,7 @@ describe('Fiche Jeune', () => {
           query: { jeune_id: 'id-jeune', page: 3 },
         } as unknown as GetServerSidePropsContext)
         // Then
-        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
           { page: 3, statuts: [] },
           'accessToken'
@@ -1640,7 +1640,7 @@ describe('Fiche Jeune', () => {
 
       it('ne recupère pas les actions', async () => {
         // Then
-        expect(actionsService.getActionsJeune).not.toHaveBeenCalled()
+        expect(actionsService.getActionsJeuneServerSide).not.toHaveBeenCalled()
         expect(actual).toMatchObject({
           props: { actionsInitiales: { actions: [] } },
         })

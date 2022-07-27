@@ -28,10 +28,7 @@ describe('ConseillerApiService', () => {
       })
 
       // When
-      const actual = await conseillerService.getConseiller(
-        idConseiller,
-        accessToken
-      )
+      const actual = await conseillerService.getConseiller()
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -43,13 +40,9 @@ describe('ConseillerApiService', () => {
   })
 
   describe('.modifierAgence', () => {
-    it("modifie le conseiller avec l'id de l'agence", async () => {
+    it("modifie le conseiller avec l'id de l'agence", ;async () => {
       // When
-      await conseillerService.modifierAgence(
-        'id-conseiller',
-        { id: 'id-agence', nom: 'Agence' },
-        'accessToken'
-      )
+      await conseillerService.modifierAgence({ id: 'id-agence', nom: 'Agence' })
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -61,11 +54,7 @@ describe('ConseillerApiService', () => {
 
     it("modifie le conseiller avec le nom de l'agence", async () => {
       // When
-      await conseillerService.modifierAgence(
-        'id-conseiller',
-        { nom: 'Agence libre' },
-        'accessToken'
-      )
+      await conseillerService.modifierAgence({ nom: 'Agence libre' })
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -79,11 +68,7 @@ describe('ConseillerApiService', () => {
   describe('.modifierNotificationsSonores', () => {
     it("modifie le conseiller avec l'activation des notifications sonores", async () => {
       // When
-      await conseillerService.modifierNotificationsSonores(
-        'id-conseiller',
-        true,
-        'accessToken'
-      )
+      await conseillerService.modifierNotificationsSonores('id-conseiller', true)
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(

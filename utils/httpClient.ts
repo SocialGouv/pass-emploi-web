@@ -47,7 +47,6 @@ export default class HttpClient {
   private static async handleHttpError(response: Response): Promise<void> {
     if (response.status === 401) {
       //ce reload permet de donner la main au SSR pour le cas non-autorisé (refreshtoken expiré).
-      //présent dans withMandatorySessionOrRediect
       //TODO trouver une solution propre
       window.location.reload()
     }

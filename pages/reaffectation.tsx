@@ -13,18 +13,13 @@ import {
   getNomJeuneComplet,
   JeuneFromListe,
 } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
 
-interface ReaffectationProps extends PageProps {}
-
-function Reaffectation(_: ReaffectationProps) {
-  const { data: session } = useSession<true>({ required: true })
+function Reaffectation() {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const [conseillerInitial, setConseillerInitial] = useState<{
@@ -94,8 +89,7 @@ function Reaffectation(_: ReaffectationProps) {
     try {
       const { idConseiller, jeunes: jeunesDuConseiller } =
         await jeunesService.getJeunesDuConseillerParEmail(
-          conseillerInitial.email,
-          session!.accessToken
+          conseillerInitial.email
         )
       setRechercheJeunesSubmitted(true)
       if (jeunesDuConseiller.length > 0) {
@@ -140,8 +134,7 @@ function Reaffectation(_: ReaffectationProps) {
         conseillerInitial.id,
         emailConseillerDestination.value,
         idsJeunesSelected,
-        isReaffectationTemporaire,
-        session!.accessToken
+        isReaffectationTemporaire
       )
       resetAll()
       setReaffectationSuccess(true)
@@ -438,9 +431,7 @@ function Reaffectation(_: ReaffectationProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  ReaffectationProps
-> = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

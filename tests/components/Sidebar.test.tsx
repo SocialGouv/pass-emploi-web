@@ -6,7 +6,7 @@ import React from 'react'
 import renderWithSession from '../renderWithSession'
 
 import Sidebar from 'components/layouts/Sidebar'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 
 describe('<Sidebar/>', () => {
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe('<Sidebar/>', () => {
       user: {
         id: '1',
         name: 'Nils Tavernier',
-        structure: UserStructure.POLE_EMPLOI,
+        structure: StructureConseiller.POLE_EMPLOI,
         estSuperviseur: false,
         email: 'fake@email.com',
         estConseiller: true,
@@ -65,7 +65,7 @@ describe('<Sidebar/>', () => {
       user: {
         id: '1',
         name: 'Nils Tavernier',
-        structure: UserStructure.MILO,
+        structure: StructureConseiller.MILO,
         estSuperviseur: true,
         email: 'fake@email.com',
         estConseiller: true,

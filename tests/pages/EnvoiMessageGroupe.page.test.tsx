@@ -9,7 +9,7 @@ import {
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { JeuneFromListe } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,
@@ -140,7 +140,7 @@ describe('EnvoiMessageGroupe', () => {
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
           conseiller: {
             id: '1',
-            structure: UserStructure.MILO,
+            structure: StructureConseiller.MILO,
           },
           idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage,
@@ -272,7 +272,7 @@ describe('EnvoiMessageGroupe', () => {
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
           conseiller: {
             id: '1',
-            structure: UserStructure.MILO,
+            structure: StructureConseiller.MILO,
           },
           idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage,
@@ -298,7 +298,7 @@ describe('EnvoiMessageGroupe', () => {
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
           conseiller: {
             id: '1',
-            structure: UserStructure.MILO,
+            structure: StructureConseiller.MILO,
           },
           idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage:
@@ -373,7 +373,7 @@ describe('EnvoiMessageGroupe', () => {
         })
         jeunes = desItemsJeunes()
         const jeunesService = mockedJeunesService({
-          getJeunesDuConseiller: jest.fn(async () => jeunes),
+          getJeunesDuConseillerServerSide: jest.fn(async () => jeunes),
         })
         ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
       })

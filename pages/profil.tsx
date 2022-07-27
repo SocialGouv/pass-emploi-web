@@ -6,11 +6,10 @@ import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
 import { Switch } from 'components/ui/Switch'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
@@ -21,13 +20,14 @@ interface ProfilProps extends PageProps {
 
 function Profil({ structureConseiller }: ProfilProps) {
   const labelAgence =
-    structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
+    structureConseiller === StructureConseiller.MILO
+      ? 'Mission locale'
+      : 'agence'
 
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
 
   const [conseiller, setConseiller] = useConseiller()
-  const { data: session } = useSession<true>({ required: true })
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -36,8 +36,7 @@ function Profil({ structureConseiller }: ProfilProps) {
     }
     await conseillerService.modifierNotificationsSonores(
       conseiller!.id,
-      conseillerMisAJour.notificationsSonores,
-      session!.accessToken
+      conseillerMisAJour.notificationsSonores
     )
     setConseiller(conseillerMisAJour)
   }

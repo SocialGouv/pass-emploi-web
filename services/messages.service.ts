@@ -15,22 +15,12 @@ import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { formatDayDate } from 'utils/date'
 
 interface FormNouveauMessage {
-  conseiller: { id: string; structure: string }
   newMessage: string
-  accessToken: string
   cleChiffrement: string
   infoPieceJointe?: InfoFichier
 }
 
-interface TempFormNouveauMessage {
-  // conseiller: { id: string; structure: string }
-  newMessage: string
-  // accessToken: string
-  cleChiffrement: string
-  infoPieceJointe?: InfoFichier
-}
-
-export type FormNouveauMessageIndividuel = TempFormNouveauMessage & {
+export type FormNouveauMessageIndividuel = FormNouveauMessage & {
   jeuneChat: JeuneChat
 }
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
@@ -38,7 +28,7 @@ export type FormNouveauMessageGroupe = FormNouveauMessage & {
 }
 
 export interface MessagesService {
-  getChatCredentials(accessToken: string): Promise<ChatCredentials>
+  getChatCredentials(): Promise<ChatCredentials>
 
   signIn(token: string): Promise<void>
 
@@ -53,11 +43,10 @@ export interface MessagesService {
   toggleFlag(idChat: string, flagged: boolean): void
 
   observeConseillerChats(
-    idConseiller: string,
     cleChiffrement: string,
     jeunes: Array<BaseJeune & { isActivated: boolean }>,
     updateChats: (chats: JeuneChat[]) => void
-  ): () => void
+  ): Promise<() => void>
 
   observeMessages(
     idChat: string,
@@ -82,13 +71,14 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     private readonly apiClient: ApiClient
   ) {}
 
-  async getChatCredentials(accessToken: string): Promise<ChatCredentials> {
+  async getChatCredentials(): Promise<ChatCredentials> {
+    const session = await getSession()
     const {
       content: { token, cle: cleChiffrement },
     } = await this.apiClient.post<{
       token: string
       cle: string
-    }>('/auth/firebase/token', {}, accessToken)
+    }>('/auth/firebase/token', {}, session!.accessToken)
     return { token: token, cleChiffrement }
   }
 
@@ -114,14 +104,14 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     })
   }
 
-  observeConseillerChats(
-    idConseiller: string,
+  async observeConseillerChats(
     cleChiffrement: string,
     jeunes: Array<BaseJeune & { isActivated: boolean }>,
     updateChats: (chats: JeuneChat[]) => void
-  ): () => void {
+  ): Promise<() => void> {
+    const session = await getSession()
     return this.firebaseClient.findAndObserveChatsDuConseiller(
-      idConseiller,
+      session!.user.id,
       (chats: { [idJeune: string]: Chat }) => {
         const newChats = jeunes
           .filter((jeune) => Boolean(chats[jeune.id]))
@@ -247,18 +237,17 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async sendNouveauMessageGroupe({
-    accessToken,
     cleChiffrement,
-    conseiller,
     idsDestinataires,
     infoPieceJointe,
     newMessage,
   }: FormNouveauMessageGroupe) {
+    const session = await getSession()
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
 
     const mappedChats = await this.firebaseClient.getChatsDuConseiller(
-      conseiller.id
+      session!.user.id
     )
     const chatsDestinataires = Object.entries(mappedChats)
       .filter(([idJeune]) => idsDestinataires.includes(idJeune))
@@ -280,7 +269,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       chatsDestinataires.map((chat) => {
         const nouveauMessage: AddMessage = {
           idChat: chat.chatId,
-          idConseiller: conseiller.id,
+          idConseiller: session!.user.id,
           message: encryptedMessage,
           date: now,
         }
@@ -305,12 +294,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
     const avecPieceJointe = Boolean(infoPieceJointe)
     await Promise.all([
-      this.notifierNouveauMessage(conseiller.id, idsDestinataires, accessToken),
+      this.notifierNouveauMessage(
+        session!.user.id,
+        idsDestinataires,
+        session!.accessToken
+      ),
       this.evenementNouveauMessageMultiple(
-        conseiller.structure,
-        conseiller.id,
+        session!.user.structure,
+        session!.user.id,
         avecPieceJointe,
-        accessToken
+        session!.accessToken
       ),
     ])
   }

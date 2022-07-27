@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import renderWithSession from 'tests/renderWithSession'
 
 describe('AlertDisplayer', () => {
@@ -300,7 +300,7 @@ describe('AlertDisplayer', () => {
       const conseillerMilo = {
         id: 'idConseiller',
         name: 'Taverner',
-        structure: UserStructure.MILO,
+        structure: StructureConseiller.MILO,
         estSuperviseur: false,
         email: 'mail@mail.com',
         estConseiller: true,
@@ -346,7 +346,7 @@ describe('AlertDisplayer', () => {
       const conseillerPoleEmploi = {
         id: 'idConseiller',
         name: 'Taverner',
-        structure: UserStructure.POLE_EMPLOI,
+        structure: StructureConseiller.POLE_EMPLOI,
         estSuperviseur: false,
         email: 'mail@mail.com',
         estConseiller: true,

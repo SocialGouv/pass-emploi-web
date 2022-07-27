@@ -23,7 +23,6 @@ import {
   MessagesService,
 } from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { ApiError } from 'utils/httpClient'
@@ -38,7 +37,6 @@ interface EnvoiMessageGroupeProps extends PageProps {
 }
 
 function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
-  const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -101,8 +99,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       if (pieceJointe) {
         fileInfo = await fichiersService.uploadFichier(
           selectedJeunesIds,
-          pieceJointe,
-          session!.accessToken
+          pieceJointe
         )
       }
     } catch (error) {
@@ -119,15 +116,10 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
     try {
       const formNouveauMessage: FormNouveauMessageGroupe = {
-        conseiller: {
-          id: session!.user.id,
-          structure: session!.user.structure,
-        },
         idsDestinataires: selectedJeunesIds,
         newMessage:
           message ||
           'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
-        accessToken: session!.accessToken,
         cleChiffrement: chatCredentials!.cleChiffrement,
       }
       if (fileInfo) formNouveauMessage.infoPieceJointe = fileInfo
@@ -388,7 +380,10 @@ export const getServerSideProps: GetServerSideProps<
     session: { user, accessToken },
   } = sessionOrRedirect
 
-  const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
+    user.id,
+    accessToken
+  )
 
   const referer: string | undefined = context.req.headers.referer
 

@@ -7,7 +7,7 @@ import {
   unJeuneChat,
 } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
@@ -108,7 +108,6 @@ describe('MessagesFirebaseAndApiService', () => {
 
       // When
       messagesService.observeConseillerChats(
-        idConseiller,
         cleChiffrement,
         [
           { ...uneBaseJeune({ id: 'jeune-1' }), isActivated: true },
@@ -240,7 +239,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.sendNouveauMessage', () => {
-    let conseiller: { id: string; structure: UserStructure }
+    let conseiller: { id: string; structure: StructureConseiller }
     let jeuneChat: JeuneChat
     let newMessage: string
     const now = new Date()
@@ -250,7 +249,7 @@ describe('MessagesFirebaseAndApiService', () => {
       jeuneChat = unJeuneChat()
       newMessage = 'nouveauMessage'
       // When
-      conseiller = { id: 'idConseiller', structure: UserStructure.POLE_EMPLOI }
+      conseiller = { id: 'idConseiller', structure: StructureConseiller.POLE_EMPLOI }
     })
 
     describe('sans piece jointe', () => {
@@ -390,7 +389,7 @@ describe('MessagesFirebaseAndApiService', () => {
         await messagesService.sendNouveauMessageGroupe({
           conseiller: {
             id: 'id-conseiller',
-            structure: UserStructure.MILO,
+            structure: StructureConseiller.MILO,
           },
           idsDestinataires: idsJeunes,
           newMessage: newMessageGroupe,
@@ -453,7 +452,7 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE_MULTIPLE',
             emetteur: {
               type: 'CONSEILLER',
-              structure: UserStructure.MILO,
+              structure: StructureConseiller.MILO,
               id: 'id-conseiller',
             },
           },
@@ -467,7 +466,7 @@ describe('MessagesFirebaseAndApiService', () => {
         await messagesService.sendNouveauMessageGroupe({
           conseiller: {
             id: 'id-conseiller',
-            structure: UserStructure.MILO,
+            structure: StructureConseiller.MILO,
           },
           idsDestinataires: idsJeunes,
           newMessage: newMessageGroupe,
@@ -505,7 +504,7 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE_MULTIPLE_PJ',
             emetteur: {
               type: 'CONSEILLER',
-              structure: UserStructure.MILO,
+              structure: StructureConseiller.MILO,
               id: 'id-conseiller',
             },
           },

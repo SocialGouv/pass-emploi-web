@@ -7,7 +7,7 @@ import Conversation from 'components/chat/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
@@ -57,7 +57,7 @@ describe('<Conversation />', () => {
     conseiller = {
       id: 'idConseiller',
       name: 'Taverner',
-      structure: UserStructure.POLE_EMPLOI,
+      structure: StructureConseiller.POLE_EMPLOI,
       estSuperviseur: false,
       email: 'mail@mail.com',
       estConseiller: true,

@@ -1,5 +1,4 @@
 import ProgressBar from '@badrap/bar-of-progress'
-import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { ReactNode, useEffect } from 'react'
@@ -31,7 +30,7 @@ Router.events.on('routeChangeError', progress.finish)
 
 export default function App({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
 }: AppProps): ReactNode {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
@@ -43,8 +42,8 @@ export default function App({
   }, [])
 
   return (
-    <SessionProvider session={session}>
-      <DIProvider dependances={Container.getDIContainer().dependances}>
+    <DIProvider dependances={Container.getDIContainer().dependances}>
+      <ConseillerProvider>
         {isLoginPage || isLogoutPage ? (
           <div className='flex flex-col justify-center h-screen'>
             <Component {...pageProps} />
@@ -52,16 +51,14 @@ export default function App({
           </div>
         ) : (
           <ChatCredentialsProvider>
-            <ConseillerProvider>
-              <CurrentJeuneProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </CurrentJeuneProvider>
-            </ConseillerProvider>
+            <CurrentJeuneProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </CurrentJeuneProvider>
           </ChatCredentialsProvider>
         )}
-      </DIProvider>
-    </SessionProvider>
+      </ConseillerProvider>
+    </DIProvider>
   )
 }

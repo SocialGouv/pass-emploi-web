@@ -8,7 +8,7 @@ import { CreationEtape } from 'components/jeune/CreationEtape'
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
 import SuccessAddJeuneMilo from 'components/jeune/SuccessAddJeuneMilo'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -135,7 +135,7 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  if (sessionOrRedirect.session.user.structure !== UserStructure.MILO) {
+  if (sessionOrRedirect.session.user.structure !== StructureConseiller.MILO) {
     return {
       redirect: {
         destination: '/mes-jeunes',

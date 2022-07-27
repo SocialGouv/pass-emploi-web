@@ -9,7 +9,7 @@ import {
 } from 'fixtures/agence'
 import { unConseiller } from 'fixtures/conseiller'
 import { mockedConseillerService } from 'fixtures/services'
-import { Agence, UserStructure } from 'interfaces/conseiller'
+import { Agence, StructureConseiller } from 'interfaces/conseiller'
 import Home, { getServerSideProps } from 'pages/index'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
@@ -41,7 +41,7 @@ describe('Home', () => {
           <DIProvider dependances={{ conseillerService }}>
             <ConseillerProvider conseiller={unConseiller()}>
               <Home
-                structureConseiller={UserStructure.POLE_EMPLOI}
+                structureConseiller={StructureConseiller.POLE_EMPLOI}
                 referentielAgences={agences}
                 redirectUrl='/mes-jeunes'
               />
@@ -194,7 +194,7 @@ describe('Home', () => {
           >
             <ConseillerProvider conseiller={unConseiller()}>
               <Home
-                structureConseiller={UserStructure.MILO}
+                structureConseiller={StructureConseiller.MILO}
                 referentielAgences={[]}
                 redirectUrl='/mes-jeunes'
               />
@@ -306,7 +306,7 @@ describe('Home', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
-            user: { id: '1', structure: UserStructure.MILO },
+            user: { id: '1', structure: StructureConseiller.MILO },
             accessToken: 'accessToken',
           },
         })
@@ -335,7 +335,7 @@ describe('Home', () => {
         expect(actual).toEqual({
           props: {
             redirectUrl: '/mes-jeunes',
-            structureConseiller: UserStructure.MILO,
+            structureConseiller: StructureConseiller.MILO,
             referentielAgences: uneListeDAgencesMILO(),
           },
         })
@@ -350,7 +350,7 @@ describe('Home', () => {
         expect(actual).toEqual({
           props: {
             redirectUrl: '/mes-rendezvous',
-            structureConseiller: UserStructure.MILO,
+            structureConseiller: StructureConseiller.MILO,
             referentielAgences: uneListeDAgencesMILO(),
           },
         })

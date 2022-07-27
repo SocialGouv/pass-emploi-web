@@ -127,11 +127,11 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeune(
-        'whatever',
-        { tri: 'date_decroissante', page: 1, statuts: [] },
-        'accessToken'
-      )
+      const actual = await actionsService.getActionsJeuneServerSide('whatever', {
+        tri: 'date_decroissante',
+        page: 1,
+        statuts: [],
+      })
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -161,15 +161,11 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeune(
-        'whatever',
-        {
-          tri: 'date_decroissante',
-          page: 1,
-          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-        },
-        'accessToken'
-      )
+      const actual = await actionsService.getActionsJeuneServerSide('whatever', {
+        tri: 'date_decroissante',
+        page: 1,
+        statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+      })
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -190,16 +186,11 @@ describe('ActionsApiService', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
       // WHEN
-      await actionsService.createAction(
-        {
+      await actionsService.createAction({
           intitule: 'content',
           commentaire: 'comment',
           dateEcheance: '2022-07-30',
-        },
-        'id-conseiller',
-        'id-jeune',
-        'accessToken'
-      )
+        }, 'id-jeune')
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -217,11 +208,7 @@ describe('ActionsApiService', () => {
   describe('.updateAction', () => {
     it('met à jour une action non commencée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction(
-        'id-action',
-        StatutAction.ARealiser,
-        'accessToken'
-      )
+      const actual = await actionsService.updateAction('id-action', StatutAction.ARealiser)
 
       // THEN
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -234,11 +221,7 @@ describe('ActionsApiService', () => {
 
     it('met à jour une action commencée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction(
-        'id-action',
-        StatutAction.Commencee,
-        'accessToken'
-      )
+      const actual = await actionsService.updateAction('id-action', StatutAction.Commencee)
 
       // THEN
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -251,11 +234,7 @@ describe('ActionsApiService', () => {
 
     it('met à jour une action terminée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction(
-        'id-action',
-        StatutAction.Terminee,
-        'accessToken'
-      )
+      const actual = await actionsService.updateAction('id-action', StatutAction.Terminee)
 
       // THEN
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -270,7 +249,7 @@ describe('ActionsApiService', () => {
   describe('.deleteAction', () => {
     it("supprime l'action", async () => {
       // WHEN
-      await actionsService.deleteAction('id-action', 'accessToken')
+      await actionsService.deleteAction('id-action')
 
       // THEN
       expect(apiClient.delete).toHaveBeenCalledWith(

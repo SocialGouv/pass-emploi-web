@@ -19,6 +19,11 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
+  async function handleSubmit(event: any, provider?: string) {
+    event.preventDefault()
+    signin(provider)
+  }
+
   const signin = useCallback(
     async (provider?: string) => {
       const redirectUrl: string = router.query.redirectUrl as string
@@ -47,11 +52,6 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
         signin(`${provider}-conseiller`)
     }
   }, [router, signin])
-
-  async function handleSubmit(event: any, provider?: string) {
-    event.preventDefault()
-    signin(provider)
-  }
 
   useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
 

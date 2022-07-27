@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { JeunesService } from 'services/jeunes.service'
 import { trackSSR } from 'utils/analytics/matomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const { user, accessToken } = sessionOrRedirect.session
-  if (user.structure !== UserStructure.MILO) {
+  if (user.structure !== StructureConseiller.MILO) {
     return { redirect: { destination: '/mes-jeunes', permanent: false } }
   }
 
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const destination = idJeune ? `/mes-jeunes/${idJeune}` : '/mes-jeunes'
   trackSSR({
-    structure: UserStructure.MILO,
+    structure: StructureConseiller.MILO,
     customTitle: `Détail jeune par numéro dossier${
       !Boolean(idJeune) ? ' en erreur' : ''
     }`,

@@ -59,7 +59,7 @@ describe('Intégration notifications sonores', () => {
         }
       ),
     })
-    ;(jeunesService.getJeunesDuConseiller as jest.Mock).mockResolvedValue(
+    ;(jeunesService.getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
       jeunes
     )
   })

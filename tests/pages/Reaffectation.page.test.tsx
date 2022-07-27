@@ -5,7 +5,7 @@ import React from 'react'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithSession from 'tests/renderWithSession'
@@ -29,7 +29,7 @@ describe('Reaffectation', () => {
           user: {
             id: '1',
             name: 'Nils Tavernier',
-            structure: UserStructure.POLE_EMPLOI,
+            structure: StructureConseiller.POLE_EMPLOI,
             estSuperviseur: true,
             email: 'fake@email.com',
             estConseiller: true,

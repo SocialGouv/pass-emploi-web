@@ -5,7 +5,7 @@ import {
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
 } from 'fixtures/agence'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { AgencesApiService } from 'services/agences.service'
 
 describe('AgencesApiService', () => {
@@ -18,7 +18,7 @@ describe('AgencesApiService', () => {
   })
 
   describe('.getAgences', () => {
-    let structure: UserStructure
+    let structure: StructureConseiller
     beforeEach(() => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/referentiels/agences?structure=MILO`)
@@ -30,7 +30,7 @@ describe('AgencesApiService', () => {
 
     it('renvoie le referentiel des agences MILO', async () => {
       // Given
-      structure = UserStructure.MILO
+      structure = StructureConseiller.MILO
       // WHEN
       const actual = await agencesService.getAgences(structure, 'accessToken')
 
@@ -40,7 +40,7 @@ describe('AgencesApiService', () => {
 
     it('renvoie le referentiel des agences Pôle Emploi', async () => {
       // Given
-      structure = UserStructure.POLE_EMPLOI
+      structure = StructureConseiller.POLE_EMPLOI
       // WHEN
       const actual = await agencesService.getAgences(structure, 'accessToken')
 

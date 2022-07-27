@@ -2,31 +2,28 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
-import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
 const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
+interface ChatContainerProps {
+  displayChat: boolean
+  setHasMessageNonLu: (value: boolean) => void
+}
+
 export default function ChatContainer({
   displayChat,
   setHasMessageNonLu,
-}: {
-  displayChat: boolean
-  setHasMessageNonLu: (value: boolean) => void
-}) {
+}: ChatContainerProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
 
-  const { data: session } = useSession<true>({ required: true })
   const [chatCredentials, setChatCredentials] = useChatCredentials()
-  const [conseiller, setConseiller] = useConseiller()
+  const [conseiller] = useConseiller()
 
   const [chats, setChats] = useState<JeuneChat[]>([])
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
@@ -51,31 +48,18 @@ export default function ChatContainer({
   }, [])
 
   useEffect(() => {
-    if (session && !chatCredentials) {
-      messagesService
-        .getChatCredentials(session.accessToken)
-        .then(setChatCredentials)
+    if (!chatCredentials) {
+      messagesService.getChatCredentials().then(setChatCredentials)
     }
-  }, [session, chatCredentials, messagesService, setChatCredentials])
+  }, [chatCredentials, messagesService, setChatCredentials])
 
   useEffect(() => {
-    if (session && !conseiller) {
-      conseillerService
-        .getConseiller(session.user.id, session.accessToken)
-        .then(setConseiller)
-    }
-  }, [session, conseiller, conseillerService, setConseiller])
-
-  useEffect(() => {
-    console.log('ChatContainer useEffect')
-    if (!session || !chatCredentials || !conseiller || !audio) return
-    const { user, accessToken } = session
+    if (!chatCredentials || !conseiller || !audio) return
     messagesService
       .signIn(chatCredentials.token)
-      .then(() => jeunesService.getJeunesDuConseiller(user.id, accessToken))
+      .then(() => jeunesService.getJeunesDuConseillerClientSide())
       .then((jeunes) =>
         messagesService.observeConseillerChats(
-          user.id,
           chatCredentials.cleChiffrement,
           jeunes,
           updateChats
@@ -111,13 +95,12 @@ export default function ChatContainer({
       )
     }
   }, [
-    session,
-    jeunesService,
     messagesService,
     chatCredentials,
     audio,
     conseiller,
     setHasMessageNonLu,
+    jeunesService,
   ])
 
   return displayChat ? <ChatRoom jeunesChats={chats} /> : <></>
