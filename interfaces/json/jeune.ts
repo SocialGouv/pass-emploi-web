@@ -4,6 +4,7 @@ import {
   DetailJeune,
   EtatSituation,
   JeuneFromListe,
+  RecherchesSauvegardees,
 } from 'interfaces/jeune'
 
 interface Situation {
@@ -32,6 +33,26 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   email?: string
   urlDossier?: string
   situations?: Situation[]
+}
+
+export interface RecherchesSauvegardeesJson {
+  favoris: {
+    autoriseLePartage: boolean
+    offres: {
+      total: number
+      nombreOffresEmploi: number
+      nombreOffresAlternance: number
+      nombreOffresImmersion: number
+      nombreOffresServiceCivique: number
+    }
+    // recherches: {
+    //   total: number
+    //   nombreRecherchesOffresEmploi: number
+    //   nombreRecherchesOffresAlternance: number
+    //   nombreRecherchesOffresImmersion: number
+    //   nombreRecherchesOffresServiceCivique: number
+    // }
+  }
 }
 
 export interface SuppressionJeuneFormData {
@@ -111,5 +132,33 @@ export function jsonToDetailJeune({
         categorie: toCategorieSituation(situation.categorie),
         etat: toEtatSituation(situation.etat),
       })) ?? [],
+  }
+}
+
+export function jsonToRecherchesSauvegardees({
+  favoris,
+}: RecherchesSauvegardeesJson): RecherchesSauvegardees {
+  return {
+    favoris: {
+      autoriseLePartage: favoris.autoriseLePartage,
+      offres: {
+        total: favoris.offres.total,
+        nombreOffresEmploi: favoris.offres.nombreOffresAlternance,
+        nombreOffresAlternance: favoris.offres.nombreOffresAlternance,
+        nombreOffresImmersion: favoris.offres.nombreOffresImmersion,
+        nombreOffresServiceCivique: favoris.offres.nombreOffresEmploi,
+      },
+      // recherches: {
+      //   total: favoris.recherches.total,
+      //   nombreRecherchesOffresAlternance:
+      //     favoris.recherches.nombreRecherchesOffresAlternance,
+      //   nombreRecherchesOffresEmploi:
+      //     favoris.recherches.nombreRecherchesOffresEmploi,
+      //   nombreRecherchesOffresImmersion:
+      //     favoris.recherches.nombreRecherchesOffresImmersion,
+      //   nombreRecherchesOffresServiceCivique:
+      //     favoris.recherches.nombreRecherchesOffresServiceCivique,
+      // },
+    },
   }
 }

@@ -19,7 +19,11 @@ import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { UserStructure } from 'interfaces/conseiller'
-import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
+import {
+  ConseillerHistorique,
+  DetailJeune,
+  RecherchesSauvegardees,
+} from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -53,6 +57,7 @@ interface FicheJeuneProps extends PageProps {
     page: number
   }
   conseillers: ConseillerHistorique[]
+  recherchesSauvegardees: RecherchesSauvegardees
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   rdvSuppressionSuccess?: boolean
@@ -65,6 +70,7 @@ function FicheJeune({
   jeune,
   rdvs,
   actionsInitiales,
+  recherchesSauvegardees,
   conseillers,
   rdvCreationSuccess,
   rdvModificationSuccess,
@@ -295,6 +301,7 @@ function FicheJeune({
       <DetailsJeune
         jeune={jeune}
         withSituations={session?.user.structure === UserStructure.MILO}
+        recherchesSauvegardees={recherchesSauvegardees}
         onDossierMiloClick={trackDossierMiloClick}
       />
 
@@ -384,35 +391,41 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const {
     session: {
       accessToken,
-      user: { structure },
+      user: { structure, id },
     },
   } = sessionOrRedirect
 
   const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, conseillers, rdvs, actions] = await Promise.all([
-    jeunesService.getJeuneDetails(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    jeunesService.getConseillersDuJeune(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    isPoleEmploi
-      ? []
-      : rendezVousService.getRendezVousJeune(
-          context.query.jeune_id as string,
-          accessToken
-        ),
-    isPoleEmploi
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : actionsService.getActionsJeune(
-          context.query.jeune_id as string,
-          { page, statuts: [] },
-          accessToken
-        ),
-  ])
+  const [jeune, conseillers, recherchesSauvegardees, rdvs, actions] =
+    await Promise.all([
+      jeunesService.getJeuneDetails(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getConseillersDuJeune(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getJeuneRecherchesSauvegardees(
+        id,
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      isPoleEmploi
+        ? []
+        : rendezVousService.getRendezVousJeune(
+            context.query.jeune_id as string,
+            accessToken
+          ),
+      isPoleEmploi
+        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+        : actionsService.getActionsJeune(
+            context.query.jeune_id as string,
+            { page, statuts: [] },
+            accessToken
+          ),
+    ])
 
   if (!jeune) {
     return { notFound: true }
@@ -421,9 +434,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const now = new Date()
   const props: FicheJeuneProps = {
     jeune,
+    conseillers,
+    recherchesSauvegardees,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actionsInitiales: { ...actions, page },
-    conseillers,
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
