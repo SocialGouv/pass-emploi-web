@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { StatutAction } from '../../interfaces/action'
-
-import { TableauActionsJeune } from 'components/action/TableauActionsJeune'
+import { TRI } from 'components/action/OngletActions'
+import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import { uneListeDActions } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
+import { StatutAction } from 'interfaces/action'
 
 describe('TableauActionsJeune', () => {
   describe('Filtre statut', () => {
@@ -18,7 +18,9 @@ describe('TableauActionsJeune', () => {
           jeune={uneBaseJeune()}
           actions={uneListeDActions()}
           isLoading={false}
-          filtrerActions={filtrerActions}
+          onFiltres={filtrerActions}
+          onTri={jest.fn()}
+          tri={TRI.dateDecroissante}
         />
       )
 

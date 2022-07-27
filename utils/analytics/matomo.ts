@@ -1,5 +1,7 @@
 import MatomoTracker from 'matomo-tracker'
 
+import { UserStructure } from 'interfaces/conseiller'
+
 interface InitSettings {
   url: string
   siteId: string
@@ -8,9 +10,16 @@ interface InitSettings {
   excludeUrlsPatterns?: RegExp[]
 }
 
-interface TrackSettings {
+interface TrackPageSettings {
   structure: string
   customTitle?: string
+}
+
+interface TrackEventSettings {
+  structure: string
+  categorie: string
+  action: string
+  nom: string
 }
 
 // to push custom events
@@ -49,7 +58,7 @@ function init({
   }
 }
 
-function track({ structure, customTitle }: TrackSettings): void {
+function trackPage({ structure, customTitle }: TrackPageSettings): void {
   window._paq = window._paq !== null ? window._paq : []
 
   let previousPath = ''
@@ -81,6 +90,21 @@ function track({ structure, customTitle }: TrackSettings): void {
   }, 0)
 }
 
+function trackEvent(trackEventSettings: TrackEventSettings): void {
+  push(['setCustomDimension', 1, 'conseiller'])
+  push([
+    'setCustomDimension',
+    2,
+    userStructureDimensionString(trackEventSettings.structure),
+  ])
+  push([
+    'trackEvent',
+    trackEventSettings.categorie,
+    trackEventSettings.categorie + ' ' + trackEventSettings.action,
+    trackEventSettings.categorie + ' ' + trackEventSettings.nom,
+  ])
+}
+
 // https://github.com/matomo-org/matomo-nodejs-tracker
 // https://developer.matomo.org/api-reference/tracking-api
 function trackSSR({
@@ -88,7 +112,10 @@ function trackSSR({
   customTitle,
   pathname,
   refererUrl,
-}: Required<TrackSettings> & { pathname: string; refererUrl?: string }): void {
+}: Required<TrackPageSettings> & {
+  pathname: string
+  refererUrl?: string
+}): void {
   const url = process.env.MATOMO_SOCIALGOUV_URL
   const siteId = process.env.MATOMO_SOCIALGOUV_SITE_ID
 
@@ -110,4 +137,14 @@ function trackSSR({
   })
 }
 
-export { init, track, trackSSR }
+function userStructureDimensionString(loginMode: string): string {
+  switch (loginMode) {
+    case UserStructure.MILO:
+      return 'Mission Locale'
+    case UserStructure.POLE_EMPLOI:
+      return 'Pôle emploi'
+  }
+  return 'pass emploi'
+}
+
+export { init, trackPage, trackSSR, trackEvent, userStructureDimensionString }

@@ -1,9 +1,7 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
-
-import renderWithSession from '../renderWithSession'
 
 import {
   uneListeDAgencesMILO,
@@ -15,6 +13,7 @@ import { Agence, UserStructure } from 'interfaces/conseiller'
 import Home, { getServerSideProps } from 'pages/index'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
+import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
@@ -103,7 +102,7 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        fireEvent.input(searchAgence, { target: { value: agence.nom } })
+        await userEvent.type(searchAgence, agence.nom)
         await userEvent.click(submit)
 
         // Then
@@ -123,7 +122,7 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        fireEvent.input(searchAgence, { target: { value: 'pouet' } })
+        await userEvent.type(searchAgence, 'pouet')
         await userEvent.click(submit)
 
         // Then
@@ -142,7 +141,7 @@ describe('Home', () => {
           searchAgence = screen.getByRole('combobox', {
             name: /Rechercher/,
           })
-          fireEvent.input(searchAgence, { target: { value: 'pouet' } })
+          await userEvent.type(searchAgence, 'pouet')
 
           const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
             name: /n’apparaît pas/,
@@ -156,7 +155,7 @@ describe('Home', () => {
 
         it('permet de renseigner une agence libre', async () => {
           // When
-          fireEvent.input(agenceLibre, { target: { value: 'Agence libre' } })
+          await userEvent.type(agenceLibre, 'Agence libre')
           const submit = screen.getByRole('button', { name: 'Ajouter' })
           await userEvent.click(submit)
 
@@ -208,7 +207,7 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        fireEvent.input(searchMission, { target: { value: 'pouet' } })
+        await userEvent.type(searchMission, 'pouet')
         await userEvent.click(submit)
 
         // Then

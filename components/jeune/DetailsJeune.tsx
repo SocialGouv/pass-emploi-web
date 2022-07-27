@@ -1,11 +1,9 @@
 import React from 'react'
 
-import EmailIcon from '../../assets/icons/email.svg'
-
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
-import { formatDayDate } from 'utils/date'
+import { formatDayDate, formatDayDateLongMonth } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
@@ -20,19 +18,24 @@ export const DetailsJeune = ({
 }: DetailsJeuneProps) => {
   return (
     <>
-      <dl className='text-sm-semi'>
-        <dt className='sr-only'>Ajouté le</dt>
+      <dl className='border border-solid rounded-medium w-full p-3 mt-6 border-grey_100'>
+        <h2 className='text-base-medium mb-4'>Informations</h2>
+        <dt className='text-base-regular sr-only'>Ajouté le</dt>
         <dd aria-label={formatDayDate(new Date(jeune.creationDate))}>
-          Ajouté le : {formatDayDate(new Date(jeune.creationDate))}
+          <span className='text-base-regular'>Ajouté le : </span>
+          <span className='text-md-semi'>
+            {formatDayDateLongMonth(new Date(jeune.creationDate))}
+          </span>
         </dd>
         {jeune.email && (
           <>
             <dt className='sr-only'>e-mail</dt>
-            <dd className='flex items-center mt-2'>
-              <EmailIcon
+            <dd className='text-primary flex items-center mt-2'>
+              <IconComponent
+                name={IconName.Email}
                 aria-hidden={true}
-                focusable='false'
-                className='mr-2'
+                focusable={false}
+                className='w-[15px] h-[13px] mr-2'
               />
               {jeune.email}
             </dd>
@@ -65,7 +68,7 @@ export const DetailsJeune = ({
 
       {withSituations && (
         <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
-          <h2 className='text-base-medium'>Situation</h2>
+          <h2 className='text-base-medium mb-1'>Situation</h2>
           {!(jeune.situations && jeune.situations.length) && (
             <ol>
               <li className='mt-3'>
@@ -73,10 +76,10 @@ export const DetailsJeune = ({
                   <SituationTag situation={CategorieSituation.SANS_SITUATION} />
                 </div>
                 <div className='mb-3'>
-                  Etat : <span className='text-base-medium'>--</span>
+                  Etat : <span className='text-md-semi'>--</span>
                 </div>
                 <div>
-                  Fin le : <span className='text-base-medium'>--</span>
+                  Fin le : <span className='text-md-semi'>--</span>
                 </div>
               </li>
             </ol>
@@ -94,13 +97,13 @@ export const DetailsJeune = ({
                   </div>
                   <div className='mb-3'>
                     Etat :{' '}
-                    <span className='text-base-medium'>
+                    <span className='text-md-semi'>
                       {situation.etat ?? '--'}
                     </span>
                   </div>
                   <div className=''>
                     Fin le :{' '}
-                    <span className='text-base-medium'>
+                    <span className='text-md-semi'>
                       {situation.dateFin ?? '--'}
                     </span>
                   </div>

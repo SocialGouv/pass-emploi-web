@@ -3,8 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import EmptyStateImage from '../assets/images/empty_state.svg'
-
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
@@ -18,7 +17,7 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParams, QueryValues } from 'referentiel/queryParams'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -46,7 +45,7 @@ function MesJeunes({
   conseillerJeunes,
   isFromEmail,
   deletionSuccess,
-  recuperationSuccess, // FIXME actuellement on ne track pas la récuperation d'un beneficiaire / mettre en place ou suppression du passage de props comme obsolète
+  recuperationSuccess,
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
@@ -75,6 +74,7 @@ function MesJeunes({
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
   if (deletionSuccess) initialTracking += ' - Succès suppr. compte'
+  if (recuperationSuccess) initialTracking += ' - Succès récupération'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -105,7 +105,7 @@ function MesJeunes({
       )
       await router.replace({
         pathname: '/mes-jeunes',
-        query: { [QueryParams.recuperationBeneficiaires]: QueryValues.succes },
+        query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
       })
       setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
     } finally {
@@ -219,7 +219,7 @@ function MesJeunes({
             <EmptyStateImage
               aria-hidden='true'
               focusable='false'
-              className='mb-16'
+              className='w-[360px] h-[200px] mb-16'
             />
             <p className='text-base-medium mb-12'>
               Vous n&apos;avez pas encore intégré de jeunes.
@@ -286,24 +286,23 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     pageTitle: 'Mes jeunes',
   }
 
-  if (context.query[QueryParams.recuperationBeneficiaires]) {
+  if (context.query[QueryParam.recuperationBeneficiaires]) {
     props.recuperationSuccess =
-      context.query[QueryParams.recuperationBeneficiaires] ===
-      QueryValues.succes
+      context.query[QueryParam.recuperationBeneficiaires] === QueryValue.succes
   }
 
-  if (context.query[QueryParams.suppressionBeneficiaire])
+  if (context.query[QueryParam.suppressionBeneficiaire])
     props.deletionSuccess =
-      context.query[QueryParams.suppressionBeneficiaire] === QueryValues.succes
+      context.query[QueryParam.suppressionBeneficiaire] === QueryValue.succes
 
-  if (context.query[QueryParams.envoiMessage]) {
+  if (context.query[QueryParam.envoiMessage]) {
     props.messageEnvoiGroupeSuccess =
-      context.query[QueryParams.envoiMessage] === QueryValues.succes
+      context.query[QueryParam.envoiMessage] === QueryValue.succes
   }
 
-  if (context.query[QueryParams.choixAgence]) {
+  if (context.query[QueryParam.choixAgence]) {
     props.ajoutAgenceSuccess =
-      context.query[QueryParams.choixAgence] === QueryValues.succes
+      context.query[QueryParam.choixAgence] === QueryValue.succes
   }
 
   return { props }

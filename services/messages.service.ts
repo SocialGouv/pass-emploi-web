@@ -40,11 +40,13 @@ export interface MessagesService {
 
   setReadByConseiller(idChat: string): void
 
-  observeJeuneChat(
+  toggleFlag(idChat: string, flagged: boolean): void
+
+  observeConseillerChats(
     idConseiller: string,
-    jeune: BaseJeune & { isActivated: boolean },
     cleChiffrement: string,
-    updateChat: (chat: JeuneChat) => void
+    jeunes: Array<BaseJeune & { isActivated: boolean }>,
+    updateChats: (chats: JeuneChat[]) => void
   ): () => void
 
   observeMessages(
@@ -97,31 +99,42 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     })
   }
 
-  observeJeuneChat(
-    idConseiller: string,
-    jeune: BaseJeune & { isActivated: boolean },
-    cleChiffrement: string,
-    updateChat: (chat: JeuneChat) => void
-  ): () => void {
-    return this.firebaseClient.findAndObserveChatDuJeune(
-      idConseiller,
-      jeune.id,
-      (chat: Chat) => {
-        const newJeuneChat: JeuneChat = {
-          ...jeune,
-          ...chat,
-          lastMessageContent: chat.lastMessageIv
-            ? this.chatCrypto.decrypt(
-                {
-                  encryptedText: chat.lastMessageContent ?? '',
-                  iv: chat.lastMessageIv,
-                },
-                cleChiffrement
-              )
-            : chat.lastMessageContent,
-        }
+  async toggleFlag(idChat: string, flagged: boolean): Promise<void> {
+    await this.firebaseClient.updateChat(idChat, {
+      flaggedByConseiller: flagged,
+    })
+  }
 
-        updateChat(newJeuneChat)
+  observeConseillerChats(
+    idConseiller: string,
+    cleChiffrement: string,
+    jeunes: Array<BaseJeune & { isActivated: boolean }>,
+    updateChats: (chats: JeuneChat[]) => void
+  ): () => void {
+    return this.firebaseClient.findAndObserveChatsDuConseiller(
+      idConseiller,
+      (chats: { [idJeune: string]: Chat }) => {
+        const newChats = jeunes
+          .filter((jeune) => Boolean(chats[jeune.id]))
+          .map((jeune) => {
+            const chat = chats[jeune.id]
+            const newJeuneChat: JeuneChat = {
+              ...jeune,
+              ...chat,
+              lastMessageContent: chat.lastMessageIv
+                ? this.chatCrypto.decrypt(
+                    {
+                      encryptedText: chat.lastMessageContent ?? '',
+                      iv: chat.lastMessageIv,
+                    },
+                    cleChiffrement
+                  )
+                : chat.lastMessageContent,
+            }
+            return newJeuneChat
+          })
+
+        updateChats(newChats)
       }
     )
   }
@@ -157,10 +170,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     idConseiller: string,
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }> {
-    const chats = await this.firebaseClient.getChatsDesJeunes(
-      idConseiller,
-      idsJeunes
-    )
+    const chats = await this.firebaseClient.getChatsDuConseiller(idConseiller)
     return idsJeunes.reduce((mappedCounts, idJeune) => {
       mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
       return mappedCounts
@@ -232,10 +242,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const now = new Date()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
 
-    const mappedChats = await this.firebaseClient.getChatsDesJeunes(
-      conseiller.id,
-      idsDestinataires
+    const mappedChats = await this.firebaseClient.getChatsDuConseiller(
+      conseiller.id
     )
+    const chatsDestinataires = Object.entries(mappedChats)
+      .filter(([idJeune]) => idsDestinataires.includes(idJeune))
+      .map(([_, chat]) => chat)
 
     let infoPieceJointeChiffrees: InfoFichier
     if (infoPieceJointe) {
@@ -250,7 +262,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     }
 
     await Promise.all([
-      Object.values(mappedChats).map((chat) => {
+      chatsDestinataires.map((chat) => {
         const nouveauMessage: AddMessage = {
           idChat: chat.chatId,
           idConseiller: conseiller.id,

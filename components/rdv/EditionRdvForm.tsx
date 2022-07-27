@@ -604,7 +604,7 @@ export function EditionRdvForm({
         {formHasChanges() && (
           <Button
             type='button'
-            aria-label={`Quitter la ${
+            label={`Quitter la ${
               rdv ? 'modification' : 'création'
             } du rendez-vous`}
             onClick={leaveWithChanges}

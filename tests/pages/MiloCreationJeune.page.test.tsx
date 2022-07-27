@@ -1,12 +1,11 @@
-import { act, fireEvent, RenderResult, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
-import renderWithSession from '../renderWithSession'
 
 import { unDossierMilo } from 'fixtures/milo'
 import { mockedConseillerService } from 'fixtures/services'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
+import renderWithSession from 'tests/renderWithSession'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('MiloCreationJeune', () => {
@@ -39,7 +38,7 @@ describe('MiloCreationJeune', () => {
         name: 'Valider le numéro',
       })
       const inputSearch = screen.getByLabelText('Numéro de dossier')
-      fireEvent.change(inputSearch, { target: { value: '' } })
+      await userEvent.clear(inputSearch)
 
       //WHEN
       await userEvent.click(submitButton)
@@ -70,7 +69,6 @@ describe('MiloCreationJeune', () => {
   })
 
   describe('quand on clique sur le bouton créer un compte', () => {
-    let page: RenderResult
     let conseillerService: ConseillerService
     it("devrait afficher les informations de succès de création d'un compte", async () => {
       //GIVEN
@@ -80,7 +78,7 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo()
 
-      page = renderWithSession(
+      renderWithSession(
         <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'
@@ -96,10 +94,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      // FIXME use userEvent.click
-      await act(async () => {
-        createCompteButton.click()
-      })
+      await userEvent.click(createCompteButton)
 
       //THEN
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
@@ -146,7 +141,7 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo({ email: 'incorrectemail' })
 
-      page = renderWithSession(
+      renderWithSession(
         <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'

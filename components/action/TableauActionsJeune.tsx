@@ -6,9 +6,11 @@ import React, {
   useState,
 } from 'react'
 
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import ActionRow from 'components/action/ActionRow'
+import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
-import Button from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
@@ -17,15 +19,19 @@ interface TableauActionsJeuneProps {
   jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
-  filtrerActions: (statutsSelectionnes: StatutAction[]) => void
+  onFiltres: (statutsSelectionnes: StatutAction[]) => void
+  onTri: () => void
+  tri: TRI
 }
 
-export const TableauActionsJeune = ({
+export default function TableauActionsJeune({
   jeune,
   actions,
   isLoading,
-  filtrerActions,
-}: TableauActionsJeuneProps) => {
+  onFiltres,
+  onTri,
+  tri,
+}: TableauActionsJeuneProps) {
   const [afficherStatut, setAfficherStatut] = useState<boolean>(false)
   const [statutsSelectionnes, setStatutsSelectionnes] = useState<
     StatutAction[]
@@ -45,10 +51,15 @@ export const TableauActionsJeune = ({
 
   function submitFiltres(e: FormEvent) {
     e.preventDefault()
-    filtrerActions(statutsSelectionnes)
+    onFiltres(statutsSelectionnes)
 
     setAfficherStatut(false)
     setStatutsValides(statutsSelectionnes)
+  }
+
+  function reinitialiserFiltres() {
+    onFiltres([])
+    setStatutsValides([])
   }
 
   function renderStatutInput(statut: StatutAction): JSX.Element {
@@ -74,66 +85,100 @@ export const TableauActionsJeune = ({
 
   return (
     <div className={isLoading ? 'animate-pulse' : ''}>
-      {actions.length === 0 && (
-        <p className='text-md mb-2'>
-          {jeune.prenom} {jeune.nom} n’a pas encore d’action
-        </p>
-      )}
-
-      {actions.length > 0 && (
-        <div
-          role='table'
-          className='table w-full'
-          aria-label={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
-        >
-          <div role='rowgroup' className='table-header-group '>
-            <div role='row' className='table-row text-s-regular'>
-              <div role='columnheader' className={`table-cell pl-4 py-4`}>
-                Intitulé de l&apos;action
-              </div>
-              <div role='columnheader' className={`table-cell`}>
+      <div
+        role='table'
+        className='table w-full'
+        aria-label={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
+      >
+        <div role='rowgroup' className='table-header-group '>
+          <div role='row' className='table-row text-s-regular'>
+            <div role='columnheader' className='table-cell pl-4 py-4'>
+              Intitulé de l&apos;action
+            </div>
+            <div role='columnheader' className='table-cell relative'>
+              <button
+                onClick={onTri}
+                aria-label='Créée le - trier les actions'
+                className='w-full flex items-center'
+              >
                 Créée le
-              </div>
-              <div role='columnheader' className='table-cell relative'>
-                <button
-                  aria-controls='filtres-statut'
-                  aria-expanded={afficherStatut}
-                  onClick={() => setAfficherStatut(!afficherStatut)}
-                  aria-label='Statut - Filtrer les actions'
-                  className='w-full flex items-center'
+                <IconComponent
+                  name={IconName.ChevronDown}
+                  className={`h-4 w-4 fill-primary ${
+                    tri === TRI.dateDecroissante ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+            </div>
+            <div role='columnheader' className='table-cell relative'>
+              <button
+                aria-controls='filtres-statut'
+                aria-expanded={afficherStatut}
+                onClick={() => setAfficherStatut(!afficherStatut)}
+                aria-label='Statut - Filtrer les actions'
+                className='w-full flex items-center'
+              >
+                Statut
+                <IconComponent
+                  name={IconName.ChevronDown}
+                  className={`h-4 w-4 fill-primary ${
+                    afficherStatut ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+              {afficherStatut && (
+                <form
+                  className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 text-base-regular'
+                  id='filtres-statut'
+                  onSubmit={submitFiltres}
                 >
-                  Statut
-                  <IconComponent
-                    name={IconName.ChevronDown}
-                    className={`h-4 w-4 fill-primary ${
-                      afficherStatut ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                {afficherStatut && (
-                  <form
-                    className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 text-base-regular'
-                    id='filtres-statut'
-                    onSubmit={submitFiltres}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <fieldset className='flex flex-col p-2'>
-                      <legend className='sr-only'>
-                        Choisir un statut à filtrer
-                      </legend>
-                      {Object.keys(StatutAction).map((statut) =>
-                        renderStatutInput(statut as StatutAction)
-                      )}
-                    </fieldset>
-                    <Button className='w-full justify-center' type='submit'>
-                      Valider
-                    </Button>
-                  </form>
-                )}
+                  <fieldset className='flex flex-col p-2'>
+                    <legend className='sr-only'>
+                      Choisir un statut à filtrer
+                    </legend>
+                    {Object.keys(StatutAction).map((statut) =>
+                      renderStatutInput(statut as StatutAction)
+                    )}
+                  </fieldset>
+                  <Button className='w-full justify-center' type='submit'>
+                    Valider
+                  </Button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {actions.length === 0 && (
+          <div
+            role='rowgroup'
+            className='table-caption text-center'
+            style={{ captionSide: 'bottom' }}
+          >
+            <div role='row'>
+              <div role='cell' aria-colspan={3}>
+                <EmptyStateImage
+                  focusable='false'
+                  aria-hidden='true'
+                  className='m-auto w-[200px] h-[200px]'
+                />
+                <p className='text-md-semi text-center'>
+                  Aucune action ne correspondant aux filtres.
+                </p>
+                <Button
+                  type='button'
+                  style={ButtonStyle.PRIMARY}
+                  onClick={reinitialiserFiltres}
+                  className='m-auto mt-8'
+                >
+                  Réinitialiser les filtres
+                </Button>
               </div>
             </div>
           </div>
+        )}
 
+        {actions.length > 0 && (
           <div role='rowgroup' className='table-row-group'>
             {actions.map((action: Action) => (
               <Fragment key={action.id}>
@@ -142,8 +187,8 @@ export const TableauActionsJeune = ({
               </Fragment>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

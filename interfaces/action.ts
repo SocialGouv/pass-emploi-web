@@ -1,5 +1,3 @@
-import { compareDatesDesc } from 'utils/date'
-
 export interface Action {
   id: string
   content: string
@@ -26,18 +24,4 @@ export enum StatutAction {
   Commencee = 'Commencee',
   Terminee = 'Terminee',
   Annulee = 'Annulee',
-}
-
-export function compareActionsDatesDesc(
-  action1: Action,
-  action2: Action
-): number {
-  const compare = compareDatesDesc(
-    new Date(action1.creationDate),
-    new Date(action2.creationDate)
-  )
-  return (
-    compare ||
-    compareDatesDesc(new Date(action1.lastUpdate), new Date(action2.lastUpdate))
-  )
 }

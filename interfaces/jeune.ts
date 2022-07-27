@@ -64,6 +64,7 @@ export type JeuneAvecInfosComplementaires = JeuneAvecNbActionsNonTerminees & {
 export interface Chat {
   chatId: string
   seenByConseiller: boolean
+  flaggedByConseiller: boolean
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
   lastMessageSentAt: Date | undefined
@@ -92,7 +93,6 @@ export interface JeunePoleEmploiFormData {
 
 export interface ConseillerHistorique {
   id: string
-  email: string
   nom: string
   prenom: string
   depuis: string
@@ -114,15 +114,6 @@ export function compareJeunesByLastNameDesc(
   return -compareJeunesByNom(jeune1, jeune2)
 }
 
-export function compareJeunesByPrenom(
-  jeune1: BaseJeune,
-  jeune2: BaseJeune
-): number {
-  return `${jeune1.prenom}${jeune1.nom}`.localeCompare(
-    `${jeune2.prenom}${jeune2.nom}`
-  )
-}
-
 export function compareJeunesBySituation(
   jeune1: JeuneFromListe,
   jeune2: JeuneFromListe
@@ -140,9 +131,11 @@ export function compareJeunesBySituationDesc(
 }
 
 export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {
-  if (a.seenByConseiller !== b.seenByConseiller)
-    return a.seenByConseiller ? 1 : -1
-  return compareJeunesByPrenom(a, b)
+  return (
+    comparerParMessageNonLu(a, b) ||
+    comparerParConversationSuivie(a, b) ||
+    comparerParDate(a, b)
+  )
 }
 
 export function compareJeuneByLastActivity(
@@ -167,4 +160,29 @@ export function compareJeuneByLastActivityDesc(
 
 export function getNomJeuneComplet(j: BaseJeune): string {
   return `${j.nom} ${j.prenom}`
+}
+
+function comparerParMessageNonLu(a: JeuneChat, b: JeuneChat): number {
+  if (a.seenByConseiller && !b.seenByConseiller) return 1
+  if (!a.seenByConseiller && b.seenByConseiller) return -1
+  return 0
+}
+
+function comparerParConversationSuivie(a: JeuneChat, b: JeuneChat): number {
+  if (a.flaggedByConseiller && !b.flaggedByConseiller) return -1
+  if (!a.flaggedByConseiller && b.flaggedByConseiller) return 1
+  return 0
+}
+
+function comparerParDate(a: JeuneChat, b: JeuneChat): number {
+  if (a.lastMessageSentAt && b.lastMessageSentAt) {
+    return a.lastMessageSentAt <= b.lastMessageSentAt ? 1 : -1
+  }
+  if (a.lastMessageSentAt) {
+    return -1
+  }
+  if (b.lastMessageSentAt) {
+    return 1
+  }
+  return 0
 }

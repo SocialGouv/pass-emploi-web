@@ -126,10 +126,9 @@ class FirebaseClient {
     }
   }
 
-  findAndObserveChatDuJeune(
+  findAndObserveChatsDuConseiller(
     idConseiller: string,
-    idJeune: string,
-    onChatFound: (chat: Chat) => void
+    onChatsFound: (chats: { [idJeune: string]: Chat }) => void
   ): () => void {
     try {
       return onSnapshot<FirebaseChat>(
@@ -138,13 +137,20 @@ class FirebaseClient {
             this.getDb(),
             this.collectionName
           ) as CollectionReference<FirebaseChat>,
-          where('conseillerId', '==', idConseiller),
-          where('jeuneId', '==', idJeune)
+          where('conseillerId', '==', idConseiller)
         ),
         (querySnapshot: QuerySnapshot<FirebaseChat>) => {
           if (querySnapshot.empty) return
-          const docSnapshot = querySnapshot.docs[0]
-          onChatFound(chatFromFirebase(docSnapshot.id, docSnapshot.data()))
+          onChatsFound(
+            querySnapshot.docs.reduce((chats, snapshot) => {
+              const chatFirebase = snapshot.data()
+              chats[chatFirebase.jeuneId] = chatFromFirebase(
+                snapshot.id,
+                chatFirebase
+              )
+              return chats
+            }, {} as { [idJeune: string]: Chat })
+          )
         }
       )
     } catch (e) {
@@ -154,16 +160,11 @@ class FirebaseClient {
     }
   }
 
-  async getChatsDesJeunes(
-    idConseiller: string,
-    idsJeunes: string[]
+  async getChatsDuConseiller(
+    idConseiller: string
   ): Promise<{ [idJeune: string]: Chat }> {
     try {
-      // firestore limits 'in' query to 10
-      const docSnapshots = await this.getFirebaseChatsByBatches(
-        idConseiller,
-        idsJeunes
-      )
+      const docSnapshots = await this.getChatsSnapshot(idConseiller)
       return docSnapshots.reduce((mappedChats, document) => {
         const firebaseChat: FirebaseChat = document.data()
         mappedChats[firebaseChat.jeuneId] = chatFromFirebase(
@@ -244,31 +245,21 @@ class FirebaseClient {
     }
   }
 
-  private async getFirebaseChatsByBatches(
-    idConseiller: string,
-    idsJeunes: string[]
+  private async getChatsSnapshot(
+    idConseiller: string
   ): Promise<QueryDocumentSnapshot<FirebaseChat>[]> {
-    if (!idsJeunes.length) return []
-
     const collectionRef = collection(
       this.getDb(),
       this.collectionName
     ) as CollectionReference<FirebaseChat>
 
-    const batches: Promise<QuerySnapshot<FirebaseChat>>[] = []
-    const ids = [...idsJeunes]
-    while (ids.length) {
-      const batch = ids.splice(0, 10)
-      const q = query<FirebaseChat>(
+    const querySnapshots: QuerySnapshot<FirebaseChat> = await getDocs(
+      query<FirebaseChat>(
         collectionRef,
-        where('conseillerId', '==', idConseiller),
-        where('jeuneId', 'in', [...batch])
+        where('conseillerId', '==', idConseiller)
       )
-      batches.push(getDocs(q))
-    }
-
-    const querySnapshots = await Promise.all(batches)
-    return querySnapshots.flatMap((querySnapshot) => querySnapshot.docs)
+    )
+    return querySnapshots.docs
   }
 
   private getDb(): Firestore {
@@ -312,6 +303,7 @@ function createFirebaseMessage({
 interface FirebaseChat {
   jeuneId: string
   seenByConseiller: boolean | undefined
+  flaggedByConseiller: boolean | undefined
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
   lastMessageSentAt: Timestamp | undefined
@@ -354,6 +346,11 @@ function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
   if (chat.lastMessageIv) {
     firebaseChatToUpdate.lastMessageIv = chat.lastMessageIv
   }
+
+  if (chat.flaggedByConseiller !== undefined) {
+    firebaseChatToUpdate.flaggedByConseiller = chat.flaggedByConseiller
+  }
+
   return firebaseChatToUpdate
 }
 
@@ -368,6 +365,7 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
     lastConseillerReading: firebaseChat.lastConseillerReading?.toDate(),
     lastJeuneReading: firebaseChat.lastJeuneReading?.toDate(),
     lastMessageIv: firebaseChat.lastMessageIv,
+    flaggedByConseiller: Boolean(firebaseChat.flaggedByConseiller),
   }
 }
 

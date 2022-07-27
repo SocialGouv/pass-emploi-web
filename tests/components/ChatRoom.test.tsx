@@ -1,18 +1,19 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import ChatRoom from 'components/layouts/ChatRoom'
+import ChatRoom from 'components/chat/ChatRoom'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
+import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import renderWithSession from 'tests/renderWithSession'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { DIProvider } from 'utils/injectionDependances'
 
-jest.mock('components/Conversation', () =>
+jest.mock('components/chat/Conversation', () =>
   jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
 )
 jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
@@ -21,11 +22,13 @@ describe('<ChatRoom />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
+  let messagesService: MessagesService
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
     jeunesService = mockedJeunesService({
       getConseillersDuJeune: jest.fn((_) => Promise.resolve(conseillers)),
     })
+    messagesService = mockedMessagesService()
     jeunesChats = [
       unJeuneChat({
         ...jeunes[0],
@@ -49,7 +52,7 @@ describe('<ChatRoom />', () => {
     beforeEach(async () => {
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService }}>
+          <DIProvider dependances={{ jeunesService, messagesService }}>
             <CurrentJeuneProvider>
               <ChatRoom jeunesChats={jeunesChats} />
             </CurrentJeuneProvider>
@@ -110,6 +113,31 @@ describe('<ChatRoom />', () => {
         ).toThrow()
       })
     })
+
+    describe("quand on clique sur le flag d'une conversation", () => {
+      it('change son suivi', async () => {
+        // Given
+        const [jeune] = jeunes
+        const conversationCard = screen
+          .getByText(jeune.prenom, {
+            exact: false,
+          })
+          .closest('div')
+        const flagConversation = within(conversationCard!).getByRole(
+          'checkbox',
+          { name: /Ne plus suivre/ }
+        )
+
+        // When
+        await userEvent.click(flagConversation!)
+
+        // Then
+        expect(messagesService.toggleFlag).toHaveBeenCalledWith(
+          `chat-${jeune.id}`,
+          false
+        )
+      })
+    })
   })
 
   describe('réaction au contexte du jeune', () => {
@@ -117,7 +145,7 @@ describe('<ChatRoom />', () => {
       // When
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService }}>
+          <DIProvider dependances={{ jeunesService, messagesService }}>
             <CurrentJeuneProvider idJeune={jeunes[2].id}>
               <ChatRoom jeunesChats={jeunesChats} />
             </CurrentJeuneProvider>
@@ -137,7 +165,7 @@ describe('<ChatRoom />', () => {
       // When
       await act(async () => {
         await renderWithSession(
-          <DIProvider dependances={{ jeunesService }}>
+          <DIProvider dependances={{ jeunesService, messagesService }}>
             <CurrentJeuneProvider>
               <ChatRoom jeunesChats={[]} />
             </CurrentJeuneProvider>

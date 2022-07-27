@@ -14,7 +14,7 @@ import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
-import { QueryParams, QueryValues } from 'referentiel/queryParams'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -124,12 +124,10 @@ function EditionRdv({
     }
 
     const { pathname, query } = getCleanUrlObject(returnTo)
-    const queryParam = rdv
-      ? QueryParams.modificationRdv
-      : QueryParams.creationRdv
+    const queryParam = rdv ? QueryParam.modificationRdv : QueryParam.creationRdv
     await router.push({
       pathname,
-      query: setQueryParams(query, { [queryParam]: QueryValues.succes }),
+      query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
     })
   }
 
@@ -142,7 +140,7 @@ function EditionRdv({
       await router.push({
         pathname,
         query: setQueryParams(query, {
-          [QueryParams.suppressionRdv]: QueryValues.succes,
+          [QueryParam.suppressionRdv]: QueryValue.succes,
         }),
       })
     } catch (e) {
@@ -167,7 +165,7 @@ function EditionRdv({
         <Button
           style={ButtonStyle.SECONDARY}
           onClick={handleDelete}
-          aria-label={`Supprimer le rendez-vous du ${rdv.date}`}
+          label={`Supprimer le rendez-vous du ${rdv.date}`}
           className='mb-4'
         >
           <IconComponent
@@ -287,9 +285,9 @@ function getCleanUrlObject(url: string): {
   return {
     pathname,
     query: deleteQueryParams(query, [
-      QueryParams.modificationRdv,
-      QueryParams.creationRdv,
-      QueryParams.suppressionRdv,
+      QueryParam.modificationRdv,
+      QueryParam.creationRdv,
+      QueryParam.suppressionRdv,
     ]),
   }
 }

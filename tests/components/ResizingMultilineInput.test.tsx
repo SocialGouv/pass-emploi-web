@@ -1,11 +1,11 @@
-import { fireEvent, render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createRef } from 'react'
 
 import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 
 describe('<ResizingMultilineInput/>', () => {
-  let form: HTMLSpanElement
+  let submitButton: HTMLButtonElement
   let textarea: HTMLTextAreaElement
   let handleFocus: jest.Mock
   let handleBlur: jest.Mock
@@ -18,8 +18,8 @@ describe('<ResizingMultilineInput/>', () => {
     handleBlur = jest.fn()
     handleChange = jest.fn()
 
-    const { container } = render(
-      <form>
+    render(
+      <form onSubmit={(e) => e.preventDefault()}>
         <ResizingMultilineInput
           inputRef={inputRef}
           style={{ padding: '10px', lineHeight: '20px', width: '1px' }}
@@ -29,11 +29,12 @@ describe('<ResizingMultilineInput/>', () => {
           onBlur={handleBlur}
           onChange={handleChange}
         />
+        <button type='submit'>Soumettre</button>
       </form>
     )
 
-    form = container.querySelector('form')!
-    textarea = container.querySelector('textarea')!
+    submitButton = screen.getByRole('button', { name: 'Soumettre' })
+    textarea = screen.getByRole('textbox')
   })
 
   it('contains a multiline textarea', () => {
@@ -61,42 +62,42 @@ describe('<ResizingMultilineInput/>', () => {
     expect(handleBlur).toHaveBeenCalled()
   })
 
-  it('fires onChange event', () => {
+  it('fires onChange event', async () => {
     // WHEN
-    fireEvent.change(textarea, { target: { value: 'new value' } })
+    await userEvent.type(textarea, 'new value')
 
     // THEN
     expect(handleChange).toHaveBeenCalled()
   })
 
-  it('resizes depending on content', () => {
+  it('resizes depending on content', async () => {
     // GIVEN
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(120)
 
     // WHEN
-    fireEvent.change(textarea, { target: { value: 'new value' } })
+    await userEvent.type(textarea, 'new value')
 
     // THEN
     expect(textarea).toHaveStyle({ height: '120px' })
   })
 
-  it('limits size depending on minRows', () => {
+  it('limits size depending on minRows', async () => {
     // GIVEN
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(20)
 
     // WHEN
-    fireEvent.change(textarea, { target: { value: 'new value' } })
+    await userEvent.type(textarea, 'new value')
 
     // THEN
     expect(textarea).toHaveStyle({ height: '80px' })
   })
 
-  it('limits size depending on maxRows', () => {
+  it('limits size depending on maxRows', async () => {
     // GIVEN
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(200)
 
     // WHEN
-    fireEvent.change(textarea, { target: { value: 'new value' } })
+    await userEvent.type(textarea, 'new value')
 
     // THEN
     expect(textarea).toHaveStyle({ height: '160px' })
@@ -108,7 +109,7 @@ describe('<ResizingMultilineInput/>', () => {
     expect(textarea).toHaveValue('input value')
 
     // WHEN
-    fireEvent.submit(form)
+    await userEvent.click(submitButton)
 
     // THEN
     expect(textarea).toHaveValue('')
@@ -121,7 +122,7 @@ describe('<ResizingMultilineInput/>', () => {
     expect(textarea).toHaveValue('input value')
 
     // WHEN
-    fireEvent.submit(form)
+    await userEvent.click(submitButton)
 
     // THEN
     expect(textarea).toHaveStyle({ height: '80px' })

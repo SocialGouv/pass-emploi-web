@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -82,79 +82,97 @@ describe('Fiche Jeune', () => {
 
     describe('pour tous les conseillers', () => {
       let setIdJeune: (id: string | undefined) => void
-      beforeEach(async () => {
-        // Given
-        setIdJeune = jest.fn()
 
-        // When
-        renderPage(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={[]}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            conseillers={listeConseillers}
-            pageTitle={''}
-          />,
-          { idJeuneSetter: setIdJeune, customDependances: dependances }
-        )
-      })
+      describe('render', () => {
+        beforeEach(async () => {
+          // Given
+          setIdJeune = jest.fn()
 
-      it('affiche la liste des 5 premiers conseillers du jeune', () => {
-        // Then
-        listeConseillers
-          .slice(0, 5)
-          .forEach(({ nom, prenom }: ConseillerHistorique) => {
+          // When
+          renderPage(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+            />,
+            { idJeuneSetter: setIdJeune, customDependances: dependances }
+          )
+        })
+
+        it('affiche la liste des 5 premiers conseillers du jeune', () => {
+          // Then
+          listeConseillers
+            .slice(0, 5)
+            .forEach(({ nom, prenom }: ConseillerHistorique) => {
+              expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+            })
+          expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
+        })
+
+        it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
+          // Then
+          const button = screen.getByRole('button', {
+            name: 'Voir l’historique complet',
+          })
+          expect(listeConseillers.length).toEqual(6)
+          expect(button).toBeInTheDocument()
+        })
+
+        it('permet d’afficher la liste complète des conseillers du jeune', async () => {
+          // Given
+          const button = screen.getByRole('button', {
+            name: 'Voir l’historique complet',
+          })
+
+          // When
+          await userEvent.click(button)
+
+          //Then
+          listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
             expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
           })
-        expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
-      })
-
-      it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
-        // Then
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
-        })
-        expect(listeConseillers.length).toEqual(6)
-        expect(button).toBeInTheDocument()
-      })
-
-      it('permet d’afficher la liste complète des conseillers du jeune', async () => {
-        // Given
-        const button = screen.getByRole('button', {
-          name: 'Voir l’historique complet',
         })
 
-        // When
-        await act(() => userEvent.click(button))
-
-        //Then
-        listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-          expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+        it('modifie le currentJeune', () => {
+          // Then
+          expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
         })
-      })
 
-      it('modifie le currentJeune', () => {
-        // Then
-        expect(setIdJeune).toHaveBeenCalledWith(jeune.id)
-      })
-
-      it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
-        // Then
-        const deleteButton = screen.getByText('Supprimer ce compte')
-        expect(deleteButton).toBeInTheDocument()
+        it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
+          // Then
+          const deleteButton = screen.getByText('Supprimer ce compte')
+          expect(deleteButton).toBeInTheDocument()
+        })
       })
 
       describe('Supprimer un compte actif', () => {
         beforeEach(async () => {
           // Given
+          renderPage(
+            <FicheJeune
+              jeune={unDetailJeune({ isActivated: true })}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+            />,
+            { customDependances: dependances }
+          )
+          // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
 
           // When
-          await act(() => userEvent.click(deleteButton))
+          await userEvent.click(deleteButton)
         })
 
         it('affiche la première modale de suppression du compte d’un bénéficiaire actif', async () => {
@@ -170,7 +188,7 @@ describe('Fiche Jeune', () => {
             const continuerButton = screen.getByText('Continuer')
 
             // When
-            await act(() => userEvent.click(continuerButton))
+            await userEvent.click(continuerButton)
           })
 
           it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
@@ -204,7 +222,7 @@ describe('Fiche Jeune', () => {
             })
 
             // When
-            await act(() => userEvent.selectOptions(selectMotif, 'Autre'))
+            await userEvent.selectOptions(selectMotif, 'Autre')
 
             // Then
             expect(
@@ -220,12 +238,10 @@ describe('Fiche Jeune', () => {
               name: /Motif de suppression/,
             })
             const supprimerButtonModal = screen.getByText('Confirmer')
-            await act(() =>
-              userEvent.selectOptions(selectMotif, 'Radiation du CEJ')
-            )
+            await userEvent.selectOptions(selectMotif, 'Radiation du CEJ')
 
             // When
-            await act(() => userEvent.click(supprimerButtonModal))
+            await userEvent.click(supprimerButtonModal)
 
             // Then
             expect(
@@ -237,6 +253,59 @@ describe('Fiche Jeune', () => {
             )
             expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
           })
+        })
+      })
+
+      describe('Supprimer un compte inactif', () => {
+        beforeEach(async () => {
+          // Given
+          renderPage(
+            <FicheJeune
+              jeune={unDetailJeune({ isActivated: false })}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+            />,
+            { customDependances: dependances }
+          )
+          // Given
+          const deleteButton = screen.getByText('Supprimer ce compte')
+
+          // When
+          await userEvent.click(deleteButton)
+        })
+
+        it("affiche l'information", () => {
+          // Then
+          expect(
+            screen.getByText('pas encore connecté', { exact: false })
+          ).toBeInTheDocument()
+        })
+
+        it('affiche la modale de suppression du compte d’un bénéficiaire inactif', async () => {
+          // Then
+          expect(
+            screen.getByText(/toutes les informations liées à ce compte/)
+          ).toBeInTheDocument()
+        })
+
+        it('lors de la confirmation, supprime le bénéficiaire', async () => {
+          // Given
+          const supprimerButtonModal = screen.getByText('Confirmer')
+
+          // When
+          await userEvent.click(supprimerButtonModal)
+
+          // Then
+          expect(
+            dependances.jeunesService.supprimerJeuneInactif
+          ).toHaveBeenCalledWith(jeune.id, 'accessToken')
+          expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
         })
       })
     })
@@ -281,7 +350,7 @@ describe('Fiche Jeune', () => {
       it('affiche les actions du jeune', async () => {
         // When
         const tabActions = screen.getByRole('tab', { name: 'Actions 14' })
-        await act(() => userEvent.click(tabActions))
+        await userEvent.click(tabActions)
 
         // Then
         actions.forEach((action) => {
@@ -385,9 +454,7 @@ describe('Fiche Jeune', () => {
 
       it("n'affiche pas de lien vers les actions du jeune", async () => {
         // Given
-        await act(() =>
-          userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
-        )
+        await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
 
         // Then
         expect(() =>
@@ -509,48 +576,10 @@ describe('Fiche Jeune', () => {
         )
 
         // When
-        await act(() =>
-          userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
-        )
+        await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
 
         // Then
         expect(screen.getByText(/n’a pas encore d’action/)).toBeInTheDocument()
-      })
-    })
-
-    describe("quand le jeune ne s'est jamais connecté", () => {
-      beforeEach(() => {
-        // Given
-        renderPage(
-          <FicheJeune
-            jeune={{ ...jeune, isActivated: false }}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            conseillers={[]}
-            pageTitle={''}
-          />
-        )
-      })
-
-      it("affiche l'information", () => {
-        // Then
-        expect(
-          screen.getByText('pas encore connecté', { exact: false })
-        ).toBeInTheDocument()
-      })
-
-      it('permet de supprimer le jeune', async () => {
-        // Then
-        const link = screen.getByText('Supprimer ce compte')
-        expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute(
-          'href',
-          `/mes-jeunes/${jeune.id}/suppression`
-        )
       })
     })
 
@@ -634,12 +663,12 @@ describe('Fiche Jeune', () => {
 
         it('met à jour les actions avec la page demandée ', async () => {
           // When
-          await act(() => userEvent.click(screen.getByLabelText('Page 2')))
+          await userEvent.click(screen.getByLabelText('Page 2'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: 2, statuts: [] },
+            { page: 2, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(screen.getByLabelText('Page 2')).toHaveAttribute(
@@ -651,14 +680,12 @@ describe('Fiche Jeune', () => {
 
         it('permet d’aller à la première page des actions', async () => {
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Première page'))
-          )
+          await userEvent.click(screen.getByLabelText('Première page'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: 1, statuts: [] },
+            { page: 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(screen.getByLabelText('Page 1')).toHaveAttribute(
@@ -672,14 +699,12 @@ describe('Fiche Jeune', () => {
 
         it('permet d’aller à la dernière page des actions', async () => {
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Dernière page'))
-          )
+          await userEvent.click(screen.getByLabelText('Dernière page'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: 6, statuts: [] },
+            { page: 6, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(screen.getByLabelText('Page 6')).toHaveAttribute(
@@ -693,14 +718,12 @@ describe('Fiche Jeune', () => {
 
         it('permet de revenir à la page précédente', async () => {
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Page précédente'))
-          )
+          await userEvent.click(screen.getByLabelText('Page précédente'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 1, statuts: [] },
+            { page: pageCourante - 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(
@@ -710,14 +733,12 @@ describe('Fiche Jeune', () => {
 
         it("permet d'aller à la page suivante", async () => {
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Page suivante'))
-          )
+          await userEvent.click(screen.getByLabelText('Page suivante'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante + 1, statuts: [] },
+            { page: pageCourante + 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(
@@ -727,22 +748,19 @@ describe('Fiche Jeune', () => {
 
         it('met à jour la page courante', async () => {
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Page précédente'))
-          )
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Page précédente'))
-          )
+          await userEvent.click(screen.getByLabelText('Page précédente'))
+          await userEvent.click(screen.getByLabelText('Page précédente'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 1, statuts: [] },
+            { page: pageCourante - 1, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
+
           expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 2, statuts: [] },
+            { page: pageCourante - 2, statuts: [], tri: 'date_decroissante' },
             'accessToken'
           )
           expect(
@@ -752,14 +770,10 @@ describe('Fiche Jeune', () => {
 
         it('ne permet pas de revenir avant la première page', async () => {
           // Given
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Première page'))
-          )
+          await userEvent.click(screen.getByLabelText('Première page'))
 
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Page précédente'))
-          )
+          await userEvent.click(screen.getByLabelText('Page précédente'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
@@ -774,14 +788,10 @@ describe('Fiche Jeune', () => {
 
         it("ne permet pas d'aller après la dernière page", async () => {
           // Given
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Dernière page'))
-          )
+          await userEvent.click(screen.getByLabelText('Dernière page'))
 
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText('Page suivante'))
-          )
+          await userEvent.click(screen.getByLabelText('Page suivante'))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(1)
@@ -796,9 +806,7 @@ describe('Fiche Jeune', () => {
 
         it('ne recharge pas la page courante', async () => {
           // When
-          await act(() =>
-            userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
-          )
+          await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
 
           // Then
           expect(actionsService.getActionsJeune).toHaveBeenCalledTimes(0)
@@ -1062,12 +1070,10 @@ describe('Fiche Jeune', () => {
         )
 
         // When
-        await act(() => userEvent.click(screen.getByText('Statut')))
-        await act(() => userEvent.click(screen.getByLabelText('Commencée')))
-        await act(() => userEvent.click(screen.getByLabelText('À réaliser')))
-        await act(() =>
-          userEvent.click(screen.getByRole('button', { name: 'Valider' }))
-        )
+        await userEvent.click(screen.getByText('Statut'))
+        await userEvent.click(screen.getByLabelText('Commencée'))
+        await userEvent.click(screen.getByLabelText('À réaliser'))
+        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       })
 
       it('filtre les actions', () => {
@@ -1077,6 +1083,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            tri: 'date_decroissante',
           },
           'accessToken'
         )
@@ -1090,9 +1097,9 @@ describe('Fiche Jeune', () => {
         expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
       })
 
-      it('conserve les filtres de statut', async () => {
+      it('conserve les filtres de statut en changeant de page', async () => {
         // When
-        await act(() => userEvent.click(screen.getByLabelText('Page 2')))
+        await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
         expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
@@ -1100,6 +1107,96 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            tri: 'date_decroissante',
+          },
+          'accessToken'
+        )
+      })
+    })
+
+    describe('trier les actions par date de création', () => {
+      let actionsService: ActionsService
+      let pageCourante: number
+      let headerColonneDate: HTMLButtonElement
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeune: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action triée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })),
+        })
+
+        pageCourante = 1
+        renderPage(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions,
+              page: pageCourante,
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
+            }}
+            conseillers={listeConseillers}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+          />,
+          { customDependances: { actionsService } }
+        )
+
+        headerColonneDate = screen.getByRole('button', { name: /Créée le/ })
+      })
+
+      it('tri les actions par ordre croissant puis decroissant', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+        await userEvent.click(headerColonneDate)
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            tri: 'date_croissante',
+          },
+          'accessToken'
+        )
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            tri: 'date_decroissante',
+          },
+          'accessToken'
+        )
+        expect(screen.getByText('Action triée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+
+        // Then
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve le tri en changeant de page', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(actionsService.getActionsJeune).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [],
+            tri: 'date_croissante',
           },
           'accessToken'
         )
@@ -1163,7 +1260,10 @@ describe('Fiche Jeune', () => {
       beforeEach(async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1263,7 +1363,10 @@ describe('Fiche Jeune', () => {
       it('récupère le statut de la création', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1281,7 +1384,10 @@ describe('Fiche Jeune', () => {
       it('récupère le statut de la modification', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1301,7 +1407,10 @@ describe('Fiche Jeune', () => {
       it("récupère le statut de l'envoi", async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1321,7 +1430,10 @@ describe('Fiche Jeune', () => {
       it('récupère le statut de la création', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 
@@ -1331,7 +1443,9 @@ describe('Fiche Jeune', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(actual).toMatchObject({ props: { actionCreationSuccess: true } })
+        expect(actual).toMatchObject({
+          props: { actionCreationSuccess: true },
+        })
       })
     })
 
@@ -1339,7 +1453,10 @@ describe('Fiche Jeune', () => {
       it('récupère l’onglet sur lequel ouvrir la page', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: { accessToken: 'accessToken', user: { structure: 'MILO' } },
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
           validSession: true,
         })
 

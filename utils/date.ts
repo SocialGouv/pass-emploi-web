@@ -25,6 +25,13 @@ export const formatDayDate = (date: Date): string => {
   return `${day}/${month}/${year}`
 }
 
+export const formatDayDateLongMonth = (date: Date): string => {
+  const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+  const month = date.toLocaleString('default', { month: 'long' })
+  const year = date.getFullYear()
+  return `${day} ${month} ${year}`
+}
+
 export const formatHourMinuteDate = (date: Date): string => {
   let hours = date.getHours().toString()
   hours = ('0' + hours).slice(-2)

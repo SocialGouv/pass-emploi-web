@@ -26,10 +26,14 @@ import ClockIcon from 'assets/icons/clock.svg'
 import CloseIcon from 'assets/icons/close.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
 import DeleteIcon from 'assets/icons/delete.svg'
+import EmailIcon from 'assets/icons/email.svg'
+import FlagIcon from 'assets/icons/flag.svg'
+import FlagFilledIcon from 'assets/icons/flag_filled.svg'
 import InfoIcon from 'assets/icons/information.svg'
 import InfoOutlineIcon from 'assets/icons/information_outline.svg'
 import LaunchIcon from 'assets/icons/launch.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
+import MenuIcon from 'assets/icons/menu.svg'
 import PeopleIcon from 'assets/icons/people.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
 import RemoveIcon from 'assets/icons/remove.svg'
@@ -67,11 +71,15 @@ export enum IconName {
   Close = 'Close',
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
+  Email = 'Email',
   File = 'File',
+  Flag = 'Flag',
+  FlagFilled = 'FlagFilled',
   Info = 'Info',
   InfoOutline = 'InfoOutline',
   Launch = 'Launch',
   Logout = 'Logout',
+  Menu = 'Menu',
   People = 'People',
   Profil = 'Profil',
   Remove = 'Remove',
@@ -110,11 +118,15 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Clock]: ClockIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
+  [IconName.Email]: EmailIcon,
   [IconName.File]: FileIcon,
+  [IconName.Flag]: FlagIcon,
+  [IconName.FlagFilled]: FlagFilledIcon,
   [IconName.Info]: InfoIcon,
   [IconName.InfoOutline]: InfoOutlineIcon,
   [IconName.Launch]: LaunchIcon,
   [IconName.Logout]: LogoutIcon,
+  [IconName.Menu]: MenuIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.Remove]: RemoveIcon,

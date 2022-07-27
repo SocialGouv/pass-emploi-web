@@ -1,13 +1,12 @@
 import { screen } from '@testing-library/react'
 import React from 'react'
 
-import getByDefinitionTerm from '../querySelector'
-import renderWithSession from '../renderWithSession'
-
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDossierMilo } from 'fixtures/milo'
 import { mockedConseillerService } from 'fixtures/services'
 import { ConseillerService } from 'services/conseiller.service'
+import getByDefinitionTerm from 'tests/querySelector'
+import renderWithSession from 'tests/renderWithSession'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('<DossierMilo', () => {

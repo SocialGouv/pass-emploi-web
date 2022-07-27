@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react'
 
-import DisplayMessage from 'components/messages/DisplayMessage'
+import DisplayMessage from 'components/chat/DisplayMessage'
 import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
@@ -20,6 +20,7 @@ import {
   FormNouveauMessageIndividuel,
   MessagesService,
 } from 'services/messages.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
@@ -161,6 +162,17 @@ export default function Conversation({
     )
   }
 
+  function toggleFlag(): void {
+    const flagged = !jeuneChat.flaggedByConseiller
+    messagesService.toggleFlag(jeuneChat.chatId, flagged)
+    trackEvent({
+      structure: session!.user.structure,
+      categorie: 'Conversation suivie',
+      action: 'Conversation',
+      nom: flagged.toString(),
+    })
+  }
+
   useEffect(() => {
     const unsubscribe = observerMessages(jeuneChat.chatId)
     setReadByConseiller(jeuneChat.chatId)
@@ -199,6 +211,29 @@ export default function Conversation({
         <h2 className='w-full text-left text-primary text-m-medium'>
           Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
         </h2>
+        <button
+          aria-label={
+            jeuneChat.flaggedByConseiller
+              ? 'Ne plus suivre la conversation'
+              : 'Suivre la conversation'
+          }
+          title={
+            jeuneChat.flaggedByConseiller
+              ? 'Ne plus suivre la conversation'
+              : 'Suivre la conversation'
+          }
+          className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
+          onClick={toggleFlag}
+        >
+          <IconComponent
+            name={
+              jeuneChat.flaggedByConseiller
+                ? IconName.FlagFilled
+                : IconName.Flag
+            }
+            className='w-6 h-6 fill-primary'
+          />
+        </button>
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 
@@ -223,11 +258,7 @@ export default function Conversation({
         ))}
       </ul>
 
-      <form
-        data-testid='newMessageForm'
-        onSubmit={sendNouveauMessage}
-        className='p-3'
-      >
+      <form onSubmit={sendNouveauMessage} className='p-3'>
         {uploadedFileError && (
           <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
         )}
@@ -288,7 +319,7 @@ export default function Conversation({
                 >
                   <IconComponent
                     name={IconName.RoundedClose}
-                    aria-hidden='false'
+                    aria-hidden='true'
                     focusable='false'
                     className='w-6 h-6 ml-2'
                   />

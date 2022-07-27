@@ -15,7 +15,7 @@ import Multiselection from 'components/ui/Multiselection'
 import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParams, QueryValues } from 'referentiel/queryParams'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import {
@@ -139,7 +139,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       await router.push({
         pathname,
         query: setQueryParams(query, {
-          [QueryParams.envoiMessage]: QueryValues.succes,
+          [QueryParam.envoiMessage]: QueryValue.succes,
         }),
       })
     } catch (error) {
@@ -265,8 +265,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             <div className='my-4'>
               <Button
                 type='button'
-                aria-controls='piece-jointe-multi'
-                aria-describedby='piece-jointe-multi--desc'
+                controls='piece-jointe-multi'
+                describedBy='piece-jointe-multi--desc'
                 style={ButtonStyle.SECONDARY}
                 onClick={ouvrirSelectionFichier}
                 disabled={Boolean(pieceJointe)}
@@ -337,7 +337,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           )}
           {formHasChanges() && (
             <Button
-              aria-label='Quitter la rédaction du message groupé'
+              label='Quitter la rédaction du message groupé'
               onClick={openLeavePageConfirmationModal}
               style={ButtonStyle.SECONDARY}
               className='mr-3 p-2'

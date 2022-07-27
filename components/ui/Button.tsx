@@ -8,15 +8,13 @@ interface Props {
   style?: ButtonStyle
   className?: any
   onClick?: MouseEventHandler<HTMLButtonElement>
-  role?: string
   type?: 'button' | 'submit' | 'reset'
   controls?: string
+  describedBy?: string
   label?: string
   disabled?: boolean
-  selected?: boolean
   form?: string
   id?: string
-  tabIndex?: number
   isLoading?: boolean
 }
 
@@ -33,13 +31,11 @@ export default function Button({
   style = ButtonStyle.PRIMARY,
   form,
   id,
-  tabIndex,
-  role,
   type,
   controls,
+  describedBy,
   label,
   disabled,
-  selected,
   isLoading = false,
 }: Props) {
   return (
@@ -50,14 +46,12 @@ export default function Button({
       } ${getColorStyleClassName(style)}`}
       form={form ?? undefined}
       id={id ?? undefined}
-      tabIndex={tabIndex ?? undefined}
-      role={role ?? undefined}
       type={type ?? undefined}
       aria-controls={controls ?? undefined}
       aria-label={label ?? undefined}
+      aria-describedby={describedBy ?? undefined}
       disabled={disabled || isLoading}
       aria-disabled={disabled}
-      aria-selected={selected}
     >
       {isLoading && (
         <IconComponent
