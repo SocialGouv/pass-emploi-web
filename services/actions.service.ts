@@ -40,7 +40,7 @@ export interface ActionsService {
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   createAction(
-    action: { intitule: string; commentaire: string },
+    action: { intitule: string; commentaire: string; dateEcheance: string },
     idJeune: string
   ): Promise<void>
 
@@ -148,11 +148,15 @@ export class ActionsApiService implements ActionsService {
   }
 
   async createAction(
-    action: { intitule: string; commentaire: string },
+    action: { intitule: string; commentaire: string; dateEcheance: string },
     idJeune: string
   ): Promise<void> {
     const session = await getSession()
-    const payload = { content: action.intitule, comment: action.commentaire }
+    const payload = {
+      content: action.intitule,
+      comment: action.commentaire,
+      dateEcheance: action.dateEcheance,
+    }
     await this.apiClient.post(
       `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,
       payload,

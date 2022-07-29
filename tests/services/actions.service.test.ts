@@ -269,14 +269,22 @@ describe('ActionsApiService', () => {
       // GIVEN
       // WHEN
       await actionsService.createAction(
-        { intitule: 'content', commentaire: 'comment' },
+        {
+          intitule: 'content',
+          commentaire: 'comment',
+          dateEcheance: '2022-07-30T00:00:00.000Z',
+        },
         'id-jeune'
       )
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/action',
-        { content: 'content', comment: 'comment' },
+        {
+          content: 'content',
+          comment: 'comment',
+          dateEcheance: '2022-07-30T00:00:00.000Z',
+        },
         'accessToken'
       )
     })

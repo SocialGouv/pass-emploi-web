@@ -87,7 +87,6 @@ function PageAction({
             onClick={() => deleteAction()}
             style={ButtonStyle.SECONDARY}
             disabled={deleteDisabled}
-            className='mb-6'
           >
             <IconComponent
               name={IconName.TrashCan}
@@ -100,6 +99,9 @@ function PageAction({
         )}
       </div>
       <dl>
+        <p className='mb-5'>
+          À réaliser pour le : {formatDayDate(new Date(action.dateEcheance))}
+        </p>
         <InfoAction label='Statut' isForm={true}>
           {Object.values(StatutAction).map((status: StatutAction) => (
             <RadioButtonStatus
