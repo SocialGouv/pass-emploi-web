@@ -14560,7 +14560,7 @@ __metadata:
     style-loader: ^3.3.1
     tailwindcss: ^3.1.4
     ts-loader: ^9.3.1
-    tsconfig-paths-webpack-plugin: ^3.5.2
+    tsconfig-paths-webpack-plugin: ^4.0.0
     typescript: ^4.7.4
   languageName: unknown
   linkType: soft
@@ -17909,18 +17909,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfig-paths-webpack-plugin@npm:^3.5.2":
-  version: 3.5.2
-  resolution: "tsconfig-paths-webpack-plugin@npm:3.5.2"
+"tsconfig-paths-webpack-plugin@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "tsconfig-paths-webpack-plugin@npm:4.0.0"
   dependencies:
     chalk: ^4.1.0
     enhanced-resolve: ^5.7.0
-    tsconfig-paths: ^3.9.0
-  checksum: e7872f45b10684204d4a6cbc7989073d885c99e0c9eb5222de6b2b83d2e1594bccb647f52d2f8e00c53da5b9a3084e47a2de44f41c6f7a607ec2b17330a8d9e9
+    tsconfig-paths: ^4.0.0
+  checksum: 7ff7d63c1153e6dd30ce660b006495ae5cb5cbb78b30bb59b3cb627567325d4af52c7a69dda8aec7b94d576f5385581a69307472992954c40fe6949564155397
   languageName: node
   linkType: hard
 
-"tsconfig-paths@npm:^3.14.1, tsconfig-paths@npm:^3.9.0":
+"tsconfig-paths@npm:^3.14.1":
   version: 3.14.1
   resolution: "tsconfig-paths@npm:3.14.1"
   dependencies:
@@ -17929,6 +17929,17 @@ __metadata:
     minimist: ^1.2.6
     strip-bom: ^3.0.0
   checksum: 8afa01c673ebb4782ba53d3a12df97fa837ce524f8ad38ee4e2b2fd57f5ac79abc21c574e9e9eb014d93efe7fe8214001b96233b5c6ea75bd1ea82afe17a4c6d
+  languageName: node
+  linkType: hard
+
+"tsconfig-paths@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "tsconfig-paths@npm:4.0.0"
+  dependencies:
+    json5: ^2.2.1
+    minimist: ^1.2.6
+    strip-bom: ^3.0.0
+  checksum: a8cf746ffe438513a71c70c1bcdee8da7d62ab2af286efbe2728ff55c4d4c92c2aea80a0822982ded6d0a13c7686c24632934d7c0f4f564be9e1b2cdc3d65eea
   languageName: node
   linkType: hard
 
