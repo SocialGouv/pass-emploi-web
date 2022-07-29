@@ -127,6 +127,13 @@ describe('NouvelleAction', () => {
         ).not.toHaveAttribute('required')
       })
 
+      it('contient un champ pour saisir une date d’échéance', () => {
+        // Then
+        expect(
+          screen.getByLabelText(/Définir une date d’échéance/)
+        ).not.toHaveAttribute('required')
+      })
+
       describe('action prédéfinie remplie', () => {
         let selectAction: HTMLSelectElement
         let submit: HTMLButtonElement
@@ -209,6 +216,13 @@ describe('NouvelleAction', () => {
         // Then
         expect(
           screen.getByRole('textbox', { name: /Commentaire de l'action/ })
+        ).not.toHaveAttribute('required')
+      })
+
+      it('contient un champ pour saisir une date d’échéance', () => {
+        // Then
+        expect(
+          screen.getByLabelText(/Définir une date d’échéance/)
         ).not.toHaveAttribute('required')
       })
 

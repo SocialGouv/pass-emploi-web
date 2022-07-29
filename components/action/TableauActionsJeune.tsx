@@ -111,6 +111,9 @@ export default function TableauActionsJeune({
               </button>
             </div>
             <div role='columnheader' className='table-cell relative'>
+              Échéance
+            </div>
+            <div role='columnheader' className='table-cell relative'>
               <button
                 aria-controls='filtres-statut'
                 aria-expanded={afficherStatut}
