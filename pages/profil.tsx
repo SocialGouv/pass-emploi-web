@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent, useMemo } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
@@ -14,20 +14,20 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
-interface ProfilProps extends PageProps {
-  structureConseiller: string
-}
+interface ProfilProps extends PageProps {}
 
-function Profil({ structureConseiller }: ProfilProps) {
-  const labelAgence =
-    structureConseiller === StructureConseiller.MILO
-      ? 'Mission locale'
-      : 'agence'
-
+function Profil(_: ProfilProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
 
   const [conseiller, setConseiller] = useConseiller()
+
+  const labelAgence = useMemo(() => {
+    if (!conseiller) return ''
+    return conseiller.structure === StructureConseiller.MILO
+      ? 'Mission locale'
+      : 'agence'
+  }, [conseiller])
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -145,11 +145,9 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-  const { user } = sessionOrRedirect.session
 
   return {
     props: {
-      structureConseiller: user.structure,
       pageTitle: 'Mon profil',
       pageHeader: 'Profil',
     },

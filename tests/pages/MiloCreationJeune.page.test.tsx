@@ -1,17 +1,16 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { unDossierMilo } from 'fixtures/milo'
 import { mockedConseillerService } from 'fixtures/services'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
 import { ConseillerService } from 'services/conseiller.service'
-import renderWithSession from 'tests/renderWithSession'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('MiloCreationJeune', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
     beforeEach(() => {
-      renderWithSession(
+      render(
         <MiloCreationJeune
           dossierId=''
           dossier={null}
@@ -54,7 +53,7 @@ describe('MiloCreationJeune', () => {
     it("quand le dossier est invalide avec un message d'erreur", () => {
       //GIVEN
       const messageErreur = "un message d'erreur"
-      renderWithSession(
+      render(
         <MiloCreationJeune
           dossierId='1'
           dossier={null}
@@ -78,7 +77,7 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo()
 
-      renderWithSession(
+      render(
         <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'
@@ -141,7 +140,7 @@ describe('MiloCreationJeune', () => {
 
       const dossier = unDossierMilo({ email: 'incorrectemail' })
 
-      renderWithSession(
+      render(
         <DIProvider dependances={{ conseillerService }}>
           <MiloCreationJeune
             dossierId='1'

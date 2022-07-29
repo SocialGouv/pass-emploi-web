@@ -3,7 +3,7 @@ import { DefaultJWT } from 'next-auth/jwt/types'
 
 declare module 'next-auth' {
   /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+   * Returned by `getSession`
    */
   interface Session {
     user: Session.HydratedUser

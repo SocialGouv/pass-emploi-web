@@ -4,6 +4,17 @@ import { ApiClient } from 'clients/api.client'
 import { unConseiller, unConseillerJson } from 'fixtures/conseiller'
 import { ConseillerApiService } from 'services/conseiller.service'
 
+jest.mock('next-auth/react', () => ({
+  getSession: jest.fn(async () => ({
+    user: {
+      id: 'idConseiller',
+      estSuperviseur: false,
+      structure: 'PASS_EMPLOI',
+    },
+    accessToken: 'accessToken',
+  })),
+}))
+
 describe('ConseillerApiService', () => {
   let apiClient: ApiClient
   let conseillerService: ConseillerApiService
@@ -13,7 +24,7 @@ describe('ConseillerApiService', () => {
     conseillerService = new ConseillerApiService(apiClient)
   })
 
-  describe('.getConseiller', () => {
+  describe('.getConseillerClientSide', () => {
     it('renvoie les informations d’un conseiller', async () => {
       // Given
       const idConseiller = 'idConseiller'
@@ -46,7 +57,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller',
+        '/conseillers/idConseiller',
         { agence: { id: 'id-agence' } },
         'accessToken'
       )
@@ -58,7 +69,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller',
+        '/conseillers/idConseiller',
         { agence: { nom: 'Agence libre' } },
         'accessToken'
       )
@@ -68,7 +79,10 @@ describe('ConseillerApiService', () => {
   describe('.modifierNotificationsSonores', () => {
     it("modifie le conseiller avec l'activation des notifications sonores", async () => {
       // When
-      await conseillerService.modifierNotificationsSonores('id-conseiller', true)
+      await conseillerService.modifierNotificationsSonores(
+        'id-conseiller',
+        true
+      )
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -86,7 +100,7 @@ describe('ConseillerApiService', () => {
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/recuperer-mes-jeunes',
+        '/conseillers/idConseiller/recuperer-mes-jeunes',
         {},
         'accessToken'
       )

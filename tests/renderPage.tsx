@@ -1,8 +1,8 @@
 import { render, RenderResult } from '@testing-library/react'
-import { Session } from 'next-auth'
-import { SessionProvider } from 'next-auth/react'
 import React from 'react'
 
+import { unConseiller } from 'fixtures/conseiller'
+import { uneBaseJeune } from 'fixtures/jeune'
 import {
   mockedActionsService,
   mockedAgencesService,
@@ -11,42 +11,23 @@ import {
   mockedJeunesService,
   mockedMessagesService,
   mockedRendezVousService,
-} from '../fixtures/services'
-import { Dependencies } from '../utils/injectionDependances/container'
-
-import { unConseiller } from 'fixtures/conseiller'
-import { uneBaseJeune } from 'fixtures/jeune'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+} from 'fixtures/services'
+import { Conseiller } from 'interfaces/conseiller'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
+import { Dependencies } from 'utils/injectionDependances/container'
 
 export default function renderPage(
   children: JSX.Element,
   options: {
-    customSession?: Partial<Session>
     customDependances?: Partial<Dependencies>
     customConseiller?: Partial<Conseiller>
     idJeuneSetter?: (id: string | undefined) => void
   } = {}
 ): RenderResult {
-  const { customSession, customDependances, customConseiller, idJeuneSetter } =
-    options
-  const defaultSession: Session = {
-    user: {
-      id: '1',
-      name: 'Nils Tavernier',
-      email: 'fake@email.com',
-      structure: StructureConseiller.MILO,
-      estConseiller: true,
-      estSuperviseur: false,
-    },
-    accessToken: 'accessToken',
-    expires: new Date(Date.now() + 300000).toISOString(),
-  }
-
-  const session = { ...defaultSession, ...customSession }
+  const { customDependances, customConseiller, idJeuneSetter } = options
 
   const defaultDependances: Dependencies = {
     actionsService: mockedActionsService(),
@@ -61,24 +42,22 @@ export default function renderPage(
   const dependances = { ...defaultDependances, ...customDependances }
 
   return render(
-    <SessionProvider session={session}>
-      <DIProvider dependances={dependances}>
+    <DIProvider dependances={dependances}>
+      <ConseillerProvider conseiller={unConseiller(customConseiller)}>
         <ChatCredentialsProvider
           credentials={{
             token: 'firebaseToken',
             cleChiffrement: 'cleChiffrement',
           }}
         >
-          <ConseillerProvider conseiller={unConseiller(customConseiller)}>
-            <CurrentJeuneProvider
-              idJeune={uneBaseJeune().id}
-              setIdJeune={idJeuneSetter}
-            >
-              {children}
-            </CurrentJeuneProvider>
-          </ConseillerProvider>
+          <CurrentJeuneProvider
+            idJeune={uneBaseJeune().id}
+            setIdJeune={idJeuneSetter}
+          >
+            {children}
+          </CurrentJeuneProvider>
         </ChatCredentialsProvider>
-      </DIProvider>
-    </SessionProvider>
+      </ConseillerProvider>
+    </DIProvider>
   )
 }

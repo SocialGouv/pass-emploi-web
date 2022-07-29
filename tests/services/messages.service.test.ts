@@ -7,7 +7,6 @@ import {
   unJeuneChat,
 } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
@@ -16,6 +15,12 @@ import { ChatCrypto } from 'utils/chat/chatCrypto'
 
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
+jest.mock('next-auth/react', () => ({
+  getSession: jest.fn(async () => ({
+    user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+    accessToken: 'accessToken',
+  })),
+}))
 
 describe('MessagesFirebaseAndApiService', () => {
   beforeEach(async () => {
@@ -98,16 +103,14 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.observeConseillerChats', () => {
-    let idConseiller: string
     let updateChats: (chats: Chat[]) => void
     beforeEach(async () => {
       // Given
       jest.setSystemTime(new Date())
-      idConseiller = 'idConseiller'
       updateChats = jest.fn()
 
       // When
-      messagesService.observeConseillerChats(
+      await messagesService.observeConseillerChats(
         cleChiffrement,
         [
           { ...uneBaseJeune({ id: 'jeune-1' }), isActivated: true },
@@ -122,7 +125,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(
         firebaseClient.findAndObserveChatsDuConseiller
-      ).toHaveBeenCalledWith(idConseiller, expect.any(Function))
+      ).toHaveBeenCalledWith('id-conseiller', expect.any(Function))
     })
 
     it('calls provided callback with new jeuneChat built from found chat', async () => {
@@ -199,18 +202,14 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.messagesNotRead', () => {
     it('retourne nombre de messages nons lus par les jeunes', async () => {
       // Given
-      const idConseiller = 'conseiller-1'
       const idsJeunes: string[] = ['jeune-1', 'jeune-2', 'jeune-3']
 
       //When
-      const actual = await messagesService.countMessagesNotRead(
-        idConseiller,
-        idsJeunes
-      )
+      const actual = await messagesService.countMessagesNotRead(idsJeunes)
 
       //Then
       expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
-        idConseiller
+        'id-conseiller'
       )
       expect(actual).toEqual({
         ['jeune-1']: 1,
@@ -224,10 +223,11 @@ describe('MessagesFirebaseAndApiService', () => {
       ;(firebaseClient.getChatsDuConseiller as jest.Mock).mockResolvedValue({})
 
       //When
-      const actual = await messagesService.countMessagesNotRead(
-        'conseiller-1',
-        ['jeune-1', 'jeune-2', 'jeune-3']
-      )
+      const actual = await messagesService.countMessagesNotRead([
+        'jeune-1',
+        'jeune-2',
+        'jeune-3',
+      ])
 
       //Then
       expect(actual).toEqual({
@@ -239,7 +239,6 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.sendNouveauMessage', () => {
-    let conseiller: { id: string; structure: StructureConseiller }
     let jeuneChat: JeuneChat
     let newMessage: string
     const now = new Date()
@@ -249,16 +248,13 @@ describe('MessagesFirebaseAndApiService', () => {
       jeuneChat = unJeuneChat()
       newMessage = 'nouveauMessage'
       // When
-      conseiller = { id: 'idConseiller', structure: StructureConseiller.POLE_EMPLOI }
     })
 
     describe('sans piece jointe', () => {
       beforeEach(async () => {
         await messagesService.sendNouveauMessage({
-          conseiller,
           jeuneChat,
           newMessage,
-          accessToken,
           cleChiffrement,
         })
       })
@@ -266,7 +262,7 @@ describe('MessagesFirebaseAndApiService', () => {
         // Then
         expect(firebaseClient.addMessage).toHaveBeenCalledWith({
           idChat: jeuneChat.chatId,
-          idConseiller: conseiller.id,
+          idConseiller: 'id-conseiller',
           message: {
             encryptedText: `Encrypted: ${newMessage}`,
             iv: `IV: ${newMessage}`,
@@ -294,7 +290,7 @@ describe('MessagesFirebaseAndApiService', () => {
       it('notifies of a new message', async () => {
         // Then
         expect(apiClient.post).toHaveBeenCalledWith(
-          `/conseillers/${conseiller.id}/jeunes/notify-messages`,
+          `/conseillers/id-conseiller/jeunes/notify-messages`,
           { idsJeunes: [jeuneChat.id] },
           accessToken
         )
@@ -308,8 +304,8 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE',
             emetteur: {
               type: 'CONSEILLER',
-              structure: conseiller.structure,
-              id: conseiller.id,
+              structure: 'POLE_EMPLOI',
+              id: 'id-conseiller',
             },
           },
           accessToken
@@ -320,11 +316,9 @@ describe('MessagesFirebaseAndApiService', () => {
     describe('avec piece jointe', () => {
       beforeEach(async () => {
         await messagesService.sendNouveauMessage({
-          conseiller,
           jeuneChat,
           newMessage,
           infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
-          accessToken,
           cleChiffrement,
         })
       })
@@ -333,7 +327,7 @@ describe('MessagesFirebaseAndApiService', () => {
         // Then
         expect(firebaseClient.addMessage).toHaveBeenCalledWith({
           idChat: jeuneChat.chatId,
-          idConseiller: conseiller.id,
+          idConseiller: 'id-conseiller',
           message: {
             encryptedText: `Encrypted: ${newMessage}`,
             iv: `IV: ${newMessage}`,
@@ -351,8 +345,8 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE_PJ',
             emetteur: {
               type: 'CONSEILLER',
-              structure: conseiller.structure,
-              id: conseiller.id,
+              structure: 'POLE_EMPLOI',
+              id: 'id-conseiller',
             },
           },
           accessToken
@@ -387,13 +381,8 @@ describe('MessagesFirebaseAndApiService', () => {
     describe('sans piece jointe', () => {
       beforeEach(async () => {
         await messagesService.sendNouveauMessageGroupe({
-          conseiller: {
-            id: 'id-conseiller',
-            structure: StructureConseiller.MILO,
-          },
           idsDestinataires: idsJeunes,
           newMessage: newMessageGroupe,
-          accessToken,
           cleChiffrement,
         })
       })
@@ -452,7 +441,7 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE_MULTIPLE',
             emetteur: {
               type: 'CONSEILLER',
-              structure: StructureConseiller.MILO,
+              structure: 'POLE_EMPLOI',
               id: 'id-conseiller',
             },
           },
@@ -464,13 +453,8 @@ describe('MessagesFirebaseAndApiService', () => {
     describe('avec piece jointe', () => {
       beforeEach(async () => {
         await messagesService.sendNouveauMessageGroupe({
-          conseiller: {
-            id: 'id-conseiller',
-            structure: StructureConseiller.MILO,
-          },
           idsDestinataires: idsJeunes,
           newMessage: newMessageGroupe,
-          accessToken,
           cleChiffrement,
           infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
         })
@@ -504,7 +488,7 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE_MULTIPLE_PJ',
             emetteur: {
               type: 'CONSEILLER',
-              structure: StructureConseiller.MILO,
+              structure: 'POLE_EMPLOI',
               id: 'id-conseiller',
             },
           },

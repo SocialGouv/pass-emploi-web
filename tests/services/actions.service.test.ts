@@ -10,6 +10,13 @@ import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
+jest.mock('next-auth/react', () => ({
+  getSession: jest.fn(() => ({
+    user: { id: 'id-conseiller' },
+    accessToken: 'accessToken',
+  })),
+}))
+
 describe('ActionsApiService', () => {
   let apiClient: ApiClient
   let actionsService: ActionsApiService
@@ -115,7 +122,7 @@ describe('ActionsApiService', () => {
     })
   })
 
-  describe('.getActionsJeune', () => {
+  describe('.getActionsJeuneClientSide', () => {
     it('renvoie les actions du jeune', async () => {
       // GIVEN
       const actions = uneListeDActions()
@@ -127,11 +134,13 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeuneServerSide('whatever', {
-        tri: 'date_decroissante',
-        page: 1,
-        statuts: [],
-      })
+      const actual = await actionsService.getActionsJeuneClientSide(
+        'whatever',
+        {
+          page: 1,
+          statuts: [],
+        }
+      )
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -161,15 +170,92 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeuneServerSide('whatever', {
-        tri: 'date_decroissante',
-        page: 1,
-        statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-      })
+      const actual = await actionsService.getActionsJeuneClientSide(
+        'whatever',
+        {
+          tri: 'date_decroissante',
+          page: 1,
+          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+        }
+      )
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante&statuts=in_progress&statuts=not_started',
+        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions: expect.arrayContaining([]),
+        metadonnees: {
+          nombreTotal: 82,
+          nombrePages: 6,
+        },
+      })
+    })
+  })
+
+  describe('.getActionsJeuneServerSide', () => {
+    it('renvoie les actions du jeune', async () => {
+      // GIVEN
+      const actions = uneListeDActions()
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          actions: uneListeDActionsJson(),
+          metadonnees: { nombreTotal: 82, nombreActionsParPage: 10 },
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.getActionsJeuneServerSide(
+        'whatever',
+        {
+          page: 1,
+          statuts: [],
+        },
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions,
+        metadonnees: { nombrePages: 9, nombreTotal: 82 },
+      })
+    })
+
+    it('parse le paramètre pour filtrer les actions par statut et compte le nombre de pages', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          actions: uneListeDActionsJson(),
+          metadonnees: {
+            nombreTotal: 82,
+            nombreEnCours: 42,
+            nombreTerminees: 30,
+            nombreAnnulees: 1,
+            nombrePasCommencees: 9,
+            nombreActionsParPage: 10,
+          },
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.getActionsJeuneServerSide(
+        'whatever',
+        {
+          tri: 'date_decroissante',
+          page: 1,
+          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+        },
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
         'accessToken'
       )
       expect(actual).toStrictEqual({
@@ -186,11 +272,14 @@ describe('ActionsApiService', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
       // WHEN
-      await actionsService.createAction({
+      await actionsService.createAction(
+        {
           intitule: 'content',
           commentaire: 'comment',
           dateEcheance: '2022-07-30',
-        }, 'id-jeune')
+        },
+        'id-jeune'
+      )
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -208,7 +297,10 @@ describe('ActionsApiService', () => {
   describe('.updateAction', () => {
     it('met à jour une action non commencée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction('id-action', StatutAction.ARealiser)
+      const actual = await actionsService.updateAction(
+        'id-action',
+        StatutAction.ARealiser
+      )
 
       // THEN
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -221,7 +313,10 @@ describe('ActionsApiService', () => {
 
     it('met à jour une action commencée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction('id-action', StatutAction.Commencee)
+      const actual = await actionsService.updateAction(
+        'id-action',
+        StatutAction.Commencee
+      )
 
       // THEN
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -234,7 +329,10 @@ describe('ActionsApiService', () => {
 
     it('met à jour une action terminée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction('id-action', StatutAction.Terminee)
+      const actual = await actionsService.updateAction(
+        'id-action',
+        StatutAction.Terminee
+      )
 
       // THEN
       expect(apiClient.put).toHaveBeenCalledWith(

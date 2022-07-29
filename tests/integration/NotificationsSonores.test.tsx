@@ -14,7 +14,7 @@ import Profil from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithSession from 'tests/renderWithSession'
+import renderWithChatCredentials from 'tests/renderWithChatCredentials'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -43,25 +43,23 @@ describe('Intégration notifications sonores', () => {
     conseillerService = mockedConseillerService()
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeConseillerChats: jest.fn(
-        (_idConseiller, _cleChiffrement, jeunes, fn) => {
-          updateChatsRef = fn
-          updateChatsRef(
-            jeunes.map((jeune) =>
-              unJeuneChat({
-                ...jeune,
-                chatId: `chat-${jeune.id}`,
-                seenByConseiller: true,
-              })
-            )
+      observeConseillerChats: jest.fn((_cleChiffrement, jeunes, fn) => {
+        updateChatsRef = fn
+        updateChatsRef(
+          jeunes.map((jeune) =>
+            unJeuneChat({
+              ...jeune,
+              chatId: `chat-${jeune.id}`,
+              seenByConseiller: true,
+            })
           )
-          return () => {}
-        }
-      ),
+        )
+        return Promise.resolve(() => {})
+      }),
     })
-    ;(jeunesService.getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
-      jeunes
-    )
+    ;(
+      jeunesService.getJeunesDuConseillerClientSide as jest.Mock
+    ).mockResolvedValue(jeunes)
   })
 
   describe('quand le conseiller active ses notification', () => {
@@ -117,7 +115,7 @@ async function renderWithNotificationsSonores(
   messagesService: MessagesService,
   notificationsSonores: boolean
 ) {
-  await renderWithSession(
+  await renderWithChatCredentials(
     <DIProvider
       dependances={{ jeunesService, conseillerService, messagesService }}
     >
@@ -127,7 +125,7 @@ async function renderWithNotificationsSonores(
         })}
       >
         <Layout>
-          <Profil structureConseiller={'MILO'} pageTitle={'Profil'} />
+          <Profil pageTitle={'Profil'} />
         </Layout>
       </ConseillerProvider>
     </DIProvider>

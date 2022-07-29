@@ -52,7 +52,7 @@ describe('Mes Jeunes', () => {
       dependances = {
         messagesService: mockedMessagesService({
           signIn: jest.fn(() => Promise.resolve()),
-          countMessagesNotRead: jest.fn((_, ids: string[]) =>
+          countMessagesNotRead: jest.fn((ids: string[]) =>
             Promise.resolve(
               ids.reduce(
                 (mapped, id) => ({ ...mapped, [id]: 2 }),
@@ -185,7 +185,7 @@ describe('Mes Jeunes', () => {
         // Then
         expect(
           dependances.conseillerService.recupererBeneficiaires
-        ).toHaveBeenCalledWith(conseiller.id, 'accessToken')
+        ).toHaveBeenCalledWith()
         expect(routerReplace).toHaveBeenCalledWith({
           pathname: '/mes-jeunes',
           query: { recuperation: 'succes' },
@@ -479,10 +479,9 @@ describe('Mes Jeunes', () => {
       await getServerSideProps({ query: {} } as GetServerSidePropsContext)
 
       // Then
-      expect(jeunesService.getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
-        'id-conseiller',
-        'accessToken'
-      )
+      expect(
+        jeunesService.getJeunesDuConseillerServerSide
+      ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
     })
 
     it("traite la réussite d'une suppression de jeune", async () => {

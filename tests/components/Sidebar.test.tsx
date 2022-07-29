@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/dom'
-import { within } from '@testing-library/react'
+import { render, within } from '@testing-library/react'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
-
 import Sidebar from 'components/layouts/Sidebar'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { unConseiller } from 'fixtures/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 describe('<Sidebar/>', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche les liens de la barre de navigation', () => {
     // WHEN
-    renderWithSession(<Sidebar />)
+    renderSidebar()
 
     // THEN
     const navigation = screen.getByRole('navigation')
@@ -34,7 +34,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche le lien de déconnexion', () => {
     // WHEN
-    renderWithSession(<Sidebar />)
+    renderSidebar()
 
     // THEN
     expect(
@@ -44,16 +44,7 @@ describe('<Sidebar/>', () => {
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
     // WHEN
-    renderWithSession(<Sidebar />, {
-      user: {
-        id: '1',
-        name: 'Nils Tavernier',
-        structure: StructureConseiller.POLE_EMPLOI,
-        estSuperviseur: false,
-        email: 'fake@email.com',
-        estConseiller: true,
-      },
-    })
+    renderSidebar(unConseiller({ structure: StructureConseiller.POLE_EMPLOI }))
 
     // THEN
     expect(() => screen.getByText('Rendez-vous')).toThrow()
@@ -61,16 +52,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche le lien de réaffectation des jeunes lorsque le conseiller est superviseur', () => {
     // WHEN
-    renderWithSession(<Sidebar />, {
-      user: {
-        id: '1',
-        name: 'Nils Tavernier',
-        structure: StructureConseiller.MILO,
-        estSuperviseur: true,
-        email: 'fake@email.com',
-        estConseiller: true,
-      },
-    })
+    renderSidebar(unConseiller({ estSuperviseur: true }))
 
     // THEN
     expect(screen.getByRole('link', { name: 'Réaffectation' })).toHaveAttribute(
@@ -79,3 +61,11 @@ describe('<Sidebar/>', () => {
     )
   })
 })
+
+function renderSidebar(conseiller?: Conseiller) {
+  return render(
+    <ConseillerProvider conseiller={conseiller ?? unConseiller()}>
+      <Sidebar />
+    </ConseillerProvider>
+  )
+}

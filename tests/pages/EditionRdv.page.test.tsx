@@ -1,8 +1,9 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes } from 'fixtures/jeune'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
@@ -12,8 +13,8 @@ import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -81,10 +82,9 @@ describe('EditionRdv', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(jeunesService.getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
-          'id-conseiller',
-          'accessToken'
-        )
+        expect(
+          jeunesService.getJeunesDuConseillerServerSide
+        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
@@ -203,15 +203,19 @@ describe('EditionRdv', () => {
     describe('contenu', () => {
       beforeEach(() => {
         // When
-        renderWithSession(
+        render(
           <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous'}
-              pageTitle={''}
-            />
+            <ConseillerProvider
+              conseiller={unConseiller({ email: 'fake@email.com' })}
+            >
+              <EditionRdv
+                jeunes={jeunes}
+                typesRendezVous={typesRendezVous}
+                withoutChat={true}
+                returnTo={'/mes-rendezvous'}
+                pageTitle={''}
+              />
+            </ConseillerProvider>
           </DIProvider>
         )
       })
@@ -464,23 +468,19 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
-              '1',
-              {
-                jeunesIds: [jeunes[0].id, jeunes[2].id],
-                type: 'ACTIVITES_EXTERIEURES',
-                modality: modalites[0],
-                precision: undefined,
-                date: '2022-03-03T09:30:00.000Z',
-                adresse: undefined,
-                organisme: undefined,
-                duration: 157,
-                comment: 'Lorem ipsum dolor sit amet',
-                presenceConseiller: true,
-                invitation: false,
-              },
-              'accessToken'
-            )
+            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
+              jeunesIds: [jeunes[0].id, jeunes[2].id],
+              type: 'ACTIVITES_EXTERIEURES',
+              modality: modalites[0],
+              precision: undefined,
+              date: '2022-03-03T09:30:00.000Z',
+              adresse: undefined,
+              organisme: undefined,
+              duration: 157,
+              comment: 'Lorem ipsum dolor sit amet',
+              presenceConseiller: true,
+              invitation: false,
+            })
           })
 
           it('crée un rendez-vous de type AUTRE', async () => {
@@ -494,23 +494,19 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
-              '1',
-              {
-                jeunesIds: [jeunes[0].id, jeunes[2].id],
-                type: 'AUTRE',
-                precision: 'un texte de précision',
-                modality: modalites[0],
-                date: '2022-03-03T09:30:00.000Z',
-                adresse: undefined,
-                organisme: undefined,
-                duration: 157,
-                comment: 'Lorem ipsum dolor sit amet',
-                presenceConseiller: true,
-                invitation: false,
-              },
-              'accessToken'
-            )
+            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
+              jeunesIds: [jeunes[0].id, jeunes[2].id],
+              type: 'AUTRE',
+              precision: 'un texte de précision',
+              modality: modalites[0],
+              date: '2022-03-03T09:30:00.000Z',
+              adresse: undefined,
+              organisme: undefined,
+              duration: 157,
+              comment: 'Lorem ipsum dolor sit amet',
+              presenceConseiller: true,
+              invitation: false,
+            })
           })
 
           it('redirige vers la page précédente', async () => {
@@ -715,16 +711,18 @@ describe('EditionRdv', () => {
         const jeuneFullname = getNomJeuneComplet(jeunes[2])
 
         // When
-        renderWithSession(
+        render(
           <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous'}
-              idJeune={idJeune}
-              pageTitle={''}
-            />
+            <ConseillerProvider conseiller={unConseiller()}>
+              <EditionRdv
+                jeunes={jeunes}
+                typesRendezVous={typesRendezVous}
+                withoutChat={true}
+                returnTo={'/mes-rendezvous'}
+                idJeune={idJeune}
+                pageTitle={''}
+              />
+            </ConseillerProvider>
           </DIProvider>
         )
 
@@ -764,16 +762,18 @@ describe('EditionRdv', () => {
         rdv = unRendezVous({ jeunes: [jeune0, jeune2] })
 
         // When
-        renderWithSession(
+        render(
           <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous?creationRdv=succes'}
-              rdv={rdv}
-              pageTitle={''}
-            />
+            <ConseillerProvider conseiller={unConseiller()}>
+              <EditionRdv
+                jeunes={jeunes}
+                typesRendezVous={typesRendezVous}
+                withoutChat={true}
+                returnTo={'/mes-rendezvous?creationRdv=succes'}
+                rdv={rdv}
+                pageTitle={''}
+              />
+            </ConseillerProvider>
           </DIProvider>
         )
       })
@@ -806,8 +806,7 @@ describe('EditionRdv', () => {
 
           // Then
           expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
-            rdv.id,
-            'accessToken'
+            rdv.id
           )
           expect(push).toHaveBeenCalledWith({
             pathname: '/mes-rendezvous',
@@ -1003,8 +1002,7 @@ describe('EditionRdv', () => {
                 comment: 'Lorem ipsum dolor sit amet',
                 presenceConseiller: false,
                 invitation: true,
-              },
-              'accessToken'
+              }
             )
           })
 
@@ -1045,16 +1043,18 @@ describe('EditionRdv', () => {
         })
 
         // When
-        renderWithSession(
+        render(
           <DIProvider dependances={{ rendezVousService }}>
-            <EditionRdv
-              jeunes={jeunes}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo={'/mes-rendezvous?creationRdv=succes'}
-              rdv={rdv}
-              pageTitle={''}
-            />
+            <ConseillerProvider conseiller={unConseiller()}>
+              <EditionRdv
+                jeunes={jeunes}
+                typesRendezVous={typesRendezVous}
+                withoutChat={true}
+                returnTo={'/mes-rendezvous?creationRdv=succes'}
+                rdv={rdv}
+                pageTitle={''}
+              />
+            </ConseillerProvider>
           </DIProvider>
         )
       })
@@ -1182,8 +1182,7 @@ describe('EditionRdv', () => {
               comment: 'modification du commentaire',
               presenceConseiller: false,
               invitation: true,
-            },
-            'accessToken'
+            }
           )
         })
       })

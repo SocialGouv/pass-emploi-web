@@ -2,8 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 
-import ImportantIcon from '../assets/icons/important.svg'
-
+import ImportantIcon from 'assets/icons/important.svg'
 import Button from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
@@ -13,13 +12,16 @@ import {
   getNomJeuneComplet,
   JeuneFromListe,
 } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
 
-function Reaffectation() {
+type ReaffectationProps = PageProps
+
+function Reaffectation(_: ReaffectationProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const [conseillerInitial, setConseillerInitial] = useState<{

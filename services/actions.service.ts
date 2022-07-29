@@ -133,7 +133,6 @@ export class ActionsApiService implements ActionsService {
       page: number
       statuts: StatutAction[]
       tri?: string
-      dateEcheance: string
     }
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
     const session = await getSession()
