@@ -33,6 +33,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
   const [currentTab, setCurrentTab] = useState<Tab>('predefinie')
   const [intitule, setIntitule] = useState<string>('')
   const [commentaire, setCommentaire] = useState<string>('')
+  const [dateEcheance, setDateEcheance] = useState<string>('')
   const INPUT_MAX_LENGTH = 250
 
   const [trackingTitle, setTrackingTitle] = useState<string>(
@@ -50,14 +51,18 @@ function EditionAction({ idJeune }: EditionActionProps) {
   }
 
   function formulaireEstValide(): boolean {
-    return Boolean(intitule)
+    return Boolean(intitule) && Boolean(dateEcheance)
   }
 
   async function creerAction(e: FormEvent) {
     e.preventDefault()
     if (!formulaireEstValide()) return
 
-    const action = { intitule, commentaire }
+    const action = {
+      intitule,
+      commentaire,
+      dateEcheance: new Date(dateEcheance).toISOString(),
+    }
     await actionsService.createAction(action, idJeune)
     await router.push({
       pathname: `/mes-jeunes/${idJeune}`,
@@ -123,10 +128,27 @@ function EditionAction({ idJeune }: EditionActionProps) {
             </label>
             <textarea
               id='commentaire-action-predefinie'
+              defaultValue={commentaire}
               onChange={(e) => setCommentaire(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
+            />
+            <label
+              htmlFor='date-echeance-action-predefinie'
+              className='text-base-medium mb-2'
+            >
+              <span className='mt-10 text-md text-content_color block'>
+                Définir une date d’échéance
+              </span>
+            </label>
+            <input
+              type='date'
+              id='date-echeance-action-predefinie'
+              name='date'
+              defaultValue={dateEcheance}
+              onChange={(e) => setDateEcheance(e.target.value)}
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
             />
           </div>
         )}
@@ -161,10 +183,27 @@ function EditionAction({ idJeune }: EditionActionProps) {
             </label>
             <textarea
               id='commentaire-action-personnalisee'
+              defaultValue={commentaire}
               onChange={(e) => setCommentaire(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
+            />
+            <label
+              htmlFor='date-echeance-action-personnalisee'
+              className='text-base-medium mb-2'
+            >
+              <span className='mt-10 text-md text-content_color block'>
+                Définir une date d’échéance
+              </span>
+            </label>
+            <input
+              type='date'
+              id='date-echeance-action-personnalisee'
+              name='date'
+              defaultValue={dateEcheance}
+              onChange={(e) => setDateEcheance(e.target.value)}
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
             />
           </div>
         )}
