@@ -340,7 +340,7 @@ describe('JeunesApiService', () => {
     it('renvoie les métadonnées des recherches sauvegardées d’un bénéficiaire', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: uneRechercheSauvegardeeJson(),
+        content: { favoris: uneRechercheSauvegardeeJson() },
       })
 
       // When

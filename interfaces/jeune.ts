@@ -53,22 +53,20 @@ export interface DetailJeune extends BaseJeune {
 }
 
 export interface RecherchesSauvegardees {
-  favoris: {
-    autoriseLePartage: boolean
-    offres: {
-      total: number
-      nombreOffresEmploi: number
-      nombreOffresAlternance: number
-      nombreOffresImmersion: number
-      nombreOffresServiceCivique: number
-    }
-    // recherches: {
-    //   total: number
-    //   nombreRecherchesOffresEmploi: number
-    //   nombreRecherchesOffresAlternance: number
-    //   nombreRecherchesOffresImmersion: number
-    //   nombreRecherchesOffresServiceCivique: number
-    // }
+  autoriseLePartage: boolean
+  offres: {
+    total: number
+    nombreOffresEmploi: number
+    nombreOffresAlternance: number
+    nombreOffresImmersion: number
+    nombreOffresServiceCivique: number
+  }
+  recherches: {
+    total: number
+    nombreRecherchesOffresEmploi: number
+    nombreRecherchesOffresAlternance: number
+    nombreRecherchesOffresImmersion: number
+    nombreRecherchesOffresServiceCivique: number
   }
 }
 

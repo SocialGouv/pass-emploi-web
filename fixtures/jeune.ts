@@ -38,27 +38,25 @@ export const unDetailJeune = (
   }
   return { ...defaults, ...overrides }
 }
-//TODO: décommenter quand API prête pour recherches
+
 export const uneRechercheSauvegardee = (
   overrides: Partial<RecherchesSauvegardees> = {}
 ): RecherchesSauvegardees => {
   const defaults: RecherchesSauvegardees = {
-    favoris: {
-      autoriseLePartage: true,
-      offres: {
-        total: 12,
-        nombreOffresEmploi: 3,
-        nombreOffresAlternance: 3,
-        nombreOffresImmersion: 3,
-        nombreOffresServiceCivique: 3,
-      },
-      // recherches: {
-      //   total: 8,
-      //   nombreRecherchesOffresEmploi: 2,
-      //   nombreRecherchesOffresAlternance: 4,
-      //   nombreRecherchesOffresImmersion: 2,
-      //   nombreRecherchesOffresServiceCivique: 2,
-      // },
+    autoriseLePartage: true,
+    offres: {
+      total: 12,
+      nombreOffresEmploi: 3,
+      nombreOffresAlternance: 3,
+      nombreOffresImmersion: 3,
+      nombreOffresServiceCivique: 3,
+    },
+    recherches: {
+      total: 8,
+      nombreRecherchesOffresEmploi: 2,
+      nombreRecherchesOffresAlternance: 4,
+      nombreRecherchesOffresImmersion: 2,
+      nombreRecherchesOffresServiceCivique: 2,
     },
   }
   return { ...defaults, ...overrides }
@@ -68,22 +66,20 @@ export const uneRechercheSauvegardeeJson = (
   overrides: Partial<RecherchesSauvegardeesJson> = {}
 ): RecherchesSauvegardeesJson => {
   const defaults: RecherchesSauvegardeesJson = {
-    favoris: {
-      autoriseLePartage: true,
-      offres: {
-        total: 12,
-        nombreOffresEmploi: 3,
-        nombreOffresAlternance: 3,
-        nombreOffresImmersion: 3,
-        nombreOffresServiceCivique: 3,
-      },
-      // recherches: {
-      //   total: 8,
-      //   nombreRecherchesOffresEmploi: 2,
-      //   nombreRecherchesOffresAlternance: 4,
-      //   nombreRecherchesOffresImmersion: 2,
-      //   nombreRecherchesOffresServiceCivique: 2,
-      // },
+    autoriseLePartage: true,
+    offres: {
+      total: 12,
+      nombreOffresEmploi: 3,
+      nombreOffresAlternance: 3,
+      nombreOffresImmersion: 3,
+      nombreOffresServiceCivique: 3,
+    },
+    recherches: {
+      total: 8,
+      nombreRecherchesOffresEmploi: 2,
+      nombreRecherchesOffresAlternance: 4,
+      nombreRecherchesOffresImmersion: 2,
+      nombreRecherchesOffresServiceCivique: 2,
     },
   }
   return { ...defaults, ...overrides }

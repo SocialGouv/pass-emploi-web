@@ -36,22 +36,20 @@ export interface DetailJeuneJson extends BaseJeuneJson {
 }
 
 export interface RecherchesSauvegardeesJson {
-  favoris: {
-    autoriseLePartage: boolean
-    offres: {
-      total: number
-      nombreOffresEmploi: number
-      nombreOffresAlternance: number
-      nombreOffresImmersion: number
-      nombreOffresServiceCivique: number
-    }
-    // recherches: {
-    //   total: number
-    //   nombreRecherchesOffresEmploi: number
-    //   nombreRecherchesOffresAlternance: number
-    //   nombreRecherchesOffresImmersion: number
-    //   nombreRecherchesOffresServiceCivique: number
-    // }
+  autoriseLePartage: boolean
+  offres: {
+    total: number
+    nombreOffresEmploi: number
+    nombreOffresAlternance: number
+    nombreOffresImmersion: number
+    nombreOffresServiceCivique: number
+  }
+  recherches: {
+    total: number
+    nombreRecherchesOffresEmploi: number
+    nombreRecherchesOffresAlternance: number
+    nombreRecherchesOffresImmersion: number
+    nombreRecherchesOffresServiceCivique: number
   }
 }
 
@@ -137,28 +135,28 @@ export function jsonToDetailJeune({
 
 export function jsonToRecherchesSauvegardees({
   favoris,
-}: RecherchesSauvegardeesJson): RecherchesSauvegardees {
+}: {
+  favoris: RecherchesSauvegardeesJson
+}): RecherchesSauvegardees {
+  const { autoriseLePartage, offres, recherches } = favoris
   return {
-    favoris: {
-      autoriseLePartage: favoris.autoriseLePartage,
-      offres: {
-        total: favoris.offres.total,
-        nombreOffresEmploi: favoris.offres.nombreOffresAlternance,
-        nombreOffresAlternance: favoris.offres.nombreOffresAlternance,
-        nombreOffresImmersion: favoris.offres.nombreOffresImmersion,
-        nombreOffresServiceCivique: favoris.offres.nombreOffresEmploi,
-      },
-      // recherches: {
-      //   total: favoris.recherches.total,
-      //   nombreRecherchesOffresAlternance:
-      //     favoris.recherches.nombreRecherchesOffresAlternance,
-      //   nombreRecherchesOffresEmploi:
-      //     favoris.recherches.nombreRecherchesOffresEmploi,
-      //   nombreRecherchesOffresImmersion:
-      //     favoris.recherches.nombreRecherchesOffresImmersion,
-      //   nombreRecherchesOffresServiceCivique:
-      //     favoris.recherches.nombreRecherchesOffresServiceCivique,
-      // },
+    autoriseLePartage: autoriseLePartage ?? null,
+    offres: {
+      total: offres.total,
+      nombreOffresEmploi: offres.nombreOffresAlternance,
+      nombreOffresAlternance: offres.nombreOffresAlternance,
+      nombreOffresImmersion: offres.nombreOffresImmersion,
+      nombreOffresServiceCivique: offres.nombreOffresEmploi,
+    },
+    recherches: {
+      total: recherches.total,
+      nombreRecherchesOffresAlternance:
+        recherches.nombreRecherchesOffresAlternance,
+      nombreRecherchesOffresEmploi: recherches.nombreRecherchesOffresEmploi,
+      nombreRecherchesOffresImmersion:
+        recherches.nombreRecherchesOffresImmersion,
+      nombreRecherchesOffresServiceCivique:
+        recherches.nombreRecherchesOffresServiceCivique,
     },
   }
 }
