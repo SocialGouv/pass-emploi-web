@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -9,11 +9,10 @@ import {
 } from 'fixtures/agence'
 import { unConseiller } from 'fixtures/conseiller'
 import { mockedConseillerService } from 'fixtures/services'
-import { Agence, UserStructure } from 'interfaces/conseiller'
+import { Agence, StructureConseiller } from 'interfaces/conseiller'
 import Home, { getServerSideProps } from 'pages/index'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
-import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
@@ -37,11 +36,11 @@ describe('Home', () => {
         conseillerService = mockedConseillerService()
 
         // When
-        renderWithSession(
+        render(
           <DIProvider dependances={{ conseillerService }}>
             <ConseillerProvider conseiller={unConseiller()}>
               <Home
-                structureConseiller={UserStructure.POLE_EMPLOI}
+                structureConseiller={StructureConseiller.POLE_EMPLOI}
                 referentielAgences={agences}
                 redirectUrl='/mes-jeunes'
               />
@@ -106,11 +105,10 @@ describe('Home', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith(
-          '1',
-          { id: agence.id, nom: 'Agence Pôle emploi THIERS' },
-          'accessToken'
-        )
+        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          id: agence.id,
+          nom: 'Agence Pôle emploi THIERS',
+        })
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
       })
 
@@ -160,11 +158,9 @@ describe('Home', () => {
           await userEvent.click(submit)
 
           // Then
-          expect(conseillerService.modifierAgence).toHaveBeenCalledWith(
-            '1',
-            { nom: 'Agence libre' },
-            'accessToken'
-          )
+          expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+            nom: 'Agence libre',
+          })
         })
 
         it('bloque la sélection dans la liste', () => {
@@ -188,13 +184,13 @@ describe('Home', () => {
     describe('quand le conseiller est Mission locale', () => {
       it("affiche 'Mission locale' au lieu de 'agence'", async () => {
         // Given
-        renderWithSession(
+        render(
           <DIProvider
             dependances={{ conseillerService: mockedConseillerService() }}
           >
             <ConseillerProvider conseiller={unConseiller()}>
               <Home
-                structureConseiller={UserStructure.MILO}
+                structureConseiller={StructureConseiller.MILO}
                 referentielAgences={[]}
                 redirectUrl='/mes-jeunes'
               />
@@ -271,12 +267,13 @@ describe('Home', () => {
           agence: 'MLS3F SAINT-LOUIS',
         }
         conseillerService = mockedConseillerService({
-          getConseiller: jest.fn(async () => conseillerAvecAgence),
+          getConseillerServerSide: jest.fn(async () => conseillerAvecAgence),
         })
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'conseillerService') return conseillerService
         })
       })
+
       it('redirige vers la liste des jeunes', async () => {
         // When
         const actual = await getServerSideProps({
@@ -288,6 +285,7 @@ describe('Home', () => {
           redirect: { destination: '/mes-jeunes', permanent: false },
         })
       })
+
       it('redirige vers l’url renseignée', async () => {
         // When
         const actual = await getServerSideProps({
@@ -306,7 +304,7 @@ describe('Home', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
-            user: { id: '1', structure: UserStructure.MILO },
+            user: { id: '1', structure: StructureConseiller.MILO },
             accessToken: 'accessToken',
           },
         })
@@ -314,7 +312,7 @@ describe('Home', () => {
         const conseiller = unConseiller()
 
         conseillerService = mockedConseillerService({
-          getConseiller: jest.fn(async () => conseiller),
+          getConseillerServerSide: jest.fn(async () => conseiller),
         })
 
         agencesService = {
@@ -335,7 +333,7 @@ describe('Home', () => {
         expect(actual).toEqual({
           props: {
             redirectUrl: '/mes-jeunes',
-            structureConseiller: UserStructure.MILO,
+            structureConseiller: StructureConseiller.MILO,
             referentielAgences: uneListeDAgencesMILO(),
           },
         })
@@ -350,7 +348,7 @@ describe('Home', () => {
         expect(actual).toEqual({
           props: {
             redirectUrl: '/mes-rendezvous',
-            structureConseiller: UserStructure.MILO,
+            structureConseiller: StructureConseiller.MILO,
             referentielAgences: uneListeDAgencesMILO(),
           },
         })

@@ -1,21 +1,19 @@
-import { RenderResult, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 
 import { mockedJeunesService } from 'fixtures/services'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { JeunesService } from 'services/jeunes.service'
-import renderWithSession from 'tests/renderWithSession'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
-  let page: RenderResult
   let submitButton: HTMLElement
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
-    page = renderWithSession(
+    render(
       <DIProvider dependances={{ jeunesService }}>
         <PoleEmploiCreationJeune />
       </DIProvider>
@@ -130,15 +128,11 @@ describe('PoleEmploiCreationJeune', () => {
 
       // Then
       expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
-      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledWith(
-        {
-          firstName: 'Nadia',
-          lastName: 'Sanfamiye',
-          email: 'nadia.sanfamiye@poleemploi.fr',
-        },
-        '1',
-        'accessToken'
-      )
+      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledWith({
+        firstName: 'Nadia',
+        lastName: 'Sanfamiye',
+        email: 'nadia.sanfamiye@poleemploi.fr',
+      })
 
       expect(
         screen.getByRole('button', {

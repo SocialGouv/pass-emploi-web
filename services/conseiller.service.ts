@@ -1,3 +1,6 @@
+import { Session } from 'next-auth'
+import { getSession } from 'next-auth/react'
+
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
@@ -5,21 +8,17 @@ import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
 import { ApiError } from 'utils/httpClient'
 
 export interface ConseillerService {
-  getConseiller(
-    idConseiller: string,
+  getConseillerClientSide(): Promise<Conseiller | undefined>
+  getConseillerServerSide(
+    user: Session.HydratedUser,
     accessToken: string
   ): Promise<Conseiller | undefined>
 
-  modifierAgence(
-    idConseiller: string,
-    agence: { id?: string; nom: string },
-    accessToken: string
-  ): Promise<void>
+  modifierAgence(agence: { id?: string; nom: string }): Promise<void>
 
   modifierNotificationsSonores(
     idConseiller: string,
-    hasNotificationsSonores: boolean,
-    accessToken: string
+    hasNotificationsSonores: boolean
   ): Promise<void>
 
   getDossierJeune(
@@ -27,38 +26,31 @@ export interface ConseillerService {
     accessToken: string
   ): Promise<DossierMilo | undefined>
 
-  createCompteJeuneMilo(
-    newJeune: {
-      idDossier: string
-      nom: string
-      prenom: string
-      email: string | undefined
-      idConseiller: string
-    },
-    accessToken: string
-  ): Promise<{ id: string }>
+  createCompteJeuneMilo(newJeune: {
+    idDossier: string
+    nom: string
+    prenom: string
+    email: string | undefined
+  }): Promise<{ id: string }>
 
-  recupererBeneficiaires(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<void>
+  recupererBeneficiaires(): Promise<void>
 }
 
 export class ConseillerApiService implements ConseillerService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getConseiller(
-    idConseiller: string,
+  private async getConseiller(
+    user: Session.HydratedUser,
     accessToken: string
   ): Promise<Conseiller | undefined> {
     try {
       const { content: conseillerJson } =
         await this.apiClient.get<ConseillerJson>(
-          `/conseillers/${idConseiller}`,
+          `/conseillers/${user.id}`,
           accessToken
         )
 
-      return jsonToConseiller(conseillerJson)
+      return jsonToConseiller(conseillerJson, user)
     } catch (e) {
       if (e instanceof ApiError) {
         return undefined
@@ -67,28 +59,43 @@ export class ConseillerApiService implements ConseillerService {
     }
   }
 
-  modifierAgence(
-    idConseiller: string,
-    { id, nom }: { id?: string; nom: string },
+  async getConseillerClientSide(): Promise<Conseiller | undefined> {
+    const session = await getSession()
+    return this.getConseiller(session!.user, session!.accessToken)
+  }
+
+  getConseillerServerSide(
+    user: Session.HydratedUser,
     accessToken: string
-  ): Promise<void> {
+  ): Promise<Conseiller | undefined> {
+    return this.getConseiller(user, accessToken)
+  }
+
+  async modifierAgence({
+    id,
+    nom,
+  }: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    const session = await getSession()
     const agence = id ? { id } : { nom }
     return this.apiClient.put(
-      `/conseillers/${idConseiller}`,
+      `/conseillers/${session!.user.id}`,
       { agence },
-      accessToken
+      session!.accessToken
     )
   }
 
-  modifierNotificationsSonores(
+  async modifierNotificationsSonores(
     idConseiller: string,
-    hasNotificationsSonores: boolean,
-    accessToken: string
+    hasNotificationsSonores: boolean
   ): Promise<void> {
+    const session = await getSession()
     return this.apiClient.put(
       `/conseillers/${idConseiller}`,
       { notificationsSonores: hasNotificationsSonores },
-      accessToken
+      session!.accessToken
     )
   }
 
@@ -102,34 +109,29 @@ export class ConseillerApiService implements ConseillerService {
     return dossier
   }
 
-  async createCompteJeuneMilo(
-    newJeune: {
-      idDossier: string
-      nom: string
-      prenom: string
-      email: string | undefined
-      idConseiller: string
-    },
-    accessToken: string
-  ): Promise<{ id: string }> {
+  async createCompteJeuneMilo(newJeune: {
+    idDossier: string
+    nom: string
+    prenom: string
+    email: string | undefined
+  }): Promise<{ id: string }> {
+    const session = await getSession()
     const {
       content: { id },
     } = await this.apiClient.post<{ id: string }>(
       `/conseillers/milo/jeunes`,
-      newJeune,
-      accessToken
+      { ...newJeune, idConseiller: session!.user.id },
+      session!.accessToken
     )
     return { id }
   }
 
-  async recupererBeneficiaires(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<void> {
+  async recupererBeneficiaires(): Promise<void> {
+    const session = await getSession()
     await this.apiClient.post(
-      `/conseillers/${idConseiller}/recuperer-mes-jeunes`,
+      `/conseillers/${session!.user.id}/recuperer-mes-jeunes`,
       {},
-      accessToken
+      session!.accessToken
     )
   }
 }

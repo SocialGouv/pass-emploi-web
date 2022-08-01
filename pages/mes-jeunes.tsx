@@ -10,7 +10,7 @@ import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import Button from 'components/ui/Button'
 import SuccessMessage from 'components/ui/SuccessMessage'
 import { TotalActions } from 'interfaces/action'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   compareJeunesByNom,
   JeuneAvecInfosComplementaires,
@@ -23,7 +23,6 @@ import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -49,7 +48,6 @@ function MesJeunes({
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
-  const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const conseillerService =
@@ -80,10 +78,10 @@ function MesJeunes({
 
   const handleAddJeune = async () => {
     switch (structureConseiller) {
-      case UserStructure.MILO:
+      case StructureConseiller.MILO:
         await router.push('/mes-jeunes/milo/creation-jeune')
         break
-      case UserStructure.POLE_EMPLOI:
+      case StructureConseiller.POLE_EMPLOI:
         await router.push('/mes-jeunes/pole-emploi/creation-jeune')
         break
       default:
@@ -99,10 +97,7 @@ function MesJeunes({
   async function recupererBeneficiaires(): Promise<void> {
     setIsRecuperationBeneficiairesLoading(true)
     try {
-      await conseillerService.recupererBeneficiaires(
-        session!.user.id,
-        session!.accessToken
-      )
+      await conseillerService.recupererBeneficiaires()
       await router.replace({
         pathname: '/mes-jeunes',
         query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
@@ -141,15 +136,12 @@ function MesJeunes({
   )
 
   useEffect(() => {
-    if (!session || !chatCredentials) return
+    if (!chatCredentials) return
 
     messagesService
       .signIn(chatCredentials.token)
       .then(() =>
-        messagesService.countMessagesNotRead(
-          session.user.id,
-          conseillerJeunes.map((j) => j.id)
-        )
+        messagesService.countMessagesNotRead(conseillerJeunes.map((j) => j.id))
       )
       .catch(() =>
         conseillerJeunes.reduce(
@@ -167,7 +159,7 @@ function MesJeunes({
         setJeunes(jeunesAvecMessagesNonLus)
         setListJeunesFiltres(jeunesAvecMessagesNonLus)
       })
-  }, [chatCredentials, conseillerJeunes, messagesService, session])
+  }, [chatCredentials, conseillerJeunes, messagesService])
 
   useMatomo(trackingTitle)
 
@@ -176,7 +168,7 @@ function MesJeunes({
       {showAjoutAgenceSuccess && (
         <SuccessMessage
           label={`Votre ${
-            structureConseiller === UserStructure.MILO
+            structureConseiller === StructureConseiller.MILO
               ? 'Mission locale'
               : 'agence'
           } a été ajoutée à votre profil`}
@@ -206,8 +198,8 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <div className={`flex flex-wrap justify-between items-end mb-6`}>
           <RechercheJeune onSearchFilterBy={onSearch} />
-          {(structureConseiller === UserStructure.MILO ||
-            structureConseiller === UserStructure.POLE_EMPLOI) && (
+          {(structureConseiller === StructureConseiller.MILO ||
+            structureConseiller === StructureConseiller.POLE_EMPLOI) && (
             <AjouterJeuneButton handleAddJeune={handleAddJeune} />
           )}
         </div>
@@ -232,8 +224,8 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <TableauJeunes
           jeunes={listeJeunesFiltres}
-          withActions={structureConseiller !== UserStructure.POLE_EMPLOI}
-          withSituations={structureConseiller === UserStructure.MILO}
+          withActions={structureConseiller !== StructureConseiller.POLE_EMPLOI}
+          withSituations={structureConseiller === StructureConseiller.MILO}
         />
       )}
     </>
@@ -253,10 +245,13 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   } = sessionOrRedirect
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const actionsService = withDependance<ActionsService>('actionsService')
-  const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
+    user.id,
+    accessToken
+  )
 
   let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
-  if (user.structure === UserStructure.POLE_EMPLOI) {
+  if (user.structure === StructureConseiller.POLE_EMPLOI) {
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
       ...jeune,
       nbActionsNonTerminees: 0,

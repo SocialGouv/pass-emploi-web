@@ -21,8 +21,8 @@ import {
   MessagesService,
 } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
-import useSession from 'utils/auth/useSession'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -40,10 +40,10 @@ export default function Conversation({
   conseillers,
   onBack,
 }: ConversationProps) {
-  const { data: session } = useSession<true>({ required: true })
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
+  const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
@@ -66,15 +66,10 @@ export default function Conversation({
     if (!(newMessage || Boolean(uploadedFileInfo)) || isFileUploading) return
 
     const formNouveauMessage: FormNouveauMessageIndividuel = {
-      conseiller: {
-        id: session!.user.id,
-        structure: session!.user.structure,
-      },
       jeuneChat,
       newMessage:
         newMessage ||
         'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
-      accessToken: session!.accessToken,
       cleChiffrement: chatCredentials!.cleChiffrement,
     }
 
@@ -87,9 +82,11 @@ export default function Conversation({
   }
 
   function getConseillerNomComplet(message: Message) {
-    const conseiller = conseillers.find((c) => c.id === message.conseillerId)
-    if (conseiller) {
-      return `${conseiller?.prenom.toLowerCase()} ${conseiller?.nom.toLowerCase()}`
+    const conseillerTrouve = conseillers.find(
+      (c) => c.id === message.conseillerId
+    )
+    if (conseillerTrouve) {
+      return `${conseillerTrouve?.prenom.toLowerCase()} ${conseillerTrouve?.nom.toLowerCase()}`
     }
   }
 
@@ -142,8 +139,7 @@ export default function Conversation({
       setIsFileUploading(true)
       const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
-        fichierSelectionne,
-        session!.accessToken
+        fichierSelectionne
       )
       setUploadedFileInfo(infoFichier)
     } catch (error) {
@@ -156,17 +152,14 @@ export default function Conversation({
 
   async function deleteFile() {
     setUploadedFileInfo(undefined)
-    await fichiersService.deleteFichier(
-      uploadedFileInfo!.id,
-      session!.accessToken
-    )
+    await fichiersService.deleteFichier(uploadedFileInfo!.id)
   }
 
-  function toggleFlag(): void {
+  async function toggleFlag() {
     const flagged = !jeuneChat.flaggedByConseiller
     messagesService.toggleFlag(jeuneChat.chatId, flagged)
     trackEvent({
-      structure: session!.user.structure,
+      structure: conseiller!.structure,
       categorie: 'Conversation suivie',
       action: 'Conversation',
       nom: flagged.toString(),

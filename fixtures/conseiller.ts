@@ -1,4 +1,4 @@
-import { Conseiller } from 'interfaces/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { ConseillerJson } from 'interfaces/json/conseiller'
 
 export const unConseiller = (
@@ -10,6 +10,8 @@ export const unConseiller = (
     lastName: 'Tavernier',
     notificationsSonores: false,
     aDesBeneficiairesARecuperer: false,
+    estSuperviseur: false,
+    structure: StructureConseiller.PASS_EMPLOI,
   }
   return { ...defaults, ...overrides }
 }

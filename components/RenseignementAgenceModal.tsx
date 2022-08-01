@@ -7,7 +7,7 @@ import Button, { ButtonStyle } from 'components/ui/Button'
 import { InputError } from 'components/ui/InputError'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
 import SelectAutocomplete from 'components/ui/SelectAutocomplete'
-import { Agence, UserStructure } from 'interfaces/conseiller'
+import { Agence, StructureConseiller } from 'interfaces/conseiller'
 
 interface RenseignementAgenceModalProps {
   structureConseiller: string
@@ -30,10 +30,14 @@ export default function RenseignementAgenceModal({
   const agenceLibreRef = useRef<HTMLInputElement>(null)
 
   const labelAgence =
-    structureConseiller === UserStructure.MILO ? 'Mission locale' : 'agence'
+    structureConseiller === StructureConseiller.MILO
+      ? 'Mission locale'
+      : 'agence'
 
   const labelAgencePluriel =
-    structureConseiller === UserStructure.MILO ? 'Missions locales' : 'agences'
+    structureConseiller === StructureConseiller.MILO
+      ? 'Missions locales'
+      : 'agences'
 
   function selectAgence(nomAgence: string) {
     const agence = referentielAgences.find((a) => a.nom === nomAgence)
@@ -128,7 +132,7 @@ export default function RenseignementAgenceModal({
           className='mt-6'
         />
         <label htmlFor='agence-not-found' className='ml-2 text-base-regular'>
-          {structureConseiller === UserStructure.MILO ? 'Ma' : 'Mon'}{' '}
+          {structureConseiller === StructureConseiller.MILO ? 'Ma' : 'Mon'}{' '}
           {labelAgence} n’apparaît pas dans la liste
         </label>
 

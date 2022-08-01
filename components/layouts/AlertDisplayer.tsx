@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import SuccessMessage from 'components/ui/SuccessMessage'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
-import useSession from 'utils/auth/useSession'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { deleteQueryParams, parseUrl } from 'utils/urlParser'
 
 interface AlertDisplayerProps {
@@ -15,8 +15,7 @@ export default function AlertDisplayer({
   hideOnLargeScreen = false,
 }: AlertDisplayerProps) {
   const router = useRouter()
-  const { data: session } = useSession<true>({ required: true })
-
+  const [conseiller] = useConseiller()
   const [alerts, setAlerts] = useState<Alert[]>(ALERTS)
 
   async function closeSuccessAlert(queryParam: QueryParam): Promise<void> {
@@ -32,10 +31,10 @@ export default function AlertDisplayer({
   }
 
   useEffect(() => {
-    if (session?.user) {
-      setAlerts(getAlertsForStructure(session.user.structure))
+    if (conseiller) {
+      setAlerts(getAlertsForStructure(conseiller.structure))
     }
-  }, [session?.user])
+  }, [conseiller])
 
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
@@ -101,12 +100,12 @@ const ALERTS_POLE_EMPLOI: Alert[] = [
 ]
 
 function getAlertsForStructure(structure?: string): Alert[] {
-  switch (structure as UserStructure) {
-    case UserStructure.MILO:
+  switch (structure as StructureConseiller) {
+    case StructureConseiller.MILO:
       return ALERTS_MILO
-    case UserStructure.POLE_EMPLOI:
+    case StructureConseiller.POLE_EMPLOI:
       return ALERTS_POLE_EMPLOI
-    case UserStructure.PASS_EMPLOI:
+    case StructureConseiller.PASS_EMPLOI:
     default:
       return ALERTS
   }

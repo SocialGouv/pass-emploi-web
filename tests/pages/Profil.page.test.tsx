@@ -1,15 +1,14 @@
-import { act, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { mockedConseillerService } from 'fixtures/services'
-import { Conseiller } from 'interfaces/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import Profil, { getServerSideProps } from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
 import getByDefinitionTerm from 'tests/querySelector'
-import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
@@ -55,7 +54,6 @@ describe('Page Profil conseiller', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            structureConseiller: 'POLE_EMPLOI',
             pageTitle: 'Mon profil',
             pageHeader: 'Profil',
           },
@@ -81,10 +79,10 @@ describe('Page Profil conseiller', () => {
 
         // When
         await act(async () => {
-          renderWithSession(
+          render(
             <DIProvider dependances={{ conseillerService }}>
               <ConseillerProvider conseiller={conseiller}>
-                <Profil structureConseiller='POLE_EMPLOI' pageTitle='' />
+                <Profil pageTitle='' />
               </ConseillerProvider>
             </DIProvider>
           )
@@ -118,10 +116,10 @@ describe('Page Profil conseiller', () => {
       it("n'affiche pas les informations manquantes", async () => {
         // When
         await act(async () => {
-          renderWithSession(
+          render(
             <DIProvider dependances={{ conseillerService }}>
               <ConseillerProvider conseiller={unConseiller()}>
-                <Profil structureConseiller='POLE_EMPLOI' pageTitle='' />
+                <Profil pageTitle='' />
               </ConseillerProvider>
             </DIProvider>
           )
@@ -141,16 +139,16 @@ describe('Page Profil conseiller', () => {
       it('affiche le label correspondant', async () => {
         // Given
         const conseiller = unConseiller({
-          email: 'nils.tavernier@mail.com',
+          structure: StructureConseiller.MILO,
           agence: 'MLS3F SAINT-LOUIS',
         })
 
         // When
         await act(async () => {
-          renderWithSession(
+          render(
             <DIProvider dependances={{ conseillerService }}>
               <ConseillerProvider conseiller={conseiller}>
-                <Profil structureConseiller='MILO' pageTitle='' />
+                <Profil pageTitle='' />
               </ConseillerProvider>
             </DIProvider>
           )
@@ -171,10 +169,10 @@ describe('Page Profil conseiller', () => {
         })
 
         await act(async () => {
-          renderWithSession(
+          render(
             <DIProvider dependances={{ conseillerService }}>
               <ConseillerProvider conseiller={conseiller}>
-                <Profil structureConseiller='POLE_EMPLOI' pageTitle='' />
+                <Profil pageTitle='' />
               </ConseillerProvider>
             </DIProvider>
           )
@@ -190,11 +188,7 @@ describe('Page Profil conseiller', () => {
         // Then
         expect(
           conseillerService.modifierNotificationsSonores
-        ).toHaveBeenCalledWith(
-          conseiller.id,
-          !conseiller.notificationsSonores,
-          'accessToken'
-        )
+        ).toHaveBeenCalledWith(conseiller.id, !conseiller.notificationsSonores)
       })
     })
   })

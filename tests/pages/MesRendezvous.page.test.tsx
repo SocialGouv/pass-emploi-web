@@ -1,14 +1,14 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
-
+import { unConseiller } from 'fixtures/conseiller'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -20,12 +20,14 @@ describe('MesRendezvous', () => {
     const rendezVousFuturs = desRdvListItems()
     describe('contenu', () => {
       beforeEach(() => {
-        renderWithSession(
-          <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
-            pageTitle=''
-          />
+        render(
+          <ConseillerProvider conseiller={unConseiller()}>
+            <MesRendezvous
+              rendezVousFuturs={rendezVousFuturs}
+              rendezVousPasses={rendezVousPasses}
+              pageTitle=''
+            />
+          </ConseillerProvider>
         )
       })
 

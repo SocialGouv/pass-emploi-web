@@ -17,7 +17,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithSession from 'tests/renderWithSession'
+import renderWithChatCredentials from 'tests/renderWithChatCredentials'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -66,15 +66,19 @@ describe('<Layout />', () => {
       asPath: '/path/to/current/page',
     })
     jeunesService = mockedJeunesService({
-      getJeunesDuConseiller: jest.fn(async () => jeunes),
+      getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
     })
-    conseillerService = mockedConseillerService()
+    conseillerService = mockedConseillerService({
+      getConseillerClientSide: jest.fn(async () =>
+        unConseiller({ notificationsSonores: true })
+      ),
+    })
     messagesService = mockedMessagesService({
       signIn: jest.fn(() => Promise.resolve()),
-      observeConseillerChats: jest.fn((_, jeune, _cle, fn) => {
+      observeConseillerChats: jest.fn((jeune, _cle, fn) => {
         updateChatsRef = fn
         updateChatsRef(jeunesChats)
-        return () => {}
+        return Promise.resolve(() => {})
       }),
     })
   })
@@ -82,13 +86,11 @@ describe('<Layout />', () => {
   describe('cas nominal', () => {
     beforeEach(async () => {
       await act(async () => {
-        await renderWithSession(
+        await renderWithChatCredentials(
           <DIProvider
             dependances={{ jeunesService, conseillerService, messagesService }}
           >
-            <ConseillerProvider
-              conseiller={unConseiller({ notificationsSonores: true })}
-            >
+            <ConseillerProvider>
               <Layout>
                 <FakeComponent
                   pageTitle='un titre'
@@ -134,24 +136,26 @@ describe('<Layout />', () => {
       expect(messagesService.signIn).toHaveBeenCalled()
     })
 
+    it('récupère le conseiller', () => {
+      // Then
+      expect(conseillerService.getConseillerClientSide).toHaveBeenCalledWith()
+    })
+
     it('récupère la liste des jeunes du conseiller', () => {
       // Then
-      expect(jeunesService.getJeunesDuConseiller).toHaveBeenCalledWith(
-        '1',
-        'accessToken'
-      )
+      expect(
+        jeunesService.getJeunesDuConseillerClientSide
+      ).toHaveBeenCalledWith()
     })
 
     it('subscribes to chats', () => {
       // Then
       expect(messagesService.observeConseillerChats).toHaveBeenCalledWith(
-        '1',
         'cleChiffrement',
         jeunes,
         expect.any(Function)
       )
     })
-    // })
 
     it('paramètre la balise head en fonction des messages non lus', async () => {
       // Then
@@ -214,7 +218,7 @@ describe('<Layout />', () => {
     it("ne notifie pas quand un nouveau message d'un jeune arrive", async () => {
       // Given
       await act(async () => {
-        await renderWithSession(
+        await renderWithChatCredentials(
           <DIProvider
             dependances={{ jeunesService, conseillerService, messagesService }}
           >
@@ -249,7 +253,7 @@ describe('<Layout />', () => {
     it('affiche un bouton "retour"', async () => {
       // When
       await act(async () => {
-        await renderWithSession(
+        await renderWithChatCredentials(
           <DIProvider
             dependances={{ jeunesService, conseillerService, messagesService }}
           >

@@ -9,7 +9,7 @@ import {
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { JeuneFromListe } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,
@@ -138,13 +138,8 @@ describe('EnvoiMessageGroupe', () => {
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          conseiller: {
-            id: '1',
-            structure: UserStructure.MILO,
-          },
           idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage,
-          accessToken: 'accessToken',
           cleChiffrement: 'cleChiffrement',
         })
       })
@@ -267,16 +262,10 @@ describe('EnvoiMessageGroupe', () => {
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
           [jeunes[0].id, jeunes[1].id],
           file,
-          'accessToken'
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          conseiller: {
-            id: '1',
-            structure: UserStructure.MILO,
-          },
           idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage,
-          accessToken: 'accessToken',
           cleChiffrement: 'cleChiffrement',
           infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
         })
@@ -293,17 +282,11 @@ describe('EnvoiMessageGroupe', () => {
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
           [jeunes[0].id, jeunes[1].id],
           file,
-          'accessToken'
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          conseiller: {
-            id: '1',
-            structure: UserStructure.MILO,
-          },
           idsDestinataires: [jeunes[0].id, jeunes[1].id],
           newMessage:
             'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
-          accessToken: 'accessToken',
           cleChiffrement: 'cleChiffrement',
           infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
         })
@@ -373,7 +356,7 @@ describe('EnvoiMessageGroupe', () => {
         })
         jeunes = desItemsJeunes()
         const jeunesService = mockedJeunesService({
-          getJeunesDuConseiller: jest.fn(async () => jeunes),
+          getJeunesDuConseillerServerSide: jest.fn(async () => jeunes),
         })
         ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
       })

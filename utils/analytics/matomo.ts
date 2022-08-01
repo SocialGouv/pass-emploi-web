@@ -1,6 +1,6 @@
 import MatomoTracker from 'matomo-tracker'
 
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 
 interface InitSettings {
   url: string
@@ -139,9 +139,9 @@ function trackSSR({
 
 function userStructureDimensionString(loginMode: string): string {
   switch (loginMode) {
-    case UserStructure.MILO:
+    case StructureConseiller.MILO:
       return 'Mission Locale'
-    case UserStructure.POLE_EMPLOI:
+    case StructureConseiller.POLE_EMPLOI:
       return 'Pôle emploi'
   }
   return 'pass emploi'

@@ -2,18 +2,17 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import renderWithSession from '../renderWithSession'
-
 import { unConseiller } from 'fixtures/conseiller'
 import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
 import {
   mockedConseillerService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import MesJeunes from 'pages/mes-jeunes'
 import { ConseillerService } from 'services/conseiller.service'
 import { MessagesService } from 'services/messages.service'
+import renderWithChatCredentials from 'tests/renderWithChatCredentials'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -32,11 +31,11 @@ describe('Recherche', () => {
     conseillerService = mockedConseillerService()
 
     await act(async () => {
-      await renderWithSession(
+      await renderWithChatCredentials(
         <DIProvider dependances={{ messagesService, conseillerService }}>
           <ConseillerProvider conseiller={unConseiller()}>
             <MesJeunes
-              structureConseiller={UserStructure.MILO}
+              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={jeunes}
               isFromEmail
               pageTitle=''

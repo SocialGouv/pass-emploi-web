@@ -1,7 +1,7 @@
 import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import Authenticator from 'utils/auth/authenticator'
 import HttpClient from 'utils/httpClient'
 
@@ -54,7 +54,7 @@ describe('Authenticator', () => {
           idConseiller: '41',
           estSuperviseur: true,
           estConseiller: true,
-          structureConseiller: UserStructure.PASS_EMPLOI,
+          structureConseiller: StructureConseiller.PASS_EMPLOI,
         })
       })
     })

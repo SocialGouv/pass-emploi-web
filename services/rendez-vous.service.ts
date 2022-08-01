@@ -1,3 +1,5 @@
+import { getSession } from 'next-auth/react'
+
 import { ApiClient } from 'clients/api.client'
 import {
   jsonToRdv,
@@ -24,19 +26,11 @@ export interface RendezVousService {
 
   getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]>
 
-  postNewRendezVous(
-    idConseiller: string,
-    newRDV: RdvFormData,
-    accessToken: string
-  ): Promise<void>
+  postNewRendezVous(newRDV: RdvFormData): Promise<void>
 
-  updateRendezVous(
-    idRdv: string,
-    updatedRdv: RdvFormData,
-    accessToken: string
-  ): Promise<void>
+  updateRendezVous(idRdv: string, updatedRdv: RdvFormData): Promise<void>
 
-  deleteRendezVous(idRendezVous: string, accessToken: string): Promise<void>
+  deleteRendezVous(idRendezVous: string): Promise<void>
 }
 
 export class RendezVousApiService implements RendezVousService {
@@ -95,23 +89,20 @@ export class RendezVousApiService implements RendezVousService {
     return types
   }
 
-  async postNewRendezVous(
-    idConseiller: string,
-    newRDV: RdvFormData,
-    accessToken: string
-  ): Promise<void> {
+  async postNewRendezVous(newRDV: RdvFormData): Promise<void> {
+    const session = await getSession()
     await this.apiClient.post(
-      `/conseillers/${idConseiller}/rendezvous`,
+      `/conseillers/${session!.user.id}/rendezvous`,
       newRDV,
-      accessToken
+      session!.accessToken
     )
   }
 
-  updateRendezVous(
+  async updateRendezVous(
     idRdv: string,
-    updatedRdv: RdvFormData,
-    accessToken: string
+    updatedRdv: RdvFormData
   ): Promise<void> {
+    const session = await getSession()
     const payload = {
       jeunesIds: updatedRdv.jeunesIds,
       modality: updatedRdv.modality,
@@ -122,13 +113,18 @@ export class RendezVousApiService implements RendezVousService {
       presenceConseiller: updatedRdv.presenceConseiller,
       comment: updatedRdv.comment,
     }
-    return this.apiClient.put(`/rendezvous/${idRdv}`, payload, accessToken)
+    await this.apiClient.put(
+      `/rendezvous/${idRdv}`,
+      payload,
+      session!.accessToken
+    )
   }
 
-  async deleteRendezVous(
-    idRendezVous: string,
-    accessToken: string
-  ): Promise<void> {
-    await this.apiClient.delete(`/rendezvous/${idRendezVous}`, accessToken)
+  async deleteRendezVous(idRendezVous: string): Promise<void> {
+    const session = await getSession()
+    await this.apiClient.delete(
+      `/rendezvous/${idRendezVous}`,
+      session!.accessToken
+    )
   }
 }
