@@ -52,7 +52,7 @@ export interface DetailJeune extends BaseJeune {
   }>
 }
 
-export interface RecherchesSauvegardees {
+export interface MetadonneesFavoris {
   autoriseLePartage: boolean
   offres: {
     total: number

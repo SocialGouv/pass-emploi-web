@@ -22,7 +22,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import {
   ConseillerHistorique,
   DetailJeune,
-  RecherchesSauvegardees,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -57,7 +57,7 @@ interface FicheJeuneProps extends PageProps {
     page: number
   }
   conseillers: ConseillerHistorique[]
-  recherchesSauvegardees?: RecherchesSauvegardees
+  metadonneesFavoris?: MetadonneesFavoris
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   rdvSuppressionSuccess?: boolean
@@ -70,7 +70,7 @@ function FicheJeune({
   jeune,
   rdvs,
   actionsInitiales,
-  recherchesSauvegardees,
+  metadonneesFavoris,
   conseillers,
   rdvCreationSuccess,
   rdvModificationSuccess,
@@ -294,7 +294,7 @@ function FicheJeune({
       <DetailsJeune
         jeune={jeune}
         withSituations={conseiller?.structure === StructureConseiller.MILO}
-        recherchesSauvegardees={recherchesSauvegardees}
+        metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={trackDossierMiloClick}
       />
 
@@ -390,7 +390,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, conseillers, recherchesSauvegardees, rdvs, actions] =
+  const [jeune, conseillers, metadonneesFavoris, rdvs, actions] =
     await Promise.all([
       jeunesService.getJeuneDetails(
         context.query.jeune_id as string,
@@ -400,7 +400,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
         context.query.jeune_id as string,
         accessToken
       ),
-      jeunesService.getJeuneRecherchesSauvegardees(
+      jeunesService.getMetadonneesFavorisJeune(
         id,
         context.query.jeune_id as string,
         accessToken
@@ -428,7 +428,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     conseillers,
-    recherchesSauvegardees,
+    metadonneesFavoris,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actionsInitiales: { ...actions, page },
     pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,

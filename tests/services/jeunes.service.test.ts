@@ -7,8 +7,8 @@ import {
   desItemsJeunesJson,
   unDetailJeune,
   unDetailJeuneJson,
-  uneRechercheSauvegardee,
-  uneRechercheSauvegardeeJson,
+  uneMetadonneeFavoris,
+  uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { JeuneFromListe } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
@@ -336,15 +336,15 @@ describe('JeunesApiService', () => {
       expect(actual).toEqual(motifs)
     })
   })
-  describe('.getJeuneRecherchesSauvegardees', () => {
+  describe('.getMetadonneesFavorisJeune', () => {
     it('renvoie les métadonnées des recherches sauvegardées d’un bénéficiaire', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: { favoris: uneRechercheSauvegardeeJson() },
+        content: { favoris: uneMetadonneeFavorisJson() },
       })
 
       // When
-      const actual = await jeunesService.getJeuneRecherchesSauvegardees(
+      const actual = await jeunesService.getMetadonneesFavorisJeune(
         'id-conseiller',
         'id-jeune',
         'accessToken'
@@ -355,7 +355,7 @@ describe('JeunesApiService', () => {
         '/conseillers/id-conseiller/jeunes/id-jeune/metadonnees',
         'accessToken'
       )
-      expect(actual).toEqual(uneRechercheSauvegardee())
+      expect(actual).toEqual(uneMetadonneeFavoris())
     })
   })
 })

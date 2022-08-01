@@ -12,7 +12,7 @@ import {
   desConseillersJeune,
   unConseillerHistorique,
   unDetailJeune,
-  uneRechercheSauvegardee,
+  uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import {
   desRdvListItems,
@@ -54,7 +54,7 @@ describe('Fiche Jeune', () => {
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
-    const recherchesSauvegardees = uneRechercheSauvegardee()
+    const metadonneesFavoris = uneMetadonneeFavoris()
     let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
 
@@ -102,7 +102,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { idJeuneSetter: setIdJeune, customDependances: dependances }
           )
@@ -172,7 +172,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: dependances }
           )
@@ -277,7 +277,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: dependances }
           )
@@ -336,7 +336,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           { idJeuneSetter: setIdJeune }
         )
@@ -408,7 +408,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={conseillers}
             pageTitle={''}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -432,7 +432,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -492,7 +492,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customConseiller: { structure: StructureConseiller.MILO } }
           )
@@ -527,7 +527,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customConseiller: { structure: StructureConseiller.MILO } }
           )
@@ -555,7 +555,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -581,7 +581,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -605,7 +605,7 @@ describe('Fiche Jeune', () => {
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -642,7 +642,7 @@ describe('Fiche Jeune', () => {
               conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: { actionsService } }
           )
@@ -830,7 +830,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -856,7 +856,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -885,7 +885,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -914,7 +914,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -944,7 +944,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -974,7 +974,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -1004,7 +1004,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -1033,7 +1033,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
-              recherchesSauvegardees={recherchesSauvegardees}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -1075,7 +1075,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           { customDependances: { actionsService } }
         )
@@ -1235,7 +1235,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
-            recherchesSauvegardees={recherchesSauvegardees}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           { customDependances: { actionsService } }
         )
@@ -1310,9 +1310,7 @@ describe('Fiche Jeune', () => {
         getConseillersDuJeuneServerSide: jest.fn(async () =>
           desConseillersJeune()
         ),
-        getJeuneRecherchesSauvegardees: jest.fn(async () =>
-          uneRechercheSauvegardee()
-        ),
+        getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
       })
       rendezVousService = mockedRendezVousService({
         getRendezVousJeune: jest.fn(async () =>
@@ -1385,7 +1383,7 @@ describe('Fiche Jeune', () => {
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
             conseillers: expect.arrayContaining([]),
-            recherchesSauvegardees: expect.arrayContaining([]),
+            metadonneesFavoris: expect.arrayContaining([]),
           },
         })
       })
@@ -1403,11 +1401,13 @@ describe('Fiche Jeune', () => {
 
       it('récupère les favoris', async () => {
         // Then
-        expect(
-          jeunesService.getJeuneRecherchesSauvegardees
-        ).toHaveBeenCalledWith('id-conseiller', 'id-jeune', 'accessToken')
+        expect(jeunesService.getMetadonneesFavorisJeune).toHaveBeenCalledWith(
+          'id-conseiller',
+          'id-jeune',
+          'accessToken'
+        )
         expect(actual).toMatchObject({
-          props: { recherchesSauvegardees: uneRechercheSauvegardee() },
+          props: { metadonneesFavoris: uneMetadonneeFavoris() },
         })
       })
 
