@@ -7,6 +7,7 @@ export interface Action {
   creator: string
   creatorType: string
   status: StatutAction
+  dateEcheance: string
 }
 
 export interface MetadonneesActions {

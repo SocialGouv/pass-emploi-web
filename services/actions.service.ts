@@ -34,7 +34,7 @@ export interface ActionsService {
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   createAction(
-    action: { intitule: string; commentaire: string },
+    action: { intitule: string; commentaire: string; dateEcheance: string },
     idConseiller: string,
     idJeune: string,
     accessToken: string
@@ -94,7 +94,7 @@ export class ActionsApiService implements ActionsService {
       page,
       statuts,
       tri,
-    }: { page: number; statuts: StatutAction[]; tri: string },
+    }: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
     const triActions = tri ?? 'date_decroissante'
@@ -125,12 +125,16 @@ export class ActionsApiService implements ActionsService {
   }
 
   async createAction(
-    action: { intitule: string; commentaire: string },
+    action: { intitule: string; commentaire: string; dateEcheance: string },
     idConseiller: string,
     idJeune: string,
     accessToken: string
   ): Promise<void> {
-    const payload = { content: action.intitule, comment: action.commentaire }
+    const payload = {
+      content: action.intitule,
+      comment: action.commentaire,
+      dateEcheance: new Date(action.dateEcheance).toISOString(),
+    }
     await this.apiClient.post(
       `/conseillers/${idConseiller}/jeunes/${idJeune}/action`,
       payload,

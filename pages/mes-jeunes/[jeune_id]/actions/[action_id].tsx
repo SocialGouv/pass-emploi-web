@@ -83,14 +83,25 @@ function PageAction({
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
-      <div className='flex flex-col items-end'>
+      <div className='flex flex-raw items-center justify-between mb-5'>
+        <span className='flex flex-row p-2 text-accent_2 bg-accent_3_lighten rounded-medium'>
+          <IconComponent
+            name={IconName.Clock}
+            aria-hidden='true'
+            focusable='false'
+            className='h-5 w-5 mr-1 stroke-accent_2'
+          />
+          <span>
+            À réaliser pour le :{' '}
+            <b>{formatDayDate(new Date(action.dateEcheance))}</b>
+          </span>
+        </span>
         {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
           <Button
             label="Supprimer l'action"
             onClick={() => deleteAction()}
             style={ButtonStyle.SECONDARY}
             disabled={deleteDisabled}
-            className='mb-6'
           >
             <IconComponent
               name={IconName.TrashCan}

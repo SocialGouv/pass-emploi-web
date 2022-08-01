@@ -10,6 +10,7 @@ export interface ActionJson {
   status: ActionStatusJson
   creator: string
   creatorType: string
+  dateEcheance: string
 }
 
 export interface MetadonneesActionsJson {
@@ -37,6 +38,7 @@ export function jsonToAction(json: ActionJson): Action {
     status: jsonToActionStatus(json.status),
     creator: json.creator,
     creatorType: json.creatorType,
+    dateEcheance: json.dateEcheance,
   }
 }
 

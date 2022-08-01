@@ -11,6 +11,7 @@ export const uneAction = (overrides: Partial<Action> = {}): Action => {
     creator: 'Nils',
     creatorType: 'conseiller',
     status: StatutAction.ARealiser,
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   }
 
   return { ...defaults, ...overrides }
@@ -27,6 +28,7 @@ export const uneListeDActions = (): Action[] => [
     creator: 'Nils',
     creatorType: 'conseiller',
     status: StatutAction.Commencee,
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
     id: 'id-action-3',
@@ -37,6 +39,7 @@ export const uneListeDActions = (): Action[] => [
     creator: 'Nils',
     creatorType: 'conseiller',
     status: StatutAction.Terminee,
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
     id: 'id-action-4',
@@ -47,6 +50,7 @@ export const uneListeDActions = (): Action[] => [
     creator: 'Nils',
     creatorType: 'conseiller',
     status: StatutAction.Terminee,
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   },
 ]
 
@@ -62,6 +66,7 @@ export const uneActionJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'not_started',
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   }
 
   return { ...defaults, ...overrides }
@@ -79,6 +84,7 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'not_started',
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
     id: 'id-action-2',
@@ -89,6 +95,7 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'in_progress',
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
     id: 'id-action-3',
@@ -99,6 +106,7 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'done',
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
     id: 'id-action-4',
@@ -109,6 +117,7 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'done',
+    dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   ...supplementaryActions,
 ]
