@@ -2,9 +2,11 @@ import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { unDetailJeune } from 'fixtures/jeune'
+import { unDetailJeune, uneMetadonneeFavoris } from 'fixtures/jeune'
 
 describe('<DetailsJeune>', () => {
+  const metadonneesFavoris = uneMetadonneeFavoris()
+
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     // Given
     const jeune = unDetailJeune({
@@ -13,7 +15,13 @@ describe('<DetailsJeune>', () => {
     })
 
     // When
-    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        metadonneesFavoris={metadonneesFavoris}
+      />
+    )
 
     // Then
     expect(() =>
@@ -24,7 +32,7 @@ describe('<DetailsJeune>', () => {
       'href',
       'https://dossier-milo.fr'
     )
-    expect(screen.getByLabelText('07/12/2021')).toBeInTheDocument()
+    expect(screen.getByText('07/12/2021')).toBeInTheDocument()
   })
 
   it("n'affiche pas le mail si le jeune n'en a pas", () => {
@@ -33,7 +41,13 @@ describe('<DetailsJeune>', () => {
     delete jeune.email
 
     // When
-    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        metadonneesFavoris={metadonneesFavoris}
+      />
+    )
 
     // Then
     expect(screen.queryByTitle('e-mail')).toBeNull()
@@ -44,9 +58,60 @@ describe('<DetailsJeune>', () => {
     const jeune = unDetailJeune({ urlDossier: undefined })
 
     // When
-    render(<DetailsJeune jeune={jeune} onDossierMiloClick={() => {}} />)
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        metadonneesFavoris={metadonneesFavoris}
+      />
+    )
 
     // Then
     expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
+  })
+
+  it('affiche les informations des favoris', () => {
+    // Given
+    const jeune = unDetailJeune()
+    const metadonneesFavori = uneMetadonneeFavoris()
+
+    // When
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        metadonneesFavoris={metadonneesFavori}
+      />
+    )
+
+    // Then
+    expect(screen.getByText(/Offres/)).toBeInTheDocument()
+    expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
+    expect(screen.getByText('Alternance :')).toBeInTheDocument()
+    expect(screen.getByText('Immersion :')).toBeInTheDocument()
+    expect(screen.getByText('Service civique :')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Voir la liste des favoris' })
+    ).toHaveAttribute('href', '/mes-jeunes/jeune-1/favoris')
+  })
+
+  it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', () => {
+    // Given
+    const jeune = unDetailJeune()
+    const metadonneesFavoris = uneMetadonneeFavoris({
+      autoriseLePartage: false,
+    })
+
+    // When
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        metadonneesFavoris={metadonneesFavoris}
+      />
+    )
+
+    // Then
+    expect(() => screen.getByText('Voir la liste des favoris')).toThrow()
   })
 })

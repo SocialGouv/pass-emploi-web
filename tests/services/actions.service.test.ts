@@ -129,7 +129,7 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.getActionsJeune(
         'whatever',
-        { page: 1, statuts: [] },
+        { tri: 'date_decroissante', page: 1, statuts: [] },
         'accessToken'
       )
 
@@ -163,7 +163,11 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.getActionsJeune(
         'whatever',
-        { page: 1, statuts: [StatutAction.Commencee, StatutAction.ARealiser] },
+        {
+          tri: 'date_decroissante',
+          page: 1,
+          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+        },
         'accessToken'
       )
 

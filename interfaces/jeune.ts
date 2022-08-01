@@ -39,7 +39,6 @@ export interface JeuneFromListe extends BaseJeune {
   }
   situationCourante: CategorieSituation
 }
-
 export interface DetailJeune extends BaseJeune {
   creationDate: string
   isActivated: boolean
@@ -51,6 +50,24 @@ export interface DetailJeune extends BaseJeune {
     categorie: CategorieSituation
     dateFin?: string
   }>
+}
+
+export interface MetadonneesFavoris {
+  autoriseLePartage: boolean
+  offres: {
+    total: number
+    nombreOffresEmploi: number
+    nombreOffresAlternance: number
+    nombreOffresImmersion: number
+    nombreOffresServiceCivique: number
+  }
+  recherches: {
+    total: number
+    nombreRecherchesOffresEmploi: number
+    nombreRecherchesOffresAlternance: number
+    nombreRecherchesOffresImmersion: number
+    nombreRecherchesOffresServiceCivique: number
+  }
 }
 
 export type JeuneAvecNbActionsNonTerminees = JeuneFromListe & {

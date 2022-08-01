@@ -4,6 +4,7 @@ import {
   ConseillerHistorique,
   DetailJeune,
   JeuneFromListe,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
@@ -14,6 +15,8 @@ import {
   ItemJeuneJson,
   jsonToDetailJeune,
   jsonToItemJeune,
+  jsonToMetadonneesFavoris,
+  MetadonneesFavorisJson,
   SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
@@ -67,6 +70,12 @@ export interface JeunesService {
   ): Promise<void>
 
   getMotifsSuppression(accessToken: string): Promise<string[]>
+
+  getMetadonneesFavorisJeune(
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<MetadonneesFavoris | undefined>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -219,5 +228,27 @@ export class JeunesApiService implements JeunesService {
       accessToken
     )
     return motifs
+  }
+
+  async getMetadonneesFavorisJeune(
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<MetadonneesFavoris | undefined> {
+    try {
+      const { content: metadonneesFavoris } = await this.apiClient.get<{
+        favoris: MetadonneesFavorisJson
+      }>(
+        `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
+        accessToken
+      )
+      return jsonToMetadonneesFavoris(metadonneesFavoris)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+
+      throw e
+    }
   }
 }

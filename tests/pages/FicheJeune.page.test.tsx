@@ -12,6 +12,7 @@ import {
   desConseillersJeune,
   unConseillerHistorique,
   unDetailJeune,
+  uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import {
   desRdvListItems,
@@ -53,6 +54,7 @@ describe('Fiche Jeune', () => {
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
+    const metadonneesFavoris = uneMetadonneeFavoris()
     let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
 
@@ -100,6 +102,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { idJeuneSetter: setIdJeune, customDependances: dependances }
           )
@@ -149,6 +152,10 @@ describe('Fiche Jeune', () => {
           const deleteButton = screen.getByText('Supprimer ce compte')
           expect(deleteButton).toBeInTheDocument()
         })
+        it('affiche les informations des favoris du jeune', () => {
+          // Then
+          expect(screen.getByText('Favoris')).toBeInTheDocument()
+        })
       })
 
       describe('Supprimer un compte actif', () => {
@@ -165,6 +172,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: dependances }
           )
@@ -270,6 +278,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: dependances }
           )
@@ -328,6 +337,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           { idJeuneSetter: setIdJeune }
         )
@@ -399,6 +409,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={conseillers}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -422,6 +433,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           {
             customSession: {
@@ -490,6 +502,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             {
               customSession: {
@@ -534,6 +547,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             {
               customSession: {
@@ -572,6 +586,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -597,6 +612,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -620,6 +636,7 @@ describe('Fiche Jeune', () => {
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -656,6 +673,7 @@ describe('Fiche Jeune', () => {
               conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: { actionsService } }
           )
@@ -844,6 +862,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -869,6 +888,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -897,6 +917,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -925,6 +946,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -954,6 +976,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -983,6 +1006,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -1012,6 +1036,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -1040,6 +1065,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -1081,6 +1107,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           { customDependances: { actionsService } }
         )
@@ -1156,6 +1183,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           { customDependances: { actionsService } }
         )
@@ -1320,6 +1348,7 @@ describe('Fiche Jeune', () => {
       jeunesService = mockedJeunesService({
         getJeuneDetails: jest.fn(async () => unDetailJeune()),
         getConseillersDuJeune: jest.fn(async () => desConseillersJeune()),
+        getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
       })
       rendezVousService = mockedRendezVousService({
         getRendezVousJeune: jest.fn(async () =>
@@ -1367,7 +1396,7 @@ describe('Fiche Jeune', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
-            user: { structure: 'MILO' },
+            user: { id: 'id-conseiller', structure: 'MILO' },
           },
           validSession: true,
         })
@@ -1392,6 +1421,7 @@ describe('Fiche Jeune', () => {
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
             conseillers: expect.arrayContaining([]),
+            metadonneesFavoris: expect.arrayContaining([]),
           },
         })
       })
@@ -1404,6 +1434,18 @@ describe('Fiche Jeune', () => {
         )
         expect(actual).toMatchObject({
           props: { rdvs: [rdvToListItem(rdvAVenir)] },
+        })
+      })
+
+      it('récupère les favoris', async () => {
+        // Then
+        expect(jeunesService.getMetadonneesFavorisJeune).toHaveBeenCalledWith(
+          'id-conseiller',
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: { metadonneesFavoris: uneMetadonneeFavoris() },
         })
       })
 
