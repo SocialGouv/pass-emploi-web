@@ -9,21 +9,21 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   CategorieSituation,
   DetailJeune,
-  RecherchesSauvegardees,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import { formatDayDate } from 'utils/date'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
   withSituations?: boolean
-  recherchesSauvegardees?: RecherchesSauvegardees
+  metadonneesFavoris?: MetadonneesFavoris
   onDossierMiloClick: () => void
 }
 
 export const DetailsJeune = ({
   jeune,
   withSituations,
-  recherchesSauvegardees,
+  metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
   return (
@@ -41,18 +41,18 @@ export const DetailsJeune = ({
           </div>
 
           {jeune.email && (
-            <>
-              <dt className='sr-only'>e-mail</dt>
-              <dd className='text-primary flex items-center mt-2'>
+            <div className='flex items-center'>
+              <dt>
                 <IconComponent
                   name={IconName.Email}
-                  aria-hidden={true}
+                  aria-label='e-mail'
+                  aria-hidden={false}
                   focusable={false}
                   className='w-[15px] h-[13px] mr-2'
                 />
-                {jeune.email}
-              </dd>
-            </>
+              </dt>
+              <dd className='text-primary'>{jeune.email}</dd>
+            </div>
           )}
           {jeune.urlDossier && (
             <>
@@ -132,13 +132,13 @@ export const DetailsJeune = ({
         <div className='flex items-center mb-4'>
           <IconComponent
             name={IconName.Favorite}
-            className='h-4 w-3 mr-2 fill-favorite_heart'
+            className='h-4 w-4 mr-2 stroke-favorite_heart'
             aria-hidden={true}
           />
           <h2 className='text-base-medium mr-2'>Favoris</h2>
 
           <Badge
-            count={recherchesSauvegardees?.offres.total ?? 0}
+            count={metadonneesFavoris?.offres.total ?? 0}
             bgColor='favorite_heart'
           />
         </div>
@@ -146,32 +146,30 @@ export const DetailsJeune = ({
           <div className='flex items-center mb-2'>
             <dt className='text-base-medium'>Offres :</dt>
             <dd className='text-base-medium ml-1'>
-              {recherchesSauvegardees?.offres.total}
+              {metadonneesFavoris?.offres.total}
             </dd>
           </div>
           <div className='ml-4 mb-4'>
             <InlineDefinitionItem
               definition='Offre d’emploi :'
-              description={
-                recherchesSauvegardees?.offres.nombreOffresEmploi ?? 0
-              }
+              description={metadonneesFavoris?.offres.nombreOffresEmploi ?? 0}
             />
             <InlineDefinitionItem
               definition='Alternance :'
               description={
-                recherchesSauvegardees?.offres.nombreOffresAlternance ?? 0
+                metadonneesFavoris?.offres.nombreOffresAlternance ?? 0
               }
             />
             <InlineDefinitionItem
               definition='Service civique :'
               description={
-                recherchesSauvegardees?.offres.nombreOffresServiceCivique ?? 0
+                metadonneesFavoris?.offres.nombreOffresServiceCivique ?? 0
               }
             />
             <InlineDefinitionItem
               definition='Immersion :'
               description={
-                recherchesSauvegardees?.offres.nombreOffresImmersion ?? 0
+                metadonneesFavoris?.offres.nombreOffresImmersion ?? 0
               }
             />
           </div>
@@ -179,14 +177,14 @@ export const DetailsJeune = ({
           <div className='flex items-center'>
             <dt className='text-base-medium'>Recherches sauvegardées :</dt>
             <dd className='text-base-medium ml-1'>
-              {recherchesSauvegardees?.recherches.total ?? 0}
+              {metadonneesFavoris?.recherches.total ?? 0}
             </dd>
           </div>
-
-          {recherchesSauvegardees?.autoriseLePartage && (
+          {/*FIXME: retirer pointer-events-none focus:pointer-events-auto quand page Favoris implémentée*/}
+          {metadonneesFavoris?.autoriseLePartage && (
             <div className='flex justify-end mt-4'>
               <Link href={`/mes-jeunes/${jeune.id}/favoris`}>
-                <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
+                <a className='pointer-events-none focus:pointer-events-auto flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
                   Voir la liste des favoris
                   <IconComponent
                     name={IconName.ChevronRight}

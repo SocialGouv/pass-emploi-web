@@ -6,7 +6,7 @@ import {
   ConseillerHistorique,
   DetailJeune,
   JeuneFromListe,
-  RecherchesSauvegardees,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
@@ -17,8 +17,8 @@ import {
   ItemJeuneJson,
   jsonToDetailJeune,
   jsonToItemJeune,
-  jsonToRecherchesSauvegardees,
-  RecherchesSauvegardeesJson,
+  jsonToMetadonneesFavoris,
+  MetadonneesFavorisJson,
   SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
@@ -74,11 +74,11 @@ export interface JeunesService {
 
   getMotifsSuppression(): Promise<string[]>
 
-  getJeuneRecherchesSauvegardees(
+  getMetadonneesFavorisJeune(
     idConseiller: string,
     idJeune: string,
     accessToken: string
-  ): Promise<RecherchesSauvegardees | undefined>
+  ): Promise<MetadonneesFavoris | undefined>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -263,19 +263,19 @@ export class JeunesApiService implements JeunesService {
     return motifs
   }
 
-  async getJeuneRecherchesSauvegardees(
+  async getMetadonneesFavorisJeune(
     idConseiller: string,
     idJeune: string,
     accessToken: string
-  ): Promise<RecherchesSauvegardees | undefined> {
+  ): Promise<MetadonneesFavoris | undefined> {
     try {
-      const { content: recherchesSauvegardees } = await this.apiClient.get<{
-        favoris: RecherchesSauvegardeesJson
+      const { content: metadonneesFavoris } = await this.apiClient.get<{
+        favoris: MetadonneesFavorisJson
       }>(
         `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
         accessToken
       )
-      return jsonToRecherchesSauvegardees(recherchesSauvegardees)
+      return jsonToMetadonneesFavoris(metadonneesFavoris)
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
         return undefined

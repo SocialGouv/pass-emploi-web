@@ -2,10 +2,10 @@ import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { unDetailJeune, uneRechercheSauvegardee } from 'fixtures/jeune'
+import { unDetailJeune, uneMetadonneeFavoris } from 'fixtures/jeune'
 
 describe('<DetailsJeune>', () => {
-  const recherchesSauvegardees = uneRechercheSauvegardee()
+  const metadonneesFavoris = uneMetadonneeFavoris()
 
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     // Given
@@ -19,7 +19,7 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         onDossierMiloClick={() => {}}
-        recherchesSauvegardees={recherchesSauvegardees}
+        metadonneesFavoris={metadonneesFavoris}
       />
     )
 
@@ -45,7 +45,7 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         onDossierMiloClick={() => {}}
-        recherchesSauvegardees={recherchesSauvegardees}
+        metadonneesFavoris={metadonneesFavoris}
       />
     )
 
@@ -62,7 +62,7 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         onDossierMiloClick={() => {}}
-        recherchesSauvegardees={recherchesSauvegardees}
+        metadonneesFavoris={metadonneesFavoris}
       />
     )
 
@@ -73,14 +73,14 @@ describe('<DetailsJeune>', () => {
   it('affiche les informations des favoris', () => {
     // Given
     const jeune = unDetailJeune()
-    const recherchesSauvegardees = uneRechercheSauvegardee()
+    const metadonneesFavori = uneMetadonneeFavoris()
 
     // When
     render(
       <DetailsJeune
         jeune={jeune}
         onDossierMiloClick={() => {}}
-        recherchesSauvegardees={recherchesSauvegardees}
+        metadonneesFavoris={metadonneesFavori}
       />
     )
 
@@ -98,7 +98,7 @@ describe('<DetailsJeune>', () => {
   it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', () => {
     // Given
     const jeune = unDetailJeune()
-    const recherchesSauvegardees = uneRechercheSauvegardee({
+    const metadonneesFavoris = uneMetadonneeFavoris({
       autoriseLePartage: false,
     })
 
@@ -107,7 +107,7 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         onDossierMiloClick={() => {}}
-        recherchesSauvegardees={recherchesSauvegardees}
+        metadonneesFavoris={metadonneesFavoris}
       />
     )
 
