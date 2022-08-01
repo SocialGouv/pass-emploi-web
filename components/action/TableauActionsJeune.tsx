@@ -12,6 +12,7 @@ import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import SortIcon from 'components/ui/SortIcon'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
@@ -20,7 +21,7 @@ interface TableauActionsJeuneProps {
   actions: Action[]
   isLoading: boolean
   onFiltres: (statutsSelectionnes: StatutAction[]) => void
-  onTri: () => void
+  onTri: (tri: TRI) => void
   tri: TRI
 }
 
@@ -83,6 +84,36 @@ export default function TableauActionsJeune({
     setStatutsSelectionnes(statutsValides)
   }, [afficherStatut, statutsValides])
 
+  function getIsSortedByCreationDate(): boolean {
+    return tri === TRI.dateCroissante || tri === TRI.dateDecroissante
+  }
+
+  function getIsSortedByDateEcheance(): boolean {
+    return (
+      tri === TRI.dateEcheanceCroissante || tri === TRI.dateEcheanceDecroissante
+    )
+  }
+
+  function getIsSortedDesc(): boolean {
+    return tri === TRI.dateEcheanceDecroissante || tri === TRI.dateDecroissante
+  }
+
+  function trierParDateCreation() {
+    let nouveauTri: TRI = TRI.dateDecroissante
+    if (getIsSortedByCreationDate() && getIsSortedDesc()) {
+      nouveauTri = TRI.dateCroissante
+    }
+    onTri(nouveauTri)
+  }
+
+  function trierParDateEcheance() {
+    let nouveauTri: TRI = TRI.dateEcheanceDecroissante
+    if (getIsSortedByDateEcheance() && getIsSortedDesc()) {
+      nouveauTri = TRI.dateEcheanceCroissante
+    }
+    onTri(nouveauTri)
+  }
+
   return (
     <div className={isLoading ? 'animate-pulse' : ''}>
       <div
@@ -97,21 +128,29 @@ export default function TableauActionsJeune({
             </div>
             <div role='columnheader' className='table-cell relative'>
               <button
-                onClick={onTri}
+                onClick={trierParDateCreation}
                 aria-label='Créée le - trier les actions'
                 className='w-full flex items-center'
               >
                 Créée le
-                <IconComponent
-                  name={IconName.ChevronDown}
-                  className={`h-4 w-4 fill-primary ${
-                    tri === TRI.dateDecroissante ? 'rotate-180' : ''
-                  }`}
+                <SortIcon
+                  isSorted={getIsSortedByCreationDate()}
+                  isDesc={getIsSortedDesc()}
                 />
               </button>
             </div>
             <div role='columnheader' className='table-cell relative'>
-              Échéance
+              <button
+                onClick={trierParDateEcheance}
+                aria-label='Échéance - trier les actions'
+                className='w-full flex items-center'
+              >
+                Échéance
+                <SortIcon
+                  isSorted={getIsSortedByDateEcheance()}
+                  isDesc={getIsSortedDesc()}
+                />
+              </button>
             </div>
             <div role='columnheader' className='table-cell relative'>
               <button

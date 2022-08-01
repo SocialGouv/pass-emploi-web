@@ -24,6 +24,8 @@ interface OngletActionsProps {
 export enum TRI {
   dateDecroissante = 'date_decroissante',
   dateCroissante = 'date_croissante',
+  dateEcheanceDecroissante = 'date_echeance_decroissante',
+  dateEcheanceCroissante = 'date_echeance_croissante',
 }
 
 export function OngletActions({
@@ -33,7 +35,7 @@ export function OngletActions({
   poleEmploi,
 }: OngletActionsProps) {
   const [filtres, setFiltres] = useState<StatutAction[]>([])
-  const [tri, setTri] = useState<TRI>(TRI.dateDecroissante)
+  const [tri, setTri] = useState<TRI>(TRI.dateEcheanceDecroissante)
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions
   )
@@ -65,10 +67,8 @@ export function OngletActions({
     stateChanged.current = true
   }
 
-  function trierActions() {
-    setTri(
-      tri === TRI.dateDecroissante ? TRI.dateCroissante : TRI.dateDecroissante
-    )
+  function trierActions(nouveauTri: TRI) {
+    setTri(nouveauTri)
     setPageCourante(1)
     stateChanged.current = true
   }
