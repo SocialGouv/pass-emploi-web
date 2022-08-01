@@ -4,7 +4,7 @@ import {
   DetailJeune,
   EtatSituation,
   JeuneFromListe,
-  RecherchesSauvegardees,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 
 interface Situation {
@@ -35,7 +35,7 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   situations?: Situation[]
 }
 
-export interface RecherchesSauvegardeesJson {
+export interface MetadonneesFavorisJson {
   autoriseLePartage: boolean
   offres: {
     total: number
@@ -133,11 +133,11 @@ export function jsonToDetailJeune({
   }
 }
 
-export function jsonToRecherchesSauvegardees({
+export function jsonToMetadonneesFavoris({
   favoris,
 }: {
-  favoris: RecherchesSauvegardeesJson
-}): RecherchesSauvegardees {
+  favoris: MetadonneesFavorisJson
+}): MetadonneesFavoris {
   const { autoriseLePartage, offres, recherches } = favoris
   return {
     autoriseLePartage: autoriseLePartage ?? null,

@@ -7,13 +7,13 @@ import {
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
   JeuneFromListe,
-  RecherchesSauvegardees,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 import {
   DetailJeuneJson,
   ItemJeuneJson,
-  RecherchesSauvegardeesJson,
+  MetadonneesFavorisJson,
 } from 'interfaces/json/jeune'
 
 export const uneBaseJeune = (overrides: Partial<BaseJeune> = {}): BaseJeune => {
@@ -39,10 +39,10 @@ export const unDetailJeune = (
   return { ...defaults, ...overrides }
 }
 
-export const uneRechercheSauvegardee = (
-  overrides: Partial<RecherchesSauvegardees> = {}
-): RecherchesSauvegardees => {
-  const defaults: RecherchesSauvegardees = {
+export const uneMetadonneeFavoris = (
+  overrides: Partial<MetadonneesFavoris> = {}
+): MetadonneesFavoris => {
+  const defaults: MetadonneesFavoris = {
     autoriseLePartage: true,
     offres: {
       total: 12,
@@ -62,10 +62,10 @@ export const uneRechercheSauvegardee = (
   return { ...defaults, ...overrides }
 }
 
-export const uneRechercheSauvegardeeJson = (
-  overrides: Partial<RecherchesSauvegardeesJson> = {}
-): RecherchesSauvegardeesJson => {
-  const defaults: RecherchesSauvegardeesJson = {
+export const uneMetadonneeFavorisJson = (
+  overrides: Partial<MetadonneesFavorisJson> = {}
+): MetadonneesFavorisJson => {
+  const defaults: MetadonneesFavorisJson = {
     autoriseLePartage: true,
     offres: {
       total: 12,
