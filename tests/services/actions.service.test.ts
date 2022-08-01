@@ -135,7 +135,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante',
+        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante',
         'accessToken'
       )
       expect(actual).toStrictEqual({
@@ -169,7 +169,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
+        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante&statuts=in_progress&statuts=not_started',
         'accessToken'
       )
       expect(actual).toStrictEqual({
