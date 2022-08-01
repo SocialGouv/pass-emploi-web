@@ -82,9 +82,11 @@ export default function Conversation({
   }
 
   function getConseillerNomComplet(message: Message) {
-    const found = conseillers.find((c) => c.id === message.conseillerId)
-    if (found) {
-      return `${found?.prenom.toLowerCase()} ${found?.nom.toLowerCase()}`
+    const conseillerTrouve = conseillers.find(
+      (c) => c.id === message.conseillerId
+    )
+    if (conseillerTrouve) {
+      return `${conseillerTrouve?.prenom.toLowerCase()} ${conseillerTrouve?.nom.toLowerCase()}`
     }
   }
 

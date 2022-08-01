@@ -2,10 +2,9 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
-import Logo from '../assets/images/logo_app_cej.svg'
-
+import Logo from 'assets/images/logo_app_cej.svg'
 import { FormButton } from 'components/ui/FormButton'
 import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -19,9 +18,9 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
-  async function handleSubmit(event: any, provider?: string) {
+  async function handleSignin(event: FormEvent, provider?: string) {
     event.preventDefault()
-    signin(provider)
+    await signin(provider)
   }
 
   const signin = useCallback(
@@ -72,19 +71,19 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
           <FormButton
             label='Connexion conseiller Mission Locale'
             className='pt-4'
-            handleSubmit={(event) => handleSubmit(event, 'similo-conseiller')}
+            handleSubmit={(event) => handleSignin(event, 'similo-conseiller')}
           />
           <FormButton
             label='Connexion conseiller Pôle emploi'
             className='pt-4'
-            handleSubmit={(event) => handleSubmit(event, 'pe-conseiller')}
+            handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
           />
 
           {ssoPassEmploiEstActif && (
             <FormButton
               className='mt-4'
               label='Authentification pass emploi'
-              handleSubmit={(event) => handleSubmit(event)}
+              handleSubmit={(event) => handleSignin(event)}
             />
           )}
 
