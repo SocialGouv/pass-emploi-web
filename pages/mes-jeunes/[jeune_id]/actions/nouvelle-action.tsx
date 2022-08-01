@@ -14,7 +14,6 @@ import { actionsPredefinies } from 'referentiel/action'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -23,7 +22,6 @@ interface EditionActionProps extends PageProps {
 }
 
 function EditionAction({ idJeune }: EditionActionProps) {
-  const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
   const actionsService = useDependance<ActionsService>('actionsService')
 
@@ -60,12 +58,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
     if (!formulaireEstValide()) return
 
     const action = { intitule, commentaire }
-    await actionsService.createAction(
-      action,
-      session!.user.id,
-      idJeune,
-      session!.accessToken
-    )
+    await actionsService.createAction(action, idJeune)
     await router.push({
       pathname: `/mes-jeunes/${idJeune}`,
       query: { [QueryParam.creationAction]: QueryValue.succes },

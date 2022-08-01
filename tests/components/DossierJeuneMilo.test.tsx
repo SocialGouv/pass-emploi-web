@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
@@ -6,7 +6,6 @@ import { unDossierMilo } from 'fixtures/milo'
 import { mockedConseillerService } from 'fixtures/services'
 import { ConseillerService } from 'services/conseiller.service'
 import getByDefinitionTerm from 'tests/querySelector'
-import renderWithSession from 'tests/renderWithSession'
 import { DIProvider } from 'utils/injectionDependances'
 
 describe('<DossierMilo', () => {
@@ -22,7 +21,7 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo()
 
       //WHEN
-      renderWithSession(
+      render(
         <DIProvider dependances={{ conseillerService }}>
           <DossierJeuneMilo
             dossier={dossier}
@@ -52,7 +51,7 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo({ email: undefined })
 
       //WHEN
-      renderWithSession(
+      render(
         <DIProvider dependances={{ conseillerService }}>
           <DossierJeuneMilo
             dossier={dossier}
@@ -72,7 +71,7 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo({ email: '' })
 
       //WHEN
-      renderWithSession(
+      render(
         <DIProvider dependances={{ conseillerService }}>
           <DossierJeuneMilo
             dossier={dossier}

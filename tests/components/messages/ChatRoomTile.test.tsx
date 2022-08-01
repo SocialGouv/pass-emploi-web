@@ -4,7 +4,7 @@ import React from 'react'
 
 import { ChatRoomTile } from 'components/chat/ChatRoomTile'
 import { unJeuneChat } from 'fixtures/jeune'
-import renderWithSession from 'tests/renderWithSession'
+import renderWithChatCredentials from 'tests/renderWithChatCredentials'
 
 describe('<ChatRoomTile />', () => {
   let toggleFlag: (flagged: boolean) => void
@@ -17,7 +17,7 @@ describe('<ChatRoomTile />', () => {
     it('permet de ne plus la suivre', async () => {
       // Given
       await act(async () => {
-        await renderWithSession(
+        await renderWithChatCredentials(
           <ChatRoomTile
             jeuneChat={unJeuneChat({
               flaggedByConseiller: true,
@@ -42,7 +42,7 @@ describe('<ChatRoomTile />', () => {
     it('permet de la suivre', async () => {
       // Given
       await act(async () => {
-        await renderWithSession(
+        await renderWithChatCredentials(
           <ChatRoomTile
             jeuneChat={unJeuneChat({
               flaggedByConseiller: false,

@@ -1,4 +1,4 @@
-export enum UserStructure {
+export enum StructureConseiller {
   MILO = 'MILO',
   POLE_EMPLOI = 'POLE_EMPLOI',
   PASS_EMPLOI = 'PASS_EMPLOI',
@@ -21,8 +21,10 @@ export interface Conseiller {
   id: string
   firstName: string
   lastName: string
-  email?: string
-  agence?: string
   notificationsSonores: boolean
   aDesBeneficiairesARecuperer: boolean
+  structure: StructureConseiller
+  estSuperviseur: boolean
+  email?: string
+  agence?: string
 }

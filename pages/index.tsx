@@ -4,12 +4,11 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import { Agence, UserStructure } from 'interfaces/conseiller'
+import { Agence, StructureConseiller } from 'interfaces/conseiller'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
@@ -27,10 +26,9 @@ function Home({
   referentielAgences,
 }: HomePageProps) {
   const router = useRouter()
-  const { data: session } = useSession<true>({ required: true })
-  const [conseiller, setConseiller] = useConseiller()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const [conseiller, setConseiller] = useConseiller()
 
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Pop-in sélection agence'
@@ -40,11 +38,7 @@ function Home({
     id?: string
     nom: string
   }): Promise<void> {
-    await conseillerService.modifierAgence(
-      session!.user.id,
-      agence,
-      session!.accessToken
-    )
+    await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller!, agence: agence.nom })
     setTrackingLabel('Succès ajout agence')
     await router.replace(
@@ -88,7 +82,10 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
   const conseillerService =
     withDependance<ConseillerService>('conseillerService')
-  const conseiller = await conseillerService.getConseiller(user.id, accessToken)
+  const conseiller = await conseillerService.getConseillerServerSide(
+    user,
+    accessToken
+  )
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
   }
@@ -97,7 +94,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
   if (
     Boolean(conseiller.agence) ||
-    user.structure === UserStructure.PASS_EMPLOI
+    user.structure === StructureConseiller.PASS_EMPLOI
   ) {
     return {
       redirect: {

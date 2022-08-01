@@ -6,12 +6,11 @@ import React, { useState } from 'react'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
 import SuccessAddJeunePoleEmploi from 'components/jeune/SuccessAddJeunePoleEmploi'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { JeunePoleEmploiFormData } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -19,7 +18,6 @@ interface PoleEmploiCreationJeuneProps extends PageProps {}
 
 function PoleEmploiCreationJeune(): JSX.Element {
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const { data: session } = useSession<true>({ required: true })
   const [createdSuccessId, setCreatedSuccessId] = useState<string>('')
   const [creationError, setCreationError] = useState<string>('')
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
@@ -27,20 +25,14 @@ function PoleEmploiCreationJeune(): JSX.Element {
   async function creerJeunePoleEmploi(
     newJeune: JeunePoleEmploiFormData
   ): Promise<void> {
-    if (!session) return Promise.resolve()
-
     setCreationError('')
     setCreationEnCours(true)
     try {
-      const { id } = await jeunesService.createCompteJeunePoleEmploi(
-        {
-          firstName: newJeune.prenom,
-          lastName: newJeune.nom,
-          email: newJeune.email,
-        },
-        session.user.id,
-        session.accessToken
-      )
+      const { id } = await jeunesService.createCompteJeunePoleEmploi({
+        firstName: newJeune.prenom,
+        lastName: newJeune.nom,
+        email: newJeune.email,
+      })
       setCreatedSuccessId(id)
     } catch (error) {
       setCreationError(
@@ -93,7 +85,9 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  if (sessionOrRedirect.session.user.structure !== UserStructure.POLE_EMPLOI) {
+  if (
+    sessionOrRedirect.session.user.structure !== StructureConseiller.POLE_EMPLOI
+  ) {
     return {
       redirect: {
         destination: '/mes-jeunes',

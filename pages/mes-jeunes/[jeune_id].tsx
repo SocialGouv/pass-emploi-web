@@ -18,7 +18,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -28,9 +28,9 @@ import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -73,12 +73,11 @@ function FicheJeune({
   messageEnvoiGroupeSuccess,
   onglet,
 }: FicheJeuneProps) {
-  const { data: session } = useSession<true>({ required: true })
-
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesServices = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
+  const [conseiller] = useConseiller()
 
   const listeConseillersReduite = conseillers.slice(0, 5)
   const [conseillersAffiches, setConseillersAffiches] = useState<
@@ -115,7 +114,7 @@ function FicheJeune({
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
+  const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
 
   function toggleListeConseillers(): void {
     setExpandListeConseillers(!expandListeConseillers)
@@ -151,11 +150,11 @@ function FicheJeune({
     statuts: StatutAction[],
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
-    const result = await actionsService.getActionsJeune(
-      jeune.id,
-      { page, statuts, tri },
-      session!.accessToken
-    )
+    const result = await actionsService.getActionsJeuneClientSide(jeune.id, {
+      page,
+      statuts,
+      tri,
+    })
 
     setTotalActions(result.metadonnees.nombreTotal)
     return result
@@ -169,9 +168,7 @@ function FicheJeune({
       setShowModaleDeleteJeuneActif(true)
 
       if (motifsSuppression.length === 0) {
-        const result = await jeunesServices.getMotifsSuppression(
-          session!.accessToken
-        )
+        const result = await jeunesServices.getMotifsSuppression()
         setMotifsSuppression(result)
       }
     }
@@ -185,11 +182,7 @@ function FicheJeune({
     payload: SuppressionJeuneFormData
   ): Promise<void> {
     try {
-      await jeunesServices.archiverJeune(
-        jeune.id,
-        payload,
-        session!.accessToken
-      )
+      await jeunesServices.archiverJeune(jeune.id, payload)
       await router.push(
         `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )
@@ -203,7 +196,7 @@ function FicheJeune({
 
   async function supprimerJeuneInactif(): Promise<void> {
     try {
-      await jeunesServices.supprimerJeuneInactif(jeune.id, session!.accessToken)
+      await jeunesServices.supprimerJeuneInactif(jeune.id)
       await router.push(
         `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )
@@ -294,7 +287,7 @@ function FicheJeune({
 
       <DetailsJeune
         jeune={jeune}
-        withSituations={session?.user.structure === UserStructure.MILO}
+        withSituations={conseiller?.structure === StructureConseiller.MILO}
         onDossierMiloClick={trackDossierMiloClick}
       />
 
@@ -345,7 +338,7 @@ function FicheJeune({
           <OngletRdvs
             poleEmploi={isPoleEmploi}
             rdvs={rdvs}
-            idConseiller={session?.user.id ?? ''}
+            idConseiller={conseiller?.id ?? ''}
           />
         </div>
       )}
@@ -388,14 +381,14 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     },
   } = sessionOrRedirect
 
-  const isPoleEmploi = structure === UserStructure.POLE_EMPLOI
+  const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, conseillers, rdvs, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
       context.query.jeune_id as string,
       accessToken
     ),
-    jeunesService.getConseillersDuJeune(
+    jeunesService.getConseillersDuJeuneServerSide(
       context.query.jeune_id as string,
       accessToken
     ),
@@ -407,9 +400,12 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
         ),
     isPoleEmploi
       ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : actionsService.getActionsJeune(
+      : actionsService.getActionsJeuneServerSide(
           context.query.jeune_id as string,
-          { page, statuts: [] },
+          {
+            page,
+            statuts: [],
+          },
           accessToken
         ),
   ])

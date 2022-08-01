@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -9,7 +9,6 @@ import NouvelleAction, {
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
-import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -72,7 +71,7 @@ describe('NouvelleAction', () => {
 
       // When
       await act(async () => {
-        renderWithSession(
+        render(
           <DIProvider dependances={{ actionsService }}>
             <NouvelleAction
               idJeune='id-jeune'
@@ -170,9 +169,7 @@ describe('NouvelleAction', () => {
                 intitule: actionsPredefinies[3].content,
                 commentaire: 'Commentaire action',
               },
-              '1',
-              'id-jeune',
-              'accessToken'
+              'id-jeune'
             )
           })
 
@@ -250,9 +247,7 @@ describe('NouvelleAction', () => {
                 intitule: 'Intitulé action',
                 commentaire: 'Commentaire action',
               },
-              '1',
-              'id-jeune',
-              'accessToken'
+              'id-jeune'
             )
           })
 

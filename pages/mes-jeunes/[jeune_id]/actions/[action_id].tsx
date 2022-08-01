@@ -9,13 +9,12 @@ import FailureMessage from 'components/FailureMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
-import { UserStructure, UserType } from 'interfaces/conseiller'
+import { StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
@@ -34,7 +33,6 @@ function PageAction({
   messageEnvoiGroupeSuccess,
 }: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
-  const { data: session } = useSession<true>({ required: true })
   const router = useRouter()
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
@@ -44,8 +42,7 @@ function PageAction({
   async function updateAction(statutChoisi: StatutAction): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
       action.id,
-      statutChoisi,
-      session!.accessToken
+      statutChoisi
     )
     setStatut(nouveauStatut)
   }
@@ -53,7 +50,7 @@ function PageAction({
   async function deleteAction(): Promise<void> {
     setDeleteDisabled(true)
     actionsService
-      .deleteAction(action.id, session!.accessToken)
+      .deleteAction(action.id)
       .then(() => {
         router.push({
           pathname: `/mes-jeunes/${jeune.id}/actions`,
@@ -149,7 +146,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (user.structure === UserStructure.POLE_EMPLOI) {
+  if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
 

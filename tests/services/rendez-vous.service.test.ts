@@ -1,5 +1,3 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import {
   typesDeRendezVous,
@@ -12,7 +10,15 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
+
+jest.mock('next-auth/react', () => ({
+  getSession: jest.fn(async () => ({
+    user: { id: 'id-conseiller' },
+    accessToken: 'accessToken',
+  })),
+}))
 
 describe('RendezVousApiService', () => {
   let apiClient: ApiClient
@@ -120,11 +126,7 @@ describe('RendezVousApiService', () => {
       }
 
       // When
-      await rendezVousService.updateRendezVous(
-        'id-rdv',
-        rdvFormData,
-        'accessToken'
-      )
+      await rendezVousService.updateRendezVous('id-rdv', rdvFormData)
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(

@@ -18,8 +18,8 @@ import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
@@ -43,7 +43,7 @@ function EditionRdv({
   const router = useRouter()
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
-  const { data: session } = useSession<true>({ required: true })
+  const [conseiller] = useConseiller()
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
@@ -110,17 +110,9 @@ function EditionRdv({
   async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!rdv) {
-      await rendezVousService.postNewRendezVous(
-        session!.user.id,
-        payload,
-        session!.accessToken
-      )
+      await rendezVousService.postNewRendezVous(payload)
     } else {
-      await rendezVousService.updateRendezVous(
-        rdv.id,
-        payload,
-        session!.accessToken
-      )
+      await rendezVousService.updateRendezVous(rdv.id, payload)
     }
 
     const { pathname, query } = getCleanUrlObject(returnTo)
@@ -135,7 +127,7 @@ function EditionRdv({
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
     try {
-      await rendezVousService.deleteRendezVous(rdv!.id, session!.accessToken)
+      await rendezVousService.deleteRendezVous(rdv!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
       await router.push({
         pathname,
@@ -185,8 +177,8 @@ function EditionRdv({
         rdv={rdv}
         redirectTo={returnTo}
         aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
-        conseillerIsCreator={!rdv || session?.user.id === rdv.createur?.id}
-        conseillerEmail={session?.user.email ?? ''}
+        conseillerIsCreator={!rdv || conseiller?.id === rdv.createur?.id}
+        conseillerEmail={conseiller?.email ?? ''}
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
         leaveWithChanges={openLeavePageModal}
@@ -238,7 +230,10 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  const jeunes = await jeunesService.getJeunesDuConseiller(user.id, accessToken)
+  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
+    user.id,
+    accessToken
+  )
   const typesRendezVous = await rendezVousService.getTypesRendezVous(
     accessToken
   )

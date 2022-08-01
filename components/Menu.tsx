@@ -3,9 +3,9 @@ import React, { useState } from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
 import MenuLink from 'components/ui/MenuLink'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
-import useSession from 'utils/auth/useSession'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export enum MenuItem {
   Jeunes = 'Jeunes',
@@ -19,11 +19,11 @@ type SidebarProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
 export default function Menu({ showLabelsOnSmallScreen, items }: SidebarProps) {
   const router = useRouter()
   const [isLoggedOut, setIsLoggedOut] = useState(false)
-  const { data: session } = useSession<true>({ required: true })
+  const [conseiller] = useConseiller()
 
-  const isMilo = session?.user.structure === UserStructure.MILO
-  const isPoleEmploi = session?.user.structure === UserStructure.POLE_EMPLOI
-  const isSuperviseur = session?.user.estSuperviseur
+  const isMilo = conseiller?.structure === StructureConseiller.MILO
+  const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
+  const isSuperviseur = conseiller?.estSuperviseur
 
   const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
 
@@ -89,11 +89,11 @@ export default function Menu({ showLabelsOnSmallScreen, items }: SidebarProps) {
         )}
       </div>
       <div className='flex flex-col'>
-        {session && items.includes(MenuItem.Profil) && (
+        {conseiller && items.includes(MenuItem.Profil) && (
           <MenuLink
             isActive={isCurrentRoute('/profil')}
             href='/profil'
-            label={session.user.name}
+            label={`${conseiller.firstName} ${conseiller.lastName}`}
             iconName={IconName.Profil}
             className='break-all'
             showLabelOnSmallScreen={showLabelsOnSmallScreen}

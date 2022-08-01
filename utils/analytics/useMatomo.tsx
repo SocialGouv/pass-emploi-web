@@ -1,25 +1,25 @@
 import { useEffect } from 'react'
 
 import { trackPage, userStructureDimensionString } from 'utils/analytics/matomo'
-import useSession from 'utils/auth/useSession'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 function useMatomo(title: string | undefined) {
-  const { data: session } = useSession<false>({ required: false })
+  const [conseiller] = useConseiller()
 
   useEffect(() => {
     if (!title) {
       return
     }
 
-    const structure = !session
+    const structure = !conseiller
       ? 'visiteur'
-      : userStructureDimensionString(session.user.structure)
+      : userStructureDimensionString(conseiller.structure)
 
     trackPage({
       structure: structure,
       customTitle: title,
     })
-  }, [session, title])
+  }, [conseiller, title])
 }
 
 export default useMatomo

@@ -1,7 +1,10 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
+
+jest.mock('next-auth/react', () => ({
+  getSession: jest.fn(async () => ({ accessToken: 'accessToken' })),
+}))
 
 describe('FichierApiService', () => {
   let apiClient: ApiClient
@@ -19,7 +22,7 @@ describe('FichierApiService', () => {
         type: 'image/png',
       })
       // When
-      await fichiersService.uploadFichier(['id-jeune'], file, 'accessToken')
+      await fichiersService.uploadFichier(['id-jeune'], file)
 
       // THEN
       expect(apiClient.postFile).toHaveBeenCalledWith(
@@ -32,7 +35,7 @@ describe('FichierApiService', () => {
   describe('.deleteFichier', () => {
     it('supprime le fichier', async () => {
       // WHEN
-      await fichiersService.deleteFichier('id-fichier', 'accessToken')
+      await fichiersService.deleteFichier('id-fichier')
 
       // THEN
       expect(apiClient.delete).toHaveBeenCalledWith(

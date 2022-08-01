@@ -14,6 +14,13 @@ import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
+jest.mock('next-auth/react', () => ({
+  getSession: jest.fn(async () => ({
+    user: { id: 'idConseiller' },
+    accessToken: 'accessToken',
+  })),
+}))
+
 describe('JeunesApiService', () => {
   let apiClient: ApiClient
   let jeunesService: JeunesApiService
@@ -23,7 +30,25 @@ describe('JeunesApiService', () => {
     jeunesService = new JeunesApiService(apiClient)
   })
 
-  describe('.getJeunesDuConseiller', () => {
+  describe('.getJeunesDuConseillerClientSide', () => {
+    it('renvoie les jeunes du conseiller', async () => {
+      // Given
+      const jeunesJson = desItemsJeunesJson()
+      ;(apiClient.get as jest.Mock).mockResolvedValue({ content: jeunesJson })
+
+      // When
+      const actual = await jeunesService.getJeunesDuConseillerClientSide()
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        `/conseillers/idConseiller/jeunes`,
+        'accessToken'
+      )
+      expect(actual).toEqual(desItemsJeunes())
+    })
+  })
+
+  describe('.getJeunesDuConseillerServerSide', () => {
     it('renvoie les jeunes du conseiller', async () => {
       // Given
       const idConseiller = 'idConseiller'
@@ -32,7 +57,7 @@ describe('JeunesApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
-      const actual = await jeunesService.getJeunesDuConseiller(
+      const actual = await jeunesService.getJeunesDuConseillerServerSide(
         idConseiller,
         accessToken
       )
@@ -49,7 +74,7 @@ describe('JeunesApiService', () => {
   describe('.getJeunesDuConseillerParEmail', () => {
     const email = 'conseiller@email.com'
     const accessToken = 'accessToken'
-    const conseiller = unConseiller()
+    const conseiller = unConseiller({ id: 'idConseiller' })
     const jeunes = desItemsJeunesJson()
     let actual: { idConseiller: string; jeunes: JeuneFromListe[] }
     beforeEach(async () => {
@@ -62,10 +87,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      actual = await jeunesService.getJeunesDuConseillerParEmail(
-        email,
-        accessToken
-      )
+      actual = await jeunesService.getJeunesDuConseillerParEmail(email)
     })
 
     it('récupère le conseiller par son email', async () => {
@@ -190,8 +212,7 @@ describe('JeunesApiService', () => {
         idConseillerInitial,
         emailConseillerDestination,
         idsJeunes,
-        estTemporaire,
-        accessToken
+        estTemporaire
       )
 
       // THEN
@@ -214,7 +235,7 @@ describe('JeunesApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await jeunesService.supprimerJeuneInactif('id-jeune', accessToken)
+      await jeunesService.supprimerJeuneInactif('id-jeune')
 
       // Then
       expect(apiClient.delete).toHaveBeenCalledWith(
@@ -233,11 +254,7 @@ describe('JeunesApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await jeunesService.archiverJeune(
-        'id-jeune',
-        payloadFormData,
-        accessToken
-      )
+      await jeunesService.archiverJeune('id-jeune', payloadFormData)
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -248,7 +265,7 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.getConseillersDuJeune', () => {
+  describe('.getConseillersDuJeuneClientSide', () => {
     it('renvoie les conseillers du jeune', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
@@ -256,7 +273,28 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await jeunesService.getConseillersDuJeune(
+      const actual = await jeunesService.getConseillersDuJeuneClientSide(
+        'id-jeune'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/jeunes/id-jeune/conseillers',
+        'accessToken'
+      )
+      expect(actual).toEqual(desConseillersJeune())
+    })
+  })
+
+  describe('.getConseillersDuJeuneServerSide', () => {
+    it('renvoie les conseillers du jeune', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: desConseillersJeuneJson(),
+      })
+
+      // When
+      const actual = await jeunesService.getConseillersDuJeuneServerSide(
         'id-jeune',
         'accessToken'
       )
@@ -269,6 +307,7 @@ describe('JeunesApiService', () => {
       expect(actual).toEqual(desConseillersJeune())
     })
   })
+
   describe('.getMotifsSuppression', () => {
     it('renvoie les motifs de suppression', async () => {
       // Given
@@ -285,7 +324,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await jeunesService.getMotifsSuppression(accessToken)
+      const actual = await jeunesService.getMotifsSuppression()
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(

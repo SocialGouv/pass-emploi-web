@@ -1,14 +1,12 @@
-import { screen, within } from '@testing-library/react'
+ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
 import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
 import { JeunesService } from 'services/jeunes.service'
-import renderWithSession from 'tests/renderWithSession'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -21,20 +19,10 @@ describe('Reaffectation', () => {
       // Given
       jeunesService = mockedJeunesService()
       // When
-      renderWithSession(
+      render(
         <DIProvider dependances={{ jeunesService }}>
           <Reaffectation withoutChat={true} pageTitle='' />
-        </DIProvider>,
-        {
-          user: {
-            id: '1',
-            name: 'Nils Tavernier',
-            structure: UserStructure.POLE_EMPLOI,
-            estSuperviseur: true,
-            email: 'fake@email.com',
-            estConseiller: true,
-          },
-        }
+        </DIProvider>
       )
     })
 
@@ -140,7 +128,7 @@ describe('Reaffectation', () => {
         // THEN
         expect(
           jeunesService.getJeunesDuConseillerParEmail
-        ).toHaveBeenCalledWith(emailConseillerInitial, 'accessToken')
+        ).toHaveBeenCalledWith(emailConseillerInitial)
       })
 
       it('affiche les jeunes du conseiller', async () => {
@@ -193,8 +181,7 @@ describe('Reaffectation', () => {
             idConseillerInitial,
             emailConseillerDestination,
             [jeunes[0].id, jeunes[2].id],
-            estTemporaire,
-            'accessToken'
+            estTemporaire
           )
         })
       })

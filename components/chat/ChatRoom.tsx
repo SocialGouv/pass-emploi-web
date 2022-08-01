@@ -10,8 +10,8 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import { trackEvent } from 'utils/analytics/matomo'
-import useSession from 'utils/auth/useSession'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
 interface ChatRoomProps {
@@ -19,10 +19,10 @@ interface ChatRoomProps {
 }
 
 export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
-  const { data: session } = useSession<true>({ required: true })
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const messagesService = useDependance<MessagesService>('messagesService')
 
+  const [conseiller] = useConseiller()
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
@@ -43,7 +43,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   function toggleFlag(idChat: string, flagged: boolean): void {
     messagesService.toggleFlag(idChat, flagged)
     trackEvent({
-      structure: session!.user.structure,
+      structure: conseiller!.structure,
       categorie: 'Conversation suivie',
       action: 'ChatRoom',
       nom: flagged.toString(),
@@ -51,12 +51,12 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   }
 
   useEffect(() => {
-    if (idCurrentJeune && session) {
+    if (idCurrentJeune) {
       jeunesService
-        .getConseillersDuJeune(idCurrentJeune, session.accessToken)
+        .getConseillersDuJeuneClientSide(idCurrentJeune)
         .then((conseillersJeunes) => setConseillers(conseillersJeunes))
     }
-  }, [jeunesService, idCurrentJeune, session])
+  }, [jeunesService, idCurrentJeune])
 
   useEffect(() => {
     if (idCurrentJeune) {

@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from 'next/types'
 
 import { mockedJeunesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { getServerSideProps } from 'pages/mes-jeunes/milo/[numero_dossier]'
 import { JeunesService } from 'services/jeunes.service'
 import { trackSSR } from 'utils/analytics/matomo'
@@ -37,7 +37,7 @@ describe('Fiche Jeune MiLo', () => {
           // Given
           ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
             validSession: true,
-            session: { user: { structure: UserStructure.POLE_EMPLOI } },
+            session: { user: { structure: StructureConseiller.POLE_EMPLOI } },
           })
 
           // When
@@ -58,7 +58,7 @@ describe('Fiche Jeune MiLo', () => {
           // Given
           ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
             validSession: true,
-            session: { user: { structure: UserStructure.MILO } },
+            session: { user: { structure: StructureConseiller.MILO } },
           })
           jeunesService = mockedJeunesService()
           ;(withDependance as jest.Mock).mockReturnValue(jeunesService)

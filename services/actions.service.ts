@@ -1,3 +1,5 @@
+import { getSession } from 'next-auth/react'
+
 import { ApiClient } from 'clients/api.client'
 import {
   Action,
@@ -27,26 +29,27 @@ export interface ActionsService {
     accessToken: string
   ): Promise<TotalActions[]>
 
-  getActionsJeune(
+  getActionsJeuneServerSide(
     idJeune: string,
     options: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
+  getActionsJeuneClientSide(
+    idJeune: string,
+    options: { page: number; statuts: StatutAction[]; tri?: string }
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   createAction(
     action: { intitule: string; commentaire: string },
-    idConseiller: string,
-    idJeune: string,
-    accessToken: string
+    idJeune: string
   ): Promise<void>
 
   updateAction(
     idAction: string,
-    nouveauStatut: StatutAction,
-    accessToken: string
+    nouveauStatut: StatutAction
   ): Promise<StatutAction>
 
-  deleteAction(idAction: string, accessToken: string): Promise<void>
+  deleteAction(idAction: string): Promise<void>
 }
 
 export class ActionsApiService implements ActionsService {
@@ -88,13 +91,13 @@ export class ActionsApiService implements ActionsService {
     }))
   }
 
-  async getActionsJeune(
+  private async getActionsJeune(
     idJeune: string,
     {
-      page,
-      statuts,
       tri,
-    }: { page: number; statuts: StatutAction[]; tri: string },
+      statuts,
+      page,
+    }: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
     const triActions = tri ?? 'date_decroissante'
@@ -124,35 +127,55 @@ export class ActionsApiService implements ActionsService {
     }
   }
 
+  async getActionsJeuneClientSide(
+    idJeune: string,
+    options: {
+      page: number
+      statuts: StatutAction[]
+      tri?: string
+    }
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const session = await getSession()
+    return this.getActionsJeune(idJeune, options, session!.accessToken)
+  }
+
+  getActionsJeuneServerSide(
+    idJeune: string,
+    options: { page: number; statuts: StatutAction[]; tri?: string },
+    accessToken: string
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    return this.getActionsJeune(idJeune, options, accessToken)
+  }
+
   async createAction(
     action: { intitule: string; commentaire: string },
-    idConseiller: string,
-    idJeune: string,
-    accessToken: string
+    idJeune: string
   ): Promise<void> {
+    const session = await getSession()
     const payload = { content: action.intitule, comment: action.commentaire }
     await this.apiClient.post(
-      `/conseillers/${idConseiller}/jeunes/${idJeune}/action`,
+      `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,
       payload,
-      accessToken
+      session!.accessToken
     )
   }
 
   async updateAction(
     idAction: string,
-    nouveauStatut: StatutAction,
-    accessToken: string
+    nouveauStatut: StatutAction
   ): Promise<StatutAction> {
+    const session = await getSession()
     await this.apiClient.put(
       `/actions/${idAction}`,
       { status: actionStatusToJson(nouveauStatut) },
-      accessToken
+      session!.accessToken
     )
     return nouveauStatut
   }
 
-  async deleteAction(idAction: string, accessToken: string): Promise<void> {
-    await this.apiClient.delete(`/actions/${idAction}`, accessToken)
+  async deleteAction(idAction: string): Promise<void> {
+    const session = await getSession()
+    await this.apiClient.delete(`/actions/${idAction}`, session!.accessToken)
   }
 }
 

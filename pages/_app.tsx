@@ -1,8 +1,7 @@
 import ProgressBar from '@badrap/bar-of-progress'
-import { SessionProvider } from 'next-auth/react'
-import { AppProps } from 'next/app'
+import { AppProps as NextAppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
-import React, { ReactNode, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 import { Footer } from 'components/layouts/Footer'
 import Layout from 'components/layouts/Layout'
@@ -29,10 +28,7 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
-export default function App({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppProps): ReactNode {
+export default function CustomApp({ Component, pageProps }: NextAppProps) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
   const isLogoutPage = router.pathname === '/logout'
@@ -43,25 +39,25 @@ export default function App({
   }, [])
 
   return (
-    <SessionProvider session={session}>
+    <>
       <DIProvider dependances={Container.getDIContainer().dependances}>
-        {isLoginPage || isLogoutPage ? (
-          <div className='flex flex-col justify-center h-screen'>
-            <Component {...pageProps} />
-            {isLoginPage && <Footer />}
-          </div>
-        ) : (
-          <ChatCredentialsProvider>
-            <ConseillerProvider>
+        <ConseillerProvider>
+          {isLoginPage || isLogoutPage ? (
+            <div className='flex flex-col justify-center h-screen'>
+              <Component {...pageProps} />
+              {isLoginPage && <Footer />}
+            </div>
+          ) : (
+            <ChatCredentialsProvider>
               <CurrentJeuneProvider>
                 <Layout>
                   <Component {...pageProps} />
                 </Layout>
               </CurrentJeuneProvider>
-            </ConseillerProvider>
-          </ChatCredentialsProvider>
-        )}
+            </ChatCredentialsProvider>
+          )}
+        </ConseillerProvider>
       </DIProvider>
-    </SessionProvider>
+    </>
   )
 }

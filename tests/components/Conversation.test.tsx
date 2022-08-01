@@ -1,36 +1,33 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Session } from 'next-auth'
 import React from 'react'
 
 import Conversation from 'components/chat/Conversation'
+import { unConseiller } from 'fixtures/conseiller'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
-import { UserStructure } from 'interfaces/conseiller'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithSession from 'tests/renderWithSession'
+import renderWithChatCredentials from 'tests/renderWithChatCredentials'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { formatDayDate } from 'utils/date'
 import { DIProvider } from 'utils/injectionDependances'
+import { Dependencies } from 'utils/injectionDependances/container'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
-  let onBack: () => void
   let messagesService: MessagesService
   let fichiersService: FichiersService
-  let conseiller: Session.HydratedUser
   let conseillersJeunes: ConseillerHistorique[]
   let rerender: (children: JSX.Element) => void
   const messagesParJour = desMessagesParJour()
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
     conseillersJeunes = desConseillersJeune()
-    onBack = jest.fn()
     messagesService = mockedMessagesService({
-      observeJeuneChat: jest.fn(),
       observeJeuneReadingDate: jest.fn(
         (idChat: string, fn: (date: Date) => void) => {
           fn(new Date())
@@ -54,25 +51,13 @@ describe('<Conversation />', () => {
       deleteFichier: jest.fn().mockResolvedValue(undefined),
     }
 
-    conseiller = {
-      id: 'idConseiller',
-      name: 'Taverner',
-      structure: UserStructure.POLE_EMPLOI,
-      estSuperviseur: false,
-      email: 'mail@mail.com',
-      estConseiller: true,
-    }
-
     await act(async () => {
-      const renderResult = await renderWithSession(
-        <DIProvider dependances={{ messagesService, fichiersService }}>
-          <Conversation
-            jeuneChat={jeuneChat}
-            conseillers={conseillersJeunes}
-            onBack={onBack}
-          />
-        </DIProvider>,
-        { user: conseiller }
+      const renderResult = await renderWithChatCredentials(
+        buildConversation(
+          { messagesService, fichiersService },
+          jeuneChat,
+          conseillersJeunes
+        )
       )
       rerender = renderResult.rerender
     })
@@ -116,13 +101,11 @@ describe('<Conversation />', () => {
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
-      <DIProvider dependances={{ messagesService, fichiersService }}>
-        <Conversation
-          jeuneChat={newJeuneChat}
-          conseillers={conseillersJeunes}
-          onBack={onBack}
-        />
-      </DIProvider>
+      buildConversation(
+        { messagesService, fichiersService },
+        newJeuneChat,
+        conseillersJeunes
+      )
     )
     // Then
     expect(() => screen.getByText('imageupload.png')).toThrow()
@@ -194,13 +177,8 @@ describe('<Conversation />', () => {
 
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
-        conseiller: {
-          id: conseiller.id,
-          structure: conseiller.structure,
-        },
         jeuneChat: jeuneChat,
         newMessage: newMessage,
-        accessToken: 'accessToken',
         cleChiffrement: 'cleChiffrement',
       })
     })
@@ -232,8 +210,7 @@ describe('<Conversation />', () => {
       expect(uploadFileButton).toHaveAttribute('disabled', '')
       expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
         ['jeune-1'],
-        file,
-        'accessToken'
+        file
       )
     })
 
@@ -245,10 +222,7 @@ describe('<Conversation />', () => {
       // When
       await userEvent.click(boutonDeleteFichier)
       // Then
-      expect(fichiersService.deleteFichier).toHaveBeenCalledWith(
-        'id-fichier',
-        'accessToken'
-      )
+      expect(fichiersService.deleteFichier).toHaveBeenCalledWith('id-fichier')
       expect(() => screen.getByText('imageupload.png')).toThrow()
     })
 
@@ -277,3 +251,21 @@ describe('<Conversation />', () => {
     })
   })
 })
+
+function buildConversation(
+  dependances: Partial<Dependencies>,
+  jeuneChat: JeuneChat,
+  conseillersJeunes: ConseillerHistorique[]
+): JSX.Element {
+  return (
+    <DIProvider dependances={dependances}>
+      <ConseillerProvider conseiller={unConseiller()}>
+        <Conversation
+          jeuneChat={jeuneChat}
+          conseillers={conseillersJeunes}
+          onBack={jest.fn()}
+        />
+      </ConseillerProvider>
+    </DIProvider>
+  )
+}

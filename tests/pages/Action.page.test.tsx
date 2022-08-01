@@ -1,22 +1,20 @@
-import { RenderResult, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { GetServerSidePropsResult } from 'next'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
 
 import { uneAction } from 'fixtures/action'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
-import { GetServerSidePropsResult } from 'next'
-import { GetServerSidePropsContext } from 'next/types'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-
-import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -30,17 +28,11 @@ describe("Page Détail d'une action d'un jeune", () => {
       nom: 'Sanfamiye',
     }
     let actionsService: ActionsService
-    let page: RenderResult
     beforeEach(() => {
-      actionsService = {
-        getAction: jest.fn(),
-        countActionsJeunes: jest.fn(),
-        getActionsJeune: jest.fn(),
-        createAction: jest.fn(),
+      actionsService = mockedActionsService({
         updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
-        deleteAction: jest.fn(),
-      }
-      page = renderWithSession(
+      })
+      render(
         <DIProvider dependances={{ actionsService }}>
           <PageAction action={action} jeune={jeune} pageTitle='' />
         </DIProvider>
@@ -65,8 +57,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         // Then
         expect(actionsService.updateAction).toHaveBeenCalledWith(
           action.id,
-          StatutAction.Commencee,
-          'accessToken'
+          StatutAction.Commencee
         )
       })
     })
