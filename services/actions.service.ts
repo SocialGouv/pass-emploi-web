@@ -155,7 +155,7 @@ export class ActionsApiService implements ActionsService {
     const payload = {
       content: action.intitule,
       comment: action.commentaire,
-      dateEcheance: action.dateEcheance,
+      dateEcheance: new Date(action.dateEcheance).toISOString(),
     }
     await this.apiClient.post(
       `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,

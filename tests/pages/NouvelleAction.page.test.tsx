@@ -130,7 +130,7 @@ describe('NouvelleAction', () => {
         // Then
         expect(
           screen.getByLabelText(/Définir une date d’échéance/)
-        ).not.toHaveAttribute('required')
+        ).toHaveAttribute('required')
       })
 
       describe('action prédéfinie remplie', () => {
@@ -144,6 +144,8 @@ describe('NouvelleAction', () => {
           const commentaire = screen.getByRole('textbox', {
             name: /Commentaire/,
           })
+
+          const dateEcheance = screen.getByLabelText(/date d’échéance/)
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
           await userEvent.selectOptions(
@@ -151,6 +153,7 @@ describe('NouvelleAction', () => {
             actionsPredefinies[3].content
           )
           await userEvent.type(commentaire, 'Commentaire action')
+          await userEvent.type(dateEcheance, '2022-07-30')
         })
 
         it("requiert la sélection d'une action", async () => {
@@ -175,6 +178,7 @@ describe('NouvelleAction', () => {
               {
                 intitule: actionsPredefinies[3].content,
                 commentaire: 'Commentaire action',
+                dateEcheance: '2022-07-30',
               },
               'id-jeune'
             )
@@ -220,7 +224,7 @@ describe('NouvelleAction', () => {
         // Then
         expect(
           screen.getByLabelText(/Définir une date d’échéance/)
-        ).not.toHaveAttribute('required')
+        ).toHaveAttribute('required')
       })
 
       describe('action personnalisée remplie', () => {
@@ -232,10 +236,13 @@ describe('NouvelleAction', () => {
           const commentaire = screen.getByRole('textbox', {
             name: /Commentaire/,
           })
+          const dateEcheance = screen.getByLabelText(/date d’échéance/)
+
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
           await userEvent.type(intitule, 'Intitulé action')
           await userEvent.type(commentaire, 'Commentaire action')
+          await userEvent.type(dateEcheance, '2022-07-30')
         })
 
         it("requiert l'intitulé de l'action", async () => {
@@ -260,6 +267,7 @@ describe('NouvelleAction', () => {
               {
                 intitule: 'Intitulé action',
                 commentaire: 'Commentaire action',
+                dateEcheance: '2022-07-30',
               },
               'id-jeune'
             )
