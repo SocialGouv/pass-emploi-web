@@ -26,6 +26,9 @@ export const DetailsJeune = ({
   metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
+  const totalFavoris = metadonneesFavoris
+    ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
+    : 0
   return (
     <>
       <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
@@ -137,10 +140,7 @@ export const DetailsJeune = ({
           />
           <h2 className='text-base-medium mr-2'>Favoris</h2>
 
-          <Badge
-            count={metadonneesFavoris?.offres.total ?? 0}
-            bgColor='favorite_heart'
-          />
+          <Badge count={totalFavoris} bgColor='favorite_heart' />
         </div>
         <dl>
           <div className='flex items-center mb-2'>
