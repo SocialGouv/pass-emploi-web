@@ -1,7 +1,6 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useMemo } from 'react'
 
-import NoteIcon from '../../assets/icons/note_outline.svg'
 import IconComponent, { IconName } from '../ui/IconComponent'
 
 import StatusTag from 'components/action/StatusTag'
@@ -14,6 +13,10 @@ interface ActionRowProps {
 }
 
 export default function ActionRow({ action, jeuneId }: ActionRowProps) {
+  const actionEstEnRetard = useMemo(() => {
+    return new Date(action.dateEcheance).getTime() < new Date().getTime()
+  }, [action])
+
   return (
     <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
       <a
@@ -30,7 +33,8 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               {action.content}
             </span>
             {action.comment && (
-              <NoteIcon
+              <IconComponent
+                name={IconName.Note}
                 role='img'
                 aria-label="Un commentaire a été ajouté à l'action"
                 focusable='false'
@@ -45,8 +49,27 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
           </span>
         </div>
         <div role='cell' className='table-cell relative py-4 pr-4 w-[120px]'>
-          <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
-            <span>{formatDayDate(new Date(action.dateEcheance))}</span>
+          <span className='flex flex-row items-center border-r border-grey_500 group-hover:border-blanc'>
+            <span
+              className={
+                actionEstEnRetard
+                  ? 'text-warning flex flex-row items-center'
+                  : ''
+              }
+            >
+              {actionEstEnRetard ? (
+                <IconComponent
+                  name={IconName.ImportantOutline}
+                  aria-label='en retard'
+                  aria-hidden='true'
+                  focusable='false'
+                  className='h-3 mr-1'
+                />
+              ) : (
+                <></>
+              )}
+              {formatDayDate(new Date(action.dateEcheance))}
+            </span>
           </span>
         </div>
         <div
