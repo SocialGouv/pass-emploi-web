@@ -1,22 +1,22 @@
 import { RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { GetServerSidePropsResult } from 'next'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
+
+import renderWithSession from '../renderWithSession'
 
 import { uneAction } from 'fixtures/action'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
-import { GetServerSidePropsResult } from 'next'
-import { GetServerSidePropsContext } from 'next/types'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
-import React from 'react'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-
-import renderWithSession from '../renderWithSession'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -48,6 +48,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     it("Devrait afficher les information d'une action", () => {
+      expect(screen.getByText('20/02/2022')).toBeInTheDocument()
       expect(screen.getByText(action.comment)).toBeInTheDocument()
       expect(screen.getByText('15/02/2022')).toBeInTheDocument()
       expect(screen.getByText('16/02/2022')).toBeInTheDocument()

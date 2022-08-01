@@ -190,7 +190,7 @@ describe('ActionsApiService', () => {
         {
           intitule: 'content',
           commentaire: 'comment',
-          dateEcheance: '2022-07-30T00:00:00.000Z',
+          dateEcheance: '2022-07-30',
         },
         'id-conseiller',
         'id-jeune',

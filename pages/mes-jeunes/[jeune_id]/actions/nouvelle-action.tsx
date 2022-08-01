@@ -63,7 +63,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
     const action = {
       intitule,
       commentaire,
-      dateEcheance: new Date(dateEcheance).toISOString(),
+      dateEcheance,
     }
     await actionsService.createAction(
       action,
@@ -146,13 +146,14 @@ function EditionAction({ idJeune }: EditionActionProps) {
               className='text-base-medium mb-2'
             >
               <span className='mt-10 text-md text-content_color block'>
-                Définir une date d’échéance
+                * Définir une date d’échéance
               </span>
             </label>
             <input
               type='date'
               id='date-echeance-action-predefinie'
               name='date'
+              required={true}
               defaultValue={dateEcheance}
               onChange={(e) => setDateEcheance(e.target.value)}
               className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
@@ -201,13 +202,14 @@ function EditionAction({ idJeune }: EditionActionProps) {
               className='text-base-medium mb-2'
             >
               <span className='mt-10 text-md text-content_color block'>
-                Définir une date d’échéance
+                * Définir une date d’échéance
               </span>
             </label>
             <input
               type='date'
               id='date-echeance-action-personnalisee'
               name='date'
+              required={true}
               defaultValue={dateEcheance}
               onChange={(e) => setDateEcheance(e.target.value)}
               className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
