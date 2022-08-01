@@ -100,7 +100,7 @@ export class ActionsApiService implements ActionsService {
     }: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
-    const triActions = tri ?? 'date_decroissante'
+    const triActions = tri ?? 'date_echeance_decroissante'
     const filtresStatuts = statuts
       .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
       .join('')

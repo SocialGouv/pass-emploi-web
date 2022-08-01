@@ -136,10 +136,7 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.getActionsJeuneClientSide(
         'whatever',
-        {
-          page: 1,
-          statuts: [],
-        }
+        { tri: 'date_decroissante', page: 1, statuts: [] }
       )
 
       // THEN
@@ -217,7 +214,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante',
+        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante',
         'accessToken'
       )
       expect(actual).toStrictEqual({
@@ -245,13 +242,17 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.getActionsJeuneServerSide(
         'whatever',
-        { page: 1, statuts: [StatutAction.Commencee, StatutAction.ARealiser] },
+        {
+          tri: 'date_echeance_decroissante',
+          page: 1,
+          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+        },
         'accessToken'
       )
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
+        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante&statuts=in_progress&statuts=not_started',
         'accessToken'
       )
       expect(actual).toStrictEqual({
