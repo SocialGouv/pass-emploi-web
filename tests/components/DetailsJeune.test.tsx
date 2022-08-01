@@ -1,9 +1,6 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 
-import { RecherchesSauvegardees } from '../../interfaces/jeune'
-import getByDefinitionTerm from '../querySelector'
-
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { unDetailJeune, uneRechercheSauvegardee } from 'fixtures/jeune'
 
@@ -90,6 +87,31 @@ describe('<DetailsJeune>', () => {
     // Then
     expect(screen.getByText(/Offres/)).toBeInTheDocument()
     expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
-    expect(getByDefinitionTerm('Offres :')).toHaveTextContent('12')
+    expect(screen.getByText('Alternance :')).toBeInTheDocument()
+    expect(screen.getByText('Immersion :')).toBeInTheDocument()
+    expect(screen.getByText('Service civique :')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Voir la liste des favoris' })
+    ).toHaveAttribute('href', '/mes-jeunes/jeune-1/favoris')
+  })
+
+  it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', () => {
+    // Given
+    const jeune = unDetailJeune()
+    const recherchesSauvegardees = uneRechercheSauvegardee({
+      autoriseLePartage: false,
+    })
+
+    // When
+    render(
+      <DetailsJeune
+        jeune={jeune}
+        onDossierMiloClick={() => {}}
+        recherchesSauvegardees={recherchesSauvegardees}
+      />
+    )
+
+    // Then
+    expect(() => screen.getByText('Voir la liste des favoris')).toThrow()
   })
 })

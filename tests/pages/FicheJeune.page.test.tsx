@@ -152,6 +152,10 @@ describe('Fiche Jeune', () => {
           const deleteButton = screen.getByText('Supprimer ce compte')
           expect(deleteButton).toBeInTheDocument()
         })
+        it('affiche les informations des favoris du jeune', () => {
+          // Then
+          expect(screen.getByText('Favoris')).toBeInTheDocument()
+        })
       })
 
       describe('Supprimer un compte actif', () => {
@@ -1239,6 +1243,9 @@ describe('Fiche Jeune', () => {
       jeunesService = mockedJeunesService({
         getJeuneDetails: jest.fn(async () => unDetailJeune()),
         getConseillersDuJeune: jest.fn(async () => desConseillersJeune()),
+        getJeuneRecherchesSauvegardees: jest.fn(async () =>
+          uneRechercheSauvegardee()
+        ),
       })
       rendezVousService = mockedRendezVousService({
         getRendezVousJeune: jest.fn(async () =>
@@ -1286,7 +1293,7 @@ describe('Fiche Jeune', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
-            user: { structure: 'MILO' },
+            user: { id: 'id-conseiller', structure: 'MILO' },
           },
           validSession: true,
         })
@@ -1311,6 +1318,7 @@ describe('Fiche Jeune', () => {
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
             conseillers: expect.arrayContaining([]),
+            recherchesSauvegardees: expect.arrayContaining([]),
           },
         })
       })
@@ -1323,6 +1331,16 @@ describe('Fiche Jeune', () => {
         )
         expect(actual).toMatchObject({
           props: { rdvs: [rdvToListItem(rdvAVenir)] },
+        })
+      })
+
+      it('récupère les favoris', async () => {
+        // Then
+        expect(
+          jeunesService.getJeuneRecherchesSauvegardees
+        ).toHaveBeenCalledWith('id-conseiller', 'id-jeune', 'accessToken')
+        expect(actual).toMatchObject({
+          props: { recherchesSauvegardees: uneRechercheSauvegardee() },
         })
       })
 

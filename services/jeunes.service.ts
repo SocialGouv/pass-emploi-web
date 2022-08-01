@@ -1,5 +1,3 @@
-import { uneRechercheSauvegardeeJson } from '../fixtures/jeune'
-
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import {
@@ -238,11 +236,12 @@ export class JeunesApiService implements JeunesService {
     accessToken: string
   ): Promise<RecherchesSauvegardees | undefined> {
     try {
-      const { content: recherchesSauvegardees } =
-        await this.apiClient.get<RecherchesSauvegardeesJson>(
-          `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
-          accessToken
-        )
+      const { content: recherchesSauvegardees } = await this.apiClient.get<{
+        favoris: RecherchesSauvegardeesJson
+      }>(
+        `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
+        accessToken
+      )
       return jsonToRecherchesSauvegardees(recherchesSauvegardees)
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {

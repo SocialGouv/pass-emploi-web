@@ -57,7 +57,7 @@ interface FicheJeuneProps extends PageProps {
     page: number
   }
   conseillers: ConseillerHistorique[]
-  recherchesSauvegardees: RecherchesSauvegardees
+  recherchesSauvegardees?: RecherchesSauvegardees
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   rdvSuppressionSuccess?: boolean
@@ -305,7 +305,7 @@ function FicheJeune({
         onDossierMiloClick={trackDossierMiloClick}
       />
 
-      <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
+      <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
         <h2 className='text-base-medium mb-4'>Historique des conseillers</h2>
         <ListeConseillersJeune
           id='liste-conseillers'
