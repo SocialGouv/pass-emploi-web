@@ -4,7 +4,7 @@ import React, { useMemo } from 'react'
 import IconComponent, { IconName } from '../ui/IconComponent'
 
 import StatusTag from 'components/action/StatusTag'
-import { Action } from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { formatDayDate } from 'utils/date'
 
 interface ActionRowProps {
@@ -14,7 +14,11 @@ interface ActionRowProps {
 
 export default function ActionRow({ action, jeuneId }: ActionRowProps) {
   const actionEstEnRetard = useMemo(() => {
-    return new Date(action.dateEcheance).getTime() < new Date().getTime()
+    return (
+      action.status !== StatutAction.Annulee &&
+      action.status !== StatutAction.Terminee &&
+      new Date(action.dateEcheance).getTime() < new Date().getTime()
+    )
   }, [action])
 
   return (
