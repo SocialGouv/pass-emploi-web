@@ -17,21 +17,21 @@ const propsStatutsActions: {
   },
   Annulee: {
     label: 'Annulée',
-    color: 'accent_3',
-    altColor: 'accent_3_lighten',
-    iconName: IconName.Check,
-  },
-  Commencee: {
-    label: 'Commencée',
     color: 'accent_2',
     altColor: 'accent_2_lighten',
     iconName: IconName.Check,
   },
+  Commencee: {
+    label: 'Commencée',
+    color: 'accent_3',
+    altColor: 'accent_3_lighten',
+    iconName: IconName.Check,
+  },
   Terminee: {
     label: 'Terminée',
-    color: 'warning',
-    altColor: 'warning_lighten',
-    iconName: IconName.Cancel,
+    color: 'accent_2',
+    altColor: 'accent_2_lighten',
+    iconName: IconName.Check,
   },
 }
 
