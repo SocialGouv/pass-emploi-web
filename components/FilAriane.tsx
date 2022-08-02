@@ -1,32 +1,43 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-import IconComponent, { IconName } from './ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface FilArianeProps {
   currentPath: string
+  currentRoute: string
 }
 
-export default function FilAriane({ currentPath }: FilArianeProps) {
+export default function FilAriane({
+  currentPath,
+  currentRoute,
+}: FilArianeProps) {
   const [ariane, setAriane] = useState<{ fragment: string; href: string }[]>([])
+
+  const routeToFragment: { [key: string]: string } = {
+    '/mes-jeunes': 'Mes jeunes',
+    '/mes-jeunes/[jeune_id]': 'Fiche jeune',
+    '/mes-jeunes/[jeune_id]/actions': 'Actions',
+    '/mes-jeunes/[jeune_id]/actions/[action_id]': 'Détail action',
+  }
 
   useEffect(() => {
     const crumbs: { fragment: string; href: string }[] = []
-    currentPath
-      .split('/')
-      .slice(1)
-      .forEach((fragment, index) => {
-        if (index > 0) {
-          crumbs.push({
-            fragment,
-            href: `${crumbs[index - 1].href}/${fragment}`,
-          })
-        } else {
-          crumbs.push({ fragment, href: `/${fragment}` })
-        }
+    const splittedPath = currentPath.split('/').slice(1)
+    const splittedRoute = currentRoute.split('/').slice(1)
+    let rebuiltPath = ''
+    let rebuiltRoute = ''
+
+    splittedPath.forEach((fragment, index) => {
+      rebuiltPath += `/${fragment}`
+      rebuiltRoute += `/${splittedRoute[index]}`
+      crumbs.push({
+        fragment: routeToFragment[rebuiltRoute] ?? fragment,
+        href: rebuiltPath,
       })
+    })
     setAriane(crumbs.length > 1 ? crumbs : [])
-  }, [currentPath])
+  }, [currentPath, currentRoute])
 
   return (
     <nav aria-label="Fil d'ariane">

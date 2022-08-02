@@ -85,7 +85,8 @@ export default function Layout({ children }: LayoutProps) {
           className={`${styles.page} ${withChat ? styles.page_when_chat : ''}`}
         >
           <Header
-            currentPath={router.asPath}
+            currentPath={router.asPath.split('?')[0]}
+            currentRoute={router.route}
             returnTo={returnTo}
             pageHeader={pageHeader ?? pageTitle}
           />
