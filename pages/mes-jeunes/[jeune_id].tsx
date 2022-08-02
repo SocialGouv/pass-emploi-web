@@ -247,7 +247,17 @@ function FicheJeune({
       )}
 
       {!jeune.isActivated && (
-        <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
+        <>
+          <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
+          <div className='mb-8'>
+            <InformationMessage
+              content={[
+                'Le lien d’activation est valable 12h.',
+                'Si le délai est dépassé, veuillez orienter ce bénéficiaire vers l’option : mot de passe oublié.',
+              ]}
+            />
+          </div>
+        </>
       )}
 
       {jeune.isReaffectationTemporaire && (
