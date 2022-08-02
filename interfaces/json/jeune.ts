@@ -143,10 +143,10 @@ export function jsonToMetadonneesFavoris({
     autoriseLePartage: autoriseLePartage ?? null,
     offres: {
       total: offres.total,
-      nombreOffresEmploi: offres.nombreOffresAlternance,
+      nombreOffresEmploi: offres.nombreOffresEmploi,
       nombreOffresAlternance: offres.nombreOffresAlternance,
       nombreOffresImmersion: offres.nombreOffresImmersion,
-      nombreOffresServiceCivique: offres.nombreOffresEmploi,
+      nombreOffresServiceCivique: offres.nombreOffresServiceCivique,
     },
     recherches: {
       total: recherches.total,
