@@ -8,7 +8,7 @@ export enum QueryParam {
   suppressionBeneficiaire = 'suppression',
   // Action
   creationAction = 'creationAction',
-  suppressionAction = 'suppression',
+  suppressionAction = 'suppressionAction',
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',

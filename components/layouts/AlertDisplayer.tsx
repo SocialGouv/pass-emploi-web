@@ -16,7 +16,7 @@ export default function AlertDisplayer({
 }: AlertDisplayerProps) {
   const router = useRouter()
   const [conseiller] = useConseiller()
-  const [alerts, setAlerts] = useState<Alert[]>(ALERTS)
+  const [alerts, setAlerts] = useState<DictAlerts>(ALERTS)
 
   async function closeSuccessAlert(queryParam: QueryParam): Promise<void> {
     const { pathname, query } = parseUrl(router.asPath)
@@ -38,16 +38,18 @@ export default function AlertDisplayer({
 
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
-      {alerts.map(
-        (alert) =>
-          router.query[alert.nom] === QueryValue.succes && (
+      {Object.keys(alerts).map((key) => {
+        const queryParam = key as QueryParam
+        return (
+          router.query[queryParam] === QueryValue.succes && (
             <SuccessAlert
-              key={`alerte-${alert.nom}`}
-              label={alert.message}
-              onAcknowledge={() => closeSuccessAlert(alert.nom)}
+              key={`alerte-${queryParam}`}
+              label={alerts[queryParam]}
+              onAcknowledge={() => closeSuccessAlert(queryParam)}
             />
           )
-      )}
+        )
+      })}
     </div>
   )
 }
@@ -57,54 +59,30 @@ export interface Alert {
   message: string
 }
 
-const ALERTS: Alert[] = [
-  { nom: QueryParam.creationRdv, message: 'Le rendez-vous a bien été créé' },
-  {
-    nom: QueryParam.modificationRdv,
-    message: 'Le rendez-vous a bien été modifié',
-  },
-  {
-    nom: QueryParam.suppressionRdv,
-    message: 'Le rendez-vous a bien été supprimé',
-  },
-  {
-    nom: QueryParam.recuperationBeneficiaires,
-    message: 'Vous avez récupéré vos bénéficiaires avec succès',
-  },
-  {
-    nom: QueryParam.suppressionBeneficiaire,
-    message: 'Le compte du bénéficiaire a bien été supprimé',
-  },
-  { nom: QueryParam.creationAction, message: 'L’action a bien été créée' },
-  {
-    nom: QueryParam.envoiMessage,
-    message:
-      'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires',
-  },
-]
+type DictAlerts = { [key in QueryParam]: string }
+const ALERTS: DictAlerts = {
+  creationRdv: 'Le rendez-vous a bien été créé',
+  modificationRdv: 'Le rendez-vous a bien été modifié',
+  suppressionRdv: 'Le rendez-vous a bien été supprimé',
+  recuperation: 'Vous avez récupéré vos bénéficiaires avec succès',
+  suppression: 'Le compte du bénéficiaire a bien été supprimé',
+  creationAction: 'L’action a bien été créée',
+  suppressionAction: 'L’action a bien été supprimée',
+  choixAgence: 'Votre agence a été ajoutée à votre profil',
+  envoiMessage:
+    'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires',
+}
 
-const ALERTS_MILO: Alert[] = [
+const ALERTS_MILO: DictAlerts = {
   ...ALERTS,
-  {
-    nom: QueryParam.choixAgence,
-    message: 'Votre Mission locale a été ajoutée à votre profil',
-  },
-]
+  choixAgence: 'Votre Mission locale a été ajoutée à votre profil',
+}
 
-const ALERTS_POLE_EMPLOI: Alert[] = [
-  ...ALERTS,
-  {
-    nom: QueryParam.choixAgence,
-    message: 'Votre agence a été ajoutée à votre profil',
-  },
-]
-
-function getAlertsForStructure(structure?: string): Alert[] {
+function getAlertsForStructure(structure?: string): DictAlerts {
   switch (structure as StructureConseiller) {
     case StructureConseiller.MILO:
       return ALERTS_MILO
     case StructureConseiller.POLE_EMPLOI:
-      return ALERTS_POLE_EMPLOI
     case StructureConseiller.PASS_EMPLOI:
     default:
       return ALERTS
