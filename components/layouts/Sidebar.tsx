@@ -8,16 +8,22 @@ export default function Sidebar() {
   return (
     <div className={styles.sidebar}>
       <Logo focusable='false' aria-hidden={true} className='mb-8 mx-auto' />
-      <Menu
-        showLabelsOnSmallScreen={false}
-        items={[
-          MenuItem.Jeunes,
-          MenuItem.Rdvs,
-          MenuItem.Supervision,
-          MenuItem.Aide,
-          MenuItem.Profil,
-        ]}
-      />
+      <nav
+        role='navigation'
+        aria-label='Menu principal'
+        className='grow flex flex-col justify-between'
+      >
+        <Menu
+          showLabelsOnSmallScreen={false}
+          items={[
+            MenuItem.Jeunes,
+            MenuItem.Rdvs,
+            MenuItem.Supervision,
+            MenuItem.Aide,
+            MenuItem.Profil,
+          ]}
+        />
+      </nav>
     </div>
   )
 }

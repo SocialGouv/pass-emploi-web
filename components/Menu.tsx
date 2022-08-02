@@ -36,11 +36,7 @@ export default function Menu({ showLabelsOnSmallScreen, items }: SidebarProps) {
   useMatomo(isLoggedOut ? 'Clic déconnexion' : undefined)
 
   return (
-    <nav
-      role='navigation'
-      aria-label='Menu principal'
-      className='grow flex flex-col justify-between'
-    >
+    <>
       <div>
         {items.includes(MenuItem.Jeunes) && (
           <MenuLink
@@ -108,6 +104,6 @@ export default function Menu({ showLabelsOnSmallScreen, items }: SidebarProps) {
           showLabelOnSmallScreen={showLabelsOnSmallScreen}
         />
       </div>
-    </nav>
+    </>
   )
 }

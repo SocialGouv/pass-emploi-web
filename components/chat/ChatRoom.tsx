@@ -87,16 +87,17 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       )}
 
       {!currentChat && showMenu && (
-        <div
+        <nav
+          role='navigation'
           id='menu-mobile'
-          className='w-[50vw] flex flex-col bg-primary z-10 layout_s:hidden'
+          className='w-[50vw] flex flex-col bg-primary px-6 py-3 z-10 layout_s:hidden'
         >
           <button
             ref={closeMenuRef}
             type='button'
             aria-controls='menu-mobile'
             onClick={fermerMenu}
-            aria-label='Fermer menu'
+            aria-label='Fermer Menu principal'
             className='m-7 w-fit'
           >
             <IconComponent
@@ -106,28 +107,37 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               focusable={false}
             />
           </button>
-          <Menu showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
-        </div>
+          <div className='grow flex flex-col justify-between'>
+            <Menu showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
+          </div>
+        </nav>
       )}
 
       {!currentChat && (
         <article className={styles.chatRoom}>
           <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
-            <button
-              type='button'
-              onClick={ouvrirMenu}
-              aria-label='Ouvrir menu'
-              aria-controls='menu-mobile'
-              className='absolute left-2 top-[calc(50%-1.25rem)]'
+            <nav
+              role='navigation'
+              aria-label='Menu principal'
+              className={`layout_s:hidden ${showMenu ? 'hidden' : ''}`}
             >
-              <IconComponent
-                name={IconName.Menu}
-                className='w-10 h-10 fill-primary layout_s:hidden'
-                aria-hidden={true}
-                focusable={false}
-              />
-            </button>
-            <h2 className='text-m-bold text-primary text-center layout_s:text-left my-3 grow'>
+              <button
+                type='button'
+                onClick={ouvrirMenu}
+                aria-controls='menu-mobile'
+                aria-expanded={showMenu}
+                className='absolute left-2 top-[calc(50%-1.25rem)]'
+              >
+                <IconComponent
+                  name={IconName.Menu}
+                  className='w-10 h-10 fill-primary layout_s:hidden'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+              </button>
+            </nav>
+
+            <h2 className='text-m-medium text-primary text-center layout_s:text-left my-3 grow'>
               Messagerie
             </h2>
           </div>
