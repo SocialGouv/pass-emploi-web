@@ -2,6 +2,9 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
+import { Offre, Recherche } from '../../../interfaces/favoris'
+import { FavorisService } from '../../../services/favoris.service'
+
 import { OngletOffres } from 'components/favoris/offres/OngletOffres'
 import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
 import Tab from 'components/ui/Tab'
@@ -11,8 +14,8 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface FavorisProps extends PageProps {
-  offres: []
-  recherches: []
+  offres: Offre[]
+  recherches: Recherche[]
 }
 
 export enum Onglet {
@@ -20,7 +23,7 @@ export enum Onglet {
   RECHERCHES = 'RECHERCHES',
 }
 
-function Favoris() {
+function Favoris({ offres, recherches }: FavorisProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.FAVORIS)
 
   async function switchTab(tab: Onglet) {
@@ -32,14 +35,14 @@ function Favoris() {
       <TabList className='mt-10'>
         <Tab
           label='Favoris'
-          count={0}
+          count={offres.length}
           selected={currentTab === Onglet.FAVORIS}
           controls='liste-favoris'
           onSelectTab={() => switchTab(Onglet.FAVORIS)}
         />
         <Tab
           label='Recherches'
-          count={0}
+          count={recherches.length}
           selected={currentTab === Onglet.RECHERCHES}
           controls='liste-recherches'
           onSelectTab={() => switchTab(Onglet.RECHERCHES)}
@@ -54,7 +57,7 @@ function Favoris() {
           id='liste-favoris'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          <OngletOffres offres={[]} />
+          <OngletOffres offres={offres} />
         </div>
       )}
       {currentTab === Onglet.RECHERCHES && (
@@ -65,7 +68,7 @@ function Favoris() {
           id='liste-recherches'
           className='mt-8 pb-8'
         >
-          <OngletRecherches recherches={[]} />
+          <OngletRecherches recherches={recherches} />
         </div>
       )}
     </>
@@ -80,17 +83,28 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  // TODO gerer 403
   const {
-    session: { user, accessToken },
+    session: { accessToken },
   } = sessionOrRedirect
+  const jeuneId = context.query.jeune_id
+  console.log('------------------------------')
+  console.log(jeuneId)
+  if (!jeuneId) {
+    return {
+      props: { offres: [], recherches: [], pageTitle: 'Favoris' },
+    }
+  }
+  console.log('after if')
   const favorisService = withDependance<FavorisService>('favorisService')
-  const offres = await favorisService.getOffres(user.id, accessToken)
-  const recherches = await favorisService.getRecherches(user.id, accessToken)
+  const offres = await favorisService.getOffres(jeuneId as string, accessToken)
+  const recherches = await favorisService.getRecherches(
+    jeuneId as string,
+    accessToken
+  )
 
   return {
-    offres,
-    recherches,
-    pageTitle: 'Favoris',
+    props: { offres, recherches, pageTitle: 'Favoris' },
   }
 }
 

@@ -1,7 +1,9 @@
+import { Recherche } from '../../../interfaces/favoris'
+import { TypeRecherche } from '../../../referentiel/favoris'
 import { HeaderCell } from '../../rdv/HeaderCell'
 
 interface RecherchesListProps {
-  recherches: []
+  recherches: Recherche[]
 }
 
 const RecherchesList = ({ recherches }: RecherchesListProps) => {
@@ -21,20 +23,31 @@ const RecherchesList = ({ recherches }: RecherchesListProps) => {
         >
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
-              <HeaderCell label='A' />
-              <HeaderCell label='B' />
-              <HeaderCell label='C' />
-              <HeaderCell label='D' />
-              <HeaderCell label='E' />
+              <HeaderCell label='Nom de la recherche' />
+              <HeaderCell label='Mot clé/ métier' />
+              <HeaderCell label='Lieu/ localisation' />
+              <HeaderCell label='Type' />
             </div>
           </div>
           <div role='rowgroup' className='table-row-group'>
             {recherches.map((recherche) => (
-              <div>
-                <div role='cell' className='table-cell p-3'></div>
-                <div role='cell' className='table-cell p-3'></div>
-                <div role='cell' className='table-cell p-3'></div>
-                <div role='cell' className='table-cell p-3'></div>
+              <div
+                role='row'
+                key={recherche.titre}
+                className='table-row text-sm  hover:bg-primary_lighten'
+              >
+                <div role='cell' className='table-cell p-3'>
+                  {recherche.titre}
+                </div>
+                <div role='cell' className='table-cell p-3'>
+                  {recherche.metier}
+                </div>
+                <div role='cell' className='table-cell p-3'>
+                  {recherche.localisation}
+                </div>
+                <div role='cell' className='table-cell p-3'>
+                  {TypeRecherche[recherche.type]}
+                </div>
               </div>
             ))}
           </div>

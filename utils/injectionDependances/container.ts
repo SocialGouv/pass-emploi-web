@@ -1,3 +1,8 @@
+import {
+  FavorisApiService,
+  FavorisService,
+} from '../../services/favoris.service'
+
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
@@ -27,6 +32,7 @@ export interface Dependencies {
   messagesService: MessagesService
   rendezVousService: RendezVousService
   fichiersService: FichiersService
+  favorisService: FavorisService
 }
 
 export class Container {
@@ -55,6 +61,7 @@ export class Container {
       ),
       rendezVousService: new RendezVousApiService(apiClient),
       fichiersService: new FichiersApiService(apiClient),
+      favorisService: new FavorisApiService(apiClient),
     })
   }
 }

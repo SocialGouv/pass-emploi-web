@@ -1,10 +1,12 @@
+import { Offre } from '../../../interfaces/favoris'
+import { TypeOffre } from '../../../referentiel/favoris'
 import { HeaderCell } from '../../rdv/HeaderCell'
 
 interface FavorisListProps {
-  offres: []
+  offres: Offre[]
 }
 
-const FavorisList = ({ offres }: FavorisListProps) => {
+const OffresList = ({ offres }: FavorisListProps) => {
   return (
     <>
       {offres.length === 0 && (
@@ -23,18 +25,30 @@ const FavorisList = ({ offres }: FavorisListProps) => {
             <div role='row' className='table-row'>
               <HeaderCell label='N°Offre' />
               <HeaderCell label='Type' />
-              <HeaderCell label='Entrepris' />
+              <HeaderCell label='Entreprise' />
               <HeaderCell label='Titre' />
               <HeaderCell label='' />
             </div>
           </div>
           <div role='rowgroup' className='table-row-group'>
             {offres.map((offre) => (
-              <div>
-                <div role='cell' className='table-cell p-3'></div>
-                <div role='cell' className='table-cell p-3'></div>
-                <div role='cell' className='table-cell p-3'></div>
-                <div role='cell' className='table-cell p-3'></div>
+              <div
+                role='row'
+                key={offre.idOffre}
+                className='table-row text-sm  hover:bg-primary_lighten'
+              >
+                <div role='cell' className='table-cell p-3'>
+                  {offre.idOffre}
+                </div>
+                <div role='cell' className='table-cell p-3'>
+                  {TypeOffre[offre.type]}
+                </div>
+                <div role='cell' className='table-cell p-3'>
+                  {offre.organisation}
+                </div>
+                <div role='cell' className='table-cell p-3'>
+                  {offre.titre}
+                </div>
               </div>
             ))}
           </div>
@@ -44,4 +58,4 @@ const FavorisList = ({ offres }: FavorisListProps) => {
   )
 }
 
-export default FavorisList
+export default OffresList

@@ -32,6 +32,9 @@ export class FavorisApiService implements FavorisService {
     const { content: recherchesJson } = await this.apiClient.get<
       RechercheJson[]
     >(`/jeunes/${idJeune}/recherches`, accessToken)
+
+    //todo to remove
+    console.log(recherchesJson)
     return recherchesJson.map(jsonToRecherche)
   }
 }

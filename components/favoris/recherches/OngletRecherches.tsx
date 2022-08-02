@@ -1,10 +1,11 @@
 import React from 'react'
 
-import OffresList from '../offres/FavorisList'
+import { Recherche } from '../../../interfaces/favoris'
+
 import RecherchesList from './RecherchesList'
 
 interface OngletRecherchesProps {
-  recherches: []
+  recherches: Recherche[]
 }
 
 export function OngletRecherches({ recherches }: OngletRecherchesProps) {

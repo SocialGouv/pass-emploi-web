@@ -29,8 +29,10 @@ export function jsonToRecherche(rechercheJson: RechercheJson): Recherche {
   return {
     titre: rechercheJson.titre,
     type: rechercheJson.type,
-    metier: rechercheJson.metier,
-    localisation: rechercheJson.localisation,
+    // TODO voir avec JOSEPH le sixieme n'a pas de localisation
+    metier: rechercheJson.metier ? rechercheJson.metier : '',
+    // TODO voir avec JOSEPH le premier n'a pas de localisation
+    localisation: rechercheJson.localisation ? rechercheJson.localisation : '',
   }
 }
 
