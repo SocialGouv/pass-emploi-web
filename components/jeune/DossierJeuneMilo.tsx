@@ -3,6 +3,7 @@ import Router from 'next/router'
 import { useState } from 'react'
 
 import RefreshIcon from 'assets/icons/refresh.svg'
+import InformationMessage from 'components/InformationMessage'
 import Button from 'components/ui/Button'
 import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -111,6 +112,17 @@ export default function DossierJeuneMilo({
           )}
         </dl>
       </div>
+
+      {dossier.email && (
+        <div className='mt-4'>
+          <InformationMessage
+            content={[
+              'Ce bénéficiaire recevra un lien d’activation valable 12h.',
+              'Passé ce délai, il sera nécessaire d’utiliser l’option : mot de passe oublié.',
+            ]}
+          />
+        </div>
+      )}
 
       {erreurMessageHttpPassEmploi && (
         <DeprecatedErrorMessage className='mt-8'>
