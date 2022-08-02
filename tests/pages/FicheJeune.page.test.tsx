@@ -542,6 +542,32 @@ describe('Fiche Jeune', () => {
           expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
         })
       })
+
+      describe("quand le jeune n'a pas activé son compte", () => {
+        it('affiche le mode opératoire pour activer le compte', () => {
+          // Given
+          renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune({ isActivated: false })}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+
+          // Then
+          expect(
+            screen.getByText(/Le lien d’activation est valable 12h/)
+          ).toBeInTheDocument()
+        })
+      })
     })
 
     describe("quand le jeune n'a pas d'action", () => {
