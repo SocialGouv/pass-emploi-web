@@ -7,15 +7,23 @@ export interface Offre {
 }
 
 export interface Recherche {
+  id: string
   titre: string
-  type: string
+  type: TypeRecherche
   metier?: string
   localisation?: string
 }
 
 export enum TypeOffre {
-  OFFRE_EMPLOI = 'OFFRE_EMPLOI',
-  OFFRE_ALTERNANCE = 'OFFRE_ALTERNANCE',
-  OFFRE_IMMERSION = 'OFFRE_IMMERSION',
-  OFFRE_SERVICE_CIVIQUE = 'OFFRE_SERVICE_CIVIQUE',
+  OFFRE_EMPLOI = 'Offre d’emploi',
+  OFFRE_ALTERNANCE = 'Alternance',
+  OFFRE_IMMERSION = 'Immersion',
+  OFFRE_SERVICE_CIVIQUE = 'Service civique',
+}
+
+export enum TypeRecherche {
+  OFFRES_EMPLOI = 'Offres d’emploi',
+  OFFRES_ALTERNANCE = 'Alternances',
+  OFFRES_IMMERSION = 'Immersions',
+  OFFRES_SERVICES_CIVIQUE = 'Services civiques',
 }

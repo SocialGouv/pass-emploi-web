@@ -2,7 +2,6 @@ import React from 'react'
 
 import { Tag } from 'components/ui/Tag'
 import { Offre } from 'interfaces/favoris'
-import { TypeOffre } from 'referentiel/favoris'
 
 export default function OffreRow(props: { offre: Offre }) {
   return (
@@ -27,7 +26,7 @@ export default function OffreRow(props: { offre: Offre }) {
         className='table-cell p-3 align-middle group-hover:rounded-r-[6px]'
       >
         <Tag
-          label={TypeOffre[props.offre.type]}
+          label={props.offre.type}
           color='primary'
           backgroundColor='primary_lighten'
         />

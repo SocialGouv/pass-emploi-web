@@ -34,7 +34,7 @@ const RecherchesList = ({ recherches }: RecherchesListProps) => {
           </div>
           <div role='rowgroup' className='table-row-group'>
             {recherches.map((recherche) => (
-              <Fragment key={recherche.titre}>
+              <Fragment key={recherche.id}>
                 <RechercheRow recherche={recherche} />
                 <div className='mb-2' />
               </Fragment>
