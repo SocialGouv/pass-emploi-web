@@ -163,7 +163,7 @@ export default function TableauActionsJeune({
                 Statut
                 <IconComponent
                   name={IconName.ChevronDown}
-                  className={`h-4 w-4 fill-primary ${
+                  className={`h-4 w-4 ml-2 fill-primary ${
                     afficherStatut ? 'rotate-180' : ''
                   }`}
                 />
