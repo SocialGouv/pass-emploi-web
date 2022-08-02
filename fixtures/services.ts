@@ -3,6 +3,7 @@ import { FichiersService } from '../services/fichiers.service'
 
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { FavorisService } from 'services/favoris.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -107,6 +108,16 @@ export function mockedFichiersService(
   const defaults: FichiersService = {
     uploadFichier: jest.fn(),
     deleteFichier: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedFavorisService(
+  overrides: Partial<FavorisService> = {}
+): FavorisService {
+  const defaults: FavorisService = {
+    getOffres: jest.fn(),
+    getRecherches: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
