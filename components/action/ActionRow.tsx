@@ -28,7 +28,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
           role='cell'
           className={`table-cell relative p-4 group-hover:rounded-l-[6px]`}
         >
-          <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
+          <span className='flex items-center'>
             <span className='text-base-medium text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
@@ -44,12 +44,12 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
           </span>
         </div>
         <div role='cell' className='table-cell relative py-4 pr-4 w-[120px]'>
-          <span className='flex items-center border-r border-grey_500 group-hover:border-blanc'>
+          <span className='flex items-center'>
             <span>{formatDayDate(new Date(action.creationDate))}</span>
           </span>
         </div>
         <div role='cell' className='table-cell relative py-4 pr-4 w-[120px]'>
-          <span className='flex flex-row items-center border-r border-grey_500 group-hover:border-blanc'>
+          <span className='flex flex-row items-center'>
             <span
               className={
                 actionEstEnRetard
