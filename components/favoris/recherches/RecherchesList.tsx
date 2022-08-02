@@ -1,6 +1,9 @@
+import React, { Fragment } from 'react'
+
 import { Recherche } from '../../../interfaces/favoris'
-import { TypeRecherche } from '../../../referentiel/favoris'
 import { HeaderCell } from '../../rdv/HeaderCell'
+
+import RechercheRow from './RechercheRow'
 
 interface RecherchesListProps {
   recherches: Recherche[]
@@ -31,24 +34,10 @@ const RecherchesList = ({ recherches }: RecherchesListProps) => {
           </div>
           <div role='rowgroup' className='table-row-group'>
             {recherches.map((recherche) => (
-              <div
-                role='row'
-                key={recherche.titre}
-                className='table-row text-sm  hover:bg-primary_lighten'
-              >
-                <div role='cell' className='table-cell p-3'>
-                  {recherche.titre}
-                </div>
-                <div role='cell' className='table-cell p-3'>
-                  {recherche.metier}
-                </div>
-                <div role='cell' className='table-cell p-3'>
-                  {recherche.localisation}
-                </div>
-                <div role='cell' className='table-cell p-3'>
-                  {TypeRecherche[recherche.type]}
-                </div>
-              </div>
+              <Fragment key={recherche.titre}>
+                <RechercheRow recherche={recherche} />
+                <div className='mb-2' />
+              </Fragment>
             ))}
           </div>
         </div>
