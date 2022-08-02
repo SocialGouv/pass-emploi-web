@@ -102,12 +102,6 @@ export interface DossierMilo {
   email?: string
 }
 
-export interface JeunePoleEmploiFormData {
-  prenom: string
-  nom: string
-  email: string
-}
-
 export interface ConseillerHistorique {
   id: string
   nom: string
