@@ -9,7 +9,7 @@ export const HeaderCell = ({ label, srOnly }: HeaderCellProps) => {
   return (
     <div
       role='columnheader'
-      className={`table-cell text-xs-regular py-2 px-3 ${
+      className={`table-cell text-s-regular py-2 px-3 ${
         srOnly ? 'sr-only' : ''
       }`}
     >
