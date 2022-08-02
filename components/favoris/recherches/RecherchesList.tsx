@@ -1,37 +1,35 @@
-import Link from 'next/link'
+import { HeaderCell } from '../../rdv/HeaderCell'
 
-import { HeaderCell } from '../rdv/HeaderCell'
-
-interface FavorisListProps {
-  offres: []
+interface RecherchesListProps {
+  recherches: []
 }
 
-const FavorisList = ({ offres }: FavorisListProps) => {
+const RecherchesList = ({ recherches }: RecherchesListProps) => {
   return (
     <>
-      {offres.length === 0 && (
+      {recherches.length === 0 && (
         <p className='text-md mb-2'>
-          Votre jeune n’a pas d’offre mise en favoris
+          Votre jeune n’a pas de recherche sauvegardée
         </p>
       )}
 
-      {Boolean(offres.length) && (
+      {Boolean(recherches.length) && (
         <div
           role='table'
           className='table w-full'
-          aria-label='Liste des offres en favoris'
+          aria-label='Liste des recherches sauvegardées'
         >
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
-              <HeaderCell label='N°Offre' />
-              <HeaderCell label='Type' />
-              <HeaderCell label='Entrepris' />
-              <HeaderCell label='Titre' />
-              <HeaderCell label='' />
+              <HeaderCell label='A' />
+              <HeaderCell label='B' />
+              <HeaderCell label='C' />
+              <HeaderCell label='D' />
+              <HeaderCell label='E' />
             </div>
           </div>
           <div role='rowgroup' className='table-row-group'>
-            {offres.map((offre) => (
+            {recherches.map((recherche) => (
               <div>
                 <div role='cell' className='table-cell p-3'></div>
                 <div role='cell' className='table-cell p-3'></div>
@@ -46,4 +44,4 @@ const FavorisList = ({ offres }: FavorisListProps) => {
   )
 }
 
-export default FavorisList
+export default RecherchesList

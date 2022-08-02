@@ -1,15 +1,26 @@
+import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
-import { OngletFavoris } from '../../../components/favoris/OngletFavoris'
-import Tab from '../../../components/ui/Tab'
-import TabList from '../../../components/ui/TabList'
+import { OngletOffres } from 'components/favoris/offres/OngletOffres'
+import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
+import Tab from 'components/ui/Tab'
+import TabList from 'components/ui/TabList'
+import { PageProps } from 'interfaces/pageProps'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withDependance from 'utils/injectionDependances/withDependance'
+
+interface FavorisProps extends PageProps {
+  offres: []
+  recherches: []
+}
 
 export enum Onglet {
   FAVORIS = 'FAVORIS',
   RECHERCHES = 'RECHERCHES',
 }
 
-export default function Favoris() {
+function Favoris() {
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.FAVORIS)
 
   async function switchTab(tab: Onglet) {
@@ -43,7 +54,7 @@ export default function Favoris() {
           id='liste-favoris'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          <OngletFavoris offres={[]} />
+          <OngletOffres offres={[]} />
         </div>
       )}
       {currentTab === Onglet.RECHERCHES && (
@@ -54,9 +65,33 @@ export default function Favoris() {
           id='liste-recherches'
           className='mt-8 pb-8'
         >
-          <OngletFavoris offres={[]} />
+          <OngletRecherches recherches={[]} />
         </div>
       )}
     </>
   )
 }
+
+export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
+  context
+) => {
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.validSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
+
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
+  const favorisService = withDependance<FavorisService>('favorisService')
+  const offres = await favorisService.getOffres(user.id, accessToken)
+  const recherches = await favorisService.getRecherches(user.id, accessToken)
+
+  return {
+    offres,
+    recherches,
+    pageTitle: 'Favoris',
+  }
+}
+
+export default withTransaction(Favoris.name, 'page')(Favoris)
