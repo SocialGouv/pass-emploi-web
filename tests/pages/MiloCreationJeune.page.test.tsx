@@ -21,7 +21,6 @@ describe('MiloCreationJeune', () => {
 
     it('devrait afficher le champ de recherche de dossier', () => {
       //THEN
-      expect(screen.getByText("Création d'un compte jeune")).toBeInTheDocument()
       expect(
         screen.getByText(
           'Saisissez le numéro de dossier du jeune pour lequel vous voulez créer un compte'

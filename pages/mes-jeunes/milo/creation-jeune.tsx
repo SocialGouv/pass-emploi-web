@@ -84,10 +84,7 @@ function MiloCreationJeune({
 
       <CreationEtape etape={etape} />
 
-      <h1 className='text-m-medium text-primary mt-6 mb-4'>
-        Création d&apos;un compte jeune
-      </h1>
-      {switchSteps()}
+      <div className='mt-4'>{switchSteps()}</div>
     </>
   )
 
