@@ -12,7 +12,7 @@ export default function SortIcon({
       name={isSorted ? IconName.ArrowDown : IconName.ArrowDouble}
       focusable='false'
       aria-hidden='true'
-      className={`w-6 h-6 ${isDesc ? 'rotate-180' : ''}`}
+      className={`w-6 h-6 ml-2 ${isDesc ? 'rotate-180' : ''}`}
     />
   )
 }
