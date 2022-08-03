@@ -97,7 +97,7 @@ export default function RenseignementAgenceModal({
       </div>
 
       <form onSubmit={submitAgenceSelectionnee} className='px-10 pt-6'>
-        <label htmlFor='search-agence' className='w-text-base-bold'>
+        <label htmlFor='search-agence' className='text-base-medium'>
           Rechercher votre {labelAgence} dans la liste suivante
         </label>
         {idAgenceSelectionnee.error && (
@@ -131,7 +131,7 @@ export default function RenseignementAgenceModal({
           onChange={toggleAgenceLibre}
           className='mt-6'
         />
-        <label htmlFor='agence-not-found' className='ml-2 w-text-base-regular'>
+        <label htmlFor='agence-not-found' className='ml-2 text-base-regular'>
           {structureConseiller === StructureConseiller.MILO ? 'Ma' : 'Mon'}{' '}
           {labelAgence} n’apparaît pas dans la liste
         </label>
@@ -140,7 +140,7 @@ export default function RenseignementAgenceModal({
           className={`${!showAgenceLibre ? 'invisible' : ''}`}
           aria-hidden={!showAgenceLibre}
         >
-          <label htmlFor='agence-libre' className='mt-4 w-text-base-bold'>
+          <label htmlFor='agence-libre' className='mt-4 text-base-medium'>
             Saisir le nom de votre {labelAgence}
           </label>
           {agenceLibre.error && (
