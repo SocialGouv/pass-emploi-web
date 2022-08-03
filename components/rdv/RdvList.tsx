@@ -29,7 +29,7 @@ const RdvList = ({
   return (
     <>
       {rdvs.length === 0 && (
-        <p className='text-md mb-2'>
+        <p className='text-base-regular mb-2'>
           Vous n’avez pas de rendez-vous pour le moment
         </p>
       )}
@@ -60,7 +60,7 @@ const RdvList = ({
                   role='row'
                   key={rdv.id}
                   aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`}
-                  className='table-row text-sm  hover:bg-primary_lighten'
+                  className='table-row text-base-regular hover:bg-primary_lighten'
                 >
                   <div role='cell' className='table-cell p-3'>
                     {dayHourCells(new Date(rdv.date), rdv.duration)}
