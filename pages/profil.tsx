@@ -48,18 +48,23 @@ function Profil(_: ProfilProps) {
       {conseiller && (
         <>
           <section className='mb-8'>
-            <h2 className='text-l-bold mb-4'>Informations</h2>
+            <h2 className='text-m-bold mb-4'>Informations</h2>
             <div className='pl-4'>
-              <h3 className='w-text-m-bold'>
+              <h3 className='text-base-bold'>
                 {conseiller.firstName} {conseiller.lastName}
               </h3>
-              <dl className='mt-3 text-sm-semi'>
+              <dl className='mt-3'>
                 {conseiller.email && (
                   <>
-                    <dt aria-label='Votre e-mail' className='mt-2 inline'>
+                    <dt
+                      aria-label='Votre e-mail'
+                      className='mt-2 inline text-base-regular'
+                    >
                       Votre e-mail :
                     </dt>
-                    <dd className='ml-2 inline'>{conseiller.email}</dd>
+                    <dd className='ml-2 inline text-base-medium'>
+                      {conseiller.email}
+                    </dd>
                   </>
                 )}
 
@@ -67,18 +72,20 @@ function Profil(_: ProfilProps) {
                   <>
                     <dt
                       aria-label={`Votre ${labelAgence}`}
-                      className='mt-2 inline before:block before:content-[""]'
+                      className='mt-2 inline before:block before:content-[""] text-base-regular'
                     >
                       Votre {labelAgence} :
                     </dt>
-                    <dd className='ml-2 inline'>{conseiller.agence}</dd>
+                    <dd className='ml-2 inline text-base-medium'>
+                      {conseiller.agence}
+                    </dd>
                   </>
                 )}
               </dl>
             </div>
           </section>
           <section className='mb-8'>
-            <h2 className='text-l-bold mb-4'>Notifications</h2>
+            <h2 className='text-m-bold mb-4'>Notifications</h2>
             <label
               htmlFor='notificationSonore'
               className='flex items-center flex-wrap layout_m:flex-nowrap'
@@ -98,7 +105,7 @@ function Profil(_: ProfilProps) {
             </label>
           </section>
           <section className='mb-8'>
-            <h2 className='text-l-bold mb-4'>
+            <h2 className='text-m-bold mb-4'>
               Application CEJ jeune - mode démo
             </h2>
             <p className='mb-4'>
