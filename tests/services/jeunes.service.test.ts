@@ -74,7 +74,7 @@ describe('JeunesApiService', () => {
   describe('.getJeunesDuConseillerParEmail', () => {
     const email = 'conseiller@email.com'
     const accessToken = 'accessToken'
-    const conseiller = unConseiller({ id: 'idConseiller' })
+    const conseiller = unConseiller({ id: 'conseiller-by-email' })
     const jeunes = desItemsJeunesJson()
     let actual: { idConseiller: string; jeunes: JeuneFromListe[] }
     beforeEach(async () => {
@@ -82,7 +82,7 @@ describe('JeunesApiService', () => {
       ;(apiClient.get as jest.Mock).mockImplementation((url) => {
         if (url === `/conseillers?email=${email}`)
           return { content: conseiller }
-        if (url === `/conseillers/${conseiller.id}/jeunes`)
+        if (url === '/conseillers/conseiller-by-email/jeunes')
           return { content: jeunes }
       })
 
@@ -101,11 +101,11 @@ describe('JeunesApiService', () => {
     it('renvoie les jeunes du conseiller', async () => {
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        `/conseillers/${conseiller.id}/jeunes`,
+        `/conseillers/conseiller-by-email/jeunes`,
         accessToken
       )
       expect(actual).toEqual({
-        idConseiller: conseiller.id,
+        idConseiller: 'conseiller-by-email',
         jeunes: desItemsJeunes(),
       })
     })
@@ -244,6 +244,7 @@ describe('JeunesApiService', () => {
       )
     })
   })
+
   describe('.archiverJeune', () => {
     it('archive le jeune', async () => {
       // Given

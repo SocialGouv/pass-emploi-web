@@ -177,7 +177,10 @@ export class JeunesApiService implements JeunesService {
       `/conseillers?email=${emailConseiller}`,
       session!.accessToken
     )
-    const jeunesDuConseiller = await this.getJeunesDuConseillerClientSide()
+    const jeunesDuConseiller = await this.getJeunesDuConseillerServerSide(
+      conseiller.id,
+      session!.accessToken
+    )
     return { idConseiller: conseiller.id, jeunes: jeunesDuConseiller }
   }
 
