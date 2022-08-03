@@ -152,14 +152,6 @@
   letter-spacing: 0;
 }
 
-.text-xs {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px;
-  letter-spacing: 0;
-}
-
 .text-md-semi {
   font-size: 16px;
   font-style: normal;
