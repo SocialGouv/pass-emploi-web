@@ -88,9 +88,9 @@ export default function JeunesMultiselectAutocomplete({
 
   return (
     <>
-      <label htmlFor='select-jeunes' className='w-text-base-bold'>
+      <label htmlFor='select-jeunes' className='text-base-medium'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-        <span className='w-text-s-regular block'>Nom et prénom</span>
+        <span className='text-s-regular block'>Nom et prénom</span>
       </label>
       {error && (
         <InputError id='select-jeunes--error' className='mt-2'>
@@ -101,7 +101,7 @@ export default function JeunesMultiselectAutocomplete({
         id='select-jeunes'
         options={buildOptions()}
         onChange={(e) => selectJeune(e.target.value)}
-        className={`text-sm text-primary_darken w-full p-3 mb-2 mt-4 border rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70 ${
+        className={`text-s-regular text-primary_darken w-full p-3 mb-2 mt-4 border rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70 ${
           error ? 'border-warning' : 'border-content_color'
         }`}
         aria-required={true}
@@ -115,7 +115,7 @@ export default function JeunesMultiselectAutocomplete({
       <p
         aria-label={`${typeSelection} sélectionnés (${selectedJeunes.length})`}
         id='selected-jeunes--title'
-        className='w-text-base-bold mb-2'
+        className='text-base-medium mb-2'
         aria-live='polite'
       >
         {typeSelection} ({selectedJeunes.length})
