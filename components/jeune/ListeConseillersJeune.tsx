@@ -19,7 +19,7 @@ export function ListeConseillersJeune({
 
         if (index === 0) {
           return (
-            <li className='list-none w-text-s-regular' key={depuis.getTime()}>
+            <li className='list-none text-s-regular' key={depuis.getTime()}>
               Du {formatDayDate(depuis) + ' à aujourd’hui'}
               {' : '}
               <span className='text-s-bold'>
@@ -31,7 +31,7 @@ export function ListeConseillersJeune({
 
         const conseillerSuivant = arr[index - 1]
         return (
-          <li className='list-none w-text-s-regular' key={depuis.getTime()}>
+          <li className='list-none text-s-regular' key={depuis.getTime()}>
             Du{' '}
             {formatDayDate(depuis) +
               ' au ' +
