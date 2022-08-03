@@ -96,7 +96,7 @@ function FormulaireJeunePoleEmploi({
 
   return (
     <>
-      <p className='w-text-base-regular mb-4'>
+      <p className='text-m-bold mt-6 mb-4'>
         Saisissez les coordonnées du jeune pour lequel vous voulez créer un
         compte
       </p>
@@ -106,7 +106,7 @@ function FormulaireJeunePoleEmploi({
           Les champs marqués d&apos;une * sont obligatoires.
         </div>
 
-        <label className='block text-md-semi' htmlFor='jeune-prenom'>
+        <label className='block text-base-medium' htmlFor='jeune-prenom'>
           * Prénom
         </label>
         <input
@@ -125,7 +125,7 @@ function FormulaireJeunePoleEmploi({
           <DeprecatedErrorMessage>{prenom.error}</DeprecatedErrorMessage>
         )}
 
-        <label className='block text-md-semi' htmlFor='jeune-nom'>
+        <label className='block text-base-medium' htmlFor='jeune-nom'>
           * Nom
         </label>
         <input
@@ -142,11 +142,11 @@ function FormulaireJeunePoleEmploi({
           <DeprecatedErrorMessage>{nom.error}</DeprecatedErrorMessage>
         )}
 
-        <label className='block mb-4 text-md-semi' htmlFor='jeune-email'>
+        <label className='block mb-4 text-base-medium' htmlFor='jeune-email'>
           * E-mail{' '}
-          <span className='w-text-s-regular'>(ex : monemail@exemple.com)</span>
+          <span className='text-base-regular'>(ex : monemail@exemple.com)</span>
         </label>
-        <span className='w-text-s-regular'>
+        <span className='text-base-regular'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
           dossier MAP du jeune.
         </span>
