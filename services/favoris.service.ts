@@ -33,8 +33,6 @@ export class FavorisApiService implements FavorisService {
       RechercheJson[]
     >(`/jeunes/${idJeune}/recherches`, accessToken)
 
-    //todo to remove
-    console.log(recherchesJson)
     return recherchesJson.map(jsonToRecherche)
   }
 }

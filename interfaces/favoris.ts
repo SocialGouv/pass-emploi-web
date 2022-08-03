@@ -1,5 +1,5 @@
 export interface Offre {
-  idOffre: string
+  id: string
   titre: string
   type: TypeOffre
   organisation?: string

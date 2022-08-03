@@ -34,7 +34,7 @@ const OffresList = ({ offres }: FavorisListProps) => {
           </div>
           <div role='rowgroup' className='table-row-group'>
             {offres.map((offre) => (
-              <Fragment key={offre.idOffre}>
+              <Fragment key={offre.id}>
                 <OffreRow offre={offre} />
                 <div className='mb-2' />
               </Fragment>

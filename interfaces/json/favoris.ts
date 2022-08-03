@@ -16,14 +16,14 @@ export interface RechercheJson {
   localisation?: string
 }
 
-enum TypeOffreJson {
+export enum TypeOffreJson {
   OFFRE_EMPLOI = 'OFFRE_EMPLOI',
   OFFRE_ALTERNANCE = 'OFFRE_ALTERNANCE',
   OFFRE_IMMERSION = 'OFFRE_IMMERSION',
   OFFRE_SERVICE_CIVIQUE = 'OFFRE_SERVICE_CIVIQUE',
 }
 
-enum TypeRechercheJson {
+export enum TypeRechercheJson {
   OFFRES_EMPLOI = 'OFFRES_EMPLOI',
   OFFRES_ALTERNANCE = 'OFFRES_ALTERNANCE',
   OFFRES_IMMERSION = 'OFFRES_IMMERSION',
@@ -32,7 +32,7 @@ enum TypeRechercheJson {
 
 export function jsonToOffre(offreJson: OffreJson): Offre {
   return {
-    idOffre: offreJson.idOffre,
+    id: offreJson.idOffre,
     localisation: offreJson.localisation,
     organisation: offreJson.organisation,
     titre: offreJson.titre,

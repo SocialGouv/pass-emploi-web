@@ -13,7 +13,7 @@ export default function OffreRow(props: { offre: Offre }) {
         role='cell'
         className='table-cell p-3 align-middle group-hover:rounded-l-[6px]'
       >
-        {props.offre.idOffre}
+        {props.offre.id}
       </div>
       <div role='cell' className='table-cell p-3 text-base-medium align-middle'>
         {props.offre.titre}
