@@ -27,7 +27,7 @@ export default function Tab({
       aria-controls={controls}
       aria-selected={selected}
       onClick={onSelectTab}
-      className={`w-text-m-regular px-4 pb-2 flex items-center cursor-pointer ${
+      className={`text-m-regular px-4 pb-2 flex items-center cursor-pointer ${
         selected
           ? 'border-b-4 border-b-primary text-content_color'
           : 'hover:border-b-4 hover:border-primary_darken text-grey_800'
