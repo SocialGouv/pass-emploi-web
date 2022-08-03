@@ -11,6 +11,6 @@ interface InputErrorProps {
 export const InputError = ({ id, children, className }: InputErrorProps) => (
   <div id={id} className={`${className ?? ''} flex items-center`}>
     <ErrorIcon focusable={false} aria-hidden={true} className='mr-1 shrink-0' />
-    <p className='text-warning text-sm-semi'>{children}</p>
+    <p className='text-warning text-s-regular'>{children}</p>
   </div>
 )
