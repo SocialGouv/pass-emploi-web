@@ -87,7 +87,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           ))}
         </TabList>
 
-        <p className='text-s-medium text-content_color'>
+        <p className='text-s-bold text-content_color'>
           Tous les champs avec * sont obligatoires
         </p>
 
@@ -136,7 +136,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
             />
             <label
               htmlFor='date-echeance-action-predefinie'
-              className='text-base-medium mb-2'
+              className='w-text-base-bold mb-2'
             >
               <span className='mt-10 text-md text-content_color block'>
                 * Définir une date d’échéance
@@ -192,7 +192,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
             />
             <label
               htmlFor='date-echeance-action-personnalisee'
-              className='text-base-medium mb-2'
+              className='w-text-base-bold mb-2'
             >
               <span className='mt-10 text-md text-content_color block'>
                 * Définir une date d’échéance

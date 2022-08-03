@@ -23,7 +23,7 @@ export default function SuccessMessage({
             focusable={false}
             className='w-6 h-6 mr-2 shrink-0'
           />
-          <p className='text-base-medium'>{label}</p>
+          <p className='w-text-base-bold'>{label}</p>
         </div>
         {onAcknowledge && (
           <button

@@ -30,7 +30,7 @@ export default function InformationMessage({
           </div>
         )}
         {!Array.isArray(content) && (
-          <p className='text-base-medium'>{content}</p>
+          <p className='w-text-base-bold'>{content}</p>
         )}
       </div>
       {children && <div className='mt-2'>{children}</div>}

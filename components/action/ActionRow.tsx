@@ -33,7 +33,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
           className={`table-cell relative p-4 group-hover:rounded-l-[6px]`}
         >
           <span className='flex items-center'>
-            <span className='text-base-medium text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
+            <span className='w-text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
             {action.comment && (

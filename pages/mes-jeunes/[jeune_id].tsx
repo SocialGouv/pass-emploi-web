@@ -309,7 +309,7 @@ function FicheJeune({
       />
 
       <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
-        <h2 className='text-base-medium mb-4'>Historique des conseillers</h2>
+        <h2 className='w-text-base-bold mb-4'>Historique des conseillers</h2>
         <ListeConseillersJeune
           id='liste-conseillers'
           conseillers={conseillersAffiches}

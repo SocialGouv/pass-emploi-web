@@ -201,7 +201,7 @@ export default function Conversation({
             className='w-6 h-6 fill-primary'
           />
         </button>
-        <h2 className='w-full text-left text-primary text-m-medium'>
+        <h2 className='w-full text-left text-primary w-text-m-bold'>
           Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
         </h2>
         <button

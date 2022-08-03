@@ -122,7 +122,7 @@ export default function TableauActionsJeune({
         aria-label={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
       >
         <div role='rowgroup' className='table-header-group '>
-          <div role='row' className='table-row text-s-regular'>
+          <div role='row' className='table-row w-text-s-regular'>
             <div role='columnheader' className='table-cell pl-4 py-4'>
               Intitulé de l&apos;action
             </div>
@@ -170,7 +170,7 @@ export default function TableauActionsJeune({
               </button>
               {afficherStatut && (
                 <form
-                  className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 text-base-regular'
+                  className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 w-text-base-regular'
                   id='filtres-statut'
                   onSubmit={submitFiltres}
                 >

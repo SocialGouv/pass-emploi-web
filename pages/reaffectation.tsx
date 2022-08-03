@@ -181,12 +181,12 @@ function Reaffectation(_: ReaffectationProps) {
       )}
 
       <div className='mb-10 bg-accent_2_lighten rounded-medium p-6'>
-        <p className='text-base-medium mb-4'>
+        <p className='w-text-base-bold mb-4'>
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
         </p>
         <ol
-          className='flex text-s-regular'
+          className='flex w-text-s-regular'
           aria-label='Étapes pour la réaffectation'
         >
           <li>
@@ -204,7 +204,7 @@ function Reaffectation(_: ReaffectationProps) {
       </p>
 
       <fieldset className='pb-6'>
-        <legend className='text-base-medium pb-2'>
+        <legend className='w-text-base-bold pb-2'>
           <span aria-hidden='true'>*</span> Type de réaffectation
         </legend>
 
@@ -238,7 +238,7 @@ function Reaffectation(_: ReaffectationProps) {
       <div className='grid w-full grid-cols-[1fr_1fr_auto] items-center gap-x-12'>
         <label
           htmlFor='email-conseiller-initial'
-          className='text-base-medium text-content_color row-start-1 row-start-1'
+          className='w-text-base-bold text-content_color row-start-1 row-start-1'
         >
           <span aria-hidden='true'>*</span> E-mail conseiller initial
         </label>
@@ -255,11 +255,11 @@ function Reaffectation(_: ReaffectationProps) {
               onChange={editEmailConseillerInitial}
               onReset={resetAll}
               type={'email'}
-              className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
+              className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 w-text-base-bold text-bleu_nuit'
               required={true}
             />
             <button
-              className={`flex p-3 items-center text-base-medium text-primary_darken border border-solid border-content_color rounded-r-medium ${
+              className={`flex p-3 items-center w-text-base-bold text-primary_darken border border-solid border-content_color rounded-r-medium ${
                 isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
               } disabled:cursor-not-allowed disabled:border-disabled`}
               type='submit'
@@ -292,7 +292,7 @@ function Reaffectation(_: ReaffectationProps) {
 
         <label
           htmlFor='email-conseiller-destination'
-          className={`text-base-medium whitespace-nowrap col-start-2 row-start-1 ${
+          className={`w-text-base-bold whitespace-nowrap col-start-2 row-start-1 ${
             isRechercheJeunesSubmitted && jeunes.length > 0
               ? 'text-content_color'
               : 'text-disabled'
@@ -313,7 +313,7 @@ function Reaffectation(_: ReaffectationProps) {
             onReset={() => editEmailConseillerDestination('')}
             disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
             type={'email'}
-            className='flex-1 border border-solid border-grey_700 rounded-medium text-base-medium text-bleu_nuit'
+            className='flex-1 border border-solid border-grey_700 rounded-medium w-text-base-bold text-bleu_nuit'
             required={true}
           />
         </form>
@@ -346,7 +346,7 @@ function Reaffectation(_: ReaffectationProps) {
 
         {idsJeunesSelected.length > 0 && (
           <div className='relative row-start-3 col-start-3'>
-            <p className='text-base-medium text-center'>
+            <p className='w-text-base-bold text-center'>
               {idsJeunesSelected.length} jeune
               {idsJeunesSelected.length > 1 ? 's' : ''} sélectionné
               {idsJeunesSelected.length > 1 ? 's' : ''}
@@ -373,7 +373,7 @@ function Reaffectation(_: ReaffectationProps) {
           } ml-5`}
         >
           <table className='w-full'>
-            <caption className='text-m-medium text-left mb-8'>
+            <caption className='w-text-m-bold text-left mb-8'>
               Jeunes de {conseillerInitial.email}
             </caption>
             <thead>
@@ -383,13 +383,13 @@ function Reaffectation(_: ReaffectationProps) {
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-s-regular text-content_color'
+                  className='pb-2 pl-4 pr-4 w-text-s-regular text-content_color'
                 >
                   Nom et prénom
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-s-regular text-content_color'
+                  className='pb-2 pl-4 pr-4 w-text-s-regular text-content_color'
                 >
                   Conseiller précédent
                 </th>

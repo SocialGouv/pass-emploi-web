@@ -64,7 +64,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
         />
 
         <div className='bg-blanc px-[122px] py-[48px] rounded-x_large'>
-          <h1 className='text-m-medium text-primary_darken text-center mb-[48px]'>
+          <h1 className='w-text-m-bold text-primary_darken text-center mb-[48px]'>
             Connectez-vous à l&apos;espace conseiller
           </h1>
 

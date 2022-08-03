@@ -158,7 +158,7 @@ export const TableauJeunes = ({
   return (
     <>
       {sortedJeunes.length === 0 ? (
-        <p className='mt-32 text-base-medium text-center text-primary'>
+        <p className='mt-32 w-text-base-bold text-center text-primary'>
           Aucun jeune trouvé
         </p>
       ) : (
@@ -346,7 +346,7 @@ export const TableauJeunes = ({
                     <div className='relative w-fit mx-auto'>
                       <MessageIcon aria-hidden='true' focusable='false' />
                       {jeune.messagesNonLus > 0 && (
-                        <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
+                        <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc w-text-xs-medium'>
                           {jeune.messagesNonLus}
                         </div>
                       )}

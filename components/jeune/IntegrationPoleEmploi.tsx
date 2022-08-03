@@ -16,10 +16,10 @@ export const IntegrationPoleEmploi = ({
       aria-hidden='true'
     />
     <div>
-      <p className='text-s-medium'>
+      <p className='text-s-bold'>
         Cette fonctionnalité n&apos;est pas encore disponible.
       </p>
-      <p className='text-s-regular'>
+      <p className='w-text-s-regular'>
         Gérez les {label} de ce jeune depuis vos outils Pôle emploi.
       </p>
     </div>

@@ -57,7 +57,7 @@ function PoleEmploiCreationJeune(): JSX.Element {
         </div>
       )}
 
-      <h1 className='text-m-medium mt-6 mb-4'>
+      <h1 className='w-text-m-bold mt-6 mb-4'>
         Création d&apos;un compte jeune
       </h1>
 

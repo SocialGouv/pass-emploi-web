@@ -34,7 +34,7 @@ export default function DisplayMessage({
         }`}
       >
         {isSentByConseiller && (
-          <p className='text-s-regular capitalize mb-1'>
+          <p className='w-text-s-regular capitalize mb-1'>
             {conseillerNomComplet}
           </p>
         )}

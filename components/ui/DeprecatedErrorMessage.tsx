@@ -17,6 +17,6 @@ export const DeprecatedErrorMessage = ({
       focusable='false'
       aria-hidden='true'
     />
-    <p className='text-s-medium text-warning'>{children}</p>
+    <p className='text-s-bold text-warning'>{children}</p>
   </div>
 )

@@ -88,9 +88,9 @@ export default function JeunesMultiselectAutocomplete({
 
   return (
     <>
-      <label htmlFor='select-jeunes' className='text-base-medium'>
+      <label htmlFor='select-jeunes' className='w-text-base-bold'>
         <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
-        <span className='text-s-regular block'>Nom et prénom</span>
+        <span className='w-text-s-regular block'>Nom et prénom</span>
       </label>
       {error && (
         <InputError id='select-jeunes--error' className='mt-2'>
@@ -115,7 +115,7 @@ export default function JeunesMultiselectAutocomplete({
       <p
         aria-label={`${typeSelection} sélectionnés (${selectedJeunes.length})`}
         id='selected-jeunes--title'
-        className='text-base-medium mb-2'
+        className='w-text-base-bold mb-2'
         aria-live='polite'
       >
         {typeSelection} ({selectedJeunes.length})

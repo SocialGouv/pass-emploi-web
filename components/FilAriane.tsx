@@ -36,7 +36,7 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
             {index < ariane.length - 1 && (
               <>
                 <Link href={href}>
-                  <a className='text-s-regular text-content_color underline hover:text-primary_darken'>
+                  <a className='w-text-s-regular text-content_color underline hover:text-primary_darken'>
                     {fragment}
                   </a>
                 </Link>
@@ -52,7 +52,7 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
               <Link href={href}>
                 <a
                   aria-current='page'
-                  className='text-s-regular text-content_color'
+                  className='w-text-s-regular text-content_color'
                 >
                   {fragment}
                 </a>

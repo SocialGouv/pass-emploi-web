@@ -22,7 +22,7 @@ function InfoAction({
       <dt
         className={`${
           isInline
-            ? 'text-base-medium py-4 border-0 border-t border-solid border-t-primary_lighten'
+            ? 'w-text-base-bold py-4 border-0 border-t border-solid border-t-primary_lighten'
             : styles
         }`}
       >
@@ -40,7 +40,7 @@ function InfoAction({
         className={`${
           isInline
             ? 'py-4 border-0 border-t border-solid border-t-primary_lighten'
-            : 'text-base-regular pb-10'
+            : 'w-text-base-regular pb-10'
         } pl-6`}
       >
         {isForm && (

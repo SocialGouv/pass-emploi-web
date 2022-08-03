@@ -188,12 +188,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       )}
 
       <form>
-        <div className='text-s-regular text-primary_darken mb-8'>
+        <div className='w-text-s-regular text-primary_darken mb-8'>
           Tous les champs sont obligatoires
         </div>
 
         <fieldset className='border-none mb-10'>
-          <legend className='flex items-center text-m-medium mb-4'>
+          <legend className='flex items-center w-text-m-bold mb-4'>
             <IconComponent
               name={IconName.Chiffre1}
               role='img'
@@ -211,7 +211,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         </fieldset>
 
         <fieldset className='border-none'>
-          <legend className='flex items-center text-m-medium mb-4'>
+          <legend className='flex items-center w-text-m-bold mb-4'>
             <IconComponent
               name={IconName.Chiffre2}
               role='img'
@@ -224,7 +224,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
           <label
             htmlFor='message'
-            className='flex text-base-medium items-center'
+            className='flex w-text-base-bold items-center'
           >
             <span aria-hidden='true'>*</span>&nbsp;Message
             <span className='ml-2'>

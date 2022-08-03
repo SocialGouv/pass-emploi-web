@@ -21,7 +21,7 @@ export function CollapseButton({
       onClick={onClick}
     >
       {isOpen && (
-        <span className='flex text-s-regular'>
+        <span className='flex w-text-s-regular'>
           Réduire la liste{' '}
           <IconComponent
             name={IconName.ChevronUp}
@@ -32,7 +32,7 @@ export function CollapseButton({
         </span>
       )}
       {!isOpen && (
-        <span className='flex text-s-regular'>
+        <span className='flex w-text-s-regular'>
           Voir l’historique complet{' '}
           <IconComponent
             name={IconName.ChevronDown}

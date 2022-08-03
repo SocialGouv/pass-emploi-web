@@ -34,7 +34,7 @@ export default function LeavePageConfirmationModal({
           aria-hidden={true}
           className='w-[54px] h-[57px] m-auto fill-primary'
         />
-        <p className='mt-6 text-base-medium'>{message}</p>
+        <p className='mt-6 w-text-base-bold'>{message}</p>
         <p className='mt-6'>{commentaire}</p>
       </div>
 

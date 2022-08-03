@@ -37,7 +37,7 @@ export function ChatRoomTile({
       >
         {jeuneChat.lastMessageSentBy === 'jeune' &&
           !jeuneChat.seenByConseiller && (
-            <p className='text-accent_1 text-s-regular mb-2'>
+            <p className='text-accent_1 w-text-s-regular mb-2'>
               <Dot color='accent_1' className='ml-1 mr-2' />
               Nouveau(x) message(s)
             </p>

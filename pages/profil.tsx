@@ -48,9 +48,9 @@ function Profil(_: ProfilProps) {
       {conseiller && (
         <>
           <section className='mb-8'>
-            <h2 className='text-l-medium mb-4'>Informations</h2>
+            <h2 className='text-l-bold mb-4'>Informations</h2>
             <div className='pl-4'>
-              <h3 className='text-m-medium'>
+              <h3 className='w-text-m-bold'>
                 {conseiller.firstName} {conseiller.lastName}
               </h3>
               <dl className='mt-3 text-sm-semi'>
@@ -78,7 +78,7 @@ function Profil(_: ProfilProps) {
             </div>
           </section>
           <section className='mb-8'>
-            <h2 className='text-l-medium mb-4'>Notifications</h2>
+            <h2 className='text-l-bold mb-4'>Notifications</h2>
             <label
               htmlFor='notificationSonore'
               className='flex items-center flex-wrap layout_m:flex-nowrap'
@@ -98,7 +98,7 @@ function Profil(_: ProfilProps) {
             </label>
           </section>
           <section className='mb-8'>
-            <h2 className='text-l-medium mb-4'>
+            <h2 className='text-l-bold mb-4'>
               Application CEJ jeune - mode démo
             </h2>
             <p className='mb-4'>
@@ -121,14 +121,14 @@ function Profil(_: ProfilProps) {
                   focusable='false'
                   aria-label='QR code pour l’App Store'
                 />
-                <p className='text-s-medium'>App Store</p>
+                <p className='text-s-bold'>App Store</p>
               </div>
               <div className='flex flex-col items-center'>
                 <QrcodePlayStore
                   focusable='false'
                   aria-label='QR code pour Google Play'
                 />
-                <p className='text-s-medium'>Google Play</p>
+                <p className='text-s-bold'>Google Play</p>
               </div>
             </div>
           </section>

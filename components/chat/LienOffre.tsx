@@ -15,7 +15,7 @@ export function LienOffre(props: { infoOffre: InfoOffre }) {
 
   return (
     <div className='p-4 rounded-medium bg-blanc mt-4'>
-      <p className='text-base-medium text-content_color'>
+      <p className='w-text-base-bold text-content_color'>
         {props.infoOffre!.titre}
       </p>
       <div className='mt-4 w-max ml-auto'>
