@@ -2,16 +2,16 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
-import { Offre, Recherche } from '../../../interfaces/favoris'
-import { FavorisService } from '../../../services/favoris.service'
-import { ApiError } from '../../../utils/httpClient'
-
 import { OngletOffres } from 'components/favoris/offres/OngletOffres'
 import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
+import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
+import { FavorisService } from 'services/favoris.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { ApiError } from 'utils/httpClient'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface FavorisProps extends PageProps {
@@ -26,10 +26,16 @@ export enum Onglet {
 
 function Favoris({ offres, recherches }: FavorisProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.FAVORIS)
+  const favorisTracking = 'Détail jeune – Favoris'
+  const recherchesTracking = 'Détail jeune – Recherches'
+  const [tracking, setTracking] = useState<string>(favorisTracking)
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
+    setTracking(tab === Onglet.FAVORIS ? favorisTracking : recherchesTracking)
   }
+
+  useMatomo(tracking)
 
   return (
     <>

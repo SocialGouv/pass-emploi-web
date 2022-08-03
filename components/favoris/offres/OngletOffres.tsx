@@ -1,11 +1,9 @@
 import React from 'react'
 
-import { Offre } from '../../../interfaces/favoris'
-
-import OffresList from './OffresList'
+import OffresList from 'components/favoris/offres/OffresList'
+import { Offre } from 'interfaces/favoris'
 
 interface OngletOffresProps {
-  //TODO tableau de ... ?
   offres: Offre[]
 }
 

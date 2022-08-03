@@ -1,8 +1,7 @@
 import React from 'react'
 
-import { Recherche } from '../../../interfaces/favoris'
-
-import RecherchesList from './RecherchesList'
+import RecherchesList from 'components/favoris/recherches/RecherchesList'
+import { Recherche } from 'interfaces/favoris'
 
 interface OngletRecherchesProps {
   recherches: Recherche[]
