@@ -46,7 +46,7 @@ function FormulaireRechercheDossier({
 
   return (
     <>
-      <p className='w-text-base-regular mb-4'>
+      <p className='text-m-bold mb-4'>
         Saisissez le numéro de dossier du jeune pour lequel vous voulez créer un
         compte
       </p>
@@ -54,7 +54,7 @@ function FormulaireRechercheDossier({
       <IndicationRechercheDossier />
 
       <form method='POST' onSubmit={handleSearchSubmit}>
-        <label className='block w-text-base-bold' htmlFor='recherche-numero'>
+        <label className='block text-base-medium' htmlFor='recherche-numero'>
           Numéro de dossier
         </label>
         <input

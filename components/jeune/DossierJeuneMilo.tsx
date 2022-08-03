@@ -55,50 +55,55 @@ export default function DossierJeuneMilo({
       <div className='border border-primary_lighten rounded-large p-6'>
         <dl className='text-primary_darken'>
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Prénom'>
+            <dt className='text-base-regular mr-1' aria-label='Prénom'>
               Prénom :
             </dt>
-            <dd className='text-s-bold'> {dossier.prenom}</dd>
+            <dd className='text-base-medium'> {dossier.prenom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Nom'>
+            <dt className='text-base-regular mr-1' aria-label='Nom'>
               Nom :
             </dt>
-            <dd className='text-s-bold'> {dossier.nom}</dd>
+            <dd className='text-base-medium'> {dossier.nom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Date de naissance'>
+            <dt
+              className='text-base-regular mr-1'
+              aria-label='Date de naissance'
+            >
               Date de naissance :
             </dt>
-            <dd className='text-s-bold'> {dossier.dateDeNaissance}</dd>
+            <dd className='text-base-medium'> {dossier.dateDeNaissance}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Code postal'>
+            <dt className='text-base-regular mr-1' aria-label='Code postal'>
               Code postal :
             </dt>
-            <dd className='text-s-bold'> {dossier.codePostal}</dd>
+            <dd className='text-base-medium'> {dossier.codePostal}</dd>
           </div>
           <div className='flex items-center mb-3'>
             <dt
               className={` ${
-                dossier.email ? 'text-sm mr-1' : 'text-s-bold text-warning'
+                dossier.email
+                  ? 'text-base-regular mr-1'
+                  : 'text-base-regular text-warning'
               }`}
               aria-label='E-mail'
             >
               E-mail :
             </dt>
 
-            <dd className='text-s-bold'>{dossier.email || ''}</dd>
+            <dd className='text-base-medium'>{dossier.email || ''}</dd>
           </div>
           {!dossier.email && (
             <>
-              <p className='text-s-bold text-warning mb-2'>
+              <p className='text-base-bold text-warning mb-2'>
                 L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
               </p>
-              <ol className='text-sm text-warning'>
+              <ol className='text-base-regular text-warning'>
                 <li className='mb-3.5'>
                   1. Renseignez l&apos;e-mail du jeune sur son profil i-Milo
                 </li>
@@ -132,7 +137,7 @@ export default function DossierJeuneMilo({
 
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'}>
-          <a className='flex items-center text-s-bold text-primary_darken mr-6'>
+          <a className='flex items-center text-base-bold text-primary_darken mr-6'>
             <IconComponent
               name={IconName.ArrowLeft}
               className='mr-2.5 w-3 h-3'
