@@ -115,7 +115,7 @@ function FormulaireJeunePoleEmploi({
           name='jeune-prenom'
           value={prenom.value}
           onChange={(e) => handleNomChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
+          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
             prenom.error
               ? 'border-warning text-warning'
               : 'border-content_color'
@@ -134,7 +134,7 @@ function FormulaireJeunePoleEmploi({
           name='jeune-nom'
           value={nom.value}
           onChange={(e) => handlePrenomChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
+          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
             nom.error ? 'border-warning text-warning' : 'border-content_color'
           }`}
         />
@@ -156,7 +156,7 @@ function FormulaireJeunePoleEmploi({
           name='jeune-email'
           value={email.value}
           onChange={(e) => handleEmailChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
+          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
             email.error || error
               ? 'border-warning text-warning'
               : 'border-content_color text-primary_darken'

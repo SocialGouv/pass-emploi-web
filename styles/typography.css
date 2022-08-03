@@ -77,13 +77,3 @@
   line-height: 32px;
   letter-spacing: 0;
 }
-
-/*** DEPRECATED ***/
-
-.text-sm {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 21px;
-  letter-spacing: 0;
-}
