@@ -90,12 +90,12 @@ export default function DeleteJeuneActifModal({
           titleIcon={IconName.Warning}
           onClose={onClose}
         >
-          <p className='mb-12 w-text-base-regular text-content_color text-center'>
+          <p className='mb-12 text-base-regular text-content_color text-center'>
             Le bénéficiaire sera prévenu de la suppression de son compte et de
             la possibilité de demander un accès à ses données pendant une
             période de 2 ans avant que celles-ci ne soient supprimées.
           </p>
-          <p className='mb-12 w-text-base-regular text-content_color text-center'>
+          <p className='mb-12 text-base-regular text-content_color text-center'>
             Souhaitez-vous continuer la suppression ?
           </p>
           <div className='flex justify-center'>
@@ -133,10 +133,10 @@ export default function DeleteJeuneActifModal({
               </legend>
               <label
                 htmlFor='motif-suppression'
-                className='w-text-base-bold mb-2'
+                className='text-base-bold mb-2'
               >
                 <span aria-hidden={true}>* </span>Motif de suppression
-                <span className='w-text-s-regular block mb-3'>
+                <span className='text-base-regular block mb-3'>
                   {' '}
                   Veuillez sélectionner un motif de suppression de compte
                 </span>
@@ -158,10 +158,7 @@ export default function DeleteJeuneActifModal({
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
                 <>
-                  <label
-                    htmlFor='commentaire-motif'
-                    className='w-text-base-bold'
-                  >
+                  <label htmlFor='commentaire-motif' className='text-s-regular'>
                     <span aria-hidden={true}>* </span>
                     Veuillez préciser le motif de la suppression du compte
                   </label>

@@ -23,11 +23,11 @@ export default function DeleteJeuneInactifModal({
       titleIcon={IconName.Warning}
       onClose={onClose}
     >
-      <p className='mb-12 w-text-base-regular text-content_color text-center'>
+      <p className='mb-12 text-base-regular text-content_color text-center'>
         Une fois confirmée toutes les informations liées à ce compte jeune
         seront supprimées.
       </p>
-      <p className='mb-12 w-text-base-regular text-content_color text-center'>
+      <p className='mb-12 text-base-regular text-content_color text-center'>
         Souhaitez-vous continuer la suppression ?
       </p>
       <div className='flex justify-center'>
