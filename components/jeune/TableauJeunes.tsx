@@ -158,7 +158,7 @@ export const TableauJeunes = ({
   return (
     <>
       {sortedJeunes.length === 0 ? (
-        <p className='mt-32 w-text-base-bold text-center text-primary'>
+        <p className='mt-32 text-base-bold text-center text-primary'>
           Aucun jeune trouvé
         </p>
       ) : (
@@ -175,7 +175,7 @@ export const TableauJeunes = ({
             <div role='row' className={`table-row`}>
               <span
                 role='columnheader'
-                className='table-cell text-sm text-left py-4'
+                className='table-cell text-base-regular text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
@@ -194,7 +194,7 @@ export const TableauJeunes = ({
               {withSituations && (
                 <span
                   role='columnheader'
-                  className='table-cell text-sm text-left p-4'
+                  className='table-cell text-base-regular text-left p-4'
                 >
                   <button
                     className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
@@ -213,7 +213,7 @@ export const TableauJeunes = ({
               )}
               <span
                 role='columnheader'
-                className='table-cell text-sm text-left py-4'
+                className='table-cell text-base-regular text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
@@ -237,7 +237,7 @@ export const TableauJeunes = ({
               {withActions && (
                 <span
                   role='columnheader'
-                  className='table-cell text-sm  text-left py-4'
+                  className='table-cell text-base-regular text-left py-4'
                 >
                   <button
                     className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center mx-auto'
@@ -259,7 +259,7 @@ export const TableauJeunes = ({
 
               <span
                 role='columnheader'
-                className='table-cell text-sm  text-left py-4'
+                className='table-cell text-base-regular  text-left py-4'
               >
                 <button
                   className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center mx-auto'
@@ -287,7 +287,7 @@ export const TableauJeunes = ({
                 <a
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className={`table-row text-sm  items-center hover:bg-primary_lighten`}
+                  className='table-row text-base-regular items-center hover:bg-primary_lighten'
                 >
                   <span role='cell' className='table-cell p-4'>
                     <span className='flex items-baseline'>
@@ -346,7 +346,7 @@ export const TableauJeunes = ({
                     <div className='relative w-fit mx-auto'>
                       <MessageIcon aria-hidden='true' focusable='false' />
                       {jeune.messagesNonLus > 0 && (
-                        <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc w-text-xs-medium'>
+                        <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
                           {jeune.messagesNonLus}
                         </div>
                       )}
