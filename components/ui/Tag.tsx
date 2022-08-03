@@ -10,7 +10,7 @@ interface TagProps {
 export function Tag({ label, color, backgroundColor, className }: TagProps) {
   return (
     <span
-      className={`table-cell w-text-s-regular border border-solid border-${color} text-${color} px-3 py-[4px] bg-${backgroundColor} rounded-x_large whitespace-nowrap ${
+      className={`table-cell text-s-regular border border-solid border-${color} text-${color} px-3 py-[4px] bg-${backgroundColor} rounded-x_large whitespace-nowrap ${
         className ?? ''
       }`}
     >

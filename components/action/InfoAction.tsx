@@ -15,14 +15,14 @@ function InfoAction({
   isForm = false,
   isInline = false,
 }: InfoActionProps) {
-  const styles = 'text-m-medium pb-6 text-sm-regular flex items-center'
+  const styles = 'text-m-bold pb-6 flex items-center'
 
   return (
     <>
       <dt
         className={`${
           isInline
-            ? 'w-text-base-bold py-4 border-0 border-t border-solid border-t-primary_lighten'
+            ? 'text-base-medium py-4 border-0 border-t border-solid border-t-primary_lighten'
             : styles
         }`}
       >
@@ -40,7 +40,7 @@ function InfoAction({
         className={`${
           isInline
             ? 'py-4 border-0 border-t border-solid border-t-primary_lighten'
-            : 'w-text-base-regular pb-10'
+            : 'text-base-regular pb-10'
         } pl-6`}
       >
         {isForm && (

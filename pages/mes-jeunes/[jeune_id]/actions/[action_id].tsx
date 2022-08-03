@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import InfoAction from 'components/action/InfoAction'
-import { RadioButtonStatus } from 'components/action/RadioButtonStatus'
+import RadioButtonStatus from 'components/action/RadioButtonStatus'
 import FailureMessage from 'components/FailureMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
