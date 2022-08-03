@@ -57,4 +57,41 @@ describe('<ChatRoomTile />', () => {
       expect(toggleFlag).toHaveBeenCalledWith(true)
     })
   })
+
+  it("affiche un indicateur si le dernier message vient du jeune et le conseiller ne l'a pas lu", () => {
+    // When
+    render(
+      <ChatRoomTile
+        jeuneChat={unJeuneChat({
+          lastMessageSentBy: 'jeune',
+          seenByConseiller: false,
+        })}
+        id='whatever'
+        onClick={jest.fn()}
+        onToggleFlag={toggleFlag}
+      />
+    )
+
+    // Then
+    expect(screen.getByText('Nouveau(x) message(s)')).toBeInTheDocument()
+  })
+
+  it("affiche un indicateur si le dernier message vient du conseiller et le jeune ne l'a pas lu", () => {
+    // When
+    render(
+      <ChatRoomTile
+        jeuneChat={unJeuneChat({
+          lastMessageSentBy: 'conseiller',
+          lastMessageSentAt: new Date(),
+          lastJeuneReading: new Date(),
+        })}
+        id='whatever'
+        onClick={jest.fn()}
+        onToggleFlag={toggleFlag}
+      />
+    )
+
+    // Then
+    expect(screen.getByText('Non lu')).toBeInTheDocument()
+  })
 })

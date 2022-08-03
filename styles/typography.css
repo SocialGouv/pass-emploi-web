@@ -1,3 +1,92 @@
+.text-xs-medium {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 21px;
+  letter-spacing: 0;
+}
+
+.text-xs-regular {
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0;
+}
+
+.text-s-medium {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.text-s-regular {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.text-base-medium {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 21px;
+  letter-spacing: 0;
+}
+
+.text-base-regular {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+}
+
+.text-m-medium {
+  font-size: 20px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 26px;
+  letter-spacing: 0;
+}
+
+.text-m-regular {
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26px;
+  letter-spacing: 0;
+}
+
+.text-l-medium {
+  font-size: 24px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 32px;
+  letter-spacing: 0;
+}
+
+.text-l-regular {
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: 0;
+}
+
+.text-xl-medium {
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 40px;
+}
+
+/*** DEPRECATED ***/
+
 .text-md {
   font-size: 16px;
   font-style: normal;
@@ -36,107 +125,4 @@
   font-weight: 500;
   line-height: 21px;
   letter-spacing: 0;
-}
-
-.text-xs-semi {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px;
-  letter-spacing: 0;
-}
-
-.text-xxs-italic {
-  font-size: 11px;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 13px;
-  letter-spacing: 0;
-  text-align: right;
-}
-/*new à implémenter avec la nouvelle nomenclature et mettre en rem*/
-.text-xs-medium {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 21px;
-  letter-spacing: 0;
-}
-
-.text-xs-regular {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
-}
-
-.text-s-medium {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: bold;
-  line-height: 24px;
-  letter-spacing: 0;
-}
-
-.text-s-regular {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
-  letter-spacing: 0;
-}
-
-.text-base-medium {
-  font-size: 16px;
-  font-style: normal;
-  font-weight: bold;
-  line-height: 21px;
-  letter-spacing: 0;
-}
-
-.text-base-regular {
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 22px;
-  letter-spacing: 0;
-}
-
-.text-m-regular {
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 26px;
-  letter-spacing: 0;
-}
-
-.text-m-medium {
-  font-size: 20px;
-  font-style: normal;
-  font-weight: bold;
-  line-height: 26px;
-  letter-spacing: 0;
-}
-
-.text-l-medium {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: bold;
-  line-height: 32px;
-  letter-spacing: 0;
-}
-
-.text-l-regular {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 32px;
-  letter-spacing: 0;
-}
-
-.text-xl-medium {
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 40px;
 }
