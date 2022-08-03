@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 
 import { Offre, Recherche } from '../../../interfaces/favoris'
 import { FavorisService } from '../../../services/favoris.service'
+import { ApiError } from '../../../utils/httpClient'
 
 import { OngletOffres } from 'components/favoris/offres/OngletOffres'
 import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
@@ -83,25 +84,30 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  // TODO gerer 403
+  let offres: Offre[] = []
+  let recherches: Recherche[] = []
   const {
     session: { accessToken },
   } = sessionOrRedirect
   const jeuneId = context.query.jeune_id
-  console.log('------------------------------')
-  console.log(jeuneId)
   if (!jeuneId) {
     return {
-      props: { offres: [], recherches: [], pageTitle: 'Favoris' },
+      props: { offres, recherches, pageTitle: 'Favoris' },
     }
   }
-  console.log('after if')
   const favorisService = withDependance<FavorisService>('favorisService')
-  const offres = await favorisService.getOffres(jeuneId as string, accessToken)
-  const recherches = await favorisService.getRecherches(
-    jeuneId as string,
-    accessToken
-  )
+  try {
+    offres = await favorisService.getOffres(jeuneId as string, accessToken)
+    recherches = await favorisService.getRecherches(
+      jeuneId as string,
+      accessToken
+    )
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 403) {
+      return { redirect: { destination: '/mes-jeunes', permanent: false } }
+    }
+    throw error
+  }
 
   return {
     props: { offres, recherches, pageTitle: 'Favoris' },
