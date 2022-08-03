@@ -70,27 +70,11 @@
   letter-spacing: 0;
 }
 
-.text-l-regular {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 32px;
-  letter-spacing: 0;
-}
-
 .text-l-bold {
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
   line-height: 32px;
-  letter-spacing: 0;
-}
-
-.text-xl-medium {
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 40px;
   letter-spacing: 0;
 }
 
