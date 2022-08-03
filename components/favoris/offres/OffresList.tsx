@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react'
 
-import { Offre } from '../../../interfaces/favoris'
-import { HeaderCell } from '../../rdv/HeaderCell'
-
 import OffreRow from 'components/favoris/offres/OffreRow'
+import { HeaderCell } from 'components/rdv/HeaderCell'
+import { Offre } from 'interfaces/favoris'
 
 interface FavorisListProps {
   offres: Offre[]

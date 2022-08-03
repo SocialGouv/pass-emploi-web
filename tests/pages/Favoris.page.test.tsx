@@ -29,7 +29,7 @@ describe('Favoris', () => {
     it('affiche la liste de ses offres', () => {
       // Then
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Favoris 2'
+        'Offres 2'
       )
       offres.forEach((offre) => {
         expect(screen.getByText(offre.titre)).toBeInTheDocument()

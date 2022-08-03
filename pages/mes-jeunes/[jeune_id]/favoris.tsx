@@ -20,19 +20,19 @@ interface FavorisProps extends PageProps {
 }
 
 export enum Onglet {
-  FAVORIS = 'FAVORIS',
+  OFFRES = 'OFFRES',
   RECHERCHES = 'RECHERCHES',
 }
 
 function Favoris({ offres, recherches }: FavorisProps) {
-  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.FAVORIS)
+  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.OFFRES)
   const favorisTracking = 'Détail jeune – Favoris'
   const recherchesTracking = 'Détail jeune – Recherches'
   const [tracking, setTracking] = useState<string>(favorisTracking)
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
-    setTracking(tab === Onglet.FAVORIS ? favorisTracking : recherchesTracking)
+    setTracking(tab === Onglet.OFFRES ? favorisTracking : recherchesTracking)
   }
 
   useMatomo(tracking)
@@ -41,11 +41,11 @@ function Favoris({ offres, recherches }: FavorisProps) {
     <>
       <TabList className='mt-10'>
         <Tab
-          label='Favoris'
+          label='Offres'
           count={offres.length}
-          selected={currentTab === Onglet.FAVORIS}
-          controls='liste-favoris'
-          onSelectTab={() => switchTab(Onglet.FAVORIS)}
+          selected={currentTab === Onglet.OFFRES}
+          controls='liste-offres'
+          onSelectTab={() => switchTab(Onglet.OFFRES)}
         />
         <Tab
           label='Recherches'
@@ -56,12 +56,12 @@ function Favoris({ offres, recherches }: FavorisProps) {
         />
       </TabList>
 
-      {currentTab === Onglet.FAVORIS && (
+      {currentTab === Onglet.OFFRES && (
         <div
           role='tabpanel'
-          aria-labelledby='liste-favoris--tab'
+          aria-labelledby='liste-offres--tab'
           tabIndex={0}
-          id='liste-favoris'
+          id='liste-offres'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
           <OngletOffres offres={offres} />

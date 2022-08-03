@@ -1,8 +1,3 @@
-import {
-  FavorisApiService,
-  FavorisService,
-} from '../../services/favoris.service'
-
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
@@ -11,6 +6,7 @@ import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
+import { FavorisApiService, FavorisService } from 'services/favoris.service'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import {

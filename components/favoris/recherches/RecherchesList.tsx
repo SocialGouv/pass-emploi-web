@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react'
 
-import { Recherche } from '../../../interfaces/favoris'
-import { HeaderCell } from '../../rdv/HeaderCell'
-
-import RechercheRow from './RechercheRow'
+import RechercheRow from 'components/favoris/recherches/RechercheRow'
+import { HeaderCell } from 'components/rdv/HeaderCell'
+import { Recherche } from 'interfaces/favoris'
 
 interface RecherchesListProps {
   recherches: Recherche[]
