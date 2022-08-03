@@ -37,15 +37,15 @@ export function ChatRoomTile({
       >
         {jeuneChat.lastMessageSentBy === 'jeune' &&
           !jeuneChat.seenByConseiller && (
-            <p className='text-accent_1 w-text-s-regular mb-2'>
+            <p className='text-accent_1 text-s-regular mb-2'>
               <Dot color='accent_1' className='ml-1 mr-2' />
               Nouveau(x) message(s)
             </p>
           )}
-        <span className='text-md-semi text-primary_darken mb-2 w-full flex justify-between'>
+        <span className='text-base-medium text-primary_darken mb-2 w-full flex justify-between'>
           {jeuneChat.prenom} {jeuneChat.nom}
         </span>
-        <span className='text-sm text-grey_800 mb-[8px]'>
+        <span className='text-s-regular text-grey_800 mb-[8px]'>
           {' '}
           {jeuneChat.lastMessageSentBy === UserType.CONSEILLER.toLowerCase()
             ? 'Vous'
