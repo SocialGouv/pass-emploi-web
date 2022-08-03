@@ -25,7 +25,6 @@ describe('PoleEmploiCreationJeune', () => {
   describe("quand le formulaire n'a pas encore été soumis", () => {
     it('devrait afficher les champ de création de compte', () => {
       // Then
-      expect(screen.getByText("Création d'un compte jeune")).toBeInTheDocument()
       expect(
         screen.getByText(
           'Saisissez les coordonnées du jeune pour lequel vous voulez créer un compte'
