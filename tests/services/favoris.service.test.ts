@@ -1,5 +1,3 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import {
   uneListeDeRecherches,
@@ -8,6 +6,7 @@ import {
   uneListeDOffresJson,
 } from 'fixtures/favoris'
 import { FavorisApiService } from 'services/favoris.service'
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
 describe('FavorisApiService', () => {
   let apiClient: ApiClient

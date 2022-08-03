@@ -1,12 +1,11 @@
+import { ApiClient } from 'clients/api.client'
+import { Offre, Recherche } from 'interfaces/favoris'
 import {
   jsonToOffre,
   jsonToRecherche,
   OffreJson,
   RechercheJson,
-} from '../interfaces/json/favoris'
-
-import { ApiClient } from 'clients/api.client'
-import { Offre, Recherche } from 'interfaces/favoris'
+} from 'interfaces/json/favoris'
 
 export interface FavorisService {
   getOffres(idJeune: string, accessToken: string): Promise<Offre[]>
