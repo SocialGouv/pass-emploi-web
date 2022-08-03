@@ -4,8 +4,6 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
-import FailureMessage from 'components/FailureMessage'
-import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
@@ -14,7 +12,9 @@ import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import FailureAlert from 'components/ui/FailureAlert'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import InformationMessage from 'components/ui/InformationMessage'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
@@ -223,7 +223,7 @@ function FicheJeune({
   return (
     <>
       {showSuppressionCompteBeneficiaireError && (
-        <FailureMessage
+        <FailureAlert
           label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
           onAcknowledge={() => setShowSuppressionCompteBeneficiaireError(false)}
         />
@@ -248,7 +248,7 @@ function FicheJeune({
 
       {!jeune.isActivated && (
         <>
-          <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
+          <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
           <div className='mb-8'>
             <InformationMessage
               content={[

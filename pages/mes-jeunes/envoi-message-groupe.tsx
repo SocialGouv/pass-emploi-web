@@ -3,12 +3,12 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
 
-import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import FailureAlert from 'components/ui/FailureAlert'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import Multiselection from 'components/ui/Multiselection'
@@ -181,10 +181,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   return (
     <>
       {erreurEnvoi && (
-        <FailureMessage
-          label={erreurEnvoi}
-          onAcknowledge={clearDeletionError}
-        />
+        <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
       <form>

@@ -1,9 +1,9 @@
 import React, { FormEvent, useRef, useState } from 'react'
 
-import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import InformationMessage from 'components/ui/InformationMessage'
 import { InputError } from 'components/ui/InputError'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
 import SelectAutocomplete from 'components/ui/SelectAutocomplete'

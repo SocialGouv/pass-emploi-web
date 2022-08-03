@@ -1,4 +1,4 @@
-import FailureIcon from '../assets/icons/important_outline.svg'
+import FailureIcon from '../../assets/icons/important_outline.svg'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
@@ -7,7 +7,7 @@ type FailureMessageProps = {
   onAcknowledge?: () => void
 }
 
-export default function FailureMessage({
+export default function FailureAlert({
   label,
   onAcknowledge,
 }: FailureMessageProps) {
@@ -21,7 +21,7 @@ export default function FailureMessage({
         focusable={false}
         className='w-6 h-6 mr-2 shrink-0'
       />
-      <p className='grow'>{label}</p>
+      <p className='text-base-bold grow'>{label}</p>
       {onAcknowledge && (
         <button
           aria-label="J'ai compris"

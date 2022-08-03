@@ -1,6 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import InformationMessage from 'components/InformationMessage'
 import JeunesMultiselectAutocomplete, {
   jeuneToOption,
   OptionJeune,
@@ -10,6 +9,7 @@ import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import InformationMessage from 'components/ui/InformationMessage'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
 import { BaseJeune } from 'interfaces/jeune'

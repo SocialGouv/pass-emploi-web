@@ -6,7 +6,7 @@ import ImportantIcon from 'assets/icons/important.svg'
 import Button from 'components/ui/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ResettableTextInput from 'components/ui/ResettableTextInput'
-import SuccessMessage from 'components/ui/SuccessMessage'
+import SuccessAlert from 'components/ui/SuccessAlert'
 import {
   compareJeunesByNom,
   getNomJeuneComplet,
@@ -177,7 +177,7 @@ function Reaffectation(_: ReaffectationProps) {
   return (
     <>
       {isReaffectationSuccess && (
-        <SuccessMessage label={'Les jeunes ont été réaffectés avec succès'} />
+        <SuccessAlert label={'Les jeunes ont été réaffectés avec succès'} />
       )}
 
       <div className='mb-10 bg-accent_2_lighten rounded-medium p-6'>

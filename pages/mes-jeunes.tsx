@@ -8,7 +8,7 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import { TableauJeunes } from 'components/jeune/TableauJeunes'
 import Button from 'components/ui/Button'
-import SuccessMessage from 'components/ui/SuccessMessage'
+import SuccessAlert from 'components/ui/SuccessAlert'
 import { TotalActions } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -164,7 +164,7 @@ function MesJeunes({
   return (
     <>
       {showAjoutAgenceSuccess && (
-        <SuccessMessage
+        <SuccessAlert
           label={`Votre ${
             conseiller?.structure === StructureConseiller.MILO
               ? 'Mission locale'

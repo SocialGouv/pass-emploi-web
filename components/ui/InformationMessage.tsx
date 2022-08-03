@@ -25,13 +25,13 @@ export default function InformationMessage({
         {Array.isArray(content) && (
           <div>
             {content.map((line) => (
-              <p key={line}>{line}</p>
+              <p key={line} className='text-base-bold'>
+                {line}
+              </p>
             ))}
           </div>
         )}
-        {!Array.isArray(content) && (
-          <p className='w-text-base-bold'>{content}</p>
-        )}
+        {!Array.isArray(content) && <p className='text-base-bold'>{content}</p>}
       </div>
       {children && <div className='mt-2'>{children}</div>}
     </div>

@@ -5,8 +5,8 @@ import React, { useState } from 'react'
 
 import InfoAction from 'components/action/InfoAction'
 import RadioButtonStatus from 'components/action/RadioButtonStatus'
-import FailureMessage from 'components/FailureMessage'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import FailureAlert from 'components/ui/FailureAlert'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller, UserType } from 'interfaces/conseiller'
@@ -75,7 +75,7 @@ function PageAction({
   return (
     <>
       {showEchecMessage && (
-        <FailureMessage
+        <FailureAlert
           label="Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
           onAcknowledge={() => setShowEchecMessage(false)}
         />

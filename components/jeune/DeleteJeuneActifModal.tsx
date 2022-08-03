@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 
-import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { IconName } from 'components/ui/IconComponent'
+import InformationMessage from 'components/ui/InformationMessage'
 import { InputError } from 'components/ui/InputError'
 import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
