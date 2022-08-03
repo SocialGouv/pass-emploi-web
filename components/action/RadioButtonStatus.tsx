@@ -10,11 +10,11 @@ interface RadioButtonStatusProps {
   onChange: (statutChoisi: StatutAction) => void
 }
 
-export const RadioButtonStatus = ({
+export default function RadioButtonStatus({
   status,
   isSelected,
   onChange,
-}: RadioButtonStatusProps) => {
+}: RadioButtonStatusProps) {
   const onClick = (e: MouseEvent) => {
     e.preventDefault()
     onChange(status)
@@ -26,7 +26,7 @@ export const RadioButtonStatus = ({
 
   return (
     <div
-      className={`flex items-center px-4 py-3 border border-solid rounded-full text-sm-semi mr-4 cursor-pointer ${
+      className={`flex items-center px-4 py-3 border border-solid rounded-full text-s-bold mr-4 cursor-pointer ${
         isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
       }`}
       onClick={onClick}

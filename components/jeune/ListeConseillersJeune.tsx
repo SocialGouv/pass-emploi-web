@@ -22,7 +22,7 @@ export function ListeConseillersJeune({
             <li className='list-none text-s-regular' key={depuis.getTime()}>
               Du {formatDayDate(depuis) + ' à aujourd’hui'}
               {' : '}
-              <span className='text-s-medium'>
+              <span className='text-s-bold'>
                 {conseiller.nom} {conseiller.prenom}
               </span>
             </li>
@@ -37,7 +37,7 @@ export function ListeConseillersJeune({
               ' au ' +
               formatDayDate(new Date(conseillerSuivant.depuis))}
             {' : '}
-            <span className='text-s-medium'>
+            <span className='text-s-bold'>
               {conseiller.nom} {conseiller.prenom}
             </span>
           </li>

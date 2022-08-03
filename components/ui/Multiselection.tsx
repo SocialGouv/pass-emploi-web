@@ -31,7 +31,7 @@ export default function Multiselection({
           aria-atomic={true}
         >
           {withInfo && (
-            <div className='flex items-center text-base-medium text-accent_3'>
+            <div className='flex items-center text-base-bold text-accent_3'>
               <div title={infoLabel} aria-label={infoLabel} className='mr-2'>
                 <IconComponent
                   name={IconName.Info}

@@ -127,7 +127,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                 focusable={false}
               />
             </button>
-            <h2 className='text-m-medium text-primary text-center layout_s:text-left my-3 grow'>
+            <h2 className='text-m-bold text-primary text-center layout_s:text-left my-3 grow'>
               Messagerie
             </h2>
           </div>

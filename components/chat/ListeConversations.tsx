@@ -27,7 +27,7 @@ export default function ListeConversations({
             aria-hidden='true'
             className='w-[360px] h-[200px]'
           />
-          <p className='mt-4 text-md-semi w-2/3 text-center'>
+          <p className='mt-4 text-base-medium w-2/3 text-center'>
             Vous devriez avoir des jeunes inscrits pour discuter avec eux
           </p>
         </div>

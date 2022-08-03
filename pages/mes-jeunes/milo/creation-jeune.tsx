@@ -4,7 +4,7 @@ import Router from 'next/router'
 import React, { ReactNode, useEffect, useState } from 'react'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
-import { CreationEtape } from 'components/jeune/CreationEtape'
+import CreationEtape from 'components/jeune/CreationEtape'
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
 import SuccessAddJeuneMilo from 'components/jeune/SuccessAddJeuneMilo'

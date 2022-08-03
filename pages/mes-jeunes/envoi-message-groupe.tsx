@@ -3,12 +3,12 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
 
-import FailureMessage from 'components/FailureMessage'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
+import FailureAlert from 'components/ui/FailureAlert'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InputError } from 'components/ui/InputError'
 import Multiselection from 'components/ui/Multiselection'
@@ -181,10 +181,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   return (
     <>
       {erreurEnvoi && (
-        <FailureMessage
-          label={erreurEnvoi}
-          onAcknowledge={clearDeletionError}
-        />
+        <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
       <form>
@@ -193,7 +190,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         </div>
 
         <fieldset className='border-none mb-10'>
-          <legend className='flex items-center text-m-medium mb-4'>
+          <legend className='flex items-center text-m-bold mb-4'>
             <IconComponent
               name={IconName.Chiffre1}
               role='img'
@@ -211,7 +208,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         </fieldset>
 
         <fieldset className='border-none'>
-          <legend className='flex items-center text-m-medium mb-4'>
+          <legend className='flex items-center text-m-bold mb-4'>
             <IconComponent
               name={IconName.Chiffre2}
               role='img'
@@ -236,7 +233,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             id='message'
             name='message'
             rows={10}
-            className={`w-full text-sm p-4  border border-solid border-black rounded-medium mt-4 ${
+            className={`w-full text-s-regular p-4  border border-solid border-black rounded-medium mt-4 ${
               erreurEnvoi ? 'mb-[8px]' : 'mb-8'
             }`}
             onChange={(e) => setMessage(e.target.value)}
@@ -244,7 +241,10 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           />
 
           <div>
-            <div id='piece-jointe-multi--desc' className='self-center text-xs'>
+            <div
+              id='piece-jointe-multi--desc'
+              className='self-center text-xs-regular'
+            >
               <p>
                 Taille maximum autorisée : 5 Mo aux formats .PDF, .JPG, .PNG
               </p>

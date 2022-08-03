@@ -87,7 +87,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           ))}
         </TabList>
 
-        <p className='text-s-medium text-content_color'>
+        <p className='text-s-bold text-content_color'>
           Tous les champs avec * sont obligatoires
         </p>
 
@@ -100,7 +100,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           >
             <label
               htmlFor='intitule-action-predefinie'
-              className='text-md text-content_color block'
+              className='text-base-medium text-content_color block'
             >
               * Choisir une action prédéfinie
             </label>
@@ -119,7 +119,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
             <label
               htmlFor='commentaire-action-predefinie'
-              className='flex mt-10 text-md text-content_color items-center'
+              className='flex mt-10 text-base-medium text-content_color items-center'
             >
               Commentaire de l&apos;action
               <span className='ml-2'>
@@ -134,11 +134,8 @@ function EditionAction({ idJeune }: EditionActionProps) {
               rows={3}
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
             />
-            <label
-              htmlFor='date-echeance-action-predefinie'
-              className='text-base-medium mb-2'
-            >
-              <span className='mt-10 text-md text-content_color block'>
+            <label htmlFor='date-echeance-action-predefinie' className='mb-2'>
+              <span className='mt-10 text-base-medium text-content_color block'>
                 * Définir une date d’échéance
               </span>
             </label>
@@ -164,7 +161,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           >
             <label
               htmlFor='intitule-action-personnalisee'
-              className='text-md text-content_color block'
+              className='text-base-medium text-content_color block'
             >
               * Intitulé de l&apos;action
             </label>
@@ -178,7 +175,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
             <label
               htmlFor='commentaire-action-personnalisee'
-              className='mt-10 text-md text-content_color block'
+              className='mt-10 text-base-medium text-content_color block'
             >
               Commentaire de l&apos;action
             </label>
@@ -192,9 +189,9 @@ function EditionAction({ idJeune }: EditionActionProps) {
             />
             <label
               htmlFor='date-echeance-action-personnalisee'
-              className='text-base-medium mb-2'
+              className='mb-2'
             >
-              <span className='mt-10 text-md text-content_color block'>
+              <span className='mt-10 text-base-medium text-content_color block'>
                 * Définir une date d’échéance
               </span>
             </label>

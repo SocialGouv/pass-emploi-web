@@ -57,10 +57,6 @@ function PoleEmploiCreationJeune(): JSX.Element {
         </div>
       )}
 
-      <h1 className='text-m-medium mt-6 mb-4'>
-        Création d&apos;un compte jeune
-      </h1>
-
       {!createdSuccessId && (
         <FormulaireJeunePoleEmploi
           creerJeunePoleEmploi={creerJeunePoleEmploi}

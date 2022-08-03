@@ -92,7 +92,7 @@ export function OngletActions({
       {poleEmploi && <IntegrationPoleEmploi label='actions et démarches' />}
 
       {!poleEmploi && actionsInitiales.metadonnees.nombreTotal === 0 && (
-        <p className='text-md mb-2'>
+        <p className='text-base-bold mb-2'>
           {jeune.prenom} {jeune.nom} n’a pas encore d’action
         </p>
       )}

@@ -42,10 +42,10 @@ export function ChatRoomTile({
               Nouveau(x) message(s)
             </p>
           )}
-        <span className='text-md-semi text-primary_darken mb-2 w-full flex justify-between'>
+        <span className='text-base-medium text-primary_darken mb-2 w-full flex justify-between'>
           {jeuneChat.prenom} {jeuneChat.nom}
         </span>
-        <span className='text-sm text-grey_800 mb-[8px]'>
+        <span className='text-s-regular text-grey_800 mb-[8px]'>
           {' '}
           {jeuneChat.lastMessageSentBy === UserType.CONSEILLER.toLowerCase()
             ? 'Vous'

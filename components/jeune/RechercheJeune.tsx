@@ -34,11 +34,11 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
           value={query}
           onChange={setQuery}
           onReset={onReset}
-          className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
+          className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-primary_darken'
         />
 
         <button
-          className='flex p-3 items-center text-base-medium text-primary border border-primary rounded-r-medium hover:bg-primary_lighten'
+          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-medium hover:bg-primary_lighten'
           type='submit'
         >
           <IconComponent

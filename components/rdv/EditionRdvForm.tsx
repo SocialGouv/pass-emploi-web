@@ -1,6 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import InformationMessage from 'components/InformationMessage'
 import JeunesMultiselectAutocomplete, {
   jeuneToOption,
   OptionJeune,
@@ -10,6 +9,7 @@ import BulleMessageSensible from 'components/ui/BulleMessageSensible'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import ButtonLink from 'components/ui/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import InformationMessage from 'components/ui/InformationMessage'
 import { InputError } from 'components/ui/InputError'
 import { Switch } from 'components/ui/Switch'
 import { BaseJeune } from 'interfaces/jeune'
@@ -268,7 +268,7 @@ export function EditionRdvForm({
 
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <p className='text-s-medium mb-6'>
+      <p className='text-s-bold mb-6'>
         Tous les champs avec * sont obligatoires
       </p>
 
@@ -279,7 +279,7 @@ export function EditionRdvForm({
       )}
 
       <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre1}
             role='img'
@@ -300,7 +300,7 @@ export function EditionRdvForm({
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre2}
             role='img'
@@ -311,7 +311,7 @@ export function EditionRdvForm({
           Type de rendez-vous :
         </legend>
 
-        <label htmlFor='typeRendezVous' className='text-base-medium mb-2'>
+        <label htmlFor='typeRendezVous' className='text-base-bold mb-2'>
           <span aria-hidden={true}>* </span>Type
         </label>
         <select
@@ -335,7 +335,7 @@ export function EditionRdvForm({
           <>
             <label
               htmlFor='typeRendezVous-autre'
-              className='flex text-base-medium mb-2 items-center'
+              className='flex text-base-bold mb-2 items-center'
             >
               <span aria-hidden={true}>* </span>Préciser
               <span className='ml-2'>
@@ -369,7 +369,7 @@ export function EditionRdvForm({
           </>
         )}
 
-        <label htmlFor='modalite' className='text-base-medium mb-2'>
+        <label htmlFor='modalite' className='text-base-bold mb-2'>
           Modalité
         </label>
         <select
@@ -389,7 +389,7 @@ export function EditionRdvForm({
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre3}
             role='img'
@@ -400,9 +400,9 @@ export function EditionRdvForm({
           Lieu et date :
         </legend>
 
-        <label htmlFor='date' className='text-base-medium mb-2'>
+        <label htmlFor='date' className='text-base-bold mb-2'>
           <span aria-hidden={true}>* </span>Date
-          <span className='text-s-regular'> (format : jj/mm/aaaa)</span>
+          <span className='text-base-regular'> (format : jj/mm/aaaa)</span>
         </label>
         {date.error && (
           <InputError id='date-error' className='mb-2'>
@@ -424,9 +424,9 @@ export function EditionRdvForm({
           }`}
         />
 
-        <label htmlFor='horaire' className='text-base-medium mb-2'>
+        <label htmlFor='horaire' className='text-base-bold mb-2'>
           <span aria-hidden='true'>* </span>Heure
-          <span className='text-s-regular'> (format : hh:mm)</span>
+          <span className='text-base-regular'> (format : hh:mm)</span>
         </label>
         {horaire.error && (
           <InputError id='horaire-error' className='mb-2'>
@@ -450,9 +450,9 @@ export function EditionRdvForm({
           } bg-clock bg-[center_right_1rem] bg-no-repeat`}
         />
 
-        <label htmlFor='duree' className='text-base-medium mb-2'>
+        <label htmlFor='duree' className='text-base-bold mb-2'>
           <span aria-hidden='true'>* </span>Durée
-          <span className='text-s-regular'> (format : hh:mm)</span>
+          <span className='text-base-regular'> (format : hh:mm)</span>
         </label>
         {duree.error && (
           <InputError id='duree-error' className='mb-2'>
@@ -474,9 +474,9 @@ export function EditionRdvForm({
           }`}
         />
 
-        <label htmlFor='adresse' className='text-base-medium mb-2'>
+        <label htmlFor='adresse' className='text-base-bold mb-2'>
           Adresse
-          <span className='text-s-regular'> Ex: 12 rue duc, Brest</span>
+          <span className='text-base-regular'> Ex: 12 rue duc, Brest</span>
         </label>
         <input
           type='text'
@@ -489,9 +489,9 @@ export function EditionRdvForm({
           }
         />
 
-        <label htmlFor='organisme' className='text-base-medium mb-2'>
+        <label htmlFor='organisme' className='text-base-bold mb-2'>
           Organisme
-          <span className='text-s-regular'>
+          <span className='text-base-regular'>
             {' '}
             Ex: prestataire, entreprise, etc.
           </span>
@@ -507,7 +507,7 @@ export function EditionRdvForm({
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre4}
             role='img'
@@ -570,15 +570,15 @@ export function EditionRdvForm({
           </label>
         </div>
 
-        <label htmlFor='commentaire' className='text-base-regular mb-2'>
+        <label htmlFor='commentaire' className='text-base-medium mb-2'>
           <span className='flex items-center'>
-            Notes
+            Commentaire à destination des jeunes
             <span className='ml-2'>
               <BulleMessageSensible />
             </span>
           </span>
           <span className='block text-s-regular'>
-            Commentaire à destination des jeunes
+            Le commentaire sera lu par l’ensemble des destinataires.
           </span>
         </label>
         <textarea

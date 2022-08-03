@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import SuccessMessage from 'components/ui/SuccessMessage'
+import SuccessAlert from 'components/ui/SuccessAlert'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -41,7 +41,7 @@ export default function AlertDisplayer({
       {alerts.map(
         (alert) =>
           router.query[alert.nom] === QueryValue.succes && (
-            <SuccessMessage
+            <SuccessAlert
               key={`alerte-${alert.nom}`}
               label={alert.message}
               onAcknowledge={() => closeSuccessAlert(alert.nom)}

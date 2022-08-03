@@ -46,7 +46,7 @@ function FormulaireRechercheDossier({
 
   return (
     <>
-      <p className='text-base-regular mb-4'>
+      <p className='text-m-bold mb-4'>
         Saisissez le numéro de dossier du jeune pour lequel vous voulez créer un
         compte
       </p>
@@ -63,7 +63,7 @@ function FormulaireRechercheDossier({
           name='recherche-numero'
           value={numeroDossier}
           onChange={(e) => handleSearchInputChanges(e.target.value)}
-          className={`mt-4 mb-8 p-3 w-8/12 border rounded-medium text-sm ${
+          className={`mt-4 mb-8 p-3 w-8/12 border rounded-medium text-s-regular ${
             messageErreur
               ? 'border-warning text-warning'
               : 'border-content_color text-primary_darken'

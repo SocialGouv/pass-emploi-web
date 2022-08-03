@@ -15,7 +15,7 @@ function InfoAction({
   isForm = false,
   isInline = false,
 }: InfoActionProps) {
-  const styles = 'text-m-medium pb-6 text-sm-regular flex items-center'
+  const styles = 'text-m-bold pb-6 flex items-center'
 
   return (
     <>

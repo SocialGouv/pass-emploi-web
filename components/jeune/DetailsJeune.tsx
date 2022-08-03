@@ -32,12 +32,12 @@ export const DetailsJeune = ({
   return (
     <>
       <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
-        <h2 className='text-base-medium mb-4'>Informations</h2>
+        <h2 className='text-base-bold mb-4'>Informations</h2>
         <dl>
           <div className='flex'>
             <dt className='text-base-regular'>Ajouté le :</dt>
             <dd>
-              <span className='text-md-semi ml-1'>
+              <span className='text-base-medium ml-1'>
                 {formatDayDate(new Date(jeune.creationDate))}
               </span>
             </dd>
@@ -85,7 +85,7 @@ export const DetailsJeune = ({
 
       {withSituations && (
         <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
-          <h2 className='text-base-medium mb-1'>Situation</h2>
+          <h2 className='text-base-bold mb-1'>Situation</h2>
           {!(jeune.situations && jeune.situations.length) && (
             <ol>
               <li className='mt-3'>
@@ -93,10 +93,10 @@ export const DetailsJeune = ({
                   <SituationTag situation={CategorieSituation.SANS_SITUATION} />
                 </div>
                 <div className='mb-3'>
-                  Etat : <span className='text-md-semi'>--</span>
+                  Etat : <span className='text-base-medium'>--</span>
                 </div>
                 <div>
-                  Fin le : <span className='text-md-semi'>--</span>
+                  Fin le : <span className='text-base-medium'>--</span>
                 </div>
               </li>
             </ol>
@@ -114,13 +114,13 @@ export const DetailsJeune = ({
                   </div>
                   <div className='mb-3'>
                     Etat :{' '}
-                    <span className='text-md-semi'>
+                    <span className='text-base-medium'>
                       {situation.etat ?? '--'}
                     </span>
                   </div>
                   <div className=''>
                     Fin le :{' '}
-                    <span className='text-md-semi'>
+                    <span className='text-base-medium'>
                       {situation.dateFin ?? '--'}
                     </span>
                   </div>
@@ -138,7 +138,7 @@ export const DetailsJeune = ({
             className='h-4 w-4 mr-2 stroke-favorite_heart'
             aria-hidden={true}
           />
-          <h2 className='text-base-medium mr-2'>Favoris</h2>
+          <h2 className='text-base-bold mr-2'>Favoris</h2>
 
           <Badge count={totalFavoris} bgColor='favorite_heart' />
         </div>

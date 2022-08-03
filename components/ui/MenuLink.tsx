@@ -45,9 +45,9 @@ function MenuLink({
           />
 
           <span
-            className={`text-md text-left break-words ${className ?? ''} ${
-              isActive ? 'text-primary' : 'text-blanc'
-            }`}
+            className={`text-base-medium text-left break-words ${
+              className ?? ''
+            } ${isActive ? 'text-primary' : 'text-blanc'}`}
           >
             {label}
           </span>
@@ -66,7 +66,7 @@ function MenuLink({
           />
 
           <span
-            className={`text-md text-left sr-only layout_l:not-sr-only break-words ${
+            className={`text-base-medium text-left sr-only layout_l:not-sr-only break-words ${
               className ?? ''
             } ${isActive ? 'text-primary' : 'text-blanc'}`}
           >

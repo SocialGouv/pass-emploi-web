@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 
-import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import { IconName } from 'components/ui/IconComponent'
+import InformationMessage from 'components/ui/InformationMessage'
 import { InputError } from 'components/ui/InputError'
 import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
@@ -133,10 +133,10 @@ export default function DeleteJeuneActifModal({
               </legend>
               <label
                 htmlFor='motif-suppression'
-                className='text-base-medium mb-2'
+                className='text-base-bold mb-2'
               >
                 <span aria-hidden={true}>* </span>Motif de suppression
-                <span className='text-s-regular block mb-3'>
+                <span className='text-base-regular block mb-3'>
                   {' '}
                   Veuillez sélectionner un motif de suppression de compte
                 </span>
@@ -158,10 +158,7 @@ export default function DeleteJeuneActifModal({
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
                 <>
-                  <label
-                    htmlFor='commentaire-motif'
-                    className='text-base-medium'
-                  >
+                  <label htmlFor='commentaire-motif' className='text-s-regular'>
                     <span aria-hidden={true}>* </span>
                     Veuillez préciser le motif de la suppression du compte
                   </label>
