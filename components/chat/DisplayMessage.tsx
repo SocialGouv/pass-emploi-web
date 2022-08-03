@@ -27,14 +27,14 @@ export default function DisplayMessage({
   return (
     <li className='mb-5' ref={scrollToRef} data-testid={message.id}>
       <div
-        className={`text-md break-words max-w-[90%] p-4 rounded-large w-max ${
+        className={`text-base-regular break-words max-w-[90%] p-4 rounded-large w-max ${
           isSentByConseiller
             ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
             : 'text-left text-blanc bg-primary_darken mb-1'
         }`}
       >
         {isSentByConseiller && (
-          <p className='w-text-s-regular capitalize mb-1'>
+          <p className='text-s-regular capitalize mb-1'>
             {conseillerNomComplet}
           </p>
         )}
@@ -49,7 +49,7 @@ export default function DisplayMessage({
           ))}
       </div>
       <p
-        className={`text-xs text-grey_800 ${
+        className={`text-xs-medium text-grey_800 ${
           isSentByConseiller ? 'text-right' : 'text-left'
         }`}
       >
