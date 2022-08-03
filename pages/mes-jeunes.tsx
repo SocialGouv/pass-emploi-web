@@ -176,7 +176,7 @@ function MesJeunes({
 
       {conseiller?.aDesBeneficiairesARecuperer && (
         <div className='bg-primary_lighten rounded-medium p-6 mb-6 text-center'>
-          <p className='w-text-base-bold text-primary'>
+          <p className='text-base-bold text-primary'>
             {conseillerJeunes.length > 0 &&
               'Certains de vos bénéficiaires ont été transférés temporairement.'}
             {conseillerJeunes.length === 0 &&
@@ -211,7 +211,7 @@ function MesJeunes({
               focusable='false'
               className='w-[360px] h-[200px] mb-16'
             />
-            <p className='w-text-base-bold mb-12'>
+            <p className='text-base-bold mb-12'>
               Vous n&apos;avez pas encore intégré de jeunes.
             </p>
 
