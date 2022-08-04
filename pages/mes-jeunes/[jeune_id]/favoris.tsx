@@ -104,7 +104,7 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
   const favorisService = withDependance<FavorisService>('favorisService')
   try {
     offres = await favorisService.getOffres(jeuneId as string, accessToken)
-    recherches = await favorisService.getRecherches(
+    recherches = await favorisService.getRecherchesSauvegardees(
       jeuneId as string,
       accessToken
     )

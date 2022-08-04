@@ -26,7 +26,7 @@ describe('Favoris', () => {
       render(<Favoris offres={offres} recherches={recherches} pageTitle={''} />)
     })
 
-    it('affiche la liste de ses offres', () => {
+    it('affiche la liste des offres du jeune', () => {
       // Then
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
         'Offres 2'
@@ -76,7 +76,7 @@ describe('Favoris', () => {
         // Given
         favorisService = mockedFavorisService({
           getOffres: jest.fn(async () => offres),
-          getRecherches: jest.fn(async () => recherches),
+          getRecherchesSauvegardees: jest.fn(async () => recherches),
         })
         ;(withDependance as jest.Mock).mockReturnValue(favorisService)
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
@@ -97,7 +97,7 @@ describe('Favoris', () => {
           'id-jeune',
           'accessToken'
         )
-        expect(favorisService.getRecherches).toHaveBeenCalledWith(
+        expect(favorisService.getRecherchesSauvegardees).toHaveBeenCalledWith(
           'id-jeune',
           'accessToken'
         )
@@ -113,13 +113,13 @@ describe('Favoris', () => {
 
     describe('Quand la session est valide mais que la ressource n’est pas accessible au conseiller', () => {
       let actual: GetServerSidePropsResult<any>
-      it('rediriges vers la page d’accueil', async () => {
+      it('redirige vers la page d’accueil', async () => {
         // Given
         favorisService = mockedFavorisService({
           getOffres: jest.fn(() => {
             throw new ApiError(403, 'erreur')
           }),
-          getRecherches: jest.fn(() => {
+          getRecherchesSauvegardees: jest.fn(() => {
             throw new ApiError(403, 'erreur')
           }),
         })

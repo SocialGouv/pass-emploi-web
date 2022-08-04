@@ -4,11 +4,11 @@ import OffreRow from 'components/favoris/offres/OffreRow'
 import { HeaderCell } from 'components/rdv/HeaderCell'
 import { Offre } from 'interfaces/favoris'
 
-interface FavorisListProps {
+interface OffresListProps {
   offres: Offre[]
 }
 
-const OffresList = ({ offres }: FavorisListProps) => {
+const TableauOffres = ({ offres }: OffresListProps) => {
   return (
     <>
       {offres.length === 0 && (
@@ -45,4 +45,4 @@ const OffresList = ({ offres }: FavorisListProps) => {
   )
 }
 
-export default OffresList
+export default TableauOffres

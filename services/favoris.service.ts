@@ -10,7 +10,10 @@ import {
 export interface FavorisService {
   getOffres(idJeune: string, accessToken: string): Promise<Offre[]>
 
-  getRecherches(idJeune: string, accessToken: string): Promise<Recherche[]>
+  getRecherchesSauvegardees(
+    idJeune: string,
+    accessToken: string
+  ): Promise<Recherche[]>
 }
 
 export class FavorisApiService implements FavorisService {
@@ -24,7 +27,7 @@ export class FavorisApiService implements FavorisService {
     return offresJson.map(jsonToOffre)
   }
 
-  async getRecherches(
+  async getRecherchesSauvegardees(
     idJeune: string,
     accessToken: string
   ): Promise<Recherche[]> {

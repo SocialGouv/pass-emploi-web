@@ -42,7 +42,7 @@ describe('FavorisApiService', () => {
       })
 
       // When
-      const actual = await favorisService.getRecherches(
+      const actual = await favorisService.getRecherchesSauvegardees(
         'ID_JEUNE',
         'accessToken'
       )

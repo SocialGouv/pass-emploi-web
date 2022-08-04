@@ -8,7 +8,7 @@ interface RecherchesListProps {
   recherches: Recherche[]
 }
 
-const RecherchesList = ({ recherches }: RecherchesListProps) => {
+const TableauRecherches = ({ recherches }: RecherchesListProps) => {
   return (
     <>
       {recherches.length === 0 && (
@@ -45,4 +45,4 @@ const RecherchesList = ({ recherches }: RecherchesListProps) => {
   )
 }
 
-export default RecherchesList
+export default TableauRecherches

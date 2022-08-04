@@ -1,6 +1,6 @@
 import React from 'react'
 
-import RecherchesList from 'components/favoris/recherches/RecherchesList'
+import TableauRecherches from 'components/favoris/recherches/TableauRecherches'
 import { Recherche } from 'interfaces/favoris'
 
 interface OngletRecherchesProps {
@@ -10,7 +10,7 @@ interface OngletRecherchesProps {
 export function OngletRecherches({ recherches }: OngletRecherchesProps) {
   return (
     <>
-      <RecherchesList recherches={recherches} />
+      <TableauRecherches recherches={recherches} />
     </>
   )
 }

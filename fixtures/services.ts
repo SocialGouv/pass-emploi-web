@@ -117,7 +117,7 @@ export function mockedFavorisService(
 ): FavorisService {
   const defaults: FavorisService = {
     getOffres: jest.fn(),
-    getRecherches: jest.fn(),
+    getRecherchesSauvegardees: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
