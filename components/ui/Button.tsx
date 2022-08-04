@@ -41,7 +41,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`${className ? className : ''} text-sm ${
+      className={`${className ? className : ''} text-s-bold ${
         styles.button
       } ${getColorStyleClassName(style)}`}
       form={form ?? undefined}

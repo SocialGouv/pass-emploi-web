@@ -5,7 +5,7 @@ import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { ChatRoomTile } from 'components/chat/ChatRoomTile'
 import { JeuneChat } from 'interfaces/jeune'
-import linkStyle from 'styles/components/Link.module.css'
+import buttonStyle from 'styles/components/Button.module.css'
 
 interface ListeConversationsProps {
   conversations: JeuneChat[]
@@ -53,12 +53,12 @@ export default function ListeConversations({
 
           <Link href={'/mes-jeunes/envoi-message-groupe'}>
             <a
-              className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
+              className={`absolute bottom-8 self-center text-s-bold ${buttonStyle.button} ${buttonStyle.buttonPrimary}`}
             >
               <MessageGroupeIcon
                 aria-hidden='true'
                 focusable='false'
-                className='mr-2'
+                className='shrink-0 mr-2'
               />
               Message multi-destinataires
             </a>
