@@ -7,12 +7,9 @@ export default function OffreRow({ offre }: { offre: Offre }) {
   return (
     <div
       role='row'
-      className='table-row h-20 text-sm rounded-[6px] shadow-s hover:bg-primary_lighten group'
+      className='table-row text-sm rounded-small shadow-s hover:bg-primary_lighten'
     >
-      <div
-        role='cell'
-        className='table-cell p-3 align-middle group-hover:rounded-l-[6px]'
-      >
+      <div role='cell' className='table-cell p-3 align-middle rounded-l-small'>
         {offre.id}
       </div>
       <div role='cell' className='table-cell p-3 text-base-medium align-middle'>
@@ -21,10 +18,7 @@ export default function OffreRow({ offre }: { offre: Offre }) {
       <div role='cell' className='table-cell p-3 align-middle'>
         {offre.organisation}
       </div>
-      <div
-        role='cell'
-        className='table-cell p-3 align-middle group-hover:rounded-r-[6px]'
-      >
+      <div role='cell' className='table-cell p-3 align-middle rounded-r-small'>
         <Tag
           label={offre.type}
           color='primary'

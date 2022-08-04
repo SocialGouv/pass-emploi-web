@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  Fragment,
-  useEffect,
-  useState,
-} from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import ActionRow from 'components/action/ActionRow'
@@ -118,7 +112,7 @@ export default function TableauActionsJeune({
     <div className={isLoading ? 'animate-pulse' : ''}>
       <div
         role='table'
-        className='table w-full'
+        className='table w-full border-spacing-y-2'
         aria-label={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
       >
         <div role='rowgroup' className='table-header-group '>
@@ -223,10 +217,7 @@ export default function TableauActionsJeune({
         {actions.length > 0 && (
           <div role='rowgroup' className='table-row-group'>
             {actions.map((action: Action) => (
-              <Fragment key={action.id}>
-                <ActionRow action={action} jeuneId={jeune.id} />
-                <div className='mb-2' />
-              </Fragment>
+              <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
             ))}
           </div>
         )}

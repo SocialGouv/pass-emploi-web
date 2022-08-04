@@ -8,9 +8,5 @@ interface OngletRecherchesProps {
 }
 
 export function OngletRecherches({ recherches }: OngletRecherchesProps) {
-  return (
-    <>
-      <TableauRecherches recherches={recherches} />
-    </>
-  )
+  return <TableauRecherches recherches={recherches} />
 }

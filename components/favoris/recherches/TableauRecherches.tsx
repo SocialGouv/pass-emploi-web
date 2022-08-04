@@ -1,48 +1,49 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import RechercheRow from 'components/favoris/recherches/RechercheRow'
-import { HeaderCell } from 'components/rdv/HeaderCell'
 import { Recherche } from 'interfaces/favoris'
 
-interface RecherchesListProps {
+interface TableauRecherchesProps {
   recherches: Recherche[]
 }
 
-const TableauRecherches = ({ recherches }: RecherchesListProps) => {
+export default function TableauRecherches({
+  recherches,
+}: TableauRecherchesProps) {
   return (
     <>
       {recherches.length === 0 && (
-        <p className='text-md mb-2'>
+        <p className='text-base-regular mb-2'>
           Votre jeune n’a pas de recherche sauvegardée
         </p>
       )}
 
-      {Boolean(recherches.length) && (
-        <div
-          role='table'
-          className='table w-full'
-          aria-label='Liste des recherches sauvegardées'
-        >
-          <div role='rowgroup' className='table-row-group'>
-            <div role='row' className='table-row'>
-              <HeaderCell label='Nom de la recherche' />
-              <HeaderCell label='Mot clé/ métier' />
-              <HeaderCell label='Lieu/ localisation' />
-              <HeaderCell label='Type' />
-            </div>
-          </div>
-          <div role='rowgroup' className='table-row-group'>
+      {recherches.length > 0 && (
+        <table className='w-full border-spacing-y-2 border-separate'>
+          <caption className='sr-only'>
+            Liste des recherches sauvegardées
+          </caption>
+          <thead>
+            <tr>
+              <th className='text-s-regular text-left py-2 px-3'>
+                Nom de la recherche
+              </th>
+              <th className='text-s-regular text-left py-2 px-3'>
+                Mot clé/métier
+              </th>
+              <th className='text-s-regular text-left py-2 px-3'>
+                Lieu/localisation
+              </th>
+              <th className='text-s-regular text-left py-2 px-3'>Type</th>
+            </tr>
+          </thead>
+          <tbody>
             {recherches.map((recherche) => (
-              <Fragment key={recherche.id}>
-                <RechercheRow recherche={recherche} />
-                <div className='mb-2' />
-              </Fragment>
+              <RechercheRow key={recherche.id} recherche={recherche} />
             ))}
-          </div>
-        </div>
+          </tbody>
+        </table>
       )}
     </>
   )
 }
-
-export default TableauRecherches

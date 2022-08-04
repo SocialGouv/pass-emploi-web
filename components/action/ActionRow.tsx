@@ -26,12 +26,9 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       <a
         role='row'
         aria-label={`Détail de l'action ${action.content}`}
-        className={`table-row cursor-pointer focus-within:primary_lighten rounded-[6px] shadow-s hover:bg-primary_lighten group`}
+        className={`table-row cursor-pointer focus-within:primary_lighten rounded-small shadow-s hover:bg-primary_lighten`}
       >
-        <div
-          role='cell'
-          className={`table-cell relative p-4 group-hover:rounded-l-[6px]`}
-        >
+        <div role='cell' className={`table-cell relative p-4 rounded-l-small`}>
           <span className='flex items-center'>
             <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
@@ -78,7 +75,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
         </div>
         <div
           role='cell'
-          className={`table-cell relative group-hover:rounded-r-[6px] w-[160px]`}
+          className={`table-cell relative rounded-r-small w-[160px]`}
         >
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />

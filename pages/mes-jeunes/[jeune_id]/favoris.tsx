@@ -62,7 +62,7 @@ function Favoris({ offres, recherches }: FavorisProps) {
           aria-labelledby='liste-offres--tab'
           tabIndex={0}
           id='liste-offres'
-          className='mt-8 pb-8 border-b border-primary_lighten'
+          className='mt-8 pb-8'
         >
           <OngletOffres offres={offres} />
         </div>
@@ -89,34 +89,28 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
-  let offres: Offre[] = []
-  let recherches: Recherche[] = []
   const {
     session: { accessToken },
   } = sessionOrRedirect
-  const jeuneId = context.query.jeune_id
-  if (!jeuneId) {
+
+  const favorisService = withDependance<FavorisService>('favorisService')
+
+  const jeuneId = context.query.jeune_id as string
+
+  try {
+    const offres = await favorisService.getOffres(jeuneId, accessToken)
+    const recherches = await favorisService.getRecherchesSauvegardees(
+      jeuneId,
+      accessToken
+    )
     return {
       props: { offres, recherches, pageTitle: 'Favoris' },
     }
-  }
-  const favorisService = withDependance<FavorisService>('favorisService')
-  try {
-    offres = await favorisService.getOffres(jeuneId as string, accessToken)
-    recherches = await favorisService.getRecherchesSauvegardees(
-      jeuneId as string,
-      accessToken
-    )
   } catch (error) {
     if (error instanceof ApiError && error.status === 403) {
       return { redirect: { destination: '/mes-jeunes', permanent: false } }
     }
     throw error
-  }
-
-  return {
-    props: { offres, recherches, pageTitle: 'Favoris' },
   }
 }
 

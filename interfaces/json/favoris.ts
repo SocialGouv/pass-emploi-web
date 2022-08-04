@@ -1,4 +1,16 @@
-import { Offre, Recherche, TypeOffre, TypeRecherche } from 'interfaces/favoris'
+import { Offre, Recherche } from 'interfaces/favoris'
+
+type TypeOffreJson =
+  | 'OFFRE_EMPLOI'
+  | 'OFFRE_ALTERNANCE'
+  | 'OFFRE_IMMERSION'
+  | 'OFFRE_SERVICE_CIVIQUE'
+
+type TypeRechercheJson =
+  | 'OFFRES_EMPLOI'
+  | 'OFFRES_ALTERNANCE'
+  | 'OFFRES_IMMERSION'
+  | 'OFFRES_SERVICES_CIVIQUE'
 
 export interface OffreJson {
   idOffre: string
@@ -16,27 +28,29 @@ export interface RechercheJson {
   localisation?: string
 }
 
-export enum TypeOffreJson {
-  OFFRE_EMPLOI = 'OFFRE_EMPLOI',
-  OFFRE_ALTERNANCE = 'OFFRE_ALTERNANCE',
-  OFFRE_IMMERSION = 'OFFRE_IMMERSION',
-  OFFRE_SERVICE_CIVIQUE = 'OFFRE_SERVICE_CIVIQUE',
-}
-
-export enum TypeRechercheJson {
-  OFFRES_EMPLOI = 'OFFRES_EMPLOI',
-  OFFRES_ALTERNANCE = 'OFFRES_ALTERNANCE',
-  OFFRES_IMMERSION = 'OFFRES_IMMERSION',
-  OFFRES_SERVICES_CIVIQUE = 'OFFRES_SERVICES_CIVIQUE',
-}
-
 export function jsonToOffre(offreJson: OffreJson): Offre {
   return {
     id: offreJson.idOffre,
     localisation: offreJson.localisation,
     organisation: offreJson.organisation,
     titre: offreJson.titre,
-    type: TypeOffre[offreJson.type],
+    type: jsonToTypeOffre(offreJson.type),
+  }
+}
+
+function jsonToTypeOffre(type: TypeOffreJson): string {
+  switch (type) {
+    case 'OFFRE_EMPLOI':
+      return 'Offre d’emploi'
+    case 'OFFRE_ALTERNANCE':
+      return 'Alternance'
+    case 'OFFRE_IMMERSION':
+      return 'Immersion'
+    case 'OFFRE_SERVICE_CIVIQUE':
+      return 'Service civique'
+    default:
+      console.warn(`Type offre ${type} inconnu`)
+      return ''
   }
 }
 
@@ -44,8 +58,24 @@ export function jsonToRecherche(rechercheJson: RechercheJson): Recherche {
   return {
     id: rechercheJson.id,
     titre: rechercheJson.titre,
-    type: TypeRecherche[rechercheJson.type],
+    type: jsonToTypeRecherche(rechercheJson.type),
     metier: rechercheJson.metier ? rechercheJson.metier : '',
     localisation: rechercheJson.localisation ? rechercheJson.localisation : '',
+  }
+}
+
+function jsonToTypeRecherche(type: TypeRechercheJson): string {
+  switch (type) {
+    case 'OFFRES_EMPLOI':
+      return 'Offres d’emploi'
+    case 'OFFRES_ALTERNANCE':
+      return 'Alternances'
+    case 'OFFRES_IMMERSION':
+      return 'Immersions'
+    case 'OFFRES_SERVICES_CIVIQUE':
+      return 'Services civiques'
+    default:
+      console.warn(`Type recherche ${type} inconnu`)
+      return ''
   }
 }

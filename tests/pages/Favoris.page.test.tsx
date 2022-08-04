@@ -9,7 +9,6 @@ import { mockedFavorisService } from 'fixtures/services'
 import Favoris, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/favoris'
-import { FavorisService } from 'services/favoris.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -51,13 +50,9 @@ describe('Favoris', () => {
   })
 
   describe('server side', () => {
-    let favorisService: FavorisService
-
     describe('Quand la session est invalide', () => {
       it('redirige', async () => {
         // Given
-        favorisService = mockedFavorisService()
-        ;(withDependance as jest.Mock).mockReturnValue(favorisService)
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           redirect: 'whatever',
           validSession: false,
@@ -74,7 +69,7 @@ describe('Favoris', () => {
     describe('Quand la session est valide', () => {
       it('récupère les offres et les recherches du jeune', async () => {
         // Given
-        favorisService = mockedFavorisService({
+        const favorisService = mockedFavorisService({
           getOffres: jest.fn(async () => offres),
           getRecherchesSauvegardees: jest.fn(async () => recherches),
         })
@@ -115,7 +110,7 @@ describe('Favoris', () => {
       let actual: GetServerSidePropsResult<any>
       it('redirige vers la page d’accueil', async () => {
         // Given
-        favorisService = mockedFavorisService({
+        const favorisService = mockedFavorisService({
           getOffres: jest.fn(() => {
             throw new ApiError(403, 'erreur')
           }),

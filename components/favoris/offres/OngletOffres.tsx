@@ -8,9 +8,5 @@ interface OngletOffresProps {
 }
 
 export function OngletOffres({ offres }: OngletOffresProps) {
-  return (
-    <>
-      <TableauOffres offres={offres} />
-    </>
-  )
+  return <TableauOffres offres={offres} />
 }
