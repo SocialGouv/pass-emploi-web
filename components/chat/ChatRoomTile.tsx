@@ -32,7 +32,7 @@ export function ChatRoomTile({
   return (
     <div className='relative'>
       <button
-        className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-[6px]'
+        className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-small'
         onClick={onClick}
       >
         {jeuneChat.lastMessageSentBy === 'jeune' &&

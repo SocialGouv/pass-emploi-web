@@ -6,6 +6,7 @@ import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
+import { FavorisApiService, FavorisService } from 'services/favoris.service'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import {
@@ -27,6 +28,7 @@ export interface Dependencies {
   messagesService: MessagesService
   rendezVousService: RendezVousService
   fichiersService: FichiersService
+  favorisService: FavorisService
 }
 
 export class Container {
@@ -55,6 +57,7 @@ export class Container {
       ),
       rendezVousService: new RendezVousApiService(apiClient),
       fichiersService: new FichiersApiService(apiClient),
+      favorisService: new FavorisApiService(apiClient),
     })
   }
 }

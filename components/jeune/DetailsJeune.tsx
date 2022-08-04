@@ -180,11 +180,10 @@ export const DetailsJeune = ({
               {metadonneesFavoris?.recherches.total ?? 0}
             </dd>
           </div>
-          {/*FIXME: retirer pointer-events-none focus:pointer-events-auto quand page Favoris implémentée*/}
           {metadonneesFavoris?.autoriseLePartage && (
             <div className='flex justify-end mt-4'>
               <Link href={`/mes-jeunes/${jeune.id}/favoris`}>
-                <a className='pointer-events-none focus:pointer-events-auto flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
+                <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
                   Voir la liste des favoris
                   <IconComponent
                     name={IconName.ChevronRight}
