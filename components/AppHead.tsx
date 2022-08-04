@@ -6,12 +6,12 @@ interface AppHeadProps {
 }
 
 export default function AppHead({ titre, hasMessageNonLu }: AppHeadProps) {
+  const title = `${
+    hasMessageNonLu ? 'Nouveau(x) message(s)' : titre
+  } - Espace conseiller CEJ`
   return (
     <Head>
-      <title>
-        {hasMessageNonLu ? 'Nouveau(x) message(s)' : titre} - Espace conseiller
-        CEJ
-      </title>
+      <title>{title}</title>
       <meta
         name='description'
         content="Espace conseiller de l'outil du Contrat d'Engagement Jeune"
