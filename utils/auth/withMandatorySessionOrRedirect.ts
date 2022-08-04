@@ -1,20 +1,21 @@
 import apm, { UserObject } from 'elastic-apm-node'
 import { Redirect } from 'next'
-import { Session } from 'next-auth'
-import { getSession } from 'next-auth/react'
+import { Session, unstable_getServerSession } from 'next-auth'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { authOptions } from 'pages/api/auth/[...nextauth]'
 import { RefreshAccessTokenError } from 'utils/auth/authenticator'
 
 export async function withMandatorySessionOrRedirect({
   req,
+  res,
   resolvedUrl,
 }: GetServerSidePropsContext): Promise<
   | { validSession: false; redirect: Redirect }
   | { validSession: true; session: Session }
 > {
-  // FIXME https://next-auth.js.org/configuration/nextjs#unstable_getserversession
-  const session = await getSession({ req })
+  // https://next-auth.js.org/getting-started/client#getsession
+  const session = await unstable_getServerSession(req, res, authOptions)
   if (!session) {
     const redirectQueryParam =
       resolvedUrl !== '/'

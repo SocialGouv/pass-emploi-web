@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react'
+import { unstable_getServerSession } from 'next-auth'
+
+import { authOptions } from 'pages/api/auth/[...nextauth]'
 
 export default async function Fichier(
   req: NextApiRequest,
@@ -7,7 +9,7 @@ export default async function Fichier(
 ) {
   try {
     const fichierId = req.query.fichier_id
-    const session = await getSession({ req })
+    const session = await unstable_getServerSession(req, res, authOptions)
 
     return res.redirect(
       307,

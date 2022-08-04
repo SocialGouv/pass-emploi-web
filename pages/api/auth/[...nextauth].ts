@@ -1,4 +1,4 @@
-import NextAuth, { Account, Session } from 'next-auth'
+import NextAuth, { Account, NextAuthOptions, Session } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
 import KeycloakProvider from 'next-auth/providers/keycloak'
 
@@ -7,7 +7,7 @@ import HttpClient from 'utils/httpClient'
 
 const authenticator = new Authenticator(new HttpClient())
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID || '',
@@ -20,7 +20,6 @@ export default NextAuth({
   jwt: {
     secret: process.env.AUTH_SECRET,
   },
-
   callbacks: {
     async jwt({ token: jwt, account }: { token: JWT; account?: Account }) {
       return authenticator.handleJWTAndRefresh({ jwt, account })
@@ -42,4 +41,8 @@ export default NextAuth({
       return session
     },
   },
+}
+
+export default NextAuth({
+  ...authOptions,
 })

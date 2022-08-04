@@ -1,11 +1,13 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { getSession, signIn } from 'next-auth/react'
+import { unstable_getServerSession } from 'next-auth'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import Logo from 'assets/images/logo_app_cej.svg'
 import { FormButton } from 'components/ui/FormButton'
+import { authOptions } from 'pages/api/auth/[...nextauth]'
 import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 
@@ -94,15 +96,17 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (
-  context
-): Promise<GetServerSidePropsResult<{}>> => {
-  const session = await getSession({ req: context.req })
-  const querySource = context.query.source && `?source=${context.query.source}`
+export const getServerSideProps: GetServerSideProps<{}> = async ({
+  query,
+  req,
+  res,
+}): Promise<GetServerSidePropsResult<{}>> => {
+  const session = await unstable_getServerSession(req, res, authOptions)
+  const querySource = query.source && `?source=${query.source}`
 
   if (session) {
     const redirectUrl: string =
-      (context.query.redirectUrl as string) ?? `/index${querySource || ''}`
+      (query.redirectUrl as string) ?? `/index${querySource || ''}`
 
     return {
       redirect: {
@@ -113,8 +117,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
   }
 
   const isFromEmail: boolean = Boolean(
-    context.query.source ||
-      (context.query.redirectUrl as string)?.includes('notif-mail')
+    query.source || (query.redirectUrl as string)?.includes('notif-mail')
   )
 
   return {
