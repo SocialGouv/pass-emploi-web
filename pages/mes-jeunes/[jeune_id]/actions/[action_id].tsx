@@ -53,8 +53,11 @@ function PageAction({
       .deleteAction(action.id)
       .then(() => {
         router.push({
-          pathname: `/mes-jeunes/${jeune.id}/actions`,
-          query: { [QueryParam.suppressionAction]: QueryValue.succes },
+          pathname: `/mes-jeunes/${jeune.id}`,
+          query: {
+            [QueryParam.suppressionAction]: QueryValue.succes,
+            onglet: 'actions',
+          },
         })
       })
       .catch((error: Error) => {
