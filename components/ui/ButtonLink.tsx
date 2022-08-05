@@ -22,7 +22,7 @@ export default function ButtonLink({
   return (
     <Link href={href}>
       <a
-        className={`${className ? className : ''} text-sm ${
+        className={`${className ? className : ''} text-s-bold ${
           styles.button
         } ${getColorStyleClassName(style)}`}
       >

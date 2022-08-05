@@ -1,11 +1,11 @@
-import Link from 'next/link'
 import React from 'react'
 
 import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { ChatRoomTile } from 'components/chat/ChatRoomTile'
+import { ButtonStyle } from 'components/ui/Button'
+import ButtonLink from 'components/ui/ButtonLink'
 import { JeuneChat } from 'interfaces/jeune'
-import linkStyle from 'styles/components/Link.module.css'
 
 interface ListeConversationsProps {
   conversations: JeuneChat[]
@@ -49,20 +49,19 @@ export default function ListeConversations({
               </li>
             ))}
           </ul>
-          {/*FIXME : use <ButtonLink/> but causes problem with tailwind and style order*/}
 
-          <Link href={'/mes-jeunes/envoi-message-groupe'}>
-            <a
-              className={`absolute bottom-8 self-center ${linkStyle.linkButtonBlue}`}
-            >
-              <MessageGroupeIcon
-                aria-hidden='true'
-                focusable='false'
-                className='mr-2'
-              />
-              Message multi-destinataires
-            </a>
-          </Link>
+          <ButtonLink
+            href='/mes-jeunes/envoi-message-groupe'
+            style={ButtonStyle.PRIMARY}
+            className='absolute bottom-8 self-center'
+          >
+            <MessageGroupeIcon
+              aria-hidden='true'
+              focusable='false'
+              className='shrink-0 mr-2'
+            />
+            Message multi-destinataires
+          </ButtonLink>
         </>
       )}
     </>
