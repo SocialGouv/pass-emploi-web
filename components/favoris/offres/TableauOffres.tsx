@@ -33,7 +33,7 @@ export default function TableauOffres({
               <HeaderCell label='Titre' />
               <HeaderCell label='Entreprise' />
               <HeaderCell label='Type' />
-              <HeaderCell label='Type' />
+              <HeaderCell label='' />
             </div>
           </div>
           <div role='rowgroup' className='table-row-group'>

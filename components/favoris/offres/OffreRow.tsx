@@ -5,6 +5,7 @@ import {
   TYPES_TO_REDIRECT_SERVICE_CIVIQUE,
 } from '../../../pages/mes-jeunes/[jeune_id]/favoris'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Tag } from 'components/ui/Tag'
 import { Offre } from 'interfaces/favoris'
 import { jsonToTypeOffre, TypeOffreJson } from 'interfaces/json/favoris'
@@ -43,7 +44,12 @@ export default function OffreRow({
           ...TYPES_TO_REDIRECT_SERVICE_CIVIQUE,
         ].includes(offre.type) && (
           <button onClick={() => handleRedirectionOffre(offre.id, offre.type)}>
-            orh click
+            <IconComponent
+              name={IconName.Launch}
+              aria-hidden='true'
+              focusable='false'
+              className='h-4 w-4 fill-content_color'
+            />
           </button>
         )}
       </div>

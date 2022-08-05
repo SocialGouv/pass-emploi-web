@@ -1,7 +1,7 @@
 import {
   OffresEmploiApiService,
   OffresEmploiService,
-} from '../../services/offres.service'
+} from '../../services/offres-emploi.service'
 import {
   ServicesCiviqueApiService,
   ServicesCiviqueService,
@@ -69,14 +69,8 @@ export class Container {
       rendezVousService: new RendezVousApiService(apiClient),
       fichiersService: new FichiersApiService(apiClient),
       favorisService: new FavorisApiService(apiClient),
-      offresEmploiService: new OffresEmploiApiService(
-        apiClient,
-        new HttpClient()
-      ),
-      servicesCiviqueService: new ServicesCiviqueApiService(
-        apiClient,
-        new HttpClient()
-      ),
+      offresEmploiService: new OffresEmploiApiService(apiClient),
+      servicesCiviqueService: new ServicesCiviqueApiService(apiClient),
     })
   }
 }

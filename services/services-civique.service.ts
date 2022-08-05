@@ -1,33 +1,30 @@
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from '../clients/api.client'
-import HttpClient from '../utils/httpClient'
+import { ApiClient } from 'clients/api.client'
+import { ApiError } from 'utils/httpClient'
 
 export interface ServicesCiviqueService {
-  getServiceCiviqueClient(idOffreEngagement: string): Promise<any>
+  getLienServiceCivique(idOffreEngagement: string): Promise<string | undefined>
 }
 export class ServicesCiviqueApiService implements ServicesCiviqueService {
-  constructor(
-    private readonly apiClient: ApiClient,
-    private readonly httpClient: HttpClient
-  ) {}
+  constructor(private readonly apiClient: ApiClient) {}
 
-  // TODO CHANGER LES ANY
-  async getServiceCiviqueClient(idOffreEngagement: string): Promise<any> {
+  async getLienServiceCivique(
+    idOffreEngagement: string
+  ): Promise<string | undefined> {
     const session = await getSession()
-    const accessToken = session?.accessToken!
+    const accessToken = session!.accessToken
 
-    const { content: serviceCiviqueJson } = await this.apiClient.get<any>(
-      `/services-civique/${idOffreEngagement}`,
-      accessToken
-    )
-    if (serviceCiviqueJson.lienAnnonce) {
-      // return this.httpClient.fetchJson(
-      // `/api/redirection/${serviceCiviqueJson.lienAnnonce}`
-      // `${serviceCiviqueJson.lienAnnonce}`
-      // )
+    try {
+      const { content: serviceCiviqueJson } = await this.apiClient.get<{
+        lienAnnonce: string
+      }>(`/services-civique/${idOffreEngagement}`, accessToken)
       return serviceCiviqueJson.lienAnnonce
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+      throw e
     }
-    return serviceCiviqueJson
   }
 }
