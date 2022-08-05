@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Logo from 'assets/images/logo_app_cej.svg'
-import Menu, { MenuItem } from 'components/Menu'
+import MenuLinks, { MenuItem } from 'components/MenuLinks'
 import styles from 'styles/components/Layouts.module.css'
 
 export default function Sidebar() {
@@ -13,7 +13,7 @@ export default function Sidebar() {
         aria-label='Menu principal'
         className='grow flex flex-col justify-between'
       >
-        <Menu
+        <MenuLinks
           showLabelsOnSmallScreen={false}
           items={[
             MenuItem.Jeunes,

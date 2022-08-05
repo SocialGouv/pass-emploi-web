@@ -373,7 +373,7 @@ function Reaffectation(_: ReaffectationProps) {
           } ml-5`}
         >
           <table className='w-full'>
-            <caption className='text-m-medium text-primary text-left mb-8'>
+            <caption className='text-m-bold text-primary text-left mb-8'>
               Jeunes de {conseillerInitial.email}
             </caption>
             <thead>

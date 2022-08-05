@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import Menu, { MenuItem } from 'components/Menu'
+import MenuLinks, { MenuItem } from 'components/MenuLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
@@ -90,15 +90,17 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
         <nav
           role='navigation'
           id='menu-mobile'
-          className='w-[50vw] flex flex-col bg-primary px-6 py-3 z-10 layout_s:hidden'
+          className='w-[70vw] flex flex-col bg-primary px-6 py-3 z-10 layout_s:hidden'
         >
           <button
             ref={closeMenuRef}
             type='button'
             aria-controls='menu-mobile'
             onClick={fermerMenu}
-            aria-label='Fermer Menu principal'
-            className='m-7 w-fit'
+            aria-label='Fermer le menu principal'
+            aria-expanded={true}
+            title='Fermer le menu principal'
+            className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-[50%]'
           >
             <IconComponent
               name={IconName.Close}
@@ -108,7 +110,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             />
           </button>
           <div className='grow flex flex-col justify-between'>
-            <Menu showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
+            <MenuLinks showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
           </div>
         </nav>
       )}
@@ -125,8 +127,9 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                 type='button'
                 onClick={ouvrirMenu}
                 aria-controls='menu-mobile'
+                title='Ouvrir le menu principal'
                 aria-expanded={showMenu}
-                className='absolute left-2 top-[calc(50%-1.25rem)]'
+                className='absolute left-4 top-[calc(50%-1.25rem)]'
               >
                 <IconComponent
                   name={IconName.Menu}
@@ -137,7 +140,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               </button>
             </nav>
 
-            <h2 className='text-m-medium text-primary text-center layout_s:text-left my-3 grow'>
+            <h2 className='text-m-bold text-primary text-center layout_s:text-left layout_xs:p-6 layout_s:p-0 layout_base:my-3 grow'>
               Messagerie
             </h2>
           </div>

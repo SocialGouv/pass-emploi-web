@@ -16,7 +16,10 @@ export enum MenuItem {
 }
 type SidebarProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
 
-export default function Menu({ showLabelsOnSmallScreen, items }: SidebarProps) {
+export default function MenuLinks({
+  showLabelsOnSmallScreen,
+  items,
+}: SidebarProps) {
   const router = useRouter()
   const [isLoggedOut, setIsLoggedOut] = useState(false)
   const [conseiller] = useConseiller()
