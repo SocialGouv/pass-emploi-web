@@ -27,6 +27,7 @@ export enum Onglet {
   RECHERCHES = 'RECHERCHES',
 }
 
+// FIXME move ou faire autremenent - import cyclique
 export const TYPES_TO_REDIRECT_PE = ['OFFRE_ALTERNANCE', 'OFFRE_EMPLOI']
 export const TYPES_TO_REDIRECT_SERVICE_CIVIQUE = ['OFFRE_SERVICE_CIVIQUE']
 
@@ -56,7 +57,7 @@ function Favoris({ offres, recherches }: FavorisProps) {
       redirectUrl = await servicesCiviqueService.getLienServiceCivique(idOffre)
     }
     if (redirectUrl) {
-      window.open(redirectUrl, '_blank')
+      window.open(redirectUrl, '_blank', 'noopener,noreferrer')
     } else {
       window.open('/404', '_blank')
     }

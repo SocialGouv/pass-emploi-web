@@ -1,7 +1,6 @@
 import React from 'react'
 
 import OffreRow from 'components/favoris/offres/OffreRow'
-import { HeaderCell } from 'components/rdv/HeaderCell'
 import { Offre } from 'interfaces/favoris'
 
 interface TableauOffresProps {
@@ -22,21 +21,20 @@ export default function TableauOffres({
       )}
 
       {offres.length > 0 && (
-        <div
-          role='table'
-          className='table w-full border-spacing-y-2'
-          aria-label='Liste des offres en favoris'
-        >
-          <div role='rowgroup' className='table-row-group'>
-            <div role='row' className='table-row'>
-              <HeaderCell label='N°Offre' />
-              <HeaderCell label='Titre' />
-              <HeaderCell label='Entreprise' />
-              <HeaderCell label='Type' />
-              <HeaderCell label='' />
-            </div>
-          </div>
-          <div role='rowgroup' className='table-row-group'>
+        <table className='w-full border-separate border-spacing-y-3'>
+          <caption className='sr-only'>Liste des offres en favoris</caption>
+          <thead>
+            <tr>
+              <th className='text-base-regular text-left pb-3 px-3'>N°Offre</th>
+              <th className='text-base-regular text-left pb-3 px-3'>Titre</th>
+              <th className='text-base-regular text-left pb-3 px-3'>
+                Entreprise
+              </th>
+              <th className='text-base-regular text-left pb-3 px-3'>Type</th>
+              <th className='aria-hidden' />
+            </tr>
+          </thead>
+          <tbody>
             {offres.map((offre) => (
               <OffreRow
                 key={offre.id}
@@ -44,8 +42,8 @@ export default function TableauOffres({
                 handleRedirectionOffre={handleRedirectionOffre}
               />
             ))}
-          </div>
-        </div>
+          </tbody>
+        </table>
       )}
     </>
   )
