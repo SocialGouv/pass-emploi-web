@@ -3,29 +3,21 @@ import React, { useMemo } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Tag } from 'components/ui/Tag'
 import { Offre } from 'interfaces/favoris'
-import { jsonToTypeOffre, TypeOffreJson } from 'interfaces/json/favoris'
-import {
-  TYPES_TO_REDIRECT_PE,
-  TYPES_TO_REDIRECT_SERVICE_CIVIQUE,
-} from 'pages/mes-jeunes/[jeune_id]/favoris'
 
 export default function OffreRow({
   offre,
   handleRedirectionOffre,
 }: {
   offre: Offre
-  handleRedirectionOffre: (idOffre: string, type: string) => void
+  handleRedirectionOffre: (offre: Offre) => void
 }) {
   const hasLink: boolean = useMemo(
-    () =>
-      [...TYPES_TO_REDIRECT_PE, ...TYPES_TO_REDIRECT_SERVICE_CIVIQUE].includes(
-        offre.type
-      ),
+    () => offre.hasLinkPE || offre.hasLinkServiceCivique,
     [offre]
   )
 
   function redirectIfHasLink() {
-    if (hasLink) handleRedirectionOffre(offre.id, offre.type)
+    if (hasLink) handleRedirectionOffre(offre)
   }
 
   return (
@@ -41,7 +33,7 @@ export default function OffreRow({
       <td className='p-3 align-middle'>{offre.organisation}</td>
       <td className='p-3 align-middle rounded-r-small'>
         <Tag
-          label={jsonToTypeOffre(offre.type as TypeOffreJson)}
+          label={offre.type}
           color='primary'
           backgroundColor='primary_lighten'
         />

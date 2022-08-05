@@ -5,7 +5,7 @@ import { Offre } from 'interfaces/favoris'
 
 interface TableauOffresProps {
   offres: Offre[]
-  handleRedirectionOffre: (idOffre: string, type: string) => void
+  handleRedirectionOffre: (offre: Offre) => void
 }
 
 export default function TableauOffres({

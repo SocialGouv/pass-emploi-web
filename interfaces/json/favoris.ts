@@ -34,7 +34,9 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
     localisation: offreJson.localisation,
     organisation: offreJson.organisation,
     titre: offreJson.titre,
-    type: offreJson.type,
+    type: jsonToTypeOffre(offreJson.type),
+    hasLinkPE: ['OFFRE_ALTERNANCE', 'OFFRE_EMPLOI'].includes(offreJson.type),
+    hasLinkServiceCivique: offreJson.type === 'OFFRE_SERVICE_CIVIQUE',
   }
 }
 
@@ -58,7 +60,7 @@ export function jsonToRecherche(rechercheJson: RechercheJson): Recherche {
   return {
     id: rechercheJson.id,
     titre: rechercheJson.titre,
-    type: rechercheJson.type,
+    type: jsonToTypeRecherche(rechercheJson.type),
     metier: rechercheJson.metier ? rechercheJson.metier : '',
     localisation: rechercheJson.localisation ? rechercheJson.localisation : '',
   }

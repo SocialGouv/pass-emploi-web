@@ -2,7 +2,6 @@ import React from 'react'
 
 import { Tag } from 'components/ui/Tag'
 import { Recherche } from 'interfaces/favoris'
-import { jsonToTypeRecherche, TypeRechercheJson } from 'interfaces/json/favoris'
 
 export default function RechercheRow({ recherche }: { recherche: Recherche }) {
   return (
@@ -14,7 +13,7 @@ export default function RechercheRow({ recherche }: { recherche: Recherche }) {
       <td className='p-3 align-middle'>{recherche.localisation}</td>
       <td className='p-3 align-middle rounded-r-small'>
         <Tag
-          label={jsonToTypeRecherche(recherche.type as TypeRechercheJson)}
+          label={recherche.type}
           color='primary'
           backgroundColor='primary_lighten'
         />

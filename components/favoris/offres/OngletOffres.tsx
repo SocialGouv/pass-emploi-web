@@ -5,7 +5,7 @@ import { Offre } from 'interfaces/favoris'
 
 interface OngletOffresProps {
   offres: Offre[]
-  handleRedirectionOffre: (idOffre: string, type: string) => void
+  handleRedirectionOffre: (offre: Offre) => void
 }
 
 export function OngletOffres({

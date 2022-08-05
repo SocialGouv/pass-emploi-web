@@ -27,10 +27,6 @@ export enum Onglet {
   RECHERCHES = 'RECHERCHES',
 }
 
-// FIXME move ou faire autremenent - import cyclique
-export const TYPES_TO_REDIRECT_PE = ['OFFRE_ALTERNANCE', 'OFFRE_EMPLOI']
-export const TYPES_TO_REDIRECT_SERVICE_CIVIQUE = ['OFFRE_SERVICE_CIVIQUE']
-
 function Favoris({ offres, recherches }: FavorisProps) {
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
@@ -49,12 +45,12 @@ function Favoris({ offres, recherches }: FavorisProps) {
     setTracking(tab === Onglet.OFFRES ? favorisTracking : recherchesTracking)
   }
 
-  async function handleRedirectionOffre(idOffre: string, type: string) {
+  async function handleRedirectionOffre(offre: Offre) {
     let redirectUrl: string | undefined
-    if (TYPES_TO_REDIRECT_PE.includes(type)) {
-      redirectUrl = await offresEmploiService.getLienOffreEmploi(idOffre)
-    } else if (TYPES_TO_REDIRECT_SERVICE_CIVIQUE.includes(type)) {
-      redirectUrl = await servicesCiviqueService.getLienServiceCivique(idOffre)
+    if (offre.hasLinkPE) {
+      redirectUrl = await offresEmploiService.getLienOffreEmploi(offre.id)
+    } else if (offre.hasLinkServiceCivique) {
+      redirectUrl = await servicesCiviqueService.getLienServiceCivique(offre.id)
     }
     if (redirectUrl) {
       window.open(redirectUrl, '_blank', 'noopener,noreferrer')
