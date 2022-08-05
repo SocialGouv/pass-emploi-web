@@ -4,18 +4,31 @@ import { OffreJson, RechercheJson } from 'interfaces/json/favoris'
 export function uneListeDOffres(): Offre[] {
   return [
     {
-      id: '1',
+      id: 'idOffre1',
       titre: 'offre 1',
       type: 'Offre d’emploi',
       organisation: 'organisation',
       localisation: 'localisation',
+      hasLinkPE: true,
+      hasLinkServiceCivique: false,
     },
     {
-      id: '2',
+      id: 'idOffre2',
       titre: 'offre 2',
-      type: 'Alternance',
+      type: 'Service civique',
       organisation: 'organisation',
       localisation: 'localisation',
+      hasLinkPE: false,
+      hasLinkServiceCivique: true,
+    },
+    {
+      id: 'idOffre3',
+      titre: 'offre 3',
+      type: 'Immersion',
+      organisation: 'organisation',
+      localisation: 'localisation',
+      hasLinkPE: false,
+      hasLinkServiceCivique: false,
     },
   ]
 }
@@ -42,16 +55,23 @@ export function uneListeDeRecherches(): Recherche[] {
 export function uneListeDOffresJson(): OffreJson[] {
   return [
     {
-      idOffre: '1',
+      idOffre: 'idOffre1',
       titre: 'offre 1',
       type: 'OFFRE_EMPLOI',
       organisation: 'organisation',
       localisation: 'localisation',
     },
     {
-      idOffre: '2',
+      idOffre: 'idOffre2',
       titre: 'offre 2',
-      type: 'OFFRE_ALTERNANCE',
+      type: 'OFFRE_SERVICE_CIVIQUE',
+      organisation: 'organisation',
+      localisation: 'localisation',
+    },
+    {
+      idOffre: 'idOffre3',
+      titre: 'offre 3',
+      type: 'OFFRE_IMMERSION',
       organisation: 'organisation',
       localisation: 'localisation',
     },
