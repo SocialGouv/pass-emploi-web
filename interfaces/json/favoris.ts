@@ -1,12 +1,12 @@
 import { Offre, Recherche } from 'interfaces/favoris'
 
-type TypeOffreJson =
+export type TypeOffreJson =
   | 'OFFRE_EMPLOI'
   | 'OFFRE_ALTERNANCE'
   | 'OFFRE_IMMERSION'
   | 'OFFRE_SERVICE_CIVIQUE'
 
-type TypeRechercheJson =
+export type TypeRechercheJson =
   | 'OFFRES_EMPLOI'
   | 'OFFRES_ALTERNANCE'
   | 'OFFRES_IMMERSION'
@@ -34,11 +34,11 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
     localisation: offreJson.localisation,
     organisation: offreJson.organisation,
     titre: offreJson.titre,
-    type: jsonToTypeOffre(offreJson.type),
+    type: offreJson.type,
   }
 }
 
-function jsonToTypeOffre(type: TypeOffreJson): string {
+export function jsonToTypeOffre(type: TypeOffreJson): string {
   switch (type) {
     case 'OFFRE_EMPLOI':
       return 'Offre d’emploi'
@@ -58,13 +58,13 @@ export function jsonToRecherche(rechercheJson: RechercheJson): Recherche {
   return {
     id: rechercheJson.id,
     titre: rechercheJson.titre,
-    type: jsonToTypeRecherche(rechercheJson.type),
+    type: rechercheJson.type,
     metier: rechercheJson.metier ? rechercheJson.metier : '',
     localisation: rechercheJson.localisation ? rechercheJson.localisation : '',
   }
 }
 
-function jsonToTypeRecherche(type: TypeRechercheJson): string {
+export function jsonToTypeRecherche(type: TypeRechercheJson): string {
   switch (type) {
     case 'OFFRES_EMPLOI':
       return 'Offres d’emploi'

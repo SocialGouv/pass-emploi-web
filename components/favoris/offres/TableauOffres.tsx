@@ -6,9 +6,13 @@ import { Offre } from 'interfaces/favoris'
 
 interface TableauOffresProps {
   offres: Offre[]
+  handleRedirectionOffre: (idOffre: string, type: string) => void
 }
 
-export default function TableauOffres({ offres }: TableauOffresProps) {
+export default function TableauOffres({
+  offres,
+  handleRedirectionOffre,
+}: TableauOffresProps) {
   return (
     <>
       {offres.length === 0 && (
@@ -29,11 +33,16 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
               <HeaderCell label='Titre' />
               <HeaderCell label='Entreprise' />
               <HeaderCell label='Type' />
+              <HeaderCell label='Type' />
             </div>
           </div>
           <div role='rowgroup' className='table-row-group'>
             {offres.map((offre) => (
-              <OffreRow key={offre.id} offre={offre} />
+              <OffreRow
+                key={offre.id}
+                offre={offre}
+                handleRedirectionOffre={handleRedirectionOffre}
+              />
             ))}
           </div>
         </div>

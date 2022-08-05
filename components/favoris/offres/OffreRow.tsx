@@ -1,9 +1,21 @@
 import React from 'react'
 
+import {
+  TYPES_TO_REDIRECT_PE,
+  TYPES_TO_REDIRECT_SERVICE_CIVIQUE,
+} from '../../../pages/mes-jeunes/[jeune_id]/favoris'
+
 import { Tag } from 'components/ui/Tag'
 import { Offre } from 'interfaces/favoris'
+import { jsonToTypeOffre, TypeOffreJson } from 'interfaces/json/favoris'
 
-export default function OffreRow({ offre }: { offre: Offre }) {
+export default function OffreRow({
+  offre,
+  handleRedirectionOffre,
+}: {
+  offre: Offre
+  handleRedirectionOffre: (idOffre: string, type: string) => void
+}) {
   return (
     <div
       role='row'
@@ -20,10 +32,20 @@ export default function OffreRow({ offre }: { offre: Offre }) {
       </div>
       <div role='cell' className='table-cell p-3 align-middle rounded-r-small'>
         <Tag
-          label={offre.type}
+          label={jsonToTypeOffre(offre.type as TypeOffreJson)}
           color='primary'
           backgroundColor='primary_lighten'
         />
+      </div>
+      <div role='cell' className='table-cell p-3 align-middle'>
+        {[
+          ...TYPES_TO_REDIRECT_PE,
+          ...TYPES_TO_REDIRECT_SERVICE_CIVIQUE,
+        ].includes(offre.type) && (
+          <button onClick={() => handleRedirectionOffre(offre.id, offre.type)}>
+            orh click
+          </button>
+        )}
       </div>
     </div>
   )

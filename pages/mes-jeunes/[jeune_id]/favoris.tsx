@@ -9,9 +9,12 @@ import TabList from 'components/ui/TabList'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
 import { FavorisService } from 'services/favoris.service'
+import { OffresEmploiService } from 'services/offres.service'
+import { ServicesCiviqueService } from 'services/services-civique.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface FavorisProps extends PageProps {
@@ -24,7 +27,17 @@ export enum Onglet {
   RECHERCHES = 'RECHERCHES',
 }
 
+export const TYPES_TO_REDIRECT_PE = ['OFFRE_ALTERNANCE', 'OFFRE_EMPLOI']
+export const TYPES_TO_REDIRECT_SERVICE_CIVIQUE = ['OFFRE_SERVICE_CIVIQUE']
+
 function Favoris({ offres, recherches }: FavorisProps) {
+  const offresEmploiService = useDependance<OffresEmploiService>(
+    'offresEmploiService'
+  )
+  const servicesCiviqueService = useDependance<ServicesCiviqueService>(
+    'servicesCiviqueService'
+  )
+
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.OFFRES)
   const favorisTracking = 'Détail jeune – Favoris'
   const recherchesTracking = 'Détail jeune – Recherches'
@@ -33,6 +46,35 @@ function Favoris({ offres, recherches }: FavorisProps) {
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
     setTracking(tab === Onglet.OFFRES ? favorisTracking : recherchesTracking)
+  }
+
+  //TODO Gerer les 404
+  async function handleRedirectionOffre(idOffre: string, type: string) {
+    console.log(idOffre)
+    console.log(type)
+    if (TYPES_TO_REDIRECT_PE.includes(type)) {
+      console.log('pe')
+      const offreEmploiRedirectionUrl =
+        await offresEmploiService.getOffreEmploiClient(idOffre)
+      //window.location.href = offreEmploiRedirectionUrl
+      console.log(offreEmploiRedirectionUrl)
+      window.open(
+        offreEmploiRedirectionUrl,
+        '_blank' // <- This is what makes it open in a new window.
+      )
+    } else if (TYPES_TO_REDIRECT_SERVICE_CIVIQUE.includes(type)) {
+      console.log('service civique')
+      const serviceEngagementRedirectionUrl =
+        await servicesCiviqueService.getServiceCiviqueClient(idOffre)
+      //window.location.href = servicesCiviqueService
+      console.log(serviceEngagementRedirectionUrl)
+      window.open(
+        serviceEngagementRedirectionUrl,
+        '_blank' // <- This is what makes it open in a new window.
+      )
+    } else {
+      console.log('bye bye')
+    }
   }
 
   useMatomo(tracking)
@@ -64,7 +106,10 @@ function Favoris({ offres, recherches }: FavorisProps) {
           id='liste-offres'
           className='mt-8 pb-8'
         >
-          <OngletOffres offres={offres} />
+          <OngletOffres
+            offres={offres}
+            handleRedirectionOffre={handleRedirectionOffre}
+          />
         </div>
       )}
       {currentTab === Onglet.RECHERCHES && (
