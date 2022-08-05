@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
@@ -155,7 +156,7 @@ export class ActionsApiService implements ActionsService {
     const payload = {
       content: action.intitule,
       comment: action.commentaire,
-      dateEcheance: new Date(action.dateEcheance).toISOString(),
+      dateEcheance: DateTime.fromISO(action.dateEcheance).toISO(),
     }
     await this.apiClient.post(
       `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,
