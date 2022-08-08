@@ -9,9 +9,12 @@ import TabList from 'components/ui/TabList'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
 import { FavorisService } from 'services/favoris.service'
+import { OffresEmploiService } from 'services/offres-emploi.service'
+import { ServicesCiviqueService } from 'services/services-civique.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface FavorisProps extends PageProps {
@@ -25,6 +28,13 @@ export enum Onglet {
 }
 
 function Favoris({ offres, recherches }: FavorisProps) {
+  const offresEmploiService = useDependance<OffresEmploiService>(
+    'offresEmploiService'
+  )
+  const servicesCiviqueService = useDependance<ServicesCiviqueService>(
+    'servicesCiviqueService'
+  )
+
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.OFFRES)
   const favorisTracking = 'Détail jeune – Favoris'
   const recherchesTracking = 'Détail jeune – Recherches'
@@ -33,6 +43,20 @@ function Favoris({ offres, recherches }: FavorisProps) {
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
     setTracking(tab === Onglet.OFFRES ? favorisTracking : recherchesTracking)
+  }
+
+  async function handleRedirectionOffre(offre: Offre) {
+    let redirectUrl: string | undefined
+    if (offre.hasLinkPE) {
+      redirectUrl = await offresEmploiService.getLienOffreEmploi(offre.id)
+    } else if (offre.hasLinkServiceCivique) {
+      redirectUrl = await servicesCiviqueService.getLienServiceCivique(offre.id)
+    }
+    if (redirectUrl) {
+      window.open(redirectUrl, '_blank', 'noopener,noreferrer')
+    } else {
+      window.open('/404', '_blank')
+    }
   }
 
   useMatomo(tracking)
@@ -64,7 +88,10 @@ function Favoris({ offres, recherches }: FavorisProps) {
           id='liste-offres'
           className='mt-8 pb-8'
         >
-          <OngletOffres offres={offres} />
+          <OngletOffres
+            offres={offres}
+            handleRedirectionOffre={handleRedirectionOffre}
+          />
         </div>
       )}
       {currentTab === Onglet.RECHERCHES && (

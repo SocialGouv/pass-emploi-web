@@ -19,22 +19,22 @@ export default function TableauRecherches({
       )}
 
       {recherches.length > 0 && (
-        <table className='w-full border-spacing-y-2 border-separate'>
+        <table className='w-full border-spacing-y-3 border-separate'>
           <caption className='sr-only'>
             Liste des recherches sauvegardées
           </caption>
           <thead>
             <tr>
-              <th className='text-s-regular text-left py-2 px-3'>
+              <th className='text-base-regular text-left pb-3 px-3'>
                 Nom de la recherche
               </th>
-              <th className='text-s-regular text-left py-2 px-3'>
+              <th className='text-base-regular text-left pb-3 px-3'>
                 Mot clé/métier
               </th>
-              <th className='text-s-regular text-left py-2 px-3'>
+              <th className='text-base-regular text-left pb-3 px-3'>
                 Lieu/localisation
               </th>
-              <th className='text-s-regular text-left py-2 px-3'>Type</th>
+              <th className='text-base-regular text-left pb-3 px-3'>Type</th>
             </tr>
           </thead>
           <tbody>

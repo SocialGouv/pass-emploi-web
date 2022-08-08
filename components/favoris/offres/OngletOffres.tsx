@@ -5,8 +5,17 @@ import { Offre } from 'interfaces/favoris'
 
 interface OngletOffresProps {
   offres: Offre[]
+  handleRedirectionOffre: (offre: Offre) => void
 }
 
-export function OngletOffres({ offres }: OngletOffresProps) {
-  return <TableauOffres offres={offres} />
+export function OngletOffres({
+  offres,
+  handleRedirectionOffre,
+}: OngletOffresProps) {
+  return (
+    <TableauOffres
+      offres={offres}
+      handleRedirectionOffre={handleRedirectionOffre}
+    />
+  )
 }

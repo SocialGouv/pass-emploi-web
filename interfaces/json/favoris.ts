@@ -1,12 +1,12 @@
 import { Offre, Recherche } from 'interfaces/favoris'
 
-type TypeOffreJson =
+export type TypeOffreJson =
   | 'OFFRE_EMPLOI'
   | 'OFFRE_ALTERNANCE'
   | 'OFFRE_IMMERSION'
   | 'OFFRE_SERVICE_CIVIQUE'
 
-type TypeRechercheJson =
+export type TypeRechercheJson =
   | 'OFFRES_EMPLOI'
   | 'OFFRES_ALTERNANCE'
   | 'OFFRES_IMMERSION'
@@ -35,10 +35,12 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
     organisation: offreJson.organisation,
     titre: offreJson.titre,
     type: jsonToTypeOffre(offreJson.type),
+    hasLinkPE: ['OFFRE_ALTERNANCE', 'OFFRE_EMPLOI'].includes(offreJson.type),
+    hasLinkServiceCivique: offreJson.type === 'OFFRE_SERVICE_CIVIQUE',
   }
 }
 
-function jsonToTypeOffre(type: TypeOffreJson): string {
+export function jsonToTypeOffre(type: TypeOffreJson): string {
   switch (type) {
     case 'OFFRE_EMPLOI':
       return 'Offre d’emploi'
@@ -64,7 +66,7 @@ export function jsonToRecherche(rechercheJson: RechercheJson): Recherche {
   }
 }
 
-function jsonToTypeRecherche(type: TypeRechercheJson): string {
+export function jsonToTypeRecherche(type: TypeRechercheJson): string {
   switch (type) {
     case 'OFFRES_EMPLOI':
       return 'Offres d’emploi'

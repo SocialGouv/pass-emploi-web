@@ -5,7 +5,7 @@ import { Recherche } from 'interfaces/favoris'
 
 export default function RechercheRow({ recherche }: { recherche: Recherche }) {
   return (
-    <tr className='text-sm rounded-small shadow-s hover:bg-primary_lighten'>
+    <tr className='text-base-regular rounded-small shadow-s hover:bg-primary_lighten'>
       <td className='p-3 align-middle text-base-medium rounded-l-small'>
         {recherche.titre}
       </td>

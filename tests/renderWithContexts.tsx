@@ -40,6 +40,8 @@ export default function renderWithContexts(
     messagesService: mockedMessagesService(),
     rendezVousService: mockedRendezVousService(),
     favorisService: mockedFavorisService(),
+    offresEmploiService: { getLienOffreEmploi: jest.fn() },
+    servicesCiviqueService: { getLienServiceCivique: jest.fn() },
     ...customDependances,
   }
 
