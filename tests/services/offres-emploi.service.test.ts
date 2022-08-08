@@ -15,7 +15,7 @@ describe('OffresEmploiApiService', () => {
   let offresEmploiService: OffresEmploiApiService
 
   describe('.getLienOffreEmploi', () => {
-    it('renvoie l’url de l’offre d’emploi si elle est trouver en base', async () => {
+    it('renvoie l’url de l’offre d’emploi si elle est trouvée en base', async () => {
       // Given
       apiClient = new FakeApiClient()
       offresEmploiService = new OffresEmploiApiService(apiClient)
@@ -37,7 +37,7 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(actual).toStrictEqual('https://www.offres-emploi.fr/id-offre')
     })
-    it('renvoie undfined si l’offre d’emploi n’est pas trouver en base', async () => {
+    it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
       // Given
       apiClient = new FakeApiClient()
       offresEmploiService = new OffresEmploiApiService(apiClient)

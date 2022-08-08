@@ -20,16 +20,19 @@ export default function OffreRow({
     if (hasLink) handleRedirectionOffre(offre)
   }
 
+  const titre = "Ouvrir l'offre (nouvel onglet)"
+
   return (
     <tr
-      aria-label={hasLink ? "Ouvrir l'offre" : undefined}
+      aria-label={hasLink ? titre : undefined}
+      title={hasLink ? titre : undefined}
       onClick={redirectIfHasLink}
       className={`text-base-regular rounded-small shadow-s ${
         hasLink ? 'hover:bg-primary_lighten cursor-pointer' : ''
       }`}
     >
       <td className='p-3 align-middle rounded-l-small'>{offre.id}</td>
-      <td className='p-3 text-base-medium align-middle'>{offre.titre}</td>
+      <td className='p-3 text-base-bold align-middle'>{offre.titre}</td>
       <td className='p-3 align-middle'>{offre.organisation}</td>
       <td className='p-3 align-middle rounded-r-small'>
         <Tag

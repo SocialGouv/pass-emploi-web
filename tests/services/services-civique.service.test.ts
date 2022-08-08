@@ -18,7 +18,7 @@ describe('ServicesCiviqueApiService', () => {
   let servicesCiviqueService: ServicesCiviqueService
 
   describe('.getLienServiceCivique', () => {
-    it('renvoie l’url du service civique si il est trouver en base', async () => {
+    it('renvoie l’url du service civique si il est trouvée en base', async () => {
       // Given
       apiClient = new FakeApiClient()
       servicesCiviqueService = new ServicesCiviqueApiService(apiClient)
@@ -40,12 +40,12 @@ describe('ServicesCiviqueApiService', () => {
       expect(actual).toStrictEqual('https://www.services-civique.fr/id-offre')
     })
 
-    it('renvoie undfined si le service civique n’est pas trouver en base', async () => {
+    it('renvoie undefined si le service civique n’est pas trouvée en base', async () => {
       // Given
       apiClient = new FakeApiClient()
       servicesCiviqueService = new ServicesCiviqueApiService(apiClient)
       ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'service civique non trouvée')
+        new ApiError(404, 'service civique non trouvé')
       )
 
       // When
