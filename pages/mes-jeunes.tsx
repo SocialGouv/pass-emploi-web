@@ -33,6 +33,7 @@ interface MesJeunesProps extends PageProps {
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
   recuperationSuccess?: boolean
+  creationSuccess?: boolean
   deletionSuccess?: boolean
   ajoutAgenceSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
@@ -41,8 +42,9 @@ interface MesJeunesProps extends PageProps {
 function MesJeunes({
   conseillerJeunes,
   isFromEmail,
-  deletionSuccess,
   recuperationSuccess,
+  creationSuccess,
+  deletionSuccess,
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
@@ -69,6 +71,7 @@ function MesJeunes({
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
+  if (creationSuccess) initialTracking += ' - Succès creation compte'
   if (deletionSuccess) initialTracking += ' - Succès suppr. compte'
   if (recuperationSuccess) initialTracking += ' - Succès récupération'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
@@ -284,6 +287,10 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     props.recuperationSuccess =
       context.query[QueryParam.recuperationBeneficiaires] === QueryValue.succes
   }
+
+  if (context.query[QueryParam.creationBeneficiaire])
+    props.creationSuccess =
+      context.query[QueryParam.creationBeneficiaire] === QueryValue.succes
 
   if (context.query[QueryParam.suppressionBeneficiaire])
     props.deletionSuccess =

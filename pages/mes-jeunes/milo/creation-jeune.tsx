@@ -1,17 +1,16 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import React, { ReactNode, useEffect, useState } from 'react'
 
-import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import CreationEtape from 'components/jeune/CreationEtape'
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
-import SuccessAddJeuneMilo from 'components/jeune/SuccessAddJeuneMilo'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ConseillerService } from 'services/conseiller.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -30,17 +29,23 @@ function MiloCreationJeune({
 }: MiloCreationJeuneProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const router = useRouter()
 
   const [etape, setEtape] = useState(1)
-  const [createdSucessId, setCreatedSucessId] = useState<string>('')
   const [erreurMessage, setErreurMessage] = useState<string>(
     erreurMessageHttpMilo
   )
 
-  async function creerCompteJeune(newJeune: JeuneMiloFormData) {
+  async function creerCompteJeune(newJeune: JeuneMiloFormData): Promise<void> {
     try {
       const { id } = await conseillerService.createCompteJeuneMilo(newJeune)
-      setCreatedSucessId(id)
+      await router.push({
+        pathname: `/mes-jeunes`,
+        query: {
+          [QueryParam.creationBeneficiaire]: QueryValue.succes,
+          idBeneficiaire: id,
+        },
+      })
     } catch (error) {
       setErreurMessage((error as Error).message)
     }
@@ -61,27 +66,10 @@ function MiloCreationJeune({
       setEtape(2)
       setErreurMessage('')
     }
-
-    if (createdSucessId) {
-      setEtape(3)
-    }
-  }, [dossierId, erreurMessageHttpMilo, createdSucessId])
+  }, [dossierId, erreurMessageHttpMilo])
 
   return (
     <>
-      {createdSucessId && (
-        <div className='mb-4'>
-          <AjouterJeuneButton
-            handleAddJeune={() => {
-              Router.push('/mes-jeunes/milo/creation-jeune')
-              dossierId = ''
-              setCreatedSucessId('')
-              setEtape(1)
-            }}
-          />
-        </div>
-      )}
-
       <CreationEtape etape={etape} />
 
       <div className='mt-4'>{switchSteps()}</div>
@@ -89,16 +77,7 @@ function MiloCreationJeune({
   )
 
   function switchSteps() {
-    switch (etape) {
-      case 1:
-        return etape1()
-      case 2:
-        return etape2()
-      case 3:
-        return etape3()
-      default:
-        break
-    }
+    return etape === 1 ? etape1() : etape2()
   }
 
   function etape1(): ReactNode {
@@ -108,10 +87,6 @@ function MiloCreationJeune({
         errMessage={erreurMessageHttpMilo}
       />
     )
-  }
-
-  function etape3(): ReactNode {
-    return <SuccessAddJeuneMilo idJeune={createdSucessId} />
   }
 
   function etape2(): ReactNode {

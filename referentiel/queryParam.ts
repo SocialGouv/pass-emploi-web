@@ -6,6 +6,7 @@ export enum QueryParam {
   // Bénéficiaires
   recuperationBeneficiaires = 'recuperation',
   suppressionBeneficiaire = 'suppression',
+  creationBeneficiaire = 'creationBeneficiaire',
   // Action
   creationAction = 'creationAction',
   suppressionAction = 'suppressionAction',
