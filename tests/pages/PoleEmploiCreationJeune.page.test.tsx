@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
+import { useRouter } from 'next/router'
 
 import { mockedJeunesService } from 'fixtures/services'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
@@ -10,9 +11,12 @@ import renderWithContexts from 'tests/renderWithContexts'
 describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
   let submitButton: HTMLElement
+  let push: Function
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
+    push = jest.fn(() => Promise.resolve())
+    ;(useRouter as jest.Mock).mockReturnValue({ push })
     renderWithContexts(<PoleEmploiCreationJeune />, {
       customDependances: { jeunesService },
     })
@@ -110,12 +114,12 @@ describe('PoleEmploiCreationJeune', () => {
       await userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
     })
 
-    it("devrait afficher les informations de succès de création d'un compte", async () => {
+    it('devrait revenir sur la page des jeunes du conseiller', async () => {
       // Given
       ;(
         jeunesService.createCompteJeunePoleEmploi as Mock<any>
       ).mockResolvedValue({
-        id: 'id-nadia-sanfamiye',
+        id: 'un-id',
         firstName: 'Nadia',
         lastName: 'Sanfamiye',
       })
@@ -131,36 +135,10 @@ describe('PoleEmploiCreationJeune', () => {
         email: 'nadia.sanfamiye@poleemploi.fr',
       })
 
-      expect(
-        screen.getByRole('button', {
-          name: 'Ajouter un jeune',
-        })
-      ).toBeInTheDocument()
-
-      expect(
-        screen.getByRole('heading', {
-          level: 2,
-          name: 'Le compte jeune a été créé avec succès.',
-        })
-      ).toBeInTheDocument()
-
-      expect(
-        screen.getByText(
-          'Vous pouvez désormais le retrouver dans l\'onglet "Mes jeunes"'
-        )
-      ).toBeInTheDocument()
-
-      expect(
-        screen.getByRole('link', {
-          name: 'Accéder à la fiche du jeune',
-        })
-      ).toBeInTheDocument()
-
-      expect(
-        screen.getByRole('link', {
-          name: 'Accéder à la fiche du jeune',
-        })
-      ).toHaveAttribute('href', '/mes-jeunes/id-nadia-sanfamiye')
+      expect(push).toHaveBeenCalledWith({
+        pathname: '/mes-jeunes',
+        query: { creationBeneficiaire: 'succes', idBeneficiaire: 'un-id' },
+      })
     })
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
