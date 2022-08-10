@@ -66,7 +66,8 @@ describe('<Layout />', () => {
       }),
     ]
     ;(useRouter as jest.Mock).mockReturnValue({
-      asPath: '/path/to/current/page',
+      asPath: '/mes-jeunes/id-jeune/actions/id-action',
+      route: '/mes-jeunes/[jeune_id]/actions/[action_id]',
     })
     jeunesService = mockedJeunesService({
       getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
@@ -114,18 +115,35 @@ describe('<Layout />', () => {
 
     it("affiche le fil d'ariane", () => {
       // Then
-      expect(screen.getByRole('link', { name: 'path' })).toHaveAttribute(
+      expect(
+        screen.getByRole('link', { name: 'Portefeuille' })
+      ).toHaveAttribute('href', '/mes-jeunes')
+      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
         'href',
-        '/path'
+        '/mes-jeunes/id-jeune'
       )
-      expect(screen.getByRole('link', { name: 'to' })).toHaveAttribute(
+      expect(
+        screen.getByRole('link', { name: 'Détail action' })
+      ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
+    })
+
+    it("affiche PAAAAAAS le fil d'ariane", () => {
+      // Given
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes',
+        route: '/mes-jeunes',
+      })
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Portefeuille' })
+      ).toHaveAttribute('href', '/mes-jeunes')
+      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
         'href',
-        '/path/to'
+        '/mes-jeunes/id-jeune'
       )
-      expect(screen.getByRole('link', { name: 'current' })).toHaveAttribute(
-        'href',
-        '/path/to/current'
-      )
+      expect(
+        screen.getByRole('link', { name: 'Détail action' })
+      ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
     })
 
     it("affiche les messages d'alerte", () => {

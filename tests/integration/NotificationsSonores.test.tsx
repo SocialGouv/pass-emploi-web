@@ -35,7 +35,10 @@ describe('Intégration notifications sonores', () => {
   beforeEach(async () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date())
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/path/to/page' })
+    ;(useRouter as jest.Mock).mockReturnValue({
+      asPath: '/path/to/page',
+      route: '/path/to/page',
+    })
 
     jeunesService = mockedJeunesService()
     conseillerService = mockedConseillerService()

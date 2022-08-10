@@ -70,9 +70,6 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller])
 
-  console.log(router.asPath)
-  console.log(router.route)
-
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
