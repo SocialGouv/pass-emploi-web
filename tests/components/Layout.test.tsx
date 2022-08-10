@@ -2,10 +2,6 @@ import { act, render, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { ChatCredentialsProvider } from '../../utils/chat/chatCredentialsContext'
-import { ConseillerProvider } from '../../utils/conseiller/conseillerContext'
-import { DIProvider } from '../../utils/injectionDependances'
-
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/chat/ChatRoom'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
@@ -23,6 +19,9 @@ import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))

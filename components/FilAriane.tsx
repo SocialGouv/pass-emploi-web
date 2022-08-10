@@ -19,7 +19,7 @@ export default function FilAriane({
   const routeToLabelPath: { [key: string]: string } = {
     // niveau 1
     '/mes-jeunes': 'Portefeuille',
-    //niveau2
+    // niveau2
     '/mes-jeunes/[jeune_id]': 'Fiche jeune',
     '/mes-jeunes/[jeune_id]/favoris': 'Favoris',
     '/mes-jeunes/milo/creation-jeune': 'Création',
