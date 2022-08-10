@@ -6,16 +6,22 @@ import styles from 'styles/components/Layouts.module.css'
 
 interface HeaderProps {
   currentPath: string
+  currentRoute: string
   returnTo?: string
   pageHeader: string
 }
 
-export function Header({ currentPath, pageHeader, returnTo }: HeaderProps) {
+export function Header({
+  currentPath,
+  currentRoute,
+  pageHeader,
+  returnTo,
+}: HeaderProps) {
   return (
     <header className={styles.header}>
       {!returnTo && (
         <>
-          <FilAriane currentPath={currentPath} />
+          <FilAriane currentPath={currentPath} currentRoute={currentRoute} />
           <h1 className='text-l-bold text-primary'>{pageHeader}</h1>
         </>
       )}
