@@ -280,7 +280,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       compareJeunesByNom
     ),
     isFromEmail: Boolean(context.query?.source),
-    pageTitle: 'Mes jeunes',
+    pageTitle: 'Portefeuille',
   }
 
   if (context.query[QueryParam.recuperationBeneficiaires]) {

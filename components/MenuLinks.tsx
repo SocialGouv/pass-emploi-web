@@ -45,7 +45,7 @@ export default function MenuLinks({
           <MenuLink
             isActive={isCurrentRoute('/mes-jeunes')}
             href='/mes-jeunes'
-            label='Mes jeunes'
+            label='Portefeuille'
             iconName={IconName.People}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
