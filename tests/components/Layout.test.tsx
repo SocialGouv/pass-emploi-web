@@ -2,10 +2,6 @@ import { act, render, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { ChatCredentialsProvider } from '../../utils/chat/chatCredentialsContext'
-import { ConseillerProvider } from '../../utils/conseiller/conseillerContext'
-import { DIProvider } from '../../utils/injectionDependances'
-
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/chat/ChatRoom'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
@@ -23,6 +19,9 @@ import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
@@ -66,7 +65,8 @@ describe('<Layout />', () => {
       }),
     ]
     ;(useRouter as jest.Mock).mockReturnValue({
-      asPath: '/path/to/current/page',
+      asPath: '/mes-jeunes/id-jeune/actions/id-action',
+      route: '/mes-jeunes/[jeune_id]/actions/[action_id]',
     })
     jeunesService = mockedJeunesService({
       getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
@@ -114,18 +114,16 @@ describe('<Layout />', () => {
 
     it("affiche le fil d'ariane", () => {
       // Then
-      expect(screen.getByRole('link', { name: 'path' })).toHaveAttribute(
+      expect(
+        screen.getByRole('link', { name: 'Portefeuille' })
+      ).toHaveAttribute('href', '/mes-jeunes')
+      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
         'href',
-        '/path'
+        '/mes-jeunes/id-jeune'
       )
-      expect(screen.getByRole('link', { name: 'to' })).toHaveAttribute(
-        'href',
-        '/path/to'
-      )
-      expect(screen.getByRole('link', { name: 'current' })).toHaveAttribute(
-        'href',
-        '/path/to/current'
-      )
+      expect(
+        screen.getByRole('link', { name: 'Détail action' })
+      ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
     })
 
     it("affiche les messages d'alerte", () => {

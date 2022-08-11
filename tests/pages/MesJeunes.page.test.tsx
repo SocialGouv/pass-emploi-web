@@ -618,7 +618,7 @@ describe('Mes Jeunes', () => {
                 nbActionsNonTerminees: 7,
               }))
               .sort(compareJeunesByNom),
-            pageTitle: 'Mes jeunes',
+            pageTitle: 'Portefeuille',
             isFromEmail: false,
           },
         })
