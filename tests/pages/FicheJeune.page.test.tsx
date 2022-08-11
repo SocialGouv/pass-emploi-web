@@ -1407,7 +1407,7 @@ describe('Fiche Jeune', () => {
         expect(actual).toEqual({
           props: {
             jeune: unDetailJeune(),
-            pageTitle: 'Mes jeunes - Kenji Jirac',
+            pageTitle: 'Portefeuille - Kenji Jirac',
             pageHeader: 'Kenji Jirac',
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),

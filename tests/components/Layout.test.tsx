@@ -126,25 +126,6 @@ describe('<Layout />', () => {
       ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
     })
 
-    it("affiche PAAAAAAS le fil d'ariane", () => {
-      // Given
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes',
-        route: '/mes-jeunes',
-      })
-      // Then
-      expect(
-        screen.getByRole('link', { name: 'Portefeuille' })
-      ).toHaveAttribute('href', '/mes-jeunes')
-      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
-        'href',
-        '/mes-jeunes/id-jeune'
-      )
-      expect(
-        screen.getByRole('link', { name: 'Détail action' })
-      ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
-    })
-
     it("affiche les messages d'alerte", () => {
       // Then
       expect(AlertDisplayer).toHaveBeenCalledWith({}, {})

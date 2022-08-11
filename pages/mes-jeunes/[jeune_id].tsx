@@ -441,7 +441,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     metadonneesFavoris,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actionsInitiales: { ...actions, page },
-    pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
+    pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
 

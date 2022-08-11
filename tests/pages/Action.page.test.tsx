@@ -129,7 +129,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           'id-action',
           'accessToken'
         )
-        const pageTitle = `Mes jeunes - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`
+        const pageTitle = `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`
         expect(actual).toEqual({
           props: {
             action,

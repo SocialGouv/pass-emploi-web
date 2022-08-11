@@ -175,7 +175,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const props: PageActionProps = {
     action,
     jeune,
-    pageTitle: `Mes jeunes - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
+    pageTitle: `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
     pageHeader: 'Détails de l’action',
   }
 

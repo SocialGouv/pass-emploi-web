@@ -12,35 +12,30 @@ export default function FilAriane({
   currentPath,
   currentRoute,
 }: FilArianeProps) {
-  const [ariane, setAriane] = useState<{ labelPath: string; href: string }[]>(
-    []
-  )
+  const [ariane, setAriane] = useState<{ label: string; href: string }[]>([])
 
-  const routeToLabelPath: { [key: string]: string } = {
-    // niveau 1
+  const routeToLabel: { [key: string]: string } = {
     '/mes-jeunes': 'Portefeuille',
-    // niveau2
     '/mes-jeunes/[jeune_id]': 'Fiche jeune',
     '/mes-jeunes/[jeune_id]/favoris': 'Favoris',
     '/mes-jeunes/milo/creation-jeune': 'Création',
     '/mes-jeunes/pole-emploi/creation-jeune': 'Création',
-    // niveau 3
     '/mes-jeunes/[jeune_id]/actions/[action_id]': 'Détail action',
   }
 
   function creationFilAriane() {
-    const liensFilAriane: { labelPath: string; href: string }[] = []
+    const liensFilAriane: { label: string; href: string }[] = []
     const splittedPath = currentPath.split('/').slice(1)
     const splittedRoute = currentRoute.split('/').slice(1)
     let rebuiltPath = ''
     let rebuiltRoute = ''
 
-    splittedPath.forEach((fragment, index) => {
-      rebuiltPath += `/${fragment}`
+    splittedPath.forEach((fragmentPath, index) => {
+      rebuiltPath += `/${fragmentPath}`
       rebuiltRoute += `/${splittedRoute[index]}`
-      if (routeToLabelPath.hasOwnProperty(rebuiltRoute)) {
+      if (routeToLabel.hasOwnProperty(rebuiltRoute)) {
         liensFilAriane.push({
-          labelPath: routeToLabelPath[rebuiltRoute] ?? fragment,
+          label: routeToLabel[rebuiltRoute] ?? fragmentPath,
           href: rebuiltPath,
         })
       }
@@ -57,13 +52,13 @@ export default function FilAriane({
   return (
     <nav aria-label="Fil d'ariane">
       <ol className='mb-2 flex items-center'>
-        {ariane.map(({ href, labelPath }, index) => (
-          <li key={labelPath} className='flex items-center'>
+        {ariane.map(({ href, label }, index) => (
+          <li key={label} className='flex items-center'>
             {index < ariane.length - 1 && (
               <>
                 <Link href={href}>
                   <a className='text-s-regular text-content_color underline hover:text-primary_darken'>
-                    {labelPath}
+                    {label}
                   </a>
                 </Link>
                 <IconComponent
@@ -80,7 +75,7 @@ export default function FilAriane({
                   aria-current='page'
                   className='text-s-regular text-content_color'
                 >
-                  {labelPath}
+                  {label}
                 </a>
               </Link>
             )}
