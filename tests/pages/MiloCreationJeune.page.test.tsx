@@ -1,5 +1,6 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
 
 import { unDossierMilo } from 'fixtures/milo'
 import { mockedConseillerService } from 'fixtures/services'
@@ -20,7 +21,7 @@ describe('MiloCreationJeune', () => {
     })
 
     it('devrait afficher le champ de recherche de dossier', () => {
-      //THEN
+      // Then
       expect(
         screen.getByText(
           'Saisissez le numéro de dossier du jeune pour lequel vous voulez créer un compte'
@@ -30,17 +31,17 @@ describe('MiloCreationJeune', () => {
     })
 
     it("quand on soumet la recherche avec une valeur vide, affiche un message d'erreur", async () => {
-      //GIVEN
+      // Given
       const submitButton = screen.getByRole('button', {
         name: 'Valider le numéro',
       })
       const inputSearch = screen.getByLabelText('Numéro de dossier')
       await userEvent.clear(inputSearch)
 
-      //WHEN
+      // When
       await userEvent.click(submitButton)
 
-      //THEN
+      // Then
       expect(
         screen.getByText('Veuillez renseigner un numéro de dossier')
       ).toBeInTheDocument()
@@ -49,7 +50,7 @@ describe('MiloCreationJeune', () => {
 
   describe('quand le dossier a été saisi', () => {
     it("quand le dossier est invalide avec un message d'erreur", () => {
-      //GIVEN
+      // Given
       const messageErreur = "un message d'erreur"
       renderWithContexts(
         <MiloCreationJeune
@@ -60,17 +61,19 @@ describe('MiloCreationJeune', () => {
         />
       )
 
-      //THEN
+      // Then
       expect(screen.getByText(messageErreur)).toBeInTheDocument()
     })
   })
 
   describe('quand on clique sur le bouton créer un compte', () => {
-    it("devrait afficher les informations de succès de création d'un compte", async () => {
-      //GIVEN
+    it('devrait revenir sur la page des jeunes du conseiller', async () => {
+      // Given
       const conseillerService = mockedConseillerService({
         createCompteJeuneMilo: jest.fn((_) => Promise.resolve({ id: 'un-id' })),
       })
+      const push = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       const dossier = unDossierMilo()
 
@@ -84,15 +87,14 @@ describe('MiloCreationJeune', () => {
         { customDependances: { conseillerService } }
       )
 
-      //WHEN
+      // When
       const createCompteButton = screen.getByRole('button', {
         name: 'Créer le compte',
       })
 
       await userEvent.click(createCompteButton)
 
-      //THEN
-
+      // Then
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledWith({
         email: 'kenji-faux-mail@mail.com',
         idDossier: '1234',
@@ -100,42 +102,14 @@ describe('MiloCreationJeune', () => {
         prenom: 'Kenji',
       })
 
-      await waitFor(() => {
-        expect(
-          screen.getByRole('button', {
-            name: 'Ajouter un jeune',
-          })
-        ).toBeInTheDocument()
-
-        expect(
-          screen.getByRole('heading', {
-            level: 2,
-            name: 'Le compte jeune a été créé avec succès.',
-          })
-        ).toBeInTheDocument()
-
-        expect(
-          screen.getByText(
-            'Vous pouvez désormais le retrouver dans l\'onglet "Mes jeunes"'
-          )
-        ).toBeInTheDocument()
-
-        expect(
-          screen.getByRole('link', {
-            name: 'Accéder à la fiche du jeune',
-          })
-        ).toBeInTheDocument()
-
-        expect(
-          screen.getByRole('link', {
-            name: 'Accéder à la fiche du jeune',
-          })
-        ).toHaveAttribute('href', '/mes-jeunes/un-id')
+      expect(push).toHaveBeenCalledWith({
+        pathname: '/mes-jeunes',
+        query: { creationBeneficiaire: 'succes', idBeneficiaire: 'un-id' },
       })
     })
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
-      //GIVEN
+      // Given
       const conseillerService = mockedConseillerService({
         createCompteJeuneMilo: jest.fn((_) =>
           Promise.reject({ message: "un message d'erreur" })
@@ -154,14 +128,14 @@ describe('MiloCreationJeune', () => {
         { customDependances: { conseillerService } }
       )
 
-      //WHEN
+      // When
       const createCompteButton = screen.getByRole('button', {
         name: 'Créer le compte',
       })
 
       await userEvent.click(createCompteButton)
 
-      //THEN
+      // Then
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })

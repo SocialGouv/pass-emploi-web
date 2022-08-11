@@ -452,6 +452,29 @@ describe('Mes Jeunes', () => {
       ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
     })
 
+    it('traite la réussite de la création d’un jeune', async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+          accessToken: 'accessToken',
+        },
+      })
+
+      // When
+      const actual = await getServerSideProps({
+        query: { creationBeneficiaire: 'succes' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(actual).toMatchObject({
+        props: {
+          creationSuccess: true,
+        },
+      })
+    })
+
     it("traite la réussite d'une suppression de jeune", async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({

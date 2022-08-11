@@ -168,6 +168,57 @@ describe('AlertDisplayer', () => {
     })
   })
 
+  describe('quand la création d’un jeune est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes',
+        query: { creationBeneficiaire: 'succes', idBeneficiaire: 'id' },
+        push: routerPush,
+      })
+
+      // When
+      renderAlertDisplayer()
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/Le bénéficiaire a été ajouté à votre portefeuille/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet d'accéder à la fiche du jeune", async () => {
+      // When
+      const lienFicheJeune = screen.getByRole('link', {
+        name: 'voir le détail du bénéficiaire',
+      })
+
+      // Then
+      expect(lienFicheJeune).toBeInTheDocument()
+      expect(lienFicheJeune).toHaveAttribute('href', '/mes-jeunes/id')
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-jeunes',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+
   describe('quand on vient de supprimer un jeune', () => {
     let routerPush: Function
     beforeEach(() => {

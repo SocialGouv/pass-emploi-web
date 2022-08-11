@@ -1,6 +1,9 @@
+import { ParsedUrlQuery } from 'querystring'
+
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import AlertLink from 'components/ui/AlertLink'
 import SuccessAlert from 'components/ui/SuccessAlert'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -30,6 +33,23 @@ export default function AlertDisplayer({
     )
   }
 
+  function getChild(queryParams: ParsedUrlQuery): JSX.Element {
+    const estUneCreationDeBeneficiaire =
+      queryParams[QueryParam.creationBeneficiaire] === QueryValue.succes &&
+      queryParams['idBeneficiaire']
+    return (
+      <>
+        {estUneCreationDeBeneficiaire && (
+          <AlertLink
+            href={`/mes-jeunes/${queryParams['idBeneficiaire']}`}
+            label={'voir le détail du bénéficiaire'}
+            onClick={() => closeSuccessAlert(QueryParam.creationBeneficiaire)}
+          />
+        )}
+      </>
+    )
+  }
+
   useEffect(() => {
     if (conseiller) {
       setAlerts(getAlertsForStructure(conseiller.structure))
@@ -46,7 +66,9 @@ export default function AlertDisplayer({
               key={`alerte-${queryParam}`}
               label={alerts[queryParam]}
               onAcknowledge={() => closeSuccessAlert(queryParam)}
-            />
+            >
+              {getChild(router.query)}
+            </SuccessAlert>
           )
         )
       })}
@@ -66,6 +88,7 @@ const ALERTS: DictAlerts = {
   suppressionRdv: 'Le rendez-vous a bien été supprimé',
   recuperation: 'Vous avez récupéré vos bénéficiaires avec succès',
   suppression: 'Le compte du bénéficiaire a bien été supprimé',
+  creationBeneficiaire: 'Le bénéficiaire a été ajouté à votre portefeuille',
   creationAction: 'L’action a bien été créée',
   suppressionAction: 'L’action a bien été supprimée',
   choixAgence: 'Votre agence a été ajoutée à votre profil',
