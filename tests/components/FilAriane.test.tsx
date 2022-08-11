@@ -31,13 +31,9 @@ describe('<FilAriane/>', () => {
         />
       )
       // Then
-      expect(
-        screen.getByRole('link', { name: 'Portefeuille' })
-      ).toHaveAttribute('href', '/mes-jeunes')
-      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
-        'href',
-        '/mes-jeunes/id-jeune'
-      )
+      expect(screen.getByText('Portefeuille')).toBeInTheDocument()
+      expect(screen.getByText('Fiche jeune')).toBeInTheDocument()
+      expect(screen.getAllByRole('link').length).toEqual(3)
       expect(
         screen.getByRole('link', { name: 'Détail action' })
       ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
@@ -53,7 +49,7 @@ describe('<FilAriane/>', () => {
     })
   })
 
-  describe('Pour une route quelconque', () => {
+  describe('Pour une route qui ne doit pas avoir de fil d’ariane', () => {
     it('N’affiche pas le fil d’ariane', () => {
       // Given
       render(
