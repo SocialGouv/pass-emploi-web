@@ -33,17 +33,17 @@ export default function AlertDisplayer({
     )
   }
 
-  function getChild(
-    queryParam: QueryParam,
-    queryComplete: ParsedUrlQuery
-  ): JSX.Element {
+  function getChild(queryParams: ParsedUrlQuery): JSX.Element {
+    const estUneCreationDeBeneficiaire =
+      queryParams[QueryParam.creationBeneficiaire] === QueryValue.succes &&
+      queryParams['idBeneficiaire']
     return (
       <>
-        {queryParam === 'creationBeneficiaire' && (
+        {estUneCreationDeBeneficiaire && (
           <AlertLink
-            href={`/mes-jeunes/${queryComplete['idBeneficiaire']}`}
+            href={`/mes-jeunes/${queryParams['idBeneficiaire']}`}
             label={'voir le détail du bénéficiaire'}
-            onClick={() => closeSuccessAlert(queryParam)}
+            onClick={() => closeSuccessAlert(QueryParam.creationBeneficiaire)}
           />
         )}
       </>
@@ -67,7 +67,7 @@ export default function AlertDisplayer({
               label={alerts[queryParam]}
               onAcknowledge={() => closeSuccessAlert(queryParam)}
             >
-              {getChild(queryParam, router.query)}
+              {getChild(router.query)}
             </SuccessAlert>
           )
         )

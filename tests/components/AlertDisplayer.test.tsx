@@ -190,15 +190,15 @@ describe('AlertDisplayer', () => {
       ).toBeInTheDocument()
     })
 
-    it("permet d'acceder à la fiche du jeune", async () => {
+    it("permet d'accéder à la fiche du jeune", async () => {
       // When
-      const ficheJeune = screen.getByRole('link', {
+      const lienFicheJeune = screen.getByRole('link', {
         name: 'voir le détail du bénéficiaire',
       })
 
       // Then
-      expect(ficheJeune).toBeInTheDocument()
-      expect(ficheJeune).toHaveAttribute('href', '/mes-jeunes/id')
+      expect(lienFicheJeune).toBeInTheDocument()
+      expect(lienFicheJeune).toHaveAttribute('href', '/mes-jeunes/id')
     })
 
     it("permet de fermer l'alerte du succès", async () => {

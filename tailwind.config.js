@@ -30,6 +30,7 @@ module.exports = {
       primary_darken: '#274996',
       success: '#0D7F50',
       success_lighten: '#E5F6EF',
+      success_darken: '#033C24',
       warning: '#D33211',
       warning_lighten: '#FFF1ED',
       warning_lighten2: '#FFCBBC',
