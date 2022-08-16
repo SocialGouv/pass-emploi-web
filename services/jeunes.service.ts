@@ -82,7 +82,10 @@ export interface JeunesService {
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined>
 
-  modifierNumeroPoleEmploi(idJeune: string, idPartenaire: string): Promise<void>
+  modifierIdentifiantPartenaire(
+    idJeune: string,
+    idPartenaire: string
+  ): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -289,7 +292,7 @@ export class JeunesApiService implements JeunesService {
     }
   }
 
-  async modifierNumeroPoleEmploi(
+  async modifierIdentifiantPartenaire(
     idJeune: string,
     idPartenaire: string
   ): Promise<void> {

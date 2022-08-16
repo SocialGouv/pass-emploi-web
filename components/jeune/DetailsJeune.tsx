@@ -57,7 +57,7 @@ export const DetailsJeune = ({
     numeroPoleEmploi: string
   ): Promise<void> {
     jeunesService
-      .modifierNumeroPoleEmploi(jeune.id, numeroPoleEmploi)
+      .modifierIdentifiantPartenaire(jeune.id, numeroPoleEmploi)
       .then(() => {
         setIdPartenaire(numeroPoleEmploi)
         setShowNumeroPEModal(false)

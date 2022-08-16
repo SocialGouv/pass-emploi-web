@@ -337,6 +337,7 @@ describe('JeunesApiService', () => {
       expect(actual).toEqual(motifs)
     })
   })
+
   describe('.getMetadonneesFavorisJeune', () => {
     it('renvoie les métadonnées des recherches sauvegardées d’un bénéficiaire', async () => {
       // Given
@@ -357,6 +358,24 @@ describe('JeunesApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(uneMetadonneeFavoris())
+    })
+  })
+
+  describe('.modifierIdentifiantPartenaire', () => {
+    it('modifie l’idPartenaire d’un jeune', async function () {
+      // Given
+      const idJeune = 'idJeune'
+      const idPartenaire = '123456789'
+
+      // When
+      await jeunesService.modifierIdentifiantPartenaire(idJeune, idPartenaire)
+
+      // Then
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/jeunes/idJeune',
+        { idPartenaire: '123456789' },
+        'accessToken'
+      )
     })
   })
 })

@@ -32,6 +32,7 @@ export const unDetailJeune = (
     ...uneBaseJeune(),
     email: 'kenji.jirac@email.fr',
     isActivated: true,
+    idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     situations: [],
@@ -125,6 +126,7 @@ export const unDetailJeuneJson = (
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
     isActivated: true,
+    idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
   }
