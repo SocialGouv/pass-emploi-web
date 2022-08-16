@@ -2,15 +2,15 @@ import { screen } from '@testing-library/dom'
 import { render, within } from '@testing-library/react'
 import React from 'react'
 
-import RdvList from 'components/rdv/RdvList'
+import TableauRdv from 'components/rdv/TableauRdv'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
-describe('<RdvList>', () => {
+describe('<TableauRdv>', () => {
   it("affiche un message lorsqu'il n'y a pas de rendez-vous", () => {
     // When
-    render(<RdvList rdvs={[]} idConseiller='1' />)
+    render(<TableauRdv rdvs={[]} idConseiller='1' />)
 
     // Then
     expect(screen.getByText(/pas de rendez-vous/)).toBeInTheDocument()
@@ -40,7 +40,7 @@ describe('<RdvList>', () => {
       )
 
       // When
-      render(<RdvList rdvs={listeRdv} idConseiller='1' />)
+      render(<TableauRdv rdvs={listeRdv} idConseiller='1' />)
     })
 
     it('affiche les informations des rendez-vous', () => {
@@ -119,7 +119,7 @@ describe('<RdvList>', () => {
         ),
       ]
 
-      render(<RdvList rdvs={listeRdv} idConseiller='1' />)
+      render(<TableauRdv rdvs={listeRdv} idConseiller='1' />)
 
       // When
       // Then

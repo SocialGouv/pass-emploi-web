@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import React, { useState } from 'react'
 
-import RdvList from 'components/rdv/RdvList'
+import TableauRdv from 'components/rdv/TableauRdv'
 import ButtonLink from 'components/ui/ButtonLink'
 import Tab from 'components/ui/Tab'
 import TabList from 'components/ui/TabList'
@@ -84,7 +84,7 @@ function MesRendezvous({
           aria-labelledby='rendez-vous-passes--tab'
           tabIndex={0}
         >
-          <RdvList
+          <TableauRdv
             idConseiller={conseiller?.id ?? ''}
             rdvs={rendezVousPasses}
           />
@@ -96,7 +96,7 @@ function MesRendezvous({
           aria-labelledby='rendez-vous-futurs--tab'
           tabIndex={0}
         >
-          <RdvList
+          <TableauRdv
             idConseiller={conseiller?.id ?? ''}
             rdvs={rendezVousFuturs}
           />

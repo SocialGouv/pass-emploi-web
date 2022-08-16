@@ -5,21 +5,22 @@ import LocationIcon from '../../assets/icons/location.svg'
 
 import { HeaderCell } from 'components/rdv/HeaderCell'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { RdvTypeTag } from 'components/ui/RdvTypeTag'
+import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
+import CellRow from 'components/ui/Table/CellRow'
 import { RdvListItem } from 'interfaces/rdv'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
-type RdvListProps = {
+type TableauRdvProps = {
   rdvs: RdvListItem[]
   idConseiller: string
   withNameJeune?: boolean
 }
 
-const RdvList = ({
+export default function TableauRdv({
   rdvs,
   idConseiller,
   withNameJeune = true,
-}: RdvListProps) => {
+}: TableauRdvProps) {
   const dayHourCells = (rdvDate: Date, duration: number) => {
     return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
       rdvDate
@@ -37,7 +38,7 @@ const RdvList = ({
       {rdvs.length > 0 && (
         <div
           role='table'
-          className='table w-full'
+          className='table w-full border-spacing-y-3 border-separate'
           aria-label='Liste de mes rendez-vous'
         >
           <div role='rowgroup' className='table-row-group'>
@@ -60,32 +61,28 @@ const RdvList = ({
                   role='row'
                   key={rdv.id}
                   aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`}
-                  className='table-row text-base-regular hover:bg-primary_lighten'
+                  className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
                 >
-                  <div role='cell' className='table-cell p-3'>
+                  <CellRow style='rounded-l-small'>
                     {dayHourCells(new Date(rdv.date), rdv.duration)}
-                  </div>
-                  {withNameJeune && (
-                    <div role='cell' className='table-cell p-3'>
-                      {rdv.beneficiaires}
-                    </div>
-                  )}
+                  </CellRow>
+                  {withNameJeune && <CellRow>{rdv.beneficiaires}</CellRow>}
 
-                  <div role='cell' className='table-cell p-3'>
+                  <CellRow>
                     <RdvTypeTag type={rdv.type} />
-                  </div>
+                  </CellRow>
 
-                  <div role='cell' className='table-cell p-3 '>
+                  <CellRow>
                     <LocationIcon
                       focusable='false'
                       aria-hidden='true'
                       className='mr-2 inline'
                     />
                     {rdv.modality}
-                  </div>
+                  </CellRow>
 
                   {rdv.idCreateur && (
-                    <div role='cell' className='table-cell p-3'>
+                    <CellRow style='rounded-r-small'>
                       {rdv.idCreateur === idConseiller && (
                         <>
                           <span className='sr-only'>oui</span>
@@ -107,7 +104,7 @@ const RdvList = ({
                           />
                         </>
                       )}
-                    </div>
+                    </CellRow>
                   )}
                   {!rdv.idCreateur && <div role='cell' />}
                 </a>
@@ -119,5 +116,3 @@ const RdvList = ({
     </>
   )
 }
-
-export default RdvList

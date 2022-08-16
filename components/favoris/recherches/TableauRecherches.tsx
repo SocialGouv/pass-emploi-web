@@ -10,6 +10,8 @@ interface TableauRecherchesProps {
 export default function TableauRecherches({
   recherches,
 }: TableauRecherchesProps) {
+  const headCellStyle = 'text-base-regular text-left pb-3 px-3'
+
   return (
     <>
       {recherches.length === 0 && (
@@ -25,16 +27,10 @@ export default function TableauRecherches({
           </caption>
           <thead>
             <tr>
-              <th className='text-base-regular text-left pb-3 px-3'>
-                Nom de la recherche
-              </th>
-              <th className='text-base-regular text-left pb-3 px-3'>
-                Mot clé/métier
-              </th>
-              <th className='text-base-regular text-left pb-3 px-3'>
-                Lieu/localisation
-              </th>
-              <th className='text-base-regular text-left pb-3 px-3'>Type</th>
+              <th className={headCellStyle}>Nom de la recherche</th>
+              <th className={headCellStyle}>Mot clé/métier</th>
+              <th className={headCellStyle}>Lieu/localisation</th>
+              <th className={headCellStyle}>Type</th>
             </tr>
           </thead>
           <tbody>
