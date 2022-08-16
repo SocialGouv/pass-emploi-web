@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { Badge } from '../ui/Badge'
@@ -13,6 +14,7 @@ import {
   DetailJeune,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
@@ -30,6 +32,7 @@ export const DetailsJeune = ({
   metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
+  const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const [showNumeroPEModal, setShowNumeroPEModal] = useState<boolean>(false)
@@ -52,9 +55,21 @@ export const DetailsJeune = ({
   async function updateNumeroPoleEmploi(
     numeroPoleEmploi: string
   ): Promise<void> {
-    await jeunesService.modifierNumeroPoleEmploi(jeune.id, numeroPoleEmploi)
-    setIdPartenaire(numeroPoleEmploi)
-    setShowNumeroPEModal(false)
+    jeunesService
+      .modifierNumeroPoleEmploi(jeune.id, numeroPoleEmploi)
+      .then(() => {
+        setIdPartenaire(numeroPoleEmploi)
+        setShowNumeroPEModal(false)
+        router.push({
+          pathname: `/mes-jeunes/${jeune.id}`,
+          query: {
+            [QueryParam.modificationIdentifiantPoleEmploi]: QueryValue.succes,
+          },
+        })
+      })
+      .catch(() => {
+        router.push({ pathname: `/mes-jeunes/${jeune.id}` })
+      })
   }
 
   return (
@@ -255,7 +270,6 @@ export const DetailsJeune = ({
           )}
         </dl>
       </div>
-      {/*TODO ne mettre en place que si c'est un conseiller PE*/}
       {showNumeroPEModal && (
         <UpdateNumeroPEModal
           numeroPoleEmploi={idPartenaire}
