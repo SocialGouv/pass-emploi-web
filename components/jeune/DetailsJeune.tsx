@@ -12,7 +12,9 @@ import {
   DetailJeune,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
+import { JeunesService } from 'services/jeunes.service'
 import { formatDayDate } from 'utils/date'
+import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
@@ -27,7 +29,12 @@ export const DetailsJeune = ({
   metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+
   const [showNumeroPEModal, setShowNumeroPEModal] = useState<boolean>(false)
+  const [idPartenaire, setIdPartenaire] = useState<string | undefined>(
+    jeune.idPartenaire
+  )
 
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
@@ -44,8 +51,8 @@ export const DetailsJeune = ({
   async function updateNumeroPoleEmploi(
     numeroPoleEmploi: string
   ): Promise<void> {
-    console.log('appel du put')
-    console.log(numeroPoleEmploi)
+    await jeunesService.modifierNumeroPoleEmploi(jeune.id, numeroPoleEmploi)
+    setIdPartenaire(numeroPoleEmploi)
     setShowNumeroPEModal(false)
   }
 
@@ -80,14 +87,12 @@ export const DetailsJeune = ({
 
           {/*TODO ne mettre en place que si c'est un conseiller PE*/}
           <div className='flex'>
-            <dt className='text-base-regular'>Numéro Pôle Emploi : </dt>
-            <dd className='text-base-bold ml-1'>
-              {jeune.idPartenaire ? jeune.idPartenaire : '-'}
-            </dd>
+            <dt className='text-base-regular'>Numéro Pôle Emploi :</dt>
+            <dd className='text-base-bold ml-1'>{idPartenaire ?? '-'}</dd>
             <button
               className='ml-5 flex items-center text-primary'
               aria-label={
-                jeune.idPartenaire
+                idPartenaire
                   ? 'Modifier numéro pôle emploi'
                   : 'Ajouter numéro pôle emploi'
               }
@@ -96,13 +101,13 @@ export const DetailsJeune = ({
               <IconComponent
                 name={IconName.Pen}
                 aria-label={
-                  jeune.idPartenaire
+                  idPartenaire
                     ? 'Modifier numéro pôle emploi'
                     : 'Ajouter numéro pôle emploi'
                 }
                 className='w-[11px] h-[11px] mr-1'
               />
-              {jeune.idPartenaire ? 'Modifier' : 'Ajouter'}
+              {idPartenaire ? 'Modifier' : 'Ajouter'}
             </button>
           </div>
 
@@ -249,7 +254,7 @@ export const DetailsJeune = ({
       {/*TODO ne mettre en place que si c'est un conseiller PE*/}
       {showNumeroPEModal && (
         <UpdateNumeroPEModal
-          numeroPoleEmploi={jeune.idPartenaire}
+          numeroPoleEmploi={idPartenaire}
           updateNumeroPoleEmploi={updateNumeroPoleEmploi}
           onClose={closeNumeroPoleEmploiModal}
         />

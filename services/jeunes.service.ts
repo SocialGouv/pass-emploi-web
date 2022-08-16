@@ -28,12 +28,14 @@ export interface JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<JeuneFromListe[]>
+
   getJeunesDuConseillerClientSide(): Promise<JeuneFromListe[]>
 
   getConseillersDuJeuneServerSide(
     idConseiller: string,
     accessToken: string
   ): Promise<ConseillerHistorique[]>
+
   getConseillersDuJeuneClientSide(
     idConseiller: string
   ): Promise<ConseillerHistorique[]>
@@ -80,11 +82,7 @@ export interface JeunesService {
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined>
 
-  modifierNumeroPoleEmploi(
-    idJeune: string,
-    idPartenaire: string,
-    accessToken: string
-  ): Promise<void>
+  modifierNumeroPoleEmploi(idJeune: string, idPartenaire: string): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -293,8 +291,7 @@ export class JeunesApiService implements JeunesService {
 
   async modifierNumeroPoleEmploi(
     idJeune: string,
-    idPartenaire: string,
-    accessToken: string
+    idPartenaire: string
   ): Promise<void> {
     const session = await getSession()
     const idConseiller = session?.user.id

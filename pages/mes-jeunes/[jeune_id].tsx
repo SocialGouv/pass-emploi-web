@@ -80,7 +80,7 @@ function FicheJeune({
   onglet,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
-  const jeunesServices = useDependance<JeunesService>('jeunesService')
+  const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
@@ -174,7 +174,7 @@ function FicheJeune({
       setShowModaleDeleteJeuneActif(true)
 
       if (motifsSuppression.length === 0) {
-        const result = await jeunesServices.getMotifsSuppression()
+        const result = await jeunesService.getMotifsSuppression()
         setMotifsSuppression(result)
       }
     }
@@ -188,7 +188,7 @@ function FicheJeune({
     payload: SuppressionJeuneFormData
   ): Promise<void> {
     try {
-      await jeunesServices.archiverJeune(jeune.id, payload)
+      await jeunesService.archiverJeune(jeune.id, payload)
       await router.push(
         `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )
@@ -202,7 +202,7 @@ function FicheJeune({
 
   async function supprimerJeuneInactif(): Promise<void> {
     try {
-      await jeunesServices.supprimerJeuneInactif(jeune.id)
+      await jeunesService.supprimerJeuneInactif(jeune.id)
       await router.push(
         `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 
-interface DeleteRdvModalProps {
+interface UpdateNumeroPEModalProps {
   numeroPoleEmploi: string | undefined
   updateNumeroPoleEmploi: (numeroPoleEmploi: string) => Promise<void>
   onClose: () => void
@@ -13,7 +13,7 @@ export default function UpdateNumeroPEModal({
   numeroPoleEmploi,
   updateNumeroPoleEmploi,
   onClose,
-}: DeleteRdvModalProps) {
+}: UpdateNumeroPEModalProps) {
   const [getNumeroPoleEmploi, setNumeroPoleEmploi] = useState<
     string | undefined
   >(numeroPoleEmploi)
