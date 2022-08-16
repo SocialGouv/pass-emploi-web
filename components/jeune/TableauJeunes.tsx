@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 import MessageIcon from '../../assets/icons/note_outline_big.svg'
+import StatusTag from '../action/StatusTag'
 
 import SituationTag from 'components/jeune/SituationTag'
 import { Badge } from 'components/ui/Badge'
@@ -164,7 +165,7 @@ export const TableauJeunes = ({
       ) : (
         <div
           role='table'
-          className='table w-full'
+          className='table w-full border-spacing-y-3 border-separate'
           aria-describedby='table-caption'
         >
           <div id='table-caption' className='sr-only'>
@@ -175,7 +176,7 @@ export const TableauJeunes = ({
             <div role='row' className={`table-row`}>
               <span
                 role='columnheader'
-                className='table-cell text-base-regular text-left py-4'
+                className='table-cell text-base-regular text-left pb-4'
               >
                 <button
                   className='flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
@@ -287,9 +288,9 @@ export const TableauJeunes = ({
                 <a
                   role='row'
                   aria-label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
-                  className='table-row text-base-regular items-center hover:bg-primary_lighten'
+                  className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
                 >
-                  <span role='cell' className='table-cell p-4'>
+                  <span role='cell' className='table-cell p-4 align-middle'>
                     <span className='flex items-baseline'>
                       {jeune.isReaffectationTemporaire && (
                         <span
@@ -310,7 +311,7 @@ export const TableauJeunes = ({
                   </span>
 
                   {withSituations && (
-                    <span role='cell' className='table-cell p-4'>
+                    <span role='cell' className='table-cell p-4 align-middle'>
                       <SituationTag
                         className={
                           'max-w-[100px] layout_l:max-w-[180px] truncate text-ellipsis'
@@ -320,7 +321,7 @@ export const TableauJeunes = ({
                     </span>
                   )}
 
-                  <span role='cell' className='table-cell p-4'>
+                  <span role='cell' className='table-cell p-4 align-middle'>
                     {jeune.lastActivity
                       ? todayOrDate(new Date(jeune.lastActivity))
                       : ''}
@@ -332,7 +333,7 @@ export const TableauJeunes = ({
                   {withActions && (
                     <span
                       role='cell'
-                      className='table-cell text-primary_darken p-4'
+                      className='table-cell text-primary_darken p-4 align-middle'
                     >
                       <div className='mx-auto w-fit'>
                         <Badge
@@ -342,15 +343,23 @@ export const TableauJeunes = ({
                       </div>
                     </span>
                   )}
-                  <span role='cell' className='table-cell p-4'>
-                    <div className='relative w-fit mx-auto'>
-                      <MessageIcon aria-hidden='true' focusable='false' />
-                      {jeune.messagesNonLus > 0 && (
-                        <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
-                          {jeune.messagesNonLus}
-                        </div>
-                      )}
-                    </div>
+                  <span role='cell' className='table-cell p-4 align-middle'>
+                    <span className='flex'>
+                      <div className='relative w-fit mx-auto'>
+                        <MessageIcon aria-hidden='true' focusable='false' />
+                        {jeune.messagesNonLus > 0 && (
+                          <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
+                            {jeune.messagesNonLus}
+                          </div>
+                        )}
+                      </div>
+                      <IconComponent
+                        name={IconName.ChevronRight}
+                        focusable='false'
+                        aria-hidden='true'
+                        className='w-6 h-6 fill-content_color'
+                      />
+                    </span>
                   </span>
                 </a>
               </Link>
