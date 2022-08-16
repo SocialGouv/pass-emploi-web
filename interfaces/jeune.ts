@@ -50,6 +50,7 @@ export interface DetailJeune extends BaseJeune {
     categorie: CategorieSituation
     dateFin?: string
   }>
+  idPartenaire: string
 }
 
 export interface MetadonneesFavoris {

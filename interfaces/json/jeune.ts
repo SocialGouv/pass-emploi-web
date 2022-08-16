@@ -33,6 +33,7 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   email?: string
   urlDossier?: string
   situations?: Situation[]
+  idPartenaire?: string
 }
 
 export interface MetadonneesFavorisJson {
@@ -130,6 +131,7 @@ export function jsonToDetailJeune({
         categorie: toCategorieSituation(situation.categorie),
         etat: toEtatSituation(situation.etat),
       })) ?? [],
+    idPartenaire: jeune.idPartenaire ?? '',
   }
 }
 
