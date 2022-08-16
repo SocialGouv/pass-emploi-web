@@ -33,32 +33,35 @@ export default function UpdateNumeroPEModal({
   }
 
   const titre = numeroPoleEmploi
-    ? 'Modifiez le numéro Pôle Emploi du jeune'
-    : 'Ajoutez le numéro Pôle Emploi du jeune'
+    ? 'Modifiez l’identifiant Pôle Emploi du jeune'
+    : 'Ajoutez l’identifiant Pôle Emploi du jeune'
 
   return (
     <Modal title={titre} onClose={onClose}>
-      <label htmlFor='numeroPoleEmploi' className='text-base-bold mb-2'>
-        Numéro Pôle Emploi (10 caractères maximum)
-      </label>
-      <input
-        type='text'
-        id='numeroPoleEmploi'
-        name='numeroPoleEmploi'
-        defaultValue={numeroPoleEmploi}
-        onChange={(e) => setNumeroPoleEmploi(e.target.value)}
-        maxLength={10}
-        className={'border border-solid rounded-medium w-full px-4 py-3 mb-8'}
-      />
+      <div className='mt-8 mb-14'>
+        <label htmlFor='identifiantPoleEmploi' className='text-base-medium'>
+          Identifiant Pôle Emploi (10 caractères maximum)
+        </label>
+        <input
+          type='text'
+          id='identifiantPoleEmploi'
+          name='identifiantPoleEmploi'
+          defaultValue={numeroPoleEmploi}
+          onChange={(e) => setNumeroPoleEmploi(e.target.value)}
+          maxLength={10}
+          className={'border border-solid rounded-medium w-full px-4 py-3 mt-3'}
+        />
+      </div>
 
-      <div className='flex justify-center mt-12'>
+      <div className='h-[1px] bg-primary_lighten' />
+      <div className='flex justify-center mt-4'>
         <Button
           type='button'
-          className='mr-[16px]'
+          className='mr-4'
           style={ButtonStyle.SECONDARY}
           onClick={onClose}
         >
-          <span className='px-[40px]'>Annuler</span>
+          <span className='px-10'>Annuler</span>
         </Button>
 
         <Button
@@ -67,7 +70,7 @@ export default function UpdateNumeroPEModal({
           disabled={!Boolean(getNumeroPoleEmploi)}
           onClick={handleUpdateNumeroPoleEmploi}
         >
-          <span className='px-[40px]'>Enregistrer</span>
+          <span className='px-10'>Enregistrer</span>
         </Button>
       </div>
     </Modal>
