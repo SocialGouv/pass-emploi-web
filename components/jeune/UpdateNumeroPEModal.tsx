@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
+import useMatomo from 'utils/analytics/useMatomo'
 
 interface UpdateNumeroPEModalProps {
   numeroPoleEmploi: string | undefined
@@ -31,6 +32,12 @@ export default function UpdateNumeroPEModal({
       await updateNumeroPoleEmploi(getNumeroPoleEmploi!)
     }
   }
+
+  useMatomo(
+    numeroPoleEmploi
+      ? 'Détail jeune - modification identifiant PE'
+      : 'Détail jeune - ajout identifiant PE'
+  )
 
   const titre = numeroPoleEmploi
     ? 'Modifiez l’identifiant Pôle Emploi du jeune'

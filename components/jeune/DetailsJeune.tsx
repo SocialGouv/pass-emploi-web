@@ -16,6 +16,7 @@ import {
 } from 'interfaces/jeune'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -72,6 +73,15 @@ export const DetailsJeune = ({
       })
   }
 
+  function trackEventOnCopieIdentifiantPoleEmploi() {
+    trackEvent({
+      structure: StructureConseiller.POLE_EMPLOI,
+      categorie: 'fiche jeune',
+      action: 'copie identifiant pe',
+      nom: '',
+    })
+  }
+
   return (
     <>
       <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
@@ -104,7 +114,10 @@ export const DetailsJeune = ({
           {structureConseiller !== StructureConseiller.MILO && (
             <div className='flex'>
               <dt className='text-base-regular'>Identifiant Pôle Emploi :</dt>
-              <dd className='text-base-bold ml-1'>
+              <dd
+                className='text-base-bold ml-1'
+                onCopy={trackEventOnCopieIdentifiantPoleEmploi}
+              >
                 {idPartenaire ? idPartenaire : '-'}
               </dd>
               <button
