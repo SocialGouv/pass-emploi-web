@@ -6,7 +6,7 @@ import { Badge } from '../ui/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
 import SituationTag from 'components/jeune/SituationTag'
-import UpdateNumeroPEModal from 'components/jeune/UpdateNumeroPEModal'
+import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -36,35 +36,36 @@ export const DetailsJeune = ({
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
-  const [showNumeroPEModal, setShowNumeroPEModal] = useState<boolean>(false)
-  const [idPartenaire, setIdPartenaire] = useState<string | undefined>(
-    jeune.idPartenaire
-  )
+  const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
+    useState<boolean>(false)
+  const [identifiantPartenaire, setIdentifiantPartenaire] = useState<
+    string | undefined
+  >(jeune.idPartenaire)
 
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
 
-  function openNumeroPoleEmploiModal() {
-    setShowNumeroPEModal(true)
+  function openIdentifiantPartenaireModal() {
+    setShowIdentifiantPartenaireModal(true)
   }
 
-  function closeNumeroPoleEmploiModal() {
-    setShowNumeroPEModal(false)
+  function closeIdentifiantPartenaireModal() {
+    setShowIdentifiantPartenaireModal(false)
   }
 
-  async function updateNumeroPoleEmploi(
-    numeroPoleEmploi: string
+  async function updateIdentifiantPartenaire(
+    identifiantPartenaire: string
   ): Promise<void> {
     jeunesService
-      .modifierIdentifiantPartenaire(jeune.id, numeroPoleEmploi)
+      .modifierIdentifiantPartenaire(jeune.id, identifiantPartenaire)
       .then(() => {
-        setIdPartenaire(numeroPoleEmploi)
-        setShowNumeroPEModal(false)
+        setIdentifiantPartenaire(identifiantPartenaire)
+        setShowIdentifiantPartenaireModal(false)
         router.push({
           pathname: `/mes-jeunes/${jeune.id}`,
           query: {
-            [QueryParam.modificationIdentifiantPoleEmploi]: QueryValue.succes,
+            [QueryParam.modificationIdentifiantPartenaire]: QueryValue.succes,
           },
         })
       })
@@ -73,7 +74,7 @@ export const DetailsJeune = ({
       })
   }
 
-  function trackEventOnCopieIdentifiantPoleEmploi() {
+  function trackEventOnCopieIdentifiantPartenaire() {
     trackEvent({
       structure: StructureConseiller.POLE_EMPLOI,
       categorie: 'fiche jeune',
@@ -116,29 +117,29 @@ export const DetailsJeune = ({
               <dt className='text-base-regular'>Identifiant Pôle Emploi :</dt>
               <dd
                 className='text-base-bold ml-1'
-                onCopy={trackEventOnCopieIdentifiantPoleEmploi}
+                onCopy={trackEventOnCopieIdentifiantPartenaire}
               >
-                {idPartenaire ? idPartenaire : '-'}
+                {identifiantPartenaire ? identifiantPartenaire : '-'}
               </dd>
               <button
                 className='ml-5 flex items-center text-primary'
                 aria-label={
-                  idPartenaire
-                    ? 'Modifier numéro pôle emploi'
-                    : 'Ajouter numéro pôle emploi'
+                  identifiantPartenaire
+                    ? 'Modifier identifiant pôle emploi'
+                    : 'Ajouter identifiant pôle emploi'
                 }
-                onClick={openNumeroPoleEmploiModal}
+                onClick={openIdentifiantPartenaireModal}
               >
                 <IconComponent
                   name={IconName.Pen}
                   aria-label={
-                    idPartenaire
-                      ? 'Modifier numéro pôle emploi'
-                      : 'Ajouter numéro pôle emploi'
+                    identifiantPartenaire
+                      ? 'Modifier identifiant pôle emploi'
+                      : 'Ajouter identifiant pôle emploi'
                   }
                   className='w-[11px] h-[11px] mr-1'
                 />
-                {idPartenaire ? 'Modifier' : 'Ajouter'}
+                {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
               </button>
             </div>
           )}
@@ -283,11 +284,11 @@ export const DetailsJeune = ({
           )}
         </dl>
       </div>
-      {showNumeroPEModal && (
-        <UpdateNumeroPEModal
-          numeroPoleEmploi={idPartenaire}
-          updateNumeroPoleEmploi={updateNumeroPoleEmploi}
-          onClose={closeNumeroPoleEmploiModal}
+      {showIdentifiantPartenaireModal && (
+        <UpdateIdentifiantPartenaireModal
+          identifiantPartenaire={identifiantPartenaire}
+          updateIdentifiantPartenaire={updateIdentifiantPartenaire}
+          onClose={closeIdentifiantPartenaireModal}
         />
       )}
     </>

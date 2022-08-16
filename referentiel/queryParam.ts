@@ -13,7 +13,7 @@ export enum QueryParam {
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',
-  modificationIdentifiantPoleEmploi = 'modificationIdentifiantPoleEmploi',
+  modificationIdentifiantPartenaire = 'modificationIdentifiantPartenaire',
 }
 
 export enum QueryValue {

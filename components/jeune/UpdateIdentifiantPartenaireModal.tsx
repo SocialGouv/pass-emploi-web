@@ -4,57 +4,57 @@ import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button'
 import useMatomo from 'utils/analytics/useMatomo'
 
-interface UpdateNumeroPEModalProps {
-  numeroPoleEmploi: string | undefined
-  updateNumeroPoleEmploi: (numeroPoleEmploi: string) => Promise<void>
+interface UpdateIdentifiantPartenaireModalProps {
+  identifiantPartenaire: string | undefined
+  updateIdentifiantPartenaire: (identifiantPartenaire: string) => Promise<void>
   onClose: () => void
 }
 
-export default function UpdateNumeroPEModal({
-  numeroPoleEmploi,
-  updateNumeroPoleEmploi,
+export default function UpdateIdentifiantPartenaireModal({
+  identifiantPartenaire,
+  updateIdentifiantPartenaire,
   onClose,
-}: UpdateNumeroPEModalProps) {
-  const [getNumeroPoleEmploi, setNumeroPoleEmploi] = useState<
+}: UpdateIdentifiantPartenaireModalProps) {
+  const [getIdentifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
-  >(numeroPoleEmploi)
+  >(identifiantPartenaire)
 
-  function identifiantPoleEmploiEstValide() {
+  function identifiantPartenaireEstValide() {
     return (
-      getNumeroPoleEmploi &&
-      getNumeroPoleEmploi.length > 0 &&
-      getNumeroPoleEmploi.length < 11
+      getIdentifiantPartenaire &&
+      getIdentifiantPartenaire.length > 0 &&
+      getIdentifiantPartenaire.length < 11
     )
   }
 
-  async function handleUpdateNumeroPoleEmploi() {
-    if (identifiantPoleEmploiEstValide()) {
-      await updateNumeroPoleEmploi(getNumeroPoleEmploi!)
+  async function handleUpdateIdentifiantPartenaire() {
+    if (identifiantPartenaireEstValide()) {
+      await updateIdentifiantPartenaire(getIdentifiantPartenaire!)
     }
   }
 
   useMatomo(
-    numeroPoleEmploi
+    identifiantPartenaire
       ? 'Détail jeune - modification identifiant PE'
       : 'Détail jeune - ajout identifiant PE'
   )
 
-  const titre = numeroPoleEmploi
+  const titre = identifiantPartenaire
     ? 'Modifiez l’identifiant Pôle Emploi du jeune'
     : 'Ajoutez l’identifiant Pôle Emploi du jeune'
 
   return (
     <Modal title={titre} onClose={onClose}>
       <div className='mt-8 mb-14'>
-        <label htmlFor='identifiantPoleEmploi' className='text-base-medium'>
+        <label htmlFor='identifiantPartenaire' className='text-base-medium'>
           Identifiant Pôle Emploi (10 caractères maximum)
         </label>
         <input
           type='text'
-          id='identifiantPoleEmploi'
-          name='identifiantPoleEmploi'
-          defaultValue={numeroPoleEmploi}
-          onChange={(e) => setNumeroPoleEmploi(e.target.value)}
+          id='identifiantPartenaire'
+          name='identifiantPartenaire'
+          defaultValue={identifiantPartenaire}
+          onChange={(e) => setIdentifiantPartenaire(e.target.value)}
           maxLength={10}
           className={'border border-solid rounded-medium w-full px-4 py-3 mt-3'}
         />
@@ -74,8 +74,8 @@ export default function UpdateNumeroPEModal({
         <Button
           type='button'
           style={ButtonStyle.PRIMARY}
-          disabled={!Boolean(getNumeroPoleEmploi)}
-          onClick={handleUpdateNumeroPoleEmploi}
+          disabled={!Boolean(getIdentifiantPartenaire)}
+          onClick={handleUpdateIdentifiantPartenaire}
         >
           <span className='px-10'>Enregistrer</span>
         </Button>

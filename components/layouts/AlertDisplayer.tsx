@@ -94,7 +94,7 @@ const ALERTS: DictAlerts = {
   choixAgence: 'Votre agence a été ajoutée à votre profil',
   envoiMessage:
     'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires',
-  modificationIdentifiantPoleEmploi:
+  modificationIdentifiantPartenaire:
     'L’identifiant Pôle Emploi a bien été mis à jour',
 }
 
