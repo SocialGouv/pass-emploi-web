@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Badge } from '../ui/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
 import SituationTag from 'components/jeune/SituationTag'
+import UpdateNumeroPEModal from 'components/jeune/UpdateNumeroPEModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   CategorieSituation,
@@ -26,9 +27,28 @@ export const DetailsJeune = ({
   metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
+  const [showNumeroPEModal, setShowNumeroPEModal] = useState<boolean>(false)
+
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
+
+  function openNumeroPoleEmploiModal() {
+    setShowNumeroPEModal(true)
+  }
+
+  function closeNumeroPoleEmploiModal() {
+    setShowNumeroPEModal(false)
+  }
+
+  async function updateNumeroPoleEmploi(
+    numeroPoleEmploi: string
+  ): Promise<void> {
+    console.log('appel du put')
+    console.log(numeroPoleEmploi)
+    setShowNumeroPEModal(false)
+  }
+
   return (
     <>
       <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
@@ -57,6 +77,35 @@ export const DetailsJeune = ({
               <dd className='text-primary'>{jeune.email}</dd>
             </div>
           )}
+
+          {/*TODO ne mettre en place que si c'est un conseiller PE*/}
+          <div className='flex'>
+            <dt className='text-base-regular'>Numéro Pôle Emploi : </dt>
+            <dd className='text-base-bold ml-1'>
+              {jeune.idPartenaire ? jeune.idPartenaire : '-'}
+            </dd>
+            <button
+              className='ml-5 flex items-center text-primary'
+              aria-label={
+                jeune.idPartenaire
+                  ? 'Modifier numéro pôle emploi'
+                  : 'Ajouter numéro pôle emploi'
+              }
+              onClick={openNumeroPoleEmploiModal}
+            >
+              <IconComponent
+                name={IconName.Pen}
+                aria-label={
+                  jeune.idPartenaire
+                    ? 'Modifier numéro pôle emploi'
+                    : 'Ajouter numéro pôle emploi'
+                }
+                className='w-[11px] h-[11px] mr-1'
+              />
+              {jeune.idPartenaire ? 'Modifier' : 'Ajouter'}
+            </button>
+          </div>
+
           {jeune.urlDossier && (
             <>
               <dt className='sr-only'>Dossier externe</dt>
@@ -197,6 +246,14 @@ export const DetailsJeune = ({
           )}
         </dl>
       </div>
+      {/*TODO ne mettre en place que si c'est un conseiller PE*/}
+      {showNumeroPEModal && (
+        <UpdateNumeroPEModal
+          numeroPoleEmploi={jeune.idPartenaire}
+          updateNumeroPoleEmploi={updateNumeroPoleEmploi}
+          onClose={closeNumeroPoleEmploiModal}
+        />
+      )}
     </>
   )
 }

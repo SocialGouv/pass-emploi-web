@@ -79,6 +79,12 @@ export interface JeunesService {
     idJeune: string,
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined>
+
+  modifierNumeroPoleEmploi(
+    idJeune: string,
+    idPartenaire: string,
+    accessToken: string
+  ): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -283,5 +289,20 @@ export class JeunesApiService implements JeunesService {
 
       throw e
     }
+  }
+
+  async modifierNumeroPoleEmploi(
+    idJeune: string,
+    idPartenaire: string,
+    accessToken: string
+  ): Promise<void> {
+    const session = await getSession()
+    const idConseiller = session?.user.id
+
+    return this.apiClient.put(
+      `/conseillers/${idConseiller}/jeunes/${idJeune}`,
+      { idPartenaire },
+      session!.accessToken
+    )
   }
 }

@@ -37,6 +37,7 @@ import LaunchIcon from 'assets/icons/launch.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
 import MenuIcon from 'assets/icons/menu.svg'
 import NoteIcon from 'assets/icons/note_outline.svg'
+import PenIcon from 'assets/icons/pen.svg'
 import PeopleIcon from 'assets/icons/people.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
 import RemoveIcon from 'assets/icons/remove.svg'
@@ -90,6 +91,7 @@ export enum IconName {
   Note = 'Note',
   People = 'People',
   Profil = 'Profil',
+  Pen = 'Pen',
   Remove = 'Remove',
   RendezVous = 'RendezVous',
   RoundedClose = 'RoundedClose',
@@ -140,6 +142,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Logout]: LogoutIcon,
   [IconName.Menu]: MenuIcon,
   [IconName.Note]: NoteIcon,
+  [IconName.Pen]: PenIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.Remove]: RemoveIcon,
