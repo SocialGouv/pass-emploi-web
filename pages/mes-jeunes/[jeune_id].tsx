@@ -303,8 +303,7 @@ function FicheJeune({
 
       <DetailsJeune
         jeune={jeune}
-        withSituations={conseiller?.structure === StructureConseiller.MILO}
-        // TODO gestion numero PE avec isPoleEmploi
+        structureConseiller={conseiller?.structure}
         metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={trackDossierMiloClick}
       />

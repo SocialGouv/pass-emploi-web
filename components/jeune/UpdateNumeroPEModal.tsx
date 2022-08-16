@@ -18,10 +18,17 @@ export default function UpdateNumeroPEModal({
     string | undefined
   >(numeroPoleEmploi)
 
-  function handleUpdateNumeroPoleEmploi() {
-    // TODO verification du nombre de caractere
-    if (getNumeroPoleEmploi) {
-      updateNumeroPoleEmploi(getNumeroPoleEmploi)
+  function identifiantPoleEmploiEstValide() {
+    return (
+      getNumeroPoleEmploi &&
+      getNumeroPoleEmploi.length > 0 &&
+      getNumeroPoleEmploi.length < 11
+    )
+  }
+
+  async function handleUpdateNumeroPoleEmploi() {
+    if (identifiantPoleEmploiEstValide()) {
+      await updateNumeroPoleEmploi(getNumeroPoleEmploi!)
     }
   }
 

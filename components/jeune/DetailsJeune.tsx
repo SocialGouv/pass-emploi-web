@@ -7,6 +7,7 @@ import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 import SituationTag from 'components/jeune/SituationTag'
 import UpdateNumeroPEModal from 'components/jeune/UpdateNumeroPEModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   DetailJeune,
@@ -18,14 +19,14 @@ import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
-  withSituations?: boolean
+  structureConseiller: StructureConseiller | undefined
   metadonneesFavoris?: MetadonneesFavoris
   onDossierMiloClick: () => void
 }
 
 export const DetailsJeune = ({
   jeune,
-  withSituations,
+  structureConseiller,
   metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
@@ -85,31 +86,34 @@ export const DetailsJeune = ({
             </div>
           )}
 
-          {/*TODO ne mettre en place que si c'est un conseiller PE*/}
-          <div className='flex'>
-            <dt className='text-base-regular'>Numéro Pôle Emploi :</dt>
-            <dd className='text-base-bold ml-1'>{idPartenaire ?? '-'}</dd>
-            <button
-              className='ml-5 flex items-center text-primary'
-              aria-label={
-                idPartenaire
-                  ? 'Modifier numéro pôle emploi'
-                  : 'Ajouter numéro pôle emploi'
-              }
-              onClick={openNumeroPoleEmploiModal}
-            >
-              <IconComponent
-                name={IconName.Pen}
+          {structureConseiller !== StructureConseiller.MILO && (
+            <div className='flex'>
+              <dt className='text-base-regular'>Identifiant Pôle Emploi :</dt>
+              <dd className='text-base-bold ml-1'>
+                {idPartenaire ? idPartenaire : '-'}
+              </dd>
+              <button
+                className='ml-5 flex items-center text-primary'
                 aria-label={
                   idPartenaire
                     ? 'Modifier numéro pôle emploi'
                     : 'Ajouter numéro pôle emploi'
                 }
-                className='w-[11px] h-[11px] mr-1'
-              />
-              {idPartenaire ? 'Modifier' : 'Ajouter'}
-            </button>
-          </div>
+                onClick={openNumeroPoleEmploiModal}
+              >
+                <IconComponent
+                  name={IconName.Pen}
+                  aria-label={
+                    idPartenaire
+                      ? 'Modifier numéro pôle emploi'
+                      : 'Ajouter numéro pôle emploi'
+                  }
+                  className='w-[11px] h-[11px] mr-1'
+                />
+                {idPartenaire ? 'Modifier' : 'Ajouter'}
+              </button>
+            </div>
+          )}
 
           {jeune.urlDossier && (
             <>
@@ -137,7 +141,7 @@ export const DetailsJeune = ({
         </dl>
       </div>
 
-      {withSituations && (
+      {structureConseiller === StructureConseiller.MILO && (
         <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
           <h2 className='text-base-bold mb-1'>Situation</h2>
           {!(jeune.situations && jeune.situations.length) && (
