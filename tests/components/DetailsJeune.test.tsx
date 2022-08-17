@@ -151,7 +151,7 @@ describe('<DetailsJeune>', () => {
       })
     })
 
-    describe('pour un jeune Pôle Emploi qui n’a pas d’identifiant partenaire', () => {
+    describe('pour un jeune Pôle emploi qui n’a pas d’identifiant partenaire', () => {
       beforeEach(() => {
         const jeune = unDetailJeune({
           idPartenaire: undefined,
@@ -170,12 +170,12 @@ describe('<DetailsJeune>', () => {
 
       it('permet l’ajout de l’identifiant', () => {
         expect(
-          screen.getByText('Identifiant Pôle Emploi :')
+          screen.getByText('Identifiant Pôle emploi :')
         ).toBeInTheDocument()
         expect(screen.getByText('-')).toBeInTheDocument()
         expect(
           screen.getByRole('button', {
-            name: 'Ajouter l’identifiant pôle emploi',
+            name: 'Ajouter l’identifiant Pôle emploi',
           })
         ).toBeInTheDocument()
       })
@@ -184,7 +184,7 @@ describe('<DetailsJeune>', () => {
         beforeEach(async () => {
           await userEvent.click(
             screen.getByRole('button', {
-              name: 'Ajouter l’identifiant pôle emploi',
+              name: 'Ajouter l’identifiant Pôle emploi',
             })
           )
         })
@@ -192,7 +192,7 @@ describe('<DetailsJeune>', () => {
         it('affiche une pop-in pour ajouter un identifiant', async () => {
           expect(
             screen.getByLabelText(
-              'Identifiant Pôle Emploi (10 caractères maximum)'
+              'Identifiant Pôle emploi (10 caractères maximum)'
             )
           ).toBeInTheDocument()
           expect(
@@ -206,7 +206,7 @@ describe('<DetailsJeune>', () => {
           // Given
           await userEvent.type(
             screen.getByLabelText(
-              'Identifiant Pôle Emploi (10 caractères maximum)'
+              'Identifiant Pôle emploi (10 caractères maximum)'
             ),
             '12345'
           )
@@ -231,7 +231,7 @@ describe('<DetailsJeune>', () => {
       })
     })
 
-    describe('pour un jeune Pôle Emploi a déjà un identifiant partenaire', () => {
+    describe('pour un jeune Pôle emploi a déjà un identifiant partenaire', () => {
       beforeEach(() => {
         const jeune = unDetailJeune({
           idPartenaire: '12345',
@@ -250,12 +250,12 @@ describe('<DetailsJeune>', () => {
 
       it('permet la modification de l’identifiant', () => {
         expect(
-          screen.getByText('Identifiant Pôle Emploi :')
+          screen.getByText('Identifiant Pôle emploi :')
         ).toBeInTheDocument()
         expect(screen.getByText('12345')).toBeInTheDocument()
         expect(
           screen.getByRole('button', {
-            name: 'Modifier l’identifiant pôle emploi',
+            name: 'Modifier l’identifiant Pôle emploi',
           })
         ).toBeInTheDocument()
       })
@@ -264,7 +264,7 @@ describe('<DetailsJeune>', () => {
         beforeEach(async () => {
           await userEvent.click(
             screen.getByRole('button', {
-              name: 'Modifier l’identifiant pôle emploi',
+              name: 'Modifier l’identifiant Pôle emploi',
             })
           )
         })
@@ -272,7 +272,7 @@ describe('<DetailsJeune>', () => {
         it('affiche une pop-in pour modifier l’identifiant', async () => {
           expect(
             screen.getByLabelText(
-              'Identifiant Pôle Emploi (10 caractères maximum)'
+              'Identifiant Pôle emploi (10 caractères maximum)'
             )
           ).toBeInTheDocument()
           expect(
@@ -286,7 +286,7 @@ describe('<DetailsJeune>', () => {
           // Given
           await userEvent.type(
             screen.getByLabelText(
-              'Identifiant Pôle Emploi (10 caractères maximum)'
+              'Identifiant Pôle emploi (10 caractères maximum)'
             ),
             '6789'
           )
@@ -329,10 +329,10 @@ describe('<DetailsJeune>', () => {
       )
 
       // Then
-      expect(() => screen.getByText('Identifiant Pôle Emploi :')).toThrow()
+      expect(() => screen.getByText('Identifiant Pôle emploi :')).toThrow()
       expect(() =>
         screen.getByRole('button', {
-          name: 'Ajouter l’identifiant pôle emploi',
+          name: 'Ajouter l’identifiant Pôle emploi',
         })
       ).toThrow()
     })

@@ -315,7 +315,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/L’identifiant Pôle Emploi a bien été mis à jour/)
+        screen.getByText(/L’identifiant Pôle emploi a bien été mis à jour/)
       ).toBeInTheDocument()
     })
 

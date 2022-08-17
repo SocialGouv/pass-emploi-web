@@ -71,7 +71,6 @@ export const DetailsJeune = ({
       })
       .catch(() => {
         setShowIdentifiantPartenaireModal(false)
-        router.push({ pathname: `/mes-jeunes/${jeune.id}` })
       })
   }
 
@@ -115,30 +114,36 @@ export const DetailsJeune = ({
 
           {structureConseiller !== StructureConseiller.MILO && (
             <div className='flex'>
-              <dt className='text-base-regular'>Identifiant Pôle Emploi :</dt>
+              <dt className='text-base-regular mr-2'>
+                Identifiant Pôle emploi :
+              </dt>
               <dd
-                className='text-base-bold ml-1'
+                className='text-base-bold'
                 onCopy={trackEventOnCopieIdentifiantPartenaire}
               >
-                {identifiantPartenaire ? identifiantPartenaire : '-'}
+                {identifiantPartenaire ? (
+                  identifiantPartenaire
+                ) : (
+                  <>
+                    <span className='sr-only'>non renseigné</span>
+                    <span>-</span>
+                  </>
+                )}
               </dd>
               <button
                 className='ml-5 flex items-center text-primary'
                 aria-label={
                   identifiantPartenaire
-                    ? 'Modifier l’identifiant pôle emploi'
-                    : 'Ajouter l’identifiant pôle emploi'
+                    ? 'Modifier l’identifiant Pôle emploi'
+                    : 'Ajouter l’identifiant Pôle emploi'
                 }
                 onClick={openIdentifiantPartenaireModal}
               >
                 <IconComponent
                   name={IconName.Pen}
-                  aria-label={
-                    identifiantPartenaire
-                      ? 'Modifier l’identifiant pôle emploi'
-                      : 'Ajouter l’identifiant pôle emploi'
-                  }
-                  className='w-[11px] h-[11px] mr-1'
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-4 h-4 mr-1'
                 />
                 {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
               </button>

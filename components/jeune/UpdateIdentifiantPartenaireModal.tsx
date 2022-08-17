@@ -40,14 +40,14 @@ export default function UpdateIdentifiantPartenaireModal({
   )
 
   const titre = identifiantPartenaire
-    ? 'Modifiez l’identifiant Pôle Emploi du jeune'
-    : 'Ajoutez l’identifiant Pôle Emploi du jeune'
+    ? 'Modifiez l’identifiant Pôle emploi du jeune'
+    : 'Ajoutez l’identifiant Pôle emploi du jeune'
 
   return (
     <Modal title={titre} onClose={onClose}>
       <div className='mt-8 mb-14'>
         <label htmlFor='identifiantPartenaire' className='text-base-medium'>
-          Identifiant Pôle Emploi (10 caractères maximum)
+          Identifiant Pôle emploi (10 caractères maximum)
         </label>
         <input
           type='text'
