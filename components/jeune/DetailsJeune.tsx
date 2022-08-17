@@ -70,6 +70,7 @@ export const DetailsJeune = ({
         })
       })
       .catch(() => {
+        setShowIdentifiantPartenaireModal(false)
         router.push({ pathname: `/mes-jeunes/${jeune.id}` })
       })
   }
