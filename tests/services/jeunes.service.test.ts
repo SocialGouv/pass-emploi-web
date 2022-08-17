@@ -372,8 +372,8 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/idJeune',
-        { idPartenaire: '123456789' },
+        '/conseillers/idConseiller/jeunes/' + idJeune,
+        { idPartenaire: idPartenaire },
         'accessToken'
       )
     })
