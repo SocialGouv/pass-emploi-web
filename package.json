@@ -15,7 +15,6 @@
     "test:watch": "jest --config jest.config.js --watch",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
-
   },
   "dependencies": {
     "@badrap/bar-of-progress": "0.2.1",

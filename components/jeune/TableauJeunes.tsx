@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
-import MessageIcon from '../../assets/icons/note_outline_big.svg'
 import CellRow from '../ui/Table/CellRow'
 
 import SituationTag from 'components/jeune/SituationTag'
@@ -12,8 +11,8 @@ import { HeaderColumnCell } from 'components/ui/Table/HeaderColumnCell'
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
-  compareJeunesByNom,
   compareJeunesByLastNameDesc,
+  compareJeunesByNom,
   compareJeunesBySituation,
   compareJeunesBySituationDesc,
   getNomJeuneComplet,
@@ -332,7 +331,12 @@ export default function TableauJeunes({
                   <CellRow className='rounded-r-small'>
                     <span className='flex'>
                       <div className='relative w-fit mx-auto'>
-                        <MessageIcon aria-hidden='true' focusable='false' />
+                        <IconComponent
+                          name={IconName.NoteBig}
+                          aria-hidden='true'
+                          focusable='false'
+                          className='w-6 h-6 fill-primary'
+                        />
                         {jeune.messagesNonLus > 0 && (
                           <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-warning rounded-full text-center p-2.5 text-blanc text-xs-medium'>
                             {jeune.messagesNonLus}

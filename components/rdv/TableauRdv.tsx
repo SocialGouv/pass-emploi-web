@@ -2,7 +2,6 @@ import Link from 'next/link'
 import React from 'react'
 
 import KoIcon from '../../assets/icons/ko.svg'
-import LocationIcon from '../../assets/icons/location.svg'
 import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
 import TableLayout from '../ui/Table/TableLayout'
 
@@ -74,7 +73,8 @@ export default function TableauRdv({
                   </CellRow>
 
                   <CellRow>
-                    <LocationIcon
+                    <IconComponent
+                      name={IconName.Location}
                       focusable='false'
                       aria-hidden='true'
                       className='mr-2 inline'
@@ -92,14 +92,15 @@ export default function TableauRdv({
                               name={IconName.CheckRounded}
                               aria-hidden='true'
                               focusable='false'
-                              className='ml-6 fill-primary h-3 w-3'
+                              className='h-3 fill-primary'
                             />
                           </>
                         )}
                         {rdv.idCreateur !== idConseiller && (
                           <>
                             <span className='sr-only'>non</span>
-                            <KoIcon
+                            <IconComponent
+                              name={IconName.Ko}
                               aria-hidden='true'
                               focusable='false'
                               className='h-3'

@@ -33,10 +33,13 @@ import FlagFilledIcon from 'assets/icons/flag_filled.svg'
 import ImportantOutlineIcon from 'assets/icons/important_outline.svg'
 import InfoIcon from 'assets/icons/information.svg'
 import InfoOutlineIcon from 'assets/icons/information_outline.svg'
+import KoIcon from 'assets/icons/ko.svg'
 import LaunchIcon from 'assets/icons/launch.svg'
+import LocationIcon from 'assets/icons/location.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
 import MenuIcon from 'assets/icons/menu.svg'
 import NoteIcon from 'assets/icons/note_outline.svg'
+import NoteBigIcon from 'assets/icons/note_outline_big.svg'
 import PenIcon from 'assets/icons/pen.svg'
 import PeopleIcon from 'assets/icons/people.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
@@ -85,10 +88,13 @@ export enum IconName {
   ImportantOutline = 'ImportantOutline',
   Info = 'Info',
   InfoOutline = 'InfoOutline',
+  Ko = 'Ko',
   Launch = 'Launch',
+  Location = 'Location',
   Logout = 'Logout',
   Menu = 'Menu',
   Note = 'Note',
+  NoteBig = 'NoteBig',
   People = 'People',
   Profil = 'Profil',
   Pen = 'Pen',
@@ -138,11 +144,14 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Info]: InfoIcon,
   [IconName.ImportantOutline]: ImportantOutlineIcon,
   [IconName.InfoOutline]: InfoOutlineIcon,
+  [IconName.Ko]: KoIcon,
   [IconName.Launch]: LaunchIcon,
+  [IconName.Location]: LocationIcon,
   [IconName.Logout]: LogoutIcon,
   [IconName.Menu]: MenuIcon,
   [IconName.Note]: NoteIcon,
   [IconName.Pen]: PenIcon,
+  [IconName.NoteBig]: NoteBigIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.Remove]: RemoveIcon,
