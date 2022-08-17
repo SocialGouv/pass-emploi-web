@@ -125,8 +125,8 @@ export const DetailsJeune = ({
                 className='ml-5 flex items-center text-primary'
                 aria-label={
                   identifiantPartenaire
-                    ? 'Modifier identifiant pôle emploi'
-                    : 'Ajouter identifiant pôle emploi'
+                    ? 'Modifier l’identifiant pôle emploi'
+                    : 'Ajouter l’identifiant pôle emploi'
                 }
                 onClick={openIdentifiantPartenaireModal}
               >
@@ -134,8 +134,8 @@ export const DetailsJeune = ({
                   name={IconName.Pen}
                   aria-label={
                     identifiantPartenaire
-                      ? 'Modifier identifiant pôle emploi'
-                      : 'Ajouter identifiant pôle emploi'
+                      ? 'Modifier l’identifiant pôle emploi'
+                      : 'Ajouter l’identifiant pôle emploi'
                   }
                   className='w-[11px] h-[11px] mr-1'
                 />
