@@ -2,8 +2,8 @@ import { UrlObject } from 'url'
 
 import { MouseEvent, useRef } from 'react'
 
+import Modal from './Modal'
 import ButtonLink from './ui/Button/ButtonLink'
-import Modal from './ui/Dialog/Modal'
 import IconComponent, { IconName } from './ui/IconComponent'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'

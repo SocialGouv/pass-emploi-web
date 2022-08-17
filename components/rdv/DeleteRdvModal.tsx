@@ -1,7 +1,7 @@
 import IconComponent, { IconName } from '../ui/IconComponent'
 
+import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import Modal from 'components/ui/Dialog/Modal'
 
 interface DeleteRdvModalProps {
   aDesJeunesDUnAutrePortefeuille: boolean

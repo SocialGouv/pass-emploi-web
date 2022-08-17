@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 
-import IconComponent, { IconName } from '../IconComponent'
+import IconComponent, { IconName } from './ui/IconComponent'
 
 import styles from 'styles/components/Modal.module.css'
 

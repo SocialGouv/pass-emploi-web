@@ -1,6 +1,6 @@
 import { MouseEvent, useRef } from 'react'
 
-import Modal from './ui/Dialog/Modal'
+import Modal from './Modal'
 import IconComponent, { IconName } from './ui/IconComponent'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
