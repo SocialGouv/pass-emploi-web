@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import React from 'react'
 
 import KoIcon from '../../assets/icons/ko.svg'
 import LocationIcon from '../../assets/icons/location.svg'
@@ -37,7 +38,10 @@ export default function TableauRdv({
       )}
 
       {rdvs.length > 0 && (
-        <TableLayout label='Liste de mes rendez-vous'>
+        <TableLayout describedBy='table-caption'>
+          <div id='table-caption' className='sr-only'>
+            Liste de mes rendez-vous
+          </div>
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
               <HeaderColumnCell>Horaires</HeaderColumnCell>
@@ -60,7 +64,7 @@ export default function TableauRdv({
                   aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`}
                   className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
                 >
-                  <CellRow style='rounded-l-small'>
+                  <CellRow className='rounded-l-small'>
                     {dayHourCells(new Date(rdv.date), rdv.duration)}
                   </CellRow>
                   {withNameJeune && <CellRow>{rdv.beneficiaires}</CellRow>}
@@ -79,28 +83,36 @@ export default function TableauRdv({
                   </CellRow>
 
                   {rdv.idCreateur && (
-                    <CellRow style='rounded-r-small'>
-                      {rdv.idCreateur === idConseiller && (
-                        <>
-                          <span className='sr-only'>oui</span>
-                          <IconComponent
-                            name={IconName.CheckRounded}
-                            aria-hidden='true'
-                            focusable='false'
-                            className='fill-primary h-3 w-3'
-                          />
-                        </>
-                      )}
-                      {rdv.idCreateur !== idConseiller && (
-                        <>
-                          <span className='sr-only'>non</span>
-                          <KoIcon
-                            aria-hidden='true'
-                            focusable='false'
-                            className='h-3'
-                          />
-                        </>
-                      )}
+                    <CellRow className='rounded-r-small'>
+                      <span className='flex items-center justify-between'>
+                        {rdv.idCreateur === idConseiller && (
+                          <>
+                            <span className='sr-only'>oui</span>
+                            <IconComponent
+                              name={IconName.CheckRounded}
+                              aria-hidden='true'
+                              focusable='false'
+                              className='ml-6 fill-primary h-3 w-3'
+                            />
+                          </>
+                        )}
+                        {rdv.idCreateur !== idConseiller && (
+                          <>
+                            <span className='sr-only'>non</span>
+                            <KoIcon
+                              aria-hidden='true'
+                              focusable='false'
+                              className='h-3'
+                            />
+                          </>
+                        )}
+                        <IconComponent
+                          name={IconName.ChevronRight}
+                          focusable='false'
+                          aria-hidden='true'
+                          className='w-6 h-6 fill-content_color'
+                        />
+                      </span>
                     </CellRow>
                   )}
                   {!rdv.idCreateur && <div role='cell' />}

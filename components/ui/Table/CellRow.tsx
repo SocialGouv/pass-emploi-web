@@ -1,15 +1,17 @@
 import React from 'react'
 
 interface CellRowProps {
-  style?: string
+  className?: string
   children: any
 }
 
-export default function CellRow({ style, children }: CellRowProps) {
+export default function CellRow({ className, children }: CellRowProps) {
   return (
     <div
       role='cell'
-      className={`table-cell text-base-medium p-4 align-middle ${style ?? ''} `}
+      className={`table-cell text-base-medium p-4 align-middle ${
+        className ?? ''
+      } `}
     >
       {children}
     </div>

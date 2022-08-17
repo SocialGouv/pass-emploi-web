@@ -136,8 +136,8 @@ export default function TableauJeunes({
     isAction,
   ])
 
-  const columnHeaderButtonStyle =
-    'flex border-none hover:bg-primary_lighten rounded-medium items-center'
+  const columnHeaderButtonStyle = 'flex border-none items-center'
+  const columnHeaderButtonStyleHover = 'rounded-medium hover:bg-primary_lighten'
 
   const matomoTitle = () => {
     if (isDate && !sortDesc)
@@ -178,7 +178,7 @@ export default function TableauJeunes({
 
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className={`table-row`}>
-              <HeaderColumnCell>
+              <HeaderColumnCell className={columnHeaderButtonStyleHover}>
                 <button
                   className={columnHeaderButtonStyle}
                   onClick={() => sortJeunes(SortColumn.NOM)}
@@ -194,7 +194,7 @@ export default function TableauJeunes({
                 </button>
               </HeaderColumnCell>
               {withSituations && (
-                <HeaderColumnCell>
+                <HeaderColumnCell className={columnHeaderButtonStyleHover}>
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.SITUATION)}
@@ -210,7 +210,7 @@ export default function TableauJeunes({
                   </button>
                 </HeaderColumnCell>
               )}
-              <HeaderColumnCell>
+              <HeaderColumnCell className={columnHeaderButtonStyleHover}>
                 <button
                   className={columnHeaderButtonStyle}
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
@@ -231,7 +231,7 @@ export default function TableauJeunes({
               </HeaderColumnCell>
 
               {withActions && (
-                <HeaderColumnCell>
+                <HeaderColumnCell className={columnHeaderButtonStyleHover}>
                   <button
                     className={`${columnHeaderButtonStyle} mx-auto`}
                     onClick={() =>
@@ -250,7 +250,7 @@ export default function TableauJeunes({
                 </HeaderColumnCell>
               )}
 
-              <HeaderColumnCell>
+              <HeaderColumnCell className={columnHeaderButtonStyleHover}>
                 <button
                   className={`${columnHeaderButtonStyle} mx-auto`}
                   onClick={() => sortJeunes(SortColumn.MESSAGES)}
@@ -279,7 +279,7 @@ export default function TableauJeunes({
                   aria-label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
                   className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
                 >
-                  <CellRow style='rounded-l-small'>
+                  <CellRow className='rounded-l-small'>
                     <span className='flex items-baseline'>
                       {jeune.isReaffectationTemporaire && (
                         <span
@@ -320,7 +320,7 @@ export default function TableauJeunes({
                   </CellRow>
 
                   {withActions && (
-                    <CellRow style='text-primary_darken'>
+                    <CellRow className='text-primary_darken'>
                       <div className='mx-auto w-fit'>
                         <Badge
                           count={jeune.nbActionsNonTerminees}
@@ -329,7 +329,7 @@ export default function TableauJeunes({
                       </div>
                     </CellRow>
                   )}
-                  <CellRow style='rounded-r-small'>
+                  <CellRow className='rounded-r-small'>
                     <span className='flex'>
                       <div className='relative w-fit mx-auto'>
                         <MessageIcon aria-hidden='true' focusable='false' />
