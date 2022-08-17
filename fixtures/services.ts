@@ -1,9 +1,8 @@
-import { AgencesApiService, AgencesService } from '../services/agences.service'
-import { FichiersService } from '../services/fichiers.service'
-
 import { ActionsService } from 'services/actions.service'
+import { AgencesApiService, AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { FavorisService } from 'services/favoris.service'
+import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -25,6 +24,7 @@ export function mockedJeunesService(
     archiverJeune: jest.fn(),
     getMotifsSuppression: jest.fn(),
     getMetadonneesFavorisJeune: jest.fn(),
+    modifierIdentifiantPartenaire: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

@@ -62,8 +62,6 @@ describe("Page Détail d'une action d'un jeune", () => {
         )
       })
     })
-
-    describe('Au clique sur la suppression', () => {})
   })
 
   describe('server-side', () => {

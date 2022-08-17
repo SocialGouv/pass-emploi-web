@@ -28,12 +28,14 @@ export interface JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<JeuneFromListe[]>
+
   getJeunesDuConseillerClientSide(): Promise<JeuneFromListe[]>
 
   getConseillersDuJeuneServerSide(
     idConseiller: string,
     accessToken: string
   ): Promise<ConseillerHistorique[]>
+
   getConseillersDuJeuneClientSide(
     idConseiller: string
   ): Promise<ConseillerHistorique[]>
@@ -79,6 +81,11 @@ export interface JeunesService {
     idJeune: string,
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined>
+
+  modifierIdentifiantPartenaire(
+    idJeune: string,
+    idPartenaire: string
+  ): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -283,5 +290,19 @@ export class JeunesApiService implements JeunesService {
 
       throw e
     }
+  }
+
+  async modifierIdentifiantPartenaire(
+    idJeune: string,
+    idPartenaire: string
+  ): Promise<void> {
+    const session = await getSession()
+    const idConseiller = session?.user.id
+
+    return this.apiClient.put(
+      `/conseillers/${idConseiller}/jeunes/${idJeune}`,
+      { idPartenaire },
+      session!.accessToken
+    )
   }
 }

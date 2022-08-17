@@ -14,7 +14,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous?creationRdv=succes',
+        asPath: '/mes-rendezvous',
         query: { creationRdv: 'succes' },
         push: routerPush,
       })
@@ -54,7 +54,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous?modificationRdv=succes',
+        asPath: '/mes-rendezvous',
         query: { modificationRdv: 'succes' },
         push: routerPush,
       })
@@ -94,7 +94,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous?suppressionRdv=succes',
+        asPath: '/mes-rendezvous',
         query: { suppressionRdv: 'succes' },
         push: routerPush,
       })
@@ -134,7 +134,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes?recuperation=succes',
+        asPath: '/mes-jeunes',
         query: { recuperation: 'succes' },
         push: routerPush,
       })
@@ -225,7 +225,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes?suppression=succes',
+        asPath: '/mes-jeunes',
         query: { suppression: 'succes' },
         push: routerPush,
       })
@@ -265,7 +265,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes/jeune-1?creationAction=succes',
+        asPath: '/mes-jeunes/jeune-1',
         query: { creationAction: 'succes' },
         push: routerPush,
       })
@@ -297,13 +297,53 @@ describe('AlertDisplayer', () => {
     })
   })
 
+  describe('quand l’ajout ou la modification de l’identifiant partenaire est réussi', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/mes-jeunes/jeune-1',
+        query: { modificationIdentifiantPartenaire: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      renderAlertDisplayer()
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/L’identifiant Pôle emploi a bien été mis à jour/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/mes-jeunes/jeune-1',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+
   describe('envoie de message multi-destinataire', () => {
     let routerPush: Function
     beforeEach(() => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes?envoiMessage=succes',
+        asPath: '/mes-jeunes',
         query: { envoiMessage: 'succes' },
         push: routerPush,
       })
@@ -343,7 +383,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes?choixAgence=succes',
+        asPath: '/mes-jeunes',
         query: { choixAgence: 'succes' },
         push: routerPush,
       })
@@ -384,7 +424,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes?choixAgence=succes',
+        asPath: '/mes-jeunes',
         query: { choixAgence: 'succes' },
         push: routerPush,
       })

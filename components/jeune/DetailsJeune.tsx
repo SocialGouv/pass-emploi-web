@@ -1,34 +1,88 @@
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
 
 import { Badge } from '../ui/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
 import SituationTag from 'components/jeune/SituationTag'
+import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   DetailJeune,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { JeunesService } from 'services/jeunes.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import { formatDayDate } from 'utils/date'
+import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
-  withSituations?: boolean
+  structureConseiller: StructureConseiller | undefined
   metadonneesFavoris?: MetadonneesFavoris
   onDossierMiloClick: () => void
 }
 
 export const DetailsJeune = ({
   jeune,
-  withSituations,
+  structureConseiller,
   metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
+  const router = useRouter()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+
+  const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
+    useState<boolean>(false)
+  const [identifiantPartenaire, setIdentifiantPartenaire] = useState<
+    string | undefined
+  >(jeune.idPartenaire)
+
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
+
+  function openIdentifiantPartenaireModal() {
+    setShowIdentifiantPartenaireModal(true)
+  }
+
+  function closeIdentifiantPartenaireModal() {
+    setShowIdentifiantPartenaireModal(false)
+  }
+
+  async function updateIdentifiantPartenaire(
+    identifiantPartenaire: string
+  ): Promise<void> {
+    jeunesService
+      .modifierIdentifiantPartenaire(jeune.id, identifiantPartenaire)
+      .then(() => {
+        setIdentifiantPartenaire(identifiantPartenaire)
+        setShowIdentifiantPartenaireModal(false)
+        router.push({
+          pathname: `/mes-jeunes/${jeune.id}`,
+          query: {
+            [QueryParam.modificationIdentifiantPartenaire]: QueryValue.succes,
+          },
+        })
+      })
+      .catch(() => {
+        setShowIdentifiantPartenaireModal(false)
+      })
+  }
+
+  function trackEventOnCopieIdentifiantPartenaire() {
+    trackEvent({
+      structure: StructureConseiller.POLE_EMPLOI,
+      categorie: 'fiche jeune',
+      action: 'copie identifiant pe',
+      nom: '',
+    })
+  }
+
   return (
     <>
       <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
@@ -57,6 +111,45 @@ export const DetailsJeune = ({
               <dd className='text-primary'>{jeune.email}</dd>
             </div>
           )}
+
+          {structureConseiller !== StructureConseiller.MILO && (
+            <div className='flex'>
+              <dt className='text-base-regular mr-2'>
+                Identifiant Pôle emploi :
+              </dt>
+              <dd
+                className='text-base-bold'
+                onCopy={trackEventOnCopieIdentifiantPartenaire}
+              >
+                {identifiantPartenaire ? (
+                  identifiantPartenaire
+                ) : (
+                  <>
+                    <span className='sr-only'>non renseigné</span>
+                    <span>-</span>
+                  </>
+                )}
+              </dd>
+              <button
+                className='ml-5 flex items-center text-primary'
+                aria-label={
+                  identifiantPartenaire
+                    ? 'Modifier l’identifiant Pôle emploi'
+                    : 'Ajouter l’identifiant Pôle emploi'
+                }
+                onClick={openIdentifiantPartenaireModal}
+              >
+                <IconComponent
+                  name={IconName.Pen}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-4 h-4 mr-1 fill-primary'
+                />
+                {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
+              </button>
+            </div>
+          )}
+
           {jeune.urlDossier && (
             <>
               <dt className='sr-only'>Dossier externe</dt>
@@ -83,7 +176,7 @@ export const DetailsJeune = ({
         </dl>
       </div>
 
-      {withSituations && (
+      {structureConseiller === StructureConseiller.MILO && (
         <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
           <h2 className='text-base-bold mb-1'>Situation</h2>
           {!(jeune.situations && jeune.situations.length) && (
@@ -197,6 +290,13 @@ export const DetailsJeune = ({
           )}
         </dl>
       </div>
+      {showIdentifiantPartenaireModal && (
+        <UpdateIdentifiantPartenaireModal
+          identifiantPartenaire={identifiantPartenaire}
+          updateIdentifiantPartenaire={updateIdentifiantPartenaire}
+          onClose={closeIdentifiantPartenaireModal}
+        />
+      )}
     </>
   )
 }
