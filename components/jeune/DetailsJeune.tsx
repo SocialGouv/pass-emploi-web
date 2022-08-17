@@ -143,7 +143,7 @@ export const DetailsJeune = ({
                   name={IconName.Pen}
                   aria-hidden={true}
                   focusable={false}
-                  className='w-4 h-4 mr-1'
+                  className='w-4 h-4 mr-1 fill-primary'
                 />
                 {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
               </button>
