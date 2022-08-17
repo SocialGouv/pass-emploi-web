@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import Tab from 'components/ui/Tab'
-import TabList from 'components/ui/TabList'
+import Tab from 'components/ui/Navigation/Tab'
+import TabList from 'components/ui/Navigation/TabList'
 
 describe('Tab & TabList', () => {
   describe('Tab', () => {

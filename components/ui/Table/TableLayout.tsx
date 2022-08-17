@@ -1,9 +1,18 @@
-import React, { ReactNode } from 'react'
+import React from 'react'
 
-export default function TableLayout(children) {
+interface TableLayoutProps {
+  label: string
+  children: any
+}
+
+export default function TableLayout({ label, children }: TableLayoutProps) {
   return (
-    <table className='w-full border-spacing-y-3 border-separate'>
+    <div
+      role='table'
+      className='table w-full border-spacing-y-3 border-separate'
+      aria-label={label}
+    >
       {children}
-    </table>
+    </div>
   )
 }

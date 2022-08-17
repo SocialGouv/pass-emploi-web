@@ -8,7 +8,7 @@ export function HeaderColumnCell({ children }: HeaderColumnCellProps) {
   return (
     <div
       role='columnheader'
-      className='table-cell text-base-regular text-left pb-4'
+      className='table-cell text-base-regular text-left p-4'
     >
       {children}
     </div>

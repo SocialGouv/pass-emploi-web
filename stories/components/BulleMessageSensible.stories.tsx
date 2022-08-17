@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import BulleMessageSensible from '../../components/ui/BulleMessageSensible'
+import BulleMessageSensible from '../../components/ui/Form/BulleMessageSensible'
 
 export default {
   title: 'Components/Form/BulleMessageSensible',

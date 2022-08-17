@@ -3,8 +3,8 @@ import React from 'react'
 import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { ChatRoomTile } from 'components/chat/ChatRoomTile'
-import { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import { JeuneChat } from 'interfaces/jeune'
 
 interface ListeConversationsProps {

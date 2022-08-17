@@ -5,10 +5,7 @@ interface CellRowProps {
   children: any
 }
 
-export default function CellRow({
-  style,
-  children,
-}: CellRowProps): JSX.Element {
+export default function CellRow({ style, children }: CellRowProps) {
   return (
     <div
       role='cell'

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
-import Pagination from 'components/ui/Pagination'
+import Pagination from 'components/ui/Table/Pagination'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 

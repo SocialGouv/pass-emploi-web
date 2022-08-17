@@ -1,9 +1,9 @@
 import { MouseEvent, useRef } from 'react'
 
-import Modal from './Modal'
+import Modal from './ui/Dialog/Modal'
 import IconComponent, { IconName } from './ui/IconComponent'
 
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 
 interface ConfirmationUpdateRdvModalProps {
   onConfirmation: () => void

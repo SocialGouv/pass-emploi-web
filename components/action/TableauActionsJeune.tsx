@@ -1,5 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
+import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
+
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import ActionRow from 'components/action/ActionRow'
 import { TRI } from 'components/action/OngletActions'

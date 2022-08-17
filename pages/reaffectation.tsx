@@ -3,10 +3,10 @@ import { GetServerSideProps } from 'next'
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 
 import ImportantIcon from 'assets/icons/important.svg'
-import Button from 'components/ui/Button'
+import Button from 'components/ui/Button/Button'
+import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ResettableTextInput from 'components/ui/ResettableTextInput'
-import SuccessAlert from 'components/ui/SuccessAlert'
+import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import {
   compareJeunesByNom,
   getNomJeuneComplet,

@@ -1,12 +1,12 @@
 import React, { FormEvent, useRef, useState } from 'react'
 
-import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
-import Button, { ButtonStyle } from 'components/ui/Button'
-import InformationMessage from 'components/ui/InformationMessage'
-import { InputError } from 'components/ui/InputError'
-import ResettableTextInput from 'components/ui/ResettableTextInput'
-import SelectAutocomplete from 'components/ui/SelectAutocomplete'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import Modal from 'components/ui/Dialog/Modal'
+import { InputError } from 'components/ui/Form/InputError'
+import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
+import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Agence, StructureConseiller } from 'interfaces/conseiller'
 
 interface RenseignementAgenceModalProps {

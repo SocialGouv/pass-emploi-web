@@ -1,8 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react'
 
 import { RequiredValue } from 'components/RequiredValue'
-import Button from 'components/ui/Button'
-import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
+import Button from 'components/ui/Button/Button'
+import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import isEmailValid from 'utils/isEmailValid'
 

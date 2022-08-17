@@ -1,7 +1,7 @@
 import React from 'react'
 
 import propsStatutsActions from 'components/action/propsStatutsActions'
-import { Tag } from 'components/ui/Tag'
+import { Tag } from 'components/ui/Indicateurs/Tag'
 import { StatutAction } from 'interfaces/action'
 
 interface StatutTagProps {

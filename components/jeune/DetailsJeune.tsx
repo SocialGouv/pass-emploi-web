@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import { Badge } from '../ui/Badge'
+import { Badge } from '../ui/Indicateurs/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
 import SituationTag from 'components/jeune/SituationTag'

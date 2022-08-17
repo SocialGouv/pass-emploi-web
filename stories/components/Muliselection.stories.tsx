@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import Multiselection from 'components/ui/Multiselection'
+import Multiselection from 'components/ui/Form/Multiselection'
 
 export default {
   title: 'Components/Multiselection',

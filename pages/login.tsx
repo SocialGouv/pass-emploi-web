@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import Logo from 'assets/images/logo_app_cej.svg'
-import { FormButton } from 'components/ui/FormButton'
+import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 

@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 
-import { InputError } from 'components/ui/InputError'
-import Multiselection from 'components/ui/Multiselection'
-import SelectAutocomplete from 'components/ui/SelectAutocomplete'
+import { InputError } from 'components/ui/Form/InputError'
+import Multiselection from 'components/ui/Form/Multiselection'
+import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {

@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import MenuLink from 'components/ui/Form/MenuLink'
 import { IconName } from 'components/ui/IconComponent'
-import MenuLink from 'components/ui/MenuLink'
 import { StructureConseiller } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'

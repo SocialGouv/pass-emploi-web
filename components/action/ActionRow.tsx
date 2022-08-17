@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from '../ui/IconComponent'
+import CellRow from '../ui/Table/CellRow'
 
 import StatusTag from 'components/action/StatusTag'
 import { Action, StatutAction } from 'interfaces/action'
@@ -28,7 +29,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
         aria-label={`Détail de l'action ${action.content}`}
         className={`table-row cursor-pointer focus-within:primary_lighten rounded-small shadow-s hover:bg-primary_lighten`}
       >
-        <div role='cell' className={`table-cell relative p-4 rounded-l-small`}>
+        <CellRow style='rounded-l-small'>
           <span className='flex items-center'>
             <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
@@ -43,13 +44,13 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               />
             )}
           </span>
-        </div>
-        <div role='cell' className='table-cell relative py-4 pr-4 w-[120px]'>
+        </CellRow>
+        <CellRow>
           <span className='flex items-center'>
             <span>{formatDayDate(new Date(action.creationDate))}</span>
           </span>
-        </div>
-        <div role='cell' className='table-cell relative py-4 pr-4 w-[120px]'>
+        </CellRow>
+        <CellRow>
           <span className='flex flex-row items-center'>
             <span
               className={
@@ -72,11 +73,8 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               {formatDayDate(new Date(action.dateEcheance))}
             </span>
           </span>
-        </div>
-        <div
-          role='cell'
-          className={`table-cell relative rounded-r-small w-[160px]`}
-        >
+        </CellRow>
+        <CellRow style='rounded-r-small w-[160px]'>
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
             <IconComponent
@@ -86,7 +84,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               className='mr-6 w-6 h-6 fill-content_color'
             />
           </span>
-        </div>
+        </CellRow>
       </a>
     </Link>
   )

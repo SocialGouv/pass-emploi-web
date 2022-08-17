@@ -1,4 +1,4 @@
-import IconComponent, { IconName } from './IconComponent'
+import IconComponent, { IconName } from '../IconComponent'
 
 import { Badge } from 'components/ui/Indicateurs/Badge'
 

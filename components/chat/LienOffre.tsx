@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import ExternalLink from 'components/ui/ExternalLink'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { InfoOffre } from 'interfaces/message'
 import useMatomo from 'utils/analytics/useMatomo'
 

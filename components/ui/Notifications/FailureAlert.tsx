@@ -1,4 +1,4 @@
-import FailureIcon from '../../assets/icons/important_outline.svg'
+import FailureIcon from '../../../assets/icons/important_outline.svg'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 

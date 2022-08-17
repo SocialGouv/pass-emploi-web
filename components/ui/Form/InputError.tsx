@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ErrorIcon from '../../assets/icons/error_outline.svg'
+import ErrorIcon from 'assets/icons/error_outline.svg'
 
 interface InputErrorProps {
   children: string

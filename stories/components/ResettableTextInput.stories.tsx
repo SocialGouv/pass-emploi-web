@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import ResettableTextInput from 'components/ui/ResettableTextInput'
+import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 
 export default {
   title: 'Components/Form/ResettableTextInput',

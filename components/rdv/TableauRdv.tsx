@@ -2,8 +2,9 @@ import Link from 'next/link'
 
 import KoIcon from '../../assets/icons/ko.svg'
 import LocationIcon from '../../assets/icons/location.svg'
+import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
+import TableLayout from '../ui/Table/TableLayout'
 
-import { HeaderCell } from 'components/rdv/HeaderCell'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
 import CellRow from 'components/ui/Table/CellRow'
@@ -36,18 +37,14 @@ export default function TableauRdv({
       )}
 
       {rdvs.length > 0 && (
-        <div
-          role='table'
-          className='table w-full border-spacing-y-3 border-separate'
-          aria-label='Liste de mes rendez-vous'
-        >
+        <TableLayout label='Liste de mes rendez-vous'>
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
-              <HeaderCell label='Horaires' />
-              {withNameJeune && <HeaderCell label='Prénom Nom' />}
-              <HeaderCell label='Type' />
-              <HeaderCell label='Modalité' />
-              <HeaderCell label='Créé par vous' />
+              <HeaderColumnCell>Horaires</HeaderColumnCell>
+              {withNameJeune && <HeaderColumnCell>Prénom Nom</HeaderColumnCell>}
+              <HeaderColumnCell>Type</HeaderColumnCell>
+              <HeaderColumnCell>Modalité</HeaderColumnCell>
+              <HeaderColumnCell>Créé par vous</HeaderColumnCell>
             </div>
           </div>
 
@@ -111,7 +108,7 @@ export default function TableauRdv({
               </Link>
             ))}
           </div>
-        </div>
+        </TableLayout>
       )}
     </>
   )

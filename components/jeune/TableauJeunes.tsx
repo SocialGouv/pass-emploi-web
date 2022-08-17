@@ -137,7 +137,7 @@ export default function TableauJeunes({
   ])
 
   const columnHeaderButtonStyle =
-    'flex border-none hover:bg-primary_lighten p-2 rounded-medium items-center'
+    'flex border-none hover:bg-primary_lighten rounded-medium items-center'
 
   const matomoTitle = () => {
     if (isDate && !sortDesc)

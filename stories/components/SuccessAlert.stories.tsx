@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import SuccessAlert from '../../components/ui/SuccessAlert'
+import SuccessAlert from '../../components/ui/Notifications/SuccessAlert'
 
 export default {
   title: 'Components/Notifications/SuccessAlert',

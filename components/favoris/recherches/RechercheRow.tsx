@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Tag } from 'components/ui/Tag'
+import { Tag } from 'components/ui/Indicateurs/Tag'
 import { Recherche } from 'interfaces/favoris'
 
 export default function RechercheRow({ recherche }: { recherche: Recherche }) {

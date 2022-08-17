@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import { Badge } from '../../components/ui/Badge'
+import { Badge } from '../../components/ui/Indicateurs/Badge'
 
 export default {
   title: 'Components/Indicateurs/Badge',
