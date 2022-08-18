@@ -31,21 +31,11 @@ export interface Rdv {
   createur: { id: string; nom: string; prenom: string } | null
 }
 
-export interface RdvAVenirItem {}
-
-export class JourRdvAVenirItem implements RdvAVenirItem {
+export class JourRdvAVenirItem {
   readonly label: string
 
   constructor(label: string) {
     this.label = label
-  }
-}
-
-export class RdvItem implements RdvAVenirItem {
-  readonly rdvListItem: RdvListItem
-
-  constructor(rdvListItem: RdvListItem) {
-    this.rdvListItem = rdvListItem
   }
 }
 

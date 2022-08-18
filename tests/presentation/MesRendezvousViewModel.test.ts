@@ -1,9 +1,4 @@
-import {
-  JourRdvAVenirItem,
-  RdvAVenirItem,
-  RdvItem,
-  RdvListItem,
-} from 'interfaces/rdv'
+import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
 import { listeRdvAVenirItem } from 'presentation/MesRendezvousViewModel'
 
 const mardi = '2030-01-01T10:00:00.000Z'
@@ -15,7 +10,7 @@ describe('listeRdvAVenirItem', () => {
     const mesRendezvous: RdvListItem[] = []
 
     // When
-    const items: RdvAVenirItem[] = listeRdvAVenirItem(mesRendezvous)
+    const items = listeRdvAVenirItem(mesRendezvous)
 
     // Then
     expect(items.length).toBe(0)
@@ -26,12 +21,12 @@ describe('listeRdvAVenirItem', () => {
     const rendezvous = unRendezvousItem(mardi)
 
     // When
-    const items: RdvAVenirItem[] = listeRdvAVenirItem([rendezvous])
+    const items = listeRdvAVenirItem([rendezvous])
 
     // Then
     expect(items.length).toBe(2)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect(items[1]).toEqual(new RdvItem(rendezvous))
+    expect(items[1]).toEqual(rendezvous)
   })
 
   it('quand la liste de rendezvous contient un rendezvous aujourd’hui retourne aujourd’hui et le rendezvous', () => {
@@ -40,12 +35,12 @@ describe('listeRdvAVenirItem', () => {
     const rendezvous = unRendezvousItem(aujourdhui)
 
     // When
-    const items: RdvAVenirItem[] = listeRdvAVenirItem([rendezvous])
+    const items = listeRdvAVenirItem([rendezvous])
 
     // Then
     expect(items.length).toBe(2)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('aujourd’hui')
-    expect(items[1]).toEqual(new RdvItem(rendezvous))
+    expect(items[1]).toEqual(rendezvous)
   })
 
   it('quand la liste de rendezvous contient 2 rendezvous de jours différents retourne les deux rendezvous avec les deux jours', () => {
@@ -54,17 +49,14 @@ describe('listeRdvAVenirItem', () => {
     const rendezvousMercredi = unRendezvousItem(mercredi)
 
     // When
-    const items: RdvAVenirItem[] = listeRdvAVenirItem([
-      rendezvousMercredi,
-      rendezvousMardi,
-    ])
+    const items = listeRdvAVenirItem([rendezvousMercredi, rendezvousMardi])
 
     // Then
     expect(items.length).toBe(4)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect(items[1]).toEqual(new RdvItem(rendezvousMardi))
+    expect(items[1]).toEqual(rendezvousMardi)
     expect((items[2] as JourRdvAVenirItem).label).toEqual('mercredi 2 janvier')
-    expect(items[3]).toEqual(new RdvItem(rendezvousMercredi))
+    expect(items[3]).toEqual(rendezvousMercredi)
   })
 
   it('quand la liste de rendezvous contient 2 rendezvous le même jour retourne les deux rendezvous avec le même jour', () => {
@@ -73,7 +65,7 @@ describe('listeRdvAVenirItem', () => {
     const unAutreRendezvousMardi = unRendezvousItem(mardi)
 
     // When
-    const items: RdvAVenirItem[] = listeRdvAVenirItem([
+    const items = listeRdvAVenirItem([
       unRendezvousMardi,
       unAutreRendezvousMardi,
     ])
@@ -81,8 +73,8 @@ describe('listeRdvAVenirItem', () => {
     // Then
     expect(items.length).toBe(3)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect(items[1]).toEqual(new RdvItem(unRendezvousMardi))
-    expect(items[2]).toEqual(new RdvItem(unAutreRendezvousMardi))
+    expect(items[1]).toEqual(unRendezvousMardi)
+    expect(items[2]).toEqual(unAutreRendezvousMardi)
   })
 })
 

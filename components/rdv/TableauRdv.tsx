@@ -1,23 +1,14 @@
-import Link from 'next/link'
 import React from 'react'
 
 import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
 import TableLayout from '../ui/Table/TableLayout'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
-import CellRow from 'components/ui/Table/CellRow'
-import {
-  JourRdvAVenirItem,
-  RdvAVenirItem,
-  RdvItem,
-  RdvListItem,
-} from 'interfaces/rdv'
-import { listeRdvAVenirItem } from 'presentation/MesRendezvousViewModel'
+import { RdvRow } from 'components/rdv/RdvRow'
+import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 type TableauRdvProps = {
-  rdvs: RdvListItem[]
+  rdvs: Array<RdvListItem | JourRdvAVenirItem>
   idConseiller: string
   withNameJeune?: boolean
 }
@@ -40,16 +31,6 @@ export default function TableauRdv({
           Vous n’avez pas de rendez-vous pour le moment
         </p>
       )}
-      {/*TODO test de la logique d’afffichage coté front*/}
-      {listeRdvAVenirItem(rdvs).map((rdv) => {
-        if (rdv instanceof JourRdvAVenirItem) {
-          return <p>walid</p>
-        } else if (rdv instanceof RdvItem) {
-          return <p>Gabi</p>
-        } else {
-          return <p>amelle</p>
-        }
-      })}
       {rdvs.length > 0 && (
         <TableLayout describedBy='table-caption'>
           <div id='table-caption' className='sr-only'>
@@ -66,74 +47,21 @@ export default function TableauRdv({
           </div>
 
           <div role='rowgroup' className='table-row-group'>
-            {rdvs.map((rdv: RdvListItem) => (
-              <Link
-                href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
-                key={rdv.id}
-              >
-                <a
-                  role='row'
-                  key={rdv.id}
-                  aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`}
-                  className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
-                >
-                  <CellRow className='rounded-l-small text-base-bold'>
-                    {dayHourCells(new Date(rdv.date), rdv.duration)}
-                  </CellRow>
-                  {withNameJeune && <CellRow>{rdv.beneficiaires}</CellRow>}
-
-                  <CellRow>
-                    <RdvTypeTag type={rdv.type} />
-                  </CellRow>
-
-                  <CellRow>
-                    <IconComponent
-                      name={IconName.Location}
-                      focusable='false'
-                      aria-hidden='true'
-                      className='mr-2 inline'
-                    />
-                    {rdv.modality}
-                  </CellRow>
-
-                  {rdv.idCreateur && (
-                    <CellRow className='rounded-r-small'>
-                      <span className='flex items-center justify-around'>
-                        {rdv.idCreateur === idConseiller && (
-                          <>
-                            <span className='sr-only'>oui</span>
-                            <IconComponent
-                              name={IconName.CheckRounded}
-                              aria-hidden='true'
-                              focusable='false'
-                              className='h-4 w-4 fill-primary'
-                            />
-                          </>
-                        )}
-                        {rdv.idCreateur !== idConseiller && (
-                          <>
-                            <span className='sr-only'>non</span>
-                            <IconComponent
-                              name={IconName.Ko}
-                              aria-hidden='true'
-                              focusable='false'
-                              className='h-3'
-                            />
-                          </>
-                        )}
-                        <IconComponent
-                          name={IconName.ChevronRight}
-                          focusable='false'
-                          aria-hidden='true'
-                          className='w-6 h-6 fill-content_color'
-                        />
-                      </span>
-                    </CellRow>
-                  )}
-                  {!rdv.idCreateur && <div role='cell' />}
-                </a>
-              </Link>
-            ))}
+            {rdvs.map((item: RdvListItem | JourRdvAVenirItem) => {
+              if (item instanceof JourRdvAVenirItem) {
+                return <p className={'text-m-bold'}>{item.label}</p>
+              } else {
+                return (
+                  <RdvRow
+                    key={item.id}
+                    item={item}
+                    horaire={dayHourCells(new Date(item.date), item.duration)}
+                    withNameJeune={withNameJeune}
+                    idConseiller={idConseiller}
+                  />
+                )
+              }
+            })}
           </div>
         </TableLayout>
       )}

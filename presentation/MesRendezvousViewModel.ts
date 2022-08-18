@@ -1,17 +1,11 @@
-import {
-  JourRdvAVenirItem,
-  RdvAVenirItem,
-  RdvItem,
-  RdvListItem,
-} from 'interfaces/rdv'
+import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
 import { dateIsToday, formatWeekdayWithMonth } from 'utils/date'
 
 export function listeRdvAVenirItem(
   mesRendezVous: RdvListItem[]
-): RdvAVenirItem[] {
+): Array<JourRdvAVenirItem | RdvListItem> {
   mesRendezVous.sort(trierParDate)
-
-  const items: RdvAVenirItem[] = []
+  const items: Array<JourRdvAVenirItem | RdvListItem> = []
   let dernierJour = ''
   for (let rdv of mesRendezVous) {
     const jour = jourDuRdvFormate(new Date(rdv.date))
@@ -19,7 +13,7 @@ export function listeRdvAVenirItem(
       dernierJour = jour
       items.push(new JourRdvAVenirItem(jour))
     }
-    items.push(new RdvItem(rdv))
+    items.push(rdv)
   }
   return items
 }
