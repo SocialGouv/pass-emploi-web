@@ -39,7 +39,7 @@ export const formatHourMinuteDate = (date: Date): string => {
   let minutes = date.getMinutes().toString()
   minutes = ('0' + minutes).slice(-2)
 
-  return `${hours}:${minutes}`
+  return `${hours}h${minutes}`
 }
 
 export const formatDayAndHourDate = (date: Date): string =>

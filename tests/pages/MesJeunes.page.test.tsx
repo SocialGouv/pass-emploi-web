@@ -112,7 +112,7 @@ describe('Mes Jeunes', () => {
           )
 
           //THEN
-          expect(row1.getByText('Le 07/12/2021 à 18:30')).toBeInTheDocument()
+          expect(row1.getByText('Le 07/12/2021 à 18h30')).toBeInTheDocument()
         })
       })
 

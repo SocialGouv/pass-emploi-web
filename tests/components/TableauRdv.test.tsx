@@ -52,9 +52,9 @@ describe('<TableauRdv>', () => {
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         expect(
           screen.getByText(
-            `${formatDayDate(date)} (${formatHourMinuteDate(date)} - ${
+            `${formatDayDate(date)} - ${formatHourMinuteDate(date)} - ${
               rdv.duration
-            } min)`
+            } min`
           )
         ).toBeInTheDocument()
       })

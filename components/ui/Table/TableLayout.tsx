@@ -14,7 +14,7 @@ export default function TableLayout({
   return (
     <div
       role='table'
-      className='table w-full border-spacing-y-3 border-separate'
+      className='table w-full border-spacing-y-2 border-separate'
       aria-label={label}
       aria-describedby={describedBy}
     >
