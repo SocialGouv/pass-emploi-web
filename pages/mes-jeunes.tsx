@@ -197,7 +197,7 @@ function MesJeunes({
       )}
 
       {conseillerJeunes.length > 0 && (
-        <div className={`flex flex-wrap justify-between items-end mb-6`}>
+        <div className={`flex flex-wrap justify-between items-end mb-12`}>
           <RechercheJeune onSearchFilterBy={onSearch} />
           {(conseiller?.structure === StructureConseiller.MILO ||
             conseiller?.structure === StructureConseiller.POLE_EMPLOI) && (
@@ -223,13 +223,21 @@ function MesJeunes({
         )}
 
       {conseillerJeunes.length > 0 && (
-        <TableauJeunes
-          jeunes={listeJeunesFiltres}
-          withActions={
-            conseiller?.structure !== StructureConseiller.POLE_EMPLOI
-          }
-          withSituations={conseiller?.structure === StructureConseiller.MILO}
-        />
+        <>
+          <div className='flex justify-between text-m-regular text-primary'>
+            <h2>Liste des bénéficiaires</h2>
+            {conseillerJeunes.length === listeJeunesFiltres.length && (
+              <h2>({conseillerJeunes.length})</h2>
+            )}
+          </div>
+          <TableauJeunes
+            jeunes={listeJeunesFiltres}
+            withActions={
+              conseiller?.structure !== StructureConseiller.POLE_EMPLOI
+            }
+            withSituations={conseiller?.structure === StructureConseiller.MILO}
+          />
+        </>
       )}
     </>
   )

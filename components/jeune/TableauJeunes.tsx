@@ -220,7 +220,7 @@ export default function TableauJeunes({
                     isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
                 >
-                  <span className='mr-1'>D. activité</span>
+                  <span className='mr-1'>Dernière activité</span>
                   <SortIcon isSorted={isDate} isDesc={sortDesc} />
                 </button>
               </HeaderColumnCell>
@@ -256,10 +256,7 @@ export default function TableauJeunes({
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
                   }`}
                 >
-                  <span className='mr-1'>
-                    Messages non lus
-                    <br /> par le bénéficiaire
-                  </span>
+                  <span className='mr-1'>Messages</span>
                   <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                 </button>
               </HeaderColumnCell>
