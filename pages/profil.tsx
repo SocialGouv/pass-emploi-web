@@ -5,7 +5,7 @@ import React, { ChangeEvent, useMemo } from 'react'
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
-import { Switch } from 'components/ui/Switch'
+import { Switch } from 'components/ui/Form/Switch'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'

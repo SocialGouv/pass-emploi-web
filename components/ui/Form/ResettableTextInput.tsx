@@ -1,6 +1,6 @@
 import React, { ChangeEvent, ForwardedRef, forwardRef, MouseEvent } from 'react'
 
-import IconComponent, { IconName } from './IconComponent'
+import IconComponent, { IconName } from '../IconComponent'
 
 interface ResettableTextInputProps {
   id: string

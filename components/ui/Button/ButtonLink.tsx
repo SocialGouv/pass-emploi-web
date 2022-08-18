@@ -3,7 +3,7 @@ import { UrlObject } from 'url'
 import Link from 'next/link'
 import { ReactNode } from 'react'
 
-import { ButtonStyle } from 'components/ui/Button'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import styles from 'styles/components/Button.module.css'
 
 interface Props {

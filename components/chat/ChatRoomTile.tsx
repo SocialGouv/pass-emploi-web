@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Dot from 'components/ui/Dot'
-import IconCheckbox from 'components/ui/IconCheckbox'
+import IconCheckbox from 'components/ui/Form/IconCheckbox'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'

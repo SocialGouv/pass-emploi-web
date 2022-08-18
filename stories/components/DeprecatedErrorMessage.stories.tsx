@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
+import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 
 export default {
   title: 'Components/Form/DeprecatedErrorMessage',

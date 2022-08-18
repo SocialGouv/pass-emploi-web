@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Tag } from 'components/ui/Tag'
+import { Tag } from 'components/ui/Indicateurs/Tag'
 import { Offre } from 'interfaces/favoris'
 
 export default function OffreRow({

@@ -3,10 +3,10 @@ import { UrlObject } from 'url'
 import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
-import ButtonLink from './ui/ButtonLink'
+import ButtonLink from './ui/Button/ButtonLink'
 import IconComponent, { IconName } from './ui/IconComponent'
 
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 
 interface LeavePageConfirmationModalProps {
   destination: string | UrlObject

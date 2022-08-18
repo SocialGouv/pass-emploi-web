@@ -8,10 +8,10 @@ import React, {
 } from 'react'
 
 import DisplayMessage from 'components/chat/DisplayMessage'
-import BulleMessageSensible from 'components/ui/BulleMessageSensible'
+import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import { InputError } from 'components/ui/Form/InputError'
+import ResizingMultilineInput from 'components/ui/Form/ResizingMultilineInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { InputError } from 'components/ui/InputError'
-import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'

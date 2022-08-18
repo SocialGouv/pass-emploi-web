@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import Modal from 'components/Modal'
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface UpdateIdentifiantPartenaireModalProps {

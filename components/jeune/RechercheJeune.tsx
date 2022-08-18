@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react'
 
+import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ResettableTextInput from 'components/ui/ResettableTextInput'
 
 interface RechercheJeuneProps {
   onSearchFilterBy: (query: string) => void

@@ -261,7 +261,7 @@ describe('EnvoiMessageGroupe', () => {
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
           [jeunes[0].id, jeunes[1].id],
-          file,
+          file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
           idsDestinataires: [jeunes[0].id, jeunes[1].id],
@@ -281,7 +281,7 @@ describe('EnvoiMessageGroupe', () => {
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
           [jeunes[0].id, jeunes[1].id],
-          file,
+          file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
           idsDestinataires: [jeunes[0].id, jeunes[1].id],

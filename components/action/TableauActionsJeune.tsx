@@ -1,10 +1,13 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
+import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
+import TableLayout from '../ui/Table/TableLayout'
+
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import ActionRow from 'components/action/ActionRow'
 import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SortIcon from 'components/ui/SortIcon'
 import { Action, StatutAction } from 'interfaces/action'
@@ -107,24 +110,22 @@ export default function TableauActionsJeune({
     }
     onTri(nouveauTri)
   }
+  const headerColumnWithButtonHover = 'rounded-medium hover:bg-primary_lighten'
 
   return (
     <div className={isLoading ? 'animate-pulse' : ''}>
-      <div
-        role='table'
-        className='table w-full border-spacing-y-2'
-        aria-label={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
-      >
+      <TableLayout describedBy='table-caption'>
+        <div id='table-caption' className='sr-only'>
+          {`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
+        </div>
         <div role='rowgroup' className='table-header-group '>
           <div role='row' className='table-row text-base-regular'>
-            <div role='columnheader' className='table-cell pl-4 py-4'>
-              Intitulé de l&apos;action
-            </div>
-            <div role='columnheader' className='table-cell relative'>
+            <HeaderColumnCell>Intitulé de l’action</HeaderColumnCell>
+            <HeaderColumnCell className={headerColumnWithButtonHover}>
               <button
                 onClick={trierParDateCreation}
                 aria-label='Créée le - trier les actions'
-                className='w-full flex items-center'
+                className='flex items-center'
               >
                 Créée le
                 <SortIcon
@@ -132,12 +133,12 @@ export default function TableauActionsJeune({
                   isDesc={getIsSortedDesc()}
                 />
               </button>
-            </div>
-            <div role='columnheader' className='table-cell relative'>
+            </HeaderColumnCell>
+            <HeaderColumnCell className={headerColumnWithButtonHover}>
               <button
                 onClick={trierParDateEcheance}
                 aria-label='Échéance - trier les actions'
-                className='w-full flex items-center'
+                className='flex items-center'
               >
                 Échéance
                 <SortIcon
@@ -145,14 +146,16 @@ export default function TableauActionsJeune({
                   isDesc={getIsSortedDesc()}
                 />
               </button>
-            </div>
-            <div role='columnheader' className='table-cell relative'>
+            </HeaderColumnCell>
+            <HeaderColumnCell
+              className={`relative ${headerColumnWithButtonHover}`}
+            >
               <button
                 aria-controls='filtres-statut'
                 aria-expanded={afficherStatut}
                 onClick={() => setAfficherStatut(!afficherStatut)}
                 aria-label='Statut - Filtrer les actions'
-                className='w-full flex items-center'
+                className='flex items-center'
               >
                 Statut
                 <IconComponent
@@ -181,7 +184,7 @@ export default function TableauActionsJeune({
                   </Button>
                 </form>
               )}
-            </div>
+            </HeaderColumnCell>
           </div>
         </div>
 
@@ -221,7 +224,7 @@ export default function TableauActionsJeune({
             ))}
           </div>
         )}
-      </div>
+      </TableLayout>
     </div>
   )
 }
