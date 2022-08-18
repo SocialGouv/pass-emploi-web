@@ -292,7 +292,7 @@ export class JeunesApiService implements JeunesService {
     }
   }
 
-  async modifierIdentifiantPartenaire(
+  async modifiwerIdentifiantPartenaire(
     idJeune: string,
     idPartenaire: string
   ): Promise<void> {

@@ -1,3 +1,5 @@
+import { FirebaseApp } from 'firebase/app'
+
 import { BaseJeune } from 'interfaces/jeune'
 
 export interface TypeRendezVous {
@@ -33,12 +35,18 @@ export interface Rdv {
 
 export interface RdvAVenirItem {}
 
-export interface JourRdvAVenirItem extends RdvAVenirItem {
-  label: string
+export class JourRdvAVenirItem implements RdvAVenirItem {
+  private readonly label: string
+  constructor(label: string) {
+    this.label = label
+  }
 }
 
-export interface RdvItem extends RdvAVenirItem {
-  rdvListItem: RdvListItem
+export class RdvItem implements RdvAVenirItem {
+  private readonly rdvListItem: RdvListItem
+  constructor(rdvListItem: RdvListItem) {
+    this.rdvListItem = rdvListItem
+  }
 }
 
 export function rdvToListItem(rdv: Rdv): RdvListItem {

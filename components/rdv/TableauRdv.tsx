@@ -7,7 +7,13 @@ import TableLayout from '../ui/Table/TableLayout'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
 import CellRow from 'components/ui/Table/CellRow'
-import { RdvListItem } from 'interfaces/rdv'
+import {
+  JourRdvAVenirItem,
+  RdvAVenirItem,
+  RdvItem,
+  RdvListItem,
+} from 'interfaces/rdv'
+import { listeRdvAVenirItem } from 'presentation/MesRendezvousViewModel'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 type TableauRdvProps = {
@@ -34,7 +40,16 @@ export default function TableauRdv({
           Vous n’avez pas de rendez-vous pour le moment
         </p>
       )}
-
+      {/*TODO test de la logique d’afffichage coté front*/}
+      {listeRdvAVenirItem(rdvs).map((rdv) => {
+        if (rdv instanceof JourRdvAVenirItem) {
+          return <p>walid</p>
+        } else if (rdv instanceof RdvItem) {
+          return <p>Gabi</p>
+        } else {
+          return <p>amelle</p>
+        }
+      })}
       {rdvs.length > 0 && (
         <TableLayout describedBy='table-caption'>
           <div id='table-caption' className='sr-only'>

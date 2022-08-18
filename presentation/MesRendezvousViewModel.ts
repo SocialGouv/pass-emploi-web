@@ -1,4 +1,9 @@
-import { RdvAVenirItem, RdvListItem } from 'interfaces/rdv'
+import {
+  JourRdvAVenirItem,
+  RdvAVenirItem,
+  RdvItem,
+  RdvListItem,
+} from 'interfaces/rdv'
 import { formatWeekdayWithMonth } from 'utils/date'
 
 export function listeRdvAVenirItem(
@@ -10,7 +15,8 @@ export function listeRdvAVenirItem(
     const jour: string = formatWeekdayWithMonth(
       new Date(premierRendezvous.date)
     )
-    listeRdvAVenirItem.push({ label: jour }, { rdvListItem: premierRendezvous })
+    listeRdvAVenirItem.push(new JourRdvAVenirItem(jour))
+    listeRdvAVenirItem.push(new RdvItem(premierRendezvous))
   }
   return listeRdvAVenirItem
 }
