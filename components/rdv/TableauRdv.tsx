@@ -47,9 +47,31 @@ export default function TableauRdv({
           </div>
 
           <div role='rowgroup' className='table-row-group'>
-            {rdvs.map((item: RdvListItem | JourRdvAVenirItem) => {
+            {rdvs.map((item: RdvListItem | JourRdvAVenirItem, index) => {
               if (item instanceof JourRdvAVenirItem) {
-                return <p className={'text-m-bold'}>{item.label}</p>
+                if (index === 0)
+                  return (
+                    <tr>
+                      <th
+                        colSpan={6}
+                        className={`table-cell text-primary capitalize text-m-bold before:content-['---------'] before:tracking-tighter after:content-['---------'] after:tracking-tighter before:whitespace-pre`}
+                      >
+                        <span className='mx-4'>{item.label}</span>
+                      </th>
+                    </tr>
+                  )
+                else {
+                  return (
+                    <tr>
+                      <th
+                        colSpan={6}
+                        className={`table-cell capitalize text-m-bold before:content-['---------'] before:tracking-tighter after:content-['---------'] after:tracking-tighter before:whitespace-pre`}
+                      >
+                        <span className='mx-4'>{item.label}</span>
+                      </th>
+                    </tr>
+                  )
+                }
               } else {
                 return (
                   <RdvRow
