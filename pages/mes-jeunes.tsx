@@ -225,10 +225,11 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <>
           <div className='flex justify-between text-m-regular text-primary'>
-            <h2>Liste des bénéficiaires</h2>
-            {conseillerJeunes.length === listeJeunesFiltres.length && (
-              <h2>({conseillerJeunes.length})</h2>
-            )}
+            <h2>
+              Liste des bénéficiaires
+              {conseillerJeunes.length === listeJeunesFiltres.length &&
+                ` (${conseillerJeunes.length})`}
+            </h2>
           </div>
           <TableauJeunes
             jeunes={listeJeunesFiltres}
