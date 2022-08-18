@@ -1,16 +1,16 @@
-import { RdvListItem } from 'interfaces/rdv'
+import { RdvAVenirItem, RdvListItem } from 'interfaces/rdv'
 import { formatWeekdayWithMonth } from 'utils/date'
 
-export function mesRendezvousParJour(
-  mesRendezvous: RdvListItem[]
-): Map<string, RdvListItem[]> {
-  const mesRendezvousParJour = new Map<string, RdvListItem[]>()
-  if (mesRendezvous.length > 0) {
-    const premierRendezvous = mesRendezvous[0]
+export function listeRdvAVenirItem(
+  mesRendezVous: RdvListItem[]
+): RdvAVenirItem[] {
+  const listeRdvAVenirItem: RdvAVenirItem[] = []
+  if (mesRendezVous.length > 0) {
+    const premierRendezvous = mesRendezVous[0]
     const jour: string = formatWeekdayWithMonth(
       new Date(premierRendezvous.date)
     )
-    mesRendezvousParJour.set(jour, mesRendezvous)
+    listeRdvAVenirItem.push({ label: jour }, { rdvListItem: premierRendezvous })
   }
-  return mesRendezvousParJour
+  return listeRdvAVenirItem
 }

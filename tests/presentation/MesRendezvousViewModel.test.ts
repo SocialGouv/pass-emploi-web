@@ -1,5 +1,5 @@
-import { RdvListItem } from 'interfaces/rdv'
-import { mesRendezvousParJour } from 'presentation/MesRendezvousViewModel'
+import { RdvAVenirItem, RdvListItem } from 'interfaces/rdv'
+import { listeRdvAVenirItem } from 'presentation/MesRendezvousViewModel'
 
 describe('mesRendezvousParJour', () => {
   it('quand ma liste de rendezvous est vide retourne une map vide', () => {
@@ -7,11 +7,10 @@ describe('mesRendezvousParJour', () => {
     const mesRendezvous: RdvListItem[] = []
 
     // When
-    const viewModel: Map<string, RdvListItem[]> =
-      mesRendezvousParJour(mesRendezvous)
+    const viewModel: RdvAVenirItem[] = listeRdvAVenirItem(mesRendezvous)
 
     // Then
-    expect(viewModel.size).toBe(0)
+    expect(viewModel.length).toBe(0)
   })
 
   it('quand ma liste de rendezvous ne contient qu’un élément retourne une map avec une seule entrée', () => {
@@ -27,12 +26,11 @@ describe('mesRendezvousParJour', () => {
     }
 
     // When
-    const viewModel: Map<string, RdvListItem[]> = mesRendezvousParJour([
-      rendezvous,
-    ])
+    const viewModel: RdvAVenirItem[] = listeRdvAVenirItem([rendezvous])
 
     // Then
-    expect(viewModel.size).toBe(1)
-    expect(viewModel.get('mardi 1 janvier')).toBe([rendezvous])
+    expect(viewModel.length).toBe(2)
+    expect(viewModel[0]).toEqual({ label: 'mardi 1 janvier' })
+    expect(viewModel[1]).toEqual({ rdvListItem: rendezvous })
   })
 })

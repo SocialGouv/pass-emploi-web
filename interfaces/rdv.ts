@@ -31,6 +31,16 @@ export interface Rdv {
   createur: { id: string; nom: string; prenom: string } | null
 }
 
+export interface RdvAVenirItem {}
+
+export interface JourRdvAVenirItem extends RdvAVenirItem {
+  label: string
+}
+
+export interface RdvItem extends RdvAVenirItem {
+  rdvListItem: RdvListItem
+}
+
 export function rdvToListItem(rdv: Rdv): RdvListItem {
   return {
     id: rdv.id,
