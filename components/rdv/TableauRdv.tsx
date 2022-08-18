@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
 
-import KoIcon from '../../assets/icons/ko.svg'
 import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
 import TableLayout from '../ui/Table/TableLayout'
 
@@ -23,9 +22,9 @@ export default function TableauRdv({
   withNameJeune = true,
 }: TableauRdvProps) {
   const dayHourCells = (rdvDate: Date, duration: number) => {
-    return `${formatDayDate(rdvDate)} (${formatHourMinuteDate(
+    return `${formatDayDate(rdvDate)} - ${formatHourMinuteDate(
       rdvDate
-    )} - ${duration} min)`
+    )} - ${duration} min`
   }
 
   return (
@@ -63,7 +62,7 @@ export default function TableauRdv({
                   aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`}
                   className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
                 >
-                  <CellRow className='rounded-l-small'>
+                  <CellRow className='rounded-l-small text-base-bold'>
                     {dayHourCells(new Date(rdv.date), rdv.duration)}
                   </CellRow>
                   {withNameJeune && <CellRow>{rdv.beneficiaires}</CellRow>}
@@ -84,7 +83,7 @@ export default function TableauRdv({
 
                   {rdv.idCreateur && (
                     <CellRow className='rounded-r-small'>
-                      <span className='flex items-center justify-between'>
+                      <span className='flex items-center justify-around'>
                         {rdv.idCreateur === idConseiller && (
                           <>
                             <span className='sr-only'>oui</span>
@@ -92,7 +91,7 @@ export default function TableauRdv({
                               name={IconName.CheckRounded}
                               aria-hidden='true'
                               focusable='false'
-                              className='h-3 fill-primary'
+                              className='h-4 w-4 fill-primary'
                             />
                           </>
                         )}

@@ -447,7 +447,7 @@ export function EditionRdvForm({
             horaire.error
               ? 'border-warning text-warning'
               : 'border-content_color'
-          } bg-clock bg-[center_right_1rem] bg-no-repeat`}
+          } bg-clock bg-[center_right_1rem] bg-[length:24px_24px] bg-no-repeat`}
         />
 
         <label htmlFor='duree' className='text-base-bold mb-2'>
