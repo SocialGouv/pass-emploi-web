@@ -206,7 +206,7 @@ describe('Mes Jeunes', () => {
       it('redirige vers la page de création jeune MILO', async () => {
         // GIVEN
         const addButton = screen.getByRole('button', {
-          name: 'Ajouter un jeune',
+          name: 'Ajouter un bénéficiaire',
         })
 
         //WHEN
@@ -256,7 +256,7 @@ describe('Mes Jeunes', () => {
       it('redirige vers la page de création jeune PE', async () => {
         // GIVEN
         const addButton = screen.getByRole('button', {
-          name: 'Ajouter un jeune',
+          name: 'Ajouter un bénéficiaire',
         })
 
         //WHEN

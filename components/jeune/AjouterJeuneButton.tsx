@@ -16,7 +16,7 @@ export const AjouterJeuneButton = ({
         aria-hidden='true'
         className='mr-2 w-4 h-4'
       />
-      Ajouter un jeune
+      Ajouter un bénéficiaire
     </Button>
   )
 }

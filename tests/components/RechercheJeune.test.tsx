@@ -40,7 +40,7 @@ describe('Recherche', () => {
     //GIVEN
     const searchForm = screen.getByRole('search') as HTMLFormElement
     const inputSearch = screen.getByLabelText(
-      'Rechercher un jeune par son nom de famille'
+      'Rechercher un bénéficiaire par son nom de famille'
     )
     const submitButton = screen.getByRole('button', {
       name: 'Rechercher',
@@ -60,7 +60,7 @@ describe('Recherche', () => {
     beforeEach(() => {
       searchForm = screen.getByRole('search') as HTMLFormElement
       inputSearch = screen.getByLabelText(
-        'Rechercher un jeune par son nom de famille'
+        'Rechercher un bénéficiaire par son nom de famille'
       )
       submitButton = screen.getByRole('button', {
         name: 'Rechercher',

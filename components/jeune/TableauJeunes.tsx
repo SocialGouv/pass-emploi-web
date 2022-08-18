@@ -172,7 +172,7 @@ export default function TableauJeunes({
           aria-describedby='table-caption'
         >
           <div id='table-caption' className='sr-only'>
-            Liste de mes jeunes
+            Liste de mes bénéficiaires
           </div>
 
           <div role='rowgroup' className='table-row-group'>
@@ -181,14 +181,14 @@ export default function TableauJeunes({
                 <button
                   className={columnHeaderButtonStyle}
                   onClick={() => sortJeunes(SortColumn.NOM)}
-                  aria-label={`Afficher la liste des jeunes triée par noms de famille par ordre alphabétique ${
+                  aria-label={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
                     isName && !sortDesc ? 'inversé' : ''
                   }`}
-                  title={`Afficher la liste des jeunes triée par noms de famille par ordre alphabétique ${
+                  title={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
                     isName && !sortDesc ? 'inversé' : ''
                   }`}
                 >
-                  <span className='mr-1'>Nom du jeune</span>
+                  <span className='mr-1'>Bénéficiaire</span>
                   <SortIcon isSorted={isName} isDesc={sortDesc} />
                 </button>
               </HeaderColumnCell>
@@ -197,10 +197,10 @@ export default function TableauJeunes({
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.SITUATION)}
-                    aria-label={`Afficher la liste des jeunes triée par situation par ordre alphabétique ${
+                    aria-label={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
                       isSituation && !sortDesc ? 'inversé' : ''
                     }`}
-                    title={`Afficher la liste des jeunes triée par situation par ordre alphabétique ${
+                    title={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
                       isSituation && !sortDesc ? 'inversé' : ''
                     }`}
                   >
@@ -213,18 +213,14 @@ export default function TableauJeunes({
                 <button
                   className={columnHeaderButtonStyle}
                   onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
-                  aria-label={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
+                  aria-label={`Afficher la liste des bénéficiaires triée par dates de dernière activité du bénéficiaire par ordre ${
                     isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
-                  title={`Afficher la liste des jeunes triée par dates de dernière activité du jeune par ordre ${
+                  title={`Afficher la liste des bénéficiaires triée par dates de dernière activité du bénéficiaire par ordre ${
                     isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
                   }`}
                 >
-                  <span className='mr-1'>
-                    Dernière activité
-                    <br />
-                    du jeune
-                  </span>
+                  <span className='mr-1'>D. activité</span>
                   <SortIcon isSorted={isDate} isDesc={sortDesc} />
                 </button>
               </HeaderColumnCell>
@@ -236,10 +232,10 @@ export default function TableauJeunes({
                     onClick={() =>
                       sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
                     }
-                    aria-label={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
+                    aria-label={`Afficher la liste des bénéficiaires triée par nombre d'actions non terminées du jeune par ordre ${
                       isAction && !sortDesc ? 'croissant' : 'décroissant'
                     }`}
-                    title={`Afficher la liste des jeunes triée par nombre d'actions non terminées du jeune par ordre ${
+                    title={`Afficher la liste des bénéficiaires triée par nombre d'actions non terminées du jeune par ordre ${
                       isAction && !sortDesc ? 'croissant' : 'décroissant'
                     }`}
                   >
@@ -262,7 +258,7 @@ export default function TableauJeunes({
                 >
                   <span className='mr-1'>
                     Messages non lus
-                    <br /> par le jeune
+                    <br /> par le bénéficiaire
                   </span>
                   <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                 </button>
