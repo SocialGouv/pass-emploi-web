@@ -1,7 +1,5 @@
 import { ReactNode } from 'react'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-
 interface InfoActionProps {
   label: string
   children: ReactNode
@@ -15,33 +13,25 @@ function InfoAction({
   isForm = false,
   isInline = false,
 }: InfoActionProps) {
-  const styles = 'text-m-bold pb-6 flex items-center'
-
   return (
     <>
       <dt
         className={`${
           isInline
-            ? 'text-base-medium py-4 border-0 border-t border-solid border-t-primary_lighten'
-            : styles
+            ? 'text-base-medium primary_lighten'
+            : 'text-m-bold pb-6 flex items-center'
         }`}
       >
-        {!isInline && (
-          <IconComponent
-            name={IconName.DecorativePoint}
-            aria-hidden={true}
-            focusable={false}
-            className='w-2 h-2 mr-4'
-          />
-        )}
-        <span>{label}</span>
+        <span>
+          {label} {isInline && ' :'}
+        </span>
       </dt>
       <dd
         className={`${
           isInline
-            ? 'py-4 border-0 border-t border-solid border-t-primary_lighten'
+            ? 'primary_lighten mb-3 pl-3 text-base-bold'
             : 'text-base-regular pb-10'
-        } pl-6`}
+        }`}
       >
         {isForm && (
           <form

@@ -3,6 +3,8 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import { HistoriqueAction } from './historique-action'
+
 import InfoAction from 'components/action/InfoAction'
 import RadioButtonStatus from 'components/action/RadioButtonStatus'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -16,7 +18,7 @@ import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { formatDayDate } from 'utils/date'
+import { formatDateLongDayLongMonth } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -83,19 +85,13 @@ function PageAction({
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
-      <div className='flex flex-raw items-center justify-between mb-5'>
-        <span className='flex flex-row p-2 text-accent_2 bg-accent_3_lighten rounded-medium'>
-          <IconComponent
-            name={IconName.Clock}
-            aria-hidden='true'
-            focusable='false'
-            className='h-5 w-5 mr-1 stroke-accent_2'
-          />
-          <span>
-            À réaliser pour le :{' '}
-            <b>{formatDayDate(new Date(action.dateEcheance))}</b>
-          </span>
-        </span>
+      <div className='flex items-start justify-between mb-5'>
+        <h2
+          className='text-m-bold text-content_color'
+          title='Intitulé de l’action'
+        >
+          {action.content}
+        </h2>
         {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
           <Button
             label="Supprimer l'action"
@@ -109,9 +105,24 @@ function PageAction({
               focusable={false}
               className='w-2.5 h-3 mr-4'
             />
-            Supprimer l’action
+            Supprimer
           </Button>
         )}
+      </div>
+      {action.comment && <p className='mb-8'>{action.comment}</p>}
+      <div className='flex flex-raw items-center justify-between mb-8 bg-accent_3_lighten rounded-medium'>
+        <span className='flex flex-row p-2 text-accent_2'>
+          <IconComponent
+            name={IconName.Clock}
+            aria-hidden='true'
+            focusable='false'
+            className='h-5 w-5 mr-1 stroke-accent_2'
+          />
+          <span>
+            À réaliser pour le :{' '}
+            <b>{formatDateLongDayLongMonth(new Date(action.dateEcheance))}</b>
+          </span>
+        </span>
       </div>
       <dl>
         <InfoAction label='Statut' isForm={true}>
@@ -124,27 +135,8 @@ function PageAction({
             />
           ))}
         </InfoAction>
-
-        <InfoAction label='Intitulé de l’action'>{action.content}</InfoAction>
-        {action.comment && (
-          <InfoAction label='Commentaire à destination du jeune'>
-            <span className='inline-block bg-primary_lighten p-4 rounded-large'>
-              {action.comment}
-            </span>
-          </InfoAction>
-        )}
       </dl>
-      <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-        <InfoAction label='Date d’actualisation' isInline={true}>
-          {formatDayDate(new Date(action.lastUpdate))}
-        </InfoAction>
-        <InfoAction label='Date de création' isInline={true}>
-          {formatDayDate(new Date(action.creationDate))}
-        </InfoAction>
-        <InfoAction label='Créateur' isInline={true}>
-          {action.creator}
-        </InfoAction>
-      </dl>
+      <HistoriqueAction action={action} />
     </>
   )
 }

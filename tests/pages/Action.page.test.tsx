@@ -40,7 +40,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     it("Devrait afficher les information d'une action", () => {
-      expect(screen.getByText('20/02/2022')).toBeInTheDocument()
+      expect(screen.getByText('dimanche 2 février')).toBeInTheDocument()
       expect(screen.getByText(action.comment)).toBeInTheDocument()
       expect(screen.getByText('15/02/2022')).toBeInTheDocument()
       expect(screen.getByText('16/02/2022')).toBeInTheDocument()
