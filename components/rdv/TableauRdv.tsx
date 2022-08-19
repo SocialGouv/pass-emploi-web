@@ -5,6 +5,7 @@ import TableLayout from '../ui/Table/TableLayout'
 
 import { RdvRow } from 'components/rdv/RdvRow'
 import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
+import { AUJOURDHUI_LABEL } from 'presentation/MesRdvViewModel'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 type TableauRdvProps = {
@@ -22,6 +23,22 @@ export default function TableauRdv({
     return `${formatDayDate(rdvDate)} - ${formatHourMinuteDate(
       rdvDate
     )} - ${duration} min`
+  }
+
+  //FIXME: Balise <tr> ne peut pas être enfant d'une div
+  function labelRdvDate(item: JourRdvAVenirItem, dateIsToday: boolean = false) {
+    return (
+      <tr key={item.label}>
+        <th
+          colSpan={6}
+          className={`table-cell capitalize text-m-bold before:content-['---------'] before:tracking-tighter after:content-['---------'] after:tracking-tighter before:whitespace-pre ${
+            dateIsToday ? 'text-primary' : 'text-content_color'
+          } `}
+        >
+          <span className='mx-4'>{item.label}</span>
+        </th>
+      </tr>
+    )
   }
 
   return (
@@ -47,30 +64,12 @@ export default function TableauRdv({
           </div>
 
           <div role='rowgroup' className='table-row-group'>
-            {rdvs.map((item: RdvListItem | JourRdvAVenirItem, index) => {
+            {rdvs.map((item: RdvListItem | JourRdvAVenirItem) => {
               if (item instanceof JourRdvAVenirItem) {
-                if (index === 0)
-                  return (
-                    <tr>
-                      <th
-                        colSpan={6}
-                        className={`table-cell text-primary capitalize text-m-bold before:content-['---------'] before:tracking-tighter after:content-['---------'] after:tracking-tighter before:whitespace-pre`}
-                      >
-                        <span className='mx-4'>{item.label}</span>
-                      </th>
-                    </tr>
-                  )
+                if (item.label === AUJOURDHUI_LABEL)
+                  return labelRdvDate(item, true)
                 else {
-                  return (
-                    <tr>
-                      <th
-                        colSpan={6}
-                        className={`table-cell capitalize text-m-bold before:content-['---------'] before:tracking-tighter after:content-['---------'] after:tracking-tighter before:whitespace-pre`}
-                      >
-                        <span className='mx-4'>{item.label}</span>
-                      </th>
-                    </tr>
-                  )
+                  return labelRdvDate(item)
                 }
               } else {
                 return (

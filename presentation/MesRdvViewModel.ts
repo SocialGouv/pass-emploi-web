@@ -1,13 +1,15 @@
 import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
 import { dateIsToday, formatWeekdayWithMonth } from 'utils/date'
 
+export const AUJOURDHUI_LABEL = 'aujourd’hui'
+
 export function listeRdvAVenirItem(
   mesRendezVous: RdvListItem[]
 ): Array<JourRdvAVenirItem | RdvListItem> {
-  mesRendezVous.sort(trierParDate)
+  const rdvTries = [...mesRendezVous].sort(trierParDate)
   const items: Array<JourRdvAVenirItem | RdvListItem> = []
   let dernierJour = ''
-  for (let rdv of mesRendezVous) {
+  for (let rdv of rdvTries) {
     const jour = jourDuRdvFormate(new Date(rdv.date))
     if (jour !== dernierJour) {
       dernierJour = jour
@@ -19,7 +21,7 @@ export function listeRdvAVenirItem(
 }
 
 function jourDuRdvFormate(date: Date): string {
-  return dateIsToday(date) ? 'aujourd’hui' : formatWeekdayWithMonth(date)
+  return dateIsToday(date) ? AUJOURDHUI_LABEL : formatWeekdayWithMonth(date)
 }
 
 function trierParDate(a: RdvListItem, b: RdvListItem) {
