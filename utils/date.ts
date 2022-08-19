@@ -32,8 +32,10 @@ export const formatWeekdayWithMonth = (date: Date): string => {
   return `${weekday} ${number} ${month}`
 }
 
-export const formatDateLongDayLongMonth = (date: Date): string => {
-  return DateTime.fromJSDate(date).setLocale('fr').toFormat('EEEE M MMMM')
+export const formatDayHourDate = (date: string): string => {
+  return DateTime.fromISO(date)
+    .setLocale('fr')
+    .toFormat('EEEE d MMMM yyyy à HH:mm')
 }
 
 export const formatHourMinuteDate = (date: Date): string => {
@@ -48,7 +50,6 @@ export const formatHourMinuteDate = (date: Date): string => {
 
 export const formatDayAndHourDate = (date: Date): string =>
   `le ${formatDayDate(date)} à ${formatHourMinuteDate(date)}`
-
 
 export const isDateOlder = (date1: Date, date2: Date): boolean => {
   return date1.getTime() < date2.getTime()

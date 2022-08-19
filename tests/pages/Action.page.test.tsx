@@ -1,10 +1,11 @@
-import { screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { uneAction } from 'fixtures/action'
+import { unCommentaire, uneAction } from 'fixtures/action'
+import { unConseiller } from 'fixtures/conseiller'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
@@ -12,8 +13,9 @@ import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
 import { ActionsService } from 'services/actions.service'
-import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -22,25 +24,36 @@ jest.mock('utils/injectionDependances/withDependance')
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client-side', () => {
     const action = uneAction()
+    const commentaires = [unCommentaire()]
     const jeune: BaseJeune = {
       id: 'jeune-1',
       prenom: 'Nadia',
       nom: 'Sanfamiye',
     }
     let actionsService: ActionsService
-    beforeEach(() => {
+    beforeEach(async () => {
       actionsService = mockedActionsService({
         updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
         deleteAction: jest.fn(),
       })
-      renderWithContexts(
-        <PageAction action={action} jeune={jeune} pageTitle='' />,
-        { customDependances: { actionsService } }
-      )
+      await act(() => {
+        render(
+          <DIProvider dependances={{ actionsService }}>
+            <ConseillerProvider conseiller={unConseiller()}>
+              <PageAction
+                action={action}
+                jeune={jeune}
+                commentaires={commentaires}
+                pageTitle=''
+              />
+            </ConseillerProvider>
+          </DIProvider>
+        )
+      })
     })
 
     it("Devrait afficher les information d'une action", () => {
-      expect(screen.getByText('dimanche 2 février')).toBeInTheDocument()
+      expect(screen.getAllByText('15/02/2022')).toBeTruthy()
       expect(screen.getByText(action.comment)).toBeInTheDocument()
       expect(screen.getByText('15/02/2022')).toBeInTheDocument()
       expect(screen.getByText('16/02/2022')).toBeInTheDocument()
@@ -60,6 +73,59 @@ describe("Page Détail d'une action d'un jeune", () => {
           action.id,
           StatutAction.Commencee
         )
+      })
+    })
+
+    describe("A l'ajout de commentaire", () => {
+      describe("quand c'est un succès", () => {
+        it('affiche un message de succès', async () => {
+          // Given
+          actionsService.ajouterCommentaire = jest
+            .fn()
+            .mockResolvedValue(unCommentaire())
+          const textbox = screen.getByRole('textbox')
+          fireEvent.change(textbox, { target: { value: 'test' } })
+          const submitButton = screen.getByRole('button', {
+            name: 'Ajouter un commentaire',
+          })
+
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
+          expect(actionsService.ajouterCommentaire).toHaveBeenCalledWith(
+            'id-action-1',
+            'test'
+          )
+          await waitFor(() =>
+            screen.getByText(
+              'Votre jeune a été alerté que vous avez écrit un commentaire'
+            )
+          )
+          expect(
+            screen.getByText(
+              'Votre jeune a été alerté que vous avez écrit un commentaire'
+            )
+          ).toBeInTheDocument()
+        })
+      })
+      describe("quand c'est un échec", () => {
+        it('affiche une alerte', async () => {
+          // Given
+          actionsService.ajouterCommentaire = jest.fn().mockRejectedValue({})
+          const textbox = screen.getByRole('textbox')
+          fireEvent.change(textbox, { target: { value: 'test' } })
+          const submitButton = screen.getByRole('button', {
+            name: 'Ajouter un commentaire',
+          })
+
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
+          await waitFor(() => screen.getByRole('alert'))
+          expect(screen.getByRole('alert')).toBeInTheDocument()
+        })
       })
     })
   })
@@ -109,6 +175,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           },
         })
         const action: Action = uneAction()
+        const commentaires = [unCommentaire()]
         const jeune: BaseJeune = {
           id: 'jeune-1',
           prenom: 'Nadia',
@@ -116,6 +183,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         }
         const actionsService: ActionsService = mockedActionsService({
           getAction: jest.fn(async () => ({ action, jeune })),
+          recupererLesCommentaires: jest.fn(async () => commentaires),
         })
         ;(withDependance as jest.Mock).mockReturnValue(actionsService)
 
@@ -132,6 +200,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           props: {
             action,
             jeune,
+            commentaires,
             pageTitle,
             pageHeader: 'Détails de l’action',
             messageEnvoiGroupeSuccess: true,

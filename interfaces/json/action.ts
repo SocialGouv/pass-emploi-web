@@ -1,4 +1,4 @@
-import { Action, StatutAction } from '../action'
+import { Action, CreateurCommentaire, StatutAction } from '../action'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
 export interface ActionJson {
@@ -26,6 +26,14 @@ export interface ActionsCountJson {
   jeuneId: string
   todoActionsCount: number
   inProgressActionsCount: number
+}
+
+export interface CommentaireJson {
+  id: string
+  idAction: string
+  date: string
+  createur: CreateurCommentaire
+  message: string
 }
 
 export function jsonToAction(json: ActionJson): Action {

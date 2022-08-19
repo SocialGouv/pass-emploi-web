@@ -3,14 +3,15 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import { HistoriqueAction } from './historique-action'
-
+import { CommentairesAction } from 'components/action/CommentairesAction'
+import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import InfoAction from 'components/action/InfoAction'
 import RadioButtonStatus from 'components/action/RadioButtonStatus'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { Action, StatutAction } from 'interfaces/action'
+import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
+import { Action, Commentaire, StatutAction } from 'interfaces/action'
 import { StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -18,13 +19,14 @@ import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { formatDateLongDayLongMonth } from 'utils/date'
+import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface PageActionProps extends PageProps {
   action: Action
   jeune: BaseJeune
+  commentaires: Commentaire[]
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
 }
@@ -32,6 +34,7 @@ interface PageActionProps extends PageProps {
 function PageAction({
   action,
   jeune,
+  commentaires,
   messageEnvoiGroupeSuccess,
 }: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
@@ -39,6 +42,7 @@ function PageAction({
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
+  const [showSuccesMessage, setShowSuccesMessage] = useState<string>('')
   const pageTracking = 'Détail Action'
 
   async function updateAction(statutChoisi: StatutAction): Promise<void> {
@@ -71,6 +75,16 @@ function PageAction({
       })
   }
 
+  function onAjoutCommentaire(estEnSucces: boolean) {
+    if (estEnSucces) {
+      setShowSuccesMessage(
+        'Votre jeune a été alerté que vous avez écrit un commentaire'
+      )
+    } else {
+      setShowEchecMessage(true)
+    }
+  }
+
   useMatomo(
     messageEnvoiGroupeSuccess
       ? `${pageTracking} - Succès envoi message`
@@ -81,8 +95,14 @@ function PageAction({
     <>
       {showEchecMessage && (
         <FailureAlert
-          label="Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
+          label="Une erreur s'est produite, veuillez réessayer ultérieurement"
           onAcknowledge={() => setShowEchecMessage(false)}
+        />
+      )}
+      {showSuccesMessage && (
+        <SuccessAlert
+          label={showSuccesMessage}
+          onAcknowledge={() => setShowSuccesMessage('')}
         />
       )}
       <div className='flex items-start justify-between mb-5'>
@@ -120,7 +140,7 @@ function PageAction({
           />
           <span>
             À réaliser pour le :{' '}
-            <b>{formatDateLongDayLongMonth(new Date(action.dateEcheance))}</b>
+            <b>{formatDayDate(new Date(action.dateEcheance))}</b>
           </span>
         </span>
       </div>
@@ -137,6 +157,11 @@ function PageAction({
         </InfoAction>
       </dl>
       <HistoriqueAction action={action} />
+      <CommentairesAction
+        idAction={action.id}
+        commentairesInitiaux={commentaires}
+        onAjout={onAjoutCommentaire}
+      />
     </>
   )
 }
@@ -163,10 +188,17 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   )
   if (!actionEtJeune) return { notFound: true }
 
+  const commentaires = await actionsService.recupererLesCommentaires(
+    context.query.action_id as string,
+    accessToken
+  )
+  if (!commentaires) return { notFound: true }
+
   const { action, jeune } = actionEtJeune
   const props: PageActionProps = {
     action,
     jeune,
+    commentaires,
     pageTitle: `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
     pageHeader: 'Détails de l’action',
   }
