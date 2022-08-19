@@ -75,12 +75,6 @@ export default function AlertDisplayer({
     </div>
   )
 }
-
-export interface Alert {
-  nom: QueryParam
-  message: string
-}
-
 type DictAlerts = { [key in QueryParam]: string }
 const ALERTS: DictAlerts = {
   creationRdv: 'Le rendez-vous a bien été créé',
@@ -96,6 +90,8 @@ const ALERTS: DictAlerts = {
     'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires',
   modificationIdentifiantPartenaire:
     'L’identifiant Pôle emploi a bien été mis à jour',
+  ajoutCommentaireAction:
+    'Votre jeune a été alerté que vous avez écrit un commentaire',
 }
 
 const ALERTS_MILO: DictAlerts = {

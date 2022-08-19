@@ -1,11 +1,13 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import renderWithContexts from 'tests/renderWithContexts'
+
 import { unCommentaire, uneAction } from 'fixtures/action'
-import { unConseiller } from 'fixtures/conseiller'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
@@ -14,8 +16,6 @@ import PageAction, {
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -31,29 +31,29 @@ describe("Page Détail d'une action d'un jeune", () => {
       nom: 'Sanfamiye',
     }
     let actionsService: ActionsService
+    let routerPush: Function
+
     beforeEach(async () => {
+      routerPush = jest.fn()
       actionsService = mockedActionsService({
         updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
         deleteAction: jest.fn(),
       })
-      await act(() => {
-        render(
-          <DIProvider dependances={{ actionsService }}>
-            <ConseillerProvider conseiller={unConseiller()}>
-              <PageAction
-                action={action}
-                jeune={jeune}
-                commentaires={commentaires}
-                pageTitle=''
-              />
-            </ConseillerProvider>
-          </DIProvider>
-        )
+      ;(useRouter as jest.Mock).mockReturnValue({
+        push: routerPush,
       })
+      renderWithContexts(
+        <PageAction
+          action={action}
+          jeune={jeune}
+          commentaires={commentaires}
+          pageTitle=''
+        />,
+        { customDependances: { actionsService } }
+      )
     })
 
     it("Devrait afficher les information d'une action", () => {
-      expect(screen.getAllByText('15/02/2022')).toBeTruthy()
       expect(screen.getByText(action.comment)).toBeInTheDocument()
       expect(screen.getByText('15/02/2022')).toBeInTheDocument()
       expect(screen.getByText('16/02/2022')).toBeInTheDocument()
@@ -97,16 +97,12 @@ describe("Page Détail d'une action d'un jeune", () => {
             'id-action-1',
             'test'
           )
-          await waitFor(() =>
-            screen.getByText(
-              'Votre jeune a été alerté que vous avez écrit un commentaire'
-            )
-          )
-          expect(
-            screen.getByText(
-              'Votre jeune a été alerté que vous avez écrit un commentaire'
-            )
-          ).toBeInTheDocument()
+          expect(routerPush).toHaveBeenCalledWith({
+            pathname: '/mes-jeunes/jeune-1/actions/id-action-1',
+            query: {
+              ajoutCommentaireAction: 'succes',
+            },
+          })
         })
       })
       describe("quand c'est un échec", () => {

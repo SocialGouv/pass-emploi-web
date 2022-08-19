@@ -15,10 +15,10 @@ export function UnCommentaireAction({
 }: UnCommentaireActionProps) {
   return (
     <>
-      <div className='flex items-center pb-2'>
+      <dt className='flex items-center pb-2'>
         {commentaire.createur.id !== idConseiller && (
           <IconComponent
-            name={IconName.People}
+            name={IconName.Profil}
             aria-hidden={true}
             focusable={false}
             className='w-4 h-4 mr-2 inline'
@@ -31,10 +31,8 @@ export function UnCommentaireAction({
         </span>
         <span className='mr-2'>·</span>
         <span>{formatDayHourDate(commentaire.date)}</span>
-      </div>
-      <p role='term' className='pb-8'>
-        {commentaire.message}
-      </p>
+      </dt>
+      <dd className='pb-8 block'>{commentaire.message}</dd>
     </>
   )
 }

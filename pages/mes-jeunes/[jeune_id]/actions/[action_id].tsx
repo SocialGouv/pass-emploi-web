@@ -5,12 +5,10 @@ import React, { useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
-import InfoAction from 'components/action/InfoAction'
 import RadioButtonStatus from 'components/action/RadioButtonStatus'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { Action, Commentaire, StatutAction } from 'interfaces/action'
 import { StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
@@ -42,7 +40,6 @@ function PageAction({
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
-  const [showSuccesMessage, setShowSuccesMessage] = useState<string>('')
   const pageTracking = 'Détail Action'
 
   async function updateAction(statutChoisi: StatutAction): Promise<void> {
@@ -76,12 +73,15 @@ function PageAction({
   }
 
   function onAjoutCommentaire(estEnSucces: boolean) {
-    if (estEnSucces) {
-      setShowSuccesMessage(
-        'Votre jeune a été alerté que vous avez écrit un commentaire'
-      )
-    } else {
+    if (!estEnSucces) {
       setShowEchecMessage(true)
+    } else {
+      router.push({
+        pathname: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
+        query: {
+          [QueryParam.ajoutCommentaireAction]: QueryValue.succes,
+        },
+      })
     }
   }
 
@@ -97,12 +97,6 @@ function PageAction({
         <FailureAlert
           label="Une erreur s'est produite, veuillez réessayer ultérieurement"
           onAcknowledge={() => setShowEchecMessage(false)}
-        />
-      )}
-      {showSuccesMessage && (
-        <SuccessAlert
-          label={showSuccesMessage}
-          onAcknowledge={() => setShowSuccesMessage('')}
         />
       )}
       <div className='flex items-start justify-between mb-5'>
@@ -144,18 +138,17 @@ function PageAction({
           </span>
         </span>
       </div>
-      <dl>
-        <InfoAction label='Statut' isForm={true}>
-          {Object.values(StatutAction).map((status: StatutAction) => (
-            <RadioButtonStatus
-              key={status.toLowerCase()}
-              status={status}
-              isSelected={statut === status}
-              onChange={updateAction}
-            />
-          ))}
-        </InfoAction>
-      </dl>
+      <h2 className='text-m-bold pb-6'>Statut</h2>
+      <form className='flex flex-raw mb-10'>
+        {Object.values(StatutAction).map((status: StatutAction) => (
+          <RadioButtonStatus
+            key={status.toLowerCase()}
+            status={status}
+            isSelected={statut === status}
+            onChange={updateAction}
+          />
+        ))}
+      </form>
       <HistoriqueAction action={action} />
       <CommentairesAction
         idAction={action.id}

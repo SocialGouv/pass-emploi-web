@@ -17,9 +17,7 @@ function InfoAction({
     <>
       <dt
         className={`${
-          isInline
-            ? 'text-base-medium primary_lighten'
-            : 'text-m-bold pb-6 flex items-center'
+          isInline ? 'text-base-medium' : 'text-m-bold pb-6 flex items-center'
         }`}
       >
         <span>

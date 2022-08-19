@@ -10,10 +10,10 @@ interface HistoriqueActionProps {
 
 export function HistoriqueAction({ action }: HistoriqueActionProps) {
   return (
-    <div className='border border-solid border-grey_100 rounded-medium pl-4 pr-4 mb-6'>
-      <h3 className='text-m-regular text-content_color mb-6 mt-4'>
-        {"Historique de l'action"}
-      </h3>
+    <div className='border border-solid border-grey_100 rounded-medium p-4 mb-5'>
+      <h2 className='text-m-bold text-content_color mb-6 mt-4'>
+        Historique de l’action
+      </h2>
       <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
         <InfoAction label='Date d’actualisation' isInline={true}>
           {formatDayDate(new Date(action.lastUpdate))}

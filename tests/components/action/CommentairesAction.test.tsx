@@ -13,6 +13,7 @@ import { DIProvider } from 'utils/injectionDependances'
 describe('<CommentairesAction/>', () => {
   let onAjoutStub = jest.fn()
   const commentaireDuJeune = unCommentaire({
+    id: 'id-commentaire-1',
     message: 'un message de jeune',
     createur: {
       id: 'id-jeune',
@@ -22,6 +23,7 @@ describe('<CommentairesAction/>', () => {
     },
   })
   const commentaireDuConseiller = unCommentaire({
+    id: 'id-commentaire-2',
     message: 'un message de conseiller',
     createur: {
       id: 'id-conseiller',
@@ -57,7 +59,7 @@ describe('<CommentairesAction/>', () => {
       it("affiche l'heure", () => {
         // Then
         expect(
-          screen.getByText('dimanche 20 février 2022 à 15:50')
+          screen.getByText('dimanche 20 février 2022 à 15h50')
         ).toBeInTheDocument()
       })
     })
