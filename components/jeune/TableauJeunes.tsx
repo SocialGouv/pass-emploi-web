@@ -256,7 +256,7 @@ export default function TableauJeunes({
                     isMessage && !sortDesc ? 'croissant' : 'décroissant'
                   }`}
                 >
-                  <span className='mr-1'>Messages</span>
+                  <span className='mr-1'>Messages non lus par les jeunes</span>
                   <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                 </button>
               </HeaderColumnCell>
