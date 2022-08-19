@@ -6,7 +6,6 @@ import TableLayout from '../ui/Table/TableLayout'
 import { RdvRow } from 'components/rdv/RdvRow'
 import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
 import { AUJOURDHUI_LABEL } from 'presentation/MesRdvViewModel'
-import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 type TableauRdvProps = {
   rdvs: Array<RdvListItem | JourRdvAVenirItem>
@@ -19,12 +18,6 @@ export default function TableauRdv({
   idConseiller,
   withNameJeune = true,
 }: TableauRdvProps) {
-  const dayHourCells = (rdvDate: Date, duration: number) => {
-    return `${formatDayDate(rdvDate)} - ${formatHourMinuteDate(
-      rdvDate
-    )} - ${duration} min`
-  }
-
   //FIXME: Balise <tr> ne peut pas être enfant d'une div
   function labelRdvDate(item: JourRdvAVenirItem, dateIsToday: boolean = false) {
     return (
@@ -76,7 +69,6 @@ export default function TableauRdv({
                   <RdvRow
                     key={item.id}
                     item={item}
-                    horaire={dayHourCells(new Date(item.date), item.duration)}
                     withNameJeune={withNameJeune}
                     idConseiller={idConseiller}
                   />

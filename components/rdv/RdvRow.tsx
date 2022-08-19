@@ -5,28 +5,33 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
 import CellRow from 'components/ui/Table/CellRow'
 import { RdvListItem } from 'interfaces/rdv'
+import { formatHourMinuteDate, formatWeekdayWithMonth } from 'utils/date'
 
 interface RdvRowProps {
   item: RdvListItem
-  horaire: string
   withNameJeune: boolean | undefined
   idConseiller: string
 }
 
-export function RdvRow({
-  item,
-  horaire,
-  withNameJeune,
-  idConseiller,
-}: RdvRowProps) {
+export function RdvRow({ item, withNameJeune, idConseiller }: RdvRowProps) {
+  const dayHourCells = (rdvDate: Date, duration: number) => {
+    return `${formatHourMinuteDate(rdvDate)} - ${duration} min`
+  }
   return (
     <Link href={'/mes-jeunes/edition-rdv?idRdv=' + item.id}>
       <a
         role='row'
-        aria-label={`Modifier rendez-vous du ${item.date} avec ${item.beneficiaires}`}
+        aria-label={`Modifier rendez-vous du ${formatWeekdayWithMonth(
+          new Date(item.date)
+        )} avec ${item.beneficiaires}`}
         className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
       >
-        <CellRow className='rounded-l-small'>{horaire}</CellRow>
+        <CellRow className='rounded-l-small'>
+          <span className='sr-only'>
+            {formatWeekdayWithMonth(new Date(item.date))}
+          </span>
+          {dayHourCells(new Date(item.date), item.duration)}
+        </CellRow>
         {withNameJeune && <CellRow>{item.beneficiaires}</CellRow>}
 
         <CellRow>
