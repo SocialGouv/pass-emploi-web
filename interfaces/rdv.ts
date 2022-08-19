@@ -31,6 +31,14 @@ export interface Rdv {
   createur: { id: string; nom: string; prenom: string } | null
 }
 
+export class JourRdvAVenirItem {
+  readonly label: string
+
+  constructor(label: string) {
+    this.label = label
+  }
+}
+
 export function rdvToListItem(rdv: Rdv): RdvListItem {
   return {
     id: rdv.id,

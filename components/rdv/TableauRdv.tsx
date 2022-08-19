@@ -1,17 +1,15 @@
-import Link from 'next/link'
 import React from 'react'
 
 import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
 import TableLayout from '../ui/Table/TableLayout'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
-import CellRow from 'components/ui/Table/CellRow'
-import { RdvListItem } from 'interfaces/rdv'
+import { RdvRow } from 'components/rdv/RdvRow'
+import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
+import { AUJOURDHUI_LABEL } from 'presentation/MesRdvViewModel'
 import { formatDayDate, formatHourMinuteDate } from 'utils/date'
 
 type TableauRdvProps = {
-  rdvs: RdvListItem[]
+  rdvs: Array<RdvListItem | JourRdvAVenirItem>
   idConseiller: string
   withNameJeune?: boolean
 }
@@ -27,6 +25,22 @@ export default function TableauRdv({
     )} - ${duration} min`
   }
 
+  //FIXME: Balise <tr> ne peut pas être enfant d'une div
+  function labelRdvDate(item: JourRdvAVenirItem, dateIsToday: boolean = false) {
+    return (
+      <tr key={item.label}>
+        <th
+          colSpan={6}
+          className={`table-cell capitalize text-m-bold before:content-['---------'] before:tracking-tighter after:content-['---------'] after:tracking-tighter before:whitespace-pre ${
+            dateIsToday ? 'text-primary' : 'text-content_color'
+          } `}
+        >
+          <span className='mx-4'>{item.label}</span>
+        </th>
+      </tr>
+    )
+  }
+
   return (
     <>
       {rdvs.length === 0 && (
@@ -34,7 +48,6 @@ export default function TableauRdv({
           Vous n’avez pas de rendez-vous pour le moment
         </p>
       )}
-
       {rdvs.length > 0 && (
         <TableLayout describedBy='table-caption'>
           <div id='table-caption' className='sr-only'>
@@ -51,74 +64,25 @@ export default function TableauRdv({
           </div>
 
           <div role='rowgroup' className='table-row-group'>
-            {rdvs.map((rdv: RdvListItem) => (
-              <Link
-                href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
-                key={rdv.id}
-              >
-                <a
-                  role='row'
-                  key={rdv.id}
-                  aria-label={`Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`}
-                  className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
-                >
-                  <CellRow className='rounded-l-small text-base-bold'>
-                    {dayHourCells(new Date(rdv.date), rdv.duration)}
-                  </CellRow>
-                  {withNameJeune && <CellRow>{rdv.beneficiaires}</CellRow>}
-
-                  <CellRow>
-                    <RdvTypeTag type={rdv.type} />
-                  </CellRow>
-
-                  <CellRow>
-                    <IconComponent
-                      name={IconName.Location}
-                      focusable='false'
-                      aria-hidden='true'
-                      className='mr-2 inline'
-                    />
-                    {rdv.modality}
-                  </CellRow>
-
-                  {rdv.idCreateur && (
-                    <CellRow className='rounded-r-small'>
-                      <span className='flex items-center justify-around'>
-                        {rdv.idCreateur === idConseiller && (
-                          <>
-                            <span className='sr-only'>oui</span>
-                            <IconComponent
-                              name={IconName.CheckRounded}
-                              aria-hidden='true'
-                              focusable='false'
-                              className='h-4 w-4 fill-primary'
-                            />
-                          </>
-                        )}
-                        {rdv.idCreateur !== idConseiller && (
-                          <>
-                            <span className='sr-only'>non</span>
-                            <IconComponent
-                              name={IconName.Ko}
-                              aria-hidden='true'
-                              focusable='false'
-                              className='h-3'
-                            />
-                          </>
-                        )}
-                        <IconComponent
-                          name={IconName.ChevronRight}
-                          focusable='false'
-                          aria-hidden='true'
-                          className='w-6 h-6 fill-content_color'
-                        />
-                      </span>
-                    </CellRow>
-                  )}
-                  {!rdv.idCreateur && <div role='cell' />}
-                </a>
-              </Link>
-            ))}
+            {rdvs.map((item: RdvListItem | JourRdvAVenirItem) => {
+              if (item instanceof JourRdvAVenirItem) {
+                if (item.label === AUJOURDHUI_LABEL)
+                  return labelRdvDate(item, true)
+                else {
+                  return labelRdvDate(item)
+                }
+              } else {
+                return (
+                  <RdvRow
+                    key={item.id}
+                    item={item}
+                    horaire={dayHourCells(new Date(item.date), item.duration)}
+                    withNameJeune={withNameJeune}
+                    idConseiller={idConseiller}
+                  />
+                )
+              }
+            })}
           </div>
         </TableLayout>
       )}

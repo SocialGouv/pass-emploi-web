@@ -8,7 +8,6 @@ import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -142,7 +141,7 @@ describe('MesRendezvous', () => {
               }),
             ],
             pageTitle: 'Tableau de bord - Mes rendez-vous',
-            pageHeader: 'Rendez-vous',
+            pageHeader: 'Mes rendez-vous',
           },
         })
       })

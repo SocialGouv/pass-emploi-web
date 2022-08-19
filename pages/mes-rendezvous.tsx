@@ -9,6 +9,7 @@ import TabList from 'components/ui/Navigation/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { listeRdvAVenirItem } from 'presentation/MesRdvViewModel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -98,7 +99,7 @@ function MesRendezvous({
         >
           <TableauRdv
             idConseiller={conseiller?.id ?? ''}
-            rdvs={rendezVousFuturs}
+            rdvs={listeRdvAVenirItem(rendezVousFuturs)}
           />
         </div>
       )}
@@ -132,7 +133,7 @@ export const getServerSideProps: GetServerSideProps<
     rendezVousFuturs: futurs.map(rdvToListItem),
     rendezVousPasses: passes.map(rdvToListItem),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
-    pageHeader: 'Rendez-vous',
+    pageHeader: 'Mes rendez-vous',
   }
 
   if (context.query[QueryParam.creationRdv])
