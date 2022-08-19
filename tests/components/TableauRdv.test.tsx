@@ -5,7 +5,11 @@ import React from 'react'
 import TableauRdv from 'components/rdv/TableauRdv'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import { formatDayDate, formatHourMinuteDate } from 'utils/date'
+import {
+  formatDayDate,
+  formatHourMinuteDate,
+  formatWeekdayWithMonth,
+} from 'utils/date'
 
 describe('<TableauRdv>', () => {
   it("affiche un message lorsqu'il n'y a pas de rendez-vous", () => {
@@ -52,9 +56,7 @@ describe('<TableauRdv>', () => {
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         expect(
           screen.getByText(
-            `${formatDayDate(date)} - ${formatHourMinuteDate(date)} - ${
-              rdv.duration
-            } min`
+            `${formatHourMinuteDate(date)} - ${rdv.duration} min`
           )
         ).toBeInTheDocument()
       })
@@ -63,7 +65,9 @@ describe('<TableauRdv>', () => {
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
         const link = screen.getByLabelText(
-          `Modifier rendez-vous du ${rdv.date} avec ${rdv.beneficiaires}`
+          `Modifier rendez-vous du ${formatWeekdayWithMonth(
+            new Date(rdv.date)
+          )} avec ${rdv.beneficiaires}`
         )
         expect(link).toBeInTheDocument()
         expect(link).toHaveAttribute(
