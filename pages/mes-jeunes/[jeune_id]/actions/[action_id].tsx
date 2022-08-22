@@ -3,12 +3,15 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import InfoAction from 'components/action/InfoAction'
+import StatutActionForm from '../../../../components/action/StatutActionForm'
+
+import { CommentairesAction } from 'components/action/CommentairesAction'
+import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import RadioButtonStatus from 'components/action/RadioButtonStatus'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { Action, StatutAction } from 'interfaces/action'
+import { Action, Commentaire, StatutAction } from 'interfaces/action'
 import { StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -23,6 +26,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface PageActionProps extends PageProps {
   action: Action
   jeune: BaseJeune
+  commentaires: Commentaire[]
   messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
 }
@@ -30,6 +34,7 @@ interface PageActionProps extends PageProps {
 function PageAction({
   action,
   jeune,
+  commentaires,
   messageEnvoiGroupeSuccess,
 }: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
@@ -69,6 +74,19 @@ function PageAction({
       })
   }
 
+  function onAjoutCommentaire(estEnSucces: boolean) {
+    if (!estEnSucces) {
+      setShowEchecMessage(true)
+    } else {
+      router.push({
+        pathname: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
+        query: {
+          [QueryParam.ajoutCommentaireAction]: QueryValue.succes,
+        },
+      })
+    }
+  }
+
   useMatomo(
     messageEnvoiGroupeSuccess
       ? `${pageTracking} - Succès envoi message`
@@ -79,23 +97,17 @@ function PageAction({
     <>
       {showEchecMessage && (
         <FailureAlert
-          label="Une erreur s'est produite lors de la suppression de l'action, veuillez réessayer ultérieurement"
+          label="Une erreur s'est produite, veuillez réessayer ultérieurement"
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
-      <div className='flex flex-raw items-center justify-between mb-5'>
-        <span className='flex flex-row p-2 text-accent_2 bg-accent_3_lighten rounded-medium'>
-          <IconComponent
-            name={IconName.Clock}
-            aria-hidden='true'
-            focusable='false'
-            className='h-5 w-5 mr-1 stroke-accent_2'
-          />
-          <span>
-            À réaliser pour le :{' '}
-            <b>{formatDayDate(new Date(action.dateEcheance))}</b>
-          </span>
-        </span>
+      <div className='flex items-start justify-between mb-5'>
+        <h2
+          className='text-m-bold text-content_color'
+          title='Intitulé de l’action'
+        >
+          {action.content}
+        </h2>
         {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
           <Button
             label="Supprimer l'action"
@@ -109,42 +121,32 @@ function PageAction({
               focusable={false}
               className='w-2.5 h-3 mr-4'
             />
-            Supprimer l’action
+            Supprimer
           </Button>
         )}
       </div>
-      <dl>
-        <InfoAction label='Statut' isForm={true}>
-          {Object.values(StatutAction).map((status: StatutAction) => (
-            <RadioButtonStatus
-              key={status.toLowerCase()}
-              status={status}
-              isSelected={statut === status}
-              onChange={updateAction}
-            />
-          ))}
-        </InfoAction>
-
-        <InfoAction label='Intitulé de l’action'>{action.content}</InfoAction>
-        {action.comment && (
-          <InfoAction label='Commentaire à destination du jeune'>
-            <span className='inline-block bg-primary_lighten p-4 rounded-large'>
-              {action.comment}
-            </span>
-          </InfoAction>
-        )}
-      </dl>
-      <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
-        <InfoAction label='Date d’actualisation' isInline={true}>
-          {formatDayDate(new Date(action.lastUpdate))}
-        </InfoAction>
-        <InfoAction label='Date de création' isInline={true}>
-          {formatDayDate(new Date(action.creationDate))}
-        </InfoAction>
-        <InfoAction label='Créateur' isInline={true}>
-          {action.creator}
-        </InfoAction>
-      </dl>
+      {action.comment && <p className='mb-8'>{action.comment}</p>}
+      <div className='flex flex-raw items-center justify-between mb-8 bg-accent_3_lighten rounded-medium'>
+        <span className='flex flex-row p-2 text-accent_2'>
+          <IconComponent
+            name={IconName.Clock}
+            aria-hidden='true'
+            focusable='false'
+            className='h-5 w-5 mr-1 stroke-accent_2'
+          />
+          <span>
+            À réaliser pour le :{' '}
+            <b>{formatDayDate(new Date(action.dateEcheance))}</b>
+          </span>
+        </span>
+      </div>
+      <StatutActionForm updateAction={updateAction} statutCourant={statut} />
+      <HistoriqueAction action={action} />
+      <CommentairesAction
+        idAction={action.id}
+        commentairesInitiaux={commentaires}
+        onAjout={onAjoutCommentaire}
+      />
     </>
   )
 }
@@ -171,10 +173,17 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   )
   if (!actionEtJeune) return { notFound: true }
 
+  const commentaires = await actionsService.recupererLesCommentaires(
+    context.query.action_id as string,
+    accessToken
+  )
+  if (!commentaires) return { notFound: true }
+
   const { action, jeune } = actionEtJeune
   const props: PageActionProps = {
     action,
     jeune,
+    commentaires,
     pageTitle: `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
     pageHeader: 'Détails de l’action',
   }

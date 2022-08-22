@@ -1,5 +1,6 @@
 import { ApiClient } from 'clients/api.client'
 import {
+  unCommentaire,
   uneAction,
   uneActionJson,
   uneListeDActions,
@@ -351,6 +352,51 @@ describe('ActionsApiService', () => {
         '/actions/id-action',
         'accessToken'
       )
+    })
+  })
+
+  describe('.ajouterCommentaire', () => {
+    it('ajoute un commentaire à une action', async () => {
+      // GIVEN
+      const commentaire = unCommentaire()
+      ;(apiClient.post as jest.Mock).mockResolvedValue({ content: commentaire })
+      // WHEN
+      const result = await actionsService.ajouterCommentaire(
+        'id-action',
+        'comment'
+      )
+
+      // THEN
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/actions/id-action/commentaires',
+        {
+          commentaire: 'comment',
+        },
+        'accessToken'
+      )
+      expect(result).toEqual(commentaire)
+    })
+  })
+
+  describe('.recupererLesCommentaires', () => {
+    it("retourne les commentaires d'une action", async () => {
+      // GIVEN
+      const commentaire = unCommentaire()
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: [commentaire],
+      })
+      // WHEN
+      const result = await actionsService.recupererLesCommentaires(
+        'id-action',
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/actions/id-action/commentaires',
+        'accessToken'
+      )
+      expect(result).toEqual([commentaire])
     })
   })
 })

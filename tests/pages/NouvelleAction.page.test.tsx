@@ -115,7 +115,7 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir un commentaire', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
+          screen.getByRole('textbox', { name: /Description de l'action/ })
         ).not.toHaveAttribute('required')
       })
 
@@ -134,8 +134,8 @@ describe('NouvelleAction', () => {
           selectAction = screen.getByRole('combobox', {
             name: /Choisir une action/,
           })
-          const commentaire = screen.getByRole('textbox', {
-            name: /Commentaire/,
+          const description = screen.getByRole('textbox', {
+            name: /Description/,
           })
 
           const dateEcheance = screen.getByLabelText(/date d’échéance/)
@@ -145,7 +145,7 @@ describe('NouvelleAction', () => {
             selectAction,
             actionsPredefinies[3].content
           )
-          await userEvent.type(commentaire, 'Commentaire action')
+          await userEvent.type(description, 'Commentaire action')
           await userEvent.type(dateEcheance, '2022-07-30')
         })
 
@@ -206,10 +206,10 @@ describe('NouvelleAction', () => {
         expect(intitule).toHaveAttribute('type', 'text')
       })
 
-      it('contient un champ pour saisir un commentaire', () => {
+      it('contient un champ pour saisir une description', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
+          screen.getByRole('textbox', { name: /Description de l'action/ })
         ).not.toHaveAttribute('required')
       })
 
@@ -226,15 +226,15 @@ describe('NouvelleAction', () => {
         beforeEach(async () => {
           // Given
           intitule = screen.getByRole('textbox', { name: /Intitulé/ })
-          const commentaire = screen.getByRole('textbox', {
-            name: /Commentaire/,
+          const description = screen.getByRole('textbox', {
+            name: /Description/,
           })
           const dateEcheance = screen.getByLabelText(/date d’échéance/)
 
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
           await userEvent.type(intitule, 'Intitulé action')
-          await userEvent.type(commentaire, 'Commentaire action')
+          await userEvent.type(description, 'Commentaire action')
           await userEvent.type(dateEcheance, '2022-07-30')
         })
 

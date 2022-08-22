@@ -34,15 +34,6 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
             <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
-            {action.comment && (
-              <IconComponent
-                name={IconName.Note}
-                role='img'
-                aria-label="Un commentaire a été ajouté à l'action"
-                focusable='false'
-                className='ml-2'
-              />
-            )}
           </span>
         </CellRow>
         <CellRow>

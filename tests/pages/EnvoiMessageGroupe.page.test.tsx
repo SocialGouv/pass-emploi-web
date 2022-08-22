@@ -9,7 +9,6 @@ import {
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { JeuneFromListe } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,

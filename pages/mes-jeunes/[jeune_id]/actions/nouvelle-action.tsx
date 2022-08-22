@@ -32,7 +32,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
   }
   const [currentTab, setCurrentTab] = useState<Tab>('predefinie')
   const [intitule, setIntitule] = useState<string>('')
-  const [commentaire, setCommentaire] = useState<string>('')
+  const [commentaire, setDescription] = useState<string>('')
   const [dateEcheance, setDateEcheance] = useState<string>('')
   const INPUT_MAX_LENGTH = 250
 
@@ -121,7 +121,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
               htmlFor='commentaire-action-predefinie'
               className='flex mt-10 text-base-medium text-content_color items-center'
             >
-              Commentaire de l&apos;action
+              Description de l&apos;action
               <span className='ml-2'>
                 <BulleMessageSensible />
               </span>
@@ -129,7 +129,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
             <textarea
               id='commentaire-action-predefinie'
               defaultValue={commentaire}
-              onChange={(e) => setCommentaire(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
@@ -177,12 +177,12 @@ function EditionAction({ idJeune }: EditionActionProps) {
               htmlFor='commentaire-action-personnalisee'
               className='mt-10 text-base-medium text-content_color block'
             >
-              Commentaire de l&apos;action
+              Description de l&apos;action
             </label>
             <textarea
               id='commentaire-action-personnalisee'
               defaultValue={commentaire}
-              onChange={(e) => setCommentaire(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'

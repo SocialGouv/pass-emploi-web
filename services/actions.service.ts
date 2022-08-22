@@ -4,6 +4,7 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 import {
   Action,
+  Commentaire,
   MetadonneesActions,
   StatutAction,
   TotalActions,
@@ -13,6 +14,7 @@ import {
   ActionJson,
   ActionsCountJson,
   actionStatusToJson,
+  CommentaireJson,
   jsonToAction,
   MetadonneesActionsJson,
 } from 'interfaces/json/action'
@@ -35,6 +37,7 @@ export interface ActionsService {
     options: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
+
   getActionsJeuneClientSide(
     idJeune: string,
     options: { page: number; statuts: StatutAction[]; tri?: string }
@@ -51,6 +54,16 @@ export interface ActionsService {
   ): Promise<StatutAction>
 
   deleteAction(idAction: string): Promise<void>
+
+  ajouterCommentaire(
+    idAction: string,
+    commentaire: string
+  ): Promise<Commentaire>
+
+  recupererLesCommentaires(
+    idAction: string,
+    accessToken: string
+  ): Promise<Commentaire[]>
 }
 
 export class ActionsApiService implements ActionsService {
@@ -181,6 +194,30 @@ export class ActionsApiService implements ActionsService {
   async deleteAction(idAction: string): Promise<void> {
     const session = await getSession()
     await this.apiClient.delete(`/actions/${idAction}`, session!.accessToken)
+  }
+
+  async ajouterCommentaire(
+    idAction: string,
+    commentaire: string
+  ): Promise<Commentaire> {
+    const session = await getSession()
+    const commentaireAjoute = await this.apiClient.post<CommentaireJson>(
+      `/actions/${idAction}/commentaires`,
+      { commentaire },
+      session!.accessToken
+    )
+    return commentaireAjoute.content
+  }
+
+  async recupererLesCommentaires(
+    idAction: string,
+    accessToken: string
+  ): Promise<Commentaire[]> {
+    const commentairesJson = await this.apiClient.get<CommentaireJson[]>(
+      `/actions/${idAction}/commentaires`,
+      accessToken
+    )
+    return commentairesJson.content
   }
 }
 

@@ -26,3 +26,18 @@ export enum StatutAction {
   Terminee = 'Terminee',
   Annulee = 'Annulee',
 }
+
+export interface Commentaire {
+  id: string
+  idAction: string
+  date: string
+  createur: CreateurCommentaire
+  message: string
+}
+
+export interface CreateurCommentaire {
+  prenom: string
+  nom: string
+  id: string
+  type: 'conseiller' | 'jeune'
+}

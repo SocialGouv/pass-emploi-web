@@ -32,6 +32,12 @@ export const formatWeekdayWithMonth = (date: Date): string => {
   return `${weekday} ${number} ${month}`
 }
 
+export const formatDayHourDate = (date: string): string => {
+  return DateTime.fromISO(date)
+    .setLocale('fr')
+    .toFormat("EEEE d MMMM yyyy à HH'h'mm")
+}
+
 export const formatHourMinuteDate = (date: Date): string => {
   let hours = date.getHours().toString()
   hours = ('0' + hours).slice(-2)
