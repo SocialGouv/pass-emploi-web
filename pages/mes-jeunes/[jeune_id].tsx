@@ -247,8 +247,11 @@ function FicheJeune({
       )}
 
       {!jeune.isActivated && (
-        <>
-          <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
+        <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
+      )}
+
+      {!jeune.isActivated &&
+        conseiller?.structure === StructureConseiller.MILO && (
           <div className='mb-8'>
             <InformationMessage
               content={[
@@ -257,8 +260,7 @@ function FicheJeune({
               ]}
             />
           </div>
-        </>
-      )}
+        )}
 
       {jeune.isReaffectationTemporaire && (
         <div className='mb-6'>
