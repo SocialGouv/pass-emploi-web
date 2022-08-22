@@ -58,9 +58,7 @@ describe('<CommentairesAction/>', () => {
       })
       it("affiche l'heure", () => {
         // Then
-        expect(
-          screen.getByText('dimanche 20 février 2022 à 15h50')
-        ).toBeInTheDocument()
+        expect(screen.getByText('20/02/2022 à 15h50')).toBeInTheDocument()
       })
     })
     describe("quand c'est le commentaire du jeune", () => {

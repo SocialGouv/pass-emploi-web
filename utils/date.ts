@@ -33,9 +33,7 @@ export const formatWeekdayWithMonth = (date: Date): string => {
 }
 
 export const formatDayHourDate = (date: string): string => {
-  return DateTime.fromISO(date)
-    .setLocale('fr')
-    .toFormat("EEEE d MMMM yyyy à HH'h'mm")
+  return DateTime.fromISO(date).toFormat("dd/MM/yyyy à HH'h'mm")
 }
 
 export const formatHourMinuteDate = (date: Date): string => {
