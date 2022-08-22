@@ -3,6 +3,8 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import StatutActionForm from '../../../../components/action/StatutActionForm'
+
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import RadioButtonStatus from 'components/action/RadioButtonStatus'
@@ -138,17 +140,7 @@ function PageAction({
           </span>
         </span>
       </div>
-      <h2 className='text-m-bold pb-6'>Statut</h2>
-      <form className='flex flex-raw mb-10'>
-        {Object.values(StatutAction).map((status: StatutAction) => (
-          <RadioButtonStatus
-            key={status.toLowerCase()}
-            status={status}
-            isSelected={statut === status}
-            onChange={updateAction}
-          />
-        ))}
-      </form>
+      <StatutActionForm updateAction={updateAction} statutCourant={statut} />
       <HistoriqueAction action={action} />
       <CommentairesAction
         idAction={action.id}
