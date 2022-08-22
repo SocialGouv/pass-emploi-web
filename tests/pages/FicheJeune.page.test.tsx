@@ -559,7 +559,10 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
-            { customDependances: dependances }
+            {
+              customDependances: dependances,
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
           )
 
           // Then
