@@ -4,7 +4,7 @@ import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
 import TableLayout from '../ui/Table/TableLayout'
 
 import { RdvRow } from 'components/rdv/RdvRow'
-import { JourRdvAVenirItem, RdvListItem } from 'interfaces/rdv'
+import { JourRdvAVenirItem, PlageHoraire, RdvListItem } from 'interfaces/rdv'
 import { AUJOURDHUI_LABEL } from 'presentation/MesRdvViewModel'
 
 type TableauRdvProps = {
@@ -34,6 +34,16 @@ export default function TableauRdv({
     )
   }
 
+  function labelPlageHoraire(item: PlageHoraire) {
+    return (
+      <tr key={item.label}>
+        <th colSpan={1} className={`table-cell text-s-bold text-content_color`}>
+          <span className='float-left'>{item.label}</span>
+        </th>
+      </tr>
+    )
+  }
+
   return (
     <>
       {rdvs.length === 0 && (
@@ -57,24 +67,26 @@ export default function TableauRdv({
           </div>
 
           <div role='rowgroup' className='table-row-group'>
-            {rdvs.map((item: RdvListItem | JourRdvAVenirItem) => {
-              if (item instanceof JourRdvAVenirItem) {
-                if (item.label === AUJOURDHUI_LABEL)
-                  return labelRdvDate(item, true)
-                else {
-                  return labelRdvDate(item)
+            {rdvs.map(
+              (item: RdvListItem | JourRdvAVenirItem | PlageHoraire) => {
+                if (item instanceof JourRdvAVenirItem)
+                  return item.label === AUJOURDHUI_LABEL
+                    ? labelRdvDate(item, true)
+                    : labelRdvDate(item)
+                else if (item instanceof PlageHoraire) {
+                  return labelPlageHoraire(item)
+                } else {
+                  return (
+                    <RdvRow
+                      key={item.id}
+                      item={item}
+                      withNameJeune={withNameJeune}
+                      idConseiller={idConseiller}
+                    />
+                  )
                 }
-              } else {
-                return (
-                  <RdvRow
-                    key={item.id}
-                    item={item}
-                    withNameJeune={withNameJeune}
-                    idConseiller={idConseiller}
-                  />
-                )
               }
-            })}
+            )}
           </div>
         </TableLayout>
       )}

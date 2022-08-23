@@ -39,6 +39,14 @@ export class JourRdvAVenirItem {
   }
 }
 
+export class PlageHoraire {
+  readonly label: string
+
+  constructor(label: string) {
+    this.label = label
+  }
+}
+
 export function rdvToListItem(rdv: Rdv): RdvListItem {
   return {
     id: rdv.id,
