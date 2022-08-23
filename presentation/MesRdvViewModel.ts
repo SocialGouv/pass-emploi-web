@@ -2,8 +2,8 @@ import { JourRdvAVenirItem, PlageHoraire, RdvListItem } from 'interfaces/rdv'
 import { dateIsToday, formatWeekdayWithMonth } from 'utils/date'
 
 export const AUJOURDHUI_LABEL = 'aujourd’hui'
-export const PLAGE_HORAIRE_MATIN = 'matin'
-export const PLAGE_HORAIRE_APRES_MIDI = 'après-midi'
+export const PLAGE_HORAIRE_MATIN = 'Matin'
+export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
 
 export function listeRdvAVenirItem(
   mesRendezVous: RdvListItem[]
@@ -11,7 +11,7 @@ export function listeRdvAVenirItem(
   const rdvTries = [...mesRendezVous].sort(trierParDate)
   const items: Array<JourRdvAVenirItem | PlageHoraire | RdvListItem> = []
   let dernierJour = ''
-  let dernierePlageHoraireDefini = ''
+  let dernierePlageHoraireDefinie = ''
   for (let rdv of rdvTries) {
     const dateRdv = new Date(rdv.date)
     const jour = jourDuRdvFormate(dateRdv)
@@ -20,23 +20,23 @@ export function listeRdvAVenirItem(
     if (jour !== dernierJour) {
       dernierJour = jour
       items.push(new JourRdvAVenirItem(jour))
-      dernierePlageHoraireDefini = ''
+      dernierePlageHoraireDefinie = ''
     }
 
     if (
       isRdvDuMatin(heureDuRdv) &&
-      dernierePlageHoraireDefini !== PLAGE_HORAIRE_MATIN
+      dernierePlageHoraireDefinie !== PLAGE_HORAIRE_MATIN
     ) {
       items.push(new PlageHoraire(PLAGE_HORAIRE_MATIN))
-      dernierePlageHoraireDefini = PLAGE_HORAIRE_MATIN
+      dernierePlageHoraireDefinie = PLAGE_HORAIRE_MATIN
     }
 
     if (
       isRdvApresMidi(heureDuRdv) &&
-      dernierePlageHoraireDefini !== PLAGE_HORAIRE_APRES_MIDI
+      dernierePlageHoraireDefinie !== PLAGE_HORAIRE_APRES_MIDI
     ) {
       items.push(new PlageHoraire(PLAGE_HORAIRE_APRES_MIDI))
-      dernierePlageHoraireDefini = PLAGE_HORAIRE_APRES_MIDI
+      dernierePlageHoraireDefinie = PLAGE_HORAIRE_APRES_MIDI
     }
 
     items.push(rdv)

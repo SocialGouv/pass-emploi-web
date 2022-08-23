@@ -37,10 +37,7 @@ export default function TableauRdv({
   function labelPlageHoraire(item: PlageHoraire) {
     return (
       <tr key={item.label}>
-        <th
-          colSpan={1}
-          className={`table-cell capitalize text-s-bold text-content_color`}
-        >
+        <th colSpan={1} className={`table-cell text-s-bold text-content_color`}>
           <span className='float-left'>{item.label}</span>
         </th>
       </tr>
@@ -72,13 +69,11 @@ export default function TableauRdv({
           <div role='rowgroup' className='table-row-group'>
             {rdvs.map(
               (item: RdvListItem | JourRdvAVenirItem | PlageHoraire) => {
-                if (item instanceof JourRdvAVenirItem) {
-                  if (item.label === AUJOURDHUI_LABEL)
-                    return labelRdvDate(item, true)
-                  else {
-                    return labelRdvDate(item)
-                  }
-                } else if (item instanceof PlageHoraire) {
+                if (item instanceof JourRdvAVenirItem)
+                  return item.label === AUJOURDHUI_LABEL
+                    ? labelRdvDate(item, true)
+                    : labelRdvDate(item)
+                else if (item instanceof PlageHoraire) {
                   return labelPlageHoraire(item)
                 } else {
                   return (

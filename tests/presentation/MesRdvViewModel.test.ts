@@ -27,7 +27,7 @@ describe('listeRdvAVenirItem', () => {
     // Then
     expect(items.length).toBe(3)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect((items[1] as PlageHoraire).label).toEqual('matin')
+    expect((items[1] as PlageHoraire).label).toEqual('Matin')
     expect(items[2]).toEqual(rendezvous)
   })
 
@@ -42,7 +42,7 @@ describe('listeRdvAVenirItem', () => {
     // Then
     expect(items.length).toBe(3)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('aujourd’hui')
-    expect((items[1] as PlageHoraire).label).toEqual('après-midi')
+    expect((items[1] as PlageHoraire).label).toEqual('Après-midi')
     expect(items[2]).toEqual(rendezvous)
   })
 
@@ -57,10 +57,10 @@ describe('listeRdvAVenirItem', () => {
     // Then
     expect(items.length).toBe(6)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect((items[1] as PlageHoraire).label).toEqual('matin')
+    expect((items[1] as PlageHoraire).label).toEqual('Matin')
     expect(items[2]).toEqual(rendezvousMardi)
     expect((items[3] as JourRdvAVenirItem).label).toEqual('mercredi 2 janvier')
-    expect((items[4] as PlageHoraire).label).toEqual('matin')
+    expect((items[4] as PlageHoraire).label).toEqual('Matin')
     expect(items[5]).toEqual(rendezvousMercredi)
   })
 
@@ -78,9 +78,9 @@ describe('listeRdvAVenirItem', () => {
     // Then
     expect(items.length).toBe(5)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect((items[1] as JourRdvAVenirItem).label).toEqual('matin')
+    expect((items[1] as JourRdvAVenirItem).label).toEqual('Matin')
     expect(items[2]).toEqual(unRendezvousMardi)
-    expect((items[3] as JourRdvAVenirItem).label).toEqual('après-midi')
+    expect((items[3] as JourRdvAVenirItem).label).toEqual('Après-midi')
     expect(items[4]).toEqual(unAutreRendezvousMardi)
   })
 })
