@@ -14,7 +14,9 @@ import { ApiError } from 'utils/httpClient'
 export interface RendezVousService {
   getRendezVousConseiller(
     idConseiller: string,
-    accessToken: string
+    accessToken: string,
+    dateDebut?: string,
+    dateFin?: string
   ): Promise<Rdv[]>
 
   getRendezVousJeune(idJeune: string, accessToken: string): Promise<Rdv[]>
@@ -38,10 +40,12 @@ export class RendezVousApiService implements RendezVousService {
 
   async getRendezVousConseiller(
     idConseiller: string,
-    accessToken: string
+    accessToken: string,
+    dateDebut: string,
+    dateFin: string
   ): Promise<Rdv[]> {
     const { content: rdvs } = await this.apiClient.get<RdvJson[]>(
-      `/v2/conseillers/${idConseiller}/rendezvous`,
+      `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebut}&dateFin=${dateFin}`,
       accessToken
     )
     return rdvs.map(jsonToRdv)

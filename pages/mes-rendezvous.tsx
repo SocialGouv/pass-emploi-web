@@ -18,8 +18,8 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesRendezvousProps extends PageProps {
-  rendezVousFuturs: RdvListItem[]
-  rendezVousPasses: RdvListItem[]
+  rendezVous: RdvListItem[]
+  rendezVousSemaineCourante?: RdvListItem[]
   creationSuccess?: boolean
   modificationSuccess?: boolean
   suppressionSuccess?: boolean
@@ -28,8 +28,8 @@ interface MesRendezvousProps extends PageProps {
 }
 
 function MesRendezvous({
-  rendezVousFuturs,
-  rendezVousPasses,
+  rendezVous,
+  rendezVousSemaineCourante,
   creationSuccess,
   modificationSuccess,
   suppressionSuccess,
@@ -85,10 +85,7 @@ function MesRendezvous({
           aria-labelledby='rendez-vous-passes--tab'
           tabIndex={0}
         >
-          <TableauRdv
-            idConseiller={conseiller?.id ?? ''}
-            rdvs={rendezVousPasses}
-          />
+          <TableauRdv idConseiller={conseiller?.id ?? ''} rdvs={rendezVous} />
         </div>
       ) : (
         <div
@@ -99,7 +96,7 @@ function MesRendezvous({
         >
           <TableauRdv
             idConseiller={conseiller?.id ?? ''}
-            rdvs={listeRdvAVenirItem(rendezVousFuturs)}
+            rdvs={listeRdvAVenirItem(rendezVous)}
           />
         </div>
       )}
@@ -121,17 +118,28 @@ export const getServerSideProps: GetServerSideProps<
   if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
+  const TODAY = DateTime.now().toString()
 
   const rendezVousService =
     withDependance<RendezVousService>('rendezVousService')
-  const { passes, futurs } = await rendezVousService.getRendezVousConseiller(
+
+  const rendezVous = await rendezVousService.getRendezVousConseiller(
     user.id,
-    accessToken
+    accessToken,
+    '2022-07-01',
+    '2022-08-29'
   )
+  const rendezVousSemaineCourante =
+    await rendezVousService.getRendezVousConseiller(
+      user.id,
+      accessToken,
+      '2022-08-23',
+      '2022-08-29'
+    )
 
   const props: MesRendezvousProps = {
-    rendezVousFuturs: futurs.map(rdvToListItem),
-    rendezVousPasses: passes.map(rdvToListItem),
+    rendezVous: rendezVous.map(rdvToListItem),
+    rendezVousSemaineCourante: rendezVousSemaineCourante.map(rdvToListItem),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
     pageHeader: 'Mes rendez-vous',
   }

@@ -147,23 +147,27 @@ describe('RendezVousApiService', () => {
     })
   })
   describe('.getRendezVousConseiller', () => {
-    it('renvoie les rendez-vous d’un conseiller', async () => {
+    it('renvoie les rendez-vous d’un conseiller sur une période définie', async () => {
       // Given
       const accessToken = 'accessToken'
       const listeRdvs = [unRendezVousJson()]
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: listeRdvs,
       })
+      const dateDebut = '2022-08-23'
+      const dateFin = '2022-08-29'
 
       // When
       const actual = await rendezVousService.getRendezVousConseiller(
         'id-conseiller',
-        accessToken
+        accessToken,
+        dateDebut,
+        dateFin
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/conseillers/id-conseiller/rendezvous',
+        `/v2/conseillers/id-conseiller/rendezvous?dateDebut=${dateDebut}&dateFin=${dateFin}`,
         accessToken
       )
       expect(actual).toEqual([unRendezVous()])

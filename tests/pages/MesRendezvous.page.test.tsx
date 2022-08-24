@@ -3,7 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
+import {
+  desRdvListItems,
+  uneListeDeRdv,
+  unRendezVous,
+} from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -15,14 +19,14 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('MesRendezvous', () => {
   describe('client side', () => {
-    const rendezVousPasses = desRdvListItems()
-    const rendezVousFuturs = desRdvListItems()
+    const rendezVous = desRdvListItems()
+    const rendezVousSemaineCourante = desRdvListItems()
     describe('contenu', () => {
       beforeEach(() => {
         renderWithContexts(
           <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
+            rendezVous={rendezVous}
+            rendezVousSemaineCourante={rendezVousSemaineCourante}
             pageTitle=''
           />
         )
@@ -62,7 +66,7 @@ describe('MesRendezvous', () => {
         const rows = screen.getAllByRole('row')
 
         expect(table).toBeInTheDocument()
-        expect(rows.length - 1).toBe(rendezVousPasses.length)
+        expect(rows.length - 1).toBe(rendezVous.length)
       })
     })
   })
@@ -70,25 +74,7 @@ describe('MesRendezvous', () => {
   describe('server side', () => {
     beforeEach(() => {
       const rendezVousService = mockedRendezVousService({
-        getRendezVousConseiller: jest.fn(async () => ({
-          futurs: [unRendezVous()],
-          passes: [
-            unRendezVous({
-              jeunes: [
-                {
-                  id: '1',
-                  prenom: 'kenji',
-                  nom: 'Jirac',
-                },
-                {
-                  id: '2',
-                  prenom: 'Nadia',
-                  nom: 'Sanfamiy',
-                },
-              ],
-            }),
-          ],
-        })),
+        getRendezVousConseiller: jest.fn(async () => [unRendezVous()]),
       })
       ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
     })
@@ -128,16 +114,11 @@ describe('MesRendezvous', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            rendezVousFuturs: [
+            rendezVous: [
               expect.objectContaining({
                 beneficiaires: 'kenji Jirac',
                 idCreateur: '1',
                 type: 'Autre',
-              }),
-            ],
-            rendezVousPasses: [
-              expect.objectContaining({
-                beneficiaires: 'Bénéficiaires multiples',
               }),
             ],
             pageTitle: 'Tableau de bord - Mes rendez-vous',
