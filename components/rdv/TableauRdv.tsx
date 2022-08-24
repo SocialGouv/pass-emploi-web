@@ -8,7 +8,7 @@ import { JourRdvAVenirItem, PlageHoraire, RdvListItem } from 'interfaces/rdv'
 import { AUJOURDHUI_LABEL } from 'presentation/MesRdvViewModel'
 
 type TableauRdvProps = {
-  rdvs: Array<RdvListItem | JourRdvAVenirItem>
+  rdvs: Array<RdvListItem | JourRdvAVenirItem | PlageHoraire>
   idConseiller: string
   withNameJeune?: boolean
 }
@@ -34,9 +34,9 @@ export default function TableauRdv({
     )
   }
 
-  function labelPlageHoraire(item: PlageHoraire) {
+  function labelPlageHoraire(item: PlageHoraire, key: number) {
     return (
-      <tr key={item.label}>
+      <tr key={item.label + key}>
         <th colSpan={1} className={`table-cell text-s-bold text-content_color`}>
           <span className='float-left'>{item.label}</span>
         </th>
@@ -68,13 +68,13 @@ export default function TableauRdv({
 
           <div role='rowgroup' className='table-row-group'>
             {rdvs.map(
-              (item: RdvListItem | JourRdvAVenirItem | PlageHoraire) => {
+              (item: RdvListItem | JourRdvAVenirItem | PlageHoraire, key) => {
                 if (item instanceof JourRdvAVenirItem)
                   return item.label === AUJOURDHUI_LABEL
                     ? labelRdvDate(item, true)
                     : labelRdvDate(item)
                 else if (item instanceof PlageHoraire) {
-                  return labelPlageHoraire(item)
+                  return labelPlageHoraire(item, key)
                 } else {
                   return (
                     <RdvRow
