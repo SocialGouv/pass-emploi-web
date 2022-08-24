@@ -1,11 +1,12 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+
+import IconComponent, { IconName } from '../components/ui/IconComponent'
 
 import TableauRdv from 'components/rdv/TableauRdv'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import Tab from 'components/ui/Navigation/Tab'
-import TabList from 'components/ui/Navigation/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -19,7 +20,9 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesRendezvousProps extends PageProps {
   rendezVous: RdvListItem[]
-  rendezVousSemaineCourante?: RdvListItem[]
+  rendezVousSemaineCourante: RdvListItem[]
+  dateDebut: string
+  dateFin: string
   creationSuccess?: boolean
   modificationSuccess?: boolean
   suppressionSuccess?: boolean
@@ -30,13 +33,14 @@ interface MesRendezvousProps extends PageProps {
 function MesRendezvous({
   rendezVous,
   rendezVousSemaineCourante,
+  dateDebut,
+  dateFin,
   creationSuccess,
   modificationSuccess,
   suppressionSuccess,
   messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) {
   const [conseiller] = useConseiller()
-  const [displayOldRdv, setDisplayOldRdv] = useState(false)
 
   const pageTracking = `Mes rendez-vous`
   let initialTracking = pageTracking
@@ -46,60 +50,47 @@ function MesRendezvous({
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  function toggleDisplayOldRdv(): void {
-    setDisplayOldRdv(!displayOldRdv)
-    if (displayOldRdv) {
-      setTrackingTitle('Mes rendez-vous passés')
-    } else {
-      setTrackingTitle(pageTracking)
-    }
-  }
-
   useMatomo(trackingTitle)
 
   return (
     <>
-      <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-4 w-fit'>
+      <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-6 w-fit'>
         Fixer un rendez-vous
       </ButtonLink>
 
-      <TabList className='mb-[40px]'>
-        <Tab
-          label='Prochains rendez-vous'
-          controls='rendez-vous-futurs'
-          selected={!displayOldRdv}
-          onSelectTab={toggleDisplayOldRdv}
-        />
-        <Tab
-          label='Rendez-vous passés'
-          controls='rendez-vous-passes'
-          selected={displayOldRdv}
-          onSelectTab={toggleDisplayOldRdv}
-        />
-      </TabList>
+      <div className='mb-12'>
+        <p className='text-base-medium'>Période du :</p>
+        <div className='flex items-center mt-1'>
+          <p className='text-m-bold text-primary mr-6'>
+            {dateDebut} au {dateFin}
+          </p>
+          <button
+            title='Aller à la semaine précédente'
+            aria-label='Aller à la semaine précédente'
+          >
+            <IconComponent
+              name={IconName.ChevronLeft}
+              className='w-6 h-6 fill-primary'
+              focusable='false'
+            />
+          </button>
+          <button
+            title='Aller à la semaine suivante'
+            aria-label='Aller à la semaine suivante'
+          >
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-6 h-6 fill-primary ml-8'
+              focusable='false'
+            />
+          </button>
+        </div>
+      </div>
 
-      {displayOldRdv ? (
-        <div
-          role='tabpanel'
-          id='rendez-vous-passes'
-          aria-labelledby='rendez-vous-passes--tab'
-          tabIndex={0}
-        >
-          <TableauRdv idConseiller={conseiller?.id ?? ''} rdvs={rendezVous} />
-        </div>
-      ) : (
-        <div
-          role='tabpanel'
-          id='rendez-vous-futurs'
-          aria-labelledby='rendez-vous-futurs--tab'
-          tabIndex={0}
-        >
-          <TableauRdv
-            idConseiller={conseiller?.id ?? ''}
-            rdvs={listeRdvAVenirItem(rendezVous)}
-          />
-        </div>
-      )}
+      <TableauRdv
+        idConseiller={conseiller?.id ?? ''}
+        rdvs={listeRdvAVenirItem(rendezVousSemaineCourante)}
+      />
     </>
   )
 }
@@ -118,7 +109,9 @@ export const getServerSideProps: GetServerSideProps<
   if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
-  const TODAY = DateTime.now().toString()
+
+  const AUJOURDHUI = DateTime.now()
+  const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 })
 
   const rendezVousService =
     withDependance<RendezVousService>('rendezVousService')
@@ -126,20 +119,22 @@ export const getServerSideProps: GetServerSideProps<
   const rendezVous = await rendezVousService.getRendezVousConseiller(
     user.id,
     accessToken,
-    '2022-07-01',
-    '2022-08-29'
+    AUJOURDHUI.toFormat('yyyy-MM-dd'),
+    FIN_SEMAINE_COURANTE.toFormat('yyyy-MM-dd')
   )
   const rendezVousSemaineCourante =
     await rendezVousService.getRendezVousConseiller(
       user.id,
       accessToken,
-      '2022-08-23',
-      '2022-08-29'
+      AUJOURDHUI.toFormat('yyyy-MM-dd'),
+      FIN_SEMAINE_COURANTE.toFormat('yyyy-MM-dd')
     )
 
   const props: MesRendezvousProps = {
     rendezVous: rendezVous.map(rdvToListItem),
     rendezVousSemaineCourante: rendezVousSemaineCourante.map(rdvToListItem),
+    dateDebut: AUJOURDHUI.toFormat('yyyy-MM-dd'),
+    dateFin: FIN_SEMAINE_COURANTE.toFormat('yyyy-MM-dd'),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
     pageHeader: 'Mes rendez-vous',
   }

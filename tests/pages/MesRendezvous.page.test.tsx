@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import {
   desRdvListItems,
   uneListeDeRdv,
+  unRdvListItem,
   unRendezVous,
 } from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
@@ -19,8 +21,15 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('MesRendezvous', () => {
   describe('client side', () => {
+    const AUJOURDHUI = '2022-08-24'
+    const FIN_SEMAINE_COURANTE = '2022-08-30'
+
     const rendezVous = desRdvListItems()
-    const rendezVousSemaineCourante = desRdvListItems()
+    const rendezVousSemaineCourante = [
+      unRdvListItem({ date: '2022-08-24T10:00:00.000Z' }),
+      unRdvListItem({ date: '2022-08-26T10:00:00.000Z' }),
+      unRdvListItem({ date: '2022-08-30T10:00:00.000Z' }),
+    ]
     describe('contenu', () => {
       beforeEach(() => {
         renderWithContexts(
@@ -28,6 +37,8 @@ describe('MesRendezvous', () => {
             rendezVous={rendezVous}
             rendezVousSemaineCourante={rendezVousSemaineCourante}
             pageTitle=''
+            dateDebut={AUJOURDHUI}
+            dateFin={FIN_SEMAINE_COURANTE}
           />
         )
       })
@@ -42,16 +53,16 @@ describe('MesRendezvous', () => {
       })
 
       it('a deux boutons', () => {
-        const rdvsButton = screen.getByRole('tab', {
-          name: 'Prochains rendez-vous',
+        const semaineFuture = screen.getByRole('button', {
+          name: 'Aller à la semaine suivante',
         })
 
-        const oldRdvsButton = screen.getByRole('tab', {
-          name: 'Rendez-vous passés',
+        const semainePassee = screen.getByRole('button', {
+          name: 'Aller à la semaine précédente',
         })
 
-        expect(rdvsButton).toBeInTheDocument()
-        expect(oldRdvsButton).toBeInTheDocument()
+        expect(semaineFuture).toBeInTheDocument()
+        expect(semainePassee).toBeInTheDocument()
       })
 
       it('affiche les anciens rdvs quand on clique sur le bouton rendez-vous passés', async () => {
@@ -67,6 +78,15 @@ describe('MesRendezvous', () => {
 
         expect(table).toBeInTheDocument()
         expect(rows.length - 1).toBe(rendezVous.length)
+      })
+
+      it('affiche la semaine courante par défaut', () => {
+        const table = screen.getByRole('table')
+
+        const rows = screen.getAllByRole('row')
+        expect(table).toBeInTheDocument()
+        expect(screen.getByText('aujourd’hui')).toBeInTheDocument()
+        expect(rows.length - 1).toBe(rendezVousSemaineCourante.length * 2)
       })
     })
   })
