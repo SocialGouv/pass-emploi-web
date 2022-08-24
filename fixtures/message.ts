@@ -27,7 +27,7 @@ export const desMessages = (): Message[] => [
   }),
   unMessage({
     id: 'message-2',
-    content: 'Message du 10/1/2022',
+    content: 'Message du 10/1/2022 avec un lien https://www.pass-emploi.com/',
     creationDate: new Date(2022, 0, 10),
     conseillerId: 'conseiller-2',
   }),
@@ -76,7 +76,8 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
     messages: [
       unMessage({
         id: 'message-2',
-        content: 'Decrypted: Message du 10/1/2022',
+        content:
+          'Decrypted: Message du 10/1/2022 avec un lien https://www.pass-emploi.com/',
         creationDate: new Date(2022, 0, 10),
         conseillerId: 'conseiller-2',
       }),

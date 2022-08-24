@@ -29,14 +29,14 @@ export default function DisplayMessage({
     return message.includes('http') || message.includes('https')
   }
 
-  function formatMessageAvecLien(message: string) {
+  function formateMessageAvecLien(message: string) {
     const messageDecoupe = message.split(' ')
     const messageFormate: string[] = []
 
     messageDecoupe.map((mot) => {
       if (detecteLien(mot)) {
         messageFormate.push(
-          `<span class='text-primary underline' title="Lien externe">${mot}</span>`
+          `<span class='text-primary-lighten hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>`
         )
       } else {
         messageFormate.push(mot)
@@ -61,7 +61,7 @@ export default function DisplayMessage({
           </p>
         )}
         {detecteLien(message.content) ? (
-          formatMessageAvecLien(message.content)
+          formateMessageAvecLien(message.content)
         ) : (
           <p className='whitespace-pre-wrap'>{message.content}</p>
         )}

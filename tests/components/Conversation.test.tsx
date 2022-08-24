@@ -145,6 +145,11 @@ describe('<Conversation />', () => {
     )
   })
 
+  it(`affiche un lien externe dans le message s’il en a un`, () => {
+    // Then
+    expect(screen.getByText(/https/)).toHaveAttribute('title', 'Lien externe')
+  })
+
   describe('quand on envoie un message', () => {
     let messageInput: HTMLInputElement
     beforeEach(() => {
