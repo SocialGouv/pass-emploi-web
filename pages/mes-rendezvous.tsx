@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import TableauRdv from 'components/rdv/TableauRdv'
 import ButtonLink from 'components/ui/Button/ButtonLink'

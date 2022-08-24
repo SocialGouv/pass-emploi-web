@@ -1,6 +1,7 @@
 import { ApiClient } from 'clients/api.client'
 import {
   typesDeRendezVous,
+  uneListeDeRdv,
   unRendezVous,
   unRendezVousJson,
 } from 'fixtures/rendez-vous'
@@ -143,6 +144,29 @@ describe('RendezVousApiService', () => {
         },
         'accessToken'
       )
+    })
+  })
+  describe('.getRendezVousConseiller', () => {
+    it('renvoie les rendez-vous d’un conseiller', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      const listeRdvs = [unRendezVousJson()]
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: listeRdvs,
+      })
+
+      // When
+      const actual = await rendezVousService.getRendezVousConseiller(
+        'id-conseiller',
+        accessToken
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/conseillers/id-conseiller/rendezvous',
+        accessToken
+      )
+      expect(actual).toEqual([unRendezVous()])
     })
   })
 })
