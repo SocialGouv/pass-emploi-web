@@ -1,3 +1,4 @@
+import parse from 'html-react-parser'
 import React from 'react'
 
 import { LienOffre } from 'components/chat/LienOffre'
@@ -24,6 +25,27 @@ export default function DisplayMessage({
     if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
+  function detecteLien(message: string) {
+    return message.includes('http') || message.includes('https')
+  }
+
+  function formatMessageAvecLien(message: string) {
+    const messageDecoupe = message.split(' ')
+    const messageFormate: string[] = []
+
+    messageDecoupe.map((mot) => {
+      if (detecteLien(mot)) {
+        messageFormate.push(
+          `<span class='text-primary underline' title="Lien externe">${mot}</span>`
+        )
+      } else {
+        messageFormate.push(mot)
+      }
+    })
+
+    return parse(`<p>${messageFormate.join(' ')}</p>`)
+  }
+
   return (
     <li className='mb-5' ref={scrollToRef} data-testid={message.id}>
       <div
@@ -38,7 +60,12 @@ export default function DisplayMessage({
             {conseillerNomComplet}
           </p>
         )}
-        <p className='whitespace-pre-wrap'>{message.content}</p>
+        {detecteLien(message.content) ? (
+          formatMessageAvecLien(message.content)
+        ) : (
+          <p className='whitespace-pre-wrap'>{message.content}</p>
+        )}
+
         {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
           <LienOffre infoOffre={message.infoOffre} />
         )}

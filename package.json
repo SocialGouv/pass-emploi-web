@@ -25,6 +25,7 @@
     "dotenv": "16.0.1",
     "elastic-apm-node": "3.38.0",
     "firebase": "9.9.3",
+    "html-react-parser": "^3.0.4",
     "jsonwebtoken": "8.5.1",
     "luxon": "3.0.1",
     "matomo-tracker": "2.2.4",
