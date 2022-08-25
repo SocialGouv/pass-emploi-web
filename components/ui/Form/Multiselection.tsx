@@ -27,7 +27,7 @@ export default function Multiselection({
       {selection.map(({ id, value, withInfo }) => (
         <li
           key={id}
-          className='bg-blanc w-full rounded-full px-4 py-2 mb-2 last:mb-0 flex justify-between items-center'
+          className='bg-blanc w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           aria-atomic={true}
         >
           {withInfo && (
