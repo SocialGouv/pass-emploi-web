@@ -302,7 +302,9 @@ export default function Conversation({
           >
             {uploadedFileInfo && (
               <div className='flex px-2 py-1 rounded-medium bg-primary_lighten w-fit mb-4'>
-                <span className='break-all overflow-y-auto max-h-56'>{uploadedFileInfo.nom}</span>
+                <span className='break-all overflow-y-auto max-h-56'>
+                  {uploadedFileInfo.nom}
+                </span>
                 <button
                   type='button'
                   aria-label='Supprimer la pièce jointe'
