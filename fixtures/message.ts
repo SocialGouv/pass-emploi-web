@@ -27,7 +27,7 @@ export const desMessages = (): Message[] => [
   }),
   unMessage({
     id: 'message-2',
-    content: 'Message du 10/1/2022 avec un lien https://www.pass-emploi.com/',
+    content: 'Message du 10/1/2022',
     creationDate: new Date(2022, 0, 10),
     conseillerId: 'conseiller-2',
   }),
@@ -58,6 +58,12 @@ export const desMessages = (): Message[] => [
       lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
     },
   }),
+  unMessage({
+    id: 'message-lien-1',
+    content: 'Message du 16/1/2022 avec un lien https://www.pass-emploi.com/',
+    creationDate: new Date(2022, 0, 16),
+    conseillerId: 'conseiller-2',
+  }),
 ]
 
 export const desMessagesParJour = (): MessagesOfADay[] => [
@@ -76,8 +82,7 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
     messages: [
       unMessage({
         id: 'message-2',
-        content:
-          'Decrypted: Message du 10/1/2022 avec un lien https://www.pass-emploi.com/',
+        content: 'Decrypted: Message du 10/1/2022',
         creationDate: new Date(2022, 0, 10),
         conseillerId: 'conseiller-2',
       }),
@@ -111,6 +116,18 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
           titre: 'Une offre',
           lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
         },
+      }),
+    ],
+  },
+  {
+    date: new Date(2022, 0, 16),
+    messages: [
+      unMessage({
+        id: 'message-lien-1',
+        content:
+          'Decrypted: Message du 16/1/2022 avec un lien https://www.pass-emploi.com/',
+        creationDate: new Date(2022, 0, 16),
+        conseillerId: 'conseiller-2',
       }),
     ],
   },

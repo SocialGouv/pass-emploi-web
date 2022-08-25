@@ -7,7 +7,7 @@ import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { MessagesOfADay } from 'interfaces/message'
+import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -121,11 +121,17 @@ describe('<Conversation />', () => {
       ).toBeInTheDocument()
     })
 
-    const casesMessages = messagesDUnJour.messages.map((message) => [message])
-    it.each(casesMessages)(`affiche le contenu du message`, (message) => {
-      // Then
-      expect(screen.getByText(message.content)).toBeInTheDocument()
-    })
+    const casesMessages: Message[] = []
+    messagesDUnJour.messages.map((message) => casesMessages.push(message))
+
+    for (let messageN = 0; messageN < casesMessages.length - 1; messageN++) {
+      it(`affiche le contenu du message`, () => {
+        // Then
+        expect(
+          screen.getByText(casesMessages[messageN].content)
+        ).toBeInTheDocument()
+      })
+    }
 
     it.each(casesMessages)(
       `affiche le nom complet du conseiller`,
