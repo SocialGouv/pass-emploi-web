@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import IconComponent, { IconName } from '../components/ui/IconComponent'
 
@@ -19,7 +19,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesRendezvousProps extends PageProps {
-  rendezVous: RdvListItem[]
+  rendezVousPasses: RdvListItem[]
   rendezVousSemaineCourante: RdvListItem[]
   dateDebut: string
   dateFin: string
@@ -31,7 +31,7 @@ interface MesRendezvousProps extends PageProps {
 }
 
 function MesRendezvous({
-  rendezVous,
+  rendezVousPasses,
   rendezVousSemaineCourante,
   dateDebut,
   dateFin,
@@ -41,6 +41,8 @@ function MesRendezvous({
   messageEnvoiGroupeSuccess,
 }: MesRendezvousProps) {
   const [conseiller] = useConseiller()
+
+  const [rdvs, setRdvs] = useState<RdvListItem[]>([])
 
   const pageTracking = `Mes rendez-vous`
   let initialTracking = pageTracking
@@ -52,6 +54,22 @@ function MesRendezvous({
 
   useMatomo(trackingTitle)
 
+  function displayRdvsPasses() {
+    setRdvs(rendezVousPasses)
+  }
+
+  function displayRdvsSemaineCourante() {
+    setRdvs(rendezVousSemaineCourante)
+  }
+
+  function displaysRdvsSemaineFuture() {
+    setRdvs([])
+  }
+
+  useEffect(() => {
+    setRdvs(rendezVousSemaineCourante)
+  }, [rendezVousPasses, rendezVousSemaineCourante])
+
   return (
     <>
       <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-6 w-fit'>
@@ -59,28 +77,39 @@ function MesRendezvous({
       </ButtonLink>
 
       <div className='mb-12'>
-        <p className='text-base-medium'>Période du :</p>
+        <div className='flex justify-between'>
+          <p className='text-base-medium'>Période du :</p>
+          <button
+            className='text-base-bold text-primary  hover:underline'
+            onClick={displayRdvsSemaineCourante}
+          >
+            Aujourd’hui
+          </button>
+        </div>
+
         <div className='flex items-center mt-1'>
           <p className='text-m-bold text-primary mr-6'>
             {dateDebut} au {dateFin}
           </p>
           <button
-            title='Aller à la semaine précédente'
-            aria-label='Aller à la semaine précédente'
+            title='Voir les rendez-vous passés'
+            aria-label='Voir les rendez-vous passés'
+            onClick={displayRdvsPasses}
           >
             <IconComponent
               name={IconName.ChevronLeft}
-              className='w-6 h-6 fill-primary'
+              className='w-6 h-6 fill-primary hover:fill-primary_darken'
               focusable='false'
             />
           </button>
           <button
             title='Aller à la semaine suivante'
             aria-label='Aller à la semaine suivante'
+            onClick={displaysRdvsSemaineFuture}
           >
             <IconComponent
               name={IconName.ChevronRight}
-              className='w-6 h-6 fill-primary ml-8'
+              className='w-6 h-6 fill-primary ml-8 hover:fill-primary_darken'
               focusable='false'
             />
           </button>
@@ -89,7 +118,7 @@ function MesRendezvous({
 
       <TableauRdv
         idConseiller={conseiller?.id ?? ''}
-        rdvs={listeRdvAVenirItem(rendezVousSemaineCourante)}
+        rdvs={listeRdvAVenirItem(rdvs)}
       />
     </>
   )
@@ -111,27 +140,30 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const AUJOURDHUI = DateTime.now()
+  const HIER = DateTime.now().minus({ day: 1 }).toFormat('yyyy-MM-dd')
   const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 })
+  const DEBUT_RDVS_PASSES = AUJOURDHUI.startOf('month').minus({ month: 5 })
 
   const rendezVousService =
     withDependance<RendezVousService>('rendezVousService')
 
-  const rendezVous = await rendezVousService.getRendezVousConseiller(
-    user.id,
-    accessToken,
-    AUJOURDHUI.toFormat('yyyy-MM-dd'),
-    FIN_SEMAINE_COURANTE.toFormat('yyyy-MM-dd')
-  )
-  const rendezVousSemaineCourante =
-    await rendezVousService.getRendezVousConseiller(
+  const [rendezVousPasses, rendezVousSemaineCourante] = await Promise.all([
+    rendezVousService.getRendezVousConseiller(
+      user.id,
+      accessToken,
+      DEBUT_RDVS_PASSES.toFormat('yyyy-MM-dd'),
+      HIER
+    ),
+    rendezVousService.getRendezVousConseiller(
       user.id,
       accessToken,
       AUJOURDHUI.toFormat('yyyy-MM-dd'),
       FIN_SEMAINE_COURANTE.toFormat('yyyy-MM-dd')
-    )
+    ),
+  ])
 
   const props: MesRendezvousProps = {
-    rendezVous: rendezVous.map(rdvToListItem),
+    rendezVousPasses: rendezVousPasses.map(rdvToListItem),
     rendezVousSemaineCourante: rendezVousSemaineCourante.map(rdvToListItem),
     dateDebut: AUJOURDHUI.toFormat('yyyy-MM-dd'),
     dateFin: FIN_SEMAINE_COURANTE.toFormat('yyyy-MM-dd'),

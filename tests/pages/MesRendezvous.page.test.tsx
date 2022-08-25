@@ -1,12 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DateTime } from 'luxon'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import {
   desRdvListItems,
-  uneListeDeRdv,
   unRdvListItem,
   unRendezVous,
 } from 'fixtures/rendez-vous'
@@ -24,17 +22,18 @@ describe('MesRendezvous', () => {
     const AUJOURDHUI = '2022-08-24'
     const FIN_SEMAINE_COURANTE = '2022-08-30'
 
-    const rendezVous = desRdvListItems()
+    const rendezVousPasses = desRdvListItems()
     const rendezVousSemaineCourante = [
-      unRdvListItem({ date: '2022-08-24T10:00:00.000Z' }),
-      unRdvListItem({ date: '2022-08-26T10:00:00.000Z' }),
-      unRdvListItem({ date: '2022-08-30T10:00:00.000Z' }),
+      unRdvListItem({ id: '1', date: '2022-08-24T10:00:00.000Z' }),
+      unRdvListItem({ id: '2', date: '2022-08-26T10:00:00.000Z' }),
+      unRdvListItem({ id: '3', date: '2022-08-30T10:00:00.000Z' }),
     ]
+
     describe('contenu', () => {
       beforeEach(() => {
         renderWithContexts(
           <MesRendezvous
-            rendezVous={rendezVous}
+            rendezVousPasses={rendezVousPasses}
             rendezVousSemaineCourante={rendezVousSemaineCourante}
             pageTitle=''
             dateDebut={AUJOURDHUI}
@@ -53,21 +52,21 @@ describe('MesRendezvous', () => {
       })
 
       it('a deux boutons', () => {
-        const semaineFuture = screen.getByRole('button', {
+        const semaineFutures = screen.getByRole('button', {
           name: 'Aller à la semaine suivante',
         })
 
-        const semainePassee = screen.getByRole('button', {
-          name: 'Aller à la semaine précédente',
+        const semainePassees = screen.getByRole('button', {
+          name: 'Voir les rendez-vous passés',
         })
 
-        expect(semaineFuture).toBeInTheDocument()
-        expect(semainePassee).toBeInTheDocument()
+        expect(semaineFutures).toBeInTheDocument()
+        expect(semainePassees).toBeInTheDocument()
       })
 
-      it('affiche les anciens rdvs quand on clique sur le bouton rendez-vous passés', async () => {
-        const oldRdvsButton = screen.getByRole('tab', {
-          name: 'Rendez-vous passés',
+      it('affiche les anciens rdvs quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
+        const oldRdvsButton = screen.getByRole('button', {
+          name: 'Voir les rendez-vous passés',
         })
 
         await userEvent.click(oldRdvsButton)
@@ -77,16 +76,31 @@ describe('MesRendezvous', () => {
         const rows = screen.getAllByRole('row')
 
         expect(table).toBeInTheDocument()
-        expect(rows.length - 1).toBe(rendezVous.length)
+        expect(rows.length - 1).toBe(rendezVousPasses.length)
       })
 
       it('affiche la semaine courante par défaut', () => {
         const table = screen.getByRole('table')
 
-        const rows = screen.getAllByRole('row')
+        const rowsWithoutTableHeader = screen.getAllByRole('row').length - 1
         expect(table).toBeInTheDocument()
-        expect(screen.getByText('aujourd’hui')).toBeInTheDocument()
-        expect(rows.length - 1).toBe(rendezVousSemaineCourante.length * 2)
+        expect(screen.getByText('Aujourd’hui')).toBeInTheDocument()
+        expect(rowsWithoutTableHeader).toBe(9)
+      })
+
+      it('au clic affiche la semaine courante', async () => {
+        const buttonRdvsSemaineCourante = screen.getByRole('button', {
+          name: 'Aujourd’hui',
+        })
+
+        await userEvent.click(buttonRdvsSemaineCourante)
+
+        const table = screen.getByRole('table')
+
+        const rowsWithoutTableHeader = screen.getAllByRole('row').length - 1
+
+        expect(table).toBeInTheDocument()
+        expect(rowsWithoutTableHeader).toBe(9)
       })
     })
   })
@@ -134,7 +148,16 @@ describe('MesRendezvous', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            rendezVous: [
+            dateDebut: '2022-08-26',
+            dateFin: '2022-09-01',
+            rendezVousPasses: [
+              expect.objectContaining({
+                beneficiaires: 'kenji Jirac',
+                idCreateur: '1',
+                type: 'Autre',
+              }),
+            ],
+            rendezVousSemaineCourante: [
               expect.objectContaining({
                 beneficiaires: 'kenji Jirac',
                 idCreateur: '1',
