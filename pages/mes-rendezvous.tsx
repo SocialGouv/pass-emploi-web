@@ -73,6 +73,7 @@ function MesRendezvous({
     setRdvs(rdvsPasses.map(rdvToListItem))
     setDebutPeriode(DEBUT_RDVS_PASSES.toFormat('dd/MM/yyyy'))
     setFinPeriode(FIN_RDVS_PASSES.toFormat('dd/MM/yyyy'))
+    setTrackingTitle(`${trackingTitle} passés`)
   }
 
   function allerRdvsSemaineCourante() {
@@ -100,6 +101,7 @@ function MesRendezvous({
     setRdvs(rdvsFuturs.map(rdvToListItem))
     setDebutPeriode(DEBUT_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
     setFinPeriode(FIN_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
+    setTrackingTitle(`${trackingTitle} futurs`)
   }
 
   useEffect(() => {
