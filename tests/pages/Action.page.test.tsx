@@ -5,8 +5,6 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import renderWithContexts from 'tests/renderWithContexts'
-
 import { unCommentaire, uneAction } from 'fixtures/action'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
@@ -15,6 +13,7 @@ import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
 import { ActionsService } from 'services/actions.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -24,7 +23,7 @@ jest.mock('utils/injectionDependances/withDependance')
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client-side', () => {
     const action = uneAction()
-    const commentaires = [unCommentaire()]
+    const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
     const jeune: BaseJeune = {
       id: 'jeune-1',
       prenom: 'Nadia',
