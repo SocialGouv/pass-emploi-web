@@ -73,10 +73,10 @@ describe('MesRendezvous', () => {
 
         const table = screen.getByRole('table')
 
-        const rows = screen.getAllByRole('row')
+        const rowsWithoutHeader = screen.getAllByRole('row').length - 1
 
         expect(table).toBeInTheDocument()
-        expect(rows.length - 1).toBe(rendezVousPasses.length)
+        expect(rowsWithoutHeader).toBe(6)
       })
 
       it('affiche la semaine courante par défaut', () => {
@@ -108,7 +108,9 @@ describe('MesRendezvous', () => {
   describe('server side', () => {
     beforeEach(() => {
       const rendezVousService = mockedRendezVousService({
-        getRendezVousConseiller: jest.fn(async () => [unRendezVous()]),
+        getRendezVousConseillerServerSide: jest.fn(async () => [
+          unRendezVous(),
+        ]),
       })
       ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
     })

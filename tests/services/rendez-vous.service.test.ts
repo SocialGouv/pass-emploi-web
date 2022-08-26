@@ -158,7 +158,7 @@ describe('RendezVousApiService', () => {
       const dateFin = '2022-08-29'
 
       // When
-      const actual = await rendezVousService.getRendezVousConseiller(
+      const actual = await rendezVousService.getRendezVousConseillerServerSide(
         'id-conseiller',
         accessToken,
         dateDebut,

@@ -12,9 +12,15 @@ import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { ApiError } from 'utils/httpClient'
 
 export interface RendezVousService {
-  getRendezVousConseiller(
+  getRendezVousConseillerServerSide(
     idConseiller: string,
     accessToken: string,
+    dateDebut: string,
+    dateFin: string
+  ): Promise<Rdv[]>
+
+  getRendezVousConseillerClientSide(
+    idConseiller: string,
     dateDebut?: string,
     dateFin?: string
   ): Promise<Rdv[]>
@@ -38,7 +44,7 @@ export interface RendezVousService {
 export class RendezVousApiService implements RendezVousService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getRendezVousConseiller(
+  async getRendezVousConseillerServerSide(
     idConseiller: string,
     accessToken: string,
     dateDebut: string,
@@ -49,6 +55,20 @@ export class RendezVousApiService implements RendezVousService {
       accessToken
     )
     return rdvs.map(jsonToRdv)
+  }
+
+  async getRendezVousConseillerClientSide(
+    idConseiller: string,
+    dateDebut: string,
+    dateFin: string
+  ): Promise<Rdv[]> {
+    const session = await getSession()
+    return this.getRendezVousConseillerServerSide(
+      idConseiller,
+      session!.accessToken,
+      dateDebut,
+      dateFin
+    )
   }
 
   async getRendezVousJeune(
