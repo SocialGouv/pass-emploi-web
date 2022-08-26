@@ -151,7 +151,7 @@ describe('<Conversation />', () => {
     )
   })
 
-  it(`affiche un lien externe dans le message s’il en a un`, () => {
+  it(`affiche au survol la présence d'un lien externe dans le message s’il en a un`, () => {
     // Then
     expect(screen.getByText(/https/)).toHaveAttribute('title', 'Lien externe')
   })

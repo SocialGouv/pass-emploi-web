@@ -33,10 +33,10 @@ export default function DisplayMessage({
     const messageDecoupe = message.split(' ')
     const messageFormate: string[] = []
 
-    messageDecoupe.map((mot) => {
+    messageDecoupe.forEach((mot) => {
       if (detecteLien(mot)) {
         messageFormate.push(
-          `<span class='text-primary-lighten hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>`
+          `<span class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>`
         )
       } else {
         messageFormate.push(mot)
