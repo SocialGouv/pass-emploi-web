@@ -70,6 +70,7 @@ export function mockedRendezVousService(
 ): RendezVousService {
   const defaults: RendezVousService = {
     getRendezVousConseillerServerSide: jest.fn(),
+    getRendezVousConseillerClientSide: jest.fn(),
     getRendezVousJeune: jest.fn(),
     getDetailsRendezVous: jest.fn(),
     getTypesRendezVous: jest.fn(),

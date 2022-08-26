@@ -20,7 +20,7 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesRendezvousProps extends PageProps {
-  rendezVousSemaineCourante: RdvListItem[]
+  rendezVous: RdvListItem[]
   dateDebut: string
   dateFin: string
   creationSuccess?: boolean
@@ -31,7 +31,7 @@ interface MesRendezvousProps extends PageProps {
 }
 
 function MesRendezvous({
-  rendezVousSemaineCourante,
+  rendezVous,
   dateDebut,
   dateFin,
   creationSuccess,
@@ -79,7 +79,7 @@ function MesRendezvous({
     const AUJOURDHUI = DateTime.now()
     const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 })
 
-    setRdvs(rendezVousSemaineCourante)
+    setRdvs(rendezVous)
     setDebutPeriode(AUJOURDHUI.toFormat('dd/MM/yyyy'))
     setFinPeriode(FIN_SEMAINE_COURANTE.toFormat('dd/MM/yyyy'))
   }
@@ -103,8 +103,8 @@ function MesRendezvous({
   }
 
   useEffect(() => {
-    setRdvs(rendezVousSemaineCourante)
-  }, [rendezVousSemaineCourante])
+    setRdvs(rendezVous)
+  }, [rendezVous])
 
   return (
     <>
@@ -190,7 +190,7 @@ export const getServerSideProps: GetServerSideProps<
     )
 
   const props: MesRendezvousProps = {
-    rendezVousSemaineCourante: rendezVousSemaineCourante.map(rdvToListItem),
+    rendezVous: rendezVousSemaineCourante.map(rdvToListItem),
     dateDebut: AUJOURDHUI.toFormat('dd/MM/yyyy'),
     dateFin: FIN_SEMAINE_COURANTE.toFormat('dd/MM/yyyy'),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
