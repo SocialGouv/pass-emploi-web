@@ -1,11 +1,16 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
+import {
+  desRdvListItems,
+  unRdvListItem,
+  unRendezVous,
+} from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
+import { RendezVousService } from 'services/rendez-vous.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -15,15 +20,23 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('MesRendezvous', () => {
   describe('client side', () => {
-    const rendezVousPasses = desRdvListItems()
-    const rendezVousFuturs = desRdvListItems()
+    const AUJOURDHUI = '2022-08-24'
+    const FIN_SEMAINE_COURANTE = '2022-08-30'
+
+    const rendezVousSemaineCourante = [
+      unRdvListItem({ id: '1', date: '2022-08-24T10:00:00.000Z' }),
+      unRdvListItem({ id: '2', date: '2022-08-26T10:00:00.000Z' }),
+      unRdvListItem({ id: '3', date: '2022-08-30T10:00:00.000Z' }),
+    ]
+
     describe('contenu', () => {
       beforeEach(() => {
         renderWithContexts(
           <MesRendezvous
-            rendezVousFuturs={rendezVousFuturs}
-            rendezVousPasses={rendezVousPasses}
+            rendezVous={rendezVousSemaineCourante}
             pageTitle=''
+            dateDebut={AUJOURDHUI}
+            dateFin={FIN_SEMAINE_COURANTE}
           />
         )
       })
@@ -38,31 +51,128 @@ describe('MesRendezvous', () => {
       })
 
       it('a deux boutons', () => {
-        const rdvsButton = screen.getByRole('tab', {
-          name: 'Prochains rendez-vous',
+        const semaineFutures = screen.getByRole('button', {
+          name: 'Aller à la semaine suivante',
         })
 
-        const oldRdvsButton = screen.getByRole('tab', {
-          name: 'Rendez-vous passés',
+        const semainePassees = screen.getByRole('button', {
+          name: 'Voir les rendez-vous passés',
         })
 
-        expect(rdvsButton).toBeInTheDocument()
-        expect(oldRdvsButton).toBeInTheDocument()
+        expect(semaineFutures).toBeInTheDocument()
+        expect(semainePassees).toBeInTheDocument()
       })
 
-      it('affiche les anciens rdvs quand on clique sur le bouton rendez-vous passés', async () => {
-        const oldRdvsButton = screen.getByRole('tab', {
-          name: 'Rendez-vous passés',
+      it('affiche la semaine courante par défaut', () => {
+        const table = screen.getByRole('table')
+
+        const rowsWithoutTableHeader = screen.getAllByRole('row').length - 1
+        expect(table).toBeInTheDocument()
+        expect(screen.getByText('Aujourd’hui')).toBeInTheDocument()
+        expect(rowsWithoutTableHeader).toBe(9)
+      })
+
+      it('au clic affiche la semaine courante', async () => {
+        const buttonRdvsSemaineCourante = screen.getByRole('button', {
+          name: 'Aujourd’hui',
         })
 
-        await userEvent.click(oldRdvsButton)
+        await userEvent.click(buttonRdvsSemaineCourante)
 
         const table = screen.getByRole('table')
 
-        const rows = screen.getAllByRole('row')
+        const rowsWithoutTableHeader = screen.getAllByRole('row').length - 1
 
         expect(table).toBeInTheDocument()
-        expect(rows.length - 1).toBe(rendezVousPasses.length)
+        expect(rowsWithoutTableHeader).toBe(9)
+      })
+    })
+
+    describe('rendez-vous passés', () => {
+      let rendezVousService: RendezVousService
+      beforeEach(() => {
+        rendezVousService = mockedRendezVousService({
+          getRendezVousConseillerClientSide: jest.fn(async () => [
+            unRendezVous(),
+          ]),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
+      })
+
+      it('affiche les anciens rdvs quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
+        // Given
+        const rendezVousPasses = desRdvListItems()
+
+        renderWithContexts(
+          <MesRendezvous
+            rendezVous={rendezVousPasses}
+            pageTitle=''
+            dateDebut={'2022-03-01'}
+            dateFin={'2022-08-25'}
+          />,
+          { customDependances: { rendezVousService } }
+        )
+
+        const oldRdvsButton = screen.getByRole('button', {
+          name: 'Voir les rendez-vous passés',
+        })
+        const table = screen.getByRole('table')
+        const rowsWithoutHeader = screen.getAllByRole('row').length - 1
+
+        // When
+        await userEvent.click(oldRdvsButton)
+
+        // Then
+        expect(
+          rendezVousService.getRendezVousConseillerClientSide
+        ).toHaveBeenCalledWith('1', '2022-03-01', '2022-08-25')
+        expect(table).toBeInTheDocument()
+        expect(rowsWithoutHeader).toBe(6)
+      })
+    })
+
+    describe('rendez-vous futurs', () => {
+      let rendezVousService: RendezVousService
+      beforeEach(() => {
+        rendezVousService = mockedRendezVousService({
+          getRendezVousConseillerClientSide: jest.fn(async () => [
+            unRendezVous({ id: '1', date: '2022-09-14T10:00:00.000Z' }),
+          ]),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
+      })
+
+      it('affiche les rdvs de la semaine suivante quand on clique sur le bouton pour aller à la semaine suivante', async () => {
+        // Given
+        const rendezVousFuturs = [
+          unRdvListItem({ id: '1', date: '2022-09-14T10:00:00.000Z' }),
+        ]
+
+        renderWithContexts(
+          <MesRendezvous
+            rendezVous={rendezVousFuturs}
+            pageTitle=''
+            dateDebut={'2022-09-02'}
+            dateFin={'2022-09-08'}
+          />,
+          { customDependances: { rendezVousService } }
+        )
+
+        const rdvsFutursButton = screen.getByRole('button', {
+          name: 'Aller à la semaine suivante',
+        })
+        const table = screen.getByRole('table')
+        const rowsWithoutHeader = screen.getAllByRole('row').length - 1
+
+        // When
+        await userEvent.click(rdvsFutursButton)
+
+        // Then
+        expect(
+          rendezVousService.getRendezVousConseillerClientSide
+        ).toHaveBeenCalledWith('1', '2022-09-02', '2022-09-08')
+        expect(table).toBeInTheDocument()
+        expect(rowsWithoutHeader).toBe(3)
       })
     })
   })
@@ -70,25 +180,9 @@ describe('MesRendezvous', () => {
   describe('server side', () => {
     beforeEach(() => {
       const rendezVousService = mockedRendezVousService({
-        getRendezVousConseiller: jest.fn(async () => ({
-          futurs: [unRendezVous()],
-          passes: [
-            unRendezVous({
-              jeunes: [
-                {
-                  id: '1',
-                  prenom: 'kenji',
-                  nom: 'Jirac',
-                },
-                {
-                  id: '2',
-                  prenom: 'Nadia',
-                  nom: 'Sanfamiy',
-                },
-              ],
-            }),
-          ],
-        })),
+        getRendezVousConseillerServerSide: jest.fn(async () => [
+          unRendezVous(),
+        ]),
       })
       ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
     })
@@ -128,16 +222,13 @@ describe('MesRendezvous', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            rendezVousFuturs: [
+            dateDebut: '26/08/2022',
+            dateFin: '01/09/2022',
+            rendezVous: [
               expect.objectContaining({
                 beneficiaires: 'kenji Jirac',
                 idCreateur: '1',
                 type: 'Autre',
-              }),
-            ],
-            rendezVousPasses: [
-              expect.objectContaining({
-                beneficiaires: 'Bénéficiaires multiples',
               }),
             ],
             pageTitle: 'Tableau de bord - Mes rendez-vous',

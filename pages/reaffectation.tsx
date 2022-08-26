@@ -383,13 +383,13 @@ function Reaffectation(_: ReaffectationProps) {
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-base-regular text-content_color'
+                  className='pb-2 pl-4 pr-4 text-base-regular text-left text-content_color'
                 >
                   Nom et prénom
                 </th>
                 <th
                   scope='col'
-                  className='pb-2 pl-4 pr-4 text-base-regular text-content_color'
+                  className='pb-2 pl-4 pr-4 text-base-regular text-left text-content_color'
                 >
                   Conseiller précédent
                 </th>

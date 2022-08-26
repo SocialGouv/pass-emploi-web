@@ -115,6 +115,19 @@ export function desRdvListItems(): RdvListItem[] {
   ]
 }
 
+export function unRdvListItem(overrides: Partial<RdvListItem>): RdvListItem {
+  const defaults: RdvListItem = {
+    id: '1',
+    beneficiaires: 'Kenji Jirac',
+    type: 'Autre',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    idCreateur: '1',
+  }
+  return { ...defaults, ...overrides }
+}
+
 export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
   const defaults: RdvJson = {
     id: '1',
