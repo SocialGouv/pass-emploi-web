@@ -99,7 +99,7 @@ describe('MesRendezvous', () => {
         ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
       })
 
-      it('affiche les anciens rdvs quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
+      it('affiche le début du mois courant quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
         const date = DateTime.fromFormat('2022-08-25', 'yyyy-MM-dd', {
           locale: 'fr-FR',
         })
@@ -111,7 +111,7 @@ describe('MesRendezvous', () => {
           <MesRendezvous
             rendezVous={rendezVousPasses}
             pageTitle=''
-            dateDebut={'2022-03-01'}
+            dateDebut={'2022-08-01'}
             dateFin={'2022-08-24'}
           />,
           { customDependances: { rendezVousService } }
@@ -129,7 +129,7 @@ describe('MesRendezvous', () => {
         // Then
         expect(
           rendezVousService.getRendezVousConseillerClientSide
-        ).toHaveBeenCalledWith('1', '2022-03-01', '2022-08-24')
+        ).toHaveBeenCalledWith('1', '2022-08-01', '2022-08-24')
         expect(table).toBeInTheDocument()
         expect(rowsWithoutHeader).toBe(6)
       })

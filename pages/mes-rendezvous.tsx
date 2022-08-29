@@ -3,10 +3,10 @@ import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import React, { useEffect, useState } from 'react'
 
-import IconComponent, { IconName } from '../components/ui/IconComponent'
-
 import TableauRdv from 'components/rdv/TableauRdv'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -59,9 +59,28 @@ function MesRendezvous({
   useMatomo(trackingTitle)
 
   async function allerRdvsPasses() {
-    const AUJOURDHUI = DateTime.now()
-    const DEBUT_RDVS_PASSES = AUJOURDHUI.startOf('month').minus({ month: 5 })
-    const FIN_RDVS_PASSES = DateTime.now().minus({ day: 1 })
+    let DEBUT_RDVS_PASSES
+    let FIN_RDVS_PASSES = DateTime.now().minus({ day: 1 })
+    //TODO: renommage et extraire en variables?
+
+    // de mois en mois
+    if (FIN_RDVS_PASSES.toFormat('dd') === '01') {
+      DEBUT_RDVS_PASSES = FIN_RDVS_PASSES.minus({ month: 1 })
+      FIN_RDVS_PASSES = DEBUT_RDVS_PASSES.endOf('month')
+    } else if (
+      DateTime.fromFormat(debutPeriode, 'dd/MM/yyyy').toFormat('dd') === '01'
+    ) {
+      // de mois en mois depuis un mois n-1 (pas fin semaine courante)
+      DEBUT_RDVS_PASSES = DateTime.fromFormat(debutPeriode, 'dd/MM/yyyy').minus(
+        {
+          month: 1,
+        }
+      )
+      FIN_RDVS_PASSES = DEBUT_RDVS_PASSES.endOf('month')
+    } else {
+      // affiche le début du mois à partir d'aujourd'hui
+      DEBUT_RDVS_PASSES = FIN_RDVS_PASSES.startOf('month')
+    }
 
     const rdvsPasses =
       await rendezVousService.getRendezVousConseillerClientSide(
@@ -86,10 +105,17 @@ function MesRendezvous({
   }
 
   async function allerRdvsSemaineFuture() {
+    let DEBUT_RDVS_FUTURS
+    let FIN_RDVS_FUTURS
     const FORMAT_DATE_DEBUT = DateTime.fromFormat(finPeriode, 'dd/MM/yyyy')
 
-    const DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
-    const FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.plus({ day: 6 })
+    if (DateTime.fromFormat(finPeriode, 'dd/MM/yyyy') >= DateTime.now()) {
+      DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
+      FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.plus({ day: 6 })
+    } else {
+      DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
+      FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.endOf('month')
+    }
 
     const rdvsFuturs =
       await rendezVousService.getRendezVousConseillerClientSide(
@@ -97,7 +123,6 @@ function MesRendezvous({
         DEBUT_RDVS_FUTURS.toFormat('yyyy-MM-dd'),
         FIN_RDVS_FUTURS.toFormat('yyyy-MM-dd')
       )
-
     setRdvs(rdvsFuturs.map(rdvToListItem))
     setDebutPeriode(DEBUT_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
     setFinPeriode(FIN_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
@@ -116,18 +141,18 @@ function MesRendezvous({
 
       <div className='mb-12'>
         <div className='flex justify-between'>
-          <p className='text-base-medium'>Période du :</p>
-          <button
-            className='text-base-bold text-primary  hover:underline'
+          <p className='text-base-medium'>Période :</p>
+          <Button
+            className={ButtonStyle.SECONDARY}
             onClick={allerRdvsSemaineCourante}
           >
             Semaine courante
-          </button>
+          </Button>
         </div>
 
         <div className='flex items-center mt-1'>
           <p className='text-m-bold text-primary mr-6'>
-            {debutPeriode} au {finPeriode}
+            du {debutPeriode} au {finPeriode}
           </p>
           <button
             title='Voir les rendez-vous passés'
