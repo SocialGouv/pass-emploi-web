@@ -59,7 +59,9 @@ export default function TableauRdv({
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
               <HeaderColumnCell>Horaires</HeaderColumnCell>
-              {withNameJeune && <HeaderColumnCell>Prénom Nom</HeaderColumnCell>}
+              {withNameJeune && (
+                <HeaderColumnCell>Bénéficiaire</HeaderColumnCell>
+              )}
               <HeaderColumnCell>Type</HeaderColumnCell>
               <HeaderColumnCell>Modalité</HeaderColumnCell>
               <HeaderColumnCell>Créé par vous</HeaderColumnCell>

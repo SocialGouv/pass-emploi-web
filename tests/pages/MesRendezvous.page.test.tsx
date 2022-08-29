@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -68,13 +69,12 @@ describe('MesRendezvous', () => {
 
         const rowsWithoutTableHeader = screen.getAllByRole('row').length - 1
         expect(table).toBeInTheDocument()
-        expect(screen.getByText('Aujourd’hui')).toBeInTheDocument()
         expect(rowsWithoutTableHeader).toBe(9)
       })
 
       it('au clic affiche la semaine courante', async () => {
         const buttonRdvsSemaineCourante = screen.getByRole('button', {
-          name: 'Aujourd’hui',
+          name: 'Semaine courante',
         })
 
         await userEvent.click(buttonRdvsSemaineCourante)
@@ -100,6 +100,10 @@ describe('MesRendezvous', () => {
       })
 
       it('affiche les anciens rdvs quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
+        const date = DateTime.fromFormat('2022-08-25', 'yyyy-MM-dd', {
+          locale: 'fr-FR',
+        })
+        jest.spyOn(DateTime, 'now').mockReturnValue(date)
         // Given
         const rendezVousPasses = desRdvListItems()
 
@@ -108,7 +112,7 @@ describe('MesRendezvous', () => {
             rendezVous={rendezVousPasses}
             pageTitle=''
             dateDebut={'2022-03-01'}
-            dateFin={'2022-08-25'}
+            dateFin={'2022-08-24'}
           />,
           { customDependances: { rendezVousService } }
         )
@@ -125,7 +129,7 @@ describe('MesRendezvous', () => {
         // Then
         expect(
           rendezVousService.getRendezVousConseillerClientSide
-        ).toHaveBeenCalledWith('1', '2022-03-01', '2022-08-25')
+        ).toHaveBeenCalledWith('1', '2022-03-01', '2022-08-24')
         expect(table).toBeInTheDocument()
         expect(rowsWithoutHeader).toBe(6)
       })
@@ -144,6 +148,10 @@ describe('MesRendezvous', () => {
 
       it('affiche les rdvs de la semaine suivante quand on clique sur le bouton pour aller à la semaine suivante', async () => {
         // Given
+        const date = DateTime.fromFormat('2022-09-01', 'yyyy-MM-dd', {
+          locale: 'fr-FR',
+        })
+        jest.spyOn(DateTime, 'fromFormat').mockReturnValue(date)
         const rendezVousFuturs = [
           unRdvListItem({ id: '1', date: '2022-09-14T10:00:00.000Z' }),
         ]
@@ -209,6 +217,10 @@ describe('MesRendezvous', () => {
     describe('quand le conseiller est connecté', () => {
       it('récupère les rendez-vous du conseiller', async () => {
         // Given
+        const date = DateTime.fromFormat('2022-08-26', 'yyyy-MM-dd', {
+          locale: 'fr-FR',
+        })
+        jest.spyOn(DateTime, 'now').mockReturnValue(date)
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: { user: { structure: 'MILO' } },
