@@ -86,9 +86,9 @@ function MesRendezvous({
   }
 
   async function allerRdvsSemaineFuture() {
-    const AUJOURDHUI = DateTime.now()
+    const FORMAT_DATE_DEBUT = DateTime.fromFormat(finPeriode, 'dd/MM/yyyy')
 
-    const DEBUT_RDVS_FUTURS = AUJOURDHUI.plus({ day: 7 })
+    const DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
     const FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.plus({ day: 6 })
 
     const rdvsFuturs =
@@ -121,7 +121,7 @@ function MesRendezvous({
             className='text-base-bold text-primary  hover:underline'
             onClick={allerRdvsSemaineCourante}
           >
-            Aujourd’hui
+            Semaine courante
           </button>
         </div>
 
