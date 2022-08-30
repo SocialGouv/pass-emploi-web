@@ -1,4 +1,4 @@
-import parse from 'html-react-parser'
+import parse, { domToReact } from 'html-react-parser'
 import React from 'react'
 
 import { LienOffre } from 'components/chat/LienOffre'
@@ -25,6 +25,10 @@ export default function DisplayMessage({
     if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
+  function onRedirection() {
+    confirm('Vous allez quitter l’espace conseiller')
+  }
+
   function detecteLien(message: string) {
     return message.includes('http') || message.includes('https')
   }
@@ -36,15 +40,35 @@ export default function DisplayMessage({
     messageDecoupe.forEach((mot) => {
       if (detecteLien(mot)) {
         messageFormate.push(
-          `<span class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>`
+          `<button id="replace">
+             <span class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>
+          </button>`
         )
       } else {
         messageFormate.push(mot)
       }
     })
 
-    return parse(`<p>${messageFormate.join(' ')}</p>`)
+    const options = {
+      replace: ({ attribs, children }) => {
+        if (!attribs) {
+          return
+        }
+
+        if (attribs.id === 'replace') {
+          return (
+            <button onClick={onRedirection}>
+              {domToReact(children, options)}
+            </button>
+          )
+        }
+      },
+    }
+
+    return parse(`<p>${messageFormate.join(' ')}</p>`, options)
   }
+
+  // TODO : Cous allez quitter l'espace conseiller. Annuler / Continuer
 
   return (
     <li className='mb-5' ref={scrollToRef} data-testid={message.id}>
