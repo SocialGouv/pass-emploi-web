@@ -25,8 +25,9 @@ export default function DisplayMessage({
     if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
-  function onRedirection() {
+  function onRedirection(lien: string) {
     confirm('Vous allez quitter l’espace conseiller')
+    window.open(lien, '_blank', 'noopener, noreferrer')
   }
 
   function detecteLien(message: string) {
@@ -50,14 +51,15 @@ export default function DisplayMessage({
     })
 
     const options = {
-      replace: ({ attribs, children }) => {
+      replace: ({ attribs, children }: any) => {
         if (!attribs) {
           return
         }
 
         if (attribs.id === 'replace') {
+          const lien = children[1] ? children[1].children[0].data : ''
           return (
-            <button onClick={onRedirection}>
+            <button onClick={() => onRedirection(lien)}>
               {domToReact(children, options)}
             </button>
           )
@@ -67,8 +69,6 @@ export default function DisplayMessage({
 
     return parse(`<p>${messageFormate.join(' ')}</p>`, options)
   }
-
-  // TODO : Cous allez quitter l'espace conseiller. Annuler / Continuer
 
   return (
     <li className='mb-5' ref={scrollToRef} data-testid={message.id}>
