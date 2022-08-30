@@ -59,28 +59,11 @@ function MesRendezvous({
   useMatomo(trackingTitle)
 
   async function allerRdvsPasses() {
-    let DEBUT_RDVS_PASSES
-    let FIN_RDVS_PASSES = DateTime.now().minus({ day: 1 })
-    //TODO: renommage et extraire en variables?
-
-    // de mois en mois
-    if (FIN_RDVS_PASSES.toFormat('dd') === '01') {
-      DEBUT_RDVS_PASSES = FIN_RDVS_PASSES.minus({ month: 1 })
-      FIN_RDVS_PASSES = DEBUT_RDVS_PASSES.endOf('month')
-    } else if (
-      DateTime.fromFormat(debutPeriode, 'dd/MM/yyyy').toFormat('dd') === '01'
-    ) {
-      // de mois en mois depuis un mois n-1 (pas fin semaine courante)
-      DEBUT_RDVS_PASSES = DateTime.fromFormat(debutPeriode, 'dd/MM/yyyy').minus(
-        {
-          month: 1,
-        }
-      )
-      FIN_RDVS_PASSES = DEBUT_RDVS_PASSES.endOf('month')
-    } else {
-      // affiche le début du mois à partir d'aujourd'hui
-      DEBUT_RDVS_PASSES = FIN_RDVS_PASSES.startOf('month')
-    }
+    const FIN_RDVS_PASSES = DateTime.fromFormat(
+      debutPeriode,
+      'dd/MM/yyyy'
+    ).minus({ day: 1 })
+    const DEBUT_RDVS_PASSES = FIN_RDVS_PASSES.minus({ day: 6 })
 
     const rdvsPasses =
       await rendezVousService.getRendezVousConseillerClientSide(
@@ -105,17 +88,9 @@ function MesRendezvous({
   }
 
   async function allerRdvsSemaineFuture() {
-    let DEBUT_RDVS_FUTURS
-    let FIN_RDVS_FUTURS
     const FORMAT_DATE_DEBUT = DateTime.fromFormat(finPeriode, 'dd/MM/yyyy')
-
-    if (DateTime.fromFormat(finPeriode, 'dd/MM/yyyy') >= DateTime.now()) {
-      DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
-      FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.plus({ day: 6 })
-    } else {
-      DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
-      FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.endOf('month')
-    }
+    const DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
+    const FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.plus({ day: 6 })
 
     const rdvsFuturs =
       await rendezVousService.getRendezVousConseillerClientSide(
@@ -140,13 +115,14 @@ function MesRendezvous({
       </ButtonLink>
 
       <div className='mb-12'>
-        <div className='flex justify-between'>
+        <div className='flex justify-between items-center'>
           <p className='text-base-medium'>Période :</p>
           <Button
-            className={ButtonStyle.SECONDARY}
+            type='button'
+            style={ButtonStyle.SECONDARY}
             onClick={allerRdvsSemaineCourante}
           >
-            Semaine courante
+            Semaine en cours
           </Button>
         </div>
 
@@ -155,8 +131,8 @@ function MesRendezvous({
             du {debutPeriode} au {finPeriode}
           </p>
           <button
-            title='Voir les rendez-vous passés'
-            aria-label='Voir les rendez-vous passés'
+            title='Aller à la semaine précédente'
+            aria-label='Aller à la semaine précédente'
             onClick={allerRdvsPasses}
           >
             <IconComponent
