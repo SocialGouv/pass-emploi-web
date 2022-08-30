@@ -48,7 +48,7 @@ export default function TableauRdv({
     <>
       {rdvs.length === 0 && (
         <p className='text-base-regular mb-2'>
-          Vous n’avez pas de rendez-vous pour le moment
+          Il n’y a pas de rendez-vous sur cette période
         </p>
       )}
       {rdvs.length > 0 && (
