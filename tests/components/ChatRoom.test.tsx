@@ -166,4 +166,19 @@ describe('<ChatRoom />', () => {
       ).toBeInTheDocument()
     })
   })
+
+  describe('quand on est sur un écran à partir de 600 px', () => {
+    xit('affiche une barre de recherches pour filtrer les conversations avec les bénéficiaires', () => {
+      // Given & When
+      renderWithContexts(<ChatRoom jeunesChats={[]} />, {
+        customDependances: { jeunesService, messagesService },
+      })
+
+      window = Object.assign(window, { innerWidth: 600 })
+
+      // Then
+      expect(screen.getByTestId('form-chat')).toBeInTheDocument()
+      // expect(screen.getByText(/Rechercher un bénéficiaire/)).toBeInTheDocument()
+    })
+  })
 })

@@ -5,9 +5,13 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface RechercheJeuneProps {
   onSearchFilterBy: (query: string) => void
+  hideOnLargeScreen?: boolean
 }
 
-export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
+export const RechercheJeune = ({
+  onSearchFilterBy,
+  hideOnLargeScreen,
+}: RechercheJeuneProps) => {
   const [query, setQuery] = useState<string>('')
 
   const onReset = () => {
@@ -21,7 +25,13 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
   }
 
   return (
-    <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
+    <form
+      role='search'
+      onSubmit={onSubmit}
+      className={`grow max-w-[75%] ${
+        hideOnLargeScreen ? 'layout_s:hidden' : ''
+      }`}
+    >
       <label
         htmlFor='rechercher-jeunes'
         className='text-base-medium text-content_color'

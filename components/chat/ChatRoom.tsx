@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import { RechercheJeune } from '../jeune/RechercheJeune'
+
 import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
@@ -30,6 +32,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
   const [showMenu, setShowMenu] = useState<boolean>(false)
+
   const closeMenuRef = useRef<HTMLButtonElement>(null)
 
   function fermerMenu(): void {
@@ -73,6 +76,10 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       closeMenuRef.current!.focus()
     }
   }, [showMenu])
+
+  function filtreConversationParRecherche() {
+    return console.log('lala')
+  }
 
   return (
     <>
