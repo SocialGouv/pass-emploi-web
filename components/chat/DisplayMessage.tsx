@@ -26,9 +26,9 @@ export default function DisplayMessage({
   }
 
   function confirmationRedirectionLienExterne(lien: string) {
-    confirm('Vous allez quitter l’espace conseiller')
-
-    window.open(lien, '_blank', 'noopener, noreferrer')
+    if (window.confirm('Vous allez quitter l’espace conseiller')) {
+      window.open(lien, '_blank', 'noopener, noreferrer')
+    }
   }
 
   function detecteLien(message: string) {
