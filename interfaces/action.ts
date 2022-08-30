@@ -8,6 +8,12 @@ export interface Action {
   creatorType: string
   status: StatutAction
   dateEcheance: string
+  qualification?: QualificationAction
+}
+
+export interface QualificationAction {
+  libelle: string
+  isSituationNonProfessionnelle: boolean
 }
 
 export interface MetadonneesActions {

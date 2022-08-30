@@ -1,6 +1,12 @@
-import { Action, CreateurCommentaire, StatutAction } from '../action'
+import {
+  Action,
+  CreateurCommentaire,
+  QualificationAction,
+  StatutAction,
+} from 'interfaces/action'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
+
 export interface ActionJson {
   id: string
   content: string
@@ -11,6 +17,12 @@ export interface ActionJson {
   creator: string
   creatorType: string
   dateEcheance: string
+  qualification?: QualificationActionJson
+}
+
+export interface QualificationActionJson {
+  libelle: string
+  code: string
 }
 
 export interface MetadonneesActionsJson {
@@ -36,8 +48,20 @@ export interface CommentaireJson {
   message: string
 }
 
-export function jsonToAction(json: ActionJson): Action {
+export const CODE_QUALIFICATION_NON_SNP = 'NON_SNP'
+
+export function jsonToQualification(
+  qualificationJson: QualificationActionJson
+): QualificationAction {
   return {
+    libelle: qualificationJson.libelle,
+    isSituationNonProfessionnelle:
+      qualificationJson.code !== CODE_QUALIFICATION_NON_SNP,
+  }
+}
+
+export function jsonToAction(json: ActionJson): Action {
+  const action: Action = {
     id: json.id,
     content: json.content,
     comment: json.comment,
@@ -48,6 +72,12 @@ export function jsonToAction(json: ActionJson): Action {
     creatorType: json.creatorType,
     dateEcheance: json.dateEcheance,
   }
+
+  if (json.qualification) {
+    action.qualification = jsonToQualification(json.qualification)
+  }
+
+  return action
 }
 
 function jsonToActionStatus(jsonStatus: ActionStatusJson): StatutAction {
