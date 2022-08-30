@@ -42,7 +42,7 @@ describe('listeRdvAVenirItem', () => {
     // Then
     expect(items.length).toBe(3)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('aujourd’hui')
-    expect((items[1] as PlageHoraire).label).toEqual('Matin')
+    expect((items[1] as PlageHoraire).label).toEqual('Après-midi')
     expect(items[2]).toEqual(rendezvous)
   })
 

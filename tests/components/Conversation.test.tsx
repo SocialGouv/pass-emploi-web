@@ -156,6 +156,24 @@ describe('<Conversation />', () => {
     expect(screen.getByText(/https/)).toHaveAttribute('title', 'Lien externe')
   })
 
+  it('ouvre une boite de dialogue de confirmation et redirige vers un lien externe', async () => {
+    // Given
+    const confirm = jest.spyOn(window, 'confirm').mockImplementation()
+    const open = jest.spyOn(window, 'open').mockImplementation()
+    const lienRedirection = screen.getByText(/https/)
+
+    // When
+    await userEvent.click(lienRedirection)
+
+    // Then
+    expect(confirm).toHaveBeenCalledTimes(1)
+    expect(open).toHaveBeenCalledWith(
+      'https://www.pass-emploi.com/',
+      '_blank',
+      'noopener, noreferrer'
+    )
+  })
+
   describe('quand on envoie un message', () => {
     let messageInput: HTMLInputElement
     beforeEach(() => {

@@ -25,8 +25,9 @@ export default function DisplayMessage({
     if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
-  function onRedirection(lien: string) {
+  function confirmationRedirectionLienExterne(lien: string) {
     confirm('Vous allez quitter l’espace conseiller')
+
     window.open(lien, '_blank', 'noopener, noreferrer')
   }
 
@@ -41,8 +42,8 @@ export default function DisplayMessage({
     messageDecoupe.forEach((mot) => {
       if (detecteLien(mot)) {
         messageFormate.push(
-          `<button id="replace">
-             <span class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>
+          `<button id="lienExterne">
+             <span  class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>
           </button>`
         )
       } else {
@@ -56,10 +57,11 @@ export default function DisplayMessage({
           return
         }
 
-        if (attribs.id === 'replace') {
+        if (attribs.id === 'lienExterne') {
           const lien = children[1] ? children[1].children[0].data : ''
+
           return (
-            <button onClick={() => onRedirection(lien)}>
+            <button onClick={() => confirmationRedirectionLienExterne(lien)}>
               {domToReact(children, options)}
             </button>
           )
