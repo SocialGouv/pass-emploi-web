@@ -5,11 +5,7 @@ import React from 'react'
 import TableauRdv from 'components/rdv/TableauRdv'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import {
-  formatDayDate,
-  formatHourMinuteDate,
-  formatWeekdayWithMonth,
-} from 'utils/date'
+import { formatHourMinuteDate, formatWeekdayWithMonth } from 'utils/date'
 
 describe('<TableauRdv>', () => {
   it("affiche un message lorsqu'il n'y a pas de rendez-vous", () => {

@@ -3,10 +3,10 @@ import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import React, { useEffect, useState } from 'react'
 
-import IconComponent, { IconName } from '../components/ui/IconComponent'
-
 import TableauRdv from 'components/rdv/TableauRdv'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -59,9 +59,11 @@ function MesRendezvous({
   useMatomo(trackingTitle)
 
   async function allerRdvsPasses() {
-    const AUJOURDHUI = DateTime.now()
-    const DEBUT_RDVS_PASSES = AUJOURDHUI.startOf('month').minus({ month: 5 })
-    const FIN_RDVS_PASSES = DateTime.now().minus({ day: 1 })
+    const FIN_RDVS_PASSES = DateTime.fromFormat(
+      debutPeriode,
+      'dd/MM/yyyy'
+    ).minus({ day: 1 })
+    const DEBUT_RDVS_PASSES = FIN_RDVS_PASSES.minus({ day: 6 })
 
     const rdvsPasses =
       await rendezVousService.getRendezVousConseillerClientSide(
@@ -87,7 +89,6 @@ function MesRendezvous({
 
   async function allerRdvsSemaineFuture() {
     const FORMAT_DATE_DEBUT = DateTime.fromFormat(finPeriode, 'dd/MM/yyyy')
-
     const DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
     const FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.plus({ day: 6 })
 
@@ -97,7 +98,6 @@ function MesRendezvous({
         DEBUT_RDVS_FUTURS.toFormat('yyyy-MM-dd'),
         FIN_RDVS_FUTURS.toFormat('yyyy-MM-dd')
       )
-
     setRdvs(rdvsFuturs.map(rdvToListItem))
     setDebutPeriode(DEBUT_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
     setFinPeriode(FIN_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
@@ -115,23 +115,24 @@ function MesRendezvous({
       </ButtonLink>
 
       <div className='mb-12'>
-        <div className='flex justify-between'>
-          <p className='text-base-medium'>Période du :</p>
-          <button
-            className='text-base-bold text-primary  hover:underline'
+        <div className='flex justify-between items-center'>
+          <p className='text-base-medium'>Période :</p>
+          <Button
+            type='button'
+            style={ButtonStyle.SECONDARY}
             onClick={allerRdvsSemaineCourante}
           >
-            Semaine courante
-          </button>
+            <span className='sr-only'>Aller à la</span> Semaine en cours
+          </Button>
         </div>
 
         <div className='flex items-center mt-1'>
           <p className='text-m-bold text-primary mr-6'>
-            {debutPeriode} au {finPeriode}
+            du {debutPeriode} au {finPeriode}
           </p>
           <button
-            title='Voir les rendez-vous passés'
-            aria-label='Voir les rendez-vous passés'
+            title='Aller à la semaine précédente'
+            aria-label='Aller à la semaine précédente'
             onClick={allerRdvsPasses}
           >
             <IconComponent
