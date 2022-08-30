@@ -122,7 +122,7 @@ function MesRendezvous({
             style={ButtonStyle.SECONDARY}
             onClick={allerRdvsSemaineCourante}
           >
-            Semaine en cours
+            <span className='sr-only'>Aller à la</span> Semaine en cours
           </Button>
         </div>
 

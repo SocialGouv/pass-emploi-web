@@ -74,7 +74,7 @@ describe('MesRendezvous', () => {
 
       it('au clic affiche la semaine courante', async () => {
         const buttonRdvsSemaineCourante = screen.getByRole('button', {
-          name: 'Semaine en cours',
+          name: 'Aller à la Semaine en cours',
         })
 
         await userEvent.click(buttonRdvsSemaineCourante)
