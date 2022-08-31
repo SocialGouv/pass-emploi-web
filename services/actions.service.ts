@@ -6,6 +6,7 @@ import {
   Action,
   Commentaire,
   MetadonneesActions,
+  QualificationAction,
   StatutAction,
   TotalActions,
 } from 'interfaces/action'
@@ -16,7 +17,9 @@ import {
   actionStatusToJson,
   CommentaireJson,
   jsonToAction,
+  jsonToQualification,
   MetadonneesActionsJson,
+  QualificationActionJson,
 } from 'interfaces/json/action'
 import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
@@ -64,6 +67,8 @@ export interface ActionsService {
     idAction: string,
     accessToken: string
   ): Promise<Commentaire[]>
+
+  qualifier(idAction: string, type: string): Promise<QualificationAction>
 }
 
 export class ActionsApiService implements ActionsService {
@@ -189,6 +194,19 @@ export class ActionsApiService implements ActionsService {
       session!.accessToken
     )
     return nouveauStatut
+  }
+
+  async qualifier(
+    idAction: string,
+    type: string
+  ): Promise<QualificationAction> {
+    const session = await getSession()
+    const { content } = await this.apiClient.post<QualificationActionJson>(
+      `/actions/${idAction}/qualifier`,
+      { codeQualification: type },
+      session!.accessToken
+    )
+    return jsonToQualification(content)
   }
 
   async deleteAction(idAction: string): Promise<void> {

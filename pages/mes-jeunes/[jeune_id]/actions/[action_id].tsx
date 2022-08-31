@@ -3,17 +3,22 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import StatutActionForm from '../../../../components/action/StatutActionForm'
-
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
-import RadioButtonStatus from 'components/action/RadioButtonStatus'
+import StatutActionForm from 'components/action/StatutActionForm'
+import TagQualificationAction from 'components/action/TagQualificationAction'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { Action, Commentaire, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  Commentaire,
+  QualificationAction,
+  StatutAction,
+} from 'interfaces/action'
 import { StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
@@ -39,17 +44,32 @@ function PageAction({
 }: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const router = useRouter()
+  const [qualification, setQualification] = useState<
+    QualificationAction | undefined
+  >(action.qualification)
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
   const pageTracking = 'Détail Action'
 
-  async function updateAction(statutChoisi: StatutAction): Promise<void> {
+  async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
       action.id,
       statutChoisi
     )
     setStatut(nouveauStatut)
+  }
+
+  async function qualifierAction(
+    isSituationNonProfessionnelle: boolean
+  ): Promise<void> {
+    if (!isSituationNonProfessionnelle) {
+      const nouvelleQualification = await actionsService.qualifier(
+        action.id,
+        CODE_QUALIFICATION_NON_SNP
+      )
+      setQualification(nouvelleQualification)
+    }
   }
 
   async function deleteAction(): Promise<void> {
@@ -101,6 +121,7 @@ function PageAction({
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
+      <TagQualificationAction statut={statut} qualification={qualification} />
       <div className='flex items-start justify-between mb-5'>
         <h2
           className='text-m-bold text-content_color'
@@ -140,7 +161,14 @@ function PageAction({
           </span>
         </span>
       </div>
-      <StatutActionForm updateAction={updateAction} statutCourant={statut} />
+      <StatutActionForm
+        updateStatutAction={updateStatutAction}
+        qualifierAction={(isSituationNonProfessionnelle) =>
+          qualifierAction(isSituationNonProfessionnelle)
+        }
+        statutCourant={statut}
+        estAQualifier={statut === StatutAction.Terminee && !qualification}
+      />
       <HistoriqueAction action={action} />
       <CommentairesAction
         idAction={action.id}

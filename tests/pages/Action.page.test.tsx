@@ -9,6 +9,7 @@ import { unCommentaire, uneAction } from 'fixtures/action'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
@@ -21,105 +22,190 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
 describe("Page Détail d'une action d'un jeune", () => {
-  describe('client-side', () => {
-    const action = uneAction()
-    const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
-    const jeune: BaseJeune = {
-      id: 'jeune-1',
-      prenom: 'Nadia',
-      nom: 'Sanfamiye',
-    }
-    let actionsService: ActionsService
-    let routerPush: Function
+  describe('client side', () => {
+    describe("quand l'action n'est pas qualifiée", () => {
+      const action = uneAction()
+      const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
+      const jeune: BaseJeune = {
+        id: 'jeune-1',
+        prenom: 'Nadia',
+        nom: 'Sanfamiye',
+      }
+      let actionsService: ActionsService
+      let routerPush: Function
 
-    beforeEach(async () => {
-      routerPush = jest.fn()
-      actionsService = mockedActionsService({
-        updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
-        deleteAction: jest.fn(),
-      })
-      ;(useRouter as jest.Mock).mockReturnValue({
-        push: routerPush,
-      })
-      renderWithContexts(
-        <PageAction
-          action={action}
-          jeune={jeune}
-          commentaires={commentaires}
-          pageTitle=''
-        />,
-        { customDependances: { actionsService } }
-      )
-    })
-
-    it("Devrait afficher les information d'une action", () => {
-      expect(screen.getByText(action.comment)).toBeInTheDocument()
-      expect(screen.getByText('15/02/2022')).toBeInTheDocument()
-      expect(screen.getByText('16/02/2022')).toBeInTheDocument()
-      expect(screen.getByText(action.creator)).toBeInTheDocument()
-    })
-
-    describe('Au clique sur un statut', () => {
-      it("déclenche le changement de statut de l'action", async () => {
-        // Given
-        const statutRadio = screen.getByText('Commencée')
-
-        // When
-        await userEvent.click(statutRadio)
-
-        // Then
-        expect(actionsService.updateAction).toHaveBeenCalledWith(
-          action.id,
-          StatutAction.Commencee
+      beforeEach(async () => {
+        routerPush = jest.fn()
+        actionsService = mockedActionsService({
+          updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
+          deleteAction: jest.fn(),
+        })
+        ;(useRouter as jest.Mock).mockReturnValue({
+          push: routerPush,
+        })
+        renderWithContexts(
+          <PageAction
+            action={action}
+            jeune={jeune}
+            commentaires={commentaires}
+            pageTitle=''
+          />,
+          { customDependances: { actionsService } }
         )
       })
-    })
 
-    describe("A l'ajout de commentaire", () => {
-      describe("quand c'est un succès", () => {
-        it('affiche un message de succès', async () => {
+      it("Devrait afficher les information d'une action", () => {
+        expect(screen.getByText(action.comment)).toBeInTheDocument()
+        expect(screen.getByText('15/02/2022')).toBeInTheDocument()
+        expect(screen.getByText('16/02/2022')).toBeInTheDocument()
+        expect(screen.getByText(action.creator)).toBeInTheDocument()
+      })
+
+      describe('Au clique sur un statut', () => {
+        it("déclenche le changement de statut de l'action", async () => {
           // Given
-          actionsService.ajouterCommentaire = jest
-            .fn()
-            .mockResolvedValue(unCommentaire())
-          const textbox = screen.getByRole('textbox')
-          fireEvent.change(textbox, { target: { value: 'test' } })
-          const submitButton = screen.getByRole('button', {
-            name: 'Ajouter un commentaire',
-          })
+          const statutRadio = screen.getByText('Commencée')
 
           // When
-          await userEvent.click(submitButton)
+          await userEvent.click(statutRadio)
 
           // Then
-          expect(actionsService.ajouterCommentaire).toHaveBeenCalledWith(
-            'id-action-1',
-            'test'
+          expect(actionsService.updateAction).toHaveBeenCalledWith(
+            action.id,
+            StatutAction.Commencee
           )
-          expect(routerPush).toHaveBeenCalledWith({
-            pathname: '/mes-jeunes/jeune-1/actions/id-action-1',
-            query: {
-              ajoutCommentaireAction: 'succes',
-            },
+        })
+      })
+
+      describe("Quand l'action est terminée et non qualifiée", () => {
+        it('affiche un bloc pour la qualifier', async () => {
+          // Given
+          const statutRadio = screen.getByText('Terminée')
+
+          // When
+          await userEvent.click(statutRadio)
+
+          // Then
+          expect(screen.getByText('Action à qualifier')).toBeInTheDocument()
+          expect(
+            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
+          ).toBeInTheDocument()
+        })
+      })
+
+      describe("A l'ajout de commentaire", () => {
+        describe("quand c'est un succès", () => {
+          it('affiche un message de succès', async () => {
+            // Given
+            actionsService.ajouterCommentaire = jest
+              .fn()
+              .mockResolvedValue(unCommentaire())
+            const textbox = screen.getByRole('textbox')
+            fireEvent.change(textbox, { target: { value: 'test' } })
+            const submitButton = screen.getByRole('button', {
+              name: 'Ajouter un commentaire',
+            })
+
+            // When
+            await userEvent.click(submitButton)
+
+            // Then
+            expect(actionsService.ajouterCommentaire).toHaveBeenCalledWith(
+              'id-action-1',
+              'test'
+            )
+            expect(routerPush).toHaveBeenCalledWith({
+              pathname: '/mes-jeunes/jeune-1/actions/id-action-1',
+              query: {
+                ajoutCommentaireAction: 'succes',
+              },
+            })
+          })
+        })
+        describe("quand c'est un échec", () => {
+          it('affiche une alerte', async () => {
+            // Given
+            actionsService.ajouterCommentaire = jest.fn().mockRejectedValue({})
+            const textbox = screen.getByRole('textbox')
+            fireEvent.change(textbox, { target: { value: 'test' } })
+            const submitButton = screen.getByRole('button', {
+              name: 'Ajouter un commentaire',
+            })
+
+            // When
+            await userEvent.click(submitButton)
+
+            // Then
+            await waitFor(() => screen.getByRole('alert'))
+            expect(screen.getByRole('alert')).toBeInTheDocument()
           })
         })
       })
-      describe("quand c'est un échec", () => {
-        it('affiche une alerte', async () => {
+    })
+    describe("quand l'action est terminée et non qualifiée", () => {
+      const actionAQualifier = uneAction({
+        status: StatutAction.Terminee,
+      })
+      const jeune: BaseJeune = {
+        id: 'jeune-1',
+        prenom: 'Nadia',
+        nom: 'Sanfamiye',
+      }
+      let actionsService: ActionsService
+
+      beforeEach(async () => {
+        actionsService = mockedActionsService({
+          qualifier: jest.fn().mockResolvedValue({
+            libelle: 'PAS Situation Non Professionnelle',
+            isSituationNonProfessionnelle: false,
+          }),
+        })
+        renderWithContexts(
+          <PageAction
+            action={actionAQualifier}
+            jeune={jeune}
+            commentaires={[]}
+            pageTitle=''
+          />,
+          { customDependances: { actionsService } }
+        )
+      })
+
+      it("affiche un bloc pour qualifier l'action", async () => {
+        expect(
+          screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
+        ).toBeInTheDocument()
+      })
+
+      describe("quand on qualifie l'action en PAS Situation Non Professionnelle", () => {
+        beforeEach(async () => {
           // Given
-          actionsService.ajouterCommentaire = jest.fn().mockRejectedValue({})
-          const textbox = screen.getByRole('textbox')
-          fireEvent.change(textbox, { target: { value: 'test' } })
-          const submitButton = screen.getByRole('button', {
-            name: 'Ajouter un commentaire',
-          })
+          const radioButton = screen.getByLabelText(
+            'Il ne s’agit pas d’une Situation Non Professionnelle'
+          )
+          await userEvent.click(radioButton)
 
           // When
-          await userEvent.click(submitButton)
-
-          // Then
-          await waitFor(() => screen.getByRole('alert'))
-          expect(screen.getByRole('alert')).toBeInTheDocument()
+          const submitQualification = screen.getByRole('button', {
+            name: /Enregistrer/,
+          })
+          await userEvent.click(submitQualification)
+        })
+        it("qualifie l'action", () => {
+          expect(actionsService.qualifier).toHaveBeenCalledWith(
+            actionAQualifier.id,
+            CODE_QUALIFICATION_NON_SNP
+          )
+        })
+        it("met à jour le tag de l'action", () => {
+          expect(
+            screen.getByText('PAS Situation Non Professionnelle')
+          ).toBeInTheDocument()
+        })
+        it('cache le formulaire de qualification', () => {
+          expect(() =>
+            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
+          ).toThrow()
         })
       })
     })

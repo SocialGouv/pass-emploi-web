@@ -1,3 +1,5 @@
+import { CODE_QUALIFICATION_NON_SNP } from '../../interfaces/json/action'
+
 import { ApiClient } from 'clients/api.client'
 import {
   unCommentaire,
@@ -6,7 +8,7 @@ import {
   uneListeDActions,
   uneListeDActionsJson,
 } from 'fixtures/action'
-import { StatutAction } from 'interfaces/action'
+import { QualificationAction, StatutAction } from 'interfaces/action'
 import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -90,6 +92,86 @@ describe('ActionsApiService', () => {
           return {
             content: {
               ...uneActionJson({ id: action.id, status: 'done' }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
+          }
+      })
+
+      // WHEN
+      const actual = await actionsService.getAction(action.id, 'accessToken')
+
+      // THEN
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
+    })
+
+    it('renvoie une action qualifiée en SNP', async () => {
+      // GIVEN
+      const action = uneAction({
+        status: StatutAction.Terminee,
+        qualification: {
+          libelle: 'Santé',
+          isSituationNonProfessionnelle: true,
+        },
+      })
+      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+        if (url === `/actions/${action.id}`)
+          return {
+            content: {
+              ...uneActionJson({
+                id: action.id,
+                status: 'done',
+                qualification: {
+                  libelle: 'Santé',
+                  code: 'SANTE',
+                },
+              }),
+              jeune: {
+                id: 'jeune-1',
+                firstName: 'Nadia',
+                lastName: 'Sanfamiye',
+              },
+            },
+          }
+      })
+
+      // WHEN
+      const actual = await actionsService.getAction(action.id, 'accessToken')
+
+      // THEN
+      expect(actual).toStrictEqual({
+        action,
+        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+      })
+    })
+
+    it('renvoie une action qualifiée en NON SNP', async () => {
+      // GIVEN
+      const action = uneAction({
+        status: StatutAction.Terminee,
+        qualification: {
+          libelle: 'Situation pas non professionnelle',
+          isSituationNonProfessionnelle: false,
+        },
+      })
+      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+        if (url === `/actions/${action.id}`)
+          return {
+            content: {
+              ...uneActionJson({
+                id: action.id,
+                status: 'done',
+                qualification: {
+                  libelle: 'Situation pas non professionnelle',
+                  code: 'NON_SNP',
+                },
+              }),
               jeune: {
                 id: 'jeune-1',
                 firstName: 'Nadia',
@@ -339,6 +421,36 @@ describe('ActionsApiService', () => {
         'accessToken'
       )
       expect(actual).toStrictEqual(StatutAction.Terminee)
+    })
+  })
+
+  describe('.qualifier', () => {
+    it('qualifie une action', async () => {
+      // Given
+      ;(apiClient.post as jest.Mock).mockResolvedValue({
+        content: {
+          libelle: 'Non-SNP',
+          code: CODE_QUALIFICATION_NON_SNP,
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.qualifier(
+        'id-action',
+        CODE_QUALIFICATION_NON_SNP
+      )
+
+      // THEN
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/actions/id-action/qualifier',
+        { codeQualification: CODE_QUALIFICATION_NON_SNP },
+        'accessToken'
+      )
+      const expected: QualificationAction = {
+        libelle: 'Non-SNP',
+        isSituationNonProfessionnelle: false,
+      }
+      expect(actual).toStrictEqual(expected)
     })
   })
 

@@ -41,6 +41,7 @@ import MenuIcon from 'assets/icons/menu.svg'
 import NoteIcon from 'assets/icons/note_outline.svg'
 import NoteBigIcon from 'assets/icons/note_outline_big.svg'
 import PenIcon from 'assets/icons/pen.svg'
+import PendingIcon from 'assets/icons/pending.svg'
 import PeopleIcon from 'assets/icons/people.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
 import RemoveIcon from 'assets/icons/remove.svg'
@@ -51,6 +52,7 @@ import RoundedCloseIcon from 'assets/icons/rounded_close.svg'
 import SearchIcon from 'assets/icons/search.svg'
 import SendIcon from 'assets/icons/send.svg'
 import SpinnerIcon from 'assets/icons/spinner.svg'
+import SuitcaseIcon from 'assets/icons/suitcase.svg'
 import TrashCanIcon from 'assets/icons/trash_can.svg'
 import WarningIcon from 'assets/icons/warning.svg'
 
@@ -95,6 +97,7 @@ export enum IconName {
   Menu = 'Menu',
   Note = 'Note',
   NoteBig = 'NoteBig',
+  Pending = 'Pending',
   People = 'People',
   Profil = 'Profil',
   Pen = 'Pen',
@@ -106,6 +109,7 @@ export enum IconName {
   Search = 'Search',
   Send = 'Send',
   Spinner = 'Spinner',
+  Suitcase = 'Suitcase',
   TrashCan = 'TrashCan',
   Warning = 'Warning',
 }
@@ -152,6 +156,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Note]: NoteIcon,
   [IconName.Pen]: PenIcon,
   [IconName.NoteBig]: NoteBigIcon,
+  [IconName.Pending]: PendingIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.Remove]: RemoveIcon,
@@ -163,6 +168,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Search]: SearchIcon,
   [IconName.Send]: SendIcon,
   [IconName.Spinner]: SpinnerIcon,
+  [IconName.Suitcase]: SuitcaseIcon,
   [IconName.TrashCan]: TrashCanIcon,
   [IconName.Warning]: WarningIcon,
 }
