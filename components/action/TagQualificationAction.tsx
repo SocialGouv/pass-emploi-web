@@ -24,7 +24,7 @@ export default function TagQualificationAction({
           color='accent_2'
           backgroundColor='accent_2_lighten'
           iconName={IconName.Pending}
-          className='mb-4 border-none'
+          className='mb-4 border-none text-s-bold'
         />
       )}
       {qualification && qualification.isSituationNonProfessionnelle && (
@@ -33,7 +33,7 @@ export default function TagQualificationAction({
           color='accent_4'
           backgroundColor='accent_4_lighten'
           iconName={IconName.Suitcase}
-          className='mb-4'
+          className='mb-4 text-s-bold'
         />
       )}
       {qualification && !qualification.isSituationNonProfessionnelle && (
@@ -41,7 +41,7 @@ export default function TagQualificationAction({
           label={qualification.libelle}
           color='accent_5'
           backgroundColor='accent_5_lighten'
-          className='mb-4'
+          className='mb-4 text-s-bold'
         />
       )}
     </>

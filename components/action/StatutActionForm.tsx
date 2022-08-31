@@ -45,8 +45,8 @@ function StatutActionForm({
       </form>
 
       {estAQualifier && (
-        <div className='border border-solid border-grey_100 bg-primary_lighten rounded-medium p-2 mb-2'>
-          <h2 className='text-m-bold'>
+        <div className='border border-solid border-grey_100 bg-primary_lighten rounded-medium p-4 mb-10'>
+          <h2 className='text-m-bold mb-2'>
             S’agit-il d’une Situation Non Professionnelle ?
           </h2>
           <form className='flex flex-col w-fit' onSubmit={submit}>
@@ -59,7 +59,7 @@ function StatutActionForm({
                 label='Il s’agit d’une Situation Non Professionnelle'
               />
             </div>
-            <div>
+            <div className='mb-6'>
               <RadioButton
                 isSelected={isSituationNonProfessionnelle === false}
                 onChange={() => setIsSituationNonProfessionnelle(false)}
@@ -70,7 +70,7 @@ function StatutActionForm({
             </div>
             <Button
               type='submit'
-              className='mt-8 mb-2 w-fit'
+              className='w-fit'
               label='Enregistrer la situation'
               style={ButtonStyle.PRIMARY}
               disabled={isSituationNonProfessionnelle === undefined}
