@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { RechercheJeune } from '../jeune/RechercheJeune'
-
 import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
+import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import MenuLinks, { MenuItem } from 'components/MenuLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -54,6 +53,20 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     })
   }
 
+  function filtrerConversations(saisieUtilisateur: string) {
+    const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
+    const chatsFiltresResult = jeunesChats.filter((jeune) => {
+      const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+      for (const item of querySplit) {
+        if (jeuneLastName.includes(item)) {
+          return true
+        }
+      }
+    })
+
+    setChatsFiltres(chatsFiltresResult)
+  }
+
   useEffect(() => {
     if (idCurrentJeune) {
       jeunesService
@@ -77,20 +90,6 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       closeMenuRef.current!.focus()
     }
   }, [showMenu])
-
-  function filtreConversationParRecherche(saisieUtilisateur: string) {
-    const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
-    const chatsFiltresResult = jeunesChats.filter((jeune) => {
-      const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
-      for (const item of querySplit) {
-        if (jeuneLastName.includes(item)) {
-          return true
-        }
-      }
-    })
-
-    setChatsFiltres(chatsFiltresResult)
-  }
 
   useEffect(() => {
     setChatsFiltres(jeunesChats)
@@ -175,7 +174,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             className='flex justify-center my-8 layout_s:hidden'
             data-testid='form-chat'
           >
-            <RechercheJeune onSearchFilterBy={filtreConversationParRecherche} />
+            <RechercheJeune onSearchFilterBy={filtrerConversations} />
           </div>
 
           <ListeConversations
