@@ -167,18 +167,24 @@ describe('<ChatRoom />', () => {
     })
   })
 
+  // FIXME: mock le resizeWindow
   describe('quand on est sur un écran à partir de 600 px', () => {
     xit('affiche une barre de recherches pour filtrer les conversations avec les bénéficiaires', () => {
-      // Given & When
+      // Given
       renderWithContexts(<ChatRoom jeunesChats={[]} />, {
         customDependances: { jeunesService, messagesService },
       })
 
-      window = Object.assign(window, { innerWidth: 600 })
+      // When
+      resizeWindow(800)
 
       // Then
       expect(screen.getByTestId('form-chat')).toBeInTheDocument()
-      // expect(screen.getByText(/Rechercher un bénéficiaire/)).toBeInTheDocument()
     })
   })
 })
+
+const resizeWindow = (x: number) => {
+  window = Object.assign(window, { innerWidth: x })
+  window.dispatchEvent(new Event('resize'))
+}

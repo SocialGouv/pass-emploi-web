@@ -26,6 +26,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
   const [conseiller] = useConseiller()
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
+  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>([])
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
@@ -77,9 +78,23 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     }
   }, [showMenu])
 
-  function filtreConversationParRecherche() {
-    return console.log('lala')
+  function filtreConversationParRecherche(saisieUtilisateur: string) {
+    const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
+    const chatsFiltresResult = jeunesChats.filter((jeune) => {
+      const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+      for (const item of querySplit) {
+        if (jeuneLastName.includes(item)) {
+          return true
+        }
+      }
+    })
+
+    setChatsFiltres(chatsFiltresResult)
   }
+
+  useEffect(() => {
+    setChatsFiltres(jeunesChats)
+  }, [jeunesChats])
 
   return (
     <>
@@ -156,8 +171,15 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <AlertDisplayer hideOnLargeScreen={true} />
           </div>
 
+          <div className='flex justify-center my-8' data-testid='form-chat'>
+            <RechercheJeune
+              onSearchFilterBy={filtreConversationParRecherche}
+              hideOnLargeScreen={true}
+            />
+          </div>
+
           <ListeConversations
-            conversations={jeunesChats}
+            conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />
