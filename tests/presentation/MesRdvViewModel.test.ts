@@ -33,8 +33,16 @@ describe('listeRdvAVenirItem', () => {
 
   it('quand la liste de rendez-vous contient un rendez-vous aujourd’hui, retourne "aujourd’hui", la plage horaire et le rendez-vous.', () => {
     // Given
-    const aujourdhui = new Date().toISOString()
-    const rendezvous = unRendezvousItem(aujourdhui)
+    const aujourdhui = new Date()
+    const aujourdhuiApresmidi = new Date(
+      aujourdhui.getFullYear(),
+      aujourdhui.getMonth(),
+      aujourdhui.getDate(),
+      15,
+      0,
+      0
+    ).toISOString()
+    const rendezvous = unRendezvousItem(aujourdhuiApresmidi)
 
     // When
     const items = listeRdvAVenirItem([rendezvous])
@@ -42,7 +50,7 @@ describe('listeRdvAVenirItem', () => {
     // Then
     expect(items.length).toBe(3)
     expect((items[0] as JourRdvAVenirItem).label).toEqual('aujourd’hui')
-    expect((items[1] as PlageHoraire).label).toEqual('Matin')
+    expect((items[1] as PlageHoraire).label).toEqual('Après-midi')
     expect(items[2]).toEqual(rendezvous)
   })
 

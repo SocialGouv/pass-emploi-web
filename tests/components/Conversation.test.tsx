@@ -151,9 +151,51 @@ describe('<Conversation />', () => {
     )
   })
 
-  it(`affiche au survol la présence d'un lien externe dans le message s’il en a un`, () => {
+  it('affiche au survol la présence d’un lien externe dans le message s’il en a un', () => {
     // Then
     expect(screen.getByText(/https/)).toHaveAttribute('title', 'Lien externe')
+  })
+
+  describe('au clic ouvre une boîte de dialogue de confirmation', () => {
+    it('continue et redirige vers un lien externe', async () => {
+      // Given
+      const modaleConfirmation = jest
+        .spyOn(window, 'confirm')
+        .mockImplementation(() => {
+          return true
+        })
+      const open = jest.spyOn(window, 'open').mockImplementation()
+      const lienRedirection = screen.getByText(/https/)
+
+      // When
+      await userEvent.click(lienRedirection)
+
+      // Then
+      expect(modaleConfirmation).toHaveBeenCalledTimes(1)
+      expect(open).toHaveBeenCalledWith(
+        'https://www.pass-emploi.com/',
+        '_blank',
+        'noopener, noreferrer'
+      )
+    })
+
+    it('annule et ne redirige pas vers un lien externe', async () => {
+      // Given
+      const modaleConfirmation = jest
+        .spyOn(window, 'confirm')
+        .mockImplementation(() => {
+          return false
+        })
+      const open = jest.spyOn(window, 'open').mockImplementation()
+      const lienRedirection = screen.getByText(/https/)
+
+      // When
+      await userEvent.click(lienRedirection)
+
+      // Then
+      expect(modaleConfirmation).toHaveBeenCalledTimes(1)
+      expect(open).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('quand on envoie un message', () => {

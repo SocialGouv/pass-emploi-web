@@ -1,4 +1,4 @@
-import parse from 'html-react-parser'
+import parse, { domToReact } from 'html-react-parser'
 import React from 'react'
 
 import { LienOffre } from 'components/chat/LienOffre'
@@ -25,25 +25,46 @@ export default function DisplayMessage({
     if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
+  function confirmationRedirectionLienExterne(lien: string) {
+    if (window.confirm('Vous allez quitter l’espace conseiller')) {
+      window.open(lien, '_blank', 'noopener, noreferrer')
+    }
+  }
+
   function detecteLien(message: string) {
     return message.includes('http') || message.includes('https')
   }
 
   function formateMessageAvecLien(message: string) {
-    const messageDecoupe = message.split(' ')
-    const messageFormate: string[] = []
-
-    messageDecoupe.forEach((mot) => {
+    const messageFormate = message.split(' ').map((mot) => {
       if (detecteLien(mot)) {
-        messageFormate.push(
-          `<span class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>`
-        )
+        return `<button id="lienExterne">
+                  <span  class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>
+                </button>`
       } else {
-        messageFormate.push(mot)
+        return mot
       }
     })
 
-    return parse(`<p>${messageFormate.join(' ')}</p>`)
+    const options = {
+      replace: ({ attribs, children }: any) => {
+        if (!attribs) {
+          return
+        }
+
+        if (attribs.id === 'lienExterne') {
+          const lien = children[1] ? children[1].children[0].data : ''
+
+          return (
+            <button onClick={() => confirmationRedirectionLienExterne(lien)}>
+              {domToReact(children, options)}
+            </button>
+          )
+        }
+      },
+    }
+
+    return parse(`<p>${messageFormate.join(' ')}</p>`, options)
   }
 
   return (
