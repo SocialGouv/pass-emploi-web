@@ -36,18 +36,13 @@ export default function DisplayMessage({
   }
 
   function formateMessageAvecLien(message: string) {
-    const messageDecoupe = message.split(' ')
-    const messageFormate: string[] = []
-
-    messageDecoupe.forEach((mot) => {
+    const messageFormate = message.split(' ').map((mot) => {
       if (detecteLien(mot)) {
-        messageFormate.push(
-          `<button id="lienExterne">
-             <span  class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>
-          </button>`
-        )
+        return `<button id="lienExterne">
+                  <span  class='text-primary_darken hover:text-primary hover:underline hover:cursor-pointer' title="Lien externe">${mot}</span>
+                </button>`
       } else {
-        messageFormate.push(mot)
+        return mot
       }
     })
 
