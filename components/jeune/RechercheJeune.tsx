@@ -5,13 +5,9 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface RechercheJeuneProps {
   onSearchFilterBy: (query: string) => void
-  hideOnLargeScreen?: boolean
 }
 
-export const RechercheJeune = ({
-  onSearchFilterBy,
-  hideOnLargeScreen,
-}: RechercheJeuneProps) => {
+export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
   const [query, setQuery] = useState<string>('')
 
   const onReset = () => {
@@ -25,13 +21,7 @@ export const RechercheJeune = ({
   }
 
   return (
-    <form
-      role='search'
-      onSubmit={onSubmit}
-      className={`grow max-w-[75%] ${
-        hideOnLargeScreen ? 'layout_s:hidden' : ''
-      }`}
-    >
+    <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
       <label
         htmlFor='rechercher-jeunes'
         className='text-base-medium text-content_color'
@@ -57,7 +47,7 @@ export const RechercheJeune = ({
             aria-hidden={true}
             className='w-4 h-4'
           />
-          <span className='ml-1'>Rechercher</span>
+          <span className='ml-1 sr-only layout_s:not-sr-only'>Rechercher</span>
         </button>
       </div>
     </form>

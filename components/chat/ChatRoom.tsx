@@ -171,11 +171,11 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <AlertDisplayer hideOnLargeScreen={true} />
           </div>
 
-          <div className='flex justify-center my-8' data-testid='form-chat'>
-            <RechercheJeune
-              onSearchFilterBy={filtreConversationParRecherche}
-              hideOnLargeScreen={true}
-            />
+          <div
+            className='flex justify-center my-8 layout_s:hidden'
+            data-testid='form-chat'
+          >
+            <RechercheJeune onSearchFilterBy={filtreConversationParRecherche} />
           </div>
 
           <ListeConversations
