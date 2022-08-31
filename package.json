@@ -22,7 +22,7 @@
     "@elastic/apm-rum-react": "1.4.2",
     "@storybook/storybook-deployer": "^2.8.12",
     "crypto-js": "4.1.1",
-    "dotenv": "16.0.1",
+    "dotenv": "16.0.2",
     "elastic-apm-node": "3.38.0",
     "firebase": "9.9.3",
     "html-react-parser": "3.0.4",
