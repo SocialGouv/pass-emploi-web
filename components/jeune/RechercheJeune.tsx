@@ -47,7 +47,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
             aria-hidden={true}
             className='w-4 h-4'
           />
-          <span className='ml-1'>Rechercher</span>
+          <span className='ml-1 sr-only layout_s:not-sr-only'>Rechercher</span>
         </button>
       </div>
     </form>

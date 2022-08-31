@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
+import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import MenuLinks, { MenuItem } from 'components/MenuLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -24,12 +25,14 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
   const [conseiller] = useConseiller()
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
+  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>([])
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
   const [showMenu, setShowMenu] = useState<boolean>(false)
+
   const closeMenuRef = useRef<HTMLButtonElement>(null)
 
   function fermerMenu(): void {
@@ -48,6 +51,20 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       action: 'ChatRoom',
       nom: flagged.toString(),
     })
+  }
+
+  function filtrerConversations(saisieUtilisateur: string) {
+    const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
+    const chatsFiltresResult = jeunesChats.filter((jeune) => {
+      const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+      for (const item of querySplit) {
+        if (jeuneLastName.includes(item)) {
+          return true
+        }
+      }
+    })
+
+    setChatsFiltres(chatsFiltresResult)
   }
 
   useEffect(() => {
@@ -73,6 +90,10 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       closeMenuRef.current!.focus()
     }
   }, [showMenu])
+
+  useEffect(() => {
+    setChatsFiltres(jeunesChats)
+  }, [jeunesChats])
 
   return (
     <>
@@ -149,8 +170,15 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <AlertDisplayer hideOnLargeScreen={true} />
           </div>
 
+          <div
+            className='flex justify-center my-8 layout_s:hidden'
+            data-testid='form-chat'
+          >
+            <RechercheJeune onSearchFilterBy={filtrerConversations} />
+          </div>
+
           <ListeConversations
-            conversations={jeunesChats}
+            conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />
