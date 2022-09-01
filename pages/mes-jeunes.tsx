@@ -56,9 +56,10 @@ function MesJeunes({
 
   const [conseiller, setConseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
-  const [listeJeunesFiltres, setListJeunesFiltres] = useState<
+  const [jeunesFiltres, setJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
   >([])
+
   const [
     isRecuperationBeneficiairesLoading,
     setIsRecuperationBeneficiairesLoading,
@@ -122,14 +123,14 @@ function MesJeunes({
           }
           return false
         })
-        setListJeunesFiltres(jeunesFiltresResult)
+        setJeunesFiltres(jeunesFiltresResult)
         if (jeunesFiltresResult.length > 0) {
           setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
         } else {
           setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
         }
       } else {
-        setListJeunesFiltres(jeunes)
+        setJeunesFiltres(jeunes)
         setTrackingTitle(initialTracking)
       }
     },
@@ -158,7 +159,7 @@ function MesJeunes({
       )
       .then((jeunesAvecMessagesNonLus) => {
         setJeunes(jeunesAvecMessagesNonLus)
-        setListJeunesFiltres(jeunesAvecMessagesNonLus)
+        setJeunesFiltres(jeunesAvecMessagesNonLus)
       })
   }, [chatCredentials, conseillerJeunes, messagesService])
 
@@ -227,12 +228,13 @@ function MesJeunes({
           <div className='flex justify-between text-m-regular text-primary'>
             <h2>
               Liste des bénéficiaires
-              {conseillerJeunes.length === listeJeunesFiltres.length &&
+              {conseillerJeunes.length === jeunesFiltres.length &&
                 ` (${conseillerJeunes.length})`}
             </h2>
           </div>
+
           <TableauJeunes
-            jeunes={listeJeunesFiltres}
+            jeunes={jeunesFiltres}
             withActions={
               conseiller?.structure !== StructureConseiller.POLE_EMPLOI
             }
