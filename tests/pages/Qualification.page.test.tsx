@@ -2,9 +2,13 @@ import { render, screen, within } from '@testing-library/react'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { uneAction } from 'fixtures/action'
+import { desSituationsNonProfessionnelles, uneAction } from 'fixtures/action'
 import { mockedActionsService } from 'fixtures/services'
-import { StatutAction } from 'interfaces/action'
+import {
+  Action,
+  SituationNonProfessionnelle,
+  StatutAction,
+} from 'interfaces/action'
 import PageQualification, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/qualification'
@@ -140,11 +144,8 @@ describe("Page Qualification d'une action", () => {
         it('récupère la liste des situations non professionnelles', async () => {
           // Given
           const action = uneAction({ status: StatutAction.Terminee })
-          const situationsNonProfessionnelles = [
-            { code: 'SNP_1', label: 'SNP 1' },
-            { code: 'SNP_2', label: 'SNP 2' },
-            { code: 'SNP_3', label: 'SNP 3' },
-          ]
+          const situationsNonProfessionnelles =
+            desSituationsNonProfessionnelles()
           const actionsService: ActionsService = mockedActionsService({
             getAction: jest.fn(async () => ({
               action,
@@ -188,25 +189,43 @@ describe("Page Qualification d'une action", () => {
   })
 
   describe('client side', () => {
-    it("affiche le résumé de l'action", () => {
+    let action: Action
+    let situationsNonProfessionnelles: SituationNonProfessionnelle[]
+    beforeEach(() => {
       // Given
-      const action = uneAction()
+      action = uneAction()
+      situationsNonProfessionnelles = desSituationsNonProfessionnelles()
 
       // When
       render(
         <PageQualification
           action={action}
-          situationsNonProfessionnelles={[]}
+          situationsNonProfessionnelles={situationsNonProfessionnelles}
           pageTitle=''
         />
       )
+    })
 
+    it("affiche le résumé de l'action", () => {
       // Then
       const etape1 = screen.getByRole('group', {
         name: "Étape 1 Résumé de l'action",
       })
       expect(within(etape1).getByText(action.content)).toBeInTheDocument()
       expect(within(etape1).getByText(action.comment)).toBeInTheDocument()
+    })
+
+    it('demande un type de situation non professionnelle', () => {
+      // Then
+      const etape2 = screen.getByRole('group', {
+        name: 'Étape 2 Type',
+      })
+      const select = within(etape2).getByRole('combobox', { name: 'Type' })
+      situationsNonProfessionnelles.forEach(({ code, label }) => {
+        expect(within(select).getByRole('option', { name: label })).toHaveValue(
+          code
+        )
+      })
     })
   })
 })

@@ -1,4 +1,9 @@
-import { Action, Commentaire, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  Commentaire,
+  SituationNonProfessionnelle,
+  StatutAction,
+} from 'interfaces/action'
 import { ActionJson } from 'interfaces/json/action'
 
 export const uneAction = (overrides: Partial<Action> = {}): Action => {
@@ -140,3 +145,10 @@ export const unCommentaire = (
 
   return { ...defaults, ...overrides }
 }
+
+export const desSituationsNonProfessionnelles =
+  (): SituationNonProfessionnelle[] => [
+    { code: 'SNP_1', label: 'SNP 1' },
+    { code: 'SNP_2', label: 'SNP 2' },
+    { code: 'SNP_3', label: 'SNP 3' },
+  ]

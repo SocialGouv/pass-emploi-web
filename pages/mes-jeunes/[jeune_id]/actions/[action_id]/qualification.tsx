@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 
+import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -14,12 +15,13 @@ type QualificationProps = PageProps & {
   situationsNonProfessionnelles: Array<{ code: string; label: string }>
 }
 
-function PageQualification({ action }: QualificationProps) {
+function PageQualification({
+  action,
+  situationsNonProfessionnelles,
+}: QualificationProps) {
   return (
     <form>
-      <p className='text-s-bold mb-6'>
-        Tous les champs avec * sont obligatoires
-      </p>
+      <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
       <fieldset className='border-none flex flex-col mb-8'>
         <legend className='flex items-center text-m-bold mb-4'>
@@ -35,6 +37,30 @@ function PageQualification({ action }: QualificationProps) {
 
         <p className='text-m-bold'>{action.content}</p>
         <p className='pt-6 text-base-regular'>{action.comment}</p>
+      </fieldset>
+
+      <fieldset className='border-none flex flex-col mb-8'>
+        <legend className='flex items-center text-m-bold mb-4'>
+          <IconComponent
+            name={IconName.Chiffre2}
+            role='img'
+            focusable={false}
+            aria-label='Étape 2'
+            className='mr-2 w-8 h-8'
+          />
+          Type
+        </legend>
+
+        <label htmlFor='select-type' className='text-base-bold mb-2'>
+          <span aria-hidden={true}>* </span>Type
+        </label>
+        <Select id='select-type' required={true} onChange={() => {}}>
+          {situationsNonProfessionnelles.map(({ label, code }) => (
+            <option key={code} value={code}>
+              {label}
+            </option>
+          ))}
+        </Select>
       </fieldset>
     </form>
   )

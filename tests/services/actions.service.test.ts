@@ -1,5 +1,6 @@
 import { ApiClient } from 'clients/api.client'
 import {
+  desSituationsNonProfessionnelles,
   unCommentaire,
   uneAction,
   uneActionJson,
@@ -514,11 +515,7 @@ describe('ActionsApiService', () => {
   describe('.getSituationsNonProfessionnelles', () => {
     it('retourne la liste des situations non professionnelles', async () => {
       // GIVEN
-      const situationsNonProfessionnelles = [
-        { code: 'SNP_1', label: 'SNP 1' },
-        { code: 'SNP_2', label: 'SNP 2' },
-        { code: 'SNP_3', label: 'SNP 3' },
-      ]
+      const situationsNonProfessionnelles = desSituationsNonProfessionnelles()
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: situationsNonProfessionnelles,
       })
