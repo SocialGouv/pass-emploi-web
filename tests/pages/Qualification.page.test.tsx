@@ -1,10 +1,13 @@
+import { render, screen, within } from '@testing-library/react'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { uneAction } from 'fixtures/action'
 import { mockedActionsService } from 'fixtures/services'
 import { StatutAction } from 'interfaces/action'
-import { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/qualification'
+import PageQualification, {
+  getServerSideProps,
+} from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/qualification'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -102,9 +105,41 @@ describe("Page Qualification d'une action", () => {
         })
       })
 
+      describe("quand l'action est qualifiée", () => {
+        it('renvoie une 404', async () => {
+          const actionsService: ActionsService = mockedActionsService({
+            getAction: jest.fn(async () => ({
+              action: uneAction({
+                status: StatutAction.Terminee,
+                qualification: {
+                  libelle: 'Santé',
+                  isSituationNonProfessionnelle: true,
+                },
+              }),
+              jeune: {
+                id: 'jeune-1',
+                prenom: 'Nadia',
+                nom: 'Sanfamiye',
+              },
+            })),
+          })
+          ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+
+          // When
+          const actual: GetServerSidePropsResult<any> =
+            await getServerSideProps({
+              query: { action_id: 'id-action' },
+            } as unknown as GetServerSidePropsContext)
+
+          // Then
+          expect(actual).toEqual({ notFound: true })
+        })
+      })
+
       describe("quand l'action est terminée", () => {
         it('récupère la liste des situations non professionnelles', async () => {
           // Given
+          const action = uneAction({ status: StatutAction.Terminee })
           const situationsNonProfessionnelles = [
             { code: 'SNP_1', label: 'SNP 1' },
             { code: 'SNP_2', label: 'SNP 2' },
@@ -112,7 +147,7 @@ describe("Page Qualification d'une action", () => {
           ]
           const actionsService: ActionsService = mockedActionsService({
             getAction: jest.fn(async () => ({
-              action: uneAction({ status: StatutAction.Terminee }),
+              action,
               jeune: {
                 id: 'jeune-1',
                 prenom: 'Nadia',
@@ -127,17 +162,51 @@ describe("Page Qualification d'une action", () => {
 
           // When
           const actual = await getServerSideProps({
-            query: { action_id: 'id-action' },
+            query: { action_id: action.id },
           } as unknown as GetServerSidePropsContext)
 
           // Then
+          expect(actionsService.getAction).toHaveBeenCalledWith(
+            action.id,
+            'accessToken'
+          )
+          expect(
+            actionsService.getSituationsNonProfessionnelles
+          ).toHaveBeenCalledWith('accessToken')
           expect(actual).toEqual({
             props: {
-              situationsNonProfessionnelles: situationsNonProfessionnelles,
+              action,
+              situationsNonProfessionnelles,
+              pageTitle: 'Création d’une situation non professionnelle',
+              returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
+              withoutChat: true,
             },
           })
         })
       })
+    })
+  })
+
+  describe('client side', () => {
+    it("affiche le résumé de l'action", () => {
+      // Given
+      const action = uneAction()
+
+      // When
+      render(
+        <PageQualification
+          action={action}
+          situationsNonProfessionnelles={[]}
+          pageTitle=''
+        />
+      )
+
+      // Then
+      const etape1 = screen.getByRole('group', {
+        name: "Étape 1 Résumé de l'action",
+      })
+      expect(within(etape1).getByText(action.content)).toBeInTheDocument()
+      expect(within(etape1).getByText(action.comment)).toBeInTheDocument()
     })
   })
 })
