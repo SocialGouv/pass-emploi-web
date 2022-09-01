@@ -1,6 +1,7 @@
 import {
   Action,
   CreateurCommentaire,
+  EtatAction,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
@@ -19,6 +20,7 @@ export interface ActionJson {
   dateEcheance: string
   dateFinReelle?: string
   qualification?: QualificationActionJson
+  etat: EtatAction
 }
 
 export interface QualificationActionJson {
@@ -72,6 +74,7 @@ export function jsonToAction(json: ActionJson): Action {
     creator: json.creator,
     creatorType: json.creatorType,
     dateEcheance: json.dateEcheance,
+    etat: json.etat,
   }
 
   if (json.dateFinReelle) {

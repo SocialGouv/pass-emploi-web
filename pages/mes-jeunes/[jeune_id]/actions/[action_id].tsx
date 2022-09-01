@@ -13,6 +13,7 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   Action,
   Commentaire,
+  EtatAction,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
@@ -152,23 +153,26 @@ function PageAction({
         >
           {action.content}
         </h2>
-        {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
-          <Button
-            label="Supprimer l'action"
-            onClick={() => deleteAction()}
-            style={ButtonStyle.SECONDARY}
-            disabled={deleteDisabled}
-          >
-            <IconComponent
-              name={IconName.TrashCan}
-              aria-hidden={true}
-              focusable={false}
-              className='w-2.5 h-3 mr-4'
-            />
-            Supprimer
-          </Button>
-        )}
+        {action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+          action.comment.length <= 1 &&
+          action.etat !== EtatAction.QUALIFIEE && (
+            <Button
+              label="Supprimer l'action"
+              onClick={() => deleteAction()}
+              style={ButtonStyle.SECONDARY}
+              disabled={deleteDisabled}
+            >
+              <IconComponent
+                name={IconName.TrashCan}
+                aria-hidden={true}
+                focusable={false}
+                className='w-2.5 h-3 mr-4'
+              />
+              Supprimer
+            </Button>
+          )}
       </div>
+
       {action.comment && <p className='mb-8'>{action.comment}</p>}
       <div className='flex flex-raw items-center justify-between mb-8 bg-accent_3_lighten rounded-medium'>
         <span className='flex flex-row p-2 text-accent_2'>

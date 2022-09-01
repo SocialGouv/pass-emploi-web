@@ -6,12 +6,14 @@ interface RadioButtonStatusProps {
   status: StatutAction
   isSelected: boolean
   onChange: (statutChoisi: StatutAction) => void
+  isDisabled: boolean
 }
 
 export default function RadioButtonStatus({
   status,
   isSelected,
   onChange,
+  isDisabled,
 }: RadioButtonStatusProps) {
   const { label, color } = propsStatutsActions[status]
   const id = `option-statut--${label.toLowerCase()}`
@@ -24,6 +26,7 @@ export default function RadioButtonStatus({
       name='option-statut'
       id={id}
       label={label}
+      disabled={isDisabled}
     />
   )
 }
