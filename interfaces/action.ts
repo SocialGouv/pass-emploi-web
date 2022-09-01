@@ -47,3 +47,5 @@ export interface CreateurCommentaire {
   id: string
   type: 'conseiller' | 'jeune'
 }
+
+export type SituationNonProfessionnelle = { code: string; label: string }

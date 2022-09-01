@@ -1,5 +1,3 @@
-import { CODE_QUALIFICATION_NON_SNP } from '../../interfaces/json/action'
-
 import { ApiClient } from 'clients/api.client'
 import {
   unCommentaire,
@@ -9,6 +7,7 @@ import {
   uneListeDActionsJson,
 } from 'fixtures/action'
 import { QualificationAction, StatutAction } from 'interfaces/action'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -509,6 +508,32 @@ describe('ActionsApiService', () => {
         'accessToken'
       )
       expect(result).toEqual([commentaire])
+    })
+  })
+
+  describe('.getSituationsNonProfessionnelles', () => {
+    it('retourne la liste des situations non professionnelles', async () => {
+      // GIVEN
+      const situationsNonProfessionnelles = [
+        { code: 'SNP_1', label: 'SNP 1' },
+        { code: 'SNP_2', label: 'SNP 2' },
+        { code: 'SNP_3', label: 'SNP 3' },
+      ]
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: situationsNonProfessionnelles,
+      })
+
+      // WHEN
+      const result = await actionsService.getSituationsNonProfessionnelles(
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/referentiels/qualifications-actions/types',
+        'accessToken'
+      )
+      expect(result).toEqual(situationsNonProfessionnelles)
     })
   })
 })

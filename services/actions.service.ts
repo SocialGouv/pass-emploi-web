@@ -7,6 +7,7 @@ import {
   Commentaire,
   MetadonneesActions,
   QualificationAction,
+  SituationNonProfessionnelle,
   StatutAction,
   TotalActions,
 } from 'interfaces/action'
@@ -69,6 +70,10 @@ export interface ActionsService {
   ): Promise<Commentaire[]>
 
   qualifier(idAction: string, type: string): Promise<QualificationAction>
+
+  getSituationsNonProfessionnelles(
+    accessToken: string
+  ): Promise<SituationNonProfessionnelle[]>
 }
 
 export class ActionsApiService implements ActionsService {
@@ -236,6 +241,16 @@ export class ActionsApiService implements ActionsService {
       accessToken
     )
     return commentairesJson.content
+  }
+
+  async getSituationsNonProfessionnelles(
+    accessToken: string
+  ): Promise<SituationNonProfessionnelle[]> {
+    const { content } = await this.apiClient.get<SituationNonProfessionnelle[]>(
+      '/referentiels/qualifications-actions/types',
+      accessToken
+    )
+    return content
   }
 }
 
