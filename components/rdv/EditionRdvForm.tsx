@@ -9,6 +9,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import { InputError } from 'components/ui/Form/InputError'
+import Select from 'components/ui/Form/Select'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
@@ -122,10 +123,10 @@ export function EditionRdvForm({
     )
   }
 
-  function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
-    setCodeTypeRendezVous(e.target.value)
-    setShowPrecisionType(e.target.value === TYPE_RENDEZ_VOUS.Autre)
-    if (e.target.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
+  function handleSelectedTypeRendezVous(value: string) {
+    setCodeTypeRendezVous(value)
+    setShowPrecisionType(value === TYPE_RENDEZ_VOUS.Autre)
+    if (value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
   }
@@ -314,22 +315,19 @@ export function EditionRdvForm({
         <label htmlFor='typeRendezVous' className='text-base-bold mb-2'>
           <span aria-hidden={true}>* </span>Type
         </label>
-        <select
+        <Select
           id='typeRendezVous'
-          name='typeRendezVous'
           defaultValue={codeTypeRendezVous}
           required={true}
           disabled={Boolean(rdv)}
           onChange={handleSelectedTypeRendezVous}
-          className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
         >
-          <option aria-hidden hidden disabled value={''} />
           {typesRendezVous.map(({ code, label }) => (
             <option key={code} value={code}>
               {label}
             </option>
           ))}
-        </select>
+        </Select>
 
         {showPrecisionType && (
           <>
@@ -372,20 +370,13 @@ export function EditionRdvForm({
         <label htmlFor='modalite' className='text-base-bold mb-2'>
           Modalité
         </label>
-        <select
-          id='modalite'
-          name='modalite'
-          defaultValue={modalite}
-          onChange={(e) => setModalite(e.target.value)}
-          className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
-        >
-          <option aria-hidden hidden disabled value={''} />
+        <Select id='modalite' defaultValue={modalite} onChange={setModalite}>
           {modalites.map((md) => (
             <option key={md} value={md}>
               {md}
             </option>
           ))}
-        </select>
+        </Select>
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>

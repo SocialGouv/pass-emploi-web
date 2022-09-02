@@ -1,9 +1,10 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 
 import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
+import Select from 'components/ui/Form/Select'
 import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
@@ -44,8 +45,8 @@ export default function DeleteJeuneActifModal({
     setTrackingLabel('Détail Jeune - Pop-in sélection motif')
   }
 
-  function selectMotifSuppression(e: ChangeEvent<HTMLSelectElement>) {
-    setMotifSuppressionJeune(e.target.value)
+  function selectMotifSuppression(value: string) {
+    setMotifSuppressionJeune(value)
   }
 
   function validateCommentaireMotif() {
@@ -141,20 +142,17 @@ export default function DeleteJeuneActifModal({
                   Veuillez sélectionner un motif de suppression de compte
                 </span>
               </label>
-              <select
+              <Select
                 id='motif-suppression'
-                name='motif-suppression'
                 required
                 onChange={selectMotifSuppression}
-                className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
               >
-                <option hidden value={''} />
                 {motifsSuppression.map((motif) => (
                   <option key={motif} value={motif}>
                     {motif}
                   </option>
                 ))}
-              </select>
+              </Select>
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
                 <>

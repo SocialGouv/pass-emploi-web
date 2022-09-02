@@ -6,6 +6,7 @@ import { FormEvent, useState } from 'react'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -100,26 +101,23 @@ function EditionAction({ idJeune }: EditionActionProps) {
           >
             <label
               htmlFor='intitule-action-predefinie'
-              className='text-base-medium text-content_color block'
+              className='text-base-medium text-content_color block mb-3'
             >
               * Choisir une action prédéfinie
             </label>
-            <select
+            <Select
               id='intitule-action-predefinie'
               required={true}
-              onChange={(e) => setIntitule(e.target.value)}
-              defaultValue={''}
-              className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3 truncate'
+              onChange={setIntitule}
             >
-              <option aria-hidden hidden disabled value={''} />
               {actionsPredefinies.map(({ id, content }) => (
                 <option key={id}>{content}</option>
               ))}
-            </select>
+            </Select>
 
             <label
               htmlFor='commentaire-action-predefinie'
-              className='flex mt-10 text-base-medium text-content_color items-center'
+              className='flex text-base-medium text-content_color items-center'
             >
               Description de l&apos;action
               <span className='ml-2'>
@@ -135,7 +133,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
             />
             <label htmlFor='date-echeance-action-predefinie' className='mb-2'>
-              <span className='mt-10 text-base-medium text-content_color block'>
+              <span className='mt-8 text-base-medium text-content_color block'>
                 * Définir une date d’échéance
               </span>
             </label>
@@ -175,7 +173,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
             <label
               htmlFor='commentaire-action-personnalisee'
-              className='mt-10 text-base-medium text-content_color block'
+              className='mt-8 text-base-medium text-content_color block'
             >
               Description de l&apos;action
             </label>
@@ -191,7 +189,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
               htmlFor='date-echeance-action-personnalisee'
               className='mb-2'
             >
-              <span className='mt-10 text-base-medium text-content_color block'>
+              <span className='mt-8 text-base-medium text-content_color block'>
                 * Définir une date d’échéance
               </span>
             </label>
@@ -207,7 +205,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           </div>
         )}
 
-        <div className='mt-10 flex justify-center'>
+        <div className='mt-8 flex justify-center'>
           <ButtonLink
             href={`/mes-jeunes/${idJeune}/actions`}
             style={ButtonStyle.SECONDARY}
