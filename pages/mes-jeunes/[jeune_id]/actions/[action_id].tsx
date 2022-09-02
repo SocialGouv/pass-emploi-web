@@ -153,9 +153,12 @@ function PageAction({
         >
           {action.content}
         </h2>
-        {action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+
+        {(action.creatorType === UserType.CONSEILLER.toLowerCase() &&
           action.comment.length <= 1 &&
-          action.etat !== EtatAction.QUALIFIEE && (
+          action.etat !== EtatAction.QUALIFIEE) ||
+          action.comment.length <= 1 ||
+          (action.creatorType === UserType.CONSEILLER.toLowerCase() && (
             <Button
               label="Supprimer l'action"
               onClick={() => deleteAction()}
@@ -170,7 +173,7 @@ function PageAction({
               />
               Supprimer
             </Button>
-          )}
+          ))}
       </div>
 
       {action.comment && <p className='mb-8'>{action.comment}</p>}

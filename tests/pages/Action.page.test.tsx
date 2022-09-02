@@ -110,8 +110,8 @@ describe("Page Détail d'une action d'un jeune", () => {
 
           it('ne permet pas de supprimer l’action', () => {
             expect(
-              screen.getByRole('button', { name: 'Supprimer l’action' })
-            ).toThrow()
+              screen.queryByRole('button', { name: 'Supprimer l’action' })
+            ).not.toBeInTheDocument()
           })
         })
 
@@ -181,7 +181,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           ).toBeInTheDocument()
         })
 
-        describe("quand on qualifie l'action en PAS Situation Non Professionnelle", () => {
+        describe("quand on qualifie l'action qui n'est PAS une Situation Non Professionnelle", () => {
           beforeEach(async () => {
             // Given
             const radioButton = screen.getByLabelText(
@@ -279,7 +279,9 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
 
         it('ne permet pas de supprimer l’action', () => {
-          expect(screen.getByText('Supprimer l’action')).toThrow()
+          expect(
+            screen.queryByRole('button', { name: 'Supprimer l’action' })
+          ).not.toBeInTheDocument()
         })
 
         it('ne permet pas de modifier le statut de l’action', () => {
