@@ -69,6 +69,11 @@ function PageAction({
         CODE_QUALIFICATION_NON_SNP
       )
       setQualification(nouvelleQualification)
+      await router.replace(
+        `/mes-jeunes/${jeune.id}/actions/${action.id}?qualificationNonSNP=succes`,
+        undefined,
+        { shallow: true }
+      )
     }
   }
 

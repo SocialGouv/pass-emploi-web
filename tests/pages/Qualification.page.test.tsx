@@ -1,6 +1,7 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desSituationsNonProfessionnelles, uneAction } from 'fixtures/action'
@@ -20,6 +21,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('next/router')
 
 describe("Page Qualification d'une action", () => {
   describe('server side', () => {
@@ -194,11 +196,15 @@ describe("Page Qualification d'une action", () => {
     let action: Action
     let situationsNonProfessionnelles: SituationNonProfessionnelle[]
     let actionsService: ActionsService
+    let push: jest.Mock
     beforeEach(() => {
       // Given
       action = uneAction({ dateFinReelle: '2022-09-02T11:00:00.000Z' })
       situationsNonProfessionnelles = desSituationsNonProfessionnelles()
       actionsService = mockedActionsService()
+
+      push = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       // When
       renderWithContexts(
@@ -206,6 +212,7 @@ describe("Page Qualification d'une action", () => {
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
           pageTitle=''
+          returnTo='/mes-jeunes/jeune-1/actions/id-action-1'
         />,
         { customDependances: { actionsService } }
       )
@@ -243,8 +250,9 @@ describe("Page Qualification d'une action", () => {
       expect(inputDate).toHaveAttribute('min', '2022-02-15')
       expect(inputDate).toHaveValue('2022-09-02')
     })
-    describe('formulaire rempli', () => {
-      it('envoie la qualification', async () => {
+
+    describe('validation formulaire', () => {
+      beforeEach(async () => {
         // Given
         const selectSNP = screen.getByRole('combobox', { name: 'Type' })
         const inputDate = screen.getByLabelText('* Date')
@@ -256,17 +264,24 @@ describe("Page Qualification d'une action", () => {
         fireEvent.change(inputDate, { target: { value: '2022-09-05' } })
 
         // When
-        expect(inputDate).toHaveValue('2022-09-05')
-
         await userEvent.click(
           screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
         )
+      })
 
+      it('envoie la qualification', async () => {
         // Then
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
           'SNP_2',
           new Date('2022-09-05T00:00:00.000+02:00')
+        )
+      })
+
+      it("redirige vers le détail de l'action", () => {
+        // Then
+        expect(push).toHaveBeenCalledWith(
+          '/mes-jeunes/jeune-1/actions/id-action-1?qualificationSNP=succes'
         )
       })
     })

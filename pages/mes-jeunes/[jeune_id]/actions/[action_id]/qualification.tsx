@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -30,6 +31,7 @@ function PageQualification({
   situationsNonProfessionnelles,
   returnTo,
 }: QualificationProps) {
+  const router = useRouter()
   const actionsService = useDependance<ActionsService>('actionsService')
 
   const [codeSNP, setCodeSNP] = useState<string | undefined>()
@@ -59,6 +61,7 @@ function PageQualification({
         codeSNP!,
         DateTime.fromISO(dateFin!).toJSDate()
       )
+      await router.push(`${returnTo}?qualificationSNP=succes`)
     } catch (error) {
       setErreurQualification(
         error instanceof ApiError

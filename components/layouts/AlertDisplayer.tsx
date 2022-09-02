@@ -92,6 +92,9 @@ const ALERTS: DictAlerts = {
     'L’identifiant Pôle emploi a bien été mis à jour',
   ajoutCommentaireAction:
     'Votre jeune a été alerté que vous avez écrit un commentaire',
+  qualificationSNP:
+    'L’action a été qualifiée en Situation Non Professionnelle et les informations ont été envoyées à i-milo',
+  qualificationNonSNP: 'L’action a été qualifiée',
 }
 
 const ALERTS_MILO: DictAlerts = {

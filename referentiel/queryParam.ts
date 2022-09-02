@@ -14,7 +14,9 @@ export enum QueryParam {
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',
   modificationIdentifiantPartenaire = 'modificationIdentifiantPartenaire',
-  ajoutCommentaireAction = 'ajoutCommentaireAction'
+  ajoutCommentaireAction = 'ajoutCommentaireAction',
+  qualificationSNP = 'qualificationSNP',
+  qualificationNonSNP = 'qualificationNonSNP',
 }
 
 export enum QueryValue {

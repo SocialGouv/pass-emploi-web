@@ -20,6 +20,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('next/router')
 
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client side', () => {
@@ -142,6 +143,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
       })
     })
+
     describe("quand l'action est terminée et non qualifiée", () => {
       const actionAQualifier = uneAction({
         status: StatutAction.Terminee,
@@ -152,6 +154,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         nom: 'Sanfamiye',
       }
       let actionsService: ActionsService
+      let replace: jest.Mock
 
       beforeEach(async () => {
         actionsService = mockedActionsService({
@@ -160,6 +163,10 @@ describe("Page Détail d'une action d'un jeune", () => {
             isSituationNonProfessionnelle: false,
           }),
         })
+
+        replace = jest.fn()
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
         renderWithContexts(
           <PageAction
             action={actionAQualifier}
@@ -191,21 +198,32 @@ describe("Page Détail d'une action d'un jeune", () => {
           })
           await userEvent.click(submitQualification)
         })
+
         it("qualifie l'action", () => {
           expect(actionsService.qualifier).toHaveBeenCalledWith(
             actionAQualifier.id,
             CODE_QUALIFICATION_NON_SNP
           )
         })
+
         it("met à jour le tag de l'action", () => {
           expect(
             screen.getByText('PAS Situation Non Professionnelle')
           ).toBeInTheDocument()
         })
+
         it('cache le formulaire de qualification', () => {
           expect(() =>
             screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
           ).toThrow()
+        })
+
+        it('affiche une alerte de succès', () => {
+          expect(replace).toHaveBeenCalledWith(
+            `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}?qualificationNonSNP=succes`,
+            undefined,
+            { shallow: true }
+          )
         })
       })
     })
