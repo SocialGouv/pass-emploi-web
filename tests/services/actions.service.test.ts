@@ -452,6 +452,38 @@ describe('ActionsApiService', () => {
       }
       expect(actual).toStrictEqual(expected)
     })
+
+    it('qualifie une action avec une date de fin', async () => {
+      // Given
+      ;(apiClient.post as jest.Mock).mockResolvedValue({
+        content: {
+          libelle: 'Santé',
+          code: 'SANTE',
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.qualifier(
+        'id-action',
+        'SANTE',
+        new Date('2022-09-05T00:00:00.000+02:00')
+      )
+
+      // THEN
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/actions/id-action/qualifier',
+        {
+          codeQualification: 'SANTE',
+          dateFinReelle: '2022-09-04T22:00:00.000Z',
+        },
+        'accessToken'
+      )
+      const expected: QualificationAction = {
+        libelle: 'Santé',
+        isSituationNonProfessionnelle: true,
+      }
+      expect(actual).toStrictEqual(expected)
+    })
   })
 
   describe('.deleteAction', () => {

@@ -1,4 +1,5 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -13,6 +14,7 @@ import PageQualification, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/qualification'
 import { ActionsService } from 'services/actions.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -191,18 +193,21 @@ describe("Page Qualification d'une action", () => {
   describe('client side', () => {
     let action: Action
     let situationsNonProfessionnelles: SituationNonProfessionnelle[]
+    let actionsService: ActionsService
     beforeEach(() => {
       // Given
       action = uneAction({ dateFinReelle: '2022-09-02T11:00:00.000Z' })
       situationsNonProfessionnelles = desSituationsNonProfessionnelles()
+      actionsService = mockedActionsService()
 
       // When
-      render(
+      renderWithContexts(
         <PageQualification
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
           pageTitle=''
-        />
+        />,
+        { customDependances: { actionsService } }
       )
     })
 
@@ -237,6 +242,33 @@ describe("Page Qualification d'une action", () => {
       expect(inputDate).toHaveAttribute('type', 'date')
       expect(inputDate).toHaveAttribute('min', '2022-02-15')
       expect(inputDate).toHaveValue('2022-09-02')
+    })
+    describe('formulaire rempli', () => {
+      it('envoie la qualification', async () => {
+        // Given
+        const selectSNP = screen.getByRole('combobox', { name: 'Type' })
+        const inputDate = screen.getByLabelText('* Date')
+        await userEvent.selectOptions(
+          selectSNP,
+          situationsNonProfessionnelles[1].code
+        )
+        // FIXME userEvent.type ne marche pas bien avec les input date/time
+        fireEvent.change(inputDate, { target: { value: '2022-09-05' } })
+
+        // When
+        expect(inputDate).toHaveValue('2022-09-05')
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
+        )
+
+        // Then
+        expect(actionsService.qualifier).toHaveBeenCalledWith(
+          action.id,
+          'SNP_2',
+          new Date('2022-09-05T00:00:00.000+02:00')
+        )
+      })
     })
   })
 })

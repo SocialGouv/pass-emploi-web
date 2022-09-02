@@ -69,7 +69,11 @@ export interface ActionsService {
     accessToken: string
   ): Promise<Commentaire[]>
 
-  qualifier(idAction: string, type: string): Promise<QualificationAction>
+  qualifier(
+    idAction: string,
+    type: string,
+    dateFinModifiee?: Date
+  ): Promise<QualificationAction>
 
   getSituationsNonProfessionnelles(
     accessToken: string
@@ -203,12 +207,19 @@ export class ActionsApiService implements ActionsService {
 
   async qualifier(
     idAction: string,
-    type: string
+    type: string,
+    dateFinModifiee?: Date
   ): Promise<QualificationAction> {
     const session = await getSession()
+
+    const payload: { codeQualification: string; dateFinReelle?: string } = {
+      codeQualification: type,
+    }
+    if (dateFinModifiee) payload.dateFinReelle = dateFinModifiee.toISOString()
+
     const { content } = await this.apiClient.post<QualificationActionJson>(
       `/actions/${idAction}/qualifier`,
-      { codeQualification: type },
+      payload,
       session!.accessToken
     )
     return jsonToQualification(content)
