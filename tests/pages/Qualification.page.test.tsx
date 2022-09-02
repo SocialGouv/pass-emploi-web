@@ -193,7 +193,7 @@ describe("Page Qualification d'une action", () => {
     let situationsNonProfessionnelles: SituationNonProfessionnelle[]
     beforeEach(() => {
       // Given
-      action = uneAction()
+      action = uneAction({ dateFinReelle: '2022-09-02T11:00:00.000Z' })
       situationsNonProfessionnelles = desSituationsNonProfessionnelles()
 
       // When
@@ -220,12 +220,23 @@ describe("Page Qualification d'une action", () => {
       const etape2 = screen.getByRole('group', {
         name: 'Étape 2 Type',
       })
-      const select = within(etape2).getByRole('combobox', { name: 'Type' })
+      const selectSNP = within(etape2).getByRole('combobox', { name: 'Type' })
       situationsNonProfessionnelles.forEach(({ code, label }) => {
-        expect(within(select).getByRole('option', { name: label })).toHaveValue(
-          code
-        )
+        expect(
+          within(selectSNP).getByRole('option', { name: label })
+        ).toHaveValue(code)
       })
+    })
+
+    it("permet de modifier la date de fin réelle de l'action", () => {
+      // Then
+      const etape3 = screen.getByRole('group', {
+        name: 'Étape 3 Date de fin de l’action',
+      })
+      const inputDate = within(etape3).getByLabelText('* Date')
+      expect(inputDate).toHaveAttribute('type', 'date')
+      expect(inputDate).toHaveAttribute('min', '2022-02-15')
+      expect(inputDate).toHaveValue('2022-09-02')
     })
   })
 })

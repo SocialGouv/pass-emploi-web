@@ -8,6 +8,7 @@ export interface Action {
   creatorType: string
   status: StatutAction
   dateEcheance: string
+  dateFinReelle?: string
   qualification?: QualificationAction
 }
 

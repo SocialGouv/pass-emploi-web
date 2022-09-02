@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 
+import Input from 'components/ui/Form/Input'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Action, StatutAction } from 'interfaces/action'
@@ -8,6 +9,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { toIsoLocalDate } from 'utils/date'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type QualificationProps = PageProps & {
@@ -61,6 +63,35 @@ function PageQualification({
             </option>
           ))}
         </Select>
+      </fieldset>
+
+      <fieldset className='border-none flex flex-col mb-8'>
+        <legend className='flex items-center text-m-bold mb-4'>
+          <IconComponent
+            name={IconName.Chiffre3}
+            role='img'
+            focusable={false}
+            aria-label='Étape 3'
+            className='mr-2 w-8 h-8'
+          />
+          Date de fin de l’action
+        </legend>
+
+        <label htmlFor='input-date-fin' className='text-base-bold mb-2'>
+          <span aria-hidden={true}>* </span>Date
+        </label>
+        <Input
+          type='date'
+          id='input-date-fin'
+          defaultValue={
+            action.dateFinReelle
+              ? toIsoLocalDate(new Date(action.dateFinReelle))
+              : ''
+          }
+          min={toIsoLocalDate(new Date(action.creationDate))}
+          required={true}
+          onChange={() => {}}
+        />
       </fieldset>
     </form>
   )

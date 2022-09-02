@@ -17,6 +17,7 @@ export interface ActionJson {
   creator: string
   creatorType: string
   dateEcheance: string
+  dateFinReelle?: string
   qualification?: QualificationActionJson
 }
 
@@ -71,6 +72,10 @@ export function jsonToAction(json: ActionJson): Action {
     creator: json.creator,
     creatorType: json.creatorType,
     dateEcheance: json.dateEcheance,
+  }
+
+  if (json.dateFinReelle) {
+    action.dateFinReelle = json.dateFinReelle
   }
 
   if (json.qualification) {
