@@ -1,29 +1,34 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import { FormEvent, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
-import Button from 'components/ui/Button/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { toIsoLocalDate } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type QualificationProps = PageProps & {
   action: Action
   situationsNonProfessionnelles: Array<{ code: string; label: string }>
+  returnTo: string
 }
 
 function PageQualification({
   action,
   situationsNonProfessionnelles,
+  returnTo,
 }: QualificationProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
 
@@ -34,15 +39,32 @@ function PageQualification({
 
   const [isQualificationEnCours, setIsQualificationEnCours] =
     useState<boolean>(false)
+  const [erreurQualification, setErreurQualification] = useState<
+    string | undefined
+  >()
 
-  async function qualifierAction(e: FormEvent<HTMLFormElement>): void {
+  function isFormValid(): boolean {
+    return Boolean(codeSNP) && Boolean(dateFin)
+  }
+
+  async function qualifierAction(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
+    if (!isFormValid()) return
 
-    const date = dateFin ? DateTime.fromISO(dateFin).toJSDate() : undefined
-
+    setErreurQualification(undefined)
     setIsQualificationEnCours(true)
     try {
-      await actionsService.qualifier(action.id, codeSNP!, date)
+      await actionsService.qualifier(
+        action.id,
+        codeSNP!,
+        DateTime.fromISO(dateFin!).toJSDate()
+      )
+    } catch (error) {
+      setErreurQualification(
+        error instanceof ApiError
+          ? error.message
+          : 'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+      )
     } finally {
       setIsQualificationEnCours(false)
     }
@@ -50,6 +72,13 @@ function PageQualification({
 
   return (
     <form onSubmit={qualifierAction}>
+      {erreurQualification && (
+        <FailureAlert
+          label={erreurQualification}
+          onAcknowledge={() => setErreurQualification(undefined)}
+        />
+      )}
+
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
       <fieldset className='border-none flex flex-col mb-8'>
@@ -117,12 +146,32 @@ function PageQualification({
           }
           min={toIsoLocalDate(new Date(action.creationDate))}
           onChange={setDateFin}
+          required={true}
         />
       </fieldset>
 
-      <Button type='submit' isLoading={isQualificationEnCours}>
-        Créer et envoyer à i-milo
-      </Button>
+      <div className='flex justify-center'>
+        <ButtonLink
+          href={returnTo}
+          style={ButtonStyle.SECONDARY}
+          className='mr-3'
+        >
+          Annuler
+        </ButtonLink>
+        <Button
+          type='submit'
+          isLoading={isQualificationEnCours}
+          disabled={!isFormValid()}
+        >
+          <IconComponent
+            name={IconName.Send}
+            aria-hidden={true}
+            focusable={false}
+            className='w-[1em] h-[1em] mr-2'
+          />
+          Créer et envoyer à i-milo
+        </Button>
+      </div>
     </form>
   )
 }

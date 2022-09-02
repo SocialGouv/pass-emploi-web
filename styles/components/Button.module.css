@@ -7,6 +7,10 @@
   align-items: center;
 }
 
+.button svg {
+  fill: currentColor
+}
+
 /**
 * Button Primary (default)
 */
@@ -24,11 +28,6 @@
   border: 1px solid theme('colors.primary');
 }
 
-.buttonPrimary:hover svg,
-.buttonPrimary:active svg {
-  fill: theme('colors.blanc');
-}
-
 .buttonPrimary[disabled] {
   background-color: theme('colors.primary');
   opacity: 50%;
@@ -41,10 +40,6 @@
   border: 1px solid transparent;
 }
 
-.buttonPrimary[disabled]:hover svg {
-  fill: theme('colors.blanc');
-}
-
 /**
 * Button Secondary
 */
@@ -53,10 +48,6 @@
   background-color: theme('colors.blanc');
   color: theme('colors.primary');
   border: 1px solid theme('colors.primary');
-}
-
-.buttonSecondary svg {
-  fill: theme('colors.primary');
 }
 
 .buttonSecondary:hover,
@@ -70,10 +61,6 @@
   cursor: not-allowed;
   border: 1px solid transparent;
   color: theme('colors.blanc');
-}
-
-.buttonSecondary[disabled] svg {
-  fill: theme('colors.blanc');
 }
 
 /**
@@ -90,10 +77,6 @@
   background-color: theme('colors.warning');
   color: theme('colors.blanc');
   border: 1px solid transparent;
-}
-
-.buttonWarning:hover svg {
-  fill: theme('colors.blanc');
 }
 
 .buttonWarning[disabled] {
