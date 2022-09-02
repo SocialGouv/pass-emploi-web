@@ -134,6 +134,22 @@ function PageAction({
       ? `${pageTracking} - Succès envoi message`
       : pageTracking
   )
+  // je peux supprimer si pas de commentaire ou actionNonQualifier
+  // je peux supprimer si createur est conseiller
+
+  const sansCommentaire = action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+    action.comment.length ===0
+  const actionNonQual = action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+    action.etat !== EtatAction.QUALIFIEE
+
+  console.log('createur PAAAAS CONSEILLER',action.creatorType === UserType.CONSEILLER.toLowerCase())
+  console.log('sans com',sansCommentaire)
+  console.log('action non qual',actionNonQual)
+  console.log('---------------',action.comment.length)
+  console.log('---------------',action.comment.length ===0)
+  console.log('---------------',action.comment)
+
+  const clause = (action.etat !== EtatAction.QUALIFIEE && action.comment.length === 0 && (sansCommentaire || actionNonQual))
 
   return (
     <>
@@ -154,11 +170,7 @@ function PageAction({
           {action.content}
         </h2>
 
-        {(action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-          action.comment.length <= 1 &&
-          action.etat !== EtatAction.QUALIFIEE) ||
-          action.comment.length <= 1 ||
-          (action.creatorType === UserType.CONSEILLER.toLowerCase() && (
+        {clause && (
             <Button
               label="Supprimer l'action"
               onClick={() => deleteAction()}
@@ -173,7 +185,7 @@ function PageAction({
               />
               Supprimer
             </Button>
-          ))}
+          )}
       </div>
 
       {action.comment && <p className='mb-8'>{action.comment}</p>}
