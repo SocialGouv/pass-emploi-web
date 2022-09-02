@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import RadioButton from '../../components/action/RadioButton'
+import RadioButton from 'components/action/RadioButton'
 
 export default {
   title: 'Components/Form/RadioButton',

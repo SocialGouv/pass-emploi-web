@@ -134,22 +134,18 @@ function PageAction({
       ? `${pageTracking} - Succès envoi message`
       : pageTracking
   )
-  // je peux supprimer si pas de commentaire ou actionNonQualifier
-  // je peux supprimer si createur est conseiller
 
-  const sansCommentaire = action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    action.comment.length ===0
-  const actionNonQual = action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+  const sansCommentaire =
+    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+    commentaires.length === 0
+  const actionNonQualifiee =
+    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.etat !== EtatAction.QUALIFIEE
 
-  console.log('createur PAAAAS CONSEILLER',action.creatorType === UserType.CONSEILLER.toLowerCase())
-  console.log('sans com',sansCommentaire)
-  console.log('action non qual',actionNonQual)
-  console.log('---------------',action.comment.length)
-  console.log('---------------',action.comment.length ===0)
-  console.log('---------------',action.comment)
-
-  const clause = (action.etat !== EtatAction.QUALIFIEE && action.comment.length === 0 && (sansCommentaire || actionNonQual))
+  const afficherSuppressionAction =
+    action.etat !== EtatAction.QUALIFIEE &&
+    commentaires.length === 0 &&
+    (sansCommentaire || actionNonQualifiee)
 
   return (
     <>
@@ -170,22 +166,22 @@ function PageAction({
           {action.content}
         </h2>
 
-        {clause && (
-            <Button
-              label="Supprimer l'action"
-              onClick={() => deleteAction()}
-              style={ButtonStyle.SECONDARY}
-              disabled={deleteDisabled}
-            >
-              <IconComponent
-                name={IconName.TrashCan}
-                aria-hidden={true}
-                focusable={false}
-                className='w-2.5 h-3 mr-4'
-              />
-              Supprimer
-            </Button>
-          )}
+        {afficherSuppressionAction && (
+          <Button
+            label="Supprimer l'action"
+            onClick={() => deleteAction()}
+            style={ButtonStyle.SECONDARY}
+            disabled={deleteDisabled}
+          >
+            <IconComponent
+              name={IconName.TrashCan}
+              aria-hidden={true}
+              focusable={false}
+              className='w-2.5 h-3 mr-4'
+            />
+            Supprimer
+          </Button>
+        )}
       </div>
 
       {action.comment && <p className='mb-8'>{action.comment}</p>}
