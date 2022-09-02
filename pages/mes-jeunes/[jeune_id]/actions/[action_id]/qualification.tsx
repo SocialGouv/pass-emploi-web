@@ -32,11 +32,20 @@ function PageQualification({
     action.dateFinReelle
   )
 
-  function qualifierAction(e: FormEvent<HTMLFormElement>): void {
+  const [isQualificationEnCours, setIsQualificationEnCours] =
+    useState<boolean>(false)
+
+  async function qualifierAction(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault()
 
     const date = dateFin ? DateTime.fromISO(dateFin).toJSDate() : undefined
-    actionsService.qualifier(action.id, codeSNP!, date)
+
+    setIsQualificationEnCours(true)
+    try {
+      await actionsService.qualifier(action.id, codeSNP!, date)
+    } finally {
+      setIsQualificationEnCours(false)
+    }
   }
 
   return (
@@ -111,7 +120,9 @@ function PageQualification({
         />
       </fieldset>
 
-      <Button type='submit'>Créer et envoyer à i-milo</Button>
+      <Button type='submit' isLoading={isQualificationEnCours}>
+        Créer et envoyer à i-milo
+      </Button>
     </form>
   )
 }
