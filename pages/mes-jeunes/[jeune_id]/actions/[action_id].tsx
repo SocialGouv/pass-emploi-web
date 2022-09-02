@@ -63,7 +63,11 @@ function PageAction({
   async function qualifierAction(
     isSituationNonProfessionnelle: boolean
   ): Promise<void> {
-    if (!isSituationNonProfessionnelle) {
+    if (isSituationNonProfessionnelle) {
+      await router.push(
+        `/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`
+      )
+    } else {
       const nouvelleQualification = await actionsService.qualifier(
         action.id,
         CODE_QUALIFICATION_NON_SNP

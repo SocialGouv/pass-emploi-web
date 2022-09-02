@@ -154,6 +154,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         nom: 'Sanfamiye',
       }
       let actionsService: ActionsService
+      let push: jest.Mock
       let replace: jest.Mock
 
       beforeEach(async () => {
@@ -164,8 +165,9 @@ describe("Page Détail d'une action d'un jeune", () => {
           }),
         })
 
+        push = jest.fn()
         replace = jest.fn()
-        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+        ;(useRouter as jest.Mock).mockReturnValue({ push, replace })
 
         renderWithContexts(
           <PageAction
@@ -223,6 +225,28 @@ describe("Page Détail d'une action d'un jeune", () => {
             `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}?qualificationNonSNP=succes`,
             undefined,
             { shallow: true }
+          )
+        })
+      })
+
+      describe("quand on qualifie l'action en Situation Non Professionnelle", () => {
+        beforeEach(async () => {
+          // Given
+          const radioButton = screen.getByLabelText(
+            'Il s’agit d’une Situation Non Professionnelle'
+          )
+          await userEvent.click(radioButton)
+
+          // When
+          const submitQualification = screen.getByRole('button', {
+            name: /Enregistrer/,
+          })
+          await userEvent.click(submitQualification)
+        })
+
+        it('redirige vers la page de qualification', () => {
+          expect(push).toHaveBeenCalledWith(
+            `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}/qualification`
           )
         })
       })
