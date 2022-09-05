@@ -74,12 +74,21 @@ function Reaffectation(_: ReaffectationProps) {
     setIsReaffectationTemporaire(undefined)
   }
 
-  function toggleJeune(_event: FormEvent, jeune: JeuneFromListe) {
+  function selectionnerJeune(_event: FormEvent, jeune: JeuneFromListe) {
     setErreurReaffectation(undefined)
     if (idsJeunesSelected.includes(jeune.id)) {
       setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
     } else {
       setIdsJeunesSelected(idsJeunesSelected.concat(jeune.id))
+    }
+  }
+
+  function selectionnerTousLesJeunes(_event: FormEvent) {
+    setErreurReaffectation(undefined)
+    if (idsJeunesSelected.length !== jeunes.length) {
+      setIdsJeunesSelected(jeunes.map((jeune) => jeune.id))
+    } else {
+      setIdsJeunesSelected([])
     }
   }
 
@@ -378,8 +387,26 @@ function Reaffectation(_: ReaffectationProps) {
             </caption>
             <thead>
               <tr>
-                <th scope='col' className='sr-only pb-2'>
-                  Cocher/Décocher les jeunes
+                <th scope='col' className=' pb-2 pl-4'>
+                  <span
+                    className='text-left'
+                    onClick={(e) => selectionnerTousLesJeunes(e)}
+                  >
+                    <span className='sr-only'>Cocher/Décocher les jeunes</span>
+                    <input
+                      id='reaffectation-tout-selectionner'
+                      type='checkbox'
+                      className='m-2'
+                      checked={idsJeunesSelected.length === jeunes.length}
+                      title='Tout sélectionner'
+                    />
+                    <label
+                      htmlFor='reaffectation-tout-selectionner'
+                      className='sr-only'
+                    >
+                      Tout sélectionner
+                    </label>
+                  </span>
                 </th>
                 <th
                   scope='col'
@@ -402,14 +429,13 @@ function Reaffectation(_: ReaffectationProps) {
               {jeunes.map((jeune: JeuneFromListe) => (
                 <tr
                   key={jeune.id}
-                  onClick={(e) => toggleJeune(e, jeune)}
+                  onClick={(e) => selectionnerJeune(e, jeune)}
                   className='hover:bg-primary_lighten cursor-pointer'
                 >
                   <td className='pt-6 pb-6 pl-4 w-0'>
                     <input
                       type='checkbox'
                       checked={idsJeunesSelected.includes(jeune.id)}
-                      readOnly={true}
                     />
                   </td>
                   <td className='pt-6 pb-6 pl-4 pr-4 text-base-medium'>
