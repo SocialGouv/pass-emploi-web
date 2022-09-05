@@ -10,6 +10,7 @@ import Input from 'components/ui/Form/Input'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
@@ -81,6 +82,10 @@ function PageQualification({
           onAcknowledge={() => setErreurQualification(undefined)}
         />
       )}
+
+      <div className='mb-6'>
+        <InformationMessage content='Ces informations seront intégrées sur le dossier i-milo du jeune' />
+      </div>
 
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
