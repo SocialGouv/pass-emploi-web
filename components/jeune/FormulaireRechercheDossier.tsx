@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useState } from 'react'
 import IndicationRechercheDossier from 'components/jeune/IndicationRechercheDossier'
 import Button from 'components/ui/Button/Button'
 import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
+import Input from 'components/ui/Form/Input'
+import Label from 'components/ui/Form/Label'
 
 type FormulaireRechercheDossierProps = {
   dossierId?: string
@@ -54,20 +56,14 @@ function FormulaireRechercheDossier({
       <IndicationRechercheDossier />
 
       <form method='POST' onSubmit={handleSearchSubmit}>
-        <label className='block text-base-medium' htmlFor='recherche-numero'>
-          Numéro de dossier
-        </label>
-        <input
+        <Label htmlFor='recherche-numero'>Numéro de dossier</Label>
+        <div className='w-8/12'></div>
+        <Input
           type='text'
           id='recherche-numero'
-          name='recherche-numero'
           value={numeroDossier}
-          onChange={(e) => handleSearchInputChanges(e.target.value)}
-          className={`mt-4 mb-8 p-3 w-8/12 border rounded-medium text-s-regular ${
-            messageErreur
-              ? 'border-warning text-warning'
-              : 'border-content_color text-primary_darken'
-          }`}
+          onChange={handleSearchInputChanges}
+          invalid={Boolean(messageErreur)}
         />
 
         {messageErreur && (
