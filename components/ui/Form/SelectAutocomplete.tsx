@@ -1,41 +1,37 @@
-import { ChangeEventHandler, forwardRef } from 'react'
+import { forwardRef } from 'react'
+
+import Input from 'components/ui/Form/Input'
 
 interface SelectAutocompleteProps {
   options: { id: string; value: string }[]
-  onChange: ChangeEventHandler<HTMLInputElement>
+  onChange: (value: string) => void
   id: string
-  className?: string
-  'aria-invalid'?: boolean
-  'aria-describedby'?: string
   multiple?: boolean
   required?: boolean
+  invalid?: boolean
   disabled?: boolean
-  'aria-required'?: boolean
 }
 
 const SelectAutocomplete = forwardRef<
   HTMLInputElement,
   SelectAutocompleteProps
->((props, ref) => {
+>(({ disabled, id, invalid, multiple, onChange, options, required }, ref) => {
   return (
     <>
-      <input
+      <Input
         type='text'
-        id={props.id}
+        id={id}
         ref={ref}
-        list={`${props.id}--options`}
-        multiple={props.multiple ?? false}
-        required={props.required ?? false}
-        aria-required={props['aria-required']}
-        onChange={props.onChange}
-        aria-invalid={props['aria-invalid']}
-        aria-describedby={props['aria-describedby']}
-        className={props.className}
-        disabled={props.disabled}
+        list={`${id}--options`}
+        multiple={multiple ?? false}
+        aria-required={required}
+        onChange={onChange}
+        invalid={invalid}
+        disabled={disabled}
       />
-      <datalist id={`${props.id}--options`}>
-        {props.options.map(({ id, value }) => (
-          <option key={id} value={value}>
+      <datalist id={`${id}--options`}>
+        {options.map(({ id: optionId, value }) => (
+          <option key={optionId} value={value}>
             {value}
           </option>
         ))}

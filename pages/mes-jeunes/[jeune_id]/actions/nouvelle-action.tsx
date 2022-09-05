@@ -5,8 +5,10 @@ import { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import Input from 'components/ui/Form/Input'
+import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
+import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -99,12 +101,9 @@ function EditionAction({ idJeune }: EditionActionProps) {
             aria-labelledby='creer-action-predefinie'
             className='mt-5'
           >
-            <label
-              htmlFor='intitule-action-predefinie'
-              className='text-base-medium text-content_color block mb-3'
-            >
-              * Choisir une action prédéfinie
-            </label>
+            <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
+              Choisir une action prédéfinie
+            </Label>
             <Select
               id='intitule-action-predefinie'
               required={true}
@@ -115,36 +114,29 @@ function EditionAction({ idJeune }: EditionActionProps) {
               ))}
             </Select>
 
-            <label
-              htmlFor='commentaire-action-predefinie'
-              className='flex text-base-medium text-content_color items-center'
-            >
+            <Label htmlFor='commentaire-action-predefinie' inputSensible={true}>
               Description de l&apos;action
-              <span className='ml-2'>
-                <BulleMessageSensible />
-              </span>
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               id='commentaire-action-predefinie'
               defaultValue={commentaire}
               onChange={(e) => setDescription(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
-              className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
             />
-            <label htmlFor='date-echeance-action-predefinie' className='mb-2'>
-              <span className='mt-8 text-base-medium text-content_color block'>
-                * Définir une date d’échéance
-              </span>
-            </label>
-            <input
+
+            <Label
+              htmlFor='date-echeance-action-predefinie'
+              inputRequired={true}
+            >
+              Définir une date d’échéance
+            </Label>
+            <Input
               type='date'
               id='date-echeance-action-predefinie'
-              name='date'
               required={true}
               defaultValue={dateEcheance}
-              onChange={(e) => setDateEcheance(e.target.value)}
-              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
+              onChange={setDateEcheance}
             />
           </div>
         )}
@@ -157,50 +149,42 @@ function EditionAction({ idJeune }: EditionActionProps) {
             tabIndex={0}
             className='mt-5'
           >
-            <label
-              htmlFor='intitule-action-personnalisee'
-              className='text-base-medium text-content_color block'
-            >
-              * Intitulé de l&apos;action
-            </label>
-            <input
+            <Label htmlFor='intitule-action-personnalisee' inputRequired={true}>
+              Intitulé de l&apos;action
+            </Label>
+            <Input
               type='text'
               id='intitule-action-personnalisee'
               required={true}
-              onChange={(e) => setIntitule(e.target.value)}
-              className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
+              onChange={setIntitule}
             />
 
-            <label
+            <Label
               htmlFor='commentaire-action-personnalisee'
-              className='mt-8 text-base-medium text-content_color block'
+              inputSensible={true}
             >
               Description de l&apos;action
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               id='commentaire-action-personnalisee'
               defaultValue={commentaire}
               onChange={(e) => setDescription(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
-              className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
             />
-            <label
+
+            <Label
               htmlFor='date-echeance-action-personnalisee'
-              className='mb-2'
+              inputRequired={true}
             >
-              <span className='mt-8 text-base-medium text-content_color block'>
-                * Définir une date d’échéance
-              </span>
-            </label>
-            <input
+              Définir une date d’échéance
+            </Label>
+            <Input
               type='date'
               id='date-echeance-action-personnalisee'
-              name='date'
               required={true}
               defaultValue={dateEcheance}
-              onChange={(e) => setDateEcheance(e.target.value)}
-              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
+              onChange={setDateEcheance}
             />
           </div>
         )}

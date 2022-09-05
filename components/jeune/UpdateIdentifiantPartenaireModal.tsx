@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import Input from 'components/ui/Form/Input'
+import Label from 'components/ui/Form/Label'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface UpdateIdentifiantPartenaireModalProps {
@@ -46,17 +48,15 @@ export default function UpdateIdentifiantPartenaireModal({
   return (
     <Modal title={titre} onClose={onClose}>
       <div className='mt-8 mb-14'>
-        <label htmlFor='identifiantPartenaire' className='text-base-medium'>
+        <Label htmlFor='identifiantPartenaire'>
           Identifiant Pôle emploi (10 caractères maximum)
-        </label>
-        <input
+        </Label>
+        <Input
           type='text'
           id='identifiantPartenaire'
-          name='identifiantPartenaire'
           defaultValue={identifiantPartenaire}
-          onChange={(e) => setIdentifiantPartenaire(e.target.value)}
+          onChange={setIdentifiantPartenaire}
           maxLength={10}
-          className={'border border-solid rounded-medium w-full px-4 py-3 mt-3'}
         />
       </div>
 

@@ -3,6 +3,8 @@ import { FormEvent, useEffect, useState } from 'react'
 import { RequiredValue } from 'components/RequiredValue'
 import Button from 'components/ui/Button/Button'
 import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
+import Input from 'components/ui/Form/Input'
+import Label from 'components/ui/Form/Label'
 import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import isEmailValid from 'utils/isEmailValid'
 
@@ -106,62 +108,56 @@ function FormulaireJeunePoleEmploi({
           Les champs marqués d&apos;une * sont obligatoires.
         </div>
 
-        <label className='block text-base-medium' htmlFor='jeune-prenom'>
-          * Prénom
-        </label>
-        <input
-          type='text'
-          id='jeune-prenom'
-          name='jeune-prenom'
-          value={prenom.value}
-          onChange={(e) => handleNomChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
-            prenom.error
-              ? 'border-warning text-warning'
-              : 'border-content_color'
-          }`}
-        />
+        <Label htmlFor='jeune-prenom' inputRequired={true}>
+          Prénom
+        </Label>
+        <div className='w-8/12'>
+          <Input
+            type='text'
+            id='jeune-prenom'
+            value={prenom.value}
+            onChange={handleNomChanges}
+            invalid={Boolean(prenom.error)}
+          />
+        </div>
         {prenom.error && (
           <DeprecatedErrorMessage>{prenom.error}</DeprecatedErrorMessage>
         )}
 
-        <label className='block text-base-medium' htmlFor='jeune-nom'>
-          * Nom
-        </label>
-        <input
-          type='text'
-          id='jeune-nom'
-          name='jeune-nom'
-          value={nom.value}
-          onChange={(e) => handlePrenomChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
-            nom.error ? 'border-warning text-warning' : 'border-content_color'
-          }`}
-        />
+        <Label htmlFor='jeune-nom' inputRequired={true}>
+          Nom
+        </Label>
+        <div className='w-8/12'>
+          <Input
+            label='Nom'
+            type='text'
+            id='jeune-nom'
+            value={nom.value}
+            onChange={handlePrenomChanges}
+            invalid={Boolean(nom.error)}
+          />
+        </div>
         {nom.error && (
           <DeprecatedErrorMessage>{nom.error}</DeprecatedErrorMessage>
         )}
 
-        <label className='block mb-4 text-base-medium' htmlFor='jeune-email'>
-          * E-mail{' '}
+        <Label htmlFor='jeune-email' inputRequired={true}>
+          E-mail{' '}
           <span className='text-base-regular'>(ex : monemail@exemple.com)</span>
-        </label>
-        <span className='text-base-regular'>
+        </Label>
+        <span className='text-base-regular mb-3'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
           dossier MAP du jeune.
         </span>
-        <input
-          type='email'
-          id='jeune-email'
-          name='jeune-email'
-          value={email.value}
-          onChange={(e) => handleEmailChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
-            email.error || error
-              ? 'border-warning text-warning'
-              : 'border-content_color text-primary_darken'
-          }`}
-        />
+        <div className='w-8/12'>
+          <Input
+            type='email'
+            id='jeune-email'
+            value={email.value}
+            onChange={handleEmailChanges}
+            invalid={Boolean(email.error)}
+          />
+        </div>
         {email.error && (
           <DeprecatedErrorMessage>{email.error}</DeprecatedErrorMessage>
         )}

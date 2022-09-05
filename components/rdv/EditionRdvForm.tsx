@@ -7,10 +7,12 @@ import JeunesMultiselectAutocomplete, {
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
+import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import { Switch } from 'components/ui/Form/Switch'
+import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
@@ -312,9 +314,9 @@ export function EditionRdvForm({
           Type de rendez-vous :
         </legend>
 
-        <label htmlFor='typeRendezVous' className='text-base-bold mb-2'>
-          <span aria-hidden={true}>* </span>Type
-        </label>
+        <Label htmlFor='typeRendezVous' inputRequired={true}>
+          Type
+        </Label>
         <Select
           id='typeRendezVous'
           defaultValue={codeTypeRendezVous}
@@ -331,45 +333,32 @@ export function EditionRdvForm({
 
         {showPrecisionType && (
           <>
-            <label
+            <Label
               htmlFor='typeRendezVous-autre'
-              className='flex text-base-bold mb-2 items-center'
+              inputRequired={true}
+              inputSensible={true}
             >
-              <span aria-hidden={true}>* </span>Préciser
-              <span className='ml-2'>
-                <BulleMessageSensible />
-              </span>
-            </label>
+              Préciser
+            </Label>
             {precisionType.error && (
               <InputError id='typeRendezVous-autre--error' className='mb-2'>
                 {precisionType.error}
               </InputError>
             )}
-            <input
+            <Input
               type='text'
               id='typeRendezVous-autre'
-              name='typeRendezVous-autre'
               required={true}
               disabled={Boolean(rdv)}
               defaultValue={precisionType.value}
-              onChange={(e) => setPrecisionType({ value: e.target.value })}
+              onChange={(value: string) => setPrecisionType({ value })}
               onBlur={validateTypeRendezVousAutre}
-              aria-invalid={precisionType.error ? true : undefined}
-              aria-describedby={
-                precisionType.error ? 'typeRendezVous-autre--error' : undefined
-              }
-              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 disabled:bg-grey_100 ${
-                precisionType.error
-                  ? 'border-warning text-warning'
-                  : 'border-content_color'
-              }`}
+              invalid={Boolean(precisionType.error)}
             />
           </>
         )}
 
-        <label htmlFor='modalite' className='text-base-bold mb-2'>
-          Modalité
-        </label>
+        <Label htmlFor='modalite'>Modalité</Label>
         <Select id='modalite' defaultValue={modalite} onChange={setModalite}>
           {modalites.map((md) => (
             <option key={md} value={md}>
@@ -391,109 +380,90 @@ export function EditionRdvForm({
           Lieu et date :
         </legend>
 
-        <label htmlFor='date' className='text-base-bold mb-2'>
-          <span aria-hidden={true}>* </span>Date
+        <Label htmlFor='date' inputRequired={true}>
+          Date
           <span className='text-base-regular'> (format : jj/mm/aaaa)</span>
-        </label>
+        </Label>
         {date.error && (
-          <InputError id='date-error' className='mb-2'>
+          <InputError id='date--error' className='mb-2'>
             {date.error}
           </InputError>
         )}
-        <input
+        <Input
           type='date'
           id='date'
-          name='date'
           defaultValue={date.value}
           required={true}
-          onChange={(e) => setDate({ value: e.target.value })}
+          onChange={(value: string) => setDate({ value })}
           onBlur={validateDate}
-          aria-invalid={date.error ? true : undefined}
-          aria-describedby={date.error ? 'date-error' : undefined}
-          className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
-            date.error ? 'border-warning text-warning' : 'border-content_color'
-          }`}
+          invalid={Boolean(date.error)}
         />
 
-        <label htmlFor='horaire' className='text-base-bold mb-2'>
-          <span aria-hidden='true'>* </span>Heure
+        <Label htmlFor='horaire' inputRequired={true}>
+          Heure
           <span className='text-base-regular'> (format : hh:mm)</span>
-        </label>
+        </Label>
         {horaire.error && (
-          <InputError id='horaire-error' className='mb-2'>
+          <InputError id='horaire--error' className='mb-2'>
             {horaire.error}
           </InputError>
         )}
-        <input
+        <Input
           type='text'
           id='horaire'
-          name='horaire'
           defaultValue={horaire.value}
           required={true}
-          onChange={(e) => setHoraire({ value: e.target.value })}
+          onChange={(value: string) => setHoraire({ value })}
           onBlur={validateHoraire}
+          invalid={Boolean(horaire.error)}
           aria-invalid={horaire.error ? true : undefined}
-          aria-describedby={horaire.error ? 'horaire-error' : undefined}
-          className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 ${
-            horaire.error
-              ? 'border-warning text-warning'
-              : 'border-content_color'
-          } bg-clock bg-[center_right_1rem] bg-[length:24px_24px] bg-no-repeat`}
+          aria-describedby={horaire.error ? 'horaire--error' : undefined}
+          icon='clock'
         />
 
-        <label htmlFor='duree' className='text-base-bold mb-2'>
-          <span aria-hidden='true'>* </span>Durée
+        <Label htmlFor='duree' inputRequired={true}>
+          Durée
           <span className='text-base-regular'> (format : hh:mm)</span>
-        </label>
+        </Label>
         {duree.error && (
-          <InputError id='duree-error' className='mb-2'>
+          <InputError id='duree--error' className='mb-2'>
             {duree.error}
           </InputError>
         )}
-        <input
+        <Input
           type='text'
           id='duree'
-          name='duree'
           required={true}
           defaultValue={duree.value}
-          onChange={(e) => setDuree({ value: e.target.value })}
+          onChange={(value: string) => setDuree({ value })}
           onBlur={validateDuree}
-          aria-invalid={duree.error ? true : undefined}
-          aria-describedby={duree.error ? 'duree-error' : undefined}
-          className={`border border-solid rounded-medium w-full px-4 py-3 mb-8 ${
-            duree.error ? 'border-warning text-warning' : 'border-content_color'
-          }`}
+          invalid={Boolean(duree.error)}
         />
 
-        <label htmlFor='adresse' className='text-base-bold mb-2'>
+        <Label htmlFor='adresse'>
           Adresse
           <span className='text-base-regular'> Ex: 12 rue duc, Brest</span>
-        </label>
-        <input
+        </Label>
+        <Input
           type='text'
           id='adresse'
-          name='adresse'
           defaultValue={adresse}
-          onChange={(e) => setAdresse(e.target.value)}
-          className={
-            'border border-solid rounded-medium w-full px-4 py-3 mb-8 bg-location bg-[center_right_1rem] bg-no-repeat'
-          }
+          onChange={setAdresse}
+          icon='location'
         />
 
-        <label htmlFor='organisme' className='text-base-bold mb-2'>
+        <Label htmlFor='organisme'>
           Organisme
           <span className='text-base-regular'>
             {' '}
             Ex: prestataire, entreprise, etc.
           </span>
-        </label>
-        <input
+        </Label>
+        <Input
           type='text'
           id='organisme'
-          name='organisme'
           defaultValue={organisme}
-          onChange={(e) => setOrganisme(e.target.value)}
-          className={'border border-solid rounded-medium w-full px-4 py-3 mb-8'}
+          onChange={setOrganisme}
         />
       </fieldset>
 
@@ -561,24 +531,19 @@ export function EditionRdvForm({
           </label>
         </div>
 
-        <label htmlFor='commentaire' className='text-base-medium mb-2'>
+        <Label htmlFor='commentaire' inputSensible={true}>
           <span className='flex items-center'>
             Commentaire à destination des jeunes
-            <span className='ml-2'>
-              <BulleMessageSensible />
-            </span>
           </span>
           <span className='block text-s-regular'>
             Le commentaire sera lu par l’ensemble des destinataires.
           </span>
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id='commentaire'
-          name='commentaire'
           defaultValue={commentaire}
           rows={3}
           onChange={(e) => setCommentaire(e.target.value)}
-          className='border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8'
         />
       </fieldset>
 

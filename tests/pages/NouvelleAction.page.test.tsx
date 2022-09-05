@@ -101,7 +101,7 @@ describe('NouvelleAction', () => {
       it('contient une liste des actions prédéfinies', () => {
         // Then
         const select = screen.getByRole('combobox', {
-          name: '* Choisir une action prédéfinie',
+          name: 'Choisir une action prédéfinie',
         })
 
         expect(select).toHaveAttribute('required', '')
@@ -200,7 +200,7 @@ describe('NouvelleAction', () => {
       it("contient un champ pour saisir l'intitule de l'action", () => {
         // Then
         const intitule = screen.getByRole('textbox', {
-          name: "* Intitulé de l'action",
+          name: "Intitulé de l'action",
         })
         expect(intitule).toHaveAttribute('required', '')
         expect(intitule).toHaveAttribute('type', 'text')

@@ -7,9 +7,10 @@ import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAut
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import { InputError } from 'components/ui/Form/InputError'
+import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
+import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { InfoFichier } from 'interfaces/fichier'
@@ -219,23 +220,13 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             Écrivez votre message
           </legend>
 
-          <label
-            htmlFor='message'
-            className='flex text-base-medium items-center'
-          >
-            <span aria-hidden='true'>*</span>&nbsp;Message
-            <span className='ml-2'>
-              <BulleMessageSensible />
-            </span>
-          </label>
+          <Label htmlFor='message' inputRequired={true} inputSensible={true}>
+            Message
+          </Label>
 
-          <textarea
+          <Textarea
             id='message'
-            name='message'
             rows={10}
-            className={`w-full text-s-regular p-4  border border-solid border-black rounded-medium mt-4 ${
-              erreurEnvoi ? 'mb-[8px]' : 'mb-8'
-            }`}
             onChange={(e) => setMessage(e.target.value)}
             required
           />
