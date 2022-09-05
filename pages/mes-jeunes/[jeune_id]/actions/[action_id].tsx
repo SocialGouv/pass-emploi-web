@@ -134,6 +134,11 @@ function PageAction({
       : pageTracking
   )
 
+  const afficherSuppressionAction =
+    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+    !Boolean(action.qualification) &&
+    commentaires.length === 0
+
   return (
     <>
       {showEchecMessage && (
@@ -152,7 +157,8 @@ function PageAction({
         >
           {action.content}
         </h2>
-        {action.creatorType === UserType.CONSEILLER.toLowerCase() && (
+
+        {afficherSuppressionAction && (
           <Button
             label="Supprimer l'action"
             onClick={() => deleteAction()}
@@ -169,6 +175,7 @@ function PageAction({
           </Button>
         )}
       </div>
+
       {action.comment && <p className='mb-8'>{action.comment}</p>}
       <div className='flex flex-raw items-center justify-between mb-8 bg-accent_3_lighten rounded-medium'>
         <span className='flex flex-row p-2 text-accent_2'>

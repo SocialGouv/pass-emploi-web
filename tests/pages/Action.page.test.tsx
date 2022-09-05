@@ -107,7 +107,14 @@ describe("Page Détail d'une action d'un jeune", () => {
               },
             })
           })
+
+          it('ne permet pas de supprimer l’action', () => {
+            expect(
+              screen.queryByRole('button', { name: 'Supprimer l’action' })
+            ).not.toBeInTheDocument()
+          })
         })
+
         describe("quand c'est un échec", () => {
           it('affiche une alerte', async () => {
             // Given
@@ -174,7 +181,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           ).toBeInTheDocument()
         })
 
-        describe("quand on qualifie l'action en PAS Situation Non Professionnelle", () => {
+        describe("quand on qualifie l'action qui n'est PAS une Situation Non Professionnelle", () => {
           beforeEach(async () => {
             // Given
             const radioButton = screen.getByLabelText(
@@ -182,25 +189,25 @@ describe("Page Détail d'une action d'un jeune", () => {
             )
             await userEvent.click(radioButton)
 
-            // When
-            const submitQualification = screen.getByRole('button', {
-              name: /Enregistrer/,
-            })
-            await userEvent.click(submitQualification)
+          // When
+          const submitQualification = screen.getByRole('button', {
+            name: /Enregistrer/,
+          })
+          await userEvent.click(submitQualification)
+        })
+
+        it("qualifie l'action", () => {
+          expect(actionsService.qualifier).toHaveBeenCalledWith(
+            actionAQualifier.id,
+            CODE_QUALIFICATION_NON_SNP)
           })
 
-          it("qualifie l'action", () => {
-            expect(actionsService.qualifier).toHaveBeenCalledWith(
-              actionAQualifier.id,
-              CODE_QUALIFICATION_NON_SNP
-            )
-          })
 
-          it("met à jour le tag de l'action", () => {
-            expect(
-              screen.getByText('PAS Situation Non Professionnelle')
-            ).toBeInTheDocument()
-          })
+        it("met à jour le tag de l'action", () => {
+          expect(
+            screen.getByText('PAS Situation Non Professionnelle')
+          ).toBeInTheDocument()
+        })
 
           it('cache le formulaire de qualification', () => {
             expect(() =>
@@ -269,6 +276,20 @@ describe("Page Détail d'une action d'un jeune", () => {
           expect(() =>
             screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
           ).toThrow()
+        })
+
+        it('ne permet pas de supprimer l’action', () => {
+          expect(
+            screen.queryByRole('button', { name: 'Supprimer l’action' })
+          ).not.toBeInTheDocument()
+        })
+
+        it('ne permet pas de modifier le statut de l’action', () => {
+          expect(screen.getByLabelText('À réaliser')).toHaveAttribute(
+            'disabled'
+          )
+          expect(screen.getByLabelText('Commencée')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('Annulée')).toHaveAttribute('disabled')
         })
       })
     })

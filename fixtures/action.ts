@@ -1,6 +1,7 @@
 import {
   Action,
   Commentaire,
+  EtatAction,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
@@ -17,6 +18,7 @@ export const uneAction = (overrides: Partial<Action> = {}): Action => {
     creatorType: 'conseiller',
     status: StatutAction.ARealiser,
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    etat: EtatAction.A_QUALIFIER,
   }
 
   return { ...defaults, ...overrides }
@@ -34,6 +36,7 @@ export const uneListeDActions = (): Action[] => [
     creatorType: 'conseiller',
     status: StatutAction.Commencee,
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    etat: EtatAction.A_QUALIFIER,
   },
   {
     id: 'id-action-3',
@@ -46,6 +49,7 @@ export const uneListeDActions = (): Action[] => [
     status: StatutAction.Terminee,
     dateEcheance: '2022-02-21T14:50:46.000Z',
     dateFinReelle: '2022-02-20T14:50:46.000Z',
+    etat: EtatAction.A_QUALIFIER,
   },
   {
     id: 'id-action-4',
@@ -58,6 +62,7 @@ export const uneListeDActions = (): Action[] => [
     status: StatutAction.Terminee,
     dateEcheance: '2022-02-22T14:50:46.000Z',
     dateFinReelle: '2022-03-22T14:50:46.000Z',
+    etat: EtatAction.A_QUALIFIER,
   },
 ]
 
@@ -74,6 +79,7 @@ export const uneActionJson = (
     creatorType: 'conseiller',
     status: 'not_started',
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    etat: 'A_QUALIFIER',
   }
 
   return { ...defaults, ...overrides }
@@ -92,6 +98,7 @@ export const uneListeDActionsJson = (
     creatorType: 'conseiller',
     status: 'not_started',
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    etat: 'A_QUALIFIER',
   },
   {
     id: 'id-action-2',
@@ -103,6 +110,7 @@ export const uneListeDActionsJson = (
     creatorType: 'conseiller',
     status: 'in_progress',
     dateEcheance: '2022-02-20T14:50:46.000Z',
+    etat: 'A_QUALIFIER',
   },
   {
     id: 'id-action-3',
@@ -115,6 +123,7 @@ export const uneListeDActionsJson = (
     status: 'done',
     dateEcheance: '2022-02-21T14:50:46.000Z',
     dateFinReelle: '2022-02-20T14:50:46.000Z',
+    etat: 'A_QUALIFIER',
   },
   {
     id: 'id-action-4',
@@ -127,6 +136,7 @@ export const uneListeDActionsJson = (
     status: 'done',
     dateEcheance: '2022-02-22T14:50:46.000Z',
     dateFinReelle: '2022-03-22T14:50:46.000Z',
+    etat: 'A_QUALIFIER',
   },
   ...supplementaryActions,
 ]

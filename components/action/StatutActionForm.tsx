@@ -40,6 +40,9 @@ function StatutActionForm({
             status={status}
             isSelected={statutCourant === status}
             onChange={updateStatutAction}
+            isDisabled={
+              statutCourant === StatutAction.Terminee && !estAQualifier
+            }
           />
         ))}
       </form>

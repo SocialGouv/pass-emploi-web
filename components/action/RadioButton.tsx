@@ -7,6 +7,7 @@ interface RadioButtonProps {
   name: string
   onChange: () => void
   color?: string
+  disabled?: boolean
 }
 
 export default function RadioButton({
@@ -16,6 +17,7 @@ export default function RadioButton({
   label,
   name,
   color = 'primary',
+  disabled,
 }: RadioButtonProps) {
   function onClickDiv(e: MouseEvent) {
     e.preventDefault()
@@ -32,7 +34,7 @@ export default function RadioButton({
     <div
       className={`flex items-center px-4 py-2 border border-solid rounded-full text-s-bold mr-4 cursor-pointer ${
         isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
-      }`}
+      } ${disabled ? 'hover:cursor-not-allowed' : ''}`}
       onClick={onClickDiv}
     >
       <input
@@ -44,8 +46,14 @@ export default function RadioButton({
         required={true}
         className='mr-2'
         onClick={onClickInput}
+        disabled={disabled}
       />
-      <label htmlFor={id} className='whitespace-nowrap cursor-pointer'>
+      <label
+        htmlFor={id}
+        className={`whitespace-nowrap cursor-pointer ${
+          disabled ? 'hover:cursor-not-allowed' : ''
+        }`}
+      >
         {label}
       </label>
     </div>
