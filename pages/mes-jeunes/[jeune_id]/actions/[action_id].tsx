@@ -13,7 +13,6 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   Action,
   Commentaire,
-  EtatAction,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
@@ -135,17 +134,10 @@ function PageAction({
       : pageTracking
   )
 
-  const sansCommentaire =
-    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    commentaires.length === 0
-  const actionNonQualifiee =
-    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    action.etat !== EtatAction.QUALIFIEE
-
   const afficherSuppressionAction =
-    action.etat !== EtatAction.QUALIFIEE &&
-    commentaires.length === 0 &&
-    (sansCommentaire || actionNonQualifiee)
+    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+    !Boolean(action.qualification) &&
+    commentaires.length === 0
 
   return (
     <>
