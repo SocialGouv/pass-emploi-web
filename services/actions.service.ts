@@ -16,6 +16,7 @@ import {
   ActionJson,
   ActionsCountJson,
   actionStatusToJson,
+  CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
   jsonToAction,
   jsonToQualification,
@@ -261,7 +262,9 @@ export class ActionsApiService implements ActionsService {
       '/referentiels/qualifications-actions/types',
       accessToken
     )
-    return content
+    return content.filter(
+      (situations) => situations.code !== CODE_QUALIFICATION_NON_SNP
+    )
   }
 }
 
