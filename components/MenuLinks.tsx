@@ -1,6 +1,10 @@
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import { useLeanBeWidget } from '../utils/useLeanBeWidget'
+
+import NouveautesMenuButton from './NouveautesMenuButton'
+
 import MenuLink from 'components/ui/Form/MenuLink'
 import { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -13,6 +17,7 @@ export enum MenuItem {
   Supervision = 'Supervision',
   Aide = 'Aide',
   Profil = 'Profil',
+  Nouveautes = 'Nouveautes',
 }
 type SidebarProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
 
@@ -37,7 +42,7 @@ export default function MenuLinks({
   }
 
   useMatomo(isLoggedOut ? 'Clic déconnexion' : undefined)
-
+  useLeanBeWidget(conseiller?.structure)
   return (
     <>
       <div>
@@ -85,6 +90,10 @@ export default function MenuLinks({
             isExternal={true}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
+        )}
+
+        {items.includes(MenuItem.Nouveautes) && (
+          <NouveautesMenuButton structure={conseiller?.structure} />
         )}
       </div>
       <div className='flex flex-col'>
