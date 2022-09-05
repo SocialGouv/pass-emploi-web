@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { StructureConseiller } from '../interfaces/conseiller'
 
 export namespace LeanBe {
-  export const MILO_WIDGET_ID = '6311e7ab83faaf001224e4e8'
+  export const MILO_WIDGET_ID = '6311adec35e9790013bdfdf6'
   export const PE_WIDGET_ID = '6311e7ab83faaf001224e4e8'
 }
 
