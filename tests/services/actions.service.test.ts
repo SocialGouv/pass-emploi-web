@@ -1,7 +1,6 @@
-import { CODE_QUALIFICATION_NON_SNP } from '../../interfaces/json/action'
-
 import { ApiClient } from 'clients/api.client'
 import {
+  desSituationsNonProfessionnelles,
   unCommentaire,
   uneAction,
   uneActionJson,
@@ -9,6 +8,7 @@ import {
   uneListeDActionsJson,
 } from 'fixtures/action'
 import { QualificationAction, StatutAction } from 'interfaces/action'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -452,6 +452,38 @@ describe('ActionsApiService', () => {
       }
       expect(actual).toStrictEqual(expected)
     })
+
+    it('qualifie une action avec une date de fin', async () => {
+      // Given
+      ;(apiClient.post as jest.Mock).mockResolvedValue({
+        content: {
+          libelle: 'Santé',
+          code: 'SANTE',
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.qualifier(
+        'id-action',
+        'SANTE',
+        new Date('2022-09-05T00:00:00.000+02:00')
+      )
+
+      // THEN
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/actions/id-action/qualifier',
+        {
+          codeQualification: 'SANTE',
+          dateFinReelle: '2022-09-04T22:00:00.000Z',
+        },
+        'accessToken'
+      )
+      const expected: QualificationAction = {
+        libelle: 'Santé',
+        isSituationNonProfessionnelle: true,
+      }
+      expect(actual).toStrictEqual(expected)
+    })
   })
 
   describe('.deleteAction', () => {
@@ -509,6 +541,28 @@ describe('ActionsApiService', () => {
         'accessToken'
       )
       expect(result).toEqual([commentaire])
+    })
+  })
+
+  describe('.getSituationsNonProfessionnelles', () => {
+    it('retourne la liste des situations non professionnelles', async () => {
+      // GIVEN
+      const situationsNonProfessionnelles = desSituationsNonProfessionnelles()
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: situationsNonProfessionnelles,
+      })
+
+      // WHEN
+      const result = await actionsService.getSituationsNonProfessionnelles(
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/referentiels/qualifications-actions/types',
+        'accessToken'
+      )
+      expect(result).toEqual(situationsNonProfessionnelles)
     })
   })
 })

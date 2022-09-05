@@ -43,6 +43,7 @@ export function mockedActionsService(
     recupererLesCommentaires: jest.fn(),
     ajouterCommentaire: jest.fn(),
     qualifier: jest.fn(),
+    getSituationsNonProfessionnelles: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

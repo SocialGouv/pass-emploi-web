@@ -1,4 +1,9 @@
-import { Action, Commentaire, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  Commentaire,
+  SituationNonProfessionnelle,
+  StatutAction,
+} from 'interfaces/action'
 import { ActionJson } from 'interfaces/json/action'
 
 export const uneAction = (overrides: Partial<Action> = {}): Action => {
@@ -39,18 +44,20 @@ export const uneListeDActions = (): Action[] => [
     creator: 'Nils',
     creatorType: 'conseiller',
     status: StatutAction.Terminee,
-    dateEcheance: '2022-02-20T14:50:46.000Z',
+    dateEcheance: '2022-02-21T14:50:46.000Z',
+    dateFinReelle: '2022-02-20T14:50:46.000Z',
   },
   {
     id: 'id-action-4',
     content: "Consulter les offres d'emploi",
     comment: 'Je suis un beau commentaire',
     creationDate: '2022-02-21T14:50:46.000Z',
-    lastUpdate: '2022-02-22T14:50:46.000Z',
+    lastUpdate: '2022-03-22T14:50:46.000Z',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: StatutAction.Terminee,
-    dateEcheance: '2022-02-20T14:50:46.000Z',
+    dateEcheance: '2022-02-22T14:50:46.000Z',
+    dateFinReelle: '2022-03-22T14:50:46.000Z',
   },
 ]
 
@@ -106,18 +113,20 @@ export const uneListeDActionsJson = (
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'done',
-    dateEcheance: '2022-02-20T14:50:46.000Z',
+    dateEcheance: '2022-02-21T14:50:46.000Z',
+    dateFinReelle: '2022-02-20T14:50:46.000Z',
   },
   {
     id: 'id-action-4',
     content: "Consulter les offres d'emploi",
     comment: 'Je suis un beau commentaire',
     creationDate: 'Sat, 21 Feb 2022 14:50:46 UTC',
-    lastUpdate: 'Sun, 22 Feb 2022 14:50:46 UTC',
+    lastUpdate: 'Sun, 22 Mar 2022 14:50:46 UTC',
     creator: 'Nils',
     creatorType: 'conseiller',
     status: 'done',
-    dateEcheance: '2022-02-20T14:50:46.000Z',
+    dateEcheance: '2022-02-22T14:50:46.000Z',
+    dateFinReelle: '2022-03-22T14:50:46.000Z',
   },
   ...supplementaryActions,
 ]
@@ -140,3 +149,10 @@ export const unCommentaire = (
 
   return { ...defaults, ...overrides }
 }
+
+export const desSituationsNonProfessionnelles =
+  (): SituationNonProfessionnelle[] => [
+    { code: 'SNP_1', label: 'SNP 1' },
+    { code: 'SNP_2', label: 'SNP 2' },
+    { code: 'SNP_3', label: 'SNP 3' },
+  ]

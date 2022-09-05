@@ -8,6 +8,7 @@ export interface Action {
   creatorType: string
   status: StatutAction
   dateEcheance: string
+  dateFinReelle?: string
   qualification?: QualificationAction
 }
 
@@ -47,3 +48,5 @@ export interface CreateurCommentaire {
   id: string
   type: 'conseiller' | 'jeune'
 }
+
+export type SituationNonProfessionnelle = { code: string; label: string }
