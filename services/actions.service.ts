@@ -73,6 +73,7 @@ export interface ActionsService {
   qualifier(
     idAction: string,
     type: string,
+    dateDebutModifiee?: Date,
     dateFinModifiee?: Date
   ): Promise<QualificationAction>
 
@@ -209,13 +210,19 @@ export class ActionsApiService implements ActionsService {
   async qualifier(
     idAction: string,
     type: string,
+    dateDebutModifiee?: Date,
     dateFinModifiee?: Date
   ): Promise<QualificationAction> {
     const session = await getSession()
 
-    const payload: { codeQualification: string; dateFinReelle?: string } = {
+    const payload: {
+      codeQualification: string
+      dateDebut?: string
+      dateFinReelle?: string
+    } = {
       codeQualification: type,
     }
+    if (dateDebutModifiee) payload.dateDebut = dateDebutModifiee.toISOString()
     if (dateFinModifiee) payload.dateFinReelle = dateFinModifiee.toISOString()
 
     const { content } = await this.apiClient.post<QualificationActionJson>(
