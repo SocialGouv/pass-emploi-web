@@ -1,0 +1,20 @@
+.input {
+  width: 100%;
+  margin-bottom: 2rem;
+
+  border: solid 1px theme('colors.content_color');
+  border-radius: theme('borderRadius.medium');
+
+  padding: 0.75rem 1rem;
+}
+
+.input:disabled {
+  background-color: theme('colors.grey_100');
+  border-color: theme('colors.disabled');
+  opacity: 70%;
+}
+
+.input.invalid {
+  color: theme('colors.warning');
+  border-color: theme('colors.warning');
+}
