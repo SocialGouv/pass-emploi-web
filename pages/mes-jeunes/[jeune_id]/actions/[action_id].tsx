@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
@@ -24,6 +24,7 @@ import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -44,13 +45,24 @@ function PageAction({
 }: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const router = useRouter()
+  const [conseiller] = useConseiller()
+
   const [qualification, setQualification] = useState<
     QualificationAction | undefined
   >(action.qualification)
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
+
   const pageTracking = 'Détail Action'
+
+  const estAQualifier: boolean = useMemo(
+    () =>
+      conseiller?.structure === StructureConseiller.MILO &&
+      statut === StatutAction.Terminee &&
+      !qualification,
+    [conseiller?.structure, qualification, statut]
+  )
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
@@ -130,7 +142,9 @@ function PageAction({
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
-      <TagQualificationAction statut={statut} qualification={qualification} />
+      {conseiller?.structure === StructureConseiller.MILO && (
+        <TagQualificationAction statut={statut} qualification={qualification} />
+      )}
       <div className='flex items-start justify-between mb-5'>
         <h2
           className='text-m-bold text-content_color'
@@ -176,7 +190,7 @@ function PageAction({
           qualifierAction(isSituationNonProfessionnelle)
         }
         statutCourant={statut}
-        estAQualifier={statut === StatutAction.Terminee && !qualification}
+        estAQualifier={estAQualifier}
       />
       <HistoriqueAction action={action} />
       <CommentairesAction

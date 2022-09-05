@@ -8,6 +8,7 @@ import React from 'react'
 import { unCommentaire, uneAction } from 'fixtures/action'
 import { mockedActionsService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import PageAction, {
@@ -24,7 +25,7 @@ jest.mock('next/router')
 
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client side', () => {
-    describe("quand l'action n'est pas qualifiée", () => {
+    describe('render', () => {
       const action = uneAction()
       const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
       const jeune: BaseJeune = {
@@ -75,22 +76,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             action.id,
             StatutAction.Commencee
           )
-        })
-      })
-
-      describe("Quand l'action est terminée et non qualifiée", () => {
-        it('affiche un bloc pour la qualifier', async () => {
-          // Given
-          const statutRadio = screen.getByText('Terminée')
-
-          // When
-          await userEvent.click(statutRadio)
-
-          // Then
-          expect(screen.getByText('Action à qualifier')).toBeInTheDocument()
-          expect(
-            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
-          ).toBeInTheDocument()
         })
       })
 
@@ -145,109 +130,145 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     describe("quand l'action est terminée et non qualifiée", () => {
-      const actionAQualifier = uneAction({
-        status: StatutAction.Terminee,
-      })
-      const jeune: BaseJeune = {
-        id: 'jeune-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-      }
-      let actionsService: ActionsService
-      let push: jest.Mock
-      let replace: jest.Mock
-
-      beforeEach(async () => {
-        actionsService = mockedActionsService({
-          qualifier: jest.fn().mockResolvedValue({
-            libelle: 'PAS Situation Non Professionnelle',
-            isSituationNonProfessionnelle: false,
-          }),
+      describe('quand le conseiller est MiLo', () => {
+        const actionAQualifier = uneAction({
+          status: StatutAction.Terminee,
         })
-
-        push = jest.fn()
-        replace = jest.fn()
-        ;(useRouter as jest.Mock).mockReturnValue({ push, replace })
-
-        renderWithContexts(
-          <PageAction
-            action={actionAQualifier}
-            jeune={jeune}
-            commentaires={[]}
-            pageTitle=''
-          />,
-          { customDependances: { actionsService } }
-        )
-      })
-
-      it("affiche un bloc pour qualifier l'action", async () => {
-        expect(
-          screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
-        ).toBeInTheDocument()
-      })
-
-      describe("quand on qualifie l'action en PAS Situation Non Professionnelle", () => {
+        const jeune: BaseJeune = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+        }
+        let actionsService: ActionsService
+        let push: jest.Mock
+        let replace: jest.Mock
         beforeEach(async () => {
-          // Given
-          const radioButton = screen.getByLabelText(
-            'Il ne s’agit pas d’une Situation Non Professionnelle'
-          )
-          await userEvent.click(radioButton)
-
-          // When
-          const submitQualification = screen.getByRole('button', {
-            name: /Enregistrer/,
+          actionsService = mockedActionsService({
+            qualifier: jest.fn().mockResolvedValue({
+              libelle: 'PAS Situation Non Professionnelle',
+              isSituationNonProfessionnelle: false,
+            }),
           })
-          await userEvent.click(submitQualification)
-        })
 
-        it("qualifie l'action", () => {
-          expect(actionsService.qualifier).toHaveBeenCalledWith(
-            actionAQualifier.id,
-            CODE_QUALIFICATION_NON_SNP
+          push = jest.fn()
+          replace = jest.fn()
+          ;(useRouter as jest.Mock).mockReturnValue({ push, replace })
+
+          renderWithContexts(
+            <PageAction
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              pageTitle=''
+            />,
+            {
+              customDependances: { actionsService },
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
           )
         })
 
-        it("met à jour le tag de l'action", () => {
+        it("affiche un bloc pour qualifier l'action", async () => {
           expect(
-            screen.getByText('PAS Situation Non Professionnelle')
+            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
           ).toBeInTheDocument()
         })
 
-        it('cache le formulaire de qualification', () => {
-          expect(() =>
-            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
-          ).toThrow()
+        describe("quand on qualifie l'action en PAS Situation Non Professionnelle", () => {
+          beforeEach(async () => {
+            // Given
+            const radioButton = screen.getByLabelText(
+              'Il ne s’agit pas d’une Situation Non Professionnelle'
+            )
+            await userEvent.click(radioButton)
+
+            // When
+            const submitQualification = screen.getByRole('button', {
+              name: /Enregistrer/,
+            })
+            await userEvent.click(submitQualification)
+          })
+
+          it("qualifie l'action", () => {
+            expect(actionsService.qualifier).toHaveBeenCalledWith(
+              actionAQualifier.id,
+              CODE_QUALIFICATION_NON_SNP
+            )
+          })
+
+          it("met à jour le tag de l'action", () => {
+            expect(
+              screen.getByText('PAS Situation Non Professionnelle')
+            ).toBeInTheDocument()
+          })
+
+          it('cache le formulaire de qualification', () => {
+            expect(() =>
+              screen.getByText(
+                'S’agit-il d’une Situation Non Professionnelle ?'
+              )
+            ).toThrow()
+          })
+
+          it('affiche une alerte de succès', () => {
+            expect(replace).toHaveBeenCalledWith(
+              `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}?qualificationNonSNP=succes`,
+              undefined,
+              { shallow: true }
+            )
+          })
         })
 
-        it('affiche une alerte de succès', () => {
-          expect(replace).toHaveBeenCalledWith(
-            `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}?qualificationNonSNP=succes`,
-            undefined,
-            { shallow: true }
-          )
+        describe("quand on qualifie l'action en Situation Non Professionnelle", () => {
+          beforeEach(async () => {
+            // Given
+            const radioButton = screen.getByLabelText(
+              'Il s’agit d’une Situation Non Professionnelle'
+            )
+            await userEvent.click(radioButton)
+
+            // When
+            const submitQualification = screen.getByRole('button', {
+              name: /Enregistrer/,
+            })
+            await userEvent.click(submitQualification)
+          })
+
+          it('redirige vers la page de qualification', () => {
+            expect(push).toHaveBeenCalledWith(
+              `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}/qualification`
+            )
+          })
         })
       })
 
-      describe("quand on qualifie l'action en Situation Non Professionnelle", () => {
+      describe("quand le conseiller n'est pas MiLo", () => {
+        const actionAQualifier = uneAction({
+          status: StatutAction.Terminee,
+        })
+        const jeune: BaseJeune = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+        }
         beforeEach(async () => {
-          // Given
-          const radioButton = screen.getByLabelText(
-            'Il s’agit d’une Situation Non Professionnelle'
+          renderWithContexts(
+            <PageAction
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              pageTitle=''
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            }
           )
-          await userEvent.click(radioButton)
-
-          // When
-          const submitQualification = screen.getByRole('button', {
-            name: /Enregistrer/,
-          })
-          await userEvent.click(submitQualification)
         })
 
-        it('redirige vers la page de qualification', () => {
-          expect(push).toHaveBeenCalledWith(
-            `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}/qualification`
-          )
+        it("n'affiche pas de bloc pour qualifier l'action", async () => {
+          expect(() =>
+            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
+          ).toThrow()
         })
       })
     })
