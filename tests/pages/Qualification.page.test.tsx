@@ -240,12 +240,22 @@ describe("Page Qualification d'une action", () => {
       })
     })
 
-    it("permet de modifier la date de fin réelle de l'action", () => {
+    it("permet de modifier la date de début de l'action", () => {
       // Then
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Date de fin de l’action',
+        name: 'Étape 3 Date de début de l’action',
       })
-      const inputDate = within(etape3).getByLabelText('* Date')
+      const inputDate = within(etape3).getByLabelText('* Date de début')
+      expect(inputDate).toHaveAttribute('type', 'date')
+      expect(inputDate).toHaveValue('2022-02-15')
+    })
+
+    it("permet de modifier la date de fin réelle de l'action", () => {
+      // Then
+      const etape4 = screen.getByRole('group', {
+        name: 'Étape 4 Date de fin de l’action',
+      })
+      const inputDate = within(etape4).getByLabelText('* Date de fin')
       expect(inputDate).toHaveAttribute('type', 'date')
       expect(inputDate).toHaveAttribute('min', '2022-02-15')
       expect(inputDate).toHaveValue('2022-09-02')
@@ -255,7 +265,7 @@ describe("Page Qualification d'une action", () => {
       beforeEach(async () => {
         // Given
         const selectSNP = screen.getByRole('combobox', { name: 'Type' })
-        const inputDate = screen.getByLabelText('* Date')
+        const inputDate = screen.getByLabelText('* Date de fin')
         await userEvent.selectOptions(
           selectSNP,
           situationsNonProfessionnelles[1].code
@@ -274,6 +284,7 @@ describe("Page Qualification d'une action", () => {
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
           'SNP_2',
+          new Date('2022-02-15T14:50:46.000Z'),
           new Date('2022-09-05T00:00:00.000+02:00')
         )
       })

@@ -37,6 +37,7 @@ function PageQualification({
   const actionsService = useDependance<ActionsService>('actionsService')
 
   const [codeSNP, setCodeSNP] = useState<string | undefined>()
+  const [dateDebut, setDateDebut] = useState<string>(action.creationDate)
   const [dateFin, setDateFin] = useState<string | undefined>(
     action.dateFinReelle
   )
@@ -48,7 +49,7 @@ function PageQualification({
   >()
 
   function isFormValid(): boolean {
-    return Boolean(codeSNP) && Boolean(dateFin)
+    return Boolean(codeSNP) && Boolean(dateFin) && Boolean(dateDebut)
   }
 
   async function qualifierAction(e: FormEvent<HTMLFormElement>): Promise<void> {
@@ -61,6 +62,7 @@ function PageQualification({
       await actionsService.qualifier(
         action.id,
         codeSNP!,
+        DateTime.fromISO(dateDebut!).toJSDate(),
         DateTime.fromISO(dateFin!).toJSDate()
       )
       await router.push(`${returnTo}?qualificationSNP=succes`)
@@ -141,11 +143,39 @@ function PageQualification({
             aria-label='Étape 3'
             className='mr-2 w-8 h-8'
           />
+          Date de début de l’action
+        </legend>
+
+        <label htmlFor='input-date-debut' className='text-base-bold mb-2'>
+          <span aria-hidden={true}>* </span>Date de début
+        </label>
+        <Input
+          type='date'
+          id='input-date-debut'
+          defaultValue={
+            action.creationDate
+              ? toIsoLocalDate(new Date(action.creationDate))
+              : ''
+          }
+          onChange={setDateDebut}
+          required={true}
+        />
+      </fieldset>
+
+      <fieldset className='border-none flex flex-col mb-8'>
+        <legend className='flex items-center text-m-bold mb-8'>
+          <IconComponent
+            name={IconName.Chiffre4}
+            role='img'
+            focusable={false}
+            aria-label='Étape 4'
+            className='mr-2 w-8 h-8'
+          />
           Date de fin de l’action
         </legend>
 
         <label htmlFor='input-date-fin' className='text-base-bold mb-2'>
-          <span aria-hidden={true}>* </span>Date
+          <span aria-hidden={true}>* </span>Date de fin
         </label>
         <Input
           type='date'
@@ -155,7 +185,7 @@ function PageQualification({
               ? toIsoLocalDate(new Date(action.dateFinReelle))
               : ''
           }
-          min={toIsoLocalDate(new Date(action.creationDate))}
+          min={toIsoLocalDate(new Date(dateDebut))}
           onChange={setDateFin}
           required={true}
         />
