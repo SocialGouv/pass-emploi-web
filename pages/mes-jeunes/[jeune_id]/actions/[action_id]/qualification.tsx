@@ -90,7 +90,7 @@ function PageQualification({
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
       <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-4'>
+        <legend className='flex items-center text-m-bold mb-8'>
           <IconComponent
             name={IconName.Chiffre1}
             role='img'
@@ -106,7 +106,7 @@ function PageQualification({
       </fieldset>
 
       <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-4'>
+        <legend className='flex items-center text-m-bold mb-8'>
           <IconComponent
             name={IconName.Chiffre2}
             role='img'
@@ -130,7 +130,7 @@ function PageQualification({
       </fieldset>
 
       <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-4'>
+        <legend className='flex items-center text-m-bold mb-8'>
           <IconComponent
             name={IconName.Chiffre3}
             role='img'
