@@ -186,7 +186,7 @@ function PageQualification({
               : ''
           }
           min={toIsoLocalDate(new Date(dateDebut))}
-          onChange={setDateFin}
+          onChange={(e) => setDateFin(e.target.value)}
           required={true}
         />
       </fieldset>

@@ -1,5 +1,7 @@
 import { ReactNode } from 'react'
 
+import styles from 'styles/components/Input.module.css'
+
 type SelectProps = {
   id: string
   onChange: (value: string) => void
@@ -24,7 +26,7 @@ export default function Select({
       required={required}
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
-      className='border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 truncate disabled:bg-grey_100'
+      className={`${styles.input} truncate`}
     >
       {required && <option aria-hidden hidden disabled value='' />}
       {!required && <option value='' />}

@@ -1,4 +1,6 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, forwardRef } from 'react'
+
+import styles from 'styles/components/Input.module.css'
 
 type InputProps = ComponentPropsWithoutRef<any> & {
   type: string
@@ -9,34 +11,47 @@ type InputProps = ComponentPropsWithoutRef<any> & {
   defaultValue?: string
   onBlur?: () => void
   invalid?: boolean
+  icon?: string
 }
 
-export default function Input({
-  type,
-  id,
-  onChange,
-  onBlur,
-  defaultValue = '',
-  required = false,
-  disabled = false,
-  invalid = false,
-  ...props
-}: InputProps) {
-  return (
-    <input
-      type={type}
-      id={id}
-      required={required}
-      disabled={disabled}
-      defaultValue={defaultValue}
-      onChange={(e) => onChange(e.target.value)}
-      onBlur={onBlur}
-      aria-invalid={invalid || undefined}
-      aria-describedby={invalid ? `${id}--error` : undefined}
-      className={`border border-solid rounded-medium w-full px-4 py-3 mb-4 disabled:bg-grey_100 ${
-        invalid ? 'border-warning text-warning' : 'border-content_color'
-      }`}
-      {...props}
-    />
-  )
-}
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      type,
+      id,
+      onChange,
+      onBlur,
+      defaultValue = '',
+      required = false,
+      disabled = false,
+      invalid = false,
+      icon,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <input
+        type={type}
+        id={id}
+        required={required}
+        disabled={disabled}
+        defaultValue={defaultValue}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
+        aria-invalid={invalid || undefined}
+        aria-describedby={invalid ? `${id}--error` : undefined}
+        className={`${styles.input} ${invalid ? 'invalid' : ''} ${
+          icon
+            ? `bg-${icon} bg-[center_right_1rem] bg-[length:24px_24px] bg-no-repeat`
+            : ''
+        }`}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Input.displayName = 'Input'
+
+export default Input
