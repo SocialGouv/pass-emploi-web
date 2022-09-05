@@ -15,6 +15,7 @@ import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { toIsoLocalDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
@@ -73,6 +74,8 @@ function PageQualification({
       setIsQualificationEnCours(false)
     }
   }
+
+  useMatomo('Création Situation Non Professionnelle')
 
   return (
     <form onSubmit={qualifierAction}>
