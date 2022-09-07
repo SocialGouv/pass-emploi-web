@@ -1,5 +1,5 @@
 import { JourRdvAVenirItem, PlageHoraire, RdvListItem } from 'interfaces/rdv'
-import { listeRdvAVenirItem } from 'presentation/MesRdvViewModel'
+import { rdvsWithIntercalaires } from 'presentation/MesRdvViewModel'
 
 const mardiMatin = '2030-01-01T10:00:00.000Z'
 const mardiApresMidi = '2030-01-01T16:00:00.000Z'
@@ -11,7 +11,7 @@ describe('listeRdvAVenirItem', () => {
     const mesRendezvous: RdvListItem[] = []
 
     // When
-    const items = listeRdvAVenirItem(mesRendezvous)
+    const items = rdvsWithIntercalaires(mesRendezvous)
 
     // Then
     expect(items.length).toBe(0)
@@ -22,7 +22,7 @@ describe('listeRdvAVenirItem', () => {
     const rendezvous = unRendezvousItem(mardiMatin)
 
     // When
-    const items = listeRdvAVenirItem([rendezvous])
+    const items = rdvsWithIntercalaires([rendezvous])
 
     // Then
     expect(items.length).toBe(3)
@@ -45,7 +45,7 @@ describe('listeRdvAVenirItem', () => {
     const rendezvous = unRendezvousItem(aujourdhuiApresmidi)
 
     // When
-    const items = listeRdvAVenirItem([rendezvous])
+    const items = rdvsWithIntercalaires([rendezvous])
 
     // Then
     expect(items.length).toBe(3)
@@ -60,7 +60,7 @@ describe('listeRdvAVenirItem', () => {
     const rendezvousMercredi = unRendezvousItem(mercredi)
 
     // When
-    const items = listeRdvAVenirItem([rendezvousMercredi, rendezvousMardi])
+    const items = rdvsWithIntercalaires([rendezvousMercredi, rendezvousMardi])
 
     // Then
     expect(items.length).toBe(6)
@@ -78,7 +78,7 @@ describe('listeRdvAVenirItem', () => {
     const unAutreRendezvousMardi = unRendezvousItem(mardiApresMidi)
 
     // When
-    const items = listeRdvAVenirItem([
+    const items = rdvsWithIntercalaires([
       unRendezvousMardi,
       unAutreRendezvousMardi,
     ])

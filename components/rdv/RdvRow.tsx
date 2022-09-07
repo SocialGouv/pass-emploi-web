@@ -3,55 +3,66 @@ import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
-import CellRow from 'components/ui/Table/CellRow'
+import RowCell from 'components/ui/Table/RowCell'
 import { RdvListItem } from 'interfaces/rdv'
-import { formatHourMinuteDate, formatWeekdayWithMonth } from 'utils/date'
+import {
+  formatDayDate,
+  formatHourMinuteDate,
+  formatWeekdayWithMonth,
+} from 'utils/date'
 
 interface RdvRowProps {
-  item: RdvListItem
-  withNameJeune: boolean | undefined
+  rdv: RdvListItem
   idConseiller: string
+  withNameJeune?: boolean
+  withDate?: boolean
 }
 
-export function RdvRow({ item, withNameJeune, idConseiller }: RdvRowProps) {
+export function RdvRow({
+  rdv,
+  withNameJeune,
+  withDate,
+  idConseiller,
+}: RdvRowProps) {
   const dayHourCells = (rdvDate: Date, duration: number) => {
     return `${formatHourMinuteDate(rdvDate)} - ${duration} min`
   }
   return (
-    <Link href={'/mes-jeunes/edition-rdv?idRdv=' + item.id}>
+    <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
       <a
         role='row'
         aria-label={`Modifier rendez-vous du ${formatWeekdayWithMonth(
-          new Date(item.date)
-        )} avec ${item.beneficiaires}`}
+          new Date(rdv.date)
+        )} avec ${rdv.beneficiaires}`}
         className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
       >
-        <CellRow className='rounded-l-small'>
-          <span className='sr-only'>
-            {formatWeekdayWithMonth(new Date(item.date))}
+        <RowCell className='rounded-l-small'>
+          <span aria-label={formatWeekdayWithMonth(new Date(rdv.date))}>
+            {withDate && `${formatDayDate(new Date(rdv.date))} - `}
           </span>
-          {dayHourCells(new Date(item.date), item.duration)}
-        </CellRow>
-        {withNameJeune && <CellRow>{item.beneficiaires}</CellRow>}
+          {dayHourCells(new Date(rdv.date), rdv.duration)}
+        </RowCell>
 
-        <CellRow>
-          <RdvTypeTag type={item.type} />
-        </CellRow>
+        {withNameJeune && <RowCell>{rdv.beneficiaires}</RowCell>}
 
-        <CellRow>
+        <RowCell>
+          <RdvTypeTag type={rdv.type} />
+        </RowCell>
+
+        <RowCell>
           <IconComponent
             name={IconName.Location}
             focusable='false'
             aria-hidden='true'
             className='mr-2 inline'
           />
-          {item.modality}
-        </CellRow>
+          {rdv.modality}
+        </RowCell>
 
-        {item.idCreateur && (
-          <CellRow className='rounded-r-small'>
+        {rdv.idCreateur && (
+          <RowCell className='rounded-r-small'>
             <span className='flex items-center justify-between'>
-              {item.idCreateur === idConseiller && (
+              {rdv.idCreateur === idConseiller && (
                 <>
                   <span className='sr-only'>oui</span>
                   <IconComponent
@@ -62,7 +73,7 @@ export function RdvRow({ item, withNameJeune, idConseiller }: RdvRowProps) {
                   />
                 </>
               )}
-              {item.idCreateur !== idConseiller && (
+              {rdv.idCreateur !== idConseiller && (
                 <>
                   <span className='sr-only'>non</span>
                   <IconComponent
@@ -80,9 +91,9 @@ export function RdvRow({ item, withNameJeune, idConseiller }: RdvRowProps) {
                 className='w-6 h-6 fill-content_color'
               />
             </span>
-          </CellRow>
+          </RowCell>
         )}
-        {!item.idCreateur && <div role='cell' />}
+        {!rdv.idCreateur && <div role='cell' />}
       </a>
     </Link>
   )

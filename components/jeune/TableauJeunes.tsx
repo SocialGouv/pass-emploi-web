@@ -1,14 +1,13 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
-import CellRow from '../ui/Table/CellRow'
-
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import SortIcon from 'components/ui/SortIcon'
-import { HeaderColumnCell } from 'components/ui/Table/HeaderColumnCell'
+import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import Pagination from 'components/ui/Table/Pagination'
+import RowCell from 'components/ui/Table/RowCell'
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
@@ -195,7 +194,7 @@ export default function TableauJeunes({
 
             <div role='rowgroup' className='table-row-group'>
               <div role='row' className={`table-row`}>
-                <HeaderColumnCell className={columnHeaderButtonStyleHover}>
+                <HeaderCell className={columnHeaderButtonStyleHover}>
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.NOM)}
@@ -209,9 +208,9 @@ export default function TableauJeunes({
                     <span className='mr-1'>Bénéficiaire</span>
                     <SortIcon isSorted={isName} isDesc={sortDesc} />
                   </button>
-                </HeaderColumnCell>
+                </HeaderCell>
                 {withSituations && (
-                  <HeaderColumnCell className={columnHeaderButtonStyleHover}>
+                  <HeaderCell className={columnHeaderButtonStyleHover}>
                     <button
                       className={columnHeaderButtonStyle}
                       onClick={() => sortJeunes(SortColumn.SITUATION)}
@@ -225,9 +224,9 @@ export default function TableauJeunes({
                       <span className='mr-1'>Situation</span>
                       <SortIcon isSorted={isSituation} isDesc={sortDesc} />
                     </button>
-                  </HeaderColumnCell>
+                  </HeaderCell>
                 )}
-                <HeaderColumnCell className={columnHeaderButtonStyleHover}>
+                <HeaderCell className={columnHeaderButtonStyleHover}>
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
@@ -245,10 +244,10 @@ export default function TableauJeunes({
                     <span className='mr-1'>Dernière activité</span>
                     <SortIcon isSorted={isDate} isDesc={sortDesc} />
                   </button>
-                </HeaderColumnCell>
+                </HeaderCell>
 
                 {withActions && (
-                  <HeaderColumnCell className={columnHeaderButtonStyleHover}>
+                  <HeaderCell className={columnHeaderButtonStyleHover}>
                     <button
                       className={`${columnHeaderButtonStyle} mx-auto`}
                       onClick={() =>
@@ -264,10 +263,10 @@ export default function TableauJeunes({
                       <span className='mr-1'>Actions</span>
                       <SortIcon isSorted={isAction} isDesc={sortDesc} />
                     </button>
-                  </HeaderColumnCell>
+                  </HeaderCell>
                 )}
 
-                <HeaderColumnCell className={columnHeaderButtonStyleHover}>
+                <HeaderCell className={columnHeaderButtonStyleHover}>
                   <button
                     className={`${columnHeaderButtonStyle} mx-auto`}
                     onClick={() => sortJeunes(SortColumn.MESSAGES)}
@@ -283,7 +282,7 @@ export default function TableauJeunes({
                     </span>
                     <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                   </button>
-                </HeaderColumnCell>
+                </HeaderCell>
               </div>
             </div>
 
@@ -295,7 +294,7 @@ export default function TableauJeunes({
                     aria-label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
                     className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
                   >
-                    <CellRow className='rounded-l-small'>
+                    <RowCell className='rounded-l-small'>
                       <span className='flex items-baseline'>
                         {jeune.isReaffectationTemporaire && (
                           <span
@@ -313,39 +312,39 @@ export default function TableauJeunes({
                         )}
                         {getNomJeuneComplet(jeune)}
                       </span>
-                    </CellRow>
+                    </RowCell>
 
                     {withSituations && (
-                      <CellRow>
+                      <RowCell>
                         <SituationTag
                           className={
                             'max-w-[100px] layout_l:max-w-[180px] truncate text-ellipsis'
                           }
                           situation={jeune.situationCourante}
                         />
-                      </CellRow>
+                      </RowCell>
                     )}
 
-                    <CellRow>
+                    <RowCell>
                       {jeune.lastActivity
                         ? todayOrDate(new Date(jeune.lastActivity))
                         : ''}
                       {!jeune.isActivated && (
                         <span className='text-warning'>Compte non activé</span>
                       )}
-                    </CellRow>
+                    </RowCell>
 
                     {withActions && (
-                      <CellRow className='text-primary_darken'>
+                      <RowCell className='text-primary_darken'>
                         <div className='mx-auto w-fit'>
                           <Badge
                             count={jeune.nbActionsNonTerminees}
                             bgColor='primary'
                           />
                         </div>
-                      </CellRow>
+                      </RowCell>
                     )}
-                    <CellRow className='rounded-r-small'>
+                    <RowCell className='rounded-r-small'>
                       <span className='flex'>
                         <div className='relative w-fit mx-auto'>
                           <IconComponent
@@ -367,7 +366,7 @@ export default function TableauJeunes({
                           className='w-6 h-6 fill-content_color'
                         />
                       </span>
-                    </CellRow>
+                    </RowCell>
                   </a>
                 </Link>
               ))}

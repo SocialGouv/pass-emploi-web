@@ -1,14 +1,11 @@
 import React from 'react'
 
-interface HeaderColumnCellProps {
+interface HeaderCellProps {
   children: any
   className?: string
 }
 
-export function HeaderColumnCell({
-  children,
-  className,
-}: HeaderColumnCellProps) {
+export function HeaderCell({ children, className }: HeaderCellProps) {
   return (
     <div
       role='columnheader'

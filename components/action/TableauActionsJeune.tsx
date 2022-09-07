@@ -1,6 +1,5 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
 import TableLayout from '../ui/Table/TableLayout'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
@@ -10,6 +9,7 @@ import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SortIcon from 'components/ui/SortIcon'
+import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
@@ -120,8 +120,8 @@ export default function TableauActionsJeune({
         </div>
         <div role='rowgroup' className='table-header-group '>
           <div role='row' className='table-row text-base-regular'>
-            <HeaderColumnCell>Intitulé de l’action</HeaderColumnCell>
-            <HeaderColumnCell className={headerColumnWithButtonHover}>
+            <HeaderCell>Intitulé de l’action</HeaderCell>
+            <HeaderCell className={headerColumnWithButtonHover}>
               <button
                 onClick={trierParDateCreation}
                 aria-label='Créée le - trier les actions'
@@ -133,8 +133,8 @@ export default function TableauActionsJeune({
                   isDesc={getIsSortedDesc()}
                 />
               </button>
-            </HeaderColumnCell>
-            <HeaderColumnCell className={headerColumnWithButtonHover}>
+            </HeaderCell>
+            <HeaderCell className={headerColumnWithButtonHover}>
               <button
                 onClick={trierParDateEcheance}
                 aria-label='Échéance - trier les actions'
@@ -146,10 +146,8 @@ export default function TableauActionsJeune({
                   isDesc={getIsSortedDesc()}
                 />
               </button>
-            </HeaderColumnCell>
-            <HeaderColumnCell
-              className={`relative ${headerColumnWithButtonHover}`}
-            >
+            </HeaderCell>
+            <HeaderCell className={`relative ${headerColumnWithButtonHover}`}>
               <button
                 aria-controls='filtres-statut'
                 aria-expanded={afficherStatut}
@@ -184,7 +182,7 @@ export default function TableauActionsJeune({
                   </Button>
                 </form>
               )}
-            </HeaderColumnCell>
+            </HeaderCell>
           </div>
         </div>
 

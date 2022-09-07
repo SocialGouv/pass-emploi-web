@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 
-import IconComponent, { IconName } from '../ui/IconComponent'
-import CellRow from '../ui/Table/CellRow'
-
 import StatusTag from 'components/action/StatusTag'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import RowCell from 'components/ui/Table/RowCell'
 import { Action, StatutAction } from 'interfaces/action'
 import { formatDayDate } from 'utils/date'
 
@@ -29,19 +28,19 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
         aria-label={`Détail de l'action ${action.content}`}
         className={`table-row cursor-pointer focus-within:primary_lighten rounded-small shadow-s hover:bg-primary_lighten`}
       >
-        <CellRow className='rounded-l-small'>
+        <RowCell className='rounded-l-small'>
           <span className='flex items-center'>
             <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
           </span>
-        </CellRow>
-        <CellRow>
+        </RowCell>
+        <RowCell>
           <span className='flex items-center'>
             <span>{formatDayDate(new Date(action.creationDate))}</span>
           </span>
-        </CellRow>
-        <CellRow>
+        </RowCell>
+        <RowCell>
           <span className='flex flex-row items-center'>
             <span
               className={
@@ -64,8 +63,8 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               {formatDayDate(new Date(action.dateEcheance))}
             </span>
           </span>
-        </CellRow>
-        <CellRow className='rounded-r-small w-[160px]'>
+        </RowCell>
+        <RowCell className='rounded-r-small w-[160px]'>
           <span className='flex items-center justify-between'>
             <StatusTag status={action.status} />
             <IconComponent
@@ -75,7 +74,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               className=' w-6 h-6 fill-content_color'
             />
           </span>
-        </CellRow>
+        </RowCell>
       </a>
     </Link>
   )

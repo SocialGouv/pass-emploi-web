@@ -10,7 +10,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import { listeRdvAVenirItem } from 'presentation/MesRdvViewModel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -48,8 +47,7 @@ function MesRendezvous({
   const [debutPeriode, setDebutPeriode] = useState<string>(dateDebut)
   const [finPeriode, setFinPeriode] = useState<string>(dateFin)
 
-  const pageTracking = `Mes rendez-vous`
-  let initialTracking = pageTracking
+  let initialTracking = `Mes rendez-vous`
   if (creationSuccess) initialTracking += ' - Creation rdv succès'
   if (modificationSuccess) initialTracking += ' - Modification rdv succès'
   if (suppressionSuccess) initialTracking += ' - Suppression rdv succès'
@@ -157,7 +155,8 @@ function MesRendezvous({
 
       <TableauRdv
         idConseiller={conseiller?.id ?? ''}
-        rdvs={listeRdvAVenirItem(rdvs)}
+        rdvs={rdvs}
+        withIntercalaires={true}
       />
     </>
   )

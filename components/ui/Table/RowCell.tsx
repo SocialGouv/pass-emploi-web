@@ -1,11 +1,11 @@
 import React from 'react'
 
-interface CellRowProps {
-  className?: string
+interface RowCellProps {
   children: any
+  className?: string
 }
 
-export default function CellRow({ className, children }: CellRowProps) {
+export default function RowCell({ className, children }: RowCellProps) {
   return (
     <div
       role='cell'
