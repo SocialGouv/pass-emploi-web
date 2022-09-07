@@ -114,7 +114,10 @@ function EditionAction({ idJeune }: EditionActionProps) {
               ))}
             </Select>
 
-            <Label htmlFor='commentaire-action-predefinie' inputSensible={true}>
+            <Label
+              htmlFor='commentaire-action-predefinie'
+              withBulleMessageSensible={true}
+            >
               Description de l&apos;action
             </Label>
             <Textarea
@@ -161,7 +164,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
             <Label
               htmlFor='commentaire-action-personnalisee'
-              inputSensible={true}
+              withBulleMessageSensible={true}
             >
               Description de l&apos;action
             </Label>

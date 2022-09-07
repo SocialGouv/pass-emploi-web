@@ -66,7 +66,7 @@ export function CommentairesAction({
           </dl>
         )}
 
-        <Label htmlFor='commentaire-action' inputSensible={true}>
+        <Label htmlFor='commentaire-action' withBulleMessageSensible={true}>
           Commentaire à destination du jeune
         </Label>
         <Textarea
