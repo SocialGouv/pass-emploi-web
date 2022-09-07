@@ -10,13 +10,6 @@ export interface Action {
   dateEcheance: string
   dateFinReelle?: string
   qualification?: QualificationAction
-  etat: EtatAction
-}
-
-export enum EtatAction {
-  A_QUALIFIER = 'A_QUALIFIER',
-  NON_QUALIFIABLE = 'NON_QUALIFIABLE',
-  QUALIFIEE = 'QUALIFIEE',
 }
 
 export interface QualificationAction {

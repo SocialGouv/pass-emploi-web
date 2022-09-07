@@ -56,6 +56,11 @@ function PageAction({
 
   const pageTracking = 'Détail Action'
 
+  const estARealiser: boolean = useMemo(
+    () => statut !== StatutAction.Terminee && statut !== StatutAction.Annulee,
+    [statut]
+  )
+
   const estAQualifier: boolean = useMemo(
     () =>
       conseiller?.structure === StructureConseiller.MILO &&
@@ -177,8 +182,9 @@ function PageAction({
       </div>
 
       {action.comment && <p className='mb-8'>{action.comment}</p>}
-      <div className='flex flex-raw items-center justify-between mb-8 bg-accent_3_lighten rounded-medium'>
-        <span className='flex flex-row p-2 text-accent_2'>
+
+      {estARealiser && (
+        <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-medium mb-8'>
           <IconComponent
             name={IconName.Clock}
             aria-hidden='true'
@@ -189,8 +195,9 @@ function PageAction({
             À réaliser pour le :{' '}
             <b>{formatDayDate(new Date(action.dateEcheance))}</b>
           </span>
-        </span>
-      </div>
+        </div>
+      )}
+
       <StatutActionForm
         updateStatutAction={updateStatutAction}
         qualifierAction={(isSituationNonProfessionnelle) =>
