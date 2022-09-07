@@ -1,13 +1,11 @@
 import {
   Action,
   CreateurCommentaire,
-  EtatAction,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
-type EtatActionJson = 'A_QUALIFIER' | 'NON_QUALIFIABLE' | 'QUALIFIEE'
 
 export interface ActionJson {
   id: string
@@ -21,7 +19,6 @@ export interface ActionJson {
   dateEcheance: string
   dateFinReelle?: string
   qualification?: QualificationActionJson
-  etat: EtatActionJson
 }
 
 export interface QualificationActionJson {
@@ -75,7 +72,6 @@ export function jsonToAction(json: ActionJson): Action {
     creator: json.creator,
     creatorType: json.creatorType,
     dateEcheance: json.dateEcheance,
-    etat: jsonToEtatAction(json.etat),
   }
 
   if (json.dateFinReelle) {
@@ -117,27 +113,5 @@ export function actionStatusToJson(status: StatutAction): ActionStatusJson {
       return 'done'
     case StatutAction.Annulee:
       return 'canceled'
-  }
-}
-
-export function etatActionToJson(etat: EtatAction): EtatActionJson {
-  switch (etat) {
-    case EtatAction.A_QUALIFIER:
-      return 'A_QUALIFIER'
-    case EtatAction.NON_QUALIFIABLE:
-      return 'NON_QUALIFIABLE'
-    case EtatAction.QUALIFIEE:
-      return 'QUALIFIEE'
-  }
-}
-
-export function jsonToEtatAction(jsonEtat: EtatActionJson): EtatAction {
-  switch (jsonEtat) {
-    case 'A_QUALIFIER':
-      return EtatAction.A_QUALIFIER
-    case 'NON_QUALIFIABLE':
-      return EtatAction.NON_QUALIFIABLE
-    case 'QUALIFIEE':
-      return EtatAction.QUALIFIEE
   }
 }
