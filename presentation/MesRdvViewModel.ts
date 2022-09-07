@@ -1,25 +1,35 @@
-import { JourRdvAVenirItem, PlageHoraire, RdvListItem } from 'interfaces/rdv'
+import { RdvListItem } from 'interfaces/rdv'
 import { dateIsToday, formatWeekdayWithMonth } from 'utils/date'
 
 export const AUJOURDHUI_LABEL = 'aujourd’hui'
 export const PLAGE_HORAIRE_MATIN = 'Matin'
 export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
 
-export function listeRdvAVenirItem(
+export class IntercalaireJour {
+  constructor(readonly label: string) {}
+}
+
+export class IntercalairePlageHoraire {
+  constructor(readonly label: string) {}
+}
+
+export function rdvsWithIntercalaires(
   mesRendezVous: RdvListItem[]
-): Array<JourRdvAVenirItem | PlageHoraire | RdvListItem> {
+): Array<IntercalaireJour | IntercalairePlageHoraire | RdvListItem> {
   const rdvTries = [...mesRendezVous].sort(trierParDate)
-  const items: Array<JourRdvAVenirItem | PlageHoraire | RdvListItem> = []
+  const items: Array<
+    IntercalaireJour | IntercalairePlageHoraire | RdvListItem
+  > = []
   let dernierJour = ''
   let dernierePlageHoraireDefinie = ''
-  for (let rdv of rdvTries) {
+  for (const rdv of rdvTries) {
     const dateRdv = new Date(rdv.date)
     const jour = jourDuRdvFormate(dateRdv)
     const heureDuRdv = dateRdv.getHours()
 
     if (jour !== dernierJour) {
       dernierJour = jour
-      items.push(new JourRdvAVenirItem(jour))
+      items.push(new IntercalaireJour(jour))
       dernierePlageHoraireDefinie = ''
     }
 
@@ -27,7 +37,7 @@ export function listeRdvAVenirItem(
       isRdvDuMatin(heureDuRdv) &&
       dernierePlageHoraireDefinie !== PLAGE_HORAIRE_MATIN
     ) {
-      items.push(new PlageHoraire(PLAGE_HORAIRE_MATIN))
+      items.push(new IntercalairePlageHoraire(PLAGE_HORAIRE_MATIN))
       dernierePlageHoraireDefinie = PLAGE_HORAIRE_MATIN
     }
 
@@ -35,7 +45,7 @@ export function listeRdvAVenirItem(
       isRdvApresMidi(heureDuRdv) &&
       dernierePlageHoraireDefinie !== PLAGE_HORAIRE_APRES_MIDI
     ) {
-      items.push(new PlageHoraire(PLAGE_HORAIRE_APRES_MIDI))
+      items.push(new IntercalairePlageHoraire(PLAGE_HORAIRE_APRES_MIDI))
       dernierePlageHoraireDefinie = PLAGE_HORAIRE_APRES_MIDI
     }
 

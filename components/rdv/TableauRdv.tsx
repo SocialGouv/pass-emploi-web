@@ -1,43 +1,59 @@
 import React from 'react'
 
-import { HeaderColumnCell } from '../ui/Table/HeaderColumnCell'
-import TableLayout from '../ui/Table/TableLayout'
-
 import { RdvRow } from 'components/rdv/RdvRow'
-import { JourRdvAVenirItem, PlageHoraire, RdvListItem } from 'interfaces/rdv'
-import { AUJOURDHUI_LABEL } from 'presentation/MesRdvViewModel'
+import { HeaderCell } from 'components/ui/Table/HeaderCell'
+import TableLayout from 'components/ui/Table/TableLayout'
+import { RdvListItem } from 'interfaces/rdv'
+import {
+  AUJOURDHUI_LABEL,
+  IntercalaireJour,
+  IntercalairePlageHoraire,
+  rdvsWithIntercalaires,
+} from 'presentation/MesRdvViewModel'
 
 type TableauRdvProps = {
-  rdvs: Array<RdvListItem | JourRdvAVenirItem | PlageHoraire>
   idConseiller: string
+  rdvs: RdvListItem[]
+  withIntercalaires?: boolean
   withNameJeune?: boolean
 }
 
 export default function TableauRdv({
   rdvs,
   idConseiller,
+  withIntercalaires = false,
   withNameJeune = true,
 }: TableauRdvProps) {
-  //FIXME: Balise <tr> ne peut pas être enfant d'une div
-  function labelRdvDate(item: JourRdvAVenirItem, dateIsToday: boolean = false) {
+  const rdvsAffiches = withIntercalaires ? rdvsWithIntercalaires(rdvs) : rdvs
+
+  //FIXME: Balise <tr> ne peut pas être enfant d'une div, mais problème avec colSpan
+  function intercalaireDate(item: IntercalaireJour) {
     return (
       <tr key={item.label}>
         <th
           colSpan={6}
-          className={`table-cell capitalize text-m-bold before:content-['---------'] before:tracking-tighter after:content-['---------'] after:tracking-tighter before:whitespace-pre ${
-            dateIsToday ? 'text-primary' : 'text-content_color'
+          className={`table-cell text-m-bold capitalize ${
+            item.label === AUJOURDHUI_LABEL
+              ? 'text-primary'
+              : 'text-content_color'
           } `}
         >
+          <span className='tracking-tighter'>---------</span>
           <span className='mx-4'>{item.label}</span>
+          <span className='tracking-tighter'>---------</span>
         </th>
       </tr>
     )
   }
 
-  function labelPlageHoraire(item: PlageHoraire, key: number) {
+  //FIXME: Balise <tr> ne peut pas être enfant d'une div, mais problème avec colSpan
+  function intercalairePlageHoraire(
+    item: IntercalairePlageHoraire,
+    key: number
+  ) {
     return (
       <tr key={item.label + key}>
-        <th colSpan={1} className={`table-cell text-s-bold text-content_color`}>
+        <th colSpan={1} className='table-cell text-s-bold text-content_color'>
           <span className='float-left'>{item.label}</span>
         </th>
       </tr>
@@ -51,6 +67,7 @@ export default function TableauRdv({
           Il n’y a pas de rendez-vous sur cette période
         </p>
       )}
+
       {rdvs.length > 0 && (
         <TableLayout describedBy='table-caption'>
           <div id='table-caption' className='sr-only'>
@@ -58,30 +75,30 @@ export default function TableauRdv({
           </div>
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
-              <HeaderColumnCell>Horaires</HeaderColumnCell>
-              {withNameJeune && (
-                <HeaderColumnCell>Bénéficiaire</HeaderColumnCell>
-              )}
-              <HeaderColumnCell>Type</HeaderColumnCell>
-              <HeaderColumnCell>Modalité</HeaderColumnCell>
-              <HeaderColumnCell>Créé par vous</HeaderColumnCell>
+              <HeaderCell>Horaires</HeaderCell>
+              {withNameJeune && <HeaderCell>Bénéficiaire</HeaderCell>}
+              <HeaderCell>Type</HeaderCell>
+              <HeaderCell>Modalité</HeaderCell>
+              <HeaderCell>Créé par vous</HeaderCell>
             </div>
           </div>
 
           <div role='rowgroup' className='table-row-group'>
-            {rdvs.map(
-              (item: RdvListItem | JourRdvAVenirItem | PlageHoraire, key) => {
-                if (item instanceof JourRdvAVenirItem)
-                  return item.label === AUJOURDHUI_LABEL
-                    ? labelRdvDate(item, true)
-                    : labelRdvDate(item)
-                else if (item instanceof PlageHoraire) {
-                  return labelPlageHoraire(item, key)
+            {rdvsAffiches.map(
+              (
+                item: RdvListItem | IntercalaireJour | IntercalairePlageHoraire,
+                key
+              ) => {
+                if (item instanceof IntercalaireJour) {
+                  return intercalaireDate(item)
+                } else if (item instanceof IntercalairePlageHoraire) {
+                  return intercalairePlageHoraire(item, key)
                 } else {
                   return (
                     <RdvRow
                       key={item.id}
-                      item={item}
+                      rdv={item}
+                      withDate={!withIntercalaires}
                       withNameJeune={withNameJeune}
                       idConseiller={idConseiller}
                     />
