@@ -336,7 +336,7 @@ export function EditionRdvForm({
             <Label
               htmlFor='typeRendezVous-autre'
               inputRequired={true}
-              inputSensible={true}
+              withBulleMessageSensible={true}
             >
               Préciser
             </Label>
@@ -531,7 +531,7 @@ export function EditionRdvForm({
           </label>
         </div>
 
-        <Label htmlFor='commentaire' inputSensible={true}>
+        <Label htmlFor='commentaire' withBulleMessageSensible={true}>
           <span className='flex items-center'>
             Commentaire à destination des jeunes
           </span>

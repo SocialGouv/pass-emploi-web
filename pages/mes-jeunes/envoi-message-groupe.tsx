@@ -220,7 +220,11 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             Écrivez votre message
           </legend>
 
-          <Label htmlFor='message' inputRequired={true} inputSensible={true}>
+          <Label
+            htmlFor='message'
+            inputRequired={true}
+            withBulleMessageSensible={true}
+          >
             Message
           </Label>
 
@@ -333,8 +337,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             type='submit'
             disabled={!formIsValid()}
             className='flex items-center p-2'
-            onClick={envoyerMessageGroupe}
             isLoading={isSending}
+            onClick={envoyerMessageGroupe}
           >
             <IconComponent
               name={IconName.Send}

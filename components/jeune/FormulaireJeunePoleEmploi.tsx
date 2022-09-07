@@ -145,10 +145,10 @@ function FormulaireJeunePoleEmploi({
           E-mail{' '}
           <span className='text-base-regular'>(ex : monemail@exemple.com)</span>
         </Label>
-        <span className='text-base-regular mb-3'>
+        <p className='text-base-regular mb-3'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
           dossier MAP du jeune.
-        </span>
+        </p>
         <div className='w-8/12'>
           <Input
             type='email'

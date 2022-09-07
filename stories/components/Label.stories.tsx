@@ -13,6 +13,13 @@ export default {
         description: "Indique si l'input lié est requis",
       },
     },
+    withBulleMessageSensible: {
+      control: {
+        type: 'boolean',
+        description:
+          "Indique s'il faut afficher une bulle pour prévenir l'utilisateur de faire attention au contenu du champ",
+      },
+    },
   },
 } as ComponentMeta<typeof Label>
 
@@ -23,4 +30,5 @@ const Template: ComponentStory<typeof Label> = (args) => (
 export const Default = Template.bind({})
 Default.args = {
   inputRequired: true,
+  withBulleMessageSensible: true,
 }
