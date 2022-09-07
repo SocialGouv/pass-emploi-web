@@ -6,6 +6,7 @@ import {
   ConseillerHistorique,
   DetailJeune,
   JeuneFromListe,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
@@ -16,6 +17,8 @@ import {
   ItemJeuneJson,
   jsonToDetailJeune,
   jsonToItemJeune,
+  jsonToMetadonneesFavoris,
+  MetadonneesFavorisJson,
   SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
@@ -25,12 +28,14 @@ export interface JeunesService {
     idConseiller: string,
     accessToken: string
   ): Promise<JeuneFromListe[]>
+
   getJeunesDuConseillerClientSide(): Promise<JeuneFromListe[]>
 
   getConseillersDuJeuneServerSide(
     idConseiller: string,
     accessToken: string
   ): Promise<ConseillerHistorique[]>
+
   getConseillersDuJeuneClientSide(
     idConseiller: string
   ): Promise<ConseillerHistorique[]>
@@ -70,6 +75,17 @@ export interface JeunesService {
   ): Promise<void>
 
   getMotifsSuppression(): Promise<string[]>
+
+  getMetadonneesFavorisJeune(
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<MetadonneesFavoris | undefined>
+
+  modifierIdentifiantPartenaire(
+    idJeune: string,
+    idPartenaire: string
+  ): Promise<void>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -252,5 +268,41 @@ export class JeunesApiService implements JeunesService {
       session!.accessToken
     )
     return motifs
+  }
+
+  async getMetadonneesFavorisJeune(
+    idConseiller: string,
+    idJeune: string,
+    accessToken: string
+  ): Promise<MetadonneesFavoris | undefined> {
+    try {
+      const { content: metadonneesFavoris } = await this.apiClient.get<{
+        favoris: MetadonneesFavorisJson
+      }>(
+        `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
+        accessToken
+      )
+      return jsonToMetadonneesFavoris(metadonneesFavoris)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+
+      throw e
+    }
+  }
+
+  async modifierIdentifiantPartenaire(
+    idJeune: string,
+    idPartenaire: string
+  ): Promise<void> {
+    const session = await getSession()
+    const idConseiller = session?.user.id
+
+    return this.apiClient.put(
+      `/conseillers/${idConseiller}/jeunes/${idJeune}`,
+      { idPartenaire },
+      session!.accessToken
+    )
   }
 }

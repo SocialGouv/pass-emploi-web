@@ -7,6 +7,21 @@ export interface Action {
   creator: string
   creatorType: string
   status: StatutAction
+  dateEcheance: string
+  dateFinReelle?: string
+  qualification?: QualificationAction
+  etat: EtatAction
+}
+
+export enum EtatAction {
+  A_QUALIFIER = 'A_QUALIFIER',
+  NON_QUALIFIABLE = 'NON_QUALIFIABLE',
+  QUALIFIEE = 'QUALIFIEE',
+}
+
+export interface QualificationAction {
+  libelle: string
+  isSituationNonProfessionnelle: boolean
 }
 
 export interface MetadonneesActions {
@@ -25,3 +40,20 @@ export enum StatutAction {
   Terminee = 'Terminee',
   Annulee = 'Annulee',
 }
+
+export interface Commentaire {
+  id: string
+  idAction: string
+  date: string
+  createur: CreateurCommentaire
+  message: string
+}
+
+export interface CreateurCommentaire {
+  prenom: string
+  nom: string
+  id: string
+  type: 'conseiller' | 'jeune'
+}
+
+export type SituationNonProfessionnelle = { code: string; label: string }

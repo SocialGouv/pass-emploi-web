@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import IconCheckbox from 'components/ui/IconCheckbox'
+import IconCheckbox from 'components/ui/Form/IconCheckbox'
 import { IconName } from 'components/ui/IconComponent'
 
 export default {

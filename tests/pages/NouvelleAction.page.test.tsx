@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -9,8 +9,8 @@ import NouvelleAction, {
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
 import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
@@ -70,17 +70,10 @@ describe('NouvelleAction', () => {
       actionsService = mockedActionsService()
 
       // When
-      await act(async () => {
-        render(
-          <DIProvider dependances={{ actionsService }}>
-            <NouvelleAction
-              idJeune='id-jeune'
-              withoutChat={true}
-              pageTitle=''
-            />
-          </DIProvider>
-        )
-      })
+      renderWithContexts(
+        <NouvelleAction idJeune='id-jeune' withoutChat={true} pageTitle='' />,
+        { customDependances: { actionsService } }
+      )
     })
 
     it("permet d'annuler la création de l'action", () => {
@@ -122,8 +115,15 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir un commentaire', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
+          screen.getByRole('textbox', { name: /Description de l'action/ })
         ).not.toHaveAttribute('required')
+      })
+
+      it('contient un champ pour saisir une date d’échéance', () => {
+        // Then
+        expect(
+          screen.getByLabelText(/Définir une date d’échéance/)
+        ).toHaveAttribute('required')
       })
 
       describe('action prédéfinie remplie', () => {
@@ -134,16 +134,19 @@ describe('NouvelleAction', () => {
           selectAction = screen.getByRole('combobox', {
             name: /Choisir une action/,
           })
-          const commentaire = screen.getByRole('textbox', {
-            name: /Commentaire/,
+          const description = screen.getByRole('textbox', {
+            name: /Description/,
           })
+
+          const dateEcheance = screen.getByLabelText(/date d’échéance/)
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
           await userEvent.selectOptions(
             selectAction,
             actionsPredefinies[3].content
           )
-          await userEvent.type(commentaire, 'Commentaire action')
+          await userEvent.type(description, 'Commentaire action')
+          await userEvent.type(dateEcheance, '2022-07-30')
         })
 
         it("requiert la sélection d'une action", async () => {
@@ -168,6 +171,7 @@ describe('NouvelleAction', () => {
               {
                 intitule: actionsPredefinies[3].content,
                 commentaire: 'Commentaire action',
+                dateEcheance: '2022-07-30',
               },
               'id-jeune'
             )
@@ -202,11 +206,18 @@ describe('NouvelleAction', () => {
         expect(intitule).toHaveAttribute('type', 'text')
       })
 
-      it('contient un champ pour saisir un commentaire', () => {
+      it('contient un champ pour saisir une description', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: /Commentaire de l'action/ })
+          screen.getByRole('textbox', { name: /Description de l'action/ })
         ).not.toHaveAttribute('required')
+      })
+
+      it('contient un champ pour saisir une date d’échéance', () => {
+        // Then
+        expect(
+          screen.getByLabelText(/Définir une date d’échéance/)
+        ).toHaveAttribute('required')
       })
 
       describe('action personnalisée remplie', () => {
@@ -215,13 +226,16 @@ describe('NouvelleAction', () => {
         beforeEach(async () => {
           // Given
           intitule = screen.getByRole('textbox', { name: /Intitulé/ })
-          const commentaire = screen.getByRole('textbox', {
-            name: /Commentaire/,
+          const description = screen.getByRole('textbox', {
+            name: /Description/,
           })
+          const dateEcheance = screen.getByLabelText(/date d’échéance/)
+
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
           await userEvent.type(intitule, 'Intitulé action')
-          await userEvent.type(commentaire, 'Commentaire action')
+          await userEvent.type(description, 'Commentaire action')
+          await userEvent.type(dateEcheance, '2022-07-30')
         })
 
         it("requiert l'intitulé de l'action", async () => {
@@ -246,6 +260,7 @@ describe('NouvelleAction', () => {
               {
                 intitule: 'Intitulé action',
                 commentaire: 'Commentaire action',
+                dateEcheance: '2022-07-30',
               },
               'id-jeune'
             )

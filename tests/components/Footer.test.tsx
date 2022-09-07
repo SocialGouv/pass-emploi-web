@@ -2,7 +2,7 @@ import { screen } from '@testing-library/dom'
 import { render, RenderResult } from '@testing-library/react'
 import React from 'react'
 
-import { Footer } from 'components/layouts/Footer'
+import Footer from 'components/layouts/Footer'
 
 describe('<Footer/>', () => {
   let component: RenderResult

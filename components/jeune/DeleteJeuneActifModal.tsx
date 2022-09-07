@@ -1,11 +1,12 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 
-import InformationMessage from 'components/InformationMessage'
 import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { InputError } from 'components/ui/Form/InputError'
+import Select from 'components/ui/Form/Select'
 import { IconName } from 'components/ui/IconComponent'
-import { InputError } from 'components/ui/InputError'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -44,8 +45,8 @@ export default function DeleteJeuneActifModal({
     setTrackingLabel('Détail Jeune - Pop-in sélection motif')
   }
 
-  function selectMotifSuppression(e: ChangeEvent<HTMLSelectElement>) {
-    setMotifSuppressionJeune(e.target.value)
+  function selectMotifSuppression(value: string) {
+    setMotifSuppressionJeune(value)
   }
 
   function validateCommentaireMotif() {
@@ -133,35 +134,29 @@ export default function DeleteJeuneActifModal({
               </legend>
               <label
                 htmlFor='motif-suppression'
-                className='text-base-medium mb-2'
+                className='text-base-bold mb-2'
               >
                 <span aria-hidden={true}>* </span>Motif de suppression
-                <span className='text-s-regular block mb-3'>
+                <span className='text-base-regular block mb-3'>
                   {' '}
                   Veuillez sélectionner un motif de suppression de compte
                 </span>
               </label>
-              <select
+              <Select
                 id='motif-suppression'
-                name='motif-suppression'
                 required
                 onChange={selectMotifSuppression}
-                className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
               >
-                <option hidden value={''} />
                 {motifsSuppression.map((motif) => (
                   <option key={motif} value={motif}>
                     {motif}
                   </option>
                 ))}
-              </select>
+              </Select>
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
                 <>
-                  <label
-                    htmlFor='commentaire-motif'
-                    className='text-base-medium'
-                  >
+                  <label htmlFor='commentaire-motif' className='text-s-regular'>
                     <span aria-hidden={true}>* </span>
                     Veuillez préciser le motif de la suppression du compte
                   </label>

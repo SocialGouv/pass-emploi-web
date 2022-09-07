@@ -1,4 +1,4 @@
- import { render, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -138,6 +138,19 @@ describe('Reaffectation', () => {
             screen.getByText(`${jeune.nom} ${jeune.prenom}`)
           ).toBeInTheDocument()
         }
+      })
+
+      it('selectionne tous les jeunes au clic sur la checkbox', async () => {
+        // Given
+        const toutSelectionnerCheckbox =
+          screen.getByLabelText('Tout sélectionner')
+        expect(toutSelectionnerCheckbox).not.toBeChecked()
+
+        // When
+        await userEvent.click(toutSelectionnerCheckbox)
+
+        // Then
+        expect(toutSelectionnerCheckbox).toBeChecked()
       })
 
       describe('à la modification du mail du conseiller initial', () => {

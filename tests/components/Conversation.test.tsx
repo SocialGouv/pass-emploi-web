@@ -3,19 +3,15 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import Conversation from 'components/chat/Conversation'
-import { unConseiller } from 'fixtures/conseiller'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { MessagesOfADay } from 'interfaces/message'
+import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithChatCredentials from 'tests/renderWithChatCredentials'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import renderWithContexts from 'tests/renderWithContexts'
 import { formatDayDate } from 'utils/date'
-import { DIProvider } from 'utils/injectionDependances'
-import { Dependencies } from 'utils/injectionDependances/container'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
@@ -52,12 +48,13 @@ describe('<Conversation />', () => {
     }
 
     await act(async () => {
-      const renderResult = await renderWithChatCredentials(
-        buildConversation(
-          { messagesService, fichiersService },
-          jeuneChat,
-          conseillersJeunes
-        )
+      const renderResult = renderWithContexts(
+        <Conversation
+          jeuneChat={jeuneChat}
+          conseillers={conseillersJeunes}
+          onBack={jest.fn()}
+        />,
+        { customDependances: { messagesService, fichiersService } }
       )
       rerender = renderResult.rerender
     })
@@ -101,11 +98,11 @@ describe('<Conversation />', () => {
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
-      buildConversation(
-        { messagesService, fichiersService },
-        newJeuneChat,
-        conseillersJeunes
-      )
+      <Conversation
+        jeuneChat={newJeuneChat}
+        conseillers={conseillersJeunes}
+        onBack={jest.fn()}
+      />
     )
     // Then
     expect(() => screen.getByText('imageupload.png')).toThrow()
@@ -124,11 +121,17 @@ describe('<Conversation />', () => {
       ).toBeInTheDocument()
     })
 
-    const casesMessages = messagesDUnJour.messages.map((message) => [message])
-    it.each(casesMessages)(`affiche le contenu du message`, (message) => {
-      // Then
-      expect(screen.getByText(message.content)).toBeInTheDocument()
-    })
+    const casesMessages: Message[] = []
+    messagesDUnJour.messages.map((message) => casesMessages.push(message))
+
+    for (let messageN = 0; messageN < casesMessages.length - 1; messageN++) {
+      it(`affiche le contenu du message`, () => {
+        // Then
+        expect(
+          screen.getByText(casesMessages[messageN].content)
+        ).toBeInTheDocument()
+      })
+    }
 
     it.each(casesMessages)(
       `affiche le nom complet du conseiller`,
@@ -146,6 +149,53 @@ describe('<Conversation />', () => {
         ).toBeInTheDocument()
       }
     )
+  })
+
+  it('affiche au survol la présence d’un lien externe dans le message s’il en a un', () => {
+    // Then
+    expect(screen.getByText(/https/)).toHaveAttribute('title', 'Lien externe')
+  })
+
+  describe('au clic ouvre une boîte de dialogue de confirmation', () => {
+    it('continue et redirige vers un lien externe', async () => {
+      // Given
+      const modaleConfirmation = jest
+        .spyOn(window, 'confirm')
+        .mockImplementation(() => {
+          return true
+        })
+      const open = jest.spyOn(window, 'open').mockImplementation()
+      const lienRedirection = screen.getByText(/https/)
+
+      // When
+      await userEvent.click(lienRedirection)
+
+      // Then
+      expect(modaleConfirmation).toHaveBeenCalledTimes(1)
+      expect(open).toHaveBeenCalledWith(
+        'https://www.pass-emploi.com/',
+        '_blank',
+        'noopener, noreferrer'
+      )
+    })
+
+    it('annule et ne redirige pas vers un lien externe', async () => {
+      // Given
+      const modaleConfirmation = jest
+        .spyOn(window, 'confirm')
+        .mockImplementation(() => {
+          return false
+        })
+      const open = jest.spyOn(window, 'open').mockImplementation()
+      const lienRedirection = screen.getByText(/https/)
+
+      // When
+      await userEvent.click(lienRedirection)
+
+      // Then
+      expect(modaleConfirmation).toHaveBeenCalledTimes(1)
+      expect(open).toHaveBeenCalledTimes(0)
+    })
   })
 
   describe('quand on envoie un message', () => {
@@ -251,21 +301,3 @@ describe('<Conversation />', () => {
     })
   })
 })
-
-function buildConversation(
-  dependances: Partial<Dependencies>,
-  jeuneChat: JeuneChat,
-  conseillersJeunes: ConseillerHistorique[]
-): JSX.Element {
-  return (
-    <DIProvider dependances={dependances}>
-      <ConseillerProvider conseiller={unConseiller()}>
-        <Conversation
-          jeuneChat={jeuneChat}
-          conseillers={conseillersJeunes}
-          onBack={jest.fn()}
-        />
-      </ConseillerProvider>
-    </DIProvider>
-  )
-}

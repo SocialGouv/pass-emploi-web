@@ -3,35 +3,25 @@ import React from 'react'
 
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDossierMilo } from 'fixtures/milo'
-import { mockedConseillerService } from 'fixtures/services'
-import { ConseillerService } from 'services/conseiller.service'
 import getByDefinitionTerm from 'tests/querySelector'
-import { DIProvider } from 'utils/injectionDependances'
 
 describe('<DossierMilo', () => {
-  let conseillerService: ConseillerService
-
-  beforeEach(() => {
-    conseillerService = mockedConseillerService()
-  })
-
   describe("quand l'e-mail du jeune est renseigné", () => {
-    it("devrait afficher les informations d'un dossier jeune avec e-mail", () => {
+    beforeEach(() => {
       //GIVEN
       const dossier = unDossierMilo()
 
       //WHEN
       render(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+        <DossierJeuneMilo
+          dossier={dossier}
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
+    })
 
+    it("affiche les informations d'un dossier jeune avec e-mail", () => {
       //THEN
       expect(getByDefinitionTerm('Prénom')).toHaveTextContent('Kenji')
       expect(getByDefinitionTerm('Nom')).toHaveTextContent('GIRAC')
@@ -43,45 +33,36 @@ describe('<DossierMilo', () => {
         'kenji-faux-mail@mail.com'
       )
     })
+
+    it("affiche le mode opératoire d'activation du compte", () => {
+      // Then
+      expect(
+        screen.getByText(/lien d’activation valable 12h/)
+      ).toBeInTheDocument()
+    })
   })
 
   describe("quand l'e-mail du jeune n'est pas renseigné", () => {
-    it('le champ e-mail doit être vide', () => {
+    beforeEach(() => {
       //GIVEN
       const dossier = unDossierMilo({ email: undefined })
 
       //WHEN
       render(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
+        <DossierJeuneMilo
+          dossier={dossier}
+          onCreateCompte={jest.fn()}
+          erreurMessageHttpPassEmploi=''
+        />
       )
+    })
 
+    it('le champ e-mail doit être vide', () => {
       //THEN
       expect(getByDefinitionTerm('E-mail')).toBeEmptyDOMElement()
     })
 
-    it("devrait afficher un message d'erreur", () => {
-      //GIVEN
-      const dossier = unDossierMilo({ email: '' })
-
-      //WHEN
-      render(
-        <DIProvider dependances={{ conseillerService }}>
-          <DossierJeuneMilo
-            dossier={dossier}
-            onCreatedSuccess={jest.fn()}
-            onCreatedError={jest.fn()}
-            erreurMessageHttpPassEmploi=''
-          />
-        </DIProvider>
-      )
-
+    it("affiche un message d'erreur", () => {
       //THEN
       expect(
         screen.getByText("L'e-mail du jeune n'est peut-être pas renseigné")
@@ -96,6 +77,11 @@ describe('<DossierMilo', () => {
           '2. Rafraîchissez ensuite cette page ou saisissez à nouveau le numéro de dossier du jeune pour créer le compte application CEJ'
         )
       ).toBeInTheDocument()
+    })
+
+    it("n'affiche pas le mode opératoire d'activation du compte", () => {
+      // Then
+      expect(() => screen.getByText(/lien d'activation valable 12h/)).toThrow()
     })
   })
 })

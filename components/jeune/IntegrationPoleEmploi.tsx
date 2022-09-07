@@ -16,7 +16,7 @@ export const IntegrationPoleEmploi = ({
       aria-hidden='true'
     />
     <div>
-      <p className='text-s-medium'>
+      <p className='text-s-bold'>
         Cette fonctionnalité n&apos;est pas encore disponible.
       </p>
       <p className='text-s-regular'>

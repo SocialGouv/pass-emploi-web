@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
-import RdvList from 'components/rdv/RdvList'
+import TableauRdv from 'components/rdv/TableauRdv'
 import { RdvListItem } from 'interfaces/rdv'
 
 interface OngletRdvsProps {
@@ -18,7 +18,7 @@ export function OngletRdvs({
   return (
     <>
       {!poleEmploi ? (
-        <RdvList
+        <TableauRdv
           rdvs={rdvs}
           idConseiller={idConseiller}
           withNameJeune={false}

@@ -1,9 +1,8 @@
 import React from 'react'
 
-import FbCheckIcon from 'assets/icons/fb_check.svg'
-import FbCheckFillIcon from 'assets/icons/fb_check_fill.svg'
-import IconCheckbox from 'components/ui/IconCheckbox'
-import { IconName } from 'components/ui/IconComponent'
+import Dot from 'components/ui/Dot'
+import IconCheckbox from 'components/ui/Form/IconCheckbox'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'
 import { formatDayAndHourDate } from 'utils/date'
@@ -13,6 +12,11 @@ interface ChatRoomTileProps {
   jeuneChat: JeuneChat
   onClick: () => void
   onToggleFlag: (flagged: boolean) => void
+}
+
+function isLastMessageSeenByJeune(jeuneChat: JeuneChat): boolean {
+  if (!jeuneChat.lastJeuneReading) return false
+  return jeuneChat.lastMessageSentAt! < jeuneChat.lastJeuneReading
 }
 
 export function ChatRoomTile({
@@ -28,36 +32,55 @@ export function ChatRoomTile({
   return (
     <div className='relative'>
       <button
-        className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-[6px]'
+        className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-small'
         onClick={onClick}
       >
-        {!jeuneChat.seenByConseiller && jeuneChat.lastMessageContent && (
-          <p className='flex items-center text-accent_1 text-s-regular mb-2'>
-            <span className='text-[48px] mr-1'>·</span>
-            Nouveau message
-          </p>
-        )}
-        <span className='text-md-semi text-primary_darken mb-2 w-full flex justify-between'>
+        {jeuneChat.lastMessageSentBy === 'jeune' &&
+          !jeuneChat.seenByConseiller && (
+            <p className='text-accent_1 text-s-regular mb-2'>
+              <Dot color='accent_1' className='ml-1 mr-2' />
+              Nouveau(x) message(s)
+            </p>
+          )}
+        <span className='text-base-medium text-primary_darken mb-2 w-full flex justify-between'>
           {jeuneChat.prenom} {jeuneChat.nom}
         </span>
-        <span className='text-sm text-grey_800 mb-[8px]'>
+        <span className='text-s-regular text-grey_800 mb-[8px]'>
           {' '}
           {jeuneChat.lastMessageSentBy === UserType.CONSEILLER.toLowerCase()
             ? 'Vous'
             : jeuneChat.prenom}{' '}
           : {jeuneChat.lastMessageContent}
         </span>
-        <span className='text-xxs-italic text-content_color self-end flex'>
-          {jeuneChat.lastMessageContent && (
-            <span className='mr-[7px]'>
-              {formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}
-            </span>
-          )}
-          {(jeuneChat.seenByConseiller && jeuneChat.lastMessageContent) ||
-          !jeuneChat.isActivated ? (
-            <FbCheckIcon focusable='false' aria-hidden='true' />
-          ) : (
-            <FbCheckFillIcon focusable='false' aria-hidden='true' />
+        <span className='text-xs-regular text-content_color self-end'>
+          {jeuneChat.lastMessageContent &&
+            formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}
+          {jeuneChat.lastMessageSentBy === 'conseiller' && (
+            <>
+              <Dot color='grey_700' />{' '}
+              {isLastMessageSeenByJeune(jeuneChat) && (
+                <span>
+                  Lu{' '}
+                  <IconComponent
+                    name={IconName.RoundedCheckFilled}
+                    focusable={false}
+                    aria-hidden={true}
+                    className='inline w-3 h-3 fill-primary'
+                  />
+                </span>
+              )}
+              {!isLastMessageSeenByJeune(jeuneChat) && (
+                <span>
+                  Non lu{' '}
+                  <IconComponent
+                    name={IconName.RoundedCheck}
+                    focusable={false}
+                    aria-hidden={true}
+                    className='inline w-3 h-3 fill-primary'
+                  />
+                </span>
+              )}
+            </>
           )}
         </span>
       </button>

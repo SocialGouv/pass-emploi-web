@@ -1,17 +1,18 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import InformationMessage from 'components/InformationMessage'
 import JeunesMultiselectAutocomplete, {
   jeuneToOption,
   OptionJeune,
 } from 'components/jeune/JeunesMultiselectAutocomplete'
 import { RequiredValue } from 'components/RequiredValue'
-import BulleMessageSensible from 'components/ui/BulleMessageSensible'
-import Button, { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import { InputError } from 'components/ui/Form/InputError'
+import Select from 'components/ui/Form/Select'
+import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { InputError } from 'components/ui/InputError'
-import { Switch } from 'components/ui/Switch'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
@@ -122,10 +123,10 @@ export function EditionRdvForm({
     )
   }
 
-  function handleSelectedTypeRendezVous(e: ChangeEvent<HTMLSelectElement>) {
-    setCodeTypeRendezVous(e.target.value)
-    setShowPrecisionType(e.target.value === TYPE_RENDEZ_VOUS.Autre)
-    if (e.target.value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
+  function handleSelectedTypeRendezVous(value: string) {
+    setCodeTypeRendezVous(value)
+    setShowPrecisionType(value === TYPE_RENDEZ_VOUS.Autre)
+    if (value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
   }
@@ -268,7 +269,7 @@ export function EditionRdvForm({
 
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <p className='text-s-medium mb-6'>
+      <p className='text-s-bold mb-6'>
         Tous les champs avec * sont obligatoires
       </p>
 
@@ -279,7 +280,7 @@ export function EditionRdvForm({
       )}
 
       <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre1}
             role='img'
@@ -300,7 +301,7 @@ export function EditionRdvForm({
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre2}
             role='img'
@@ -311,31 +312,28 @@ export function EditionRdvForm({
           Type de rendez-vous :
         </legend>
 
-        <label htmlFor='typeRendezVous' className='text-base-medium mb-2'>
+        <label htmlFor='typeRendezVous' className='text-base-bold mb-2'>
           <span aria-hidden={true}>* </span>Type
         </label>
-        <select
+        <Select
           id='typeRendezVous'
-          name='typeRendezVous'
           defaultValue={codeTypeRendezVous}
           required={true}
           disabled={Boolean(rdv)}
           onChange={handleSelectedTypeRendezVous}
-          className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 disabled:bg-grey_100`}
         >
-          <option aria-hidden hidden disabled value={''} />
           {typesRendezVous.map(({ code, label }) => (
             <option key={code} value={code}>
               {label}
             </option>
           ))}
-        </select>
+        </Select>
 
         {showPrecisionType && (
           <>
             <label
               htmlFor='typeRendezVous-autre'
-              className='flex text-base-medium mb-2 items-center'
+              className='flex text-base-bold mb-2 items-center'
             >
               <span aria-hidden={true}>* </span>Préciser
               <span className='ml-2'>
@@ -369,27 +367,20 @@ export function EditionRdvForm({
           </>
         )}
 
-        <label htmlFor='modalite' className='text-base-medium mb-2'>
+        <label htmlFor='modalite' className='text-base-bold mb-2'>
           Modalité
         </label>
-        <select
-          id='modalite'
-          name='modalite'
-          defaultValue={modalite}
-          onChange={(e) => setModalite(e.target.value)}
-          className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8`}
-        >
-          <option aria-hidden hidden disabled value={''} />
+        <Select id='modalite' defaultValue={modalite} onChange={setModalite}>
           {modalites.map((md) => (
             <option key={md} value={md}>
               {md}
             </option>
           ))}
-        </select>
+        </Select>
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre3}
             role='img'
@@ -400,9 +391,9 @@ export function EditionRdvForm({
           Lieu et date :
         </legend>
 
-        <label htmlFor='date' className='text-base-medium mb-2'>
+        <label htmlFor='date' className='text-base-bold mb-2'>
           <span aria-hidden={true}>* </span>Date
-          <span className='text-s-regular'> (format : jj/mm/aaaa)</span>
+          <span className='text-base-regular'> (format : jj/mm/aaaa)</span>
         </label>
         {date.error && (
           <InputError id='date-error' className='mb-2'>
@@ -424,9 +415,9 @@ export function EditionRdvForm({
           }`}
         />
 
-        <label htmlFor='horaire' className='text-base-medium mb-2'>
+        <label htmlFor='horaire' className='text-base-bold mb-2'>
           <span aria-hidden='true'>* </span>Heure
-          <span className='text-s-regular'> (format : hh:mm)</span>
+          <span className='text-base-regular'> (format : hh:mm)</span>
         </label>
         {horaire.error && (
           <InputError id='horaire-error' className='mb-2'>
@@ -447,12 +438,12 @@ export function EditionRdvForm({
             horaire.error
               ? 'border-warning text-warning'
               : 'border-content_color'
-          } bg-clock bg-[center_right_1rem] bg-no-repeat`}
+          } bg-clock bg-[center_right_1rem] bg-[length:24px_24px] bg-no-repeat`}
         />
 
-        <label htmlFor='duree' className='text-base-medium mb-2'>
+        <label htmlFor='duree' className='text-base-bold mb-2'>
           <span aria-hidden='true'>* </span>Durée
-          <span className='text-s-regular'> (format : hh:mm)</span>
+          <span className='text-base-regular'> (format : hh:mm)</span>
         </label>
         {duree.error && (
           <InputError id='duree-error' className='mb-2'>
@@ -474,9 +465,9 @@ export function EditionRdvForm({
           }`}
         />
 
-        <label htmlFor='adresse' className='text-base-medium mb-2'>
+        <label htmlFor='adresse' className='text-base-bold mb-2'>
           Adresse
-          <span className='text-s-regular'> Ex: 12 rue duc, Brest</span>
+          <span className='text-base-regular'> Ex: 12 rue duc, Brest</span>
         </label>
         <input
           type='text'
@@ -489,9 +480,9 @@ export function EditionRdvForm({
           }
         />
 
-        <label htmlFor='organisme' className='text-base-medium mb-2'>
+        <label htmlFor='organisme' className='text-base-bold mb-2'>
           Organisme
-          <span className='text-s-regular'>
+          <span className='text-base-regular'>
             {' '}
             Ex: prestataire, entreprise, etc.
           </span>
@@ -507,7 +498,7 @@ export function EditionRdvForm({
       </fieldset>
 
       <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-medium mb-4'>
+        <legend className='flex items-center text-m-bold mb-4'>
           <IconComponent
             name={IconName.Chiffre4}
             role='img'
@@ -570,15 +561,15 @@ export function EditionRdvForm({
           </label>
         </div>
 
-        <label htmlFor='commentaire' className='text-base-regular mb-2'>
+        <label htmlFor='commentaire' className='text-base-medium mb-2'>
           <span className='flex items-center'>
-            Notes
+            Commentaire à destination des jeunes
             <span className='ml-2'>
               <BulleMessageSensible />
             </span>
           </span>
           <span className='block text-s-regular'>
-            Commentaire à destination des jeunes
+            Le commentaire sera lu par l’ensemble des destinataires.
           </span>
         </label>
         <textarea

@@ -4,6 +4,7 @@ import {
   DetailJeune,
   EtatSituation,
   JeuneFromListe,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 
 interface Situation {
@@ -32,6 +33,25 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   email?: string
   urlDossier?: string
   situations?: Situation[]
+  idPartenaire?: string
+}
+
+export interface MetadonneesFavorisJson {
+  autoriseLePartage: boolean
+  offres: {
+    total: number
+    nombreOffresEmploi: number
+    nombreOffresAlternance: number
+    nombreOffresImmersion: number
+    nombreOffresServiceCivique: number
+  }
+  recherches: {
+    total: number
+    nombreRecherchesOffresEmploi: number
+    nombreRecherchesOffresAlternance: number
+    nombreRecherchesOffresImmersion: number
+    nombreRecherchesOffresServiceCivique: number
+  }
 }
 
 export interface SuppressionJeuneFormData {
@@ -111,5 +131,47 @@ export function jsonToDetailJeune({
         categorie: toCategorieSituation(situation.categorie),
         etat: toEtatSituation(situation.etat),
       })) ?? [],
+    idPartenaire: jeune.idPartenaire ?? '',
   }
+}
+
+export function jsonToMetadonneesFavoris({
+  favoris,
+}: {
+  favoris: MetadonneesFavorisJson
+}): MetadonneesFavoris {
+  const { autoriseLePartage, offres, recherches } = favoris
+  return {
+    autoriseLePartage: autoriseLePartage ?? null,
+    offres: {
+      total: offres.total,
+      nombreOffresEmploi: offres.nombreOffresEmploi,
+      nombreOffresAlternance: offres.nombreOffresAlternance,
+      nombreOffresImmersion: offres.nombreOffresImmersion,
+      nombreOffresServiceCivique: offres.nombreOffresServiceCivique,
+    },
+    recherches: {
+      total: recherches.total,
+      nombreRecherchesOffresAlternance:
+        recherches.nombreRecherchesOffresAlternance,
+      nombreRecherchesOffresEmploi: recherches.nombreRecherchesOffresEmploi,
+      nombreRecherchesOffresImmersion:
+        recherches.nombreRecherchesOffresImmersion,
+      nombreRecherchesOffresServiceCivique:
+        recherches.nombreRecherchesOffresServiceCivique,
+    },
+  }
+}
+
+export interface JeunePoleEmploiFormData {
+  prenom: string
+  nom: string
+  email: string
+}
+
+export interface JeuneMiloFormData {
+  idDossier: string
+  nom: string
+  prenom: string
+  email?: string
 }

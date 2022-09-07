@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 
-import { InputError } from 'components/ui/InputError'
-import Multiselection from 'components/ui/Multiselection'
-import SelectAutocomplete from 'components/ui/SelectAutocomplete'
+import { InputError } from 'components/ui/Form/InputError'
+import Multiselection from 'components/ui/Form/Multiselection'
+import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
@@ -101,7 +101,7 @@ export default function JeunesMultiselectAutocomplete({
         id='select-jeunes'
         options={buildOptions()}
         onChange={(e) => selectJeune(e.target.value)}
-        className={`text-sm text-primary_darken w-full p-3 mb-2 mt-4 border rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70 ${
+        className={`text-s-regular text-primary_darken w-full p-3 mb-2 mt-4 border rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70 ${
           error ? 'border-warning' : 'border-content_color'
         }`}
         aria-required={true}

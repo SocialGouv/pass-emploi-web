@@ -27,7 +27,7 @@ import {
 import MesJeunes, { getServerSideProps } from 'pages/mes-jeunes'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
-import renderPage from 'tests/renderPage'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -69,13 +69,8 @@ describe('Mes Jeunes', () => {
       beforeEach(async () => {
         // WHEN
         await act(() => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-            />,
+          renderWithContexts(
+            <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
             { customDependances: dependances }
           )
         })
@@ -117,7 +112,7 @@ describe('Mes Jeunes', () => {
           )
 
           //THEN
-          expect(row1.getByText('Le 07/12/2021 à 18:30')).toBeInTheDocument()
+          expect(row1.getByText('Le 07/12/2021 à 18h30')).toBeInTheDocument()
         })
       })
 
@@ -152,13 +147,8 @@ describe('Mes Jeunes', () => {
         // Given
         await act(() => {
           conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
-          renderPage(
-            <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-            />,
+          renderWithContexts(
+            <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
             { customDependances: dependances, customConseiller: conseiller }
           )
         })
@@ -203,14 +193,12 @@ describe('Mes Jeunes', () => {
         })
 
         await act(() => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
-              conseillerJeunes={[jeune]}
-              isFromEmail
-              pageTitle=''
-            />,
-            { customDependances: dependances }
+          renderWithContexts(
+            <MesJeunes conseillerJeunes={[jeune]} isFromEmail pageTitle='' />,
+            {
+              customDependances: dependances,
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
           )
         })
       })
@@ -218,7 +206,7 @@ describe('Mes Jeunes', () => {
       it('redirige vers la page de création jeune MILO', async () => {
         // GIVEN
         const addButton = screen.getByRole('button', {
-          name: 'Ajouter un jeune',
+          name: 'Ajouter un bénéficiaire',
         })
 
         //WHEN
@@ -255,14 +243,12 @@ describe('Mes Jeunes', () => {
         const jeune = unJeuneAvecActionsNonTerminees()
 
         await act(() => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={StructureConseiller.POLE_EMPLOI}
-              conseillerJeunes={[jeune]}
-              isFromEmail
-              pageTitle=''
-            />,
-            { customDependances: dependances }
+          renderWithContexts(
+            <MesJeunes conseillerJeunes={[jeune]} isFromEmail pageTitle='' />,
+            {
+              customDependances: dependances,
+              customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            }
           )
         })
       })
@@ -270,7 +256,7 @@ describe('Mes Jeunes', () => {
       it('redirige vers la page de création jeune PE', async () => {
         // GIVEN
         const addButton = screen.getByRole('button', {
-          name: 'Ajouter un jeune',
+          name: 'Ajouter un bénéficiaire',
         })
 
         //WHEN
@@ -301,13 +287,8 @@ describe('Mes Jeunes', () => {
       it("n'affiche pas la recherche de jeune", async () => {
         // GIVEN
         await act(() => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
-              conseillerJeunes={[]}
-              isFromEmail
-              pageTitle=''
-            />,
+          renderWithContexts(
+            <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />,
             { customDependances: dependances }
           )
         })
@@ -321,13 +302,8 @@ describe('Mes Jeunes', () => {
       it('affiche un message invitant à ajouter des jeunes', async () => {
         // GIVEN
         await act(() => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
-              conseillerJeunes={[]}
-              isFromEmail
-              pageTitle=''
-            />,
+          renderWithContexts(
+            <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />,
             { customDependances: dependances }
           )
         })
@@ -346,13 +322,8 @@ describe('Mes Jeunes', () => {
             aDesBeneficiairesARecuperer: true,
           })
           await act(() => {
-            renderPage(
-              <MesJeunes
-                structureConseiller={StructureConseiller.MILO}
-                conseillerJeunes={[]}
-                isFromEmail
-                pageTitle=''
-              />,
+            renderWithContexts(
+              <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />,
               { customDependances: dependances, customConseiller: conseiller }
             )
           })
@@ -386,13 +357,8 @@ describe('Mes Jeunes', () => {
 
         // WHEN
         await act(() => {
-          renderPage(
-            <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-            />,
+          renderWithContexts(
+            <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
             { customDependances: dependances }
           )
         })
@@ -406,15 +372,17 @@ describe('Mes Jeunes', () => {
       it('affiche un message de succès', async () => {
         // When
         await act(() => {
-          renderPage(
+          renderWithContexts(
             <MesJeunes
-              structureConseiller={StructureConseiller.MILO}
               conseillerJeunes={jeunes}
               isFromEmail
               pageTitle=''
               ajoutAgenceSuccess={true}
             />,
-            { customDependances: dependances }
+            {
+              customDependances: dependances,
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
           )
         })
 
@@ -482,6 +450,29 @@ describe('Mes Jeunes', () => {
       expect(
         jeunesService.getJeunesDuConseillerServerSide
       ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
+    })
+
+    it('traite la réussite de la création d’un jeune', async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
+          accessToken: 'accessToken',
+        },
+      })
+
+      // When
+      const actual = await getServerSideProps({
+        query: { creationBeneficiaire: 'succes' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(actual).toMatchObject({
+        props: {
+          creationSuccess: true,
+        },
+      })
     })
 
     it("traite la réussite d'une suppression de jeune", async () => {
@@ -627,8 +618,7 @@ describe('Mes Jeunes', () => {
                 nbActionsNonTerminees: 7,
               }))
               .sort(compareJeunesByNom),
-            structureConseiller: 'MILO',
-            pageTitle: 'Mes jeunes',
+            pageTitle: 'Portefeuille',
             isFromEmail: false,
           },
         })

@@ -4,12 +4,12 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
-import FailureMessage from 'components/FailureMessage'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
@@ -147,7 +147,7 @@ function EditionRdv({
   return (
     <>
       {showDeleteRdvError && (
-        <FailureMessage
+        <FailureAlert
           label="Votre rendez-vous n'a pas été supprimé, veuillez essayer ultérieurement"
           onAcknowledge={() => setShowDeleteRdvError(false)}
         />

@@ -25,11 +25,15 @@ export const formatDayDate = (date: Date): string => {
   return `${day}/${month}/${year}`
 }
 
-export const formatDayDateLongMonth = (date: Date): string => {
-  const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-  const month = date.toLocaleString('default', { month: 'long' })
-  const year = date.getFullYear()
-  return `${day} ${month} ${year}`
+export const formatWeekdayWithMonth = (date: Date): string => {
+  const weekday = date.toLocaleString('fr-FR', { weekday: 'long' })
+  const number = date.getDate()
+  const month = date.toLocaleString('fr-FR', { month: 'long' })
+  return `${weekday} ${number} ${month}`
+}
+
+export const formatDayHourDate = (date: string): string => {
+  return DateTime.fromISO(date).toFormat("dd/MM/yyyy à HH'h'mm")
 }
 
 export const formatHourMinuteDate = (date: Date): string => {
@@ -39,7 +43,7 @@ export const formatHourMinuteDate = (date: Date): string => {
   let minutes = date.getMinutes().toString()
   minutes = ('0' + minutes).slice(-2)
 
-  return `${hours}:${minutes}`
+  return `${hours}h${minutes}`
 }
 
 export const formatDayAndHourDate = (date: Date): string =>

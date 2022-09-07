@@ -9,7 +9,7 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import AppHead from 'components/AppHead'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import ChatContainer from 'components/layouts/ChatContainer'
-import { Footer } from 'components/layouts/Footer'
+import Footer from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
 import { PageProps } from 'interfaces/pageProps'
@@ -86,6 +86,7 @@ export default function Layout({ children }: LayoutProps) {
         >
           <Header
             currentPath={router.asPath}
+            currentRoute={router.route}
             returnTo={returnTo}
             pageHeader={pageHeader ?? pageTitle}
           />

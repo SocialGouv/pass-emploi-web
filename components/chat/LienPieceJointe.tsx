@@ -15,7 +15,7 @@ export function LienPieceJointe(props: { id: string; nom: string }) {
         href={`/api/fichiers/${props.id}`}
         aria-label='Télécharger la pièce jointe'
         title='Télécharger la pièce jointe'
-        className='font-bold break-words'
+        className='font-bold break-all'
       >
         {props.nom}
       </a>

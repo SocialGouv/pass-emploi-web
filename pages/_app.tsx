@@ -1,12 +1,15 @@
+// eslint import/order: 0
 import ProgressBar from '@badrap/bar-of-progress'
 import { AppProps as NextAppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
-import { Footer } from 'components/layouts/Footer'
-import Layout from 'components/layouts/Layout'
+// /!\ Garder les imports du CSS au début
 import 'styles/globals.css'
 import 'styles/typography.css'
+
+import Footer from 'components/layouts/Footer'
+import Layout from 'components/layouts/Layout'
 import { init } from 'utils/analytics/matomo'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'

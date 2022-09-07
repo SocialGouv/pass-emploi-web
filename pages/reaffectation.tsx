@@ -3,10 +3,10 @@ import { GetServerSideProps } from 'next'
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 
 import ImportantIcon from 'assets/icons/important.svg'
-import Button from 'components/ui/Button'
+import Button from 'components/ui/Button/Button'
+import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ResettableTextInput from 'components/ui/ResettableTextInput'
-import SuccessMessage from 'components/ui/SuccessMessage'
+import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import {
   compareJeunesByNom,
   getNomJeuneComplet,
@@ -74,12 +74,21 @@ function Reaffectation(_: ReaffectationProps) {
     setIsReaffectationTemporaire(undefined)
   }
 
-  function toggleJeune(_event: FormEvent, jeune: JeuneFromListe) {
+  function selectionnerJeune(_event: FormEvent, jeune: JeuneFromListe) {
     setErreurReaffectation(undefined)
     if (idsJeunesSelected.includes(jeune.id)) {
       setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
     } else {
       setIdsJeunesSelected(idsJeunesSelected.concat(jeune.id))
+    }
+  }
+
+  function selectionnerTousLesJeunes(_event: FormEvent) {
+    setErreurReaffectation(undefined)
+    if (idsJeunesSelected.length !== jeunes.length) {
+      setIdsJeunesSelected(jeunes.map((jeune) => jeune.id))
+    } else {
+      setIdsJeunesSelected([])
     }
   }
 
@@ -174,14 +183,17 @@ function Reaffectation(_: ReaffectationProps) {
 
   useMatomo(trackingTitle)
 
+  const headerColumnStyle =
+    'pb-2 pl-4 pr-4 text-base-regular text-left text-content_color'
+
   return (
     <>
       {isReaffectationSuccess && (
-        <SuccessMessage label={'Les jeunes ont été réaffectés avec succès'} />
+        <SuccessAlert label={'Les jeunes ont été réaffectés avec succès'} />
       )}
 
       <div className='mb-10 bg-accent_2_lighten rounded-medium p-6'>
-        <p className='text-base-medium mb-4'>
+        <p className='text-base-bold mb-4'>
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
         </p>
@@ -204,7 +216,7 @@ function Reaffectation(_: ReaffectationProps) {
       </p>
 
       <fieldset className='pb-6'>
-        <legend className='text-base-medium pb-2'>
+        <legend className='text-base-medium mb-3'>
           <span aria-hidden='true'>*</span> Type de réaffectation
         </legend>
 
@@ -238,7 +250,7 @@ function Reaffectation(_: ReaffectationProps) {
       <div className='grid w-full grid-cols-[1fr_1fr_auto] items-center gap-x-12'>
         <label
           htmlFor='email-conseiller-initial'
-          className='text-base-medium text-content_color row-start-1 row-start-1'
+          className='text-base-medium text-content_color row-start-1 row-start-1 mb-3'
         >
           <span aria-hidden='true'>*</span> E-mail conseiller initial
         </label>
@@ -255,11 +267,11 @@ function Reaffectation(_: ReaffectationProps) {
               onChange={editEmailConseillerInitial}
               onReset={resetAll}
               type={'email'}
-              className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-bleu_nuit'
+              className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-regular text-primary_darken'
               required={true}
             />
             <button
-              className={`flex p-3 items-center text-base-medium text-primary_darken border border-solid border-content_color rounded-r-medium ${
+              className={`flex p-3 items-center border border-solid border-content_color rounded-r-medium ${
                 isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
               } disabled:cursor-not-allowed disabled:border-disabled`}
               type='submit'
@@ -292,7 +304,7 @@ function Reaffectation(_: ReaffectationProps) {
 
         <label
           htmlFor='email-conseiller-destination'
-          className={`text-base-medium whitespace-nowrap col-start-2 row-start-1 ${
+          className={`text-base-medium whitespace-nowrap col-start-2 row-start-1 mb-3 ${
             isRechercheJeunesSubmitted && jeunes.length > 0
               ? 'text-content_color'
               : 'text-disabled'
@@ -313,7 +325,7 @@ function Reaffectation(_: ReaffectationProps) {
             onReset={() => editEmailConseillerDestination('')}
             disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
             type={'email'}
-            className='flex-1 border border-solid border-grey_700 rounded-medium text-base-medium text-bleu_nuit'
+            className='flex-1 border border-solid border-grey_700 rounded-medium text-base-regular text-primary_darken'
             required={true}
           />
         </form>
@@ -346,7 +358,7 @@ function Reaffectation(_: ReaffectationProps) {
 
         {idsJeunesSelected.length > 0 && (
           <div className='relative row-start-3 col-start-3'>
-            <p className='text-base-medium text-center'>
+            <p className='text-base-bold text-center'>
               {idsJeunesSelected.length} jeune
               {idsJeunesSelected.length > 1 ? 's' : ''} sélectionné
               {idsJeunesSelected.length > 1 ? 's' : ''}
@@ -372,25 +384,21 @@ function Reaffectation(_: ReaffectationProps) {
             idsJeunesSelected.length === 0 ? 'mt-16' : 'mt-7'
           } ml-5`}
         >
-          <table className='w-full'>
-            <caption className='text-m-medium text-left mb-8'>
+          <table className='w-full border-spacing-y-2 border-separate'>
+            <caption className='text-m-bold text-primary text-left mb-8'>
               Jeunes de {conseillerInitial.email}
             </caption>
             <thead>
               <tr>
-                <th scope='col' className='sr-only pb-2'>
-                  Cocher/Décocher les jeunes
+                <th scope='col' className='pb-2 pl-2'>
+                  <span onClick={(e) => selectionnerTousLesJeunes(e)}>
+                    <span className='sr-only'>Cocher/Décocher les jeunes</span>
+                  </span>
                 </th>
-                <th
-                  scope='col'
-                  className='pb-2 pl-4 pr-4 text-s-regular text-content_color'
-                >
+                <th scope='col' className={headerColumnStyle}>
                   Nom et prénom
                 </th>
-                <th
-                  scope='col'
-                  className='pb-2 pl-4 pr-4 text-s-regular text-content_color'
-                >
+                <th scope='col' className={headerColumnStyle}>
                   Conseiller précédent
                 </th>
                 <th scope='col' className='sr-only'>
@@ -399,28 +407,43 @@ function Reaffectation(_: ReaffectationProps) {
               </tr>
             </thead>
             <tbody>
+              <tr onClick={(e) => selectionnerTousLesJeunes(e)}>
+                <td className='py-4 pl-4'>
+                  <input
+                    id='reaffectation-tout-selectionner'
+                    type='checkbox'
+                    className='mr-6'
+                    checked={idsJeunesSelected.length === jeunes.length}
+                    title='Tout sélectionner'
+                  />
+                </td>
+                <td className={`${headerColumnStyle} whitespace-nowrap`}>
+                  <label htmlFor='reaffectation-tout-selectionner'>
+                    Tout sélectionner
+                  </label>
+                </td>
+              </tr>
               {jeunes.map((jeune: JeuneFromListe) => (
                 <tr
                   key={jeune.id}
-                  onClick={(e) => toggleJeune(e, jeune)}
-                  className='hover:bg-primary_lighten cursor-pointer'
+                  onClick={(e) => selectionnerJeune(e, jeune)}
+                  className='hover:bg-primary_lighten cursor-pointer rounded-small shadow-s hover:bg-primary_lighten'
                 >
-                  <td className='pt-6 pb-6 pl-4 w-0'>
+                  <td className='p-4 rounded-l-small'>
                     <input
                       type='checkbox'
                       checked={idsJeunesSelected.includes(jeune.id)}
-                      readOnly={true}
                     />
                   </td>
-                  <td className='pt-6 pb-6 pl-4 pr-4 text-md-semi'>
+                  <td className='p-4 text-base-regular'>
                     {getNomJeuneComplet(jeune)}
                   </td>
-                  <td className='pt-6 pb-6 pl-4 pr-4'>
+                  <td className='p-4 text-base-regular'>
                     {jeune.conseillerPrecedent
                       ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
                       : '-'}
                   </td>
-                  <td className='pt-6 pb-6 pl-4 pr-6'>
+                  <td className='p-4 text-base-regular rounded-r-small'>
                     {jeune.conseillerPrecedent?.email ?? '-'}
                   </td>
                 </tr>

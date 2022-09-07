@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import InformationMessage from 'components/InformationMessage'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
 export default {
   title: 'Components/Notifications/InformationMessage',

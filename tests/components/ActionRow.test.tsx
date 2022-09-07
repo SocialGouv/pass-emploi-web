@@ -29,11 +29,10 @@ describe('<ActionRow/>', () => {
     expect(screen.getByText('Terminée')).toBeInTheDocument()
   })
 
-  it('devrait afficher une icône quand il y a un commentaire', () => {
-    const actionTerminee = uneAction()
-    render(<ActionRow action={actionTerminee} jeuneId={'1'} />)
-    expect(
-      screen.getByLabelText("Un commentaire a été ajouté à l'action")
-    ).toBeInTheDocument()
+  it('devrait afficher une icône quand la date d’échéance de l’action est dépassée', () => {
+    const action = uneAction()
+    render(<ActionRow action={action} jeuneId={'1'} />)
+    expect(screen.getByText('20/02/2022')).toBeInTheDocument()
+    expect(screen.getByLabelText('en retard')).toBeInTheDocument()
   })
 })

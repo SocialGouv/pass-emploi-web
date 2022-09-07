@@ -1,74 +1,184 @@
-import React from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+
+import { Badge } from '../ui/Indicateurs/Badge'
+import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
 import SituationTag from 'components/jeune/SituationTag'
+import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { CategorieSituation, DetailJeune } from 'interfaces/jeune'
-import { formatDayDate, formatDayDateLongMonth } from 'utils/date'
+import { StructureConseiller } from 'interfaces/conseiller'
+import {
+  CategorieSituation,
+  DetailJeune,
+  MetadonneesFavoris,
+} from 'interfaces/jeune'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { JeunesService } from 'services/jeunes.service'
+import { trackEvent } from 'utils/analytics/matomo'
+import { formatDayDate } from 'utils/date'
+import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
-  withSituations?: boolean
+  structureConseiller: StructureConseiller | undefined
+  metadonneesFavoris?: MetadonneesFavoris
   onDossierMiloClick: () => void
 }
 
 export const DetailsJeune = ({
   jeune,
-  withSituations,
+  structureConseiller,
+  metadonneesFavoris,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
+  const router = useRouter()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+
+  const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
+    useState<boolean>(false)
+  const [identifiantPartenaire, setIdentifiantPartenaire] = useState<
+    string | undefined
+  >(jeune.idPartenaire)
+
+  const totalFavoris = metadonneesFavoris
+    ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
+    : 0
+
+  function openIdentifiantPartenaireModal() {
+    setShowIdentifiantPartenaireModal(true)
+  }
+
+  function closeIdentifiantPartenaireModal() {
+    setShowIdentifiantPartenaireModal(false)
+  }
+
+  async function updateIdentifiantPartenaire(
+    identifiantPartenaire: string
+  ): Promise<void> {
+    jeunesService
+      .modifierIdentifiantPartenaire(jeune.id, identifiantPartenaire)
+      .then(() => {
+        setIdentifiantPartenaire(identifiantPartenaire)
+        setShowIdentifiantPartenaireModal(false)
+        router.push({
+          pathname: `/mes-jeunes/${jeune.id}`,
+          query: {
+            [QueryParam.modificationIdentifiantPartenaire]: QueryValue.succes,
+          },
+        })
+      })
+      .catch(() => {
+        setShowIdentifiantPartenaireModal(false)
+      })
+  }
+
+  function trackEventOnCopieIdentifiantPartenaire() {
+    trackEvent({
+      structure: StructureConseiller.POLE_EMPLOI,
+      categorie: 'fiche jeune',
+      action: 'copie identifiant pe',
+      nom: '',
+    })
+  }
+
   return (
     <>
-      <dl className='border border-solid rounded-medium w-full p-3 mt-6 border-grey_100'>
-        <h2 className='text-base-medium mb-4'>Informations</h2>
-        <dt className='text-base-regular sr-only'>Ajouté le</dt>
-        <dd aria-label={formatDayDate(new Date(jeune.creationDate))}>
-          <span className='text-base-regular'>Ajouté le : </span>
-          <span className='text-md-semi'>
-            {formatDayDateLongMonth(new Date(jeune.creationDate))}
-          </span>
-        </dd>
-        {jeune.email && (
-          <>
-            <dt className='sr-only'>e-mail</dt>
-            <dd className='text-primary flex items-center mt-2'>
-              <IconComponent
-                name={IconName.Email}
-                aria-hidden={true}
-                focusable={false}
-                className='w-[15px] h-[13px] mr-2'
-              />
-              {jeune.email}
+      <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
+        <h2 className='text-base-bold mb-4'>Informations</h2>
+        <dl>
+          <div className='flex'>
+            <dt className='text-base-regular'>Ajouté le :</dt>
+            <dd>
+              <span className='text-base-medium ml-1'>
+                {formatDayDate(new Date(jeune.creationDate))}
+              </span>
             </dd>
-          </>
-        )}
-        {jeune.urlDossier && (
-          <>
-            <dt className='sr-only'>Dossier externe</dt>
-            <dd className='mt-2'>
-              <a
-                className='underline text-primary hover:text-primary_darken flex items-center'
-                href={jeune.urlDossier}
-                target='_blank'
-                onClick={onDossierMiloClick}
-                rel='noopener noreferrer'
-              >
-                Dossier jeune i-Milo
-                <IconComponent
-                  name={IconName.Launch}
-                  focusable='false'
-                  role='img'
-                  title='ouvrir'
-                  className='ml-2 w-3 h-3'
-                />
-              </a>
-            </dd>
-          </>
-        )}
-      </dl>
+          </div>
 
-      {withSituations && (
-        <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
-          <h2 className='text-base-medium mb-1'>Situation</h2>
+          {jeune.email && (
+            <div className='flex items-center'>
+              <dt>
+                <IconComponent
+                  name={IconName.Email}
+                  aria-label='e-mail'
+                  aria-hidden={false}
+                  focusable={false}
+                  className='w-[15px] h-[13px] mr-2'
+                />
+              </dt>
+              <dd className='text-primary'>{jeune.email}</dd>
+            </div>
+          )}
+
+          {structureConseiller !== StructureConseiller.MILO && (
+            <div className='flex'>
+              <dt className='text-base-regular mr-2'>
+                Identifiant Pôle emploi :
+              </dt>
+              <dd
+                className='text-base-bold'
+                onCopy={trackEventOnCopieIdentifiantPartenaire}
+              >
+                {identifiantPartenaire ? (
+                  identifiantPartenaire
+                ) : (
+                  <>
+                    <span className='sr-only'>non renseigné</span>
+                    <span>-</span>
+                  </>
+                )}
+              </dd>
+              <button
+                className='ml-5 flex items-center text-primary'
+                aria-label={
+                  identifiantPartenaire
+                    ? 'Modifier l’identifiant Pôle emploi'
+                    : 'Ajouter l’identifiant Pôle emploi'
+                }
+                onClick={openIdentifiantPartenaireModal}
+              >
+                <IconComponent
+                  name={IconName.Pen}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-4 h-4 mr-1 fill-primary'
+                />
+                {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
+              </button>
+            </div>
+          )}
+
+          {jeune.urlDossier && (
+            <>
+              <dt className='sr-only'>Dossier externe</dt>
+              <dd className='mt-2'>
+                <a
+                  className='underline text-primary hover:text-primary_darken flex items-center'
+                  href={jeune.urlDossier}
+                  target='_blank'
+                  onClick={onDossierMiloClick}
+                  rel='noopener noreferrer'
+                >
+                  Dossier jeune i-Milo
+                  <IconComponent
+                    name={IconName.Launch}
+                    focusable='false'
+                    role='img'
+                    title='ouvrir'
+                    className='ml-2 w-3 h-3'
+                  />
+                </a>
+              </dd>
+            </>
+          )}
+        </dl>
+      </div>
+
+      {structureConseiller === StructureConseiller.MILO && (
+        <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
+          <h2 className='text-base-bold mb-1'>Situation</h2>
           {!(jeune.situations && jeune.situations.length) && (
             <ol>
               <li className='mt-3'>
@@ -76,10 +186,10 @@ export const DetailsJeune = ({
                   <SituationTag situation={CategorieSituation.SANS_SITUATION} />
                 </div>
                 <div className='mb-3'>
-                  Etat : <span className='text-md-semi'>--</span>
+                  Etat : <span className='text-base-medium'>--</span>
                 </div>
                 <div>
-                  Fin le : <span className='text-md-semi'>--</span>
+                  Fin le : <span className='text-base-medium'>--</span>
                 </div>
               </li>
             </ol>
@@ -97,13 +207,13 @@ export const DetailsJeune = ({
                   </div>
                   <div className='mb-3'>
                     Etat :{' '}
-                    <span className='text-md-semi'>
+                    <span className='text-base-medium'>
                       {situation.etat ?? '--'}
                     </span>
                   </div>
                   <div className=''>
                     Fin le :{' '}
-                    <span className='text-md-semi'>
+                    <span className='text-base-medium'>
                       {situation.dateFin ?? '--'}
                     </span>
                   </div>
@@ -112,6 +222,80 @@ export const DetailsJeune = ({
             </ol>
           )}
         </div>
+      )}
+
+      <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
+        <div className='flex items-center mb-4'>
+          <IconComponent
+            name={IconName.Favorite}
+            className='h-4 w-4 mr-2 stroke-favorite_heart'
+            aria-hidden={true}
+          />
+          <h2 className='text-base-bold mr-2'>Favoris</h2>
+
+          <Badge count={totalFavoris} bgColor='favorite_heart' />
+        </div>
+        <dl>
+          <div className='flex items-center mb-2'>
+            <dt className='text-base-medium'>Offres :</dt>
+            <dd className='text-base-medium ml-1'>
+              {metadonneesFavoris?.offres.total}
+            </dd>
+          </div>
+          <div className='ml-4 mb-4'>
+            <InlineDefinitionItem
+              definition='Offre d’emploi :'
+              description={metadonneesFavoris?.offres.nombreOffresEmploi ?? 0}
+            />
+            <InlineDefinitionItem
+              definition='Alternance :'
+              description={
+                metadonneesFavoris?.offres.nombreOffresAlternance ?? 0
+              }
+            />
+            <InlineDefinitionItem
+              definition='Service civique :'
+              description={
+                metadonneesFavoris?.offres.nombreOffresServiceCivique ?? 0
+              }
+            />
+            <InlineDefinitionItem
+              definition='Immersion :'
+              description={
+                metadonneesFavoris?.offres.nombreOffresImmersion ?? 0
+              }
+            />
+          </div>
+
+          <div className='flex items-center'>
+            <dt className='text-base-medium'>Recherches sauvegardées :</dt>
+            <dd className='text-base-medium ml-1'>
+              {metadonneesFavoris?.recherches.total ?? 0}
+            </dd>
+          </div>
+          {metadonneesFavoris?.autoriseLePartage && (
+            <div className='flex justify-end mt-4'>
+              <Link href={`/mes-jeunes/${jeune.id}/favoris`}>
+                <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
+                  Voir la liste des favoris
+                  <IconComponent
+                    name={IconName.ChevronRight}
+                    className='w-4 h-5 fill-[inherit]'
+                    aria-hidden={true}
+                    focusable={false}
+                  />
+                </a>
+              </Link>
+            </div>
+          )}
+        </dl>
+      </div>
+      {showIdentifiantPartenaireModal && (
+        <UpdateIdentifiantPartenaireModal
+          identifiantPartenaire={identifiantPartenaire}
+          updateIdentifiantPartenaire={updateIdentifiantPartenaire}
+          onClose={closeIdentifiantPartenaireModal}
+        />
       )}
     </>
   )

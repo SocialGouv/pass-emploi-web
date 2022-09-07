@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
+import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import Menu, { MenuItem } from 'components/Menu'
+import MenuLinks, { MenuItem } from 'components/MenuLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
@@ -24,12 +25,14 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
   const [conseiller] = useConseiller()
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
+  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>([])
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
   const [showMenu, setShowMenu] = useState<boolean>(false)
+
   const closeMenuRef = useRef<HTMLButtonElement>(null)
 
   function fermerMenu(): void {
@@ -48,6 +51,20 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       action: 'ChatRoom',
       nom: flagged.toString(),
     })
+  }
+
+  function filtrerConversations(saisieUtilisateur: string) {
+    const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
+    const chatsFiltresResult = jeunesChats.filter((jeune) => {
+      const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+      for (const item of querySplit) {
+        if (jeuneLastName.includes(item)) {
+          return true
+        }
+      }
+    })
+
+    setChatsFiltres(chatsFiltresResult)
   }
 
   useEffect(() => {
@@ -74,6 +91,10 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     }
   }, [showMenu])
 
+  useEffect(() => {
+    setChatsFiltres(jeunesChats)
+  }, [jeunesChats])
+
   return (
     <>
       {currentChat && (
@@ -87,17 +108,20 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       )}
 
       {!currentChat && showMenu && (
-        <div
+        <nav
+          role='navigation'
           id='menu-mobile'
-          className='w-[50vw] flex flex-col bg-primary z-10 layout_s:hidden'
+          className='w-[70vw] flex flex-col bg-primary px-6 py-3 z-10 layout_s:hidden'
         >
           <button
             ref={closeMenuRef}
             type='button'
             aria-controls='menu-mobile'
             onClick={fermerMenu}
-            aria-label='Fermer menu'
-            className='m-7 w-fit'
+            aria-label='Fermer le menu principal'
+            aria-expanded={true}
+            title='Fermer le menu principal'
+            className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-[50%]'
           >
             <IconComponent
               name={IconName.Close}
@@ -106,28 +130,38 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               focusable={false}
             />
           </button>
-          <Menu showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
-        </div>
+          <div className='grow flex flex-col justify-between'>
+            <MenuLinks showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
+          </div>
+        </nav>
       )}
 
       {!currentChat && (
         <article className={styles.chatRoom}>
           <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
-            <button
-              type='button'
-              onClick={ouvrirMenu}
-              aria-label='Ouvrir menu'
-              aria-controls='menu-mobile'
-              className='absolute left-2 top-[calc(50%-1.25rem)]'
+            <nav
+              role='navigation'
+              aria-label='Menu principal'
+              className={`layout_s:hidden ${showMenu ? 'hidden' : ''}`}
             >
-              <IconComponent
-                name={IconName.Menu}
-                className='w-10 h-10 fill-primary layout_s:hidden'
-                aria-hidden={true}
-                focusable={false}
-              />
-            </button>
-            <h2 className='text-m-medium text-primary text-center layout_s:text-left my-3 grow'>
+              <button
+                type='button'
+                onClick={ouvrirMenu}
+                aria-controls='menu-mobile'
+                title='Ouvrir le menu principal'
+                aria-expanded={showMenu}
+                className='absolute left-4 top-[calc(50%-1.25rem)]'
+              >
+                <IconComponent
+                  name={IconName.Menu}
+                  className='w-10 h-10 fill-primary layout_s:hidden'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+              </button>
+            </nav>
+
+            <h2 className='text-m-bold text-primary text-center layout_s:text-left layout_xs:p-6 layout_s:p-0 layout_base:my-3 grow'>
               Messagerie
             </h2>
           </div>
@@ -136,8 +170,15 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <AlertDisplayer hideOnLargeScreen={true} />
           </div>
 
+          <div
+            className='flex justify-center my-8 layout_s:hidden'
+            data-testid='form-chat'
+          >
+            <RechercheJeune onSearchFilterBy={filtrerConversations} />
+          </div>
+
           <ListeConversations
-            conversations={jeunesChats}
+            conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />

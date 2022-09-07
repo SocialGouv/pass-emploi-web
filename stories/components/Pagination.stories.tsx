@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import Pagination from 'components/ui/Pagination'
+import Pagination from 'components/ui/Table/Pagination'
 
 export default {
   title: 'Components/Pagination',

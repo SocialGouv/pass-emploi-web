@@ -12,6 +12,7 @@ import {
   desConseillersJeune,
   unConseillerHistorique,
   unDetailJeune,
+  uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import {
   desRdvListItems,
@@ -38,7 +39,7 @@ import FicheJeune, {
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
-import renderPage from 'tests/renderPage'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -53,6 +54,7 @@ describe('Fiche Jeune', () => {
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
     const listeConseillers = desConseillersJeune()
+    const metadonneesFavoris = uneMetadonneeFavoris()
     let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
 
@@ -89,7 +91,7 @@ describe('Fiche Jeune', () => {
           setIdJeune = jest.fn()
 
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -100,8 +102,12 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
-            { idJeuneSetter: setIdJeune, customDependances: dependances }
+            {
+              customCurrentJeune: { idSetter: setIdJeune },
+              customDependances: dependances,
+            }
           )
         })
 
@@ -149,12 +155,16 @@ describe('Fiche Jeune', () => {
           const deleteButton = screen.getByText('Supprimer ce compte')
           expect(deleteButton).toBeInTheDocument()
         })
+        it('affiche les informations des favoris du jeune', () => {
+          // Then
+          expect(screen.getByText('Favoris')).toBeInTheDocument()
+        })
       })
 
       describe('Supprimer un compte actif', () => {
         beforeEach(async () => {
           // Given
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={unDetailJeune({ isActivated: true })}
               rdvs={[]}
@@ -165,6 +175,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: dependances }
           )
@@ -258,7 +269,7 @@ describe('Fiche Jeune', () => {
       describe('Supprimer un compte inactif', () => {
         beforeEach(async () => {
           // Given
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={unDetailJeune({ isActivated: false })}
               rdvs={[]}
@@ -269,6 +280,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={listeConseillers}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: dependances }
           )
@@ -316,7 +328,7 @@ describe('Fiche Jeune', () => {
         setIdJeune = jest.fn()
 
         // When
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -327,8 +339,9 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={listeConseillers}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />,
-          { idJeuneSetter: setIdJeune }
+          { customCurrentJeune: { idSetter: setIdJeune } }
         )
       })
 
@@ -387,7 +400,7 @@ describe('Fiche Jeune', () => {
       it('n’affiche pas de bouton pour dérouler', async () => {
         const conseillers = [unConseillerHistorique()]
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -398,6 +411,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={conseillers}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -410,7 +424,7 @@ describe('Fiche Jeune', () => {
     describe("quand l'utilisateur est un conseiller Pole emploi", () => {
       beforeEach(async () => {
         // When
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
@@ -421,6 +435,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -469,7 +484,7 @@ describe('Fiche Jeune', () => {
       describe('quand le jeune n’a aucune situation', () => {
         it('affiche les informations concernant la situation du jeune', () => {
           // Given
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -480,6 +495,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customConseiller: { structure: StructureConseiller.MILO } }
           )
@@ -503,7 +519,7 @@ describe('Fiche Jeune', () => {
               categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
             },
           ]
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={unDetailJeune({ situations: situations })}
               rdvs={[]}
@@ -514,6 +530,7 @@ describe('Fiche Jeune', () => {
               }}
               conseillers={[]}
               pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customConseiller: { structure: StructureConseiller.MILO } }
           )
@@ -525,12 +542,41 @@ describe('Fiche Jeune', () => {
           expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
         })
       })
+
+      describe("quand le jeune n'a pas activé son compte", () => {
+        it('affiche le mode opératoire pour activer le compte', () => {
+          // Given
+          renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune({ isActivated: false })}
+              rdvs={[]}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              conseillers={listeConseillers}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customDependances: dependances,
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
+          )
+
+          // Then
+          expect(
+            screen.getByText(/Le lien d’activation est valable 12h/)
+          ).toBeInTheDocument()
+        })
+      })
     })
 
     describe("quand le jeune n'a pas d'action", () => {
       it('affiche un message qui le précise', async () => {
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -541,6 +587,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -555,7 +602,7 @@ describe('Fiche Jeune', () => {
     describe('quand le jeune a été réaffecté temporairement', () => {
       it("affiche l'information", () => {
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={{ ...jeune, isReaffectationTemporaire: true }}
             rdvs={rdvs}
@@ -566,6 +613,7 @@ describe('Fiche Jeune', () => {
             }}
             conseillers={[]}
             pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -577,7 +625,7 @@ describe('Fiche Jeune', () => {
     describe('quand on revient sur la page depuis le détail d’une action', () => {
       it('ouvre l’onglet des actions', () => {
         // Given
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={[]}
@@ -589,6 +637,7 @@ describe('Fiche Jeune', () => {
             conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            metadonneesFavoris={metadonneesFavoris}
           />
         )
 
@@ -613,7 +662,7 @@ describe('Fiche Jeune', () => {
           })
 
           pageCourante = 4
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={rdvs}
@@ -625,6 +674,7 @@ describe('Fiche Jeune', () => {
               conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />,
             { customDependances: { actionsService } }
           )
@@ -637,7 +687,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: 2, statuts: [], tri: 'date_decroissante' }
+            { page: 2, statuts: [], tri: 'date_echeance_decroissante' }
           )
           expect(screen.getByLabelText('Page 2')).toHaveAttribute(
             'aria-current',
@@ -653,7 +703,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: 1, statuts: [], tri: 'date_decroissante' }
+            { page: 1, statuts: [], tri: 'date_echeance_decroissante' }
           )
           expect(screen.getByLabelText('Page 1')).toHaveAttribute(
             'aria-current',
@@ -671,7 +721,7 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: 6, statuts: [], tri: 'date_decroissante' }
+            { page: 6, statuts: [], tri: 'date_echeance_decroissante' }
           )
           expect(screen.getByLabelText('Page 6')).toHaveAttribute(
             'aria-current',
@@ -689,7 +739,11 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 1, statuts: [], tri: 'date_decroissante' }
+            {
+              page: pageCourante - 1,
+              statuts: [],
+              tri: 'date_echeance_decroissante',
+            }
           )
           expect(
             screen.getByLabelText(`Page ${pageCourante - 1}`)
@@ -703,7 +757,11 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante + 1, statuts: [], tri: 'date_decroissante' }
+            {
+              page: pageCourante + 1,
+              statuts: [],
+              tri: 'date_echeance_decroissante',
+            }
           )
           expect(
             screen.getByLabelText(`Page ${pageCourante + 1}`)
@@ -718,12 +776,20 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 1, statuts: [], tri: 'date_decroissante' }
+            {
+              page: pageCourante - 1,
+              statuts: [],
+              tri: 'date_echeance_decroissante',
+            }
           )
 
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: pageCourante - 2, statuts: [], tri: 'date_decroissante' }
+            {
+              page: pageCourante - 2,
+              statuts: [],
+              tri: 'date_echeance_decroissante',
+            }
           )
           expect(
             screen.getByLabelText(`Page ${pageCourante - 2}`)
@@ -784,7 +850,7 @@ describe('Fiche Jeune', () => {
       describe('troncature', () => {
         it('1 2 -3-', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -796,6 +862,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -809,7 +876,7 @@ describe('Fiche Jeune', () => {
 
         it('1 2 -3- 4 5 6', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -821,6 +888,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -837,7 +905,7 @@ describe('Fiche Jeune', () => {
 
         it('-1- 2 3 4 5 ... 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -849,6 +917,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -865,7 +934,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 9 10 -11- 12 13 ... 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -877,6 +946,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -894,7 +964,7 @@ describe('Fiche Jeune', () => {
 
         it('1 2 3 -4- 5 6 ... 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -906,6 +976,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -923,7 +994,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 15 16 -17- 18 19 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -935,6 +1006,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -952,7 +1024,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 16 17 -18- 19 20', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -964,6 +1036,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -980,7 +1053,7 @@ describe('Fiche Jeune', () => {
 
         it('1 ... 16 17 18 19 -20-', () => {
           // When
-          renderPage(
+          renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -992,6 +1065,7 @@ describe('Fiche Jeune', () => {
               conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )
 
@@ -1021,7 +1095,7 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -1033,6 +1107,7 @@ describe('Fiche Jeune', () => {
             conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
+            metadonneesFavoris={metadonneesFavoris}
           />,
           { customDependances: { actionsService } }
         )
@@ -1051,7 +1126,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-            tri: 'date_decroissante',
+            tri: 'date_echeance_decroissante',
           }
         )
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
@@ -1074,7 +1149,7 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-            tri: 'date_decroissante',
+            tri: 'date_echeance_decroissante',
           }
         )
       })
@@ -1094,7 +1169,7 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderPage(
+        renderWithContexts(
           <FicheJeune
             jeune={jeune}
             rdvs={rdvs}
@@ -1160,8 +1235,95 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [],
-            tri: 'date_croissante',
-          },
+            tri: 'date_decroissante',
+          }
+        )
+      })
+    })
+
+    describe("trier les actions par date d'échéance", () => {
+      let actionsService: ActionsService
+      let pageCourante: number
+      let headerColonneDate: HTMLButtonElement
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeuneClientSide: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action triée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })),
+        })
+
+        pageCourante = 1
+        renderWithContexts(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions,
+              page: pageCourante,
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
+            }}
+            conseillers={listeConseillers}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+            metadonneesFavoris={metadonneesFavoris}
+          />,
+          { customDependances: { actionsService } }
+        )
+
+        headerColonneDate = screen.getByRole('button', { name: /Échéance/ })
+      })
+
+      it('tri les actions par ordre croissant puis decroissant', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+        await userEvent.click(headerColonneDate)
+
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            tri: 'date_echeance_croissante',
+          }
+        )
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+        expect(screen.getByText('Action triée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+
+        // Then
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve le tri en changeant de page', async () => {
+        // When
+        await userEvent.click(headerColonneDate)
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [],
+            tri: 'date_echeance_croissante',
+          }
         )
       })
     })
@@ -1180,6 +1342,7 @@ describe('Fiche Jeune', () => {
         getConseillersDuJeuneServerSide: jest.fn(async () =>
           desConseillersJeune()
         ),
+        getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
       })
       rendezVousService = mockedRendezVousService({
         getRendezVousJeune: jest.fn(async () =>
@@ -1227,7 +1390,7 @@ describe('Fiche Jeune', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
-            user: { structure: 'MILO' },
+            user: { id: 'id-conseiller', structure: 'MILO' },
           },
           validSession: true,
         })
@@ -1247,11 +1410,12 @@ describe('Fiche Jeune', () => {
         expect(actual).toEqual({
           props: {
             jeune: unDetailJeune(),
-            pageTitle: 'Mes jeunes - Kenji Jirac',
+            pageTitle: 'Portefeuille - Kenji Jirac',
             pageHeader: 'Kenji Jirac',
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
             conseillers: expect.arrayContaining([]),
+            metadonneesFavoris: expect.arrayContaining([]),
           },
         })
       })
@@ -1264,6 +1428,18 @@ describe('Fiche Jeune', () => {
         )
         expect(actual).toMatchObject({
           props: { rdvs: [rdvToListItem(rdvAVenir)] },
+        })
+      })
+
+      it('récupère les favoris', async () => {
+        // Then
+        expect(jeunesService.getMetadonneesFavorisJeune).toHaveBeenCalledWith(
+          'id-conseiller',
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: { metadonneesFavoris: uneMetadonneeFavoris() },
         })
       })
 

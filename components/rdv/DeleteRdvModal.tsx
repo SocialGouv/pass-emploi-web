@@ -1,7 +1,7 @@
 import IconComponent, { IconName } from '../ui/IconComponent'
 
 import Modal from 'components/Modal'
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 
 interface DeleteRdvModalProps {
   aDesJeunesDUnAutrePortefeuille: boolean
@@ -31,7 +31,7 @@ export default function DeleteRdvModal({
         className='w-[100px] h-[91px] m-auto mb-16 fill-primary'
       />
 
-      <p className='text-base-medium text-content_color text-center mx-28'>
+      <p className='text-base-bold text-content_color text-center mx-28'>
         {message}
       </p>
 

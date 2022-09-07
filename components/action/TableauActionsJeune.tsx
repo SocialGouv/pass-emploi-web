@@ -1,17 +1,15 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  Fragment,
-  useEffect,
-  useState,
-} from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+
+import TableLayout from '../ui/Table/TableLayout'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import ActionRow from 'components/action/ActionRow'
 import { TRI } from 'components/action/OngletActions'
 import propsStatutsActions from 'components/action/propsStatutsActions'
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import SortIcon from 'components/ui/SortIcon'
+import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
@@ -20,7 +18,7 @@ interface TableauActionsJeuneProps {
   actions: Action[]
   isLoading: boolean
   onFiltres: (statutsSelectionnes: StatutAction[]) => void
-  onTri: () => void
+  onTri: (tri: TRI) => void
   tri: TRI
 }
 
@@ -83,45 +81,84 @@ export default function TableauActionsJeune({
     setStatutsSelectionnes(statutsValides)
   }, [afficherStatut, statutsValides])
 
+  function getIsSortedByCreationDate(): boolean {
+    return tri === TRI.dateCroissante || tri === TRI.dateDecroissante
+  }
+
+  function getIsSortedByDateEcheance(): boolean {
+    return (
+      tri === TRI.dateEcheanceCroissante || tri === TRI.dateEcheanceDecroissante
+    )
+  }
+
+  function getIsSortedDesc(): boolean {
+    return tri === TRI.dateEcheanceDecroissante || tri === TRI.dateDecroissante
+  }
+
+  function trierParDateCreation() {
+    let nouveauTri: TRI = TRI.dateDecroissante
+    if (getIsSortedByCreationDate() && getIsSortedDesc()) {
+      nouveauTri = TRI.dateCroissante
+    }
+    onTri(nouveauTri)
+  }
+
+  function trierParDateEcheance() {
+    let nouveauTri: TRI = TRI.dateEcheanceDecroissante
+    if (getIsSortedByDateEcheance() && getIsSortedDesc()) {
+      nouveauTri = TRI.dateEcheanceCroissante
+    }
+    onTri(nouveauTri)
+  }
+  const headerColumnWithButtonHover = 'rounded-medium hover:bg-primary_lighten'
+
   return (
     <div className={isLoading ? 'animate-pulse' : ''}>
-      <div
-        role='table'
-        className='table w-full'
-        aria-label={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
-      >
+      <TableLayout describedBy='table-caption'>
+        <div id='table-caption' className='sr-only'>
+          {`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
+        </div>
         <div role='rowgroup' className='table-header-group '>
-          <div role='row' className='table-row text-s-regular'>
-            <div role='columnheader' className='table-cell pl-4 py-4'>
-              Intitulé de l&apos;action
-            </div>
-            <div role='columnheader' className='table-cell relative'>
+          <div role='row' className='table-row text-base-regular'>
+            <HeaderCell>Intitulé de l’action</HeaderCell>
+            <HeaderCell className={headerColumnWithButtonHover}>
               <button
-                onClick={onTri}
+                onClick={trierParDateCreation}
                 aria-label='Créée le - trier les actions'
-                className='w-full flex items-center'
+                className='flex items-center'
               >
                 Créée le
-                <IconComponent
-                  name={IconName.ChevronDown}
-                  className={`h-4 w-4 fill-primary ${
-                    tri === TRI.dateDecroissante ? 'rotate-180' : ''
-                  }`}
+                <SortIcon
+                  isSorted={getIsSortedByCreationDate()}
+                  isDesc={getIsSortedDesc()}
                 />
               </button>
-            </div>
-            <div role='columnheader' className='table-cell relative'>
+            </HeaderCell>
+            <HeaderCell className={headerColumnWithButtonHover}>
+              <button
+                onClick={trierParDateEcheance}
+                aria-label='Échéance - trier les actions'
+                className='flex items-center'
+              >
+                Échéance
+                <SortIcon
+                  isSorted={getIsSortedByDateEcheance()}
+                  isDesc={getIsSortedDesc()}
+                />
+              </button>
+            </HeaderCell>
+            <HeaderCell className={`relative ${headerColumnWithButtonHover}`}>
               <button
                 aria-controls='filtres-statut'
                 aria-expanded={afficherStatut}
                 onClick={() => setAfficherStatut(!afficherStatut)}
                 aria-label='Statut - Filtrer les actions'
-                className='w-full flex items-center'
+                className='flex items-center'
               >
                 Statut
                 <IconComponent
                   name={IconName.ChevronDown}
-                  className={`h-4 w-4 fill-primary ${
+                  className={`h-4 w-4 ml-2 fill-primary ${
                     afficherStatut ? 'rotate-180' : ''
                   }`}
                 />
@@ -145,7 +182,7 @@ export default function TableauActionsJeune({
                   </Button>
                 </form>
               )}
-            </div>
+            </HeaderCell>
           </div>
         </div>
 
@@ -162,7 +199,7 @@ export default function TableauActionsJeune({
                   aria-hidden='true'
                   className='m-auto w-[200px] h-[200px]'
                 />
-                <p className='text-md-semi text-center'>
+                <p className='text-base-bold text-center'>
                   Aucune action ne correspondant aux filtres.
                 </p>
                 <Button
@@ -181,14 +218,11 @@ export default function TableauActionsJeune({
         {actions.length > 0 && (
           <div role='rowgroup' className='table-row-group'>
             {actions.map((action: Action) => (
-              <Fragment key={action.id}>
-                <ActionRow action={action} jeuneId={jeune.id} />
-                <div className='mb-2' />
-              </Fragment>
+              <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
             ))}
           </div>
         )}
-      </div>
+      </TableLayout>
     </div>
   )
 }

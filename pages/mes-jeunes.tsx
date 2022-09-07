@@ -6,9 +6,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
-import { TableauJeunes } from 'components/jeune/TableauJeunes'
-import Button from 'components/ui/Button'
-import SuccessMessage from 'components/ui/SuccessMessage'
+import TableauJeunes from 'components/jeune/TableauJeunes'
+import Button from 'components/ui/Button/Button'
+import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { TotalActions } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -30,21 +30,21 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesJeunesProps extends PageProps {
-  structureConseiller: string
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
   recuperationSuccess?: boolean
+  creationSuccess?: boolean
   deletionSuccess?: boolean
   ajoutAgenceSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
 
 function MesJeunes({
-  structureConseiller,
   conseillerJeunes,
   isFromEmail,
-  deletionSuccess,
   recuperationSuccess,
+  creationSuccess,
+  deletionSuccess,
   ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
@@ -56,9 +56,10 @@ function MesJeunes({
 
   const [conseiller, setConseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
-  const [listeJeunesFiltres, setListJeunesFiltres] = useState<
+  const [jeunesFiltres, setJeunesFiltres] = useState<
     JeuneAvecInfosComplementaires[]
   >([])
+
   const [
     isRecuperationBeneficiairesLoading,
     setIsRecuperationBeneficiairesLoading,
@@ -71,13 +72,14 @@ function MesJeunes({
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
+  if (creationSuccess) initialTracking += ' - Succès creation compte'
   if (deletionSuccess) initialTracking += ' - Succès suppr. compte'
   if (recuperationSuccess) initialTracking += ' - Succès récupération'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const handleAddJeune = async () => {
-    switch (structureConseiller) {
+    switch (conseiller?.structure) {
       case StructureConseiller.MILO:
         await router.push('/mes-jeunes/milo/creation-jeune')
         break
@@ -121,14 +123,14 @@ function MesJeunes({
           }
           return false
         })
-        setListJeunesFiltres(jeunesFiltresResult)
+        setJeunesFiltres(jeunesFiltresResult)
         if (jeunesFiltresResult.length > 0) {
           setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
         } else {
           setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
         }
       } else {
-        setListJeunesFiltres(jeunes)
+        setJeunesFiltres(jeunes)
         setTrackingTitle(initialTracking)
       }
     },
@@ -157,7 +159,7 @@ function MesJeunes({
       )
       .then((jeunesAvecMessagesNonLus) => {
         setJeunes(jeunesAvecMessagesNonLus)
-        setListJeunesFiltres(jeunesAvecMessagesNonLus)
+        setJeunesFiltres(jeunesAvecMessagesNonLus)
       })
   }, [chatCredentials, conseillerJeunes, messagesService])
 
@@ -166,9 +168,9 @@ function MesJeunes({
   return (
     <>
       {showAjoutAgenceSuccess && (
-        <SuccessMessage
+        <SuccessAlert
           label={`Votre ${
-            structureConseiller === StructureConseiller.MILO
+            conseiller?.structure === StructureConseiller.MILO
               ? 'Mission locale'
               : 'agence'
           } a été ajoutée à votre profil`}
@@ -178,7 +180,7 @@ function MesJeunes({
 
       {conseiller?.aDesBeneficiairesARecuperer && (
         <div className='bg-primary_lighten rounded-medium p-6 mb-6 text-center'>
-          <p className='text-base-medium text-primary'>
+          <p className='text-base-bold text-primary'>
             {conseillerJeunes.length > 0 &&
               'Certains de vos bénéficiaires ont été transférés temporairement.'}
             {conseillerJeunes.length === 0 &&
@@ -196,10 +198,10 @@ function MesJeunes({
       )}
 
       {conseillerJeunes.length > 0 && (
-        <div className={`flex flex-wrap justify-between items-end mb-6`}>
+        <div className={`flex flex-wrap justify-between items-end mb-12`}>
           <RechercheJeune onSearchFilterBy={onSearch} />
-          {(structureConseiller === StructureConseiller.MILO ||
-            structureConseiller === StructureConseiller.POLE_EMPLOI) && (
+          {(conseiller?.structure === StructureConseiller.MILO ||
+            conseiller?.structure === StructureConseiller.POLE_EMPLOI) && (
             <AjouterJeuneButton handleAddJeune={handleAddJeune} />
           )}
         </div>
@@ -213,7 +215,7 @@ function MesJeunes({
               focusable='false'
               className='w-[360px] h-[200px] mb-16'
             />
-            <p className='text-base-medium mb-12'>
+            <p className='text-base-bold mb-12'>
               Vous n&apos;avez pas encore intégré de jeunes.
             </p>
 
@@ -222,11 +224,23 @@ function MesJeunes({
         )}
 
       {conseillerJeunes.length > 0 && (
-        <TableauJeunes
-          jeunes={listeJeunesFiltres}
-          withActions={structureConseiller !== StructureConseiller.POLE_EMPLOI}
-          withSituations={structureConseiller === StructureConseiller.MILO}
-        />
+        <>
+          <div className='flex justify-between text-m-regular text-primary'>
+            <h2>
+              Liste des bénéficiaires
+              {conseillerJeunes.length === jeunesFiltres.length &&
+                ` (${conseillerJeunes.length})`}
+            </h2>
+          </div>
+
+          <TableauJeunes
+            jeunes={jeunesFiltres}
+            withActions={
+              conseiller?.structure !== StructureConseiller.POLE_EMPLOI
+            }
+            withSituations={conseiller?.structure === StructureConseiller.MILO}
+          />
+        </>
       )}
     </>
   )
@@ -273,18 +287,21 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   }
 
   const props: MesJeunesProps = {
-    structureConseiller: user.structure,
     conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
       compareJeunesByNom
     ),
     isFromEmail: Boolean(context.query?.source),
-    pageTitle: 'Mes jeunes',
+    pageTitle: 'Portefeuille',
   }
 
   if (context.query[QueryParam.recuperationBeneficiaires]) {
     props.recuperationSuccess =
       context.query[QueryParam.recuperationBeneficiaires] === QueryValue.succes
   }
+
+  if (context.query[QueryParam.creationBeneficiaire])
+    props.creationSuccess =
+      context.query[QueryParam.creationBeneficiaire] === QueryValue.succes
 
   if (context.query[QueryParam.suppressionBeneficiaire])
     props.deletionSuccess =

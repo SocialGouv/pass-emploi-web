@@ -1,8 +1,8 @@
-import { AgencesApiService, AgencesService } from '../services/agences.service'
-import { FichiersService } from '../services/fichiers.service'
-
 import { ActionsService } from 'services/actions.service'
+import { AgencesApiService, AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { FavorisService } from 'services/favoris.service'
+import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { RendezVousService } from 'services/rendez-vous.service'
@@ -23,6 +23,8 @@ export function mockedJeunesService(
     supprimerJeuneInactif: jest.fn(),
     archiverJeune: jest.fn(),
     getMotifsSuppression: jest.fn(),
+    getMetadonneesFavorisJeune: jest.fn(),
+    modifierIdentifiantPartenaire: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -38,6 +40,10 @@ export function mockedActionsService(
     getActionsJeuneServerSide: jest.fn(),
     getActionsJeuneClientSide: jest.fn(),
     updateAction: jest.fn(),
+    recupererLesCommentaires: jest.fn(),
+    ajouterCommentaire: jest.fn(),
+    qualifier: jest.fn(),
+    getSituationsNonProfessionnelles: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -65,7 +71,8 @@ export function mockedRendezVousService(
   overrides: Partial<RendezVousService> = {}
 ): RendezVousService {
   const defaults: RendezVousService = {
-    getRendezVousConseiller: jest.fn(),
+    getRendezVousConseillerServerSide: jest.fn(),
+    getRendezVousConseillerClientSide: jest.fn(),
     getRendezVousJeune: jest.fn(),
     getDetailsRendezVous: jest.fn(),
     getTypesRendezVous: jest.fn(),
@@ -106,6 +113,16 @@ export function mockedFichiersService(
   const defaults: FichiersService = {
     uploadFichier: jest.fn(),
     deleteFichier: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedFavorisService(
+  overrides: Partial<FavorisService> = {}
+): FavorisService {
+  const defaults: FavorisService = {
+    getOffres: jest.fn(),
+    getRecherchesSauvegardees: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

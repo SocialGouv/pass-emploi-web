@@ -16,15 +16,10 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface HomePageProps {
   redirectUrl: string
-  structureConseiller: string
   referentielAgences: Agence[]
 }
 
-function Home({
-  redirectUrl,
-  structureConseiller,
-  referentielAgences,
-}: HomePageProps) {
+function Home({ redirectUrl, referentielAgences }: HomePageProps) {
   const router = useRouter()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
@@ -55,7 +50,9 @@ function Home({
   return (
     <>
       <RenseignementAgenceModal
-        structureConseiller={structureConseiller}
+        structureConseiller={
+          conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
+        }
         referentielAgences={referentielAgences}
         onAgenceChoisie={selectAgence}
         onClose={redirectToUrl}
@@ -112,7 +109,6 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   return {
     props: {
       redirectUrl,
-      structureConseiller: user.structure,
       referentielAgences,
     },
   }

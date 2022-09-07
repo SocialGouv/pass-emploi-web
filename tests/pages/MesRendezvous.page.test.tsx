@@ -1,14 +1,19 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { unConseiller } from 'fixtures/conseiller'
-import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
+import {
+  desRdvListItems,
+  unRdvListItem,
+  unRendezVous,
+} from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
 import MesRendezvous, { getServerSideProps } from 'pages/mes-rendezvous'
+import { RendezVousService } from 'services/rendez-vous.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -16,18 +21,24 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('MesRendezvous', () => {
   describe('client side', () => {
-    const rendezVousPasses = desRdvListItems()
-    const rendezVousFuturs = desRdvListItems()
+    const AUJOURDHUI = '2022-08-24'
+    const FIN_SEMAINE_COURANTE = '2022-08-30'
+
+    const rendezVousSemaineCourante = [
+      unRdvListItem({ id: '1', date: '2022-08-24T10:00:00.000Z' }),
+      unRdvListItem({ id: '2', date: '2022-08-26T10:00:00.000Z' }),
+      unRdvListItem({ id: '3', date: '2022-08-30T10:00:00.000Z' }),
+    ]
+
     describe('contenu', () => {
       beforeEach(() => {
-        render(
-          <ConseillerProvider conseiller={unConseiller()}>
-            <MesRendezvous
-              rendezVousFuturs={rendezVousFuturs}
-              rendezVousPasses={rendezVousPasses}
-              pageTitle=''
-            />
-          </ConseillerProvider>
+        renderWithContexts(
+          <MesRendezvous
+            rendezVous={rendezVousSemaineCourante}
+            pageTitle=''
+            dateDebut={AUJOURDHUI}
+            dateFin={FIN_SEMAINE_COURANTE}
+          />
         )
       })
 
@@ -40,32 +51,135 @@ describe('MesRendezvous', () => {
         expect(addRdv).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
 
-      it('a deux boutons', () => {
-        const rdvsButton = screen.getByRole('tab', {
-          name: 'Prochains rendez-vous',
+      it('a deux boutons de navigation', () => {
+        const semaineFutures = screen.getByRole('button', {
+          name: 'Aller à la semaine suivante',
         })
 
-        const oldRdvsButton = screen.getByRole('tab', {
-          name: 'Rendez-vous passés',
+        const semainePassees = screen.getByRole('button', {
+          name: 'Aller à la semaine précédente',
         })
 
-        expect(rdvsButton).toBeInTheDocument()
-        expect(oldRdvsButton).toBeInTheDocument()
+        expect(semaineFutures).toBeInTheDocument()
+        expect(semainePassees).toBeInTheDocument()
       })
 
-      it('affiche les anciens rdvs quand on clique sur le bouton rendez-vous passés', async () => {
-        const oldRdvsButton = screen.getByRole('tab', {
-          name: 'Rendez-vous passés',
+      it('affiche la semaine courante par défaut', () => {
+        const table = screen.getByRole('table')
+
+        const rowsWithoutTableHeader = screen.getAllByRole('row').length - 1
+        expect(table).toBeInTheDocument()
+        expect(rowsWithoutTableHeader).toBe(9)
+      })
+
+      it('au clic affiche la semaine courante', async () => {
+        const buttonRdvsSemaineCourante = screen.getByRole('button', {
+          name: 'Aller à la Semaine en cours',
         })
 
-        await userEvent.click(oldRdvsButton)
+        await userEvent.click(buttonRdvsSemaineCourante)
 
         const table = screen.getByRole('table')
 
-        const rows = screen.getAllByRole('row')
+        const rowsWithoutTableHeader = screen.getAllByRole('row').length - 1
 
         expect(table).toBeInTheDocument()
-        expect(rows.length - 1).toBe(rendezVousPasses.length)
+        expect(rowsWithoutTableHeader).toBe(9)
+      })
+    })
+
+    describe('rendez-vous passés', () => {
+      let rendezVousService: RendezVousService
+
+      it('affiche les rdvs de la semaine précédente quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
+        // Given
+        rendezVousService = mockedRendezVousService({
+          getRendezVousConseillerClientSide: jest.fn(async () => [
+            unRendezVous({ id: '1', date: '2022-08-25T10:00:00.000Z' }),
+          ]),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
+        const date = DateTime.fromFormat('2022-09-01', 'yyyy-MM-dd', {
+          locale: 'fr-FR',
+        })
+
+        jest.spyOn(DateTime, 'fromFormat').mockReturnValue(date)
+
+        const rendezVousPasses = desRdvListItems()
+
+        renderWithContexts(
+          <MesRendezvous
+            rendezVous={rendezVousPasses}
+            pageTitle=''
+            dateDebut={''}
+            dateFin={''}
+          />,
+          { customDependances: { rendezVousService } }
+        )
+
+        const rdvsPassesButton = screen.getByRole('button', {
+          name: 'Aller à la semaine précédente',
+        })
+        const table = screen.getByRole('table')
+        const rowsWithoutHeader = screen.getAllByRole('row').length - 1
+
+        // When
+        await userEvent.click(rdvsPassesButton)
+
+        // Then
+        expect(
+          rendezVousService.getRendezVousConseillerClientSide
+        ).toHaveBeenCalledWith('1', '2022-08-25', '2022-08-31')
+        expect(table).toBeInTheDocument()
+        expect(rowsWithoutHeader).toBe(6)
+      })
+    })
+
+    describe('rendez-vous futurs', () => {
+      let rendezVousService: RendezVousService
+
+      it('affiche les rdvs de la semaine suivante quand on clique sur le bouton pour aller à la semaine suivante', async () => {
+        // Given
+        rendezVousService = mockedRendezVousService({
+          getRendezVousConseillerClientSide: jest.fn(async () => [
+            unRendezVous({ id: '1', date: '2022-09-14T10:00:00.000Z' }),
+          ]),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
+        const date = DateTime.fromFormat('2022-09-01', 'yyyy-MM-dd', {
+          locale: 'fr-FR',
+        })
+
+        jest.spyOn(DateTime, 'fromFormat').mockReturnValue(date)
+        const rendezVousFuturs = [
+          unRdvListItem({ id: '1', date: '2022-09-14T10:00:00.000Z' }),
+        ]
+
+        renderWithContexts(
+          <MesRendezvous
+            rendezVous={rendezVousFuturs}
+            pageTitle=''
+            dateDebut={''}
+            dateFin={''}
+          />,
+          { customDependances: { rendezVousService } }
+        )
+
+        const rdvsFutursButton = screen.getByRole('button', {
+          name: 'Aller à la semaine suivante',
+        })
+        const table = screen.getByRole('table')
+        const rowsWithoutHeader = screen.getAllByRole('row').length - 1
+
+        // When
+        await userEvent.click(rdvsFutursButton)
+
+        // Then
+        expect(
+          rendezVousService.getRendezVousConseillerClientSide
+        ).toHaveBeenCalledWith('1', '2022-09-02', '2022-09-08')
+        expect(table).toBeInTheDocument()
+        expect(rowsWithoutHeader).toBe(3)
       })
     })
   })
@@ -73,25 +187,9 @@ describe('MesRendezvous', () => {
   describe('server side', () => {
     beforeEach(() => {
       const rendezVousService = mockedRendezVousService({
-        getRendezVousConseiller: jest.fn(async () => ({
-          futurs: [unRendezVous()],
-          passes: [
-            unRendezVous({
-              jeunes: [
-                {
-                  id: '1',
-                  prenom: 'kenji',
-                  nom: 'Jirac',
-                },
-                {
-                  id: '2',
-                  prenom: 'Nadia',
-                  nom: 'Sanfamiy',
-                },
-              ],
-            }),
-          ],
-        })),
+        getRendezVousConseillerServerSide: jest.fn(async () => [
+          unRendezVous(),
+        ]),
       })
       ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
     })
@@ -118,6 +216,10 @@ describe('MesRendezvous', () => {
     describe('quand le conseiller est connecté', () => {
       it('récupère les rendez-vous du conseiller', async () => {
         // Given
+        const date = DateTime.fromFormat('2022-08-26', 'yyyy-MM-dd', {
+          locale: 'fr-FR',
+        })
+        jest.spyOn(DateTime, 'now').mockReturnValue(date)
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: { user: { structure: 'MILO' } },
@@ -131,20 +233,17 @@ describe('MesRendezvous', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            rendezVousFuturs: [
+            dateDebut: '26/08/2022',
+            dateFin: '01/09/2022',
+            rendezVous: [
               expect.objectContaining({
                 beneficiaires: 'kenji Jirac',
                 idCreateur: '1',
                 type: 'Autre',
               }),
             ],
-            rendezVousPasses: [
-              expect.objectContaining({
-                beneficiaires: 'Bénéficiaires multiples',
-              }),
-            ],
             pageTitle: 'Tableau de bord - Mes rendez-vous',
-            pageHeader: 'Rendez-vous',
+            pageHeader: 'Mes rendez-vous',
           },
         })
       })

@@ -8,10 +8,10 @@ import React, {
 } from 'react'
 
 import DisplayMessage from 'components/chat/DisplayMessage'
-import BulleMessageSensible from 'components/ui/BulleMessageSensible'
+import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import { InputError } from 'components/ui/Form/InputError'
+import ResizingMultilineInput from 'components/ui/Form/ResizingMultilineInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { InputError } from 'components/ui/InputError'
-import ResizingMultilineInput from 'components/ui/ResizingMultilineInput'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
@@ -201,7 +201,7 @@ export default function Conversation({
             className='w-6 h-6 fill-primary'
           />
         </button>
-        <h2 className='w-full text-left text-primary text-m-medium'>
+        <h2 className='w-full text-left text-primary text-l-bold'>
           Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
         </h2>
         <button
@@ -233,7 +233,7 @@ export default function Conversation({
       <ul className='p-4 flex-grow overflow-y-auto short:hidden'>
         {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
           <li key={messagesOfADay.date.getTime()} className='mb-5'>
-            <div className={`text-md text-center mb-3`}>
+            <div className='text-base-regular text-center mb-3'>
               <span>{todayOrDate(messagesOfADay.date)}</span>
             </div>
 
@@ -258,7 +258,7 @@ export default function Conversation({
         <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-1'>
           <span
             id='piece-jointe--desc'
-            className='self-center text-xs short:hidden'
+            className='self-center text-xs-regular short:hidden'
           >
             Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
             maximum)
@@ -297,12 +297,12 @@ export default function Conversation({
           </button>
 
           <div
-            className='p-4 bg-blanc rounded-x_large border text-md border-primary focus-within:outline focus-within:outline-1'
+            className='p-4 bg-blanc rounded-x_large border text-base-bold border-primary focus-within:outline focus-within:outline-1'
             onClick={() => inputRef.current!.focus()}
           >
             {uploadedFileInfo && (
               <div className='flex px-2 py-1 rounded-medium bg-primary_lighten w-fit mb-4'>
-                <span className='font-bold break-words'>
+                <span className='break-all overflow-y-auto max-h-56'>
                   {uploadedFileInfo.nom}
                 </span>
                 <button

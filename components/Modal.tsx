@@ -17,18 +17,11 @@ interface ModalProps {
   title: string
   onClose: () => void
   children: ReactNode
-  showTitle?: boolean
   titleIcon?: IconName
 }
 
 const Modal = forwardRef((props: ModalProps, ref) => {
-  const {
-    children: modalContent,
-    onClose,
-    showTitle = true,
-    title,
-    titleIcon,
-  } = props
+  const { children: modalContent, onClose, title, titleIcon } = props
 
   useImperativeHandle(ref, () => ({
     closeModal: handleClose,
@@ -91,13 +84,13 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   }, [])
 
   const modalTemplate = (
-    <div className='rounded-x_large bg-blanc max-w-[620px]' ref={modalRef}>
-      <div className='flex justify-end p-5'>
+    <div className='rounded-x_large bg-blanc max-w-[620px] p-3' ref={modalRef}>
+      <div className='flex justify-end'>
         <button
           type='button'
           onClick={handleClose}
           ref={focusOnRender}
-          className='p-3 border-none hover:bg-primary_lighten hover:rounded-full'
+          className='p-2 border-none hover:bg-primary_lighten hover:rounded-full'
         >
           <IconComponent
             name={IconName.Close}
@@ -108,51 +101,35 @@ const Modal = forwardRef((props: ModalProps, ref) => {
           />
         </button>
       </div>
-      <div className='px-5 pt-3 pb-8'>
+      <div className='mt-2 p-6'>
         {titleIcon && (
           <IconComponent
             name={titleIcon}
             focusable={false}
             aria-hidden={true}
-            className='w-[100px] h-[91px] m-auto mb-8 fill-primary'
+            className='w-20 h-20 m-auto fill-primary mb-8'
           />
         )}
-        {showTitle && (
-          <h1
-            id='modal-title'
-            className='text-base-medium text-content_color text-center flex-auto mb-4'
-          >
-            {title}
-          </h1>
-        )}
+        <h1
+          id='modal-title'
+          className='text-l-bold text-content_color text-center flex-auto mb-4'
+        >
+          {title}
+        </h1>
         {modalContent}
       </div>
     </div>
   )
 
   const modalContainer = (
-    <>
-      {showTitle && (
-        <div
-          role='dialog'
-          aria-modal='true'
-          aria-labelledby='modal-title'
-          className={styles.modalOverlay}
-        >
-          {modalTemplate}
-        </div>
-      )}
-      {!showTitle && (
-        <div
-          role='dialog'
-          aria-modal='true'
-          aria-label={title}
-          className={styles.modalOverlay}
-        >
-          {modalTemplate}
-        </div>
-      )}
-    </>
+    <div
+      role='dialog'
+      aria-modal='true'
+      aria-labelledby='modal-title'
+      className={styles.modalOverlay}
+    >
+      {modalTemplate}
+    </div>
   )
 
   if (isBrowser) {

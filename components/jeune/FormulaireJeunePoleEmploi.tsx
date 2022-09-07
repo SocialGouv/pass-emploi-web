@@ -1,14 +1,13 @@
 import { FormEvent, useEffect, useState } from 'react'
 
-import { RequiredValue } from '../RequiredValue'
-
-import Button from 'components/ui/Button'
-import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
-import { JeunePoleEmploiFormData } from 'interfaces/jeune'
+import { RequiredValue } from 'components/RequiredValue'
+import Button from 'components/ui/Button/Button'
+import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
+import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import isEmailValid from 'utils/isEmailValid'
 
 type FormulaireJeunePoleEmploiProps = {
-  creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => Promise<void>
+  creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => void
   creationError: string
   creationEnCours: boolean
 }
@@ -66,7 +65,7 @@ function FormulaireJeunePoleEmploi({
     return isValid
   }
 
-  const handleJeuneSubmit = (e: FormEvent<HTMLFormElement>) => {
+  function handleJeuneSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const isValid = validate()
     if (isValid && !creationEnCours) {
@@ -97,17 +96,17 @@ function FormulaireJeunePoleEmploi({
 
   return (
     <>
-      <p className='text-base-regular mb-4'>
+      <p className='text-m-bold mt-6 mb-4'>
         Saisissez les coordonnées du jeune pour lequel vous voulez créer un
         compte
       </p>
 
       <form method='POST' onSubmit={handleJeuneSubmit}>
-        <div className='text-s-medium mb-8'>
+        <div className='text-s-bold mb-8'>
           Les champs marqués d&apos;une * sont obligatoires.
         </div>
 
-        <label className='block text-md-semi' htmlFor='jeune-prenom'>
+        <label className='block text-base-medium' htmlFor='jeune-prenom'>
           * Prénom
         </label>
         <input
@@ -116,7 +115,7 @@ function FormulaireJeunePoleEmploi({
           name='jeune-prenom'
           value={prenom.value}
           onChange={(e) => handleNomChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
+          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
             prenom.error
               ? 'border-warning text-warning'
               : 'border-content_color'
@@ -126,7 +125,7 @@ function FormulaireJeunePoleEmploi({
           <DeprecatedErrorMessage>{prenom.error}</DeprecatedErrorMessage>
         )}
 
-        <label className='block text-md-semi' htmlFor='jeune-nom'>
+        <label className='block text-base-medium' htmlFor='jeune-nom'>
           * Nom
         </label>
         <input
@@ -135,7 +134,7 @@ function FormulaireJeunePoleEmploi({
           name='jeune-nom'
           value={nom.value}
           onChange={(e) => handlePrenomChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
+          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
             nom.error ? 'border-warning text-warning' : 'border-content_color'
           }`}
         />
@@ -143,11 +142,11 @@ function FormulaireJeunePoleEmploi({
           <DeprecatedErrorMessage>{nom.error}</DeprecatedErrorMessage>
         )}
 
-        <label className='block mb-4 text-md-semi' htmlFor='jeune-email'>
+        <label className='block mb-4 text-base-medium' htmlFor='jeune-email'>
           * E-mail{' '}
-          <span className='text-s-regular'>(ex : monemail@exemple.com)</span>
+          <span className='text-base-regular'>(ex : monemail@exemple.com)</span>
         </label>
-        <span className='text-s-regular'>
+        <span className='text-base-regular'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
           dossier MAP du jeune.
         </span>
@@ -157,7 +156,7 @@ function FormulaireJeunePoleEmploi({
           name='jeune-email'
           value={email.value}
           onChange={(e) => handleEmailChanges(e.target.value)}
-          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-sm ${
+          className={`mt-4 mb-4 p-3 w-8/12 border rounded-medium text-s-regular ${
             email.error || error
               ? 'border-warning text-warning'
               : 'border-content_color text-primary_darken'

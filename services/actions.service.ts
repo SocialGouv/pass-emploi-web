@@ -1,9 +1,13 @@
+import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import {
   Action,
+  Commentaire,
   MetadonneesActions,
+  QualificationAction,
+  SituationNonProfessionnelle,
   StatutAction,
   TotalActions,
 } from 'interfaces/action'
@@ -12,8 +16,12 @@ import {
   ActionJson,
   ActionsCountJson,
   actionStatusToJson,
+  CODE_QUALIFICATION_NON_SNP,
+  CommentaireJson,
   jsonToAction,
+  jsonToQualification,
   MetadonneesActionsJson,
+  QualificationActionJson,
 } from 'interfaces/json/action'
 import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
@@ -34,13 +42,14 @@ export interface ActionsService {
     options: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
+
   getActionsJeuneClientSide(
     idJeune: string,
     options: { page: number; statuts: StatutAction[]; tri?: string }
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   createAction(
-    action: { intitule: string; commentaire: string },
+    action: { intitule: string; commentaire: string; dateEcheance: string },
     idJeune: string
   ): Promise<void>
 
@@ -50,6 +59,27 @@ export interface ActionsService {
   ): Promise<StatutAction>
 
   deleteAction(idAction: string): Promise<void>
+
+  ajouterCommentaire(
+    idAction: string,
+    commentaire: string
+  ): Promise<Commentaire>
+
+  recupererLesCommentaires(
+    idAction: string,
+    accessToken: string
+  ): Promise<Commentaire[]>
+
+  qualifier(
+    idAction: string,
+    type: string,
+    dateDebutModifiee?: Date,
+    dateFinModifiee?: Date
+  ): Promise<QualificationAction>
+
+  getSituationsNonProfessionnelles(
+    accessToken: string
+  ): Promise<SituationNonProfessionnelle[]>
 }
 
 export class ActionsApiService implements ActionsService {
@@ -100,7 +130,7 @@ export class ActionsApiService implements ActionsService {
     }: { page: number; statuts: StatutAction[]; tri?: string },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
-    const triActions = tri ?? 'date_decroissante'
+    const triActions = tri ?? 'date_echeance_decroissante'
     const filtresStatuts = statuts
       .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
       .join('')
@@ -148,11 +178,15 @@ export class ActionsApiService implements ActionsService {
   }
 
   async createAction(
-    action: { intitule: string; commentaire: string },
+    action: { intitule: string; commentaire: string; dateEcheance: string },
     idJeune: string
   ): Promise<void> {
     const session = await getSession()
-    const payload = { content: action.intitule, comment: action.commentaire }
+    const payload = {
+      content: action.intitule,
+      comment: action.commentaire,
+      dateEcheance: DateTime.fromISO(action.dateEcheance).toISO(),
+    }
     await this.apiClient.post(
       `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,
       payload,
@@ -173,9 +207,71 @@ export class ActionsApiService implements ActionsService {
     return nouveauStatut
   }
 
+  async qualifier(
+    idAction: string,
+    type: string,
+    dateDebutModifiee?: Date,
+    dateFinModifiee?: Date
+  ): Promise<QualificationAction> {
+    const session = await getSession()
+
+    const payload: {
+      codeQualification: string
+      dateDebut?: string
+      dateFinReelle?: string
+    } = {
+      codeQualification: type,
+    }
+    if (dateDebutModifiee) payload.dateDebut = dateDebutModifiee.toISOString()
+    if (dateFinModifiee) payload.dateFinReelle = dateFinModifiee.toISOString()
+
+    const { content } = await this.apiClient.post<QualificationActionJson>(
+      `/actions/${idAction}/qualifier`,
+      payload,
+      session!.accessToken
+    )
+    return jsonToQualification(content)
+  }
+
   async deleteAction(idAction: string): Promise<void> {
     const session = await getSession()
     await this.apiClient.delete(`/actions/${idAction}`, session!.accessToken)
+  }
+
+  async ajouterCommentaire(
+    idAction: string,
+    commentaire: string
+  ): Promise<Commentaire> {
+    const session = await getSession()
+    const commentaireAjoute = await this.apiClient.post<CommentaireJson>(
+      `/actions/${idAction}/commentaires`,
+      { commentaire },
+      session!.accessToken
+    )
+    return commentaireAjoute.content
+  }
+
+  async recupererLesCommentaires(
+    idAction: string,
+    accessToken: string
+  ): Promise<Commentaire[]> {
+    const commentairesJson = await this.apiClient.get<CommentaireJson[]>(
+      `/actions/${idAction}/commentaires`,
+      accessToken
+    )
+    return commentairesJson.content
+  }
+
+  async getSituationsNonProfessionnelles(
+    accessToken: string
+  ): Promise<SituationNonProfessionnelle[]> {
+    const { content } = await this.apiClient.get<SituationNonProfessionnelle[]>(
+      '/referentiels/qualifications-actions/types',
+      accessToken
+    )
+    return content.filter(
+      (situations) => situations.code !== CODE_QUALIFICATION_NON_SNP
+    )
   }
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import ExternalLink from 'components/ui/ExternalLink'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { InfoOffre } from 'interfaces/message'
 import useMatomo from 'utils/analytics/useMatomo'
 
@@ -15,7 +15,7 @@ export function LienOffre(props: { infoOffre: InfoOffre }) {
 
   return (
     <div className='p-4 rounded-medium bg-blanc mt-4'>
-      <p className='text-base-medium text-content_color'>
+      <p className='text-base-bold text-content_color'>
         {props.infoOffre!.titre}
       </p>
       <div className='mt-4 w-max ml-auto'>

@@ -1,3 +1,12 @@
+import {
+  OffresEmploiApiService,
+  OffresEmploiService,
+} from '../../services/offres-emploi.service'
+import {
+  ServicesCiviqueApiService,
+  ServicesCiviqueService,
+} from '../../services/services-civique.service'
+
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
@@ -6,6 +15,7 @@ import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
+import { FavorisApiService, FavorisService } from 'services/favoris.service'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import {
@@ -27,6 +37,9 @@ export interface Dependencies {
   messagesService: MessagesService
   rendezVousService: RendezVousService
   fichiersService: FichiersService
+  favorisService: FavorisService
+  offresEmploiService: OffresEmploiService
+  servicesCiviqueService: ServicesCiviqueService
 }
 
 export class Container {
@@ -55,6 +68,9 @@ export class Container {
       ),
       rendezVousService: new RendezVousApiService(apiClient),
       fichiersService: new FichiersApiService(apiClient),
+      favorisService: new FavorisApiService(apiClient),
+      offresEmploiService: new OffresEmploiApiService(apiClient),
+      servicesCiviqueService: new ServicesCiviqueApiService(apiClient),
     })
   }
 }

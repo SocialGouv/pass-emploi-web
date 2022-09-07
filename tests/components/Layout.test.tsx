@@ -1,5 +1,6 @@
-import { act, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
+import React from 'react'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/chat/ChatRoom'
@@ -17,7 +18,8 @@ import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
-import renderWithChatCredentials from 'tests/renderWithChatCredentials'
+import renderWithContexts from 'tests/renderWithContexts'
+import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
@@ -63,7 +65,8 @@ describe('<Layout />', () => {
       }),
     ]
     ;(useRouter as jest.Mock).mockReturnValue({
-      asPath: '/path/to/current/page',
+      asPath: '/mes-jeunes/id-jeune/actions/id-action',
+      route: '/mes-jeunes/[jeune_id]/actions/[action_id]',
     })
     jeunesService = mockedJeunesService({
       getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
@@ -86,19 +89,18 @@ describe('<Layout />', () => {
   describe('cas nominal', () => {
     beforeEach(async () => {
       await act(async () => {
-        await renderWithChatCredentials(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider>
-              <Layout>
-                <FakeComponent
-                  pageTitle='un titre'
-                  pageHeader='Titre de la page'
-                />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
+        await renderWithContexts(
+          <Layout>
+            <FakeComponent pageTitle='un titre' pageHeader='Titre de la page' />
+          </Layout>,
+          {
+            customDependances: {
+              jeunesService,
+              conseillerService,
+              messagesService,
+            },
+            customConseiller: { notificationsSonores: true },
+          }
         )
       })
     })
@@ -112,18 +114,16 @@ describe('<Layout />', () => {
 
     it("affiche le fil d'ariane", () => {
       // Then
-      expect(screen.getByRole('link', { name: 'path' })).toHaveAttribute(
+      expect(
+        screen.getByRole('link', { name: 'Portefeuille' })
+      ).toHaveAttribute('href', '/mes-jeunes')
+      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
         'href',
-        '/path'
+        '/mes-jeunes/id-jeune'
       )
-      expect(screen.getByRole('link', { name: 'to' })).toHaveAttribute(
-        'href',
-        '/path/to'
-      )
-      expect(screen.getByRole('link', { name: 'current' })).toHaveAttribute(
-        'href',
-        '/path/to/current'
-      )
+      expect(
+        screen.getByRole('link', { name: 'Détail action' })
+      ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
     })
 
     it("affiche les messages d'alerte", () => {
@@ -134,11 +134,6 @@ describe('<Layout />', () => {
     it('signs into chat', () => {
       // Then
       expect(messagesService.signIn).toHaveBeenCalled()
-    })
-
-    it('récupère le conseiller', () => {
-      // Then
-      expect(conseillerService.getConseillerClientSide).toHaveBeenCalledWith()
     })
 
     it('récupère la liste des jeunes du conseiller', () => {
@@ -214,22 +209,58 @@ describe('<Layout />', () => {
     })
   })
 
+  describe("quand le conseiller n'a pas éte récupéré", () => {
+    it('récupère le conseiller', async () => {
+      // When
+      await act(async () => {
+        render(
+          <DIProvider
+            dependances={{
+              jeunesService,
+              conseillerService,
+              messagesService,
+            }}
+          >
+            <ConseillerProvider>
+              <ChatCredentialsProvider
+                credentials={{
+                  token: 'firebaseToken',
+                  cleChiffrement: 'cleChiffrement',
+                }}
+              >
+                <Layout>
+                  <FakeComponent
+                    pageTitle='un titre'
+                    pageHeader='Titre de la page'
+                  />
+                </Layout>
+              </ChatCredentialsProvider>
+            </ConseillerProvider>
+          </DIProvider>
+        )
+      })
+
+      // Then
+      expect(conseillerService.getConseillerClientSide).toHaveBeenCalledWith()
+    })
+  })
+
   describe('quand le conseiller a désactivé ses notifications', () => {
     it("ne notifie pas quand un nouveau message d'un jeune arrive", async () => {
       // Given
       await act(async () => {
-        await renderWithChatCredentials(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider
-              conseiller={unConseiller({ notificationsSonores: false })}
-            >
-              <Layout>
-                <FakeComponent pageTitle='un titre' />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Layout>
+            <FakeComponent pageTitle='un titre' />
+          </Layout>,
+          {
+            customDependances: {
+              jeunesService,
+              conseillerService,
+              messagesService,
+            },
+            customConseiller: unConseiller({ notificationsSonores: false }),
+          }
         )
       })
 
@@ -253,19 +284,20 @@ describe('<Layout />', () => {
     it('affiche un bouton "retour"', async () => {
       // When
       await act(async () => {
-        await renderWithChatCredentials(
-          <DIProvider
-            dependances={{ jeunesService, conseillerService, messagesService }}
-          >
-            <ConseillerProvider conseiller={unConseiller()}>
-              <Layout>
-                <FakeComponent
-                  pageTitle='un titre'
-                  returnTo='/path/to/previous/page'
-                />
-              </Layout>
-            </ConseillerProvider>
-          </DIProvider>
+        renderWithContexts(
+          <Layout>
+            <FakeComponent
+              pageTitle='un titre'
+              returnTo='/path/to/previous/page'
+            />
+          </Layout>,
+          {
+            customDependances: {
+              jeunesService,
+              conseillerService,
+              messagesService,
+            },
+          }
         )
       })
 

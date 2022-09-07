@@ -3,7 +3,7 @@ import { MouseEvent, useRef } from 'react'
 import Modal from './Modal'
 import IconComponent, { IconName } from './ui/IconComponent'
 
-import Button, { ButtonStyle } from 'components/ui/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 
 interface ConfirmationUpdateRdvModalProps {
   onConfirmation: () => void
@@ -31,7 +31,7 @@ export default function ConfirmationUpdateRdvModal({
           aria-hidden={true}
           className='w-[54px] h-[57px] m-auto fill-primary'
         />
-        <p className='mt-6 text-base-medium'>
+        <p className='mt-6 text-base-bold'>
           Vous avez modifié un rendez-vous dont vous n’êtes pas le créateur
         </p>
         <p className='mt-6'>

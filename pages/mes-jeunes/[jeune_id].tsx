@@ -4,22 +4,26 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
-import FailureMessage from 'components/FailureMessage'
-import InformationMessage from 'components/InformationMessage'
 import { CollapseButton } from 'components/jeune/CollapseButton'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
-import Button, { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import Tab from 'components/ui/Tab'
-import TabList from 'components/ui/TabList'
+import Tab from 'components/ui/Navigation/Tab'
+import TabList from 'components/ui/Navigation/TabList'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { ConseillerHistorique, DetailJeune } from 'interfaces/jeune'
+import {
+  ConseillerHistorique,
+  DetailJeune,
+  MetadonneesFavoris,
+} from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -53,6 +57,7 @@ interface FicheJeuneProps extends PageProps {
     page: number
   }
   conseillers: ConseillerHistorique[]
+  metadonneesFavoris?: MetadonneesFavoris
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
   rdvSuppressionSuccess?: boolean
@@ -65,6 +70,7 @@ function FicheJeune({
   jeune,
   rdvs,
   actionsInitiales,
+  metadonneesFavoris,
   conseillers,
   rdvCreationSuccess,
   rdvModificationSuccess,
@@ -74,7 +80,7 @@ function FicheJeune({
   onglet,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
-  const jeunesServices = useDependance<JeunesService>('jeunesService')
+  const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
@@ -168,7 +174,7 @@ function FicheJeune({
       setShowModaleDeleteJeuneActif(true)
 
       if (motifsSuppression.length === 0) {
-        const result = await jeunesServices.getMotifsSuppression()
+        const result = await jeunesService.getMotifsSuppression()
         setMotifsSuppression(result)
       }
     }
@@ -182,7 +188,7 @@ function FicheJeune({
     payload: SuppressionJeuneFormData
   ): Promise<void> {
     try {
-      await jeunesServices.archiverJeune(jeune.id, payload)
+      await jeunesService.archiverJeune(jeune.id, payload)
       await router.push(
         `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )
@@ -196,7 +202,7 @@ function FicheJeune({
 
   async function supprimerJeuneInactif(): Promise<void> {
     try {
-      await jeunesServices.supprimerJeuneInactif(jeune.id)
+      await jeunesService.supprimerJeuneInactif(jeune.id)
       await router.push(
         `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
       )
@@ -217,7 +223,7 @@ function FicheJeune({
   return (
     <>
       {showSuppressionCompteBeneficiaireError && (
-        <FailureMessage
+        <FailureAlert
           label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
           onAcknowledge={() => setShowSuppressionCompteBeneficiaireError(false)}
         />
@@ -241,8 +247,20 @@ function FicheJeune({
       )}
 
       {!jeune.isActivated && (
-        <FailureMessage label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
+        <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
       )}
+
+      {!jeune.isActivated &&
+        conseiller?.structure === StructureConseiller.MILO && (
+          <div className='mb-8'>
+            <InformationMessage
+              content={[
+                'Le lien d’activation est valable 12h.',
+                'Si le délai est dépassé, veuillez orienter ce bénéficiaire vers l’option : mot de passe oublié.',
+              ]}
+            />
+          </div>
+        )}
 
       {jeune.isReaffectationTemporaire && (
         <div className='mb-6'>
@@ -287,12 +305,13 @@ function FicheJeune({
 
       <DetailsJeune
         jeune={jeune}
-        withSituations={conseiller?.structure === StructureConseiller.MILO}
+        structureConseiller={conseiller?.structure}
+        metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={trackDossierMiloClick}
       />
 
-      <div className='border border-solid rounded-medium w-full p-3 mt-2 border-grey_100'>
-        <h2 className='text-base-medium mb-4'>Historique des conseillers</h2>
+      <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
+        <h2 className='text-base-bold mb-4'>Historique des conseillers</h2>
         <ListeConseillersJeune
           id='liste-conseillers'
           conseillers={conseillersAffiches}
@@ -377,38 +396,41 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const {
     session: {
       accessToken,
-      user: { structure },
+      user: { structure, id },
     },
   } = sessionOrRedirect
 
   const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, conseillers, rdvs, actions] = await Promise.all([
-    jeunesService.getJeuneDetails(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    jeunesService.getConseillersDuJeuneServerSide(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    isPoleEmploi
-      ? []
-      : rendezVousService.getRendezVousJeune(
-          context.query.jeune_id as string,
-          accessToken
-        ),
-    isPoleEmploi
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : actionsService.getActionsJeuneServerSide(
-          context.query.jeune_id as string,
-          {
-            page,
-            statuts: [],
-          },
-          accessToken
-        ),
-  ])
+  const [jeune, conseillers, metadonneesFavoris, rdvs, actions] =
+    await Promise.all([
+      jeunesService.getJeuneDetails(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getConseillersDuJeuneServerSide(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getMetadonneesFavorisJeune(
+        id,
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      isPoleEmploi
+        ? []
+        : rendezVousService.getRendezVousJeune(
+            context.query.jeune_id as string,
+            accessToken
+          ),
+      isPoleEmploi
+        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+        : actionsService.getActionsJeuneServerSide(
+            context.query.jeune_id as string,
+            { page, statuts: [] },
+            accessToken
+          ),
+    ])
 
   if (!jeune) {
     return { notFound: true }
@@ -417,10 +439,11 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const now = new Date()
   const props: FicheJeuneProps = {
     jeune,
+    conseillers,
+    metadonneesFavoris,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actionsInitiales: { ...actions, page },
-    conseillers,
-    pageTitle: `Mes jeunes - ${jeune.prenom} ${jeune.nom}`,
+    pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
 

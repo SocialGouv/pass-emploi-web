@@ -2,33 +2,27 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 
-import RefreshIcon from '../../assets/icons/refresh.svg'
-
-import Button from 'components/ui/Button'
-import { DeprecatedErrorMessage } from 'components/ui/DeprecatedErrorMessage'
+import RefreshIcon from 'assets/icons/refresh.svg'
+import Button from 'components/ui/Button/Button'
+import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { DossierMilo } from 'interfaces/jeune'
-import { ConseillerService } from 'services/conseiller.service'
+import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useDependance } from 'utils/injectionDependances'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
-  onCreatedSuccess: (idJeune: string) => void
-  onCreatedError: (erreurMessage: string) => void
+  onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
   erreurMessageHttpPassEmploi: string
 }
 
-const DossierJeuneMilo = ({
+export default function DossierJeuneMilo({
   dossier,
-  onCreatedSuccess,
-  onCreatedError,
+  onCreateCompte,
   erreurMessageHttpPassEmploi,
-}: DossierJeuneMiloProps) => {
+}: DossierJeuneMiloProps) {
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
-
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
 
   const addJeune = async () => {
     if (!creationEnCours) {
@@ -38,17 +32,11 @@ const DossierJeuneMilo = ({
         prenom: dossier.prenom,
         email: dossier.email ?? undefined,
       }
+
       setCreationEnCours(true)
-      conseillerService
-        .createCompteJeuneMilo(newJeune)
-        .then(({ id }) => {
-          setCreationEnCours(false)
-          onCreatedSuccess(id)
-        })
-        .catch((error: Error) => {
-          setCreationEnCours(false)
-          onCreatedError(error.message)
-        })
+      onCreateCompte(newJeune).finally(() => {
+        setCreationEnCours(false)
+      })
     }
   }
   useMatomo(
@@ -67,50 +55,55 @@ const DossierJeuneMilo = ({
       <div className='border border-primary_lighten rounded-large p-6'>
         <dl className='text-primary_darken'>
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Prénom'>
+            <dt className='text-base-regular mr-1' aria-label='Prénom'>
               Prénom :
             </dt>
-            <dd className='text-s-medium'> {dossier.prenom}</dd>
+            <dd className='text-base-medium'> {dossier.prenom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Nom'>
+            <dt className='text-base-regular mr-1' aria-label='Nom'>
               Nom :
             </dt>
-            <dd className='text-s-medium'> {dossier.nom}</dd>
+            <dd className='text-base-medium'> {dossier.nom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Date de naissance'>
+            <dt
+              className='text-base-regular mr-1'
+              aria-label='Date de naissance'
+            >
               Date de naissance :
             </dt>
-            <dd className='text-s-medium'> {dossier.dateDeNaissance}</dd>
+            <dd className='text-base-medium'> {dossier.dateDeNaissance}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-sm mr-1' aria-label='Code postal'>
+            <dt className='text-base-regular mr-1' aria-label='Code postal'>
               Code postal :
             </dt>
-            <dd className='text-s-medium'> {dossier.codePostal}</dd>
+            <dd className='text-base-medium'> {dossier.codePostal}</dd>
           </div>
           <div className='flex items-center mb-3'>
             <dt
               className={` ${
-                dossier.email ? 'text-sm mr-1' : 'text-s-medium text-warning'
+                dossier.email
+                  ? 'text-base-regular mr-1'
+                  : 'text-base-regular text-warning'
               }`}
               aria-label='E-mail'
             >
               E-mail :
             </dt>
 
-            <dd className='text-s-medium'>{dossier.email || ''}</dd>
+            <dd className='text-base-medium'>{dossier.email || ''}</dd>
           </div>
           {!dossier.email && (
             <>
-              <p className='text-s-medium text-warning mb-2'>
+              <p className='text-base-bold text-warning mb-2'>
                 L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
               </p>
-              <ol className='text-sm text-warning'>
+              <ol className='text-base-regular text-warning'>
                 <li className='mb-3.5'>
                   1. Renseignez l&apos;e-mail du jeune sur son profil i-Milo
                 </li>
@@ -125,6 +118,17 @@ const DossierJeuneMilo = ({
         </dl>
       </div>
 
+      {dossier.email && (
+        <div className='mt-4'>
+          <InformationMessage
+            content={[
+              'Ce bénéficiaire recevra un lien d’activation valable 12h.',
+              'Passé ce délai, il sera nécessaire d’utiliser l’option : mot de passe oublié.',
+            ]}
+          />
+        </div>
+      )}
+
       {erreurMessageHttpPassEmploi && (
         <DeprecatedErrorMessage className='mt-8'>
           {erreurMessageHttpPassEmploi}
@@ -133,7 +137,7 @@ const DossierJeuneMilo = ({
 
       <div className='flex items-center mt-14'>
         <Link href={'/mes-jeunes/milo/creation-jeune'}>
-          <a className='flex items-center text-s-medium text-primary_darken mr-6'>
+          <a className='flex items-center text-base-bold text-primary_darken mr-6'>
             <IconComponent
               name={IconName.ArrowLeft}
               className='mr-2.5 w-3 h-3'
@@ -168,5 +172,3 @@ function actionButtons(
     </Button>
   )
 }
-
-export default DossierJeuneMilo

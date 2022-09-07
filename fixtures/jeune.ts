@@ -7,9 +7,14 @@ import {
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
   JeuneFromListe,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
-import { DetailJeuneJson, ItemJeuneJson } from 'interfaces/json/jeune'
+import {
+  DetailJeuneJson,
+  ItemJeuneJson,
+  MetadonneesFavorisJson,
+} from 'interfaces/json/jeune'
 
 export const uneBaseJeune = (overrides: Partial<BaseJeune> = {}): BaseJeune => {
   const defaults: BaseJeune = {
@@ -27,9 +32,56 @@ export const unDetailJeune = (
     ...uneBaseJeune(),
     email: 'kenji.jirac@email.fr',
     isActivated: true,
+    idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     situations: [],
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const uneMetadonneeFavoris = (
+  overrides: Partial<MetadonneesFavoris> = {}
+): MetadonneesFavoris => {
+  const defaults: MetadonneesFavoris = {
+    autoriseLePartage: true,
+    offres: {
+      total: 12,
+      nombreOffresEmploi: 3,
+      nombreOffresAlternance: 3,
+      nombreOffresImmersion: 3,
+      nombreOffresServiceCivique: 3,
+    },
+    recherches: {
+      total: 8,
+      nombreRecherchesOffresEmploi: 2,
+      nombreRecherchesOffresAlternance: 4,
+      nombreRecherchesOffresImmersion: 2,
+      nombreRecherchesOffresServiceCivique: 2,
+    },
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const uneMetadonneeFavorisJson = (
+  overrides: Partial<MetadonneesFavorisJson> = {}
+): MetadonneesFavorisJson => {
+  const defaults: MetadonneesFavorisJson = {
+    autoriseLePartage: true,
+    offres: {
+      total: 12,
+      nombreOffresEmploi: 3,
+      nombreOffresAlternance: 3,
+      nombreOffresImmersion: 3,
+      nombreOffresServiceCivique: 3,
+    },
+    recherches: {
+      total: 8,
+      nombreRecherchesOffresEmploi: 2,
+      nombreRecherchesOffresAlternance: 4,
+      nombreRecherchesOffresImmersion: 2,
+      nombreRecherchesOffresServiceCivique: 2,
+    },
   }
   return { ...defaults, ...overrides }
 }
@@ -74,6 +126,7 @@ export const unDetailJeuneJson = (
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
     isActivated: true,
+    idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
   }

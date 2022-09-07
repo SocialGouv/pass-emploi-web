@@ -27,21 +27,32 @@ import CloseIcon from 'assets/icons/close.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
 import DeleteIcon from 'assets/icons/delete.svg'
 import EmailIcon from 'assets/icons/email.svg'
+import FavoriteIcon from 'assets/icons/favorite.svg'
 import FlagIcon from 'assets/icons/flag.svg'
 import FlagFilledIcon from 'assets/icons/flag_filled.svg'
+import ImportantOutlineIcon from 'assets/icons/important_outline.svg'
 import InfoIcon from 'assets/icons/information.svg'
 import InfoOutlineIcon from 'assets/icons/information_outline.svg'
+import KoIcon from 'assets/icons/ko.svg'
 import LaunchIcon from 'assets/icons/launch.svg'
+import LocationIcon from 'assets/icons/location.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
 import MenuIcon from 'assets/icons/menu.svg'
+import NoteIcon from 'assets/icons/note_outline.svg'
+import NoteBigIcon from 'assets/icons/note_outline_big.svg'
+import PenIcon from 'assets/icons/pen.svg'
+import PendingIcon from 'assets/icons/pending.svg'
 import PeopleIcon from 'assets/icons/people.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
 import RemoveIcon from 'assets/icons/remove.svg'
 import RendezVousIcon from 'assets/icons/rendez-vous.svg'
+import RoundedCheckIcon from 'assets/icons/rounded_check.svg'
+import RoundedCheckFilledIcon from 'assets/icons/rounded_check_filled.svg'
 import RoundedCloseIcon from 'assets/icons/rounded_close.svg'
 import SearchIcon from 'assets/icons/search.svg'
 import SendIcon from 'assets/icons/send.svg'
 import SpinnerIcon from 'assets/icons/spinner.svg'
+import SuitcaseIcon from 'assets/icons/suitcase.svg'
 import TrashCanIcon from 'assets/icons/trash_can.svg'
 import WarningIcon from 'assets/icons/warning.svg'
 
@@ -72,22 +83,33 @@ export enum IconName {
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
   Email = 'Email',
+  Favorite = 'Favorite',
   File = 'File',
   Flag = 'Flag',
   FlagFilled = 'FlagFilled',
+  ImportantOutline = 'ImportantOutline',
   Info = 'Info',
   InfoOutline = 'InfoOutline',
+  Ko = 'Ko',
   Launch = 'Launch',
+  Location = 'Location',
   Logout = 'Logout',
   Menu = 'Menu',
+  Note = 'Note',
+  NoteBig = 'NoteBig',
+  Pending = 'Pending',
   People = 'People',
   Profil = 'Profil',
+  Pen = 'Pen',
   Remove = 'Remove',
   RendezVous = 'RendezVous',
   RoundedClose = 'RoundedClose',
+  RoundedCheck = 'RoundedCheck',
+  RoundedCheckFilled = 'RoundedCheckFilled',
   Search = 'Search',
   Send = 'Send',
   Spinner = 'Spinner',
+  Suitcase = 'Suitcase',
   TrashCan = 'TrashCan',
   Warning = 'Warning',
 }
@@ -119,22 +141,34 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
   [IconName.Email]: EmailIcon,
+  [IconName.Favorite]: FavoriteIcon,
   [IconName.File]: FileIcon,
   [IconName.Flag]: FlagIcon,
   [IconName.FlagFilled]: FlagFilledIcon,
   [IconName.Info]: InfoIcon,
+  [IconName.ImportantOutline]: ImportantOutlineIcon,
   [IconName.InfoOutline]: InfoOutlineIcon,
+  [IconName.Ko]: KoIcon,
   [IconName.Launch]: LaunchIcon,
+  [IconName.Location]: LocationIcon,
   [IconName.Logout]: LogoutIcon,
   [IconName.Menu]: MenuIcon,
+  [IconName.Note]: NoteIcon,
+  [IconName.Pen]: PenIcon,
+  [IconName.NoteBig]: NoteBigIcon,
+  [IconName.Pending]: PendingIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.Remove]: RemoveIcon,
   [IconName.RendezVous]: RendezVousIcon,
   [IconName.RoundedClose]: RoundedCloseIcon,
+  [IconName.RoundedCheck]: RoundedCheckIcon,
+  [IconName.RoundedCheck]: RoundedCheckIcon,
+  [IconName.RoundedCheckFilled]: RoundedCheckFilledIcon,
   [IconName.Search]: SearchIcon,
   [IconName.Send]: SendIcon,
   [IconName.Spinner]: SpinnerIcon,
+  [IconName.Suitcase]: SuitcaseIcon,
   [IconName.TrashCan]: TrashCanIcon,
   [IconName.Warning]: WarningIcon,
 }

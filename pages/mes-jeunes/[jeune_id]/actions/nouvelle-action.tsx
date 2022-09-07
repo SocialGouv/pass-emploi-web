@@ -3,12 +3,13 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
 
-import BulleMessageSensible from 'components/ui/BulleMessageSensible'
-import Button, { ButtonStyle } from 'components/ui/Button'
-import ButtonLink from 'components/ui/ButtonLink'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import Tab from 'components/ui/Tab'
-import TabList from 'components/ui/TabList'
+import Tab from 'components/ui/Navigation/Tab'
+import TabList from 'components/ui/Navigation/TabList'
 import { PageProps } from 'interfaces/pageProps'
 import { actionsPredefinies } from 'referentiel/action'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -32,7 +33,8 @@ function EditionAction({ idJeune }: EditionActionProps) {
   }
   const [currentTab, setCurrentTab] = useState<Tab>('predefinie')
   const [intitule, setIntitule] = useState<string>('')
-  const [commentaire, setCommentaire] = useState<string>('')
+  const [commentaire, setDescription] = useState<string>('')
+  const [dateEcheance, setDateEcheance] = useState<string>('')
   const INPUT_MAX_LENGTH = 250
 
   const [trackingTitle, setTrackingTitle] = useState<string>(
@@ -50,14 +52,18 @@ function EditionAction({ idJeune }: EditionActionProps) {
   }
 
   function formulaireEstValide(): boolean {
-    return Boolean(intitule)
+    return Boolean(intitule) && Boolean(dateEcheance)
   }
 
   async function creerAction(e: FormEvent) {
     e.preventDefault()
     if (!formulaireEstValide()) return
 
-    const action = { intitule, commentaire }
+    const action = {
+      intitule,
+      commentaire,
+      dateEcheance,
+    }
     await actionsService.createAction(action, idJeune)
     await router.push({
       pathname: `/mes-jeunes/${idJeune}`,
@@ -82,7 +88,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           ))}
         </TabList>
 
-        <p className='text-s-medium text-content_color'>
+        <p className='text-s-bold text-content_color'>
           Tous les champs avec * sont obligatoires
         </p>
 
@@ -95,38 +101,50 @@ function EditionAction({ idJeune }: EditionActionProps) {
           >
             <label
               htmlFor='intitule-action-predefinie'
-              className='text-md text-content_color block'
+              className='text-base-medium text-content_color block mb-3'
             >
               * Choisir une action prédéfinie
             </label>
-            <select
+            <Select
               id='intitule-action-predefinie'
               required={true}
-              onChange={(e) => setIntitule(e.target.value)}
-              defaultValue={''}
-              className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3 truncate'
+              onChange={setIntitule}
             >
-              <option aria-hidden hidden disabled value={''} />
               {actionsPredefinies.map(({ id, content }) => (
                 <option key={id}>{content}</option>
               ))}
-            </select>
+            </Select>
 
             <label
               htmlFor='commentaire-action-predefinie'
-              className='flex mt-10 text-md text-content_color items-center'
+              className='flex text-base-medium text-content_color items-center'
             >
-              Commentaire de l&apos;action
+              Description de l&apos;action
               <span className='ml-2'>
                 <BulleMessageSensible />
               </span>
             </label>
             <textarea
               id='commentaire-action-predefinie'
-              onChange={(e) => setCommentaire(e.target.value)}
+              defaultValue={commentaire}
+              onChange={(e) => setDescription(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
+            />
+            <label htmlFor='date-echeance-action-predefinie' className='mb-2'>
+              <span className='mt-8 text-base-medium text-content_color block'>
+                * Définir une date d’échéance
+              </span>
+            </label>
+            <input
+              type='date'
+              id='date-echeance-action-predefinie'
+              name='date'
+              required={true}
+              defaultValue={dateEcheance}
+              onChange={(e) => setDateEcheance(e.target.value)}
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
             />
           </div>
         )}
@@ -141,7 +159,7 @@ function EditionAction({ idJeune }: EditionActionProps) {
           >
             <label
               htmlFor='intitule-action-personnalisee'
-              className='text-md text-content_color block'
+              className='text-base-medium text-content_color block'
             >
               * Intitulé de l&apos;action
             </label>
@@ -155,21 +173,39 @@ function EditionAction({ idJeune }: EditionActionProps) {
 
             <label
               htmlFor='commentaire-action-personnalisee'
-              className='mt-10 text-md text-content_color block'
+              className='mt-8 text-base-medium text-content_color block'
             >
-              Commentaire de l&apos;action
+              Description de l&apos;action
             </label>
             <textarea
               id='commentaire-action-personnalisee'
-              onChange={(e) => setCommentaire(e.target.value)}
+              defaultValue={commentaire}
+              onChange={(e) => setDescription(e.target.value)}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
               className='mt-3 w-full border border-solid border-content_color rounded-medium px-4 py-3'
             />
+            <label
+              htmlFor='date-echeance-action-personnalisee'
+              className='mb-2'
+            >
+              <span className='mt-8 text-base-medium text-content_color block'>
+                * Définir une date d’échéance
+              </span>
+            </label>
+            <input
+              type='date'
+              id='date-echeance-action-personnalisee'
+              name='date'
+              required={true}
+              defaultValue={dateEcheance}
+              onChange={(e) => setDateEcheance(e.target.value)}
+              className={`border border-solid rounded-medium w-full px-4 py-3 mb-4`}
+            />
           </div>
         )}
 
-        <div className='mt-10 flex justify-center'>
+        <div className='mt-8 flex justify-center'>
           <ButtonLink
             href={`/mes-jeunes/${idJeune}/actions`}
             style={ButtonStyle.SECONDARY}

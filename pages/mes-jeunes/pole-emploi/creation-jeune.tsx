@@ -1,14 +1,13 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
-import SuccessAddJeunePoleEmploi from 'components/jeune/SuccessAddJeunePoleEmploi'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { JeunePoleEmploiFormData } from 'interfaces/jeune'
+import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -18,7 +17,7 @@ interface PoleEmploiCreationJeuneProps extends PageProps {}
 
 function PoleEmploiCreationJeune(): JSX.Element {
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const [createdSuccessId, setCreatedSuccessId] = useState<string>('')
+  const router = useRouter()
   const [creationError, setCreationError] = useState<string>('')
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
@@ -33,7 +32,13 @@ function PoleEmploiCreationJeune(): JSX.Element {
         lastName: newJeune.nom,
         email: newJeune.email,
       })
-      setCreatedSuccessId(id)
+      await router.push({
+        pathname: `/mes-jeunes`,
+        query: {
+          [QueryParam.creationBeneficiaire]: QueryValue.succes,
+          idBeneficiaire: id,
+        },
+      })
     } catch (error) {
       setCreationError(
         (error as Error).message || "Une erreur inconnue s'est produite"
@@ -46,33 +51,11 @@ function PoleEmploiCreationJeune(): JSX.Element {
   useMatomo(creationError ? 'Création jeune PE en erreur' : 'Création jeune PE')
 
   return (
-    <>
-      {createdSuccessId && (
-        <div className='mb-4'>
-          <AjouterJeuneButton
-            handleAddJeune={() => {
-              Router.reload()
-            }}
-          />
-        </div>
-      )}
-
-      <h1 className='text-m-medium mt-6 mb-4'>
-        Création d&apos;un compte jeune
-      </h1>
-
-      {!createdSuccessId && (
-        <FormulaireJeunePoleEmploi
-          creerJeunePoleEmploi={creerJeunePoleEmploi}
-          creationError={creationError}
-          creationEnCours={creationEnCours}
-        />
-      )}
-
-      {createdSuccessId && (
-        <SuccessAddJeunePoleEmploi idJeune={createdSuccessId} />
-      )}
-    </>
+    <FormulaireJeunePoleEmploi
+      creerJeunePoleEmploi={creerJeunePoleEmploi}
+      creationError={creationError}
+      creationEnCours={creationEnCours}
+    />
   )
 }
 

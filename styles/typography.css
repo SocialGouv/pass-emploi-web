@@ -1,80 +1,16 @@
-.text-md {
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: -0.3px;
-}
-
-.text-sm {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 21px;
-  letter-spacing: 0;
-}
-
-.text-xs {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px;
-  letter-spacing: 0;
-}
-
-.text-md-semi {
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: -0.3px;
-}
-
-.text-sm-semi {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 21px;
-  letter-spacing: 0;
-}
-
-.text-xs-semi {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px;
-  letter-spacing: 0;
-}
-
-.text-xxs-italic {
-  font-size: 11px;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 13px;
-  letter-spacing: 0;
-  text-align: right;
-}
-/*new à implémenter avec la nouvelle nomenclature et mettre en rem*/
-.text-xs-medium {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 21px;
-  letter-spacing: 0;
-}
-
 .text-xs-regular {
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 16px;
+  letter-spacing: 0;
 }
 
-.text-s-medium {
-  font-size: 14px;
+.text-xs-medium {
+  font-size: 12px;
   font-style: normal;
-  font-weight: bold;
-  line-height: 24px;
+  font-weight: 500;
+  line-height: 16px;
   letter-spacing: 0;
 }
 
@@ -82,15 +18,15 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 24px;
   letter-spacing: 0;
 }
 
-.text-base-medium {
-  font-size: 16px;
+.text-s-bold {
+  font-size: 14px;
   font-style: normal;
-  font-weight: bold;
-  line-height: 21px;
+  font-weight: 700;
+  line-height: 24px;
   letter-spacing: 0;
 }
 
@@ -98,7 +34,23 @@
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 22px;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.text-base-medium {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.text-base-bold {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px;
   letter-spacing: 0;
 }
 
@@ -106,37 +58,22 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 26px;
+  line-height: 24px;
   letter-spacing: 0;
 }
 
-.text-m-medium {
+.text-m-bold {
   font-size: 20px;
   font-style: normal;
-  font-weight: bold;
-  line-height: 26px;
+  font-weight: 700;
+  line-height: 24px;
   letter-spacing: 0;
 }
 
-.text-l-medium {
+.text-l-bold {
   font-size: 24px;
   font-style: normal;
-  font-weight: bold;
+  font-weight: 700;
   line-height: 32px;
   letter-spacing: 0;
-}
-
-.text-l-regular {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 32px;
-  letter-spacing: 0;
-}
-
-.text-xl-medium {
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 40px;
 }
