@@ -18,7 +18,7 @@ export function BlocSituation({
 }: BlocSituationProps) {
   situations = situations.concat(situations)
   return (
-    <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
+    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       <h2 className='text-base-bold mb-1'>Situation</h2>
       {!(situations && situations.length) && (
         <ol>
