@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { Badge } from '../ui/Indicateurs/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
+import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import SituationTag from 'components/jeune/SituationTag'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -17,7 +18,6 @@ import {
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { trackEvent } from 'utils/analytics/matomo'
-import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
@@ -85,96 +85,16 @@ export const DetailsJeune = ({
 
   return (
     <>
-      <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
-        <h2 className='text-base-bold mb-4'>Informations</h2>
-        <dl>
-          <div className='flex'>
-            <dt className='text-base-regular'>Ajouté le :</dt>
-            <dd>
-              <span className='text-base-medium ml-1'>
-                {formatDayDate(new Date(jeune.creationDate))}
-              </span>
-            </dd>
-          </div>
-
-          {jeune.email && (
-            <div className='flex items-center'>
-              <dt>
-                <IconComponent
-                  name={IconName.Email}
-                  aria-label='e-mail'
-                  aria-hidden={false}
-                  focusable={false}
-                  className='w-[15px] h-[13px] mr-2'
-                />
-              </dt>
-              <dd className='text-primary'>{jeune.email}</dd>
-            </div>
-          )}
-
-          {structureConseiller !== StructureConseiller.MILO && (
-            <div className='flex'>
-              <dt className='text-base-regular mr-2'>
-                Identifiant Pôle emploi :
-              </dt>
-              <dd
-                className='text-base-bold'
-                onCopy={trackEventOnCopieIdentifiantPartenaire}
-              >
-                {identifiantPartenaire ? (
-                  identifiantPartenaire
-                ) : (
-                  <>
-                    <span className='sr-only'>non renseigné</span>
-                    <span>-</span>
-                  </>
-                )}
-              </dd>
-              <button
-                className='ml-5 flex items-center text-primary'
-                aria-label={
-                  identifiantPartenaire
-                    ? 'Modifier l’identifiant Pôle emploi'
-                    : 'Ajouter l’identifiant Pôle emploi'
-                }
-                onClick={openIdentifiantPartenaireModal}
-              >
-                <IconComponent
-                  name={IconName.Pen}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='w-4 h-4 mr-1 fill-primary'
-                />
-                {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
-              </button>
-            </div>
-          )}
-
-          {jeune.urlDossier && (
-            <>
-              <dt className='sr-only'>Dossier externe</dt>
-              <dd className='mt-2'>
-                <a
-                  className='underline text-primary hover:text-primary_darken flex items-center'
-                  href={jeune.urlDossier}
-                  target='_blank'
-                  onClick={onDossierMiloClick}
-                  rel='noopener noreferrer'
-                >
-                  Dossier jeune i-Milo
-                  <IconComponent
-                    name={IconName.Launch}
-                    focusable='false'
-                    role='img'
-                    title='ouvrir'
-                    className='ml-2 w-3 h-3'
-                  />
-                </a>
-              </dd>
-            </>
-          )}
-        </dl>
-      </div>
+      <BlocInformationJeune
+        creationDate={jeune.creationDate}
+        email={jeune.email}
+        structureConseiller={structureConseiller}
+        onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
+        identifiantPartenaire={identifiantPartenaire}
+        onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
+        urlDossier={jeune.urlDossier}
+        onDossierMiloClick={onDossierMiloClick}
+      />
 
       {structureConseiller === StructureConseiller.MILO && (
         <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
