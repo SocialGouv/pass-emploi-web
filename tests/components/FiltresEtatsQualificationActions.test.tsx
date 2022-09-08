@@ -64,42 +64,20 @@ describe('FiltresEtatsQualificationAction', () => {
     )
   })
 
-  describe('quand on valide les états sélectionnés', () => {
-    beforeEach(async () => {
-      // Given
-      await userEvent.click(screen.getByLabelText('Actions non qualifiables'))
-      await userEvent.click(screen.getByLabelText('Actions à qualifier'))
-      await userEvent.click(screen.getByLabelText('Actions qualifiées'))
-      await userEvent.click(screen.getByLabelText('Actions non qualifiables'))
+  it('filtre les actions avec les états sélectionnés', async () => {
+    // Given
+    await userEvent.click(screen.getByLabelText('Actions non qualifiables'))
+    await userEvent.click(screen.getByLabelText('Actions à qualifier'))
+    await userEvent.click(screen.getByLabelText('Actions qualifiées'))
+    await userEvent.click(screen.getByLabelText('Actions non qualifiables'))
 
-      // When
-      await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
-    })
+    // When
+    await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
 
-    it('filtre les actions avec les états sélectionnés', async () => {
-      // Then
-      expect(filtrerActions).toHaveBeenCalledWith([
-        EtatQualificationAction.AQualifier,
-        EtatQualificationAction.Qualifiee,
-      ])
-    })
-
-    it('ne réinitialise pas les états sélectionnés', async () => {
-      // Given
-      await userEvent.click(
-        screen.getByRole('button', { name: /qualification/ })
-      )
-
-      // Then
-      expect(
-        screen.getByLabelText('Actions non qualifiables')
-      ).not.toHaveAttribute('checked')
-      expect(screen.getByLabelText('Actions à qualifier')).toHaveAttribute(
-        'checked'
-      )
-      expect(screen.getByLabelText('Actions qualifiées')).toHaveAttribute(
-        'checked'
-      )
-    })
+    // Then
+    expect(filtrerActions).toHaveBeenCalledWith([
+      EtatQualificationAction.AQualifier,
+      EtatQualificationAction.Qualifiee,
+    ])
   })
 })

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import FiltresEtatsQualificationActions from 'components/action/FiltresEtatsQualificationActions'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import Pagination from 'components/ui/Table/Pagination'
@@ -63,6 +62,31 @@ export function OngletActions({
   function changerPage(page: number) {
     if (page < 1 || page > nombrePages) return
     setPageCourante(page)
+    stateChanged.current = true
+  }
+
+  function filtrerActions({
+    statuts,
+    etatsQualification,
+  }: {
+    statuts: StatutAction[]
+    etatsQualification: EtatQualificationAction[]
+  }) {
+    if (
+      statuts.every((statut) => filtresParStatuts.includes(statut)) &&
+      filtresParStatuts.every((filtre) => statuts.includes(filtre)) &&
+      etatsQualification.every((etat) =>
+        filtresParEtatsQualification.includes(etat)
+      ) &&
+      filtresParEtatsQualification.every((filtre) =>
+        etatsQualification.includes(filtre)
+      )
+    )
+      return
+
+    setFiltresParStatuts(statuts)
+    setFiltresParEtatsQualification(etatsQualification)
+    setPageCourante(1)
     stateChanged.current = true
   }
 
@@ -133,15 +157,15 @@ export function OngletActions({
 
       {!poleEmploi && actionsInitiales.metadonnees.nombreTotal > 0 && (
         <>
-          <FiltresEtatsQualificationActions
-            onFiltres={filtrerActionsAvecEtatsQualification}
-          />
-
           <TableauActionsJeune
             jeune={jeune}
             actions={actionsAffichees}
             isLoading={isLoading}
-            onFiltres={filtrerActionsAvecStatuts}
+            onFiltres={filtrerActions}
+            // onFiltresParStatuts={filtrerActionsAvecStatuts}
+            // onFiltresParEtatsQualification={
+            //   filtrerActionsAvecEtatsQualification
+            // }
             onTri={trierActions}
             tri={tri}
           />

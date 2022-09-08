@@ -6,18 +6,17 @@ import { EtatQualificationAction } from 'interfaces/action'
 
 type FiltresEtatsQualificationActionsProps = {
   onFiltres: (etatsQualificationSelectionnes: EtatQualificationAction[]) => void
+  defaultValue?: EtatQualificationAction[]
 }
 
 export default function FiltresEtatsQualificationActions({
   onFiltres,
+  defaultValue = [],
 }: FiltresEtatsQualificationActionsProps) {
   const [afficherFiltresQualification, setAfficherFiltresQualification] =
     useState<boolean>(false)
   const [etatsQualificationSelectionnes, setEtatsQualificationSelectionnes] =
     useState<EtatQualificationAction[]>([])
-  const [etatsQualificationValides, setEtatsQualificationValides] = useState<
-    EtatQualificationAction[]
-  >([])
 
   const labelsEtatsQualification: {
     [key in EtatQualificationAction]: string
@@ -63,12 +62,11 @@ export default function FiltresEtatsQualificationActions({
     e.preventDefault()
     onFiltres(etatsQualificationSelectionnes)
 
-    setEtatsQualificationValides(etatsQualificationSelectionnes)
     setAfficherFiltresQualification(false)
   }
 
   useEffect(() => {
-    setEtatsQualificationSelectionnes(etatsQualificationValides)
+    setEtatsQualificationSelectionnes(defaultValue)
   }, [afficherFiltresQualification])
 
   return (
