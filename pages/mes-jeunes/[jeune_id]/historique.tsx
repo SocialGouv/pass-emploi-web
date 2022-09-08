@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
+import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -75,12 +76,14 @@ function Historique({
               selected={currentTab === Onglet.SITUATIONS}
               controls='liste-situations'
               onSelectTab={() => switchTab(Onglet.SITUATIONS)}
+              iconName={IconName.Calendar}
             />
             <Tab
               label='Historique des conseillers'
               selected={currentTab === Onglet.CONSEILLERS}
               controls='liste-conseillers'
               onSelectTab={() => switchTab(Onglet.CONSEILLERS)}
+              iconName={IconName.Actions}
             />
           </TabList>
 
