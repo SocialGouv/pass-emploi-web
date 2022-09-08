@@ -5,6 +5,7 @@ import { ApiClient } from 'clients/api.client'
 import {
   Action,
   Commentaire,
+  EtatQualificationAction,
   MetadonneesActions,
   QualificationAction,
   SituationNonProfessionnelle,
@@ -18,6 +19,7 @@ import {
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
+  etatQualificationActionToJson,
   jsonToAction,
   jsonToQualification,
   MetadonneesActionsJson,
@@ -39,13 +41,18 @@ export interface ActionsService {
 
   getActionsJeuneServerSide(
     idJeune: string,
-    options: { page: number; statuts: StatutAction[]; tri?: string },
+    page: number,
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   getActionsJeuneClientSide(
     idJeune: string,
-    options: { page: number; statuts: StatutAction[]; tri?: string }
+    options: {
+      page: number
+      statuts: StatutAction[]
+      etatsQualification: EtatQualificationAction[]
+      tri?: string
+    }
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 
   createAction(
@@ -126,15 +133,24 @@ export class ActionsApiService implements ActionsService {
     {
       tri,
       statuts,
+      etatsQualification,
       page,
-    }: { page: number; statuts: StatutAction[]; tri?: string },
+    }: {
+      page: number
+      statuts: StatutAction[]
+      etatsQualification: EtatQualificationAction[]
+      tri?: string
+    },
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
     const triActions = tri ?? 'date_echeance_decroissante'
     const filtresStatuts = statuts
       .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
       .join('')
-    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}`
+    const filtresEtatsQualification = etatsQualification
+      .map((etat) => `&etats=${etatQualificationActionToJson(etat)}`)
+      .join('')
+    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}${filtresEtatsQualification}`
 
     const {
       content: { actions: actionsJson, metadonnees },
@@ -144,9 +160,9 @@ export class ActionsApiService implements ActionsService {
     }>(url, accessToken)
 
     const nombreActions =
-      statuts.length === 0
-        ? metadonnees.nombreTotal
-        : calculeNombreActionsFiltrees(statuts, metadonnees)
+      statuts.length || etatsQualification.length
+        ? calculeNombreActionsFiltrees(statuts, etatsQualification, metadonnees)
+        : metadonnees.nombreTotal
     const nombrePages = Math.ceil(
       nombreActions / metadonnees.nombreActionsParPage
     )
@@ -162,6 +178,7 @@ export class ActionsApiService implements ActionsService {
     options: {
       page: number
       statuts: StatutAction[]
+      etatsQualification: EtatQualificationAction[]
       tri?: string
     }
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
@@ -171,10 +188,14 @@ export class ActionsApiService implements ActionsService {
 
   getActionsJeuneServerSide(
     idJeune: string,
-    options: { page: number; statuts: StatutAction[]; tri?: string },
+    page: number,
     accessToken: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
-    return this.getActionsJeune(idJeune, options, accessToken)
+    return this.getActionsJeune(
+      idJeune,
+      { page, statuts: [], etatsQualification: [] },
+      accessToken
+    )
   }
 
   async createAction(
@@ -277,12 +298,21 @@ export class ActionsApiService implements ActionsService {
 
 function calculeNombreActionsFiltrees(
   statuts: StatutAction[],
+  etatsQualification: EtatQualificationAction[],
   metadonnees: MetadonneesActionsJson
 ): number {
   let total = 0
+
   statuts.forEach((statut) => {
     total += extraireNombreActionsAvecStatut(metadonnees, statut)
   })
+  etatsQualification.forEach((etatQualification) => {
+    total += extraireNombreActionsAvecEtatQualification(
+      metadonnees,
+      etatQualification
+    )
+  })
+
   return total
 }
 
@@ -299,6 +329,22 @@ function extraireNombreActionsAvecStatut(
       return metadonnees.nombreTerminees
     case StatutAction.Annulee:
       return metadonnees.nombreAnnulees
+    default:
+      return 0
+  }
+}
+
+function extraireNombreActionsAvecEtatQualification(
+  metadonnees: MetadonneesActionsJson,
+  etatQualification: EtatQualificationAction
+): number {
+  switch (etatQualification) {
+    case EtatQualificationAction.NonQualifiable:
+      return metadonnees.nombreNonQualifiables
+    case EtatQualificationAction.AQualifier:
+      return metadonnees.nombreAQualifier
+    case EtatQualificationAction.Qualifiee:
+      return metadonnees.nombreQualifiees
     default:
       return 0
   }

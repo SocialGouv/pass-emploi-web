@@ -31,7 +31,9 @@ describe('TableauActionsJeune', () => {
     it('affiche une liste de statuts', async () => {
       // Then
       expect(
-        screen.getByRole('group', { name: 'Choisir un statut à filtrer' })
+        screen.getByRole('group', {
+          name: 'Choisir un ou plusieurs statuts à filtrer',
+        })
       ).toBeInTheDocument()
       expect(screen.getByLabelText('Commencée')).toBeInTheDocument()
       expect(screen.getByLabelText('À réaliser')).toBeInTheDocument()
@@ -45,7 +47,9 @@ describe('TableauActionsJeune', () => {
 
       // Then
       expect(() =>
-        screen.getByRole('group', { name: 'Choisir un statut à filtrer' })
+        screen.getByRole('group', {
+          name: 'Choisir un ou plusieurs statuts à filtrer',
+        })
       ).toThrow()
     })
 

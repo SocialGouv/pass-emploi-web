@@ -27,7 +27,7 @@ export function Tag({
         <IconComponent
           name={iconName}
           aria-hidden={true}
-          className='inline h-5 w-5 mr-1 fill-[currentColor]'
+          className='h-5 w-5 mr-1 fill-[currentColor]'
         />
       )}
       {label}
