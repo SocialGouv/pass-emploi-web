@@ -83,7 +83,7 @@ export const DetailsJeune = ({
 
   return (
     <>
-      <div className='flex flex-row items-stretch gap-x-6 mt-2'>
+      <div className='flex flex-row items-stretch gap-x-6'>
         {structureConseiller === StructureConseiller.MILO && (
           <BlocSituation
             idJeune={jeune.id}
