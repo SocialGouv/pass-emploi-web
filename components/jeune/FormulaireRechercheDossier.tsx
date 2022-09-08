@@ -61,7 +61,7 @@ function FormulaireRechercheDossier({
         <Input
           type='text'
           id='recherche-numero'
-          value={numeroDossier}
+          defaultValue={numeroDossier}
           onChange={handleSearchInputChanges}
           invalid={Boolean(messageErreur)}
         />
