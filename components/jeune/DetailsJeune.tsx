@@ -93,6 +93,7 @@ export const DetailsJeune = ({
         )}
 
         <BlocInformationJeune
+          idJeune={jeune.id}
           creationDate={jeune.creationDate}
           email={jeune.email}
           structureConseiller={structureConseiller}

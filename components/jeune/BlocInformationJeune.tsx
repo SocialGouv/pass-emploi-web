@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React, { MouseEventHandler } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -6,6 +7,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { formatDayDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
+  idJeune: string
   creationDate: string
   email: string | undefined
   structureConseiller: StructureConseiller | undefined
@@ -18,6 +20,7 @@ interface BlocInformationJeuneProps {
 }
 
 export function BlocInformationJeune({
+  idJeune,
   creationDate,
   email,
   structureConseiller,
@@ -118,13 +121,34 @@ export function BlocInformationJeune({
           </>
         )}
       </dl>
-      <Button
-        onClick={onDeleteJeuneClick}
-        style={ButtonStyle.SECONDARY}
-        className='mt-4 w-fit'
-      >
-        Supprimer ce compte
-      </Button>
+
+      <div className='flex flex-row justify-between items-end mt-4'>
+        <Button
+          onClick={onDeleteJeuneClick}
+          style={ButtonStyle.SECONDARY}
+          className='w-fit'
+        >
+          Supprimer ce compte
+        </Button>
+
+        {structureConseiller &&
+          [
+            StructureConseiller.POLE_EMPLOI,
+            StructureConseiller.PASS_EMPLOI,
+          ].includes(structureConseiller) && (
+            <Link href={`/mes-jeunes/${idJeune}/historique`}>
+              <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
+                Voir l’historique des conseillers
+                <IconComponent
+                  name={IconName.ChevronRight}
+                  className='w-4 h-5 fill-[inherit]'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+              </a>
+            </Link>
+          )}
+      </div>
     </div>
   )
 }
