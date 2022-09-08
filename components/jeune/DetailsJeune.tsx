@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { MouseEventHandler, useState } from 'react'
 
 import { Badge } from '../ui/Indicateurs/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
@@ -21,6 +21,7 @@ interface DetailsJeuneProps {
   structureConseiller: StructureConseiller | undefined
   metadonneesFavoris?: MetadonneesFavoris
   onDossierMiloClick: () => void
+  onDeleteJeuneClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export const DetailsJeune = ({
@@ -28,6 +29,7 @@ export const DetailsJeune = ({
   structureConseiller,
   metadonneesFavoris,
   onDossierMiloClick,
+  onDeleteJeuneClick,
 }: DetailsJeuneProps) => {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -98,6 +100,7 @@ export const DetailsJeune = ({
           onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
           urlDossier={jeune.urlDossier}
           onDossierMiloClick={onDossierMiloClick}
+          onDeleteJeuneClick={onDeleteJeuneClick}
         />
       </div>
 

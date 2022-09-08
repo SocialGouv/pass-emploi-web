@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { MouseEventHandler } from 'react'
 
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { formatDayDate } from 'utils/date'
@@ -13,6 +14,7 @@ interface BlocInformationJeuneProps {
   onIdentifiantPartenaireClick: () => void
   urlDossier: string | undefined
   onDossierMiloClick: () => void
+  onDeleteJeuneClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export function BlocInformationJeune({
@@ -24,6 +26,7 @@ export function BlocInformationJeune({
   onIdentifiantPartenaireClick,
   urlDossier,
   onDossierMiloClick,
+  onDeleteJeuneClick,
 }: BlocInformationJeuneProps) {
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
@@ -115,6 +118,13 @@ export function BlocInformationJeune({
           </>
         )}
       </dl>
+      <Button
+        onClick={onDeleteJeuneClick}
+        style={ButtonStyle.SECONDARY}
+        className='mt-4 w-fit'
+      >
+        Supprimer ce compte
+      </Button>
     </div>
   )
 }

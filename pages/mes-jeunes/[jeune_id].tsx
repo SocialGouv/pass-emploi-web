@@ -10,7 +10,6 @@ import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -302,13 +301,6 @@ function FicheJeune({
             </ButtonLink>
           )}
         </div>
-        <Button
-          onClick={openDeleteJeuneModal}
-          style={ButtonStyle.SECONDARY}
-          className='w-fit'
-        >
-          Supprimer ce compte
-        </Button>
       </div>
 
       <DetailsJeune
@@ -316,6 +308,7 @@ function FicheJeune({
         structureConseiller={conseiller?.structure}
         metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={trackDossierMiloClick}
+        onDeleteJeuneClick={openDeleteJeuneModal}
       />
 
       <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
