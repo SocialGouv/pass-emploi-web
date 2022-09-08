@@ -327,7 +327,7 @@ describe('EditionRdv', () => {
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
-          expect(inputHoraire).toHaveAttribute('type', 'text')
+          expect(inputHoraire).toHaveAttribute('type', 'time')
         })
 
         it('contient un champ pour choisir la durée', () => {
@@ -337,7 +337,7 @@ describe('EditionRdv', () => {
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
-          expect(inputDuree).toHaveAttribute('type', 'text')
+          expect(inputDuree).toHaveAttribute('type', 'time')
         })
 
         it('contient un champ pour indiquer l’adresse si besoin', () => {
@@ -620,20 +620,6 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand l'horaire est incorrecte", async () => {
-          // When
-          await userEvent.type(inputHoraire, '123:45')
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm"
-            )
-          ).toBeInTheDocument()
-        })
-
         it("est désactivé quand aucune durée n'est renseignée", async () => {
           // When
           await userEvent.clear(inputDuree)
@@ -644,20 +630,6 @@ describe('EditionRdv', () => {
           expect(
             screen.getByText(
               "Le champ durée n'est pas renseigné. Veuillez renseigner une durée."
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('est désactivé quand la durée est incorrecte', async () => {
-          // When
-          await userEvent.type(inputDuree, '123:45')
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm"
             )
           ).toBeInTheDocument()
         })

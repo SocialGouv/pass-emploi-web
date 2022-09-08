@@ -409,7 +409,7 @@ export function EditionRdvForm({
           </InputError>
         )}
         <Input
-          type='text'
+          type='time'
           id='horaire'
           defaultValue={horaire.value}
           required={true}
@@ -418,7 +418,6 @@ export function EditionRdvForm({
           invalid={Boolean(horaire.error)}
           aria-invalid={horaire.error ? true : undefined}
           aria-describedby={horaire.error ? 'horaire--error' : undefined}
-          icon='clock'
         />
 
         <Label htmlFor='duree' inputRequired={true}>
@@ -431,7 +430,7 @@ export function EditionRdvForm({
           </InputError>
         )}
         <Input
-          type='text'
+          type='time'
           id='duree'
           required={true}
           defaultValue={duree.value}
