@@ -30,6 +30,7 @@ interface HistoriqueProps extends PageProps {
 
 interface HistoriqueConseillersProps {
   conseillers: ConseillerHistorique[]
+  avecTitre: boolean
 }
 
 export enum Onglet {
@@ -37,10 +38,15 @@ export enum Onglet {
   CONSEILLERS = 'CONSEILLERS',
 }
 
-function HistoriqueConseillers({ conseillers }: HistoriqueConseillersProps) {
+function HistoriqueConseillers({
+  conseillers,
+  avecTitre,
+}: HistoriqueConseillersProps) {
   return (
     <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
-      <h2 className='text-base-bold mb-4'>Historique des conseillers</h2>
+      {avecTitre && (
+        <h2 className='text-base-bold mb-4'>Historique des conseillers</h2>
+      )}
       <ListeConseillersJeune id='liste-conseillers' conseillers={conseillers} />
     </div>
   )
@@ -102,16 +108,21 @@ function Historique({
               id='liste-conseillers'
               className='mt-8 pb-8'
             >
-              <HistoriqueConseillers conseillers={conseillers} />
+              <HistoriqueConseillers
+                conseillers={conseillers}
+                avecTitre={false}
+              />
             </div>
           )}
         </>
       )}
 
-      {structure === StructureConseiller.POLE_EMPLOI ||
-        (structure === StructureConseiller.PASS_EMPLOI && (
-          <HistoriqueConseillers conseillers={conseillers} />
-        ))}
+      {[
+        StructureConseiller.POLE_EMPLOI,
+        StructureConseiller.PASS_EMPLOI,
+      ].includes(structure) && (
+        <HistoriqueConseillers conseillers={conseillers} avecTitre={true} />
+      )}
     </>
   )
 }
