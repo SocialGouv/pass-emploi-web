@@ -115,7 +115,7 @@ function FormulaireJeunePoleEmploi({
           <Input
             type='text'
             id='jeune-prenom'
-            value={prenom.value}
+            defaultValue={prenom.value}
             onChange={handleNomChanges}
             invalid={Boolean(prenom.error)}
           />
@@ -132,7 +132,7 @@ function FormulaireJeunePoleEmploi({
             label='Nom'
             type='text'
             id='jeune-nom'
-            value={nom.value}
+            defaultValue={nom.value}
             onChange={handlePrenomChanges}
             invalid={Boolean(nom.error)}
           />
@@ -153,7 +153,7 @@ function FormulaireJeunePoleEmploi({
           <Input
             type='email'
             id='jeune-email'
-            value={email.value}
+            defaultValue={email.value}
             onChange={handleEmailChanges}
             invalid={Boolean(email.error)}
           />
