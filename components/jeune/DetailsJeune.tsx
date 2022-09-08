@@ -6,15 +6,11 @@ import { Badge } from '../ui/Indicateurs/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
 import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
-import SituationTag from 'components/jeune/SituationTag'
+import { BlocSituation } from 'components/jeune/BlocSituation'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  CategorieSituation,
-  DetailJeune,
-  MetadonneesFavoris,
-} from 'interfaces/jeune'
+import { DetailJeune, MetadonneesFavoris } from 'interfaces/jeune'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -97,51 +93,10 @@ export const DetailsJeune = ({
       />
 
       {structureConseiller === StructureConseiller.MILO && (
-        <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
-          <h2 className='text-base-bold mb-1'>Situation</h2>
-          {!(jeune.situations && jeune.situations.length) && (
-            <ol>
-              <li className='mt-3'>
-                <div className='mb-3'>
-                  <SituationTag situation={CategorieSituation.SANS_SITUATION} />
-                </div>
-                <div className='mb-3'>
-                  Etat : <span className='text-base-medium'>--</span>
-                </div>
-                <div>
-                  Fin le : <span className='text-base-medium'>--</span>
-                </div>
-              </li>
-            </ol>
-          )}
-
-          {jeune.situations && Boolean(jeune.situations.length) && (
-            <ol className='flex flex-row flex-wrap'>
-              {jeune.situations.map((situation) => (
-                <li
-                  className='mt-3 mr-32 last:mr-0'
-                  key={situation.etat + '-' + situation.categorie}
-                >
-                  <div className='mb-3'>
-                    <SituationTag situation={situation.categorie} />
-                  </div>
-                  <div className='mb-3'>
-                    Etat :{' '}
-                    <span className='text-base-medium'>
-                      {situation.etat ?? '--'}
-                    </span>
-                  </div>
-                  <div className=''>
-                    Fin le :{' '}
-                    <span className='text-base-medium'>
-                      {situation.dateFin ?? '--'}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          )}
-        </div>
+        <BlocSituation
+          situations={jeune.situations}
+          afficherUneSeuleSituation={true}
+        />
       )}
 
       <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
