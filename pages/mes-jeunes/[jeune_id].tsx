@@ -254,18 +254,32 @@ function FicheJeune({
         </div>
       )}
 
-      <div className='flex justify-between'>
+      <DetailsJeune
+        jeune={jeune}
+        structureConseiller={conseiller?.structure}
+        metadonneesFavoris={metadonneesFavoris}
+        onDossierMiloClick={trackDossierMiloClick}
+        onDeleteJeuneClick={openDeleteJeuneModal}
+      />
+
+      <div className='flex justify-between mt-6 mb-4'>
         <div className='flex'>
           {!isPoleEmploi && (
-            <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4'>
-              Fixer un rendez-vous
+            <ButtonLink href={`/mes-jeunes/edition-rdv`}>
+              <IconComponent
+                name={IconName.Add}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Créer un rendez-vous
             </ButtonLink>
           )}
 
           {!isPoleEmploi && (
             <ButtonLink
               href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-              className='mb-4 ml-4'
+              className='ml-4'
             >
               <IconComponent
                 name={IconName.Add}
@@ -278,14 +292,6 @@ function FicheJeune({
           )}
         </div>
       </div>
-
-      <DetailsJeune
-        jeune={jeune}
-        structureConseiller={conseiller?.structure}
-        metadonneesFavoris={metadonneesFavoris}
-        onDossierMiloClick={trackDossierMiloClick}
-        onDeleteJeuneClick={openDeleteJeuneModal}
-      />
 
       <TabList className='mt-10'>
         <Tab
