@@ -81,23 +81,25 @@ export const DetailsJeune = ({
 
   return (
     <>
-      <BlocInformationJeune
-        creationDate={jeune.creationDate}
-        email={jeune.email}
-        structureConseiller={structureConseiller}
-        onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
-        identifiantPartenaire={identifiantPartenaire}
-        onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
-        urlDossier={jeune.urlDossier}
-        onDossierMiloClick={onDossierMiloClick}
-      />
+      <div className='flex flex-row items-stretch gap-x-6 mt-2'>
+        {structureConseiller === StructureConseiller.MILO && (
+          <BlocSituation
+            situations={jeune.situations}
+            afficherUneSeuleSituation={true}
+          />
+        )}
 
-      {structureConseiller === StructureConseiller.MILO && (
-        <BlocSituation
-          situations={jeune.situations}
-          afficherUneSeuleSituation={true}
+        <BlocInformationJeune
+          creationDate={jeune.creationDate}
+          email={jeune.email}
+          structureConseiller={structureConseiller}
+          onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
+          identifiantPartenaire={identifiantPartenaire}
+          onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
+          urlDossier={jeune.urlDossier}
+          onDossierMiloClick={onDossierMiloClick}
         />
-      )}
+      </div>
 
       <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
         <div className='flex items-center mb-4'>

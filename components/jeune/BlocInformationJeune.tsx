@@ -26,7 +26,7 @@ export function BlocInformationJeune({
   onDossierMiloClick,
 }: BlocInformationJeuneProps) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
+    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       <h2 className='text-base-bold mb-4'>Informations</h2>
       <dl>
         <div className='flex'>
