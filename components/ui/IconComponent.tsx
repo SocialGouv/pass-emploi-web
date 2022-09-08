@@ -17,7 +17,6 @@ import ChevronFirstIcon from 'assets/icons/chevron_first.svg'
 import ChevronLastIcon from 'assets/icons/chevron_last.svg'
 import ChevronLeftIcon from 'assets/icons/chevron_left.svg'
 import ChevronRightIcon from 'assets/icons/chevron_right.svg'
-import ChevronUpIcon from 'assets/icons/chevron_up.svg'
 import Chiffre1Icon from 'assets/icons/chiffre_1.svg'
 import Chiffre2Icon from 'assets/icons/chiffre_2.svg'
 import Chiffre3Icon from 'assets/icons/chiffre_3.svg'
@@ -73,7 +72,6 @@ export enum IconName {
   ChevronLast = 'ChevronLast',
   ChevronLeft = 'ChevronLeft',
   ChevronRight = 'ChevronRight',
-  ChevronUp = 'ChevronUp',
   Chiffre1 = 'Chiffre1',
   Chiffre2 = 'Chiffre2',
   Chiffre3 = 'Chiffre3',
@@ -131,7 +129,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ChevronLast]: ChevronLastIcon,
   [IconName.ChevronLeft]: ChevronLeftIcon,
   [IconName.ChevronRight]: ChevronRightIcon,
-  [IconName.ChevronUp]: ChevronUpIcon,
   [IconName.Chiffre1]: Chiffre1Icon,
   [IconName.Chiffre2]: Chiffre2Icon,
   [IconName.Chiffre3]: Chiffre3Icon,
