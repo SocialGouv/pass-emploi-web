@@ -1,11 +1,16 @@
 import {
   Action,
   CreateurCommentaire,
+  EtatQualificationAction,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
+type EtatQualificationActionJson =
+  | 'A_QUALIFIER'
+  | 'NON_QUALIFIABLE'
+  | 'QUALIFIEE'
 
 export interface ActionJson {
   id: string
@@ -28,10 +33,13 @@ export interface QualificationActionJson {
 
 export interface MetadonneesActionsJson {
   nombreTotal: number
+  nombrePasCommencees: number
   nombreEnCours: number
   nombreTerminees: number
   nombreAnnulees: number
-  nombrePasCommencees: number
+  nombreNonQualifiables: number
+  nombreAQualifier: number
+  nombreQualifiees: number
   nombreActionsParPage: number
 }
 
@@ -113,5 +121,18 @@ export function actionStatusToJson(status: StatutAction): ActionStatusJson {
       return 'done'
     case StatutAction.Annulee:
       return 'canceled'
+  }
+}
+
+export function etatQualificationActionToJson(
+  etat: EtatQualificationAction
+): EtatQualificationActionJson {
+  switch (etat) {
+    case EtatQualificationAction.AQualifier:
+      return 'A_QUALIFIER'
+    case EtatQualificationAction.NonQualifiable:
+      return 'NON_QUALIFIABLE'
+    case EtatQualificationAction.Qualifiee:
+      return 'QUALIFIEE'
   }
 }

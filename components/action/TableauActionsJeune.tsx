@@ -41,9 +41,7 @@ export default function TableauActionsJeune({
     if (statutsSelectionnes.includes(statut)) {
       setStatutsSelectionnes(statutsSelectionnes.filter((s) => s !== statut))
     } else {
-      setStatutsSelectionnes(
-        statutsSelectionnes.concat(e.target.value as StatutAction)
-      )
+      setStatutsSelectionnes(statutsSelectionnes.concat(statut))
     }
   }
 
@@ -51,8 +49,8 @@ export default function TableauActionsJeune({
     e.preventDefault()
     onFiltres(statutsSelectionnes)
 
-    setAfficherStatut(false)
     setStatutsValides(statutsSelectionnes)
+    setAfficherStatut(false)
   }
 
   function reinitialiserFiltres() {
@@ -171,7 +169,7 @@ export default function TableauActionsJeune({
                 >
                   <fieldset className='flex flex-col p-2'>
                     <legend className='sr-only'>
-                      Choisir un statut à filtrer
+                      Choisir un ou plusieurs statuts à filtrer
                     </legend>
                     {Object.keys(StatutAction).map((statut) =>
                       renderStatutInput(statut as StatutAction)
@@ -193,7 +191,7 @@ export default function TableauActionsJeune({
             style={{ captionSide: 'bottom' }}
           >
             <div role='row'>
-              <div role='cell' aria-colspan={3}>
+              <div role='cell' aria-colspan={4}>
                 <EmptyStateImage
                   focusable='false'
                   aria-hidden='true'
