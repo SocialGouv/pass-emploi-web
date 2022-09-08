@@ -128,6 +128,12 @@ export function BlocInformationJeune({
           style={ButtonStyle.SECONDARY}
           className='w-fit'
         >
+          <IconComponent
+            name={IconName.TrashCan}
+            focusable='false'
+            aria-hidden='true'
+            className='mr-3 w-3 h-3'
+          />
           Supprimer ce compte
         </Button>
 
