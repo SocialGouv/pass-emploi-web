@@ -1,22 +1,25 @@
+import Link from 'next/link'
 import React from 'react'
 
 import SituationTag from 'components/jeune/SituationTag'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 
 interface BlocSituationProps {
+  idJeune: string
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
     dateFin?: string
   }>
-  afficherUneSeuleSituation: boolean
+  versionResumee: boolean
 }
 
 export function BlocSituation({
+  idJeune,
   situations,
-  afficherUneSeuleSituation,
+  versionResumee,
 }: BlocSituationProps) {
-  situations = situations.concat(situations)
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       <h2 className='text-base-bold mb-1'>Situation</h2>
@@ -61,8 +64,22 @@ export function BlocSituation({
                 </div>
               </li>
             ))
-            .slice(0, afficherUneSeuleSituation ? 1 : situations.length)}
+            .slice(0, versionResumee ? 1 : situations.length)}
         </ol>
+      )}
+
+      {versionResumee && (
+        <Link href={`/mes-jeunes/${idJeune}/historique`}>
+          <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
+            Voir le détail des situations
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-5 fill-[inherit]'
+              aria-hidden={true}
+              focusable={false}
+            />
+          </a>
+        </Link>
       )}
     </div>
   )

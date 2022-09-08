@@ -18,6 +18,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface HistoriqueProps extends PageProps {
+  idJeune: string
   structure: StructureConseiller
   situations: Array<{
     etat?: EtatSituation
@@ -45,7 +46,12 @@ function HistoriqueConseillers({ conseillers }: HistoriqueConseillersProps) {
   )
 }
 
-function Historique({ structure, situations, conseillers }: HistoriqueProps) {
+function Historique({
+  idJeune,
+  structure,
+  situations,
+  conseillers,
+}: HistoriqueProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.SITUATIONS)
 
   async function switchTab(tab: Onglet) {
@@ -81,8 +87,9 @@ function Historique({ structure, situations, conseillers }: HistoriqueProps) {
               className='mt-8 pb-8'
             >
               <BlocSituation
+                idJeune={idJeune}
                 situations={situations}
-                afficherUneSeuleSituation={false}
+                versionResumee={false}
               />
             </div>
           )}
@@ -142,6 +149,7 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
 
   return {
     props: {
+      idJeune: jeune.id,
       structure: structure as StructureConseiller,
       situations: jeune.situations,
       conseillers: conseillers,
