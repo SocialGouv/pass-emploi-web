@@ -1,12 +1,11 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import ActionRow from 'components/action/ActionRow'
 import FiltresEtatsQualificationActions from 'components/action/FiltresEtatsQualificationActions'
+import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
 import { TRI } from 'components/action/OngletActions'
-import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SortIcon from 'components/ui/SortIcon'
 import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import TableLayout from 'components/ui/Table/TableLayout'
@@ -37,59 +36,16 @@ export default function TableauActionsJeune({
   onTri,
   tri,
 }: TableauActionsJeuneProps) {
-  const [afficherStatut, setAfficherStatut] = useState<boolean>(false)
-  const [statutsSelectionnes, setStatutsSelectionnes] = useState<
-    StatutAction[]
-  >([])
   const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
-
   const [etatsQualificationValides, setEtatsQualificationValides] = useState<
     EtatQualificationAction[]
   >([])
-
-  function actionnerStatut(e: ChangeEvent<HTMLInputElement>) {
-    const statut = e.target.value as StatutAction
-    if (statutsSelectionnes.includes(statut)) {
-      setStatutsSelectionnes(statutsSelectionnes.filter((s) => s !== statut))
-    } else {
-      setStatutsSelectionnes(statutsSelectionnes.concat(statut))
-    }
-  }
-
-  function submitFiltres(e: FormEvent) {
-    e.preventDefault()
-    onFiltres({ statuts: statutsSelectionnes, etatsQualification: [] })
-
-    setStatutsValides(statutsSelectionnes)
-    setAfficherStatut(false)
-  }
 
   function reinitialiserFiltres() {
     onFiltres({ statuts: [], etatsQualification: [] })
     setStatutsValides([])
     setEtatsQualificationValides([])
   }
-
-  function renderStatutInput(statut: StatutAction): JSX.Element {
-    const id = `statut-${statut.toLowerCase()}`
-    return (
-      <label key={id} htmlFor={id} className='flex pb-8'>
-        <input
-          type='checkbox'
-          value={statut}
-          id={id}
-          className='h-5 w-5'
-          checked={statutsSelectionnes.includes(statut)}
-          onChange={actionnerStatut}
-        />
-        <span className='pl-5'>{propsStatutsActions[statut].label}</span>
-      </label>
-    )
-  }
-
-  useEffect(() => {
-    setStatutsSelectionnes(statutsValides)
-  }, [afficherStatut, statutsValides])
 
   function getIsSortedByCreationDate(): boolean {
     return tri === TRI.dateCroissante || tri === TRI.dateDecroissante
@@ -120,7 +76,16 @@ export default function TableauActionsJeune({
     }
     onTri(nouveauTri)
   }
+
   const headerColumnWithButtonHover = 'rounded-medium hover:bg-primary_lighten'
+
+  function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
+    setStatutsValides(statutsSelectionnes)
+    onFiltres({
+      statuts: statutsSelectionnes,
+      etatsQualification: [],
+    })
+  }
 
   function filtrerActionsParEtatsQualification(
     etatsQualificationSelectionnes: EtatQualificationAction[]
@@ -173,42 +138,11 @@ export default function TableauActionsJeune({
                   />
                 </button>
               </HeaderCell>
-              <HeaderCell className={`relative ${headerColumnWithButtonHover}`}>
-                <button
-                  aria-controls='filtres-statut'
-                  aria-expanded={afficherStatut}
-                  onClick={() => setAfficherStatut(!afficherStatut)}
-                  aria-label='Statut - Filtrer les actions'
-                  className='flex items-center'
-                >
-                  Statut
-                  <IconComponent
-                    name={IconName.ChevronDown}
-                    className={`h-4 w-4 ml-2 fill-primary ${
-                      afficherStatut ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                {afficherStatut && (
-                  <form
-                    className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 text-base-regular'
-                    id='filtres-statut'
-                    onSubmit={submitFiltres}
-                  >
-                    <fieldset className='flex flex-col p-2'>
-                      <legend className='sr-only'>
-                        Choisir un ou plusieurs statuts à filtrer
-                      </legend>
-                      {Object.keys(StatutAction).map((statut) =>
-                        renderStatutInput(statut as StatutAction)
-                      )}
-                    </fieldset>
-                    <Button className='w-full justify-center' type='submit'>
-                      Valider
-                    </Button>
-                  </form>
-                )}
-              </HeaderCell>
+              <FiltresStatutsActions
+                style={headerColumnWithButtonHover}
+                defaultValue={statutsValides}
+                onFiltres={filtrerActionsParStatuts}
+              />
             </div>
           </div>
 

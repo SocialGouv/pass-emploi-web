@@ -90,38 +90,6 @@ export function OngletActions({
     stateChanged.current = true
   }
 
-  function filtrerActionsAvecStatuts(statutsSelectionnes: StatutAction[]) {
-    if (
-      statutsSelectionnes.every((statut) =>
-        filtresParStatuts.includes(statut)
-      ) &&
-      filtresParStatuts.every((filtre) => statutsSelectionnes.includes(filtre))
-    )
-      return
-
-    setFiltresParStatuts(statutsSelectionnes)
-    setPageCourante(1)
-    stateChanged.current = true
-  }
-
-  function filtrerActionsAvecEtatsQualification(
-    etatsQualificationSelectionnes: EtatQualificationAction[]
-  ) {
-    if (
-      etatsQualificationSelectionnes.every((etat) =>
-        filtresParEtatsQualification.includes(etat)
-      ) &&
-      filtresParEtatsQualification.every((filtre) =>
-        etatsQualificationSelectionnes.includes(filtre)
-      )
-    )
-      return
-
-    setFiltresParEtatsQualification(etatsQualificationSelectionnes)
-    setPageCourante(1)
-    stateChanged.current = true
-  }
-
   function trierActions(nouveauTri: TRI) {
     setTri(nouveauTri)
     setPageCourante(1)
@@ -162,10 +130,6 @@ export function OngletActions({
             actions={actionsAffichees}
             isLoading={isLoading}
             onFiltres={filtrerActions}
-            // onFiltresParStatuts={filtrerActionsAvecStatuts}
-            // onFiltresParEtatsQualification={
-            //   filtrerActionsAvecEtatsQualification
-            // }
             onTri={trierActions}
             tri={tri}
           />
