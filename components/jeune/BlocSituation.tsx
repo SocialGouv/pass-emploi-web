@@ -20,9 +20,10 @@ export function BlocSituation({
   situations,
   versionResumee,
 }: BlocSituationProps) {
+  situations = situations.concat(situations)
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
-      <h2 className='text-base-bold mb-1'>Situation</h2>
+      {versionResumee && <h2 className='text-base-bold mb-1'>Situation</h2>}
       {!(situations && situations.length) && (
         <ol>
           <li className='mt-3'>
