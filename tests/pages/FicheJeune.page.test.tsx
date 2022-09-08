@@ -1203,7 +1203,10 @@ describe('Fiche Jeune', () => {
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
           />,
-          { customDependances: { actionsService } }
+          {
+            customDependances: { actionsService },
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
         )
 
         // When
