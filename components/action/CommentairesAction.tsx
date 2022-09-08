@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 
 import { UnCommentaireAction } from 'components/action/UnCommentaireAction'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import Label from 'components/ui/Form/Label'
+import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Commentaire } from 'interfaces/action'
 import { ActionsService } from 'services/actions.service'
@@ -64,25 +65,17 @@ export function CommentairesAction({
             ))}
           </dl>
         )}
-        <label
-          htmlFor='commentaire-action'
-          className='flex mb-4 text-base-medium text-content_color items-center'
-        >
+
+        <Label htmlFor='commentaire-action' withBulleMessageSensible={true}>
           Commentaire à destination du jeune
-          <span className='ml-2'>
-            <BulleMessageSensible />
-          </span>
-        </label>
-        <textarea
-          role='textbox'
+        </Label>
+        <Textarea
           id='commentaire-action'
-          value={nouveauCommentaire}
           onChange={(event) => {
             setNouveauCommentaire(event.target.value)
           }}
           rows={3}
-          className='mb-4 w-full border border-solid border-content_color rounded-medium px-4 py-3 mb-4'
-        ></textarea>
+        ></Textarea>
         <Button
           className='self-end'
           label='Ajouter un commentaire'

@@ -7,6 +7,7 @@ import React, { FormEvent, useState } from 'react'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
+import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -122,9 +123,9 @@ function PageQualification({
           Type
         </legend>
 
-        <label htmlFor='select-type' className='text-base-bold mb-2'>
-          <span aria-hidden={true}>* </span>Type
-        </label>
+        <Label htmlFor='select-type' inputRequired={true}>
+          Type
+        </Label>
         <Select id='select-type' required={true} onChange={setCodeSNP}>
           {situationsNonProfessionnelles.map(({ label, code }) => (
             <option key={code} value={code}>
@@ -146,9 +147,9 @@ function PageQualification({
           Date de début de l’action
         </legend>
 
-        <label htmlFor='input-date-debut' className='text-base-bold mb-2'>
-          <span aria-hidden={true}>* </span>Date de début
-        </label>
+        <Label htmlFor='input-date-debut' inputRequired={true}>
+          Date de début
+        </Label>
         <Input
           type='date'
           id='input-date-debut'
@@ -174,9 +175,9 @@ function PageQualification({
           Date de fin de l’action
         </legend>
 
-        <label htmlFor='input-date-fin' className='text-base-bold mb-2'>
-          <span aria-hidden={true}>* </span>Date de fin
-        </label>
+        <Label htmlFor='input-date-fin' inputRequired={true}>
+          Date de fin
+        </Label>
         <Input
           type='date'
           id='input-date-fin'

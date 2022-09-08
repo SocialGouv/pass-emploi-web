@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 
 import { InputError } from 'components/ui/Form/InputError'
+import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
@@ -88,10 +89,10 @@ export default function JeunesMultiselectAutocomplete({
 
   return (
     <>
-      <label htmlFor='select-jeunes' className='text-base-medium'>
-        <span aria-hidden='true'>*</span> Rechercher et ajouter des jeunes
+      <Label htmlFor='select-jeunes' inputRequired={true}>
+        Rechercher et ajouter des jeunes
         <span className='text-s-regular block'>Nom et prénom</span>
-      </label>
+      </Label>
       {error && (
         <InputError id='select-jeunes--error' className='mt-2'>
           {error}
@@ -100,16 +101,12 @@ export default function JeunesMultiselectAutocomplete({
       <SelectAutocomplete
         id='select-jeunes'
         options={buildOptions()}
-        onChange={(e) => selectJeune(e.target.value)}
-        className={`text-s-regular text-primary_darken w-full p-3 mb-2 mt-4 border rounded-medium cursor-pointer bg-blanc disabled:border-disabled disabled:opacity-70 ${
-          error ? 'border-warning' : 'border-content_color'
-        }`}
-        aria-required={true}
+        onChange={(value: string) => selectJeune(value)}
+        required={true}
         multiple={true}
         aria-controls='selected-jeunes'
         ref={input}
-        aria-describedby='select-jeunes--error'
-        aria-invalid={error ? true : undefined}
+        invalid={Boolean(error)}
       />
 
       <p
