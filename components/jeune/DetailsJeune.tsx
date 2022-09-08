@@ -86,8 +86,9 @@ export const DetailsJeune = ({
       <div className='flex flex-row items-stretch gap-x-6 mt-2'>
         {structureConseiller === StructureConseiller.MILO && (
           <BlocSituation
+            idJeune={jeune.id}
             situations={jeune.situations}
-            afficherUneSeuleSituation={true}
+            versionResumee={true}
           />
         )}
 
