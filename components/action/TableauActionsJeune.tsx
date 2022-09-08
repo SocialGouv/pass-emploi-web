@@ -17,6 +17,7 @@ import {
 import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
+  isMilo: boolean
   jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
@@ -29,6 +30,7 @@ interface TableauActionsJeuneProps {
 }
 
 export default function TableauActionsJeune({
+  isMilo,
   jeune,
   actions,
   isLoading,
@@ -99,10 +101,12 @@ export default function TableauActionsJeune({
 
   return (
     <>
-      <FiltresEtatsQualificationActions
-        defaultValue={etatsQualificationValides}
-        onFiltres={filtrerActionsParEtatsQualification}
-      />
+      {isMilo && (
+        <FiltresEtatsQualificationActions
+          defaultValue={etatsQualificationValides}
+          onFiltres={filtrerActionsParEtatsQualification}
+        />
+      )}
 
       <div className={isLoading ? 'animate-pulse' : ''}>
         <TableLayout describedBy='table-caption'>

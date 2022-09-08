@@ -126,6 +126,7 @@ function FicheJeune({
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
+  const isMilo = conseiller?.structure === StructureConseiller.MILO
 
   function toggleListeConseillers(): void {
     setExpandListeConseillers(!expandListeConseillers)
@@ -377,7 +378,8 @@ function FicheJeune({
           className='mt-8 pb-8'
         >
           <OngletActions
-            poleEmploi={isPoleEmploi}
+            isPoleEmploi={isPoleEmploi}
+            isMilo={isMilo}
             jeune={jeune}
             actionsInitiales={actionsInitiales}
             getActions={chargerActions}
