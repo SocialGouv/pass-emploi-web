@@ -177,5 +177,4 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
   }
 }
 
-// TODO-GAD Faire passer le test pour supprimer le warning
 export default withTransaction(Historique.name, 'page')(Historique)
