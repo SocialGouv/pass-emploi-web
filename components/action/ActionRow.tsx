@@ -29,11 +29,21 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
         className={`table-row cursor-pointer focus-within:primary_lighten rounded-small shadow-s hover:bg-primary_lighten`}
       >
         <RowCell className='rounded-l-small'>
-          <span className='flex items-center'>
+          <div className='flex items-center'>
+            {action.qualification?.isSituationNonProfessionnelle && (
+              <IconComponent
+                role='img'
+                focusable={false}
+                name={IconName.Suitcase}
+                aria-label='Qualifiée en Situation Non Professionnelle'
+                title='SNP'
+                className='w-4 h-4 fill-accent_2 mr-2'
+              />
+            )}
             <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
-          </span>
+          </div>
         </RowCell>
         <RowCell>
           <span className='flex items-center'>

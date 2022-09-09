@@ -373,11 +373,13 @@ export default function TableauJeunes({
             </div>
           </div>
 
-          <Pagination
-            pageCourante={pageJeunes}
-            nombreDePages={nombrePagesJeunes}
-            allerALaPage={setPageJeunes}
-          />
+          {nombrePagesJeunes > 1 && (
+            <Pagination
+              pageCourante={pageJeunes}
+              nombreDePages={nombrePagesJeunes}
+              allerALaPage={setPageJeunes}
+            />
+          )}
         </>
       )}
     </>

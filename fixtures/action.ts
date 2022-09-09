@@ -58,6 +58,10 @@ export const uneListeDActions = (): Action[] => [
     status: StatutAction.Terminee,
     dateEcheance: '2022-02-22T14:50:46.000Z',
     dateFinReelle: '2022-03-22T14:50:46.000Z',
+    qualification: {
+      libelle: 'Non SNP',
+      isSituationNonProfessionnelle: false,
+    },
   },
 ]
 
@@ -127,6 +131,10 @@ export const uneListeDActionsJson = (
     status: 'done',
     dateEcheance: '2022-02-22T14:50:46.000Z',
     dateFinReelle: '2022-03-22T14:50:46.000Z',
+    qualification: {
+      libelle: 'Non SNP',
+      code: 'NON_SNP',
+    },
   },
   ...supplementaryActions,
 ]

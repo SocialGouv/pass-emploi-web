@@ -152,9 +152,11 @@ function PageAction({
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
+
       {conseiller?.structure === StructureConseiller.MILO && (
         <TagQualificationAction statut={statut} qualification={qualification} />
       )}
+
       <div className='flex items-start justify-between mb-5'>
         <h2
           className='text-m-bold text-content_color'
