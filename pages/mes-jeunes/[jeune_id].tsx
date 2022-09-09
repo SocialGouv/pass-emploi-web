@@ -378,8 +378,8 @@ function FicheJeune({
           className='mt-8 pb-8'
         >
           <OngletActions
-            isPoleEmploi={isPoleEmploi}
-            isMilo={isMilo}
+            afficherActions={!isPoleEmploi}
+            afficherFiltresEtatsQualification={isMilo}
             jeune={jeune}
             actionsInitiales={actionsInitiales}
             getActions={chargerActions}

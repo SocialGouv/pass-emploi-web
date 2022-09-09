@@ -17,7 +17,7 @@ import {
 import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
-  isMilo: boolean
+  afficherFiltresEtatsQualification: boolean
   jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
@@ -30,7 +30,7 @@ interface TableauActionsJeuneProps {
 }
 
 export default function TableauActionsJeune({
-  isMilo,
+  afficherFiltresEtatsQualification,
   jeune,
   actions,
   isLoading,
@@ -101,7 +101,7 @@ export default function TableauActionsJeune({
 
   return (
     <>
-      {isMilo && (
+      {afficherFiltresEtatsQualification && (
         <FiltresEtatsQualificationActions
           defaultValue={etatsQualificationValides}
           onFiltres={filtrerActionsParEtatsQualification}
