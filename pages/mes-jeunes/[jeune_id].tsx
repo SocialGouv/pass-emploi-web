@@ -4,13 +4,10 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
-import { CollapseButton } from 'components/jeune/CollapseButton'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -24,11 +21,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  ConseillerHistorique,
-  DetailJeune,
-  MetadonneesFavoris,
-} from 'interfaces/jeune'
+import { DetailJeune, MetadonneesFavoris } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -61,7 +54,6 @@ interface FicheJeuneProps extends PageProps {
     metadonnees: MetadonneesActions
     page: number
   }
-  conseillers: ConseillerHistorique[]
   metadonneesFavoris?: MetadonneesFavoris
   rdvCreationSuccess?: boolean
   rdvModificationSuccess?: boolean
@@ -76,7 +68,6 @@ function FicheJeune({
   rdvs,
   actionsInitiales,
   metadonneesFavoris,
-  conseillers,
   rdvCreationSuccess,
   rdvModificationSuccess,
   rdvSuppressionSuccess,
@@ -89,13 +80,6 @@ function FicheJeune({
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
-
-  const listeConseillersReduite = conseillers.slice(0, 5)
-  const [conseillersAffiches, setConseillersAffiches] = useState<
-    ConseillerHistorique[]
-  >(listeConseillersReduite)
-  const [expandListeConseillers, setExpandListeConseillers] =
-    useState<boolean>(false)
 
   const [motifsSuppression, setMotifsSuppression] = useState<string[]>([])
 
@@ -127,15 +111,6 @@ function FicheJeune({
 
   const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
   const isMilo = conseiller?.structure === StructureConseiller.MILO
-
-  function toggleListeConseillers(): void {
-    setExpandListeConseillers(!expandListeConseillers)
-    if (!expandListeConseillers) {
-      setConseillersAffiches(conseillers)
-    } else {
-      setConseillersAffiches(listeConseillersReduite)
-    }
-  }
 
   function trackDossierMiloClick() {
     setTrackingLabel(pageTracking + ' - Dossier i-Milo')
@@ -279,18 +254,32 @@ function FicheJeune({
         </div>
       )}
 
-      <div className='flex justify-between'>
+      <DetailsJeune
+        jeune={jeune}
+        structureConseiller={conseiller?.structure}
+        metadonneesFavoris={metadonneesFavoris}
+        onDossierMiloClick={trackDossierMiloClick}
+        onDeleteJeuneClick={openDeleteJeuneModal}
+      />
+
+      <div className='flex justify-between mt-6 mb-4'>
         <div className='flex'>
           {!isPoleEmploi && (
-            <ButtonLink href={`/mes-jeunes/edition-rdv`} className='mb-4'>
-              Fixer un rendez-vous
+            <ButtonLink href={`/mes-jeunes/edition-rdv`}>
+              <IconComponent
+                name={IconName.Add}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Créer un rendez-vous
             </ButtonLink>
           )}
 
           {!isPoleEmploi && (
             <ButtonLink
               href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-              className='mb-4 ml-4'
+              className='ml-4'
             >
               <IconComponent
                 name={IconName.Add}
@@ -302,37 +291,6 @@ function FicheJeune({
             </ButtonLink>
           )}
         </div>
-        <Button
-          onClick={openDeleteJeuneModal}
-          style={ButtonStyle.SECONDARY}
-          className='w-fit'
-        >
-          Supprimer ce compte
-        </Button>
-      </div>
-
-      <DetailsJeune
-        jeune={jeune}
-        structureConseiller={conseiller?.structure}
-        metadonneesFavoris={metadonneesFavoris}
-        onDossierMiloClick={trackDossierMiloClick}
-      />
-
-      <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
-        <h2 className='text-base-bold mb-4'>Historique des conseillers</h2>
-        <ListeConseillersJeune
-          id='liste-conseillers'
-          conseillers={conseillersAffiches}
-        />
-        {conseillers.length > 5 && (
-          <div className='flex justify-end mt-8'>
-            <CollapseButton
-              controlledId='liste-conseillers'
-              isOpen={expandListeConseillers}
-              onClick={toggleListeConseillers}
-            />
-          </div>
-        )}
       </div>
 
       <TabList className='mt-10'>
@@ -411,35 +369,30 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, conseillers, metadonneesFavoris, rdvs, actions] =
-    await Promise.all([
-      jeunesService.getJeuneDetails(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      jeunesService.getConseillersDuJeuneServerSide(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      jeunesService.getMetadonneesFavorisJeune(
-        id,
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      isPoleEmploi
-        ? []
-        : rendezVousService.getRendezVousJeune(
-            context.query.jeune_id as string,
-            accessToken
-          ),
-      isPoleEmploi
-        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : actionsService.getActionsJeuneServerSide(
-            context.query.jeune_id as string,
-            page,
-            accessToken
-          ),
-    ])
+  const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
+    jeunesService.getJeuneDetails(
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    jeunesService.getMetadonneesFavorisJeune(
+      id,
+      context.query.jeune_id as string,
+      accessToken
+    ),
+    isPoleEmploi
+      ? []
+      : rendezVousService.getRendezVousJeune(
+          context.query.jeune_id as string,
+          accessToken
+        ),
+    isPoleEmploi
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+      : actionsService.getActionsJeuneServerSide(
+          context.query.jeune_id as string,
+          page,
+          accessToken
+        ),
+  ])
 
   if (!jeune) {
     return { notFound: true }
@@ -448,7 +401,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const now = new Date()
   const props: FicheJeuneProps = {
     jeune,
-    conseillers,
     metadonneesFavoris,
     rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
     actionsInitiales: { ...actions, page },

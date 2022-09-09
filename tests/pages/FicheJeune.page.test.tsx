@@ -10,7 +10,6 @@ import { uneAction, uneListeDActions } from 'fixtures/action'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import {
   desConseillersJeune,
-  unConseillerHistorique,
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
@@ -26,11 +25,7 @@ import {
 } from 'fixtures/services'
 import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  CategorieSituation,
-  ConseillerHistorique,
-  EtatSituation,
-} from 'interfaces/jeune'
+import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, {
   getServerSideProps,
@@ -53,7 +48,6 @@ describe('Fiche Jeune', () => {
     const jeune = unDetailJeune()
     const rdvs = desRdvListItems()
     const actions = uneListeDActions()
-    const listeConseillers = desConseillersJeune()
     const metadonneesFavoris = uneMetadonneeFavoris()
     let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
@@ -100,7 +94,6 @@ describe('Fiche Jeune', () => {
                 page: 1,
                 metadonnees: { nombreTotal: 0, nombrePages: 0 },
               }}
-              conseillers={listeConseillers}
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
@@ -109,40 +102,6 @@ describe('Fiche Jeune', () => {
               customDependances: dependances,
             }
           )
-        })
-
-        it('affiche la liste des 5 premiers conseillers du jeune', () => {
-          // Then
-          listeConseillers
-            .slice(0, 5)
-            .forEach(({ nom, prenom }: ConseillerHistorique) => {
-              expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-            })
-          expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
-        })
-
-        it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
-          // Then
-          const button = screen.getByRole('button', {
-            name: 'Voir l’historique complet',
-          })
-          expect(listeConseillers.length).toEqual(6)
-          expect(button).toBeInTheDocument()
-        })
-
-        it('permet d’afficher la liste complète des conseillers du jeune', async () => {
-          // Given
-          const button = screen.getByRole('button', {
-            name: 'Voir l’historique complet',
-          })
-
-          // When
-          await userEvent.click(button)
-
-          //Then
-          listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-            expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-          })
         })
 
         it('modifie le currentJeune', () => {
@@ -173,7 +132,6 @@ describe('Fiche Jeune', () => {
                 page: 1,
                 metadonnees: { nombreTotal: 0, nombrePages: 0 },
               }}
-              conseillers={listeConseillers}
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
@@ -278,7 +236,6 @@ describe('Fiche Jeune', () => {
                 page: 1,
                 metadonnees: { nombreTotal: 0, nombrePages: 0 },
               }}
-              conseillers={listeConseillers}
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
@@ -337,7 +294,6 @@ describe('Fiche Jeune', () => {
               page: 1,
               metadonnees: { nombreTotal: 14, nombrePages: 2 },
             }}
-            conseillers={listeConseillers}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
           />,
@@ -384,7 +340,7 @@ describe('Fiche Jeune', () => {
       it('permet la prise de rendez-vous', async () => {
         // Then
         expect(
-          screen.getByRole('link', { name: 'Fixer un rendez-vous' })
+          screen.getByRole('link', { name: 'Créer un rendez-vous' })
         ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
 
@@ -393,31 +349,6 @@ describe('Fiche Jeune', () => {
         expect(
           screen.getByRole('link', { name: 'Créer une nouvelle action' })
         ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
-      })
-    })
-
-    describe('quand il y a moins de 5 conseillers dans l’historique', () => {
-      it('n’affiche pas de bouton pour dérouler', async () => {
-        const conseillers = [unConseillerHistorique()]
-        // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: 1,
-              metadonnees: { nombreTotal: 14, nombrePages: 2 },
-            }}
-            conseillers={conseillers}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />
-        )
-
-        // Then
-        expect(conseillers.length).toEqual(1)
-        expect(() => screen.getByText('Voir l’historique complet')).toThrow()
       })
     })
 
@@ -433,7 +364,6 @@ describe('Fiche Jeune', () => {
               page: 1,
               metadonnees: { nombreTotal: 14, nombrePages: 2 },
             }}
-            conseillers={[]}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
           />,
@@ -441,6 +371,15 @@ describe('Fiche Jeune', () => {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           }
         )
+      })
+
+      it('affiche un lien vers l’historique des conseillers du jeune', async () => {
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Voir l’historique des conseillers',
+          })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/historique')
       })
 
       it("n'affiche pas la liste des rendez-vous du jeune", async () => {
@@ -493,7 +432,6 @@ describe('Fiche Jeune', () => {
                 page: 1,
                 metadonnees: { nombreTotal: 14, nombrePages: 2 },
               }}
-              conseillers={[]}
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
@@ -507,7 +445,7 @@ describe('Fiche Jeune', () => {
       })
 
       describe('quand le jeune a une liste de situations', () => {
-        it('affiche les informations concernant la situation du jeune ', () => {
+        it('affiche uniquement sa premiere situation ', () => {
           // Given
           const situations = [
             {
@@ -528,7 +466,6 @@ describe('Fiche Jeune', () => {
                 page: 1,
                 metadonnees: { nombreTotal: 14, nombrePages: 2 },
               }}
-              conseillers={[]}
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
@@ -539,8 +476,32 @@ describe('Fiche Jeune', () => {
           expect(screen.getByText('Situation')).toBeInTheDocument()
           expect(screen.getByText('Emploi')).toBeInTheDocument()
           expect(screen.getByText('en cours')).toBeInTheDocument()
-          expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
+          expect(() => screen.getByText('Contrat en Alternance')).toThrow()
+          expect(() => screen.getByText('prévue')).toThrow()
         })
+      })
+
+      it('affiche un lien vers l’historique des situations', () => {
+        // Given
+        renderWithContexts(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={[]}
+            actionsInitiales={{
+              actions,
+              page: 1,
+              metadonnees: { nombreTotal: 14, nombrePages: 2 },
+            }}
+            pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
+          />,
+          { customConseiller: { structure: StructureConseiller.MILO } }
+        )
+
+        // Then
+        expect(
+          screen.getByRole('link', { name: 'Voir le détail des situations' })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/historique')
       })
 
       describe("quand le jeune n'a pas activé son compte", () => {
@@ -555,7 +516,6 @@ describe('Fiche Jeune', () => {
                 page: 1,
                 metadonnees: { nombreTotal: 0, nombrePages: 0 },
               }}
-              conseillers={listeConseillers}
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
@@ -585,7 +545,6 @@ describe('Fiche Jeune', () => {
               page: 1,
               metadonnees: { nombreTotal: 0, nombrePages: 0 },
             }}
-            conseillers={[]}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
           />
@@ -611,7 +570,6 @@ describe('Fiche Jeune', () => {
               page: 1,
               metadonnees: { nombreTotal: 0, nombrePages: 0 },
             }}
-            conseillers={[]}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
           />
@@ -634,7 +592,6 @@ describe('Fiche Jeune', () => {
               page: 1,
               metadonnees: { nombreTotal: 14, nombrePages: 2 },
             }}
-            conseillers={[]}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
@@ -671,7 +628,6 @@ describe('Fiche Jeune', () => {
                 page: pageCourante,
                 metadonnees: { nombreTotal: 52, nombrePages: 6 },
               }}
-              conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -878,7 +834,6 @@ describe('Fiche Jeune', () => {
                 page: 3,
                 metadonnees: { nombreTotal: 22, nombrePages: 3 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -904,7 +859,6 @@ describe('Fiche Jeune', () => {
                 page: 3,
                 metadonnees: { nombreTotal: 52, nombrePages: 6 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -933,7 +887,6 @@ describe('Fiche Jeune', () => {
                 page: 1,
                 metadonnees: { nombreTotal: 195, nombrePages: 20 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -962,7 +915,6 @@ describe('Fiche Jeune', () => {
                 page: 11,
                 metadonnees: { nombreTotal: 195, nombrePages: 20 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -992,7 +944,6 @@ describe('Fiche Jeune', () => {
                 page: 4,
                 metadonnees: { nombreTotal: 195, nombrePages: 20 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -1022,7 +973,6 @@ describe('Fiche Jeune', () => {
                 page: 17,
                 metadonnees: { nombreTotal: 195, nombrePages: 20 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -1052,7 +1002,6 @@ describe('Fiche Jeune', () => {
                 page: 18,
                 metadonnees: { nombreTotal: 195, nombrePages: 20 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -1081,7 +1030,6 @@ describe('Fiche Jeune', () => {
                 page: 20,
                 metadonnees: { nombreTotal: 195, nombrePages: 20 },
               }}
-              conseillers={[]}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
@@ -1123,7 +1071,6 @@ describe('Fiche Jeune', () => {
               page: pageCourante,
               metadonnees: { nombreTotal: 52, nombrePages: 6 },
             }}
-            conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
@@ -1198,7 +1145,6 @@ describe('Fiche Jeune', () => {
               page: pageCourante,
               metadonnees: { nombreTotal: 52, nombrePages: 6 },
             }}
-            conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
@@ -1285,7 +1231,6 @@ describe('Fiche Jeune', () => {
               page: pageCourante,
               metadonnees: { nombreTotal: 52, nombrePages: 6 },
             }}
-            conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
           />,
@@ -1374,7 +1319,6 @@ describe('Fiche Jeune', () => {
               page: pageCourante,
               metadonnees: { nombreTotal: 52, nombrePages: 6 },
             }}
-            conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
@@ -1527,7 +1471,6 @@ describe('Fiche Jeune', () => {
             pageHeader: 'Kenji Jirac',
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
-            conseillers: expect.arrayContaining([]),
             metadonneesFavoris: expect.arrayContaining([]),
           },
         })
@@ -1576,16 +1519,6 @@ describe('Fiche Jeune', () => {
               metadonnees: { nombreTotal: 14, nombrePages: 2 },
             },
           },
-        })
-      })
-
-      it('récupère les conseillers du jeune', async () => {
-        // Then
-        expect(
-          jeunesService.getConseillersDuJeuneServerSide
-        ).toHaveBeenCalledWith('id-jeune', 'accessToken')
-        expect(actual).toMatchObject({
-          props: { conseillers: desConseillersJeune() },
         })
       })
     })

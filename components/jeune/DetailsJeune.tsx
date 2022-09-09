@@ -1,23 +1,19 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { MouseEventHandler, useState } from 'react'
 
 import { Badge } from '../ui/Indicateurs/Badge'
 import { InlineDefinitionItem } from '../ui/InlineDefinitionItem'
 
-import SituationTag from 'components/jeune/SituationTag'
+import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
+import { BlocSituation } from 'components/jeune/BlocSituation'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  CategorieSituation,
-  DetailJeune,
-  MetadonneesFavoris,
-} from 'interfaces/jeune'
+import { DetailJeune, MetadonneesFavoris } from 'interfaces/jeune'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { trackEvent } from 'utils/analytics/matomo'
-import { formatDayDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
@@ -25,6 +21,7 @@ interface DetailsJeuneProps {
   structureConseiller: StructureConseiller | undefined
   metadonneesFavoris?: MetadonneesFavoris
   onDossierMiloClick: () => void
+  onDeleteJeuneClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export const DetailsJeune = ({
@@ -32,6 +29,7 @@ export const DetailsJeune = ({
   structureConseiller,
   metadonneesFavoris,
   onDossierMiloClick,
+  onDeleteJeuneClick,
 }: DetailsJeuneProps) => {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -85,144 +83,28 @@ export const DetailsJeune = ({
 
   return (
     <>
-      <div className='border border-solid rounded-medium w-full p-4 mt-6 border-grey_100'>
-        <h2 className='text-base-bold mb-4'>Informations</h2>
-        <dl>
-          <div className='flex'>
-            <dt className='text-base-regular'>Ajouté le :</dt>
-            <dd>
-              <span className='text-base-medium ml-1'>
-                {formatDayDate(new Date(jeune.creationDate))}
-              </span>
-            </dd>
-          </div>
+      <div className='flex flex-row items-stretch gap-x-6'>
+        {structureConseiller === StructureConseiller.MILO && (
+          <BlocSituation
+            idJeune={jeune.id}
+            situations={jeune.situations}
+            versionResumee={true}
+          />
+        )}
 
-          {jeune.email && (
-            <div className='flex items-center'>
-              <dt>
-                <IconComponent
-                  name={IconName.Email}
-                  aria-label='e-mail'
-                  aria-hidden={false}
-                  focusable={false}
-                  className='w-[15px] h-[13px] mr-2'
-                />
-              </dt>
-              <dd className='text-primary'>{jeune.email}</dd>
-            </div>
-          )}
-
-          {structureConseiller !== StructureConseiller.MILO && (
-            <div className='flex'>
-              <dt className='text-base-regular mr-2'>
-                Identifiant Pôle emploi :
-              </dt>
-              <dd
-                className='text-base-bold'
-                onCopy={trackEventOnCopieIdentifiantPartenaire}
-              >
-                {identifiantPartenaire ? (
-                  identifiantPartenaire
-                ) : (
-                  <>
-                    <span className='sr-only'>non renseigné</span>
-                    <span>-</span>
-                  </>
-                )}
-              </dd>
-              <button
-                className='ml-5 flex items-center text-primary'
-                aria-label={
-                  identifiantPartenaire
-                    ? 'Modifier l’identifiant Pôle emploi'
-                    : 'Ajouter l’identifiant Pôle emploi'
-                }
-                onClick={openIdentifiantPartenaireModal}
-              >
-                <IconComponent
-                  name={IconName.Pen}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='w-4 h-4 mr-1 fill-primary'
-                />
-                {identifiantPartenaire ? 'Modifier' : 'Ajouter'}
-              </button>
-            </div>
-          )}
-
-          {jeune.urlDossier && (
-            <>
-              <dt className='sr-only'>Dossier externe</dt>
-              <dd className='mt-2'>
-                <a
-                  className='underline text-primary hover:text-primary_darken flex items-center'
-                  href={jeune.urlDossier}
-                  target='_blank'
-                  onClick={onDossierMiloClick}
-                  rel='noopener noreferrer'
-                >
-                  Dossier jeune i-Milo
-                  <IconComponent
-                    name={IconName.Launch}
-                    focusable='false'
-                    role='img'
-                    title='ouvrir'
-                    className='ml-2 w-3 h-3'
-                  />
-                </a>
-              </dd>
-            </>
-          )}
-        </dl>
+        <BlocInformationJeune
+          idJeune={jeune.id}
+          creationDate={jeune.creationDate}
+          email={jeune.email}
+          structureConseiller={structureConseiller}
+          onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
+          identifiantPartenaire={identifiantPartenaire}
+          onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
+          urlDossier={jeune.urlDossier}
+          onDossierMiloClick={onDossierMiloClick}
+          onDeleteJeuneClick={onDeleteJeuneClick}
+        />
       </div>
-
-      {structureConseiller === StructureConseiller.MILO && (
-        <div className='border border-solid rounded-medium w-full p-4 mt-2 border-grey_100'>
-          <h2 className='text-base-bold mb-1'>Situation</h2>
-          {!(jeune.situations && jeune.situations.length) && (
-            <ol>
-              <li className='mt-3'>
-                <div className='mb-3'>
-                  <SituationTag situation={CategorieSituation.SANS_SITUATION} />
-                </div>
-                <div className='mb-3'>
-                  Etat : <span className='text-base-medium'>--</span>
-                </div>
-                <div>
-                  Fin le : <span className='text-base-medium'>--</span>
-                </div>
-              </li>
-            </ol>
-          )}
-
-          {jeune.situations && Boolean(jeune.situations.length) && (
-            <ol className='flex flex-row flex-wrap'>
-              {jeune.situations.map((situation) => (
-                <li
-                  className='mt-3 mr-32 last:mr-0'
-                  key={situation.etat + '-' + situation.categorie}
-                >
-                  <div className='mb-3'>
-                    <SituationTag situation={situation.categorie} />
-                  </div>
-                  <div className='mb-3'>
-                    Etat :{' '}
-                    <span className='text-base-medium'>
-                      {situation.etat ?? '--'}
-                    </span>
-                  </div>
-                  <div className=''>
-                    Fin le :{' '}
-                    <span className='text-base-medium'>
-                      {situation.dateFin ?? '--'}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          )}
-        </div>
-      )}
 
       <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
         <div className='flex items-center mb-4'>
