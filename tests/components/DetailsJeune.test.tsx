@@ -33,8 +33,9 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
-        onDossierMiloClick={() => {}}
         metadonneesFavoris={metadonneesFavoris}
+        onDossierMiloClick={() => {}}
+        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -61,8 +62,9 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
-        onDossierMiloClick={() => {}}
         metadonneesFavoris={metadonneesFavoris}
+        onDossierMiloClick={() => {}}
+        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -80,8 +82,9 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
-        onDossierMiloClick={() => {}}
         metadonneesFavoris={metadonneesFavoris}
+        onDossierMiloClick={() => {}}
+        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -93,15 +96,15 @@ describe('<DetailsJeune>', () => {
   it('affiche les informations des favoris', () => {
     // Given
     const jeune = unDetailJeune()
-    const metadonneesFavori = uneMetadonneeFavoris()
 
     // When
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
+        metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={() => {}}
-        metadonneesFavoris={metadonneesFavori}
+        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -129,8 +132,9 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
-        onDossierMiloClick={() => {}}
         metadonneesFavoris={metadonneesFavoris}
+        onDossierMiloClick={() => {}}
+        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -161,8 +165,9 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             structureConseiller={StructureConseiller.POLE_EMPLOI}
-            onDossierMiloClick={() => {}}
             metadonneesFavoris={metadonneesFavoris}
+            onDossierMiloClick={() => {}}
+            onDeleteJeuneClick={() => {}}
           />,
           { customDependances: { jeunesService } }
         )
@@ -241,8 +246,9 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             structureConseiller={StructureConseiller.POLE_EMPLOI}
-            onDossierMiloClick={() => {}}
             metadonneesFavoris={metadonneesFavoris}
+            onDossierMiloClick={() => {}}
+            onDeleteJeuneClick={() => {}}
           />,
           { customDependances: { jeunesService } }
         )
@@ -322,8 +328,9 @@ describe('<DetailsJeune>', () => {
         <DetailsJeune
           jeune={jeune}
           structureConseiller={StructureConseiller.MILO}
-          onDossierMiloClick={() => {}}
           metadonneesFavoris={metadonneesFavoris}
+          onDossierMiloClick={() => {}}
+          onDeleteJeuneClick={() => {}}
         />,
         { customDependances: { jeunesService } }
       )
