@@ -40,19 +40,7 @@ export function BlocSituation({
         </ol>
       )}
 
-      {versionResumee && (
-        <Link href={`/mes-jeunes/${idJeune}/historique`}>
-          <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
-            Voir le détail des situations
-            <IconComponent
-              name={IconName.ChevronRight}
-              className='w-4 h-5 fill-[inherit]'
-              aria-hidden={true}
-              focusable={false}
-            />
-          </a>
-        </Link>
-      )}
+      {versionResumee && <LienVersHistorique idJeune={idJeune} />}
     </div>
   )
 }
@@ -93,5 +81,21 @@ function Situation(props: {
         <span className='text-base-medium'>{props.dateFin ?? '--'}</span>
       </div>
     </li>
+  )
+}
+
+function LienVersHistorique(props: { idJeune: string }) {
+  return (
+    <Link href={`/mes-jeunes/${props.idJeune}/historique`}>
+      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
+        Voir le détail des situations
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </a>
+    </Link>
   )
 }
