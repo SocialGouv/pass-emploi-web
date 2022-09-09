@@ -1145,7 +1145,6 @@ describe('Fiche Jeune', () => {
               page: pageCourante,
               metadonnees: { nombreTotal: 52, nombrePages: 6 },
             }}
-            conseillers={listeConseillers}
             pageTitle={''}
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
