@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { unDetailJeune, uneMetadonneeFavoris } from 'fixtures/jeune'
+import { unDetailJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { JeunesService } from 'services/jeunes.service'
@@ -13,7 +13,6 @@ jest.mock('components/Modal')
 
 describe('<DetailsJeune>', () => {
   let jeunesService: JeunesService
-  const metadonneesFavoris = uneMetadonneeFavoris()
 
   beforeEach(() => {
     jeunesService = mockedJeunesService({
@@ -33,7 +32,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
-        metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={() => {}}
         onDeleteJeuneClick={() => {}}
       />,
@@ -62,7 +60,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
-        metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={() => {}}
         onDeleteJeuneClick={() => {}}
       />,
@@ -82,7 +79,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
-        metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={() => {}}
         onDeleteJeuneClick={() => {}}
       />,
@@ -91,56 +87,6 @@ describe('<DetailsJeune>', () => {
 
     // Then
     expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
-  })
-
-  it('affiche les informations des favoris', () => {
-    // Given
-    const jeune = unDetailJeune()
-
-    // When
-    renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
-        metadonneesFavoris={metadonneesFavoris}
-        onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
-      />,
-      { customDependances: { jeunesService } }
-    )
-
-    // Then
-    expect(screen.getByText(/Offres/)).toBeInTheDocument()
-    expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
-    expect(screen.getByText('Alternance :')).toBeInTheDocument()
-    expect(screen.getByText('Immersion :')).toBeInTheDocument()
-    expect(screen.getByText('Service civique :')).toBeInTheDocument()
-    expect(
-      screen.getByRole('link', { name: 'Voir la liste des favoris' })
-    ).toHaveAttribute('href', '/mes-jeunes/jeune-1/favoris')
-  })
-
-  it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', () => {
-    // Given
-    const jeune = unDetailJeune()
-    const metadonneesFavoris = uneMetadonneeFavoris({
-      autoriseLePartage: false,
-    })
-
-    // When
-    renderWithContexts(
-      <DetailsJeune
-        jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
-        metadonneesFavoris={metadonneesFavoris}
-        onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
-      />,
-      { customDependances: { jeunesService } }
-    )
-
-    // Then
-    expect(() => screen.getByText('Voir la liste des favoris')).toThrow()
   })
 
   describe('identifiant partenaire', () => {
@@ -165,7 +111,6 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             structureConseiller={StructureConseiller.POLE_EMPLOI}
-            metadonneesFavoris={metadonneesFavoris}
             onDossierMiloClick={() => {}}
             onDeleteJeuneClick={() => {}}
           />,
@@ -246,7 +191,6 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             structureConseiller={StructureConseiller.POLE_EMPLOI}
-            metadonneesFavoris={metadonneesFavoris}
             onDossierMiloClick={() => {}}
             onDeleteJeuneClick={() => {}}
           />,
@@ -328,7 +272,6 @@ describe('<DetailsJeune>', () => {
         <DetailsJeune
           jeune={jeune}
           structureConseiller={StructureConseiller.MILO}
-          metadonneesFavoris={metadonneesFavoris}
           onDossierMiloClick={() => {}}
           onDeleteJeuneClick={() => {}}
         />,

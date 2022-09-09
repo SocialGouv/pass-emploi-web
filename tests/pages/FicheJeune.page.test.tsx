@@ -1384,6 +1384,64 @@ describe('Fiche Jeune', () => {
         )
       })
     })
+
+    describe('quand on sélectionne l’onglet des favoris', () => {
+      it('affiche les informations des offres et des recherches sauvegardées', async () => {
+        // Given
+        renderWithContexts(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
+            pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
+          />
+        )
+
+        // When
+        await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
+
+        // Then
+        expect(screen.getByText(/Offres/)).toBeInTheDocument()
+        expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
+        expect(screen.getByText('Alternance :')).toBeInTheDocument()
+        expect(screen.getByText('Immersion :')).toBeInTheDocument()
+        expect(screen.getByText('Service civique :')).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', { name: 'Voir la liste des favoris' })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/favoris')
+      })
+
+      it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', async () => {
+        // Given
+        const metadonneesFavoris = uneMetadonneeFavoris({
+          autoriseLePartage: false,
+        })
+        renderWithContexts(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions: [],
+              page: 1,
+              metadonnees: { nombreTotal: 0, nombrePages: 0 },
+            }}
+            pageTitle={''}
+            metadonneesFavoris={metadonneesFavoris}
+          />
+        )
+
+        // When
+        await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
+
+        // Then
+        expect(() => screen.getByText('Voir la liste des favoris')).toThrow()
+      })
+    })
   })
 
   describe('server side', () => {
