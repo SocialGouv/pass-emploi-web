@@ -16,11 +16,11 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface HistoriqueProps extends PageProps {
   idJeune: string
-  structure: StructureConseiller
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
@@ -53,12 +53,8 @@ function HistoriqueConseillers({
   )
 }
 
-function Historique({
-  idJeune,
-  structure,
-  situations,
-  conseillers,
-}: HistoriqueProps) {
+function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
+  const [conseiller] = useConseiller()
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.SITUATIONS)
 
   async function switchTab(tab: Onglet) {
@@ -68,7 +64,7 @@ function Historique({
 
   return (
     <>
-      {structure === StructureConseiller.MILO && (
+      {conseiller?.structure === StructureConseiller.MILO && (
         <>
           <TabList className='mt-10'>
             <Tab
@@ -120,12 +116,13 @@ function Historique({
         </>
       )}
 
-      {[
-        StructureConseiller.POLE_EMPLOI,
-        StructureConseiller.PASS_EMPLOI,
-      ].includes(structure) && (
-        <HistoriqueConseillers conseillers={conseillers} avecTitre={true} />
-      )}
+      {conseiller?.structure &&
+        [
+          StructureConseiller.POLE_EMPLOI,
+          StructureConseiller.PASS_EMPLOI,
+        ].includes(conseiller?.structure) && (
+          <HistoriqueConseillers conseillers={conseillers} avecTitre={true} />
+        )}
     </>
   )
 }
@@ -140,10 +137,7 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const {
-    session: {
-      accessToken,
-      user: { structure },
-    },
+    session: { accessToken },
   } = sessionOrRedirect
 
   const [jeune, conseillers] = await Promise.all([
@@ -164,7 +158,6 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
   return {
     props: {
       idJeune: jeune.id,
-      structure: structure as StructureConseiller,
       situations: jeune.situations,
       conseillers: conseillers,
       pageTitle: 'Historique',
