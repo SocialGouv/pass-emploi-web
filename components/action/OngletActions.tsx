@@ -3,11 +3,17 @@ import React, { useEffect, useRef, useState } from 'react'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import Pagination from 'components/ui/Table/Pagination'
-import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  EtatQualificationAction,
+  MetadonneesActions,
+  StatutAction,
+} from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
 interface OngletActionsProps {
-  poleEmploi: boolean
+  afficherActions: boolean
+  afficherFiltresEtatsQualification: boolean
   jeune: BaseJeune
   actionsInitiales: {
     actions: Action[]
@@ -17,6 +23,7 @@ interface OngletActionsProps {
   getActions: (
     page: number,
     statuts: StatutAction[],
+    etatsQualification: EtatQualificationAction[],
     tri: string
   ) => Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
 }
@@ -32,21 +39,26 @@ export function OngletActions({
   actionsInitiales,
   getActions,
   jeune,
-  poleEmploi,
+  afficherActions,
+  afficherFiltresEtatsQualification,
 }: OngletActionsProps) {
-  const [filtres, setFiltres] = useState<StatutAction[]>([])
-  const [tri, setTri] = useState<TRI>(TRI.dateEcheanceDecroissante)
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions
   )
+  const [tri, setTri] = useState<TRI>(TRI.dateEcheanceDecroissante)
+
+  const [filtresParStatuts, setFiltresParStatuts] = useState<StatutAction[]>([])
+  const [filtresParEtatsQualification, setFiltresParEtatsQualification] =
+    useState<EtatQualificationAction[]>([])
+
   const [nombrePages, setNombrePages] = useState<number>(
     actionsInitiales.metadonnees.nombrePages
   )
   const [pageCourante, setPageCourante] = useState<number>(
     actionsInitiales.page
   )
-  const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const stateChanged = useRef<boolean>(false)
 
   function changerPage(page: number) {
@@ -55,14 +67,27 @@ export function OngletActions({
     stateChanged.current = true
   }
 
-  function filtrerActions(statutsSelectionnes: StatutAction[]) {
+  function filtrerActions({
+    statuts,
+    etatsQualification,
+  }: {
+    statuts: StatutAction[]
+    etatsQualification: EtatQualificationAction[]
+  }) {
     if (
-      statutsSelectionnes.every((statut) => filtres.includes(statut)) &&
-      filtres.every((filtre) => statutsSelectionnes.includes(filtre))
+      statuts.every((statut) => filtresParStatuts.includes(statut)) &&
+      filtresParStatuts.every((filtre) => statuts.includes(filtre)) &&
+      etatsQualification.every((etat) =>
+        filtresParEtatsQualification.includes(etat)
+      ) &&
+      filtresParEtatsQualification.every((filtre) =>
+        etatsQualification.includes(filtre)
+      )
     )
       return
 
-    setFiltres(statutsSelectionnes)
+    setFiltresParStatuts(statuts)
+    setFiltresParEtatsQualification(etatsQualification)
     setPageCourante(1)
     stateChanged.current = true
   }
@@ -77,29 +102,37 @@ export function OngletActions({
     if (stateChanged.current) {
       setIsLoading(true)
 
-      getActions(pageCourante, filtres, tri).then(
-        ({ actions, metadonnees }) => {
-          setActionsAffichees(actions)
-          setNombrePages(metadonnees.nombrePages)
-          setIsLoading(false)
-        }
-      )
+      getActions(
+        pageCourante,
+        filtresParStatuts,
+        filtresParEtatsQualification,
+        tri
+      ).then(({ actions, metadonnees }) => {
+        setActionsAffichees(actions)
+        setNombrePages(metadonnees.nombrePages)
+        setIsLoading(false)
+      })
     }
-  }, [tri, filtres, pageCourante])
+  }, [tri, filtresParStatuts, filtresParEtatsQualification, pageCourante])
 
   return (
     <>
-      {poleEmploi && <IntegrationPoleEmploi label='actions et démarches' />}
+      {!afficherActions && (
+        <IntegrationPoleEmploi label='actions et démarches' />
+      )}
 
-      {!poleEmploi && actionsInitiales.metadonnees.nombreTotal === 0 && (
+      {afficherActions && actionsInitiales.metadonnees.nombreTotal === 0 && (
         <p className='text-base-bold mb-2'>
           {jeune.prenom} {jeune.nom} n’a pas encore d’action
         </p>
       )}
 
-      {!poleEmploi && actionsInitiales.metadonnees.nombreTotal > 0 && (
+      {afficherActions && actionsInitiales.metadonnees.nombreTotal > 0 && (
         <>
           <TableauActionsJeune
+            afficherFiltresEtatsQualification={
+              afficherFiltresEtatsQualification
+            }
             jeune={jeune}
             actions={actionsAffichees}
             isLoading={isLoading}

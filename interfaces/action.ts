@@ -34,6 +34,12 @@ export enum StatutAction {
   Annulee = 'Annulee',
 }
 
+export enum EtatQualificationAction {
+  NonQualifiable = 'NonQualifiable',
+  AQualifier = 'AQualifier',
+  Qualifiee = 'Qualifiee',
+}
+
 export interface Commentaire {
   id: string
   idAction: string

@@ -24,7 +24,7 @@ import {
   mockedJeunesService,
   mockedRendezVousService,
 } from 'fixtures/services'
-import { StatutAction } from 'interfaces/action'
+import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
@@ -687,7 +687,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: 2, statuts: [], tri: 'date_echeance_decroissante' }
+            {
+              page: 2,
+              statuts: [],
+              etatsQualification: [],
+              tri: 'date_echeance_decroissante',
+            }
           )
           expect(screen.getByLabelText('Page 2')).toHaveAttribute(
             'aria-current',
@@ -703,7 +708,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: 1, statuts: [], tri: 'date_echeance_decroissante' }
+            {
+              page: 1,
+              statuts: [],
+              etatsQualification: [],
+              tri: 'date_echeance_decroissante',
+            }
           )
           expect(screen.getByLabelText('Page 1')).toHaveAttribute(
             'aria-current',
@@ -721,7 +731,12 @@ describe('Fiche Jeune', () => {
           // Then
           expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
             jeune.id,
-            { page: 6, statuts: [], tri: 'date_echeance_decroissante' }
+            {
+              page: 6,
+              statuts: [],
+              etatsQualification: [],
+              tri: 'date_echeance_decroissante',
+            }
           )
           expect(screen.getByLabelText('Page 6')).toHaveAttribute(
             'aria-current',
@@ -742,6 +757,7 @@ describe('Fiche Jeune', () => {
             {
               page: pageCourante - 1,
               statuts: [],
+              etatsQualification: [],
               tri: 'date_echeance_decroissante',
             }
           )
@@ -760,6 +776,7 @@ describe('Fiche Jeune', () => {
             {
               page: pageCourante + 1,
               statuts: [],
+              etatsQualification: [],
               tri: 'date_echeance_decroissante',
             }
           )
@@ -779,6 +796,7 @@ describe('Fiche Jeune', () => {
             {
               page: pageCourante - 1,
               statuts: [],
+              etatsQualification: [],
               tri: 'date_echeance_decroissante',
             }
           )
@@ -788,6 +806,7 @@ describe('Fiche Jeune', () => {
             {
               page: pageCourante - 2,
               statuts: [],
+              etatsQualification: [],
               tri: 'date_echeance_decroissante',
             }
           )
@@ -1126,6 +1145,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            etatsQualification: [],
             tri: 'date_echeance_decroissante',
           }
         )
@@ -1149,6 +1169,93 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+      })
+    })
+
+    describe('filtrer les actions par etat de qualification', () => {
+      let actionsService: ActionsService
+      let pageCourante: number
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeuneClientSide: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action filtrée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })),
+        })
+
+        pageCourante = 1
+        renderWithContexts(
+          <FicheJeune
+            jeune={jeune}
+            rdvs={rdvs}
+            actionsInitiales={{
+              actions,
+              page: pageCourante,
+              metadonnees: { nombreTotal: 52, nombrePages: 6 },
+            }}
+            conseillers={listeConseillers}
+            pageTitle={''}
+            onglet={Onglet.ACTIONS}
+            metadonneesFavoris={metadonneesFavoris}
+          />,
+          {
+            customDependances: { actionsService },
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
+        )
+
+        // When
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Filtrer par qualification' })
+        )
+        await userEvent.click(screen.getByLabelText('Actions à qualifier'))
+        await userEvent.click(screen.getByLabelText('Actions qualifiées'))
+        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+      })
+
+      it('filtre les actions', () => {
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            etatsQualification: [
+              EtatQualificationAction.AQualifier,
+              EtatQualificationAction.Qualifiee,
+            ],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+        expect(screen.getByText('Action filtrée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', () => {
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve les filtres de qualification en changeant de page', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [],
+            etatsQualification: [
+              EtatQualificationAction.AQualifier,
+              EtatQualificationAction.Qualifiee,
+            ],
             tri: 'date_echeance_decroissante',
           }
         )
@@ -1199,6 +1306,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_croissante',
           }
         )
@@ -1207,6 +1315,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_decroissante',
           }
         )
@@ -1235,6 +1344,7 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_decroissante',
           }
         )
@@ -1286,6 +1396,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_echeance_croissante',
           }
         )
@@ -1294,6 +1405,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_echeance_decroissante',
           }
         )
@@ -1322,6 +1434,7 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_echeance_croissante',
           }
         )
@@ -1447,7 +1560,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
-          { page: 1, statuts: [] },
+          1,
           'accessToken'
         )
         expect(actual).toMatchObject({
@@ -1486,7 +1599,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
-          { page: 3, statuts: [] },
+          3,
           'accessToken'
         )
         expect(actual).toMatchObject({

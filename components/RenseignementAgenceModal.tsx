@@ -147,7 +147,7 @@ export default function RenseignementAgenceModal({
           <ResettableTextInput
             id='agence-libre'
             ref={agenceLibreRef}
-            value={agenceLibre.value ?? ''}
+            defaultValue={agenceLibre.value ?? ''}
             onChange={(value) => setAgenceLibre({ value })}
             onReset={() => setAgenceLibre({ value: '' })}
             className={`mt-2 border border-solid rounded-medium w-full mt-2 ${

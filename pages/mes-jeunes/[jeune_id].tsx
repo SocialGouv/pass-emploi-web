@@ -17,7 +17,12 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Action, MetadonneesActions, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  EtatQualificationAction,
+  MetadonneesActions,
+  StatutAction,
+} from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   ConseillerHistorique,
@@ -121,6 +126,7 @@ function FicheJeune({
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
+  const isMilo = conseiller?.structure === StructureConseiller.MILO
 
   function toggleListeConseillers(): void {
     setExpandListeConseillers(!expandListeConseillers)
@@ -154,11 +160,13 @@ function FicheJeune({
   async function chargerActions(
     page: number,
     statuts: StatutAction[],
+    etatsQualification: EtatQualificationAction[],
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
     const result = await actionsService.getActionsJeuneClientSide(jeune.id, {
       page,
       statuts,
+      etatsQualification,
       tri,
     })
 
@@ -370,7 +378,8 @@ function FicheJeune({
           className='mt-8 pb-8'
         >
           <OngletActions
-            poleEmploi={isPoleEmploi}
+            afficherActions={!isPoleEmploi}
+            afficherFiltresEtatsQualification={isMilo}
             jeune={jeune}
             actionsInitiales={actionsInitiales}
             getActions={chargerActions}
@@ -427,7 +436,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
         ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
         : actionsService.getActionsJeuneServerSide(
             context.query.jeune_id as string,
-            { page, statuts: [] },
+            page,
             accessToken
           ),
     ])
