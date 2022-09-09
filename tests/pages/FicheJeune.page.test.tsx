@@ -47,7 +47,17 @@ describe('Fiche Jeune', () => {
   describe('client side', () => {
     const jeune = unDetailJeune()
     const rdvs = desRdvListItems()
-    const actions = uneListeDActions()
+    const actions = uneListeDActions().concat(
+      uneAction({
+        id: 'id-action-5',
+        content: 'Action 5',
+        status: StatutAction.Terminee,
+        qualification: {
+          libelle: 'SNP',
+          isSituationNonProfessionnelle: true,
+        },
+      })
+    )
     const metadonneesFavoris = uneMetadonneeFavoris()
     let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
@@ -114,6 +124,7 @@ describe('Fiche Jeune', () => {
           const deleteButton = screen.getByText('Supprimer ce compte')
           expect(deleteButton).toBeInTheDocument()
         })
+
         it('affiche les informations des favoris du jeune', () => {
           // Then
           expect(screen.getByText('Favoris')).toBeInTheDocument()
@@ -324,6 +335,14 @@ describe('Fiche Jeune', () => {
         actions.forEach((action) => {
           expect(screen.getByText(action.content)).toBeInTheDocument()
         })
+        expect(
+          within(
+            screen.getByRole('row', {
+              name: `Détail de l'action ${actions[4].content}`,
+            })
+          ).getByLabelText(`Qualifiée en Situation Non Professionnelle`)
+        ).toBeInTheDocument()
+
         expect(
           screen.getByRole('tab', { selected: true })
         ).toHaveAccessibleName('Actions 14')
