@@ -15,6 +15,7 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -56,11 +57,22 @@ function HistoriqueConseillers({
 function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
   const [conseiller] = useConseiller()
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.SITUATIONS)
+  const situationsTracking = 'Détail jeune – Situations'
+  const conseillersTracking = 'Détail jeune – Historique conseillers'
+  const initialTracking =
+    conseiller?.structure === StructureConseiller.MILO
+      ? situationsTracking
+      : conseillersTracking
+  const [tracking, setTracking] = useState<string>(initialTracking)
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
-    // TODO-GAD setTracking(tab === Onglet.OFFRES ? favorisTracking : recherchesTracking)
+    setTracking(
+      tab === Onglet.SITUATIONS ? situationsTracking : conseillersTracking
+    )
   }
+
+  useMatomo(tracking)
 
   return (
     <>
