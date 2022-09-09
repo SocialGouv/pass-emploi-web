@@ -11,7 +11,7 @@ describe('TableauActionsJeune', () => {
       // Given
       render(
         <TableauActionsJeune
-          isMilo={false}
+          afficherFiltresEtatsQualification={false}
           jeune={uneBaseJeune()}
           actions={[]}
           isLoading={false}
@@ -67,7 +67,7 @@ describe('TableauActionsJeune', () => {
         // Given
         render(
           <TableauActionsJeune
-            isMilo={true}
+            afficherFiltresEtatsQualification={true}
             jeune={uneBaseJeune()}
             actions={[]}
             isLoading={false}
@@ -131,7 +131,7 @@ describe('TableauActionsJeune', () => {
         // Given
         render(
           <TableauActionsJeune
-            isMilo={false}
+            afficherFiltresEtatsQualification={false}
             jeune={uneBaseJeune()}
             actions={[]}
             isLoading={false}

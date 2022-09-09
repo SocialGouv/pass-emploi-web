@@ -12,8 +12,8 @@ import {
 import { BaseJeune } from 'interfaces/jeune'
 
 interface OngletActionsProps {
-  isPoleEmploi: boolean
-  isMilo: boolean
+  afficherActions: boolean
+  afficherFiltresEtatsQualification: boolean
   jeune: BaseJeune
   actionsInitiales: {
     actions: Action[]
@@ -39,8 +39,8 @@ export function OngletActions({
   actionsInitiales,
   getActions,
   jeune,
-  isPoleEmploi,
-  isMilo,
+  afficherActions,
+  afficherFiltresEtatsQualification,
 }: OngletActionsProps) {
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions
@@ -117,18 +117,22 @@ export function OngletActions({
 
   return (
     <>
-      {isPoleEmploi && <IntegrationPoleEmploi label='actions et démarches' />}
+      {!afficherActions && (
+        <IntegrationPoleEmploi label='actions et démarches' />
+      )}
 
-      {!isPoleEmploi && actionsInitiales.metadonnees.nombreTotal === 0 && (
+      {afficherActions && actionsInitiales.metadonnees.nombreTotal === 0 && (
         <p className='text-base-bold mb-2'>
           {jeune.prenom} {jeune.nom} n’a pas encore d’action
         </p>
       )}
 
-      {!isPoleEmploi && actionsInitiales.metadonnees.nombreTotal > 0 && (
+      {afficherActions && actionsInitiales.metadonnees.nombreTotal > 0 && (
         <>
           <TableauActionsJeune
-            isMilo={isMilo}
+            afficherFiltresEtatsQualification={
+              afficherFiltresEtatsQualification
+            }
             jeune={jeune}
             actions={actionsAffichees}
             isLoading={isLoading}
