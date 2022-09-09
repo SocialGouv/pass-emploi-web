@@ -23,46 +23,18 @@ export function BlocSituation({
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       {versionResumee && <h2 className='text-base-bold mb-1'>Situation</h2>}
-      {!(situations && situations.length) && (
-        <ol>
-          <li className='mt-3'>
-            <div className='mb-3'>
-              <SituationTag situation={CategorieSituation.SANS_SITUATION} />
-            </div>
-            <div className='mb-3'>
-              Etat : <span className='text-base-medium'>--</span>
-            </div>
-            <div>
-              Fin le : <span className='text-base-medium'>--</span>
-            </div>
-          </li>
-        </ol>
-      )}
+      {!(situations && situations.length) && <SansSituation />}
 
       {situations && Boolean(situations.length) && (
         <ol className='flex flex-row flex-wrap'>
           {situations
             .map((situation) => (
-              <li
-                className='mt-3 mr-32 last:mr-0'
+              <Situation
                 key={situation.etat + '-' + situation.categorie}
-              >
-                <div className='mb-3'>
-                  <SituationTag situation={situation.categorie} />
-                </div>
-                <div className='mb-3'>
-                  Etat :{' '}
-                  <span className='text-base-medium'>
-                    {situation.etat ?? '--'}
-                  </span>
-                </div>
-                <div className=''>
-                  Fin le :{' '}
-                  <span className='text-base-medium'>
-                    {situation.dateFin ?? '--'}
-                  </span>
-                </div>
-              </li>
+                categorie={situation.categorie}
+                etat={situation.etat}
+                dateFin={situation.dateFin}
+              />
             ))
             .slice(0, versionResumee ? 1 : situations.length)}
         </ol>
@@ -82,5 +54,44 @@ export function BlocSituation({
         </Link>
       )}
     </div>
+  )
+}
+
+function SansSituation() {
+  return (
+    <ol>
+      <li className='mt-3'>
+        <div className='mb-3'>
+          <SituationTag situation={CategorieSituation.SANS_SITUATION} />
+        </div>
+        <div className='mb-3'>
+          Etat : <span className='text-base-medium'>--</span>
+        </div>
+        <div>
+          Fin le : <span className='text-base-medium'>--</span>
+        </div>
+      </li>
+    </ol>
+  )
+}
+
+function Situation(props: {
+  categorie: CategorieSituation
+  etat?: EtatSituation
+  dateFin?: string
+}) {
+  return (
+    <li className='mt-3 mr-32 last:mr-0'>
+      <div className='mb-3'>
+        <SituationTag situation={props.categorie} />
+      </div>
+      <div className='mb-3'>
+        Etat : <span className='text-base-medium'>{props.etat ?? '--'}</span>
+      </div>
+      <div className=''>
+        Fin le :{' '}
+        <span className='text-base-medium'>{props.dateFin ?? '--'}</span>
+      </div>
+    </li>
   )
 }
