@@ -28,6 +28,7 @@ export function BlocSituation({
       {situations && Boolean(situations.length) && (
         <ol className='flex flex-row flex-wrap'>
           {situations
+            .slice(0, versionResumee ? 1 : situations.length)
             .map((situation) => (
               <Situation
                 key={situation.etat + '-' + situation.categorie}
@@ -35,8 +36,7 @@ export function BlocSituation({
                 etat={situation.etat}
                 dateFin={situation.dateFin}
               />
-            ))
-            .slice(0, versionResumee ? 1 : situations.length)}
+            ))}
         </ol>
       )}
 

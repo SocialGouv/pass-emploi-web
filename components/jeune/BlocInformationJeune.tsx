@@ -96,9 +96,7 @@ function IndentifiantPartenaire(props: {
     <div className='flex'>
       <dt className='text-base-regular mr-2'>Identifiant Pôle emploi :</dt>
       <dd className='text-base-bold' onCopy={props.onCopy}>
-        {props.identifiantPartenaire ? (
-          props.identifiantPartenaire
-        ) : (
+        {props.identifiantPartenaire ?? (
           <>
             <span className='sr-only'>non renseigné</span>
             <span>-</span>

@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
@@ -20,7 +20,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface HistoriqueProps extends PageProps {
+type HistoriqueProps = PageProps & {
   idJeune: string
   situations: Array<{
     etat?: EtatSituation
@@ -37,99 +37,88 @@ export enum Onglet {
 
 function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
   const [conseiller] = useConseiller()
-  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.SITUATIONS)
+  const [currentTab, setCurrentTab] = useState<Onglet | undefined>()
+
   const situationsTracking = 'Détail jeune – Situations'
   const conseillersTracking = 'Détail jeune – Historique conseillers'
-  const initialTracking =
-    conseiller?.structure === StructureConseiller.MILO
-      ? situationsTracking
-      : conseillersTracking
-  const [tracking, setTracking] = useState<string>(initialTracking)
-
-  async function switchTab(tab: Onglet) {
-    setCurrentTab(tab)
-    setTracking(
-      tab === Onglet.SITUATIONS ? situationsTracking : conseillersTracking
-    )
-  }
+  const [tracking, setTracking] = useState<string | undefined>()
 
   useMatomo(tracking)
 
+  useEffect(() => {
+    if (conseiller && !currentTab) {
+      setCurrentTab(
+        conseiller?.structure === StructureConseiller.MILO
+          ? Onglet.SITUATIONS
+          : Onglet.CONSEILLERS
+      )
+    }
+  }, [conseiller, currentTab])
+
+  useEffect(() => {
+    if (currentTab) {
+      setTracking(
+        currentTab === Onglet.SITUATIONS
+          ? situationsTracking
+          : conseillersTracking
+      )
+    }
+  }, [currentTab])
+
   return (
     <>
-      {conseiller?.structure === StructureConseiller.MILO && (
-        <>
-          <TabList className='mt-10'>
-            <Tab
-              label='Situations'
-              selected={currentTab === Onglet.SITUATIONS}
-              controls='liste-situations'
-              onSelectTab={() => switchTab(Onglet.SITUATIONS)}
-              iconName={IconName.Calendar}
-            />
-            <Tab
-              label='Historique des conseillers'
-              selected={currentTab === Onglet.CONSEILLERS}
-              controls='liste-conseillers'
-              onSelectTab={() => switchTab(Onglet.CONSEILLERS)}
-              iconName={IconName.Actions}
-            />
-          </TabList>
+      <TabList className='mt-10'>
+        {conseiller?.structure === StructureConseiller.MILO && (
+          <Tab
+            label='Situations'
+            selected={currentTab === Onglet.SITUATIONS}
+            controls='liste-situations'
+            onSelectTab={() => setCurrentTab(Onglet.SITUATIONS)}
+            iconName={IconName.Calendar}
+          />
+        )}
+        <Tab
+          label='Historique des conseillers'
+          selected={currentTab === Onglet.CONSEILLERS}
+          controls='liste-conseillers'
+          onSelectTab={() => setCurrentTab(Onglet.CONSEILLERS)}
+          iconName={IconName.Actions}
+        />
+      </TabList>
 
-          {currentTab === Onglet.SITUATIONS && (
-            <div
-              role='tabpanel'
-              aria-labelledby='liste-situations--tab'
-              tabIndex={0}
-              id='liste-situations'
-              className='mt-8 pb-8'
-            >
-              <BlocSituation
-                idJeune={idJeune}
-                situations={situations}
-                versionResumee={false}
-              />
-            </div>
-          )}
-
-          {currentTab === Onglet.CONSEILLERS && (
-            <div
-              role='tabpanel'
-              aria-labelledby='liste-conseillers--tab'
-              tabIndex={0}
-              id='liste-conseillers'
-              className='mt-8 pb-8'
-            >
-              <HistoriqueConseillers
-                conseillers={conseillers}
-                avecTitre={false}
-              />
-            </div>
-          )}
-        </>
+      {currentTab === Onglet.SITUATIONS && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-situations--tab'
+          tabIndex={0}
+          id='liste-situations'
+          className='mt-8 pb-8'
+        >
+          <BlocSituation
+            idJeune={idJeune}
+            situations={situations}
+            versionResumee={false}
+          />
+        </div>
       )}
 
-      {conseiller?.structure !== StructureConseiller.MILO && (
-        <HistoriqueConseillers conseillers={conseillers} avecTitre={true} />
+      {currentTab === Onglet.CONSEILLERS && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-conseillers--tab'
+          tabIndex={0}
+          id='liste-conseillers'
+          className='mt-8 pb-8'
+        >
+          <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
+            <ListeConseillersJeune
+              id='liste-conseillers'
+              conseillers={conseillers}
+            />
+          </div>
+        </div>
       )}
     </>
-  )
-}
-
-function HistoriqueConseillers(props: {
-  conseillers: ConseillerHistorique[]
-  avecTitre: boolean
-}) {
-  return (
-    <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
-      {props.avecTitre && (
-        <h2 className='text-base-bold mb-4'>Historique des conseillers</h2>
-      )}
-      <ListeConseillersJeune
-        id='liste-conseillers'
-        conseillers={props.conseillers}
-      />
-    </div>
   )
 }
 
