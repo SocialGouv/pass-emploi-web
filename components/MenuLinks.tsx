@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import { useLeanBeWidget } from '../utils/useLeanBeWidget'
 
-import NouveautesMenuButton from './NouveautesMenuButton'
+import ActualitesMenuButton from './ActualitesMenuButton'
 
 import MenuLink from 'components/ui/Form/MenuLink'
 import { IconName } from 'components/ui/IconComponent'
@@ -17,7 +17,7 @@ export enum MenuItem {
   Supervision = 'Supervision',
   Aide = 'Aide',
   Profil = 'Profil',
-  Nouveautes = 'Nouveautes',
+  Actualites = 'Actualites',
 }
 type SidebarProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
 
@@ -92,8 +92,8 @@ export default function MenuLinks({
           />
         )}
 
-        {items.includes(MenuItem.Nouveautes) && (
-          <NouveautesMenuButton structure={conseiller?.structure} />
+        {items.includes(MenuItem.Actualites) && (
+          <ActualitesMenuButton structure={conseiller?.structure} />
         )}
       </div>
       <div className='flex flex-col'>
