@@ -111,12 +111,15 @@ describe('Historique', () => {
     })
 
     describe('quand l’utilisateur est un conseiller Pôle Empoi', () => {
-      it('n’affiche pas d’onglet', () => {
+      it('affiche uniquement l’onglet Historique des conseiller', () => {
         // Given
         renderHistorique([], [], StructureConseiller.POLE_EMPLOI)
 
         // Then
-        expect(() => screen.getByRole('tab', { selected: true })).toThrow()
+        expect(() => screen.getByText('Situations')).toThrow()
+        expect(
+          screen.getByRole('tab', { selected: true })
+        ).toHaveAccessibleName('Historique des conseillers')
       })
 
       it('affiche la liste complète des conseillers du jeune', async () => {
@@ -163,7 +166,7 @@ describe('Historique', () => {
       })
     })
 
-    describe('Quand la session est invalide', () => {
+    describe('Quand la session est valide', () => {
       let actual: GetServerSidePropsResult<any>
 
       beforeEach(async () => {
