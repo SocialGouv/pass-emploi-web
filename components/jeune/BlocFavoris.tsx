@@ -56,19 +56,19 @@ function Offres({ offres }: Pick<MetadonneesFavoris, 'offres'>) {
   )
 }
 
-function RecherchesSauvegardees(props: { total: number }) {
+function RecherchesSauvegardees({ total }: { total: number }) {
   return (
     <div className='flex items-center'>
       <dt className='text-base-medium'>Recherches sauvegardées :</dt>
-      <dd className='text-base-medium ml-1'>{props.total}</dd>
+      <dd className='text-base-medium ml-1'>{total}</dd>
     </div>
   )
 }
 
-function LienVersFavoris(props: { idJeune: string }) {
+function LienVersFavoris({ idJeune }: { idJeune: string }) {
   return (
     <div className='flex justify-end mt-4'>
-      <Link href={`/mes-jeunes/${props.idJeune}/favoris`}>
+      <Link href={`/mes-jeunes/${idJeune}/favoris`}>
         <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
           Voir la liste des favoris
           <IconComponent

@@ -43,10 +43,12 @@ export enum Onglet {
   FAVORIS = 'FAVORIS',
 }
 
-const ongletProps: { [key in Onglet]: string } = {
-  RDVS: 'rdvs',
-  ACTIONS: 'actions',
-  FAVORIS: 'favoris',
+const ongletProps: {
+  [key in Onglet]: { queryParam: string; trackingLabel: string }
+} = {
+  RDVS: { queryParam: 'rdvs', trackingLabel: 'Événements' },
+  ACTIONS: { queryParam: 'actions', trackingLabel: 'Actions' },
+  FAVORIS: { queryParam: 'favoris', trackingLabel: 'Favoris' },
 }
 
 interface FicheJeuneProps extends PageProps {
@@ -125,28 +127,20 @@ function FicheJeune({
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
-    setTrackingLabel(pageTracking + ' - Consultation ' + tabLabel(tab))
+
+    setTrackingLabel(
+      pageTracking + ' - Consultation ' + ongletProps[tab].trackingLabel
+    )
     await router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}`,
-        query: { onglet: ongletProps[tab] },
+        query: { onglet: ongletProps[tab].queryParam },
       },
       undefined,
       {
         shallow: true,
       }
     )
-  }
-
-  function tabLabel(tab: Onglet): string {
-    switch (tab) {
-      case Onglet.RDVS:
-        return 'Événements'
-      case Onglet.ACTIONS:
-        return 'Actions'
-      case Onglet.FAVORIS:
-        return 'Favoris'
-    }
   }
 
   async function chargerActions(
