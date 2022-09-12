@@ -16,12 +16,8 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesRendezvousProps extends PageProps {
-  rendezVous: RdvListItem[]
-  dateDebut: string
-  dateFin: string
   creationSuccess?: boolean
   modificationSuccess?: boolean
   suppressionSuccess?: boolean
@@ -30,9 +26,6 @@ interface MesRendezvousProps extends PageProps {
 }
 
 function MesRendezvous({
-  rendezVous,
-  dateDebut,
-  dateFin,
   creationSuccess,
   modificationSuccess,
   suppressionSuccess,
@@ -43,9 +36,9 @@ function MesRendezvous({
 
   const [conseiller] = useConseiller()
 
-  const [rdvs, setRdvs] = useState<RdvListItem[]>([])
-  const [debutPeriode, setDebutPeriode] = useState<string>(dateDebut)
-  const [finPeriode, setFinPeriode] = useState<string>(dateFin)
+  const [rdvs, setRdvs] = useState<RdvListItem[] | undefined>()
+  const [debutPeriode, setDebutPeriode] = useState<DateTime | undefined>()
+  const [finPeriode, setFinPeriode] = useState<DateTime | undefined>()
 
   let initialTracking = `Mes rendez-vous`
   if (creationSuccess) initialTracking += ' - Creation rdv succès'
@@ -57,54 +50,59 @@ function MesRendezvous({
   useMatomo(trackingTitle)
 
   async function allerRdvsPasses() {
-    const FIN_RDVS_PASSES = DateTime.fromFormat(
-      debutPeriode,
-      'dd/MM/yyyy'
-    ).minus({ day: 1 })
-    const DEBUT_RDVS_PASSES = FIN_RDVS_PASSES.minus({ day: 6 })
+    const DEBUT_RDVS_PASSES = debutPeriode!.minus({ day: 7 })
+    const FIN_RDVS_PASSES = finPeriode!.minus({ day: 7 })
 
     const rdvsPasses =
       await rendezVousService.getRendezVousConseillerClientSide(
         conseiller!.id,
-        DEBUT_RDVS_PASSES.toFormat('yyyy-MM-dd'),
-        FIN_RDVS_PASSES.toFormat('yyyy-MM-dd')
+        DEBUT_RDVS_PASSES,
+        FIN_RDVS_PASSES
       )
 
     setRdvs(rdvsPasses.map(rdvToListItem))
-    setDebutPeriode(DEBUT_RDVS_PASSES.toFormat('dd/MM/yyyy'))
-    setFinPeriode(FIN_RDVS_PASSES.toFormat('dd/MM/yyyy'))
+    setDebutPeriode(DEBUT_RDVS_PASSES)
+    setFinPeriode(FIN_RDVS_PASSES)
     setTrackingTitle(`${trackingTitle} passés`)
   }
 
-  function allerRdvsSemaineCourante() {
-    const AUJOURDHUI = DateTime.now()
-    const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 })
+  async function allerRdvsSemaineCourante() {
+    const AUJOURDHUI = DateTime.now().startOf('day')
+    const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 }).endOf('day')
 
-    setRdvs(rendezVous)
-    setDebutPeriode(AUJOURDHUI.toFormat('dd/MM/yyyy'))
-    setFinPeriode(FIN_SEMAINE_COURANTE.toFormat('dd/MM/yyyy'))
+    const rdvsSemaineCourante =
+      await rendezVousService.getRendezVousConseillerClientSide(
+        conseiller!.id,
+        AUJOURDHUI,
+        FIN_SEMAINE_COURANTE
+      )
+
+    setRdvs(rdvsSemaineCourante.map(rdvToListItem))
+    setDebutPeriode(AUJOURDHUI)
+    setFinPeriode(FIN_SEMAINE_COURANTE)
   }
 
   async function allerRdvsSemaineFuture() {
-    const FORMAT_DATE_DEBUT = DateTime.fromFormat(finPeriode, 'dd/MM/yyyy')
-    const DEBUT_RDVS_FUTURS = FORMAT_DATE_DEBUT.plus({ day: 1 })
-    const FIN_RDVS_FUTURS = DEBUT_RDVS_FUTURS.plus({ day: 6 })
+    const DEBUT_RDVS_FUTURS = debutPeriode!.plus({ day: 7 })
+    const FIN_RDVS_FUTURS = finPeriode!.plus({ day: 7 })
 
     const rdvsFuturs =
       await rendezVousService.getRendezVousConseillerClientSide(
         conseiller!.id,
-        DEBUT_RDVS_FUTURS.toFormat('yyyy-MM-dd'),
-        FIN_RDVS_FUTURS.toFormat('yyyy-MM-dd')
+        DEBUT_RDVS_FUTURS,
+        FIN_RDVS_FUTURS
       )
     setRdvs(rdvsFuturs.map(rdvToListItem))
-    setDebutPeriode(DEBUT_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
-    setFinPeriode(FIN_RDVS_FUTURS.toFormat('dd/MM/yyyy'))
+    setDebutPeriode(DEBUT_RDVS_FUTURS)
+    setFinPeriode(FIN_RDVS_FUTURS)
     setTrackingTitle(`${trackingTitle} futurs`)
   }
 
   useEffect(() => {
-    setRdvs(rendezVous)
-  }, [rendezVous])
+    if (!rdvs && conseiller) {
+      allerRdvsSemaineCourante()
+    }
+  }, [rdvs, conseiller])
 
   return (
     <>
@@ -126,7 +124,8 @@ function MesRendezvous({
 
         <div className='flex items-center mt-1'>
           <p className='text-m-bold text-primary mr-6'>
-            du {debutPeriode} au {finPeriode}
+            du {debutPeriode?.toFormat('dd/MM/yyyy')} au{' '}
+            {finPeriode?.toFormat('dd/MM/yyyy')}
           </p>
           <button
             aria-label='Aller à la semaine précédente'
@@ -155,7 +154,7 @@ function MesRendezvous({
 
       <TableauRdv
         idConseiller={conseiller?.id ?? ''}
-        rdvs={rdvs}
+        rdvs={rdvs ?? []}
         withIntercalaires={true}
       />
     </>
@@ -171,30 +170,13 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const {
-    session: { user, accessToken },
+    session: { user },
   } = sessionOrRedirect
   if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
 
-  const AUJOURDHUI = DateTime.now()
-  const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 })
-
-  const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
-
-  const rendezVousSemaineCourante =
-    await rendezVousService.getRendezVousConseillerServerSide(
-      user.id,
-      accessToken,
-      AUJOURDHUI.toFormat('yyyy-MM-dd'),
-      FIN_SEMAINE_COURANTE.toFormat('yyyy-MM-dd')
-    )
-
   const props: MesRendezvousProps = {
-    rendezVous: rendezVousSemaineCourante.map(rdvToListItem),
-    dateDebut: AUJOURDHUI.toFormat('dd/MM/yyyy'),
-    dateFin: FIN_SEMAINE_COURANTE.toFormat('dd/MM/yyyy'),
     pageTitle: 'Tableau de bord - Mes rendez-vous',
     pageHeader: 'Mes rendez-vous',
   }

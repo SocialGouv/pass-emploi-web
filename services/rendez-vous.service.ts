@@ -10,19 +10,13 @@ import {
 } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { ApiError } from 'utils/httpClient'
+import { DateTime } from 'luxon'
 
 export interface RendezVousService {
-  getRendezVousConseillerServerSide(
-    idConseiller: string,
-    accessToken: string,
-    dateDebut: string,
-    dateFin: string
-  ): Promise<Rdv[]>
-
   getRendezVousConseillerClientSide(
     idConseiller: string,
-    dateDebut?: string,
-    dateFin?: string
+    dateDebut: DateTime,
+    dateFin: DateTime
   ): Promise<Rdv[]>
 
   getRendezVousJeune(idJeune: string, accessToken: string): Promise<Rdv[]>
@@ -44,31 +38,22 @@ export interface RendezVousService {
 export class RendezVousApiService implements RendezVousService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getRendezVousConseillerServerSide(
-    idConseiller: string,
-    accessToken: string,
-    dateDebut: string,
-    dateFin: string
-  ): Promise<Rdv[]> {
-    const { content: rdvs } = await this.apiClient.get<RdvJson[]>(
-      `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebut}&dateFin=${dateFin}`,
-      accessToken
-    )
-    return rdvs.map(jsonToRdv)
-  }
-
   async getRendezVousConseillerClientSide(
     idConseiller: string,
-    dateDebut: string,
-    dateFin: string
+    dateDebut: DateTime,
+    dateFin: DateTime
   ): Promise<Rdv[]> {
     const session = await getSession()
-    return this.getRendezVousConseillerServerSide(
-      idConseiller,
-      session!.accessToken,
-      dateDebut,
-      dateFin
+    console.log('BEFORE URI')
+    const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+    const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+    console.log('dateDebutUrlEncoded', dateDebutUrlEncoded)
+    console.log('dateFinUrlEncoded', dateFinUrlEncoded)
+    const { content: rdvs } = await this.apiClient.get<RdvJson[]>(
+      `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+      session!.accessToken
     )
+    return rdvs.map(jsonToRdv)
   }
 
   async getRendezVousJeune(
