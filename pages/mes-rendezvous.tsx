@@ -36,9 +36,11 @@ function MesRendezvous({
 
   const [conseiller] = useConseiller()
 
+  const AUJOURDHUI = DateTime.now().startOf('day')
+  const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 }).endOf('day')
+
+  const [numeroSemaineAffichee, setNumeroSemaineAffichee] = useState<number>(0)
   const [rdvs, setRdvs] = useState<RdvListItem[] | undefined>()
-  const [debutPeriode, setDebutPeriode] = useState<DateTime | undefined>()
-  const [finPeriode, setFinPeriode] = useState<DateTime | undefined>()
 
   let initialTracking = `Mes rendez-vous`
   if (creationSuccess) initialTracking += ' - Creation rdv succès'
@@ -50,52 +52,35 @@ function MesRendezvous({
   useMatomo(trackingTitle)
 
   async function allerRdvsPasses() {
-    const DEBUT_RDVS_PASSES = debutPeriode!.minus({ day: 7 })
-    const FIN_RDVS_PASSES = finPeriode!.minus({ day: 7 })
-
-    const rdvsPasses =
-      await rendezVousService.getRendezVousConseillerClientSide(
-        conseiller!.id,
-        DEBUT_RDVS_PASSES,
-        FIN_RDVS_PASSES
-      )
-
-    setRdvs(rdvsPasses.map(rdvToListItem))
-    setDebutPeriode(DEBUT_RDVS_PASSES)
-    setFinPeriode(FIN_RDVS_PASSES)
+    setNumeroSemaineAffichee(numeroSemaineAffichee - 1)
     setTrackingTitle(`${trackingTitle} passés`)
   }
 
   async function allerRdvsSemaineCourante() {
-    const AUJOURDHUI = DateTime.now().startOf('day')
-    const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 }).endOf('day')
-
-    const rdvsSemaineCourante =
-      await rendezVousService.getRendezVousConseillerClientSide(
-        conseiller!.id,
-        AUJOURDHUI,
-        FIN_SEMAINE_COURANTE
-      )
-
-    setRdvs(rdvsSemaineCourante.map(rdvToListItem))
-    setDebutPeriode(AUJOURDHUI)
-    setFinPeriode(FIN_SEMAINE_COURANTE)
+    setNumeroSemaineAffichee(0)
+    setTrackingTitle(trackingTitle)
   }
 
   async function allerRdvsSemaineFuture() {
-    const DEBUT_RDVS_FUTURS = debutPeriode!.plus({ day: 7 })
-    const FIN_RDVS_FUTURS = finPeriode!.plus({ day: 7 })
-
-    const rdvsFuturs =
-      await rendezVousService.getRendezVousConseillerClientSide(
-        conseiller!.id,
-        DEBUT_RDVS_FUTURS,
-        FIN_RDVS_FUTURS
-      )
-    setRdvs(rdvsFuturs.map(rdvToListItem))
-    setDebutPeriode(DEBUT_RDVS_FUTURS)
-    setFinPeriode(FIN_RDVS_FUTURS)
+    setNumeroSemaineAffichee(numeroSemaineAffichee + 1)
     setTrackingTitle(`${trackingTitle} futurs`)
+  }
+
+  async function allerRdvsSemaine() {
+    const rdvs = await rendezVousService.getRendezVousConseillerClientSide(
+      conseiller!.id,
+      jourDeDebutDesRdvs(),
+      jourDeFinDesRdvs()
+    )
+    setRdvs(rdvs.map(rdvToListItem))
+  }
+
+  function jourDeDebutDesRdvs() {
+    return AUJOURDHUI.plus({ day: 7 * numeroSemaineAffichee })
+  }
+
+  function jourDeFinDesRdvs() {
+    return FIN_SEMAINE_COURANTE.plus({ day: 7 * numeroSemaineAffichee })
   }
 
   useEffect(() => {
@@ -103,6 +88,12 @@ function MesRendezvous({
       allerRdvsSemaineCourante()
     }
   }, [rdvs, conseiller])
+
+  useEffect(() => {
+    if (conseiller) {
+      allerRdvsSemaine()
+    }
+  }, [numeroSemaineAffichee, conseiller])
 
   return (
     <>
@@ -124,8 +115,8 @@ function MesRendezvous({
 
         <div className='flex items-center mt-1'>
           <p className='text-m-bold text-primary mr-6'>
-            du {debutPeriode?.toFormat('dd/MM/yyyy')} au{' '}
-            {finPeriode?.toFormat('dd/MM/yyyy')}
+            du {jourDeDebutDesRdvs().toFormat('dd/MM/yyyy')} au{' '}
+            {jourDeFinDesRdvs().toFormat('dd/MM/yyyy')}
           </p>
           <button
             aria-label='Aller à la semaine précédente'

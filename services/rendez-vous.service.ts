@@ -44,11 +44,8 @@ export class RendezVousApiService implements RendezVousService {
     dateFin: DateTime
   ): Promise<Rdv[]> {
     const session = await getSession()
-    console.log('BEFORE URI')
     const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
     const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-    console.log('dateDebutUrlEncoded', dateDebutUrlEncoded)
-    console.log('dateFinUrlEncoded', dateFinUrlEncoded)
     const { content: rdvs } = await this.apiClient.get<RdvJson[]>(
       `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
       session!.accessToken
