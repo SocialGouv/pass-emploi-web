@@ -3,48 +3,23 @@ import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InlineDefinitionItem } from 'components/ui/InlineDefinitionItem'
+import { MetadonneesFavoris } from 'interfaces/jeune'
 
 type BlocFavorisProps = {
   idJeune: string
-  offres:
-    | {
-        total: number
-        nombreOffresEmploi: number | undefined
-        nombreOffresAlternance: number | undefined
-        nombreOffresImmersion: number | undefined
-        nombreOffresServiceCivique: number | undefined
-      }
-    | undefined
-  recherches:
-    | {
-        total: number
-        nombreRecherchesOffresEmploi: number | undefined
-        nombreRecherchesOffresAlternance: number | undefined
-        nombreRecherchesOffresImmersion: number | undefined
-        nombreRecherchesOffresServiceCivique: number | undefined
-      }
-    | undefined
-  autoriseLePartage: boolean | undefined
+  metadonneesFavoris: MetadonneesFavoris
 }
 
 export function BlocFavoris({
   idJeune,
-  offres,
-  recherches,
-  autoriseLePartage,
+  metadonneesFavoris: { offres, recherches, autoriseLePartage },
 }: BlocFavorisProps) {
   return (
     <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
       <dl>
-        <Offres
-          total={offres?.total}
-          nombreOffresEmploi={offres?.nombreOffresEmploi}
-          nombreOffresAlternance={offres?.nombreOffresAlternance}
-          nombreOffresServiceCivique={offres?.nombreOffresServiceCivique}
-          nombreOffresImmersion={offres?.nombreOffresImmersion}
-        />
+        <Offres offres={offres} />
 
-        <RecherchesSauvegardees total={recherches?.total} />
+        <RecherchesSauvegardees total={recherches.total} />
 
         {autoriseLePartage && <LienVersFavoris idJeune={idJeune} />}
       </dl>
@@ -52,46 +27,40 @@ export function BlocFavoris({
   )
 }
 
-function Offres(props: {
-  total: number | undefined
-  nombreOffresEmploi: number | undefined
-  nombreOffresAlternance: number | undefined
-  nombreOffresServiceCivique: number | undefined
-  nombreOffresImmersion: number | undefined
-}) {
+function Offres({ offres }: Pick<MetadonneesFavoris, 'offres'>) {
   return (
     <>
       <div className='flex items-center mb-2'>
         <dt className='text-base-medium'>Offres :</dt>
-        <dd className='text-base-medium ml-1'>{props.total ?? 0}</dd>
+        <dd className='text-base-medium ml-1'>{offres.total}</dd>
       </div>
       <div className='ml-4 mb-4'>
         <InlineDefinitionItem
           definition='Offre d’emploi :'
-          description={props.nombreOffresEmploi ?? 0}
+          description={offres.nombreOffresEmploi}
         />
         <InlineDefinitionItem
           definition='Alternance :'
-          description={props.nombreOffresAlternance ?? 0}
+          description={offres.nombreOffresAlternance}
         />
         <InlineDefinitionItem
           definition='Service civique :'
-          description={props.nombreOffresServiceCivique ?? 0}
+          description={offres.nombreOffresServiceCivique}
         />
         <InlineDefinitionItem
           definition='Immersion :'
-          description={props.nombreOffresImmersion ?? 0}
+          description={offres.nombreOffresImmersion}
         />
       </div>
     </>
   )
 }
 
-function RecherchesSauvegardees(props: { total: number | undefined }) {
+function RecherchesSauvegardees(props: { total: number }) {
   return (
     <div className='flex items-center'>
       <dt className='text-base-medium'>Recherches sauvegardées :</dt>
-      <dd className='text-base-medium ml-1'>{props.total ?? 0}</dd>
+      <dd className='text-base-medium ml-1'>{props.total}</dd>
     </div>
   )
 }
