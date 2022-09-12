@@ -326,14 +326,16 @@ function FicheJeune({
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
           iconName={IconName.Actions}
         />
-        <Tab
-          label='Favoris'
-          count={totalFavoris}
-          selected={currentTab === Onglet.FAVORIS}
-          controls='liste-favoris'
-          onSelectTab={() => switchTab(Onglet.FAVORIS)}
-          iconName={IconName.Favorite}
-        />
+        {metadonneesFavoris && (
+          <Tab
+            label='Favoris'
+            count={totalFavoris}
+            selected={currentTab === Onglet.FAVORIS}
+            controls='liste-favoris'
+            onSelectTab={() => switchTab(Onglet.FAVORIS)}
+            iconName={IconName.Favorite}
+          />
+        )}
       </TabList>
 
       {currentTab === Onglet.RDVS && (
@@ -378,9 +380,7 @@ function FicheJeune({
         >
           <BlocFavoris
             idJeune={jeune.id}
-            offres={metadonneesFavoris?.offres}
-            recherches={metadonneesFavoris?.recherches}
-            autoriseLePartage={metadonneesFavoris?.autoriseLePartage}
+            metadonneesFavoris={metadonneesFavoris!}
           />
         </div>
       )}
