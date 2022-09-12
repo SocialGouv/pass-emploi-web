@@ -40,19 +40,7 @@ export function BlocSituation({
         </ol>
       )}
 
-      {versionResumee && (
-        <Link href={`/mes-jeunes/${idJeune}/historique`}>
-          <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
-            Voir le détail des situations
-            <IconComponent
-              name={IconName.ChevronRight}
-              className='w-4 h-5 fill-[inherit]'
-              aria-hidden={true}
-              focusable={false}
-            />
-          </a>
-        </Link>
-      )}
+      {versionResumee && <LienVersHistorique idJeune={idJeune} />}
     </div>
   )
 }
@@ -75,7 +63,11 @@ function SansSituation() {
   )
 }
 
-function Situation(props: {
+function Situation({
+  categorie,
+  dateFin,
+  etat,
+}: {
   categorie: CategorieSituation
   etat?: EtatSituation
   dateFin?: string
@@ -83,15 +75,30 @@ function Situation(props: {
   return (
     <li className='mt-3 mr-32 last:mr-0'>
       <div className='mb-3'>
-        <SituationTag situation={props.categorie} />
+        <SituationTag situation={categorie} />
       </div>
       <div className='mb-3'>
-        Etat : <span className='text-base-medium'>{props.etat ?? '--'}</span>
+        Etat : <span className='text-base-medium'>{etat ?? '--'}</span>
       </div>
       <div className=''>
-        Fin le :{' '}
-        <span className='text-base-medium'>{props.dateFin ?? '--'}</span>
+        Fin le : <span className='text-base-medium'>{dateFin ?? '--'}</span>
       </div>
     </li>
+  )
+}
+
+function LienVersHistorique({ idJeune }: { idJeune: string }) {
+  return (
+    <Link href={`/mes-jeunes/${idJeune}/historique`}>
+      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
+        Voir le détail des situations
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </a>
+    </Link>
   )
 }

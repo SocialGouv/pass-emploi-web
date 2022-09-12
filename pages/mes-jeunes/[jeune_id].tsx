@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
+import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
@@ -39,11 +40,15 @@ import withDependance from 'utils/injectionDependances/withDependance'
 export enum Onglet {
   RDVS = 'RDVS',
   ACTIONS = 'ACTIONS',
+  FAVORIS = 'FAVORIS',
 }
 
-const ongletProps: { [key in Onglet]: string } = {
-  RDVS: 'rdvs',
-  ACTIONS: 'actions',
+const ongletProps: {
+  [key in Onglet]: { queryParam: string; trackingLabel: string }
+} = {
+  RDVS: { queryParam: 'rdvs', trackingLabel: 'Événements' },
+  ACTIONS: { queryParam: 'actions', trackingLabel: 'Actions' },
+  FAVORIS: { queryParam: 'favoris', trackingLabel: 'Favoris' },
 }
 
 interface FicheJeuneProps extends PageProps {
@@ -112,18 +117,24 @@ function FicheJeune({
   const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
   const isMilo = conseiller?.structure === StructureConseiller.MILO
 
+  const totalFavoris = metadonneesFavoris
+    ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
+    : 0
+
   function trackDossierMiloClick() {
     setTrackingLabel(pageTracking + ' - Dossier i-Milo')
   }
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
-    const tabLabel = tab === Onglet.ACTIONS ? 'Actions' : 'Événements'
-    setTrackingLabel(pageTracking + ' - Consultation ' + tabLabel)
+
+    setTrackingLabel(
+      pageTracking + ' - Consultation ' + ongletProps[tab].trackingLabel
+    )
     await router.replace(
       {
         pathname: `/mes-jeunes/${jeune.id}`,
-        query: { onglet: ongletProps[tab] },
+        query: { onglet: ongletProps[tab].queryParam },
       },
       undefined,
       {
@@ -257,7 +268,6 @@ function FicheJeune({
       <DetailsJeune
         jeune={jeune}
         structureConseiller={conseiller?.structure}
-        metadonneesFavoris={metadonneesFavoris}
         onDossierMiloClick={trackDossierMiloClick}
         onDeleteJeuneClick={openDeleteJeuneModal}
       />
@@ -310,6 +320,16 @@ function FicheJeune({
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
           iconName={IconName.Actions}
         />
+        {metadonneesFavoris && (
+          <Tab
+            label='Favoris'
+            count={totalFavoris}
+            selected={currentTab === Onglet.FAVORIS}
+            controls='liste-favoris'
+            onSelectTab={() => switchTab(Onglet.FAVORIS)}
+            iconName={IconName.Favorite}
+          />
+        )}
       </TabList>
 
       {currentTab === Onglet.RDVS && (
@@ -341,6 +361,20 @@ function FicheJeune({
             jeune={jeune}
             actionsInitiales={actionsInitiales}
             getActions={chargerActions}
+          />
+        </div>
+      )}
+      {currentTab === Onglet.FAVORIS && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-favoris--tab'
+          tabIndex={0}
+          id='liste-favoris'
+          className='mt-8 pb-8'
+        >
+          <BlocFavoris
+            idJeune={jeune.id}
+            metadonneesFavoris={metadonneesFavoris!}
           />
         </div>
       )}
