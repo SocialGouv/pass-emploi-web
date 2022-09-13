@@ -37,10 +37,9 @@ function MesRendezvous({
   const [conseiller] = useConseiller()
 
   const AUJOURDHUI = DateTime.now().startOf('day')
-  const FIN_SEMAINE_COURANTE = AUJOURDHUI.plus({ day: 6 }).endOf('day')
 
-  const [numeroSemaineAffichee, setNumeroSemaineAffichee] = useState<number>(0)
-  const [rdvs, setRdvs] = useState<RdvListItem[] | undefined>()
+  const [index7JoursAffiches, setIndex7JoursAffiches] = useState<number>(0)
+  const [rdvs, setRdvs] = useState<RdvListItem[]>([])
 
   let initialTracking = `Mes rendez-vous`
   if (creationSuccess) initialTracking += ' - Creation rdv succès'
@@ -49,54 +48,54 @@ function MesRendezvous({
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  async function allerRdvsPasses() {
-    const numeroSemainePassee = numeroSemaineAffichee - 1
-    await chargerRdvsSemaine(numeroSemainePassee)
-    setNumeroSemaineAffichee(numeroSemainePassee)
+  async function allerRdvs7JoursPrecedants() {
+    const index7JoursPrecedants = index7JoursAffiches - 1
+    await chargerRdvs7Jours(index7JoursPrecedants)
+    setIndex7JoursAffiches(index7JoursPrecedants)
     setTrackingTitle(`${trackingTitle} passés`)
   }
 
-  async function allerRdvsSemaineCourante() {
-    const numeroSemaineCourante = 0
-    await chargerRdvsSemaine(numeroSemaineCourante)
-    setNumeroSemaineAffichee(numeroSemaineCourante)
+  async function allerRdvs7JoursActuels() {
+    const index7JoursActuels = 0
+    await chargerRdvs7Jours(index7JoursActuels)
+    setIndex7JoursAffiches(index7JoursActuels)
     setTrackingTitle(trackingTitle)
   }
 
-  async function allerRdvsSemaineFuture() {
-    const numeroSemaineFuture = numeroSemaineAffichee + 1
-    await chargerRdvsSemaine(numeroSemaineFuture)
-    setNumeroSemaineAffichee(numeroSemaineFuture)
+  async function allerRdvs7JoursSuivants() {
+    const index7JoursSuivants = index7JoursAffiches + 1
+    await chargerRdvs7Jours(index7JoursSuivants)
+    setIndex7JoursAffiches(index7JoursSuivants)
     setTrackingTitle(`${trackingTitle} futurs`)
   }
 
-  async function chargerRdvsSemaine(numeroSemaine: number) {
+  async function chargerRdvs7Jours(index7Jours: number) {
     const rdvsSemaine =
       await rendezVousService.getRendezVousConseillerClientSide(
         conseiller!.id,
-        jourDeDebutDesRdvs(numeroSemaine),
-        jourDeFinDesRdvs(numeroSemaine)
+        jourDeDebutDesRdvs(index7Jours),
+        jourDeFinDesRdvs(index7Jours)
       )
     if (rdvsSemaine) setRdvs(rdvsSemaine.map(rdvToListItem))
   }
 
-  function jourDeDebutDesRdvs(numeroSemaine?: number) {
+  function jourDeDebutDesRdvs(index7Jours?: number) {
     return AUJOURDHUI.plus({
-      day: 7 * (numeroSemaine ?? numeroSemaineAffichee),
+      day: 7 * (index7Jours ?? index7JoursAffiches),
     })
   }
 
-  function jourDeFinDesRdvs(numeroSemaine?: number) {
-    return FIN_SEMAINE_COURANTE.plus({
-      day: 7 * (numeroSemaine ?? numeroSemaineAffichee),
-    })
+  function jourDeFinDesRdvs(index7Jours?: number) {
+    return jourDeDebutDesRdvs(index7Jours ?? index7JoursAffiches)
+      .plus({ day: 6 })
+      .endOf('day')
   }
 
   useMatomo(trackingTitle)
 
   useEffect(() => {
-    if (!rdvs && conseiller) allerRdvsSemaineCourante()
-  }, [rdvs, conseiller])
+    if (conseiller) chargerRdvs7Jours(index7JoursAffiches)
+  }, [conseiller, index7JoursAffiches])
 
   return (
     <>
@@ -110,7 +109,7 @@ function MesRendezvous({
           <Button
             type='button'
             style={ButtonStyle.SECONDARY}
-            onClick={allerRdvsSemaineCourante}
+            onClick={allerRdvs7JoursActuels}
           >
             <span className='sr-only'>Aller à la</span> Semaine en cours
           </Button>
@@ -123,7 +122,7 @@ function MesRendezvous({
           </p>
           <button
             aria-label='Aller à la semaine précédente'
-            onClick={allerRdvsPasses}
+            onClick={allerRdvs7JoursPrecedants}
           >
             <IconComponent
               name={IconName.ChevronLeft}
@@ -134,7 +133,7 @@ function MesRendezvous({
           </button>
           <button
             aria-label='Aller à la semaine suivante'
-            onClick={allerRdvsSemaineFuture}
+            onClick={allerRdvs7JoursSuivants}
           >
             <IconComponent
               name={IconName.ChevronRight}
