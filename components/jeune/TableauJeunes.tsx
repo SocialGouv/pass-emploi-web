@@ -298,7 +298,6 @@ export default function TableauJeunes({
                       <span className='flex items-baseline'>
                         {jeune.isReaffectationTemporaire && (
                           <span
-                            title='bénéficiaire temporaire'
                             aria-label='bénéficiaire temporaire'
                             className='self-center mr-2'
                           >
@@ -307,6 +306,7 @@ export default function TableauJeunes({
                               aria-hidden={true}
                               focusable={false}
                               className='w-4 h-4'
+                              title='bénéficiaire temporaire'
                             />
                           </span>
                         )}

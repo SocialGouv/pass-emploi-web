@@ -129,7 +129,6 @@ function MesRendezvous({
             du {debutPeriode} au {finPeriode}
           </p>
           <button
-            title='Aller à la semaine précédente'
             aria-label='Aller à la semaine précédente'
             onClick={allerRdvsPasses}
           >
@@ -137,10 +136,10 @@ function MesRendezvous({
               name={IconName.ChevronLeft}
               className='w-6 h-6 fill-primary hover:fill-primary_darken'
               focusable='false'
+              title='Aller à la semaine précédente'
             />
           </button>
           <button
-            title='Aller à la semaine suivante'
             aria-label='Aller à la semaine suivante'
             onClick={allerRdvsSemaineFuture}
           >
@@ -148,6 +147,7 @@ function MesRendezvous({
               name={IconName.ChevronRight}
               className='w-6 h-6 fill-primary ml-8 hover:fill-primary_darken'
               focusable='false'
+              title='Aller à la semaine suivante'
             />
           </button>
         </div>

@@ -210,22 +210,23 @@ export default function Conversation({
               ? 'Ne plus suivre la conversation'
               : 'Suivre la conversation'
           }
-          title={
-            jeuneChat.flaggedByConseiller
-              ? 'Ne plus suivre la conversation'
-              : 'Suivre la conversation'
-          }
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
           onClick={toggleFlag}
         >
-          <IconComponent
-            name={
-              jeuneChat.flaggedByConseiller
-                ? IconName.FlagFilled
-                : IconName.Flag
-            }
-            className='w-6 h-6 fill-primary'
-          />
+          {jeuneChat.flaggedByConseiller && (
+            <IconComponent
+              name={IconName.FlagFilled}
+              title='Ne plus suivre la conversation'
+              className='w-6 h-6 fill-primary'
+            />
+          )}
+          {!jeuneChat.flaggedByConseiller && (
+            <IconComponent
+              name={IconName.Flag}
+              title='Suivre la conversation'
+              className='w-6 h-6 fill-primary'
+            />
+          )}
         </button>
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />

@@ -32,12 +32,13 @@ export default function Multiselection({
         >
           {withInfo && (
             <div className='flex items-center text-base-bold text-accent_3'>
-              <div title={infoLabel} aria-label={infoLabel} className='mr-2'>
+              <div aria-label={infoLabel} className='mr-2'>
                 <IconComponent
                   name={IconName.Info}
                   focusable={false}
                   aria-hidden={true}
                   className='w-6 h-6 fill-accent_3'
+                  title={infoLabel}
                 />
               </div>
               {value}
@@ -45,13 +46,14 @@ export default function Multiselection({
           )}
           {!withInfo && value}
 
-          <button type='reset' title='Enlever' onClick={() => unselect(id)}>
+          <button type='reset' onClick={() => unselect(id)}>
             <span className='sr-only'>Enlever {typeSelection}</span>
             <IconComponent
               name={IconName.Remove}
               focusable={false}
               aria-hidden={true}
               className='w-8 h-8'
+              title='Enlever'
             />
           </button>
         </li>
