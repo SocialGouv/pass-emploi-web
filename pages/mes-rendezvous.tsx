@@ -71,12 +71,13 @@ function MesRendezvous({
   }
 
   async function chargerRdvsSemaine(numeroSemaine: number) {
-    const rdvs = await rendezVousService.getRendezVousConseillerClientSide(
-      conseiller!.id,
-      jourDeDebutDesRdvs(numeroSemaine),
-      jourDeFinDesRdvs(numeroSemaine)
-    )
-    if (rdvs) setRdvs(rdvs.map(rdvToListItem))
+    const rdvsSemaine =
+      await rendezVousService.getRendezVousConseillerClientSide(
+        conseiller!.id,
+        jourDeDebutDesRdvs(numeroSemaine),
+        jourDeFinDesRdvs(numeroSemaine)
+      )
+    if (rdvsSemaine) setRdvs(rdvsSemaine.map(rdvToListItem))
   }
 
   function jourDeDebutDesRdvs(numeroSemaine?: number) {
