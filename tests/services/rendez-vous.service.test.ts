@@ -1,7 +1,6 @@
 import { ApiClient } from 'clients/api.client'
 import {
   typesDeRendezVous,
-  uneListeDeRdv,
   unRendezVous,
   unRendezVousJson,
 } from 'fixtures/rendez-vous'
@@ -13,6 +12,7 @@ import {
 } from 'services/rendez-vous.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
+import { DateTime } from 'luxon'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(async () => ({
@@ -147,19 +147,19 @@ describe('RendezVousApiService', () => {
     })
   })
   describe('.getRendezVousConseiller', () => {
-    it('renvoie les rendez-vous d’un conseiller sur une période définie', async () => {
+    it('url encode les date en paramètres et renvoie les rendez-vous d’un conseiller sur une période définie', async () => {
       // Given
       const accessToken = 'accessToken'
       const listeRdvs = [unRendezVousJson()]
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: listeRdvs,
       })
-      const dateDebut = '2022-08-23'
-      const dateFin = '2022-08-29'
+
+      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+      const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
 
       // When
-      const actual = await rendezVousService.getRendezVousConseillerServerSide(
-        'id-conseiller',
+      const actual = await rendezVousService.getRendezVousConseiller(
         accessToken,
         dateDebut,
         dateFin
@@ -167,7 +167,7 @@ describe('RendezVousApiService', () => {
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        `/v2/conseillers/id-conseiller/rendezvous?dateDebut=${dateDebut}&dateFin=${dateFin}`,
+        `/v2/conseillers/accessToken/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         accessToken
       )
       expect(actual).toEqual([unRendezVous()])
