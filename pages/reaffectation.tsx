@@ -275,7 +275,6 @@ function Reaffectation(_: ReaffectationProps) {
                 isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
               } disabled:cursor-not-allowed disabled:border-disabled`}
               type='submit'
-              title='Rechercher'
               disabled={!isRechercheJeunesEnabled}
             >
               <span className='sr-only'>Rechercher conseiller initial</span>
@@ -286,6 +285,7 @@ function Reaffectation(_: ReaffectationProps) {
                 className={`w-4 h-4 ${
                   isRechercheJeunesEnabled ? '' : 'fill-disabled'
                 }`}
+                title='Rechercher'
               />
             </button>
           </div>

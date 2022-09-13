@@ -61,7 +61,6 @@ const ResettableTextInput = forwardRef(
         />
         <button
           type='reset'
-          title='Effacer'
           className={`w-8 cursor-[inherit]`}
           onClick={applyReset}
           disabled={disabled}
@@ -73,6 +72,7 @@ const ResettableTextInput = forwardRef(
             aria-hidden={true}
             className='w-6 h-6'
             fill='currentColor'
+            title='Effacer'
           />
         </button>
       </div>
