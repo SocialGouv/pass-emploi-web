@@ -343,7 +343,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer l’adresse si besoin', () => {
           // Then
           const inputAdresse = within(etape).getByLabelText(
-            'Adresse Ex: 12 rue duc, Brest'
+            'Adresse Ex : 12 rue duc, Brest'
           )
           expect(inputAdresse).toBeInTheDocument()
           expect(inputAdresse).toHaveAttribute('type', 'text')
@@ -352,7 +352,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer un organisme si besoin', () => {
           // Then
           const inputOrganisme = within(etape).getByLabelText(
-            'Organisme Ex: prestataire, entreprise, etc.'
+            'Organisme Ex : prestataire, entreprise, etc.'
           )
           expect(inputOrganisme).toBeInTheDocument()
           expect(inputOrganisme).toHaveAttribute('type', 'text')
