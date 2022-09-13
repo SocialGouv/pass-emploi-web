@@ -49,51 +49,53 @@ function MesRendezvous({
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  useMatomo(trackingTitle)
-
   async function allerRdvsPasses() {
-    setNumeroSemaineAffichee(numeroSemaineAffichee - 1)
+    const numeroSemainePassee = numeroSemaineAffichee - 1
+    await chargerRdvsSemaine(numeroSemainePassee)
+    setNumeroSemaineAffichee(numeroSemainePassee)
     setTrackingTitle(`${trackingTitle} passés`)
   }
 
   async function allerRdvsSemaineCourante() {
-    setNumeroSemaineAffichee(0)
+    const numeroSemaineCourante = 0
+    await chargerRdvsSemaine(numeroSemaineCourante)
+    setNumeroSemaineAffichee(numeroSemaineCourante)
     setTrackingTitle(trackingTitle)
   }
 
   async function allerRdvsSemaineFuture() {
-    setNumeroSemaineAffichee(numeroSemaineAffichee + 1)
+    const numeroSemaineFuture = numeroSemaineAffichee + 1
+    await chargerRdvsSemaine(numeroSemaineFuture)
+    setNumeroSemaineAffichee(numeroSemaineFuture)
     setTrackingTitle(`${trackingTitle} futurs`)
   }
 
-  async function allerRdvsSemaine() {
+  async function chargerRdvsSemaine(numeroSemaine: number) {
     const rdvs = await rendezVousService.getRendezVousConseillerClientSide(
       conseiller!.id,
-      jourDeDebutDesRdvs(),
-      jourDeFinDesRdvs()
+      jourDeDebutDesRdvs(numeroSemaine),
+      jourDeFinDesRdvs(numeroSemaine)
     )
     setRdvs(rdvs.map(rdvToListItem))
   }
 
-  function jourDeDebutDesRdvs() {
-    return AUJOURDHUI.plus({ day: 7 * numeroSemaineAffichee })
+  function jourDeDebutDesRdvs(numeroSemaine?: number) {
+    return AUJOURDHUI.plus({
+      day: 7 * (numeroSemaine ?? numeroSemaineAffichee),
+    })
   }
 
-  function jourDeFinDesRdvs() {
-    return FIN_SEMAINE_COURANTE.plus({ day: 7 * numeroSemaineAffichee })
+  function jourDeFinDesRdvs(numeroSemaine?: number) {
+    return FIN_SEMAINE_COURANTE.plus({
+      day: 7 * (numeroSemaine ?? numeroSemaineAffichee),
+    })
   }
+
+  useMatomo(trackingTitle)
 
   useEffect(() => {
-    if (!rdvs && conseiller) {
-      allerRdvsSemaineCourante()
-    }
+    if (!rdvs && conseiller) allerRdvsSemaineCourante()
   }, [rdvs, conseiller])
-
-  useEffect(() => {
-    if (conseiller) {
-      allerRdvsSemaine()
-    }
-  }, [numeroSemaineAffichee, conseiller])
 
   return (
     <>
