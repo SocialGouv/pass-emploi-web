@@ -154,8 +154,9 @@ describe('RendezVousApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: listeRdvs,
       })
-      const dateDebut = DateTime.fromJSDate(new Date(2022, 9, 23))
-      const dateFin = DateTime.fromJSDate(new Date(2022, 9, 29))
+
+      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+      const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
 
       // When
       const actual = await rendezVousService.getRendezVousConseillerClientSide(
@@ -166,7 +167,7 @@ describe('RendezVousApiService', () => {
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        `/v2/conseillers/accessToken/rendezvous?dateDebut=2022-10-23T00%3A00%3A00.000%2B03%3A00&dateFin=2022-10-29T00%3A00%3A00.000%2B03%3A00`,
+        `/v2/conseillers/accessToken/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         accessToken
       )
       expect(actual).toEqual([unRendezVous()])
