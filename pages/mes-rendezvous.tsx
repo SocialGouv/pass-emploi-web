@@ -71,7 +71,7 @@ function MesRendezvous({
 
   async function chargerRdvs7Jours(index7Jours: number) {
     const rdvs7Jours =
-      await rendezVousService.getRendezVousConseillerClientSide(
+      await rendezVousService.getRendezVousConseiller(
         conseiller!.id,
         jourDeDebutDesRdvs(index7Jours),
         jourDeFinDesRdvs(index7Jours)
@@ -79,13 +79,13 @@ function MesRendezvous({
     if (rdvs7Jours) setRdvs(rdvs7Jours.map(rdvToListItem))
   }
 
-  function jourDeDebutDesRdvs(index7Jours?: number) {
+  function jourDeDebutDesRdvs(index7Jours?: number): DateTime {
     return AUJOURDHUI.plus({
       day: 7 * (index7Jours ?? index7JoursAffiches),
     })
   }
 
-  function jourDeFinDesRdvs(index7Jours?: number) {
+  function jourDeFinDesRdvs(index7Jours?: number): DateTime {
     return jourDeDebutDesRdvs(index7Jours ?? index7JoursAffiches)
       .plus({ day: 6 })
       .endOf('day')
