@@ -441,7 +441,7 @@ export function EditionRdvForm({
 
         <Label htmlFor='adresse'>
           Adresse
-          <span className='text-base-regular'> Ex: 12 rue duc, Brest</span>
+          <span className='text-base-regular'> Ex : 12 rue duc, Brest</span>
         </Label>
         <Input
           type='text'
@@ -455,7 +455,7 @@ export function EditionRdvForm({
           Organisme
           <span className='text-base-regular'>
             {' '}
-            Ex: prestataire, entreprise, etc.
+            Ex : prestataire, entreprise, etc.
           </span>
         </Label>
         <Input
@@ -531,12 +531,10 @@ export function EditionRdvForm({
         </div>
 
         <Label htmlFor='commentaire' withBulleMessageSensible={true}>
-          <span className='flex items-center'>
-            Commentaire à destination des jeunes
-          </span>
-          <span className='block text-s-regular'>
-            Le commentaire sera lu par l’ensemble des destinataires.
-          </span>
+          {{
+            main: 'Commentaire à destination des jeunes',
+            sub: 'Le commentaire sera lu par l’ensemble des destinataires',
+          }}
         </Label>
         <Textarea
           id='commentaire'
