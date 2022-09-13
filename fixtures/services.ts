@@ -71,7 +71,6 @@ export function mockedRendezVousService(
   overrides: Partial<RendezVousService> = {}
 ): RendezVousService {
   const defaults: RendezVousService = {
-    getRendezVousConseillerServerSide: jest.fn(),
     getRendezVousConseillerClientSide: jest.fn(),
     getRendezVousJeune: jest.fn(),
     getDetailsRendezVous: jest.fn(),
