@@ -70,12 +70,11 @@ function MesRendezvous({
   }
 
   async function chargerRdvs7Jours(index7Jours: number) {
-    const rdvs7Jours =
-      await rendezVousService.getRendezVousConseiller(
-        conseiller!.id,
-        jourDeDebutDesRdvs(index7Jours),
-        jourDeFinDesRdvs(index7Jours)
-      )
+    const rdvs7Jours = await rendezVousService.getRendezVousConseiller(
+      conseiller!.id,
+      jourDeDebutDesRdvs(index7Jours),
+      jourDeFinDesRdvs(index7Jours)
+    )
     if (rdvs7Jours) setRdvs(rdvs7Jours.map(rdvToListItem))
   }
 
