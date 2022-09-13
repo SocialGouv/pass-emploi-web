@@ -76,7 +76,7 @@ function MesRendezvous({
       jourDeDebutDesRdvs(numeroSemaine),
       jourDeFinDesRdvs(numeroSemaine)
     )
-    setRdvs(rdvs.map(rdvToListItem))
+    if (rdvs) setRdvs(rdvs.map(rdvToListItem))
   }
 
   function jourDeDebutDesRdvs(numeroSemaine?: number) {
