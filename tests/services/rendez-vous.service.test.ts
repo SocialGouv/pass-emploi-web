@@ -159,7 +159,7 @@ describe('RendezVousApiService', () => {
       const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
 
       // When
-      const actual = await rendezVousService.getRendezVousConseillerClientSide(
+      const actual = await rendezVousService.getRendezVousConseiller(
         accessToken,
         dateDebut,
         dateFin

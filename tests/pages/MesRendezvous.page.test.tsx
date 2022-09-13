@@ -71,14 +71,14 @@ describe('MesRendezvous', () => {
     describe('rendez-vous', () => {
       beforeEach(async () => {
         rendezVousService = mockedRendezVousService({
-          getRendezVousConseillerClientSide: jest
-              .fn()
-              .mockImplementation(function (_, dateDebut) {
-                const rendezVous = unRendezVous({
-                  date: dateDebut.plus({ day: 3 }).toISO(),
-                })
-                return [rendezVous]
-              }),
+          getRendezVousConseiller: jest
+            .fn()
+            .mockImplementation(function (_, dateDebut) {
+              const rendezVous = unRendezVous({
+                date: dateDebut.plus({ day: 3 }).toISO(),
+              })
+              return [rendezVous]
+            }),
         })
 
         await act(async () => {
@@ -98,7 +98,7 @@ describe('MesRendezvous', () => {
         it('sont affichés par défaut', async () => {
           // Then
           expect(
-            rendezVousService.getRendezVousConseillerClientSide
+            rendezVousService.getRendezVousConseiller
           ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
 
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
@@ -114,9 +114,7 @@ describe('MesRendezvous', () => {
           await userEvent.click(buttonRdvsSemaineCourante)
 
           // Then service should be called twice: on page display and on button click
-          expect(
-            rendezVousService.getRendezVousConseillerClientSide
-          ).toBeCalledTimes(2)
+          expect(rendezVousService.getRendezVousConseiller).toBeCalledTimes(2)
         })
       })
 
@@ -132,7 +130,7 @@ describe('MesRendezvous', () => {
 
           // Then
           expect(
-              rendezVousService.getRendezVousConseillerClientSide
+            rendezVousService.getRendezVousConseiller
           ).toHaveBeenLastCalledWith('1', AOUT_25_0H, AOUT_31_23H)
 
           expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
@@ -151,7 +149,7 @@ describe('MesRendezvous', () => {
 
           // Then
           expect(
-              rendezVousService.getRendezVousConseillerClientSide
+            rendezVousService.getRendezVousConseiller
           ).toHaveBeenLastCalledWith('1', SEPTEMBRE_8_0H, SEPTEMBRE_14_23H)
 
           expect(screen.getByText('dimanche 11 septembre')).toBeInTheDocument()

@@ -13,7 +13,7 @@ import { ApiError } from 'utils/httpClient'
 import { DateTime } from 'luxon'
 
 export interface RendezVousService {
-  getRendezVousConseillerClientSide(
+  getRendezVousConseiller(
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
@@ -38,7 +38,7 @@ export interface RendezVousService {
 export class RendezVousApiService implements RendezVousService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getRendezVousConseillerClientSide(
+  async getRendezVousConseiller(
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
