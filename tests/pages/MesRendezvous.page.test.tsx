@@ -31,16 +31,17 @@ describe('MesRendezvous', () => {
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1_14H)
     })
 
-    describe('contenu', () => {
-      it('a un lien pour fixer un rendez-vous', () => {
-        // Given
+    describe('navigation', () => {
+      beforeEach(() => {
         rendezVousService = mockedRendezVousService()
         ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
 
         renderWithContexts(<MesRendezvous pageTitle='' />, {
           customDependances: { rendezVousService },
         })
+      })
 
+      it('a un lien pour fixer un rendez-vous', () => {
         // When
         const addRdv = screen.getByRole('link', {
           name: 'Fixer un rendez-vous',
@@ -52,14 +53,6 @@ describe('MesRendezvous', () => {
       })
 
       it('a deux boutons de navigation', () => {
-        // Given
-        rendezVousService = mockedRendezVousService()
-        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
-
-        renderWithContexts(<MesRendezvous pageTitle='' />, {
-          customDependances: { rendezVousService },
-        })
-
         // When
         const semaineFutures = screen.getByRole('button', {
           name: 'Aller à la semaine suivante',
@@ -73,126 +66,96 @@ describe('MesRendezvous', () => {
         expect(semaineFutures).toBeInTheDocument()
         expect(semainePassees).toBeInTheDocument()
       })
+    })
 
-      it('affiche la semaine courante par défaut', async () => {
-        // Given
+    describe('rendez-vous', () => {
+      beforeEach(async () => {
         rendezVousService = mockedRendezVousService({
-          getRendezVousConseillerClientSide: jest.fn(async () => [
-            unRendezVous({ id: '1', date: '2022-09-03T09:00:00.000Z' }),
-          ]),
+          getRendezVousConseillerClientSide: jest
+              .fn()
+              .mockImplementation(function (_, dateDebut) {
+                const rendezVous = unRendezVous({
+                  date: dateDebut.plus({ day: 3 }).toISO(),
+                })
+                return [rendezVous]
+              }),
         })
-        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
-
-        // When
-        await act(async () => {
-          renderWithContexts(<MesRendezvous pageTitle='' />, {
-            customDependances: { rendezVousService },
-          })
-        })
-
-        // Then
-        expect(
-          rendezVousService.getRendezVousConseillerClientSide
-        ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
-        expect(screen.getByRole('table')).toBeInTheDocument()
-        expect(screen.getByText('samedi 3 septembre')).toBeInTheDocument()
-        expect(screen.getByText('Matin')).toBeInTheDocument()
-        expect(screen.getByText('11h00 - 125 min')).toBeInTheDocument()
-      })
-
-      it('au clic affiche la semaine courante', async () => {
-        // Given
-        rendezVousService = mockedRendezVousService({
-          getRendezVousConseillerClientSide: jest.fn(async () => [
-            unRendezVous({ id: '1', date: '2022-09-03T09:00:00.000Z' }),
-          ]),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
 
         await act(async () => {
           renderWithContexts(<MesRendezvous pageTitle='' />, {
             customDependances: { rendezVousService },
           })
         })
-
-        // When
-        const buttonRdvsSemaineCourante = screen.getByRole('button', {
-          name: 'Aller à la Semaine en cours',
-        })
-
-        // When
-        await userEvent.click(buttonRdvsSemaineCourante)
-
-        // Then
-        expect(screen.getByRole('table')).toBeInTheDocument()
-        // Service should be called twice: on page display and on button click
-        expect(
-          rendezVousService.getRendezVousConseillerClientSide
-        ).toBeCalledTimes(2)
       })
-    })
 
-    describe('rendez-vous passés', () => {
-      it('affiche les rdvs de la semaine précédente quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
-        // Given
-        rendezVousService = mockedRendezVousService({
-          getRendezVousConseillerClientSide: jest.fn(async () => [
-            unRendezVous({ id: '1', date: '2022-08-25T10:00:00.000Z' }),
-          ]),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
-
-        renderWithContexts(<MesRendezvous pageTitle='' />, {
-          customDependances: { rendezVousService },
-        })
-
-        const rdvsPassesButton = screen.getByRole('button', {
-          name: 'Aller à la semaine précédente',
-        })
-
-        // When
-        await userEvent.click(rdvsPassesButton)
-
-        // Then
-        expect(
-          rendezVousService.getRendezVousConseillerClientSide
-        ).toHaveBeenLastCalledWith('1', AOUT_25_0H, AOUT_31_23H)
+      afterEach(() => {
         expect(screen.getByRole('table')).toBeInTheDocument()
-        expect(screen.getByText('jeudi 25 août')).toBeInTheDocument()
         expect(screen.getByText('Matin')).toBeInTheDocument()
-        expect(screen.getByText('12h00 - 125 min')).toBeInTheDocument()
+        expect(screen.getByText('00h00 - 125 min')).toBeInTheDocument()
       })
-    })
 
-    describe('rendez-vous futurs', () => {
-      it('affiche les rdvs de la semaine suivante quand on clique sur le bouton pour aller à la semaine suivante', async () => {
-        // Given
-        rendezVousService = mockedRendezVousService({
-          getRendezVousConseillerClientSide: jest.fn(async () => [
-            unRendezVous({ id: '1', date: '2022-09-14T14:00:00.000Z' }),
-          ]),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
+      describe('des 7 jours actuels', () => {
+        it('sont affichés par défaut', async () => {
+          // Then
+          expect(
+            rendezVousService.getRendezVousConseillerClientSide
+          ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
 
-        renderWithContexts(<MesRendezvous pageTitle='' />, {
-          customDependances: { rendezVousService },
+          expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
         })
 
-        const rdvsFutursButton = screen.getByRole('button', {
-          name: 'Aller à la semaine suivante',
+        it('au clic sur le bouton Semaine en cours, les affiche de nouveaux', async () => {
+          // Given
+          const buttonRdvsSemaineCourante = screen.getByRole('button', {
+            name: 'Aller à la Semaine en cours',
+          })
+
+          // When
+          await userEvent.click(buttonRdvsSemaineCourante)
+
+          // Then service should be called twice: on page display and on button click
+          expect(
+            rendezVousService.getRendezVousConseillerClientSide
+          ).toBeCalledTimes(2)
         })
+      })
 
-        // When
-        await userEvent.click(rdvsFutursButton)
+      describe('des 7 jours précédants', () => {
+        it('affiche les rdvs des 7 jours précédants quand on clique sur le bouton pour aller aux rendez-vous précédents', async () => {
+          // Given
+          const rdvsPassesButton = screen.getByRole('button', {
+            name: 'Aller à la semaine précédente',
+          })
 
-        // Then
-        expect(
-          rendezVousService.getRendezVousConseillerClientSide
-        ).toHaveBeenLastCalledWith('1', SEPTEMBRE_8_0H, SEPTEMBRE_14_23H)
-        expect(screen.getByRole('table')).toBeInTheDocument()
-        expect(screen.getByText('mercredi 14 septembre')).toBeInTheDocument()
-        expect(screen.getByText('Après-midi')).toBeInTheDocument()
-        expect(screen.getByText('16h00 - 125 min')).toBeInTheDocument()
+          // When
+          await userEvent.click(rdvsPassesButton)
+
+          // Then
+          expect(
+              rendezVousService.getRendezVousConseillerClientSide
+          ).toHaveBeenLastCalledWith('1', AOUT_25_0H, AOUT_31_23H)
+
+          expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
+        })
+      })
+
+      describe('des 7 jours suivants', () => {
+        it('affiche les rdvs des 7 jours précédants quand on clique sur le bouton pour aller à la semaine suivante', async () => {
+          // Given
+          const rdvsFutursButton = screen.getByRole('button', {
+            name: 'Aller à la semaine suivante',
+          })
+
+          // When
+          await userEvent.click(rdvsFutursButton)
+
+          // Then
+          expect(
+              rendezVousService.getRendezVousConseillerClientSide
+          ).toHaveBeenLastCalledWith('1', SEPTEMBRE_8_0H, SEPTEMBRE_14_23H)
+
+          expect(screen.getByText('dimanche 11 septembre')).toBeInTheDocument()
+        })
       })
     })
   })
