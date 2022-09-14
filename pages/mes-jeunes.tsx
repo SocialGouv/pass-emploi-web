@@ -78,19 +78,6 @@ function MesJeunes({
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  const handleAddJeune = async () => {
-    switch (conseiller?.structure) {
-      case StructureConseiller.MILO:
-        await router.push('/mes-jeunes/milo/creation-jeune')
-        break
-      case StructureConseiller.POLE_EMPLOI:
-        await router.push('/mes-jeunes/pole-emploi/creation-jeune')
-        break
-      default:
-        break
-    }
-  }
-
   async function closeAjoutAgenceSuccessMessage(): Promise<void> {
     setShowAjoutAgenceSuccess(false)
     await router.replace('/mes-jeunes', undefined, { shallow: true })
@@ -200,10 +187,7 @@ function MesJeunes({
       {conseillerJeunes.length > 0 && (
         <div className={`flex flex-wrap justify-between items-end mb-12`}>
           <RechercheJeune onSearchFilterBy={onSearch} />
-          {(conseiller?.structure === StructureConseiller.MILO ||
-            conseiller?.structure === StructureConseiller.POLE_EMPLOI) && (
-            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
-          )}
+          <AjouterJeuneButton structure={conseiller?.structure} />
         </div>
       )}
 
@@ -219,7 +203,7 @@ function MesJeunes({
               Vous n&apos;avez pas encore intégré de jeunes.
             </p>
 
-            <AjouterJeuneButton handleAddJeune={handleAddJeune} />
+            <AjouterJeuneButton structure={conseiller?.structure} />
           </div>
         )}
 
