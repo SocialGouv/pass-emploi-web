@@ -48,25 +48,19 @@ function MesRendezvous({
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  async function allerRdvs7JoursPrecedants() {
-    const index7JoursPrecedants = index7JoursAffiches - 1
-    await chargerRdvs7Jours(index7JoursPrecedants)
-    setIndex7JoursAffiches(index7JoursPrecedants)
-    setTrackingTitle(`${trackingTitle} passés`)
+  async function allerRdvs7JoursPrecedents() {
+    setIndex7JoursAffiches(index7JoursAffiches - 1)
+    setTrackingTitle(`${initialTracking} passés`)
   }
 
   async function allerRdvs7JoursActuels() {
-    const index7JoursActuels = 0
-    await chargerRdvs7Jours(index7JoursActuels)
-    setIndex7JoursAffiches(index7JoursActuels)
-    setTrackingTitle(trackingTitle)
+    setIndex7JoursAffiches(0)
+    setTrackingTitle(initialTracking)
   }
 
   async function allerRdvs7JoursSuivants() {
-    const index7JoursSuivants = index7JoursAffiches + 1
-    await chargerRdvs7Jours(index7JoursSuivants)
-    setIndex7JoursAffiches(index7JoursSuivants)
-    setTrackingTitle(`${trackingTitle} futurs`)
+    setIndex7JoursAffiches(index7JoursAffiches + 1)
+    setTrackingTitle(`${initialTracking} futurs`)
   }
 
   async function chargerRdvs7Jours(index7Jours: number) {
@@ -75,7 +69,7 @@ function MesRendezvous({
       jourDeDebutDesRdvs(index7Jours),
       jourDeFinDesRdvs(index7Jours)
     )
-    if (rdvs7Jours) setRdvs(rdvs7Jours.map(rdvToListItem))
+    setRdvs(rdvs7Jours.map(rdvToListItem))
   }
 
   function jourDeDebutDesRdvs(index7Jours?: number): DateTime {
@@ -121,7 +115,7 @@ function MesRendezvous({
           </p>
           <button
             aria-label='Aller à la semaine précédente'
-            onClick={allerRdvs7JoursPrecedants}
+            onClick={allerRdvs7JoursPrecedents}
           >
             <IconComponent
               name={IconName.ChevronLeft}
