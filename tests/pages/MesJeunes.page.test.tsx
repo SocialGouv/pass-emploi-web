@@ -37,15 +37,12 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {
   describe('client side', () => {
-    let routerPush: Function
     let routerReplace: Function
     let dependances: Pick<Dependencies, 'messagesService' | 'conseillerService'>
     const jeunes = desJeunesAvecActionsNonTerminees()
     beforeEach(() => {
-      routerPush = jest.fn()
       routerReplace = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        push: routerPush,
         replace: routerReplace,
       })
 
@@ -203,19 +200,13 @@ describe('Mes Jeunes', () => {
         })
       })
 
-      it('redirige vers la page de création jeune MILO', async () => {
-        // GIVEN
-        const addButton = screen.getByRole('button', {
-          name: 'Ajouter un bénéficiaire',
-        })
-
-        //WHEN
-        await userEvent.click(addButton)
-
+      it('permer de créer un jeune MILO', async () => {
         //THEN
-        expect(routerPush).toHaveBeenCalledWith(
-          '/mes-jeunes/milo/creation-jeune'
-        )
+        expect(
+          screen.getByRole('link', {
+            name: 'Ajouter un bénéficiaire',
+          })
+        ).toHaveAttribute('href', '/mes-jeunes/milo/creation-jeune')
       })
 
       it("affiche la colonne nombre d'actions des jeunes", () => {
@@ -253,19 +244,13 @@ describe('Mes Jeunes', () => {
         })
       })
 
-      it('redirige vers la page de création jeune PE', async () => {
-        // GIVEN
-        const addButton = screen.getByRole('button', {
-          name: 'Ajouter un bénéficiaire',
-        })
-
-        //WHEN
-        await userEvent.click(addButton)
-
+      it('permer de créer un jeune PE', async () => {
         //THEN
-        expect(routerPush).toHaveBeenCalledWith(
-          '/mes-jeunes/pole-emploi/creation-jeune'
-        )
+        expect(
+          screen.getByRole('link', {
+            name: 'Ajouter un bénéficiaire',
+          })
+        ).toHaveAttribute('href', '/mes-jeunes/pole-emploi/creation-jeune')
       })
 
       it("n'affiche pas le nombre d'actions des jeunes", () => {
