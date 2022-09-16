@@ -11,7 +11,6 @@ import FileIcon from 'assets/icons/attach_file.svg'
 import CalendarIcon from 'assets/icons/calendar.svg'
 import CancelIcon from 'assets/icons/cancel.svg'
 import CheckIcon from 'assets/icons/check.svg'
-import CheckRoundedIcon from 'assets/icons/check_rounded.svg'
 import ChevronDownIcon from 'assets/icons/chevron_down.svg'
 import ChevronFirstIcon from 'assets/icons/chevron_first.svg'
 import ChevronLastIcon from 'assets/icons/chevron_last.svg'
@@ -66,7 +65,6 @@ export enum IconName {
   ArrowRight = 'ArrowRight',
   Calendar = 'Calendar',
   Cancel = 'Cancel',
-  CheckRounded = 'CheckRounded',
   Check = 'Check',
   ChevronDown = 'ChevronDown',
   ChevronFirst = 'ChevronFirst',
@@ -124,7 +122,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowRight]: ArrowRightIcon,
   [IconName.Calendar]: CalendarIcon,
   [IconName.Cancel]: CancelIcon,
-  [IconName.CheckRounded]: CheckRoundedIcon,
   [IconName.Check]: CheckIcon,
   [IconName.ChevronDown]: ChevronDownIcon,
   [IconName.ChevronFirst]: ChevronFirstIcon,
