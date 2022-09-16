@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import JeunesMultiselectAutocomplete, {
@@ -19,7 +20,7 @@ import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
-import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
+import { DATE_DASH_SEPARATOR, TIME_24_SIMPLE, toFrenchFormat } from 'utils/date'
 
 interface EditionRdvFormProps {
   jeunes: BaseJeune[]
@@ -66,11 +67,12 @@ export function EditionRdvForm({
   )
   const [modalite, setModalite] = useState<string>(rdv?.modality ?? '')
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-  const dateRdv = rdv ? new Date(rdv.date) : undefined
-  const localDate = toIsoLocalDate(dateRdv) ?? ''
+  const dateRdv = rdv ? DateTime.fromISO(rdv.date) : undefined
+  const localDate = dateRdv ? toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR) : ''
   const [date, setDate] = useState<RequiredValue>({ value: localDate })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const localTime = toIsoLocalTime(dateRdv)?.slice(0, 5) ?? ''
+  const localTime =
+    dateRdv?.toLocaleString(DateTime.TIME_24_SIMPLE, { locale: 'fr-FR' }) ?? ''
   const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(rdv?.duration)
@@ -232,10 +234,14 @@ export function EditionRdvForm({
     if (!formIsValid()) return Promise.resolve()
 
     const [dureeHeures, dureeMinutes] = duree.value.split(':')
+    const dateTime: DateTime = DateTime.fromFormat(
+      `${date.value} ${horaire.value}`,
+      `${DATE_DASH_SEPARATOR} ${TIME_24_SIMPLE}`
+    )
     const payload: RdvFormData = {
       jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous,
-      date: new Date(`${date.value} ${horaire.value}`).toISOString(),
+      date: dateTime.toISO(),
       duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,

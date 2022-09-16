@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import React from 'react'
 
 import { ChatRoomTile } from 'components/chat/ChatRoomTile'
@@ -82,8 +83,8 @@ describe('<ChatRoomTile />', () => {
       <ChatRoomTile
         jeuneChat={unJeuneChat({
           lastMessageSentBy: 'conseiller',
-          lastMessageSentAt: new Date(),
-          lastJeuneReading: new Date(),
+          lastMessageSentAt: DateTime.now(),
+          lastJeuneReading: DateTime.now().minus({ hour: 1 }),
         })}
         id='whatever'
         onClick={jest.fn()}

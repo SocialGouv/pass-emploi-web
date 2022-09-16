@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import React from 'react'
 
 import Conversation from 'components/chat/Conversation'
@@ -11,7 +12,7 @@ import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { formatDayDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
@@ -25,8 +26,8 @@ describe('<Conversation />', () => {
     conseillersJeunes = desConseillersJeune()
     messagesService = mockedMessagesService({
       observeJeuneReadingDate: jest.fn(
-        (idChat: string, fn: (date: Date) => void) => {
-          fn(new Date())
+        (idChat: string, fn: (date: DateTime) => void) => {
+          fn(DateTime.now())
           return () => {}
         }
       ),
@@ -114,10 +115,10 @@ describe('<Conversation />', () => {
 
   const cases = messagesParJour.map((messagesDUnJour) => [messagesDUnJour])
   describe.each(cases)('Pour chaque jour avec message', (messagesDUnJour) => {
-    it(`affiche la date (${formatDayDate(messagesDUnJour.date)})`, () => {
+    it(`affiche la date (${toShortDate(messagesDUnJour.date)})`, () => {
       // Then
       expect(
-        screen.getByText(`Le ${formatDayDate(messagesDUnJour.date)}`)
+        screen.getByText(`Le ${toShortDate(messagesDUnJour.date)}`)
       ).toBeInTheDocument()
     })
 

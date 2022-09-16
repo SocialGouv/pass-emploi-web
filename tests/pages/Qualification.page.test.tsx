@@ -1,5 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -284,8 +285,8 @@ describe("Page Qualification d'une action", () => {
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
           'SNP_2',
-          new Date('2022-02-15T14:50:46.000Z'),
-          new Date('2022-09-05T00:00:00.000+02:00')
+          DateTime.fromISO('2022-02-15T14:50:46.000Z'),
+          DateTime.fromISO('2022-09-05T00:00:00.000+02:00')
         )
       })
 

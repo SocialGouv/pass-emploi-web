@@ -1,4 +1,6 @@
-import { JourRdvAVenirItem, PlageHoraire, RdvListItem } from 'interfaces/rdv'
+import { DateTime } from 'luxon'
+
+import { RdvListItem } from 'interfaces/rdv'
 import { rdvsWithIntercalaires } from 'presentation/MesRdvViewModel'
 
 const mardiMatin = '2030-01-01T10:00:00.000Z'
@@ -26,22 +28,14 @@ describe('listeRdvAVenirItem', () => {
 
     // Then
     expect(items.length).toBe(3)
-    expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect((items[1] as PlageHoraire).label).toEqual('Matin')
+    expect(items[0]).toHaveProperty('label', 'mardi 1 janvier')
+    expect(items[1]).toHaveProperty('label', 'Matin')
     expect(items[2]).toEqual(rendezvous)
   })
 
   it('quand la liste de rendez-vous contient un rendez-vous aujourd’hui, retourne "aujourd’hui", la plage horaire et le rendez-vous.', () => {
     // Given
-    const aujourdhui = new Date()
-    const aujourdhuiApresmidi = new Date(
-      aujourdhui.getFullYear(),
-      aujourdhui.getMonth(),
-      aujourdhui.getDate(),
-      15,
-      0,
-      0
-    ).toISOString()
+    const aujourdhuiApresmidi = DateTime.now().set({ hour: 15 }).toISO()
     const rendezvous = unRendezvousItem(aujourdhuiApresmidi)
 
     // When
@@ -49,8 +43,8 @@ describe('listeRdvAVenirItem', () => {
 
     // Then
     expect(items.length).toBe(3)
-    expect((items[0] as JourRdvAVenirItem).label).toEqual('aujourd’hui')
-    expect((items[1] as PlageHoraire).label).toEqual('Après-midi')
+    expect(items[0]).toHaveProperty('label', 'aujourd’hui')
+    expect(items[1]).toHaveProperty('label', 'Après-midi')
     expect(items[2]).toEqual(rendezvous)
   })
 
@@ -64,11 +58,11 @@ describe('listeRdvAVenirItem', () => {
 
     // Then
     expect(items.length).toBe(6)
-    expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect((items[1] as PlageHoraire).label).toEqual('Matin')
+    expect(items[0]).toHaveProperty('label', 'mardi 1 janvier')
+    expect(items[1]).toHaveProperty('label', 'Matin')
     expect(items[2]).toEqual(rendezvousMardi)
-    expect((items[3] as JourRdvAVenirItem).label).toEqual('mercredi 2 janvier')
-    expect((items[4] as PlageHoraire).label).toEqual('Matin')
+    expect(items[3]).toHaveProperty('label', 'mercredi 2 janvier')
+    expect(items[4]).toHaveProperty('label', 'Matin')
     expect(items[5]).toEqual(rendezvousMercredi)
   })
 
@@ -85,10 +79,10 @@ describe('listeRdvAVenirItem', () => {
 
     // Then
     expect(items.length).toBe(5)
-    expect((items[0] as JourRdvAVenirItem).label).toEqual('mardi 1 janvier')
-    expect((items[1] as JourRdvAVenirItem).label).toEqual('Matin')
+    expect(items[0]).toHaveProperty('label', 'mardi 1 janvier')
+    expect(items[1]).toHaveProperty('label', 'Matin')
     expect(items[2]).toEqual(unRendezvousMardi)
-    expect((items[3] as JourRdvAVenirItem).label).toEqual('Après-midi')
+    expect(items[3]).toHaveProperty('label', 'Après-midi')
     expect(items[4]).toEqual(unAutreRendezvousMardi)
   })
 })
@@ -99,7 +93,7 @@ function unRendezvousItem(date: string) {
     beneficiaires: '',
     type: '',
     modality: '',
-    date: date,
+    date,
     duration: 0,
     idCreateur: '1',
   }

@@ -1,79 +1,38 @@
 import { DateTime } from 'luxon'
 
-export const datesAreOnSameDay = (firstDate: Date, secondDate: Date): boolean =>
-  firstDate.getFullYear() === secondDate.getFullYear() &&
-  firstDate.getMonth() === secondDate.getMonth() &&
-  firstDate.getDate() === secondDate.getDate()
+export const WEEKDAY_MONTH_LONG: string = 'EEEE d MMMM'
+export const TIME_24_H_SEPARATOR: string = "HH'h'mm"
+export const TIME_24_SIMPLE: string = 'HH:mm'
+export const DATE_DASH_SEPARATOR: string = 'yyyy-MM-dd'
+export const DATETIME_LONG: string = `dd/MM/yyyy 'à' ${TIME_24_H_SEPARATOR}`
 
-export const dateIsToday = (dateToCheck: Date): boolean =>
-  datesAreOnSameDay(new Date(), dateToCheck)
-
-export const dateIsYesterday = (dateToCheck: Date): boolean => {
-  const yesterday = new Date()
-
-  yesterday.setDate(yesterday.getDate() - 1)
-
-  return datesAreOnSameDay(yesterday, dateToCheck)
+export function dateIsToday(dateToCheck: DateTime): boolean {
+  return DateTime.now().hasSame(dateToCheck, 'day')
 }
 
-export const formatDayDate = (date: Date): string => {
-  const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-  const month =
-    date.getMonth() > 8 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
-  const year = date.getFullYear()
-
-  return `${day}/${month}/${year}`
+export function dateIsYesterday(dateToCheck: DateTime): boolean {
+  return DateTime.now().minus({ day: 1 }).hasSame(dateToCheck, 'day')
 }
 
-export const formatWeekdayWithMonth = (date: Date): string => {
-  const weekday = date.toLocaleString('fr-FR', { weekday: 'long' })
-  const number = date.getDate()
-  const month = date.toLocaleString('fr-FR', { month: 'long' })
-  return `${weekday} ${number} ${month}`
+export function toShortDate(date: string | DateTime): string {
+  const datetime = date instanceof DateTime ? date : DateTime.fromISO(date)
+  return datetime.toLocaleString(DateTime.DATE_SHORT, { locale: 'fr-FR' })
 }
 
-export const formatDayHourDate = (date: string): string => {
-  return DateTime.fromISO(date).toFormat("dd/MM/yyyy à HH'h'mm")
-}
-
-export const formatHourMinuteDate = (date: Date): string => {
-  let hours = date.getHours().toString()
-  hours = ('0' + hours).slice(-2)
-
-  let minutes = date.getMinutes().toString()
-  minutes = ('0' + minutes).slice(-2)
-
-  return `${hours}h${minutes}`
-}
-
-export const formatDayAndHourDate = (date: Date): string =>
-  `le ${formatDayDate(date)} à ${formatHourMinuteDate(date)}`
-
-export const isDateOlder = (date1: Date, date2: Date): boolean => {
-  return date1.getTime() < date2.getTime()
+export function toFrenchFormat(date: DateTime, format: string): string {
+  return date.toFormat(format, { locale: 'fr-FR' })
 }
 
 export function compareDates(
-  date1: Date | undefined,
-  date2: Date | undefined
+  date1: DateTime | undefined,
+  date2: DateTime | undefined
 ): number {
-  if (!date1 && !date2) return 0
-  if (!date1) return -1
-  else if (!date2) return 1
-  return date1.getTime() - date2.getTime()
+  return (date1?.toMillis() ?? 0) - (date2?.toMillis() ?? 0)
 }
 
 export function compareDatesDesc(
-  date1: Date | undefined,
-  date2: Date | undefined
+  date1: DateTime | undefined,
+  date2: DateTime | undefined
 ): number {
   return -compareDates(date1, date2)
-}
-
-export function toIsoLocalDate(date?: Date): string | undefined {
-  return date && DateTime.fromJSDate(date).toISODate()
-}
-
-export function toIsoLocalTime(date?: Date): string | undefined {
-  return date && DateTime.fromJSDate(date).toISOTime()
 }

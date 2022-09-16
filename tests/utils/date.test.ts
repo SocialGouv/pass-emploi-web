@@ -1,8 +1,10 @@
+import { DateTime } from 'luxon'
+
 import {
-  datePasseeLoin,
-  datePassee,
   dateFuture,
   dateFutureLoin,
+  datePassee,
+  datePasseeLoin,
   now,
 } from 'fixtures/date'
 import {
@@ -10,7 +12,6 @@ import {
   compareDatesDesc,
   dateIsToday,
   dateIsYesterday,
-  isDateOlder,
 } from 'utils/date'
 
 describe('dateUtils', () => {
@@ -18,40 +19,37 @@ describe('dateUtils', () => {
     jest.useFakeTimers()
   })
 
-  describe('isDateOlder', () => {
-    it('isDateOlder renvoie true si la date est plus ancienne', () => {
-      const dateAvant = new Date('Thu, 21 Oct 2021 10:01:19 GMT')
-      const dateApres = new Date('Thu, 21 Oct 2021 10:01:20 GMT')
-
-      const isOlder = isDateOlder(dateAvant, dateApres)
-
-      expect(isOlder).toBeTruthy()
-    })
-  })
-
   describe('dateIsToday', () => {
     it("dateIsToday renvoie true si la date correspond à la date d'aujourd'hui", () => {
       //GIVEN
-      jest.setSystemTime(new Date('2018-12-31T23:59:59.000Z'))
-
-      //WHEN
-      const isToday = dateIsToday(new Date('2018-12-31T23:59:59.000Z'))
+      jest.setSystemTime(
+        DateTime.fromISO('2018-12-31T13:59:59.000Z').toJSDate()
+      )
 
       //THEN
-      expect(isToday).toBeTruthy()
+      expect(dateIsToday(DateTime.fromISO('2018-12-31T22:59:59.000Z'))).toEqual(
+        true
+      )
+      expect(dateIsToday(DateTime.fromISO('2018-11-31T22:59:59.000Z'))).toEqual(
+        false
+      )
     })
   })
 
   describe('dateIsYesterday', () => {
     it("dateIsYesterday renvoie true si la date correspond à la date d'hier", () => {
       //GIVEN
-      jest.setSystemTime(new Date('2018-12-31T23:59:59.000Z'))
-
-      //WHEN
-      const isYesterday = dateIsYesterday(new Date('2018-12-30T23:59:59.000Z'))
+      jest.setSystemTime(
+        DateTime.fromISO('2018-12-31T13:59:59.000Z').toJSDate()
+      )
 
       //THEN
-      expect(isYesterday).toBeTruthy()
+      expect(
+        dateIsYesterday(DateTime.fromISO('2018-12-30T13:59:59.000Z'))
+      ).toEqual(true)
+      expect(
+        dateIsYesterday(DateTime.fromISO('2018-12-30T23:59:59.000Z'))
+      ).toEqual(false)
     })
   })
 

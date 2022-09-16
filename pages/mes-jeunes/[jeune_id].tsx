@@ -1,4 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
@@ -432,11 +433,13 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     return { notFound: true }
   }
 
-  const now = new Date()
+  const now = DateTime.now()
   const props: FicheJeuneProps = {
     jeune,
     metadonneesFavoris,
-    rdvs: rdvs.filter((rdv) => new Date(rdv.date) > now).map(rdvToListItem),
+    rdvs: rdvs
+      .filter((rdv) => DateTime.fromISO(rdv.date) > now)
+      .map(rdvToListItem),
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,

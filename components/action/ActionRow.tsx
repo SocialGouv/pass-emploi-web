@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 
@@ -5,7 +6,7 @@ import StatusTag from 'components/action/StatusTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RowCell from 'components/ui/Table/RowCell'
 import { Action, StatutAction } from 'interfaces/action'
-import { formatDayDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 interface ActionRowProps {
   action: Action
@@ -17,9 +18,17 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     return (
       action.status !== StatutAction.Annulee &&
       action.status !== StatutAction.Terminee &&
-      new Date(action.dateEcheance).getTime() < new Date().getTime()
+      DateTime.fromISO(action.dateEcheance) < DateTime.now()
     )
   }, [action])
+  const creationDate = useMemo(
+    () => toShortDate(action.creationDate),
+    [action.creationDate]
+  )
+  const dateEcheance: string = useMemo(
+    () => toShortDate(action.dateEcheance),
+    [action.dateEcheance]
+  )
 
   return (
     <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
@@ -47,7 +56,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
         </RowCell>
         <RowCell>
           <span className='flex items-center'>
-            <span>{formatDayDate(new Date(action.creationDate))}</span>
+            <span>{creationDate}</span>
           </span>
         </RowCell>
         <RowCell>
@@ -70,7 +79,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               ) : (
                 <></>
               )}
-              {formatDayDate(new Date(action.dateEcheance))}
+              {dateEcheance}
             </span>
           </span>
         </RowCell>

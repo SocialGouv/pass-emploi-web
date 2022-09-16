@@ -1486,10 +1486,10 @@ describe('Fiche Jeune', () => {
       actionsService = mockedActionsService({
         getActionsJeuneServerSide: jest.fn(async () => ({
           actions: [
-            uneAction({ creationDate: now.toISOString() }),
-            uneAction({ creationDate: datePasseeLoin.toISOString() }),
-            uneAction({ creationDate: dateFuture.toISOString() }),
-            uneAction({ creationDate: dateFutureLoin.toISOString() }),
+            uneAction({ creationDate: now.toISO() }),
+            uneAction({ creationDate: datePasseeLoin.toISO() }),
+            uneAction({ creationDate: dateFuture.toISO() }),
+            uneAction({ creationDate: dateFutureLoin.toISO() }),
           ],
           metadonnees: { nombreTotal: 14, nombrePages: 2 },
         })),
@@ -1587,10 +1587,10 @@ describe('Fiche Jeune', () => {
           props: {
             actionsInitiales: {
               actions: [
-                uneAction({ creationDate: now.toISOString() }),
-                uneAction({ creationDate: datePasseeLoin.toISOString() }),
-                uneAction({ creationDate: dateFuture.toISOString() }),
-                uneAction({ creationDate: dateFutureLoin.toISOString() }),
+                uneAction({ creationDate: now.toISO() }),
+                uneAction({ creationDate: datePasseeLoin.toISO() }),
+                uneAction({ creationDate: dateFuture.toISO() }),
+                uneAction({ creationDate: dateFutureLoin.toISO() }),
               ],
               page: 1,
               metadonnees: { nombreTotal: 14, nombrePages: 2 },

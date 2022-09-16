@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { compareDates, compareDatesDesc } from 'utils/date'
 
 /**
@@ -85,10 +87,10 @@ export interface Chat {
   flaggedByConseiller: boolean
   newConseillerMessageCount: number
   lastMessageContent: string | undefined
-  lastMessageSentAt: Date | undefined
+  lastMessageSentAt: DateTime | undefined
   lastMessageSentBy: string | undefined
-  lastConseillerReading: Date | undefined
-  lastJeuneReading: Date | undefined
+  lastConseillerReading: DateTime | undefined
+  lastJeuneReading: DateTime | undefined
   lastMessageIv: string | undefined
 }
 
@@ -155,8 +157,12 @@ export function compareJeuneByLastActivity(
   jeune2: JeuneFromListe,
   sortStatutCompteActif: number
 ) {
-  const date1 = jeune1.lastActivity ? new Date(jeune1.lastActivity) : undefined
-  const date2 = jeune2.lastActivity ? new Date(jeune2.lastActivity) : undefined
+  const date1 = jeune1.lastActivity
+    ? DateTime.fromISO(jeune1.lastActivity)
+    : undefined
+  const date2 = jeune2.lastActivity
+    ? DateTime.fromISO(jeune2.lastActivity)
+    : undefined
   return compareDates(date1, date2) || sortStatutCompteActif
 }
 
@@ -165,8 +171,12 @@ export function compareJeuneByLastActivityDesc(
   jeune2: JeuneFromListe,
   sortStatutCompteActif: number
 ) {
-  const date1 = jeune1.lastActivity ? new Date(jeune1.lastActivity) : undefined
-  const date2 = jeune2.lastActivity ? new Date(jeune2.lastActivity) : undefined
+  const date1 = jeune1.lastActivity
+    ? DateTime.fromISO(jeune1.lastActivity)
+    : undefined
+  const date2 = jeune2.lastActivity
+    ? DateTime.fromISO(jeune2.lastActivity)
+    : undefined
   return compareDatesDesc(date1, date2) || -sortStatutCompteActif
 }
 

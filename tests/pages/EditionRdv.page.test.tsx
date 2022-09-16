@@ -14,12 +14,10 @@ import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
-jest.mock('utils/date')
 jest.mock('components/Modal')
 
 describe('EditionRdv', () => {
@@ -469,7 +467,7 @@ describe('EditionRdv', () => {
               type: 'ACTIVITES_EXTERIEURES',
               modality: modalites[0],
               precision: undefined,
-              date: '2022-03-03T09:30:00.000Z',
+              date: '2022-03-03T10:30:00.000+01:00',
               adresse: undefined,
               organisme: undefined,
               duration: 157,
@@ -495,7 +493,7 @@ describe('EditionRdv', () => {
               type: 'AUTRE',
               precision: 'un texte de précision',
               modality: modalites[0],
-              date: '2022-03-03T09:30:00.000Z',
+              date: '2022-03-03T10:30:00.000+01:00',
               adresse: undefined,
               organisme: undefined,
               duration: 157,
@@ -710,8 +708,6 @@ describe('EditionRdv', () => {
     describe('quand on souhaite modifier un rdv existant', () => {
       let rdv: Rdv
       beforeEach(() => {
-        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
-        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         // Given
         const jeune0 = {
           id: jeunes[0].id,
@@ -957,7 +953,7 @@ describe('EditionRdv', () => {
                 type: 'AUTRE',
                 modality: modalites[0],
                 precision: 'Prise de nouvelles',
-                date: '2022-03-03T09:30:00.000Z',
+                date: '2022-03-03T10:30:00.000+01:00',
                 adresse: '36 rue de marseille, 93200 Saint-Denis',
                 organisme: 'S.A.R.L',
                 duration: 157,
@@ -986,8 +982,6 @@ describe('EditionRdv', () => {
       let rdv: Rdv
       beforeEach(() => {
         // Given
-        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
-        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         const jeune = {
           id: jeunes[0].id,
           prenom: jeunes[0].prenom,
@@ -1134,7 +1128,7 @@ describe('EditionRdv', () => {
               type: 'AUTRE',
               modality: modalites[2],
               precision: 'Prise de nouvelles',
-              date: '2021-10-21T10:00:00.000Z',
+              date: '2021-10-21T12:00:00.000+02:00',
               adresse: '36 rue de marseille, 93200 Saint-Denis',
               organisme: 'S.A.R.L',
               duration: 125,

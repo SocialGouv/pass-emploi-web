@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -45,7 +46,7 @@ describe('<Layout />', () => {
   let conseillerService: ConseillerService
   let messagesService: MessagesService
   beforeEach(async () => {
-    jest.setSystemTime(new Date())
+    jest.setSystemTime(DateTime.now().toJSDate())
 
     jeunesChats = [
       unJeuneChat({
