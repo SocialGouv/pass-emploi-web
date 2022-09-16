@@ -1,11 +1,16 @@
 import { screen } from '@testing-library/dom'
 import { render, within } from '@testing-library/react'
+import { DateTime } from 'luxon'
 import React from 'react'
 
 import TableauRdv from 'components/rdv/TableauRdv'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import { formatHourMinuteDate, formatWeekdayWithMonth } from 'utils/date'
+import {
+  WEEKDAY_MONTH_LONG,
+  TIME_24_H_SEPARATOR,
+  toFrenchFormat,
+} from 'utils/date'
 
 describe('<TableauRdv>', () => {
   it("affiche un message lorsqu'il n'y a pas de rendez-vous", () => {
@@ -46,13 +51,13 @@ describe('<TableauRdv>', () => {
     it('affiche les informations des rendez-vous', () => {
       // Then
       listeRdv.forEach((rdv) => {
-        const date = new Date(rdv.date)
+        const date = DateTime.fromISO(rdv.date)
         expect(screen.getByText(`${rdv.beneficiaires}`)).toBeInTheDocument()
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         expect(
           screen.getByText(
-            `${formatHourMinuteDate(date)} - ${rdv.duration} min`
+            `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duration} min`
           )
         ).toBeInTheDocument()
       })
@@ -61,8 +66,9 @@ describe('<TableauRdv>', () => {
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
         const link = screen.getByLabelText(
-          `Modifier rendez-vous du ${formatWeekdayWithMonth(
-            new Date(rdv.date)
+          `Modifier rendez-vous du ${toFrenchFormat(
+            DateTime.fromISO(rdv.date),
+            WEEKDAY_MONTH_LONG
           )} avec ${rdv.beneficiaires}`
         )
         expect(link).toBeInTheDocument()

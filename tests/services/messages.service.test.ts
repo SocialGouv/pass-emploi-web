@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { ApiClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import {
@@ -72,8 +74,8 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.setReadByConseiller', () => {
     it('updates chat in firebase', async () => {
       // Given
-      const now = new Date()
-      jest.setSystemTime(now)
+      const now = DateTime.now()
+      jest.setSystemTime(now.toJSDate())
       const jeuneChat = unJeuneChat()
 
       // When
@@ -106,7 +108,7 @@ describe('MessagesFirebaseAndApiService', () => {
     let updateChats: (chats: Chat[]) => void
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(new Date())
+      jest.setSystemTime(DateTime.now().toJSDate())
       updateChats = jest.fn()
 
       // When
@@ -169,11 +171,11 @@ describe('MessagesFirebaseAndApiService', () => {
 
   describe('.observeJeuneReadingDate', () => {
     let idChat: string
-    let jeuneReadingDate: Date
-    let onJeuneReadingDate: (date: Date) => void
+    let jeuneReadingDate: DateTime
+    let onJeuneReadingDate: (date: DateTime) => void
     beforeEach(async () => {
       // Given
-      jeuneReadingDate = new Date(2022, 0, 12)
+      jeuneReadingDate = DateTime.local(2022, 1, 12)
       ;(firebaseClient.observeChat as jest.Mock).mockImplementation(
         (idChat: string, fn: (chat: Chat) => void) =>
           fn(unChat({ lastJeuneReading: jeuneReadingDate }))
@@ -241,10 +243,10 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.sendNouveauMessage', () => {
     let jeuneChat: JeuneChat
     let newMessage: string
-    const now = new Date()
+    const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(now)
+      jest.setSystemTime(now.toJSDate())
       jeuneChat = unJeuneChat()
       newMessage = 'nouveauMessage'
       // When
@@ -360,10 +362,10 @@ describe('MessagesFirebaseAndApiService', () => {
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
     let newMessageGroupe: string
-    const now = new Date()
+    const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(now)
+      jest.setSystemTime(now.toJSDate())
       destinataires = desItemsJeunes()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'nouveau message groupé'
@@ -419,7 +421,7 @@ describe('MessagesFirebaseAndApiService', () => {
             lastMessageSentBy: 'conseiller',
             newConseillerMessageCount: chat.newConseillerMessageCount + 1,
             seenByConseiller: false,
-            lastConseillerReading: new Date(0),
+            lastConseillerReading: DateTime.fromMillis(0),
           })
         })
       })

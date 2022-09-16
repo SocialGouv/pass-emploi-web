@@ -18,7 +18,6 @@ import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { toIsoLocalDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -63,8 +62,8 @@ function PageQualification({
       await actionsService.qualifier(
         action.id,
         codeSNP!,
-        DateTime.fromISO(dateDebut).startOf('day').toJSDate(),
-        DateTime.fromISO(dateFin!).startOf('day').toJSDate()
+        DateTime.fromISO(dateDebut).startOf('day'),
+        DateTime.fromISO(dateFin!).startOf('day')
       )
       await router.push(`${returnTo}?qualificationSNP=succes`)
     } catch (error) {
@@ -154,8 +153,8 @@ function PageQualification({
           type='date'
           id='input-date-debut'
           defaultValue={
-            action.creationDate
-              ? toIsoLocalDate(new Date(action.creationDate))
+            action.creationDate ?? ''
+              ? DateTime.fromISO(action.creationDate).toISODate()
               : ''
           }
           onChange={setDateDebut}
@@ -183,10 +182,10 @@ function PageQualification({
           id='input-date-fin'
           defaultValue={
             action.dateFinReelle
-              ? toIsoLocalDate(new Date(action.dateFinReelle))
+              ? DateTime.fromISO(action.dateFinReelle).toISODate()
               : ''
           }
-          min={toIsoLocalDate(new Date(dateDebut))}
+          min={DateTime.fromISO(dateDebut).toISODate()}
           onChange={setDateFin}
           required={true}
         />

@@ -1,18 +1,23 @@
-import React from 'react'
+import { DateTime } from 'luxon'
+import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Commentaire } from 'interfaces/action'
-import { formatDayHourDate } from 'utils/date'
+import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
-interface UnCommentaireActionProps {
+interface CommentaireActionProps {
   commentaire: Commentaire
   idConseiller: string | undefined
 }
 
-export function UnCommentaireAction({
+export function CommentaireAction({
   commentaire,
   idConseiller,
-}: UnCommentaireActionProps) {
+}: CommentaireActionProps) {
+  const commentaireDateTime: string = useMemo(
+    () => toFrenchFormat(DateTime.fromISO(commentaire.date), DATETIME_LONG),
+    [commentaire.date]
+  )
   return (
     <>
       <dt className='flex items-center pb-2'>
@@ -30,7 +35,7 @@ export function UnCommentaireAction({
             : `${commentaire.createur.prenom} ${commentaire.createur.nom}`}
         </span>
         <span className='mr-2'>·</span>
-        <span>{formatDayHourDate(commentaire.date)}</span>
+        <span>{commentaireDateTime}</span>
       </dt>
       <dd className='pb-8 block'>{commentaire.message}</dd>
     </>

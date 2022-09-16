@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import React, { MouseEventHandler } from 'react'
+import React, { MouseEventHandler, useMemo } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { formatDayDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
   idJeune: string
@@ -31,6 +31,11 @@ export function BlocInformationJeune({
   onDossierMiloClick,
   onDeleteJeuneClick,
 }: BlocInformationJeuneProps) {
+  const shortCreationDate = useMemo(
+    () => toShortDate(creationDate),
+    [creationDate]
+  )
+
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       <h2 className='text-base-bold mb-4'>Informations</h2>
@@ -38,9 +43,7 @@ export function BlocInformationJeune({
         <div className='flex'>
           <dt className='text-base-regular'>Ajouté le :</dt>
           <dd>
-            <span className='text-base-medium ml-1'>
-              {formatDayDate(new Date(creationDate))}
-            </span>
+            <span className='text-base-medium ml-1'>{shortCreationDate}</span>
           </dd>
         </div>
 

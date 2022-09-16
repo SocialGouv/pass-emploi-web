@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 
@@ -10,14 +11,14 @@ describe('Authenticator', () => {
   let httpClient: HttpClient
   let accessToken: string
   let refreshToken: string
-  let now: Date
+  let now: DateTime
 
   beforeEach(() => {
     httpClient = { fetchJson: jest.fn(), fetchNoContent: jest.fn() }
     authenticator = new Authenticator(httpClient)
     jest.useFakeTimers()
-    now = new Date()
-    jest.setSystemTime(now)
+    now = DateTime.now()
+    jest.setSystemTime(now.toJSDate())
 
     accessToken =
       'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJleGItdTZsMmNkS1BzWEdRUXJIb0tIS0lVS2NmbE9xUkcyYTE0QjNWSzRVIn0.eyJleHAiOjE2NDYwMzkwMjgsImlhdCI6MTY0NjAzNzIyOCwiYXV0aF90aW1lIjoxNjQ2MDM3MjI4LCJqdGkiOiI4MmQwOWI2Zi00NjFmLTQ2OWEtODk0Yy01NDYzMmE2NmU5YzUiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODIvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJzdWIiOiI4NDNkYzljZS1jMWVlLTRmYjUtODYwMy1hYjI3MzEwMzY0N2QiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTIyZjY3OWYtZmFjZi00ZTgzLWEwZjgtYjI0YzBkMzJjNGZiIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJjb25zZWlsbGVyX3N1cGVydmlzZXVyIl19LCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwYXNzLWVtcGxvaS11c2VyIHByb2ZpbGUiLCJzaWQiOiJhMjJmNjc5Zi1mYWNmLTRlODMtYTBmOC1iMjRjMGQzMmM0ZmIiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiXSwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJ1c2VyU3RydWN0dXJlIjoiUEFTU19FTVBMT0kiLCJuYW1lIjoiTmlscyBUYXZlcm5pZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI0MSIsInVzZXJUeXBlIjoiQ09OU0VJTExFUiIsImdpdmVuX25hbWUiOiJOaWxzIiwidXNlcklkIjoiNDEiLCJmYW1pbHlfbmFtZSI6IlRhdmVybmllciIsImVtYWlsIjoibmlscy50YXZlcm5pZXJAcGFzc2VtcGxvaS5jb20ifQ.TdAdafg4EVyJkTaBfEiFLjsGjWyAkFgIcBfB72tmYc6uVWvy49u5RJIkqVk60OEjsGX6bfSW_lbAp8nR1tpfVMV_rAHCFnnk3nw2dh-Qp2jmNfvlxY5v1m_KouK-7_XB6xJ-M7-Q2EUQmRn5XFJ31Pka7JaSCaCHae7W-juE4Ocko2eEbYV24OtRqRYXLlAS3WPR9vVufVwRp-hQYghdQ9WvAsdPzGW9yqnl5FlA7ITx_ad8OwCIQtFznXqzXYVq9bqfBqnsxz6lb9KHhL5EGIjqaWxzxLeIZ44Ag3R1hUhDOZYaw2qD1VMu2HnhDqESCiCoYTYRKasKCsyaSFKZ-A'
@@ -27,7 +28,6 @@ describe('Authenticator', () => {
 
   describe('handleJWTAndRefresh', () => {
     const cinqMnEnS = 300
-    const cinqMnEnMs = 300000
 
     describe("Quand c'est la 1ere connexion", () => {
       it('enrichit le JWT avec les infos du token et du conseiller', async () => {
@@ -64,7 +64,7 @@ describe('Authenticator', () => {
         const vingtSEnMs = 20000
         const jwt = {
           ...jwtFixture(),
-          expiresAtTimestamp: now.getTime() + vingtSEnMs,
+          expiresAtTimestamp: now.plus({ second: 20 }).toMillis(),
         }
         const actual = await authenticator.handleJWTAndRefresh({
           jwt,
@@ -81,7 +81,7 @@ describe('Authenticator', () => {
             ...jwtFixture(),
             accessToken: 'accessToken',
             refreshToken: 'refreshToken',
-            expiresAtTimestamp: now.getTime() - cinqMnEnMs,
+            expiresAtTimestamp: now.minus({ minute: 5 }).toMillis(),
           }
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
@@ -103,7 +103,7 @@ describe('Authenticator', () => {
             ...jwt,
             accessToken: nouvelAccessToken,
             refreshToken: nouveauRefreshToken,
-            expiresAtTimestamp: now.getTime() + cinqMnEnMs,
+            expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
           }
           expect(actual).toEqual(jwtMisAjour)
         })
@@ -117,7 +117,7 @@ describe('Authenticator', () => {
             ...jwtFixture(),
             accessToken: 'accessToken',
             refreshToken: 'refreshToken',
-            expiresAtTimestamp: now.getTime() + treizeSenMs,
+            expiresAtTimestamp: now.plus({ second: 13 }).toMillis(),
           }
 
           const nouvelAccessToken = 'nouvelAccessToken'
@@ -140,7 +140,7 @@ describe('Authenticator', () => {
             ...jwt,
             accessToken: nouvelAccessToken,
             refreshToken: nouveauRefreshToken,
-            expiresAtTimestamp: now.getTime() + cinqMnEnMs,
+            expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
           }
           expect(actual).toEqual(jwtMisAjour)
         })

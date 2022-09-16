@@ -1,16 +1,17 @@
 import parse, { domToReact } from 'html-react-parser'
-import React from 'react'
+import { DateTime } from 'luxon'
+import React, { useMemo } from 'react'
 
 import { LienOffre } from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
-import { formatHourMinuteDate, isDateOlder } from 'utils/date'
+import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
 
 interface DisplayMessageProps {
   message: Message
   conseillerNomComplet: string | undefined
-  lastSeenByJeune: Date | undefined
+  lastSeenByJeune: DateTime | undefined
 }
 
 export default function DisplayMessage({
@@ -20,6 +21,14 @@ export default function DisplayMessage({
 }: DisplayMessageProps) {
   const isSentByConseiller =
     message.sentBy === UserType.CONSEILLER.toLowerCase()
+  const creationTime: string = useMemo(
+    () => toFrenchFormat(message.creationDate, TIME_24_H_SEPARATOR),
+    [message.creationDate]
+  )
+  const isSeenByJeune: boolean = useMemo(
+    () => Boolean(lastSeenByJeune && lastSeenByJeune > message.creationDate),
+    [lastSeenByJeune, message.creationDate]
+  )
 
   function scrollToRef(element: HTMLLIElement | null) {
     if (element) element.scrollIntoView({ behavior: 'smooth' })
@@ -101,14 +110,9 @@ export default function DisplayMessage({
           isSentByConseiller ? 'text-right' : 'text-left'
         }`}
       >
-        {formatHourMinuteDate(message.creationDate)}
+        {creationTime}
         {isSentByConseiller && (
-          <span>
-            {!lastSeenByJeune ||
-            isDateOlder(lastSeenByJeune, message.creationDate)
-              ? ' · Envoyé'
-              : ' · Lu'}
-          </span>
+          <span>{isSeenByJeune ? ' · Envoyé' : ' · Lu'}</span>
         )}
       </p>
     </li>

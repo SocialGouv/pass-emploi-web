@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import Dot from 'components/ui/Dot'
 import IconCheckbox from 'components/ui/Form/IconCheckbox'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'
-import { formatDayAndHourDate } from 'utils/date'
+import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
 interface ChatRoomTileProps {
   id: string
@@ -14,17 +14,24 @@ interface ChatRoomTileProps {
   onToggleFlag: (flagged: boolean) => void
 }
 
-function isLastMessageSeenByJeune(jeuneChat: JeuneChat): boolean {
-  if (!jeuneChat.lastJeuneReading) return false
-  return jeuneChat.lastMessageSentAt! < jeuneChat.lastJeuneReading
-}
-
 export function ChatRoomTile({
   id,
   jeuneChat,
   onClick,
   onToggleFlag,
 }: ChatRoomTileProps) {
+  const lastMessageSentAt: string | undefined = useMemo(
+    () =>
+      jeuneChat.lastMessageSentAt &&
+      toFrenchFormat(jeuneChat.lastMessageSentAt, `'le' ${DATETIME_LONG}`),
+    [jeuneChat.lastMessageSentAt]
+  )
+  const isLastMessageSeenByJeune: boolean | undefined = useMemo(() => {
+    if (!jeuneChat.lastMessageSentAt) return
+    if (!jeuneChat.lastJeuneReading) return false
+    return jeuneChat.lastMessageSentAt < jeuneChat.lastJeuneReading
+  }, [jeuneChat.lastJeuneReading, jeuneChat.lastMessageSentAt])
+
   function toggleFollowMessage() {
     onToggleFlag(!jeuneChat.flaggedByConseiller)
   }
@@ -53,12 +60,11 @@ export function ChatRoomTile({
           : {jeuneChat.lastMessageContent}
         </span>
         <span className='text-xs-regular text-content_color self-end'>
-          {jeuneChat.lastMessageContent &&
-            formatDayAndHourDate(jeuneChat.lastMessageSentAt!)}{' '}
+          {lastMessageSentAt}{' '}
           {jeuneChat.lastMessageSentBy === 'conseiller' && (
             <>
               <Dot color='grey_700' />{' '}
-              {isLastMessageSeenByJeune(jeuneChat) && (
+              {isLastMessageSeenByJeune && (
                 <span>
                   Lu{' '}
                   <IconComponent
@@ -69,7 +75,7 @@ export function ChatRoomTile({
                   />
                 </span>
               )}
-              {!isLastMessageSeenByJeune(jeuneChat) && (
+              {!isLastMessageSeenByJeune && (
                 <span>
                   Non lu{' '}
                   <IconComponent

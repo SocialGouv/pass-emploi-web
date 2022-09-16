@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import {
   BaseJeune,
   CategorieSituation,
@@ -202,9 +204,9 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
     seenByConseiller: true,
     newConseillerMessageCount: 1,
     lastMessageContent: 'Test message',
-    lastMessageSentAt: new Date(),
+    lastMessageSentAt: DateTime.now(),
     lastMessageSentBy: 'conseiller',
-    lastConseillerReading: new Date(),
+    lastConseillerReading: DateTime.now(),
     lastJeuneReading: undefined,
     lastMessageIv: undefined,
     flaggedByConseiller: true,
