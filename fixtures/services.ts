@@ -18,6 +18,7 @@ export function mockedJeunesService(
     getJeunesDuConseillerParEmail: jest.fn(),
     getJeuneDetails: jest.fn(),
     getIdJeuneMilo: jest.fn(),
+    getIndicateursJeune: jest.fn(),
     createCompteJeunePoleEmploi: jest.fn(),
     reaffecter: jest.fn(),
     supprimerJeuneInactif: jest.fn(),

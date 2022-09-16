@@ -16,6 +16,7 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import TileIndicateur from 'components/ui/TileIndicateurComponent'
 import {
   Action,
   EtatQualificationAction,
@@ -23,7 +24,11 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { DetailJeune, MetadonneesFavoris } from 'interfaces/jeune'
+import {
+  DetailJeune,
+  IndicateursSemaine,
+  MetadonneesFavoris,
+} from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -93,6 +98,9 @@ function FicheJeune({
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
+  const [indicateursSemaine, setIndicateursSemaine] = useState<
+    IndicateursSemaine | undefined
+  >()
 
   const [showModaleDeleteJeuneActif, setShowModaleDeleteJeuneActif] =
     useState<boolean>(false)
@@ -103,6 +111,10 @@ function FicheJeune({
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
+
+  const aujourdHui = DateTime.now()
+  const debutDeLaSemaine = aujourdHui.startOf('week')
+  const finDeLaSemaine = aujourdHui.endOf('week')
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -215,6 +227,27 @@ function FicheJeune({
     setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
+  useEffect(() => {
+    if (conseiller && !indicateursSemaine && !isPoleEmploi) {
+      jeunesService
+        .getIndicateursJeune(
+          conseiller.id,
+          jeune.id,
+          debutDeLaSemaine,
+          finDeLaSemaine
+        )
+        .then(setIndicateursSemaine)
+    }
+  }, [
+    conseiller,
+    debutDeLaSemaine,
+    finDeLaSemaine,
+    indicateursSemaine,
+    jeune.id,
+    jeunesService,
+    isPoleEmploi,
+  ])
+
   return (
     <>
       {showSuppressionCompteBeneficiaireError && (
@@ -266,12 +299,75 @@ function FicheJeune({
         </div>
       )}
 
-      <DetailsJeune
-        jeune={jeune}
-        structureConseiller={conseiller?.structure}
-        onDossierMiloClick={trackDossierMiloClick}
-        onDeleteJeuneClick={openDeleteJeuneModal}
-      />
+      <div className='mb-6'>
+        <DetailsJeune
+          jeune={jeune}
+          structureConseiller={conseiller?.structure}
+          onDossierMiloClick={trackDossierMiloClick}
+          onDeleteJeuneClick={openDeleteJeuneModal}
+        />
+      </div>
+
+      {!isPoleEmploi && (
+        <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+          <h2 className='text-base-bold'>Les indicateurs de la semaine</h2>
+          <p className='mb-2'>
+            du {debutDeLaSemaine.toLocaleString()} au{' '}
+            {finDeLaSemaine.toLocaleString()}
+          </p>
+          <div className='flex gap-6'>
+            <div className='text-primary_darken text-base-bold'>
+              <h3 className='mb-2'>Les actions</h3>
+              <div className='flex gap-2'>
+                <TileIndicateur
+                  valeur={indicateursSemaine?.actions.creees.toString() ?? '-'}
+                  label={
+                    indicateursSemaine?.actions.creees !== 1
+                      ? 'Créées'
+                      : 'Créée'
+                  }
+                  bgColor='primary_lighten'
+                  textColor='primary_darken'
+                />
+                <TileIndicateur
+                  valeur={
+                    indicateursSemaine?.actions.terminees.toString() ?? '-'
+                  }
+                  label={
+                    indicateursSemaine?.actions.terminees !== 1
+                      ? 'Terminées'
+                      : 'Terminée'
+                  }
+                  bgColor='accent_2_lighten'
+                  textColor='accent_2'
+                  iconName={IconName.RoundedCheck}
+                />
+                <TileIndicateur
+                  valeur={
+                    indicateursSemaine?.actions.enRetard.toString() ?? '-'
+                  }
+                  label='En retard'
+                  bgColor='alert_lighten'
+                  textColor='content_color'
+                  iconName={IconName.WarningRounded}
+                />
+              </div>
+            </div>
+            <div className='text-primary_darken text-base-bold'>
+              <h3 className='mb-2'>Les rendez-vous</h3>
+              <div className='flex gap-2'>
+                <TileIndicateur
+                  valeur={indicateursSemaine?.rendezVous.toString() ?? '-'}
+                  label='Cette semaine'
+                  bgColor='primary_lighten'
+                  textColor='primary_darken'
+                />
+              </div>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      )}
 
       <div className='flex justify-between mt-6 mb-4'>
         <div className='flex'>

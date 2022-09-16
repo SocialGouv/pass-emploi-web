@@ -10,6 +10,7 @@ import { uneAction, uneListeDActions } from 'fixtures/action'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import {
   desConseillersJeune,
+  desIndicateursSemaine,
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
@@ -82,6 +83,7 @@ describe('Fiche Jeune', () => {
       dependances = {
         jeunesService: mockedJeunesService({
           getMotifsSuppression: jest.fn(async () => motifsSuppression),
+          getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
         }),
       }
     })
@@ -308,8 +310,25 @@ describe('Fiche Jeune', () => {
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
           />,
-          { customCurrentJeune: { idSetter: setIdJeune } }
+          {
+            customCurrentJeune: { idSetter: setIdJeune },
+            customDependances: dependances,
+          }
         )
+      })
+
+      xit('affiche les indicateurs du jeune', async () => {
+        // Then
+        expect(
+          screen.getByRole('tab', { selected: true })
+        ).toHaveAccessibleName('Rendez-vous 2')
+        rdvs.forEach((rdv) => {
+          expect(screen.getByText(rdv.type)).toBeInTheDocument()
+          expect(screen.getByText(rdv.modality)).toBeInTheDocument()
+        })
+        expect(() =>
+          screen.getByRole('table', { name: /Liste des actions de/ })
+        ).toThrow()
       })
 
       it('affiche la liste des rendez-vous du jeune', async () => {
@@ -454,7 +473,10 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
-            { customConseiller: { structure: StructureConseiller.MILO } }
+            {
+              customConseiller: { structure: StructureConseiller.MILO },
+              customDependances: dependances,
+            }
           )
 
           // Then
@@ -488,7 +510,10 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
-            { customConseiller: { structure: StructureConseiller.MILO } }
+            {
+              customConseiller: { structure: StructureConseiller.MILO },
+              customDependances: dependances,
+            }
           )
 
           // Then
@@ -514,7 +539,10 @@ describe('Fiche Jeune', () => {
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
           />,
-          { customConseiller: { structure: StructureConseiller.MILO } }
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+            customDependances: dependances,
+          }
         )
 
         // Then
@@ -566,7 +594,8 @@ describe('Fiche Jeune', () => {
             }}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
-          />
+          />,
+          { customDependances: dependances }
         )
 
         // When
@@ -591,7 +620,8 @@ describe('Fiche Jeune', () => {
             }}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
-          />
+          />,
+          { customDependances: dependances }
         )
 
         // Then
@@ -614,7 +644,8 @@ describe('Fiche Jeune', () => {
             pageTitle={''}
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
-          />
+          />,
+          { customDependances: dependances }
         )
 
         // Then
@@ -651,7 +682,9 @@ describe('Fiche Jeune', () => {
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
             />,
-            { customDependances: { actionsService } }
+            {
+              customDependances: { ...dependances, actionsService },
+            }
           )
         })
 
@@ -856,7 +889,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -881,7 +915,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -909,7 +944,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -937,7 +973,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -966,7 +1003,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -995,7 +1033,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -1024,7 +1063,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -1052,7 +1092,8 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
-            />
+            />,
+            { customDependances: dependances }
           )
 
           // Then
@@ -1094,7 +1135,9 @@ describe('Fiche Jeune', () => {
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
           />,
-          { customDependances: { actionsService } }
+          {
+            customDependances: { ...dependances, actionsService },
+          }
         )
 
         // When
@@ -1169,7 +1212,7 @@ describe('Fiche Jeune', () => {
             metadonneesFavoris={metadonneesFavoris}
           />,
           {
-            customDependances: { actionsService },
+            customDependances: { ...dependances, actionsService },
             customConseiller: { structure: StructureConseiller.MILO },
           }
         )
@@ -1253,7 +1296,9 @@ describe('Fiche Jeune', () => {
             pageTitle={''}
             onglet={Onglet.ACTIONS}
           />,
-          { customDependances: { actionsService } }
+          {
+            customDependances: { ...dependances, actionsService },
+          }
         )
 
         headerColonneDate = screen.getByRole('button', { name: /Créée le/ })
@@ -1342,7 +1387,9 @@ describe('Fiche Jeune', () => {
             onglet={Onglet.ACTIONS}
             metadonneesFavoris={metadonneesFavoris}
           />,
-          { customDependances: { actionsService } }
+          {
+            customDependances: { ...dependances, actionsService },
+          }
         )
 
         headerColonneDate = screen.getByRole('button', { name: /Échéance/ })
@@ -1418,7 +1465,8 @@ describe('Fiche Jeune', () => {
             }}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
-          />
+          />,
+          { customDependances: dependances }
         )
 
         // When
@@ -1451,7 +1499,8 @@ describe('Fiche Jeune', () => {
             }}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
-          />
+          />,
+          { customDependances: dependances }
         )
 
         // When
