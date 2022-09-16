@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
@@ -5,6 +6,7 @@ import { Conseiller } from 'interfaces/conseiller'
 import {
   ConseillerHistorique,
   DetailJeune,
+  IndicateursSemaine,
   JeuneFromListe,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
@@ -14,8 +16,10 @@ import {
 } from 'interfaces/json/conseiller'
 import {
   DetailJeuneJson,
+  IndicateursSemaineJson,
   ItemJeuneJson,
   jsonToDetailJeune,
+  jsonToIndicateursSemaine,
   jsonToItemJeune,
   jsonToMetadonneesFavoris,
   MetadonneesFavorisJson,
@@ -86,6 +90,13 @@ export interface JeunesService {
     idJeune: string,
     idPartenaire: string
   ): Promise<void>
+
+  getIndicateursJeune(
+    idConseiller: string,
+    idJeune: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<IndicateursSemaine>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -304,5 +315,23 @@ export class JeunesApiService implements JeunesService {
       { idPartenaire },
       session!.accessToken
     )
+  }
+
+  async getIndicateursJeune(
+    idConseiller: string,
+    idJeune: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<IndicateursSemaine> {
+    const session = await getSession()
+    const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+    const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+
+    const { content: indicateurs } =
+      await this.apiClient.get<IndicateursSemaineJson>(
+        `/conseillers/${idConseiller}/jeunes/${idJeune}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+        session!.accessToken
+      )
+    return jsonToIndicateursSemaine(indicateurs)
   }
 }

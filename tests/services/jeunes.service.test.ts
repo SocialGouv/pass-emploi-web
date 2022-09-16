@@ -1,8 +1,12 @@
+import { DateTime } from 'luxon'
+
 import { ApiClient } from 'clients/api.client'
 import { unConseiller } from 'fixtures/conseiller'
 import {
   desConseillersJeune,
   desConseillersJeuneJson,
+  desIndicateursSemaine,
+  desIndicateursSemaineJson,
   desItemsJeunes,
   desItemsJeunesJson,
   unDetailJeune,
@@ -376,6 +380,32 @@ describe('JeunesApiService', () => {
         { idPartenaire: idPartenaire },
         'accessToken'
       )
+    })
+  })
+
+  describe('.getIndicateursJeune', () => {
+    it('renvoie les indicateurs du jeune entre une date de début et une date de fin', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: desIndicateursSemaineJson(),
+      })
+      const dateDebut = DateTime.fromISO('2022-10-10')
+      const dateFin = DateTime.fromISO('2022-10-17')
+
+      // When
+      const actual = await jeunesService.getIndicateursJeune(
+        'id-conseiller',
+        'id-jeune',
+        dateDebut,
+        dateFin
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00',
+        'accessToken'
+      )
+      expect(actual).toEqual(desIndicateursSemaine())
     })
   })
 })
