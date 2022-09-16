@@ -18,10 +18,10 @@ export default function SuccessAlert({
       <div className='flex justify-between'>
         <div className='flex items-center'>
           <IconComponent
-            name={IconName.CheckRounded}
+            name={IconName.RoundedCheckFilled}
             aria-hidden={true}
             focusable={false}
-            className='w-6 h-6 mr-2 shrink-0'
+            className='w-6 h-6 mr-2 shrink-0 fill-success'
           />
           <p className='text-base-bold'>{label}</p>
         </div>

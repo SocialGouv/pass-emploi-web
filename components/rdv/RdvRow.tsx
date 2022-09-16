@@ -72,7 +72,7 @@ export function RdvRow({
                 <>
                   <span className='sr-only'>oui</span>
                   <IconComponent
-                    name={IconName.CheckRounded}
+                    name={IconName.RoundedCheckFilled}
                     aria-hidden='true'
                     focusable='false'
                     className='h-3 fill-primary'
