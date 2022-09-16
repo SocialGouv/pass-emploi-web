@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import {
   Action,
   CreateurCommentaire,
@@ -16,8 +18,8 @@ export interface ActionJson {
   id: string
   content: string
   comment: string
-  creationDate: string
-  lastUpdate: string
+  creationDate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
+  lastUpdate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
   status: ActionStatusJson
   creator: string
   creatorType: string
@@ -70,12 +72,13 @@ export function jsonToQualification(
 }
 
 export function jsonToAction(json: ActionJson): Action {
+  const legacyFormat = 'EEE, d MMM yyyy HH:mm:ss z'
   const action: Action = {
     id: json.id,
     content: json.content,
     comment: json.comment,
-    creationDate: new Date(json.creationDate).toISOString(),
-    lastUpdate: new Date(json.lastUpdate).toISOString(),
+    creationDate: DateTime.fromFormat(json.creationDate, legacyFormat).toISO(),
+    lastUpdate: DateTime.fromFormat(json.lastUpdate, legacyFormat).toISO(),
     status: jsonToActionStatus(json.status),
     creator: json.creator,
     creatorType: json.creatorType,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { UnCommentaireAction } from 'components/action/UnCommentaireAction'
+import { CommentaireAction } from 'components/action/CommentaireAction'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
@@ -57,7 +57,7 @@ export function CommentairesAction({
         {commentaires.length > 0 && (
           <dl>
             {commentaires.map((commentaire) => (
-              <UnCommentaireAction
+              <CommentaireAction
                 key={commentaire.id}
                 commentaire={commentaire}
                 idConseiller={conseiller?.id}

@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { ApiClient } from 'clients/api.client'
 import {
   desSituationsNonProfessionnelles,
@@ -482,8 +484,8 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.qualifier(
         'id-action',
         'SANTE',
-        new Date('2022-09-05T22:00:00.000Z'),
-        new Date('2022-09-06T22:00:00.000Z')
+        DateTime.fromISO('2022-09-05T22:00:00.000Z'),
+        DateTime.fromISO('2022-09-06T22:00:00.000Z')
       )
 
       // THEN
@@ -491,8 +493,8 @@ describe('ActionsApiService', () => {
         '/actions/id-action/qualifier',
         {
           codeQualification: 'SANTE',
-          dateDebut: '2022-09-05T22:00:00.000Z',
-          dateFinReelle: '2022-09-06T22:00:00.000Z',
+          dateDebut: '2022-09-06T00:00:00.000+02:00',
+          dateFinReelle: '2022-09-07T00:00:00.000+02:00',
         },
         'accessToken'
       )

@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { unItemJeune, unJeuneChat } from 'fixtures/jeune'
 import {
   CategorieSituation,
@@ -55,14 +57,14 @@ describe('Jeune', () => {
         id: 'jeune-3',
         seenByConseiller: true,
         flaggedByConseiller: false,
-        lastMessageSentAt: new Date(2022, 0, 10),
+        lastMessageSentAt: DateTime.local(2022, 1, 10),
       })
 
       const unJeuneChatVieux = unJeuneChat({
         id: 'jeune-4',
         seenByConseiller: true,
         flaggedByConseiller: false,
-        lastMessageSentAt: new Date(2022, 0, 1),
+        lastMessageSentAt: DateTime.local(2022, 1, 1),
       })
 
       // When

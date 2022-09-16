@@ -1,5 +1,6 @@
+import { DateTime } from 'luxon'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -22,8 +23,9 @@ import useMatomo from 'utils/analytics/useMatomo'
 import {
   dateIsToday,
   dateIsYesterday,
-  formatDayDate,
-  formatHourMinuteDate,
+  TIME_24_H_SEPARATOR,
+  toFrenchFormat,
+  toShortDate,
 } from 'utils/date'
 
 enum SortColumn {
@@ -38,20 +40,6 @@ interface TableauJeunesProps {
   jeunes: JeuneAvecInfosComplementaires[]
   withActions: boolean
   withSituations: boolean
-}
-
-function todayOrDate(date: Date): string {
-  let dateString: string
-
-  if (dateIsToday(date)) {
-    dateString = "Aujourd'hui"
-  } else if (dateIsYesterday(date)) {
-    dateString = 'Hier'
-  } else {
-    dateString = `Le ${formatDayDate(date)}`
-  }
-
-  return `${dateString} à ${formatHourMinuteDate(date)}`
 }
 
 export default function TableauJeunes({
@@ -86,6 +74,25 @@ export default function TableauJeunes({
       setSortDesc(!sortDesc)
     }
   }
+
+  const getLastActivity = useCallback(
+    (jeune: JeuneAvecInfosComplementaires): string => {
+      if (!jeune.lastActivity) return ''
+
+      const date = DateTime.fromISO(jeune.lastActivity)
+      let dateString: string
+      if (dateIsToday(date)) {
+        dateString = "Aujourd'hui"
+      } else if (dateIsYesterday(date)) {
+        dateString = 'Hier'
+      } else {
+        dateString = `Le ${toShortDate(date)}`
+      }
+
+      return `${dateString} à ${toFrenchFormat(date, TIME_24_H_SEPARATOR)}`
+    },
+    []
+  )
 
   useEffect(() => {
     function compareJeunes(
@@ -326,9 +333,7 @@ export default function TableauJeunes({
                     )}
 
                     <RowCell>
-                      {jeune.lastActivity
-                        ? todayOrDate(new Date(jeune.lastActivity))
-                        : ''}
+                      {getLastActivity(jeune)}
                       {!jeune.isActivated && (
                         <span className='text-warning'>Compte non activé</span>
                       )}

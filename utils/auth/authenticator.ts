@@ -1,4 +1,5 @@
 import { decode, JwtPayload } from 'jsonwebtoken'
+import { DateTime } from 'luxon'
 import { Account } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
 
@@ -34,10 +35,11 @@ export default class Authenticator {
     if (account) return Authenticator.hydrateJwtAtFirstSignin(account, jwt)
 
     const hydratedJWT = jwt as HydratedJWT
-    const safetyRefreshBuffer15Seconds: number = 15000
     const tokenIsExpired = hydratedJWT.expiresAtTimestamp
-      ? Date.now() >
-        hydratedJWT.expiresAtTimestamp - safetyRefreshBuffer15Seconds
+      ? DateTime.now() >
+        DateTime.fromMillis(hydratedJWT.expiresAtTimestamp).minus({
+          second: 15,
+        })
       : false
 
     if (tokenIsExpired) {
@@ -55,7 +57,9 @@ export default class Authenticator {
         accessToken: refreshedTokens.access_token,
         refreshToken: refreshedTokens.refresh_token ?? jwt.refreshToken, // Garde l'ancien refresh_token
         expiresAtTimestamp: refreshedTokens.expires_in
-          ? Date.now() + refreshedTokens.expires_in * 1000
+          ? DateTime.now()
+              .plus({ second: refreshedTokens.expires_in })
+              .toMillis()
           : jwt.expiresAtTimestamp,
       }
     } catch (error) {

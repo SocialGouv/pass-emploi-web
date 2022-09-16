@@ -1,5 +1,7 @@
-export const now = new Date()
-export const datePassee = new Date(now.getTime() - 100000)
-export const datePasseeLoin = new Date(now.getTime() - 999999)
-export const dateFuture = new Date(now.getTime() + 100000)
-export const dateFutureLoin = new Date(now.getTime() + 999999)
+import { DateTime } from 'luxon'
+
+export const now = DateTime.now()
+export const datePassee = now.minus({ month: 1 })
+export const datePasseeLoin = now.minus({ year: 1 })
+export const dateFuture = now.plus({ month: 1 })
+export const dateFutureLoin = now.plus({ year: 1 })

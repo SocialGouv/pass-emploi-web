@@ -15,6 +15,7 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 interface MesRendezvousProps extends PageProps {
@@ -110,8 +111,8 @@ function MesRendezvous({
 
         <div className='flex items-center mt-1'>
           <p className='text-m-bold text-primary mr-6'>
-            du {jourDeDebutDesRdvs().toFormat('dd/MM/yyyy')} au{' '}
-            {jourDeFinDesRdvs().toFormat('dd/MM/yyyy')}
+            du {toShortDate(jourDeDebutDesRdvs())} au{' '}
+            {toShortDate(jourDeFinDesRdvs())}
           </p>
           <button
             aria-label='Aller à la semaine précédente'
