@@ -14,7 +14,7 @@ export default function TileIndicateur({
   iconName?: IconName
 }) {
   return (
-    <div
+    <p
       className={`flex flex-col p-3 rounded-medium bg-${bgColor} text-${textColor}`}
     >
       <span className='text-xl-bold'>{valeur}</span>
@@ -30,6 +30,6 @@ export default function TileIndicateur({
         )}
         {label}
       </span>
-    </div>
+    </p>
   )
 }
