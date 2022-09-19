@@ -228,7 +228,7 @@ function FicheJeune({
   }, [jeune, setIdCurrentJeune])
 
   useEffect(() => {
-    if (conseiller && !indicateursSemaine && !isPoleEmploi) {
+    if (conseiller && !isPoleEmploi && !indicateursSemaine) {
       jeunesService
         .getIndicateursJeune(
           conseiller.id,
@@ -310,15 +310,19 @@ function FicheJeune({
 
       {!isPoleEmploi && (
         <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
-          <h2 className='text-base-bold'>Les indicateurs de la semaine</h2>
-          <p className='mb-2'>
+          <h2 className='text-m-bold'>Les indicateurs de la semaine</h2>
+          <p className='mb-4'>
             du {debutDeLaSemaine.toLocaleString()} au{' '}
             {finDeLaSemaine.toLocaleString()}
           </p>
-          <div className='flex gap-6'>
+          <div
+            className={`flex gap-6 ${
+              !indicateursSemaine ? 'animate-pulse' : ''
+            }`}
+          >
             <div className='text-primary_darken text-base-bold'>
               <h3 className='mb-2'>Les actions</h3>
-              <div className='flex gap-2'>
+              <ul className='flex gap-2'>
                 <TileIndicateur
                   valeur={indicateursSemaine?.actions.creees.toString() ?? '-'}
                   label={
@@ -351,7 +355,7 @@ function FicheJeune({
                   textColor='content_color'
                   iconName={IconName.WarningRounded}
                 />
-              </div>
+              </ul>
             </div>
             <div className='text-primary_darken text-base-bold'>
               <h3 className='mb-2'>Les rendez-vous</h3>

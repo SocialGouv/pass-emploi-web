@@ -14,8 +14,12 @@ export default function TileIndicateur({
   iconName?: IconName
 }) {
   return (
-    <p
-      className={`flex flex-col p-3 rounded-medium bg-${bgColor} text-${textColor}`}
+    <li
+      className={`flex flex-col p-3 rounded-medium ${
+        parseInt(valeur, 10) > 0
+          ? `bg-${bgColor} text-${textColor}`
+          : 'bg-grey_100 text-grey_800'
+      }`}
     >
       <span className='text-xl-bold'>{valeur}</span>
 
@@ -25,11 +29,11 @@ export default function TileIndicateur({
             name={iconName}
             focusable='false'
             aria-hidden='true'
-            className='inline w-3 h-3'
+            className='inline w-3 h-3 fill-[currentColor]'
           />
         )}
         {label}
       </span>
-    </p>
+    </li>
   )
 }
