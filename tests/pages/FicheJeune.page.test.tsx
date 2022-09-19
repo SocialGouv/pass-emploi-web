@@ -1,4 +1,4 @@
-import { act, screen, waitFor, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -35,6 +35,7 @@ import FicheJeune, {
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
@@ -97,23 +98,25 @@ describe('Fiche Jeune', () => {
           setIdJeune = jest.fn()
 
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            {
-              customCurrentJeune: { idSetter: setIdJeune },
-              customDependances: dependances,
-            }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customCurrentJeune: { idSetter: setIdJeune },
+                customDependances: dependances,
+              }
+            )
+          })
         })
 
         it('modifie le currentJeune', () => {
@@ -136,20 +139,22 @@ describe('Fiche Jeune', () => {
       describe('Supprimer un compte actif', () => {
         beforeEach(async () => {
           // Given
-          renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune({ isActivated: true })}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ isActivated: true })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
           // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
 
@@ -240,20 +245,22 @@ describe('Fiche Jeune', () => {
       describe('Supprimer un compte inactif', () => {
         beforeEach(async () => {
           // Given
-          renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune({ isActivated: false })}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ isActivated: false })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
           // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
 
@@ -321,9 +328,25 @@ describe('Fiche Jeune', () => {
 
       it('affiche les indicateurs du jeune', async () => {
         // Then
-        await waitFor(() =>
-          expect(screen.getByText(/0Créées/)).toBeInTheDocument()
-        )
+        const indicateursActions = screen.getByRole('heading', {
+          name: 'Les actions',
+        }).parentElement
+        expect(
+          getByTextContent('0Créées', indicateursActions!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('1Terminée', indicateursActions!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('2En retard', indicateursActions!)
+        ).toBeInTheDocument()
+
+        const indicateursRdv = screen.getByRole('heading', {
+          name: 'Les rendez-vous',
+        }).parentElement
+        expect(
+          getByTextContent('3Cette semaine', indicateursRdv!)
+        ).toBeInTheDocument()
       })
 
       it('affiche la liste des rendez-vous du jeune', async () => {
@@ -454,9 +477,80 @@ describe('Fiche Jeune', () => {
 
     describe('quand l’utilisateur est un conseiller MILO', () => {
       describe('quand le jeune n’a aucune situation', () => {
-        it('affiche les informations concernant la situation du jeune', () => {
+        it('affiche les informations concernant la situation du jeune', async () => {
           // Given
-          renderWithContexts(
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions,
+                  page: 1,
+                  metadonnees: { nombreTotal: 14, nombrePages: 2 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customConseiller: { structure: StructureConseiller.MILO },
+                customDependances: dependances,
+              }
+            )
+          })
+
+          // Then
+          expect(screen.getByText('Situation')).toBeInTheDocument()
+          expect(screen.getByText('Sans situation')).toBeInTheDocument()
+        })
+      })
+
+      describe('quand le jeune a une liste de situations', () => {
+        it('affiche uniquement sa premiere situation ', async () => {
+          // Given
+          const situations = [
+            {
+              etat: EtatSituation.EN_COURS,
+              categorie: CategorieSituation.EMPLOI,
+            },
+            {
+              etat: EtatSituation.PREVU,
+              categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
+            },
+          ]
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ situations: situations })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions,
+                  page: 1,
+                  metadonnees: { nombreTotal: 14, nombrePages: 2 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customConseiller: { structure: StructureConseiller.MILO },
+                customDependances: dependances,
+              }
+            )
+          })
+
+          // Then
+          expect(screen.getByText('Situation')).toBeInTheDocument()
+          expect(screen.getByText('Emploi')).toBeInTheDocument()
+          expect(screen.getByText('en cours')).toBeInTheDocument()
+          expect(() => screen.getByText('Contrat en Alternance')).toThrow()
+          expect(() => screen.getByText('prévue')).toThrow()
+        })
+      })
+
+      it('affiche un lien vers l’historique des situations', async () => {
+        // Given
+        await act(async () => {
+          await renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={[]}
@@ -473,72 +567,7 @@ describe('Fiche Jeune', () => {
               customDependances: dependances,
             }
           )
-
-          // Then
-          expect(screen.getByText('Situation')).toBeInTheDocument()
-          expect(screen.getByText('Sans situation')).toBeInTheDocument()
         })
-      })
-
-      describe('quand le jeune a une liste de situations', () => {
-        it('affiche uniquement sa premiere situation ', () => {
-          // Given
-          const situations = [
-            {
-              etat: EtatSituation.EN_COURS,
-              categorie: CategorieSituation.EMPLOI,
-            },
-            {
-              etat: EtatSituation.PREVU,
-              categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
-            },
-          ]
-          renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune({ situations: situations })}
-              rdvs={[]}
-              actionsInitiales={{
-                actions,
-                page: 1,
-                metadonnees: { nombreTotal: 14, nombrePages: 2 },
-              }}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            {
-              customConseiller: { structure: StructureConseiller.MILO },
-              customDependances: dependances,
-            }
-          )
-
-          // Then
-          expect(screen.getByText('Situation')).toBeInTheDocument()
-          expect(screen.getByText('Emploi')).toBeInTheDocument()
-          expect(screen.getByText('en cours')).toBeInTheDocument()
-          expect(() => screen.getByText('Contrat en Alternance')).toThrow()
-          expect(() => screen.getByText('prévue')).toThrow()
-        })
-      })
-
-      it('affiche un lien vers l’historique des situations', () => {
-        // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={[]}
-            actionsInitiales={{
-              actions,
-              page: 1,
-              metadonnees: { nombreTotal: 14, nombrePages: 2 },
-            }}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          {
-            customConseiller: { structure: StructureConseiller.MILO },
-            customDependances: dependances,
-          }
-        )
 
         // Then
         expect(
@@ -547,25 +576,27 @@ describe('Fiche Jeune', () => {
       })
 
       describe("quand le jeune n'a pas activé son compte", () => {
-        it('affiche le mode opératoire pour activer le compte', () => {
+        it('affiche le mode opératoire pour activer le compte', async () => {
           // Given
-          renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune({ isActivated: false })}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            {
-              customDependances: dependances,
-              customConseiller: { structure: StructureConseiller.MILO },
-            }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ isActivated: false })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customDependances: dependances,
+                customConseiller: { structure: StructureConseiller.MILO },
+              }
+            )
+          })
 
           // Then
           expect(
@@ -578,20 +609,22 @@ describe('Fiche Jeune', () => {
     describe("quand le jeune n'a pas d'action", () => {
       it('affiche un message qui le précise', async () => {
         // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customDependances: dependances }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // When
         await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
@@ -602,22 +635,24 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand le jeune a été réaffecté temporairement', () => {
-      it("affiche l'information", () => {
+      it("affiche l'information", async () => {
         // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={{ ...jeune, isReaffectationTemporaire: true }}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customDependances: dependances }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={{ ...jeune, isReaffectationTemporaire: true }}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // Then
         expect(screen.getByText(/ajouté temporairement/)).toBeInTheDocument()
@@ -625,23 +660,25 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand on revient sur la page depuis le détail d’une action', () => {
-      it('ouvre l’onglet des actions', () => {
+      it('ouvre l’onglet des actions', async () => {
         // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={[]}
-            actionsInitiales={{
-              actions,
-              page: 1,
-              metadonnees: { nombreTotal: 14, nombrePages: 2 },
-            }}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customDependances: dependances }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // Then
         expect(
@@ -654,7 +691,7 @@ describe('Fiche Jeune', () => {
       describe('navigation', () => {
         let actionsService: ActionsService
         let pageCourante: number
-        beforeEach(() => {
+        beforeEach(async () => {
           // Given
           actionsService = mockedActionsService({
             getActionsJeuneClientSide: jest.fn(async (_, { page }) => ({
@@ -664,23 +701,25 @@ describe('Fiche Jeune', () => {
           })
 
           pageCourante = 4
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={rdvs}
-              actionsInitiales={{
-                actions,
-                page: pageCourante,
-                metadonnees: { nombreTotal: 52, nombrePages: 6 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            {
-              customDependances: { ...dependances, actionsService },
-            }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={rdvs}
+                actionsInitiales={{
+                  actions,
+                  page: pageCourante,
+                  metadonnees: { nombreTotal: 52, nombrePages: 6 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customDependances: { ...dependances, actionsService },
+              }
+            )
+          })
         })
 
         it('met à jour les actions avec la page demandée ', async () => {
@@ -870,23 +909,25 @@ describe('Fiche Jeune', () => {
       })
 
       describe('troncature', () => {
-        it('1 2 -3-', () => {
+        it('1 2 -3-', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 3,
-                metadonnees: { nombreTotal: 22, nombrePages: 3 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 3,
+                  metadonnees: { nombreTotal: 22, nombrePages: 3 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
@@ -896,23 +937,25 @@ describe('Fiche Jeune', () => {
           expect(() => screen.getByText('…')).toThrow()
         })
 
-        it('1 2 -3- 4 5 6', () => {
+        it('1 2 -3- 4 5 6', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 3,
-                metadonnees: { nombreTotal: 52, nombrePages: 6 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 3,
+                  metadonnees: { nombreTotal: 52, nombrePages: 6 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
@@ -925,23 +968,25 @@ describe('Fiche Jeune', () => {
           expect(() => screen.getByText('…')).toThrow()
         })
 
-        it('-1- 2 3 4 5 ... 20', () => {
+        it('-1- 2 3 4 5 ... 20', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
@@ -954,23 +999,25 @@ describe('Fiche Jeune', () => {
           expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
-        it('1 ... 9 10 -11- 12 13 ... 20', () => {
+        it('1 ... 9 10 -11- 12 13 ... 20', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 11,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 11,
+                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
@@ -984,23 +1031,25 @@ describe('Fiche Jeune', () => {
           expect(screen.getAllByText('…')).toHaveLength(2)
         })
 
-        it('1 2 3 -4- 5 6 ... 20', () => {
+        it('1 2 3 -4- 5 6 ... 20', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 4,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 4,
+                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
@@ -1014,23 +1063,25 @@ describe('Fiche Jeune', () => {
           expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
-        it('1 ... 15 16 -17- 18 19 20', () => {
+        it('1 ... 15 16 -17- 18 19 20', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 17,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 17,
+                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
@@ -1044,23 +1095,25 @@ describe('Fiche Jeune', () => {
           expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
-        it('1 ... 16 17 -18- 19 20', () => {
+        it('1 ... 16 17 -18- 19 20', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 18,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 18,
+                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
@@ -1073,23 +1126,25 @@ describe('Fiche Jeune', () => {
           expect(screen.getAllByText('…')).toHaveLength(1)
         })
 
-        it('1 ... 16 17 18 19 -20-', () => {
+        it('1 ... 16 17 18 19 -20-', async () => {
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 20,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 20,
+                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
+                }}
+                pageTitle={''}
+                onglet={Onglet.ACTIONS}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
 
           // Then
           expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
@@ -1117,23 +1172,25 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: pageCourante,
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            }}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          {
-            customDependances: { ...dependances, actionsService },
-          }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+            }
+          )
+        })
 
         // When
         await userEvent.click(screen.getByText('Statut'))
@@ -1193,24 +1250,26 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: pageCourante,
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            }}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          {
-            customDependances: { ...dependances, actionsService },
-            customConseiller: { structure: StructureConseiller.MILO },
-          }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
+          )
+        })
 
         // When
         await userEvent.click(
@@ -1279,22 +1338,24 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: pageCourante,
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            }}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-          />,
-          {
-            customDependances: { ...dependances, actionsService },
-          }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+            }
+          )
+        })
 
         headerColonneDate = screen.getByRole('button', { name: /Créée le/ })
       })
@@ -1369,23 +1430,25 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: pageCourante,
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            }}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          {
-            customDependances: { ...dependances, actionsService },
-          }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+            }
+          )
+        })
 
         headerColonneDate = screen.getByRole('button', { name: /Échéance/ })
       })
@@ -1449,20 +1512,22 @@ describe('Fiche Jeune', () => {
     describe('quand on sélectionne l’onglet des favoris', () => {
       it('affiche les informations des offres et des recherches sauvegardées', async () => {
         // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customDependances: dependances }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // When
         await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
@@ -1483,20 +1548,22 @@ describe('Fiche Jeune', () => {
         const metadonneesFavoris = uneMetadonneeFavoris({
           autoriseLePartage: false,
         })
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customDependances: dependances }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // When
         await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
