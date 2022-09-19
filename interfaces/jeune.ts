@@ -112,6 +112,15 @@ export interface ConseillerHistorique {
   depuis: string
 }
 
+export type IndicateursSemaine = {
+  actions: {
+    creees: number
+    enRetard: number
+    terminees: number
+  }
+  rendezVous: number
+}
+
 export function compareJeunesByNom(
   jeune1: BaseJeune,
   jeune2: BaseJeune

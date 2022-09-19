@@ -9,6 +9,7 @@ import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import { IndicateursJeune } from 'components/jeune/IndicateursJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -23,7 +24,11 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { DetailJeune, MetadonneesFavoris } from 'interfaces/jeune'
+import {
+  DetailJeune,
+  IndicateursSemaine,
+  MetadonneesFavoris,
+} from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
@@ -93,6 +98,9 @@ function FicheJeune({
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
+  const [indicateursSemaine, setIndicateursSemaine] = useState<
+    IndicateursSemaine | undefined
+  >()
 
   const [showModaleDeleteJeuneActif, setShowModaleDeleteJeuneActif] =
     useState<boolean>(false)
@@ -103,6 +111,10 @@ function FicheJeune({
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
+
+  const aujourdHui = DateTime.now()
+  const debutDeLaSemaine = aujourdHui.startOf('week')
+  const finDeLaSemaine = aujourdHui.endOf('week')
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -215,6 +227,27 @@ function FicheJeune({
     setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
+  useEffect(() => {
+    if (conseiller && !isPoleEmploi && !indicateursSemaine) {
+      jeunesService
+        .getIndicateursJeune(
+          conseiller.id,
+          jeune.id,
+          debutDeLaSemaine,
+          finDeLaSemaine
+        )
+        .then(setIndicateursSemaine)
+    }
+  }, [
+    conseiller,
+    debutDeLaSemaine,
+    finDeLaSemaine,
+    indicateursSemaine,
+    jeune.id,
+    jeunesService,
+    isPoleEmploi,
+  ])
+
   return (
     <>
       {showSuppressionCompteBeneficiaireError && (
@@ -266,12 +299,22 @@ function FicheJeune({
         </div>
       )}
 
-      <DetailsJeune
-        jeune={jeune}
-        structureConseiller={conseiller?.structure}
-        onDossierMiloClick={trackDossierMiloClick}
-        onDeleteJeuneClick={openDeleteJeuneModal}
-      />
+      <div className='mb-6'>
+        <DetailsJeune
+          jeune={jeune}
+          structureConseiller={conseiller?.structure}
+          onDossierMiloClick={trackDossierMiloClick}
+          onDeleteJeuneClick={openDeleteJeuneModal}
+        />
+      </div>
+
+      {!isPoleEmploi && (
+        <IndicateursJeune
+          debutDeLaSemaine={debutDeLaSemaine}
+          finDeLaSemaine={finDeLaSemaine}
+          indicateursSemaine={indicateursSemaine}
+        />
+      )}
 
       <div className='flex justify-between mt-6 mb-4'>
         <div className='flex'>

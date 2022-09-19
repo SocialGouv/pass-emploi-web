@@ -38,7 +38,7 @@ export function BlocInformationJeune({
 
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
-      <h2 className='text-base-bold mb-4'>Informations</h2>
+      <h2 className='text-m-bold mb-4'>Informations</h2>
       <dl>
         <div className='flex'>
           <dt className='text-base-regular'>Ajouté le :</dt>

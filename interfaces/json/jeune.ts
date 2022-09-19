@@ -3,6 +3,7 @@ import {
   CategorieSituation,
   DetailJeune,
   EtatSituation,
+  IndicateursSemaine,
   JeuneFromListe,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
@@ -57,6 +58,17 @@ export interface MetadonneesFavorisJson {
 export interface SuppressionJeuneFormData {
   motif: string
   commentaire?: string
+}
+
+export type IndicateursSemaineJson = {
+  actions: {
+    creees: number
+    enRetard: number
+    terminees: number
+  }
+  rendezVous: {
+    planifies: number
+  }
 }
 
 function toEtatSituation(etat: string): EtatSituation | undefined {
@@ -160,6 +172,19 @@ export function jsonToMetadonneesFavoris({
       nombreRecherchesOffresServiceCivique:
         recherches.nombreRecherchesOffresServiceCivique,
     },
+  }
+}
+
+export function jsonToIndicateursSemaine(
+  indicateursJson: IndicateursSemaineJson
+): IndicateursSemaine {
+  return {
+    actions: {
+      creees: indicateursJson.actions.creees,
+      enRetard: indicateursJson.actions.enRetard,
+      terminees: indicateursJson.actions.terminees,
+    },
+    rendezVous: indicateursJson.rendezVous.planifies,
   }
 }
 
