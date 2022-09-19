@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -298,37 +298,32 @@ describe('Fiche Jeune', () => {
         setIdJeune = jest.fn()
 
         // When
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: 1,
-              metadonnees: { nombreTotal: 14, nombrePages: 2 },
-            }}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          {
-            customCurrentJeune: { idSetter: setIdJeune },
-            customDependances: dependances,
-          }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customCurrentJeune: { idSetter: setIdJeune },
+              customDependances: dependances,
+            }
+          )
+        })
       })
 
-      xit('affiche les indicateurs du jeune', async () => {
+      it('affiche les indicateurs du jeune', async () => {
         // Then
-        expect(
-          screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Rendez-vous 2')
-        rdvs.forEach((rdv) => {
-          expect(screen.getByText(rdv.type)).toBeInTheDocument()
-          expect(screen.getByText(rdv.modality)).toBeInTheDocument()
-        })
-        expect(() =>
-          screen.getByRole('table', { name: /Liste des actions de/ })
-        ).toThrow()
+        await waitFor(() =>
+          expect(screen.getByText(/0Créées/)).toBeInTheDocument()
+        )
       })
 
       it('affiche la liste des rendez-vous du jeune', async () => {
