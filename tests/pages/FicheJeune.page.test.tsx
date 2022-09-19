@@ -688,474 +688,94 @@ describe('Fiche Jeune', () => {
     })
 
     describe('pagination actions', () => {
-      describe('navigation', () => {
-        let actionsService: ActionsService
-        let pageCourante: number
-        beforeEach(async () => {
-          // Given
-          actionsService = mockedActionsService({
-            getActionsJeuneClientSide: jest.fn(async (_, { page }) => ({
-              actions: [uneAction({ content: `Action page ${page}` })],
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            })),
-          })
-
-          pageCourante = 4
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={rdvs}
-                actionsInitiales={{
-                  actions,
-                  page: pageCourante,
-                  metadonnees: { nombreTotal: 52, nombrePages: 6 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              {
-                customDependances: { ...dependances, actionsService },
-              }
-            )
-          })
+      let actionsService: ActionsService
+      let pageCourante: number
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeuneClientSide: jest.fn(async (_, { page }) => ({
+            actions: [uneAction({ content: `Action page ${page}` })],
+            metadonnees: { nombreTotal: 52, nombrePages: 6 },
+          })),
         })
 
-        it('met à jour les actions avec la page demandée ', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page 2'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
+        pageCourante = 4
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
             {
-              page: 2,
-              statuts: [],
-              etatsQualification: [],
-              tri: 'date_echeance_decroissante',
+              customDependances: { ...dependances, actionsService },
             }
           )
-          expect(screen.getByLabelText('Page 2')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByText('Action page 2')).toBeInTheDocument()
-        })
-
-        it('permet d’aller à la première page des actions', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Première page'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: 1,
-              statuts: [],
-              etatsQualification: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Première page')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it('permet d’aller à la dernière page des actions', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Dernière page'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: 6,
-              statuts: [],
-              etatsQualification: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it('permet de revenir à la page précédente', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: pageCourante - 1,
-              statuts: [],
-              etatsQualification: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-          expect(
-            screen.getByLabelText(`Page ${pageCourante - 1}`)
-          ).toHaveAttribute('aria-current', 'page')
-        })
-
-        it("permet d'aller à la page suivante", async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page suivante'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: pageCourante + 1,
-              statuts: [],
-              etatsQualification: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-          expect(
-            screen.getByLabelText(`Page ${pageCourante + 1}`)
-          ).toHaveAttribute('aria-current', 'page')
-        })
-
-        it('met à jour la page courante', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: pageCourante - 1,
-              statuts: [],
-              etatsQualification: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: pageCourante - 2,
-              statuts: [],
-              etatsQualification: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-          expect(
-            screen.getByLabelText(`Page ${pageCourante - 2}`)
-          ).toHaveAttribute('aria-current', 'page')
-        })
-
-        it('ne permet pas de revenir avant la première page', async () => {
-          // Given
-          await userEvent.click(screen.getByLabelText('Première page'))
-
-          // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-
-          // Then
-          expect(
-            actionsService.getActionsJeuneClientSide
-          ).toHaveBeenCalledTimes(1)
-          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it("ne permet pas d'aller après la dernière page", async () => {
-          // Given
-          await userEvent.click(screen.getByLabelText('Dernière page'))
-
-          // When
-          await userEvent.click(screen.getByLabelText('Page suivante'))
-
-          // Then
-          expect(
-            actionsService.getActionsJeuneClientSide
-          ).toHaveBeenCalledTimes(1)
-          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it('ne recharge pas la page courante', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
-
-          // Then
-          expect(
-            actionsService.getActionsJeuneClientSide
-          ).toHaveBeenCalledTimes(0)
         })
       })
 
-      describe('troncature', () => {
-        it('1 2 -3-', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 3,
-                  metadonnees: { nombreTotal: 22, nombrePages: 3 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
+      it('met à jour les actions avec la page demandée ', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
 
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(() => screen.getByText('…')).toThrow()
-        })
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+        expect(screen.getByText('Action page 2')).toBeInTheDocument()
+      })
 
-        it('1 2 -3- 4 5 6', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 3,
-                  metadonnees: { nombreTotal: 52, nombrePages: 6 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
+      it('met à jour la page courante', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page précédente'))
+        await userEvent.click(screen.getByLabelText('Page précédente'))
 
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
-          expect(() => screen.getByText('…')).toThrow()
-        })
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: pageCourante - 1,
+            statuts: [],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
 
-        it('-1- 2 3 4 5 ... 20', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 1,
-                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: pageCourante - 2,
+            statuts: [],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+        expect(
+          screen.getByLabelText(`Page ${pageCourante - 2}`)
+        ).toHaveAttribute('aria-current', 'page')
+      })
 
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
+      it('ne recharge pas la page courante', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
 
-        it('1 ... 9 10 -11- 12 13 ... 20', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 11,
-                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 9')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 10')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 11')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 12')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 13')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(2)
-        })
-
-        it('1 2 3 -4- 5 6 ... 20', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 4,
-                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
-
-        it('1 ... 15 16 -17- 18 19 20', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 17,
-                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 15')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
-
-        it('1 ... 16 17 -18- 19 20', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 18,
-                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
-
-        it('1 ... 16 17 18 19 -20-', async () => {
-          // When
-          await act(async () => {
-            await renderWithContexts(
-              <FicheJeune
-                jeune={jeune}
-                rdvs={[]}
-                actionsInitiales={{
-                  actions: [],
-                  page: 20,
-                  metadonnees: { nombreTotal: 195, nombrePages: 20 },
-                }}
-                pageTitle={''}
-                onglet={Onglet.ACTIONS}
-                metadonneesFavoris={metadonneesFavoris}
-              />,
-              { customDependances: dependances }
-            )
-          })
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledTimes(
+          0
+        )
       })
     })
 
