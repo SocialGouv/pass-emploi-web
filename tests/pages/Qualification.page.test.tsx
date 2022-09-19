@@ -279,12 +279,12 @@ describe("Page Qualification d'une action", () => {
         )
       })
 
-      it('envoie la qualification', async () => {
+      it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
         // Then
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
           'SNP_2',
-          new Date('2022-02-15T14:50:46.000Z'),
+          new Date('2022-02-15T00:00:00.000+01:00'), // en février, l'offset est +1 (DST)
           new Date('2022-09-05T00:00:00.000+02:00')
         )
       })
