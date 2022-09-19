@@ -62,8 +62,8 @@ function PageQualification({
       await actionsService.qualifier(
         action.id,
         codeSNP!,
-        DateTime.fromISO(dateDebut),
-        DateTime.fromISO(dateFin!)
+        DateTime.fromISO(dateDebut).startOf('day'),
+        DateTime.fromISO(dateFin!).startOf('day')
       )
       await router.push(`${returnTo}?qualificationSNP=succes`)
     } catch (error) {
