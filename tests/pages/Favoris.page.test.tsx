@@ -5,7 +5,10 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { mockedFavorisService } from 'fixtures/services'
+import {
+  mockedFavorisService,
+  mockedOffresEmploiService,
+} from 'fixtures/services'
 import Favoris, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/favoris'
@@ -29,7 +32,7 @@ describe('Favoris', () => {
     let mockOpen: () => null
 
     beforeEach(async () => {
-      offresEmploiService = { getLienOffreEmploi: jest.fn() }
+      offresEmploiService = mockedOffresEmploiService()
       servicesCiviqueService = { getLienServiceCivique: jest.fn() }
       mockOpen = jest.fn()
       jest.spyOn(window, 'open').mockImplementation(mockOpen)
