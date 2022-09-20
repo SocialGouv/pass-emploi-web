@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
@@ -12,7 +13,7 @@ import {
   TypeMessage,
 } from 'interfaces/message'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
-import { formatDayDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 interface FormNouveauMessage {
   newMessage: string
@@ -56,7 +57,7 @@ export interface MessagesService {
 
   observeJeuneReadingDate(
     idChat: string,
-    onJeuneReadingDate: (date: Date) => void
+    onJeuneReadingDate: (date: DateTime) => void
   ): () => void
 
   countMessagesNotRead(
@@ -91,10 +92,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async setReadByConseiller(idChat: string): Promise<void> {
-    const now = new Date()
     await this.firebaseClient.updateChat(idChat, {
       seenByConseiller: true,
-      lastConseillerReading: now,
+      lastConseillerReading: DateTime.now(),
     })
   }
 
@@ -155,7 +155,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   observeJeuneReadingDate(
     idChat: string,
-    onJeuneReadingDate: (date: Date) => void
+    onJeuneReadingDate: (date: DateTime) => void
   ): () => void {
     return this.firebaseClient.observeChat(idChat, (chat: Chat) => {
       const lastJeuneReadingDate = chat.lastJeuneReading
@@ -185,7 +185,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     jeuneChat,
     newMessage,
   }: FormNouveauMessageIndividuel) {
-    const now = new Date()
+    const now = DateTime.now()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
     const session = await getSession()
 
@@ -243,7 +243,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     newMessage,
   }: FormNouveauMessageGroupe) {
     const session = await getSession()
-    const now = new Date()
+    const now = DateTime.now()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
 
     const mappedChats = await this.firebaseClient.getChatsDuConseiller(
@@ -286,7 +286,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
             lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
             newConseillerMessageCount: chat.newConseillerMessageCount + 1,
             seenByConseiller: false,
-            lastConseillerReading: new Date(0),
+            lastConseillerReading: DateTime.fromMillis(0),
           }),
         ])
       }),
@@ -375,7 +375,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
           message = this.decryptMessageAndFilename(message, cleChiffrement)
         }
 
-        const day = formatDayDate(message.creationDate)
+        const day = toShortDate(message.creationDate)
         const messagesOfDay = messagesByDay[day] ?? {
           date: message.creationDate,
           messages: [],

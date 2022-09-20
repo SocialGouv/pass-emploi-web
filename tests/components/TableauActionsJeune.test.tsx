@@ -1,99 +1,148 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { TRI } from 'components/action/OngletActions'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
-import { uneListeDActions } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
-import { StatutAction } from 'interfaces/action'
 
 describe('TableauActionsJeune', () => {
   describe('Filtre statut', () => {
-    let filtrerActions: (statutsSelectionnes: StatutAction[]) => void
     beforeEach(async () => {
       // Given
-      filtrerActions = jest.fn()
       render(
         <TableauActionsJeune
+          afficherFiltresEtatsQualification={false}
           jeune={uneBaseJeune()}
-          actions={uneListeDActions()}
+          actions={[]}
           isLoading={false}
-          onFiltres={filtrerActions}
+          onFiltres={jest.fn()}
           onTri={jest.fn()}
           tri={TRI.dateDecroissante}
         />
       )
-
-      // When
       await userEvent.click(screen.getByText('Statut'))
-    })
-
-    it('affiche une liste de statuts', async () => {
-      // Then
-      expect(
-        screen.getByRole('group', { name: 'Choisir un statut à filtrer' })
-      ).toBeInTheDocument()
-      expect(screen.getByLabelText('Commencée')).toBeInTheDocument()
-      expect(screen.getByLabelText('À réaliser')).toBeInTheDocument()
-      expect(screen.getByLabelText('Terminée')).toBeInTheDocument()
-      expect(screen.getByLabelText('Annulée')).toBeInTheDocument()
-    })
-
-    it('cache la liste de statuts', async () => {
-      // When
-      await userEvent.click(screen.getByText('Statut'))
-
-      // Then
-      expect(() =>
-        screen.getByRole('group', { name: 'Choisir un statut à filtrer' })
-      ).toThrow()
-    })
-
-    it('réinitialise les statuts non validés', async () => {
-      // Given
+      await userEvent.click(screen.getByLabelText('Commencée'))
       await userEvent.click(screen.getByLabelText('À réaliser'))
-      await userEvent.click(screen.getByLabelText('Terminée'))
-      await userEvent.click(screen.getByText('Statut'))
+      await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+    })
 
+    it('sauvegarde les statuts sélectionnés', async () => {
       // When
       await userEvent.click(screen.getByText('Statut'))
 
       // Then
       expect(screen.getByLabelText('Terminée')).not.toHaveAttribute('checked')
-      expect(screen.getByLabelText('Commencée')).not.toHaveAttribute('checked')
-      expect(screen.getByLabelText('À réaliser')).not.toHaveAttribute('checked')
+      expect(screen.getByLabelText('Commencée')).toHaveAttribute('checked')
+      expect(screen.getByLabelText('À réaliser')).toHaveAttribute('checked')
       expect(screen.getByLabelText('Annulée')).not.toHaveAttribute('checked')
     })
 
-    describe('quand on valide les statuts sélectionnés', () => {
+    xit('permet de réinitialiser les filtres', async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: /Réinitialiser/ })
+      )
+
+      // Then
+      await userEvent.click(
+        screen.getByRole('button', { name: /qualification/ })
+      )
+      await waitFor(() => {
+        expect(
+          screen.getByLabelText('Actions non qualifiables')
+        ).not.toHaveAttribute('checked')
+        expect(
+          screen.getByLabelText('Actions à qualifier')
+        ).not.toHaveAttribute('checked')
+        expect(screen.getByLabelText('Actions qualifiées')).not.toHaveAttribute(
+          'checked'
+        )
+      })
+    })
+  })
+
+  describe('Filtre etats qualification', () => {
+    describe('pour un conseiller Milo', () => {
       beforeEach(async () => {
         // Given
-        await userEvent.click(screen.getByLabelText('Terminée'))
-        await userEvent.click(screen.getByLabelText('Commencée'))
-        await userEvent.click(screen.getByLabelText('À réaliser'))
-        await userEvent.click(screen.getByLabelText('Terminée'))
-
-        // When
+        render(
+          <TableauActionsJeune
+            afficherFiltresEtatsQualification={true}
+            jeune={uneBaseJeune()}
+            actions={[]}
+            isLoading={false}
+            onFiltres={jest.fn()}
+            onTri={jest.fn()}
+            tri={TRI.dateDecroissante}
+          />
+        )
+        await userEvent.click(
+          screen.getByRole('button', { name: /qualification/ })
+        )
+        await userEvent.click(screen.getByLabelText('Actions à qualifier'))
+        await userEvent.click(screen.getByLabelText('Actions qualifiées'))
         await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       })
 
-      it('filtre les actions avec les statuts sélectionnés', async () => {
+      it('sauvegarde les états de qualification sélectionnés', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', { name: /qualification/ })
+        )
+
         // Then
-        expect(filtrerActions).toHaveBeenCalledWith([
-          StatutAction.Commencee,
-          StatutAction.ARealiser,
-        ])
+        expect(
+          screen.getByLabelText('Actions non qualifiables')
+        ).not.toHaveAttribute('checked')
+        expect(screen.getByLabelText('Actions à qualifier')).toHaveAttribute(
+          'checked'
+        )
+        expect(screen.getByLabelText('Actions qualifiées')).toHaveAttribute(
+          'checked'
+        )
       })
 
-      it('ne réinitialise pas les statuts sélectionnés', async () => {
-        // Given
-        await userEvent.click(screen.getByText('Statut'))
+      xit('permet de réinitialiser les filtres', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', { name: /Réinitialiser/ })
+        )
 
         // Then
-        expect(screen.getByLabelText('Terminée')).not.toHaveAttribute('checked')
-        expect(screen.getByLabelText('Commencée')).toHaveAttribute('checked')
-        expect(screen.getByLabelText('À réaliser')).toHaveAttribute('checked')
-        expect(screen.getByLabelText('Annulée')).not.toHaveAttribute('checked')
+        await userEvent.click(
+          screen.getByRole('button', { name: /qualification/ })
+        )
+        await waitFor(() => {
+          expect(
+            screen.getByLabelText('Actions non qualifiables')
+          ).not.toHaveAttribute('checked')
+          expect(
+            screen.getByLabelText('Actions à qualifier')
+          ).not.toHaveAttribute('checked')
+          expect(
+            screen.getByLabelText('Actions qualifiées')
+          ).not.toHaveAttribute('checked')
+        })
+      })
+    })
+
+    describe('pour un conseiller par Milo', () => {
+      it('ne permet pas de filter par états de qualification', () => {
+        // Given
+        render(
+          <TableauActionsJeune
+            afficherFiltresEtatsQualification={false}
+            jeune={uneBaseJeune()}
+            actions={[]}
+            isLoading={false}
+            onFiltres={jest.fn()}
+            onTri={jest.fn()}
+            tri={TRI.dateDecroissante}
+          />
+        )
+
+        // Then
+        expect(() => screen.getByText(/qualification/)).toThrow()
       })
     })
   })

@@ -263,7 +263,7 @@ function Reaffectation(_: ReaffectationProps) {
           <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-initial'}
-              value={conseillerInitial.email}
+              defaultValue={conseillerInitial.email}
               onChange={editEmailConseillerInitial}
               onReset={resetAll}
               type={'email'}
@@ -275,7 +275,6 @@ function Reaffectation(_: ReaffectationProps) {
                 isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
               } disabled:cursor-not-allowed disabled:border-disabled`}
               type='submit'
-              title='Rechercher'
               disabled={!isRechercheJeunesEnabled}
             >
               <span className='sr-only'>Rechercher conseiller initial</span>
@@ -286,6 +285,7 @@ function Reaffectation(_: ReaffectationProps) {
                 className={`w-4 h-4 ${
                   isRechercheJeunesEnabled ? '' : 'fill-disabled'
                 }`}
+                title='Rechercher'
               />
             </button>
           </div>
@@ -320,7 +320,7 @@ function Reaffectation(_: ReaffectationProps) {
         >
           <ResettableTextInput
             id={'email-conseiller-destination'}
-            value={emailConseillerDestination.value}
+            defaultValue={emailConseillerDestination.value}
             onChange={editEmailConseillerDestination}
             onReset={() => editEmailConseillerDestination('')}
             disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
@@ -414,6 +414,7 @@ function Reaffectation(_: ReaffectationProps) {
                     type='checkbox'
                     className='mr-6'
                     checked={idsJeunesSelected.length === jeunes.length}
+                    readOnly={true}
                     title='Tout sélectionner'
                   />
                 </td>
@@ -433,6 +434,7 @@ function Reaffectation(_: ReaffectationProps) {
                     <input
                       type='checkbox'
                       checked={idsJeunesSelected.includes(jeune.id)}
+                      readOnly={true}
                     />
                   </td>
                   <td className='p-4 text-base-regular'>

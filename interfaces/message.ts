@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { InfoFichier } from 'interfaces/fichier'
 
 export enum TypeMessage {
@@ -10,7 +12,7 @@ export enum TypeMessage {
 export interface Message {
   id: string
   content: string
-  creationDate: Date
+  creationDate: DateTime
   sentBy: string
   iv: string | undefined
   conseillerId: string | undefined
@@ -20,7 +22,7 @@ export interface Message {
 }
 
 export interface MessagesOfADay {
-  date: Date
+  date: DateTime
   messages: Message[]
 }
 

@@ -1,22 +1,36 @@
-import Button from 'components/ui/Button/Button'
+import { useMemo } from 'react'
+
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { StructureConseiller } from 'interfaces/conseiller'
 
 interface AjouterJeuneButtonProps {
-  handleAddJeune: () => void
+  structure?: StructureConseiller
 }
 
-export const AjouterJeuneButton = ({
-  handleAddJeune,
-}: AjouterJeuneButtonProps) => {
+export const AjouterJeuneButton = ({ structure }: AjouterJeuneButtonProps) => {
+  const href = useMemo(() => {
+    switch (structure) {
+      case StructureConseiller.MILO:
+        return '/mes-jeunes/milo/creation-jeune'
+      case StructureConseiller.POLE_EMPLOI:
+        return '/mes-jeunes/pole-emploi/creation-jeune'
+    }
+  }, [structure])
+
   return (
-    <Button onClick={handleAddJeune}>
-      <IconComponent
-        name={IconName.Add}
-        focusable='false'
-        aria-hidden='true'
-        className='mr-2 w-4 h-4'
-      />
-      Ajouter un bénéficiaire
-    </Button>
+    <>
+      {href && (
+        <ButtonLink href={href}>
+          <IconComponent
+            name={IconName.Add}
+            focusable='false'
+            aria-hidden='true'
+            className='mr-2 w-4 h-4'
+          />
+          Ajouter un bénéficiaire
+        </ButtonLink>
+      )}
+    </>
   )
 }

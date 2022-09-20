@@ -14,12 +14,10 @@ import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { toIsoLocalDate, toIsoLocalTime } from 'utils/date'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
-jest.mock('utils/date')
 jest.mock('components/Modal')
 
 describe('EditionRdv', () => {
@@ -327,7 +325,7 @@ describe('EditionRdv', () => {
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
-          expect(inputHoraire).toHaveAttribute('type', 'text')
+          expect(inputHoraire).toHaveAttribute('type', 'time')
         })
 
         it('contient un champ pour choisir la durée', () => {
@@ -337,13 +335,13 @@ describe('EditionRdv', () => {
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
-          expect(inputDuree).toHaveAttribute('type', 'text')
+          expect(inputDuree).toHaveAttribute('type', 'time')
         })
 
         it('contient un champ pour indiquer l’adresse si besoin', () => {
           // Then
           const inputAdresse = within(etape).getByLabelText(
-            'Adresse Ex: 12 rue duc, Brest'
+            'Adresse Ex : 12 rue duc, Brest'
           )
           expect(inputAdresse).toBeInTheDocument()
           expect(inputAdresse).toHaveAttribute('type', 'text')
@@ -352,7 +350,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer un organisme si besoin', () => {
           // Then
           const inputOrganisme = within(etape).getByLabelText(
-            'Organisme Ex: prestataire, entreprise, etc.'
+            'Organisme Ex : prestataire, entreprise, etc.'
           )
           expect(inputOrganisme).toBeInTheDocument()
           expect(inputOrganisme).toHaveAttribute('type', 'text')
@@ -469,7 +467,7 @@ describe('EditionRdv', () => {
               type: 'ACTIVITES_EXTERIEURES',
               modality: modalites[0],
               precision: undefined,
-              date: '2022-03-03T09:30:00.000Z',
+              date: '2022-03-03T10:30:00.000+01:00',
               adresse: undefined,
               organisme: undefined,
               duration: 157,
@@ -495,7 +493,7 @@ describe('EditionRdv', () => {
               type: 'AUTRE',
               precision: 'un texte de précision',
               modality: modalites[0],
-              date: '2022-03-03T09:30:00.000Z',
+              date: '2022-03-03T10:30:00.000+01:00',
               adresse: undefined,
               organisme: undefined,
               duration: 157,
@@ -620,20 +618,6 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand l'horaire est incorrecte", async () => {
-          // When
-          await userEvent.type(inputHoraire, '123:45')
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm"
-            )
-          ).toBeInTheDocument()
-        })
-
         it("est désactivé quand aucune durée n'est renseignée", async () => {
           // When
           await userEvent.clear(inputDuree)
@@ -644,20 +628,6 @@ describe('EditionRdv', () => {
           expect(
             screen.getByText(
               "Le champ durée n'est pas renseigné. Veuillez renseigner une durée."
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('est désactivé quand la durée est incorrecte', async () => {
-          // When
-          await userEvent.type(inputDuree, '123:45')
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm"
             )
           ).toBeInTheDocument()
         })
@@ -738,8 +708,6 @@ describe('EditionRdv', () => {
     describe('quand on souhaite modifier un rdv existant', () => {
       let rdv: Rdv
       beforeEach(() => {
-        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
-        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         // Given
         const jeune0 = {
           id: jeunes[0].id,
@@ -985,7 +953,7 @@ describe('EditionRdv', () => {
                 type: 'AUTRE',
                 modality: modalites[0],
                 precision: 'Prise de nouvelles',
-                date: '2022-03-03T09:30:00.000Z',
+                date: '2022-03-03T10:30:00.000+01:00',
                 adresse: '36 rue de marseille, 93200 Saint-Denis',
                 organisme: 'S.A.R.L',
                 duration: 157,
@@ -1014,8 +982,6 @@ describe('EditionRdv', () => {
       let rdv: Rdv
       beforeEach(() => {
         // Given
-        ;(toIsoLocalDate as jest.Mock).mockReturnValue('2021-10-21')
-        ;(toIsoLocalTime as jest.Mock).mockReturnValue('12:00:00.000+02:00')
         const jeune = {
           id: jeunes[0].id,
           prenom: jeunes[0].prenom,
@@ -1162,7 +1128,7 @@ describe('EditionRdv', () => {
               type: 'AUTRE',
               modality: modalites[2],
               precision: 'Prise de nouvelles',
-              date: '2021-10-21T10:00:00.000Z',
+              date: '2021-10-21T12:00:00.000+02:00',
               adresse: '36 rue de marseille, 93200 Saint-Denis',
               organisme: 'S.A.R.L',
               duration: 125,

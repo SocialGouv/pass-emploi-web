@@ -1,9 +1,12 @@
+import { DateTime } from 'luxon'
+
 import {
   BaseJeune,
   CategorieSituation,
   Chat,
   ConseillerHistorique,
   DetailJeune,
+  IndicateursSemaine,
   JeuneAvecNbActionsNonTerminees,
   JeuneChat,
   JeuneFromListe,
@@ -12,6 +15,7 @@ import {
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 import {
   DetailJeuneJson,
+  IndicateursSemaineJson,
   ItemJeuneJson,
   MetadonneesFavorisJson,
 } from 'interfaces/json/jeune'
@@ -202,9 +206,9 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
     seenByConseiller: true,
     newConseillerMessageCount: 1,
     lastMessageContent: 'Test message',
-    lastMessageSentAt: new Date(),
+    lastMessageSentAt: DateTime.now(),
     lastMessageSentBy: 'conseiller',
-    lastConseillerReading: new Date(),
+    lastConseillerReading: DateTime.now(),
     lastJeuneReading: undefined,
     lastMessageIv: undefined,
     flaggedByConseiller: true,
@@ -281,4 +285,34 @@ export const desConseillersJeuneJson = (): ConseillerHistoriqueJson[] => {
 
 export function extractBaseJeune(base: BaseJeune): BaseJeune {
   return { id: base.id, nom: base.nom, prenom: base.prenom }
+}
+
+export const desIndicateursSemaineJson = (
+  overrides: Partial<IndicateursSemaineJson> = {}
+): IndicateursSemaineJson => {
+  const defaults: IndicateursSemaineJson = {
+    actions: {
+      creees: 0,
+      enRetard: 2,
+      terminees: 1,
+    },
+    rendezVous: {
+      planifies: 3,
+    },
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const desIndicateursSemaine = (
+  overrides: Partial<IndicateursSemaine> = {}
+): IndicateursSemaine => {
+  const defaults: IndicateursSemaine = {
+    actions: {
+      creees: 0,
+      enRetard: 2,
+      terminees: 1,
+    },
+    rendezVous: 3,
+  }
+  return { ...defaults, ...overrides }
 }

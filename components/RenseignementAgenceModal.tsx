@@ -4,6 +4,7 @@ import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
+import Label from 'components/ui/Form/Label'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
@@ -97,9 +98,9 @@ export default function RenseignementAgenceModal({
       </div>
 
       <form onSubmit={submitAgenceSelectionnee} className='px-10 pt-6'>
-        <label htmlFor='search-agence' className='text-base-medium'>
+        <Label htmlFor='search-agence'>
           Rechercher votre {labelAgence} dans la liste suivante
-        </label>
+        </Label>
         {idAgenceSelectionnee.error && (
           <InputError id='search-agence--error' className='mt-2'>
             {idAgenceSelectionnee.error}
@@ -112,16 +113,8 @@ export default function RenseignementAgenceModal({
             id,
             value: nom,
           }))}
-          onChange={(e) => selectAgence(e.target.value)}
-          aria-invalid={idAgenceSelectionnee.error ? true : undefined}
-          aria-describedby={
-            idAgenceSelectionnee.error ? 'search-agence--error' : undefined
-          }
-          className={`border border-solid rounded-medium w-full px-4 py-3 mt-2 disabled:border-disabled disabled:opacity-70 ${
-            idAgenceSelectionnee.error
-              ? 'border-warning text-warning'
-              : 'border-content_color'
-          }`}
+          onChange={selectAgence}
+          invalid={Boolean(idAgenceSelectionnee.error)}
           disabled={showAgenceLibre}
         />
 
@@ -131,7 +124,10 @@ export default function RenseignementAgenceModal({
           onChange={toggleAgenceLibre}
           className='mt-6'
         />
-        <label htmlFor='agence-not-found' className='ml-2 text-base-regular'>
+        <label
+          htmlFor='agence-not-found'
+          className='ml-2 text-base-regular mb-4'
+        >
           {structureConseiller === StructureConseiller.MILO ? 'Ma' : 'Mon'}{' '}
           {labelAgence} n’apparaît pas dans la liste
         </label>
@@ -140,9 +136,9 @@ export default function RenseignementAgenceModal({
           className={`${!showAgenceLibre ? 'invisible' : ''}`}
           aria-hidden={!showAgenceLibre}
         >
-          <label htmlFor='agence-libre' className='mt-4 text-base-medium'>
+          <Label htmlFor='agence-libre'>
             Saisir le nom de votre {labelAgence}
-          </label>
+          </Label>
           {agenceLibre.error && (
             <InputError id='agence-libre--error'>
               {agenceLibre.error}
@@ -151,7 +147,7 @@ export default function RenseignementAgenceModal({
           <ResettableTextInput
             id='agence-libre'
             ref={agenceLibreRef}
-            value={agenceLibre.value ?? ''}
+            defaultValue={agenceLibre.value ?? ''}
             onChange={(value) => setAgenceLibre({ value })}
             onReset={() => setAgenceLibre({ value: '' })}
             className={`mt-2 border border-solid rounded-medium w-full mt-2 ${

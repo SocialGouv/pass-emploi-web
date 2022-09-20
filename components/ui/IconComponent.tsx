@@ -11,7 +11,6 @@ import FileIcon from 'assets/icons/attach_file.svg'
 import CalendarIcon from 'assets/icons/calendar.svg'
 import CancelIcon from 'assets/icons/cancel.svg'
 import CheckIcon from 'assets/icons/check.svg'
-import CheckRoundedIcon from 'assets/icons/check_rounded.svg'
 import ChevronDownIcon from 'assets/icons/chevron_down.svg'
 import ChevronFirstIcon from 'assets/icons/chevron_first.svg'
 import ChevronLastIcon from 'assets/icons/chevron_last.svg'
@@ -55,6 +54,7 @@ import SpinnerIcon from 'assets/icons/spinner.svg'
 import SuitcaseIcon from 'assets/icons/suitcase.svg'
 import TrashCanIcon from 'assets/icons/trash_can.svg'
 import WarningIcon from 'assets/icons/warning.svg'
+import WarningRoundedIcon from 'assets/icons/warning_rounded.svg'
 
 export enum IconName {
   Actions = 'Actions',
@@ -66,7 +66,6 @@ export enum IconName {
   ArrowRight = 'ArrowRight',
   Calendar = 'Calendar',
   Cancel = 'Cancel',
-  CheckRounded = 'CheckRounded',
   Check = 'Check',
   ChevronDown = 'ChevronDown',
   ChevronFirst = 'ChevronFirst',
@@ -112,6 +111,7 @@ export enum IconName {
   Suitcase = 'Suitcase',
   TrashCan = 'TrashCan',
   Warning = 'Warning',
+  WarningRounded = 'WarningRounded',
 }
 
 const iconsByName: { [key in IconName]: any } = {
@@ -124,7 +124,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowRight]: ArrowRightIcon,
   [IconName.Calendar]: CalendarIcon,
   [IconName.Cancel]: CancelIcon,
-  [IconName.CheckRounded]: CheckRoundedIcon,
   [IconName.Check]: CheckIcon,
   [IconName.ChevronDown]: ChevronDownIcon,
   [IconName.ChevronFirst]: ChevronFirstIcon,
@@ -171,6 +170,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Suitcase]: SuitcaseIcon,
   [IconName.TrashCan]: TrashCanIcon,
   [IconName.Warning]: WarningIcon,
+  [IconName.WarningRounded]: WarningRoundedIcon,
 }
 
 interface IconComponentProps extends ComponentPropsWithoutRef<any> {

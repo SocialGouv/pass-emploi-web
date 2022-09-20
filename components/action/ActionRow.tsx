@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import Link from 'next/link'
 import React, { useMemo } from 'react'
 
@@ -5,7 +6,7 @@ import StatusTag from 'components/action/StatusTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RowCell from 'components/ui/Table/RowCell'
 import { Action, StatutAction } from 'interfaces/action'
-import { formatDayDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 interface ActionRowProps {
   action: Action
@@ -17,9 +18,17 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     return (
       action.status !== StatutAction.Annulee &&
       action.status !== StatutAction.Terminee &&
-      new Date(action.dateEcheance).getTime() < new Date().getTime()
+      DateTime.fromISO(action.dateEcheance) < DateTime.now()
     )
   }, [action])
+  const creationDate = useMemo(
+    () => toShortDate(action.creationDate),
+    [action.creationDate]
+  )
+  const dateEcheance: string = useMemo(
+    () => toShortDate(action.dateEcheance),
+    [action.dateEcheance]
+  )
 
   return (
     <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
@@ -29,15 +38,25 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
         className={`table-row cursor-pointer focus-within:primary_lighten rounded-small shadow-s hover:bg-primary_lighten`}
       >
         <RowCell className='rounded-l-small'>
-          <span className='flex items-center'>
+          <div className='flex items-center'>
+            {action.qualification?.isSituationNonProfessionnelle && (
+              <IconComponent
+                role='img'
+                focusable={false}
+                name={IconName.Suitcase}
+                aria-label='Qualifiée en Situation Non Professionnelle'
+                title='SNP'
+                className='w-4 h-4 fill-accent_2 mr-2'
+              />
+            )}
             <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
               {action.content}
             </span>
-          </span>
+          </div>
         </RowCell>
         <RowCell>
           <span className='flex items-center'>
-            <span>{formatDayDate(new Date(action.creationDate))}</span>
+            <span>{creationDate}</span>
           </span>
         </RowCell>
         <RowCell>
@@ -60,7 +79,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
               ) : (
                 <></>
               )}
-              {formatDayDate(new Date(action.dateEcheance))}
+              {dateEcheance}
             </span>
           </span>
         </RowCell>

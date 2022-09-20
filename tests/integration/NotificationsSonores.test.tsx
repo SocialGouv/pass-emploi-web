@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 
 import Layout from 'components/layouts/Layout'
@@ -34,7 +35,7 @@ describe('Intégration notifications sonores', () => {
   let messagesService: MessagesService
   beforeEach(async () => {
     jest.useFakeTimers()
-    jest.setSystemTime(new Date())
+    jest.setSystemTime(DateTime.now().toJSDate())
     ;(useRouter as jest.Mock).mockReturnValue({
       asPath: '/path/to/page',
       route: '/path/to/page',

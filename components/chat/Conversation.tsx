@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import React, {
   ChangeEvent,
   FormEvent,
@@ -23,11 +24,8 @@ import {
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { dateIsToday, formatDayDate } from 'utils/date'
+import { dateIsToday, toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
-
-const todayOrDate = (date: Date) =>
-  dateIsToday(date) ? "Aujourd'hui" : `Le ${formatDayDate(date)}`
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]
@@ -55,11 +53,15 @@ export default function Conversation({
   >(undefined)
   const [isFileUploading, setIsFileUploading] = useState<boolean>(false)
 
-  const [lastSeenByJeune, setLastSeenByJeune] = useState<Date | undefined>(
+  const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
     undefined
   )
   const hiddenFileInput = useRef<HTMLInputElement>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
+
+  const displayDate = useCallback((date: DateTime) => {
+    return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
+  }, [])
 
   async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -210,31 +212,32 @@ export default function Conversation({
               ? 'Ne plus suivre la conversation'
               : 'Suivre la conversation'
           }
-          title={
-            jeuneChat.flaggedByConseiller
-              ? 'Ne plus suivre la conversation'
-              : 'Suivre la conversation'
-          }
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
           onClick={toggleFlag}
         >
-          <IconComponent
-            name={
-              jeuneChat.flaggedByConseiller
-                ? IconName.FlagFilled
-                : IconName.Flag
-            }
-            className='w-6 h-6 fill-primary'
-          />
+          {jeuneChat.flaggedByConseiller && (
+            <IconComponent
+              name={IconName.FlagFilled}
+              title='Ne plus suivre la conversation'
+              className='w-6 h-6 fill-primary'
+            />
+          )}
+          {!jeuneChat.flaggedByConseiller && (
+            <IconComponent
+              name={IconName.Flag}
+              title='Suivre la conversation'
+              className='w-6 h-6 fill-primary'
+            />
+          )}
         </button>
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 
       <ul className='p-4 flex-grow overflow-y-auto short:hidden'>
         {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
-          <li key={messagesOfADay.date.getTime()} className='mb-5'>
+          <li key={messagesOfADay.date.toMillis()} className='mb-5'>
             <div className='text-base-regular text-center mb-3'>
-              <span>{todayOrDate(messagesOfADay.date)}</span>
+              <span>{displayDate(messagesOfADay.date)}</span>
             </div>
 
             <ul>

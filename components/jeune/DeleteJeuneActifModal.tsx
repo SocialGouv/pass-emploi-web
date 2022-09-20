@@ -4,7 +4,9 @@ import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
+import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
+import Textarea from 'components/ui/Form/Textarea'
 import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
@@ -132,16 +134,13 @@ export default function DeleteJeuneActifModal({
               <legend className='sr-only'>
                 Choisir un motif de suppression
               </legend>
-              <label
-                htmlFor='motif-suppression'
-                className='text-base-bold mb-2'
-              >
-                <span aria-hidden={true}>* </span>Motif de suppression
+              <Label htmlFor='motif-suppression' inputRequired={true}>
+                Motif de suppression
                 <span className='text-base-regular block mb-3'>
                   {' '}
                   Veuillez sélectionner un motif de suppression de compte
                 </span>
-              </label>
+              </Label>
               <Select
                 id='motif-suppression'
                 required
@@ -156,35 +155,23 @@ export default function DeleteJeuneActifModal({
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
                 <>
-                  <label htmlFor='commentaire-motif' className='text-s-regular'>
-                    <span aria-hidden={true}>* </span>
+                  <Label htmlFor='commentaire-motif' inputRequired={true}>
                     Veuillez préciser le motif de la suppression du compte
-                  </label>
+                  </Label>
                   {commentaireMotif.error && (
                     <InputError id='commentaire-motif--error' className='mb-2'>
                       {commentaireMotif.error}
                     </InputError>
                   )}
-                  <textarea
+                  <Textarea
                     id='commentaire-motif'
-                    name='commentaire-motif'
                     required
                     onChange={(e) =>
                       setCommentaireMotif({ value: e.target.value })
                     }
                     onBlur={validateCommentaireMotif}
                     rows={3}
-                    aria-invalid={commentaireMotif.error ? true : undefined}
-                    aria-describedby={
-                      commentaireMotif.error
-                        ? 'commentaire-motif--error'
-                        : undefined
-                    }
-                    className={`border border-solid border-content_color rounded-medium w-full px-4 py-3 mb-8 mt-3 ${
-                      commentaireMotif.error
-                        ? 'border-warning text-warning'
-                        : 'border-content_color'
-                    }`}
+                    invalid={Boolean(commentaireMotif)}
                   />
                 </>
               )}

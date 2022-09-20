@@ -21,7 +21,7 @@ export default function Sidebar() {
             MenuItem.Supervision,
             MenuItem.Aide,
             MenuItem.Profil,
-            MenuItem.Nouveautes,
+            MenuItem.Actualites,
           ]}
         />
       </nav>

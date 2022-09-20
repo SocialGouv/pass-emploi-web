@@ -1,27 +1,31 @@
+import { DateTime } from 'luxon'
+
 import {
   Action,
   CreateurCommentaire,
-  EtatAction,
+  EtatQualificationAction,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
-type EtatActionJson = 'A_QUALIFIER' | 'NON_QUALIFIABLE' | 'QUALIFIEE'
+type EtatQualificationActionJson =
+  | 'A_QUALIFIER'
+  | 'NON_QUALIFIABLE'
+  | 'QUALIFIEE'
 
 export interface ActionJson {
   id: string
   content: string
   comment: string
-  creationDate: string
-  lastUpdate: string
+  creationDate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
+  lastUpdate: string // 'EEE, d MMM yyyy HH:mm:ss z: Sat, 21 Feb 2022 14:50:46 UTC
   status: ActionStatusJson
   creator: string
   creatorType: string
   dateEcheance: string
   dateFinReelle?: string
   qualification?: QualificationActionJson
-  etat: EtatActionJson
 }
 
 export interface QualificationActionJson {
@@ -31,10 +35,13 @@ export interface QualificationActionJson {
 
 export interface MetadonneesActionsJson {
   nombreTotal: number
+  nombrePasCommencees: number
   nombreEnCours: number
   nombreTerminees: number
   nombreAnnulees: number
-  nombrePasCommencees: number
+  nombreNonQualifiables: number
+  nombreAQualifier: number
+  nombreQualifiees: number
   nombreActionsParPage: number
 }
 
@@ -65,17 +72,17 @@ export function jsonToQualification(
 }
 
 export function jsonToAction(json: ActionJson): Action {
+  const legacyFormat = 'EEE, d MMM yyyy HH:mm:ss z'
   const action: Action = {
     id: json.id,
     content: json.content,
     comment: json.comment,
-    creationDate: new Date(json.creationDate).toISOString(),
-    lastUpdate: new Date(json.lastUpdate).toISOString(),
+    creationDate: DateTime.fromFormat(json.creationDate, legacyFormat).toISO(),
+    lastUpdate: DateTime.fromFormat(json.lastUpdate, legacyFormat).toISO(),
     status: jsonToActionStatus(json.status),
     creator: json.creator,
     creatorType: json.creatorType,
     dateEcheance: json.dateEcheance,
-    etat: jsonToEtatAction(json.etat),
   }
 
   if (json.dateFinReelle) {
@@ -120,24 +127,15 @@ export function actionStatusToJson(status: StatutAction): ActionStatusJson {
   }
 }
 
-export function etatActionToJson(etat: EtatAction): EtatActionJson {
+export function etatQualificationActionToJson(
+  etat: EtatQualificationAction
+): EtatQualificationActionJson {
   switch (etat) {
-    case EtatAction.A_QUALIFIER:
+    case EtatQualificationAction.AQualifier:
       return 'A_QUALIFIER'
-    case EtatAction.NON_QUALIFIABLE:
+    case EtatQualificationAction.NonQualifiable:
       return 'NON_QUALIFIABLE'
-    case EtatAction.QUALIFIEE:
+    case EtatQualificationAction.Qualifiee:
       return 'QUALIFIEE'
-  }
-}
-
-export function jsonToEtatAction(jsonEtat: EtatActionJson): EtatAction {
-  switch (jsonEtat) {
-    case 'A_QUALIFIER':
-      return EtatAction.A_QUALIFIER
-    case 'NON_QUALIFIABLE':
-      return EtatAction.NON_QUALIFIABLE
-    case 'QUALIFIEE':
-      return EtatAction.QUALIFIEE
   }
 }

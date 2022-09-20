@@ -1,5 +1,7 @@
+import { DateTime } from 'luxon'
+
 import { RdvListItem } from 'interfaces/rdv'
-import { dateIsToday, formatWeekdayWithMonth } from 'utils/date'
+import { dateIsToday, toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 
 export const AUJOURDHUI_LABEL = 'aujourd’hui'
 export const PLAGE_HORAIRE_MATIN = 'Matin'
@@ -23,9 +25,9 @@ export function rdvsWithIntercalaires(
   let dernierJour = ''
   let dernierePlageHoraireDefinie = ''
   for (const rdv of rdvTries) {
-    const dateRdv = new Date(rdv.date)
+    const dateRdv = DateTime.fromISO(rdv.date)
     const jour = jourDuRdvFormate(dateRdv)
-    const heureDuRdv = dateRdv.getHours()
+    const heureDuRdv = dateRdv.hour
 
     if (jour !== dernierJour) {
       dernierJour = jour
@@ -54,8 +56,10 @@ export function rdvsWithIntercalaires(
   return items
 }
 
-function jourDuRdvFormate(date: Date): string {
-  return dateIsToday(date) ? AUJOURDHUI_LABEL : formatWeekdayWithMonth(date)
+function jourDuRdvFormate(date: DateTime): string {
+  return dateIsToday(date)
+    ? AUJOURDHUI_LABEL
+    : toFrenchFormat(date, WEEKDAY_MONTH_LONG)
 }
 
 function isRdvDuMatin(heureDuRdv: number) {
@@ -67,5 +71,7 @@ function isRdvApresMidi(heureDuRdv: number) {
 }
 
 function trierParDate(a: RdvListItem, b: RdvListItem) {
-  return new Date(a.date) < new Date(b.date) ? -1 : 1
+  return (
+    DateTime.fromISO(a.date).toMillis() - DateTime.fromISO(b.date).toMillis()
+  )
 }

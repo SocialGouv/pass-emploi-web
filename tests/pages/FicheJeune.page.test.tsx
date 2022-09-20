@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -10,7 +10,7 @@ import { uneAction, uneListeDActions } from 'fixtures/action'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import {
   desConseillersJeune,
-  unConseillerHistorique,
+  desIndicateursSemaine,
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
@@ -24,13 +24,9 @@ import {
   mockedJeunesService,
   mockedRendezVousService,
 } from 'fixtures/services'
-import { StatutAction } from 'interfaces/action'
+import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  CategorieSituation,
-  ConseillerHistorique,
-  EtatSituation,
-} from 'interfaces/jeune'
+import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
 import FicheJeune, {
   getServerSideProps,
@@ -39,6 +35,7 @@ import FicheJeune, {
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Dependencies } from 'utils/injectionDependances/container'
@@ -52,8 +49,17 @@ describe('Fiche Jeune', () => {
   describe('client side', () => {
     const jeune = unDetailJeune()
     const rdvs = desRdvListItems()
-    const actions = uneListeDActions()
-    const listeConseillers = desConseillersJeune()
+    const actions = uneListeDActions().concat(
+      uneAction({
+        id: 'id-action-5',
+        content: 'Action 5',
+        status: StatutAction.Terminee,
+        qualification: {
+          libelle: 'SNP',
+          isSituationNonProfessionnelle: true,
+        },
+      })
+    )
     const metadonneesFavoris = uneMetadonneeFavoris()
     let motifsSuppression: string[]
     let dependances: Pick<Dependencies, 'jeunesService'>
@@ -78,6 +84,7 @@ describe('Fiche Jeune', () => {
       dependances = {
         jeunesService: mockedJeunesService({
           getMotifsSuppression: jest.fn(async () => motifsSuppression),
+          getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
         }),
       }
     })
@@ -91,57 +98,24 @@ describe('Fiche Jeune', () => {
           setIdJeune = jest.fn()
 
           // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              conseillers={listeConseillers}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            {
-              customCurrentJeune: { idSetter: setIdJeune },
-              customDependances: dependances,
-            }
-          )
-        })
-
-        it('affiche la liste des 5 premiers conseillers du jeune', () => {
-          // Then
-          listeConseillers
-            .slice(0, 5)
-            .forEach(({ nom, prenom }: ConseillerHistorique) => {
-              expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-            })
-          expect(() => screen.getByText(listeConseillers[5].nom)).toThrow()
-        })
-
-        it('affiche un bouton pour dérouler la liste complète des conseillers du jeune', async () => {
-          // Then
-          const button = screen.getByRole('button', {
-            name: 'Voir l’historique complet',
-          })
-          expect(listeConseillers.length).toEqual(6)
-          expect(button).toBeInTheDocument()
-        })
-
-        it('permet d’afficher la liste complète des conseillers du jeune', async () => {
-          // Given
-          const button = screen.getByRole('button', {
-            name: 'Voir l’historique complet',
-          })
-
-          // When
-          await userEvent.click(button)
-
-          //Then
-          listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-            expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customCurrentJeune: { idSetter: setIdJeune },
+                customDependances: dependances,
+              }
+            )
           })
         })
 
@@ -155,6 +129,7 @@ describe('Fiche Jeune', () => {
           const deleteButton = screen.getByText('Supprimer ce compte')
           expect(deleteButton).toBeInTheDocument()
         })
+
         it('affiche les informations des favoris du jeune', () => {
           // Then
           expect(screen.getByText('Favoris')).toBeInTheDocument()
@@ -164,21 +139,22 @@ describe('Fiche Jeune', () => {
       describe('Supprimer un compte actif', () => {
         beforeEach(async () => {
           // Given
-          renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune({ isActivated: true })}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              conseillers={listeConseillers}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ isActivated: true })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
           // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
 
@@ -269,21 +245,22 @@ describe('Fiche Jeune', () => {
       describe('Supprimer un compte inactif', () => {
         beforeEach(async () => {
           // Given
-          renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune({ isActivated: false })}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              conseillers={listeConseillers}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customDependances: dependances }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ isActivated: false })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              { customDependances: dependances }
+            )
+          })
           // Given
           const deleteButton = screen.getByText('Supprimer ce compte')
 
@@ -328,21 +305,48 @@ describe('Fiche Jeune', () => {
         setIdJeune = jest.fn()
 
         // When
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: 1,
-              metadonnees: { nombreTotal: 14, nombrePages: 2 },
-            }}
-            conseillers={listeConseillers}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customCurrentJeune: { idSetter: setIdJeune } }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customCurrentJeune: { idSetter: setIdJeune },
+              customDependances: dependances,
+            }
+          )
+        })
+      })
+
+      it('affiche les indicateurs du jeune', async () => {
+        // Then
+        const indicateursActions = screen.getByRole('heading', {
+          name: 'Les actions',
+        }).parentElement
+        expect(
+          getByTextContent('0Créées', indicateursActions!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('1Terminée', indicateursActions!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('2En retard', indicateursActions!)
+        ).toBeInTheDocument()
+
+        const indicateursRdv = screen.getByRole('heading', {
+          name: 'Les rendez-vous',
+        }).parentElement
+        expect(
+          getByTextContent('3Cette semaine', indicateursRdv!)
+        ).toBeInTheDocument()
       })
 
       it('affiche la liste des rendez-vous du jeune', async () => {
@@ -369,6 +373,14 @@ describe('Fiche Jeune', () => {
           expect(screen.getByText(action.content)).toBeInTheDocument()
         })
         expect(
+          within(
+            screen.getByRole('row', {
+              name: `Détail de l'action ${actions[4].content}`,
+            })
+          ).getByLabelText(`Qualifiée en Situation Non Professionnelle`)
+        ).toBeInTheDocument()
+
+        expect(
           screen.getByRole('tab', { selected: true })
         ).toHaveAccessibleName('Actions 14')
         expect(() =>
@@ -384,7 +396,7 @@ describe('Fiche Jeune', () => {
       it('permet la prise de rendez-vous', async () => {
         // Then
         expect(
-          screen.getByRole('link', { name: 'Fixer un rendez-vous' })
+          screen.getByRole('link', { name: 'Créer un rendez-vous' })
         ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
 
@@ -393,31 +405,6 @@ describe('Fiche Jeune', () => {
         expect(
           screen.getByRole('link', { name: 'Créer une nouvelle action' })
         ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
-      })
-    })
-
-    describe('quand il y a moins de 5 conseillers dans l’historique', () => {
-      it('n’affiche pas de bouton pour dérouler', async () => {
-        const conseillers = [unConseillerHistorique()]
-        // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: 1,
-              metadonnees: { nombreTotal: 14, nombrePages: 2 },
-            }}
-            conseillers={conseillers}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />
-        )
-
-        // Then
-        expect(conseillers.length).toEqual(1)
-        expect(() => screen.getByText('Voir l’historique complet')).toThrow()
       })
     })
 
@@ -433,7 +420,6 @@ describe('Fiche Jeune', () => {
               page: 1,
               metadonnees: { nombreTotal: 14, nombrePages: 2 },
             }}
-            conseillers={[]}
             pageTitle={''}
             metadonneesFavoris={metadonneesFavoris}
           />,
@@ -441,6 +427,15 @@ describe('Fiche Jeune', () => {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           }
         )
+      })
+
+      it('affiche un lien vers l’historique des conseillers du jeune', async () => {
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Voir l’historique des conseillers',
+          })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/historique')
       })
 
       it("n'affiche pas la liste des rendez-vous du jeune", async () => {
@@ -482,23 +477,27 @@ describe('Fiche Jeune', () => {
 
     describe('quand l’utilisateur est un conseiller MILO', () => {
       describe('quand le jeune n’a aucune situation', () => {
-        it('affiche les informations concernant la situation du jeune', () => {
+        it('affiche les informations concernant la situation du jeune', async () => {
           // Given
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions,
-                page: 1,
-                metadonnees: { nombreTotal: 14, nombrePages: 2 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customConseiller: { structure: StructureConseiller.MILO } }
-          )
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions,
+                  page: 1,
+                  metadonnees: { nombreTotal: 14, nombrePages: 2 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customConseiller: { structure: StructureConseiller.MILO },
+                customDependances: dependances,
+              }
+            )
+          })
 
           // Then
           expect(screen.getByText('Situation')).toBeInTheDocument()
@@ -507,7 +506,7 @@ describe('Fiche Jeune', () => {
       })
 
       describe('quand le jeune a une liste de situations', () => {
-        it('affiche les informations concernant la situation du jeune ', () => {
+        it('affiche uniquement sa premiere situation ', async () => {
           // Given
           const situations = [
             {
@@ -519,51 +518,85 @@ describe('Fiche Jeune', () => {
               categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
             },
           ]
-          renderWithContexts(
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ situations: situations })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions,
+                  page: 1,
+                  metadonnees: { nombreTotal: 14, nombrePages: 2 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customConseiller: { structure: StructureConseiller.MILO },
+                customDependances: dependances,
+              }
+            )
+          })
+
+          // Then
+          expect(screen.getByText('Situation')).toBeInTheDocument()
+          expect(screen.getByText('Emploi')).toBeInTheDocument()
+          expect(screen.getByText('en cours')).toBeInTheDocument()
+          expect(() => screen.getByText('Contrat en Alternance')).toThrow()
+          expect(() => screen.getByText('prévue')).toThrow()
+        })
+      })
+
+      it('affiche un lien vers l’historique des situations', async () => {
+        // Given
+        await act(async () => {
+          await renderWithContexts(
             <FicheJeune
-              jeune={unDetailJeune({ situations: situations })}
+              jeune={jeune}
               rdvs={[]}
               actionsInitiales={{
                 actions,
                 page: 1,
                 metadonnees: { nombreTotal: 14, nombrePages: 2 },
               }}
-              conseillers={[]}
-              pageTitle={''}
-              metadonneesFavoris={metadonneesFavoris}
-            />,
-            { customConseiller: { structure: StructureConseiller.MILO } }
-          )
-
-          // Then
-          expect(screen.getByText('Situation')).toBeInTheDocument()
-          expect(screen.getByText('Emploi')).toBeInTheDocument()
-          expect(screen.getByText('en cours')).toBeInTheDocument()
-          expect(screen.getByText('Contrat en Alternance')).toBeInTheDocument()
-        })
-      })
-
-      describe("quand le jeune n'a pas activé son compte", () => {
-        it('affiche le mode opératoire pour activer le compte', () => {
-          // Given
-          renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune({ isActivated: false })}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 0, nombrePages: 0 },
-              }}
-              conseillers={listeConseillers}
               pageTitle={''}
               metadonneesFavoris={metadonneesFavoris}
             />,
             {
-              customDependances: dependances,
               customConseiller: { structure: StructureConseiller.MILO },
+              customDependances: dependances,
             }
           )
+        })
+
+        // Then
+        expect(
+          screen.getByRole('link', { name: 'Voir le détail des situations' })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/historique')
+      })
+
+      describe("quand le jeune n'a pas activé son compte", () => {
+        it('affiche le mode opératoire pour activer le compte', async () => {
+          // Given
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={unDetailJeune({ isActivated: false })}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions: [],
+                  page: 1,
+                  metadonnees: { nombreTotal: 0, nombrePages: 0 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customDependances: dependances,
+                customConseiller: { structure: StructureConseiller.MILO },
+              }
+            )
+          })
 
           // Then
           expect(
@@ -576,20 +609,22 @@ describe('Fiche Jeune', () => {
     describe("quand le jeune n'a pas d'action", () => {
       it('affiche un message qui le précise', async () => {
         // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            conseillers={[]}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // When
         await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
@@ -600,22 +635,24 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand le jeune a été réaffecté temporairement', () => {
-      it("affiche l'information", () => {
+      it("affiche l'information", async () => {
         // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={{ ...jeune, isReaffectationTemporaire: true }}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions: [],
-              page: 1,
-              metadonnees: { nombreTotal: 0, nombrePages: 0 },
-            }}
-            conseillers={[]}
-            pageTitle={''}
-            metadonneesFavoris={metadonneesFavoris}
-          />
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={{ ...jeune, isReaffectationTemporaire: true }}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // Then
         expect(screen.getByText(/ajouté temporairement/)).toBeInTheDocument()
@@ -623,23 +660,25 @@ describe('Fiche Jeune', () => {
     })
 
     describe('quand on revient sur la page depuis le détail d’une action', () => {
-      it('ouvre l’onglet des actions', () => {
+      it('ouvre l’onglet des actions', async () => {
         // Given
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={[]}
-            actionsInitiales={{
-              actions,
-              page: 1,
-              metadonnees: { nombreTotal: 14, nombrePages: 2 },
-            }}
-            conseillers={[]}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-            metadonneesFavoris={metadonneesFavoris}
-          />
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={{
+                actions,
+                page: 1,
+                metadonnees: { nombreTotal: 14, nombrePages: 2 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
 
         // Then
         expect(
@@ -649,20 +688,20 @@ describe('Fiche Jeune', () => {
     })
 
     describe('pagination actions', () => {
-      describe('navigation', () => {
-        let actionsService: ActionsService
-        let pageCourante: number
-        beforeEach(() => {
-          // Given
-          actionsService = mockedActionsService({
-            getActionsJeuneClientSide: jest.fn(async (_, { page }) => ({
-              actions: [uneAction({ content: `Action page ${page}` })],
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            })),
-          })
+      let actionsService: ActionsService
+      let pageCourante: number
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeuneClientSide: jest.fn(async (_, { page }) => ({
+            actions: [uneAction({ content: `Action page ${page}` })],
+            metadonnees: { nombreTotal: 52, nombrePages: 6 },
+          })),
+        })
 
-          pageCourante = 4
-          renderWithContexts(
+        pageCourante = 4
+        await act(async () => {
+          await renderWithContexts(
             <FicheJeune
               jeune={jeune}
               rdvs={rdvs}
@@ -671,414 +710,72 @@ describe('Fiche Jeune', () => {
                 page: pageCourante,
                 metadonnees: { nombreTotal: 52, nombrePages: 6 },
               }}
-              conseillers={listeConseillers}
               pageTitle={''}
               onglet={Onglet.ACTIONS}
               metadonneesFavoris={metadonneesFavoris}
             />,
-            { customDependances: { actionsService } }
-          )
-        })
-
-        it('met à jour les actions avec la page demandée ', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page 2'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            { page: 2, statuts: [], tri: 'date_echeance_decroissante' }
-          )
-          expect(screen.getByLabelText('Page 2')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByText('Action page 2')).toBeInTheDocument()
-        })
-
-        it('permet d’aller à la première page des actions', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Première page'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            { page: 1, statuts: [], tri: 'date_echeance_decroissante' }
-          )
-          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Première page')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it('permet d’aller à la dernière page des actions', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Dernière page'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            { page: 6, statuts: [], tri: 'date_echeance_decroissante' }
-          )
-          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Dernière page')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it('permet de revenir à la page précédente', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
             {
-              page: pageCourante - 1,
-              statuts: [],
-              tri: 'date_echeance_decroissante',
+              customDependances: { ...dependances, actionsService },
             }
           )
-          expect(
-            screen.getByLabelText(`Page ${pageCourante - 1}`)
-          ).toHaveAttribute('aria-current', 'page')
-        })
-
-        it("permet d'aller à la page suivante", async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page suivante'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: pageCourante + 1,
-              statuts: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-          expect(
-            screen.getByLabelText(`Page ${pageCourante + 1}`)
-          ).toHaveAttribute('aria-current', 'page')
-        })
-
-        it('met à jour la page courante', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-
-          // Then
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: pageCourante - 1,
-              statuts: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-
-          expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-            jeune.id,
-            {
-              page: pageCourante - 2,
-              statuts: [],
-              tri: 'date_echeance_decroissante',
-            }
-          )
-          expect(
-            screen.getByLabelText(`Page ${pageCourante - 2}`)
-          ).toHaveAttribute('aria-current', 'page')
-        })
-
-        it('ne permet pas de revenir avant la première page', async () => {
-          // Given
-          await userEvent.click(screen.getByLabelText('Première page'))
-
-          // When
-          await userEvent.click(screen.getByLabelText('Page précédente'))
-
-          // Then
-          expect(
-            actionsService.getActionsJeuneClientSide
-          ).toHaveBeenCalledTimes(1)
-          expect(screen.getByLabelText('Page 1')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Page précédente')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it("ne permet pas d'aller après la dernière page", async () => {
-          // Given
-          await userEvent.click(screen.getByLabelText('Dernière page'))
-
-          // When
-          await userEvent.click(screen.getByLabelText('Page suivante'))
-
-          // Then
-          expect(
-            actionsService.getActionsJeuneClientSide
-          ).toHaveBeenCalledTimes(1)
-          expect(screen.getByLabelText('Page 6')).toHaveAttribute(
-            'aria-current',
-            'page'
-          )
-          expect(screen.getByLabelText('Page suivante')).toHaveAttribute(
-            'disabled'
-          )
-        })
-
-        it('ne recharge pas la page courante', async () => {
-          // When
-          await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
-
-          // Then
-          expect(
-            actionsService.getActionsJeuneClientSide
-          ).toHaveBeenCalledTimes(0)
         })
       })
 
-      describe('troncature', () => {
-        it('1 2 -3-', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 3,
-                metadonnees: { nombreTotal: 22, nombrePages: 3 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
+      it('met à jour les actions avec la page demandée ', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
 
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(() => screen.getByText('…')).toThrow()
-        })
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+        expect(screen.getByText('Action page 2')).toBeInTheDocument()
+      })
 
-        it('1 2 -3- 4 5 6', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 3,
-                metadonnees: { nombreTotal: 52, nombrePages: 6 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
+      it('met à jour la page courante', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page précédente'))
+        await userEvent.click(screen.getByLabelText('Page précédente'))
 
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
-          expect(() => screen.getByText('…')).toThrow()
-        })
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: pageCourante - 1,
+            statuts: [],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
 
-        it('-1- 2 3 4 5 ... 20', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 1,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: pageCourante - 2,
+            statuts: [],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+        expect(
+          screen.getByLabelText(`Page ${pageCourante - 2}`)
+        ).toHaveAttribute('aria-current', 'page')
+      })
 
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
+      it('ne recharge pas la page courante', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
 
-        it('1 ... 9 10 -11- 12 13 ... 20', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 11,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 9')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 10')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 11')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 12')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 13')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(2)
-        })
-
-        it('1 2 3 -4- 5 6 ... 20', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 4,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 4')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 6')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
-
-        it('1 ... 15 16 -17- 18 19 20', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 17,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(7)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 15')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
-
-        it('1 ... 16 17 -18- 19 20', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 18,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
-
-        it('1 ... 16 17 18 19 -20-', () => {
-          // When
-          renderWithContexts(
-            <FicheJeune
-              jeune={jeune}
-              rdvs={[]}
-              actionsInitiales={{
-                actions: [],
-                page: 20,
-                metadonnees: { nombreTotal: 195, nombrePages: 20 },
-              }}
-              conseillers={[]}
-              pageTitle={''}
-              onglet={Onglet.ACTIONS}
-              metadonneesFavoris={metadonneesFavoris}
-            />
-          )
-
-          // Then
-          expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(6)
-          expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 16')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 17')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 18')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 19')).toBeInTheDocument()
-          expect(screen.getByLabelText('Page 20')).toBeInTheDocument()
-          expect(screen.getAllByText('…')).toHaveLength(1)
-        })
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledTimes(
+          0
+        )
       })
     })
 
@@ -1095,22 +792,25 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: pageCourante,
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            }}
-            conseillers={listeConseillers}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customDependances: { actionsService } }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+            }
+          )
+        })
 
         // When
         await userEvent.click(screen.getByText('Statut'))
@@ -1126,6 +826,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            etatsQualification: [],
             tri: 'date_echeance_decroissante',
           }
         )
@@ -1149,6 +850,94 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+            etatsQualification: [],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+      })
+    })
+
+    describe('filtrer les actions par etat de qualification', () => {
+      let actionsService: ActionsService
+      let pageCourante: number
+      beforeEach(async () => {
+        // Given
+        actionsService = mockedActionsService({
+          getActionsJeuneClientSide: jest.fn(async () => ({
+            actions: [uneAction({ content: 'Action filtrée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })),
+        })
+
+        pageCourante = 1
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
+          )
+        })
+
+        // When
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Filtrer par qualification' })
+        )
+        await userEvent.click(screen.getByLabelText('Actions à qualifier'))
+        await userEvent.click(screen.getByLabelText('Actions qualifiées'))
+        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+      })
+
+      it('filtre les actions', () => {
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 1,
+            statuts: [],
+            etatsQualification: [
+              EtatQualificationAction.AQualifier,
+              EtatQualificationAction.Qualifiee,
+            ],
+            tri: 'date_echeance_decroissante',
+          }
+        )
+        expect(screen.getByText('Action filtrée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', () => {
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve les filtres de qualification en changeant de page', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
+          jeune.id,
+          {
+            page: 2,
+            statuts: [],
+            etatsQualification: [
+              EtatQualificationAction.AQualifier,
+              EtatQualificationAction.Qualifiee,
+            ],
             tri: 'date_echeance_decroissante',
           }
         )
@@ -1169,21 +958,24 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: pageCourante,
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            }}
-            conseillers={listeConseillers}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-          />,
-          { customDependances: { actionsService } }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+            }
+          )
+        })
 
         headerColonneDate = screen.getByRole('button', { name: /Créée le/ })
       })
@@ -1199,6 +991,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_croissante',
           }
         )
@@ -1207,6 +1000,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_decroissante',
           }
         )
@@ -1235,6 +1029,7 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_decroissante',
           }
         )
@@ -1255,22 +1050,25 @@ describe('Fiche Jeune', () => {
         })
 
         pageCourante = 1
-        renderWithContexts(
-          <FicheJeune
-            jeune={jeune}
-            rdvs={rdvs}
-            actionsInitiales={{
-              actions,
-              page: pageCourante,
-              metadonnees: { nombreTotal: 52, nombrePages: 6 },
-            }}
-            conseillers={listeConseillers}
-            pageTitle={''}
-            onglet={Onglet.ACTIONS}
-            metadonneesFavoris={metadonneesFavoris}
-          />,
-          { customDependances: { actionsService } }
-        )
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions,
+                page: pageCourante,
+                metadonnees: { nombreTotal: 52, nombrePages: 6 },
+              }}
+              pageTitle={''}
+              onglet={Onglet.ACTIONS}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            {
+              customDependances: { ...dependances, actionsService },
+            }
+          )
+        })
 
         headerColonneDate = screen.getByRole('button', { name: /Échéance/ })
       })
@@ -1286,6 +1084,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_echeance_croissante',
           }
         )
@@ -1294,6 +1093,7 @@ describe('Fiche Jeune', () => {
           {
             page: 1,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_echeance_decroissante',
           }
         )
@@ -1322,9 +1122,74 @@ describe('Fiche Jeune', () => {
           {
             page: 2,
             statuts: [],
+            etatsQualification: [],
             tri: 'date_echeance_croissante',
           }
         )
+      })
+    })
+
+    describe('quand on sélectionne l’onglet des favoris', () => {
+      it('affiche les informations des offres et des recherches sauvegardées', async () => {
+        // Given
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
+
+        // When
+        await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
+
+        // Then
+        expect(screen.getByText(/Offres/)).toBeInTheDocument()
+        expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
+        expect(screen.getByText('Alternance :')).toBeInTheDocument()
+        expect(screen.getByText('Immersion :')).toBeInTheDocument()
+        expect(screen.getByText('Service civique :')).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', { name: 'Voir la liste des favoris' })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/favoris')
+      })
+
+      it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', async () => {
+        // Given
+        const metadonneesFavoris = uneMetadonneeFavoris({
+          autoriseLePartage: false,
+        })
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={rdvs}
+              actionsInitiales={{
+                actions: [],
+                page: 1,
+                metadonnees: { nombreTotal: 0, nombrePages: 0 },
+              }}
+              pageTitle={''}
+              metadonneesFavoris={metadonneesFavoris}
+            />,
+            { customDependances: dependances }
+          )
+        })
+
+        // When
+        await userEvent.click(screen.getByRole('tab', { name: /Favoris/ }))
+
+        // Then
+        expect(() => screen.getByText('Voir la liste des favoris')).toThrow()
       })
     })
   })
@@ -1352,10 +1217,10 @@ describe('Fiche Jeune', () => {
       actionsService = mockedActionsService({
         getActionsJeuneServerSide: jest.fn(async () => ({
           actions: [
-            uneAction({ creationDate: now.toISOString() }),
-            uneAction({ creationDate: datePasseeLoin.toISOString() }),
-            uneAction({ creationDate: dateFuture.toISOString() }),
-            uneAction({ creationDate: dateFutureLoin.toISOString() }),
+            uneAction({ creationDate: now.toISO() }),
+            uneAction({ creationDate: datePasseeLoin.toISO() }),
+            uneAction({ creationDate: dateFuture.toISO() }),
+            uneAction({ creationDate: dateFutureLoin.toISO() }),
           ],
           metadonnees: { nombreTotal: 14, nombrePages: 2 },
         })),
@@ -1414,7 +1279,6 @@ describe('Fiche Jeune', () => {
             pageHeader: 'Kenji Jirac',
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
-            conseillers: expect.arrayContaining([]),
             metadonneesFavoris: expect.arrayContaining([]),
           },
         })
@@ -1447,32 +1311,22 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
-          { page: 1, statuts: [] },
+          1,
           'accessToken'
         )
         expect(actual).toMatchObject({
           props: {
             actionsInitiales: {
               actions: [
-                uneAction({ creationDate: now.toISOString() }),
-                uneAction({ creationDate: datePasseeLoin.toISOString() }),
-                uneAction({ creationDate: dateFuture.toISOString() }),
-                uneAction({ creationDate: dateFutureLoin.toISOString() }),
+                uneAction({ creationDate: now.toISO() }),
+                uneAction({ creationDate: datePasseeLoin.toISO() }),
+                uneAction({ creationDate: dateFuture.toISO() }),
+                uneAction({ creationDate: dateFutureLoin.toISO() }),
               ],
               page: 1,
               metadonnees: { nombreTotal: 14, nombrePages: 2 },
             },
           },
-        })
-      })
-
-      it('récupère les conseillers du jeune', async () => {
-        // Then
-        expect(
-          jeunesService.getConseillersDuJeuneServerSide
-        ).toHaveBeenCalledWith('id-jeune', 'accessToken')
-        expect(actual).toMatchObject({
-          props: { conseillers: desConseillersJeune() },
         })
       })
     })
@@ -1486,7 +1340,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
-          { page: 3, statuts: [] },
+          3,
           'accessToken'
         )
         expect(actual).toMatchObject({

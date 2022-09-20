@@ -5,11 +5,11 @@ import { LeanBe } from '../utils/useLeanBeWidget'
 
 import IconComponent, { IconName } from './ui/IconComponent'
 
-interface NouveautesMenuButtonProps {
+interface ActualitesMenuButtonProps {
   structure: StructureConseiller | undefined
 }
 
-function NouveautesMenuButton({ structure }: NouveautesMenuButtonProps) {
+function ActualitesMenuButton({ structure }: ActualitesMenuButtonProps) {
   const widgetId =
     structure === StructureConseiller.POLE_EMPLOI
       ? LeanBe.PE_WIDGET_ID
@@ -34,11 +34,11 @@ function NouveautesMenuButton({ structure }: NouveautesMenuButtonProps) {
           name={IconName.InfoOutline}
         />
         <span className='text-md text-left sr-only layout_l:not-sr-only break-words text-blanc'>
-          Nouveautés
+          Actualités
         </span>
       </div>
     </>
   )
 }
 
-export default NouveautesMenuButton
+export default ActualitesMenuButton

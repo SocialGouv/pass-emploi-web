@@ -19,6 +19,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { DateTime } from 'luxon'
 
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -53,7 +54,7 @@ interface CreateFirebaseMessage {
   idConseiller: string
   message: EncryptedTextWithInitializationVector
   infoPieceJointe?: InfoFichier
-  date: Date
+  date: DateTime
 }
 
 class FirebaseClient {
@@ -289,7 +290,7 @@ function createFirebaseMessage({
     iv,
     conseillerId: idConseiller,
     sentBy: UserType.CONSEILLER.toLowerCase(),
-    creationDate: Timestamp.fromDate(date),
+    creationDate: Timestamp.fromMillis(date.toMillis()),
     type,
   }
 
@@ -326,21 +327,21 @@ function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
     firebaseChatToUpdate.lastMessageContent = chat.lastMessageContent
   }
   if (chat.lastMessageSentAt) {
-    firebaseChatToUpdate.lastMessageSentAt = Timestamp.fromDate(
-      chat.lastMessageSentAt
+    firebaseChatToUpdate.lastMessageSentAt = Timestamp.fromMillis(
+      chat.lastMessageSentAt.toMillis()
     )
   }
   if (chat.lastMessageSentBy) {
     firebaseChatToUpdate.lastMessageSentBy = chat.lastMessageSentBy
   }
   if (chat.lastConseillerReading) {
-    firebaseChatToUpdate.lastConseillerReading = Timestamp.fromDate(
-      chat.lastConseillerReading
+    firebaseChatToUpdate.lastConseillerReading = Timestamp.fromMillis(
+      chat.lastConseillerReading.toMillis()
     )
   }
   if (chat.lastJeuneReading) {
-    firebaseChatToUpdate.lastJeuneReading = Timestamp.fromDate(
-      chat.lastJeuneReading
+    firebaseChatToUpdate.lastJeuneReading = Timestamp.fromMillis(
+      chat.lastJeuneReading.toMillis()
     )
   }
   if (chat.lastMessageIv) {
@@ -360,10 +361,16 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
     seenByConseiller: firebaseChat.seenByConseiller ?? true,
     newConseillerMessageCount: firebaseChat.newConseillerMessageCount,
     lastMessageContent: firebaseChat.lastMessageContent,
-    lastMessageSentAt: firebaseChat.lastMessageSentAt?.toDate(),
+    lastMessageSentAt:
+      firebaseChat.lastMessageSentAt &&
+      DateTime.fromMillis(firebaseChat.lastMessageSentAt.toMillis()),
     lastMessageSentBy: firebaseChat.lastMessageSentBy,
-    lastConseillerReading: firebaseChat.lastConseillerReading?.toDate(),
-    lastJeuneReading: firebaseChat.lastJeuneReading?.toDate(),
+    lastConseillerReading:
+      firebaseChat.lastConseillerReading &&
+      DateTime.fromMillis(firebaseChat.lastConseillerReading.toMillis()),
+    lastJeuneReading:
+      firebaseChat.lastJeuneReading &&
+      DateTime.fromMillis(firebaseChat.lastJeuneReading.toMillis()),
     lastMessageIv: firebaseChat.lastMessageIv,
     flaggedByConseiller: Boolean(firebaseChat.flaggedByConseiller),
   }
@@ -375,7 +382,7 @@ function docSnapshotToMessage(
   const firebaseMessage = docSnapshot.data()
   const message: Message = {
     ...firebaseMessage,
-    creationDate: firebaseMessage.creationDate.toDate(),
+    creationDate: DateTime.fromMillis(firebaseMessage.creationDate.toMillis()),
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
   }

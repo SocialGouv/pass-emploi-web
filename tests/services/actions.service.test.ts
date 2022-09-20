@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { ApiClient } from 'clients/api.client'
 import {
   desSituationsNonProfessionnelles,
@@ -7,7 +9,11 @@ import {
   uneListeDActions,
   uneListeDActionsJson,
 } from 'fixtures/action'
-import { QualificationAction, StatutAction } from 'interfaces/action'
+import {
+  EtatQualificationAction,
+  QualificationAction,
+  StatutAction,
+} from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
@@ -219,7 +225,12 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.getActionsJeuneClientSide(
         'whatever',
-        { tri: 'date_decroissante', page: 1, statuts: [] }
+        {
+          tri: 'date_decroissante',
+          page: 1,
+          statuts: [],
+          etatsQualification: [],
+        }
       )
 
       // THEN
@@ -240,10 +251,13 @@ describe('ActionsApiService', () => {
           actions: uneListeDActionsJson(),
           metadonnees: {
             nombreTotal: 82,
+            nombrePasCommencees: 9,
             nombreEnCours: 42,
             nombreTerminees: 30,
             nombreAnnulees: 1,
-            nombrePasCommencees: 9,
+            nombreNonQualifiables: 52,
+            nombreAQualifier: 12,
+            nombreQualifiees: 18,
             nombreActionsParPage: 10,
           },
         },
@@ -256,6 +270,7 @@ describe('ActionsApiService', () => {
           tri: 'date_decroissante',
           page: 1,
           statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          etatsQualification: [],
         }
       )
 
@@ -269,6 +284,53 @@ describe('ActionsApiService', () => {
         metadonnees: {
           nombreTotal: 82,
           nombrePages: 6,
+        },
+      })
+    })
+
+    it('parse le paramètre pour filtrer les actions par état de qualification et compte le nombre de pages', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          actions: uneListeDActionsJson(),
+          metadonnees: {
+            nombreTotal: 82,
+            nombrePasCommencees: 9,
+            nombreEnCours: 42,
+            nombreTerminees: 30,
+            nombreAnnulees: 1,
+            nombreNonQualifiables: 52,
+            nombreAQualifier: 12,
+            nombreQualifiees: 18,
+            nombreActionsParPage: 10,
+          },
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.getActionsJeuneClientSide(
+        'whatever',
+        {
+          tri: 'date_decroissante',
+          page: 1,
+          statuts: [],
+          etatsQualification: [
+            EtatQualificationAction.AQualifier,
+            EtatQualificationAction.Qualifiee,
+          ],
+        }
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&etats=A_QUALIFIER&etats=QUALIFIEE',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions: expect.arrayContaining([]),
+        metadonnees: {
+          nombreTotal: 82,
+          nombrePages: 3,
         },
       })
     })
@@ -288,10 +350,7 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.getActionsJeuneServerSide(
         'whatever',
-        {
-          page: 1,
-          statuts: [],
-        },
+        1,
         'accessToken'
       )
 
@@ -303,47 +362,6 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         actions,
         metadonnees: { nombrePages: 9, nombreTotal: 82 },
-      })
-    })
-
-    it('parse le paramètre pour filtrer les actions par statut et compte le nombre de pages', async () => {
-      // GIVEN
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: {
-          actions: uneListeDActionsJson(),
-          metadonnees: {
-            nombreTotal: 82,
-            nombreEnCours: 42,
-            nombreTerminees: 30,
-            nombreAnnulees: 1,
-            nombrePasCommencees: 9,
-            nombreActionsParPage: 10,
-          },
-        },
-      })
-
-      // WHEN
-      const actual = await actionsService.getActionsJeuneServerSide(
-        'whatever',
-        {
-          tri: 'date_echeance_decroissante',
-          page: 1,
-          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-        },
-        'accessToken'
-      )
-
-      // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante&statuts=in_progress&statuts=not_started',
-        'accessToken'
-      )
-      expect(actual).toStrictEqual({
-        actions: expect.arrayContaining([]),
-        metadonnees: {
-          nombreTotal: 82,
-          nombrePages: 6,
-        },
       })
     })
   })
@@ -466,8 +484,8 @@ describe('ActionsApiService', () => {
       const actual = await actionsService.qualifier(
         'id-action',
         'SANTE',
-        new Date('2022-09-05T22:00:00.000Z'),
-        new Date('2022-09-06T22:00:00.000Z')
+        DateTime.fromISO('2022-09-05T22:00:00.000Z'),
+        DateTime.fromISO('2022-09-06T22:00:00.000Z')
       )
 
       // THEN
@@ -475,8 +493,8 @@ describe('ActionsApiService', () => {
         '/actions/id-action/qualifier',
         {
           codeQualification: 'SANTE',
-          dateDebut: '2022-09-05T22:00:00.000Z',
-          dateFinReelle: '2022-09-06T22:00:00.000Z',
+          dateDebut: '2022-09-06T00:00:00.000+02:00',
+          dateFinReelle: '2022-09-07T00:00:00.000+02:00',
         },
         'accessToken'
       )

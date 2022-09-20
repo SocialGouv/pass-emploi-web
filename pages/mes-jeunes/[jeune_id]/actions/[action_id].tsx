@@ -25,7 +25,7 @@ import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { formatDayDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -56,12 +56,27 @@ function PageAction({
 
   const pageTracking = 'Détail Action'
 
+  const estARealiser: boolean = useMemo(
+    () => statut !== StatutAction.Terminee && statut !== StatutAction.Annulee,
+    [statut]
+  )
   const estAQualifier: boolean = useMemo(
     () =>
       conseiller?.structure === StructureConseiller.MILO &&
       statut === StatutAction.Terminee &&
       !qualification,
     [conseiller?.structure, qualification, statut]
+  )
+  const afficherSuppressionAction = useMemo(
+    () =>
+      action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+      !Boolean(action.qualification) &&
+      commentaires.length === 0,
+    [action.creatorType, action.qualification, commentaires.length]
+  )
+  const dateEcheance: string = useMemo(
+    () => toShortDate(action.dateEcheance),
+    [action.dateEcheance]
   )
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
@@ -134,11 +149,6 @@ function PageAction({
       : pageTracking
   )
 
-  const afficherSuppressionAction =
-    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    !Boolean(action.qualification) &&
-    commentaires.length === 0
-
   return (
     <>
       {showEchecMessage && (
@@ -147,9 +157,11 @@ function PageAction({
           onAcknowledge={() => setShowEchecMessage(false)}
         />
       )}
+
       {conseiller?.structure === StructureConseiller.MILO && (
         <TagQualificationAction statut={statut} qualification={qualification} />
       )}
+
       <div className='flex items-start justify-between mb-5'>
         <h2
           className='text-m-bold text-content_color'
@@ -177,8 +189,9 @@ function PageAction({
       </div>
 
       {action.comment && <p className='mb-8'>{action.comment}</p>}
-      <div className='flex flex-raw items-center justify-between mb-8 bg-accent_3_lighten rounded-medium'>
-        <span className='flex flex-row p-2 text-accent_2'>
+
+      {estARealiser && (
+        <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-medium mb-8'>
           <IconComponent
             name={IconName.Clock}
             aria-hidden='true'
@@ -186,11 +199,11 @@ function PageAction({
             className='h-5 w-5 mr-1 stroke-accent_2'
           />
           <span>
-            À réaliser pour le :{' '}
-            <b>{formatDayDate(new Date(action.dateEcheance))}</b>
+            À réaliser pour le : <b>{dateEcheance}</b>
           </span>
-        </span>
-      </div>
+        </div>
+      )}
+
       <StatutActionForm
         updateStatutAction={updateStatutAction}
         qualifierAction={(isSituationNonProfessionnelle) =>

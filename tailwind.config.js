@@ -34,6 +34,7 @@ module.exports = {
       warning: '#D33211',
       warning_lighten: '#FFF1ED',
       warning_lighten2: '#FFCBBC',
+      alert_lighten: '#FFC6A6',
       accent_1: '#950EFF',
       accent_1_lighten: '#F4E5FF',
       accent_2: '#4A526D',

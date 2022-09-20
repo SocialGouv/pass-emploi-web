@@ -4,7 +4,7 @@ import IconComponent, { IconName } from '../IconComponent'
 
 interface ResettableTextInputProps {
   id: string
-  value: string
+  defaultValue: string
   onChange: (value: string) => void
   onReset: () => void
   disabled?: boolean
@@ -17,7 +17,7 @@ const ResettableTextInput = forwardRef(
   (
     {
       id,
-      value,
+      defaultValue,
       onChange,
       onReset,
       disabled = false,
@@ -53,7 +53,7 @@ const ResettableTextInput = forwardRef(
           id={id}
           name={id}
           ref={ref}
-          value={value}
+          defaultValue={defaultValue}
           onChange={applyChange}
           className={`flex-1 p-3 bg-blanc rounded-l-medium`}
           disabled={disabled}
@@ -61,7 +61,6 @@ const ResettableTextInput = forwardRef(
         />
         <button
           type='reset'
-          title='Effacer'
           className={`w-8 cursor-[inherit]`}
           onClick={applyReset}
           disabled={disabled}
@@ -73,6 +72,7 @@ const ResettableTextInput = forwardRef(
             aria-hidden={true}
             className='w-6 h-6'
             fill='currentColor'
+            title='Effacer'
           />
         </button>
       </div>

@@ -120,7 +120,6 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             onClick={fermerMenu}
             aria-label='Fermer le menu principal'
             aria-expanded={true}
-            title='Fermer le menu principal'
             className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-[50%]'
           >
             <IconComponent
@@ -128,6 +127,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               className='w-10 h-10 fill-blanc'
               aria-hidden={true}
               focusable={false}
+              title='Fermer le menu principal'
             />
           </button>
           <div className='grow flex flex-col justify-between'>
@@ -148,7 +148,6 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                 type='button'
                 onClick={ouvrirMenu}
                 aria-controls='menu-mobile'
-                title='Ouvrir le menu principal'
                 aria-expanded={showMenu}
                 className='absolute left-4 top-[calc(50%-1.25rem)]'
               >
@@ -157,6 +156,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
                   className='w-10 h-10 fill-primary layout_s:hidden'
                   aria-hidden={true}
                   focusable={false}
+                  title='Ouvrir le menu principal'
                 />
               </button>
             </nav>

@@ -18,6 +18,7 @@ export function mockedJeunesService(
     getJeunesDuConseillerParEmail: jest.fn(),
     getJeuneDetails: jest.fn(),
     getIdJeuneMilo: jest.fn(),
+    getIndicateursJeune: jest.fn(),
     createCompteJeunePoleEmploi: jest.fn(),
     reaffecter: jest.fn(),
     supprimerJeuneInactif: jest.fn(),
@@ -71,8 +72,7 @@ export function mockedRendezVousService(
   overrides: Partial<RendezVousService> = {}
 ): RendezVousService {
   const defaults: RendezVousService = {
-    getRendezVousConseillerServerSide: jest.fn(),
-    getRendezVousConseillerClientSide: jest.fn(),
+    getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
     getDetailsRendezVous: jest.fn(),
     getTypesRendezVous: jest.fn(),

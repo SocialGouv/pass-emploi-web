@@ -1,7 +1,8 @@
-import React from 'react'
+import { DateTime } from 'luxon'
+import React, { useCallback } from 'react'
 
 import { ConseillerHistorique } from 'interfaces/jeune'
-import { formatDayDate } from 'utils/date'
+import { toShortDate as _toShortDate } from 'utils/date'
 
 interface ListeConseillersJeuneprops {
   id: string
@@ -12,15 +13,24 @@ export function ListeConseillersJeune({
   id,
   conseillers,
 }: ListeConseillersJeuneprops) {
+  const getDepuis = useCallback(
+    (conseiller: ConseillerHistorique) => DateTime.fromISO(conseiller.depuis),
+    []
+  )
+  const toShortDate = useCallback(
+    (depuis: DateTime) => _toShortDate(depuis),
+    []
+  )
+
   return (
     <ol className='list-disc' id={id}>
       {conseillers.map((conseiller, index, arr) => {
-        const depuis = new Date(conseiller.depuis)
+        const depuis = getDepuis(conseiller)
 
         if (index === 0) {
           return (
-            <li className='list-none text-base-regular' key={depuis.getTime()}>
-              Du {formatDayDate(depuis) + ' à aujourd’hui'}
+            <li className='list-none text-base-regular' key={depuis.toMillis()}>
+              Du {toShortDate(depuis) + ' à aujourd’hui'}
               {' : '}
               <span className='text-base-bold'>
                 {conseiller.nom} {conseiller.prenom}
@@ -31,11 +41,11 @@ export function ListeConseillersJeune({
 
         const conseillerSuivant = arr[index - 1]
         return (
-          <li className='list-none text-base-regular' key={depuis.getTime()}>
+          <li className='list-none text-base-regular' key={depuis.toMillis()}>
             Du{' '}
-            {formatDayDate(depuis) +
+            {toShortDate(depuis) +
               ' au ' +
-              formatDayDate(new Date(conseillerSuivant.depuis))}
+              toShortDate(getDepuis(conseillerSuivant))}
             {' : '}
             <span className='text-base-bold'>
               {conseiller.nom} {conseiller.prenom}

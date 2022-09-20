@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { RdvRow } from 'components/rdv/RdvRow'
 import { HeaderCell } from 'components/ui/Table/HeaderCell'
@@ -24,7 +24,10 @@ export default function TableauRdv({
   withIntercalaires = false,
   withNameJeune = true,
 }: TableauRdvProps) {
-  const rdvsAffiches = withIntercalaires ? rdvsWithIntercalaires(rdvs) : rdvs
+  const rdvsAffiches = useMemo(
+    () => (withIntercalaires ? rdvsWithIntercalaires(rdvs) : rdvs),
+    [rdvs, withIntercalaires]
+  )
 
   //FIXME: Balise <tr> ne peut pas être enfant d'une div, mais problème avec colSpan
   function intercalaireDate(item: IntercalaireJour) {
