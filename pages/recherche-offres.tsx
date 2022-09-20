@@ -1,23 +1,38 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { GetServerSideProps } from 'next'
+import { FormEvent, useState } from 'react'
 
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
-import { GetServerSideProps } from 'next'
-import { withMandatorySessionOrRedirect } from '../utils/auth/withMandatorySessionOrRedirect'
-import { PageProps } from '../interfaces/pageProps'
+import { PageProps } from 'interfaces/pageProps'
+import { OffresEmploiService } from 'services/offres-emploi.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps
 
 function RechercheOffres() {
+  const offresEmploiService = useDependance<OffresEmploiService>(
+    'offresEmploiService'
+  )
+
+  const [motsCles, setMotsCles] = useState<string | undefined>()
+
+  function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    offresEmploiService.searchOffresEmploi({ query: motsCles! })
+  }
+
   return (
     <>
-      <form className='flex items-center'>
+      <form onSubmit={rechercherOffresEmploi} className='flex items-center'>
         <div className='grow'>
           <Label htmlFor='mots-cles'>
             Mots clés (intitulé, numéro d’offre, code ROME)
           </Label>
-          <Input type='text' id='mots-cles' onChange={() => {}} />
+          <Input type='text' id='mots-cles' onChange={setMotsCles} />
         </div>
 
         <Button type='submit' className='ml-5'>

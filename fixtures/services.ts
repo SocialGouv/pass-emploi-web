@@ -5,6 +5,7 @@ import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
+import { OffresEmploiService } from 'services/offres-emploi.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 
 export function mockedJeunesService(
@@ -123,6 +124,16 @@ export function mockedFavorisService(
   const defaults: FavorisService = {
     getOffres: jest.fn(),
     getRecherchesSauvegardees: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedOffresEmploiService(
+  overrides: Partial<OffresEmploiService> = {}
+): OffresEmploiService {
+  const defaults: OffresEmploiService = {
+    getLienOffreEmploi: jest.fn(),
+    searchOffresEmploi: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
