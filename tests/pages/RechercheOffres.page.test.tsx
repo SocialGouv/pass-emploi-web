@@ -1,9 +1,12 @@
-import { render, screen } from '@testing-library/react'
-
-import RechercheOffres from 'pages/recherche-offres'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { getServerSideProps } from 'pages/recherche-offres'
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
+
+import { mockedOffresEmploiService } from 'fixtures/services'
+import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
+import { OffresEmploiService } from 'services/offres-emploi.service'
+import renderWithContexts from 'tests/renderWithContexts'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
@@ -11,10 +14,15 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('Page Recherche Offres', () => {
   describe('client side', () => {
-    it('affiche un bouton pour lancer la recherche', () => {
-      // Given
-      render(<RechercheOffres />)
+    let offresEmploiService: OffresEmploiService
+    beforeEach(() => {
+      offresEmploiService = mockedOffresEmploiService()
+      renderWithContexts(<RechercheOffres />, {
+        customDependances: { offresEmploiService },
+      })
+    })
 
+    it('affiche un bouton pour lancer la recherche', () => {
       // Then
       expect(
         screen.getByRole('button', { name: 'Rechercher' })
@@ -22,11 +30,23 @@ describe('Page Recherche Offres', () => {
     })
 
     it('permet de saisir des mots clés', () => {
-      // Given
-      render(<RechercheOffres />)
-
       // Then
       expect(screen.getByLabelText(/Mots clés/)).toHaveAttribute('type', 'text')
+    })
+
+    it("permet de rechercher des offres d'emploi", async () => {
+      // Given
+      const inputMotsCles = screen.getByLabelText(/Mots clés/)
+      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+      // When
+      await userEvent.type(inputMotsCles, 'prof industrie')
+      await userEvent.click(submitButton)
+
+      // Then
+      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+        query: 'prof industrie',
+      })
     })
   })
 

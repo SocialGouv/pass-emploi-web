@@ -9,6 +9,7 @@ export interface OffresEmploiService {
     query: string
   }): Promise<Array<{ titre: string }>>
 }
+
 export class OffresEmploiApiService implements OffresEmploiService {
   constructor(private readonly apiClient: ApiClient) {}
 
