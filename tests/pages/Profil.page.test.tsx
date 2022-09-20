@@ -50,7 +50,7 @@ describe('Page Profil conseiller', () => {
         actual = await getServerSideProps({} as GetServerSidePropsContext)
       })
 
-      it('récupère la structure du conseiller', () => {
+      it('charge la page avec les bonnes props', () => {
         // Then
         expect(actual).toEqual({
           props: {

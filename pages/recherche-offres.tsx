@@ -3,6 +3,11 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
+import { GetServerSideProps } from 'next'
+import { withMandatorySessionOrRedirect } from '../utils/auth/withMandatorySessionOrRedirect'
+import { PageProps } from '../interfaces/pageProps'
+
+type RechercheOffresProps = PageProps
 
 function RechercheOffres() {
   return (
@@ -21,6 +26,22 @@ function RechercheOffres() {
       </form>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<
+  RechercheOffresProps
+> = async (context) => {
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.validSession) {
+    return { redirect: sessionOrRedirect.redirect }
+  }
+
+  return {
+    props: {
+      pageTitle: 'Recherche d’offres',
+      pageHeader: 'Offres',
+    },
+  }
 }
 
 export default withTransaction(RechercheOffres.name, 'page')(RechercheOffres)
