@@ -5,6 +5,9 @@ import { ApiError } from 'utils/httpClient'
 
 export interface OffresEmploiService {
   getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
+  searchOffresEmploi(recherche: {
+    query: string
+  }): Promise<Array<{ titre: string }>>
 }
 export class OffresEmploiApiService implements OffresEmploiService {
   constructor(private readonly apiClient: ApiClient) {}
@@ -24,5 +27,23 @@ export class OffresEmploiApiService implements OffresEmploiService {
       }
       throw e
     }
+  }
+
+  async searchOffresEmploi({
+    query,
+  }: {
+    query: string
+  }): Promise<Array<{ titre: string }>> {
+    const session = await getSession()
+    const accessToken = session!.accessToken
+
+    const { content } = await this.apiClient.get<{
+      results: Array<{ titre: string }>
+    }>(
+      `/offres-emploi?alternance=false&q=${encodeURIComponent(query)}`,
+      accessToken
+    )
+
+    return content.results
   }
 }
