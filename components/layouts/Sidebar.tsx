@@ -18,6 +18,7 @@ export default function Sidebar() {
           items={[
             MenuItem.Jeunes,
             MenuItem.Rdvs,
+            MenuItem.RechercheOffres,
             MenuItem.Supervision,
             MenuItem.Aide,
             MenuItem.Profil,
