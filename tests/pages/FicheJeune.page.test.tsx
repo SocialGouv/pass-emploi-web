@@ -349,6 +349,15 @@ describe('Fiche Jeune', () => {
         ).toBeInTheDocument()
       })
 
+      it('affiche un lien vers tous les indicateurs du jeune', async () => {
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Voir plus d’indicateurs',
+          })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/indicateurs')
+      })
+
       it('affiche la liste des rendez-vous du jeune', async () => {
         // Then
         expect(

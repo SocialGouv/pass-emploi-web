@@ -53,7 +53,7 @@ function Indicateurs({ idJeune, idConseiller }: IndicateursProps) {
 
   return (
     <div>
-      <h2 className='text-m-bold text-content_color mb-6 mt-2'>
+      <h2 className='text-m-bold text-content_color mb-6'>
         Semaine du {debutDeLaSemaine.toLocaleString()} au{' '}
         {finDeLaSemaine.toLocaleString()}
       </h2>
