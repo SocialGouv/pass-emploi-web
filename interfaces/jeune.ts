@@ -41,6 +41,7 @@ export interface JeuneFromListe extends BaseJeune {
   }
   situationCourante: CategorieSituation
 }
+
 export interface DetailJeune extends BaseJeune {
   creationDate: string
   isActivated: boolean
@@ -119,6 +120,14 @@ export type IndicateursSemaine = {
     terminees: number
   }
   rendezVous: number
+  offres: {
+    consultees: number
+    partagees: number
+  }
+  favoris: {
+    offresSauvegardees: number
+    recherchesSauvegardees: number
+  }
 }
 
 export function compareJeunesByNom(
