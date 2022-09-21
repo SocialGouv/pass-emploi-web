@@ -35,6 +35,12 @@ describe('Page Recherche Offres', () => {
       expect(screen.getByLabelText(/Mots clés/)).toHaveAttribute('type', 'text')
     })
 
+    it('n’affiche pas de résultat par défaut', () => {
+      // Then
+      expect(() => screen.getByText('Liste des résultats')).toThrow()
+      expect(() => screen.getByRole('list')).toThrow()
+    })
+
     it("permet de rechercher des offres d'emploi", async () => {
       // Given
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
@@ -69,7 +75,9 @@ describe('Page Recherche Offres', () => {
       await userEvent.click(submitButton)
 
       // Then
-      const offresList = screen.getByRole('list')
+      const offresList = screen.getByRole('list', {
+        description: 'Liste des résultats',
+      })
       expect(within(offresList).getAllByRole('listitem').length).toEqual(
         offresEmploi.length
       )
