@@ -9,6 +9,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { IndicateursSemaine } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -28,7 +29,7 @@ function Indicateurs({ idJeune, idConseiller }: IndicateursProps) {
   const debutDeLaSemaine = aujourdHui.startOf('week')
   const finDeLaSemaine = aujourdHui.endOf('week')
 
-  // TODO-GAD tracking
+  useMatomo('Détail jeune – Indicateurs')
 
   useEffect(() => {
     if (!indicateursSemaine) {
