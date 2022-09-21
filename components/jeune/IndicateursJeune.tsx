@@ -27,7 +27,9 @@ export function IndicateursJeune({
         {finDeLaSemaine.toLocaleString()}
       </p>
       <div
-        className={`flex gap-6 ${!indicateursSemaine ? 'animate-pulse' : ''}`}
+        className={`flex flex-wrap gap-6 ${
+          !indicateursSemaine ? 'animate-pulse' : ''
+        }`}
       >
         <div className='text-primary_darken text-base-bold'>
           <h3 className='mb-2'>Les actions</h3>
