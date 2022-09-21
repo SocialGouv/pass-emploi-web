@@ -16,13 +16,17 @@ function RechercheOffres() {
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
   )
+  const [offres, setOffres] = useState<Array<{ titre: string }>>([])
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
 
-  function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
+  async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    offresEmploiService.searchOffresEmploi(motsCles ? { motsCles } : {})
+    const result = await offresEmploiService.searchOffresEmploi(
+      motsCles ? { motsCles } : {}
+    )
+    setOffres(result)
   }
 
   return (
@@ -39,6 +43,11 @@ function RechercheOffres() {
           Rechercher
         </Button>
       </form>
+      <ul>
+        {offres.map((offre) => (
+          <li key={offre.titre}>{offre.titre}</li>
+        ))}
+      </ul>
     </>
   )
 }
