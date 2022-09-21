@@ -295,6 +295,7 @@ export const desIndicateursSemaineJson = (
       creees: 0,
       enRetard: 2,
       terminees: 1,
+      aEcheance: 3,
     },
     rendezVous: {
       planifies: 3,
@@ -319,6 +320,7 @@ export const desIndicateursSemaine = (
       creees: 0,
       enRetard: 2,
       terminees: 1,
+      aEcheance: 3,
     },
     rendezVous: 3,
     offres: {

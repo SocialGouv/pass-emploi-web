@@ -118,6 +118,7 @@ export type IndicateursSemaine = {
     creees: number
     enRetard: number
     terminees: number
+    aEcheance: number
   }
   rendezVous: number
   offres: {

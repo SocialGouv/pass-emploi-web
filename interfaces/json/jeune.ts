@@ -65,6 +65,7 @@ export type IndicateursSemaineJson = {
     creees: number
     enRetard: number
     terminees: number
+    aEcheance: number
   }
   rendezVous: {
     planifies: number
@@ -191,6 +192,7 @@ export function jsonToIndicateursSemaine(
       creees: indicateursJson.actions.creees,
       enRetard: indicateursJson.actions.enRetard,
       terminees: indicateursJson.actions.terminees,
+      aEcheance: indicateursJson.actions.aEcheance,
     },
     rendezVous: indicateursJson.rendezVous.planifies,
     offres: {
