@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -15,8 +15,12 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 describe('Page Recherche Offres', () => {
   describe('client side', () => {
     let offresEmploiService: OffresEmploiService
+    const offresEmploi = [{ titre: 'prof' }, { titre: 'assistant' }]
     beforeEach(() => {
-      offresEmploiService = mockedOffresEmploiService()
+      offresEmploiService = mockedOffresEmploiService({
+        searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
+      })
+
       renderWithContexts(<RechercheOffres />, {
         customDependances: { offresEmploiService },
       })
@@ -50,6 +54,23 @@ describe('Page Recherche Offres', () => {
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
         motsCles: 'prof industrie',
+      })
+    })
+
+    it('affiche le resultat de la recherche', async () => {
+      // Given
+      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+      // When
+      await userEvent.click(submitButton)
+
+      // Then
+      const offresList = screen.getByRole('list')
+      expect(within(offresList).getAllByRole('listitem').length).toEqual(
+        offresEmploi.length
+      )
+      offresEmploi.forEach((offre) => {
+        expect(within(offresList).getByText(offre.titre)).toBeInTheDocument()
       })
     })
   })
