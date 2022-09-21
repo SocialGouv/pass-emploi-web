@@ -5,6 +5,7 @@ import { FormEvent, useState } from 'react'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { OffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
@@ -21,19 +22,21 @@ function RechercheOffres() {
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [offres, setOffres] = useState<OffreEmploi[]>([])
   const [isSearching, setIsSearching] = useState<boolean>(false)
+  const [searchError, setSearchError] = useState<string | undefined>()
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
     setIsSearching(true)
     setOffres([])
+    setSearchError(undefined)
     try {
       const result = await offresEmploiService.searchOffresEmploi(
         motsCles ? { motsCles } : {}
       )
       setOffres(result)
     } catch {
-      setOffres([])
+      setSearchError('Une erreur est survenue. Vous pouvez réessayer')
     } finally {
       setIsSearching(false)
     }
@@ -61,6 +64,12 @@ function RechercheOffres() {
         >
           Liste des résultats
         </h2>
+      )}
+      {searchError && (
+        <FailureAlert
+          label={searchError}
+          onAcknowledge={() => setSearchError(undefined)}
+        />
       )}
       {offres.length > 0 && (
         <>
