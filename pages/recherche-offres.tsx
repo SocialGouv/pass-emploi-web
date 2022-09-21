@@ -20,14 +20,23 @@ function RechercheOffres() {
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [offres, setOffres] = useState<OffreEmploi[]>([])
+  const [isSearching, setIsSearching] = useState<boolean>(false)
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    const result = await offresEmploiService.searchOffresEmploi(
-      motsCles ? { motsCles } : {}
-    )
-    setOffres(result)
+    setIsSearching(true)
+    setOffres([])
+    try {
+      const result = await offresEmploiService.searchOffresEmploi(
+        motsCles ? { motsCles } : {}
+      )
+      setOffres(result)
+    } catch {
+      setOffres([])
+    } finally {
+      setIsSearching(false)
+    }
   }
 
   return (
@@ -40,11 +49,19 @@ function RechercheOffres() {
           <Input type='text' id='mots-cles' onChange={setMotsCles} />
         </div>
 
-        <Button type='submit' className='ml-5'>
+        <Button type='submit' className='ml-5' isLoading={isSearching}>
           Rechercher
         </Button>
       </form>
 
+      {isSearching && (
+        <h2
+          id='result-title'
+          className='animate-pulse text-m-medium text-primary mb-5'
+        >
+          Liste des résultats
+        </h2>
+      )}
       {offres.length > 0 && (
         <>
           <h2 id='result-title' className='text-m-medium text-primary mb-5'>
