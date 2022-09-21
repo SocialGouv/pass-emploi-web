@@ -5,6 +5,7 @@ import { FormEvent, useState } from 'react'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
+import { OffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -16,9 +17,9 @@ function RechercheOffres() {
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-  const [offres, setOffres] = useState<Array<{ titre: string }>>([])
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
+  const [offres, setOffres] = useState<OffreEmploi[]>([])
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -45,7 +46,7 @@ function RechercheOffres() {
       </form>
       <ul>
         {offres.map((offre) => (
-          <li key={offre.titre}>{offre.titre}</li>
+          <li key={offre.id}>{offre.titre}</li>
         ))}
       </ul>
     </>
