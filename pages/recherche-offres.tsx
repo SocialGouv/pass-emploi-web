@@ -22,7 +22,7 @@ function RechercheOffres() {
   function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    offresEmploiService.searchOffresEmploi({ query: motsCles! })
+    offresEmploiService.searchOffresEmploi(motsCles ? { motsCles } : {})
   }
 
   return (

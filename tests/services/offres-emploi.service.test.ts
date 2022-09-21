@@ -57,33 +57,47 @@ describe('OffresEmploiApiService', () => {
   })
 
   describe('.searchOffresEmploi', () => {
-    it('renvoie une liste d’offres d’emploi', async () => {
+    beforeEach(() => {
       // Given
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/offres-emploi?alternance=false&q=prof%20industrie`)
-          return {
-            content: {
-              results: [
-                { titre: 'Prof à domicile F/H' },
-                { titre: 'Assistant/Assistante qualité en industrie' },
-              ],
-            },
-          }
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          results: [
+            { titre: 'Prof à domicile F/H' },
+            { titre: 'Assistant/Assistante qualité en industrie' },
+          ],
+        },
       })
-      const query = 'prof industrie'
+    })
 
+    it('renvoie une liste d’offres d’emploi', async () => {
       // When
-      const actual = await offresEmploiService.searchOffresEmploi({ query })
+      const actual = await offresEmploiService.searchOffresEmploi()
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&q=prof%20industrie',
+        '/offres-emploi?alternance=false',
         'accessToken'
       )
       expect(actual).toEqual([
         { titre: 'Prof à domicile F/H' },
         { titre: 'Assistant/Assistante qualité en industrie' },
       ])
+    })
+
+    it('parse les mots clés', async () => {
+      // Given
+      const query = 'prof industrie'
+
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        motsCles: query,
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&q=prof%20industrie',
+        'accessToken'
+      )
     })
   })
 })

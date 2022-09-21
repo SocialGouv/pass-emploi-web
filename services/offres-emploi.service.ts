@@ -6,7 +6,7 @@ import { ApiError } from 'utils/httpClient'
 export interface OffresEmploiService {
   getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
   searchOffresEmploi(recherche: {
-    query: string
+    motsCles?: string
   }): Promise<Array<{ titre: string }>>
 }
 
@@ -31,19 +31,19 @@ export class OffresEmploiApiService implements OffresEmploiService {
   }
 
   async searchOffresEmploi({
-    query,
+    motsCles,
   }: {
-    query: string
-  }): Promise<Array<{ titre: string }>> {
+    motsCles?: string
+  } = {}): Promise<Array<{ titre: string }>> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
+    const path = `/offres-emploi?alternance=false`
+    const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
+
     const { content } = await this.apiClient.get<{
       results: Array<{ titre: string }>
-    }>(
-      `/offres-emploi?alternance=false&q=${encodeURIComponent(query)}`,
-      accessToken
-    )
+    }>(path + queryMotsCles, accessToken)
 
     return content.results
   }

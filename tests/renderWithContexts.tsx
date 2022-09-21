@@ -10,6 +10,7 @@ import {
   mockedFichiersService,
   mockedJeunesService,
   mockedMessagesService,
+  mockedOffresEmploiService,
   mockedRendezVousService,
 } from 'fixtures/services'
 import { Conseiller } from 'interfaces/conseiller'
@@ -40,7 +41,7 @@ export default function renderWithContexts(
     messagesService: mockedMessagesService(),
     rendezVousService: mockedRendezVousService(),
     favorisService: mockedFavorisService(),
-    offresEmploiService: { getLienOffreEmploi: jest.fn() },
+    offresEmploiService: mockedOffresEmploiService(),
     servicesCiviqueService: { getLienServiceCivique: jest.fn() },
     ...customDependances,
   }
