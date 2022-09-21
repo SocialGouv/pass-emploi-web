@@ -58,106 +58,119 @@ function Indicateurs({ idJeune, idConseiller }: IndicateursProps) {
         {finDeLaSemaine.toLocaleString()}
       </h2>
 
-      <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
-        <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
-        <ul className='flex gap-2'>
-          <TileIndicateur
-            valeur={indicateursSemaine?.actions.creees.toString() ?? '-'}
-            label={
-              indicateursSemaine?.actions.creees !== 1 ? 'Créées' : 'Créée'
-            }
-            bgColor='primary_lighten'
-            textColor='primary_darken'
-          />
-          <TileIndicateur
-            valeur={indicateursSemaine?.actions.enRetard.toString() ?? '-'}
-            label='En retard'
-            bgColor='alert_lighten'
-            textColor='content_color'
-            iconName={IconName.WarningRounded}
-          />
-          <TileIndicateur
-            valeur={indicateursSemaine?.actions.terminees.toString() ?? '-'}
-            label={
-              indicateursSemaine?.actions.terminees !== 1
-                ? 'Terminées'
-                : 'Terminée'
-            }
-            bgColor='accent_2_lighten'
-            textColor='accent_2'
-            iconName={IconName.RoundedCheck}
-          />
-          <TileIndicateur
-            valeur={indicateursSemaine?.actions.aEcheance.toString() ?? '-'}
-            label='Échéance cette semaine'
-            bgColor='primary_lighten'
-            textColor='primary_darken'
-          />
-        </ul>
-      </div>
+      <IndicateursActions actions={indicateursSemaine?.actions} />
 
-      <div className='border border-solid rounded-medium w-full mt-6 p-4 border-grey_100'>
-        <h3 className='text-m-bold text-content_color mb-4'>Les rendez-vous</h3>
-        <ul className='flex'>
-          <TileIndicateur
-            valeur={indicateursSemaine?.rendezVous.toString() ?? '-'}
-            label='Cette semaine'
-            bgColor='primary_lighten'
-            textColor='primary_darken'
-          />
-        </ul>
-      </div>
+      <IndicateursRendezvous rendezVous={indicateursSemaine?.rendezVous} />
 
-      <div className='border border-solid rounded-medium w-full mt-6 p-4 border-grey_100'>
-        <h3 className='text-m-bold text-content_color mb-4'>Les offres</h3>
-        <ul className='flex gap-2'>
-          <TileIndicateur
-            valeur={indicateursSemaine?.offres.consultees.toString() ?? '-'}
-            label={
-              indicateursSemaine?.offres.consultees !== 1
-                ? 'Offres consultées'
-                : 'Offre consultée'
-            }
-            bgColor='primary_lighten'
-            textColor='primary_darken'
-          />
-          <TileIndicateur
-            valeur={
-              indicateursSemaine?.favoris.offresSauvegardees.toString() ?? '-'
-            }
-            label={
-              indicateursSemaine?.favoris.offresSauvegardees !== 1
-                ? 'Favoris ajoutés'
-                : 'Favori ajouté'
-            }
-            bgColor='primary_lighten'
-            textColor='primary_darken'
-          />
-          <TileIndicateur
-            valeur={indicateursSemaine?.offres.partagees.toString() ?? '-'}
-            label={
-              indicateursSemaine?.offres.partagees !== 1
-                ? 'Offres partagées'
-                : 'Offre partagée'
-            }
-            bgColor='primary_lighten'
-            textColor='primary_darken'
-          />
-          <TileIndicateur
-            valeur={
-              indicateursSemaine?.favoris.recherchesSauvegardees.toString() ??
-              '-'
-            }
-            label={
-              indicateursSemaine?.favoris.recherchesSauvegardees !== 1
-                ? 'Recherches sauvegardées'
-                : 'Recherche sauvegardée'
-            }
-            bgColor='primary_lighten'
-            textColor='primary_darken'
-          />
-        </ul>
-      </div>
+      <IndicateursOffres
+        offres={indicateursSemaine?.offres}
+        favoris={indicateursSemaine?.favoris}
+      />
+    </div>
+  )
+}
+
+function IndicateursActions({
+  actions,
+}: Pick<Partial<IndicateursSemaine>, 'actions'>) {
+  return (
+    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+      <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
+      <ul className='flex flex-wrap gap-2'>
+        <TileIndicateur
+          valeur={actions?.creees.toString() ?? '-'}
+          label={actions?.creees !== 1 ? 'Créées' : 'Créée'}
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+        <TileIndicateur
+          valeur={actions?.enRetard.toString() ?? '-'}
+          label='En retard'
+          bgColor='alert_lighten'
+          textColor='content_color'
+          iconName={IconName.WarningRounded}
+        />
+        <TileIndicateur
+          valeur={actions?.terminees.toString() ?? '-'}
+          label={actions?.terminees !== 1 ? 'Terminées' : 'Terminée'}
+          bgColor='accent_2_lighten'
+          textColor='accent_2'
+          iconName={IconName.RoundedCheck}
+        />
+        <TileIndicateur
+          valeur={actions?.aEcheance.toString() ?? '-'}
+          label='Échéance cette semaine'
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+      </ul>
+    </div>
+  )
+}
+
+function IndicateursRendezvous({
+  rendezVous,
+}: Partial<Pick<IndicateursSemaine, 'rendezVous'>>) {
+  return (
+    <div className='border border-solid rounded-medium w-full mt-6 p-4 border-grey_100'>
+      <h3 className='text-m-bold text-content_color mb-4'>Les rendez-vous</h3>
+      <ul className='flex'>
+        <TileIndicateur
+          valeur={rendezVous?.toString() ?? '-'}
+          label='Cette semaine'
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+      </ul>
+    </div>
+  )
+}
+
+function IndicateursOffres({
+  offres,
+  favoris,
+}: Partial<Pick<IndicateursSemaine, 'offres' | 'favoris'>>) {
+  return (
+    <div className='border border-solid rounded-medium w-full mt-6 p-4 border-grey_100'>
+      <h3 className='text-m-bold text-content_color mb-4'>Les offres</h3>
+      <ul className='flex flex-wrap gap-2'>
+        <TileIndicateur
+          valeur={offres?.consultees.toString() ?? '-'}
+          label={
+            offres?.consultees !== 1 ? 'Offres consultées' : 'Offre consultée'
+          }
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+        <TileIndicateur
+          valeur={favoris?.offresSauvegardees.toString() ?? '-'}
+          label={
+            favoris?.offresSauvegardees !== 1
+              ? 'Favoris ajoutés'
+              : 'Favori ajouté'
+          }
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+        <TileIndicateur
+          valeur={offres?.partagees.toString() ?? '-'}
+          label={
+            offres?.partagees !== 1 ? 'Offres partagées' : 'Offre partagée'
+          }
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+        <TileIndicateur
+          valeur={favoris?.recherchesSauvegardees.toString() ?? '-'}
+          label={
+            favoris?.recherchesSauvegardees !== 1
+              ? 'Recherches sauvegardées'
+              : 'Recherche sauvegardée'
+          }
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+      </ul>
     </div>
   )
 }
