@@ -132,6 +132,7 @@ export function mockedOffresEmploiService(
   overrides: Partial<OffresEmploiService> = {}
 ): OffresEmploiService {
   const defaults: OffresEmploiService = {
+    getOffreEmploiServerSide: jest.fn(),
     getLienOffreEmploi: jest.fn(),
     searchOffresEmploi: jest.fn(),
   }

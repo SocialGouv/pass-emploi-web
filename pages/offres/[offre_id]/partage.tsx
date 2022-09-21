@@ -1,11 +1,14 @@
-import { GetServerSideProps } from 'next'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { PageProps } from 'interfaces/pageProps'
 import { withTransaction } from '@elastic/apm-rum-react'
-import { OffreEmploi } from 'interfaces/offre-emploi'
+import { GetServerSideProps } from 'next'
+
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { PageProps } from 'interfaces/pageProps'
+import { OffresEmploiService } from 'services/offres-emploi.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 type PartageOffresProps = PageProps & {
-  offre: OffreEmploi
+  offre: DetailOffreEmploi
 }
 
 function PartageOffre({ offre }: PartageOffresProps) {
@@ -25,10 +28,21 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const { accessToken } = sessionOrRedirect.session
+  const offresEmploiService = withDependance<OffresEmploiService>(
+    'offresEmploiService'
+  )
+
+  const offre = await offresEmploiService.getOffreEmploiServerSide(
+    context.query.offre_id as string,
+    accessToken
+  )
+  if (!offre) return { notFound: true }
+
   return {
     props: {
       pageTitle: 'Partager une offre',
-      offre: { id: 'offre-prof', titre: 'prof' },
+      offre,
     },
   }
 }
