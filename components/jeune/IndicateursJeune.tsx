@@ -1,17 +1,20 @@
 import { DateTime } from 'luxon'
+import Link from 'next/link'
 import React from 'react'
 
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine } from 'interfaces/jeune'
 
 type IndicateursJeuneProps = {
+  idJeune: string
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
   indicateursSemaine: IndicateursSemaine | undefined
 }
 
 export function IndicateursJeune({
+  idJeune,
   debutDeLaSemaine,
   finDeLaSemaine,
   indicateursSemaine,
@@ -68,8 +71,24 @@ export function IndicateursJeune({
             />
           </div>
         </div>
-        <div></div>
       </div>
+      <LienVersIndicateurs idJeune={idJeune} />
     </div>
+  )
+}
+
+function LienVersIndicateurs(props: { idJeune: string }) {
+  return (
+    <Link href={`/mes-jeunes/${props.idJeune}/indicateurs`}>
+      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'>
+        Voir plus d’indicateurs
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </a>
+    </Link>
   )
 }
