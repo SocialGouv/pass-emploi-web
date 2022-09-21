@@ -101,6 +101,24 @@ describe('Page Recherche Offres', () => {
         /Une erreur est survenue/
       )
     })
+
+    it("affiche un message s'il n'y a pas de résultat", async () => {
+      // Given
+      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockResolvedValue(
+        []
+      )
+
+      // When
+      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+      await userEvent.click(submitButton)
+
+      // Then
+      expect(
+        screen.getByText(
+          'Aucune offre ne correspond à vos critères de recherche.'
+        )
+      )
+    })
   })
 
   describe('server side', () => {
