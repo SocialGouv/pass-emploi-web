@@ -1,7 +1,8 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import { FormEvent, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
@@ -21,7 +22,7 @@ function RechercheOffres() {
   )
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
-  const [offres, setOffres] = useState<OffreEmploi[]>([])
+  const [offres, setOffres] = useState<OffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 
@@ -32,7 +33,7 @@ function RechercheOffres() {
     e.preventDefault()
 
     setIsSearching(true)
-    setOffres([])
+    setOffres(undefined)
     setSearchError(undefined)
     try {
       const result = await offresEmploiService.searchOffresEmploi(
@@ -52,6 +53,13 @@ function RechercheOffres() {
 
   return (
     <>
+      {searchError && (
+        <FailureAlert
+          label={searchError}
+          onAcknowledge={() => setSearchError(undefined)}
+        />
+      )}
+
       <form onSubmit={rechercherOffresEmploi} className='flex items-center'>
         <div className='grow'>
           <Label htmlFor='mots-cles'>
@@ -60,35 +68,42 @@ function RechercheOffres() {
           <Input type='text' id='mots-cles' onChange={setMotsCles} />
         </div>
 
-        <Button type='submit' className='ml-5' isLoading={isSearching}>
+        <Button type='submit' className='ml-5' disabled={isSearching}>
           Rechercher
         </Button>
       </form>
 
       {isSearching && (
-        <h2
-          id='result-title'
-          className='animate-pulse text-m-medium text-primary mb-5'
-        >
+        <h2 className='animate-pulse text-m-medium text-primary mb-5'>
           Liste des résultats
         </h2>
       )}
-      {searchError && (
-        <FailureAlert
-          label={searchError}
-          onAcknowledge={() => setSearchError(undefined)}
-        />
-      )}
-      {offres.length > 0 && (
+
+      {offres && offres.length > 0 && (
         <>
           <h2 id='result-title' className='text-m-medium text-primary mb-5'>
             Liste des résultats
           </h2>
           <ul aria-describedby='result-title'>
-            {offres.map((offre) => (
+            {offres!.map((offre) => (
               <li key={offre.id}>{offre.titre}</li>
             ))}
           </ul>
+        </>
+      )}
+      {offres && offres.length === 0 && (
+        <>
+          <h2 id='result-title' className='text-m-medium text-primary mb-5'>
+            Liste des résultats
+          </h2>
+          <EmptyStateImage
+            focusable='false'
+            aria-hidden='true'
+            className='m-auto w-[200px] h-[200px]'
+          />
+          <p className='text-base-bold text-center'>
+            Aucune offre ne correspond à vos critères de recherche.
+          </p>
         </>
       )}
     </>
