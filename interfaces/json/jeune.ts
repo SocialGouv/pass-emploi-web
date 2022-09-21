@@ -69,6 +69,14 @@ export type IndicateursSemaineJson = {
   rendezVous: {
     planifies: number
   }
+  offres: {
+    consultees: number
+    partagees: number
+  }
+  favoris: {
+    offresSauvegardees: number
+    recherchesSauvegardees: number
+  }
 }
 
 function toEtatSituation(etat: string): EtatSituation | undefined {
@@ -185,6 +193,14 @@ export function jsonToIndicateursSemaine(
       terminees: indicateursJson.actions.terminees,
     },
     rendezVous: indicateursJson.rendezVous.planifies,
+    offres: {
+      partagees: indicateursJson.offres.partagees,
+      consultees: indicateursJson.offres.consultees,
+    },
+    favoris: {
+      offresSauvegardees: indicateursJson.favoris.offresSauvegardees,
+      recherchesSauvegardees: indicateursJson.favoris.recherchesSauvegardees,
+    },
   }
 }
 
