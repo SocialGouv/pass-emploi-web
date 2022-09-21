@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { mockedOffresEmploiService } from 'fixtures/services'
+import { OffreEmploi } from 'interfaces/offre-emploi'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -15,7 +16,10 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 describe('Page Recherche Offres', () => {
   describe('client side', () => {
     let offresEmploiService: OffresEmploiService
-    const offresEmploi = [{ titre: 'prof' }, { titre: 'assistant' }]
+    const offresEmploi: OffreEmploi[] = [
+      { id: 'offre-prof', titre: 'prof' },
+      { id: 'offre-assistant', titre: 'assistant' },
+    ]
     beforeEach(() => {
       offresEmploiService = mockedOffresEmploiService({
         searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
