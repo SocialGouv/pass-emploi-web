@@ -1,10 +1,15 @@
+import { render, screen, within } from '@testing-library/react'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { GetServerSidePropsContext } from 'next/types'
-import { getServerSideProps } from 'pages/offres/[offre_id]/partage'
+import PartageOffre, {
+  getServerSideProps,
+} from 'pages/offres/[offre_id]/partage'
+import renderPage from 'next-auth/core/pages'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('Page Partage Offre', () => {
+  const uneOffre = { id: 'offre-prof', titre: 'prof' }
   describe('server side', () => {
     it('requiert la connexion', async () => {
       // Given
@@ -34,11 +39,20 @@ describe('Page Partage Offre', () => {
       expect(actual).toEqual({
         props: {
           pageTitle: 'Partager une offre',
-          offre: { id: 'offre-prof', titre: 'prof' },
+          offre: uneOffre,
         },
       })
     })
   })
 
-  describe('client side', () => {})
+  describe('client side', () => {
+    beforeEach(() => {
+      render(<PartageOffre pageTitle='' offre={uneOffre} />)
+    })
+    it('affiche les informations de l’offre', () => {
+      // Then
+      expect(screen.getByText(uneOffre.titre)).toBeInTheDocument()
+      expect(screen.getByText('Offre n°' + uneOffre.id)).toBeInTheDocument()
+    })
+  })
 })
