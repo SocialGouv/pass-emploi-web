@@ -31,7 +31,7 @@ import {
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -385,6 +385,7 @@ function FicheJeune({
             poleEmploi={isPoleEmploi}
             rdvs={rdvs}
             idConseiller={conseiller?.id ?? ''}
+            idJeune={jeune.id}
           />
         </div>
       )}
@@ -458,6 +459,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       ? []
       : rendezVousService.getRendezVousJeune(
           context.query.jeune_id as string,
+          PeriodeRdv.FUTURS,
           accessToken
         ),
     isPoleEmploi
@@ -473,13 +475,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     return { notFound: true }
   }
 
-  const now = DateTime.now()
   const props: FicheJeuneProps = {
     jeune,
     metadonneesFavoris,
-    rdvs: rdvs
-      .filter((rdv) => DateTime.fromISO(rdv.date) > now)
-      .map(rdvToListItem),
+    rdvs: rdvs.map(rdvToListItem),
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
