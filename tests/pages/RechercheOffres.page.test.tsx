@@ -22,19 +22,23 @@ describe('Page Recherche Offres', () => {
       })
     })
 
-    it('affiche un bouton pour lancer la recherche', () => {
-      // Then
-      expect(
-        screen.getByRole('button', { name: 'Rechercher' })
-      ).toBeInTheDocument()
-    })
-
     it('permet de saisir des mots clés', () => {
       // Then
       expect(screen.getByLabelText(/Mots clés/)).toHaveAttribute('type', 'text')
     })
 
     it("permet de rechercher des offres d'emploi", async () => {
+      // Given
+      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+      // When
+      await userEvent.click(submitButton)
+
+      // Then
+      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
+    })
+
+    it('construit la recherche', async () => {
       // Given
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
@@ -45,7 +49,7 @@ describe('Page Recherche Offres', () => {
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-        query: 'prof industrie',
+        motsCles: 'prof industrie',
       })
     })
   })
