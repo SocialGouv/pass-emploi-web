@@ -1,13 +1,12 @@
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
+import { OffreEmploi } from 'interfaces/offre-emploi'
 import { ApiError } from 'utils/httpClient'
 
 export interface OffresEmploiService {
   getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
-  searchOffresEmploi(recherche: {
-    motsCles?: string
-  }): Promise<Array<{ titre: string }>>
+  searchOffresEmploi(recherche: { motsCles?: string }): Promise<OffreEmploi[]>
 }
 
 export class OffresEmploiApiService implements OffresEmploiService {
@@ -34,16 +33,17 @@ export class OffresEmploiApiService implements OffresEmploiService {
     motsCles,
   }: {
     motsCles?: string
-  } = {}): Promise<Array<{ titre: string }>> {
+  } = {}): Promise<OffreEmploi[]> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
     const path = `/offres-emploi?alternance=false`
     const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
 
-    const { content } = await this.apiClient.get<{
-      results: Array<{ titre: string }>
-    }>(path + queryMotsCles, accessToken)
+    const { content } = await this.apiClient.get<{ results: OffreEmploi[] }>(
+      path + queryMotsCles,
+      accessToken
+    )
 
     return content.results
   }
