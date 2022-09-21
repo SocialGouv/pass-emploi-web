@@ -85,6 +85,22 @@ describe('Page Recherche Offres', () => {
         expect(within(offresList).getByText(offre.titre)).toBeInTheDocument()
       })
     })
+
+    it('affiche une erreur si la recherche échoue', async () => {
+      // Given
+      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockRejectedValue(
+        'whatever'
+      )
+
+      // When
+      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+      await userEvent.click(submitButton)
+
+      // Then
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        /Une erreur est survenue/
+      )
+    })
   })
 
   describe('server side', () => {
