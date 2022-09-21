@@ -44,11 +44,19 @@ function RechercheOffres() {
           Rechercher
         </Button>
       </form>
-      <ul>
-        {offres.map((offre) => (
-          <li key={offre.id}>{offre.titre}</li>
-        ))}
-      </ul>
+
+      {offres.length > 0 && (
+        <>
+          <h2 id='result-title' className='text-m-medium text-primary mb-5'>
+            Liste des résultats
+          </h2>
+          <ul aria-describedby='result-title'>
+            {offres.map((offre) => (
+              <li key={offre.id}>{offre.titre}</li>
+            ))}
+          </ul>
+        </>
+      )}
     </>
   )
 }
