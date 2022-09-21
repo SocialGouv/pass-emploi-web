@@ -16,7 +16,7 @@ export default function Label({
   if (Object.prototype.hasOwnProperty.call(children, 'main')) {
     const { main, sub } = children as { main: string; sub: string }
     return (
-      <label htmlFor={htmlFor} className='text-content_color mb-3'>
+      <label htmlFor={htmlFor} className='inline-block text-content_color mb-3'>
         <span
           className={`text-base-medium ${
             withBulleMessageSensible ? 'flex' : ''
@@ -38,7 +38,7 @@ export default function Label({
     return (
       <label
         htmlFor={htmlFor}
-        className={`text-base-medium text-content_color mb-3 ${
+        className={`inline-block text-base-medium text-content_color mb-3 ${
           withBulleMessageSensible ? 'flex' : ''
         }`}
       >

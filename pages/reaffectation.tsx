@@ -282,8 +282,8 @@ function Reaffectation(_: ReaffectationProps) {
                 name={IconName.Search}
                 focusable='false'
                 aria-hidden={true}
-                className={`w-4 h-4 ${
-                  isRechercheJeunesEnabled ? '' : 'fill-disabled'
+                className={`w-6 h-6 ${
+                  isRechercheJeunesEnabled ? 'fill-primary' : 'fill-disabled'
                 }`}
                 title='Rechercher'
               />
