@@ -19,6 +19,7 @@ export default function FilAriane({
     '/mes-jeunes/[jeune_id]': 'Fiche jeune',
     '/mes-jeunes/[jeune_id]/favoris': 'Favoris',
     '/mes-jeunes/[jeune_id]/historique': 'Historique',
+    '/mes-jeunes/[jeune_id]/indicateurs': 'Indicateurs',
     '/mes-jeunes/milo/creation-jeune': 'Création',
     '/mes-jeunes/pole-emploi/creation-jeune': 'Création',
     '/mes-jeunes/[jeune_id]/actions/[action_id]': 'Détail action',
