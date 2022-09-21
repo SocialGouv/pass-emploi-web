@@ -7,7 +7,7 @@ import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { OffreEmploi } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -22,7 +22,7 @@ function RechercheOffres() {
   )
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
-  const [offres, setOffres] = useState<OffreEmploi[] | undefined>(undefined)
+  const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 

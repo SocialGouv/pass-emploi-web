@@ -1,12 +1,22 @@
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { OffreEmploi } from 'interfaces/offre-emploi'
+import {
+  DetailOffreEmploiJson,
+  jsonToDetailOffreEmploi,
+} from 'interfaces/json/offre'
+import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ApiError } from 'utils/httpClient'
 
 export interface OffresEmploiService {
   getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
-  searchOffresEmploi(recherche: { motsCles?: string }): Promise<OffreEmploi[]>
+  getOffreEmploiServerSide(
+    idOffreEmploi: string,
+    accessToken: string
+  ): Promise<DetailOffreEmploi | undefined>
+  searchOffresEmploi(recherche: {
+    motsCles?: string
+  }): Promise<BaseOffreEmploi[]>
 }
 
 export class OffresEmploiApiService implements OffresEmploiService {
@@ -16,35 +26,51 @@ export class OffresEmploiApiService implements OffresEmploiService {
     const session = await getSession()
     const accessToken = session!.accessToken
 
-    try {
-      const { content: offreEmploiJson } = await this.apiClient.get<{
-        urlRedirectPourPostulation: string
-      }>(`/offres-emploi/${idOffreEmploi}`, accessToken)
-      return offreEmploiJson.urlRedirectPourPostulation
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        return undefined
-      }
-      throw e
-    }
+    const offre = await this.getOffreEmploi(idOffreEmploi, accessToken)
+    return offre?.urlPostulation
+  }
+
+  async getOffreEmploiServerSide(
+    idOffreEmploi: string,
+    accessToken: string
+  ): Promise<DetailOffreEmploi | undefined> {
+    return this.getOffreEmploi(idOffreEmploi, accessToken)
   }
 
   async searchOffresEmploi({
     motsCles,
   }: {
     motsCles?: string
-  } = {}): Promise<OffreEmploi[]> {
+  } = {}): Promise<BaseOffreEmploi[]> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
     const path = `/offres-emploi?alternance=false`
     const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
 
-    const { content } = await this.apiClient.get<{ results: OffreEmploi[] }>(
-      path + queryMotsCles,
-      accessToken
-    )
+    const { content } = await this.apiClient.get<{
+      results: BaseOffreEmploi[]
+    }>(path + queryMotsCles, accessToken)
 
     return content.results
+  }
+
+  private async getOffreEmploi(
+    idOffreEmploi: string,
+    accessToken: string
+  ): Promise<DetailOffreEmploi | undefined> {
+    try {
+      const { content: offreEmploiJson } =
+        await this.apiClient.get<DetailOffreEmploiJson>(
+          `/offres-emploi/${idOffreEmploi}`,
+          accessToken
+        )
+      return jsonToDetailOffreEmploi(offreEmploiJson)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+      throw e
+    }
   }
 }
