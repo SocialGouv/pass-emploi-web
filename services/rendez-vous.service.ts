@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
@@ -10,7 +11,6 @@ import {
 } from 'interfaces/json/rdv'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { ApiError } from 'utils/httpClient'
-import { DateTime } from 'luxon'
 
 export interface RendezVousService {
   getRendezVousConseiller(
@@ -19,7 +19,11 @@ export interface RendezVousService {
     dateFin: DateTime
   ): Promise<Rdv[]>
 
-  getRendezVousJeune(idJeune: string, accessToken: string): Promise<Rdv[]>
+  getRendezVousJeune(
+    idJeune: string,
+    periode: string,
+    accessToken: string
+  ): Promise<Rdv[]>
 
   getDetailsRendezVous(
     idRdv: string,
@@ -55,10 +59,11 @@ export class RendezVousApiService implements RendezVousService {
 
   async getRendezVousJeune(
     idJeune: string,
+    periode: string,
     accessToken: string
   ): Promise<Rdv[]> {
     const { content: rdvsJson } = await this.apiClient.get<RdvJeuneJson[]>(
-      `/jeunes/${idJeune}/rendezvous`,
+      `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
       accessToken
     )
     return rdvsJson.map(rdvJeuneJsonToRdv)

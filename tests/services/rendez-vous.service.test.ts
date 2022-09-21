@@ -12,7 +12,6 @@ import {
 } from 'services/rendez-vous.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
-import { DateTime } from 'luxon'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(async () => ({
@@ -171,6 +170,33 @@ describe('RendezVousApiService', () => {
         accessToken
       )
       expect(actual).toEqual([unRendezVous()])
+    })
+  })
+
+  describe('.getRendezVousJeune', () => {
+    it('renvoie les rendez-vous passés', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      const idJeune = 'id-jeune'
+      const periode = 'PASSES'
+      const rdvs = [unRendezVous()]
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: rdvs,
+      })
+
+      // When
+      const actual = await rendezVousService.getRendezVousJeune(
+        'id-jeune',
+        'PASSES',
+        accessToken
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
+        accessToken
+      )
+      expect(actual).toEqual(rdvs)
     })
   })
 })

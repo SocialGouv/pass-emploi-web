@@ -53,3 +53,8 @@ export const TYPE_RENDEZ_VOUS = {
   Autre: 'AUTRE',
   EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }
+
+export enum PeriodeRdv {
+  PASSES = 'PASSES',
+  FUTURS = 'FUTURS',
+}
