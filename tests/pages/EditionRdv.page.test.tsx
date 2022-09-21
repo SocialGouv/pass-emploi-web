@@ -237,6 +237,7 @@ describe('EditionRdv', () => {
           const options = within(etape).getByRole('listbox', { hidden: true })
 
           expect(selectJeune).toHaveAttribute('aria-required', 'true')
+          expect(selectJeune).toHaveAttribute('multiple', '')
           for (const jeune of jeunes) {
             const jeuneOption = within(options).getByRole('option', {
               name: `${jeune.nom} ${jeune.prenom}`,
