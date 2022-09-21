@@ -9,6 +9,7 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { OffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -24,6 +25,9 @@ function RechercheOffres() {
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 
+  const initialTracking: string = 'Recherche offres emploi'
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -35,12 +39,16 @@ function RechercheOffres() {
         motsCles ? { motsCles } : {}
       )
       setOffres(result)
+      setTrackingTitle(initialTracking + ' - Résultats')
     } catch {
       setSearchError('Une erreur est survenue. Vous pouvez réessayer')
+      setTrackingTitle(initialTracking + ' - Erreur')
     } finally {
       setIsSearching(false)
     }
   }
+
+  useMatomo(trackingTitle)
 
   return (
     <>
