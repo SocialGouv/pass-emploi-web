@@ -310,6 +310,7 @@ function FicheJeune({
 
       {!isPoleEmploi && (
         <IndicateursJeune
+          idJeune={jeune.id}
           debutDeLaSemaine={debutDeLaSemaine}
           finDeLaSemaine={finDeLaSemaine}
           indicateursSemaine={indicateursSemaine}
