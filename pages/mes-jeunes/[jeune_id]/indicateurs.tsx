@@ -12,6 +12,7 @@ import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { toFrenchString } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 type IndicateursProps = PageProps & {
@@ -51,8 +52,8 @@ function Indicateurs({ idJeune }: IndicateursProps) {
   return (
     <div>
       <h2 className='text-m-bold text-content_color mb-6'>
-        Semaine du {debutSemaine.toLocaleString()} au{' '}
-        {finSemaine.toLocaleString()}
+        Semaine du {toFrenchString(debutSemaine)} au{' '}
+        {toFrenchString(finSemaine)}
       </h2>
 
       <IndicateursActions actions={indicateursSemaine?.actions} />
