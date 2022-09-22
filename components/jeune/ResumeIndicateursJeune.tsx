@@ -6,19 +6,19 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine } from 'interfaces/jeune'
 
-type IndicateursJeuneProps = {
+type ResumeIndicateursJeuneProps = {
   idJeune: string
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
   indicateursSemaine: IndicateursSemaine | undefined
 }
 
-export function IndicateursJeune({
+export function ResumeIndicateursJeune({
   idJeune,
   debutDeLaSemaine,
   finDeLaSemaine,
   indicateursSemaine,
-}: IndicateursJeuneProps) {
+}: ResumeIndicateursJeuneProps) {
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       <h2 className='text-m-bold'>Les indicateurs de la semaine</h2>
