@@ -22,8 +22,7 @@ describe('Indicateurs', () => {
 
     beforeEach(async () => {
       // Given
-      jest.useFakeTimers()
-      jest.setSystemTime(SEPTEMBRE_1.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
       const jeunesService = mockedJeunesService({
         getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
       })
