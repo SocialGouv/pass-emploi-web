@@ -34,8 +34,8 @@ describe('Intégration notifications sonores', () => {
   let conseillerService: ConseillerService
   let messagesService: MessagesService
   beforeEach(async () => {
-    jest.useFakeTimers()
-    jest.setSystemTime(DateTime.now().toJSDate())
+    const now = DateTime.now()
+    jest.spyOn(DateTime, 'now').mockReturnValue(now)
     ;(useRouter as jest.Mock).mockReturnValue({
       asPath: '/path/to/page',
       route: '/path/to/page',

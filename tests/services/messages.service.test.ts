@@ -25,10 +25,6 @@ jest.mock('next-auth/react', () => ({
 }))
 
 describe('MessagesFirebaseAndApiService', () => {
-  beforeEach(async () => {
-    jest.useFakeTimers()
-  })
-
   let firebaseClient: FirebaseClient
   let apiClient: ApiClient
   let messagesService: MessagesFirebaseAndApiService
@@ -75,7 +71,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('updates chat in firebase', async () => {
       // Given
       const now = DateTime.now()
-      jest.setSystemTime(now.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       const jeuneChat = unJeuneChat()
 
       // When
@@ -108,7 +104,8 @@ describe('MessagesFirebaseAndApiService', () => {
     let updateChats: (chats: Chat[]) => void
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(DateTime.now().toJSDate())
+      const now = DateTime.now()
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       updateChats = jest.fn()
 
       // When
@@ -246,7 +243,7 @@ describe('MessagesFirebaseAndApiService', () => {
     const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(now.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       jeuneChat = unJeuneChat()
       newMessage = 'nouveauMessage'
       // When
@@ -365,7 +362,7 @@ describe('MessagesFirebaseAndApiService', () => {
     const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(now.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       destinataires = desItemsJeunes()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'nouveau message groupé'

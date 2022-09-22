@@ -15,16 +15,12 @@ import {
 } from 'utils/date'
 
 describe('dateUtils', () => {
-  beforeEach(() => {
-    jest.useFakeTimers()
-  })
-
   describe('dateIsToday', () => {
     it("dateIsToday renvoie true si la date correspond à la date d'aujourd'hui", () => {
       //GIVEN
-      jest.setSystemTime(
-        DateTime.fromISO('2018-12-31T13:59:59.000Z').toJSDate()
-      )
+      jest
+        .spyOn(DateTime, 'now')
+        .mockReturnValue(DateTime.fromISO('2018-12-31T13:59:59.000Z'))
 
       //THEN
       expect(dateIsToday(DateTime.fromISO('2018-12-31T22:59:59.000Z'))).toEqual(
@@ -39,9 +35,9 @@ describe('dateUtils', () => {
   describe('dateIsYesterday', () => {
     it("dateIsYesterday renvoie true si la date correspond à la date d'hier", () => {
       //GIVEN
-      jest.setSystemTime(
-        DateTime.fromISO('2018-12-31T13:59:59.000Z').toJSDate()
-      )
+      jest
+        .spyOn(DateTime, 'now')
+        .mockReturnValue(DateTime.fromISO('2018-12-31T13:59:59.000Z'))
 
       //THEN
       expect(

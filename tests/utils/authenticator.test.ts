@@ -16,9 +16,8 @@ describe('Authenticator', () => {
   beforeEach(() => {
     httpClient = { fetchJson: jest.fn(), fetchNoContent: jest.fn() }
     authenticator = new Authenticator(httpClient)
-    jest.useFakeTimers()
     now = DateTime.now()
-    jest.setSystemTime(now.toJSDate())
+    jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
     accessToken =
       'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJleGItdTZsMmNkS1BzWEdRUXJIb0tIS0lVS2NmbE9xUkcyYTE0QjNWSzRVIn0.eyJleHAiOjE2NDYwMzkwMjgsImlhdCI6MTY0NjAzNzIyOCwiYXV0aF90aW1lIjoxNjQ2MDM3MjI4LCJqdGkiOiI4MmQwOWI2Zi00NjFmLTQ2OWEtODk0Yy01NDYzMmE2NmU5YzUiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODIvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJzdWIiOiI4NDNkYzljZS1jMWVlLTRmYjUtODYwMy1hYjI3MzEwMzY0N2QiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTIyZjY3OWYtZmFjZi00ZTgzLWEwZjgtYjI0YzBkMzJjNGZiIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJjb25zZWlsbGVyX3N1cGVydmlzZXVyIl19LCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwYXNzLWVtcGxvaS11c2VyIHByb2ZpbGUiLCJzaWQiOiJhMjJmNjc5Zi1mYWNmLTRlODMtYTBmOC1iMjRjMGQzMmM0ZmIiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiXSwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJ1c2VyU3RydWN0dXJlIjoiUEFTU19FTVBMT0kiLCJuYW1lIjoiTmlscyBUYXZlcm5pZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI0MSIsInVzZXJUeXBlIjoiQ09OU0VJTExFUiIsImdpdmVuX25hbWUiOiJOaWxzIiwidXNlcklkIjoiNDEiLCJmYW1pbHlfbmFtZSI6IlRhdmVybmllciIsImVtYWlsIjoibmlscy50YXZlcm5pZXJAcGFzc2VtcGxvaS5jb20ifQ.TdAdafg4EVyJkTaBfEiFLjsGjWyAkFgIcBfB72tmYc6uVWvy49u5RJIkqVk60OEjsGX6bfSW_lbAp8nR1tpfVMV_rAHCFnnk3nw2dh-Qp2jmNfvlxY5v1m_KouK-7_XB6xJ-M7-Q2EUQmRn5XFJ31Pka7JaSCaCHae7W-juE4Ocko2eEbYV24OtRqRYXLlAS3WPR9vVufVwRp-hQYghdQ9WvAsdPzGW9yqnl5FlA7ITx_ad8OwCIQtFznXqzXYVq9bqfBqnsxz6lb9KHhL5EGIjqaWxzxLeIZ44Ag3R1hUhDOZYaw2qD1VMu2HnhDqESCiCoYTYRKasKCsyaSFKZ-A'
@@ -61,7 +60,6 @@ describe('Authenticator', () => {
     describe("Quand ce n'est pas la première connexion", () => {
       it('renvoie le JWT', async () => {
         // When
-        const vingtSEnMs = 20000
         const jwt = {
           ...jwtFixture(),
           expiresAtTimestamp: now.plus({ second: 20 }).toMillis(),
@@ -111,7 +109,6 @@ describe('Authenticator', () => {
 
       describe("si l'access token expire dans moins de 15 secondes", () => {
         it('utilise le refresh token pour récupérer un nouvel access token', async () => {
-          const treizeSenMs = 13000
           // Given
           const jwt = {
             ...jwtFixture(),
