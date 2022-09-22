@@ -22,7 +22,8 @@ describe('Indicateurs', () => {
 
     beforeEach(async () => {
       // Given
-      jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
+      jest.useFakeTimers()
+      jest.setSystemTime(SEPTEMBRE_1.toJSDate())
       const jeunesService = mockedJeunesService({
         getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
       })
@@ -31,11 +32,7 @@ describe('Indicateurs', () => {
       // Given
       await act(async () => {
         await renderWithContexts(
-          <Indicateurs
-            idJeune='id-jeune'
-            idConseiller='id-conseiller'
-            pageTitle=''
-          />,
+          <Indicateurs idJeune='id-jeune' pageTitle='' />,
           {
             customDependances: { jeunesService },
           }
@@ -45,7 +42,7 @@ describe('Indicateurs', () => {
 
     it('affiche la semaine courante', async () => {
       expect(
-        screen.getByText('Semaine du 8/29/2022 au 9/4/2022')
+        screen.getByText('Semaine du 29/08/2022 au 04/09/2022')
       ).toBeInTheDocument()
     })
 
@@ -118,7 +115,7 @@ describe('Indicateurs', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
-            user: { id: 'id-conseiller', structure: 'MILO' },
+            user: { structure: 'MILO' },
           },
         })
 
@@ -131,7 +128,6 @@ describe('Indicateurs', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
-            idConseiller: 'id-conseiller',
             pageTitle: 'Indicateurs',
           },
         })

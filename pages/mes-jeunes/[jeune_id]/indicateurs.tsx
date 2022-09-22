@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
@@ -11,42 +11,39 @@ import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
 type IndicateursProps = PageProps & {
   idJeune: string
-  idConseiller: string
 }
 
-function Indicateurs({ idJeune, idConseiller }: IndicateursProps) {
+function Indicateurs({ idJeune }: IndicateursProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const [conseiller] = useConseiller()
 
   const [indicateursSemaine, setIndicateursSemaine] = useState<
     IndicateursSemaine | undefined
   >()
 
-  const aujourdHui = DateTime.now()
-  const debutDeLaSemaine = aujourdHui.startOf('week')
-  const finDeLaSemaine = aujourdHui.endOf('week')
+  const aujourdHui = useMemo(() => DateTime.now(), [])
+  const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
+  const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
 
   useMatomo('Détail jeune – Indicateurs')
 
+  // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
-    if (!indicateursSemaine) {
+    if (conseiller && !indicateursSemaine) {
       jeunesService
-        .getIndicateursJeune(
-          idConseiller,
-          idJeune,
-          debutDeLaSemaine,
-          finDeLaSemaine
-        )
+        .getIndicateursJeune(conseiller.id, idJeune, debutSemaine, finSemaine)
         .then(setIndicateursSemaine)
     }
   }, [
-    idConseiller,
+    conseiller,
     idJeune,
-    debutDeLaSemaine,
-    finDeLaSemaine,
+    debutSemaine,
+    finSemaine,
     indicateursSemaine,
     jeunesService,
   ])
@@ -54,8 +51,8 @@ function Indicateurs({ idJeune, idConseiller }: IndicateursProps) {
   return (
     <div>
       <h2 className='text-m-bold text-content_color mb-6'>
-        Semaine du {debutDeLaSemaine.toLocaleString()} au{' '}
-        {finDeLaSemaine.toLocaleString()}
+        Semaine du {debutSemaine.toLocaleString()} au{' '}
+        {finSemaine.toLocaleString()}
       </h2>
 
       <IndicateursActions actions={indicateursSemaine?.actions} />
@@ -72,7 +69,7 @@ function Indicateurs({ idJeune, idConseiller }: IndicateursProps) {
 
 function IndicateursActions({
   actions,
-}: Pick<Partial<IndicateursSemaine>, 'actions'>) {
+}: Partial<Pick<IndicateursSemaine, 'actions'>>) {
   return (
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
@@ -193,7 +190,6 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   return {
     props: {
       idJeune: context.query.jeune_id as string,
-      idConseiller: user.id,
       pageTitle: 'Indicateurs',
     },
   }

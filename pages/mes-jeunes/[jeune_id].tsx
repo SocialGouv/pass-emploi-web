@@ -2,14 +2,14 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
 import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { IndicateursJeune } from 'components/jeune/IndicateursJeune'
+import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -112,9 +112,9 @@ function FicheJeune({
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
 
-  const aujourdHui = DateTime.now()
-  const debutDeLaSemaine = aujourdHui.startOf('week')
-  const finDeLaSemaine = aujourdHui.endOf('week')
+  const aujourdHui = useMemo(() => DateTime.now(), [])
+  const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
+  const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -227,21 +227,17 @@ function FicheJeune({
     setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
+  // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
     if (conseiller && !isPoleEmploi && !indicateursSemaine) {
       jeunesService
-        .getIndicateursJeune(
-          conseiller.id,
-          jeune.id,
-          debutDeLaSemaine,
-          finDeLaSemaine
-        )
+        .getIndicateursJeune(conseiller.id, jeune.id, debutSemaine, finSemaine)
         .then(setIndicateursSemaine)
     }
   }, [
     conseiller,
-    debutDeLaSemaine,
-    finDeLaSemaine,
+    debutSemaine,
+    finSemaine,
     indicateursSemaine,
     jeune.id,
     jeunesService,
@@ -309,10 +305,10 @@ function FicheJeune({
       </div>
 
       {!isPoleEmploi && (
-        <IndicateursJeune
+        <ResumeIndicateursJeune
           idJeune={jeune.id}
-          debutDeLaSemaine={debutDeLaSemaine}
-          finDeLaSemaine={finDeLaSemaine}
+          debutDeLaSemaine={debutSemaine}
+          finDeLaSemaine={finSemaine}
           indicateursSemaine={indicateursSemaine}
         />
       )}
