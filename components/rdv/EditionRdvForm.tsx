@@ -20,7 +20,12 @@ import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
-import { DATE_DASH_SEPARATOR, TIME_24_SIMPLE, toFrenchFormat } from 'utils/date'
+import {
+  DATE_DASH_SEPARATOR,
+  TIME_24_SIMPLE,
+  toFrenchFormat,
+  toFrenchString,
+} from 'utils/date'
 
 interface EditionRdvFormProps {
   jeunes: BaseJeune[]
@@ -71,8 +76,9 @@ export function EditionRdvForm({
   const localDate = dateRdv ? toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR) : ''
   const [date, setDate] = useState<RequiredValue>({ value: localDate })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const localTime =
-    dateRdv?.toLocaleString(DateTime.TIME_24_SIMPLE, { locale: 'fr-FR' }) ?? ''
+  const localTime = dateRdv
+    ? toFrenchString(dateRdv, DateTime.TIME_24_SIMPLE)
+    : ''
   const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(rdv?.duration)

@@ -5,6 +5,7 @@ import React from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine } from 'interfaces/jeune'
+import { toFrenchString } from 'utils/date'
 
 type ResumeIndicateursJeuneProps = {
   idJeune: string
@@ -23,8 +24,8 @@ export function ResumeIndicateursJeune({
     <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
       <h2 className='text-m-bold'>Les indicateurs de la semaine</h2>
       <p className='mb-4'>
-        du {debutDeLaSemaine.toLocaleString()} au{' '}
-        {finDeLaSemaine.toLocaleString()}
+        du {toFrenchString(debutDeLaSemaine)} au{' '}
+        {toFrenchString(finDeLaSemaine)}
       </p>
       <div
         className={`flex flex-wrap gap-6 ${
