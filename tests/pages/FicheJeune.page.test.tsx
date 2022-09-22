@@ -302,6 +302,8 @@ describe('Fiche Jeune', () => {
       let setIdJeune: (id: string | undefined) => void
       beforeEach(async () => {
         // Given
+        const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
+        jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
         setIdJeune = jest.fn()
 
         // When
@@ -328,6 +330,13 @@ describe('Fiche Jeune', () => {
 
       it('affiche les indicateurs du jeune', async () => {
         // Then
+        const indicateurs = screen.getByRole('heading', {
+          name: 'Les indicateurs de la semaine',
+        }).parentElement
+        expect(
+          within(indicateurs!).getByText('du 29/08/2022 au 04/09/2022')
+        ).toBeInTheDocument()
+
         const indicateursActions = screen.getByRole('heading', {
           name: 'Les actions',
         }).parentElement

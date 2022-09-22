@@ -21,5 +21,4 @@ jest.mock('next/router', () => ({
 
 afterEach(() => {
   cleanup()
-  jest.useRealTimers()
 })
