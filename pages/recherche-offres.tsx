@@ -62,9 +62,7 @@ function RechercheOffres() {
 
       <form onSubmit={rechercherOffresEmploi} className='flex items-center'>
         <div className='grow'>
-          <Label htmlFor='mots-cles'>
-            Mots clés (intitulé, numéro d’offre, code ROME)
-          </Label>
+          <Label htmlFor='mots-cles'>Mots clés (intitulé, code ROME)</Label>
           <Input type='text' id='mots-cles' onChange={setMotsCles} />
         </div>
 
