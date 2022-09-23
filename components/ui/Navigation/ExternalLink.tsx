@@ -18,14 +18,14 @@ export default function ExternalLink({
       href={href}
       target='_blank'
       rel='noreferrer noopener'
-      className='flex items-center text-s-regular whitespace-nowrap underline text-[inherit] text-primary_darken fill-primary_darken hover:text-primary hover:fill-primary'
+      className='flex items-center text-s-regular whitespace-nowrap underline text-[inherit] fill-primary_darken hover:text-primary hover:fill-primary'
       aria-label={`${label} (nouvelle fenêtre)`}
       onClick={onClick}
     >
       {label}
       <IconComponent
         name={IconName.Launch}
-        className='ml-1.5 w-3 h-3 fill-[inherit]'
+        className='ml-1.5 w-3 h-3 fill-[currentColor]'
         focusable='false'
         aria-hidden={true}
       />
