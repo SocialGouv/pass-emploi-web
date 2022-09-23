@@ -14,6 +14,7 @@ import { Message, MessagesOfADay } from 'interfaces/message'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
+import { unDetailOffre } from 'fixtures/offre'
 
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
@@ -494,6 +495,102 @@ describe('MessagesFirebaseAndApiService', () => {
           accessToken
         )
       })
+    })
+  })
+
+  describe('.partagerOffre', () => {
+    let destinataires: JeuneFromListe[]
+    let idsJeunes: string[]
+    let chats: { [idJeune: string]: Chat }
+    let newMessageGroupe: string
+    let idOffre: string
+    const now = DateTime.now()
+    beforeEach(async () => {
+      // Given
+      jest.setSystemTime(now.toJSDate())
+      destinataires = desItemsJeunes()
+      idsJeunes = destinataires.map(({ id }) => id)
+      newMessageGroupe = 'Regarde cette offre qui pourrait t’intéresser.'
+      idOffre = unDetailOffre().id
+
+      chats = idsJeunes.reduce((mappedChats, idJeune) => {
+        mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })
+        return mappedChats
+      }, {} as { [idJeune: string]: Chat })
+      ;(firebaseClient.getChatsDuConseiller as jest.Mock).mockResolvedValue(
+        chats
+      )
+
+      await messagesService.partagerOffre({
+        idOffre,
+        idsDestinataires: idsJeunes,
+        message: newMessageGroupe,
+        cleChiffrement,
+      })
+    })
+
+    it('récupère les chats du conseiler', () => {
+      // Then
+      expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
+        'id-conseiller'
+      )
+    })
+
+    it('ajoute un nouveau message à firebase pour chaque destinataire', () => {
+      // Then
+
+      Object.values(chats).forEach((chat) => {
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
+          idOffre: idOffre,
+          idChat: chat.chatId,
+          idConseiller: 'id-conseiller',
+          message: {
+            encryptedText: `Encrypted: ${newMessageGroupe}`,
+            iv: `IV: ${newMessageGroupe}`,
+          },
+          date: now,
+        })
+      })
+    })
+
+    it('met à jour le chat dans firebase pour chaque destinataire', () => {
+      // Then
+      Object.values(chats).forEach((chat) => {
+        expect(firebaseClient.updateChat).toHaveBeenCalledWith(chat.chatId, {
+          lastMessageContent: `Encrypted: ${newMessageGroupe}`,
+          lastMessageIv: `IV: ${newMessageGroupe}`,
+          lastMessageSentAt: now,
+          lastMessageSentBy: 'conseiller',
+          newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+          //seenByConseiller: false,
+          //lastConseillerReading: DateTime.fromMillis(0),
+        })
+      })
+    })
+
+    it('notifie envoi de message pour chaque destinataire', () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        `/conseillers/id-conseiller/jeunes/notify-messages`,
+        { idsJeunes: idsJeunes },
+        accessToken
+      )
+    })
+
+    xit('tracks partage d’offre', () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_ENVOYE_MULTIPLE',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: 'POLE_EMPLOI',
+            id: 'id-conseiller',
+          },
+        },
+        accessToken
+      )
     })
   })
 })
