@@ -32,6 +32,7 @@ export interface ChatCredentials {
 }
 
 export interface InfoOffre {
+  id: string
   titre: string
   lien: string
 }

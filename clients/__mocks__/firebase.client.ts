@@ -6,6 +6,7 @@ export const FirebaseClient = jest.fn(() => ({
   signIn: jest.fn(),
   signOut: jest.fn(),
   addMessage: jest.fn(),
+  addMessageOffre: jest.fn(),
   addFichier: jest.fn(),
   updateChat: jest.fn(),
   findAndObserveChatsDuConseiller: jest.fn(

@@ -37,10 +37,10 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
     e.preventDefault()
 
     messagesService.partagerOffre({
-      idOffre: offre.id,
+      offre,
       idsDestinataires: idsJeunesSelectionnes,
       cleChiffrement: chatCredentials!.cleChiffrement,
-      message,
+      message: message!,
     })
   }
 
