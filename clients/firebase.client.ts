@@ -46,14 +46,21 @@ interface FirebaseMessage {
   offre?: InfoOffre
 }
 
-export interface AddMessage extends CreateFirebaseMessage {
+export type AddMessage = {
   idChat: string
-}
+} & (CreateFirebaseMessage | CreateFirebaseOffre)
 
-interface CreateFirebaseMessage {
+type CreateFirebaseMessage = {
   idConseiller: string
   message: EncryptedTextWithInitializationVector
   infoPieceJointe?: InfoFichier
+  date: DateTime
+}
+
+type CreateFirebaseOffre = {
+  idConseiller: string
+  message: EncryptedTextWithInitializationVector
+  idOffre: string
   date: DateTime
 }
 

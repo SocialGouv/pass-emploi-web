@@ -38,7 +38,7 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
 
     messagesService.partagerOffre({
       idOffre: offre.id,
-      idsJeunes: idsJeunesSelectionnes,
+      idsDestinataires: idsJeunesSelectionnes,
       cleChiffrement: chatCredentials!.cleChiffrement,
       message,
     })

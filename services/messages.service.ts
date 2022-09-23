@@ -66,9 +66,9 @@ export interface MessagesService {
 
   partagerOffre(options: {
     idOffre: string
-    idsJeunes: string[]
+    idsDestinataires: string[]
     cleChiffrement: string
-    message?: string
+    message: string
   }): Promise<void>
 }
 
@@ -315,13 +315,61 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     ])
   }
 
-  partagerOffre(options: {
+  async partagerOffre(options: {
     idOffre: string
-    idsJeunes: string[]
+    idsDestinataires: string[]
     cleChiffrement: string
-    message?: string
-  }): Promise<void> {
-    throw new Error('Not implemented')
+    message: string
+  }) {
+    const session = await getSession()
+    const now = DateTime.now()
+    const encryptedMessage = this.chatCrypto.encrypt(
+      options.message,
+      options.cleChiffrement
+    )
+
+    const mappedChats = await this.firebaseClient.getChatsDuConseiller(
+      session!.user.id
+    )
+    const chatsDestinataires = Object.entries(mappedChats)
+      .filter(([idJeune]) => options.idsDestinataires.includes(idJeune))
+      .map(([_, chat]) => chat)
+
+    await Promise.all([
+      chatsDestinataires.map((chat) => {
+        const nouveauMessage: AddMessage = {
+          idChat: chat.chatId,
+          idConseiller: session!.user.id,
+          message: encryptedMessage,
+          idOffre: options.idOffre,
+          date: now,
+        }
+
+        return Promise.all([
+          this.firebaseClient.addMessage(nouveauMessage),
+          this.firebaseClient.updateChat(chat.chatId, {
+            lastMessageContent: encryptedMessage.encryptedText,
+            lastMessageIv: encryptedMessage.iv,
+            lastMessageSentAt: now,
+            lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
+            newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+          }),
+        ])
+      }),
+    ])
+
+    await Promise.all([
+      this.notifierNouveauMessage(
+        session!.user.id,
+        options.idsDestinataires,
+        session!.accessToken
+      ),
+      // this.evenementNouveauMessageMultiple(
+      //   session!.user.structure,
+      //   session!.user.id,
+      //   session!.accessToken
+      // ),
+    ])
   }
 
   private async notifierNouveauMessage(
