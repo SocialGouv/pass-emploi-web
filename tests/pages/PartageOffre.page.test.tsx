@@ -163,5 +163,18 @@ describe('Page Partage Offre', () => {
         expect(jeuneOption).toBeInTheDocument()
       }
     })
+
+    it('contient un champ de saisie pour accompagner l’offre d’un message', () => {
+      expect(screen.getByLabelText('* Message')).toBeInTheDocument()
+    })
+
+    it('contient un bouton d’envoie et d’annulation', () => {
+      expect(
+        screen.getByRole('button', { name: 'Envoyer' })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Annuler' })
+      ).toBeInTheDocument()
+    })
   })
 })

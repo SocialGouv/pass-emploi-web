@@ -10,6 +10,10 @@ import { JeunesService } from 'services/jeunes.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
+import Label from 'components/ui/Form/Label'
+import Textarea from 'components/ui/Form/Textarea'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import React from 'react'
 
 type PartageOffresProps = PageProps & {
   offre: DetailOffreEmploi
@@ -42,6 +46,55 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
             onUpdate={() => {}}
           />
         </fieldset>
+        <fieldset className='border-none'>
+          <legend className='flex items-center text-m-bold mb-4'>
+            <IconComponent
+              name={IconName.Chiffre2}
+              role='img'
+              focusable='false'
+              aria-label='Étape 2'
+              className='mr-2 w-8 h-8'
+            />
+            Écrivez votre message
+          </legend>
+
+          <Label
+            htmlFor='message'
+            inputRequired={true}
+            withBulleMessageSensible={true}
+          >
+            Message
+          </Label>
+
+          <Textarea id='message' rows={10} onChange={(e) => {}} required />
+        </fieldset>
+
+        <div className='flex justify-center'>
+          <Button
+            label=''
+            onClick={() => {}}
+            style={ButtonStyle.SECONDARY}
+            className='mr-3 p-2'
+          >
+            Annuler
+          </Button>
+
+          <Button
+            type='submit'
+            disabled={false}
+            className='flex items-center p-2'
+            isLoading={false}
+            onClick={() => {}}
+          >
+            <IconComponent
+              name={IconName.Send}
+              aria-hidden='true'
+              focusable='false'
+              className='mr-2 h-4 w-4 fill-blanc'
+            />
+            Envoyer
+          </Button>
+        </div>
       </form>
     </>
   )
