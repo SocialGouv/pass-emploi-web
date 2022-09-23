@@ -6,6 +6,7 @@ import React, { FormEvent, useMemo, useState } from 'react'
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -16,6 +17,7 @@ import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
@@ -25,9 +27,10 @@ type PartageOffresProps = PageProps & {
   offre: DetailOffreEmploi
   jeunes: BaseJeune[]
   withoutChat: true
+  returnTo: string
 }
 
-function PartageOffre({ offre, jeunes }: PartageOffresProps) {
+function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
@@ -67,7 +70,7 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
           "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
       })
       await router.push({
-        pathname: '/recherche-offres',
+        pathname: returnTo,
         query: { [QueryParam.partageOffre]: QueryValue.succes },
       })
     } finally {
@@ -126,24 +129,20 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
         </fieldset>
 
         <div className='flex justify-center'>
-          <Button
-            onClick={() => {}}
-            style={ButtonStyle.SECONDARY}
-            className='mr-3 p-2'
-          >
+          <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
             Annuler
-          </Button>
+          </ButtonLink>
 
           <Button
             type='submit'
-            className='flex items-center p-2'
+            className='ml-3 flex items-center'
             disabled={!formIsValid}
             isLoading={isPartageEnCours}
           >
             <IconComponent
               name={IconName.Send}
-              aria-hidden='true'
-              focusable='false'
+              aria-hidden={true}
+              focusable={false}
               className='mr-2 h-4 w-4 fill-blanc'
             />
             Envoyer
@@ -184,6 +183,7 @@ export const getServerSideProps: GetServerSideProps<
       jeunes,
       pageTitle: 'Partager une offre',
       withoutChat: true,
+      returnTo: '/recherche-offres',
     },
   }
 }

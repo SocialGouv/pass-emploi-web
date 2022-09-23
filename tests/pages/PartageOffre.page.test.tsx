@@ -89,6 +89,7 @@ describe('Page Partage Offre', () => {
             offre,
             jeunes: expect.arrayContaining([]),
             pageTitle: 'Partager une offre',
+            returnTo: '/recherche-offres',
             withoutChat: true,
           },
         })
@@ -139,8 +140,9 @@ describe('Page Partage Offre', () => {
         <PartageOffre
           offre={offre}
           jeunes={jeunes}
-          pageTitle=''
           withoutChat={true}
+          pageTitle=''
+          returnTo='/return/to'
         />,
         { customDependances: { messagesService } }
       )
@@ -193,9 +195,10 @@ describe('Page Partage Offre', () => {
         'type',
         'submit'
       )
-      expect(
-        screen.getByRole('button', { name: 'Annuler' })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Annuler' })).toHaveAttribute(
+        'href',
+        '/return/to'
+      )
     })
 
     describe('formulaire rempli', () => {
@@ -257,7 +260,7 @@ describe('Page Partage Offre', () => {
 
           // Then
           expect(push).toHaveBeenCalledWith({
-            pathname: '/recherche-offres',
+            pathname: '/return/to',
             query: { partageOffre: 'succes' },
           })
         })
