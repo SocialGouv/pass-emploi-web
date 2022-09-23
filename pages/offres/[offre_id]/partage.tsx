@@ -36,6 +36,7 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
     RequiredValue<string[]>
   >({ value: [] })
   const [message, setMessage] = useState<string | undefined>()
+  const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
 
   const formIsValid = useMemo(
     () => idsDestinataires.value.length > 0,
@@ -55,18 +56,23 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
     e.preventDefault()
     if (!formIsValid) return
 
-    await messagesService.partagerOffre({
-      offre,
-      idsDestinataires: idsDestinataires.value,
-      cleChiffrement: chatCredentials!.cleChiffrement,
-      message:
-        message ||
-        "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
-    })
-    await router.push({
-      pathname: '/recherche-offres',
-      query: { [QueryParam.partageOffre]: QueryValue.succes },
-    })
+    setIsPartageEnCours(true)
+    try {
+      await messagesService.partagerOffre({
+        offre,
+        idsDestinataires: idsDestinataires.value,
+        cleChiffrement: chatCredentials!.cleChiffrement,
+        message:
+          message ||
+          "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
+      })
+      await router.push({
+        pathname: '/recherche-offres',
+        query: { [QueryParam.partageOffre]: QueryValue.succes },
+      })
+    } finally {
+      setIsPartageEnCours(false)
+    }
   }
 
   return (
@@ -132,7 +138,7 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
             type='submit'
             className='flex items-center p-2'
             disabled={!formIsValid}
-            isLoading={false}
+            isLoading={isPartageEnCours}
           >
             <IconComponent
               name={IconName.Send}
