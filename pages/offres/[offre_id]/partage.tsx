@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
@@ -10,6 +11,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
@@ -27,22 +29,27 @@ type PartageOffresProps = PageProps & {
 function PartageOffre({ offre, jeunes }: PartageOffresProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
+  const router = useRouter()
 
   const [idsJeunesSelectionnes, setIdsJeunesSelectionnes] = useState<string[]>(
     []
   )
   const [message, setMessage] = useState<string | undefined>()
 
-  function partager(e: FormEvent<HTMLFormElement>) {
+  async function partager(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    messagesService.partagerOffre({
+    await messagesService.partagerOffre({
       offre,
       idsDestinataires: idsJeunesSelectionnes,
       cleChiffrement: chatCredentials!.cleChiffrement,
       message:
         message ||
         "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
+    })
+    await router.push({
+      pathname: '/recherche-offres',
+      query: { [QueryParam.partageOffre]: QueryValue.succes },
     })
   }
 

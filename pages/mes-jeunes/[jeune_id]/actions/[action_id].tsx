@@ -104,7 +104,7 @@ function PageAction({
       )
       setQualification(nouvelleQualification)
       await router.replace(
-        `/mes-jeunes/${jeune.id}/actions/${action.id}?qualificationNonSNP=succes`,
+        `/mes-jeunes/${jeune.id}/actions/${action.id}?${QueryParam.qualificationNonSNP}=${QueryValue.succes}`,
         undefined,
         { shallow: true }
       )

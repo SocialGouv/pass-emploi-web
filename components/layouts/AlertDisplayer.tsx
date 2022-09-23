@@ -108,6 +108,7 @@ const ALERTS: DictAlerts = {
     sub: 'Les informations ont été envoyées à i-milo',
   },
   qualificationNonSNP: { title: 'L’action a été qualifiée' },
+  partageOffre: { title: 'L’offre a bien été partagée' },
 }
 
 const ALERTS_MILO: DictAlerts = {

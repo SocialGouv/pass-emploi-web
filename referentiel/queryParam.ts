@@ -10,13 +10,14 @@ export enum QueryParam {
   // Action
   creationAction = 'creationAction',
   suppressionAction = 'suppressionAction',
+  ajoutCommentaireAction = 'ajoutCommentaireAction',
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',
   modificationIdentifiantPartenaire = 'modificationIdentifiantPartenaire',
-  ajoutCommentaireAction = 'ajoutCommentaireAction',
   qualificationSNP = 'qualificationSNP',
   qualificationNonSNP = 'qualificationNonSNP',
+  partageOffre = 'partageOffre',
 }
 
 export enum QueryValue {
