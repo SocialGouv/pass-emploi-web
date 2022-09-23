@@ -196,13 +196,14 @@ describe('Page Partage Offre', () => {
     })
 
     describe('formulaire rempli', () => {
+      let inputMessage: HTMLTextAreaElement
       let message: string
       beforeEach(async () => {
         // Given
         const selectJeune = screen.getByRole('combobox', {
           name: 'Rechercher et ajouter des jeunes Nom et prénom',
         })
-        const inputMessage = screen.getByRole('textbox', { name: /Message/ })
+        inputMessage = screen.getByRole('textbox', { name: /Message/ })
 
         message = "Regarde cette offre qui pourrait t'intéresser."
         await userEvent.type(selectJeune, 'Jirac Kenji')
@@ -210,18 +211,33 @@ describe('Page Partage Offre', () => {
         await userEvent.type(inputMessage, message)
       })
 
-      describe('quand le formulaire est valide', () => {
-        it("partage l'offre", async () => {
-          // When
-          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+      it("partage l'offre", async () => {
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
 
-          // Then
-          expect(messagesService.partagerOffre).toHaveBeenCalledWith({
-            offre,
-            idsDestinataires: [jeunes[0].id, jeunes[2].id],
-            cleChiffrement: 'cleChiffrement',
-            message,
-          })
+        // Then
+        expect(messagesService.partagerOffre).toHaveBeenCalledWith({
+          offre,
+          idsDestinataires: [jeunes[0].id, jeunes[2].id],
+          cleChiffrement: 'cleChiffrement',
+          message,
+        })
+      })
+
+      it('partage une offre avec un message par défaut', async () => {
+        // Given
+        await userEvent.clear(inputMessage)
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+
+        // Then
+        expect(messagesService.partagerOffre).toHaveBeenCalledWith({
+          offre,
+          idsDestinataires: [jeunes[0].id, jeunes[2].id],
+          cleChiffrement: 'cleChiffrement',
+          message:
+              "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
         })
       })
     })

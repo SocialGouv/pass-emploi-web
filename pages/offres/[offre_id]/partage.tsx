@@ -40,7 +40,9 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
       offre,
       idsDestinataires: idsJeunesSelectionnes,
       cleChiffrement: chatCredentials!.cleChiffrement,
-      message: message!,
+      message:
+        message ||
+        "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
     })
   }
 
