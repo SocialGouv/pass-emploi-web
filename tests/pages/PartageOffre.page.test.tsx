@@ -217,7 +217,7 @@ describe('Page Partage Offre', () => {
 
           // Then
           expect(messagesService.partagerOffre).toHaveBeenCalledWith({
-            idOffre: offre.id,
+            offre,
             idsDestinataires: [jeunes[0].id, jeunes[2].id],
             cleChiffrement: 'cleChiffrement',
             message,

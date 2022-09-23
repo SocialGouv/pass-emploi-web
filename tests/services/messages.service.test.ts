@@ -9,12 +9,13 @@ import {
   unJeuneChat,
 } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
+import { unDetailOffre } from 'fixtures/offre'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
-import { unDetailOffre } from 'fixtures/offre'
 
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
@@ -503,15 +504,15 @@ describe('MessagesFirebaseAndApiService', () => {
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
     let newMessageGroupe: string
-    let idOffre: string
+    let offre: DetailOffreEmploi
     const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(now.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       destinataires = desItemsJeunes()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'Regarde cette offre qui pourrait t’intéresser.'
-      idOffre = unDetailOffre().id
+      offre = unDetailOffre()
 
       chats = idsJeunes.reduce((mappedChats, idJeune) => {
         mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })
@@ -522,7 +523,7 @@ describe('MessagesFirebaseAndApiService', () => {
       )
 
       await messagesService.partagerOffre({
-        idOffre,
+        offre,
         idsDestinataires: idsJeunes,
         message: newMessageGroupe,
         cleChiffrement,
@@ -540,8 +541,8 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
 
       Object.values(chats).forEach((chat) => {
-        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-          idOffre: idOffre,
+        expect(firebaseClient.addMessageOffre).toHaveBeenCalledWith({
+          offre,
           idChat: chat.chatId,
           idConseiller: 'id-conseiller',
           message: {
@@ -577,12 +578,12 @@ describe('MessagesFirebaseAndApiService', () => {
       )
     })
 
-    xit('tracks partage d’offre', () => {
+    it('tracks partage d’offre', () => {
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
         '/evenements',
         {
-          type: 'MESSAGE_ENVOYE_MULTIPLE',
+          type: 'MESSAGE_OFFRE_PARTAGE',
           emetteur: {
             type: 'CONSEILLER',
             structure: 'POLE_EMPLOI',

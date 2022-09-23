@@ -25,6 +25,7 @@ import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { Chat } from 'interfaces/jeune'
 import { InfoOffre, Message, TypeMessage } from 'interfaces/message'
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
@@ -46,10 +47,7 @@ interface FirebaseMessage {
   offre?: InfoOffre
 }
 
-export type AddMessage = {
-  idChat: string
-} & (CreateFirebaseMessage | CreateFirebaseOffre)
-
+export type AddMessage = { idChat: string } & CreateFirebaseMessage
 type CreateFirebaseMessage = {
   idConseiller: string
   message: EncryptedTextWithInitializationVector
@@ -57,10 +55,11 @@ type CreateFirebaseMessage = {
   date: DateTime
 }
 
+export type AddMessageOffre = { idChat: string } & CreateFirebaseOffre
 type CreateFirebaseOffre = {
   idConseiller: string
   message: EncryptedTextWithInitializationVector
-  idOffre: string
+  offre: DetailOffreEmploi
   date: DateTime
 }
 
@@ -103,6 +102,34 @@ class FirebaseClient {
     const firebaseMessage = createFirebaseMessage({
       message,
       infoPieceJointe: infoPieceJointe,
+      idConseiller,
+      date,
+    })
+    try {
+      await addDoc<FirebaseMessage>(
+        collection(
+          this.getChatReference(idChat),
+          'messages'
+        ) as CollectionReference<FirebaseMessage>,
+        firebaseMessage
+      )
+    } catch (e) {
+      console.error(e)
+      captureRUMError(e as Error)
+      throw e
+    }
+  }
+
+  async addMessageOffre({
+    idChat,
+    idConseiller,
+    message,
+    offre,
+    date,
+  }: AddMessageOffre): Promise<void> {
+    const firebaseMessage = createFirebaseMessageOffre({
+      message,
+      offre,
       idConseiller,
       date,
     })
@@ -292,7 +319,7 @@ function createFirebaseMessage({
   date,
 }: CreateFirebaseMessage): FirebaseMessage {
   const type = infoPieceJointe ? TypeMessage.MESSAGE_PJ : TypeMessage.MESSAGE
-  const firebaseFichier: FirebaseMessage = {
+  const firebaseMessage: FirebaseMessage = {
     content: encryptedText,
     iv,
     conseillerId: idConseiller,
@@ -302,10 +329,31 @@ function createFirebaseMessage({
   }
 
   if (infoPieceJointe) {
-    firebaseFichier.piecesJointes = [infoPieceJointe]
+    firebaseMessage.piecesJointes = [infoPieceJointe]
   }
 
-  return firebaseFichier
+  return firebaseMessage
+}
+
+function createFirebaseMessageOffre({
+  message: { encryptedText, iv },
+  offre,
+  idConseiller,
+  date,
+}: CreateFirebaseOffre): FirebaseMessage {
+  return {
+    content: encryptedText,
+    iv,
+    conseillerId: idConseiller,
+    sentBy: UserType.CONSEILLER.toLowerCase(),
+    creationDate: Timestamp.fromMillis(date.toMillis()),
+    type: TypeMessage.MESSAGE_OFFRE,
+    offre: {
+      id: offre.id,
+      titre: offre.titre,
+      lien: offre.urlPostulation,
+    },
+  }
 }
 
 interface FirebaseChat {

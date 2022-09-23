@@ -2,7 +2,11 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { AddMessage, FirebaseClient } from 'clients/firebase.client'
+import {
+  AddMessage,
+  AddMessageOffre,
+  FirebaseClient,
+} from 'clients/firebase.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
@@ -12,6 +16,7 @@ import {
   MessagesOfADay,
   TypeMessage,
 } from 'interfaces/message'
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { toShortDate } from 'utils/date'
 
@@ -65,7 +70,7 @@ export interface MessagesService {
   ): Promise<{ [idJeune: string]: number }>
 
   partagerOffre(options: {
-    idOffre: string
+    offre: DetailOffreEmploi
     idsDestinataires: string[]
     cleChiffrement: string
     message: string
@@ -316,7 +321,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async partagerOffre(options: {
-    idOffre: string
+    offre: DetailOffreEmploi
     idsDestinataires: string[]
     cleChiffrement: string
     message: string
@@ -337,16 +342,16 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
     await Promise.all([
       chatsDestinataires.map((chat) => {
-        const nouveauMessage: AddMessage = {
+        const nouveauMessage: AddMessageOffre = {
           idChat: chat.chatId,
           idConseiller: session!.user.id,
           message: encryptedMessage,
-          idOffre: options.idOffre,
+          offre: options.offre,
           date: now,
         }
 
         return Promise.all([
-          this.firebaseClient.addMessage(nouveauMessage),
+          this.firebaseClient.addMessageOffre(nouveauMessage),
           this.firebaseClient.updateChat(chat.chatId, {
             lastMessageContent: encryptedMessage.encryptedText,
             lastMessageIv: encryptedMessage.iv,
@@ -364,11 +369,11 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         options.idsDestinataires,
         session!.accessToken
       ),
-      // this.evenementNouveauMessageMultiple(
-      //   session!.user.structure,
-      //   session!.user.id,
-      //   session!.accessToken
-      // ),
+      this.evenementPartageOffre(
+        session!.user.structure,
+        session!.user.id,
+        session!.accessToken
+      ),
     ])
   }
 
@@ -416,6 +421,25 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         type: avecPieceJointe
           ? 'MESSAGE_ENVOYE_MULTIPLE_PJ'
           : 'MESSAGE_ENVOYE_MULTIPLE',
+        emetteur: {
+          type: UserType.CONSEILLER,
+          structure: structure,
+          id: idConseiller,
+        },
+      },
+      accessToken
+    )
+  }
+
+  private async evenementPartageOffre(
+    structure: string,
+    idConseiller: string,
+    accessToken: string
+  ): Promise<void> {
+    await this.apiClient.post(
+      '/evenements',
+      {
+        type: 'MESSAGE_OFFRE_PARTAGE',
         emetteur: {
           type: UserType.CONSEILLER,
           structure: structure,
