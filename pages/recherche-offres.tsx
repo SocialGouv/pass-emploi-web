@@ -1,11 +1,13 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import React, { FormEvent, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
@@ -84,7 +86,19 @@ function RechercheOffres() {
           </h2>
           <ul aria-describedby='result-title'>
             {offres!.map((offre) => (
-              <li key={offre.id}>{offre.titre}</li>
+              <li key={offre.id} className='flex items-center'>
+                <Link href={`/offres/${offre.id}/partage`}>
+                  <a aria-label={`Partager offre numéro ${offre.id}`}>
+                    <IconComponent
+                      name={IconName.Partage}
+                      className='w-4 h-4 fill-primary'
+                      focusable={false}
+                      aria-hidden={true}
+                    />
+                  </a>
+                </Link>
+                {offre.titre}
+              </li>
             ))}
           </ul>
         </>

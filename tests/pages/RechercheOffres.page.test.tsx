@@ -66,22 +66,41 @@ describe('Page Recherche Offres', () => {
       })
     })
 
-    it('affiche le resultat de la recherche', async () => {
-      // Given
-      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+    describe('résultat de la recherche', () => {
+      let offresList: HTMLElement
+      beforeEach(async () => {
+        // Given
+        const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
-      // When
-      await userEvent.click(submitButton)
+        // When
+        await userEvent.click(submitButton)
 
-      // Then
-      const offresList = screen.getByRole('list', {
-        description: 'Liste des résultats',
+        // Then
+        offresList = screen.getByRole('list', {
+          description: 'Liste des résultats',
+        })
       })
-      expect(within(offresList).getAllByRole('listitem').length).toEqual(
-        offresEmploi.length
-      )
-      offresEmploi.forEach((offre) => {
-        expect(within(offresList).getByText(offre.titre)).toBeInTheDocument()
+
+      it('affiche toutes les offres', async () => {
+        expect(within(offresList).getAllByRole('listitem').length).toEqual(
+          offresEmploi.length
+        )
+      })
+
+      it('affiche chaque offre', async () => {
+        offresEmploi.forEach((offre) => {
+          expect(within(offresList).getByText(offre.titre)).toBeInTheDocument()
+        })
+      })
+
+      it('permet de partager chaque offre', () => {
+        offresEmploi.forEach((offre) => {
+          expect(
+            within(offresList).getByRole('link', {
+              name: `Partager offre numéro ${offre.id}`,
+            })
+          ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
+        })
       })
     })
 
