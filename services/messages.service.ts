@@ -439,7 +439,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     await this.apiClient.post(
       '/evenements',
       {
-        type: 'MESSAGE_OFFRE_PARTAGE',
+        type: 'MESSAGE_OFFRE_PARTAGEE',
         emetteur: {
           type: UserType.CONSEILLER,
           structure: structure,

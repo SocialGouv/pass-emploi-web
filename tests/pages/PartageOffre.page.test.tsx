@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
@@ -130,7 +131,9 @@ describe('Page Partage Offre', () => {
     beforeEach(() => {
       offre = unDetailOffre()
       jeunes = desItemsJeunes()
-      messagesService = mockedMessagesService()
+      messagesService = mockedMessagesService({
+        partagerOffre: jest.fn(async () => {}),
+      })
 
       renderWithContexts(
         <PartageOffre
@@ -198,8 +201,12 @@ describe('Page Partage Offre', () => {
     describe('formulaire rempli', () => {
       let inputMessage: HTMLTextAreaElement
       let message: string
+      let push: Function
       beforeEach(async () => {
         // Given
+        push = jest.fn(async () => {})
+        ;(useRouter as jest.Mock).mockReturnValue({ push })
+
         const selectJeune = screen.getByRole('combobox', {
           name: 'Rechercher et ajouter des jeunes Nom et prénom',
         })
@@ -211,33 +218,46 @@ describe('Page Partage Offre', () => {
         await userEvent.type(inputMessage, message)
       })
 
-      it("partage l'offre", async () => {
-        // When
-        await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+      describe('quand le formulair est valide', () => {
+        it("partage l'offre", async () => {
+          // When
+          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
 
-        // Then
-        expect(messagesService.partagerOffre).toHaveBeenCalledWith({
-          offre,
-          idsDestinataires: [jeunes[0].id, jeunes[2].id],
-          cleChiffrement: 'cleChiffrement',
-          message,
+          // Then
+          expect(messagesService.partagerOffre).toHaveBeenCalledWith({
+            offre,
+            idsDestinataires: [jeunes[0].id, jeunes[2].id],
+            cleChiffrement: 'cleChiffrement',
+            message,
+          })
         })
-      })
 
-      it('partage une offre avec un message par défaut', async () => {
-        // Given
-        await userEvent.clear(inputMessage)
+        it('partage une offre avec un message par défaut', async () => {
+          // Given
+          await userEvent.clear(inputMessage)
 
-        // When
-        await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+          // When
+          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
 
-        // Then
-        expect(messagesService.partagerOffre).toHaveBeenCalledWith({
-          offre,
-          idsDestinataires: [jeunes[0].id, jeunes[2].id],
-          cleChiffrement: 'cleChiffrement',
-          message:
+          // Then
+          expect(messagesService.partagerOffre).toHaveBeenCalledWith({
+            offre,
+            idsDestinataires: [jeunes[0].id, jeunes[2].id],
+            cleChiffrement: 'cleChiffrement',
+            message:
               "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
+          })
+        })
+
+        it('renvoie à la recherche', async () => {
+          // When
+          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+
+          // Then
+          expect(push).toHaveBeenCalledWith({
+            pathname: '/recherche-offres',
+            query: { partageOffre: 'succes' },
+          })
         })
       })
     })

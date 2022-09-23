@@ -15,6 +15,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -65,7 +66,9 @@ function PageQualification({
         DateTime.fromISO(dateDebut).startOf('day'),
         DateTime.fromISO(dateFin!).startOf('day')
       )
-      await router.push(`${returnTo}?qualificationSNP=succes`)
+      await router.push(
+        `${returnTo}?${QueryParam.qualificationSNP}=${QueryValue.succes}`
+      )
     } catch (error) {
       setErreurQualification(
         error instanceof ApiError

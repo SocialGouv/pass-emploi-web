@@ -583,7 +583,7 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(apiClient.post).toHaveBeenCalledWith(
         '/evenements',
         {
-          type: 'MESSAGE_OFFRE_PARTAGE',
+          type: 'MESSAGE_OFFRE_PARTAGEE',
           emetteur: {
             type: 'CONSEILLER',
             structure: 'POLE_EMPLOI',
