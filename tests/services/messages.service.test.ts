@@ -261,15 +261,17 @@ describe('MessagesFirebaseAndApiService', () => {
       })
       it('adds a new message to firebase', async () => {
         // Then
-        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-          idChat: jeuneChat.chatId,
-          idConseiller: 'id-conseiller',
-          message: {
-            encryptedText: `Encrypted: ${newMessage}`,
-            iv: `IV: ${newMessage}`,
-          },
-          date: now,
-        })
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith(
+          jeuneChat.chatId,
+          {
+            idConseiller: 'id-conseiller',
+            message: {
+              encryptedText: `Encrypted: ${newMessage}`,
+              iv: `IV: ${newMessage}`,
+            },
+            date: now,
+          }
+        )
       })
 
       it('updates chat in firebase', async () => {
@@ -326,16 +328,18 @@ describe('MessagesFirebaseAndApiService', () => {
 
       it('adds a new message to firebase', async () => {
         // Then
-        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-          idChat: jeuneChat.chatId,
-          idConseiller: 'id-conseiller',
-          message: {
-            encryptedText: `Encrypted: ${newMessage}`,
-            iv: `IV: ${newMessage}`,
-          },
-          infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
-          date: now,
-        })
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith(
+          jeuneChat.chatId,
+          {
+            idConseiller: 'id-conseiller',
+            message: {
+              encryptedText: `Encrypted: ${newMessage}`,
+              iv: `IV: ${newMessage}`,
+            },
+            infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
+            date: now,
+          }
+        )
       })
 
       it('tracks new message', async () => {
@@ -395,8 +399,7 @@ describe('MessagesFirebaseAndApiService', () => {
         )
 
         Object.values(chats).forEach((chat) => {
-          expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-            idChat: chat.chatId,
+          expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
             idConseiller: 'id-conseiller',
             message: {
               encryptedText: `Encrypted: ${newMessageGroupe}`,
@@ -419,8 +422,6 @@ describe('MessagesFirebaseAndApiService', () => {
             lastMessageSentAt: now,
             lastMessageSentBy: 'conseiller',
             newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-            seenByConseiller: false,
-            lastConseillerReading: DateTime.fromMillis(0),
           })
         })
       })
@@ -468,8 +469,7 @@ describe('MessagesFirebaseAndApiService', () => {
         )
 
         Object.values(chats).forEach((chat) => {
-          expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-            idChat: chat.chatId,
+          expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
             idConseiller: 'id-conseiller',
             message: {
               encryptedText: `Encrypted: ${newMessageGroupe}`,
@@ -541,9 +541,8 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
 
       Object.values(chats).forEach((chat) => {
-        expect(firebaseClient.addMessageOffre).toHaveBeenCalledWith({
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
           offre,
-          idChat: chat.chatId,
           idConseiller: 'id-conseiller',
           message: {
             encryptedText: `Encrypted: ${newMessageGroupe}`,
@@ -563,8 +562,6 @@ describe('MessagesFirebaseAndApiService', () => {
           lastMessageSentAt: now,
           lastMessageSentBy: 'conseiller',
           newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-          //seenByConseiller: false,
-          //lastConseillerReading: DateTime.fromMillis(0),
         })
       })
     })
