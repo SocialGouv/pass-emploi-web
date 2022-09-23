@@ -1,19 +1,22 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import React, { FormEvent, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import Label from 'components/ui/Form/Label'
+import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import Label from 'components/ui/Form/Label'
-import Textarea from 'components/ui/Form/Textarea'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import React from 'react'
 
 type PartageOffresProps = PageProps & {
   offre: DetailOffreEmploi
@@ -22,12 +25,31 @@ type PartageOffresProps = PageProps & {
 }
 
 function PartageOffre({ offre, jeunes }: PartageOffresProps) {
+  const messagesService = useDependance<MessagesService>('messagesService')
+  const [chatCredentials] = useChatCredentials()
+
+  const [idsJeunesSelectionnes, setIdsJeunesSelectionnes] = useState<string[]>(
+    []
+  )
+  const [message, setMessage] = useState<string | undefined>()
+
+  function partager(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    messagesService.partagerOffre({
+      idOffre: offre.id,
+      idsJeunes: idsJeunesSelectionnes,
+      cleChiffrement: chatCredentials!.cleChiffrement,
+      message,
+    })
+  }
+
   return (
     <>
       <p>Offre n°{offre.id}</p>
       <p>{offre.titre}</p>
 
-      <form>
+      <form onSubmit={partager} className='mt-8'>
         <fieldset className='border-none flex flex-col mb-8'>
           <legend className='flex items-center text-m-bold mb-4'>
             <IconComponent
@@ -37,15 +59,16 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
               aria-label='Étape 1'
               className='mr-2 w-8 h-8'
             />
-            Bénéficiaires :
+            Bénéficiaires
           </legend>
 
           <JeunesMultiselectAutocomplete
             jeunes={jeunes}
             typeSelection='Bénéficiaires'
-            onUpdate={() => {}}
+            onUpdate={setIdsJeunesSelectionnes}
           />
         </fieldset>
+
         <fieldset className='border-none'>
           <legend className='flex items-center text-m-bold mb-4'>
             <IconComponent
@@ -58,20 +81,20 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
             Écrivez votre message
           </legend>
 
-          <Label
-            htmlFor='message'
-            inputRequired={true}
-            withBulleMessageSensible={true}
-          >
+          <Label htmlFor='message' withBulleMessageSensible={true}>
             Message
           </Label>
-
-          <Textarea id='message' rows={10} onChange={(e) => {}} required />
+          <Textarea
+            id='message'
+            rows={10}
+            onChange={(e) => {
+              setMessage(e.target.value)
+            }}
+          />
         </fieldset>
 
         <div className='flex justify-center'>
           <Button
-            label=''
             onClick={() => {}}
             style={ButtonStyle.SECONDARY}
             className='mr-3 p-2'
@@ -81,8 +104,8 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
 
           <Button
             type='submit'
-            disabled={false}
             className='flex items-center p-2'
+            disabled={false}
             isLoading={false}
             onClick={() => {}}
           >

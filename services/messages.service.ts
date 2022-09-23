@@ -63,6 +63,13 @@ export interface MessagesService {
   countMessagesNotRead(
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }>
+
+  partagerOffre(options: {
+    idOffre: string
+    idsJeunes: string[]
+    cleChiffrement: string
+    message?: string
+  }): Promise<void>
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
@@ -306,6 +313,15 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         session!.accessToken
       ),
     ])
+  }
+
+  partagerOffre(options: {
+    idOffre: string
+    idsJeunes: string[]
+    cleChiffrement: string
+    message?: string
+  }): Promise<void> {
+    throw new Error('Not implemented')
   }
 
   private async notifierNouveauMessage(

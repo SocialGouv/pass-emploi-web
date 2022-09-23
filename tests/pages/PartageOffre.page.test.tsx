@@ -1,10 +1,12 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { unDetailOffre } from 'fixtures/offre'
 import {
   mockedJeunesService,
+  mockedMessagesService,
   mockedOffresEmploiService,
 } from 'fixtures/services'
 import { BaseJeune, JeuneFromListe } from 'interfaces/jeune'
@@ -13,7 +15,9 @@ import PartageOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_id]/partage'
 import { JeunesService } from 'services/jeunes.service'
+import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -122,16 +126,20 @@ describe('Page Partage Offre', () => {
   describe('client side', () => {
     let offre: DetailOffreEmploi
     let jeunes: BaseJeune[]
+    let messagesService: MessagesService
     beforeEach(() => {
       offre = unDetailOffre()
       jeunes = desItemsJeunes()
-      render(
+      messagesService = mockedMessagesService()
+
+      renderWithContexts(
         <PartageOffre
           offre={offre}
           jeunes={jeunes}
           pageTitle=''
           withoutChat={true}
-        />
+        />,
+        { customDependances: { messagesService } }
       )
     })
 
@@ -144,7 +152,7 @@ describe('Page Partage Offre', () => {
     it('contient une liste pour choisir un ou plusieurs jeune', () => {
       // Given
       const etape = screen.getByRole('group', {
-        name: 'Étape 1 Bénéficiaires :',
+        name: 'Étape 1 Bénéficiaires',
       })
 
       // Then
@@ -165,16 +173,57 @@ describe('Page Partage Offre', () => {
     })
 
     it('contient un champ de saisie pour accompagner l’offre d’un message', () => {
-      expect(screen.getByLabelText('* Message')).toBeInTheDocument()
+      // Given
+      const etape = screen.getByRole('group', {
+        name: 'Étape 2 Écrivez votre message',
+      })
+
+      // Then
+      expect(
+        within(etape).getByRole('textbox', { name: /Message/ })
+      ).toBeInTheDocument()
     })
 
     it('contient un bouton d’envoie et d’annulation', () => {
-      expect(
-        screen.getByRole('button', { name: 'Envoyer' })
-      ).toBeInTheDocument()
+      // Then
+      expect(screen.getByRole('button', { name: 'Envoyer' })).toHaveAttribute(
+        'type',
+        'submit'
+      )
       expect(
         screen.getByRole('button', { name: 'Annuler' })
       ).toBeInTheDocument()
+    })
+
+    describe('formulaire rempli', () => {
+      let message: string
+      beforeEach(async () => {
+        // Given
+        const selectJeune = screen.getByRole('combobox', {
+          name: 'Rechercher et ajouter des jeunes Nom et prénom',
+        })
+        const inputMessage = screen.getByRole('textbox', { name: /Message/ })
+
+        message = "Regarde cette offre qui pourrait t'intéresser."
+        await userEvent.type(selectJeune, 'Jirac Kenji')
+        await userEvent.type(selectJeune, "D'Aböville-Muñoz François Maria")
+        await userEvent.type(inputMessage, message)
+      })
+
+      describe('quand le formulaire est valide', () => {
+        it("partage l'offre", async () => {
+          // When
+          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+
+          // Then
+          expect(messagesService.partagerOffre).toHaveBeenCalledWith({
+            idOffre: offre.id,
+            idsJeunes: [jeunes[0].id, jeunes[2].id],
+            cleChiffrement: 'cleChiffrement',
+            message,
+          })
+        })
+      })
     })
   })
 })
