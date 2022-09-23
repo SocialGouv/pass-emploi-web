@@ -39,6 +39,7 @@ import LogoutIcon from 'assets/icons/logout.svg'
 import MenuIcon from 'assets/icons/menu.svg'
 import NoteIcon from 'assets/icons/note_outline.svg'
 import NoteBigIcon from 'assets/icons/note_outline_big.svg'
+import PartageIcon from 'assets/icons/partage.svg'
 import PenIcon from 'assets/icons/pen.svg'
 import PendingIcon from 'assets/icons/pending.svg'
 import PeopleIcon from 'assets/icons/people.svg'
@@ -96,6 +97,7 @@ export enum IconName {
   Menu = 'Menu',
   Note = 'Note',
   NoteBig = 'NoteBig',
+  Partage = 'Partage',
   Pending = 'Pending',
   People = 'People',
   Profil = 'Profil',
@@ -156,6 +158,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Pen]: PenIcon,
   [IconName.NoteBig]: NoteBigIcon,
   [IconName.Pending]: PendingIcon,
+  [IconName.Partage]: PartageIcon,
   [IconName.People]: PeopleIcon,
   [IconName.Profil]: ProfilIcon,
   [IconName.Remove]: RemoveIcon,
