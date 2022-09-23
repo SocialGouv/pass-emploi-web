@@ -97,7 +97,10 @@ export default function DisplayMessage({
         )}
 
         {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
-          <LienOffre infoOffre={message.infoOffre} />
+          <LienOffre
+            infoOffre={message.infoOffre}
+            isSentByConseiller={isSentByConseiller}
+          />
         )}
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&

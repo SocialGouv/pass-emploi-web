@@ -145,7 +145,7 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
             focusable='false'
             role='img'
             title='ouvrir'
-            className='ml-2 w-3 h-3'
+            className='ml-2 w-3 h-3 fill-primary'
           />
         </a>
       </dd>
