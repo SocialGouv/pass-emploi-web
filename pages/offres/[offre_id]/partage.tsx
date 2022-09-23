@@ -78,6 +78,8 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
     }
   }
 
+  useMatomo('Partage offre')
+
   return (
     <>
       <p>Offre n°{offre.id}</p>

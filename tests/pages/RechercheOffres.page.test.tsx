@@ -24,7 +24,7 @@ describe('Page Recherche Offres', () => {
         searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
       })
 
-      renderWithContexts(<RechercheOffres />, {
+      renderWithContexts(<RechercheOffres pageTitle='' />, {
         customDependances: { offresEmploiService },
       })
     })
@@ -162,13 +162,36 @@ describe('Page Recherche Offres', () => {
       })
 
       // When
-      const actual = await getServerSideProps({} as GetServerSidePropsContext)
+      const actual = await getServerSideProps({
+        query: {},
+      } as GetServerSidePropsContext)
 
       // Then
       expect(actual).toEqual({
         props: {
           pageTitle: 'Recherche d’offres',
           pageHeader: 'Offres',
+        },
+      })
+    })
+
+    it('récupère la réussite du partage', async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+      })
+
+      // When
+      const actual = await getServerSideProps({
+        query: { partageOffre: 'succes' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(actual).toEqual({
+        props: {
+          pageTitle: 'Recherche d’offres',
+          pageHeader: 'Offres',
+          partageSuccess: true,
         },
       })
     })
