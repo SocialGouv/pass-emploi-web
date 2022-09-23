@@ -203,8 +203,6 @@ describe('EnvoiMessageGroupe', () => {
         })
 
         // When
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
-        await userEvent.type(inputMessage, 'un message')
         await userEvent.click(submitButton)
 
         // Then
