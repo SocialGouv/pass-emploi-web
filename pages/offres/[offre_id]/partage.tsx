@@ -1,9 +1,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
@@ -31,17 +32,32 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
 
-  const [idsJeunesSelectionnes, setIdsJeunesSelectionnes] = useState<string[]>(
-    []
-  )
+  const [idsDestinataires, setIdsDestinataires] = useState<
+    RequiredValue<string[]>
+  >({ value: [] })
   const [message, setMessage] = useState<string | undefined>()
+
+  const formIsValid = useMemo(
+    () => idsDestinataires.value.length > 0,
+    [idsDestinataires]
+  )
+
+  function updateIdsDestinataires(selectedIds: string[]) {
+    setIdsDestinataires({
+      value: selectedIds,
+      error: !selectedIds.length
+        ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+        : undefined,
+    })
+  }
 
   async function partager(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!formIsValid) return
 
     await messagesService.partagerOffre({
       offre,
-      idsDestinataires: idsJeunesSelectionnes,
+      idsDestinataires: idsDestinataires.value,
       cleChiffrement: chatCredentials!.cleChiffrement,
       message:
         message ||
@@ -74,7 +90,8 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
           <JeunesMultiselectAutocomplete
             jeunes={jeunes}
             typeSelection='Bénéficiaires'
-            onUpdate={setIdsJeunesSelectionnes}
+            onUpdate={updateIdsDestinataires}
+            error={idsDestinataires.error}
           />
         </fieldset>
 
@@ -114,9 +131,8 @@ function PartageOffre({ offre, jeunes }: PartageOffresProps) {
           <Button
             type='submit'
             className='flex items-center p-2'
-            disabled={false}
+            disabled={!formIsValid}
             isLoading={false}
-            onClick={() => {}}
           >
             <IconComponent
               name={IconName.Send}

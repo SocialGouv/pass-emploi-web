@@ -200,6 +200,7 @@ describe('Page Partage Offre', () => {
 
     describe('formulaire rempli', () => {
       let inputMessage: HTMLTextAreaElement
+      let buttonValider: HTMLButtonElement
       let message: string
       let push: Function
       beforeEach(async () => {
@@ -211,6 +212,7 @@ describe('Page Partage Offre', () => {
           name: 'Rechercher et ajouter des jeunes Nom et prénom',
         })
         inputMessage = screen.getByRole('textbox', { name: /Message/ })
+        buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
         message = "Regarde cette offre qui pourrait t'intéresser."
         await userEvent.type(selectJeune, 'Jirac Kenji')
@@ -221,7 +223,7 @@ describe('Page Partage Offre', () => {
       describe('quand le formulair est valide', () => {
         it("partage l'offre", async () => {
           // When
-          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+          await userEvent.click(buttonValider)
 
           // Then
           expect(messagesService.partagerOffre).toHaveBeenCalledWith({
@@ -237,7 +239,7 @@ describe('Page Partage Offre', () => {
           await userEvent.clear(inputMessage)
 
           // When
-          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+          await userEvent.click(buttonValider)
 
           // Then
           expect(messagesService.partagerOffre).toHaveBeenCalledWith({
@@ -251,7 +253,7 @@ describe('Page Partage Offre', () => {
 
         it('renvoie à la recherche', async () => {
           // When
-          await userEvent.click(screen.getByRole('button', { name: 'Envoyer' }))
+          await userEvent.click(buttonValider)
 
           // Then
           expect(push).toHaveBeenCalledWith({
@@ -259,6 +261,27 @@ describe('Page Partage Offre', () => {
             query: { partageOffre: 'succes' },
           })
         })
+      })
+
+      it("est désactivé quand aucun jeune n'est sélectionné", async () => {
+        // Given
+        const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
+          'button',
+          { name: 'Enlever jeune' }
+        )
+
+        // When
+        for (const bouton of enleverJeunes) {
+          await userEvent.click(bouton)
+        }
+
+        // Then
+        expect(buttonValider).toHaveAttribute('disabled', '')
+        expect(
+          screen.getByText(
+            "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+          )
+        ).toBeInTheDocument()
       })
     })
   })
