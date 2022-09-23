@@ -11,24 +11,26 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
+import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 
-type RechercheOffresProps = PageProps
+type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
-function RechercheOffres() {
+function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 
-  const initialTracking: string = 'Recherche offres emploi'
+  const pageTracking: string = 'Recherche offres emploi'
+  let initialTracking: string = pageTracking
+  if (partageSuccess) initialTracking += ' - Partage offre succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
@@ -42,10 +44,10 @@ function RechercheOffres() {
         motsCles ? { motsCles } : {}
       )
       setOffres(result)
-      setTrackingTitle(initialTracking + ' - Résultats')
+      setTrackingTitle(pageTracking + ' - Résultats')
     } catch {
       setSearchError('Une erreur est survenue. Vous pouvez réessayer')
-      setTrackingTitle(initialTracking + ' - Erreur')
+      setTrackingTitle(pageTracking + ' - Erreur')
     } finally {
       setIsSearching(false)
     }
@@ -130,12 +132,16 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  return {
-    props: {
-      pageTitle: 'Recherche d’offres',
-      pageHeader: 'Offres',
-    },
+  const props: RechercheOffresProps = {
+    pageTitle: 'Recherche d’offres',
+    pageHeader: 'Offres',
   }
+
+  if (context.query[QueryParam.partageOffre])
+    props.partageSuccess =
+      context.query[QueryParam.partageOffre] === QueryValue.succes
+
+  return { props }
 }
 
 export default withTransaction(RechercheOffres.name, 'page')(RechercheOffres)

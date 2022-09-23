@@ -189,25 +189,25 @@ describe("Page Détail d'une action d'un jeune", () => {
             )
             await userEvent.click(radioButton)
 
-          // When
-          const submitQualification = screen.getByRole('button', {
-            name: /Enregistrer/,
-          })
-          await userEvent.click(submitQualification)
-        })
-
-        it("qualifie l'action", () => {
-          expect(actionsService.qualifier).toHaveBeenCalledWith(
-            actionAQualifier.id,
-            CODE_QUALIFICATION_NON_SNP)
+            // When
+            const submitQualification = screen.getByRole('button', {
+              name: /Enregistrer/,
+            })
+            await userEvent.click(submitQualification)
           })
 
+          it("qualifie l'action", () => {
+            expect(actionsService.qualifier).toHaveBeenCalledWith(
+              actionAQualifier.id,
+              CODE_QUALIFICATION_NON_SNP
+            )
+          })
 
-        it("met à jour le tag de l'action", () => {
-          expect(
-            screen.getByText('PAS Situation Non Professionnelle')
-          ).toBeInTheDocument()
-        })
+          it("met à jour le tag de l'action", () => {
+            expect(
+              screen.getByText('PAS Situation Non Professionnelle')
+            ).toBeInTheDocument()
+          })
 
           it('cache le formulaire de qualification', () => {
             expect(() =>
