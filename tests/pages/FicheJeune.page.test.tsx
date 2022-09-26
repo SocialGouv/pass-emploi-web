@@ -381,6 +381,13 @@ describe('Fiche Jeune', () => {
         ).toThrow()
       })
 
+      it('affiche un lien vers les rendez-vous passés du jeune', () => {
+        // Then
+        expect(
+          screen.getByRole('link', { name: 'Voir les rendez-vous passés' })
+        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/rendez-vous-passes')
+      })
+
       it('affiche les actions du jeune', async () => {
         // When
         const tabActions = screen.getByRole('tab', { name: 'Actions 14' })
@@ -1228,9 +1235,7 @@ describe('Fiche Jeune', () => {
         getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
       })
       rendezVousService = mockedRendezVousService({
-        getRendezVousJeune: jest.fn(async () =>
-          uneListeDeRdv().concat(rdvAVenir)
-        ),
+        getRendezVousJeune: jest.fn(async () => [rdvAVenir]),
       })
       actionsService = mockedActionsService({
         getActionsJeuneServerSide: jest.fn(async () => ({
@@ -1306,6 +1311,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(rendezVousService.getRendezVousJeune).toHaveBeenCalledWith(
           'id-jeune',
+          'FUTURS',
           'accessToken'
         )
         expect(actual).toMatchObject({
