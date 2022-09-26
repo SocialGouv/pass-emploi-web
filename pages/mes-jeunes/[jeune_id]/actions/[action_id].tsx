@@ -1,4 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useMemo, useState } from 'react'
@@ -97,7 +98,9 @@ function PageAction({
     } else {
       const nouvelleQualification = await actionsService.qualifier(
         action.id,
-        CODE_QUALIFICATION_NON_SNP
+        CODE_QUALIFICATION_NON_SNP,
+        DateTime.fromISO(action.dateEcheance),
+        DateTime.fromISO(action.dateEcheance)
       )
       setQualification(nouvelleQualification)
       await router.replace(
