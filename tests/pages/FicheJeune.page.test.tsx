@@ -1235,9 +1235,7 @@ describe('Fiche Jeune', () => {
         getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
       })
       rendezVousService = mockedRendezVousService({
-        getRendezVousJeune: jest.fn(async () =>
-          uneListeDeRdv().concat(rdvAVenir)
-        ),
+        getRendezVousJeune: jest.fn(async () => [rdvAVenir]),
       })
       actionsService = mockedActionsService({
         getActionsJeuneServerSide: jest.fn(async () => ({

@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { ApiClient } from 'clients/api.client'
 import {
   typesDeRendezVous,
@@ -108,7 +110,7 @@ describe('RendezVousApiService', () => {
     })
   })
 
-  describe('updateRendezVous', () => {
+  describe('.updateRendezVous', () => {
     it('met à jour un rendez vous déja existant', async () => {
       // Given
       const rdvFormData: RdvFormData = {
@@ -179,9 +181,8 @@ describe('RendezVousApiService', () => {
       const accessToken = 'accessToken'
       const idJeune = 'id-jeune'
       const periode = 'PASSES'
-      const rdvs = [unRendezVous()]
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: rdvs,
+        content: [unRendezVousJson()],
       })
 
       // When
@@ -196,7 +197,7 @@ describe('RendezVousApiService', () => {
         `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
         accessToken
       )
-      expect(actual).toEqual(rdvs)
+      expect(actual).toEqual([unRendezVous({ jeunes: [] })])
     })
   })
 })
