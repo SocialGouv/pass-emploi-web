@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { desBaseOffres } from 'fixtures/offre'
+import { listeBaseOffres } from 'fixtures/offre'
 import { mockedOffresEmploiService } from 'fixtures/services'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
@@ -19,7 +19,7 @@ describe('Page Recherche Offres', () => {
     let offresEmploiService: OffresEmploiService
     let offresEmploi: BaseOffreEmploi[]
     beforeEach(() => {
-      offresEmploi = desBaseOffres()
+      offresEmploi = listeBaseOffres()
       offresEmploiService = mockedOffresEmploiService({
         searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
       })
