@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -36,10 +36,10 @@ describe('MiloCreationJeune', () => {
         name: 'Valider le numéro',
       })
       const inputSearch = screen.getByLabelText('Numéro de dossier')
-      await userEvent.clear(inputSearch)
+      await act(() => userEvent.clear(inputSearch))
 
       // When
-      await userEvent.click(submitButton)
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(
@@ -92,7 +92,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      await userEvent.click(createCompteButton)
+      await act(() => userEvent.click(createCompteButton))
 
       // Then
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledWith({
@@ -133,7 +133,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      await userEvent.click(createCompteButton)
+      await act(() => userEvent.click(createCompteButton))
 
       // Then
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)

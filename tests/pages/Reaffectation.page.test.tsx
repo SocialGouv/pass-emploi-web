@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -99,7 +99,7 @@ describe('Reaffectation', () => {
         expect(typeReaffectationRadio).not.toBeChecked()
 
         // When
-        await userEvent.click(typeReaffectationRadio)
+        await act(() => userEvent.click(typeReaffectationRadio))
 
         // Then
         expect(typeReaffectationRadio).toBeChecked()
@@ -118,10 +118,10 @@ describe('Reaffectation', () => {
         ;(
           jeunesService.getJeunesDuConseillerParEmail as jest.Mock
         ).mockResolvedValue({ idConseiller: idConseillerInitial, jeunes })
-        await userEvent.type(emailInput, emailConseillerInitial)
+        await act(() => userEvent.type(emailInput, emailConseillerInitial))
 
         // WHEN
-        await userEvent.click(submitRecherche)
+        await act(() => userEvent.click(submitRecherche))
       })
 
       it('récupère les jeunes du conseiller', async () => {
@@ -147,7 +147,7 @@ describe('Reaffectation', () => {
         expect(toutSelectionnerCheckbox).not.toBeChecked()
 
         // When
-        await userEvent.click(toutSelectionnerCheckbox)
+        await act(() => userEvent.click(toutSelectionnerCheckbox))
 
         // Then
         expect(toutSelectionnerCheckbox).toBeChecked()
@@ -156,7 +156,7 @@ describe('Reaffectation', () => {
       describe('à la modification du mail du conseiller initial', () => {
         it('reset la recherche', async () => {
           // WHEN
-          await userEvent.type(emailInput, 'whatever')
+          await act(() => userEvent.type(emailInput, 'whatever'))
 
           // THEN
           for (const jeune of jeunes) {
@@ -179,15 +179,21 @@ describe('Reaffectation', () => {
           const submitReaffecter = screen.getByText('Réaffecter les jeunes')
 
           // WHEN
-          await userEvent.type(destinationInput, emailConseillerDestination)
-          await userEvent.click(
-            screen.getByText(jeunes[0].prenom, { exact: false })
+          await act(() =>
+            userEvent.type(destinationInput, emailConseillerDestination)
           )
-          await userEvent.click(
-            screen.getByText(jeunes[2].prenom, { exact: false })
+          await act(() =>
+            userEvent.click(
+              screen.getByText(jeunes[0].prenom, { exact: false })
+            )
           )
-          await userEvent.click(typeReaffectationRadio)
-          await userEvent.click(submitReaffecter)
+          await act(() =>
+            userEvent.click(
+              screen.getByText(jeunes[2].prenom, { exact: false })
+            )
+          )
+          await act(() => userEvent.click(typeReaffectationRadio))
+          await act(() => userEvent.click(submitReaffecter))
 
           // THEN
           expect(jeunesService.reaffecter).toHaveBeenCalledWith(

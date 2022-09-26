@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -78,7 +78,7 @@ describe('Home', () => {
         const annuler = screen.getByRole('button', { name: 'Annuler' })
 
         // When
-        await userEvent.click(annuler)
+        await act(() => userEvent.click(annuler))
 
         // Then
         expect(replace).toHaveBeenCalledWith('/mes-jeunes')
@@ -93,8 +93,8 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        await userEvent.type(searchAgence, agence.nom)
-        await userEvent.click(submit)
+        await act(() => userEvent.type(searchAgence, agence.nom))
+        await act(() => userEvent.click(submit))
 
         // Then
         expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
@@ -112,8 +112,8 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        await userEvent.type(searchAgence, 'pouet')
-        await userEvent.click(submit)
+        await act(() => userEvent.type(searchAgence, 'pouet'))
+        await act(() => userEvent.click(submit))
 
         // Then
         expect(
@@ -131,12 +131,12 @@ describe('Home', () => {
           searchAgence = screen.getByRole('combobox', {
             name: /Rechercher/,
           })
-          await userEvent.type(searchAgence, 'pouet')
+          await act(() => userEvent.type(searchAgence, 'pouet'))
 
           const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
             name: /n’apparaît pas/,
           })
-          await userEvent.click(checkAgenceNonTrouvee)
+          await act(() => userEvent.click(checkAgenceNonTrouvee))
 
           agenceLibre = screen.getByRole('textbox', {
             name: /Saisir le nom de votre agence/,
@@ -145,9 +145,9 @@ describe('Home', () => {
 
         it('permet de renseigner une agence libre', async () => {
           // When
-          await userEvent.type(agenceLibre, 'Agence libre')
+          await act(() => userEvent.type(agenceLibre, 'Agence libre'))
           const submit = screen.getByRole('button', { name: 'Ajouter' })
-          await userEvent.click(submit)
+          await act(() => userEvent.click(submit))
 
           // Then
           expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
@@ -164,7 +164,7 @@ describe('Home', () => {
         it("prévient si l'agence n'est pas renseignée", async () => {
           // When
           const submit = screen.getByRole('button', { name: 'Ajouter' })
-          await userEvent.click(submit)
+          await act(() => userEvent.click(submit))
 
           // Then
           expect(screen.getByText('Saisir une agence')).toBeInTheDocument()
@@ -186,8 +186,8 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        await userEvent.type(searchMission, 'pouet')
-        await userEvent.click(submit)
+        await act(() => userEvent.type(searchMission, 'pouet'))
+        await act(() => userEvent.click(submit))
 
         // Then
         expect(
@@ -204,7 +204,7 @@ describe('Home', () => {
         const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
           name: /Ma Mission locale n’apparaît pas/,
         })
-        await userEvent.click(checkAgenceNonTrouvee)
+        await act(() => userEvent.click(checkAgenceNonTrouvee))
 
         // Then
         expect(

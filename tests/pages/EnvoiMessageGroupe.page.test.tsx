@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -99,7 +99,7 @@ describe('EnvoiMessageGroupe', () => {
 
       it('ne devrait pas pouvoir cliquer sur le bouton envoyer avec un champ du formulaire vide', async () => {
         // Given
-        await userEvent.type(inputMessage, 'Un message')
+        await act(() => userEvent.type(inputMessage, 'Un message'))
 
         // Then
         expect(inputSearchJeune.selectedOptions).toBe(undefined)
@@ -118,9 +118,11 @@ describe('EnvoiMessageGroupe', () => {
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
 
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
-        await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-        await userEvent.type(inputMessage, newMessage)
+        await act(async () => {
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+          await userEvent.type(inputMessage, newMessage)
+        })
       })
 
       it('sélectionne plusieurs jeunes dans la liste', () => {
@@ -132,7 +134,7 @@ describe('EnvoiMessageGroupe', () => {
 
       it('envoi un message à plusieurs destinataires', async () => {
         // When
-        await userEvent.click(submitButton)
+        await act(() => userEvent.click(submitButton))
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
@@ -145,7 +147,7 @@ describe('EnvoiMessageGroupe', () => {
 
       it('redirige vers la page précédente', async () => {
         // When
-        await userEvent.click(submitButton)
+        await act(() => userEvent.click(submitButton))
 
         // Then
         expect(push).toHaveBeenCalledWith({
@@ -162,7 +164,7 @@ describe('EnvoiMessageGroupe', () => {
       //   )
       //
       //   // When
-      //   await userEvent.click(previousButton)
+      //   await act(() => userEvent.click(previousButton))
       //
       //   // Then
       //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -180,7 +182,7 @@ describe('EnvoiMessageGroupe', () => {
         const cancelButton = screen.getByText('Annuler')
 
         // When
-        await userEvent.click(cancelButton)
+        await act(() => userEvent.click(cancelButton))
 
         // Then
         expect(cancelButton).not.toHaveAttribute('href')
@@ -203,7 +205,7 @@ describe('EnvoiMessageGroupe', () => {
         })
 
         // When
-        await userEvent.click(submitButton)
+        await act(() => userEvent.click(submitButton))
 
         // Then
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
@@ -227,15 +229,16 @@ describe('EnvoiMessageGroupe', () => {
 
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
-
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
-        await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-        await userEvent.type(inputMessage, newMessage)
-
         file = new File(['un contenu'], 'imageupload.png', {
           type: 'image/png',
         })
-        await userEvent.upload(fileInput, file, { applyAccept: false })
+
+        await act(async () => {
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+          await userEvent.type(inputMessage, newMessage)
+          await userEvent.upload(fileInput, file, { applyAccept: false })
+        })
       })
 
       it('affiche le nom du fichier sélectionné', () => {
@@ -245,7 +248,7 @@ describe('EnvoiMessageGroupe', () => {
 
       it('permet la suppression de la pièce jointe', async () => {
         // When
-        await userEvent.click(screen.getByText('Enlever fichier'))
+        await act(() => userEvent.click(screen.getByText('Enlever fichier')))
 
         // Then
         expect(() => screen.getByText('imageupload.png')).toThrow()
@@ -253,7 +256,7 @@ describe('EnvoiMessageGroupe', () => {
 
       it('envoi un message à plusieurs destinataires avec pièce jointe', async () => {
         // When
-        await userEvent.click(submitButton)
+        await act(() => userEvent.click(submitButton))
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
@@ -270,10 +273,10 @@ describe('EnvoiMessageGroupe', () => {
 
       it('envoi une pièce jointe à plusieurs destinataires avec un message par défaut', async () => {
         // Given
-        await userEvent.clear(inputMessage)
+        await act(() => userEvent.clear(inputMessage))
 
         // When
-        await userEvent.click(submitButton)
+        await act(() => userEvent.click(submitButton))
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
@@ -297,7 +300,7 @@ describe('EnvoiMessageGroupe', () => {
         )
 
         // When
-        await userEvent.click(submitButton)
+        await act(() => userEvent.click(submitButton))
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(1)
@@ -311,7 +314,9 @@ describe('EnvoiMessageGroupe', () => {
     describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
       it('sélectionne tout les jeunes dans la liste', async () => {
         // When
-        await userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+        await act(() =>
+          userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+        )
 
         // Then
         expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()

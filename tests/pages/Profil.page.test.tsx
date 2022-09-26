@@ -181,7 +181,7 @@ describe('Page Profil conseiller', () => {
         const toggleNotifications = getToggleNotifications()
 
         // When
-        await userEvent.click(toggleNotifications)
+        await act(() => userEvent.click(toggleNotifications))
       })
 
       it('met à jour côté API', async () => {

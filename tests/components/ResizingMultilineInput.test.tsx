@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createRef } from 'react'
 
@@ -64,7 +64,7 @@ describe('<ResizingMultilineInput/>', () => {
 
   it('fires onChange event', async () => {
     // WHEN
-    await userEvent.type(textarea, 'new value')
+    await act(() => userEvent.type(textarea, 'new value'))
 
     // THEN
     expect(handleChange).toHaveBeenCalled()
@@ -75,7 +75,7 @@ describe('<ResizingMultilineInput/>', () => {
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(120)
 
     // WHEN
-    await userEvent.type(textarea, 'new value')
+    await act(() => userEvent.type(textarea, 'new value'))
 
     // THEN
     expect(textarea).toHaveStyle({ height: '120px' })
@@ -86,7 +86,7 @@ describe('<ResizingMultilineInput/>', () => {
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(20)
 
     // WHEN
-    await userEvent.type(textarea, 'new value')
+    await act(() => userEvent.type(textarea, 'new value'))
 
     // THEN
     expect(textarea).toHaveStyle({ height: '80px' })
@@ -97,7 +97,7 @@ describe('<ResizingMultilineInput/>', () => {
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(200)
 
     // WHEN
-    await userEvent.type(textarea, 'new value')
+    await act(() => userEvent.type(textarea, 'new value'))
 
     // THEN
     expect(textarea).toHaveStyle({ height: '160px' })
@@ -105,11 +105,11 @@ describe('<ResizingMultilineInput/>', () => {
 
   it('clears input on form submit', async () => {
     // GIVEN
-    await userEvent.type(textarea, 'input value')
+    await act(() => userEvent.type(textarea, 'input value'))
     expect(textarea).toHaveValue('input value')
 
     // WHEN
-    await userEvent.click(submitButton)
+    await act(() => userEvent.click(submitButton))
 
     // THEN
     expect(textarea).toHaveValue('')
@@ -118,11 +118,11 @@ describe('<ResizingMultilineInput/>', () => {
   it('resets height to min height on form submit', async () => {
     // GIVEN
     jest.spyOn(textarea, 'scrollHeight', 'get').mockReturnValue(200)
-    await userEvent.type(textarea, 'input value')
+    await act(() => userEvent.type(textarea, 'input value'))
     expect(textarea).toHaveValue('input value')
 
     // WHEN
-    await userEvent.click(submitButton)
+    await act(() => userEvent.click(submitButton))
 
     // THEN
     expect(textarea).toHaveStyle({ height: '80px' })
