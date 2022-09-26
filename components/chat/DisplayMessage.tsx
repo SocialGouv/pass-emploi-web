@@ -115,7 +115,7 @@ export default function DisplayMessage({
       >
         {creationTime}
         {isSentByConseiller && (
-          <span>{isSeenByJeune ? ' · Envoyé' : ' · Lu'}</span>
+          <span>{!isSeenByJeune ? ' · Envoyé' : ' · Lu'}</span>
         )}
       </p>
     </li>

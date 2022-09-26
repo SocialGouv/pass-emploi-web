@@ -189,7 +189,7 @@ describe('Page Partage Offre', () => {
       ).toBeInTheDocument()
     })
 
-    it('contient un bouton d’envoie et d’annulation', () => {
+    it('contient un bouton d’envoi et d’annulation', () => {
       // Then
       expect(screen.getByRole('button', { name: 'Envoyer' })).toHaveAttribute(
         'type',
@@ -223,7 +223,7 @@ describe('Page Partage Offre', () => {
         await userEvent.type(inputMessage, message)
       })
 
-      describe('quand le formulair est valide', () => {
+      describe('quand le formulaire est valide', () => {
         it("partage l'offre", async () => {
           // When
           await userEvent.click(buttonValider)

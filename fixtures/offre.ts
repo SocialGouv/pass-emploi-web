@@ -12,7 +12,7 @@ export function unDetailOffre(
   return { ...defaults, ...overrides }
 }
 
-export function desBaseOffres(): BaseOffreEmploi[] {
+export function listeBaseOffres(): BaseOffreEmploi[] {
   return [
     { id: '7158498', titre: 'F/H Comptable auxiliaire (H/F)' },
     { id: '7157716', titre: 'Contrôleur de Gestion H/F' },

@@ -34,7 +34,9 @@ export function LienOffre({
       </p>
       <div
         className={`mt-4 w-max ml-auto ${
-          isSentByConseiller ? 'text-blanc' : ''
+          isSentByConseiller
+            ? 'text-blanc hover:text-primary_lighten'
+            : 'text-primary_darken hover:text-primary'
         }`}
       >
         <ExternalLink
