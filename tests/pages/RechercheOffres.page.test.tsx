@@ -90,6 +90,19 @@ describe('Page Recherche Offres', () => {
       it('affiche chaque offre', async () => {
         offresEmploi.forEach((offre) => {
           expect(within(offresList).getByText(offre.titre)).toBeInTheDocument()
+          expect(
+            within(offresList).getByText('Offre n°' + offre.id)
+          ).toBeInTheDocument()
+          expect(
+            within(offresList).getByText(offre.typeContrat)
+          ).toBeInTheDocument()
+          expect(within(offresList).getByText(offre.duree)).toBeInTheDocument()
+          expect(
+            within(offresList).getByText(offre.nomEntreprise)
+          ).toBeInTheDocument()
+          expect(
+            within(offresList).getByText(offre.localisation.nom)
+          ).toBeInTheDocument()
         })
       })
 
