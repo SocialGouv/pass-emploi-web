@@ -2,6 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 
 import TableauRdv from 'components/rdv/TableauRdv'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -33,18 +34,26 @@ export const getServerSideProps: GetServerSideProps<
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-  const {
-    session: { accessToken },
-  } = sessionOrRedirect
 
   const rendezVousService =
     withDependance<RendezVousService>('rendezVousService')
 
-  const rdvs = await rendezVousService.getRendezVousJeune(
-    context.query.jeune_id as string,
-    PeriodeRdv.PASSES,
-    accessToken
-  )
+  const {
+    session: {
+      accessToken,
+      user: { structure },
+    },
+  } = sessionOrRedirect
+
+  const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
+
+  const rdvs = isPoleEmploi
+    ? []
+    : await rendezVousService.getRendezVousJeune(
+        context.query.jeune_id as string,
+        PeriodeRdv.PASSES,
+        accessToken
+      )
 
   if (!rdvs) {
     return { notFound: true }
