@@ -48,7 +48,7 @@ describe('RendezVousPasses', () => {
 
           // Then
           expect(
-            screen.getByText('Il n’y a pas de rendez-vous sur cette période')
+            screen.getByText('Il n’y a pas de rendez-vous sur cette période.')
           ).toBeInTheDocument()
         })
       })
