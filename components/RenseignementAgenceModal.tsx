@@ -8,7 +8,8 @@ import Label from 'components/ui/Form/Label'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Agence, StructureConseiller } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { Agence } from 'interfaces/referentiel'
 
 interface RenseignementAgenceModalProps {
   structureConseiller: string

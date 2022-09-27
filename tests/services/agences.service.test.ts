@@ -4,7 +4,7 @@ import { ApiClient } from 'clients/api.client'
 import {
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
-} from 'fixtures/agence'
+} from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AgencesApiService } from 'services/agences.service'
 

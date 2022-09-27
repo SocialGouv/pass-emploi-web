@@ -3,13 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { unConseiller } from 'fixtures/conseiller'
 import {
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
-} from 'fixtures/agence'
-import { unConseiller } from 'fixtures/conseiller'
+} from 'fixtures/referentiel'
 import { mockedConseillerService } from 'fixtures/services'
-import { Agence, StructureConseiller } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { Agence } from 'interfaces/referentiel'
 import Home, { getServerSideProps } from 'pages/index'
 import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'

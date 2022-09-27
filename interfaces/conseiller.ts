@@ -12,11 +12,6 @@ export enum UserRole {
   SUPERVISEUR = 'SUPERVISEUR',
 }
 
-export interface Agence {
-  id: string
-  nom: string
-}
-
 export interface Conseiller {
   id: string
   firstName: string
