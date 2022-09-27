@@ -136,5 +136,31 @@ describe('OffresEmploiApiService', () => {
         'accessToken'
       )
     })
+
+    it('parse le département', async () => {
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        departement: '75',
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&departement=75',
+        'accessToken'
+      )
+    })
+
+    it('parse la commune', async () => {
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        commune: '35238',
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&commune=35238',
+        'accessToken'
+      )
+    })
   })
 })

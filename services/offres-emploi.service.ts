@@ -18,6 +18,8 @@ export interface OffresEmploiService {
   ): Promise<DetailOffreEmploi | undefined>
   searchOffresEmploi(recherche: {
     motsCles?: string
+    departement?: string
+    commune?: string
   }): Promise<OffreEmploiItem[]>
 }
 
@@ -39,20 +41,20 @@ export class OffresEmploiApiService implements OffresEmploiService {
     return this.getOffreEmploi(idOffreEmploi, accessToken)
   }
 
-  async searchOffresEmploi({
-    motsCles,
-  }: {
-    motsCles?: string
-  } = {}): Promise<OffreEmploiItem[]> {
+  async searchOffresEmploi(
+    options: {
+      motsCles?: string
+      departement?: string
+      commune?: string
+    } = {}
+  ): Promise<OffreEmploiItem[]> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
-    const path = `/offres-emploi?alternance=false`
-    const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
-
+    const searchUrl = buildSearchUrl(options)
     const { content } = await this.apiClient.get<{
       results: OffreEmploiItemJson[]
-    }>(path + queryMotsCles, accessToken)
+    }>(searchUrl, accessToken)
 
     return content.results.map(jsonToOffreEmploiItem)
   }
@@ -75,4 +77,21 @@ export class OffresEmploiApiService implements OffresEmploiService {
       throw e
     }
   }
+}
+
+function buildSearchUrl({
+  commune,
+  departement,
+  motsCles,
+}: {
+  motsCles?: string
+  departement?: string
+  commune?: string
+}): string {
+  const path = `/offres-emploi?alternance=false`
+  const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
+  const queryDepartement = departement ? `&departement=${departement}` : ''
+  const queryCommune = commune ? `&commune=${commune}` : ''
+
+  return path + queryMotsCles + queryDepartement + queryCommune
 }
