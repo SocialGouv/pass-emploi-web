@@ -9,7 +9,7 @@ import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { BaseOffreEmploi } from 'interfaces/offre-emploi'
+import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { OffresEmploiService } from 'services/offres-emploi.service'
@@ -24,7 +24,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     'offresEmploiService'
   )
   const [motsCles, setMotsCles] = useState<string | undefined>()
-  const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
+  const [offres, setOffres] = useState<OffreEmploiItem[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 

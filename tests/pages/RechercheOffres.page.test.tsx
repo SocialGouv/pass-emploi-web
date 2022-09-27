@@ -4,7 +4,7 @@ import { GetServerSidePropsContext } from 'next/types'
 
 import { listeBaseOffres } from 'fixtures/offre'
 import { mockedOffresEmploiService } from 'fixtures/services'
-import { BaseOffreEmploi } from 'interfaces/offre-emploi'
+import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -17,7 +17,7 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 describe('Page Recherche Offres', () => {
   describe('client side', () => {
     let offresEmploiService: OffresEmploiService
-    let offresEmploi: BaseOffreEmploi[]
+    let offresEmploi: OffreEmploiItem[]
     beforeEach(() => {
       offresEmploi = listeBaseOffres()
       offresEmploiService = mockedOffresEmploiService({
@@ -89,19 +89,18 @@ describe('Page Recherche Offres', () => {
 
       it('affiche chaque offre', async () => {
         offresEmploi.forEach((offre) => {
-          expect(within(offresList).getByText(offre.titre)).toBeInTheDocument()
+          const offreCard = within(offresList).getByText('Offre n°' + offre.id)
+            .parentElement!
+          expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
           expect(
-            within(offresList).getByText('Offre n°' + offre.id)
+            within(offreCard).getByText(offre.typeContrat)
+          ).toBeInTheDocument()
+          expect(within(offreCard).getByText(offre.duree)).toBeInTheDocument()
+          expect(
+            within(offreCard).getByText(offre.nomEntreprise)
           ).toBeInTheDocument()
           expect(
-            within(offresList).getByText(offre.typeContrat)
-          ).toBeInTheDocument()
-          expect(within(offresList).getByText(offre.duree)).toBeInTheDocument()
-          expect(
-            within(offresList).getByText(offre.nomEntreprise)
-          ).toBeInTheDocument()
-          expect(
-            within(offresList).getByText(offre.localisation.nom)
+            within(offreCard).getByText(offre.localisation.nom)
           ).toBeInTheDocument()
         })
       })

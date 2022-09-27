@@ -1,6 +1,9 @@
-export type BaseOffreEmploi = {
+type BaseOffreEmploi = {
   id: string
   titre: string
+}
+
+export type OffreEmploiItem = BaseOffreEmploi & {
   nomEntreprise: string
   localisation: {
     nom: string

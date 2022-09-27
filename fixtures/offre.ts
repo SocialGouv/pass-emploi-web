@@ -1,5 +1,5 @@
 import { DetailOffreEmploiJson } from 'interfaces/json/offre'
-import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { OffreEmploiItem, DetailOffreEmploi } from 'interfaces/offre-emploi'
 
 export function unDetailOffre(
   overrides: Partial<DetailOffreEmploi> = {}
@@ -7,48 +7,42 @@ export function unDetailOffre(
   const defaults: DetailOffreEmploi = {
     id: 'id-offre',
     titre: "Offre d'emploi",
-    nomEntreprise: 'Entreprise 0',
-    localisation: {
-      nom: 'Adresse 0',
-    },
-    typeContrat: 'CDI',
-    duree: 'Temps plein',
     urlPostulation: 'https://www.offres-emploi.fr/id-offre',
   }
   return { ...defaults, ...overrides }
 }
 
-export function listeBaseOffres(): BaseOffreEmploi[] {
+export function listeBaseOffres(): OffreEmploiItem[] {
   return [
     {
       id: '7158498',
       titre: 'F/H Comptable auxiliaire (H/F)',
-      nomEntreprise: 'Entreprise 1',
+      nomEntreprise: 'Entreprise',
       localisation: {
-        nom: 'Adresse 1',
+        nom: 'Adresse',
       },
-      typeContrat: 'CDI 1',
-      duree: 'Temps plein 1',
+      typeContrat: 'CDI',
+      duree: 'Temps plein',
     },
     {
       id: '7157716',
       titre: 'Contrôleur de Gestion H/F',
-      nomEntreprise: 'Entreprise 2',
+      nomEntreprise: 'Entreprise',
       localisation: {
-        nom: 'Adresse 2',
+        nom: 'Adresse',
       },
-      typeContrat: 'CD 2',
-      duree: 'Temps plein 2',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
     },
     {
       id: '137FPBC',
       titre: 'Serveur / Serveuse de bar-brasserie',
-      nomEntreprise: 'Entreprise 3',
+      nomEntreprise: 'Entreprise',
       localisation: {
-        nom: 'Adresse 3',
+        nom: 'Adresse',
       },
-      typeContrat: 'CDI 3',
-      duree: 'Temps plein 3',
+      typeContrat: 'CDI',
+      duree: 'Temps plein',
     },
   ]
 }

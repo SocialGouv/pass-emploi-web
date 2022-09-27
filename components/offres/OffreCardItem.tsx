@@ -5,10 +5,10 @@ import IconComponent, { IconName } from '../ui/IconComponent'
 import { DataTag } from '../ui/Indicateurs/DataTag'
 import { Tag } from '../ui/Indicateurs/Tag'
 
-import { BaseOffreEmploi } from 'interfaces/offre-emploi'
+import { OffreEmploiItem } from 'interfaces/offre-emploi'
 
 interface OffreItemCardProps {
-  offre: BaseOffreEmploi
+  offre: OffreEmploiItem
 }
 
 export function OffreCardItem({ offre }: OffreItemCardProps) {
