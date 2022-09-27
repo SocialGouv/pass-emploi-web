@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -45,7 +45,7 @@ describe('Page Recherche Offres', () => {
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await userEvent.click(submitButton)
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
@@ -57,8 +57,8 @@ describe('Page Recherche Offres', () => {
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await userEvent.type(inputMotsCles, 'prof industrie')
-      await userEvent.click(submitButton)
+      await act(() => userEvent.type(inputMotsCles, 'prof industrie'))
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
@@ -73,7 +73,7 @@ describe('Page Recherche Offres', () => {
         const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
         // When
-        await userEvent.click(submitButton)
+        await act(() => userEvent.click(submitButton))
 
         // Then
         offresList = screen.getByRole('list', {
@@ -125,7 +125,7 @@ describe('Page Recherche Offres', () => {
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await userEvent.click(submitButton)
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(screen.getByRole('alert')).toHaveTextContent(
@@ -141,7 +141,7 @@ describe('Page Recherche Offres', () => {
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await userEvent.click(submitButton)
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(

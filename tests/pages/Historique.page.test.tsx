@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -84,7 +84,7 @@ describe('Historique', () => {
           const tabConseillers = screen.getByRole('tab', {
             name: 'Historique des conseillers',
           })
-          await userEvent.click(tabConseillers)
+          await act(() => userEvent.click(tabConseillers))
 
           // Then
           expect(
@@ -100,7 +100,7 @@ describe('Historique', () => {
           const tabConseillers = screen.getByRole('tab', {
             name: 'Historique des conseillers',
           })
-          await userEvent.click(tabConseillers)
+          await act(() => userEvent.click(tabConseillers))
 
           //Then
           listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {

@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -60,7 +60,7 @@ describe('Favoris', () => {
       )
       const offre = screen.getByText('Offre d’emploi')
       // When
-      await userEvent.click(offre)
+      await act(() => userEvent.click(offre))
       // Then
       expect(offresEmploiService.getLienOffreEmploi).toHaveBeenCalledWith(
         'idOffre1'
@@ -79,7 +79,7 @@ describe('Favoris', () => {
       ).mockResolvedValue('https://wwww.service-civique.fr/une-id')
       const serviceCivique = screen.getByText('Service civique')
       // When
-      await userEvent.click(serviceCivique)
+      await act(() => userEvent.click(serviceCivique))
       // Then
       expect(servicesCiviqueService.getLienServiceCivique).toHaveBeenCalledWith(
         'idOffre2'
@@ -98,7 +98,7 @@ describe('Favoris', () => {
       ).mockResolvedValue(undefined)
       const serviceCivique = screen.getByText('Service civique')
       // When
-      await userEvent.click(serviceCivique)
+      await act(() => userEvent.click(serviceCivique))
       // Then
       expect(servicesCiviqueService.getLienServiceCivique).toHaveBeenCalledWith(
         'idOffre2'
@@ -110,7 +110,7 @@ describe('Favoris', () => {
       // Given
       const immersion = screen.getByText('Immersion')
       // When
-      await userEvent.click(immersion)
+      await act(() => userEvent.click(immersion))
       // Then
       expect(mockOpen).toHaveBeenCalledTimes(0)
     })
@@ -118,7 +118,7 @@ describe('Favoris', () => {
     it('affiche la liste de ses recherches', async () => {
       // When
       const tabActions = screen.getByRole('tab', { name: 'Recherches 2' })
-      await userEvent.click(tabActions)
+      await act(() => userEvent.click(tabActions))
 
       // Then
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(

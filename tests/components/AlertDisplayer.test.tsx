@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -32,8 +32,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -72,8 +72,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -112,8 +112,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -152,8 +152,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -203,8 +203,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -243,8 +243,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -281,8 +281,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -321,8 +321,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -361,8 +361,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -402,8 +402,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then
@@ -443,8 +443,8 @@ describe('AlertDisplayer', () => {
 
     it("permet de fermer l'alerte du succès", async () => {
       // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
+      await act(() =>
+        userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
       )
 
       // Then

@@ -69,8 +69,10 @@ describe('Recherche', () => {
 
     it('quand on recherche un nom avec des caractères spéciaux', async () => {
       //WHEN
-      await userEvent.type(inputSearch, 'muñoz')
-      await userEvent.click(submitButton)
+      await act(async () => {
+        await userEvent.type(inputSearch, 'muñoz')
+        await userEvent.click(submitButton)
+      })
 
       //THEN
       const result = screen.getByRole('row', {
@@ -81,8 +83,10 @@ describe('Recherche', () => {
 
     it("quand on recherche un nom composé d'un espace et/ou avec tiret", async () => {
       //WHEN
-      await userEvent.type(inputSearch, "D'Aböville-Muñoz")
-      await userEvent.click(submitButton)
+      await act(async () => {
+        await userEvent.type(inputSearch, "D'Aböville-Muñoz")
+        await userEvent.click(submitButton)
+      })
 
       //THEN
       const result = screen.getByRole('row', {
@@ -90,10 +94,13 @@ describe('Recherche', () => {
       })
       expect(result).toBeInTheDocument()
     })
+
     it("quand on recherche un nom composé d'une apostrophe", async () => {
       //WHEN
-      await userEvent.type(inputSearch, 'D aböville-Muñoz')
-      await userEvent.click(submitButton)
+      await act(async () => {
+        await userEvent.type(inputSearch, 'D aböville-Muñoz')
+        await userEvent.click(submitButton)
+      })
 
       //THEN
       const result = screen.getByRole('row', {

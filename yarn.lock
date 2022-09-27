@@ -1869,16 +1869,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/app-compat@npm:0.1.33":
-  version: 0.1.33
-  resolution: "@firebase/app-compat@npm:0.1.33"
+"@firebase/app-compat@npm:0.1.34":
+  version: 0.1.34
+  resolution: "@firebase/app-compat@npm:0.1.34"
   dependencies:
-    "@firebase/app": 0.7.32
+    "@firebase/app": 0.7.33
     "@firebase/component": 0.5.17
     "@firebase/logger": 0.3.3
     "@firebase/util": 1.6.3
     tslib: ^2.1.0
-  checksum: 24c6b5b5a674eeaf326e9d883378b36725ae09ceb1fea53d885ba0fef6297de6e759281a0935b0e4f08bdaaf85974c006740f2948d3d6eb59a06d195d7e3af5a
+  checksum: 959a14358bcb1a2df9b7f9def9ac5035c9ce1bc14913891d65357b6342bc43e91e4a6e68f1cb2c5ca56e55fd85369b80d0074542be43ed3849d3c7fc236f837a
   languageName: node
   linkType: hard
 
@@ -1889,24 +1889,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/app@npm:0.7.32":
-  version: 0.7.32
-  resolution: "@firebase/app@npm:0.7.32"
+"@firebase/app@npm:0.7.33":
+  version: 0.7.33
+  resolution: "@firebase/app@npm:0.7.33"
   dependencies:
     "@firebase/component": 0.5.17
     "@firebase/logger": 0.3.3
     "@firebase/util": 1.6.3
     idb: 7.0.1
     tslib: ^2.1.0
-  checksum: 005b1fea853bb2cd63ad531a7f34f866482684226d2f6d7a7a5bbc7be9d67f83f954f197a0ad29ad6178aa3e566dace10d5842ecdfd464ff900b41ad2dc9c7b9
+  checksum: 52904eb31c6a56561c331eba76a9d37a6d2b9b4f804410391dc74b3a02a2f6e2c8e60ca2d61e9c81333a48b373bb8152634e6204d95cf792bcef34aab4d5e486
   languageName: node
   linkType: hard
 
-"@firebase/auth-compat@npm:0.2.19":
-  version: 0.2.19
-  resolution: "@firebase/auth-compat@npm:0.2.19"
+"@firebase/auth-compat@npm:0.2.20":
+  version: 0.2.20
+  resolution: "@firebase/auth-compat@npm:0.2.20"
   dependencies:
-    "@firebase/auth": 0.20.6
+    "@firebase/auth": 0.20.7
     "@firebase/auth-types": 0.11.0
     "@firebase/component": 0.5.17
     "@firebase/util": 1.6.3
@@ -1915,7 +1915,7 @@ __metadata:
     tslib: ^2.1.0
   peerDependencies:
     "@firebase/app-compat": 0.x
-  checksum: f32bcfff7c3e95987ede8a414ef9150dd10e686fcb2ff0442f615f831097b7cf0cbda0acc1d025f646ee4e32d560fa6ca7fc89378770562ad9f1cb5fb98d742f
+  checksum: 68c75946d24d38fed7ec8a00d5aca95e3e719caf98abdefe00b00df1b344a3b247b052497126ab090262e398da4680803a807808ea76a0ac85cc6401b2f57422
   languageName: node
   linkType: hard
 
@@ -1939,9 +1939,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/auth@npm:0.20.6":
-  version: 0.20.6
-  resolution: "@firebase/auth@npm:0.20.6"
+"@firebase/auth@npm:0.20.7":
+  version: 0.20.7
+  resolution: "@firebase/auth@npm:0.20.7"
   dependencies:
     "@firebase/component": 0.5.17
     "@firebase/logger": 0.3.3
@@ -1951,7 +1951,7 @@ __metadata:
     tslib: ^2.1.0
   peerDependencies:
     "@firebase/app": 0.x
-  checksum: bb401e199e4be8998abac99d22f255b8892eb75487042e8eb535369644f6addb0710c0ea41b7ea853182e8292f38d0e268a99858e82e2de76fbeb6547db8e66b
+  checksum: e7863ed5ac036387f06ef8f6804b6f1ce113727e00562f48ce4a333106ccca98150d14058dc0c202367498b1302dc4f77dd89faef841eac7644b303914c4f0e0
   languageName: node
   linkType: hard
 
@@ -2003,18 +2003,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/firestore-compat@npm:0.1.24":
-  version: 0.1.24
-  resolution: "@firebase/firestore-compat@npm:0.1.24"
+"@firebase/firestore-compat@npm:0.1.25":
+  version: 0.1.25
+  resolution: "@firebase/firestore-compat@npm:0.1.25"
   dependencies:
     "@firebase/component": 0.5.17
-    "@firebase/firestore": 3.4.15
+    "@firebase/firestore": 3.5.0
     "@firebase/firestore-types": 2.5.0
     "@firebase/util": 1.6.3
     tslib: ^2.1.0
   peerDependencies:
     "@firebase/app-compat": 0.x
-  checksum: 61c98dbea956347f715386b2041c7af56b9991d7adfe5d379432958a84b3571069795aaf4cb0733bbc6608c9aee89fe33ed53c8b576af6688e4f8c86e559efbf
+  checksum: 8a56e16cf64cc8a727c6af8fde1b37e4f14a16d8cb6c556a70baa1179a00bd6859661cd719c4096f0bcb83f593945c1321290a52614215768424b559722391a5
   languageName: node
   linkType: hard
 
@@ -2028,21 +2028,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/firestore@npm:3.4.15":
-  version: 3.4.15
-  resolution: "@firebase/firestore@npm:3.4.15"
+"@firebase/firestore@npm:3.5.0":
+  version: 3.5.0
+  resolution: "@firebase/firestore@npm:3.5.0"
   dependencies:
     "@firebase/component": 0.5.17
     "@firebase/logger": 0.3.3
     "@firebase/util": 1.6.3
-    "@firebase/webchannel-wrapper": 0.6.2
+    "@firebase/webchannel-wrapper": 0.7.0
     "@grpc/grpc-js": ^1.3.2
     "@grpc/proto-loader": ^0.6.13
     node-fetch: 2.6.7
     tslib: ^2.1.0
   peerDependencies:
     "@firebase/app": 0.x
-  checksum: abf921b2f9ed741f9a604586f4d63c96b8bd1a8890ce2cb77dd8d2fc877242bb9e7cfab7051c6bc59988e2002e9b3835d50f83ba19b8478501bf8d55996967be
+  checksum: efdf8f7efcd2d28c23cb7704d71b91475cb2894561d5a2c790379f8caafec03018df3db97238597f2ab5aadee0f6696fd553635c9b926ce9cb382d164951b8df
   languageName: node
   linkType: hard
 
@@ -2293,10 +2293,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/webchannel-wrapper@npm:0.6.2":
-  version: 0.6.2
-  resolution: "@firebase/webchannel-wrapper@npm:0.6.2"
-  checksum: e15e1d7d5fe668616c0f698cc4776af4ce858154fdabd1be7a34da60f368652a6a8c7a59c253be030600c1c515caaefc73ae941766ec61c6ee8d555971f7d619
+"@firebase/webchannel-wrapper@npm:0.7.0":
+  version: 0.7.0
+  resolution: "@firebase/webchannel-wrapper@npm:0.7.0"
+  checksum: 927d744a8e3be1eb8662aba299c5b357dc067e46673f1e5ac681af271c415c9bab801478de7390152a7b56aec61d7e318bd232694c64e7cbfb684de86c8cfcf7
   languageName: node
   linkType: hard
 
@@ -2347,14 +2347,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@humanwhocodes/config-array@npm:^0.10.4":
-  version: 0.10.4
-  resolution: "@humanwhocodes/config-array@npm:0.10.4"
+"@humanwhocodes/config-array@npm:^0.10.5":
+  version: 0.10.5
+  resolution: "@humanwhocodes/config-array@npm:0.10.5"
   dependencies:
     "@humanwhocodes/object-schema": ^1.2.1
     debug: ^4.1.1
     minimatch: ^3.0.4
-  checksum: d480e5d57e6d787565b6cff78e27c3d1b380692d4ffb0ada7d7f5957a56c9032f034da05a3e443065dbd0671ebf4d859036ced34e96b325bbc1badbae3c05300
+  checksum: af4fa2633c57414be22ddba0a072cc611ef9a07104542fa24bde918a0153b89b6e08ca6a20ccc9079de6079e219e2406e38414d1b662db8bb59a3ba9d6eee6e3
   languageName: node
   linkType: hard
 
@@ -4643,7 +4643,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.17.1, @testing-library/dom@npm:^8.3.0, @testing-library/dom@npm:^8.5.0":
+"@testing-library/dom@npm:^8.18.1":
+  version: 8.18.1
+  resolution: "@testing-library/dom@npm:8.18.1"
+  dependencies:
+    "@babel/code-frame": ^7.10.4
+    "@babel/runtime": ^7.12.5
+    "@types/aria-query": ^4.2.0
+    aria-query: ^5.0.0
+    chalk: ^4.1.0
+    dom-accessibility-api: ^0.5.9
+    lz-string: ^1.4.4
+    pretty-format: ^27.0.2
+  checksum: 432a7da2bb626b11375b22e22d12c02317b35d69c0f69972c03bd0104895b496f21dc5b9d4447adef6e0c9acb3c0a64337f7d38c9667dbbacf09d5cd523394dd
+  languageName: node
+  linkType: hard
+
+"@testing-library/dom@npm:^8.3.0, @testing-library/dom@npm:^8.5.0":
   version: 8.17.1
   resolution: "@testing-library/dom@npm:8.17.1"
   dependencies:
@@ -5067,7 +5083,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.20":
+"@types/react@npm:*":
   version: 18.0.20
   resolution: "@types/react@npm:18.0.20"
   dependencies:
@@ -5075,6 +5091,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: f67f5b16efd89e237bf0e40d133218c398cf2a2f81166ce1e9fa32d0df6b869106740983396c51df9708a1b79b2a9d725eda1230cc3064c92d86d9ea6a4b714c
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.0.21":
+  version: 18.0.21
+  resolution: "@types/react@npm:18.0.21"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 36c1a7c9d507e81e2e629c1ad3db51d7b84d8b010c2d5008da411874286c6a5ccc711ae1d4c470efc0bdc77153cc8804a40e927e929e5164c669ca41b84b846d
   languageName: node
   linkType: hard
 
@@ -6271,12 +6298,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.4.11":
-  version: 10.4.11
-  resolution: "autoprefixer@npm:10.4.11"
+"autoprefixer@npm:^10.4.12":
+  version: 10.4.12
+  resolution: "autoprefixer@npm:10.4.12"
   dependencies:
-    browserslist: ^4.21.3
-    caniuse-lite: ^1.0.30001399
+    browserslist: ^4.21.4
+    caniuse-lite: ^1.0.30001407
     fraction.js: ^4.2.0
     normalize-range: ^0.1.2
     picocolors: ^1.0.0
@@ -6285,7 +6312,7 @@ __metadata:
     postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: fb8b2abbb0ce5e3c6bc957ffb714b84aa2e6a9f24cf9c139bcfec33ba5e3334f61a132c606a621e04097d026c1f653fe1bda2d1c3dc47b87c9f6b00d90732daa
+  checksum: 6ae79cbacd31fb3d464ec64eb6ad2600f4f689c3080bbe62c5536d539b41b472083a2e941ef99d14aa11142370d6c16e8b05a62f077374933ed991aceb5943d2
   languageName: node
   linkType: hard
 
@@ -6866,6 +6893,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"browserslist@npm:^4.21.4":
+  version: 4.21.4
+  resolution: "browserslist@npm:4.21.4"
+  dependencies:
+    caniuse-lite: ^1.0.30001400
+    electron-to-chromium: ^1.4.251
+    node-releases: ^2.0.6
+    update-browserslist-db: ^1.0.9
+  bin:
+    browserslist: cli.js
+  checksum: 4af3793704dbb4615bcd29059ab472344dc7961c8680aa6c4bb84f05340e14038d06a5aead58724eae69455b8fade8b8c69f1638016e87e5578969d74c078b79
+  languageName: node
+  linkType: hard
+
 "bser@npm:2.1.1":
   version: 2.1.1
   resolution: "bser@npm:2.1.1"
@@ -7114,10 +7155,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001370, caniuse-lite@npm:^1.0.30001399, caniuse-lite@npm:^1.0.30001406":
+"caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001370, caniuse-lite@npm:^1.0.30001406":
   version: 1.0.30001407
   resolution: "caniuse-lite@npm:1.0.30001407"
   checksum: e1c449d22f120a708accc956c1780f1da01af6c226cb6a324e531dc9f26f53075bff98e6c9cfce806157cdeede459aa8de03a3407b05f71d292a57b2910018b1
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001400, caniuse-lite@npm:^1.0.30001407":
+  version: 1.0.30001412
+  resolution: "caniuse-lite@npm:1.0.30001412"
+  checksum: 7f5f476355f25a9841c30785c11df5225e2e7613f3334573e8da5490f195ac897a525fe4b514fa926b7be7e7937f15743e466bbc3a3272e848fb7ace7432ae02
   languageName: node
   linkType: hard
 
@@ -7673,13 +7721,6 @@ __metadata:
   version: 0.5.0
   resolution: "cookie@npm:0.5.0"
   checksum: 1f4bd2ca5765f8c9689a7e8954183f5332139eb72b6ff783d8947032ec1fdf43109852c178e21a953a30c0dd42257828185be01b49d1eb1a67fd054ca588a180
-  languageName: node
-  linkType: hard
-
-"cookie@npm:^0.4.1":
-  version: 0.4.2
-  resolution: "cookie@npm:0.4.2"
-  checksum: a00833c998bedf8e787b4c342defe5fa419abd96b32f4464f718b91022586b8f1bafbddd499288e75c037642493c83083da426c6a9080d309e3bd90fd11baa9b
   languageName: node
   linkType: hard
 
@@ -8609,6 +8650,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"electron-to-chromium@npm:^1.4.251":
+  version: 1.4.262
+  resolution: "electron-to-chromium@npm:1.4.262"
+  checksum: fee9ee842495f5cc4209b3af3a6ef0737165a19b62efd10825d7eb84f8cfb627380b4cf9d82fae5fb98cb065194dc974e0dec8b61b40d9c96e430f30fa13485c
+  languageName: node
+  linkType: hard
+
 "element-resize-detector@npm:^1.2.2":
   version: 1.2.4
   resolution: "element-resize-detector@npm:1.2.4"
@@ -9175,12 +9223,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.23.1":
-  version: 8.23.1
-  resolution: "eslint@npm:8.23.1"
+"eslint@npm:^8.24.0":
+  version: 8.24.0
+  resolution: "eslint@npm:8.24.0"
   dependencies:
     "@eslint/eslintrc": ^1.3.2
-    "@humanwhocodes/config-array": ^0.10.4
+    "@humanwhocodes/config-array": ^0.10.5
     "@humanwhocodes/gitignore-to-minimatch": ^1.0.2
     "@humanwhocodes/module-importer": ^1.0.1
     ajv: ^6.10.0
@@ -9220,7 +9268,7 @@ __metadata:
     text-table: ^0.2.0
   bin:
     eslint: bin/eslint.js
-  checksum: a727e15492786a03b438bcf021db49f715680679846a7b8d79b98ad34576f2a570404ffe882d3c3e26f6359bff7277ef11fae5614bfe8629adb653f20d018c71
+  checksum: ca293ce7116599b742d7ab4d43db469beec22f40dd272092d809498be3cff3a7c567769f9763bdf6799aac13dd53447b93a99629b7b54092783046eb57eaced6
   languageName: node
   linkType: hard
 
@@ -9762,23 +9810,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase@npm:9.9.4":
-  version: 9.9.4
-  resolution: "firebase@npm:9.9.4"
+"firebase@npm:9.10.0":
+  version: 9.10.0
+  resolution: "firebase@npm:9.10.0"
   dependencies:
     "@firebase/analytics": 0.8.0
     "@firebase/analytics-compat": 0.1.13
-    "@firebase/app": 0.7.32
+    "@firebase/app": 0.7.33
     "@firebase/app-check": 0.5.12
     "@firebase/app-check-compat": 0.2.12
-    "@firebase/app-compat": 0.1.33
+    "@firebase/app-compat": 0.1.34
     "@firebase/app-types": 0.7.0
-    "@firebase/auth": 0.20.6
-    "@firebase/auth-compat": 0.2.19
+    "@firebase/auth": 0.20.7
+    "@firebase/auth-compat": 0.2.20
     "@firebase/database": 0.13.6
     "@firebase/database-compat": 0.2.6
-    "@firebase/firestore": 3.4.15
-    "@firebase/firestore-compat": 0.1.24
+    "@firebase/firestore": 3.5.0
+    "@firebase/firestore-compat": 0.1.25
     "@firebase/functions": 0.8.4
     "@firebase/functions-compat": 0.2.4
     "@firebase/installations": 0.5.12
@@ -9792,7 +9840,7 @@ __metadata:
     "@firebase/storage": 0.9.9
     "@firebase/storage-compat": 0.1.17
     "@firebase/util": 1.6.3
-  checksum: 7904947cc8bddb3f5b1cd5299fd523ffa28a0c654157d6a9816e90bfd06a28dea031b3ac6f34a04ffad59685c5bfe0366bd5e416f29cdbe283d1028d8d8fddee
+  checksum: 5c4f3cb337573bcc70025280737b588e9b45a2b53c7ab55ec2417fb894f0d9b630a286b86c635693310c2e4ce7a754f27331c987f81e2a1652db740e47535e23
   languageName: node
   linkType: hard
 
@@ -12311,7 +12359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:^4.1.4, jose@npm:^4.3.7":
+"jose@npm:^4.1.4, jose@npm:^4.9.3":
   version: 4.9.3
   resolution: "jose@npm:4.9.3"
   checksum: 95865830768dcf82774d19e92dc854c5bc9dc5d9c9626a65a2974272e3aca5d2f56678611943f85802431d2d6d6f8bff9548b7cdb7578e6fe61529bd9c82e1d3
@@ -12928,10 +12976,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:3.0.3":
-  version: 3.0.3
-  resolution: "luxon@npm:3.0.3"
-  checksum: 67d143f102f520761c4202086579a5cf30b230ea299da27cacb31e9f9d372cadef90f14cbe7e2621b70825b267fe00128b8176ed8b7172b48f77a403a662d5aa
+"luxon@npm:3.0.4":
+  version: 3.0.4
+  resolution: "luxon@npm:3.0.4"
+  checksum: d0908c3951da2a10ccf23040210ead23b0da5366a9d0954e7d5db3560189a7bd703d8af1e00084f197effc9cd7158d1bddf32886d98a70d59ce9bc3fe88bbce0
   languageName: node
   linkType: hard
 
@@ -13637,27 +13685,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-auth@npm:4.10.3":
-  version: 4.10.3
-  resolution: "next-auth@npm:4.10.3"
+"next-auth@npm:4.12.0":
+  version: 4.12.0
+  resolution: "next-auth@npm:4.12.0"
   dependencies:
     "@babel/runtime": ^7.16.3
     "@panva/hkdf": ^1.0.1
-    cookie: ^0.4.1
-    jose: ^4.3.7
+    cookie: ^0.5.0
+    jose: ^4.9.3
     oauth: ^0.9.15
     openid-client: ^5.1.0
     preact: ^10.6.3
     preact-render-to-string: ^5.1.19
     uuid: ^8.3.2
   peerDependencies:
+    next: 12.2.5
     nodemailer: ^6.6.5
     react: ^17.0.2 || ^18
     react-dom: ^17.0.2 || ^18
   peerDependenciesMeta:
     nodemailer:
       optional: true
-  checksum: 7c78fe88a8be3a7fb1947d151ed3cb45e549f652acbf7aeadcae405a4a62998d068656702df88f4e240ad5348b8f8428b0c4d3f5dd5a870fb2e6c1597130b815
+  checksum: 9da0dd3dbae7d716880ec23a03834e8462b989d7ed721e08c0beee974ca6e2d0006e5c0ff33244f28bf5234a82f5e77fd49e83e34f265a67d39b62704773acfc
   languageName: node
   linkType: hard
 
@@ -14593,33 +14642,33 @@ __metadata:
     "@storybook/storybook-deployer": ^2.8.12
     "@storybook/testing-library": ^0.0.13
     "@svgr/webpack": ^6.3.1
-    "@testing-library/dom": ^8.17.1
+    "@testing-library/dom": ^8.18.1
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
     "@types/crypto-js": ^4.1.1
     "@types/jsonwebtoken": ^8.5.9
     "@types/luxon": ^3.0.1
-    "@types/react": ^18.0.20
-    autoprefixer: ^10.4.11
+    "@types/react": ^18.0.21
+    autoprefixer: ^10.4.12
     crypto-js: 4.1.1
     css-loader: ^6.7.1
     dotenv: 16.0.2
     elastic-apm-node: 3.38.0
-    eslint: ^8.23.1
+    eslint: ^8.24.0
     eslint-config-next: 12.3.1
     eslint-config-prettier: ^8.5.0
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-storybook: ^0.6.4
-    firebase: 9.9.4
+    firebase: 9.10.0
     html-react-parser: 3.0.4
     jest: ^29.0.3
     jest-environment-jsdom: ^29.0.3
     jsonwebtoken: 8.5.1
-    luxon: 3.0.3
+    luxon: 3.0.4
     matomo-tracker: 2.2.4
     next: 12.3.1
-    next-auth: 4.10.3
+    next-auth: 4.12.0
     next-logger: 3.0.1
     node-mocks-http: ^1.11.0
     pino: 8.6.0
@@ -14631,7 +14680,7 @@ __metadata:
     react-router-dom: 6.4.1
     style-loader: ^3.3.1
     tailwindcss: ^3.1.8
-    ts-loader: ^9.3.1
+    ts-loader: ^9.4.1
     tsconfig-paths-webpack-plugin: ^4.0.0
     typescript: ^4.8.3
   languageName: unknown
@@ -17997,9 +18046,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.3.1":
-  version: 9.3.1
-  resolution: "ts-loader@npm:9.3.1"
+"ts-loader@npm:^9.4.1":
+  version: 9.4.1
+  resolution: "ts-loader@npm:9.4.1"
   dependencies:
     chalk: ^4.1.0
     enhanced-resolve: ^5.0.0
@@ -18008,7 +18057,7 @@ __metadata:
   peerDependencies:
     typescript: "*"
     webpack: ^5.0.0
-  checksum: 462a8ac315017cf4961dafd2be29d5abe7c3af63c4515e325269f79b9d0212b35c59184d7fd01fc378749c88454752e1599301d2190eb6844ea5fe332de5f695
+  checksum: b8947f6d396621cc3f6ba8d4c14fa09eba03c4b7eeabbc429481e923a973c244fb80feb44e900f03fc1010755a6bf14fc561c574fb79e324f39b5b6ef1dcca6c
   languageName: node
   linkType: hard
 
@@ -18469,6 +18518,20 @@ __metadata:
   bin:
     browserslist-lint: cli.js
   checksum: 7e425fe5dbbebdccf72a84ce70ec47fc74dce561d28f47bc2b84a1c2b84179a862c2261b18ab66a5e73e261c7e2ef9e11c6129112989d4d52e8f75a56bb923f8
+  languageName: node
+  linkType: hard
+
+"update-browserslist-db@npm:^1.0.9":
+  version: 1.0.9
+  resolution: "update-browserslist-db@npm:1.0.9"
+  dependencies:
+    escalade: ^3.1.1
+    picocolors: ^1.0.0
+  peerDependencies:
+    browserslist: ">= 4.21.0"
+  bin:
+    browserslist-lint: cli.js
+  checksum: f625899b236f6a4d7f62b56be1b8da230c5563d1fef84d3ef148f2e1a3f11a5a4b3be4fd7e3703e51274c116194017775b10afb4de09eb2c0d09d36b90f1f578
   languageName: node
   linkType: hard
 

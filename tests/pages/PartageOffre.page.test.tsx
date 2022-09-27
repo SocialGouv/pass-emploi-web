@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -218,15 +218,17 @@ describe('Page Partage Offre', () => {
         buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
         message = "Regarde cette offre qui pourrait t'intéresser."
-        await userEvent.type(selectJeune, 'Jirac Kenji')
-        await userEvent.type(selectJeune, "D'Aböville-Muñoz François Maria")
-        await userEvent.type(inputMessage, message)
+        await act(async () => {
+          await userEvent.type(selectJeune, 'Jirac Kenji')
+          await userEvent.type(selectJeune, "D'Aböville-Muñoz François Maria")
+          await userEvent.type(inputMessage, message)
+        })
       })
 
       describe('quand le formulaire est valide', () => {
         it("partage l'offre", async () => {
           // When
-          await userEvent.click(buttonValider)
+          await act(() => userEvent.click(buttonValider))
 
           // Then
           expect(messagesService.partagerOffre).toHaveBeenCalledWith({
@@ -239,10 +241,10 @@ describe('Page Partage Offre', () => {
 
         it('partage une offre avec un message par défaut', async () => {
           // Given
-          await userEvent.clear(inputMessage)
+          await act(() => userEvent.clear(inputMessage))
 
           // When
-          await userEvent.click(buttonValider)
+          await act(() => userEvent.click(buttonValider))
 
           // Then
           expect(messagesService.partagerOffre).toHaveBeenCalledWith({
@@ -256,7 +258,7 @@ describe('Page Partage Offre', () => {
 
         it('renvoie à la recherche', async () => {
           // When
-          await userEvent.click(buttonValider)
+          await act(() => userEvent.click(buttonValider))
 
           // Then
           expect(push).toHaveBeenCalledWith({
@@ -275,7 +277,7 @@ describe('Page Partage Offre', () => {
 
         // When
         for (const bouton of enleverJeunes) {
-          await userEvent.click(bouton)
+          await act(() => userEvent.click(bouton))
         }
 
         // Then

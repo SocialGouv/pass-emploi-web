@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -141,18 +141,20 @@ describe('NouvelleAction', () => {
           const dateEcheance = screen.getByLabelText(/date d’échéance/)
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
-          await userEvent.selectOptions(
-            selectAction,
-            actionsPredefinies[3].content
-          )
-          await userEvent.type(description, 'Commentaire action')
-          await userEvent.type(dateEcheance, '2022-07-30')
+          await act(async () => {
+            await userEvent.selectOptions(
+              selectAction,
+              actionsPredefinies[3].content
+            )
+            await userEvent.type(description, 'Commentaire action')
+            await userEvent.type(dateEcheance, '2022-07-30')
+          })
         })
 
         it("requiert la sélection d'une action", async () => {
           // When
           fireEvent.change(selectAction, { target: { value: '' } })
-          await userEvent.click(submit)
+          await act(() => userEvent.click(submit))
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
@@ -162,7 +164,7 @@ describe('NouvelleAction', () => {
         describe('formulaire valide', () => {
           beforeEach(async () => {
             // When
-            await userEvent.click(submit)
+            await act(() => userEvent.click(submit))
           })
 
           it("crée l'action", () => {
@@ -194,7 +196,7 @@ describe('NouvelleAction', () => {
         const switchTab = screen.getByRole('tab', {
           name: 'Action personnalisée',
         })
-        await userEvent.click(switchTab)
+        await act(() => userEvent.click(switchTab))
       })
 
       it("contient un champ pour saisir l'intitule de l'action", () => {
@@ -233,15 +235,17 @@ describe('NouvelleAction', () => {
 
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
-          await userEvent.type(intitule, 'Intitulé action')
-          await userEvent.type(description, 'Commentaire action')
-          await userEvent.type(dateEcheance, '2022-07-30')
+          await act(async () => {
+            await userEvent.type(intitule, 'Intitulé action')
+            await userEvent.type(description, 'Commentaire action')
+            await userEvent.type(dateEcheance, '2022-07-30')
+          })
         })
 
         it("requiert l'intitulé de l'action", async () => {
           // When
-          await userEvent.clear(intitule)
-          await userEvent.click(submit)
+          await act(() => userEvent.clear(intitule))
+          await act(() => userEvent.click(submit))
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
@@ -251,7 +255,7 @@ describe('NouvelleAction', () => {
         describe('formulaire valide', () => {
           beforeEach(async () => {
             // When
-            await userEvent.click(submit)
+            await act(() => userEvent.click(submit))
           })
 
           it("crée l'action", () => {

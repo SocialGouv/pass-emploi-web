@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
@@ -10,8 +10,9 @@ describe('FiltresStatutsAction', () => {
     // Given
     filtrerActions = jest.fn()
     render(<FiltresStatutsActions style='' onFiltres={filtrerActions} />)
+
     // When
-    await userEvent.click(screen.getByText('Statut'))
+    await act(() => userEvent.click(screen.getByText('Statut')))
   })
 
   it('affiche une liste de statuts', async () => {
@@ -29,7 +30,7 @@ describe('FiltresStatutsAction', () => {
 
   it('cache la liste de statuts', async () => {
     // When
-    await userEvent.click(screen.getByText('Statut'))
+    await act(() => userEvent.click(screen.getByText('Statut')))
 
     // Then
     expect(() =>
@@ -41,12 +42,14 @@ describe('FiltresStatutsAction', () => {
 
   it('réinitialise les statuts non validés', async () => {
     // Given
-    await userEvent.click(screen.getByLabelText('À réaliser'))
-    await userEvent.click(screen.getByLabelText('Terminée'))
-    await userEvent.click(screen.getByText('Statut'))
+    await act(() => {
+      userEvent.click(screen.getByLabelText('À réaliser'))
+      userEvent.click(screen.getByLabelText('Terminée'))
+      userEvent.click(screen.getByText('Statut'))
+    })
 
     // When
-    await userEvent.click(screen.getByText('Statut'))
+    await act(() => userEvent.click(screen.getByText('Statut')))
 
     // Then
     expect(screen.getByLabelText('Terminée')).not.toHaveAttribute('checked')
@@ -57,13 +60,17 @@ describe('FiltresStatutsAction', () => {
 
   it('filtre les actions avec les statuts sélectionnés', async () => {
     // Given
-    await userEvent.click(screen.getByLabelText('Terminée'))
-    await userEvent.click(screen.getByLabelText('Commencée'))
-    await userEvent.click(screen.getByLabelText('À réaliser'))
-    await userEvent.click(screen.getByLabelText('Terminée'))
+    await act(() => {
+      userEvent.click(screen.getByLabelText('Terminée'))
+      userEvent.click(screen.getByLabelText('Commencée'))
+      userEvent.click(screen.getByLabelText('À réaliser'))
+      userEvent.click(screen.getByLabelText('Terminée'))
+    })
 
     // When
-    await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+    await act(() =>
+      userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+    )
 
     // Then
     expect(filtrerActions).toHaveBeenCalledWith([
