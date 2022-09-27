@@ -1,15 +1,14 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
 import React, { FormEvent, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import { OffreCard } from 'components/offres/OffreCard'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { BaseOffreEmploi } from 'interfaces/offre-emploi'
+import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { OffresEmploiService } from 'services/offres-emploi.service'
@@ -24,7 +23,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     'offresEmploiService'
   )
   const [motsCles, setMotsCles] = useState<string | undefined>()
-  const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
+  const [offres, setOffres] = useState<OffreEmploiItem[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 
@@ -88,19 +87,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           </h2>
           <ul aria-describedby='result-title'>
             {offres!.map((offre) => (
-              <li key={offre.id} className='flex items-center'>
-                <Link href={`/offres/${offre.id}/partage`}>
-                  <a aria-label={`Partager offre numéro ${offre.id}`}>
-                    <IconComponent
-                      name={IconName.Partage}
-                      className='w-4 h-4 fill-primary'
-                      focusable={false}
-                      aria-hidden={true}
-                    />
-                  </a>
-                </Link>
-                {offre.titre}
-              </li>
+              <OffreCard key={offre.id} offre={offre} />
             ))}
           </ul>
         </>
