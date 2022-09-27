@@ -2,19 +2,26 @@ import { FakeApiClient } from '../utils/fakeApiClient'
 
 import { ApiClient } from 'clients/api.client'
 import {
+  desLocalites,
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
 } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { AgencesApiService } from 'services/agences.service'
+import { ReferentielApiService } from 'services/referentiel.service'
 
-describe('AgencesApiService', () => {
+jest.mock('next-auth/react', () => ({
+  getSession: jest.fn(() => ({
+    accessToken: 'accessToken',
+  })),
+}))
+
+describe('ReferentielApiService', () => {
   let apiClient: ApiClient
-  let agencesService: AgencesApiService
+  let referentielService: ReferentielApiService
   beforeEach(async () => {
     // Given
     apiClient = new FakeApiClient()
-    agencesService = new AgencesApiService(apiClient)
+    referentielService = new ReferentielApiService(apiClient)
   })
 
   describe('.getAgences', () => {
@@ -32,7 +39,10 @@ describe('AgencesApiService', () => {
       // Given
       structure = StructureConseiller.MILO
       // WHEN
-      const actual = await agencesService.getAgences(structure, 'accessToken')
+      const actual = await referentielService.getAgences(
+        structure,
+        'accessToken'
+      )
 
       // THEN
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
@@ -42,10 +52,33 @@ describe('AgencesApiService', () => {
       // Given
       structure = StructureConseiller.POLE_EMPLOI
       // WHEN
-      const actual = await agencesService.getAgences(structure, 'accessToken')
+      const actual = await referentielService.getAgences(
+        structure,
+        'accessToken'
+      )
 
       // THEN
       expect(actual).toStrictEqual(uneListeDAgencesPoleEmploi())
+    })
+  })
+
+  describe('.getCommunesEtDepartements', () => {
+    it('retourne un référentiel de communes et départements', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: desLocalites(),
+      })
+
+      // When
+      const actual = await referentielService.getCommunesEtDepartements(
+        'Hauts de seine'
+      )
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/referentiels/communes-et-departements?recherche=Hauts%20de%20seine',
+        'accessToken'
+      )
+      expect(actual).toEqual(desLocalites())
     })
   })
 })
