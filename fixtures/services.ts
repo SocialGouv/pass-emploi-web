@@ -1,5 +1,8 @@
 import { ActionsService } from 'services/actions.service'
-import { AgencesApiService, AgencesService } from 'services/agences.service'
+import {
+  ReferentielApiService,
+  ReferentielService,
+} from 'services/referentiel.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
@@ -101,9 +104,9 @@ export function mockedConseillerService(
 }
 
 export function mockedAgencesService(
-  overrides: Partial<AgencesApiService> = {}
-): AgencesService {
-  const defaults: AgencesService = {
+  overrides: Partial<ReferentielApiService> = {}
+): ReferentielService {
+  const defaults: ReferentielService = {
     getAgences: jest.fn(),
   }
   return { ...defaults, ...overrides }

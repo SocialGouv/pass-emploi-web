@@ -12,7 +12,7 @@ import { mockedConseillerService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import Home, { getServerSideProps } from 'pages/index'
-import { AgencesService } from 'services/agences.service'
+import { ReferentielService } from 'services/referentiel.service'
 import { ConseillerService } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -219,7 +219,7 @@ describe('Home', () => {
 
   describe('server side', () => {
     let conseillerService: ConseillerService
-    let agencesService: AgencesService
+    let agencesService: ReferentielService
     it('nécessite une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({

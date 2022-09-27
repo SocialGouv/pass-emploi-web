@@ -10,7 +10,10 @@ import {
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
-import { AgencesApiService, AgencesService } from 'services/agences.service'
+import {
+  ReferentielApiService,
+  ReferentielService,
+} from 'services/referentiel.service'
 import {
   ConseillerApiService,
   ConseillerService,
@@ -30,7 +33,7 @@ import { ChatCrypto } from 'utils/chat/chatCrypto'
 import HttpClient from 'utils/httpClient'
 
 export interface Dependencies {
-  agencesService: AgencesService
+  agencesService: ReferentielService
   actionsService: ActionsService
   conseillerService: ConseillerService
   jeunesService: JeunesService
@@ -57,7 +60,7 @@ export class Container {
   private static buildDIContainer() {
     const apiClient = new ApiHttpClient(new HttpClient())
     return new Container({
-      agencesService: new AgencesApiService(apiClient),
+      agencesService: new ReferentielApiService(apiClient),
       actionsService: new ActionsApiService(apiClient),
       conseillerService: new ConseillerApiService(apiClient),
       jeunesService: new JeunesApiService(apiClient),
