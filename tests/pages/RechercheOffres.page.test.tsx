@@ -1,10 +1,12 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { listeBaseOffres } from 'fixtures/offre'
+import { desLocalites } from 'fixtures/referentiel'
 import { mockedOffresEmploiService } from 'fixtures/services'
 import { OffreEmploiItem } from 'interfaces/offre-emploi'
+import { Localite } from 'interfaces/referentiel'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -18,7 +20,9 @@ describe('Page Recherche Offres', () => {
   describe('client side', () => {
     let offresEmploiService: OffresEmploiService
     let offresEmploi: OffreEmploiItem[]
+    let localites: Localite[]
     beforeEach(() => {
+      localites = desLocalites()
       offresEmploi = listeBaseOffres()
       offresEmploiService = mockedOffresEmploiService({
         searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
@@ -53,21 +57,33 @@ describe('Page Recherche Offres', () => {
 
     it('permet de rechercher une localisation', () => {
       // Then
-      expect(screen.getByLabelText('Localisation')).toBeInTheDocument()
+      expect(
+        screen.getByRole('combobox', {
+          name: 'Localisation (département ou commune)',
+        })
+      ).toBeInTheDocument()
+      localites.forEach((localite) =>
+        expect(
+          screen.getByRole('option', { hidden: true, name: localite.libelle })
+        ).toHaveValue(localite.libelle)
+      )
     })
 
     it('construit la recherche', async () => {
       // Given
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
-      const inputLocalisation = screen.getByLabelText('Localisation')
+      const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
       await act(async () => {
         await userEvent.type(inputMotsCles, 'prof industrie')
-        await userEvent.type(inputLocalisation, '75')
-        await userEvent.click(submitButton)
+        await userEvent.type(inputLocalisation, 'pAris')
       })
+      await act(() => {
+        fireEvent.blur(inputLocalisation)
+      })
+      await act(async () => userEvent.click(submitButton))
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
@@ -79,21 +95,43 @@ describe('Page Recherche Offres', () => {
     it('construit la recherche avec une commune', async () => {
       // Given
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
-      const inputLocalisation = screen.getByLabelText('Localisation')
+      const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
       await act(async () => {
         await userEvent.type(inputMotsCles, 'prof industrie')
-        await userEvent.type(inputLocalisation, '35238')
-        await userEvent.click(submitButton)
+        await userEvent.type(inputLocalisation, 'paris 14')
       })
+      await act(() => {
+        fireEvent.blur(inputLocalisation)
+      })
+      await act(async () => userEvent.click(submitButton))
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
         motsCles: 'prof industrie',
-        commune: '35238',
+        commune: '75114',
       })
+    })
+
+    it('affiche une erreur quand la localisation est incorrecte', async () => {
+      // Given
+      const inputLocalisation = screen.getByLabelText(/Localisation/)
+      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+      // When
+      await act(async () => userEvent.type(inputLocalisation, 'paris14'))
+      await act(() => {
+        fireEvent.blur(inputLocalisation)
+      })
+      await act(async () => userEvent.click(submitButton))
+
+      // Then
+      expect(
+        screen.getByText('Veuillez saisir une localisation correcte.')
+      ).toBeInTheDocument()
+      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledTimes(0)
     })
 
     describe('résultat de la recherche', () => {

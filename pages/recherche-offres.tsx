@@ -1,15 +1,19 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useMemo, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { OffreCard } from 'components/offres/OffreCard'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
+import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { desLocalites } from 'fixtures/referentiel'
 import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
+import { Localite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import {
   OffresEmploiService,
@@ -26,8 +30,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     'offresEmploiService'
   )
 
+  const [localites] = useState<Localite[]>(desLocalites)
+
   const [motsCles, setMotsCles] = useState<string | undefined>()
-  const [localisation, setLocalisation] = useState<string | undefined>()
+  const [localisation, setLocalisation] = useState<{
+    value?: string
+    error?: string
+  }>({})
+  const [localite, setLocalite] = useState<Localite | undefined>()
 
   const [offres, setOffres] = useState<OffreEmploiItem[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -38,8 +48,31 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   if (partageSuccess) initialTracking += ' - Partage offre succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
+  const formIsValid = useMemo(() => !localisation.error, [localisation.error])
+
+  function validateLocalite() {
+    if (!localisation.value) return
+
+    const localiteCorrespondante: Localite | undefined = localites.find(
+      ({ libelle }) =>
+        libelle.localeCompare(localisation.value!, undefined, {
+          sensitivity: 'base',
+        }) === 0
+    )
+
+    if (!localiteCorrespondante) {
+      setLocalisation({
+        ...localisation,
+        error: 'Veuillez saisir une localisation correcte.',
+      })
+    } else {
+      setLocalite(localiteCorrespondante)
+    }
+  }
+
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!formIsValid) return
 
     setIsSearching(true)
     setOffres(undefined)
@@ -47,8 +80,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     try {
       const query: SearchOffresEmploiQuery = {}
       if (motsCles) query.motsCles = motsCles
-      if (localisation?.length === 2) query.departement = localisation
-      if (localisation?.length === 5) query.commune = localisation
+
+      if (localite) {
+        if (localite.type === 'DEPARTEMENT') query.departement = localite.code
+        if (localite.type === 'COMMUNE') query.commune = localite.code
+      }
 
       const result = await offresEmploiService.searchOffresEmploi(query)
       setOffres(result)
@@ -74,8 +110,24 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
       <form onSubmit={rechercherOffresEmploi}>
         <div className='w-1/2'>
-          <Label htmlFor='localisation'>Localisation</Label>
-          <Input type='text' id='localisation' onChange={setLocalisation} />
+          <Label htmlFor='localisation'>
+            Localisation (département ou commune)
+          </Label>
+          {localisation.error && (
+            <InputError id='localisation--error'>
+              {localisation.error}
+            </InputError>
+          )}
+          <SelectAutocomplete
+            id='localisation'
+            options={localites.map((localite) => ({
+              id: localite.code,
+              value: localite.libelle,
+            }))}
+            onChange={(value) => setLocalisation({ value })}
+            onBlur={validateLocalite}
+            invalid={Boolean(localisation.error)}
+          />
         </div>
 
         <div className='flex items-center'>
@@ -84,7 +136,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             <Input type='text' id='mots-cles' onChange={setMotsCles} />
           </div>
 
-          <Button type='submit' className='ml-5' disabled={isSearching}>
+          <Button
+            type='submit'
+            className='ml-5'
+            disabled={!formIsValid || isSearching}
+          >
             Rechercher
           </Button>
         </div>
