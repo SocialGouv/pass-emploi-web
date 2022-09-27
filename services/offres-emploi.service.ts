@@ -10,17 +10,21 @@ import {
 import { OffreEmploiItem, DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ApiError } from 'utils/httpClient'
 
+export type SearchOffresEmploiQuery = {
+  motsCles?: string
+  departement?: string
+  commune?: string
+}
+
 export interface OffresEmploiService {
   getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
   getOffreEmploiServerSide(
     idOffreEmploi: string,
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined>
-  searchOffresEmploi(recherche: {
-    motsCles?: string
-    departement?: string
-    commune?: string
-  }): Promise<OffreEmploiItem[]>
+  searchOffresEmploi(
+    recherche: SearchOffresEmploiQuery
+  ): Promise<OffreEmploiItem[]>
 }
 
 export class OffresEmploiApiService implements OffresEmploiService {
@@ -42,11 +46,7 @@ export class OffresEmploiApiService implements OffresEmploiService {
   }
 
   async searchOffresEmploi(
-    options: {
-      motsCles?: string
-      departement?: string
-      commune?: string
-    } = {}
+    options: SearchOffresEmploiQuery = {}
   ): Promise<OffreEmploiItem[]> {
     const session = await getSession()
     const accessToken = session!.accessToken
@@ -83,11 +83,7 @@ function buildSearchUrl({
   commune,
   departement,
   motsCles,
-}: {
-  motsCles?: string
-  departement?: string
-  commune?: string
-}): string {
+}: SearchOffresEmploiQuery): string {
   const path = `/offres-emploi?alternance=false`
   const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
   const queryDepartement = departement ? `&departement=${departement}` : ''

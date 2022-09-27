@@ -11,7 +11,10 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
-import { OffresEmploiService } from 'services/offres-emploi.service'
+import {
+  OffresEmploiService,
+  SearchOffresEmploiQuery,
+} from 'services/offres-emploi.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
@@ -22,7 +25,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
   )
+
   const [motsCles, setMotsCles] = useState<string | undefined>()
+  const [localisation, setLocalisation] = useState<string | undefined>()
+
   const [offres, setOffres] = useState<OffreEmploiItem[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
@@ -39,9 +45,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     setOffres(undefined)
     setSearchError(undefined)
     try {
-      const result = await offresEmploiService.searchOffresEmploi(
-        motsCles ? { motsCles } : {}
-      )
+      const query: SearchOffresEmploiQuery = {}
+      if (motsCles) query.motsCles = motsCles
+      if (localisation?.length === 2) query.departement = localisation
+      if (localisation?.length === 5) query.commune = localisation
+
+      const result = await offresEmploiService.searchOffresEmploi(query)
       setOffres(result)
       setTrackingTitle(pageTracking + ' - Résultats')
     } catch {
@@ -63,15 +72,22 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         />
       )}
 
-      <form onSubmit={rechercherOffresEmploi} className='flex items-center'>
-        <div className='grow'>
-          <Label htmlFor='mots-cles'>Mots clés (intitulé, code ROME)</Label>
-          <Input type='text' id='mots-cles' onChange={setMotsCles} />
+      <form onSubmit={rechercherOffresEmploi}>
+        <div className='w-1/2'>
+          <Label htmlFor='localisation'>Localisation</Label>
+          <Input type='text' id='localisation' onChange={setLocalisation} />
         </div>
 
-        <Button type='submit' className='ml-5' disabled={isSearching}>
-          Rechercher
-        </Button>
+        <div className='flex items-center'>
+          <div className='grow'>
+            <Label htmlFor='mots-cles'>Mots clés (intitulé, code ROME)</Label>
+            <Input type='text' id='mots-cles' onChange={setMotsCles} />
+          </div>
+
+          <Button type='submit' className='ml-5' disabled={isSearching}>
+            Rechercher
+          </Button>
+        </div>
       </form>
 
       {isSearching && (

@@ -51,18 +51,48 @@ describe('Page Recherche Offres', () => {
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
     })
 
+    it('permet de rechercher une localisation', () => {
+      // Then
+      expect(screen.getByLabelText('Localisation')).toBeInTheDocument()
+    })
+
     it('construit la recherche', async () => {
       // Given
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
+      const inputLocalisation = screen.getByLabelText('Localisation')
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await act(() => userEvent.type(inputMotsCles, 'prof industrie'))
-      await act(() => userEvent.click(submitButton))
+      await act(async () => {
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await userEvent.type(inputLocalisation, '75')
+        await userEvent.click(submitButton)
+      })
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
         motsCles: 'prof industrie',
+        departement: '75',
+      })
+    })
+
+    it('construit la recherche avec une commune', async () => {
+      // Given
+      const inputMotsCles = screen.getByLabelText(/Mots clés/)
+      const inputLocalisation = screen.getByLabelText('Localisation')
+      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+      // When
+      await act(async () => {
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await userEvent.type(inputLocalisation, '35238')
+        await userEvent.click(submitButton)
+      })
+
+      // Then
+      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+        motsCles: 'prof industrie',
+        commune: '35238',
       })
     })
 
