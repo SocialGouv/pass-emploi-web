@@ -89,8 +89,9 @@ describe('Page Recherche Offres', () => {
 
       it('affiche chaque offre', async () => {
         offresEmploi.forEach((offre) => {
-          const offreCard = within(offresList).getByText('Offre n°' + offre.id)
-            .parentElement!
+          const offreCard = within(offresList).getByRole('heading', {
+            name: 'Offre n°' + offre.id,
+          }).parentElement!
           expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
           expect(
             within(offreCard).getByText(offre.typeContrat)
@@ -100,7 +101,7 @@ describe('Page Recherche Offres', () => {
             within(offreCard).getByText(offre.nomEntreprise)
           ).toBeInTheDocument()
           expect(
-            within(offreCard).getByText(offre.localisation.nom)
+            within(offreCard).getByText(offre.localisation)
           ).toBeInTheDocument()
         })
       })

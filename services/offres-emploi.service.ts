@@ -4,6 +4,8 @@ import { ApiClient } from 'clients/api.client'
 import {
   DetailOffreEmploiJson,
   jsonToDetailOffreEmploi,
+  jsonToOffreEmploiItem,
+  OffreEmploiItemJson,
 } from 'interfaces/json/offre'
 import { OffreEmploiItem, DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ApiError } from 'utils/httpClient'
@@ -49,10 +51,10 @@ export class OffresEmploiApiService implements OffresEmploiService {
     const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
 
     const { content } = await this.apiClient.get<{
-      results: OffreEmploiItem[]
+      results: OffreEmploiItemJson[]
     }>(path + queryMotsCles, accessToken)
 
-    return content.results
+    return content.results.map(jsonToOffreEmploiItem)
   }
 
   private async getOffreEmploi(

@@ -1,5 +1,10 @@
 import { ApiClient } from 'clients/api.client'
-import { unDetailOffre, unDetailOffreJson } from 'fixtures/offre'
+import {
+  listeBaseOffres,
+  listeOffresJson,
+  unDetailOffre,
+  unDetailOffreJson,
+} from 'fixtures/offre'
 import { OffresEmploiApiService } from 'services/offres-emploi.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -99,10 +104,7 @@ describe('OffresEmploiApiService', () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
-          results: [
-            { titre: 'Prof à domicile F/H' },
-            { titre: 'Assistant/Assistante qualité en industrie' },
-          ],
+          results: listeOffresJson(),
         },
       })
     })
@@ -116,10 +118,7 @@ describe('OffresEmploiApiService', () => {
         '/offres-emploi?alternance=false',
         'accessToken'
       )
-      expect(actual).toEqual([
-        { titre: 'Prof à domicile F/H' },
-        { titre: 'Assistant/Assistante qualité en industrie' },
-      ])
+      expect(actual).toEqual(listeBaseOffres())
     })
 
     it('parse les mots clés', async () => {

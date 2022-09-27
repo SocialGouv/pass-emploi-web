@@ -5,9 +5,7 @@ type BaseOffreEmploi = {
 
 export type OffreEmploiItem = BaseOffreEmploi & {
   nomEntreprise: string
-  localisation: {
-    nom: string
-  }
+  localisation: string
   typeContrat: string
   duree: string
 }

@@ -2,9 +2,8 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { FormEvent, useState } from 'react'
 
-import { OffreCardItem } from '../components/offres/OffreCardItem'
-
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import { OffreCard } from 'components/offres/OffreCard'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
@@ -88,7 +87,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           </h2>
           <ul aria-describedby='result-title'>
             {offres!.map((offre) => (
-              <OffreCardItem key={offre.id} offre={offre} />
+              <OffreCard key={offre.id} offre={offre} />
             ))}
           </ul>
         </>
