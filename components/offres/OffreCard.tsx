@@ -50,8 +50,29 @@ export function OffreCard({ offre, withPartage = false }: OffreItemCardProps) {
         />
         {offre.localisation}
       </p>
-      <DataTag type={offre.typeContrat} className='mr-6' />
-      {offre.duree && <DataTag type={offre.duree} />}
+
+      <div className='flex justify-between'>
+        <div>
+          <DataTag type={offre.typeContrat} className='mr-6' />
+          {offre.duree && <DataTag type={offre.duree} />}
+        </div>
+        <div>
+          <Link href={`/offres/${offre.id}`}>
+            <a
+              aria-label={`Détail de l’offre ${offre.id}`}
+              className='flex items-center text-s-regular hover:text-primary'
+            >
+              Voir le détail
+              <IconComponent
+                name={IconName.ChevronRight}
+                className='w-4 h-4 mr-3 fill-primary'
+                focusable={false}
+                aria-hidden={true}
+              />
+            </a>
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
