@@ -1,14 +1,14 @@
 import { ActionsService } from 'services/actions.service'
-import {
-  ReferentielApiService,
-  ReferentielService,
-} from 'services/referentiel.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import {
+  ReferentielApiService,
+  ReferentielService,
+} from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 
 export function mockedJeunesService(
@@ -103,11 +103,12 @@ export function mockedConseillerService(
   return { ...defaults, ...overrides }
 }
 
-export function mockedAgencesService(
+export function mockedReferentielService(
   overrides: Partial<ReferentielApiService> = {}
 ): ReferentielService {
   const defaults: ReferentielService = {
     getAgences: jest.fn(),
+    getCommunesEtDepartements: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

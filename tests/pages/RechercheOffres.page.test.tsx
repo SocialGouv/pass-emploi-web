@@ -4,21 +4,25 @@ import { GetServerSidePropsContext } from 'next/types'
 
 import { listeBaseOffres } from 'fixtures/offre'
 import { desLocalites } from 'fixtures/referentiel'
-import { mockedOffresEmploiService } from 'fixtures/services'
+import {
+  mockedOffresEmploiService,
+  mockedReferentielService,
+} from 'fixtures/services'
 import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import { Localite } from 'interfaces/referentiel'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('Page Recherche Offres', () => {
   describe('client side', () => {
     let offresEmploiService: OffresEmploiService
+    let referentielService: ReferentielService
+
     let offresEmploi: OffreEmploiItem[]
     let localites: Localite[]
     beforeEach(() => {
@@ -27,9 +31,12 @@ describe('Page Recherche Offres', () => {
       offresEmploiService = mockedOffresEmploiService({
         searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
       })
+      referentielService = mockedReferentielService({
+        getCommunesEtDepartements: jest.fn().mockResolvedValue(desLocalites()),
+      })
 
       renderWithContexts(<RechercheOffres pageTitle='' />, {
-        customDependances: { offresEmploiService },
+        customDependances: { offresEmploiService, referentielService },
       })
     })
 
@@ -62,6 +69,23 @@ describe('Page Recherche Offres', () => {
           name: 'Localisation (département ou commune)',
         })
       ).toBeInTheDocument()
+
+      expect(() => screen.getAllByRole('option', { hidden: true })).toThrow()
+    })
+
+    it('récupère les communes et les départements à la saisie', async () => {
+      // Given
+      const inputLocalisation = screen.getByLabelText(/Localisation/)
+
+      // When
+      await act(() => userEvent.type(inputLocalisation, 'Crégy'))
+      // Then
+      // expect(
+      //   referentielService.getCommunesEtDepartements
+      // ).toHaveBeenCalledTimes(1)
+      expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
+        'Crégy'
+      )
       localites.forEach((localite) =>
         expect(
           screen.getByRole('option', { hidden: true, name: localite.libelle })

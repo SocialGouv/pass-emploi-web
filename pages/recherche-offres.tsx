@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { FormEvent, useMemo, useState } from 'react'
+import React, { FormEvent, useEffect, useMemo, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { OffreCard } from 'components/offres/OffreCard'
@@ -10,7 +10,6 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { desLocalites } from 'fixtures/referentiel'
 import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { Localite } from 'interfaces/referentiel'
@@ -19,6 +18,7 @@ import {
   OffresEmploiService,
   SearchOffresEmploiQuery,
 } from 'services/offres-emploi.service'
+import { ReferentielService } from 'services/referentiel.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
@@ -30,14 +30,19 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     'offresEmploiService'
   )
 
-  const [localites] = useState<Localite[]>(desLocalites)
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
+
+  const [localites, setLocalites] = useState<Localite[]>([])
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [localisation, setLocalisation] = useState<{
     value?: string
     error?: string
   }>({})
-  const [localite, setLocalite] = useState<Localite | undefined>()
+  const [localiteSelectionnee, setLocaliteSelectionnee] = useState<
+    Localite | undefined
+  >()
 
   const [offres, setOffres] = useState<OffreEmploiItem[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -66,7 +71,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         error: 'Veuillez saisir une localisation correcte.',
       })
     } else {
-      setLocalite(localiteCorrespondante)
+      setLocaliteSelectionnee(localiteCorrespondante)
     }
   }
 
@@ -81,9 +86,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       const query: SearchOffresEmploiQuery = {}
       if (motsCles) query.motsCles = motsCles
 
-      if (localite) {
-        if (localite.type === 'DEPARTEMENT') query.departement = localite.code
-        if (localite.type === 'COMMUNE') query.commune = localite.code
+      if (localiteSelectionnee) {
+        if (localiteSelectionnee.type === 'DEPARTEMENT')
+          query.departement = localiteSelectionnee.code
+        if (localiteSelectionnee.type === 'COMMUNE')
+          query.commune = localiteSelectionnee.code
       }
 
       const result = await offresEmploiService.searchOffresEmploi(query)
@@ -96,6 +103,16 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       setIsSearching(false)
     }
   }
+
+  useEffect(() => {
+    if (localisation.value) {
+      referentielService
+        .getCommunesEtDepartements(localisation.value)
+        .then((res) => {
+          setLocalites(res)
+        })
+    }
+  }, [localisation.value, referentielService])
 
   useMatomo(trackingTitle)
 

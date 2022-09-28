@@ -7,8 +7,8 @@ import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
-import { ReferentielService } from 'services/referentiel.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { ReferentielService } from 'services/referentiel.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -102,7 +102,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     }
   }
 
-  const agenceService = withDependance<ReferentielService>('agencesService')
+  const agenceService = withDependance<ReferentielService>('referentielService')
   const referentielAgences = await agenceService.getAgences(
     user.structure,
     accessToken
