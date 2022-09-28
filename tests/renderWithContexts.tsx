@@ -4,7 +4,7 @@ import React from 'react'
 import { unConseiller } from 'fixtures/conseiller'
 import {
   mockedActionsService,
-  mockedAgencesService,
+  mockedReferentielService,
   mockedConseillerService,
   mockedFavorisService,
   mockedFichiersService,
@@ -34,7 +34,7 @@ export default function renderWithContexts(
   const { customDependances, customConseiller, customCurrentJeune } = options
   const dependances: Dependencies = {
     actionsService: mockedActionsService(),
-    agencesService: mockedAgencesService(),
+    referentielService: mockedReferentielService(),
     conseillerService: mockedConseillerService(),
     fichiersService: mockedFichiersService(),
     jeunesService: mockedJeunesService(),
