@@ -35,7 +35,7 @@ describe('ReferentielApiService', () => {
       })
     })
 
-    it('renvoie le referentiel des agences MILO', async () => {
+    it('renvoie le référentiel des agences MILO', async () => {
       // Given
       structure = StructureConseiller.MILO
       // WHEN
@@ -48,7 +48,7 @@ describe('ReferentielApiService', () => {
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
     })
 
-    it('renvoie le referentiel des agences Pôle emploi', async () => {
+    it('renvoie le référentiel des agences Pôle emploi', async () => {
       // Given
       structure = StructureConseiller.POLE_EMPLOI
       // WHEN

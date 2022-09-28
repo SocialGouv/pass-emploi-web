@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { StructureConseiller } from '../interfaces/conseiller'
+
+import { StructureConseiller } from 'interfaces/conseiller'
 
 export namespace LeanBe {
   export const MILO_WIDGET_ID = '6311adec35e9790013bdfdf6'

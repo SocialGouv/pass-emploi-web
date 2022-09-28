@@ -7,7 +7,7 @@ window.HTMLElement.prototype.scrollIntoView = jest.fn()
 window.HTMLElement.prototype.scrollTo = jest.fn()
 
 jest.mock('utils/analytics/useMatomo')
-jest.mock('utils/useLeanBeWidget')
+jest.mock('utils/hooks/useLeanBeWidget')
 jest.mock('next/router', () => ({
   __esModule: true,
   useRouter: jest.fn(),

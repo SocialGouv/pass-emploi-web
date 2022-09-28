@@ -7,7 +7,7 @@ import { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useLeanBeWidget } from 'utils/useLeanBeWidget'
+import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
 
 export enum MenuItem {
   Jeunes = 'Jeunes',

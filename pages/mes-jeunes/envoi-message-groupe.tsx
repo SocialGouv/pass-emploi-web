@@ -26,11 +26,11 @@ import {
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { parseUrl, setQueryParams } from 'utils/urlParser'
-import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   jeunes: BaseJeune[]
