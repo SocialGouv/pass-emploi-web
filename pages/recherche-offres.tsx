@@ -72,7 +72,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     if (!localiteCorrespondante) {
       setLocalisationInput({
         ...localisationInput,
-        error: 'Veuillez saisir une localisationInput correcte.',
+        error: 'Veuillez saisir une localisation correcte.',
       })
     } else {
       setLocaliteSelectionnee(localiteCorrespondante)

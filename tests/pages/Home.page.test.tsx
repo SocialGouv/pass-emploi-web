@@ -219,7 +219,7 @@ describe('Home', () => {
 
   describe('server side', () => {
     let conseillerService: ConseillerService
-    let agencesService: ReferentielService
+    let referentielService: ReferentielService
     it('nécessite une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -299,12 +299,13 @@ describe('Home', () => {
           getConseillerServerSide: jest.fn(async () => conseiller),
         })
 
-        agencesService = {
+        referentielService = {
           getAgences: jest.fn(async () => uneListeDAgencesMILO()),
+          getCommunesEtDepartements: jest.fn(),
         }
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'conseillerService') return conseillerService
-          if (dependance === 'agencesService') return agencesService
+          if (dependance === 'referentielService') return referentielService
         })
       })
       it('renvoie les props nécessaires pour demander l’agence', async () => {
