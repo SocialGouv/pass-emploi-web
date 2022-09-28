@@ -20,10 +20,10 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
-import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]

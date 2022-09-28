@@ -44,7 +44,6 @@ describe('Page Recherche Offres', () => {
     })
 
     afterEach(() => {
-      jest.runOnlyPendingTimers()
       jest.useRealTimers()
     })
 
@@ -102,6 +101,7 @@ describe('Page Recherche Offres', () => {
       expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
         'Crégy'
       )
+      //FIXME: Error: Changed from using fake timers to real timers while using waitFor. This is not allowed and will result in very strange behavior. Please ensure you're awaiting all async things your test is doing before changing to real timers. For more info, please go to https://github.com/testing-library/dom-testing-library/issues/830
       await waitFor(() =>
         expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
       )
@@ -118,7 +118,7 @@ describe('Page Recherche Offres', () => {
       )
     })
 
-    it('construit la recherche', async () => {
+    it('construit la recherche avec un département', async () => {
       // Given
       const user = userEvent.setup({
         delay: null,
@@ -131,17 +131,17 @@ describe('Page Recherche Offres', () => {
       await act(async () => {
         await user.type(inputMotsCles, 'prof industrie')
         await user.type(inputLocalisation, 'pAris')
-        await jest.runAllTimers()
+        jest.runAllTimers()
       })
-      await act(() => {
-        fireEvent.blur(inputLocalisation)
-      })
+
       await act(async () => user.click(submitButton))
 
       // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-        motsCles: 'prof industrie',
-        departement: '75',
+      waitFor(() => {
+        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+          motsCles: 'prof industrie',
+          departement: '75',
+        })
       })
     })
 
@@ -160,15 +160,15 @@ describe('Page Recherche Offres', () => {
         await user.type(inputLocalisation, 'paris 14')
         await jest.runAllTimers()
       })
-      await act(() => {
-        fireEvent.blur(inputLocalisation)
-      })
+
       await act(async () => user.click(submitButton))
 
       // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-        motsCles: 'prof industrie',
-        commune: '75114',
+      waitFor(() => {
+        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+          motsCles: 'prof industrie',
+          commune: '75114',
+        })
       })
     })
 

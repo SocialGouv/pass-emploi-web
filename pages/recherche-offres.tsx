@@ -21,6 +21,7 @@ import {
 import { ReferentielService } from 'services/referentiel.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
@@ -59,8 +60,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     [localisationInput.error]
   )
 
-  function validateLocalite() {
-    if (!localisationInput.value) return
+  function validateLocalite(): boolean {
+    if (!localisationInput.value) return true
 
     const localiteCorrespondante: Localite | undefined = localites.find(
       ({ libelle }) =>
@@ -74,14 +75,18 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         ...localisationInput,
         error: 'Veuillez saisir une localisation correcte.',
       })
+      return false
     } else {
       setLocaliteSelectionnee(localiteCorrespondante)
+      return true
     }
   }
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!formIsValid) return
+    const isLocaliteValide = validateLocalite()
+
+    if (!isLocaliteValide) return
 
     setIsSearching(true)
     setOffres(undefined)
@@ -108,25 +113,13 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     }
   }
 
-  function useDebounce(value: string | undefined, delayInMs: number) {
-    const [debouncedValue, setDebouncedValue] = useState(value)
-
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value)
-      }, delayInMs)
-
-      return () => clearTimeout(handler)
-    }, [value, delayInMs])
-
-    return debouncedValue
-  }
-
   useEffect(() => {
     if (debouncedLocalisationInput) {
       referentielService
         .getCommunesEtDepartements(debouncedLocalisationInput)
         .then(setLocalites)
+    } else {
+      setLocalites([])
     }
   }, [debouncedLocalisationInput, referentielService])
 
