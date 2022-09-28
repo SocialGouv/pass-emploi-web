@@ -34,15 +34,16 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     useDependance<ReferentielService>('referentielService')
 
   const [localites, setLocalites] = useState<Localite[]>([])
-
-  const [motsCles, setMotsCles] = useState<string | undefined>()
-  const [localisation, setLocalisation] = useState<{
-    value?: string
-    error?: string
-  }>({})
   const [localiteSelectionnee, setLocaliteSelectionnee] = useState<
     Localite | undefined
   >()
+
+  const [motsCles, setMotsCles] = useState<string | undefined>()
+  const [localisationInput, setLocalisationInput] = useState<{
+    value?: string
+    error?: string
+  }>({})
+  const debouncedLocalisationInput = useDebounce(localisationInput.value, 1000)
 
   const [offres, setOffres] = useState<OffreEmploiItem[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -53,22 +54,25 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   if (partageSuccess) initialTracking += ' - Partage offre succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  const formIsValid = useMemo(() => !localisation.error, [localisation.error])
+  const formIsValid = useMemo(
+    () => !localisationInput.error,
+    [localisationInput.error]
+  )
 
   function validateLocalite() {
-    if (!localisation.value) return
+    if (!localisationInput.value) return
 
     const localiteCorrespondante: Localite | undefined = localites.find(
       ({ libelle }) =>
-        libelle.localeCompare(localisation.value!, undefined, {
+        libelle.localeCompare(localisationInput.value!, undefined, {
           sensitivity: 'base',
         }) === 0
     )
 
     if (!localiteCorrespondante) {
-      setLocalisation({
-        ...localisation,
-        error: 'Veuillez saisir une localisation correcte.',
+      setLocalisationInput({
+        ...localisationInput,
+        error: 'Veuillez saisir une localisationInput correcte.',
       })
     } else {
       setLocaliteSelectionnee(localiteCorrespondante)
@@ -104,15 +108,27 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     }
   }
 
+  function useDebounce(value: string | undefined, delayInMs: number) {
+    const [debouncedValue, setDebouncedValue] = useState(value)
+
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value)
+      }, delayInMs)
+
+      return () => clearTimeout(handler)
+    }, [value, delayInMs])
+
+    return debouncedValue
+  }
+
   useEffect(() => {
-    if (localisation.value) {
+    if (debouncedLocalisationInput) {
       referentielService
-        .getCommunesEtDepartements(localisation.value)
-        .then((res) => {
-          setLocalites(res)
-        })
+        .getCommunesEtDepartements(debouncedLocalisationInput)
+        .then(setLocalites)
     }
-  }, [localisation.value, referentielService])
+  }, [debouncedLocalisationInput, referentielService])
 
   useMatomo(trackingTitle)
 
@@ -130,9 +146,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           <Label htmlFor='localisation'>
             Localisation (département ou commune)
           </Label>
-          {localisation.error && (
+          {localisationInput.error && (
             <InputError id='localisation--error'>
-              {localisation.error}
+              {localisationInput.error}
             </InputError>
           )}
           <SelectAutocomplete
@@ -141,9 +157,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
               id: localite.code,
               value: localite.libelle,
             }))}
-            onChange={(value) => setLocalisation({ value })}
+            onChange={(value) => setLocalisationInput({ value })}
             onBlur={validateLocalite}
-            invalid={Boolean(localisation.error)}
+            invalid={Boolean(localisationInput.error)}
           />
         </div>
 
