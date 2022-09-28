@@ -87,15 +87,13 @@ describe('Page Recherche Offres', () => {
       const inputLocalisation = screen.getByLabelText(/Localisation/)
       const user = userEvent.setup({
         delay: null,
-        // advanceTimers: jest.runOnlyPendingTimers,
       })
 
       // When
       await act(() => user.type(inputLocalisation, 'Crégy'))
-      await act(() => jest.advanceTimersByTime(2000))
-      // await act(() => {
-      //   jest.runAllTimers()
-      // })
+      await act(() => {
+        jest.runAllTimers()
+      })
 
       // Then
       expect(
@@ -104,25 +102,27 @@ describe('Page Recherche Offres', () => {
       expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
         'Crégy'
       )
-      // await waitFor(() =>
-      expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
-      // )
-      // localites.forEach(
-      //   async (localite) =>
-      //     await waitFor(() =>
-      //       expect(
-      //         screen.getByRole('option', {
-      //           hidden: true,
-      //           name: localite.libelle,
-      //         })
-      //       ).toHaveValue(localite.libelle)
-      //     )
-      // )
+      await waitFor(() =>
+        expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
+      )
+      localites.forEach(
+        async (localite) =>
+          await waitFor(() =>
+            expect(
+              screen.getByRole('option', {
+                hidden: true,
+                name: localite.libelle,
+              })
+            ).toHaveValue(localite.libelle)
+          )
+      )
     })
 
     it('construit la recherche', async () => {
       // Given
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+      })
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
@@ -131,6 +131,7 @@ describe('Page Recherche Offres', () => {
       await act(async () => {
         await user.type(inputMotsCles, 'prof industrie')
         await user.type(inputLocalisation, 'pAris')
+        await jest.runAllTimers()
       })
       await act(() => {
         fireEvent.blur(inputLocalisation)
@@ -146,7 +147,9 @@ describe('Page Recherche Offres', () => {
 
     it('construit la recherche avec une commune', async () => {
       // Given
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+      })
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
@@ -155,6 +158,7 @@ describe('Page Recherche Offres', () => {
       await act(async () => {
         await user.type(inputMotsCles, 'prof industrie')
         await user.type(inputLocalisation, 'paris 14')
+        await jest.runAllTimers()
       })
       await act(() => {
         fireEvent.blur(inputLocalisation)
@@ -170,12 +174,17 @@ describe('Page Recherche Offres', () => {
 
     it('affiche une erreur quand la localisation est incorrecte', async () => {
       // Given
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+      })
       const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await act(async () => user.type(inputLocalisation, 'paris14'))
+      await act(async () => {
+        await user.type(inputLocalisation, 'paris14')
+        await jest.runAllTimers()
+      })
       await act(() => {
         fireEvent.blur(inputLocalisation)
       })
