@@ -63,10 +63,10 @@ describe('ReferentielApiService', () => {
   })
 
   describe('.getCommunesEtDepartements', () => {
-    it('retourne un référentiel de communes et départements', async () => {
+    it('retourne un référentiel de communes et départements avec des codes uniques', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: desLocalites(),
+        content: [...desLocalites(), ...desLocalites()],
       })
 
       // When

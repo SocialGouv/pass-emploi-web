@@ -1,6 +1,7 @@
+import { getSession } from 'next-auth/react'
+
 import { ApiClient } from 'clients/api.client'
 import { Agence, Localite } from 'interfaces/referentiel'
-import { getSession } from 'next-auth/react'
 
 export interface ReferentielService {
   getAgences(structure: string, accessToken: string): Promise<Agence[]>
@@ -29,6 +30,11 @@ export class ReferentielApiService implements ReferentielService {
       )}`,
       session!.accessToken
     )
-    return communesEtDepartements
+
+    return Array.from(
+      new Map(
+        communesEtDepartements.map((localite) => [localite.code, localite])
+      ).values()
+    )
   }
 }
