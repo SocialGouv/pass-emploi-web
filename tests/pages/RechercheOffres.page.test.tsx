@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -27,8 +27,6 @@ describe('Page Recherche Offres', () => {
     let localites: Localite[]
 
     beforeEach(() => {
-      jest.useFakeTimers()
-
       localites = desLocalites()
       offresEmploi = listeBaseOffres()
       offresEmploiService = mockedOffresEmploiService({
@@ -41,10 +39,6 @@ describe('Page Recherche Offres', () => {
       renderWithContexts(<RechercheOffres pageTitle='' />, {
         customDependances: { offresEmploiService, referentielService },
       })
-    })
-
-    afterEach(() => {
-      jest.useRealTimers()
     })
 
     it('permet de saisir des mots clés', () => {
@@ -60,11 +54,10 @@ describe('Page Recherche Offres', () => {
 
     it("permet de rechercher des offres d'emploi", async () => {
       // Given
-      const user = userEvent.setup({ delay: null })
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await act(() => user.click(submitButton))
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
@@ -84,15 +77,10 @@ describe('Page Recherche Offres', () => {
     it('récupère les communes et les départements à la saisie', async () => {
       // Given
       const inputLocalisation = screen.getByLabelText(/Localisation/)
-      const user = userEvent.setup({
-        delay: null,
-      })
 
       // When
-      await act(() => user.type(inputLocalisation, 'Crégy'))
-      await act(() => {
-        jest.runAllTimers()
-      })
+      await act(() => userEvent.type(inputLocalisation, 'Crégy'))
+      await act(() => new Promise((r) => setTimeout(r, 1000)))
 
       // Then
       expect(
@@ -101,94 +89,69 @@ describe('Page Recherche Offres', () => {
       expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
         'Crégy'
       )
-      //FIXME: Error: Changed from using fake timers to real timers while using waitFor. This is not allowed and will result in very strange behavior. Please ensure you're awaiting all async things your test is doing before changing to real timers. For more info, please go to https://github.com/testing-library/dom-testing-library/issues/830
-      await waitFor(() =>
-        expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
-      )
-      localites.forEach(
-        async (localite) =>
-          await waitFor(() =>
-            expect(
-              screen.getByRole('option', {
-                hidden: true,
-                name: localite.libelle,
-              })
-            ).toHaveValue(localite.libelle)
-          )
+      expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
+      localites.forEach((localite) =>
+        expect(
+          screen.getByRole('option', { hidden: true, name: localite.libelle })
+        ).toHaveValue(localite.libelle)
       )
     })
 
     it('construit la recherche avec un département', async () => {
       // Given
-      const user = userEvent.setup({
-        delay: null,
-      })
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
       await act(async () => {
-        await user.type(inputMotsCles, 'prof industrie')
-        await user.type(inputLocalisation, 'pAris')
-        jest.runAllTimers()
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await userEvent.type(inputLocalisation, 'pAris')
+        await new Promise((r) => setTimeout(r, 1000))
       })
-
-      await act(async () => user.click(submitButton))
+      await act(async () => userEvent.click(submitButton))
 
       // Then
-      waitFor(() => {
-        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-          motsCles: 'prof industrie',
-          departement: '75',
-        })
+      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+        motsCles: 'prof industrie',
+        departement: '75',
       })
     })
 
     it('construit la recherche avec une commune', async () => {
       // Given
-      const user = userEvent.setup({
-        delay: null,
-      })
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
       await act(async () => {
-        await user.type(inputMotsCles, 'prof industrie')
-        await user.type(inputLocalisation, 'paris 14')
-        await jest.runAllTimers()
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await userEvent.type(inputLocalisation, 'paris 14')
+        await new Promise((r) => setTimeout(r, 1000))
       })
-
-      await act(async () => user.click(submitButton))
+      await act(async () => userEvent.click(submitButton))
 
       // Then
-      waitFor(() => {
-        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-          motsCles: 'prof industrie',
-          commune: '75114',
-        })
+      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+        motsCles: 'prof industrie',
+        commune: '75114',
       })
     })
 
     it('affiche une erreur quand la localisation est incorrecte', async () => {
       // Given
-      const user = userEvent.setup({
-        delay: null,
-      })
       const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
       await act(async () => {
-        await user.type(inputLocalisation, 'paris14')
-        await jest.runAllTimers()
+        await userEvent.type(inputLocalisation, 'paris14')
       })
       await act(() => {
         fireEvent.blur(inputLocalisation)
       })
-      await act(async () => user.click(submitButton))
+      await act(async () => userEvent.click(submitButton))
 
       // Then
       expect(
@@ -201,11 +164,10 @@ describe('Page Recherche Offres', () => {
       let offresList: HTMLElement
       beforeEach(async () => {
         // Given
-        const user = userEvent.setup({ delay: null })
         const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
         // When
-        await act(() => user.click(submitButton))
+        await act(() => userEvent.click(submitButton))
 
         // Then
         offresList = screen.getByRole('list', {
@@ -251,14 +213,13 @@ describe('Page Recherche Offres', () => {
 
     it('affiche une erreur si la recherche échoue', async () => {
       // Given
-      const user = userEvent.setup({ delay: null })
       ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockRejectedValue(
         'whatever'
       )
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await act(() => user.click(submitButton))
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(screen.getByRole('alert')).toHaveTextContent(
@@ -268,14 +229,13 @@ describe('Page Recherche Offres', () => {
 
     it("affiche un message s'il n'y a pas de résultat", async () => {
       // Given
-      const user = userEvent.setup({ delay: null })
       ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockResolvedValue(
         []
       )
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await act(() => user.click(submitButton))
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(
