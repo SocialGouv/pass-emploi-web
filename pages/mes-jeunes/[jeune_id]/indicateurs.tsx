@@ -151,14 +151,6 @@ function IndicateursOffres({
           textColor='primary_darken'
         />
         <TileIndicateur
-          valeur={offres?.partagees.toString() ?? '-'}
-          label={
-            offres?.partagees !== 1 ? 'Offres partagées' : 'Offre partagée'
-          }
-          bgColor='primary_lighten'
-          textColor='primary_darken'
-        />
-        <TileIndicateur
           valeur={favoris?.recherchesSauvegardees.toString() ?? '-'}
           label={
             favoris?.recherchesSauvegardees !== 1

@@ -65,16 +65,6 @@ export default function MenuLinks({
           />
         )}
 
-        {items.includes(MenuItem.RechercheOffres) && (
-          <MenuLink
-            isActive={isCurrentRoute('/recherche-offres')}
-            href='/recherche-offres'
-            label='Offres'
-            iconName={IconName.Search}
-            showLabelOnSmallScreen={showLabelsOnSmallScreen}
-          />
-        )}
-
         {isSuperviseur && items.includes(MenuItem.Supervision) && (
           <>
             <MenuLink
