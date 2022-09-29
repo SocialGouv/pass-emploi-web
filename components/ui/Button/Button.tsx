@@ -21,6 +21,7 @@ interface Props {
 export enum ButtonStyle {
   PRIMARY = 'PRIMARY',
   SECONDARY = 'SECONDARY',
+  TERTIARY = 'TERTIARY',
   WARNING = 'WARNING',
 }
 
@@ -66,11 +67,13 @@ export default function Button({
 
 function getColorStyleClassName(style: ButtonStyle): string {
   switch (style) {
-    case ButtonStyle.SECONDARY:
-      return styles.buttonSecondary
-    case ButtonStyle.WARNING:
-      return styles.buttonWarning
     case ButtonStyle.PRIMARY:
       return styles.buttonPrimary
+    case ButtonStyle.SECONDARY:
+      return styles.buttonSecondary
+    case ButtonStyle.TERTIARY:
+      return styles.buttonTertiary
+    case ButtonStyle.WARNING:
+      return styles.buttonWarning
   }
 }

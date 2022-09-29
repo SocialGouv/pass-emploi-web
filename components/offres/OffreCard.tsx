@@ -1,6 +1,7 @@
-import Link from 'next/link'
 import React from 'react'
 
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
@@ -20,20 +21,18 @@ export function OffreCard({ offre }: OffreItemCardProps) {
           backgroundColor='white'
           className='text-s-regular'
         />
-        <Link href={`/offres/${offre.id}/partage`}>
-          <a
-            aria-label={`Partager offre numéro ${offre.id}`}
-            className='flex items-center text-base-bold text-primary'
-          >
-            <IconComponent
-              name={IconName.Partage}
-              className='w-4 h-4 mr-3 fill-primary'
-              focusable={false}
-              aria-hidden={true}
-            />
-            Partager
-          </a>
-        </Link>
+        <ButtonLink
+          href={`/offres/${offre.id}/partage`}
+          style={ButtonStyle.TERTIARY}
+        >
+          <IconComponent
+            name={IconName.Partage}
+            className='w-4 h-4 mr-3 fill-primary'
+            focusable={false}
+            aria-hidden={true}
+          />
+          Partager <span className='sr-only'>offre numéro {offre.id}</span>
+        </ButtonLink>
       </div>
       <h3 className='text-base-bold text-accent_1 mb-2'>Offre n°{offre.id}</h3>
       <p className='text-base-bold mb-2'>{offre.titre}</p>
