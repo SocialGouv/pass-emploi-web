@@ -42,10 +42,10 @@ describe('FiltresStatutsAction', () => {
 
   it('réinitialise les statuts non validés', async () => {
     // Given
-    await act(() => {
-      userEvent.click(screen.getByLabelText('À réaliser'))
-      userEvent.click(screen.getByLabelText('Terminée'))
-      userEvent.click(screen.getByText('Statut'))
+    await act(async () => {
+      await userEvent.click(screen.getByLabelText('À réaliser'))
+      await userEvent.click(screen.getByLabelText('Terminée'))
+      await userEvent.click(screen.getByText('Statut'))
     })
 
     // When
@@ -60,11 +60,11 @@ describe('FiltresStatutsAction', () => {
 
   it('filtre les actions avec les statuts sélectionnés', async () => {
     // Given
-    await act(() => {
-      userEvent.click(screen.getByLabelText('Terminée'))
-      userEvent.click(screen.getByLabelText('Commencée'))
-      userEvent.click(screen.getByLabelText('À réaliser'))
-      userEvent.click(screen.getByLabelText('Terminée'))
+    await act(async () => {
+      await userEvent.click(screen.getByLabelText('Terminée'))
+      await userEvent.click(screen.getByLabelText('Commencée'))
+      await userEvent.click(screen.getByLabelText('À réaliser'))
+      await userEvent.click(screen.getByLabelText('Terminée'))
     })
 
     // When

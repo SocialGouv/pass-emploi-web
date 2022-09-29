@@ -81,10 +81,10 @@ describe('TableauActionsJeune', () => {
         await act(() =>
           userEvent.click(screen.getByRole('button', { name: /qualification/ }))
         )
-        await act(() => {
-          userEvent.click(screen.getByLabelText('Actions à qualifier'))
-          userEvent.click(screen.getByLabelText('Actions qualifiées'))
-          userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+        await act(async () => {
+          await userEvent.click(screen.getByLabelText('Actions à qualifier'))
+          await userEvent.click(screen.getByLabelText('Actions qualifiées'))
+          await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
         })
       })
 
