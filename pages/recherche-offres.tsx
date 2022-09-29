@@ -35,9 +35,6 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     useDependance<ReferentielService>('referentielService')
 
   const [localites, setLocalites] = useState<Localite[]>([])
-  const [localiteSelectionnee, setLocaliteSelectionnee] = useState<
-    Localite | undefined
-  >()
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [localisationInput, setLocalisationInput] = useState<{
@@ -60,8 +57,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     [localisationInput.error]
   )
 
-  function validateLocalite(): boolean {
-    if (!localisationInput.value) return true
+  function validateLocalite(): Localite | null | false {
+    if (!localisationInput.value) return null
 
     const localiteCorrespondante: Localite | undefined = localites.find(
       ({ libelle }) =>
@@ -77,16 +74,15 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       })
       return false
     } else {
-      setLocaliteSelectionnee(localiteCorrespondante)
-      return true
+      return localiteCorrespondante
     }
   }
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const isLocaliteValide = validateLocalite()
 
-    if (!isLocaliteValide) return
+    const localiteValide = validateLocalite()
+    if (localiteValide === false) return
 
     setIsSearching(true)
     setOffres(undefined)
@@ -95,11 +91,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       const query: SearchOffresEmploiQuery = {}
       if (motsCles) query.motsCles = motsCles
 
-      if (localiteSelectionnee) {
-        if (localiteSelectionnee.type === 'DEPARTEMENT')
-          query.departement = localiteSelectionnee.code
-        if (localiteSelectionnee.type === 'COMMUNE')
-          query.commune = localiteSelectionnee.code
+      if (localiteValide) {
+        if (localiteValide.type === 'DEPARTEMENT')
+          query.departement = localiteValide.code
+        if (localiteValide.type === 'COMMUNE')
+          query.commune = localiteValide.code
       }
 
       const result = await offresEmploiService.searchOffresEmploi(query)
