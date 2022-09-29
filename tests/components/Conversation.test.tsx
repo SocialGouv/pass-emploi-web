@@ -94,8 +94,8 @@ describe('<Conversation />', () => {
     const messageInput = screen.getByPlaceholderText(
       'Écrivez votre message ici...'
     )
-    await userEvent.upload(fileInput, file, { applyAccept: false })
-    await userEvent.type(messageInput, 'TOTO')
+    await act(() => userEvent.upload(fileInput, file, { applyAccept: false }))
+    await act(() => userEvent.type(messageInput, 'TOTO'))
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
@@ -169,7 +169,7 @@ describe('<Conversation />', () => {
       const lienRedirection = screen.getByText(/https/)
 
       // When
-      await userEvent.click(lienRedirection)
+      await act(() => userEvent.click(lienRedirection))
 
       // Then
       expect(modaleConfirmation).toHaveBeenCalledTimes(1)
@@ -191,7 +191,7 @@ describe('<Conversation />', () => {
       const lienRedirection = screen.getByText(/https/)
 
       // When
-      await userEvent.click(lienRedirection)
+      await act(() => userEvent.click(lienRedirection))
 
       // Then
       expect(modaleConfirmation).toHaveBeenCalledTimes(1)
@@ -223,8 +223,8 @@ describe('<Conversation />', () => {
       const submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
-      await userEvent.type(messageInput, newMessage)
-      await userEvent.click(submitButton)
+      await act(() => userEvent.type(messageInput, newMessage))
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
@@ -248,7 +248,7 @@ describe('<Conversation />', () => {
       submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
-      await userEvent.upload(fileInput, file, { applyAccept: false })
+      await act(() => userEvent.upload(fileInput, file, { applyAccept: false }))
     })
 
     it('téléverse un fichier et affiche son nom en cas de succès', async () => {
@@ -271,14 +271,14 @@ describe('<Conversation />', () => {
         'Supprimer la pièce jointe'
       )
       // When
-      await userEvent.click(boutonDeleteFichier)
+      await act(() => userEvent.click(boutonDeleteFichier))
       // Then
       expect(fichiersService.deleteFichier).toHaveBeenCalledWith('id-fichier')
       expect(() => screen.getByText('imageupload.png')).toThrow()
     })
 
     it('création d’un message avec une pièce jointe', async () => {
-      await userEvent.click(submitButton)
+      await act(() => userEvent.click(submitButton))
 
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(

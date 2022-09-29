@@ -50,7 +50,7 @@ describe('Page Profil conseiller', () => {
         actual = await getServerSideProps({} as GetServerSidePropsContext)
       })
 
-      it('récupère la structure du conseiller', () => {
+      it('charge la page avec les bonnes props', () => {
         // Then
         expect(actual).toEqual({
           props: {
@@ -181,7 +181,7 @@ describe('Page Profil conseiller', () => {
         const toggleNotifications = getToggleNotifications()
 
         // When
-        await userEvent.click(toggleNotifications)
+        await act(() => userEvent.click(toggleNotifications))
       })
 
       it('met à jour côté API', async () => {

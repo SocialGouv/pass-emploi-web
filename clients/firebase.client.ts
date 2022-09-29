@@ -25,6 +25,7 @@ import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { Chat } from 'interfaces/jeune'
 import { InfoOffre, Message, TypeMessage } from 'interfaces/message'
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
@@ -46,15 +47,16 @@ interface FirebaseMessage {
   offre?: InfoOffre
 }
 
-export interface AddMessage extends CreateFirebaseMessage {
-  idChat: string
-}
-
-interface CreateFirebaseMessage {
+type BaseCreateFirebaseMessage = {
   idConseiller: string
   message: EncryptedTextWithInitializationVector
-  infoPieceJointe?: InfoFichier
   date: DateTime
+}
+export type CreateFirebaseMessage = BaseCreateFirebaseMessage & {
+  infoPieceJointe?: InfoFichier
+}
+export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
+  offre: DetailOffreEmploi
 }
 
 class FirebaseClient {
@@ -86,19 +88,8 @@ class FirebaseClient {
     await signOut(this.auth)
   }
 
-  async addMessage({
-    idChat,
-    idConseiller,
-    message,
-    infoPieceJointe,
-    date,
-  }: AddMessage): Promise<void> {
-    const firebaseMessage = createFirebaseMessage({
-      message,
-      infoPieceJointe: infoPieceJointe,
-      idConseiller,
-      date,
-    })
+  async addMessage(idChat: string, data: CreateFirebaseMessage): Promise<void> {
+    const firebaseMessage = createFirebaseMessage(data)
     try {
       await addDoc<FirebaseMessage>(
         collection(
@@ -278,27 +269,34 @@ class FirebaseClient {
   }
 }
 
-function createFirebaseMessage({
-  message: { encryptedText, iv },
-  infoPieceJointe,
-  idConseiller,
-  date,
-}: CreateFirebaseMessage): FirebaseMessage {
-  const type = infoPieceJointe ? TypeMessage.MESSAGE_PJ : TypeMessage.MESSAGE
-  const firebaseFichier: FirebaseMessage = {
+function createFirebaseMessage(data: CreateFirebaseMessage | CreateFirebaseMessageWithOffre): FirebaseMessage {
+  const type: TypeMessage = TypeMessage.MESSAGE
+  let { encryptedText, iv } = data.message
+  const firebaseMessage: FirebaseMessage = {
     content: encryptedText,
     iv,
-    conseillerId: idConseiller,
+    conseillerId: data.idConseiller,
     sentBy: UserType.CONSEILLER.toLowerCase(),
-    creationDate: Timestamp.fromMillis(date.toMillis()),
+    creationDate: Timestamp.fromMillis(data.date.toMillis()),
     type,
   }
 
-  if (infoPieceJointe) {
-    firebaseFichier.piecesJointes = [infoPieceJointe]
+  if (Object.prototype.hasOwnProperty.call(data, 'infoPieceJointe')) {
+    firebaseMessage.type = TypeMessage.MESSAGE_PJ
+    firebaseMessage.piecesJointes = [
+      (data as CreateFirebaseMessage).infoPieceJointe!,
+    ]
   }
 
-  return firebaseFichier
+  if (Object.prototype.hasOwnProperty.call(data, 'offre')) {
+    firebaseMessage.type = TypeMessage.MESSAGE_OFFRE
+    const { id, titre, urlPostulation } = (
+      data as CreateFirebaseMessageWithOffre
+    ).offre
+    firebaseMessage.offre = { id, titre, lien: urlPostulation }
+  }
+
+  return firebaseMessage
 }
 
 interface FirebaseChat {

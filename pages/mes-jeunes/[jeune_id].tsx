@@ -2,14 +2,14 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
 import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { IndicateursJeune } from 'components/jeune/IndicateursJeune'
+import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { OngletRdvs } from 'components/rdv/OngletRdvs'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -31,7 +31,7 @@ import {
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -112,9 +112,9 @@ function FicheJeune({
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
 
-  const aujourdHui = DateTime.now()
-  const debutDeLaSemaine = aujourdHui.startOf('week')
-  const finDeLaSemaine = aujourdHui.endOf('week')
+  const aujourdHui = useMemo(() => DateTime.now(), [])
+  const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
+  const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
 
   const pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
@@ -227,21 +227,17 @@ function FicheJeune({
     setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
+  // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
     if (conseiller && !isPoleEmploi && !indicateursSemaine) {
       jeunesService
-        .getIndicateursJeune(
-          conseiller.id,
-          jeune.id,
-          debutDeLaSemaine,
-          finDeLaSemaine
-        )
+        .getIndicateursJeune(conseiller.id, jeune.id, debutSemaine, finSemaine)
         .then(setIndicateursSemaine)
     }
   }, [
     conseiller,
-    debutDeLaSemaine,
-    finDeLaSemaine,
+    debutSemaine,
+    finSemaine,
     indicateursSemaine,
     jeune.id,
     jeunesService,
@@ -309,9 +305,10 @@ function FicheJeune({
       </div>
 
       {!isPoleEmploi && (
-        <IndicateursJeune
-          debutDeLaSemaine={debutDeLaSemaine}
-          finDeLaSemaine={finDeLaSemaine}
+        <ResumeIndicateursJeune
+          idJeune={jeune.id}
+          debutDeLaSemaine={debutSemaine}
+          finDeLaSemaine={finSemaine}
           indicateursSemaine={indicateursSemaine}
         />
       )}
@@ -388,6 +385,7 @@ function FicheJeune({
             poleEmploi={isPoleEmploi}
             rdvs={rdvs}
             idConseiller={conseiller?.id ?? ''}
+            idJeune={jeune.id}
           />
         </div>
       )}
@@ -461,6 +459,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       ? []
       : rendezVousService.getRendezVousJeune(
           context.query.jeune_id as string,
+          PeriodeRdv.FUTURS,
           accessToken
         ),
     isPoleEmploi
@@ -476,13 +475,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     return { notFound: true }
   }
 
-  const now = DateTime.now()
   const props: FicheJeuneProps = {
     jeune,
     metadonneesFavoris,
-    rdvs: rdvs
-      .filter((rdv) => DateTime.fromISO(rdv.date) > now)
-      .map(rdvToListItem),
+    rdvs: rdvs.map(rdvToListItem),
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,

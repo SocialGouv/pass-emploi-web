@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { CommentaireAction } from 'components/action/CommentaireAction'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -22,13 +22,10 @@ export function CommentairesAction({
   onAjout,
 }: CommentairesActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
-  const [commentaires, setCommentaires] = useState<Commentaire[]>([])
+  const [commentaires, setCommentaires] =
+    useState<Commentaire[]>(commentairesInitiaux)
   const [nouveauCommentaire, setNouveauCommentaire] = useState<string>('')
   const [conseiller] = useConseiller()
-
-  useEffect(() => {
-    setCommentaires(commentairesInitiaux)
-  }, [commentairesInitiaux])
 
   function ajouterUnCommentaire() {
     actionsService

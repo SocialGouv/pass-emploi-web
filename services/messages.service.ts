@@ -1,8 +1,13 @@
 import { DateTime } from 'luxon'
+import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { AddMessage, FirebaseClient } from 'clients/firebase.client'
+import {
+  CreateFirebaseMessage,
+  CreateFirebaseMessageWithOffre,
+  FirebaseClient,
+} from 'clients/firebase.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
@@ -12,10 +17,11 @@ import {
   MessagesOfADay,
   TypeMessage,
 } from 'interfaces/message'
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { toShortDate } from 'utils/date'
 
-interface FormNouveauMessage {
+type FormNouveauMessage = {
   newMessage: string
   cleChiffrement: string
   infoPieceJointe?: InfoFichier
@@ -27,6 +33,20 @@ export type FormNouveauMessageIndividuel = FormNouveauMessage & {
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
   idsDestinataires: string[]
 }
+
+type FormPartageOffre = {
+  offre: DetailOffreEmploi
+  idsDestinataires: string[]
+  cleChiffrement: string
+  message: string
+}
+
+type MessageType =
+  | 'MESSAGE_ENVOYE'
+  | 'MESSAGE_ENVOYE_PJ'
+  | 'MESSAGE_ENVOYE_MULTIPLE'
+  | 'MESSAGE_ENVOYE_MULTIPLE_PJ'
+  | 'MESSAGE_OFFRE_PARTAGEE'
 
 export interface MessagesService {
   getChatCredentials(): Promise<ChatCredentials>
@@ -63,6 +83,8 @@ export interface MessagesService {
   countMessagesNotRead(
     idsJeunes: string[]
   ): Promise<{ [idJeune: string]: number }>
+
+  partagerOffre(options: FormPartageOffre): Promise<void>
 }
 
 export class MessagesFirebaseAndApiService implements MessagesService {
@@ -189,13 +211,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
     const session = await getSession()
 
-    const nouveauMessage: AddMessage = {
-      idChat: jeuneChat.chatId,
+    const nouveauMessage: CreateFirebaseMessage = {
       idConseiller: session!.user.id,
       message: encryptedMessage,
       date: now,
     }
 
+    let type: MessageType = 'MESSAGE_ENVOYE'
     if (infoPieceJointe) {
       nouveauMessage.infoPieceJointe = {
         ...infoPieceJointe,
@@ -205,10 +227,11 @@ export class MessagesFirebaseAndApiService implements MessagesService {
           encryptedMessage.iv
         ),
       }
+      type = 'MESSAGE_ENVOYE_PJ'
     }
 
     await Promise.all([
-      this.firebaseClient.addMessage(nouveauMessage),
+      this.firebaseClient.addMessage(jeuneChat.chatId, nouveauMessage),
       this.firebaseClient.updateChat(jeuneChat.chatId, {
         lastMessageContent: encryptedMessage.encryptedText,
         lastMessageIv: encryptedMessage.iv,
@@ -220,7 +243,6 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       }),
     ])
 
-    const avecPieceJointe = Boolean(infoPieceJointe)
     await Promise.all([
       this.notifierNouveauMessage(
         session!.user.id,
@@ -228,9 +250,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         session!.accessToken
       ),
       this.evenementNouveauMessage(
+        type,
         session!.user.structure,
         session!.user.id,
-        avecPieceJointe,
         session!.accessToken
       ),
     ])
@@ -245,17 +267,14 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const session = await getSession()
     const now = DateTime.now()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
-
-    const mappedChats = await this.firebaseClient.getChatsDuConseiller(
-      session!.user.id
-    )
-    const chatsDestinataires = Object.entries(mappedChats)
-      .filter(([idJeune]) => idsDestinataires.includes(idJeune))
-      .map(([_, chat]) => chat)
-
-    let infoPieceJointeChiffrees: InfoFichier
+    const nouveauMessage: CreateFirebaseMessage = {
+      idConseiller: session!.user.id,
+      message: encryptedMessage,
+      date: now,
+    }
+    let type: MessageType = 'MESSAGE_ENVOYE_MULTIPLE'
     if (infoPieceJointe) {
-      infoPieceJointeChiffrees = {
+      nouveauMessage.infoPieceJointe = {
         ...infoPieceJointe,
         nom: this.chatCrypto.encryptWithCustomIv(
           infoPieceJointe.nom,
@@ -263,47 +282,83 @@ export class MessagesFirebaseAndApiService implements MessagesService {
           encryptedMessage.iv
         ),
       }
+      type = 'MESSAGE_ENVOYE_MULTIPLE_PJ'
     }
 
-    await Promise.all([
-      chatsDestinataires.map((chat) => {
-        const nouveauMessage: AddMessage = {
-          idChat: chat.chatId,
-          idConseiller: session!.user.id,
-          message: encryptedMessage,
-          date: now,
-        }
-        if (infoPieceJointeChiffrees) {
-          nouveauMessage.infoPieceJointe = infoPieceJointeChiffrees
-        }
+    await this.envoyerMessage(
+      idsDestinataires,
+      nouveauMessage,
+      type,
+      session!,
+      now
+    )
+  }
 
-        return Promise.all([
-          this.firebaseClient.addMessage(nouveauMessage),
+  async partagerOffre({
+    cleChiffrement,
+    idsDestinataires,
+    message,
+    offre,
+  }: FormPartageOffre) {
+    const session = await getSession()
+    const now = DateTime.now()
+    const encryptedMessage = this.chatCrypto.encrypt(message, cleChiffrement)
+    const nouveauMessage: CreateFirebaseMessageWithOffre = {
+      idConseiller: session!.user.id,
+      message: encryptedMessage,
+      offre: offre,
+      date: now,
+    }
+
+    await this.envoyerMessage(
+      idsDestinataires,
+      nouveauMessage,
+      'MESSAGE_OFFRE_PARTAGEE',
+      session!,
+      now
+    )
+  }
+
+  private async envoyerMessage(
+    idsDestinataires: string[],
+    nouveauMessage: CreateFirebaseMessage | CreateFirebaseMessageWithOffre,
+    type: MessageType,
+    session: Session,
+    date: DateTime
+  ) {
+    const chats = await this.firebaseClient.getChatsDuConseiller(
+      session.user.id
+    )
+    const chatsDestinataires = Object.entries(chats)
+      .filter(([idJeune]) => idsDestinataires.includes(idJeune))
+      .map(([_, chat]) => chat)
+
+    await Promise.all([
+      chatsDestinataires.map((chat) =>
+        Promise.all([
+          this.firebaseClient.addMessage(chat.chatId, nouveauMessage),
           this.firebaseClient.updateChat(chat.chatId, {
-            lastMessageContent: encryptedMessage.encryptedText,
-            lastMessageIv: encryptedMessage.iv,
-            lastMessageSentAt: now,
+            lastMessageContent: nouveauMessage.message.encryptedText,
+            lastMessageIv: nouveauMessage.message.iv,
+            lastMessageSentAt: date,
             lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
             newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-            seenByConseiller: false,
-            lastConseillerReading: DateTime.fromMillis(0),
           }),
         ])
-      }),
+      ),
     ])
 
-    const avecPieceJointe = Boolean(infoPieceJointe)
     await Promise.all([
       this.notifierNouveauMessage(
-        session!.user.id,
+        session.user.id,
         idsDestinataires,
-        session!.accessToken
+        session.accessToken
       ),
-      this.evenementNouveauMessageMultiple(
-        session!.user.structure,
-        session!.user.id,
-        avecPieceJointe,
-        session!.accessToken
+      this.evenementNouveauMessage(
+        type,
+        session.user.structure,
+        session.user.id,
+        session.accessToken
       ),
     ])
   }
@@ -321,37 +376,15 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   private async evenementNouveauMessage(
+    type: MessageType,
     structure: string,
     idConseiller: string,
-    avecPieceJointe: boolean,
     accessToken: string
   ): Promise<void> {
     await this.apiClient.post(
       '/evenements',
       {
-        type: avecPieceJointe ? 'MESSAGE_ENVOYE_PJ' : 'MESSAGE_ENVOYE',
-        emetteur: {
-          type: UserType.CONSEILLER,
-          structure: structure,
-          id: idConseiller,
-        },
-      },
-      accessToken
-    )
-  }
-
-  private async evenementNouveauMessageMultiple(
-    structure: string,
-    idConseiller: string,
-    avecPieceJointe: boolean,
-    accessToken: string
-  ): Promise<void> {
-    await this.apiClient.post(
-      '/evenements',
-      {
-        type: avecPieceJointe
-          ? 'MESSAGE_ENVOYE_MULTIPLE_PJ'
-          : 'MESSAGE_ENVOYE_MULTIPLE',
+        type,
         emetteur: {
           type: UserType.CONSEILLER,
           structure: structure,

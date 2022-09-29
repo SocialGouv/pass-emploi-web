@@ -21,11 +21,11 @@ describe('<Sidebar/>', () => {
     // THEN
     const navigation = screen.getByRole('navigation')
     expect(
-      within(navigation).getByRole('link', { name: 'Rendez-vous' })
-    ).toHaveAttribute('href', '/mes-rendezvous')
-    expect(
       within(navigation).getByRole('link', { name: 'Portefeuille' })
     ).toHaveAttribute('href', '/mes-jeunes')
+    expect(
+      within(navigation).getByRole('link', { name: 'Rendez-vous' })
+    ).toHaveAttribute('href', '/mes-rendezvous')
     expect(within(navigation).getByLabelText(/Aide/)).toBeInTheDocument()
     expect(
       within(navigation).getByRole('link', { name: 'Nils Tavernier' })

@@ -1,4 +1,10 @@
 import { ApiClient } from 'clients/api.client'
+import {
+  listeBaseOffres,
+  listeOffresJson,
+  unDetailOffre,
+  unDetailOffreJson,
+} from 'fixtures/offre'
 import { OffresEmploiApiService } from 'services/offres-emploi.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -14,19 +20,16 @@ describe('OffresEmploiApiService', () => {
   let apiClient: ApiClient
   let offresEmploiService: OffresEmploiApiService
 
+  beforeEach(() => {
+    apiClient = new FakeApiClient()
+    offresEmploiService = new OffresEmploiApiService(apiClient)
+  })
+
   describe('.getLienOffreEmploi', () => {
-    it('renvoie l’url de l’offre d’emploi si elle est trouvée en base', async () => {
+    it('renvoie le lien de l’offre d’emploi si elle est trouvée en base', async () => {
       // Given
-      apiClient = new FakeApiClient()
-      offresEmploiService = new OffresEmploiApiService(apiClient)
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/offres-emploi/ID_OFFRE_EMPLOI`)
-          return {
-            content: {
-              urlRedirectPourPostulation:
-                'https://www.offres-emploi.fr/id-offre',
-            },
-          }
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unDetailOffreJson(),
       })
 
       // When
@@ -35,12 +38,15 @@ describe('OffresEmploiApiService', () => {
       )
 
       // Then
-      expect(actual).toStrictEqual('https://www.offres-emploi.fr/id-offre')
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi/ID_OFFRE_EMPLOI',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual(unDetailOffre().urlPostulation)
     })
+
     it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
       // Given
-      apiClient = new FakeApiClient()
-      offresEmploiService = new OffresEmploiApiService(apiClient)
       ;(apiClient.get as jest.Mock).mockRejectedValue(
         new ApiError(404, 'offre d’emploi non trouvée')
       )
@@ -52,6 +58,83 @@ describe('OffresEmploiApiService', () => {
 
       // Then
       expect(actual).toStrictEqual(undefined)
+    })
+  })
+
+  describe('.getOffreEmploiServerSide', () => {
+    it('renvoie l’offre d’emploi si elle est trouvée en base', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unDetailOffreJson(),
+      })
+
+      // When
+      const actual = await offresEmploiService.getOffreEmploiServerSide(
+        'ID_OFFRE_EMPLOI',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi/ID_OFFRE_EMPLOI',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual(unDetailOffre())
+    })
+
+    it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'offre d’emploi non trouvée')
+      )
+
+      // When
+      const actual = await offresEmploiService.getOffreEmploiServerSide(
+        'ID_OFFRE_EMPLOI',
+        'accessToken'
+      )
+
+      // Then
+      expect(actual).toStrictEqual(undefined)
+    })
+  })
+
+  describe('.searchOffresEmploi', () => {
+    beforeEach(() => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          results: listeOffresJson(),
+        },
+      })
+    })
+
+    it('renvoie une liste d’offres d’emploi', async () => {
+      // When
+      const actual = await offresEmploiService.searchOffresEmploi()
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false',
+        'accessToken'
+      )
+      expect(actual).toEqual(listeBaseOffres())
+    })
+
+    it('parse les mots clés', async () => {
+      // Given
+      const query = 'prof industrie'
+
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        motsCles: query,
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&q=prof%20industrie',
+        'accessToken'
+      )
     })
   })
 })

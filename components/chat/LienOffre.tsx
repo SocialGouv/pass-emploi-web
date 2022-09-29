@@ -4,7 +4,13 @@ import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { InfoOffre } from 'interfaces/message'
 import useMatomo from 'utils/analytics/useMatomo'
 
-export function LienOffre(props: { infoOffre: InfoOffre }) {
+export function LienOffre({
+  infoOffre,
+  isSentByConseiller,
+}: {
+  infoOffre: InfoOffre
+  isSentByConseiller: boolean
+}) {
   const [trackingLabel, setLabelMatomo] = useState<string | undefined>(
     undefined
   )
@@ -14,13 +20,27 @@ export function LienOffre(props: { infoOffre: InfoOffre }) {
   const label = 'Voir l’offre'
 
   return (
-    <div className='p-4 rounded-medium bg-blanc mt-4'>
-      <p className='text-base-bold text-content_color'>
-        {props.infoOffre!.titre}
+    <div
+      className={`mt-4 p-4 rounded-medium ${
+        isSentByConseiller ? 'bg-primary_darken' : 'bg-blanc'
+      }`}
+    >
+      <p
+        className={`text-base-bold ${
+          isSentByConseiller ? 'text-blanc' : 'text-content_color'
+        }`}
+      >
+        {infoOffre.titre}
       </p>
-      <div className='mt-4 w-max ml-auto'>
+      <div
+        className={`mt-4 w-max ml-auto ${
+          isSentByConseiller
+            ? 'text-blanc hover:text-primary_lighten'
+            : 'text-primary_darken hover:text-primary'
+        }`}
+      >
         <ExternalLink
-          href={props.infoOffre!.lien}
+          href={infoOffre.lien}
           label={label}
           onClick={() => setLabelMatomo(label)}
         />

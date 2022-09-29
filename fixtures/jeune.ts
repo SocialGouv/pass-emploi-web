@@ -295,9 +295,18 @@ export const desIndicateursSemaineJson = (
       creees: 0,
       enRetard: 2,
       terminees: 1,
+      aEcheance: 3,
     },
     rendezVous: {
       planifies: 3,
+    },
+    offres: {
+      consultees: 10,
+      partagees: 4,
+    },
+    favoris: {
+      offresSauvegardees: 6,
+      recherchesSauvegardees: 7,
     },
   }
   return { ...defaults, ...overrides }
@@ -311,8 +320,17 @@ export const desIndicateursSemaine = (
       creees: 0,
       enRetard: 2,
       terminees: 1,
+      aEcheance: 3,
     },
     rendezVous: 3,
+    offres: {
+      consultees: 10,
+      partagees: 4,
+    },
+    favoris: {
+      offresSauvegardees: 6,
+      recherchesSauvegardees: 7,
+    },
   }
   return { ...defaults, ...overrides }
 }

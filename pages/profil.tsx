@@ -14,7 +14,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
-interface ProfilProps extends PageProps {}
+type ProfilProps = PageProps
 
 function Profil(_: ProfilProps) {
   const conseillerService =

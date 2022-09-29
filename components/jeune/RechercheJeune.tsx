@@ -45,7 +45,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
             name={IconName.Search}
             focusable='false'
             aria-hidden={true}
-            className='w-4 h-4'
+            className='w-6 h-6 fill-[currentColor]'
           />
           <span className='ml-1 sr-only layout_s:not-sr-only'>Rechercher</span>
         </button>

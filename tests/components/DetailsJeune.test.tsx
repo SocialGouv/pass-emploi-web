@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/dom'
+import { act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -132,10 +133,12 @@ describe('<DetailsJeune>', () => {
 
       describe('au clic sur le bouton Ajouter', () => {
         beforeEach(async () => {
-          await userEvent.click(
-            screen.getByRole('button', {
-              name: 'Ajouter l’identifiant Pôle emploi',
-            })
+          await act(() =>
+            userEvent.click(
+              screen.getByRole('button', {
+                name: 'Ajouter l’identifiant Pôle emploi',
+              })
+            )
           )
         })
 
@@ -154,18 +157,22 @@ describe('<DetailsJeune>', () => {
 
         it('lors du clic sur Enregistrer, appelle le service et revient sur le détail du jeune avec l’identifiant présent', async () => {
           // Given
-          await userEvent.type(
-            screen.getByLabelText(
-              'Identifiant Pôle emploi (10 caractères maximum)'
-            ),
-            '12345'
+          await act(() =>
+            userEvent.type(
+              screen.getByLabelText(
+                'Identifiant Pôle emploi (10 caractères maximum)'
+              ),
+              '12345'
+            )
           )
 
           // When
-          await userEvent.click(
-            screen.getByRole('button', {
-              name: 'Enregistrer',
-            })
+          await act(() =>
+            userEvent.click(
+              screen.getByRole('button', {
+                name: 'Enregistrer',
+              })
+            )
           )
 
           // Then
@@ -212,10 +219,12 @@ describe('<DetailsJeune>', () => {
 
       describe('au clic sur le bouton Modifier', () => {
         beforeEach(async () => {
-          await userEvent.click(
-            screen.getByRole('button', {
-              name: 'Modifier l’identifiant Pôle emploi',
-            })
+          await act(() =>
+            userEvent.click(
+              screen.getByRole('button', {
+                name: 'Modifier l’identifiant Pôle emploi',
+              })
+            )
           )
         })
 
@@ -234,18 +243,22 @@ describe('<DetailsJeune>', () => {
 
         it('lors du clic sur Enregistrer, appelle le service et revient sur le détail du jeune avec le nouvel identifiant présent', async () => {
           // Given
-          await userEvent.type(
-            screen.getByLabelText(
-              'Identifiant Pôle emploi (10 caractères maximum)'
-            ),
-            '6789'
+          await act(() =>
+            userEvent.type(
+              screen.getByLabelText(
+                'Identifiant Pôle emploi (10 caractères maximum)'
+              ),
+              '6789'
+            )
           )
 
           // When
-          await userEvent.click(
-            screen.getByRole('button', {
-              name: 'Enregistrer',
-            })
+          await act(() =>
+            userEvent.click(
+              screen.getByRole('button', {
+                name: 'Enregistrer',
+              })
+            )
           )
 
           // Then

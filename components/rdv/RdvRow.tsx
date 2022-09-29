@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { RdvTypeTag } from 'components/ui/Indicateurs/RdvTypeTag'
+import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import RowCell from 'components/ui/Table/RowCell'
 import { RdvListItem } from 'interfaces/rdv'
 import {
@@ -52,7 +52,7 @@ export function RdvRow({
         {withNameJeune && <RowCell>{rdv.beneficiaires}</RowCell>}
 
         <RowCell>
-          <RdvTypeTag type={rdv.type} />
+          <DataTag type={rdv.type} />
         </RowCell>
 
         <RowCell>

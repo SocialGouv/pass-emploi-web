@@ -9,8 +9,10 @@ import {
   unJeuneChat,
 } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
+import { unDetailOffre } from 'fixtures/offre'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
@@ -25,10 +27,6 @@ jest.mock('next-auth/react', () => ({
 }))
 
 describe('MessagesFirebaseAndApiService', () => {
-  beforeEach(async () => {
-    jest.useFakeTimers()
-  })
-
   let firebaseClient: FirebaseClient
   let apiClient: ApiClient
   let messagesService: MessagesFirebaseAndApiService
@@ -75,7 +73,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('updates chat in firebase', async () => {
       // Given
       const now = DateTime.now()
-      jest.setSystemTime(now.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       const jeuneChat = unJeuneChat()
 
       // When
@@ -108,7 +106,8 @@ describe('MessagesFirebaseAndApiService', () => {
     let updateChats: (chats: Chat[]) => void
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(DateTime.now().toJSDate())
+      const now = DateTime.now()
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       updateChats = jest.fn()
 
       // When
@@ -246,7 +245,7 @@ describe('MessagesFirebaseAndApiService', () => {
     const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(now.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       jeuneChat = unJeuneChat()
       newMessage = 'nouveauMessage'
       // When
@@ -262,15 +261,17 @@ describe('MessagesFirebaseAndApiService', () => {
       })
       it('adds a new message to firebase', async () => {
         // Then
-        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-          idChat: jeuneChat.chatId,
-          idConseiller: 'id-conseiller',
-          message: {
-            encryptedText: `Encrypted: ${newMessage}`,
-            iv: `IV: ${newMessage}`,
-          },
-          date: now,
-        })
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith(
+          jeuneChat.chatId,
+          {
+            idConseiller: 'id-conseiller',
+            message: {
+              encryptedText: `Encrypted: ${newMessage}`,
+              iv: `IV: ${newMessage}`,
+            },
+            date: now,
+          }
+        )
       })
 
       it('updates chat in firebase', async () => {
@@ -327,16 +328,18 @@ describe('MessagesFirebaseAndApiService', () => {
 
       it('adds a new message to firebase', async () => {
         // Then
-        expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-          idChat: jeuneChat.chatId,
-          idConseiller: 'id-conseiller',
-          message: {
-            encryptedText: `Encrypted: ${newMessage}`,
-            iv: `IV: ${newMessage}`,
-          },
-          infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
-          date: now,
-        })
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith(
+          jeuneChat.chatId,
+          {
+            idConseiller: 'id-conseiller',
+            message: {
+              encryptedText: `Encrypted: ${newMessage}`,
+              iv: `IV: ${newMessage}`,
+            },
+            infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
+            date: now,
+          }
+        )
       })
 
       it('tracks new message', async () => {
@@ -365,7 +368,7 @@ describe('MessagesFirebaseAndApiService', () => {
     const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.setSystemTime(now.toJSDate())
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
       destinataires = desItemsJeunes()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'nouveau message groupé'
@@ -396,8 +399,7 @@ describe('MessagesFirebaseAndApiService', () => {
         )
 
         Object.values(chats).forEach((chat) => {
-          expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-            idChat: chat.chatId,
+          expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
             idConseiller: 'id-conseiller',
             message: {
               encryptedText: `Encrypted: ${newMessageGroupe}`,
@@ -420,8 +422,6 @@ describe('MessagesFirebaseAndApiService', () => {
             lastMessageSentAt: now,
             lastMessageSentBy: 'conseiller',
             newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-            seenByConseiller: false,
-            lastConseillerReading: DateTime.fromMillis(0),
           })
         })
       })
@@ -469,8 +469,7 @@ describe('MessagesFirebaseAndApiService', () => {
         )
 
         Object.values(chats).forEach((chat) => {
-          expect(firebaseClient.addMessage).toHaveBeenCalledWith({
-            idChat: chat.chatId,
+          expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
             idConseiller: 'id-conseiller',
             message: {
               encryptedText: `Encrypted: ${newMessageGroupe}`,
@@ -497,6 +496,99 @@ describe('MessagesFirebaseAndApiService', () => {
           accessToken
         )
       })
+    })
+  })
+
+  describe('.partagerOffre', () => {
+    let destinataires: JeuneFromListe[]
+    let idsJeunes: string[]
+    let chats: { [idJeune: string]: Chat }
+    let newMessageGroupe: string
+    let offre: DetailOffreEmploi
+    const now = DateTime.now()
+    beforeEach(async () => {
+      // Given
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+      destinataires = desItemsJeunes()
+      idsJeunes = destinataires.map(({ id }) => id)
+      newMessageGroupe = 'Regarde cette offre qui pourrait t’intéresser.'
+      offre = unDetailOffre()
+
+      chats = idsJeunes.reduce((mappedChats, idJeune) => {
+        mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })
+        return mappedChats
+      }, {} as { [idJeune: string]: Chat })
+      ;(firebaseClient.getChatsDuConseiller as jest.Mock).mockResolvedValue(
+        chats
+      )
+
+      await messagesService.partagerOffre({
+        offre,
+        idsDestinataires: idsJeunes,
+        message: newMessageGroupe,
+        cleChiffrement,
+      })
+    })
+
+    it('récupère les chats du conseiler', () => {
+      // Then
+      expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
+        'id-conseiller'
+      )
+    })
+
+    it('ajoute un nouveau message à firebase pour chaque destinataire', () => {
+      // Then
+
+      Object.values(chats).forEach((chat) => {
+        expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
+          offre,
+          idConseiller: 'id-conseiller',
+          message: {
+            encryptedText: `Encrypted: ${newMessageGroupe}`,
+            iv: `IV: ${newMessageGroupe}`,
+          },
+          date: now,
+        })
+      })
+    })
+
+    it('met à jour le chat dans firebase pour chaque destinataire', () => {
+      // Then
+      Object.values(chats).forEach((chat) => {
+        expect(firebaseClient.updateChat).toHaveBeenCalledWith(chat.chatId, {
+          lastMessageContent: `Encrypted: ${newMessageGroupe}`,
+          lastMessageIv: `IV: ${newMessageGroupe}`,
+          lastMessageSentAt: now,
+          lastMessageSentBy: 'conseiller',
+          newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+        })
+      })
+    })
+
+    it('notifie envoi de message pour chaque destinataire', () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        `/conseillers/id-conseiller/jeunes/notify-messages`,
+        { idsJeunes: idsJeunes },
+        accessToken
+      )
+    })
+
+    it('tracks partage d’offre', () => {
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_OFFRE_PARTAGEE',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: 'POLE_EMPLOI',
+            id: 'id-conseiller',
+          },
+        },
+        accessToken
+      )
     })
   })
 })

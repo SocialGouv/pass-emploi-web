@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon'
+import { DateTime, DateTimeFormatOptions } from 'luxon'
 
 export const WEEKDAY_MONTH_LONG: string = 'EEEE d MMMM'
 export const TIME_24_H_SEPARATOR: string = "HH'h'mm"
@@ -14,9 +14,16 @@ export function dateIsYesterday(dateToCheck: DateTime): boolean {
   return DateTime.now().minus({ day: 1 }).hasSame(dateToCheck, 'day')
 }
 
+export function toFrenchString(
+  datetime: DateTime,
+  format?: DateTimeFormatOptions
+): string {
+  return datetime.toLocaleString(format, { locale: 'fr-FR' })
+}
+
 export function toShortDate(date: string | DateTime): string {
   const datetime = date instanceof DateTime ? date : DateTime.fromISO(date)
-  return datetime.toLocaleString(DateTime.DATE_SHORT, { locale: 'fr-FR' })
+  return toFrenchString(datetime, DateTime.DATE_SHORT)
 }
 
 export function toFrenchFormat(date: DateTime, format: string): string {

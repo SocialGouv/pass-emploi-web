@@ -35,10 +35,6 @@ global.Audio = jest.fn().mockImplementation(() => ({
 }))
 
 describe('<Layout />', () => {
-  beforeEach(() => {
-    jest.useFakeTimers()
-  })
-
   let updateChatsRef: (chats: JeuneChat[]) => void
   const jeunes: JeuneFromListe[] = desItemsJeunes()
   let jeunesChats: JeuneChat[]
@@ -46,7 +42,8 @@ describe('<Layout />', () => {
   let conseillerService: ConseillerService
   let messagesService: MessagesService
   beforeEach(async () => {
-    jest.setSystemTime(DateTime.now().toJSDate())
+    const now = DateTime.now()
+    jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
     jeunesChats = [
       unJeuneChat({

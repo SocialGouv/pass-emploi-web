@@ -13,6 +13,7 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     type: TypeMessage.MESSAGE,
     infoPiecesJointes: [],
     infoOffre: {
+      id: '',
       titre: '',
       lien: '',
     },
@@ -56,6 +57,7 @@ export const desMessages = (): Message[] => [
     creationDate: DateTime.local(2022, 1, 15),
     type: TypeMessage.MESSAGE_OFFRE,
     infoOffre: {
+      id: 'id-offre',
       titre: 'Une offre',
       lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
     },
@@ -115,6 +117,7 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         creationDate: DateTime.local(2022, 1, 15),
         type: TypeMessage.MESSAGE_OFFRE,
         infoOffre: {
+          id: 'id-offre',
           titre: 'Une offre',
           lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
         },
