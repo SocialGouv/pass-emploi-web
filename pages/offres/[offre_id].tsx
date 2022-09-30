@@ -13,10 +13,20 @@ type DetailOffreProps = PageProps & {
 }
 
 function DetailOffre({ offre }: DetailOffreProps) {
-  console.log(offre)
   return (
     <>
+      <p>{offre.dateActualisation}</p>
       <h2>{offre.titre}</h2>
+      <p>{offre.nomEntreprise}</p>
+      <p>{offre.localisation}</p>
+      <p>{offre.typeContrat}</p>
+      {offre.salaire && <p>{offre.salaire}</p>}
+      <p>{offre.horaires}</p>
+      <p>{offre.description}</p>
+
+      <h3>Détail de l’offre</h3>
+      <h3>Profil souhaité</h3>
+      <h3>Entreprise</h3>
     </>
   )
 }

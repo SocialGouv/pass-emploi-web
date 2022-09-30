@@ -7,4 +7,10 @@ export type BaseOffreEmploi = {
   duree: string
 }
 
-export type DetailOffreEmploi = BaseOffreEmploi & { urlPostulation: string }
+export type DetailOffreEmploi = BaseOffreEmploi & {
+  urlPostulation: string
+  dateActualisation: string
+  salaire: string
+  horaires: string
+  description: string
+}

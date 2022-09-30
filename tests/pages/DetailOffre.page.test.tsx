@@ -16,11 +16,11 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Page Détail Offre', () => {
   describe('client side', () => {
-    let offre: any
+    let offre: DetailOffreEmploi
 
     it('affiche les informations détaillées de l’offre', () => {
       // Given
-      offre = {}
+      offre = unDetailOffre()
 
       // When
       renderWithContexts(
@@ -32,28 +32,25 @@ describe('Page Détail Offre', () => {
       )
 
       // Then
+      expect(screen.getByText(offre.dateActualisation)).toBeInTheDocument()
       expect(
         screen.getByRole('heading', {
           level: 2,
           name: offre.titre,
         })
       ).toBeInTheDocument()
-      expect(
-        screen.getByText('Actualisée le 29 septembre 2022')
-      ).toBeInTheDocument()
-      expect(screen.getByText('Nom entreprise')).toBeInTheDocument()
-      expect(screen.getByText('59 - Anger')).toBeInTheDocument()
-      expect(
-        screen.getByText('Contrat à durée déterminée - 6 mois')
-      ).toBeInTheDocument()
-      expect(screen.getByText('Mensuel de 1635 Euros')).toBeInTheDocument()
-      expect(screen.getByText('36H Horaires normaux')).toBeInTheDocument()
+      expect(screen.getByText(offre.nomEntreprise)).toBeInTheDocument()
+      expect(screen.getByText(offre.localisation)).toBeInTheDocument()
+      expect(screen.getByText(offre.typeContrat)).toBeInTheDocument()
+      expect(screen.getByText(offre.salaire)).toBeInTheDocument()
+      expect(screen.getByText(offre.horaires)).toBeInTheDocument()
       expect(
         screen.getByRole('heading', {
           level: 3,
           name: 'Détail de l’offre',
         })
       ).toBeInTheDocument()
+      expect(screen.getByText(offre.description)).toBeInTheDocument()
       expect(
         screen.getByRole('heading', {
           level: 3,

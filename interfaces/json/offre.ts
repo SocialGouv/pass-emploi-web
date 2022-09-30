@@ -9,6 +9,10 @@ export type DetailOffreEmploiJson = {
     typeContrat: string
     dureeTravailLibelleConverti: string
     lieuTravail: { libelle: string }
+    dateActualisation: string
+    salaire: { commentaire: string }
+    dureeTravailLibelle: string
+    description: string
   }
 }
 
@@ -48,5 +52,9 @@ export function jsonToDetailOffreEmploi(
     duree: data.dureeTravailLibelleConverti,
     localisation: data.lieuTravail.libelle,
     urlPostulation: urlRedirectPourPostulation,
+    dateActualisation: data.dateActualisation,
+    salaire: data.salaire.commentaire || '',
+    horaires: data.dureeTravailLibelle,
+    description: data.description,
   }
 }

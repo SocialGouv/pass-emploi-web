@@ -15,6 +15,10 @@ export function unDetailOffre(
     duree: 'Temps plein',
     localisation: 'Paris',
     urlPostulation: 'https://www.offres-emploi.fr/id-offre',
+    dateActualisation: '2022-09-30T07:47:25.000Z',
+    salaire: 'Selon profil',
+    horaires: '24H Horaires normaux',
+    description: 'une descrption d’offre d’emploi',
   }
   return { ...defaults, ...overrides }
 }
@@ -88,6 +92,10 @@ export function unDetailOffreJson(
       typeContrat: 'CDI',
       lieuTravail: { libelle: 'Paris' },
       dureeTravailLibelleConverti: 'Temps plein',
+      dateActualisation: '2022-09-30T07:47:25.000Z',
+      salaire: { commentaire: 'Selon profil' },
+      dureeTravailLibelle: '24H Horaires normaux',
+      description: 'une descrption d’offre d’emploi',
     },
     urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
   }
