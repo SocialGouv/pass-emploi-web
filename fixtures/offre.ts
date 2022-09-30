@@ -21,14 +21,11 @@ export function unDetailOffre(
     horaires: '24H Horaires normaux',
     description: 'une description d’offre d’emploi',
     experiences: '1 an - en formation continue ou initiale',
-    competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
-    competencesProfessionnelles: [
-      { libelle: 'compétence pro 1' },
-      { libelle: 'compétence pro 2' },
-    ],
-    formations: [{ libelle: 'formation 1' }],
-    langues: [{ libelle: 'langue 1' }],
-    permis: [{ libelle: 'permis 1' }],
+    competences: ['compétence 1', 'compétence 2'],
+    competencesProfessionnelles: ['compétence pro 1', 'compétence pro 2'],
+    formations: ['formation 1'],
+    langues: ['langue 1'],
+    permis: ['permis 1'],
   }
   return { ...defaults, ...overrides }
 }
@@ -113,7 +110,7 @@ export function unDetailOffreJson(
         { libelle: 'compétence pro 1' },
         { libelle: 'compétence pro 2' },
       ],
-      formations: [{ libelle: 'formation 1' }],
+      formations: [{ commentaire: 'formation 1', niveauLibelle: 'bac +3' }],
       langues: [{ libelle: 'langue 1' }],
       permis: [{ libelle: 'permis 1' }],
     },

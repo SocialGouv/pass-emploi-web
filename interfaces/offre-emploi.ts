@@ -15,9 +15,9 @@ export type DetailOffreEmploi = BaseOffreEmploi & {
   horaires: string
   description: string
   experiences: string
-  competences: Array<{ libelle: string }>
-  competencesProfessionnelles: Array<{ libelle: string }>
-  formations: Array<{ libelle: string }>
-  langues: Array<{ libelle: string }>
-  permis: Array<{ libelle: string }>
+  competences: string[]
+  competencesProfessionnelles: string[]
+  formations: string[]
+  langues: string[]
+  permis: string[]
 }

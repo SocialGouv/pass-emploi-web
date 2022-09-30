@@ -19,6 +19,7 @@ describe('Page Détail Offre', () => {
     let offre: DetailOffreEmploi
 
     it('affiche les informations détaillées de l’offre', () => {
+      // TODO séparé en plusieurs it  / section heading
       // Given
       offre = unDetailOffre()
 
@@ -59,13 +60,19 @@ describe('Page Détail Offre', () => {
       ).toBeInTheDocument()
       expect(screen.getByText(offre.experiences)).toBeInTheDocument()
       offre.competences.map((competence) => {
-        expect(screen.getByText(competence.libelle)).toBeInTheDocument()
+        expect(screen.getByText(competence)).toBeInTheDocument()
       })
       offre.competencesProfessionnelles.map((competencePro) => {
-        expect(screen.getByText(competencePro.libelle)).toBeInTheDocument()
+        expect(screen.getByText(competencePro)).toBeInTheDocument()
+      })
+      offre.formations.map((uneFormation) => {
+        expect(screen.getByText(uneFormation)).toBeInTheDocument()
+      })
+      offre.langues.map((uneLangues) => {
+        expect(screen.getByText(uneLangues)).toBeInTheDocument()
       })
       offre.permis.map((unPermis) => {
-        expect(screen.getByText(unPermis.libelle)).toBeInTheDocument()
+        expect(screen.getByText(unPermis)).toBeInTheDocument()
       })
       expect(
         screen.getByRole('heading', {

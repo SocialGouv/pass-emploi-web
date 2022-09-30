@@ -34,7 +34,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
       {offre.competences.length > 0 && (
         <ul>
           {offre.competences.map((competence) => (
-            <li key={competence.libelle}>{competence.libelle}</li>
+            <li key={competence}>{competence}</li>
           ))}
         </ul>
       )}
@@ -42,7 +42,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
       {offre.competencesProfessionnelles.length > 0 && (
         <ul>
           {offre.competencesProfessionnelles.map((competencePro) => (
-            <li key={competencePro.libelle}>{competencePro.libelle}</li>
+            <li key={competencePro}>{competencePro}</li>
           ))}
         </ul>
       )}
@@ -50,7 +50,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
       {offre.formations.length > 0 && (
         <ul>
           {offre.formations.map((uneFormation) => (
-            <li key={uneFormation.libelle}>{uneFormation.libelle}</li>
+            <li key={uneFormation}>{uneFormation}</li>
           ))}
         </ul>
       )}
@@ -58,7 +58,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
       {offre.langues.length > 0 && (
         <ul>
           {offre.langues.map((uneLangue) => (
-            <li key={uneLangue.libelle}>{uneLangue.libelle}</li>
+            <li key={uneLangue}>{uneLangue}</li>
           ))}
         </ul>
       )}
@@ -66,7 +66,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
       {offre.permis.length > 0 && (
         <ul>
           {offre.permis.map((unPermis) => (
-            <li key={unPermis.libelle}>{unPermis.libelle}</li>
+            <li key={unPermis}>{unPermis}</li>
           ))}
         </ul>
       )}

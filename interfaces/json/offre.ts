@@ -66,34 +66,28 @@ export function jsonToDetailOffreEmploi(
     description: data.description,
     experiences: data.experienceLibelle,
     competences: data.competences.map((uneCompétence) => {
-      return { libelle: uneCompétence.libelle }
+      return uneCompétence.libelle
     }),
     competencesProfessionnelles:
       data.qualitesProfessionnelles && data.qualitesProfessionnelles.length
         ? data.qualitesProfessionnelles.map((uneCompétencePro) => {
-            return { libelle: uneCompétencePro.libelle }
+            return uneCompétencePro.libelle
           })
         : [],
     formations:
       data.formations && data.formations.length
-        ? data.formations.map((uneFormation) => {
-            return {
-              libelle:
-                uneFormation.commentaire + ' : ' + uneFormation.niveauLibelle,
-            }
-          })
+        ? data.formations.map(
+            (uneFormation) =>
+              uneFormation.commentaire + ' : ' + uneFormation.niveauLibelle
+          )
         : [],
     langues:
       data.langues && data.langues.length
-        ? data.langues.map((uneLangue) => {
-            return { libelle: uneLangue.libelle }
-          })
+        ? data.langues.map((uneLangue) => uneLangue.libelle)
         : [],
     permis:
       data.permis && data.permis.length
-        ? data.permis.map((unPermis) => {
-            return { libelle: unPermis.libelle }
-          })
+        ? data.permis.map((unPermis) => unPermis.libelle)
         : [],
   }
 }
