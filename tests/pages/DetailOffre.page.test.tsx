@@ -41,7 +41,7 @@ describe('Page Détail Offre', () => {
       ).toBeInTheDocument()
       expect(screen.getByText(offre.nomEntreprise)).toBeInTheDocument()
       expect(screen.getByText(offre.localisation)).toBeInTheDocument()
-      expect(screen.getByText(offre.typeContrat)).toBeInTheDocument()
+      expect(screen.getByText(offre.typeContratLibelle)).toBeInTheDocument()
       expect(screen.getByText(offre.salaire)).toBeInTheDocument()
       expect(screen.getByText(offre.horaires)).toBeInTheDocument()
       expect(
@@ -57,6 +57,16 @@ describe('Page Détail Offre', () => {
           name: 'Profil souhaité',
         })
       ).toBeInTheDocument()
+      expect(screen.getByText(offre.experiences)).toBeInTheDocument()
+      offre.competences.map((competence) => {
+        expect(screen.getByText(competence.libelle)).toBeInTheDocument()
+      })
+      offre.competencesProfessionnelles.map((competencePro) => {
+        expect(screen.getByText(competencePro.libelle)).toBeInTheDocument()
+      })
+      offre.permis.map((unPermis) => {
+        expect(screen.getByText(unPermis.libelle)).toBeInTheDocument()
+      })
       expect(
         screen.getByRole('heading', {
           level: 3,

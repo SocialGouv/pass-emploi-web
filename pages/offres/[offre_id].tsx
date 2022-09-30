@@ -16,17 +16,61 @@ function DetailOffre({ offre }: DetailOffreProps) {
   return (
     <>
       <p>{offre.dateActualisation}</p>
-      <h2>{offre.titre}</h2>
+      <h2 className='text-base-bold'>{offre.titre}</h2>
       <p>{offre.nomEntreprise}</p>
       <p>{offre.localisation}</p>
-      <p>{offre.typeContrat}</p>
+      <p>{offre.typeContratLibelle}</p>
       {offre.salaire && <p>{offre.salaire}</p>}
       <p>{offre.horaires}</p>
+
+      <h3 className='text-base-bold'>Détail de l’offre</h3>
       <p>{offre.description}</p>
 
-      <h3>Détail de l’offre</h3>
-      <h3>Profil souhaité</h3>
-      <h3>Entreprise</h3>
+      <h3 className='text-base-bold'>Profil souhaité</h3>
+      <h4 className='text-base-bold'>Experiences</h4>
+      <p>{offre.experiences}</p>
+
+      <h4 className='text-base-bold'>Savoir et savoir faire</h4>
+      {offre.competences.length > 0 && (
+        <ul>
+          {offre.competences.map((competence) => (
+            <li key={competence.libelle}>{competence.libelle}</li>
+          ))}
+        </ul>
+      )}
+      <h4>Savoir être professionnel</h4>
+      {offre.competencesProfessionnelles.length > 0 && (
+        <ul>
+          {offre.competencesProfessionnelles.map((competencePro) => (
+            <li key={competencePro.libelle}>{competencePro.libelle}</li>
+          ))}
+        </ul>
+      )}
+      <h4 className='text-base-bold'>Formation</h4>
+      {offre.formations.length > 0 && (
+        <ul>
+          {offre.formations.map((uneFormation) => (
+            <li key={uneFormation.libelle}>{uneFormation.libelle}</li>
+          ))}
+        </ul>
+      )}
+      <h4 className='text-base-bold'>Langue</h4>
+      {offre.langues.length > 0 && (
+        <ul>
+          {offre.langues.map((uneLangue) => (
+            <li key={uneLangue.libelle}>{uneLangue.libelle}</li>
+          ))}
+        </ul>
+      )}
+      <h4 className='text-base-bold'>Permis</h4>
+      {offre.permis.length > 0 && (
+        <ul>
+          {offre.permis.map((unPermis) => (
+            <li key={unPermis.libelle}>{unPermis.libelle}</li>
+          ))}
+        </ul>
+      )}
+      <h3 className='text-base-bold'>Entreprise</h3>
     </>
   )
 }
