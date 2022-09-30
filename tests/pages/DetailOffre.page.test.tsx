@@ -38,6 +38,34 @@ describe('Page Détail Offre', () => {
           name: offre.titre,
         })
       ).toBeInTheDocument()
+      expect(
+        screen.getByText('Actualisée le 29 septembre 2022')
+      ).toBeInTheDocument()
+      expect(screen.getByText('Nom entreprise')).toBeInTheDocument()
+      expect(screen.getByText('59 - Anger')).toBeInTheDocument()
+      expect(
+        screen.getByText('Contrat à durée déterminée - 6 mois')
+      ).toBeInTheDocument()
+      expect(screen.getByText('Mensuel de 1635 Euros')).toBeInTheDocument()
+      expect(screen.getByText('36H Horaires normaux')).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', {
+          level: 3,
+          name: 'Détail de l’offre',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', {
+          level: 3,
+          name: 'Profil souhaité',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', {
+          level: 3,
+          name: 'Entreprise',
+        })
+      ).toBeInTheDocument()
     })
   })
 
