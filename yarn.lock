@@ -8531,10 +8531,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:16.0.2":
-  version: 16.0.2
-  resolution: "dotenv@npm:16.0.2"
-  checksum: ca8f9ca2d67929c7771069f4c31b4e46b9932621009e658e5afd655dde2d69b77642bf36dbc9e72bc170523dfd908a9ee41c26f034c1fdc605ace3b1b4b10faf
+"dotenv@npm:16.0.3":
+  version: 16.0.3
+  resolution: "dotenv@npm:16.0.3"
+  checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
   languageName: node
   linkType: hard
 
@@ -13685,9 +13685,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-auth@npm:4.12.0":
-  version: 4.12.0
-  resolution: "next-auth@npm:4.12.0"
+"next-auth@npm:4.12.2":
+  version: 4.12.2
+  resolution: "next-auth@npm:4.12.2"
   dependencies:
     "@babel/runtime": ^7.16.3
     "@panva/hkdf": ^1.0.1
@@ -13699,14 +13699,14 @@ __metadata:
     preact-render-to-string: ^5.1.19
     uuid: ^8.3.2
   peerDependencies:
-    next: 12.2.5
+    next: ^12.2.5
     nodemailer: ^6.6.5
     react: ^17.0.2 || ^18
     react-dom: ^17.0.2 || ^18
   peerDependenciesMeta:
     nodemailer:
       optional: true
-  checksum: 9da0dd3dbae7d716880ec23a03834e8462b989d7ed721e08c0beee974ca6e2d0006e5c0ff33244f28bf5234a82f5e77fd49e83e34f265a67d39b62704773acfc
+  checksum: 02ab2ee985b92afe47e28e8e3ba224327a1331fac6eef7c27e141bd083dc377479d58fdd20244e48be6bb835d4e754a3beb957adc0d22d60e8848e99010ad0e6
   languageName: node
   linkType: hard
 
@@ -14653,7 +14653,7 @@ __metadata:
     autoprefixer: ^10.4.12
     crypto-js: 4.1.1
     css-loader: ^6.7.1
-    dotenv: 16.0.2
+    dotenv: 16.0.3
     elastic-apm-node: 3.38.0
     eslint: ^8.24.0
     eslint-config-next: 12.3.1
@@ -14668,10 +14668,10 @@ __metadata:
     luxon: 3.0.4
     matomo-tracker: 2.2.4
     next: 12.3.1
-    next-auth: 4.12.0
+    next-auth: 4.12.2
     next-logger: 3.0.1
     node-mocks-http: ^1.11.0
-    pino: 8.6.0
+    pino: 8.6.1
     pino-pretty: ^9.1.0
     postcss: ^8.4.16
     prettier: ^2.7.1
@@ -14682,7 +14682,7 @@ __metadata:
     tailwindcss: ^3.1.8
     ts-loader: ^9.4.1
     tsconfig-paths-webpack-plugin: ^4.0.0
-    typescript: ^4.8.3
+    typescript: ^4.8.4
   languageName: unknown
   linkType: soft
 
@@ -14921,9 +14921,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:8.6.0":
-  version: 8.6.0
-  resolution: "pino@npm:8.6.0"
+"pino@npm:8.6.1":
+  version: 8.6.1
+  resolution: "pino@npm:8.6.1"
   dependencies:
     atomic-sleep: ^1.0.0
     fast-redact: ^3.1.1
@@ -14938,7 +14938,7 @@ __metadata:
     thread-stream: ^2.0.0
   bin:
     pino: bin.js
-  checksum: 1142454645053191239e126d1f248e55d116dd3c7f0b00a2201ad4ea907b655d8b5dc6eb44ec1ea823974a13f5034df08cd5607e097c11409eda2a9c6672cc95
+  checksum: 1201cf2b47c8860b8e5811c20ddf6db000158d98dd04da2f09d59e797c3d7c391819d6279a526699b3fd8c13c357e86e0bb32ded15d2815ca8d97a407de47c9f
   languageName: node
   linkType: hard
 
@@ -18216,23 +18216,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.8.3":
-  version: 4.8.3
-  resolution: "typescript@npm:4.8.3"
+"typescript@npm:^4.8.4":
+  version: 4.8.4
+  resolution: "typescript@npm:4.8.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 8286a5edcaf3d68e65c451aa1e7150ad1cf53ee0813c07ec35b7abdfdb10f355ecaa13c6a226a694ae7a67785fd7eeebf89f845da0b4f7e4a35561ddc459aba0
+  checksum: 3e4f061658e0c8f36c820802fa809e0fd812b85687a9a2f5430bc3d0368e37d1c9605c3ce9b39df9a05af2ece67b1d844f9f6ea8ff42819f13bcb80f85629af0
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.8.3#~builtin<compat/typescript>":
-  version: 4.8.3
-  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=a1c5e5"
+"typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
+  version: 4.8.4
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2222d2382fb3146089b1d27ce2b55e9d1f99cc64118f1aba75809b693b856c5d3c324f052f60c75b577947fc538bc1c27bad0eb76cbdba9a63a253489504ba7e
+  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
   languageName: node
   linkType: hard
 
