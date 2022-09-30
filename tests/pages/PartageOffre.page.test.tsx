@@ -150,8 +150,18 @@ describe('Page Partage Offre', () => {
 
     it('affiche les informations de l’offre', () => {
       // Then
-      expect(screen.getByText(offre.titre)).toBeInTheDocument()
-      expect(screen.getByText('Offre n°' + offre.id)).toBeInTheDocument()
+      const offreCard = screen.getByRole('heading', {
+        name: 'Offre n°' + offre.id,
+      }).parentElement!
+      expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
+      expect(within(offreCard).getByText(offre.typeContrat)).toBeInTheDocument()
+      expect(within(offreCard).getByText(offre.duree)).toBeInTheDocument()
+      expect(
+        within(offreCard).getByText(offre.nomEntreprise)
+      ).toBeInTheDocument()
+      expect(
+        within(offreCard).getByText(offre.localisation)
+      ).toBeInTheDocument()
     })
 
     it('contient une liste pour choisir un ou plusieurs jeune', () => {

@@ -1,18 +1,20 @@
-import Link from 'next/link'
 import React from 'react'
 
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
-import { OffreEmploiItem } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 
 interface OffreItemCardProps {
-  offre: OffreEmploiItem
+  offre: BaseOffreEmploi
+  withPartage?: boolean
 }
 
-export function OffreCard({ offre }: OffreItemCardProps) {
+export function OffreCard({ offre, withPartage = false }: OffreItemCardProps) {
   return (
-    <li className='rounded-small shadow-s p-6 mb-4'>
+    <div className='rounded-small shadow-s p-6'>
       <div className='flex justify-between mb-4'>
         <Tag
           label='Emploi'
@@ -20,10 +22,10 @@ export function OffreCard({ offre }: OffreItemCardProps) {
           backgroundColor='white'
           className='text-s-regular'
         />
-        <Link href={`/offres/${offre.id}/partage`}>
-          <a
-            aria-label={`Partager offre numéro ${offre.id}`}
-            className='flex items-center text-base-bold text-primary'
+        {withPartage && (
+          <ButtonLink
+            href={`/offres/${offre.id}/partage`}
+            style={ButtonStyle.TERTIARY}
           >
             <IconComponent
               name={IconName.Partage}
@@ -31,10 +33,11 @@ export function OffreCard({ offre }: OffreItemCardProps) {
               focusable={false}
               aria-hidden={true}
             />
-            Partager
-          </a>
-        </Link>
+            Partager <span className='sr-only'>offre numéro {offre.id}</span>
+          </ButtonLink>
+        )}
       </div>
+
       <h3 className='text-base-bold text-accent_1 mb-2'>Offre n°{offre.id}</h3>
       <p className='text-base-bold mb-2'>{offre.titre}</p>
       <p className='text-s-bold mb-2'>{offre.nomEntreprise}</p>
@@ -49,6 +52,6 @@ export function OffreCard({ offre }: OffreItemCardProps) {
       </p>
       <DataTag type={offre.typeContrat} className='mr-6' />
       {offre.duree && <DataTag type={offre.duree} />}
-    </li>
+    </div>
   )
 }

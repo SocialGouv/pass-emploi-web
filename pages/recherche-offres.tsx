@@ -10,7 +10,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { OffreEmploiItem } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { Localite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -43,7 +43,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   }>({})
   const debouncedLocalisationInput = useDebounce(localisationInput.value, 1000)
 
-  const [offres, setOffres] = useState<OffreEmploiItem[] | undefined>(undefined)
+  const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 
@@ -181,7 +181,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           </h2>
           <ul aria-describedby='result-title'>
             {offres!.map((offre) => (
-              <OffreCard key={offre.id} offre={offre} />
+              <li key={offre.id} className='mb-4'>
+                <OffreCard offre={offre} withPartage={true} />
+              </li>
             ))}
           </ul>
         </>

@@ -2,7 +2,7 @@ import {
   DetailOffreEmploiJson,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre'
-import { OffreEmploiItem, DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
 
 export function unDetailOffre(
   overrides: Partial<DetailOffreEmploi> = {}
@@ -10,12 +10,16 @@ export function unDetailOffre(
   const defaults: DetailOffreEmploi = {
     id: 'id-offre',
     titre: "Offre d'emploi",
+    nomEntreprise: 'Mon Entreprise',
+    typeContrat: 'CDI',
+    duree: 'Temps plein',
+    localisation: 'Paris',
     urlPostulation: 'https://www.offres-emploi.fr/id-offre',
   }
   return { ...defaults, ...overrides }
 }
 
-export function listeBaseOffres(): OffreEmploiItem[] {
+export function listeBaseOffres(): BaseOffreEmploi[] {
   return [
     {
       id: '7158498',
@@ -78,7 +82,13 @@ export function unDetailOffreJson(
 ): DetailOffreEmploiJson {
   const defaults: DetailOffreEmploiJson = {
     id: 'id-offre',
-    data: { intitule: "Offre d'emploi" },
+    data: {
+      intitule: "Offre d'emploi",
+      entreprise: { nom: 'Mon Entreprise' },
+      typeContrat: 'CDI',
+      lieuTravail: { libelle: 'Paris' },
+      dureeTravailLibelleConverti: 'Temps plein',
+    },
     urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
   }
   return { ...defaults, ...overrides }

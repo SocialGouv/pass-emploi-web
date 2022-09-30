@@ -1,9 +1,15 @@
-import { DetailOffreEmploi, OffreEmploiItem } from 'interfaces/offre-emploi'
+import { DetailOffreEmploi, BaseOffreEmploi } from 'interfaces/offre-emploi'
 
 export type DetailOffreEmploiJson = {
   id: string
   urlRedirectPourPostulation: string
-  data: { intitule: string }
+  data: {
+    intitule: string
+    entreprise: { nom: string }
+    typeContrat: string
+    dureeTravailLibelleConverti: string
+    lieuTravail: { libelle: string }
+  }
 }
 
 export type OffreEmploiItemJson = {
@@ -19,7 +25,7 @@ export type OffreEmploiItemJson = {
 
 export function jsonToOffreEmploiItem(
   offreEmploiItemJson: OffreEmploiItemJson
-): OffreEmploiItem {
+): BaseOffreEmploi {
   return {
     id: offreEmploiItemJson.id,
     titre: offreEmploiItemJson.titre,
@@ -33,9 +39,14 @@ export function jsonToOffreEmploiItem(
 export function jsonToDetailOffreEmploi(
   json: DetailOffreEmploiJson
 ): DetailOffreEmploi {
+  const { id, data, urlRedirectPourPostulation } = json
   return {
-    id: json.id,
-    titre: json.data.intitule,
-    urlPostulation: json.urlRedirectPourPostulation,
+    id: id,
+    titre: data.intitule,
+    nomEntreprise: data.entreprise.nom,
+    typeContrat: data.typeContrat,
+    duree: data.dureeTravailLibelleConverti,
+    localisation: data.lieuTravail.libelle,
+    urlPostulation: urlRedirectPourPostulation,
   }
 }

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import { OffreCard } from 'components/offres/OffreCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -82,8 +83,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
 
   return (
     <>
-      <p>Offre n°{offre.id}</p>
-      <p>{offre.titre}</p>
+      <OffreCard offre={offre} />
 
       <form onSubmit={partager} className='mt-8'>
         <fieldset className='border-none flex flex-col mb-8'>
