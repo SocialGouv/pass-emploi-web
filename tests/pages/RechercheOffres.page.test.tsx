@@ -8,7 +8,7 @@ import {
   mockedOffresEmploiService,
   mockedReferentielService,
 } from 'fixtures/services'
-import { OffreEmploiItem } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { Localite } from 'interfaces/referentiel'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
 import { OffresEmploiService } from 'services/offres-emploi.service'
@@ -23,9 +23,8 @@ describe('Page Recherche Offres', () => {
     let offresEmploiService: OffresEmploiService
     let referentielService: ReferentielService
 
-    let offresEmploi: OffreEmploiItem[]
+    let offresEmploi: BaseOffreEmploi[]
     let localites: Localite[]
-
     beforeEach(() => {
       localites = desLocalites()
       offresEmploi = listeBaseOffres()

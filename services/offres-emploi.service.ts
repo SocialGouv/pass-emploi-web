@@ -7,7 +7,7 @@ import {
   jsonToOffreEmploiItem,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre'
-import { OffreEmploiItem, DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ApiError } from 'utils/httpClient'
 
 export type SearchOffresEmploiQuery = {
@@ -24,7 +24,7 @@ export interface OffresEmploiService {
   ): Promise<DetailOffreEmploi | undefined>
   searchOffresEmploi(
     recherche: SearchOffresEmploiQuery
-  ): Promise<OffreEmploiItem[]>
+  ): Promise<BaseOffreEmploi[]>
 }
 
 export class OffresEmploiApiService implements OffresEmploiService {
@@ -47,7 +47,7 @@ export class OffresEmploiApiService implements OffresEmploiService {
 
   async searchOffresEmploi(
     options: SearchOffresEmploiQuery = {}
-  ): Promise<OffreEmploiItem[]> {
+  ): Promise<BaseOffreEmploi[]> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
