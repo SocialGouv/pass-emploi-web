@@ -73,12 +73,30 @@ describe('Page Recherche Offres', () => {
       expect(() => screen.getAllByRole('option', { hidden: true })).toThrow()
     })
 
+    it('retire les accents à la saisie', async () => {
+      // Given
+      const inputLocalisation = screen.getByLabelText(/Localisation/)
+
+      // When
+      await act(() => userEvent.type(inputLocalisation, 'Ardèche'))
+      await act(() => new Promise((r) => setTimeout(r, 1000)))
+
+      // Then
+      expect(inputLocalisation).toHaveValue('Ardeche')
+      expect(
+        referentielService.getCommunesEtDepartements
+      ).toHaveBeenCalledTimes(1)
+      expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
+        'Ardeche'
+      )
+    })
+
     it('récupère les communes et les départements à la saisie', async () => {
       // Given
       const inputLocalisation = screen.getByLabelText(/Localisation/)
 
       // When
-      await act(() => userEvent.type(inputLocalisation, 'Crégy'))
+      await act(() => userEvent.type(inputLocalisation, 'Paris'))
       await act(() => new Promise((r) => setTimeout(r, 1000)))
 
       // Then
@@ -86,14 +104,17 @@ describe('Page Recherche Offres', () => {
         referentielService.getCommunesEtDepartements
       ).toHaveBeenCalledTimes(1)
       expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
-        'Crégy'
+        'Paris'
       )
       expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
-      localites.forEach((localite) =>
+      localites.forEach((localite) => {
         expect(
-          screen.getByRole('option', { hidden: true, name: localite.libelle })
+          screen.getByRole('option', {
+            hidden: true,
+            name: localite.libelle,
+          })
         ).toHaveValue(localite.libelle)
-      )
+      })
     })
 
     it('construit la recherche avec un département', async () => {

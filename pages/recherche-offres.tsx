@@ -41,6 +41,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     value?: string
     error?: string
   }>({})
+
   const debouncedLocalisationInput = useDebounce(localisationInput.value, 1000)
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
@@ -55,6 +56,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const formIsValid = useMemo(
     () => !localisationInput.error,
     [localisationInput.error]
+  )
+
+  const localiteOptions = useMemo(
+    () => localites.map(({ code, libelle }) => ({ id: code, value: libelle })),
+    [localites]
   )
 
   function validateLocalite(): Localite | null | false {
@@ -76,6 +82,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     } else {
       return localiteCorrespondante
     }
+  }
+
+  function handleLocalisationInputChanges(value: string) {
+    setLocalisationInput({
+      value: value?.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+    })
   }
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
@@ -142,13 +154,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           )}
           <SelectAutocomplete
             id='localisation'
-            options={localites.map((localite) => ({
-              id: localite.code,
-              value: localite.libelle,
-            }))}
-            onChange={(value) => setLocalisationInput({ value })}
+            options={localiteOptions}
+            onChange={handleLocalisationInputChanges}
             onBlur={validateLocalite}
             invalid={Boolean(localisationInput.error)}
+            value={localisationInput.value ?? ''}
           />
         </div>
 
