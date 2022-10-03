@@ -8,7 +8,6 @@ export type BaseOffreEmploi = {
 }
 
 export type DetailOffreEmploi = BaseOffreEmploi & {
-  urlPostulation: string
   typeContratLibelle: string
   dateActualisation: string
   description: string

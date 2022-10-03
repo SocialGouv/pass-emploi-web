@@ -56,7 +56,7 @@ export function jsonToOffreEmploiItem(
 export function jsonToDetailOffreEmploi(
   json: DetailOffreEmploiJson
 ): DetailOffreEmploi {
-  const { id, data, urlRedirectPourPostulation } = json
+  const { id, data } = json
   const offre: DetailOffreEmploi = {
     id: id,
     titre: data.intitule,
@@ -65,7 +65,6 @@ export function jsonToDetailOffreEmploi(
     typeContratLibelle: data.typeContratLibelle,
     duree: data.dureeTravailLibelleConverti,
     localisation: data.lieuTravail.libelle,
-    urlPostulation: urlRedirectPourPostulation,
     dateActualisation: data.dateActualisation,
     horaires: data.dureeTravailLibelle,
     description: data.description,

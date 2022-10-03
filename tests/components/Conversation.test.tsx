@@ -290,15 +290,24 @@ describe('<Conversation />', () => {
   })
 
   describe("quand on reçoit un message de partage d'offre", () => {
+    let message: HTMLElement
+    beforeEach(() => {
+      message = screen.getByText('Decrypted: Je vous partage cette offre')
+        .parentElement!
+    })
+
     it("affiche le titre de l'offre", async () => {
       // Then
-      expect(screen.getByText('Une offre')).toBeInTheDocument()
+      expect(within(message).getByText('Une offre')).toBeInTheDocument()
     })
+
     it("affiche le lien de l'offre", async () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Voir l’offre (nouvelle fenêtre)' })
-      ).toBeInTheDocument()
+        within(message).getByRole('link', {
+          name: 'Voir l’offre',
+        })
+      ).toHaveAttribute('href', '/offres/id-offre')
     })
   })
 })

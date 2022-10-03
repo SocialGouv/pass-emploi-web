@@ -15,7 +15,6 @@ export function unDetailOffre(
     typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
     duree: 'Temps plein',
     localisation: 'Paris',
-    urlPostulation: 'https://www.offres-emploi.fr/id-offre',
     dateActualisation: '2022-09-30T07:47:25.000Z',
     salaire: 'Selon profil',
     horaires: '24H Horaires normaux',
