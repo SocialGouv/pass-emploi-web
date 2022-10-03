@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -94,6 +94,13 @@ function DetailOffre({ offre }: DetailOffreProps) {
         </h3>
 
         <p className={`${ddStyle} whitespace-pre-wrap`}>{offre.description}</p>
+        <p className={`${ddStyle} text-primary hover:text-primary_darken`}>
+          <ExternalLink
+            href={offre.urlPostulation}
+            label="Voir l'offre"
+            onClick={() => setLabelMatomo('Lien Offre externe')}
+          />
+        </p>
       </section>
 
       <section aria-labelledby='heading-profil' className='mt-6'>
@@ -193,10 +200,10 @@ function DetailOffre({ offre }: DetailOffreProps) {
           {offre.infoEntreprise.lien && (
             <>
               <dt className='sr-only'>Lien site</dt>
-              <dd className='mt-4 text-base-regular text-primary'>
+              <dd className='mt-4 text-base-regular text-primary hover:text-primary_darken'>
                 <ExternalLink
                   href={offre.infoEntreprise.lien}
-                  label={offre.infoEntreprise.lien}
+                  label="Aller sur le site de l'entreprise"
                   onClick={() => setLabelMatomo('Lien Site entreprise')}
                 />
               </dd>

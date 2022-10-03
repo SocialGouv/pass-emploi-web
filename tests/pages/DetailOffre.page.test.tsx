@@ -82,6 +82,11 @@ describe('Page Détail Offre', () => {
       ).toHaveAccessibleName('Détail de l’offre')
 
       expect(within(section).getByText(offre.description)).toBeInTheDocument()
+      expect(
+        within(section).getByRole('link', {
+          name: "Voir l'offre (nouvelle fenêtre)",
+        })
+      ).toHaveAttribute('href', offre.urlPostulation)
     })
 
     it('affiche le profil souhaité', () => {
@@ -123,7 +128,7 @@ describe('Page Détail Offre', () => {
       const ddLien = getByDescriptionTerm('Lien site', section)
       expect(
         within(ddLien).getByRole('link', {
-          name: offre.infoEntreprise.lien + ' (nouvelle fenêtre)',
+          name: "Aller sur le site de l'entreprise (nouvelle fenêtre)",
         })
       ).toHaveAttribute('href', offre.infoEntreprise.lien)
       expect(

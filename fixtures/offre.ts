@@ -10,6 +10,7 @@ export function unDetailOffre(
   const defaults: DetailOffreEmploi = {
     id: 'id-offre',
     titre: "Offre d'emploi",
+    urlPostulation: 'https://www.offres-emploi.fr/id-offre',
     nomEntreprise: 'Mon Entreprise',
     typeContrat: 'CDI',
     typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
