@@ -33,7 +33,7 @@ export function LienOffre({
         {infoOffre.titre}
       </p>
       <div
-        className={`mt-4 w-max ml-auto ${
+        className={`mt-4 w-max ml-auto text-s-regular ${
           isSentByConseiller
             ? 'text-blanc hover:text-primary_lighten'
             : 'text-primary_darken hover:text-primary'

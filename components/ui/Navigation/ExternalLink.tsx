@@ -18,7 +18,7 @@ export default function ExternalLink({
       href={href}
       target='_blank'
       rel='noreferrer noopener'
-      className='flex items-center text-s-regular whitespace-nowrap underline text-[inherit] hover:text-[inherit]'
+      className='flex items-center whitespace-nowrap underline text-[inherit] hover:text-[inherit]'
       aria-label={`${label} (nouvelle fenêtre)`}
       onClick={onClick}
     >

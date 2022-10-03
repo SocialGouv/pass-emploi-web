@@ -353,7 +353,7 @@ export default function TableauJeunes({
                       <span className='flex'>
                         <div className='relative w-fit mx-auto'>
                           <IconComponent
-                            name={IconName.NoteBig}
+                            name={IconName.Note}
                             aria-hidden='true'
                             focusable='false'
                             className='w-6 h-6 fill-primary'

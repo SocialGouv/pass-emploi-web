@@ -115,7 +115,9 @@ describe('Page Détail Offre', () => {
 
       const ddLien = getByDescriptionTerm('Lien site', section)
       expect(
-        within(ddLien).getByRole('link', { name: offre.infoEntreprise.lien })
+        within(ddLien).getByRole('link', {
+          name: offre.infoEntreprise.lien + ' (nouvelle fenêtre)',
+        })
       ).toHaveAttribute('href', offre.infoEntreprise.lien)
       expect(
         getByDescriptionTerm('Entreprise adaptée', section)

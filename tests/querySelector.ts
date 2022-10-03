@@ -8,11 +8,16 @@ export default function getByDescriptionTerm(
   function isHTMLElement(element: any): element is HTMLElement {
     return element instanceof HTMLElement
   }
-  function isDescriptionTerm(node: HTMLElement) {
+  function isDescriptionTerm(node: HTMLElement): boolean {
     return node.tagName === 'DT'
   }
-  function hasText(node: HTMLElement) {
-    return getNodeText(node) === descriptionTerm
+  function hasText(node: HTMLElement): boolean {
+    return (
+      getNodeText(node) === descriptionTerm ||
+      Array.from(node.children).some(
+        (child) => isHTMLElement(child) && hasText(child)
+      )
+    )
   }
 
   const container = parent ? within(parent) : screen

@@ -52,7 +52,7 @@ export function RdvRow({
         {withNameJeune && <RowCell>{rdv.beneficiaires}</RowCell>}
 
         <RowCell>
-          <DataTag type={rdv.type} />
+          <DataTag text={rdv.type} />
         </RowCell>
 
         <RowCell>

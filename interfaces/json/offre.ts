@@ -67,7 +67,6 @@ export function jsonToDetailOffreEmploi(
     localisation: data.lieuTravail.libelle,
     urlPostulation: urlRedirectPourPostulation,
     dateActualisation: data.dateActualisation,
-    salaire: data.salaire.commentaire,
     horaires: data.dureeTravailLibelle,
     description: data.description,
     experience: data.experienceLibelle,
@@ -94,6 +93,7 @@ export function jsonToDetailOffreEmploi(
     infoEntreprise: {},
   }
 
+  if (data.salaire.commentaire) offre.salaire = data.salaire.commentaire
   if (data.entreprise?.description)
     offre.infoEntreprise.detail = data.entreprise.description
   if (data.entreprise?.url) offre.infoEntreprise.lien = data.entreprise.url

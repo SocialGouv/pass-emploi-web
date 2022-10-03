@@ -54,8 +54,8 @@ export function OffreCard({ offre, withPartage = false }: OffreItemCardProps) {
 
       <div className='flex justify-between'>
         <div>
-          <DataTag type={offre.typeContrat} className='mr-6' />
-          {offre.duree && <DataTag type={offre.duree} />}
+          <DataTag text={offre.typeContrat} className='mr-6' />
+          {offre.duree && <DataTag text={offre.duree} />}
         </div>
         <div>
           <Link href={`/offres/${offre.id}`}>

@@ -11,8 +11,6 @@ export type DetailOffreEmploi = BaseOffreEmploi & {
   urlPostulation: string
   typeContratLibelle: string
   dateActualisation: string
-  salaire?: string
-  horaires?: string
   description: string
   experience: string
   competences: string[]
@@ -26,4 +24,6 @@ export type DetailOffreEmploi = BaseOffreEmploi & {
     adaptee?: boolean
     accessibleTH?: boolean
   }
+  salaire?: string
+  horaires?: string
 }

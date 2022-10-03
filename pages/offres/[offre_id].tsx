@@ -1,11 +1,15 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import { useMemo } from 'react'
+import { useState } from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { DataTag } from 'components/ui/Indicateurs/DataTag'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -15,21 +19,29 @@ type DetailOffreProps = PageProps & {
 }
 
 function DetailOffre({ offre }: DetailOffreProps) {
-  const dateActualisation = useMemo(
-    () =>
-      toFrenchFormat(
-        DateTime.fromISO(offre.dateActualisation),
-        WEEKDAY_MONTH_LONG
-      ),
-    [offre.dateActualisation]
+  const [labelMatomo, setLabelMatomo] = useState<string | undefined>()
+
+  const dateActualisation = toFrenchFormat(
+    DateTime.fromISO(offre.dateActualisation),
+    WEEKDAY_MONTH_LONG
   )
+
+  const sectionTitleStyle =
+    'inline-flex items-center w-full text-m-bold pb-6 border-b border-solid border-primary_lighten'
+  const dtStyle = 'mt-6 text-base-bold'
+  const ddStyle =
+    'mt-4 text-s-regular pb-4 border-b border-solid border-primary_lighten'
+  const ulStyle = 'list-disc list-inside'
+  const liStyle = 'mb-4 last:mb-0'
+
+  useMatomo(labelMatomo)
 
   return (
     <>
-      <p>Actualisée le {dateActualisation}</p>
-      <h2 className='text-base-bold'>{offre.titre}</h2>
+      <p className='text-s-regular'>Actualisée le {dateActualisation}</p>
+      <h2 className='mt-2 text-l-bold text-primary'>{offre.titre}</h2>
 
-      <section aria-labelledby='heading-info'>
+      <section aria-labelledby='heading-info' className='mt-6'>
         <h3 id='heading-info' className='sr-only'>
           Informations de l&apos;offre
         </h3>
@@ -39,51 +51,66 @@ function DetailOffre({ offre }: DetailOffreProps) {
           <dd>{offre.nomEntreprise}</dd>
 
           <dt className='sr-only'>Localisation</dt>
-          <dd>{offre.localisation}</dd>
+          <dd className='mt-6'>
+            <DataTag text={offre.localisation} iconName={IconName.Location} />
+          </dd>
 
           <dt className='sr-only'>Type de contrat</dt>
-          <dd>{offre.typeContratLibelle}</dd>
+          <dd className='mt-2'>
+            <DataTag
+              text={offre.typeContratLibelle}
+              iconName={IconName.Contrat}
+            />
+          </dd>
 
           {offre.salaire && (
             <>
               <dt className='sr-only'>Salaire</dt>
-              <dd>{offre.salaire}</dd>
+              <dd className='mt-2'>
+                <DataTag text={offre.salaire} iconName={IconName.Euro} />
+              </dd>
             </>
           )}
 
           {offre.horaires && (
             <>
               <dt className='sr-only'>Horaires</dt>
-              <dd>{offre.horaires}</dd>
+              <dd className='mt-2'>
+                <DataTag text={offre.horaires} iconName={IconName.Clock} />
+              </dd>
             </>
           )}
         </dl>
       </section>
 
-      <section aria-labelledby='heading-detail'>
-        <h3 id='heading-detail' className='text-base-bold'>
+      <section aria-labelledby='heading-detail' className='mt-8'>
+        <h3 id='heading-detail' className={sectionTitleStyle}>
+          <SectionTitleDot />
           Détail de l’offre
         </h3>
 
-        <p className='whitespace-pre-wrap'>{offre.description}</p>
+        <p className={`${ddStyle} whitespace-pre-wrap`}>{offre.description}</p>
       </section>
 
-      <section aria-labelledby='heading-profil'>
-        <h3 id='heading-profil' className='text-base-bold'>
+      <section aria-labelledby='heading-profil' className='mt-6'>
+        <h3 id='heading-profil' className={sectionTitleStyle}>
+          <SectionTitleDot />
           Profil souhaité
         </h3>
 
         <dl>
-          <dt>Expériences</dt>
-          <dd>{offre.experience}</dd>
+          <dt className={dtStyle}>Expériences</dt>
+          <dd className={ddStyle}>{offre.experience}</dd>
 
           {offre.competences.length > 0 && (
             <>
-              <dt>Savoir et savoir faire</dt>
-              <dd>
-                <ul>
+              <dt className={dtStyle}>Savoir et savoir faire</dt>
+              <dd className={ddStyle}>
+                <ul className={ulStyle}>
                   {offre.competences.map((competence) => (
-                    <li key={competence}>{competence}</li>
+                    <li key={competence} className={liStyle}>
+                      {competence}
+                    </li>
                   ))}
                 </ul>
               </dd>
@@ -92,11 +119,13 @@ function DetailOffre({ offre }: DetailOffreProps) {
 
           {offre.competencesProfessionnelles.length > 0 && (
             <>
-              <dt>Savoir être professionnel</dt>
-              <dd>
-                <ul>
+              <dt className={dtStyle}>Savoir être professionnel</dt>
+              <dd className={ddStyle}>
+                <ul className={ulStyle}>
                   {offre.competencesProfessionnelles.map((competencePro) => (
-                    <li key={competencePro}>{competencePro}</li>
+                    <li key={competencePro} className={liStyle}>
+                      {competencePro}
+                    </li>
                   ))}
                 </ul>
               </dd>
@@ -105,11 +134,13 @@ function DetailOffre({ offre }: DetailOffreProps) {
 
           {offre.formations.length > 0 && (
             <>
-              <dt>Formation</dt>
-              <dd>
-                <ul>
+              <dt className={dtStyle}>Formation</dt>
+              <dd className={ddStyle}>
+                <ul className={ulStyle}>
                   {offre.formations.map((formation) => (
-                    <li key={formation}>{formation}</li>
+                    <li key={formation} className={liStyle}>
+                      {formation}
+                    </li>
                   ))}
                 </ul>
               </dd>
@@ -118,11 +149,13 @@ function DetailOffre({ offre }: DetailOffreProps) {
 
           {offre.langues.length > 0 && (
             <>
-              <dt>Langue</dt>
-              <dd>
-                <ul>
+              <dt className={dtStyle}>Langue</dt>
+              <dd className={ddStyle}>
+                <ul className={ulStyle}>
                   {offre.langues.map((langue) => (
-                    <li key={langue}>{langue}</li>
+                    <li key={langue} className={liStyle}>
+                      {langue}
+                    </li>
                   ))}
                 </ul>
               </dd>
@@ -131,11 +164,13 @@ function DetailOffre({ offre }: DetailOffreProps) {
 
           {offre.permis.length > 0 && (
             <>
-              <dt>Permis</dt>
-              <dd>
-                <ul>
+              <dt className={dtStyle}>Permis</dt>
+              <dd className={ddStyle}>
+                <ul className={ulStyle}>
                   {offre.permis.map((permis) => (
-                    <li key={permis}>{permis}</li>
+                    <li key={permis} className={liStyle}>
+                      {permis}
+                    </li>
                   ))}
                 </ul>
               </dd>
@@ -144,8 +179,9 @@ function DetailOffre({ offre }: DetailOffreProps) {
         </dl>
       </section>
 
-      <section aria-labelledby='heading-entreprise'>
-        <h3 id='heading-entreprise'>
+      <section aria-labelledby='heading-entreprise' className='mt-6'>
+        <h3 id='heading-entreprise' className={sectionTitleStyle}>
+          <SectionTitleDot />
           <span className='sr-only'>Informations de l&apos;</span>Entreprise
         </h3>
 
@@ -153,37 +189,64 @@ function DetailOffre({ offre }: DetailOffreProps) {
           {offre.infoEntreprise.lien && (
             <>
               <dt className='sr-only'>Lien site</dt>
-              <dd>
-                <a href={offre.infoEntreprise.lien}>
-                  {offre.infoEntreprise.lien}
-                </a>
+              <dd className='mt-4 text-base-regular text-primary'>
+                <ExternalLink
+                  href={offre.infoEntreprise.lien}
+                  label={offre.infoEntreprise.lien}
+                  onClick={() => setLabelMatomo('Lien Site entreprise')}
+                />
               </dd>
             </>
           )}
 
           {offre.infoEntreprise.adaptee !== undefined && (
             <>
-              <dt>Entreprise adaptée</dt>
-              <dd>{offre.infoEntreprise.adaptee ? 'OUI' : 'NON'}</dd>
+              <dt className={offre.infoEntreprise.adaptee ? 'mt-4' : 'sr-only'}>
+                <DataTag text='Entreprise adaptée' />
+              </dt>
+              <dd className='sr-only'>
+                {offre.infoEntreprise.adaptee ? 'OUI' : 'NON'}
+              </dd>
             </>
           )}
 
           {offre.infoEntreprise.accessibleTH !== undefined && (
             <>
-              <dt>Entreprise handi-bienveillante</dt>
-              <dd>{offre.infoEntreprise.accessibleTH ? 'OUI' : 'NON'}</dd>
+              <dt
+                className={
+                  offre.infoEntreprise.accessibleTH ? 'mt-4' : 'sr-only'
+                }
+              >
+                <DataTag text='Entreprise handi-bienveillante'></DataTag>
+              </dt>
+              <dd className='sr-only'>
+                {offre.infoEntreprise.accessibleTH ? 'OUI' : 'NON'}
+              </dd>
             </>
           )}
 
           {offre.infoEntreprise.detail && (
             <>
-              <dt>Détail de l&apos;entreprise</dt>
-              <dd>{offre.infoEntreprise.detail}</dd>
+              <dt className={dtStyle}>Détail de l&apos;entreprise</dt>
+              <dd className='mt-4 text-s-regular whitespace-pre-wrap'>
+                {offre.infoEntreprise.detail}
+              </dd>
             </>
           )}
         </dl>
       </section>
     </>
+  )
+}
+
+function SectionTitleDot() {
+  return (
+    <IconComponent
+      name={IconName.DecorativePoint}
+      focusable={false}
+      aria-hidden={true}
+      className='inline w-2 h-2 fill-primary mr-4'
+    />
   )
 }
 
