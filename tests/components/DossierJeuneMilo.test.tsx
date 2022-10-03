@@ -3,7 +3,7 @@ import React from 'react'
 
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDossierMilo } from 'fixtures/milo'
-import getByDefinitionTerm from 'tests/querySelector'
+import getByDescriptionTerm from 'tests/querySelector'
 
 describe('<DossierMilo', () => {
   describe("quand l'e-mail du jeune est renseigné", () => {
@@ -23,13 +23,13 @@ describe('<DossierMilo', () => {
 
     it("affiche les informations d'un dossier jeune avec e-mail", () => {
       //THEN
-      expect(getByDefinitionTerm('Prénom')).toHaveTextContent('Kenji')
-      expect(getByDefinitionTerm('Nom')).toHaveTextContent('GIRAC')
-      expect(getByDefinitionTerm('Date de naissance')).toHaveTextContent(
+      expect(getByDescriptionTerm('Prénom :')).toHaveTextContent('Kenji')
+      expect(getByDescriptionTerm('Nom :')).toHaveTextContent('GIRAC')
+      expect(getByDescriptionTerm('Date de naissance :')).toHaveTextContent(
         '1997-12-17'
       )
-      expect(getByDefinitionTerm('Code postal')).toHaveTextContent('13000')
-      expect(getByDefinitionTerm('E-mail')).toHaveTextContent(
+      expect(getByDescriptionTerm('Code postal :')).toHaveTextContent('13000')
+      expect(getByDescriptionTerm('E-mail :')).toHaveTextContent(
         'kenji-faux-mail@mail.com'
       )
     })
@@ -59,7 +59,7 @@ describe('<DossierMilo', () => {
 
     it('le champ e-mail doit être vide', () => {
       //THEN
-      expect(getByDefinitionTerm('E-mail')).toBeEmptyDOMElement()
+      expect(getByDescriptionTerm('E-mail :')).toBeEmptyDOMElement()
     })
 
     it("affiche un message d'erreur", () => {

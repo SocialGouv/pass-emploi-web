@@ -69,9 +69,6 @@ export class OffresEmploiApiService implements OffresEmploiService {
           `/offres-emploi/${idOffreEmploi}`,
           accessToken
         )
-
-      console.log('--------------------------------------')
-      console.log(offreEmploiJson)
       return jsonToDetailOffreEmploi(offreEmploiJson)
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {

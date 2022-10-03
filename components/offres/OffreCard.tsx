@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 import { ButtonStyle } from 'components/ui/Button/Button'
@@ -6,7 +7,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
-import Link from 'next/link'
 
 interface OffreItemCardProps {
   offre: BaseOffreEmploi

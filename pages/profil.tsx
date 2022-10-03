@@ -56,10 +56,7 @@ function Profil(_: ProfilProps) {
               <dl className='mt-3'>
                 {conseiller.email && (
                   <>
-                    <dt
-                      aria-label='Votre e-mail'
-                      className='mt-2 inline text-base-regular'
-                    >
+                    <dt className='mt-2 inline text-base-regular'>
                       Votre e-mail :
                     </dt>
                     <dd className='ml-2 inline text-base-medium'>
@@ -70,10 +67,7 @@ function Profil(_: ProfilProps) {
 
                 {conseiller.agence && (
                   <>
-                    <dt
-                      aria-label={`Votre ${labelAgence}`}
-                      className='mt-2 inline before:block before:content-[""] text-base-regular'
-                    >
+                    <dt className='mt-2 inline before:block before:content-[""] text-base-regular'>
                       Votre {labelAgence} :
                     </dt>
                     <dd className='ml-2 inline text-base-medium'>

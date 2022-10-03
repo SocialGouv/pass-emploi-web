@@ -20,12 +20,18 @@ export function unDetailOffre(
     salaire: 'Selon profil',
     horaires: '24H Horaires normaux',
     description: 'une description d’offre d’emploi',
-    experiences: '1 an - en formation continue ou initiale',
+    experience: '1 an - en formation continue ou initiale',
     competences: ['compétence 1', 'compétence 2'],
     competencesProfessionnelles: ['compétence pro 1', 'compétence pro 2'],
-    formations: ['formation 1'],
+    formations: ['formation 1 : bac +3'],
     langues: ['langue 1'],
     permis: ['permis 1'],
+    infoEntreprise: {
+      detail: "Description longue de l'entreprise",
+      lien: 'perdu.com',
+      adaptee: false,
+      accessibleTH: true,
+    },
   }
   return { ...defaults, ...overrides }
 }
@@ -95,7 +101,12 @@ export function unDetailOffreJson(
     id: 'id-offre',
     data: {
       intitule: "Offre d'emploi",
-      entreprise: { nom: 'Mon Entreprise' },
+      entreprise: {
+        nom: 'Mon Entreprise',
+        description: "Description longue de l'entreprise",
+        url: 'perdu.com',
+        entrepriseAdaptee: false,
+      },
       typeContrat: 'CDI',
       typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
       lieuTravail: { libelle: 'Paris' },
@@ -113,6 +124,7 @@ export function unDetailOffreJson(
       formations: [{ commentaire: 'formation 1', niveauLibelle: 'bac +3' }],
       langues: [{ libelle: 'langue 1' }],
       permis: [{ libelle: 'permis 1' }],
+      accessibleTH: true,
     },
     urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
   }

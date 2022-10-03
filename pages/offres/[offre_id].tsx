@@ -1,76 +1,188 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-
-import { DetailOffreEmploi, OffreEmploiItem } from 'interfaces/offre-emploi'
-import { PageProps } from 'interfaces/pageProps'
+import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import { useMemo } from 'react'
+
+import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 type DetailOffreProps = PageProps & {
   offre: DetailOffreEmploi
-  returnTo: string
 }
 
 function DetailOffre({ offre }: DetailOffreProps) {
+  const dateActualisation = useMemo(
+    () =>
+      toFrenchFormat(
+        DateTime.fromISO(offre.dateActualisation),
+        WEEKDAY_MONTH_LONG
+      ),
+    [offre.dateActualisation]
+  )
+
   return (
     <>
-      <p>{offre.dateActualisation}</p>
+      <p>Actualisée le {dateActualisation}</p>
       <h2 className='text-base-bold'>{offre.titre}</h2>
-      <p>{offre.nomEntreprise}</p>
-      <p>{offre.localisation}</p>
-      <p>{offre.typeContratLibelle}</p>
-      {offre.salaire && <p>{offre.salaire}</p>}
-      <p>{offre.horaires}</p>
 
-      <h3 className='text-base-bold'>Détail de l’offre</h3>
-      <p>{offre.description}</p>
+      <section aria-labelledby='heading-info'>
+        <h3 id='heading-info' className='sr-only'>
+          Informations de l&apos;offre
+        </h3>
 
-      <h3 className='text-base-bold'>Profil souhaité</h3>
-      <h4 className='text-base-bold'>Experiences</h4>
-      <p>{offre.experiences}</p>
+        <dl>
+          <dt className='sr-only'>Entreprise</dt>
+          <dd>{offre.nomEntreprise}</dd>
 
-      <h4 className='text-base-bold'>Savoir et savoir faire</h4>
-      {offre.competences.length > 0 && (
-        <ul>
-          {offre.competences.map((competence) => (
-            <li key={competence}>{competence}</li>
-          ))}
-        </ul>
-      )}
-      <h4>Savoir être professionnel</h4>
-      {offre.competencesProfessionnelles.length > 0 && (
-        <ul>
-          {offre.competencesProfessionnelles.map((competencePro) => (
-            <li key={competencePro}>{competencePro}</li>
-          ))}
-        </ul>
-      )}
-      <h4 className='text-base-bold'>Formation</h4>
-      {offre.formations.length > 0 && (
-        <ul>
-          {offre.formations.map((uneFormation) => (
-            <li key={uneFormation}>{uneFormation}</li>
-          ))}
-        </ul>
-      )}
-      <h4 className='text-base-bold'>Langue</h4>
-      {offre.langues.length > 0 && (
-        <ul>
-          {offre.langues.map((uneLangue) => (
-            <li key={uneLangue}>{uneLangue}</li>
-          ))}
-        </ul>
-      )}
-      <h4 className='text-base-bold'>Permis</h4>
-      {offre.permis.length > 0 && (
-        <ul>
-          {offre.permis.map((unPermis) => (
-            <li key={unPermis}>{unPermis}</li>
-          ))}
-        </ul>
-      )}
-      <h3 className='text-base-bold'>Entreprise</h3>
+          <dt className='sr-only'>Localisation</dt>
+          <dd>{offre.localisation}</dd>
+
+          <dt className='sr-only'>Type de contrat</dt>
+          <dd>{offre.typeContratLibelle}</dd>
+
+          {offre.salaire && (
+            <>
+              <dt className='sr-only'>Salaire</dt>
+              <dd>{offre.salaire}</dd>
+            </>
+          )}
+
+          {offre.horaires && (
+            <>
+              <dt className='sr-only'>Horaires</dt>
+              <dd>{offre.horaires}</dd>
+            </>
+          )}
+        </dl>
+      </section>
+
+      <section aria-labelledby='heading-detail'>
+        <h3 id='heading-detail' className='text-base-bold'>
+          Détail de l’offre
+        </h3>
+
+        <p className='whitespace-pre-wrap'>{offre.description}</p>
+      </section>
+
+      <section aria-labelledby='heading-profil'>
+        <h3 id='heading-profil' className='text-base-bold'>
+          Profil souhaité
+        </h3>
+
+        <dl>
+          <dt>Expériences</dt>
+          <dd>{offre.experience}</dd>
+
+          {offre.competences.length > 0 && (
+            <>
+              <dt>Savoir et savoir faire</dt>
+              <dd>
+                <ul>
+                  {offre.competences.map((competence) => (
+                    <li key={competence}>{competence}</li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+
+          {offre.competencesProfessionnelles.length > 0 && (
+            <>
+              <dt>Savoir être professionnel</dt>
+              <dd>
+                <ul>
+                  {offre.competencesProfessionnelles.map((competencePro) => (
+                    <li key={competencePro}>{competencePro}</li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+
+          {offre.formations.length > 0 && (
+            <>
+              <dt>Formation</dt>
+              <dd>
+                <ul>
+                  {offre.formations.map((formation) => (
+                    <li key={formation}>{formation}</li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+
+          {offre.langues.length > 0 && (
+            <>
+              <dt>Langue</dt>
+              <dd>
+                <ul>
+                  {offre.langues.map((langue) => (
+                    <li key={langue}>{langue}</li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+
+          {offre.permis.length > 0 && (
+            <>
+              <dt>Permis</dt>
+              <dd>
+                <ul>
+                  {offre.permis.map((permis) => (
+                    <li key={permis}>{permis}</li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+        </dl>
+      </section>
+
+      <section aria-labelledby='heading-entreprise'>
+        <h3 id='heading-entreprise'>
+          <span className='sr-only'>Informations de l&apos;</span>Entreprise
+        </h3>
+
+        <dl>
+          {offre.infoEntreprise.lien && (
+            <>
+              <dt className='sr-only'>Lien site</dt>
+              <dd>
+                <a href={offre.infoEntreprise.lien}>
+                  {offre.infoEntreprise.lien}
+                </a>
+              </dd>
+            </>
+          )}
+
+          {offre.infoEntreprise.adaptee !== undefined && (
+            <>
+              <dt>Entreprise adaptée</dt>
+              <dd>{offre.infoEntreprise.adaptee ? 'OUI' : 'NON'}</dd>
+            </>
+          )}
+
+          {offre.infoEntreprise.accessibleTH !== undefined && (
+            <>
+              <dt>Entreprise handi-bienveillante</dt>
+              <dd>{offre.infoEntreprise.accessibleTH ? 'OUI' : 'NON'}</dd>
+            </>
+          )}
+
+          {offre.infoEntreprise.detail && (
+            <>
+              <dt>Détail de l&apos;entreprise</dt>
+              <dd>{offre.infoEntreprise.detail}</dd>
+            </>
+          )}
+        </dl>
+      </section>
     </>
   )
 }

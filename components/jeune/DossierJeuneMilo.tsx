@@ -55,43 +55,31 @@ export default function DossierJeuneMilo({
       <div className='border border-primary_lighten rounded-large p-6'>
         <dl className='text-primary_darken'>
           <div className='flex items-center mb-3'>
-            <dt className='text-base-regular mr-1' aria-label='Prénom'>
-              Prénom :
-            </dt>
+            <dt className='text-base-regular mr-1'>Prénom :</dt>
             <dd className='text-base-medium'> {dossier.prenom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-base-regular mr-1' aria-label='Nom'>
-              Nom :
-            </dt>
+            <dt className='text-base-regular mr-1'>Nom :</dt>
             <dd className='text-base-medium'> {dossier.nom}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt
-              className='text-base-regular mr-1'
-              aria-label='Date de naissance'
-            >
-              Date de naissance :
-            </dt>
+            <dt className='text-base-regular mr-1'>Date de naissance :</dt>
             <dd className='text-base-medium'> {dossier.dateDeNaissance}</dd>
           </div>
 
           <div className='flex items-center mb-3'>
-            <dt className='text-base-regular mr-1' aria-label='Code postal'>
-              Code postal :
-            </dt>
+            <dt className='text-base-regular mr-1'>Code postal :</dt>
             <dd className='text-base-medium'> {dossier.codePostal}</dd>
           </div>
           <div className='flex items-center mb-3'>
             <dt
-              className={` ${
+              className={
                 dossier.email
                   ? 'text-base-regular mr-1'
                   : 'text-base-regular text-warning'
-              }`}
-              aria-label='E-mail'
+              }
             >
               E-mail :
             </dt>

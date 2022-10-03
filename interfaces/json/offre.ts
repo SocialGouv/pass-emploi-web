@@ -5,13 +5,18 @@ export type DetailOffreEmploiJson = {
   urlRedirectPourPostulation: string
   data: {
     intitule: string
-    entreprise: { nom: string }
+    entreprise?: {
+      nom?: string
+      description?: string
+      url?: string
+      entrepriseAdaptee?: boolean
+    }
     typeContrat: string
     typeContratLibelle: string
     dureeTravailLibelleConverti: string
     lieuTravail: { libelle: string }
     dateActualisation: string
-    salaire: { commentaire: string }
+    salaire: { commentaire?: string }
     dureeTravailLibelle: string
     description: string
     experienceLibelle: string
@@ -20,6 +25,7 @@ export type DetailOffreEmploiJson = {
     formations: Array<{ commentaire: string; niveauLibelle: string }>
     langues: Array<{ libelle: string }>
     permis: Array<{ libelle: string }>
+    accessibleTH?: boolean
   }
 }
 
@@ -51,28 +57,24 @@ export function jsonToDetailOffreEmploi(
   json: DetailOffreEmploiJson
 ): DetailOffreEmploi {
   const { id, data, urlRedirectPourPostulation } = json
-  return {
+  const offre: DetailOffreEmploi = {
     id: id,
     titre: data.intitule,
-    nomEntreprise: data.entreprise.nom,
+    nomEntreprise: data.entreprise?.nom ?? '',
     typeContrat: data.typeContrat,
     typeContratLibelle: data.typeContratLibelle,
     duree: data.dureeTravailLibelleConverti,
     localisation: data.lieuTravail.libelle,
     urlPostulation: urlRedirectPourPostulation,
     dateActualisation: data.dateActualisation,
-    salaire: data.salaire.commentaire || '',
+    salaire: data.salaire.commentaire,
     horaires: data.dureeTravailLibelle,
     description: data.description,
-    experiences: data.experienceLibelle,
-    competences: data.competences.map((uneCompétence) => {
-      return uneCompétence.libelle
-    }),
+    experience: data.experienceLibelle,
+    competences: data.competences.map(({ libelle }) => libelle),
     competencesProfessionnelles:
       data.qualitesProfessionnelles && data.qualitesProfessionnelles.length
-        ? data.qualitesProfessionnelles.map((uneCompétencePro) => {
-            return uneCompétencePro.libelle
-          })
+        ? data.qualitesProfessionnelles.map(({ libelle }) => libelle)
         : [],
     formations:
       data.formations && data.formations.length
@@ -89,5 +91,16 @@ export function jsonToDetailOffreEmploi(
       data.permis && data.permis.length
         ? data.permis.map((unPermis) => unPermis.libelle)
         : [],
+    infoEntreprise: {},
   }
+
+  if (data.entreprise?.description)
+    offre.infoEntreprise.detail = data.entreprise.description
+  if (data.entreprise?.url) offre.infoEntreprise.lien = data.entreprise.url
+  if (data.entreprise?.entrepriseAdaptee !== undefined)
+    offre.infoEntreprise.adaptee = data.entreprise.entrepriseAdaptee
+  if (data.accessibleTH !== undefined)
+    offre.infoEntreprise.accessibleTH = data.accessibleTH
+
+  return offre
 }
