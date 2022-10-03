@@ -42,14 +42,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     error?: string
   }>({})
 
-  const localisationInputValueSansAccents = localisationInput.value
-    ?.normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-
-  const debouncedLocalisationInput = useDebounce(
-    localisationInputValueSansAccents,
-    1000
-  )
+  const debouncedLocalisationInput = useDebounce(localisationInput.value, 1000)
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -65,19 +58,24 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     [localisationInput.error]
   )
 
+  const localiteOptions = useMemo(
+    () => localites.map(({ code, libelle }) => ({ id: code, value: libelle })),
+    [localites]
+  )
+
   function validateLocalite(): Localite | null | false {
-    if (!localisationInputValueSansAccents) return null
+    if (!localisationInput.value) return null
 
     const localiteCorrespondante: Localite | undefined = localites.find(
       ({ libelle }) =>
-        libelle.localeCompare(localisationInputValueSansAccents, undefined, {
+        libelle.localeCompare(localisationInput.value!, undefined, {
           sensitivity: 'base',
         }) === 0
     )
 
     if (!localiteCorrespondante) {
       setLocalisationInput({
-        value: localisationInputValueSansAccents,
+        ...localisationInput,
         error: 'Veuillez saisir une localisation correcte.',
       })
       return false
@@ -87,15 +85,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   }
 
   function handleLocalisationInputChanges(value: string) {
-    setLocalisationInput({ value })
-  }
-
-  function getLocalitesOptions() {
-    return localites.map((localite) => {
-      return {
-        id: localite.code,
-        value: localite.libelle.toUpperCase(),
-      }
+    setLocalisationInput({
+      value: value?.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
     })
   }
 
@@ -163,11 +154,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           )}
           <SelectAutocomplete
             id='localisation'
-            options={getLocalitesOptions()}
+            options={localiteOptions}
             onChange={handleLocalisationInputChanges}
             onBlur={validateLocalite}
             invalid={Boolean(localisationInput.error)}
-            value={localisationInputValueSansAccents || ''}
+            value={localisationInput.value ?? ''}
           />
         </div>
 

@@ -108,13 +108,12 @@ describe('Page Recherche Offres', () => {
       )
       expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
       localites.forEach((localite) => {
-        const libelleAvecMajuscules = localite.libelle.toUpperCase()
         expect(
           screen.getByRole('option', {
             hidden: true,
-            name: libelleAvecMajuscules,
+            name: localite.libelle,
           })
-        ).toHaveValue(libelleAvecMajuscules)
+        ).toHaveValue(localite.libelle)
       })
     })
 

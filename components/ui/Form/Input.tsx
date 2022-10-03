@@ -36,7 +36,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         id={id}
         required={required}
         disabled={disabled}
-        defaultValue={defaultValue}
+        defaultValue={defaultValue || undefined}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         aria-describedby={invalid ? `${id}--error` : undefined}
