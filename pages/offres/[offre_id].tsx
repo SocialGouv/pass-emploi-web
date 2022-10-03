@@ -20,7 +20,7 @@ type DetailOffreProps = PageProps & {
 }
 
 function DetailOffre({ offre }: DetailOffreProps) {
-  const [labelMatomo, setLabelMatomo] = useState<string | undefined>()
+  const [labelMatomo, setLabelMatomo] = useState<string>('Détail offre')
 
   const dateActualisation = toFrenchFormat(
     DateTime.fromISO(offre.dateActualisation),
