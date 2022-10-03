@@ -16,7 +16,7 @@ export type DetailOffreEmploiJson = {
     dureeTravailLibelleConverti: string
     lieuTravail: { libelle: string }
     dateActualisation: string
-    salaire: { commentaire?: string }
+    salaire: { libelle?: string }
     dureeTravailLibelle: string
     description: string
     experienceLibelle: string
@@ -93,7 +93,7 @@ export function jsonToDetailOffreEmploi(
     infoEntreprise: {},
   }
 
-  if (data.salaire.commentaire) offre.salaire = data.salaire.commentaire
+  if (data.salaire.libelle) offre.salaire = data.salaire.libelle
   if (data.entreprise?.description)
     offre.infoEntreprise.detail = data.entreprise.description
   if (data.entreprise?.url) offre.infoEntreprise.lien = data.entreprise.url
