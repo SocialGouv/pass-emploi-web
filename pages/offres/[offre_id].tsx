@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 
+import LienPartageOffre from 'components/offres/LienPartageOffre'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
@@ -38,8 +39,11 @@ function DetailOffre({ offre }: DetailOffreProps) {
 
   return (
     <>
-      <p className='text-s-regular'>Actualisée le {dateActualisation}</p>
-      <h2 className='mt-2 text-l-bold text-primary'>{offre.titre}</h2>
+      <div className='flex justify-between items-center'>
+        <p className='text-s-regular'>Actualisée le {dateActualisation}</p>
+        <LienPartageOffre idOffre={offre.id} />
+      </div>
+      <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
 
       <section aria-labelledby='heading-info' className='mt-6'>
         <h3 id='heading-info' className='sr-only'>

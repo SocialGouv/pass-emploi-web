@@ -25,6 +25,13 @@ describe('Page Détail Offre', () => {
       render(<DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />)
     })
 
+    it("permet de partager l'offre", () => {
+      // Then
+      expect(
+        screen.getByRole('link', { name: `Partager offre numéro ${offre.id}` })
+      ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
+    })
+
     it("affiche la date d'actualisation de l'offre", () => {
       // Then
       expect(
