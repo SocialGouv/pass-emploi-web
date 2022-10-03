@@ -11,6 +11,7 @@ interface SelectAutocompleteProps {
   invalid?: boolean
   disabled?: boolean
   onBlur?: () => void
+  value?: string
 }
 
 const SelectAutocomplete = forwardRef<
@@ -18,7 +19,17 @@ const SelectAutocomplete = forwardRef<
   SelectAutocompleteProps
 >(
   (
-    { disabled, id, invalid, multiple, onChange, options, required, onBlur },
+    {
+      disabled,
+      id,
+      invalid,
+      multiple,
+      onChange,
+      options,
+      required,
+      onBlur,
+      value,
+    },
     ref
   ) => {
     return (
@@ -34,11 +45,12 @@ const SelectAutocomplete = forwardRef<
           invalid={invalid}
           disabled={disabled}
           onBlur={onBlur}
+          value={value}
         />
         <datalist id={`${id}--options`}>
-          {options.map(({ id: optionId, value }) => (
-            <option key={optionId} value={value}>
-              {value}
+          {options.map(({ id: optionId, value: optionValue }) => (
+            <option key={optionId} value={optionValue}>
+              {optionValue}
             </option>
           ))}
         </datalist>

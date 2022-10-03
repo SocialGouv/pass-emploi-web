@@ -41,7 +41,15 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     value?: string
     error?: string
   }>({})
-  const debouncedLocalisationInput = useDebounce(localisationInput.value, 1000)
+
+  const localisationInputValueSansAccents = localisationInput.value
+    ?.normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+
+  const debouncedLocalisationInput = useDebounce(
+    localisationInputValueSansAccents,
+    1000
+  )
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -58,24 +66,37 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   )
 
   function validateLocalite(): Localite | null | false {
-    if (!localisationInput.value) return null
+    if (!localisationInputValueSansAccents) return null
 
     const localiteCorrespondante: Localite | undefined = localites.find(
       ({ libelle }) =>
-        libelle.localeCompare(localisationInput.value!, undefined, {
+        libelle.localeCompare(localisationInputValueSansAccents, undefined, {
           sensitivity: 'base',
         }) === 0
     )
 
     if (!localiteCorrespondante) {
       setLocalisationInput({
-        ...localisationInput,
+        value: localisationInputValueSansAccents,
         error: 'Veuillez saisir une localisation correcte.',
       })
       return false
     } else {
       return localiteCorrespondante
     }
+  }
+
+  function handleLocalisationInputChanges(value: string) {
+    setLocalisationInput({ value })
+  }
+
+  function getLocalitesOptions() {
+    return localites.map((localite) => {
+      return {
+        id: localite.code,
+        value: localite.libelle.toUpperCase(),
+      }
+    })
   }
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
@@ -142,13 +163,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           )}
           <SelectAutocomplete
             id='localisation'
-            options={localites.map((localite) => ({
-              id: localite.code,
-              value: localite.libelle,
-            }))}
-            onChange={(value) => setLocalisationInput({ value })}
+            options={getLocalitesOptions()}
+            onChange={handleLocalisationInputChanges}
             onBlur={validateLocalite}
             invalid={Boolean(localisationInput.error)}
+            value={localisationInputValueSansAccents || ''}
           />
         </div>
 
