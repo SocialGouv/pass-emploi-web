@@ -22,10 +22,15 @@ type DetailOffreProps = PageProps & {
 function DetailOffre({ offre }: DetailOffreProps) {
   const [labelMatomo, setLabelMatomo] = useState<string>('Détail offre')
 
-  const dateActualisation = toFrenchFormat(
-    DateTime.fromISO(offre.dateActualisation),
-    WEEKDAY_MONTH_LONG
-  )
+  const dateActualisation: string | undefined =
+    offre.dateActualisation &&
+    toFrenchFormat(
+      DateTime.fromISO(offre.dateActualisation),
+      WEEKDAY_MONTH_LONG
+    )
+  const infoEntrepriseSrOnly =
+    Boolean(offre.infoEntreprise) &&
+    !Boolean(offre.infoEntreprise?.lien || offre.infoEntreprise?.detail)
 
   const sectionTitleStyle =
     'inline-flex items-center w-full text-m-bold pb-6 border-b border-solid border-primary_lighten'
@@ -40,7 +45,9 @@ function DetailOffre({ offre }: DetailOffreProps) {
   return (
     <>
       <div className='flex justify-between items-center'>
-        <p className='text-s-regular'>Actualisée le {dateActualisation}</p>
+        <p className='text-s-regular'>
+          {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
+        </p>
         <LienPartageOffre idOffre={offre.id} />
       </div>
       <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
@@ -51,13 +58,24 @@ function DetailOffre({ offre }: DetailOffreProps) {
         </h3>
 
         <dl>
-          <dt className='sr-only'>Entreprise</dt>
-          <dd>{offre.nomEntreprise}</dd>
+          {offre.nomEntreprise && (
+            <>
+              <dt className='sr-only'>Entreprise</dt>
+              <dd>{offre.nomEntreprise}</dd>
+            </>
+          )}
 
-          <dt className='sr-only'>Localisation</dt>
-          <dd className='mt-6'>
-            <DataTag text={offre.localisation} iconName={IconName.Location} />
-          </dd>
+          {offre.localisation && (
+            <>
+              <dt className='sr-only'>Localisation</dt>
+              <dd className='mt-6'>
+                <DataTag
+                  text={offre.localisation}
+                  iconName={IconName.Location}
+                />
+              </dd>
+            </>
+          )}
 
           <dt className='sr-only'>Type de contrat</dt>
           <dd className='mt-2'>
@@ -93,14 +111,20 @@ function DetailOffre({ offre }: DetailOffreProps) {
           Détail de l’offre
         </h3>
 
-        <p className={`${ddStyle} whitespace-pre-wrap`}>{offre.description}</p>
-        <p className={`${ddStyle} text-primary hover:text-primary_darken`}>
-          <ExternalLink
-            href={offre.urlPostulation}
-            label="Voir l'offre"
-            onClick={() => setLabelMatomo('Lien Offre externe')}
-          />
-        </p>
+        {offre.description && (
+          <p className={`${ddStyle} whitespace-pre-wrap`}>
+            {offre.description}
+          </p>
+        )}
+        {offre.urlPostulation && (
+          <p className={`${ddStyle} text-primary hover:text-primary_darken`}>
+            <ExternalLink
+              href={offre.urlPostulation}
+              label="Voir l'offre"
+              onClick={() => setLabelMatomo('Lien Offre externe')}
+            />
+          </p>
+        )}
       </section>
 
       <section aria-labelledby='heading-profil' className='mt-6'>
@@ -110,8 +134,12 @@ function DetailOffre({ offre }: DetailOffreProps) {
         </h3>
 
         <dl>
-          <dt className={dtStyle}>Expériences</dt>
-          <dd className={ddStyle}>{offre.experience}</dd>
+          {offre.experience && (
+            <>
+              <dt className={dtStyle}>Expériences</dt>
+              <dd className={ddStyle}>{offre.experience}</dd>
+            </>
+          )}
 
           {offre.competences.length > 0 && (
             <>
@@ -190,62 +218,69 @@ function DetailOffre({ offre }: DetailOffreProps) {
         </dl>
       </section>
 
-      <section aria-labelledby='heading-entreprise' className='mt-6'>
-        <h3 id='heading-entreprise' className={sectionTitleStyle}>
-          <SectionTitleDot />
-          <span className='sr-only'>Informations de l&apos;</span>Entreprise
-        </h3>
+      {offre.infoEntreprise && (
+        <section
+          aria-labelledby='heading-entreprise'
+          className={infoEntrepriseSrOnly ? 'sr-only' : 'mt-6'}
+        >
+          <h3 id='heading-entreprise' className={sectionTitleStyle}>
+            <SectionTitleDot />
+            <span className='sr-only'>Informations de l&apos;</span>Entreprise
+          </h3>
 
-        <dl>
-          {offre.infoEntreprise.lien && (
-            <>
-              <dt className='sr-only'>Lien site</dt>
-              <dd className='mt-4 text-base-regular text-primary hover:text-primary_darken'>
-                <ExternalLink
-                  href={offre.infoEntreprise.lien}
-                  label="Aller sur le site de l'entreprise"
-                  onClick={() => setLabelMatomo('Lien Site entreprise')}
-                />
-              </dd>
-            </>
-          )}
+          <dl>
+            {offre.infoEntreprise.lien && (
+              <>
+                <dt className='sr-only'>Lien site</dt>
+                <dd className='mt-4 text-base-regular text-primary hover:text-primary_darken'>
+                  <ExternalLink
+                    href={offre.infoEntreprise.lien}
+                    label="Aller sur le site de l'entreprise"
+                    onClick={() => setLabelMatomo('Lien Site entreprise')}
+                  />
+                </dd>
+              </>
+            )}
 
-          {offre.infoEntreprise.adaptee !== undefined && (
-            <>
-              <dt className={offre.infoEntreprise.adaptee ? 'mt-4' : 'sr-only'}>
-                <DataTag text='Entreprise adaptée' />
-              </dt>
-              <dd className='sr-only'>
-                {offre.infoEntreprise.adaptee ? 'OUI' : 'NON'}
-              </dd>
-            </>
-          )}
+            {offre.infoEntreprise.adaptee !== undefined && (
+              <>
+                <dt
+                  className={offre.infoEntreprise.adaptee ? 'mt-4' : 'sr-only'}
+                >
+                  <DataTag text='Entreprise adaptée' />
+                </dt>
+                <dd className='sr-only'>
+                  {offre.infoEntreprise.adaptee ? 'OUI' : 'NON'}
+                </dd>
+              </>
+            )}
 
-          {offre.infoEntreprise.accessibleTH !== undefined && (
-            <>
-              <dt
-                className={
-                  offre.infoEntreprise.accessibleTH ? 'mt-4' : 'sr-only'
-                }
-              >
-                <DataTag text='Entreprise handi-bienveillante'></DataTag>
-              </dt>
-              <dd className='sr-only'>
-                {offre.infoEntreprise.accessibleTH ? 'OUI' : 'NON'}
-              </dd>
-            </>
-          )}
+            {offre.infoEntreprise.accessibleTH !== undefined && (
+              <>
+                <dt
+                  className={
+                    offre.infoEntreprise.accessibleTH ? 'mt-4' : 'sr-only'
+                  }
+                >
+                  <DataTag text='Entreprise handi-bienveillante'></DataTag>
+                </dt>
+                <dd className='sr-only'>
+                  {offre.infoEntreprise.accessibleTH ? 'OUI' : 'NON'}
+                </dd>
+              </>
+            )}
 
-          {offre.infoEntreprise.detail && (
-            <>
-              <dt className={dtStyle}>Détail de l&apos;entreprise</dt>
-              <dd className='mt-4 text-s-regular whitespace-pre-wrap'>
-                {offre.infoEntreprise.detail}
-              </dd>
-            </>
-          )}
-        </dl>
-      </section>
+            {offre.infoEntreprise.detail && (
+              <>
+                <dt className={dtStyle}>Détail de l&apos;entreprise</dt>
+                <dd className='mt-4 text-s-regular whitespace-pre-wrap'>
+                  {offre.infoEntreprise.detail}
+                </dd>
+              </>
+            )}
+          </dl>
+        </section>
+      )}
     </>
   )
 }

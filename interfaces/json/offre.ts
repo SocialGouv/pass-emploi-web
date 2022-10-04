@@ -1,56 +1,70 @@
-import { DetailOffreEmploi, BaseOffreEmploi } from 'interfaces/offre-emploi'
-
-export type DetailOffreEmploiJson = {
-  id: string
-  urlRedirectPourPostulation: string
-  data: {
-    intitule: string
-    entreprise?: {
-      nom?: string
-      description?: string
-      url?: string
-      entrepriseAdaptee?: boolean
-    }
-    typeContrat: string
-    typeContratLibelle: string
-    dureeTravailLibelleConverti: string
-    lieuTravail: { libelle: string }
-    dateActualisation: string
-    salaire: { libelle?: string }
-    dureeTravailLibelle: string
-    description: string
-    experienceLibelle: string
-    competences: Array<{ libelle: string }>
-    qualitesProfessionnelles: Array<{ libelle: string }>
-    formations: Array<{ commentaire: string; niveauLibelle: string }>
-    langues: Array<{ libelle: string }>
-    permis: Array<{ libelle: string }>
-    accessibleTH?: boolean
-  }
-}
+import {
+  BaseOffreEmploi,
+  DetailOffreEmploi,
+  DetailOffreEmploiInfoEntreprise,
+} from 'interfaces/offre-emploi'
 
 export type OffreEmploiItemJson = {
   id: string
   titre: string
-  nomEntreprise: string
-  localisation: {
-    nom: string
-  }
   typeContrat: string
-  duree: string
+
+  duree?: string
+  localisation?: { nom?: string }
+  nomEntreprise?: string
+}
+
+type DataDetailOffreEmploiJson = {
+  intitule: string
+  typeContrat: string
+  typeContratLibelle: string
+
+  accessibleTH?: boolean
+  competences?: Array<{ libelle?: string }>
+  dateActualisation?: string
+  description?: string
+  dureeTravailLibelle?: string
+  dureeTravailLibelleConverti?: string
+  formations?: Array<{
+    commentaire?: string
+    domaineLibelle?: string
+    niveauLibelle?: string
+  }>
+  entreprise?: {
+    nom?: string
+    description?: string
+    url?: string
+    entrepriseAdaptee?: boolean
+  }
+  experienceLibelle?: string
+  langues?: Array<{ libelle?: string }>
+  lieuTravail?: { libelle?: string }
+  permis?: Array<{ libelle?: string }>
+  qualitesProfessionnelles?: Array<{ libelle?: string }>
+  salaire?: { libelle?: string }
+}
+
+export type DetailOffreEmploiJson = {
+  id: string
+  urlRedirectPourPostulation?: string
+  data: DataDetailOffreEmploiJson
 }
 
 export function jsonToOffreEmploiItem(
-  offreEmploiItemJson: OffreEmploiItemJson
+  json: OffreEmploiItemJson
 ): BaseOffreEmploi {
-  return {
-    id: offreEmploiItemJson.id,
-    titre: offreEmploiItemJson.titre,
-    nomEntreprise: offreEmploiItemJson.nomEntreprise,
-    typeContrat: offreEmploiItemJson.typeContrat,
-    duree: offreEmploiItemJson.duree,
-    localisation: offreEmploiItemJson.localisation.nom,
+  const offreEmploiItem: BaseOffreEmploi = {
+    id: json.id,
+    titre: json.titre,
+    typeContrat: json.typeContrat,
   }
+
+  if (json.nomEntreprise) offreEmploiItem.nomEntreprise = json.nomEntreprise
+  if (json.duree) offreEmploiItem.duree = json.duree
+  if (json.localisation?.nom)
+    offreEmploiItem.localisation = json.localisation?.nom
+
+  return offreEmploiItem
 }
 
 export function jsonToDetailOffreEmploi(
@@ -60,47 +74,90 @@ export function jsonToDetailOffreEmploi(
   const offre: DetailOffreEmploi = {
     id: id,
     titre: data.intitule,
-    urlPostulation: urlRedirectPourPostulation,
-    nomEntreprise: data.entreprise?.nom ?? '',
     typeContrat: data.typeContrat,
     typeContratLibelle: data.typeContratLibelle,
-    duree: data.dureeTravailLibelleConverti,
-    localisation: data.lieuTravail.libelle,
-    dateActualisation: data.dateActualisation,
-    horaires: data.dureeTravailLibelle,
-    description: data.description,
-    experience: data.experienceLibelle,
-    competences: data.competences.map(({ libelle }) => libelle),
-    competencesProfessionnelles:
-      data.qualitesProfessionnelles && data.qualitesProfessionnelles.length
-        ? data.qualitesProfessionnelles.map(({ libelle }) => libelle)
-        : [],
-    formations:
-      data.formations && data.formations.length
-        ? data.formations.map(
-            (uneFormation) =>
-              uneFormation.commentaire + ' : ' + uneFormation.niveauLibelle
-          )
-        : [],
-    langues:
-      data.langues && data.langues.length
-        ? data.langues.map((uneLangue) => uneLangue.libelle)
-        : [],
-    permis:
-      data.permis && data.permis.length
-        ? data.permis.map((unPermis) => unPermis.libelle)
-        : [],
-    infoEntreprise: {},
+    competences: (data.competences ?? [])
+      .map(({ libelle }) => libelle)
+      .filter(isNotUndefined),
+    competencesProfessionnelles: jsonToCompetencesProfessionnelles(data),
+    formations: jsonToFormations(data),
+    langues: jsonToLangues(data),
+    permis: jsonToPermis(data),
   }
 
-  if (data.salaire.libelle) offre.salaire = data.salaire.libelle
-  if (data.entreprise?.description)
-    offre.infoEntreprise.detail = data.entreprise.description
-  if (data.entreprise?.url) offre.infoEntreprise.lien = data.entreprise.url
-  if (data.entreprise?.entrepriseAdaptee !== undefined)
-    offre.infoEntreprise.adaptee = data.entreprise.entrepriseAdaptee
-  if (data.accessibleTH !== undefined)
-    offre.infoEntreprise.accessibleTH = data.accessibleTH
+  if (urlRedirectPourPostulation)
+    offre.urlPostulation = urlRedirectPourPostulation
+
+  if (data.dateActualisation) offre.dateActualisation = data.dateActualisation
+  if (data.description) offre.description = data.description
+
+  if (data.salaire?.libelle) offre.salaire = data.salaire.libelle
+  if (data.experienceLibelle) offre.experience = data.experienceLibelle
+
+  if (data.dureeTravailLibelleConverti)
+    offre.duree = data.dureeTravailLibelleConverti
+  if (data.dureeTravailLibelle) offre.horaires = data.dureeTravailLibelle
+
+  if (data.lieuTravail?.libelle) offre.localisation = data.lieuTravail.libelle
+
+  if (data.entreprise?.nom) offre.nomEntreprise = data.entreprise.nom
+  const infoEntreprise = jsonToInfoEntreprise(data)
+  if (infoEntreprise) offre.infoEntreprise = infoEntreprise
 
   return offre
+}
+
+function jsonToFormations({ formations }: DataDetailOffreEmploiJson): string[] {
+  return (formations ?? [])
+    .map(({ niveauLibelle, commentaire, domaineLibelle }) => {
+      let formation = niveauLibelle
+      if (commentaire)
+        formation = formation ? `${commentaire} : ${formation}` : commentaire
+      if (domaineLibelle)
+        formation = formation
+          ? `${formation} (${domaineLibelle})`
+          : domaineLibelle
+      return formation
+    })
+    .filter(isNotUndefined)
+}
+
+function jsonToLangues({ langues }: DataDetailOffreEmploiJson): string[] {
+  return (langues ?? []).map(({ libelle }) => libelle).filter(isNotUndefined)
+}
+
+function jsonToPermis({ permis }: DataDetailOffreEmploiJson): string[] {
+  return (permis ?? []).map(({ libelle }) => libelle).filter(isNotUndefined)
+}
+
+function jsonToCompetencesProfessionnelles({
+  qualitesProfessionnelles,
+}: DataDetailOffreEmploiJson): string[] {
+  return (qualitesProfessionnelles ?? [])
+    .map(({ libelle }) => libelle)
+    .filter(isNotUndefined)
+}
+
+function isNotUndefined(
+  maybeUndefined: string | undefined
+): maybeUndefined is string {
+  return Boolean(maybeUndefined)
+}
+
+function jsonToInfoEntreprise(
+  data: DataDetailOffreEmploiJson
+): DetailOffreEmploiInfoEntreprise | undefined {
+  if (!data.entreprise) return undefined
+
+  const infoEntreprise: DetailOffreEmploiInfoEntreprise = {}
+  if (data.entreprise?.description)
+    infoEntreprise.detail = data.entreprise.description
+  if (data.entreprise?.url) infoEntreprise.lien = data.entreprise.url
+  if (data.entreprise?.entrepriseAdaptee !== undefined)
+    infoEntreprise.adaptee = data.entreprise.entrepriseAdaptee
+  if (data.accessibleTH !== undefined)
+    infoEntreprise.accessibleTH = data.accessibleTH
+
+  if (!Object.entries(infoEntreprise).length) return undefined
+  return infoEntreprise
 }

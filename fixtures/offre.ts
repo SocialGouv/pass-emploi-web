@@ -23,7 +23,14 @@ export function unDetailOffre(
     experience: '1 an - en formation continue ou initiale',
     competences: ['compétence 1', 'compétence 2'],
     competencesProfessionnelles: ['compétence pro 1', 'compétence pro 2'],
-    formations: ['formation 1 : bac +3'],
+    formations: [
+      'formation 1',
+      'formation 1 : bac +3',
+      'formation 1 : bac +3 (informatique)',
+      'bac +3 (informatique)',
+      'informatique',
+      'formation 1 (informatique)',
+    ],
     langues: ['langue 1'],
     permis: ['permis 1'],
     infoEntreprise: {
@@ -112,7 +119,7 @@ export function unDetailOffreJson(
       lieuTravail: { libelle: 'Paris' },
       dureeTravailLibelleConverti: 'Temps plein',
       dateActualisation: '2022-09-30T07:47:25.000Z',
-      salaire: { commentaire: 'Selon profil' },
+      salaire: { libelle: 'Selon profil' },
       dureeTravailLibelle: '24H Horaires normaux',
       description: 'une description d’offre d’emploi',
       experienceLibelle: '1 an - en formation continue ou initiale',
@@ -121,7 +128,31 @@ export function unDetailOffreJson(
         { libelle: 'compétence pro 1' },
         { libelle: 'compétence pro 2' },
       ],
-      formations: [{ commentaire: 'formation 1', niveauLibelle: 'bac +3' }],
+      formations: [
+        {
+          commentaire: 'formation 1',
+        },
+        {
+          commentaire: 'formation 1',
+          niveauLibelle: 'bac +3',
+        },
+        {
+          commentaire: 'formation 1',
+          niveauLibelle: 'bac +3',
+          domaineLibelle: 'informatique',
+        },
+        {
+          niveauLibelle: 'bac +3',
+          domaineLibelle: 'informatique',
+        },
+        {
+          domaineLibelle: 'informatique',
+        },
+        {
+          commentaire: 'formation 1',
+          domaineLibelle: 'informatique',
+        },
+      ],
       langues: [{ libelle: 'langue 1' }],
       permis: [{ libelle: 'permis 1' }],
       accessibleTH: true,

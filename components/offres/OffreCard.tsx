@@ -27,16 +27,22 @@ export function OffreCard({ offre, withPartage = false }: OffreItemCardProps) {
 
       <h3 className='text-base-bold text-accent_1 mb-2'>Offre n°{offre.id}</h3>
       <p className='text-base-bold mb-2'>{offre.titre}</p>
-      <p className='text-s-bold mb-2'>{offre.nomEntreprise}</p>
-      <p className='flex items-center text-s-regular text-grey_800 mb-5'>
-        <IconComponent
-          name={IconName.Location}
-          className='w-4 h-4 mr-3 fill-primary'
-          focusable={false}
-          aria-hidden={true}
-        />
-        {offre.localisation}
-      </p>
+      {offre.nomEntreprise && (
+        <p className='text-s-bold mb-2'>{offre.nomEntreprise}</p>
+      )}
+      {offre.localisation && (
+        <>
+          <p className='flex items-center text-s-regular text-grey_800 mb-5'>
+            <IconComponent
+              name={IconName.Location}
+              className='w-4 h-4 mr-3 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+            />
+            {offre.localisation}
+          </p>
+        </>
+      )}
 
       <div className='flex justify-between'>
         <div>
