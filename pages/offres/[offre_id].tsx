@@ -4,6 +4,7 @@ import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
@@ -48,7 +49,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
         <p className='text-s-regular'>
           {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
         </p>
-        <LienPartageOffre idOffre={offre.id} />
+        <LienPartageOffre idOffre={offre.id} style={ButtonStyle.PRIMARY} />
       </div>
       <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
 
@@ -247,7 +248,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
                 <dd className='mt-4 text-base-regular text-primary hover:text-primary_darken'>
                   <ExternalLink
                     href={offre.infoEntreprise.lien}
-                    label="Aller sur le site de l'entreprise"
+                    label="Site de l'entreprise"
                     onClick={() => setLabelMatomo('Lien Site entreprise')}
                   />
                 </dd>

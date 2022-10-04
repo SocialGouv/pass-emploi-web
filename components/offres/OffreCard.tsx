@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
@@ -22,7 +23,9 @@ export function OffreCard({ offre, withPartage = false }: OffreItemCardProps) {
           backgroundColor='white'
           className='text-s-regular'
         />
-        {withPartage && <LienPartageOffre idOffre={offre.id} />}
+        {withPartage && (
+          <LienPartageOffre idOffre={offre.id} style={ButtonStyle.TERTIARY} />
+        )}
       </div>
 
       <h3 className='text-base-bold text-accent_1 mb-2'>Offre n°{offre.id}</h3>
