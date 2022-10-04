@@ -136,10 +136,10 @@ describe('Page Détail Offre', () => {
       ).toHaveAttribute('href', offre.infoEntreprise!.lien)
       expect(
         getByDescriptionTerm('Entreprise adaptée', section)
-      ).toHaveTextContent('NON')
+      ).toHaveTextContent('Entreprise non adaptée')
       expect(
         getByDescriptionTerm('Entreprise handi-bienveillante', section)
-      ).toHaveTextContent('OUI')
+      ).toHaveTextContent('Entreprise handi-bienveillante')
       expect(
         getByDescriptionTerm("Détail de l'entreprise", section)
       ).toHaveTextContent(offre.infoEntreprise!.detail!)

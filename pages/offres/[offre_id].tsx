@@ -257,28 +257,34 @@ function DetailOffre({ offre }: DetailOffreProps) {
 
             {offre.infoEntreprise.adaptee !== undefined && (
               <>
-                <dt
-                  className={offre.infoEntreprise.adaptee ? 'mt-4' : 'sr-only'}
-                >
-                  <DataTag text='Entreprise adaptée' />
-                </dt>
-                <dd className='sr-only'>
-                  {offre.infoEntreprise.adaptee ? 'OUI' : 'NON'}
+                <dt className='sr-only'>Entreprise adaptée</dt>
+                <dd className='mt-4'>
+                  {offre.infoEntreprise.adaptee && (
+                    <DataTag text='Entreprise adaptée' />
+                  )}
+                  {!offre.infoEntreprise.adaptee && (
+                    <DataTag
+                      text='Entreprise non adaptée'
+                      style={ButtonStyle.WARNING}
+                    />
+                  )}
                 </dd>
               </>
             )}
 
             {offre.infoEntreprise.accessibleTH !== undefined && (
               <>
-                <dt
-                  className={
-                    offre.infoEntreprise.accessibleTH ? 'mt-4' : 'sr-only'
-                  }
-                >
-                  <DataTag text='Entreprise handi-bienveillante'></DataTag>
-                </dt>
-                <dd className='sr-only'>
-                  {offre.infoEntreprise.accessibleTH ? 'OUI' : 'NON'}
+                <dt className='sr-only'>Entreprise handi-bienveillante</dt>
+                <dd className='mt-4'>
+                  {offre.infoEntreprise.accessibleTH && (
+                    <DataTag text='Entreprise handi-bienveillante' />
+                  )}
+                  {!offre.infoEntreprise.accessibleTH && (
+                    <DataTag
+                      text='Entreprise non handi-bienveillante'
+                      style={ButtonStyle.WARNING}
+                    />
+                  )}
                 </dd>
               </>
             )}

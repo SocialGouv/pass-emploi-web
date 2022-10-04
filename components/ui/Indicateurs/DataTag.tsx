@@ -1,21 +1,30 @@
 import React from 'react'
 
+import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface DataTagProps {
   text: string
   iconName?: IconName
   className?: string
+  style?: ButtonStyle.PRIMARY | ButtonStyle.WARNING
 }
 
-export function DataTag({ text, iconName, className }: DataTagProps) {
+export function DataTag({
+  text,
+  iconName,
+  className,
+  style = ButtonStyle.PRIMARY,
+}: DataTagProps) {
   return (
     <span
       className={`${
-        iconName ? 'inline-flex items-center' : ''
-      } bg-primary_lighten border border-solid border-primary rounded-x_large ${
-        iconName ? 'px-2' : 'px-4'
-      } py-1 text-s-regular text-primary whitespace-nowrap ${className ?? ''}`}
+        iconName ? 'inline-flex items-center px-2' : 'px-4'
+      } ${getStyle(
+        style
+      )} border border-solid rounded-x_large py-1 text-s-regular whitespace-nowrap ${
+        className ?? ''
+      }`}
     >
       {iconName && (
         <IconComponent
@@ -28,4 +37,13 @@ export function DataTag({ text, iconName, className }: DataTagProps) {
       {text}
     </span>
   )
+}
+
+function getStyle(style: ButtonStyle.PRIMARY | ButtonStyle.WARNING): string {
+  switch (style) {
+    case ButtonStyle.PRIMARY:
+      return 'bg-primary_ligten border-primary text-primary'
+    case ButtonStyle.WARNING:
+      return 'bg-warning_lighten border-warning text-warning'
+  }
 }
