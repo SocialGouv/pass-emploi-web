@@ -137,7 +137,19 @@ function DetailOffre({ offre }: DetailOffreProps) {
           {offre.experience && (
             <>
               <dt className={dtStyle}>Expériences</dt>
-              <dd className={ddStyle}>{offre.experience}</dd>
+              <dd className={`${ddStyle} flex`}>
+                {offre.experience.libelle}
+                {offre.experience.exigee && (
+                  <IconComponent
+                    name={IconName.Important}
+                    title='Expérience exigée'
+                    aria-label='Expérience exigée'
+                    focusable={false}
+                    aria-hidden={true}
+                    className='inline ml-2 h-5 w-5 fill-primary'
+                  />
+                )}
+              </dd>
             </>
           )}
 

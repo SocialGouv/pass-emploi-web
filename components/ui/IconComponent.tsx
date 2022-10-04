@@ -31,6 +31,7 @@ import EuroIcon from 'assets/icons/euro.svg'
 import FavoriteIcon from 'assets/icons/favorite.svg'
 import FlagIcon from 'assets/icons/flag.svg'
 import FlagFilledIcon from 'assets/icons/flag_filled.svg'
+import ImportantIcon from 'assets/icons/important.svg'
 import ImportantOutlineIcon from 'assets/icons/important_outline.svg'
 import InfoIcon from 'assets/icons/information.svg'
 import InfoOutlineIcon from 'assets/icons/information_outline.svg'
@@ -56,7 +57,6 @@ import SpinnerIcon from 'assets/icons/spinner.svg'
 import SuitcaseIcon from 'assets/icons/suitcase.svg'
 import TrashCanIcon from 'assets/icons/trash_can.svg'
 import WarningIcon from 'assets/icons/warning.svg'
-import WarningRoundedIcon from 'assets/icons/warning_rounded.svg'
 
 export enum IconName {
   Actions = 'Actions',
@@ -90,6 +90,7 @@ export enum IconName {
   File = 'File',
   Flag = 'Flag',
   FlagFilled = 'FlagFilled',
+  Important = 'Important',
   ImportantOutline = 'ImportantOutline',
   Info = 'Info',
   InfoOutline = 'InfoOutline',
@@ -115,7 +116,6 @@ export enum IconName {
   Suitcase = 'Suitcase',
   TrashCan = 'TrashCan',
   Warning = 'Warning',
-  WarningRounded = 'WarningRounded',
 }
 
 const iconsByName: { [key in IconName]: any } = {
@@ -150,8 +150,9 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.File]: FileIcon,
   [IconName.Flag]: FlagIcon,
   [IconName.FlagFilled]: FlagFilledIcon,
-  [IconName.Info]: InfoIcon,
+  [IconName.Important]: ImportantIcon,
   [IconName.ImportantOutline]: ImportantOutlineIcon,
+  [IconName.Info]: InfoIcon,
   [IconName.InfoOutline]: InfoOutlineIcon,
   [IconName.Ko]: KoIcon,
   [IconName.Launch]: LaunchIcon,
@@ -176,7 +177,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Suitcase]: SuitcaseIcon,
   [IconName.TrashCan]: TrashCanIcon,
   [IconName.Warning]: WarningIcon,
-  [IconName.WarningRounded]: WarningRoundedIcon,
 }
 
 interface IconComponentProps extends ComponentPropsWithoutRef<any> {

@@ -20,7 +20,10 @@ export function unDetailOffre(
     salaire: 'Selon profil',
     horaires: '24H Horaires normaux',
     description: 'une description d’offre d’emploi',
-    experience: '1 an - en formation continue ou initiale',
+    experience: {
+      libelle: '1 an - en formation continue ou initiale',
+      exigee: true,
+    },
     competences: ['compétence 1', 'compétence 2'],
     competencesProfessionnelles: ['compétence pro 1', 'compétence pro 2'],
     formations: [
@@ -123,6 +126,7 @@ export function unDetailOffreJson(
       dureeTravailLibelle: '24H Horaires normaux',
       description: 'une description d’offre d’emploi',
       experienceLibelle: '1 an - en formation continue ou initiale',
+      experienceExige: 'E',
       competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
       qualitesProfessionnelles: [
         { libelle: 'compétence pro 1' },

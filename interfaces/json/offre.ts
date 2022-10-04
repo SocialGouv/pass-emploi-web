@@ -1,6 +1,7 @@
 import {
   BaseOffreEmploi,
   DetailOffreEmploi,
+  DetailOffreEmploiExperience,
   DetailOffreEmploiInfoEntreprise,
 } from 'interfaces/offre-emploi'
 
@@ -37,6 +38,7 @@ type DataDetailOffreEmploiJson = {
     entrepriseAdaptee?: boolean
   }
   experienceLibelle?: string
+  experienceExige?: 'D' | 'S' | 'E'
   langues?: Array<{ libelle?: string }>
   lieuTravail?: { libelle?: string }
   permis?: Array<{ libelle?: string }>
@@ -92,13 +94,15 @@ export function jsonToDetailOffreEmploi(
   if (data.description) offre.description = data.description
 
   if (data.salaire?.libelle) offre.salaire = data.salaire.libelle
-  if (data.experienceLibelle) offre.experience = data.experienceLibelle
 
   if (data.dureeTravailLibelleConverti)
     offre.duree = data.dureeTravailLibelleConverti
   if (data.dureeTravailLibelle) offre.horaires = data.dureeTravailLibelle
 
   if (data.lieuTravail?.libelle) offre.localisation = data.lieuTravail.libelle
+
+  const experience = jsonToExperience(data)
+  if (experience) offre.experience = experience
 
   if (data.entreprise?.nom) offre.nomEntreprise = data.entreprise.nom
   const infoEntreprise = jsonToInfoEntreprise(data)
@@ -138,10 +142,14 @@ function jsonToCompetencesProfessionnelles({
     .filter(isNotUndefined)
 }
 
-function isNotUndefined(
-  maybeUndefined: string | undefined
-): maybeUndefined is string {
-  return Boolean(maybeUndefined)
+function jsonToExperience({
+  experienceLibelle,
+  experienceExige,
+}: DataDetailOffreEmploiJson): DetailOffreEmploiExperience | undefined {
+  if (!experienceLibelle) return undefined
+  const experience: DetailOffreEmploiExperience = { libelle: experienceLibelle }
+  if (experienceExige) experience.exigee = experienceExige === 'E'
+  return experience
 }
 
 function jsonToInfoEntreprise(
@@ -160,4 +168,10 @@ function jsonToInfoEntreprise(
 
   if (!Object.entries(infoEntreprise).length) return undefined
   return infoEntreprise
+}
+
+function isNotUndefined(
+  maybeUndefined: string | undefined
+): maybeUndefined is string {
+  return Boolean(maybeUndefined)
 }

@@ -18,12 +18,13 @@ export type DetailOffreEmploi = BaseOffreEmploi & {
 
   dateActualisation?: string
   description?: string
-  experience?: string
+  experience?: DetailOffreEmploiExperience
   horaires?: string
   infoEntreprise?: DetailOffreEmploiInfoEntreprise
   urlPostulation?: string
   salaire?: string
 }
+export type DetailOffreEmploiExperience = { libelle: string; exigee?: boolean }
 
 export type DetailOffreEmploiInfoEntreprise = {
   detail?: string

@@ -2,7 +2,6 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 
-import ImportantIcon from 'assets/icons/important.svg'
 import Button from 'components/ui/Button/Button'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -293,7 +292,8 @@ function Reaffectation(_: ReaffectationProps) {
 
         {Boolean(conseillerInitial.error) && (
           <div className='flex col-start-1 row-start-3'>
-            <ImportantIcon
+            <IconComponent
+              name={IconName.Important}
               focusable={false}
               aria-hidden={true}
               className='fill-warning w-6 h-6 mr-2'
@@ -332,7 +332,8 @@ function Reaffectation(_: ReaffectationProps) {
 
         {Boolean(emailConseillerDestination.error) && (
           <div className='flex col-start-2 row-start-3'>
-            <ImportantIcon
+            <IconComponent
+              name={IconName.Important}
               focusable={false}
               aria-hidden={true}
               className='fill-warning w-6 h-6 mr-2'
@@ -366,7 +367,8 @@ function Reaffectation(_: ReaffectationProps) {
 
             {Boolean(erreurReaffectation) && (
               <div className='absolute flex mt-3'>
-                <ImportantIcon
+                <IconComponent
+                  name={IconName.Important}
                   focusable={false}
                   aria-hidden={true}
                   className='fill-warning w-6 h-6 mr-2 flex-shrink-0'

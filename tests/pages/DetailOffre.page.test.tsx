@@ -58,10 +58,10 @@ describe('Page Détail Offre', () => {
       ).toHaveAccessibleName("Informations de l'offre")
 
       expect(getByDescriptionTerm('Entreprise', section)).toHaveTextContent(
-        offre.nomEntreprise
+        offre.nomEntreprise!
       )
       expect(getByDescriptionTerm('Localisation', section)).toHaveTextContent(
-        offre.localisation
+        offre.localisation!
       )
       expect(
         getByDescriptionTerm('Type de contrat', section)
@@ -81,7 +81,7 @@ describe('Page Détail Offre', () => {
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Détail de l’offre')
 
-      expect(within(section).getByText(offre.description)).toBeInTheDocument()
+      expect(within(section).getByText(offre.description!)).toBeInTheDocument()
       expect(
         within(section).getByRole('link', {
           name: "Voir l'offre (nouvelle fenêtre)",
@@ -97,7 +97,10 @@ describe('Page Détail Offre', () => {
       ).toHaveAccessibleName('Profil souhaité')
 
       expect(getByDescriptionTerm('Expériences', section)).toHaveTextContent(
-        offre.experience
+        offre.experience!.libelle!
+      )
+      expect(getByDescriptionTerm('Expériences', section)).toContainElement(
+        screen.getByLabelText('Expérience exigée')
       )
       expect(
         getByDescriptionTerm('Savoir et savoir faire', section)
@@ -130,7 +133,7 @@ describe('Page Détail Offre', () => {
         within(ddLien).getByRole('link', {
           name: "Aller sur le site de l'entreprise (nouvelle fenêtre)",
         })
-      ).toHaveAttribute('href', offre.infoEntreprise.lien)
+      ).toHaveAttribute('href', offre.infoEntreprise!.lien)
       expect(
         getByDescriptionTerm('Entreprise adaptée', section)
       ).toHaveTextContent('NON')
@@ -139,7 +142,7 @@ describe('Page Détail Offre', () => {
       ).toHaveTextContent('OUI')
       expect(
         getByDescriptionTerm("Détail de l'entreprise", section)
-      ).toHaveTextContent(offre.infoEntreprise.detail!)
+      ).toHaveTextContent(offre.infoEntreprise!.detail!)
     })
   })
 
