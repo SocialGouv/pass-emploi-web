@@ -121,7 +121,7 @@ export function unDetailOffreJson(
       typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
       lieuTravail: { libelle: 'Paris' },
       dureeTravailLibelleConverti: 'Temps plein',
-      dateActualisation: '2022-09-30T07:47:25.000Z',
+      dateCreation: '2022-09-30T07:47:25.000Z',
       salaire: { libelle: 'Selon profil' },
       dureeTravailLibelle: '24H Horaires normaux',
       description: 'une description d’offre d’emploi',

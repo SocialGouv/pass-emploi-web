@@ -22,6 +22,7 @@ type DataDetailOffreEmploiJson = {
 
   accessibleTH?: boolean
   competences?: Array<{ libelle?: string }>
+  dateCreation: string
   dateActualisation?: string
   description?: string
   dureeTravailLibelle?: string
@@ -75,6 +76,7 @@ export function jsonToDetailOffreEmploi(
   const { id, data, urlRedirectPourPostulation } = json
   const offre: DetailOffreEmploi = {
     id: id,
+    dateActualisation: data.dateActualisation ?? data.dateCreation,
     titre: data.intitule,
     typeContrat: data.typeContrat,
     typeContratLibelle: data.typeContratLibelle,
@@ -90,7 +92,6 @@ export function jsonToDetailOffreEmploi(
   if (urlRedirectPourPostulation)
     offre.urlPostulation = urlRedirectPourPostulation
 
-  if (data.dateActualisation) offre.dateActualisation = data.dateActualisation
   if (data.description) offre.description = data.description
 
   if (data.salaire?.libelle) offre.salaire = data.salaire.libelle

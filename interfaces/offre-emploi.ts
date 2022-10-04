@@ -11,12 +11,12 @@ export type BaseOffreEmploi = {
 export type DetailOffreEmploi = BaseOffreEmploi & {
   competences: string[]
   competencesProfessionnelles: string[]
+  dateActualisation: string
   formations: string[]
   langues: string[]
   permis: string[]
   typeContratLibelle: string
 
-  dateActualisation?: string
   description?: string
   experience?: DetailOffreEmploiExperience
   horaires?: string
