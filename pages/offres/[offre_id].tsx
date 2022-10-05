@@ -255,37 +255,21 @@ function DetailOffre({ offre }: DetailOffreProps) {
               </>
             )}
 
-            {offre.infoEntreprise.adaptee !== undefined && (
+            {offre.infoEntreprise.adaptee && (
               <>
-                <dt className='sr-only'>Entreprise adaptée</dt>
-                <dd className='mt-4'>
-                  {offre.infoEntreprise.adaptee && (
-                    <DataTag text='Entreprise adaptée' />
-                  )}
-                  {!offre.infoEntreprise.adaptee && (
-                    <DataTag
-                      text='Entreprise non adaptée'
-                      style={ButtonStyle.WARNING}
-                    />
-                  )}
-                </dd>
+                <dt className='mt-4'>
+                  <DataTag text='Entreprise adaptée' />
+                </dt>
+                <dd className='sr-only'>OUI</dd>
               </>
             )}
 
-            {offre.infoEntreprise.accessibleTH !== undefined && (
+            {offre.infoEntreprise.accessibleTH && (
               <>
-                <dt className='sr-only'>Entreprise handi-bienveillante</dt>
-                <dd className='mt-4'>
-                  {offre.infoEntreprise.accessibleTH && (
-                    <DataTag text='Entreprise handi-bienveillante' />
-                  )}
-                  {!offre.infoEntreprise.accessibleTH && (
-                    <DataTag
-                      text='Entreprise non handi-bienveillante'
-                      style={ButtonStyle.WARNING}
-                    />
-                  )}
-                </dd>
+                <dt className='mt-4'>
+                  <DataTag text='Entreprise handi-bienveillante'></DataTag>
+                </dt>
+                <dd className='sr-only'>OUI</dd>
               </>
             )}
 
