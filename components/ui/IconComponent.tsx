@@ -23,12 +23,15 @@ import Chiffre3Icon from 'assets/icons/chiffre_3.svg'
 import Chiffre4Icon from 'assets/icons/chiffre_4.svg'
 import ClockIcon from 'assets/icons/clock.svg'
 import CloseIcon from 'assets/icons/close.svg'
+import ContratIcon from 'assets/icons/contrat.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
 import DeleteIcon from 'assets/icons/delete.svg'
 import EmailIcon from 'assets/icons/email.svg'
+import EuroIcon from 'assets/icons/euro.svg'
 import FavoriteIcon from 'assets/icons/favorite.svg'
 import FlagIcon from 'assets/icons/flag.svg'
 import FlagFilledIcon from 'assets/icons/flag_filled.svg'
+import ImportantIcon from 'assets/icons/important.svg'
 import ImportantOutlineIcon from 'assets/icons/important_outline.svg'
 import InfoIcon from 'assets/icons/information.svg'
 import InfoOutlineIcon from 'assets/icons/information_outline.svg'
@@ -37,8 +40,7 @@ import LaunchIcon from 'assets/icons/launch.svg'
 import LocationIcon from 'assets/icons/location.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
 import MenuIcon from 'assets/icons/menu.svg'
-import NoteIcon from 'assets/icons/note_outline.svg'
-import NoteBigIcon from 'assets/icons/note_outline_big.svg'
+import NoteIcon from 'assets/icons/note.svg'
 import PartageIcon from 'assets/icons/partage.svg'
 import PenIcon from 'assets/icons/pen.svg'
 import PendingIcon from 'assets/icons/pending.svg'
@@ -55,7 +57,6 @@ import SpinnerIcon from 'assets/icons/spinner.svg'
 import SuitcaseIcon from 'assets/icons/suitcase.svg'
 import TrashCanIcon from 'assets/icons/trash_can.svg'
 import WarningIcon from 'assets/icons/warning.svg'
-import WarningRoundedIcon from 'assets/icons/warning_rounded.svg'
 
 export enum IconName {
   Actions = 'Actions',
@@ -80,13 +81,16 @@ export enum IconName {
   Chiffre4 = 'Chiffre4',
   Clock = 'Clock',
   Close = 'Close',
+  Contrat = 'Contrat',
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
   Email = 'Email',
+  Euro = 'Euro',
   Favorite = 'Favorite',
   File = 'File',
   Flag = 'Flag',
   FlagFilled = 'FlagFilled',
+  Important = 'Important',
   ImportantOutline = 'ImportantOutline',
   Info = 'Info',
   InfoOutline = 'InfoOutline',
@@ -96,7 +100,6 @@ export enum IconName {
   Logout = 'Logout',
   Menu = 'Menu',
   Note = 'Note',
-  NoteBig = 'NoteBig',
   Partage = 'Partage',
   Pending = 'Pending',
   People = 'People',
@@ -113,7 +116,6 @@ export enum IconName {
   Suitcase = 'Suitcase',
   TrashCan = 'TrashCan',
   Warning = 'Warning',
-  WarningRounded = 'WarningRounded',
 }
 
 const iconsByName: { [key in IconName]: any } = {
@@ -137,17 +139,20 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Chiffre2]: Chiffre2Icon,
   [IconName.Chiffre3]: Chiffre3Icon,
   [IconName.Chiffre4]: Chiffre4Icon,
-  [IconName.Close]: CloseIcon,
   [IconName.Clock]: ClockIcon,
+  [IconName.Close]: CloseIcon,
+  [IconName.Contrat]: ContratIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
   [IconName.Email]: EmailIcon,
+  [IconName.Euro]: EuroIcon,
   [IconName.Favorite]: FavoriteIcon,
   [IconName.File]: FileIcon,
   [IconName.Flag]: FlagIcon,
   [IconName.FlagFilled]: FlagFilledIcon,
-  [IconName.Info]: InfoIcon,
+  [IconName.Important]: ImportantIcon,
   [IconName.ImportantOutline]: ImportantOutlineIcon,
+  [IconName.Info]: InfoIcon,
   [IconName.InfoOutline]: InfoOutlineIcon,
   [IconName.Ko]: KoIcon,
   [IconName.Launch]: LaunchIcon,
@@ -156,7 +161,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Menu]: MenuIcon,
   [IconName.Note]: NoteIcon,
   [IconName.Pen]: PenIcon,
-  [IconName.NoteBig]: NoteBigIcon,
   [IconName.Pending]: PendingIcon,
   [IconName.Partage]: PartageIcon,
   [IconName.People]: PeopleIcon,
@@ -173,7 +177,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Suitcase]: SuitcaseIcon,
   [IconName.TrashCan]: TrashCanIcon,
   [IconName.Warning]: WarningIcon,
-  [IconName.WarningRounded]: WarningRoundedIcon,
 }
 
 interface IconComponentProps extends ComponentPropsWithoutRef<any> {

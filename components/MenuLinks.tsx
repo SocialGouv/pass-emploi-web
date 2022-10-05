@@ -67,7 +67,9 @@ export default function MenuLinks({
 
         {items.includes(MenuItem.RechercheOffres) && (
           <MenuLink
-            isActive={isCurrentRoute('/recherche-offres')}
+            isActive={
+              isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
+            }
             href='/recherche-offres'
             label='Offres'
             iconName={IconName.Search}

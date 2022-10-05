@@ -42,7 +42,9 @@ describe('OffresEmploiApiService', () => {
         '/offres-emploi/ID_OFFRE_EMPLOI',
         'accessToken'
       )
-      expect(actual).toStrictEqual(unDetailOffre().urlPostulation)
+      expect(actual).toStrictEqual(
+        unDetailOffreJson().urlRedirectPourPostulation
+      )
     })
 
     it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {

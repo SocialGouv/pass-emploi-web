@@ -86,7 +86,7 @@ function IndicateursActions({
           label='En retard'
           bgColor='alert_lighten'
           textColor='content_color'
-          iconName={IconName.WarningRounded}
+          iconName={IconName.ImportantOutline}
         />
         <TileIndicateur
           valeur={actions?.terminees.toString() ?? '-'}

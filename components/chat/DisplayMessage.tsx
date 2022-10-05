@@ -2,7 +2,7 @@ import parse, { domToReact } from 'html-react-parser'
 import { DateTime } from 'luxon'
 import React, { useMemo } from 'react'
 
-import { LienOffre } from 'components/chat/LienOffre'
+import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'

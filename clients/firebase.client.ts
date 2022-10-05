@@ -269,7 +269,9 @@ class FirebaseClient {
   }
 }
 
-function createFirebaseMessage(data: CreateFirebaseMessage | CreateFirebaseMessageWithOffre): FirebaseMessage {
+function createFirebaseMessage(
+  data: CreateFirebaseMessage | CreateFirebaseMessageWithOffre
+): FirebaseMessage {
   const type: TypeMessage = TypeMessage.MESSAGE
   let { encryptedText, iv } = data.message
   const firebaseMessage: FirebaseMessage = {
@@ -290,10 +292,8 @@ function createFirebaseMessage(data: CreateFirebaseMessage | CreateFirebaseMessa
 
   if (Object.prototype.hasOwnProperty.call(data, 'offre')) {
     firebaseMessage.type = TypeMessage.MESSAGE_OFFRE
-    const { id, titre, urlPostulation } = (
-      data as CreateFirebaseMessageWithOffre
-    ).offre
-    firebaseMessage.offre = { id, titre, lien: urlPostulation }
+    const { id, titre } = (data as CreateFirebaseMessageWithOffre).offre
+    firebaseMessage.offre = { id, titre }
   }
 
   return firebaseMessage

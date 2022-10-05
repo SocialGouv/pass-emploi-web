@@ -15,7 +15,6 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     infoOffre: {
       id: '',
       titre: '',
-      lien: '',
     },
   }
 
@@ -59,7 +58,6 @@ export const desMessages = (): Message[] => [
     infoOffre: {
       id: 'id-offre',
       titre: 'Une offre',
-      lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
     },
   }),
   unMessage({
@@ -119,7 +117,6 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         infoOffre: {
           id: 'id-offre',
           titre: 'Une offre',
-          lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
         },
       }),
     ],

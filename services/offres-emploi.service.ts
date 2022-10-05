@@ -35,14 +35,18 @@ export class OffresEmploiApiService implements OffresEmploiService {
     const accessToken = session!.accessToken
 
     const offre = await this.getOffreEmploi(idOffreEmploi, accessToken)
-    return offre?.urlPostulation
+    return offre?.urlRedirectPourPostulation
   }
 
   async getOffreEmploiServerSide(
     idOffreEmploi: string,
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined> {
-    return this.getOffreEmploi(idOffreEmploi, accessToken)
+    const offreEmploiJson = await this.getOffreEmploi(
+      idOffreEmploi,
+      accessToken
+    )
+    return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
   }
 
   async searchOffresEmploi(
@@ -62,14 +66,14 @@ export class OffresEmploiApiService implements OffresEmploiService {
   private async getOffreEmploi(
     idOffreEmploi: string,
     accessToken: string
-  ): Promise<DetailOffreEmploi | undefined> {
+  ): Promise<DetailOffreEmploiJson | undefined> {
     try {
       const { content: offreEmploiJson } =
         await this.apiClient.get<DetailOffreEmploiJson>(
           `/offres-emploi/${idOffreEmploi}`,
           accessToken
         )
-      return jsonToDetailOffreEmploi(offreEmploiJson)
+      return offreEmploiJson
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
         return undefined

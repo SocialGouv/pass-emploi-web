@@ -8,7 +8,7 @@ import { mockedConseillerService } from 'fixtures/services'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import Profil, { getServerSideProps } from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
-import getByDefinitionTerm from 'tests/querySelector'
+import getByDescriptionTerm from 'tests/querySelector'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
@@ -92,10 +92,10 @@ describe('Page Profil conseiller', () => {
       it('affiche les informations du conseiller', () => {
         // Then
         expect(screen.getByText('Nils Tavernier')).toBeInTheDocument()
-        expect(getByDefinitionTerm('Votre e-mail')).toHaveTextContent(
+        expect(getByDescriptionTerm('Votre e-mail :')).toHaveTextContent(
           'nils.tavernier@mail.com'
         )
-        expect(getByDefinitionTerm('Votre agence')).toHaveTextContent(
+        expect(getByDescriptionTerm('Votre agence :')).toHaveTextContent(
           'MLS3F SAINT-LOUIS'
         )
       })
@@ -155,7 +155,7 @@ describe('Page Profil conseiller', () => {
         })
 
         // Then
-        expect(getByDefinitionTerm('Votre Mission locale')).toHaveTextContent(
+        expect(getByDescriptionTerm('Votre Mission locale :')).toHaveTextContent(
           'MLS3F SAINT-LOUIS'
         )
       })
