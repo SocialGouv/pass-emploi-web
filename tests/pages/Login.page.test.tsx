@@ -1,10 +1,12 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import Layout from 'components/layouts/Layout'
 import Login from 'pages/login'
+import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
@@ -78,6 +80,57 @@ describe('Login', () => {
         { callbackUrl: '/index?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'similo-conseiller' }
       )
+    })
+
+    it("n'affiche pas de modale d'onboarding mobile", () => {
+      // Then
+      expect(() =>
+        screen.getByText('Bienvenue sur l’espace mobile du conseiller')
+      ).toThrow()
+    })
+  })
+
+  describe("quand l'utilisateur est sur mobile", () => {
+    let originalInnerWidth: PropertyDescriptor
+    beforeEach(() => {
+      originalInnerWidth = Object.getOwnPropertyDescriptor(
+        window,
+        'innerWidth'
+      )!
+    })
+
+    afterEach(() => {
+      Object.defineProperty(window, 'innerWidth', originalInnerWidth)
+    })
+
+    it("affiche une modale d'onboarding", async () => {
+      // Given
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        configurable: true,
+        value: 599,
+      })
+
+      // When
+      render(<Login isFromEmail={false} />)
+
+      // Then
+      expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
+        'Bienvenue sur l’espace mobile du conseiller'
+      )
+      expect(screen.getByRole('heading', { level: 3 })).toHaveAccessibleName(
+        'Un accès dedié à vos conversations'
+      )
+      expect(
+        screen.getByText(
+          'Retrouvez l’ensemble de vos conversations avec les bénéficiaires de votre portefeuile.'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          'À ce jour, seul l’accès à la messagerie est disponible sur l’espace mobile.'
+        )
+      ).toBeInTheDocument()
     })
   })
 

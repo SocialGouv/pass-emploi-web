@@ -23,6 +23,7 @@ import Chiffre3Icon from 'assets/icons/chiffre_3.svg'
 import Chiffre4Icon from 'assets/icons/chiffre_4.svg'
 import ClockIcon from 'assets/icons/clock.svg'
 import CloseIcon from 'assets/icons/close.svg'
+import CommentIcon from 'assets/icons/comment.svg'
 import ContratIcon from 'assets/icons/contrat.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
 import DeleteIcon from 'assets/icons/delete.svg'
@@ -81,6 +82,7 @@ export enum IconName {
   Chiffre4 = 'Chiffre4',
   Clock = 'Clock',
   Close = 'Close',
+  Comment = 'Comment',
   Contrat = 'Contrat',
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
@@ -141,6 +143,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Chiffre4]: Chiffre4Icon,
   [IconName.Clock]: ClockIcon,
   [IconName.Close]: CloseIcon,
+  [IconName.Comment]: CommentIcon,
   [IconName.Contrat]: ContratIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Delete]: DeleteIcon,
