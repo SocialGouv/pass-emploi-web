@@ -84,7 +84,7 @@ describe('Page Détail Offre', () => {
       expect(within(section).getByText(offre.description!)).toBeInTheDocument()
       expect(
         within(section).getByRole('link', {
-          name: "Voir l'offre (nouvelle fenêtre)",
+          name: "Voir l'offre détaillée (nouvelle fenêtre)",
         })
       ).toHaveAttribute('href', offre.urlPostulation)
     })

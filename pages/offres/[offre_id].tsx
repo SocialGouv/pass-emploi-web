@@ -44,7 +44,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
   useMatomo(labelMatomo)
 
   return (
-    <>
+    <div className='max-w-2xl mx-auto'>
       <div className='flex justify-between items-center'>
         <p className='text-s-regular'>
           {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
@@ -121,7 +121,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
           <p className={`${ddStyle} text-primary hover:text-primary_darken`}>
             <ExternalLink
               href={offre.urlPostulation}
-              label="Voir l'offre"
+              label="Voir l'offre détaillée"
               onClick={() => setLabelMatomo('Lien Offre externe')}
             />
           </p>
@@ -284,7 +284,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
           </dl>
         </section>
       )}
-    </>
+    </div>
   )
 }
 
