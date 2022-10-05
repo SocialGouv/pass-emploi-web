@@ -14,7 +14,7 @@ describe('Login', () => {
   describe('render', () => {
     beforeEach(async () => {
       ;(useRouter as jest.Mock).mockReturnValue({
-        query: { redirectUrl: 'redirectUrl' },
+        query: { redirectUrl: '/mes-jeunes' },
       })
 
       render(<Login isFromEmail={false} />)
@@ -58,7 +58,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: '/index?redirectUrl=redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=%2Fmes-jeunes' },
         { kc_idp_hint: 'pe-conseiller' }
       )
     })
@@ -75,7 +75,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: '/index?redirectUrl=redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=%2Fmes-jeunes' },
         { kc_idp_hint: 'similo-conseiller' }
       )
     })
@@ -121,7 +121,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: '/index?redirectUrl=redirectUrl' },
+        { callbackUrl: '/index?redirectUrl=%2Fmes-jeunes' },
         { kc_idp_hint: '' }
       )
     })

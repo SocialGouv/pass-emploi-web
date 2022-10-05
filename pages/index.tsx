@@ -1,10 +1,12 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ConseillerService } from 'services/conseiller.service'
@@ -15,16 +17,24 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface HomePageProps {
+type HomePageProps = PageProps & {
   redirectUrl: string
+  agenceRenseignee: boolean
   referentielAgences: Agence[]
+  withoutChat: true
 }
 
-function Home({ redirectUrl, referentielAgences }: HomePageProps) {
+function Home({
+  redirectUrl,
+  agenceRenseignee,
+  referentielAgences,
+}: HomePageProps) {
   const router = useRouter()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const [conseiller, setConseiller] = useConseiller()
+
+  const MIN_DESKTOP_WIDTH = 600
 
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Pop-in sélection agence'
@@ -42,22 +52,43 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     )
   }
 
-  async function redirectToUrl() {
-    await router.replace(redirectUrl)
-  }
+  const redirectToOriginalDestination = useCallback(() => {
+    router.replace(redirectUrl)
+  }, [redirectUrl, router])
+
+  useEffect(() => {
+    if (agenceRenseignee) redirectToOriginalDestination()
+    // if (agenceRenseignee)
+    // if (window.innerWidth < MIN_DESKTOP_WIDTH)
+    //   router.replace('/onboarding?' + new URLSearchParams({ redirectUrl }))
+    // }, [agenceRenseignee, redirectToOriginalDestination])
+    // }, [agenceRenseignee, redirectUrl, router])
+  })
 
   useMatomo(trackingLabel)
 
   return (
     <>
-      <RenseignementAgenceModal
-        structureConseiller={
-          conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
-        }
-        referentielAgences={referentielAgences}
-        onAgenceChoisie={selectAgence}
-        onClose={redirectToUrl}
-      />
+      {agenceRenseignee && (
+        <div aria-busy={true}>
+          <IconComponent
+            name={IconName.Spinner}
+            focusable={false}
+            aria-label='Chargement…'
+            className='m-auto w-3/4 fill-primary animate-spin'
+          />
+        </div>
+      )}
+      {!agenceRenseignee && (
+        <RenseignementAgenceModal
+          structureConseiller={
+            conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
+          }
+          referentielAgences={referentielAgences}
+          onAgenceChoisie={selectAgence}
+          onClose={redirectToOriginalDestination}
+        />
+      )}
     </>
   )
 }
@@ -90,27 +121,29 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
+
+  let referentielAgences: Agence[] = []
+  let agenceRenseignee = true
   if (
-    Boolean(conseiller.agence) ||
-    user.structure === StructureConseiller.PASS_EMPLOI
+    user.structure !== StructureConseiller.PASS_EMPLOI &&
+    !conseiller.agence
   ) {
-    return {
-      redirect: {
-        destination: `${redirectUrl}`,
-        permanent: false,
-      },
-    }
+    const agenceService =
+      withDependance<ReferentielService>('referentielService')
+    referentielAgences = await agenceService.getAgences(
+      user.structure,
+      accessToken
+    )
+    agenceRenseignee = false
   }
 
-  const agenceService = withDependance<ReferentielService>('referentielService')
-  const referentielAgences = await agenceService.getAgences(
-    user.structure,
-    accessToken
-  )
   return {
     props: {
+      pageTitle: 'Accueil',
       redirectUrl,
+      agenceRenseignee,
       referentielAgences,
+      withoutChat: true,
     },
   }
 }

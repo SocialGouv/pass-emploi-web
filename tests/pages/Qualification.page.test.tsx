@@ -22,7 +22,6 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
-jest.mock('next/router')
 
 describe("Page Qualification d'une action", () => {
   describe('server side', () => {

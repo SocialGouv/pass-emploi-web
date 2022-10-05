@@ -12,8 +12,8 @@ import { mockedConseillerService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import Home, { getServerSideProps } from 'pages/index'
-import { ReferentielService } from 'services/referentiel.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -24,195 +24,255 @@ jest.mock('components/Modal')
 
 describe('Home', () => {
   describe('client side', () => {
-    describe('contenu', () => {
-      let agences: Agence[]
-      let replace: jest.Mock
-      let conseillerService: ConseillerService
-      beforeEach(() => {
-        // Given
-        replace = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ replace })
-        agences = uneListeDAgencesPoleEmploi()
-        conseillerService = mockedConseillerService()
-
-        // When
-        renderWithContexts(
-          <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
-          { customDependances: { conseillerService } }
-        )
-      })
-
-      it("contient un message pour demander l'agence du conseiller", () => {
-        // Then
-        expect(
-          screen.getByText(/La liste des agences a été mise à jour/)
-        ).toBeInTheDocument()
-        expect(
-          screen.getByText(/Une fois votre agence renseignée/)
-        ).toBeInTheDocument()
-      })
-
-      it('contient un input pour choisir une agence', () => {
-        // Then
-        expect(
-          screen.getByRole('combobox', { name: /votre agence/ })
-        ).toBeInTheDocument()
-        agences.forEach((agence) =>
-          expect(
-            screen.getByRole('option', { hidden: true, name: agence.nom })
-          ).toBeInTheDocument()
-        )
-      })
-
-      it("contient un bouton pour dire que l'agence n'est pas dans liste", () => {
-        // Then
-        expect(
-          screen.getByRole('checkbox', { name: /Mon agence n’apparaît pas/ })
-        ).toBeInTheDocument()
-        expect(() =>
-          screen.getByRole('textbox', { name: /Saisir le nom/ })
-        ).toThrow()
-      })
-
-      it('contient un bouton pour annuler', async () => {
-        // Given
-        const annuler = screen.getByRole('button', { name: 'Annuler' })
-
-        // When
-        await act(() => userEvent.click(annuler))
-
-        // Then
-        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
-      })
-
-      it("modifie le conseiller avec l'agence choisie", async () => {
-        // Given
-        const agence = agences[2]
-        const searchAgence = screen.getByRole('combobox', {
-          name: /votre agence/,
-        })
-        const submit = screen.getByRole('button', { name: 'Ajouter' })
-
-        // When
-        await act(() => userEvent.type(searchAgence, agence.nom))
-        await act(() => userEvent.click(submit))
-
-        // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
-          id: agence.id,
-          nom: 'Agence Pôle emploi THIERS',
-        })
-        expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
-      })
-
-      it("prévient si l'agence n'est pas renseignée", async () => {
-        // Given
-        const searchAgence = screen.getByRole('combobox', {
-          name: /votre agence/,
-        })
-        const submit = screen.getByRole('button', { name: 'Ajouter' })
-
-        // When
-        await act(() => userEvent.type(searchAgence, 'pouet'))
-        await act(() => userEvent.click(submit))
-
-        // Then
-        expect(
-          screen.getByText('Sélectionner une agence dans la liste')
-        ).toBeInTheDocument()
-        expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
-        expect(replace).not.toHaveBeenCalled()
-      })
-
-      describe("quand l'agence n'est pas dans la liste", () => {
-        let searchAgence: HTMLInputElement
-        let agenceLibre: HTMLInputElement
-        beforeEach(async () => {
+    describe('quand le conseiller doit renseigner son agence', () => {
+      describe('contenu', () => {
+        let agences: Agence[]
+        let replace: jest.Mock
+        let conseillerService: ConseillerService
+        beforeEach(() => {
           // Given
-          searchAgence = screen.getByRole('combobox', {
-            name: /Rechercher/,
-          })
-          await act(() => userEvent.type(searchAgence, 'pouet'))
+          replace = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ replace })
+          agences = uneListeDAgencesPoleEmploi()
+          conseillerService = mockedConseillerService()
 
-          const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
-            name: /n’apparaît pas/,
-          })
-          await act(() => userEvent.click(checkAgenceNonTrouvee))
-
-          agenceLibre = screen.getByRole('textbox', {
-            name: /Saisir le nom de votre agence/,
-          })
+          // When
+          renderWithContexts(
+            <Home
+              referentielAgences={agences}
+              agenceRenseignee={false}
+              redirectUrl='/mes-jeunes'
+              pageTitle=''
+              withoutChat={true}
+            />,
+            { customDependances: { conseillerService } }
+          )
         })
 
-        it('permet de renseigner une agence libre', async () => {
+        it("contient un message pour demander l'agence du conseiller", () => {
+          // Then
+          expect(
+            screen.getByText(/La liste des agences a été mise à jour/)
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(/Une fois votre agence renseignée/)
+          ).toBeInTheDocument()
+        })
+
+        it('contient un input pour choisir une agence', () => {
+          // Then
+          expect(
+            screen.getByRole('combobox', { name: /votre agence/ })
+          ).toBeInTheDocument()
+          agences.forEach((agence) =>
+            expect(
+              screen.getByRole('option', { hidden: true, name: agence.nom })
+            ).toBeInTheDocument()
+          )
+        })
+
+        it("contient un bouton pour dire que l'agence n'est pas dans liste", () => {
+          // Then
+          expect(
+            screen.getByRole('checkbox', { name: /Mon agence n’apparaît pas/ })
+          ).toBeInTheDocument()
+          expect(() =>
+            screen.getByRole('textbox', { name: /Saisir le nom/ })
+          ).toThrow()
+        })
+
+        it('contient un bouton pour annuler', async () => {
+          // Given
+          const annuler = screen.getByRole('button', { name: 'Annuler' })
+
           // When
-          await act(() => userEvent.type(agenceLibre, 'Agence libre'))
+          await act(() => userEvent.click(annuler))
+
+          // Then
+          expect(replace).toHaveBeenCalledWith('/mes-jeunes')
+        })
+
+        it("modifie le conseiller avec l'agence choisie", async () => {
+          // Given
+          const agence = agences[2]
+          const searchAgence = screen.getByRole('combobox', {
+            name: /votre agence/,
+          })
           const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+          // When
+          await act(() => userEvent.type(searchAgence, agence.nom))
           await act(() => userEvent.click(submit))
 
           // Then
           expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
-            nom: 'Agence libre',
+            id: agence.id,
+            nom: 'Agence Pôle emploi THIERS',
           })
-        })
-
-        it('bloque la sélection dans la liste', () => {
-          // Then
-          expect(searchAgence.value).toEqual('')
-          expect(searchAgence).toHaveAttribute('disabled', '')
+          expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
         })
 
         it("prévient si l'agence n'est pas renseignée", async () => {
-          // When
+          // Given
+          const searchAgence = screen.getByRole('combobox', {
+            name: /votre agence/,
+          })
           const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+          // When
+          await act(() => userEvent.type(searchAgence, 'pouet'))
           await act(() => userEvent.click(submit))
 
           // Then
-          expect(screen.getByText('Saisir une agence')).toBeInTheDocument()
-          expect(conseillerService.modifierAgence).toHaveBeenCalledTimes(0)
+          expect(
+            screen.getByText('Sélectionner une agence dans la liste')
+          ).toBeInTheDocument()
+          expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+          expect(replace).not.toHaveBeenCalled()
+        })
+
+        describe("quand l'agence n'est pas dans la liste", () => {
+          let searchAgence: HTMLInputElement
+          let agenceLibre: HTMLInputElement
+          beforeEach(async () => {
+            // Given
+            searchAgence = screen.getByRole('combobox', {
+              name: /Rechercher/,
+            })
+            await act(() => userEvent.type(searchAgence, 'pouet'))
+
+            const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
+              name: /n’apparaît pas/,
+            })
+            await act(() => userEvent.click(checkAgenceNonTrouvee))
+
+            agenceLibre = screen.getByRole('textbox', {
+              name: /Saisir le nom de votre agence/,
+            })
+          })
+
+          it('permet de renseigner une agence libre', async () => {
+            // When
+            await act(() => userEvent.type(agenceLibre, 'Agence libre'))
+            const submit = screen.getByRole('button', { name: 'Ajouter' })
+            await act(() => userEvent.click(submit))
+
+            // Then
+            expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+              nom: 'Agence libre',
+            })
+          })
+
+          it('bloque la sélection dans la liste', () => {
+            // Then
+            expect(searchAgence.value).toEqual('')
+            expect(searchAgence).toHaveAttribute('disabled', '')
+          })
+
+          it("prévient si l'agence n'est pas renseignée", async () => {
+            // When
+            const submit = screen.getByRole('button', { name: 'Ajouter' })
+            await act(() => userEvent.click(submit))
+
+            // Then
+            expect(screen.getByText('Saisir une agence')).toBeInTheDocument()
+            expect(conseillerService.modifierAgence).toHaveBeenCalledTimes(0)
+          })
+        })
+      })
+
+      describe('quand le conseiller est Mission locale', () => {
+        it("affiche 'Mission locale' au lieu de 'agence'", async () => {
+          // Given
+          renderWithContexts(
+            <Home
+              referentielAgences={[]}
+              agenceRenseignee={false}
+              redirectUrl='/mes-jeunes'
+              pageTitle=''
+              withoutChat={true}
+            />,
+            { customConseiller: { structure: StructureConseiller.MILO } }
+          )
+          const searchMission = screen.getByRole('combobox', {
+            name: /votre Mission locale/,
+          })
+          const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+          // When
+          await act(() => userEvent.type(searchMission, 'pouet'))
+          await act(() => userEvent.click(submit))
+
+          // Then
+          expect(
+            screen.getByText(/La liste des Missions locales a été mise à jour/)
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(/Une fois votre Mission locale renseignée/)
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(/Sélectionner une Mission locale/)
+          ).toBeInTheDocument()
+
+          // When
+          const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
+            name: /Ma Mission locale n’apparaît pas/,
+          })
+          await act(() => userEvent.click(checkAgenceNonTrouvee))
+
+          // Then
+          expect(
+            screen.getByRole('textbox', {
+              name: /Saisir le nom de votre Mission locale/,
+            })
+          ).toBeInTheDocument()
         })
       })
     })
 
-    describe('quand le conseiller est Mission locale', () => {
-      it("affiche 'Mission locale' au lieu de 'agence'", async () => {
+    describe('quand le conseiller ne doit pas renseigner son agence', () => {
+      it('renvoie directement à la page demandée', () => {
         // Given
+        const replace = jest.fn()
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+        // When
         renderWithContexts(
-          <Home referentielAgences={[]} redirectUrl='/mes-jeunes' />,
-          { customConseiller: { structure: StructureConseiller.MILO } }
+          <Home
+            referentielAgences={[]}
+            agenceRenseignee={true}
+            redirectUrl='/mes-jeunes'
+            pageTitle=''
+            withoutChat={true}
+          />
         )
-        const searchMission = screen.getByRole('combobox', {
-          name: /votre Mission locale/,
-        })
-        const submit = screen.getByRole('button', { name: 'Ajouter' })
-
-        // When
-        await act(() => userEvent.type(searchMission, 'pouet'))
-        await act(() => userEvent.click(submit))
 
         // Then
-        expect(
-          screen.getByText(/La liste des Missions locales a été mise à jour/)
-        ).toBeInTheDocument()
-        expect(
-          screen.getByText(/Une fois votre Mission locale renseignée/)
-        ).toBeInTheDocument()
-        expect(
-          screen.getByText(/Sélectionner une Mission locale/)
-        ).toBeInTheDocument()
+        expect(screen.getByLabelText('Chargement…')).toBeInTheDocument()
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
+      })
+
+      it("renvoie à la page d'onboarding mobile", () => {
+        // Given
+        const replace = jest.fn()
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
 
         // When
-        const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
-          name: /Ma Mission locale n’apparaît pas/,
-        })
-        await act(() => userEvent.click(checkAgenceNonTrouvee))
+        renderWithContexts(
+          <Home
+            referentielAgences={[]}
+            agenceRenseignee={true}
+            redirectUrl='/mes-jeunes'
+            pageTitle=''
+            withoutChat={true}
+          />
+        )
 
         // Then
-        expect(
-          screen.getByRole('textbox', {
-            name: /Saisir le nom de votre Mission locale/,
-          })
-        ).toBeInTheDocument()
+        expect(screen.getByLabelText('Chargement…')).toBeInTheDocument()
+        expect(replace).toHaveBeenCalledWith(
+          '/onboarding?redirectUrl=%2Fmes-jeunes'
+        )
       })
     })
   })
@@ -258,27 +318,35 @@ describe('Home', () => {
         })
       })
 
-      it('redirige vers la liste des jeunes', async () => {
+      it('affiche la home sans charger les agences', async () => {
         // When
         const actual = await getServerSideProps({
           query: {},
         } as unknown as GetServerSidePropsContext)
 
-        //Then
+        // Then
         expect(actual).toEqual({
-          redirect: { destination: '/mes-jeunes', permanent: false },
+          props: {
+            pageTitle: 'Accueil',
+            redirectUrl: '/mes-jeunes',
+            agenceRenseignee: true,
+            referentielAgences: [],
+            withoutChat: true,
+          },
         })
       })
 
-      it('redirige vers l’url renseignée', async () => {
+      it('renvoie l’url renseignée', async () => {
         // When
         const actual = await getServerSideProps({
           query: { redirectUrl: '/mes-rendezvous' },
         } as unknown as GetServerSidePropsContext)
 
-        //Then
-        expect(actual).toEqual({
-          redirect: { destination: '/mes-rendezvous', permanent: false },
+        // Then
+        expect(actual).toMatchObject({
+          props: {
+            redirectUrl: '/mes-rendezvous',
+          },
         })
       })
     })
@@ -308,7 +376,8 @@ describe('Home', () => {
           if (dependance === 'referentielService') return referentielService
         })
       })
-      it('renvoie les props nécessaires pour demander l’agence', async () => {
+
+      it('affiche la home en chargeant la liste des agences', async () => {
         // When
         const actual = await getServerSideProps({
           query: {},
@@ -317,11 +386,15 @@ describe('Home', () => {
         // Then
         expect(actual).toEqual({
           props: {
+            pageTitle: 'Accueil',
             redirectUrl: '/mes-jeunes',
+            agenceRenseignee: false,
             referentielAgences: uneListeDAgencesMILO(),
+            withoutChat: true,
           },
         })
       })
+
       it('renvoie l’url renseignée', async () => {
         // When
         const actual = await getServerSideProps({
@@ -329,10 +402,9 @@ describe('Home', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(actual).toEqual({
+        expect(actual).toMatchObject({
           props: {
             redirectUrl: '/mes-rendezvous',
-            referentielAgences: uneListeDAgencesMILO(),
           },
         })
       })
