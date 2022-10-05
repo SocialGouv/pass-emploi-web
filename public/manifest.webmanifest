@@ -1,0 +1,15 @@
+{
+  "background_color": "#3B69D1",
+  "description": "Application web pour les conseillers du Contrat d'Engagement Jeune",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "360x360",
+      "type": "image/png"
+    }
+  ],
+  "name": "Contrat d'Engagement Jeune",
+  "short_name": "CEJ",
+  "start_url": "/login"
+}
