@@ -53,3 +53,10 @@ storybook-static
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# next-pwa
+sw.js
+sw.js.map
+public/workbox*.js
+public/workbox*.js.map
+public/fallback-*.js

@@ -16,6 +16,12 @@ export default function AppHead({ titre, hasMessageNonLu }: AppHeadProps) {
         name='description'
         content="Espace conseiller de l'outil du Contrat d'Engagement Jeune"
       />
+      <meta name='application-name' content='CEJ' />
+      <meta name='format-detection' content='telephone=no' />
+      <meta name='mobile-web-app-capable' content='yes' />
+      <meta name='theme-color' content='#3B69D1' />
+
+      <link rel='shortcut icon' href='/favicon.png' />
       <link
         rel='icon'
         href={`/${hasMessageNonLu ? 'favicon_notif' : 'favicon'}.png`}
