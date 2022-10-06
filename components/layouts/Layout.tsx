@@ -34,8 +34,8 @@ export default function Layout({ children }: LayoutProps) {
 
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
+  const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
 
-  const [hasMessageNonLu, setHasMessageNonLu] = useState<boolean>(false)
   const withChat = !withoutChat
 
   useEffect(() => {

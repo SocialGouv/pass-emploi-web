@@ -11,7 +11,6 @@ const apm = require('elastic-apm-node').start({
 require('next-logger')
 const { createServer } = require('http')
 const { parse } = require('url')
-const { createReadStream } = require('fs')
 const next = require('next')
 
 const dev = process.env.NODE_ENV !== 'production'
@@ -25,15 +24,7 @@ app.prepare().then(() => {
   createServer((req, res) => {
     const parsedUrl = parse(req.url, true)
     apm.setTransactionName(`${req.method} ${parsedUrl.pathname}`)
-
-    // https://medium.com/@anatomic/using-a-service-worker-with-next-js-460e0168a60a
-    if (parsedUrl.pathname === '/sw.js') {
-      res.setHeader('content-type', 'text/javascript')
-      console.log('COUCOU')
-      createReadStream('./offline/serviceWorker.js').pipe(res)
-    } else {
-      handle(req, res, parsedUrl)
-    }
+    handle(req, res, parsedUrl)
   }).listen(port, (err) => {
     if (err) throw err
     console.log(`> Ready on http://${hostname}:${port}`)
