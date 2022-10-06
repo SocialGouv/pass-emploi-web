@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import Logo from 'assets/images/logo_app_cej.svg'
+import OnboardingMobileModal from 'components/OnboardingMobileModal'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -17,6 +18,9 @@ interface LoginProps {
 function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
+
+  const MIN_DESKTOP_WIDTH = 600
+  const [afficherOnboarding, setAfficherOnboarding] = useState(false)
 
   async function handleSignin(event: FormEvent, provider?: string) {
     event.preventDefault()
@@ -51,6 +55,10 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
         signin(`${provider}-conseiller`)
     }
   }, [router, signin])
+
+  useEffect(() => {
+    if (window.innerWidth < MIN_DESKTOP_WIDTH) setAfficherOnboarding(true)
+  }, [])
 
   useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
 
@@ -90,6 +98,12 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
       </div>
+
+      {afficherOnboarding && (
+        <OnboardingMobileModal onClose={() => setAfficherOnboarding(false)} />
+      )}
+
+      <div id='modal-root' />
     </div>
   )
 }
