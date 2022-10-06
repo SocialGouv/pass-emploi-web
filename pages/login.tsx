@@ -6,6 +6,7 @@ import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import Logo from 'assets/images/logo_app_cej.svg'
 import OnboardingMobileModal from 'components/OnboardingMobileModal'
+import Button from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -21,6 +22,8 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
 
   const MIN_DESKTOP_WIDTH = 600
   const [afficherOnboarding, setAfficherOnboarding] = useState(false)
+  const [deferredInstallPrompt, setDeferredInstallPrompt] =
+    useState<BeforeInstallPromptEvent>()
 
   async function handleSignin(event: FormEvent, provider?: string) {
     event.preventDefault()
@@ -47,6 +50,19 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
     [router]
   )
 
+  function addAppToHomeScreen() {
+    if (!deferredInstallPrompt) return
+    deferredInstallPrompt.prompt()
+    deferredInstallPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt')
+      } else {
+        console.log('User dismissed the A2HS prompt')
+      }
+      setDeferredInstallPrompt(undefined)
+    })
+  }
+
   useEffect(() => {
     const provider = router?.query.provider
     switch (provider) {
@@ -60,10 +76,27 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
     if (window.innerWidth < MIN_DESKTOP_WIDTH) setAfficherOnboarding(true)
   }, [])
 
+  useEffect(() => {
+    function getListener(e: Event) {
+      e.preventDefault()
+      console.log('BEFORE INSTALL PROMPT')
+      setDeferredInstallPrompt(e as BeforeInstallPromptEvent)
+    }
+
+    window.addEventListener('beforeinstallprompt', getListener)
+    return () => window.removeEventListener('beforeinstallprompt', getListener)
+  })
+
   useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
 
   return (
     <div className={`${styles.login} w-full h-screen relative`}>
+      {deferredInstallPrompt && (
+        <Button onClick={addAppToHomeScreen}>
+          Installer l&apos;application
+        </Button>
+      )}
+
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
         <Logo
           focusable='false'
@@ -140,3 +173,8 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 }
 
 export default withTransaction(Login.name, 'page')(Login)
+
+interface BeforeInstallPromptEvent extends Event {
+  userChoice: Promise<any>
+  prompt: () => void
+}

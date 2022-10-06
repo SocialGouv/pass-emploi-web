@@ -42,6 +42,26 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
     initRum()
   }, [])
 
+  useEffect(() => {
+    // https://medium.com/@anatomic/using-a-service-worker-with-next-js-460e0168a60a
+    let serviceWorkerRegistration: ServiceWorkerRegistration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          serviceWorkerRegistration = registration
+        })
+        .catch((err) =>
+          console.error('Service worker registration failed', err)
+        )
+    } else {
+      console.log('Service worker not supported')
+    }
+    return () => {
+      if (serviceWorkerRegistration) serviceWorkerRegistration.unregister()
+    }
+  }, [])
+
   return (
     <>
       <DIProvider dependances={Container.getDIContainer().dependances}>
