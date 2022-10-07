@@ -206,6 +206,37 @@ describe('Page Recherche Offres', () => {
           })
         ).toBeInTheDocument()
       })
+
+      it("permet d'afficher uniquement les offres débutants acceptés", () => {
+        // Then
+        const etape3 = screen.getByRole('group', {
+          name: 'Étape 3 Plus de critères',
+        })
+        const experienceGroup = within(etape3).getByRole('group', {
+          name: 'Expérience',
+        })
+        expect(
+          within(experienceGroup).getByRole('radio', {
+            name: /Afficher uniquement les offres débutants acceptés/,
+          })
+        ).toHaveValue('false')
+      })
+
+      it('permet de définir un rayon de recherche', () => {
+        // Then
+        const etape3 = screen.getByRole('group', {
+          name: 'Étape 3 Plus de critères',
+        })
+        const distanceGroup = within(etape3).getByRole('group', {
+          name: 'Distance',
+        })
+        const inputRange = within(distanceGroup).getByRole('input', {
+          name: 'Dans un rayon de : 10km',
+        })
+        expect(inputRange).toHaveAttribute('type', 'range')
+        expect(inputRange).toHaveAttribute('min', '0')
+        expect(inputRange).toHaveAttribute('max', '100')
+      })
     })
 
     it('n’affiche pas de résultat par défaut', () => {
