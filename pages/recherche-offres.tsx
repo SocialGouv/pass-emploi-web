@@ -23,6 +23,9 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import RadioButton from 'components/action/RadioButton'
+import propsStatutsActions from 'components/action/propsStatutsActions'
 
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
@@ -47,6 +50,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
+  const [hasMoreFilters, setHasMoreFilters] = useState<boolean>(false)
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
@@ -143,7 +147,40 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       )}
 
       <form onSubmit={rechercherOffresEmploi}>
+        <div>
+          <legend
+            className='flex items-center text-m-bold mb-4'
+            aria-label='Selectionner un type d’offre'
+          >
+            <IconComponent
+              name={IconName.Chiffre1}
+              role='img'
+              focusable={false}
+              className='mr-2 w-8 h-8'
+            />
+            Selectionner un type d’offre
+          </legend>
+          <div className='mb-4'>
+            <RadioButton
+              isSelected={true}
+              onChange={() => {}}
+              name='type-offre'
+              id='type-offre-emploi'
+              label='Offre d’emploi'
+            />
+          </div>
+        </div>
+
         <div className='w-1/2'>
+          <legend className='flex items-center text-m-bold mb-8'>
+            <IconComponent
+              name={IconName.Chiffre2}
+              role='img'
+              focusable={false}
+              className='mr-2 w-8 h-8'
+            />
+            Critères de recherche
+          </legend>
           <Label htmlFor='localisation'>
             Localisation (département ou commune)
           </Label>
@@ -175,6 +212,55 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           >
             Rechercher
           </Button>
+        </div>
+
+        <div>
+          <button
+            type='button'
+            onClick={() => setHasMoreFilters(!hasMoreFilters)}
+          >
+            Voir plus de critères
+          </button>
+          {hasMoreFilters && (
+            <div>
+              <div>
+                <p className='my-4'>Type de contrat</p>
+                <label key='' htmlFor='' className='flex pb-4'>
+                  <input
+                    type='checkbox'
+                    value=''
+                    id=''
+                    className='h-5 w-5'
+                    checked={false}
+                    onChange={() => {}}
+                  />
+                  <span className='pl-5'>CDI</span>
+                </label>
+                <label key='' htmlFor='' className='flex pb-4'>
+                  <input
+                    type='checkbox'
+                    value=''
+                    id=''
+                    className='h-5 w-5'
+                    checked={false}
+                    onChange={() => {}}
+                  />
+                  <span className='pl-5'>CDD - intérim - saisonnier</span>
+                </label>
+                <label key='' htmlFor='' className='flex pb-4'>
+                  <input
+                    type='checkbox'
+                    value=''
+                    id=''
+                    className='h-5 w-5'
+                    checked={false}
+                    onChange={() => {}}
+                  />
+                  <span className='pl-5'>Autres</span>
+                </label>
+              </div>
+            </div>
+          )}
         </div>
       </form>
 

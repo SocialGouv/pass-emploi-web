@@ -40,37 +40,78 @@ describe('Page Recherche Offres', () => {
       })
     })
 
-    it('permet de saisir des mots clés', () => {
-      // Then
-      expect(screen.getByLabelText(/Mots clés/)).toHaveAttribute('type', 'text')
-    })
-
-    it('n’affiche pas de résultat par défaut', () => {
-      // Then
-      expect(() => screen.getByText('Liste des résultats')).toThrow()
-      expect(() => screen.getByRole('list')).toThrow()
-    })
-
-    it("permet de rechercher des offres d'emploi", async () => {
-      // Given
-      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-
-      // When
-      await userEvent.click(submitButton)
-
-      // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
-    })
-
-    it('permet de rechercher une localisation', () => {
+    it('permet de selectionner un type d’offre', () => {
       // Then
       expect(
-        screen.getByRole('combobox', {
-          name: 'Localisation (département ou commune)',
-        })
+        screen.getByLabelText('Selectionner un type d’offre')
       ).toBeInTheDocument()
+      expect(screen.getByLabelText('Offre d’emploi')).toBeInTheDocument()
+      //expect(screen.getByText('Alternance')).toBeInTheDocument()
+      //expect(screen.getByText('Service civique')).toBeInTheDocument()
+      //expect(screen.getByText('Immersion')).toBeInTheDocument()
+    })
 
-      expect(() => screen.getAllByRole('option', { hidden: true })).toThrow()
+    describe('permet de definir des critères de recherche', () => {
+      it('permet de saisir des mots clés', () => {
+        // Then
+        expect(screen.getByText('Critères de recherche')).toBeInTheDocument()
+        expect(screen.getByLabelText(/Mots clés/)).toHaveAttribute(
+          'type',
+          'text'
+        )
+      })
+
+      it('n’affiche pas de résultat par défaut', () => {
+        // Then
+        expect(() => screen.getByText('Liste des résultats')).toThrow()
+        expect(() => screen.getByRole('list')).toThrow()
+      })
+
+      it("permet de rechercher des offres d'emploi", async () => {
+        // Given
+        const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+        // When
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
+      })
+
+      it('permet de rechercher une localisation', () => {
+        // Then
+        expect(
+          screen.getByRole('combobox', {
+            name: 'Localisation (département ou commune)',
+          })
+        ).toBeInTheDocument()
+
+        expect(() => screen.getAllByRole('option', { hidden: true })).toThrow()
+      })
+    })
+
+    describe('permet d’affiner la recherche par des filtres', () => {
+      it('permet d’ajouter plus de filtre à notre recherche', () => {
+        // Then
+        expect(
+          screen.getByRole('button', { name: 'Voir plus de critères' })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de selectionner un type de contrat', async () => {
+        // Given
+        // When
+        await act(() =>
+          userEvent.click(screen.getByText('Voir plus de critères'))
+        )
+        // Then
+        expect(screen.getByText('Type de contrat')).toBeInTheDocument()
+        expect(screen.getByText('CDI')).toBeInTheDocument()
+        expect(
+          screen.getByText('CDD - intérim - saisonnier')
+        ).toBeInTheDocument()
+        expect(screen.getByText('Autres')).toBeInTheDocument()
+      })
     })
 
     it('retire les accents à la saisie', async () => {
