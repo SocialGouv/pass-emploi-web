@@ -12,8 +12,8 @@ import { mockedConseillerService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import Home, { getServerSideProps } from 'pages/index'
-import { ReferentielService } from 'services/referentiel.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -79,7 +79,7 @@ describe('Home', () => {
         const annuler = screen.getByRole('button', { name: 'Annuler' })
 
         // When
-        await act(() => userEvent.click(annuler))
+        await userEvent.click(annuler)
 
         // Then
         expect(replace).toHaveBeenCalledWith('/mes-jeunes')
@@ -94,8 +94,8 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        await act(() => userEvent.type(searchAgence, agence.nom))
-        await act(() => userEvent.click(submit))
+        await userEvent.type(searchAgence, agence.nom)
+        await userEvent.click(submit)
 
         // Then
         expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
@@ -113,8 +113,8 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        await act(() => userEvent.type(searchAgence, 'pouet'))
-        await act(() => userEvent.click(submit))
+        await userEvent.type(searchAgence, 'pouet')
+        await userEvent.click(submit)
 
         // Then
         expect(
@@ -132,12 +132,12 @@ describe('Home', () => {
           searchAgence = screen.getByRole('combobox', {
             name: /Rechercher/,
           })
-          await act(() => userEvent.type(searchAgence, 'pouet'))
+          await userEvent.type(searchAgence, 'pouet')
 
           const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
             name: /n’apparaît pas/,
           })
-          await act(() => userEvent.click(checkAgenceNonTrouvee))
+          await userEvent.click(checkAgenceNonTrouvee)
 
           agenceLibre = screen.getByRole('textbox', {
             name: /Saisir le nom de votre agence/,
@@ -146,9 +146,9 @@ describe('Home', () => {
 
         it('permet de renseigner une agence libre', async () => {
           // When
-          await act(() => userEvent.type(agenceLibre, 'Agence libre'))
+          await userEvent.type(agenceLibre, 'Agence libre')
           const submit = screen.getByRole('button', { name: 'Ajouter' })
-          await act(() => userEvent.click(submit))
+          await userEvent.click(submit)
 
           // Then
           expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
@@ -165,7 +165,7 @@ describe('Home', () => {
         it("prévient si l'agence n'est pas renseignée", async () => {
           // When
           const submit = screen.getByRole('button', { name: 'Ajouter' })
-          await act(() => userEvent.click(submit))
+          await userEvent.click(submit)
 
           // Then
           expect(screen.getByText('Saisir une agence')).toBeInTheDocument()
@@ -187,8 +187,8 @@ describe('Home', () => {
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        await act(() => userEvent.type(searchMission, 'pouet'))
-        await act(() => userEvent.click(submit))
+        await userEvent.type(searchMission, 'pouet')
+        await userEvent.click(submit)
 
         // Then
         expect(
@@ -205,7 +205,7 @@ describe('Home', () => {
         const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
           name: /Ma Mission locale n’apparaît pas/,
         })
-        await act(() => userEvent.click(checkAgenceNonTrouvee))
+        await userEvent.click(checkAgenceNonTrouvee)
 
         // Then
         expect(

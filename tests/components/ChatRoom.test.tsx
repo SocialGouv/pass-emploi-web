@@ -90,7 +90,7 @@ describe('<ChatRoom />', () => {
           .closest('button')
 
         // When
-        await act(() => userEvent.click(goToConversation!))
+        await userEvent.click(goToConversation!)
       })
 
       it('affiche la conversation du jeune', async () => {
@@ -123,7 +123,7 @@ describe('<ChatRoom />', () => {
         )
 
         // When
-        await act(() => userEvent.click(flagConversation!))
+        await userEvent.click(flagConversation!)
 
         // Then
         expect(messagesService.toggleFlag).toHaveBeenCalledWith(

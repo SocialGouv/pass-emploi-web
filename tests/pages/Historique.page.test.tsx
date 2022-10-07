@@ -84,7 +84,7 @@ describe('Historique', () => {
           const tabConseillers = screen.getByRole('tab', {
             name: 'Historique des conseillers',
           })
-          await act(() => userEvent.click(tabConseillers))
+          await userEvent.click(tabConseillers)
 
           // Then
           expect(
@@ -100,7 +100,7 @@ describe('Historique', () => {
           const tabConseillers = screen.getByRole('tab', {
             name: 'Historique des conseillers',
           })
-          await act(() => userEvent.click(tabConseillers))
+          await userEvent.click(tabConseillers)
 
           //Then
           listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {

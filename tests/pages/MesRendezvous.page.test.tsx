@@ -102,7 +102,7 @@ describe('MesRendezvous', () => {
         })
 
         // When
-        await act(() => userEvent.click(rdvsPassesButton))
+        await userEvent.click(rdvsPassesButton)
         // Then
         expect(
           rendezVousService.getRendezVousConseiller
@@ -110,7 +110,7 @@ describe('MesRendezvous', () => {
         expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
         // When
-        await act(() => userEvent.click(buttonRdvsSemaineCourante))
+        await userEvent.click(buttonRdvsSemaineCourante)
         // Then
         expect(rendezVousService.getRendezVousConseiller).toHaveBeenCalledWith(
           '1',
@@ -120,7 +120,7 @@ describe('MesRendezvous', () => {
         expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
         // When
-        await act(() => userEvent.click(rdvsFutursButton))
+        await userEvent.click(rdvsFutursButton)
         // Then
         expect(
           rendezVousService.getRendezVousConseiller

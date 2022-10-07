@@ -56,7 +56,7 @@ describe('Page Recherche Offres', () => {
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
@@ -78,7 +78,7 @@ describe('Page Recherche Offres', () => {
       const inputLocalisation = screen.getByLabelText(/Localisation/)
 
       // When
-      await act(() => userEvent.type(inputLocalisation, 'Ardèche'))
+      await userEvent.type(inputLocalisation, 'Ardèche')
       await act(() => new Promise((r) => setTimeout(r, 1000)))
 
       // Then
@@ -96,7 +96,7 @@ describe('Page Recherche Offres', () => {
       const inputLocalisation = screen.getByLabelText(/Localisation/)
 
       // When
-      await act(() => userEvent.type(inputLocalisation, 'Paris'))
+      await userEvent.type(inputLocalisation, 'Paris')
       await act(() => new Promise((r) => setTimeout(r, 1000)))
 
       // Then
@@ -124,12 +124,10 @@ describe('Page Recherche Offres', () => {
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await act(async () => {
-        await userEvent.type(inputMotsCles, 'prof industrie')
-        await userEvent.type(inputLocalisation, 'pAris')
-        await new Promise((r) => setTimeout(r, 1000))
-      })
-      await act(async () => userEvent.click(submitButton))
+      await userEvent.type(inputMotsCles, 'prof industrie')
+      await userEvent.type(inputLocalisation, 'pAris')
+      await act(() => new Promise((r) => setTimeout(r, 1000)))
+      await userEvent.click(submitButton)
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
@@ -145,12 +143,10 @@ describe('Page Recherche Offres', () => {
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await act(async () => {
-        await userEvent.type(inputMotsCles, 'prof industrie')
-        await userEvent.type(inputLocalisation, 'paris 14')
-        await new Promise((r) => setTimeout(r, 1000))
-      })
-      await act(async () => userEvent.click(submitButton))
+      await userEvent.type(inputMotsCles, 'prof industrie')
+      await userEvent.type(inputLocalisation, 'paris 14')
+      await act(() => new Promise((r) => setTimeout(r, 1000)))
+      await userEvent.click(submitButton)
 
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
@@ -165,13 +161,12 @@ describe('Page Recherche Offres', () => {
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
       // When
-      await act(async () => {
-        await userEvent.type(inputLocalisation, 'paris14')
-      })
+      await userEvent.type(inputLocalisation, 'paris14')
+
       await act(() => {
         fireEvent.blur(inputLocalisation)
       })
-      await act(async () => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(
@@ -187,7 +182,7 @@ describe('Page Recherche Offres', () => {
         const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
         // When
-        await act(() => userEvent.click(submitButton))
+        await userEvent.click(submitButton)
 
         // Then
         offresList = screen.getByRole('list', {
@@ -210,12 +205,12 @@ describe('Page Recherche Offres', () => {
           expect(
             within(offreCard).getByText(offre.typeContrat)
           ).toBeInTheDocument()
-          expect(within(offreCard).getByText(offre.duree)).toBeInTheDocument()
+          expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
           expect(
-            within(offreCard).getByText(offre.nomEntreprise)
+            within(offreCard).getByText(offre.nomEntreprise!)
           ).toBeInTheDocument()
           expect(
-            within(offreCard).getByText(offre.localisation)
+            within(offreCard).getByText(offre.localisation!)
           ).toBeInTheDocument()
           expect(
             within(offreCard).getByRole('link', {
@@ -244,7 +239,7 @@ describe('Page Recherche Offres', () => {
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(screen.getByRole('alert')).toHaveTextContent(
@@ -260,7 +255,7 @@ describe('Page Recherche Offres', () => {
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(

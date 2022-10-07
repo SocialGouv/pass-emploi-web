@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -267,20 +267,16 @@ describe("Page Qualification d'une action", () => {
         // Given
         const selectSNP = screen.getByRole('combobox', { name: 'Type' })
         const inputDate = screen.getByLabelText('* Date de fin')
-        await act(() =>
-          userEvent.selectOptions(
-            selectSNP,
-            situationsNonProfessionnelles[1].code
-          )
+        await userEvent.selectOptions(
+          selectSNP,
+          situationsNonProfessionnelles[1].code
         )
         // FIXME userEvent.type ne marche pas bien avec les input date/time
         fireEvent.change(inputDate, { target: { value: '2022-09-05' } })
 
         // When
-        await act(() =>
-          userEvent.click(
-            screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
-          )
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
         )
       })
 

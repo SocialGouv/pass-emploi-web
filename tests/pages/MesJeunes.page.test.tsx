@@ -167,7 +167,7 @@ describe('Mes Jeunes', () => {
         })
 
         // When
-        await act(() => userEvent.click(boutonRecuperationBeneficiaires))
+        await userEvent.click(boutonRecuperationBeneficiaires)
 
         // Then
         expect(

@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -99,7 +99,7 @@ describe('Reaffectation', () => {
         expect(typeReaffectationRadio).not.toBeChecked()
 
         // When
-        await act(() => userEvent.click(typeReaffectationRadio))
+        await userEvent.click(typeReaffectationRadio)
 
         // Then
         expect(typeReaffectationRadio).toBeChecked()
@@ -118,10 +118,10 @@ describe('Reaffectation', () => {
         ;(
           jeunesService.getJeunesDuConseillerParEmail as jest.Mock
         ).mockResolvedValue({ idConseiller: idConseillerInitial, jeunes })
-        await act(() => userEvent.type(emailInput, emailConseillerInitial))
+        await userEvent.type(emailInput, emailConseillerInitial)
 
         // WHEN
-        await act(() => userEvent.click(submitRecherche))
+        await userEvent.click(submitRecherche)
       })
 
       it('récupère les jeunes du conseiller', async () => {
@@ -147,7 +147,7 @@ describe('Reaffectation', () => {
         expect(toutSelectionnerCheckbox).not.toBeChecked()
 
         // When
-        await act(() => userEvent.click(toutSelectionnerCheckbox))
+        await userEvent.click(toutSelectionnerCheckbox)
 
         // Then
         expect(toutSelectionnerCheckbox).toBeChecked()
@@ -156,7 +156,7 @@ describe('Reaffectation', () => {
       describe('à la modification du mail du conseiller initial', () => {
         it('reset la recherche', async () => {
           // WHEN
-          await act(() => userEvent.type(emailInput, 'whatever'))
+          await userEvent.type(emailInput, 'whatever')
 
           // THEN
           for (const jeune of jeunes) {
@@ -179,21 +179,15 @@ describe('Reaffectation', () => {
           const submitReaffecter = screen.getByText('Réaffecter les jeunes')
 
           // WHEN
-          await act(() =>
-            userEvent.type(destinationInput, emailConseillerDestination)
+          await userEvent.type(destinationInput, emailConseillerDestination)
+          await userEvent.click(
+            screen.getByText(jeunes[0].prenom, { exact: false })
           )
-          await act(() =>
-            userEvent.click(
-              screen.getByText(jeunes[0].prenom, { exact: false })
-            )
+          await userEvent.click(
+            screen.getByText(jeunes[2].prenom, { exact: false })
           )
-          await act(() =>
-            userEvent.click(
-              screen.getByText(jeunes[2].prenom, { exact: false })
-            )
-          )
-          await act(() => userEvent.click(typeReaffectationRadio))
-          await act(() => userEvent.click(submitReaffecter))
+          await userEvent.click(typeReaffectationRadio)
+          await userEvent.click(submitReaffecter)
 
           // THEN
           expect(jeunesService.reaffecter).toHaveBeenCalledWith(
@@ -224,25 +218,25 @@ describe('Reaffectation', () => {
         expect(actual).toEqual({ notFound: true })
       })
     })
-  })
 
-  describe('quand le conseiller est superviseur', () => {
-    it('prépare la page', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: { user: { estSuperviseur: true } },
-      })
+    describe('quand le conseiller est superviseur', () => {
+      it('prépare la page', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: { user: { estSuperviseur: true } },
+        })
 
-      // When
-      const actual = await getServerSideProps({} as GetServerSidePropsContext)
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
 
-      // Then
-      expect(actual).toEqual({
-        props: {
-          pageTitle: 'Réaffectation',
-          pageHeader: 'Réaffectation des jeunes',
-        },
+        // Then
+        expect(actual).toEqual({
+          props: {
+            pageTitle: 'Réaffectation',
+            pageHeader: 'Réaffectation des jeunes',
+          },
+        })
       })
     })
   })

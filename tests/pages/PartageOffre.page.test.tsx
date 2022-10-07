@@ -228,17 +228,15 @@ describe('Page Partage Offre', () => {
         buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
         message = "Regarde cette offre qui pourrait t'intéresser."
-        await act(async () => {
-          await userEvent.type(selectJeune, 'Jirac Kenji')
-          await userEvent.type(selectJeune, "D'Aböville-Muñoz François Maria")
-          await userEvent.type(inputMessage, message)
-        })
+        await userEvent.type(selectJeune, 'Jirac Kenji')
+        await userEvent.type(selectJeune, "D'Aböville-Muñoz François Maria")
+        await userEvent.type(inputMessage, message)
       })
 
       describe('quand le formulaire est valide', () => {
         it("partage l'offre", async () => {
           // When
-          await act(() => userEvent.click(buttonValider))
+          await userEvent.click(buttonValider)
 
           // Then
           expect(messagesService.partagerOffre).toHaveBeenCalledWith({
@@ -251,10 +249,10 @@ describe('Page Partage Offre', () => {
 
         it('partage une offre avec un message par défaut', async () => {
           // Given
-          await act(() => userEvent.clear(inputMessage))
+          await userEvent.clear(inputMessage)
 
           // When
-          await act(() => userEvent.click(buttonValider))
+          await userEvent.click(buttonValider)
 
           // Then
           expect(messagesService.partagerOffre).toHaveBeenCalledWith({
@@ -268,7 +266,7 @@ describe('Page Partage Offre', () => {
 
         it('renvoie à la recherche', async () => {
           // When
-          await act(() => userEvent.click(buttonValider))
+          await userEvent.click(buttonValider)
 
           // Then
           expect(push).toHaveBeenCalledWith({
@@ -287,7 +285,7 @@ describe('Page Partage Offre', () => {
 
         // When
         for (const bouton of enleverJeunes) {
-          await act(() => userEvent.click(bouton))
+          await userEvent.click(bouton)
         }
 
         // Then

@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -70,7 +70,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           const statutRadio = screen.getByText('Commencée')
 
           // When
-          await act(() => userEvent.click(statutRadio))
+          await userEvent.click(statutRadio)
 
           // Then
           expect(actionsService.updateAction).toHaveBeenCalledWith(
@@ -94,7 +94,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             })
 
             // When
-            await act(() => userEvent.click(submitButton))
+            await userEvent.click(submitButton)
 
             // Then
             expect(actionsService.ajouterCommentaire).toHaveBeenCalledWith(
@@ -127,7 +127,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             })
 
             // When
-            await act(() => userEvent.click(submitButton))
+            await userEvent.click(submitButton)
 
             // Then
             expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -187,13 +187,13 @@ describe("Page Détail d'une action d'un jeune", () => {
             const radioButton = screen.getByLabelText(
               'Il ne s’agit pas d’une Situation Non Professionnelle'
             )
-            await act(() => userEvent.click(radioButton))
+            await userEvent.click(radioButton)
 
             // When
             const submitQualification = screen.getByRole('button', {
               name: /Enregistrer/,
             })
-            await act(() => userEvent.click(submitQualification))
+            await userEvent.click(submitQualification)
           })
 
           it("qualifie l'action", () => {
@@ -234,13 +234,13 @@ describe("Page Détail d'une action d'un jeune", () => {
             const radioButton = screen.getByLabelText(
               'Il s’agit d’une Situation Non Professionnelle'
             )
-            await act(() => userEvent.click(radioButton))
+            await userEvent.click(radioButton)
 
             // When
             const submitQualification = screen.getByRole('button', {
               name: /Enregistrer/,
             })
-            await act(() => userEvent.click(submitQualification))
+            await userEvent.click(submitQualification)
           })
 
           it('redirige vers la page de qualification', () => {

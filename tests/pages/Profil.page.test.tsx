@@ -155,9 +155,9 @@ describe('Page Profil conseiller', () => {
         })
 
         // Then
-        expect(getByDescriptionTerm('Votre Mission locale :')).toHaveTextContent(
-          'MLS3F SAINT-LOUIS'
-        )
+        expect(
+          getByDescriptionTerm('Votre Mission locale :')
+        ).toHaveTextContent('MLS3F SAINT-LOUIS')
       })
     })
 
@@ -181,7 +181,7 @@ describe('Page Profil conseiller', () => {
         const toggleNotifications = getToggleNotifications()
 
         // When
-        await act(() => userEvent.click(toggleNotifications))
+        await userEvent.click(toggleNotifications)
       })
 
       it('met à jour côté API', async () => {

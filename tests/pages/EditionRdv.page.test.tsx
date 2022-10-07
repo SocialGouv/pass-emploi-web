@@ -279,11 +279,9 @@ describe('EditionRdv', () => {
             )
 
             // When
-            await act(() =>
-              userEvent.selectOptions(
-                selectType,
-                'ENTRETIEN_INDIVIDUEL_CONSEILLER'
-              )
+            await userEvent.selectOptions(
+              selectType,
+              'ENTRETIEN_INDIVIDUEL_CONSEILLER'
             )
 
             // Then
@@ -449,25 +447,20 @@ describe('EditionRdv', () => {
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
           // Given
-          await act(async () => {
-            await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[0]))
-            await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[2]))
-            await userEvent.selectOptions(selectModalite, modalites[0])
-            await userEvent.selectOptions(selectType, typesRendezVous[0].code)
-            await userEvent.type(inputDate, '2022-03-03')
-            await userEvent.type(inputHoraire, '10:30')
-            await userEvent.type(inputDuree, '02:37')
-            await userEvent.type(
-              inputCommentaires,
-              'Lorem ipsum dolor sit amet'
-            )
-          })
+          await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[0]))
+          await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[2]))
+          await userEvent.selectOptions(selectModalite, modalites[0])
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
+          await userEvent.type(inputDate, '2022-03-03')
+          await userEvent.type(inputHoraire, '10:30')
+          await userEvent.type(inputDuree, '02:37')
+          await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
         })
 
         describe('quand le formulaire est validé', () => {
           it('crée un rendez-vous de type Generique', async () => {
             // When
-            await act(() => userEvent.click(buttonValider))
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
@@ -487,15 +480,13 @@ describe('EditionRdv', () => {
 
           it('crée un rendez-vous de type AUTRE', async () => {
             // Given
-            await act(() => userEvent.selectOptions(selectType, 'AUTRE'))
+            await userEvent.selectOptions(selectType, 'AUTRE')
 
             const inputTypePrecision = screen.getByLabelText('* Préciser')
-            await act(() =>
-              userEvent.type(inputTypePrecision, 'un texte de précision')
-            )
+            await userEvent.type(inputTypePrecision, 'un texte de précision')
 
             // When
-            await act(() => userEvent.click(buttonValider))
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
@@ -515,7 +506,7 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            await act(() => userEvent.click(buttonValider))
+            await userEvent.click(buttonValider)
 
             // Then
             expect(push).toHaveBeenCalledWith({
@@ -536,7 +527,7 @@ describe('EditionRdv', () => {
 
           // When
           for (const bouton of enleverJeunes) {
-            await act(() => userEvent.click(bouton))
+            await userEvent.click(bouton)
           }
 
           // Then
@@ -560,7 +551,7 @@ describe('EditionRdv', () => {
 
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
           // When
-          await act(() => userEvent.selectOptions(selectType, 'AUTRE'))
+          await userEvent.selectOptions(selectType, 'AUTRE')
 
           // Then
           expect(screen.getByLabelText('* Préciser')).toBeInTheDocument()
@@ -568,14 +559,14 @@ describe('EditionRdv', () => {
 
         it("affiche un message d'erreur quand type de rendez-vous 'Autre' pas rempli", async () => {
           // Given
-          await act(() => userEvent.selectOptions(selectType, 'AUTRE'))
+          await userEvent.selectOptions(selectType, 'AUTRE')
           const inputTypePrecision: HTMLInputElement =
             screen.getByLabelText('* Préciser')
 
           // When
           expect(inputTypePrecision).toBeInTheDocument()
-          await act(() => userEvent.click(inputTypePrecision))
-          await act(() => userEvent.tab())
+          await userEvent.click(inputTypePrecision)
+          await userEvent.tab()
 
           // Then
           expect(inputTypePrecision.value).toEqual('')
@@ -588,8 +579,8 @@ describe('EditionRdv', () => {
 
         it("est désactivé quand aucune date n'est sélectionnée", async () => {
           // When
-          await act(() => userEvent.clear(inputDate))
-          await act(() => userEvent.tab())
+          await userEvent.clear(inputDate)
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -602,8 +593,8 @@ describe('EditionRdv', () => {
 
         it('est désactivé quand la date est incorrecte', async () => {
           // When
-          await act(() => userEvent.type(inputDate, 'yyyy-06-06'))
-          await act(() => userEvent.tab())
+          await userEvent.type(inputDate, 'yyyy-06-06')
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -616,8 +607,8 @@ describe('EditionRdv', () => {
 
         it("est désactivé quand aucune horaire n'est renseignée", async () => {
           // When
-          await act(() => userEvent.clear(inputHoraire))
-          await act(() => userEvent.tab())
+          await userEvent.clear(inputHoraire)
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -630,8 +621,8 @@ describe('EditionRdv', () => {
 
         it("est désactivé quand aucune durée n'est renseignée", async () => {
           // When
-          await act(() => userEvent.clear(inputDuree))
-          await act(() => userEvent.tab())
+          await userEvent.clear(inputDuree)
+          await userEvent.tab()
 
           // Then
           expect(buttonValider).toHaveAttribute('disabled', '')
@@ -648,7 +639,7 @@ describe('EditionRdv', () => {
         //   const button = screen.getByText('Quitter la création du rendez-vous')
         //
         //   // When
-        //   await act(() => userEvent.click(button))
+        //   await userEvent.click(button)
         //
         //   // Then
         //   expect(() => screen.getByText('Page précédente')).toThrow()
@@ -666,7 +657,7 @@ describe('EditionRdv', () => {
           const button = screen.getByText('Annuler')
 
           // When
-          await act(() => userEvent.click(button))
+          await userEvent.click(button)
 
           // Then
           expect(button).not.toHaveAttribute('href')
@@ -752,7 +743,7 @@ describe('EditionRdv', () => {
           const deleteButtonFromPage = screen.getByText('Supprimer')
 
           // When
-          await act(() => userEvent.click(deleteButtonFromPage))
+          await userEvent.click(deleteButtonFromPage)
         })
 
         it('affiche une modale avec les bonnes informations', async () => {
@@ -770,7 +761,7 @@ describe('EditionRdv', () => {
           const deleteButtonFromModal = screen.getByText('Confirmer')
 
           // When
-          await act(() => userEvent.click(deleteButtonFromModal))
+          await userEvent.click(deleteButtonFromModal)
 
           // Then
           expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
@@ -898,23 +889,18 @@ describe('EditionRdv', () => {
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
 
           // Given
-          await act(async () => {
-            await userEvent.type(searchJeune, getNomJeuneComplet(jeunes[1]))
-            await userEvent.click(enleverJeune)
-            await userEvent.selectOptions(selectModalite, modalites[0])
+          await userEvent.type(searchJeune, getNomJeuneComplet(jeunes[1]))
+          await userEvent.click(enleverJeune)
+          await userEvent.selectOptions(selectModalite, modalites[0])
 
-            await userEvent.clear(inputDate)
-            await userEvent.type(inputDate, '2022-03-03')
-            await userEvent.clear(inputHoraire)
-            await userEvent.type(inputHoraire, '10:30')
-            await userEvent.clear(inputDuree)
-            await userEvent.type(inputDuree, '02:37')
-            await userEvent.clear(inputCommentaires)
-            await userEvent.type(
-              inputCommentaires,
-              'Lorem ipsum dolor sit amet'
-            )
-          })
+          await userEvent.clear(inputDate)
+          await userEvent.type(inputDate, '2022-03-03')
+          await userEvent.clear(inputHoraire)
+          await userEvent.type(inputHoraire, '10:30')
+          await userEvent.clear(inputDuree)
+          await userEvent.type(inputDuree, '02:37')
+          await userEvent.clear(inputCommentaires)
+          await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
         })
 
         // FIXME trouver comment tester
@@ -943,7 +929,7 @@ describe('EditionRdv', () => {
           const button = screen.getByText('Annuler')
 
           // When
-          await act(() => userEvent.click(button))
+          await userEvent.click(button)
 
           // Then
           expect(button).not.toHaveAttribute('href')
@@ -958,7 +944,7 @@ describe('EditionRdv', () => {
         describe('quand le formulaire est validé', () => {
           it('modifie le rendez-vous', async () => {
             // When
-            await act(() => userEvent.click(buttonValider))
+            await userEvent.click(buttonValider)
 
             // Then
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
@@ -981,7 +967,7 @@ describe('EditionRdv', () => {
 
           it('redirige vers la page précédente', async () => {
             // When
-            await act(() => userEvent.click(buttonValider))
+            await userEvent.click(buttonValider)
 
             // Then
             expect(push).toHaveBeenCalledWith({
@@ -1091,7 +1077,7 @@ describe('EditionRdv', () => {
       it("contient un message spécial lors de la suppression pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
         // When
         const deleteButtonFromPage = screen.getByText('Supprimer')
-        await act(() => userEvent.click(deleteButtonFromPage))
+        await userEvent.click(deleteButtonFromPage)
 
         // Then
         expect(
@@ -1108,14 +1094,12 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           const inputCommentaire =
             screen.getByLabelText<HTMLInputElement>(/Commentaire/)
-          await act(() => userEvent.clear(inputCommentaire))
-          await act(() =>
-            userEvent.type(inputCommentaire, 'modification du commentaire')
-          )
+          await userEvent.clear(inputCommentaire)
+          await userEvent.type(inputCommentaire, 'modification du commentaire')
           const buttonSubmit = screen.getByText('Envoyer')
 
           // When
-          await act(() => userEvent.click(buttonSubmit))
+          await userEvent.click(buttonSubmit)
         })
 
         it('affiche une modal de verification', () => {
@@ -1135,7 +1119,7 @@ describe('EditionRdv', () => {
           })
 
           // When
-          await act(() => userEvent.click(boutonConfirmer))
+          await userEvent.click(boutonConfirmer)
 
           // Then
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(

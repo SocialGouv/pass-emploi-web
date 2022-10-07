@@ -89,13 +89,13 @@ describe('<CommentairesAction/>', () => {
         )
 
         const textbox = screen.getByRole('textbox')
-        await act(() => userEvent.type(textbox, 'test'))
+        await userEvent.type(textbox, 'test')
 
         // When
         const submitButton = screen.getByRole('button', {
           name: 'Ajouter un commentaire',
         })
-        await act(() => userEvent.click(submitButton))
+        await userEvent.click(submitButton)
 
         // Then
         expect(screen.getByText(commentaireDuJeune.message)).toBeInTheDocument()

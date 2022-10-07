@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { TRI } from 'components/action/OngletActions'
@@ -20,17 +20,15 @@ describe('TableauActionsJeune', () => {
           tri={TRI.dateDecroissante}
         />
       )
-      await act(() => userEvent.click(screen.getByText('Statut')))
-      await act(async () => {
-        await userEvent.click(screen.getByLabelText('Commencée'))
-        await userEvent.click(screen.getByLabelText('À réaliser'))
-        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
-      })
+      await userEvent.click(screen.getByText('Statut'))
+      await userEvent.click(screen.getByLabelText('Commencée'))
+      await userEvent.click(screen.getByLabelText('À réaliser'))
+      await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
     })
 
     it('sauvegarde les statuts sélectionnés', async () => {
       // When
-      await act(() => userEvent.click(screen.getByText('Statut')))
+      await userEvent.click(screen.getByText('Statut'))
 
       // Then
       expect(screen.getByLabelText('Terminée')).not.toHaveAttribute('checked')
@@ -41,13 +39,13 @@ describe('TableauActionsJeune', () => {
 
     xit('permet de réinitialiser les filtres', async () => {
       // When
-      await act(() =>
-        userEvent.click(screen.getByRole('button', { name: /Réinitialiser/ }))
+      await userEvent.click(
+        screen.getByRole('button', { name: /Réinitialiser/ })
       )
 
       // Then
-      await act(() =>
-        userEvent.click(screen.getByRole('button', { name: /qualification/ }))
+      await userEvent.click(
+        screen.getByRole('button', { name: /qualification/ })
       )
       await waitFor(() => {
         expect(
@@ -78,20 +76,18 @@ describe('TableauActionsJeune', () => {
             tri={TRI.dateDecroissante}
           />
         )
-        await act(() =>
-          userEvent.click(screen.getByRole('button', { name: /qualification/ }))
+        await userEvent.click(
+          screen.getByRole('button', { name: /qualification/ })
         )
-        await act(async () => {
-          await userEvent.click(screen.getByLabelText('Actions à qualifier'))
-          await userEvent.click(screen.getByLabelText('Actions qualifiées'))
-          await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
-        })
+        await userEvent.click(screen.getByLabelText('Actions à qualifier'))
+        await userEvent.click(screen.getByLabelText('Actions qualifiées'))
+        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       })
 
       it('sauvegarde les états de qualification sélectionnés', async () => {
         // When
-        await act(() =>
-          userEvent.click(screen.getByRole('button', { name: /qualification/ }))
+        await userEvent.click(
+          screen.getByRole('button', { name: /qualification/ })
         )
 
         // Then
@@ -108,13 +104,13 @@ describe('TableauActionsJeune', () => {
 
       xit('permet de réinitialiser les filtres', async () => {
         // When
-        await act(() =>
-          userEvent.click(screen.getByRole('button', { name: /Réinitialiser/ }))
+        await userEvent.click(
+          screen.getByRole('button', { name: /Réinitialiser/ })
         )
 
         // Then
-        await act(() =>
-          userEvent.click(screen.getByRole('button', { name: /qualification/ }))
+        await userEvent.click(
+          screen.getByRole('button', { name: /qualification/ })
         )
         await waitFor(() => {
           expect(
