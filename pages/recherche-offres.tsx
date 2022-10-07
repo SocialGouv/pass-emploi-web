@@ -11,6 +11,7 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
@@ -44,7 +45,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     error?: string
   }>({})
 
-  const debouncedLocalisationInput = useDebounce(localisationInput.value, 1000)
+  const debouncedLocalisationInput = useDebounce(localisationInput.value, 500)
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -146,7 +147,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       )}
 
       <form onSubmit={rechercherOffresEmploi}>
-        <Etape numero={1} titre="Sélectionner un type d'offre">
+        <Etape numero={1} titre='Sélectionner un type d’offre'>
           <RadioButton
             isSelected={true}
             onChange={() => {}}
@@ -182,89 +183,81 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           />
         </Etape>
 
-        <div className='flex items-center'>
-          <div className='grow'></div>
-
-          <Button
-            type='submit'
-            className='ml-5'
-            disabled={!formIsValid || isSearching}
-          >
-            Rechercher
-          </Button>
-        </div>
-
-        <div>
+        <div className='flex justify-end mb-6'>
           <button
             type='button'
             onClick={() => setHasMoreFilters(!hasMoreFilters)}
+            className='mr-12'
           >
             Voir plus de critères
           </button>
-          {hasMoreFilters && (
-            <fieldset>
-              <legend className='sr-only'>Étape 3 Plus de critères</legend>
-
-              <fieldset>
-                <legend className='my-4'>Type de contrat</legend>
-
-                <label htmlFor='contrat--cdi'>CDI</label>
-                <input
-                  type='checkbox'
-                  value=''
-                  id='contrat--cdi'
-                  className='h-5 w-5'
-                  checked={false}
-                  onChange={() => {}}
-                />
-
-                <label htmlFor='contrat--cdd'>CDD - intérim - saisonnier</label>
-                <input
-                  type='checkbox'
-                  value=''
-                  id='contrat--cdd'
-                  className='h-5 w-5'
-                  checked={false}
-                  onChange={() => {}}
-                />
-
-                <label htmlFor='contrat--autres'>Autres</label>
-                <input
-                  type='checkbox'
-                  value=''
-                  id='contrat--autres'
-                  className='h-5 w-5'
-                  checked={false}
-                  onChange={() => {}}
-                />
-              </fieldset>
-
-              <fieldset>
-                <legend className='my-4'>Temps de travail</legend>
-
-                <label htmlFor='temps-travail--plein'>Temps plein</label>
-                <input
-                  type='checkbox'
-                  value=''
-                  id='temps-travail--plein'
-                  className='h-5 w-5'
-                  checked={false}
-                  onChange={() => {}}
-                />
-
-                <label htmlFor='temps-travail--partiel'>Temps partiel</label>
-                <input
-                  type='checkbox'
-                  value=''
-                  id='temps-travail--partiel'
-                  className='h-5 w-5'
-                  checked={false}
-                  onChange={() => {}}
-                />
-              </fieldset>
-            </fieldset>
-          )}
         </div>
+
+        {hasMoreFilters && (
+          <fieldset>
+            <legend className='sr-only'>Étape 3 Plus de critères</legend>
+
+            <div className='flex'>
+              <fieldset className='grow flex flex-col gap-y-8'>
+                <legend className='contents text-base-bold'>
+                  Type de contrat
+                </legend>
+
+                <Checkbox
+                  id='contrat--cdi'
+                  label='CDI'
+                  value=''
+                  onChange={() => {}}
+                />
+                <Checkbox
+                  id='contrat--cdd'
+                  label='CDD - intérim - saisonnier'
+                  value=''
+                  onChange={() => {}}
+                />
+                <Checkbox
+                  id='contrat--autres'
+                  label='Autres'
+                  value=''
+                  onChange={() => {}}
+                />
+              </fieldset>
+
+              <fieldset className='grow flex flex-col gap-y-8'>
+                <legend className='contents text-base-bold'>
+                  Temps de travail
+                </legend>
+
+                <Checkbox
+                  id='temps-travail--plein'
+                  label='Temps plein'
+                  value=''
+                  onChange={() => {}}
+                />
+                <Checkbox
+                  id='temps-travail--partiel'
+                  label='Temps partiel'
+                  value=''
+                  onChange={() => {}}
+                />
+              </fieldset>
+            </div>
+          </fieldset>
+        )}
+
+        <Button
+          type='submit'
+          className='mx-auto'
+          disabled={!formIsValid || isSearching}
+        >
+          <IconComponent
+            name={IconName.Search}
+            focusable={false}
+            aria-hidden={true}
+            className='w-4 h-4 mr-2'
+          />
+          Rechercher
+        </Button>
       </form>
 
       {isSearching && (
@@ -303,6 +296,26 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         </>
       )}
     </>
+  )
+}
+
+function Checkbox(props: {
+  id: string
+  value: string
+  onChange: (value: string) => void
+  label: string
+}) {
+  return (
+    <label htmlFor={props.id} className='flex w-fit'>
+      <input
+        type='checkbox'
+        value={props.value}
+        id={props.id}
+        className='h-6 w-6 mr-5'
+        onChange={(e) => props.onChange(e.target.value)}
+      />
+      {props.label}
+    </label>
   )
 }
 

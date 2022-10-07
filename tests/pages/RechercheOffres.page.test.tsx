@@ -43,7 +43,7 @@ describe('Page Recherche Offres', () => {
     it('permet de selectionner un type d’offre', () => {
       // Then
       const etape1 = screen.getByRole('group', {
-        name: 'Étape 1 Selectionner un type d’offre',
+        name: 'Étape 1 Sélectionner un type d’offre',
       })
       expect(etape1).toBeInTheDocument()
       expect(within(etape1).getByLabelText('Offre d’emploi')).toHaveAttribute(
