@@ -6,6 +6,7 @@ import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import MenuLinks, { MenuItem } from 'components/MenuLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -16,7 +17,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
 interface ChatRoomProps {
-  jeunesChats: JeuneChat[]
+  jeunesChats: JeuneChat[] | undefined
 }
 
 export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
@@ -25,7 +26,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
   const [conseiller] = useConseiller()
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
-  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>([])
+  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
@@ -55,7 +56,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
 
   function filtrerConversations(saisieUtilisateur: string) {
     const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
-    const chatsFiltresResult = jeunesChats.filter((jeune) => {
+    const chatsFiltresResult = (jeunesChats ?? []).filter((jeune) => {
       const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
       for (const item of querySplit) {
         if (jeuneLastName.includes(item)) {
@@ -76,7 +77,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   }, [jeunesService, idCurrentJeune])
 
   useEffect(() => {
-    if (idCurrentJeune) {
+    if (idCurrentJeune && jeunesChats) {
       setCurrentChat(
         jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
       )
@@ -177,11 +178,16 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <RechercheJeune onSearchFilterBy={filtrerConversations} />
           </div>
 
-          <ListeConversations
-            conversations={chatsFiltres}
-            onToggleFlag={toggleFlag}
-            onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
-          />
+          <div aria-live='polite' aria-busy={!chatsFiltres}>
+            {!chatsFiltres && <SpinningLoader />}
+            {chatsFiltres && (
+              <ListeConversations
+                conversations={chatsFiltres}
+                onToggleFlag={toggleFlag}
+                onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
+              />
+            )}
+          </div>
         </article>
       )}
     </>

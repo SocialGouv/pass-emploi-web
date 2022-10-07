@@ -13,6 +13,7 @@ import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import { InputError } from 'components/ui/Form/InputError'
 import ResizingMultilineInput from 'components/ui/Form/ResizingMultilineInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
@@ -44,7 +45,7 @@ export default function Conversation({
   const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')
-  const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>([])
+  const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>()
   const [uploadedFileInfo, setUploadedFileInfo] = useState<
     InfoFichier | undefined
   >(undefined)
@@ -233,26 +234,35 @@ export default function Conversation({
       </div>
       <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 
-      <ul className='p-4 flex-grow overflow-y-auto short:hidden'>
-        {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
-          <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-            <div className='text-base-regular text-center mb-3'>
-              <span>{displayDate(messagesOfADay.date)}</span>
-            </div>
+      <div
+        className='p-4 flex-grow overflow-y-auto short:hidden'
+        aria-live='polite'
+        aria-busy={!messagesByDay}
+      >
+        {!messagesByDay && <SpinningLoader />}
+        {messagesByDay && (
+          <ul>
+            {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
+              <li key={messagesOfADay.date.toMillis()} className='mb-5'>
+                <div className='text-base-regular text-center mb-3'>
+                  <span>{displayDate(messagesOfADay.date)}</span>
+                </div>
 
-            <ul>
-              {messagesOfADay.messages.map((message: Message) => (
-                <DisplayMessage
-                  key={message.id}
-                  message={message}
-                  conseillerNomComplet={getConseillerNomComplet(message)}
-                  lastSeenByJeune={lastSeenByJeune}
-                />
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+                <ul>
+                  {messagesOfADay.messages.map((message: Message) => (
+                    <DisplayMessage
+                      key={message.id}
+                      message={message}
+                      conseillerNomComplet={getConseillerNomComplet(message)}
+                      lastSeenByJeune={lastSeenByJeune}
+                    />
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <form onSubmit={sendNouveauMessage} className='p-3'>
         {uploadedFileError && (
