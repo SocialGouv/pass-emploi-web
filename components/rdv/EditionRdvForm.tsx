@@ -8,13 +8,13 @@ import JeunesMultiselectAutocomplete, {
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import { Switch } from 'components/ui/Form/Switch'
 import Textarea from 'components/ui/Form/Textarea'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
@@ -293,18 +293,7 @@ export function EditionRdvForm({
         </div>
       )}
 
-      <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre1}
-            role='img'
-            focusable='false'
-            aria-label='Étape 1'
-            className='mr-2 w-8 h-8'
-          />
-          Bénéficiaires :
-        </legend>
-
+      <Etape numero={1} titre='Bénéficiaires'>
         <JeunesMultiselectAutocomplete
           jeunes={jeunes}
           typeSelection='Bénéficiaires'
@@ -312,20 +301,9 @@ export function EditionRdvForm({
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
         />
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre2}
-            role='img'
-            focusable='false'
-            aria-label='Étape 2'
-            className='mr-2 w-8 h-8'
-          />
-          Type de rendez-vous :
-        </legend>
-
+      <Etape numero={2} titre='Type de rendez-vous'>
         <Label htmlFor='typeRendezVous' inputRequired={true}>
           Type
         </Label>
@@ -378,20 +356,9 @@ export function EditionRdvForm({
             </option>
           ))}
         </Select>
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre3}
-            role='img'
-            focusable='false'
-            aria-label='Étape 3'
-            className='mr-2 w-8 h-8'
-          />
-          Lieu et date :
-        </legend>
-
+      <Etape numero={3} titre='Lieu et date'>
         <Label htmlFor='date' inputRequired={true}>
           Date
           <span className='text-base-regular'> (format : jj/mm/aaaa)</span>
@@ -476,20 +443,9 @@ export function EditionRdvForm({
           defaultValue={organisme}
           onChange={setOrganisme}
         />
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre4}
-            role='img'
-            focusable='false'
-            aria-label='Étape 4'
-            className='mr-2 w-8 h-8'
-          />
-          Informations conseiller :
-        </legend>
-
+      <Etape numero={4} titre='Informations conseiller'>
         {!conseillerIsCreator && (
           <>
             {rdv!.createur && (
@@ -554,7 +510,7 @@ export function EditionRdvForm({
           rows={3}
           onChange={(e) => setCommentaire(e.target.value)}
         />
-      </fieldset>
+      </Etape>
 
       <div className='flex justify-center'>
         {!formHasChanges() && (

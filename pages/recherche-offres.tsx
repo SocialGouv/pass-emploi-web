@@ -6,11 +6,11 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import RadioButton from 'components/action/RadioButton'
 import { OffreCard } from 'components/offres/OffreCard'
 import Button from 'components/ui/Button/Button'
+import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
@@ -146,18 +146,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       )}
 
       <form onSubmit={rechercherOffresEmploi}>
-        <fieldset className='border-none flex flex-col mb-8'>
-          <legend className='flex items-center text-m-bold mb-4'>
-            <IconComponent
-              name={IconName.Chiffre1}
-              role='img'
-              focusable='false'
-              aria-label='Étape 1'
-              className='mr-2 w-8 h-8'
-            />
-            Selectionner un type d’offre
-          </legend>
-
+        <Etape numero={1} titre="Sélectionner un type d'offre">
           <RadioButton
             isSelected={true}
             onChange={() => {}}
@@ -166,20 +155,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             id='type-offre--emploi'
             label='Offre d’emploi'
           />
-        </fieldset>
+        </Etape>
 
-        <fieldset className='border-none flex flex-col mb-8'>
-          <legend className='flex items-center text-m-bold mb-4'>
-            <IconComponent
-              name={IconName.Chiffre2}
-              role='img'
-              focusable='false'
-              aria-label='Étape 2'
-              className='mr-2 w-8 h-8'
-            />
-            Critères de recherche
-          </legend>
-
+        <Etape numero={2} titre='Critères de recherche'>
           <Label htmlFor='mots-cles'>Mots clés (Métier, code ROME)</Label>
           <Input type='text' id='mots-cles' onChange={setMotsCles} />
 
@@ -202,7 +180,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             invalid={Boolean(localisationInput.error)}
             value={localisationInput.value ?? ''}
           />
-        </fieldset>
+        </Etape>
 
         <div className='flex items-center'>
           <div className='grow'></div>
@@ -224,7 +202,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             Voir plus de critères
           </button>
           {hasMoreFilters && (
-            <fieldset className='border-none flex flex-col mb-8'>
+            <fieldset>
               <legend className='sr-only'>Étape 3 Plus de critères</legend>
 
               <fieldset>
