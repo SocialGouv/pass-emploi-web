@@ -42,31 +42,179 @@ describe('Page Recherche Offres', () => {
 
     it('permet de selectionner un type d’offre', () => {
       // Then
-      expect(
-        screen.getByLabelText('Selectionner un type d’offre')
-      ).toBeInTheDocument()
-      expect(screen.getByLabelText('Offre d’emploi')).toBeInTheDocument()
-      //expect(screen.getByText('Alternance')).toBeInTheDocument()
-      //expect(screen.getByText('Service civique')).toBeInTheDocument()
-      //expect(screen.getByText('Immersion')).toBeInTheDocument()
+      const etape1 = screen.getByRole('group', {
+        name: 'Étape 1 Selectionner un type d’offre',
+      })
+      expect(etape1).toBeInTheDocument()
+      expect(within(etape1).getByLabelText('Offre d’emploi')).toHaveAttribute(
+        'disabled',
+        ''
+      )
     })
 
-    describe('permet de definir des critères de recherche', () => {
-      it('permet de saisir des mots clés', () => {
-        // Then
-        expect(screen.getByText('Critères de recherche')).toBeInTheDocument()
-        expect(screen.getByLabelText(/Mots clés/)).toHaveAttribute(
-          'type',
-          'text'
-        )
+    it('permet de definir des critères de recherche', () => {
+      // Then
+      const etape2 = screen.getByRole('group', {
+        name: 'Étape 2 Critères de recherche',
       })
 
-      it('n’affiche pas de résultat par défaut', () => {
+      expect(etape2).toBeInTheDocument()
+      expect(
+        within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
+      ).toHaveAttribute('type', 'text')
+      expect(
+        within(etape2).getByRole('combobox', {
+          name: 'Lieu de travail Saisissez une ville ou un département',
+        })
+      ).toBeInTheDocument()
+      expect(() =>
+        within(etape2).getAllByRole('option', { hidden: true })
+      ).toThrow()
+    })
+
+    describe('autocomplétion localisation', () => {
+      it('retire les accents à la saisie', async () => {
+        // Given
+        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
+
+        // When
+        await userEvent.type(inputLocalisation, 'Ardèche')
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
+
         // Then
-        expect(() => screen.getByText('Liste des résultats')).toThrow()
-        expect(() => screen.getByRole('list')).toThrow()
+        expect(inputLocalisation).toHaveValue('Ardeche')
+        expect(
+          referentielService.getCommunesEtDepartements
+        ).toHaveBeenCalledTimes(1)
+        expect(
+          referentielService.getCommunesEtDepartements
+        ).toHaveBeenCalledWith('Ardeche')
       })
 
+      it('récupère les communes et les départements à la saisie', async () => {
+        // Given
+        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
+
+        // When
+        await userEvent.type(inputLocalisation, 'Paris')
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
+
+        // Then
+        expect(
+          referentielService.getCommunesEtDepartements
+        ).toHaveBeenCalledTimes(1)
+        expect(
+          referentielService.getCommunesEtDepartements
+        ).toHaveBeenCalledWith('Paris')
+        expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
+        localites.forEach((localite) => {
+          expect(
+            screen.getByRole('option', {
+              hidden: true,
+              name: localite.libelle,
+            })
+          ).toHaveValue(localite.libelle)
+        })
+      })
+
+      it('affiche une erreur quand la localisation est incorrecte', async () => {
+        // Given
+        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
+        const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+        // When
+        await userEvent.type(inputLocalisation, 'paris14')
+
+        await act(() => {
+          fireEvent.blur(inputLocalisation)
+        })
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(
+          screen.getByText('Veuillez saisir une localisation correcte.')
+        ).toBeInTheDocument()
+        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledTimes(0)
+      })
+    })
+
+    describe('permet d’affiner la recherche par des filtres', () => {
+      it('permet d’ajouter plus de filtre à notre recherche', async () => {
+        // Then
+        expect(() =>
+          screen.getByRole('group', { name: 'Étape 3 Plus de critères' })
+        ).toThrow()
+        expect(
+          screen.getByRole('button', { name: 'Voir plus de critères' })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+
+        // Then
+        const etape3 = screen.getByRole('group', {
+          name: 'Étape 3 Plus de critères',
+        })
+        expect(etape3).toBeInTheDocument()
+      })
+
+      it('permet de selectionner un ou plusieurs types de contrat', async () => {
+        // When
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+
+        // Then
+        const etape3 = screen.getByRole('group', {
+          name: 'Étape 3 Plus de critères',
+        })
+        const typeContratGroup = within(etape3).getByRole('group', {
+          name: 'Type de contrat',
+        })
+        expect(typeContratGroup).toBeInTheDocument()
+        expect(
+          within(typeContratGroup).getByRole('checkbox', { name: 'CDI' })
+        ).toBeInTheDocument()
+        expect(
+          within(typeContratGroup).getByRole('checkbox', {
+            name: 'CDD - intérim - saisonnier',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(typeContratGroup).getByRole('checkbox', { name: 'Autres' })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de selectionner un ou plusieurs temps de travail', async () => {
+        // When
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+
+        // Then
+        const etape3 = screen.getByRole('group', {
+          name: 'Étape 3 Plus de critères',
+        })
+        const tempsTravailGroup = within(etape3).getByRole('group', {
+          name: 'Temps de travail',
+        })
+        expect(tempsTravailGroup).toBeInTheDocument()
+        expect(
+          within(tempsTravailGroup).getByRole('checkbox', {
+            name: 'Temps partiel',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(tempsTravailGroup).getByRole('checkbox', {
+            name: 'Temps plein',
+          })
+        ).toBeInTheDocument()
+      })
+    })
+
+    it('n’affiche pas de résultat par défaut', () => {
+      // Then
+      expect(() => screen.getByText('Liste des résultats')).toThrow()
+      expect(() => screen.getByRole('list')).toThrow()
+    })
+
+    describe('recherche', () => {
       it("permet de rechercher des offres d'emploi", async () => {
         // Given
         const submitButton = screen.getByRole('button', { name: 'Rechercher' })
@@ -78,145 +226,46 @@ describe('Page Recherche Offres', () => {
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
       })
 
-      it('permet de rechercher une localisation', () => {
-        // Then
-        expect(
-          screen.getByRole('combobox', {
-            name: 'Localisation (département ou commune)',
-          })
-        ).toBeInTheDocument()
-
-        expect(() => screen.getAllByRole('option', { hidden: true })).toThrow()
-      })
-    })
-
-    describe('permet d’affiner la recherche par des filtres', () => {
-      it('permet d’ajouter plus de filtre à notre recherche', () => {
-        // Then
-        expect(
-          screen.getByRole('button', { name: 'Voir plus de critères' })
-        ).toBeInTheDocument()
-      })
-
-      it('permet de selectionner un type de contrat', async () => {
+      it('construit la recherche avec un département', async () => {
         // Given
+        const inputMotsCles = screen.getByLabelText(/Mots clés/)
+        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
+        const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
         // When
-        await act(() =>
-          userEvent.click(screen.getByText('Voir plus de critères'))
-        )
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await userEvent.type(inputLocalisation, 'pAris')
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await userEvent.click(submitButton)
+
         // Then
-        expect(screen.getByText('Type de contrat')).toBeInTheDocument()
-        expect(screen.getByText('CDI')).toBeInTheDocument()
-        expect(
-          screen.getByText('CDD - intérim - saisonnier')
-        ).toBeInTheDocument()
-        expect(screen.getByText('Autres')).toBeInTheDocument()
+        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+          motsCles: 'prof industrie',
+          departement: '75',
+        })
+      })
+
+      it('construit la recherche avec une commune', async () => {
+        // Given
+        const inputMotsCles = screen.getByLabelText(/Mots clés/)
+        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
+        const submitButton = screen.getByRole('button', { name: 'Rechercher' })
+
+        // When
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await userEvent.type(inputLocalisation, 'paris 14')
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+          motsCles: 'prof industrie',
+          commune: '75114',
+        })
       })
     })
 
-    it('retire les accents à la saisie', async () => {
-      // Given
-      const inputLocalisation = screen.getByLabelText(/Localisation/)
-
-      // When
-      await userEvent.type(inputLocalisation, 'Ardèche')
-      await act(() => new Promise((r) => setTimeout(r, 1000)))
-
-      // Then
-      expect(inputLocalisation).toHaveValue('Ardeche')
-      expect(
-        referentielService.getCommunesEtDepartements
-      ).toHaveBeenCalledTimes(1)
-      expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
-        'Ardeche'
-      )
-    })
-
-    it('récupère les communes et les départements à la saisie', async () => {
-      // Given
-      const inputLocalisation = screen.getByLabelText(/Localisation/)
-
-      // When
-      await userEvent.type(inputLocalisation, 'Paris')
-      await act(() => new Promise((r) => setTimeout(r, 1000)))
-
-      // Then
-      expect(
-        referentielService.getCommunesEtDepartements
-      ).toHaveBeenCalledTimes(1)
-      expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
-        'Paris'
-      )
-      expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(5)
-      localites.forEach((localite) => {
-        expect(
-          screen.getByRole('option', {
-            hidden: true,
-            name: localite.libelle,
-          })
-        ).toHaveValue(localite.libelle)
-      })
-    })
-
-    it('construit la recherche avec un département', async () => {
-      // Given
-      const inputMotsCles = screen.getByLabelText(/Mots clés/)
-      const inputLocalisation = screen.getByLabelText(/Localisation/)
-      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-
-      // When
-      await userEvent.type(inputMotsCles, 'prof industrie')
-      await userEvent.type(inputLocalisation, 'pAris')
-      await act(() => new Promise((r) => setTimeout(r, 1000)))
-      await userEvent.click(submitButton)
-
-      // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-        motsCles: 'prof industrie',
-        departement: '75',
-      })
-    })
-
-    it('construit la recherche avec une commune', async () => {
-      // Given
-      const inputMotsCles = screen.getByLabelText(/Mots clés/)
-      const inputLocalisation = screen.getByLabelText(/Localisation/)
-      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-
-      // When
-      await userEvent.type(inputMotsCles, 'prof industrie')
-      await userEvent.type(inputLocalisation, 'paris 14')
-      await act(() => new Promise((r) => setTimeout(r, 1000)))
-      await userEvent.click(submitButton)
-
-      // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-        motsCles: 'prof industrie',
-        commune: '75114',
-      })
-    })
-
-    it('affiche une erreur quand la localisation est incorrecte', async () => {
-      // Given
-      const inputLocalisation = screen.getByLabelText(/Localisation/)
-      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-
-      // When
-      await userEvent.type(inputLocalisation, 'paris14')
-
-      await act(() => {
-        fireEvent.blur(inputLocalisation)
-      })
-      await userEvent.click(submitButton)
-
-      // Then
-      expect(
-        screen.getByText('Veuillez saisir une localisation correcte.')
-      ).toBeInTheDocument()
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledTimes(0)
-    })
-
-    describe('résultat de la recherche', () => {
+    describe('recherche réussie', () => {
       let offresList: HTMLElement
       beforeEach(async () => {
         // Given

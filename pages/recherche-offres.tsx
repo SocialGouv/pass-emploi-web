@@ -3,12 +3,14 @@ import { GetServerSideProps } from 'next'
 import React, { FormEvent, useEffect, useMemo, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import RadioButton from 'components/action/RadioButton'
 import { OffreCard } from 'components/offres/OffreCard'
 import Button from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
 import { PageProps } from 'interfaces/pageProps'
@@ -23,9 +25,6 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-import RadioButton from 'components/action/RadioButton'
-import propsStatutsActions from 'components/action/propsStatutsActions'
 
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
@@ -147,42 +146,48 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       )}
 
       <form onSubmit={rechercherOffresEmploi}>
-        <div>
-          <legend
-            className='flex items-center text-m-bold mb-4'
-            aria-label='Selectionner un type d’offre'
-          >
+        <fieldset className='border-none flex flex-col mb-8'>
+          <legend className='flex items-center text-m-bold mb-4'>
             <IconComponent
               name={IconName.Chiffre1}
               role='img'
-              focusable={false}
+              focusable='false'
+              aria-label='Étape 1'
               className='mr-2 w-8 h-8'
             />
             Selectionner un type d’offre
           </legend>
-          <div className='mb-4'>
-            <RadioButton
-              isSelected={true}
-              onChange={() => {}}
-              name='type-offre'
-              id='type-offre-emploi'
-              label='Offre d’emploi'
-            />
-          </div>
-        </div>
 
-        <div className='w-1/2'>
-          <legend className='flex items-center text-m-bold mb-8'>
+          <RadioButton
+            isSelected={true}
+            onChange={() => {}}
+            disabled={true}
+            name='type-offre'
+            id='type-offre--emploi'
+            label='Offre d’emploi'
+          />
+        </fieldset>
+
+        <fieldset className='border-none flex flex-col mb-8'>
+          <legend className='flex items-center text-m-bold mb-4'>
             <IconComponent
               name={IconName.Chiffre2}
               role='img'
-              focusable={false}
+              focusable='false'
+              aria-label='Étape 2'
               className='mr-2 w-8 h-8'
             />
             Critères de recherche
           </legend>
+
+          <Label htmlFor='mots-cles'>Mots clés (Métier, code ROME)</Label>
+          <Input type='text' id='mots-cles' onChange={setMotsCles} />
+
           <Label htmlFor='localisation'>
-            Localisation (département ou commune)
+            {{
+              main: 'Lieu de travail',
+              sub: 'Saisissez une ville ou un département',
+            }}
           </Label>
           {localisationInput.error && (
             <InputError id='localisation--error'>
@@ -197,13 +202,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             invalid={Boolean(localisationInput.error)}
             value={localisationInput.value ?? ''}
           />
-        </div>
+        </fieldset>
 
         <div className='flex items-center'>
-          <div className='grow'>
-            <Label htmlFor='mots-cles'>Mots clés (intitulé, code ROME)</Label>
-            <Input type='text' id='mots-cles' onChange={setMotsCles} />
-          </div>
+          <div className='grow'></div>
 
           <Button
             type='submit'
@@ -222,44 +224,67 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             Voir plus de critères
           </button>
           {hasMoreFilters && (
-            <div>
-              <div>
-                <p className='my-4'>Type de contrat</p>
-                <label key='' htmlFor='' className='flex pb-4'>
-                  <input
-                    type='checkbox'
-                    value=''
-                    id=''
-                    className='h-5 w-5'
-                    checked={false}
-                    onChange={() => {}}
-                  />
-                  <span className='pl-5'>CDI</span>
-                </label>
-                <label key='' htmlFor='' className='flex pb-4'>
-                  <input
-                    type='checkbox'
-                    value=''
-                    id=''
-                    className='h-5 w-5'
-                    checked={false}
-                    onChange={() => {}}
-                  />
-                  <span className='pl-5'>CDD - intérim - saisonnier</span>
-                </label>
-                <label key='' htmlFor='' className='flex pb-4'>
-                  <input
-                    type='checkbox'
-                    value=''
-                    id=''
-                    className='h-5 w-5'
-                    checked={false}
-                    onChange={() => {}}
-                  />
-                  <span className='pl-5'>Autres</span>
-                </label>
-              </div>
-            </div>
+            <fieldset className='border-none flex flex-col mb-8'>
+              <legend className='sr-only'>Étape 3 Plus de critères</legend>
+
+              <fieldset>
+                <legend className='my-4'>Type de contrat</legend>
+
+                <label htmlFor='contrat--cdi'>CDI</label>
+                <input
+                  type='checkbox'
+                  value=''
+                  id='contrat--cdi'
+                  className='h-5 w-5'
+                  checked={false}
+                  onChange={() => {}}
+                />
+
+                <label htmlFor='contrat--cdd'>CDD - intérim - saisonnier</label>
+                <input
+                  type='checkbox'
+                  value=''
+                  id='contrat--cdd'
+                  className='h-5 w-5'
+                  checked={false}
+                  onChange={() => {}}
+                />
+
+                <label htmlFor='contrat--autres'>Autres</label>
+                <input
+                  type='checkbox'
+                  value=''
+                  id='contrat--autres'
+                  className='h-5 w-5'
+                  checked={false}
+                  onChange={() => {}}
+                />
+              </fieldset>
+
+              <fieldset>
+                <legend className='my-4'>Temps de travail</legend>
+
+                <label htmlFor='temps-travail--plein'>Temps plein</label>
+                <input
+                  type='checkbox'
+                  value=''
+                  id='temps-travail--plein'
+                  className='h-5 w-5'
+                  checked={false}
+                  onChange={() => {}}
+                />
+
+                <label htmlFor='temps-travail--partiel'>Temps partiel</label>
+                <input
+                  type='checkbox'
+                  value=''
+                  id='temps-travail--partiel'
+                  className='h-5 w-5'
+                  checked={false}
+                  onChange={() => {}}
+                />
+              </fieldset>
+            </fieldset>
           )}
         </div>
       </form>
