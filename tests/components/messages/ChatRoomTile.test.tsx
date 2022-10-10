@@ -59,12 +59,12 @@ describe('<ChatRoomTile />', () => {
     })
   })
 
-  it("affiche un indicateur si le dernier message vient du jeune et le conseiller ne l'a pas lu", () => {
+  it("affiche un indicateur si le conseiller n'a pas lu le dernier message", () => {
     // When
     render(
       <ChatRoomTile
         jeuneChat={unJeuneChat({
-          lastMessageSentBy: 'jeune',
+          lastMessageSentBy: 'conseiller',
           seenByConseiller: false,
         })}
         id='whatever'
