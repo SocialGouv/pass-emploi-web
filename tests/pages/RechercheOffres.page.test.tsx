@@ -156,6 +156,7 @@ describe('Page Recherche Offres', () => {
           name: 'Étape 3 Plus de critères',
         })
         expect(etape3).toBeInTheDocument()
+        expect(screen.getByText('Voir moins de critères')).toBeInTheDocument()
       })
 
       it('permet de selectionner un ou plusieurs types de contrat', async () => {
@@ -298,6 +299,26 @@ describe('Page Recherche Offres', () => {
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
           motsCles: 'prof industrie',
           commune: '75114',
+        })
+      })
+
+      it('construit la recherche avec les critères d’affinage', async () => {
+        // Given
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+        await userEvent.click(
+          screen.getByLabelText(
+            /Afficher uniquement les offres débutants acceptés/
+          )
+        )
+
+        // When
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Rechercher' })
+        )
+
+        // Then
+        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+          debutantAccepte: true,
         })
       })
     })

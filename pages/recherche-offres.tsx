@@ -52,6 +52,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
   const [hasMoreFilters, setHasMoreFilters] = useState<boolean>(false)
+  const [isDebutantAccepte, setIsDebutantAccepte] = useState<boolean>(false)
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
@@ -114,6 +115,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         if (localiteValide.type === 'COMMUNE')
           query.commune = localiteValide.code
       }
+
+      if (isDebutantAccepte) query.debutantAccepte = true
 
       const result = await offresEmploiService.searchOffresEmploi(query)
       setOffres(result)
@@ -190,7 +193,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             onClick={() => setHasMoreFilters(!hasMoreFilters)}
             className='mr-12'
           >
-            Voir plus de critères
+            Voir {hasMoreFilters ? 'moins' : 'plus'} de critères
           </button>
         </div>
 
@@ -248,8 +251,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
               <label htmlFor='debutants-acceptes' className='flex items-center'>
                 <Switch
                   id='debutants-acceptes'
-                  checked={false}
-                  onChange={() => {}}
+                  checked={isDebutantAccepte}
+                  onChange={() => setIsDebutantAccepte(!isDebutantAccepte)}
                 />
                 <span className='ml-8'>
                   Afficher uniquement les offres débutants acceptés

@@ -14,6 +14,7 @@ export type SearchOffresEmploiQuery = {
   motsCles?: string
   departement?: string
   commune?: string
+  debutantAccepte?: boolean
 }
 
 export interface OffresEmploiService {
