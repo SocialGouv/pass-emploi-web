@@ -33,6 +33,7 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   isReaffectationTemporaire: boolean
   email?: string
   urlDossier?: string
+  dateFinCEJ?: string
   situations?: Situation[]
   idPartenaire?: string
 }

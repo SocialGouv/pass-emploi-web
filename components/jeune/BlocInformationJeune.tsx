@@ -9,6 +9,7 @@ import { toShortDate } from 'utils/date'
 interface BlocInformationJeuneProps {
   idJeune: string
   creationDate: string
+  dateFinCEJ: string | undefined
   email: string | undefined
   structureConseiller: StructureConseiller | undefined
   onIdentifiantPartenaireCopie: () => void
@@ -22,6 +23,7 @@ interface BlocInformationJeuneProps {
 export function BlocInformationJeune({
   idJeune,
   creationDate,
+  dateFinCEJ,
   email,
   structureConseiller,
   onIdentifiantPartenaireCopie,
@@ -43,7 +45,7 @@ export function BlocInformationJeune({
         <div className='flex'>
           <dt className='text-base-regular'>Ajouté le :</dt>
           <dd>
-            <span className='text-base-medium ml-1'>{shortCreationDate}</span>
+            <span className='text-base-bold ml-1'>{shortCreationDate}</span>
           </dd>
         </div>
 
@@ -59,6 +61,17 @@ export function BlocInformationJeune({
 
         {urlDossier && (
           <DossierExterne href={urlDossier} onClick={onDossierMiloClick} />
+        )}
+
+        {structureConseiller === StructureConseiller.MILO && (
+          <div className='flex'>
+            <dt className='text-base-regular'>Date de fin du CEJ :</dt>
+            <dd>
+              <span className='text-base-bold ml-1'>
+                {dateFinCEJ ? toShortDate(dateFinCEJ) : '--'}
+              </span>
+            </dd>
+          </div>
         )}
       </dl>
 
