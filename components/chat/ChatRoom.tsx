@@ -6,7 +6,6 @@ import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import MenuLinks, { MenuItem } from 'components/MenuLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -178,16 +177,11 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <RechercheJeune onSearchFilterBy={filtrerConversations} />
           </div>
 
-          <div aria-live='polite' aria-busy={!chatsFiltres}>
-            {!chatsFiltres && <SpinningLoader />}
-            {chatsFiltres && (
-              <ListeConversations
-                conversations={chatsFiltres}
-                onToggleFlag={toggleFlag}
-                onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
-              />
-            )}
-          </div>
+          <ListeConversations
+            conversations={chatsFiltres}
+            onToggleFlag={toggleFlag}
+            onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
+          />
         </article>
       )}
     </>

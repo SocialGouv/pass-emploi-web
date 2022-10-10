@@ -8,7 +8,8 @@ export function SpinningLoader() {
       name={IconName.Spinner}
       aria-label='Chargement…'
       focusable={false}
-      className='fill-primary animate-spin'
+      className='w-20 h-20 m-auto fill-primary animate-spin'
+      title='Chargement…'
     />
   )
 }
