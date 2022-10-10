@@ -52,6 +52,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const [isDebutantAccepte, setIsDebutantAccepte] = useState<boolean>(false)
   const [typesContrats, setTypesContrats] = useState<TypeContrat[]>([])
   const [durees, setDurees] = useState<Duree[]>([])
+  const [rayon, setRayon] = useState<number>(10)
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -127,7 +128,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     setOffres(undefined)
     setSearchError(undefined)
     try {
-      const query: SearchOffresEmploiQuery = {}
+      const query: SearchOffresEmploiQuery = { rayon }
       if (motsCles) query.motsCles = motsCles
 
       if (localiteValide) {
@@ -291,14 +292,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                   km
                 </span>
               </label>
-              <input
+              <Input
                 id='distance'
                 type='range'
                 className='block mt-4'
                 defaultValue={10}
                 min={0}
                 max={100}
-                onChange={(e) => console.log(e.target.value)}
+                onChange={(value: string) => setRayon(parseInt(value, 10))}
               />
             </fieldset>
           </fieldset>

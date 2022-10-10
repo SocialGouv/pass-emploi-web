@@ -320,6 +320,10 @@ describe('Page Recherche Offres', () => {
         await userEvent.click(screen.getByLabelText('Temps partiel'))
         await userEvent.click(screen.getByLabelText('Temps partiel'))
 
+        fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+          target: { value: 43 },
+        })
+
         // When
         await userEvent.click(
           screen.getByRole('button', { name: 'Rechercher' })
@@ -330,6 +334,7 @@ describe('Page Recherche Offres', () => {
           debutantAccepte: true,
           contrat: ['CDI', 'CDD-interim-saisonnier'],
           duree: ['Temps plein'],
+          rayon: 43,
         })
       })
     })

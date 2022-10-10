@@ -13,6 +13,7 @@ import { ApiError } from 'utils/httpClient'
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
 export type Duree = 'Temps plein' | 'Temps partiel'
 export type SearchOffresEmploiQuery = {
+  rayon: number
   motsCles?: string
   departement?: string
   commune?: string
