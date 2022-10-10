@@ -36,12 +36,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-
   const referentielService =
     useDependance<ReferentielService>('referentielService')
 
   const [localites, setLocalites] = useState<Localite[]>([])
   const [hasMoreFilters, setHasMoreFilters] = useState<boolean>(false)
+  const [afficherRayon, setAfficherRayon] = useState<boolean>(false)
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [localisationInput, setLocalisationInput] = useState<{
@@ -49,10 +49,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     error?: string
   }>({})
   const debouncedLocalisationInput = useDebounce(localisationInput.value, 500)
+  const [localiteSaisie, setLocaliteSaisie] = useState<Localite | undefined>()
   const [isDebutantAccepte, setIsDebutantAccepte] = useState<boolean>(false)
   const [typesContrats, setTypesContrats] = useState<TypeContrat[]>([])
   const [durees, setDurees] = useState<Duree[]>([])
-  const [rayon, setRayon] = useState<number>(10)
+  const [rayon, setRayon] = useState<number | undefined>()
+  const RAYON_DEFAULT = 10
+  const RAYON_MIN = 0
+  const RAYON_MAX = 100
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -73,16 +77,25 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     [localites]
   )
 
-  function validateLocalite(): Localite | null | false {
-    if (!localisationInput.value) return null
-
-    const localiteCorrespondante: Localite | undefined = localites.find(
+  function findLocaliteInListe(
+    value: string,
+    liste: Localite[]
+  ): Localite | undefined {
+    return liste.find(
       ({ libelle }) =>
-        libelle.localeCompare(localisationInput.value!, undefined, {
+        libelle.localeCompare(value, undefined, {
           sensitivity: 'base',
         }) === 0
     )
+  }
 
+  function validateLocalite(): boolean {
+    if (!localisationInput.value) return true
+
+    const localiteCorrespondante = findLocaliteInListe(
+      localisationInput.value,
+      localites
+    )
     if (!localiteCorrespondante) {
       setLocalisationInput({
         ...localisationInput,
@@ -90,7 +103,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       })
       return false
     } else {
-      return localiteCorrespondante
+      return true
     }
   }
 
@@ -125,23 +138,23 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    const localiteValide = validateLocalite()
-    if (localiteValide === false) return
+    if (!validateLocalite()) return
 
     setIsSearching(true)
     setOffres(undefined)
     setSearchError(undefined)
     try {
-      const query: SearchOffresEmploiQuery = { rayon }
-      if (motsCles) query.motsCles = motsCles
+      const query: SearchOffresEmploiQuery = {}
 
-      if (localiteValide) {
-        if (localiteValide.type === 'DEPARTEMENT')
-          query.departement = localiteValide.code
-        if (localiteValide.type === 'COMMUNE')
-          query.commune = localiteValide.code
+      if (localiteSaisie) {
+        if (localiteSaisie.type === 'DEPARTEMENT')
+          query.departement = localiteSaisie.code
+        if (localiteSaisie.type === 'COMMUNE')
+          query.commune = localiteSaisie.code
       }
 
+      if (rayon !== undefined) query.rayon = rayon
+      if (motsCles) query.motsCles = motsCles
       if (isDebutantAccepte) query.debutantAccepte = true
       if (typesContrats.length) query.typesContrats = typesContrats
       if (durees.length) query.durees = durees
@@ -161,11 +174,31 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     if (debouncedLocalisationInput) {
       referentielService
         .getCommunesEtDepartements(debouncedLocalisationInput)
-        .then(setLocalites)
+        .then((communesEtDepartements) => {
+          setLocalites(communesEtDepartements)
+          if (communesEtDepartements.length) {
+            setLocaliteSaisie(
+              findLocaliteInListe(
+                debouncedLocalisationInput,
+                communesEtDepartements
+              )
+            )
+          }
+        })
     } else {
       setLocalites([])
     }
   }, [debouncedLocalisationInput, referentielService])
+
+  useEffect(() => {
+    if (localiteSaisie?.type === 'COMMUNE') {
+      setAfficherRayon(true)
+      setRayon(RAYON_DEFAULT)
+    } else {
+      setAfficherRayon(false)
+      setRayon(undefined)
+    }
+  }, [localiteSaisie?.type])
 
   useMatomo(trackingTitle)
 
@@ -287,25 +320,27 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                 </span>
               </label>
             </fieldset>
-            <fieldset>
-              <legend className='text-base-bold mb-4'>Distance</legend>
-              <label htmlFor='distance'>
-                Dans un rayon de :{' '}
-                <span>
-                  {'10'}
-                  km
-                </span>
-              </label>
-              <Input
-                id='distance'
-                type='range'
-                className='block mt-4'
-                defaultValue={10}
-                min={0}
-                max={100}
-                onChange={(value: string) => setRayon(parseInt(value, 10))}
-              />
-            </fieldset>
+            {afficherRayon && (
+              <fieldset>
+                <legend className='text-base-bold mb-4'>Distance</legend>
+                <label htmlFor='distance'>
+                  Dans un rayon de :{' '}
+                  <span>
+                    {'10'}
+                    km
+                  </span>
+                </label>
+                <Input
+                  id='distance'
+                  type='range'
+                  className='block mt-4'
+                  value={rayon}
+                  min={RAYON_MIN}
+                  max={RAYON_MAX}
+                  onChange={(value: string) => setRayon(parseInt(value, 10))}
+                />
+              </fieldset>
+            )}
           </fieldset>
         )}
 

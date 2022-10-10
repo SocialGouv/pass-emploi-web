@@ -226,20 +226,30 @@ describe('Page Recherche Offres', () => {
         ).not.toBeChecked()
       })
 
-      it('permet de définir un rayon de recherche', async () => {
+      it('permet de définir un rayon de recherche si une commune est sélectionnée', async () => {
         // When
         await userEvent.click(screen.getByText('Voir plus de critères'))
-
-        // Then
         const etape3 = screen.getByRole('group', {
           name: 'Étape 3 Plus de critères',
         })
+        expect(() =>
+          within(etape3).getByRole('group', { name: 'Distance' })
+        ).toThrow()
+
+        await userEvent.type(
+          screen.getByLabelText(/Lieu de travail/),
+          'paris 14'
+        )
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
+
+        // Then
         const distanceGroup = within(etape3).getByRole('group', {
           name: 'Distance',
         })
         const inputRange = within(distanceGroup).getByRole('slider', {
           name: 'Dans un rayon de : 10km',
         })
+        expect(inputRange).toHaveAttribute('value', '10')
         expect(inputRange).toHaveAttribute('type', 'range')
         expect(inputRange).toHaveAttribute('min', '0')
         expect(inputRange).toHaveAttribute('max', '100')
@@ -299,12 +309,19 @@ describe('Page Recherche Offres', () => {
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
           motsCles: 'prof industrie',
           commune: '75114',
+          rayon: 10,
         })
       })
 
       it('construit la recherche avec les critères d’affinage', async () => {
         // Given
+        await userEvent.type(
+          screen.getByLabelText(/Lieu de travail/),
+          'paris 14'
+        )
+        await act(() => new Promise((r) => setTimeout(r, 1000)))
         await userEvent.click(screen.getByText('Voir plus de critères'))
+
         await userEvent.click(
           screen.getByLabelText(
             /Afficher uniquement les offres débutants acceptés/
@@ -331,6 +348,7 @@ describe('Page Recherche Offres', () => {
 
         // Then
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
+          commune: '75114',
           debutantAccepte: true,
           typesContrats: ['CDI', 'CDD-interim-saisonnier'],
           durees: ['Temps plein'],
