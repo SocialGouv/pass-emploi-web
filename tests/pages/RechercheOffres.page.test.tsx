@@ -332,8 +332,8 @@ describe('Page Recherche Offres', () => {
         // Then
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
           debutantAccepte: true,
-          contrat: ['CDI', 'CDD-interim-saisonnier'],
-          duree: ['Temps plein'],
+          typesContrats: ['CDI', 'CDD-interim-saisonnier'],
+          durees: ['Temps plein'],
           rayon: 43,
         })
       })

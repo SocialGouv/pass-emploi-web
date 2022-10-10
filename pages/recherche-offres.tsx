@@ -102,20 +102,24 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   function updateTypeContrat(type: TypeContrat) {
     const index = typesContrats.indexOf(type)
-    setTypesContrats((state) => {
-      if (index > -1) state.splice(index, 1)
-      else state.push(type)
-      return state
-    })
+    if (index > -1) {
+      const modified = [...typesContrats]
+      modified.splice(index, 1)
+      setTypesContrats(modified)
+    } else {
+      setTypesContrats(typesContrats.concat(type))
+    }
   }
 
   function updateDuree(duree: Duree) {
     const index = durees.indexOf(duree)
-    setDurees((state) => {
-      if (index > -1) state.splice(index, 1)
-      else state.push(duree)
-      return state
-    })
+    if (index > -1) {
+      const modified = [...durees]
+      modified.splice(index, 1)
+      setDurees(modified)
+    } else {
+      setDurees(durees.concat(duree))
+    }
   }
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
@@ -139,8 +143,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       }
 
       if (isDebutantAccepte) query.debutantAccepte = true
-      if (typesContrats.length) query.contrat = typesContrats
-      if (durees.length) query.duree = durees
+      if (typesContrats.length) query.typesContrats = typesContrats
+      if (durees.length) query.durees = durees
 
       const result = await offresEmploiService.searchOffresEmploi(query)
       setOffres(result)

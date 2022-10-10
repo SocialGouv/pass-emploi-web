@@ -164,5 +164,57 @@ describe('OffresEmploiApiService', () => {
         'accessToken'
       )
     })
+
+    it('parse les types de contrat', async () => {
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        typesContrats: ['CDI', 'autre'],
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&contrat=CDI&contrat=autre',
+        'accessToken'
+      )
+    })
+
+    it('parse les durées', async () => {
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        durees: ['Temps plein', 'Temps partiel'],
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&duree=1&duree=2',
+        'accessToken'
+      )
+    })
+
+    it('parse la distance', async () => {
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        rayon: 32,
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&rayon=32',
+        'accessToken'
+      )
+    })
+
+    it("parse l'experience", async () => {
+      // When
+      await offresEmploiService.searchOffresEmploi({
+        debutantAccepte: true,
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?alternance=false&debutantAccepte=true',
+        'accessToken'
+      )
+    })
   })
 })
