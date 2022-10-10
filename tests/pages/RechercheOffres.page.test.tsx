@@ -207,7 +207,10 @@ describe('Page Recherche Offres', () => {
         ).toBeInTheDocument()
       })
 
-      it("permet d'afficher uniquement les offres débutants acceptés", () => {
+      it("permet d'afficher uniquement les offres débutants acceptés", async () => {
+        // When
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+
         // Then
         const etape3 = screen.getByRole('group', {
           name: 'Étape 3 Plus de critères',
@@ -216,13 +219,16 @@ describe('Page Recherche Offres', () => {
           name: 'Expérience',
         })
         expect(
-          within(experienceGroup).getByRole('radio', {
+          within(experienceGroup).getByRole('checkbox', {
             name: /Afficher uniquement les offres débutants acceptés/,
           })
-        ).toHaveValue('false')
+        ).not.toBeChecked()
       })
 
-      it('permet de définir un rayon de recherche', () => {
+      it('permet de définir un rayon de recherche', async () => {
+        // When
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+
         // Then
         const etape3 = screen.getByRole('group', {
           name: 'Étape 3 Plus de critères',
@@ -230,7 +236,7 @@ describe('Page Recherche Offres', () => {
         const distanceGroup = within(etape3).getByRole('group', {
           name: 'Distance',
         })
-        const inputRange = within(distanceGroup).getByRole('input', {
+        const inputRange = within(distanceGroup).getByRole('slider', {
           name: 'Dans un rayon de : 10km',
         })
         expect(inputRange).toHaveAttribute('type', 'range')

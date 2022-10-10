@@ -26,6 +26,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
+import { Switch } from 'components/ui/Form/Switch'
 
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
@@ -197,7 +198,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           <fieldset>
             <legend className='sr-only'>Étape 3 Plus de critères</legend>
 
-            <div className='flex'>
+            <div className='flex mb-10'>
               <fieldset className='grow flex flex-col gap-y-8'>
                 <legend className='contents text-base-bold'>
                   Type de contrat
@@ -242,6 +243,38 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                 />
               </fieldset>
             </div>
+            <fieldset className='mb-8'>
+              <legend className='text-base-bold mb-6'>Expérience</legend>
+              <label htmlFor='debutants-acceptes' className='flex items-center'>
+                <Switch
+                  id='debutants-acceptes'
+                  checked={false}
+                  onChange={() => {}}
+                />
+                <span className='ml-8'>
+                  Afficher uniquement les offres débutants acceptés
+                </span>
+              </label>
+            </fieldset>
+            <fieldset>
+              <legend className='text-base-bold mb-4'>Distance</legend>
+              <label htmlFor='distance'>
+                Dans un rayon de :{' '}
+                <span>
+                  {'10'}
+                  km
+                </span>
+              </label>
+              <input
+                id='distance'
+                type='range'
+                className='block mt-4'
+                defaultValue={10}
+                min={0}
+                max={100}
+                onChange={(e) => console.log(e.target.value)}
+              />
+            </fieldset>
           </fieldset>
         )}
 
