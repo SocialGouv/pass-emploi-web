@@ -316,6 +316,10 @@ describe('Page Recherche Offres', () => {
         await userEvent.click(screen.getByLabelText('Autres'))
         await userEvent.click(screen.getByLabelText('Autres'))
 
+        await userEvent.click(screen.getByLabelText('Temps plein'))
+        await userEvent.click(screen.getByLabelText('Temps partiel'))
+        await userEvent.click(screen.getByLabelText('Temps partiel'))
+
         // When
         await userEvent.click(
           screen.getByRole('button', { name: 'Rechercher' })
@@ -325,6 +329,7 @@ describe('Page Recherche Offres', () => {
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
           debutantAccepte: true,
           contrat: ['CDI', 'CDD-interim-saisonnier'],
+          duree: ['Temps plein'],
         })
       })
     })

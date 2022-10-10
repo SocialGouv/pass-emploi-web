@@ -19,6 +19,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { Localite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import {
+  Duree,
   OffresEmploiService,
   SearchOffresEmploiQuery,
   TypeContrat,
@@ -50,6 +51,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const debouncedLocalisationInput = useDebounce(localisationInput.value, 500)
   const [isDebutantAccepte, setIsDebutantAccepte] = useState<boolean>(false)
   const [typesContrats, setTypesContrats] = useState<TypeContrat[]>([])
+  const [durees, setDurees] = useState<Duree[]>([])
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -99,12 +101,20 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   function updateTypeContrat(type: TypeContrat) {
     const index = typesContrats.indexOf(type)
-    if (index > -1)
-      setTypesContrats((types) => {
-        types.splice(index, 1)
-        return types
-      })
-    else setTypesContrats(typesContrats.concat(type))
+    setTypesContrats((state) => {
+      if (index > -1) state.splice(index, 1)
+      else state.push(type)
+      return state
+    })
+  }
+
+  function updateDuree(duree: Duree) {
+    const index = durees.indexOf(duree)
+    setDurees((state) => {
+      if (index > -1) state.splice(index, 1)
+      else state.push(duree)
+      return state
+    })
   }
 
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
@@ -129,6 +139,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
       if (isDebutantAccepte) query.debutantAccepte = true
       if (typesContrats.length) query.contrat = typesContrats
+      if (durees.length) query.duree = durees
 
       const result = await offresEmploiService.searchOffresEmploi(query)
       setOffres(result)
@@ -247,14 +258,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                 <Checkbox
                   id='temps-travail--plein'
                   label='Temps plein'
-                  value=''
-                  onChange={() => {}}
+                  value='Temps plein'
+                  onChange={(value) => updateDuree(value as Duree)}
                 />
                 <Checkbox
                   id='temps-travail--partiel'
                   label='Temps partiel'
-                  value=''
-                  onChange={() => {}}
+                  value='Temps partiel'
+                  onChange={(value) => updateDuree(value as Duree)}
                 />
               </fieldset>
             </div>
