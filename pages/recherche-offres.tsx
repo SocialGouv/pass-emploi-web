@@ -11,6 +11,7 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseOffreEmploi } from 'interfaces/offre-emploi'
@@ -20,13 +21,13 @@ import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import {
   OffresEmploiService,
   SearchOffresEmploiQuery,
+  TypeContrat,
 } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
-import { Switch } from 'components/ui/Form/Switch'
 
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
@@ -39,20 +40,20 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     useDependance<ReferentielService>('referentielService')
 
   const [localites, setLocalites] = useState<Localite[]>([])
+  const [hasMoreFilters, setHasMoreFilters] = useState<boolean>(false)
 
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [localisationInput, setLocalisationInput] = useState<{
     value?: string
     error?: string
   }>({})
-
   const debouncedLocalisationInput = useDebounce(localisationInput.value, 500)
+  const [isDebutantAccepte, setIsDebutantAccepte] = useState<boolean>(false)
+  const [typesContrats, setTypesContrats] = useState<TypeContrat[]>([])
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
-  const [hasMoreFilters, setHasMoreFilters] = useState<boolean>(false)
-  const [isDebutantAccepte, setIsDebutantAccepte] = useState<boolean>(false)
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
@@ -96,6 +97,16 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     })
   }
 
+  function updateTypeContrat(type: TypeContrat) {
+    const index = typesContrats.indexOf(type)
+    if (index > -1)
+      setTypesContrats((types) => {
+        types.splice(index, 1)
+        return types
+      })
+    else setTypesContrats(typesContrats.concat(type))
+  }
+
   async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -117,6 +128,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       }
 
       if (isDebutantAccepte) query.debutantAccepte = true
+      if (typesContrats.length) query.contrat = typesContrats
 
       const result = await offresEmploiService.searchOffresEmploi(query)
       setOffres(result)
@@ -210,20 +222,20 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                 <Checkbox
                   id='contrat--cdi'
                   label='CDI'
-                  value=''
-                  onChange={() => {}}
+                  value='CDI'
+                  onChange={(value) => updateTypeContrat(value as TypeContrat)}
                 />
                 <Checkbox
                   id='contrat--cdd'
                   label='CDD - intérim - saisonnier'
-                  value=''
-                  onChange={() => {}}
+                  value='CDD-interim-saisonnier'
+                  onChange={(value) => updateTypeContrat(value as TypeContrat)}
                 />
                 <Checkbox
                   id='contrat--autres'
                   label='Autres'
-                  value=''
-                  onChange={() => {}}
+                  value='autre'
+                  onChange={(value) => updateTypeContrat(value as TypeContrat)}
                 />
               </fieldset>
 

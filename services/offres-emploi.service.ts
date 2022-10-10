@@ -10,11 +10,13 @@ import {
 import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ApiError } from 'utils/httpClient'
 
+export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
 export type SearchOffresEmploiQuery = {
   motsCles?: string
   departement?: string
   commune?: string
   debutantAccepte?: boolean
+  contrat?: Array<TypeContrat>
 }
 
 export interface OffresEmploiService {

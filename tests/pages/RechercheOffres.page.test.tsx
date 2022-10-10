@@ -311,6 +311,11 @@ describe('Page Recherche Offres', () => {
           )
         )
 
+        await userEvent.click(screen.getByLabelText('CDI'))
+        await userEvent.click(screen.getByLabelText(/CDD/))
+        await userEvent.click(screen.getByLabelText('Autres'))
+        await userEvent.click(screen.getByLabelText('Autres'))
+
         // When
         await userEvent.click(
           screen.getByRole('button', { name: 'Rechercher' })
@@ -319,6 +324,7 @@ describe('Page Recherche Offres', () => {
         // Then
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
           debutantAccepte: true,
+          contrat: ['CDI', 'CDD-interim-saisonnier'],
         })
       })
     })
