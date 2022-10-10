@@ -22,7 +22,13 @@ export default NextAuth({
   },
 
   callbacks: {
-    async jwt({ token: jwt, account }: { token: JWT; account?: Account }) {
+    async jwt({
+      token: jwt,
+      account,
+    }: {
+      token: JWT
+      account?: Account | null
+    }) {
       return authenticator.handleJWTAndRefresh({ jwt, account })
     },
 

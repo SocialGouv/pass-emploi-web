@@ -30,7 +30,7 @@ export default class Authenticator {
     account,
   }: {
     jwt: JWT | HydratedJWT
-    account?: Account
+    account?: Account | null
   }): Promise<HydratedJWT> {
     if (account) return Authenticator.hydrateJwtAtFirstSignin(account, jwt)
 
