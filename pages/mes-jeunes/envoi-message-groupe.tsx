@@ -7,6 +7,7 @@ import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAut
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { Etape } from 'components/ui/Form/Etape'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
@@ -190,36 +191,15 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           Tous les champs sont obligatoires
         </div>
 
-        <fieldset className='border-none mb-10'>
-          <legend className='flex items-center text-m-bold mb-4'>
-            <IconComponent
-              name={IconName.Chiffre1}
-              role='img'
-              focusable='false'
-              aria-label='Étape 1'
-              className='mr-2 w-8 h-8'
-            />
-            Destinataires
-          </legend>
+        <Etape numero={1} titre='Destinataires'>
           <JeunesMultiselectAutocomplete
             jeunes={jeunes}
             typeSelection='Destinataires'
             onUpdate={setSelectedJeunesIds}
           />
-        </fieldset>
+        </Etape>
 
-        <fieldset className='border-none'>
-          <legend className='flex items-center text-m-bold mb-4'>
-            <IconComponent
-              name={IconName.Chiffre2}
-              role='img'
-              focusable='false'
-              aria-label='Étape 2'
-              className='mr-2 w-8 h-8'
-            />
-            Écrivez votre message
-          </legend>
-
+        <Etape numero={2} titre='Écrivez votre message'>
           <Label
             htmlFor='message'
             inputRequired={true}
@@ -310,7 +290,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
               </InputError>
             )}
           </div>
-        </fieldset>
+        </Etape>
 
         <div className='flex justify-center'>
           {!formHasChanges() && (

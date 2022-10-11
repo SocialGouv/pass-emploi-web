@@ -17,7 +17,7 @@ export default function Label({
     const { main, sub } = children as { main: string; sub: string }
     return (
       <label htmlFor={htmlFor} className='inline-block text-content_color mb-3'>
-        <span
+        <p
           className={`text-base-medium ${
             withBulleMessageSensible ? 'flex' : ''
           }`}
@@ -29,8 +29,8 @@ export default function Label({
               <BulleMessageSensible />
             </span>
           )}
-        </span>
-        <span className='text-s-regular'>{sub}</span>
+        </p>
+        <p className='text-s-regular'>{sub}</p>
       </label>
     )
   } else {

@@ -10,10 +10,16 @@ import {
 import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
 import { ApiError } from 'utils/httpClient'
 
+export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
+export type Duree = 'Temps plein' | 'Temps partiel'
 export type SearchOffresEmploiQuery = {
   motsCles?: string
-  departement?: string
   commune?: string
+  debutantAccepte?: boolean
+  departement?: string
+  durees?: Array<Duree>
+  rayon?: number
+  typesContrats?: Array<TypeContrat>
 }
 
 export interface OffresEmploiService {
@@ -87,11 +93,33 @@ function buildSearchUrl({
   commune,
   departement,
   motsCles,
+  typesContrats,
+  durees,
+  rayon,
+  debutantAccepte,
 }: SearchOffresEmploiQuery): string {
-  const path = `/offres-emploi?alternance=false`
+  const path = `/offres-emploi`
+  const searchParams = new URLSearchParams({ alternance: 'false' })
   const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
-  const queryDepartement = departement ? `&departement=${departement}` : ''
-  const queryCommune = commune ? `&commune=${commune}` : ''
+  if (departement) searchParams.set('departement', departement)
+  if (commune) searchParams.set('commune', commune)
+  if (rayon) searchParams.set('rayon', rayon.toString(10))
+  if (debutantAccepte) searchParams.set('debutantAccepte', 'true')
+  typesContrats?.forEach((typeContrat) =>
+    searchParams.append('contrat', typeContrat)
+  )
+  durees
+    ?.map(dureeToQueryParam)
+    .forEach((duree) => searchParams.append('duree', duree))
 
-  return path + queryMotsCles + queryDepartement + queryCommune
+  return path + '?' + searchParams + queryMotsCles
+}
+
+function dureeToQueryParam(duree: Duree): '1' | '2' {
+  switch (duree) {
+    case 'Temps plein':
+      return '1'
+    case 'Temps partiel':
+      return '2'
+  }
 }

@@ -8,6 +8,7 @@ import { OffreCard } from 'components/offres/OffreCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { Etape } from 'components/ui/Form/Etape'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -86,38 +87,16 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
       <OffreCard offre={offre} />
 
       <form onSubmit={partager} className='mt-8'>
-        <fieldset className='border-none flex flex-col mb-8'>
-          <legend className='flex items-center text-m-bold mb-4'>
-            <IconComponent
-              name={IconName.Chiffre1}
-              role='img'
-              focusable='false'
-              aria-label='Étape 1'
-              className='mr-2 w-8 h-8'
-            />
-            Bénéficiaires
-          </legend>
-
+        <Etape numero={1} titre='Bénéficiaires'>
           <JeunesMultiselectAutocomplete
             jeunes={jeunes}
             typeSelection='Bénéficiaires'
             onUpdate={updateIdsDestinataires}
             error={idsDestinataires.error}
           />
-        </fieldset>
+        </Etape>
 
-        <fieldset className='border-none'>
-          <legend className='flex items-center text-m-bold mb-4'>
-            <IconComponent
-              name={IconName.Chiffre2}
-              role='img'
-              focusable='false'
-              aria-label='Étape 2'
-              className='mr-2 w-8 h-8'
-            />
-            Écrivez votre message
-          </legend>
-
+        <Etape numero={2} titre='Écrivez votre message'>
           <Label htmlFor='message' withBulleMessageSensible={true}>
             Message
           </Label>
@@ -128,7 +107,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
               setMessage(e.target.value)
             }}
           />
-        </fieldset>
+        </Etape>
 
         <div className='flex justify-center'>
           <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>

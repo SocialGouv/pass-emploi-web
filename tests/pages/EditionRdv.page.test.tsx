@@ -226,7 +226,7 @@ describe('EditionRdv', () => {
       describe('étape 1 bénéficiaires', () => {
         let etape: HTMLFieldSetElement
         beforeEach(() => {
-          etape = screen.getByRole('group', { name: 'Étape 1 Bénéficiaires :' })
+          etape = screen.getByRole('group', { name: 'Étape 1 Bénéficiaires' })
         })
 
         it('contient une liste pour choisir un jeune', () => {
@@ -253,7 +253,7 @@ describe('EditionRdv', () => {
         let selectType: HTMLSelectElement
         beforeEach(() => {
           etape = screen.getByRole('group', {
-            name: 'Étape 2 Type de rendez-vous :',
+            name: 'Étape 2 Type de rendez-vous',
           })
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
@@ -306,7 +306,7 @@ describe('EditionRdv', () => {
       describe('étape 3 lieu et date', () => {
         let etape: HTMLFieldSetElement
         beforeEach(() => {
-          etape = screen.getByRole('group', { name: 'Étape 3 Lieu et date :' })
+          etape = screen.getByRole('group', { name: 'Étape 3 Lieu et date' })
         })
 
         it('contient un champ pour choisir la date', () => {
@@ -398,7 +398,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour saisir des commentaires', () => {
           // Given
           etape = screen.getByRole('group', {
-            name: 'Étape 4 Informations conseiller :',
+            name: 'Étape 4 Informations conseiller',
           })
 
           // Then
