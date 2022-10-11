@@ -221,7 +221,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         />
       )}
 
-      <form onSubmit={rechercherOffresEmploi}>
+      <form
+        onSubmit={rechercherOffresEmploi}
+        className={
+          offres !== undefined
+            ? 'bg-primary_lighten p-6 mb-10 rounded-small'
+            : ''
+        }
+      >
         <Etape numero={1} titre='Sélectionner un type d’offre'>
           <RadioButton
             isSelected={true}
