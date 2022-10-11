@@ -12,6 +12,7 @@ type TextareaProps = {
   maxLength?: number
   onBlur?: () => void
   invalid?: boolean
+  value?: string
 }
 
 export default function Textarea({
@@ -24,10 +25,12 @@ export default function Textarea({
   invalid = false,
   onBlur,
   maxLength,
+  value,
 }: TextareaProps) {
   return (
     <textarea
       id={id}
+      value={value}
       required={required}
       disabled={disabled}
       defaultValue={defaultValue}
