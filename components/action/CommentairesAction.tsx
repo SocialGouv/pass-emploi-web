@@ -67,6 +67,7 @@ export function CommentairesAction({
           Commentaire à destination du jeune
         </Label>
         <Textarea
+          value={nouveauCommentaire}
           id='commentaire-action'
           onChange={(event) => {
             setNouveauCommentaire(event.target.value)

@@ -107,6 +107,7 @@ describe("Page Détail d'une action d'un jeune", () => {
                 ajoutCommentaireAction: 'succes',
               },
             })
+            expect(textbox).toHaveValue('')
           })
 
           it('ne permet pas de supprimer l’action', () => {
