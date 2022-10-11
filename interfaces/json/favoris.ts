@@ -35,8 +35,9 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
     organisation: offreJson.organisation,
     titre: offreJson.titre,
     type: jsonToTypeOffre(offreJson.type),
-    hasLinkPE: ['OFFRE_ALTERNANCE', 'OFFRE_EMPLOI'].includes(offreJson.type),
-    hasLinkServiceCivique: offreJson.type === 'OFFRE_SERVICE_CIVIQUE',
+    isEmploi: offreJson.type === 'OFFRE_EMPLOI',
+    isAlternance: offreJson.type === 'OFFRE_ALTERNANCE',
+    isServiceCivique: offreJson.type === 'OFFRE_SERVICE_CIVIQUE',
   }
 }
 
