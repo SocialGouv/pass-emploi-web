@@ -48,12 +48,13 @@ export interface DetailJeune extends BaseJeune {
   isReaffectationTemporaire: boolean
   email?: string
   urlDossier?: string
+  dateFinCEJ?: string
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
     dateFin?: string
   }>
-  idPartenaire: string
+  idPartenaire?: string
 }
 
 export interface MetadonneesFavoris {

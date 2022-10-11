@@ -123,6 +123,7 @@ describe('JeunesApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: unDetailJeuneJson({
           urlDossier: 'url-dossier',
+          dateFinCEJ: '2020-10-10',
         }),
       })
 
@@ -140,6 +141,7 @@ describe('JeunesApiService', () => {
       expect(actual).toEqual(
         unDetailJeune({
           urlDossier: 'url-dossier',
+          dateFinCEJ: '2020-10-10',
         })
       )
     })
