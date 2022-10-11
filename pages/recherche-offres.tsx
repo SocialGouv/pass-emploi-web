@@ -57,6 +57,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const RAYON_DEFAULT = 10
   const RAYON_MIN = 0
   const RAYON_MAX = 100
+  const [countCriteres, setCountCriteres] = useState<number>(0)
 
   const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -200,6 +201,15 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     }
   }, [localiteSaisie?.type])
 
+  useEffect(() => {
+    let nbCriteres = 0
+    if (typesContrats.length > 0) nbCriteres++
+    if (durees.length > 0) nbCriteres++
+    if (isDebutantAccepte) nbCriteres++
+    if (rayon !== undefined) nbCriteres++
+    setCountCriteres(nbCriteres)
+  }, [durees.length, isDebutantAccepte, rayon, typesContrats.length])
+
   useMatomo(trackingTitle)
 
   return (
@@ -272,18 +282,21 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                   id='contrat--cdi'
                   label='CDI'
                   value='CDI'
+                  checked={typesContrats.includes('CDI')}
                   onChange={(value) => updateTypeContrat(value as TypeContrat)}
                 />
                 <Checkbox
                   id='contrat--cdd'
                   label='CDD - intérim - saisonnier'
                   value='CDD-interim-saisonnier'
+                  checked={typesContrats.includes('CDD-interim-saisonnier')}
                   onChange={(value) => updateTypeContrat(value as TypeContrat)}
                 />
                 <Checkbox
                   id='contrat--autres'
                   label='Autres'
                   value='autre'
+                  checked={typesContrats.includes('autre')}
                   onChange={(value) => updateTypeContrat(value as TypeContrat)}
                 />
               </fieldset>
@@ -297,16 +310,19 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                   id='temps-travail--plein'
                   label='Temps plein'
                   value='Temps plein'
+                  checked={durees.includes('Temps plein')}
                   onChange={(value) => updateDuree(value as Duree)}
                 />
                 <Checkbox
                   id='temps-travail--partiel'
                   label='Temps partiel'
                   value='Temps partiel'
+                  checked={durees.includes('Temps partiel')}
                   onChange={(value) => updateDuree(value as Duree)}
                 />
               </fieldset>
             </div>
+
             <fieldset className='mb-8'>
               <legend className='text-base-bold mb-6'>Expérience</legend>
               <label htmlFor='debutants-acceptes' className='flex items-center'>
@@ -316,20 +332,15 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                   onChange={() => setIsDebutantAccepte(!isDebutantAccepte)}
                 />
                 <span className='ml-8'>
-                  Afficher uniquement les offres débutants acceptés
+                  Afficher uniquement les offres débutant accepté
                 </span>
               </label>
             </fieldset>
+
             {afficherRayon && (
               <fieldset>
                 <legend className='text-base-bold mb-4'>Distance</legend>
-                <label htmlFor='distance'>
-                  Dans un rayon de :{' '}
-                  <span>
-                    {'10'}
-                    km
-                  </span>
-                </label>
+                <label htmlFor='distance'>Dans un rayon de : {rayon}km</label>
                 <Input
                   id='distance'
                   type='range'
@@ -343,6 +354,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             )}
           </fieldset>
         )}
+
+        <div className='mt-5 mb-4 text-center'>
+          [{countCriteres}] critère{countCriteres > 1 && 's'} sélectionné
+          {countCriteres > 1 && 's'}
+        </div>
 
         <Button
           type='submit'
@@ -403,6 +419,7 @@ function Checkbox(props: {
   value: string
   onChange: (value: string) => void
   label: string
+  checked: boolean
 }) {
   return (
     <label htmlFor={props.id} className='flex w-fit'>
@@ -410,6 +427,7 @@ function Checkbox(props: {
         type='checkbox'
         value={props.value}
         id={props.id}
+        checked={props.checked}
         className='h-6 w-6 mr-5'
         onChange={(e) => props.onChange(e.target.value)}
       />

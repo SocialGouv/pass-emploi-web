@@ -78,8 +78,7 @@ describe('Page Recherche Offres', () => {
         const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
 
         // When
-        await userEvent.type(inputLocalisation, 'Ardèche')
-        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await saisirLocalite('Ardèche')
 
         // Then
         expect(inputLocalisation).toHaveValue('Ardeche')
@@ -92,12 +91,8 @@ describe('Page Recherche Offres', () => {
       })
 
       it('récupère les communes et les départements à la saisie', async () => {
-        // Given
-        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
-
         // When
-        await userEvent.type(inputLocalisation, 'Paris')
-        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await saisirLocalite('Paris')
 
         // Then
         expect(
@@ -208,7 +203,7 @@ describe('Page Recherche Offres', () => {
         ).toBeInTheDocument()
       })
 
-      it("permet d'afficher uniquement les offres débutants acceptés", async () => {
+      it("permet d'afficher uniquement les offres débutant accepté", async () => {
         // When
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
@@ -221,7 +216,7 @@ describe('Page Recherche Offres', () => {
         })
         expect(
           within(experienceGroup).getByRole('checkbox', {
-            name: /Afficher uniquement les offres débutants acceptés/,
+            name: /Afficher uniquement les offres débutant accepté/,
           })
         ).not.toBeChecked()
       })
@@ -236,11 +231,7 @@ describe('Page Recherche Offres', () => {
           within(etape3).getByRole('group', { name: 'Distance' })
         ).toThrow()
 
-        await userEvent.type(
-          screen.getByLabelText(/Lieu de travail/),
-          'paris 14'
-        )
-        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await saisirLocalite('paris 14')
 
         // Then
         const distanceGroup = within(etape3).getByRole('group', {
@@ -277,13 +268,11 @@ describe('Page Recherche Offres', () => {
       it('construit la recherche avec un département', async () => {
         // Given
         const inputMotsCles = screen.getByLabelText(/Mots clés/)
-        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
         const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
         // When
         await userEvent.type(inputMotsCles, 'prof industrie')
-        await userEvent.type(inputLocalisation, 'pAris')
-        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await saisirLocalite('pAris')
         await userEvent.click(submitButton)
 
         // Then
@@ -296,13 +285,11 @@ describe('Page Recherche Offres', () => {
       it('construit la recherche avec une commune', async () => {
         // Given
         const inputMotsCles = screen.getByLabelText(/Mots clés/)
-        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
         const submitButton = screen.getByRole('button', { name: 'Rechercher' })
 
         // When
         await userEvent.type(inputMotsCles, 'prof industrie')
-        await userEvent.type(inputLocalisation, 'paris 14')
-        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await saisirLocalite('paris 14')
         await userEvent.click(submitButton)
 
         // Then
@@ -315,16 +302,12 @@ describe('Page Recherche Offres', () => {
 
       it('construit la recherche avec les critères d’affinage', async () => {
         // Given
-        await userEvent.type(
-          screen.getByLabelText(/Lieu de travail/),
-          'paris 14'
-        )
-        await act(() => new Promise((r) => setTimeout(r, 1000)))
+        await saisirLocalite('paris 14')
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
         await userEvent.click(
           screen.getByLabelText(
-            /Afficher uniquement les offres débutants acceptés/
+            /Afficher uniquement les offres débutant accepté/
           )
         )
 
@@ -354,6 +337,44 @@ describe('Page Recherche Offres', () => {
           durees: ['Temps plein'],
           rayon: 43,
         })
+      })
+
+      it("retiens les critères d'affinage saisie", async () => {
+        // Given
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+
+        // When-Then
+        await userEvent.click(
+          screen.getByLabelText(
+            /Afficher uniquement les offres débutant accepté/
+          )
+        )
+        expect(screen.getByText('[1] critère sélectionné'))
+
+        await userEvent.click(screen.getByLabelText('CDI'))
+        await userEvent.click(screen.getByLabelText(/CDD/))
+        expect(screen.getByText('[2] critères sélectionnés'))
+
+        await userEvent.click(screen.getByLabelText('Temps plein'))
+        expect(screen.getByText('[3] critères sélectionnés'))
+
+        await saisirLocalite('paris 14')
+        fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+          target: { value: 43 },
+        })
+        expect(screen.getByText('Dans un rayon de : 43km')).toBeInTheDocument()
+        expect(screen.getByText('[4] critères sélectionnés'))
+
+        // When
+        await userEvent.click(screen.getByText('Voir moins de critères'))
+        await userEvent.click(screen.getByText('Voir plus de critères'))
+
+        // Then
+        expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
+        expect(screen.getByLabelText(/CDI/)).toBeChecked()
+        expect(screen.getByLabelText(/CDD/)).toBeChecked()
+        expect(screen.getByLabelText(/Temps plein/)).toBeChecked()
+        expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
       })
     })
 
@@ -506,3 +527,8 @@ describe('Page Recherche Offres', () => {
     })
   })
 })
+
+async function saisirLocalite(text: string) {
+  await userEvent.type(screen.getByLabelText(/Lieu de travail/), text)
+  await act(() => new Promise((r) => setTimeout(r, 500)))
+}
