@@ -6,8 +6,8 @@ import {
   jsonToDetailOffreEmploi,
   jsonToOffreEmploiItem,
   OffreEmploiItemJson,
-} from 'interfaces/json/offre'
-import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
+} from 'interfaces/json/offre-emploi'
+import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre'
 import { ApiError } from 'utils/httpClient'
 
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
@@ -98,7 +98,7 @@ function buildSearchUrl({
   rayon,
   debutantAccepte,
 }: SearchOffresEmploiQuery): string {
-  const path = `/offres-emploi`
+  const path = '/offres-emploi'
   const searchParams = new URLSearchParams({ alternance: 'false' })
   const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
   if (departement) searchParams.set('departement', departement)

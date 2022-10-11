@@ -17,7 +17,7 @@ import {
   MessagesOfADay,
   TypeMessage,
 } from 'interfaces/message'
-import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { DetailOffreEmploi } from 'interfaces/offre'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { toShortDate } from 'utils/date'
 

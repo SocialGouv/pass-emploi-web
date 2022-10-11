@@ -4,14 +4,14 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
-import { unDetailOffre } from 'fixtures/offre'
+import { unDetailOffreEmploi } from 'fixtures/offre'
 import {
   mockedJeunesService,
   mockedMessagesService,
   mockedOffresEmploiService,
 } from 'fixtures/services'
 import { BaseJeune, JeuneFromListe } from 'interfaces/jeune'
-import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { DetailOffreEmploi } from 'interfaces/offre'
 import PartageOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_id]/partage'
@@ -49,7 +49,7 @@ describe('Page Partage Offre', () => {
       let jeunesService: JeunesService
       beforeEach(() => {
         // Given
-        offre = unDetailOffre()
+        offre = unDetailOffreEmploi()
         jeunes = desItemsJeunes()
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
@@ -59,7 +59,7 @@ describe('Page Partage Offre', () => {
           },
         })
         offresEmploiService = mockedOffresEmploiService({
-          getOffreEmploiServerSide: jest.fn(async () => unDetailOffre()),
+          getOffreEmploiServerSide: jest.fn(async () => unDetailOffreEmploi()),
         })
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn(async () =>
@@ -130,7 +130,7 @@ describe('Page Partage Offre', () => {
     let jeunes: BaseJeune[]
     let messagesService: MessagesService
     beforeEach(() => {
-      offre = unDetailOffre()
+      offre = unDetailOffreEmploi()
       jeunes = desItemsJeunes()
       messagesService = mockedMessagesService({
         partagerOffre: jest.fn(async () => {}),

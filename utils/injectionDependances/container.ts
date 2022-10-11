@@ -2,10 +2,6 @@ import {
   OffresEmploiApiService,
   OffresEmploiService,
 } from '../../services/offres-emploi.service'
-import {
-  ServicesCiviqueApiService,
-  ServicesCiviqueService,
-} from '../../services/services-civique.service'
 
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
@@ -29,6 +25,10 @@ import {
   RendezVousApiService,
   RendezVousService,
 } from 'services/rendez-vous.service'
+import {
+  ServicesCiviquesApiService,
+  ServicesCiviquesService,
+} from 'services/services-civiques.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import HttpClient from 'utils/httpClient'
 
@@ -42,7 +42,7 @@ export interface Dependencies {
   fichiersService: FichiersService
   favorisService: FavorisService
   offresEmploiService: OffresEmploiService
-  servicesCiviqueService: ServicesCiviqueService
+  servicesCiviquesService: ServicesCiviquesService
 }
 
 export class Container {
@@ -73,7 +73,7 @@ export class Container {
       fichiersService: new FichiersApiService(apiClient),
       favorisService: new FavorisApiService(apiClient),
       offresEmploiService: new OffresEmploiApiService(apiClient),
-      servicesCiviqueService: new ServicesCiviqueApiService(apiClient),
+      servicesCiviquesService: new ServicesCiviquesApiService(apiClient),
     })
   }
 }

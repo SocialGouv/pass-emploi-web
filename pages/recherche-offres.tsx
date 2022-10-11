@@ -14,9 +14,9 @@ import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { BaseOffreEmploi, TypeOffre } from 'interfaces/offre'
+import { BaseOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { Localite } from 'interfaces/referentiel'
+import { Commune, Localite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import {
   Duree,
@@ -25,6 +25,10 @@ import {
   TypeContrat,
 } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
+import {
+  SearchServicesCiviquesQuery,
+  ServicesCiviquesService,
+} from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDebounce } from 'utils/hooks/useDebounce'
@@ -33,11 +37,14 @@ import { useDependance } from 'utils/injectionDependances'
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
 function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-  const referentielService =
-    useDependance<ReferentielService>('referentielService')
+  const servicesCiviquesService = useDependance<ServicesCiviquesService>(
+    'servicesCiviquesService'
+  )
 
   const [typeOffre, setTypeOffre] = useState<TypeOffre | undefined>()
   const [localites, setLocalites] = useState<Localite[]>([])
@@ -60,7 +67,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const RAYON_MAX = 100
   const [countCriteres, setCountCriteres] = useState<number>(0)
 
-  const [offres, setOffres] = useState<BaseOffreEmploi[] | undefined>(undefined)
+  const [offres, setOffres] = useState<BaseOffre[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
 
@@ -137,60 +144,98 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     }
   }
 
-  async function rechercherOffresEmploi(e: FormEvent<HTMLFormElement>) {
+  async function rechercherOffres(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!typeOffre) return
 
-    if (!validateLocalite()) return
+    switch (typeOffre) {
+      case TypeOffre.EMPLOI:
+        if (!validateLocalite()) return
 
-    setIsSearching(true)
-    setOffres(undefined)
-    setSearchError(undefined)
-    try {
-      const query: SearchOffresEmploiQuery = {}
+        setIsSearching(true)
+        setOffres(undefined)
+        setSearchError(undefined)
+        try {
+          const query: SearchOffresEmploiQuery = {}
 
-      if (localiteSaisie) {
-        if (localiteSaisie.type === 'DEPARTEMENT')
-          query.departement = localiteSaisie.code
-        if (localiteSaisie.type === 'COMMUNE')
-          query.commune = localiteSaisie.code
-      }
+          if (localiteSaisie) {
+            if (localiteSaisie.type === 'DEPARTEMENT')
+              query.departement = localiteSaisie.code
+            if (localiteSaisie.type === 'COMMUNE')
+              query.commune = localiteSaisie.code
+          }
 
-      if (rayon !== undefined) query.rayon = rayon
-      if (motsCles) query.motsCles = motsCles
-      if (isDebutantAccepte) query.debutantAccepte = true
-      if (typesContrats.length) query.typesContrats = typesContrats
-      if (durees.length) query.durees = durees
+          if (rayon !== undefined) query.rayon = rayon
+          if (motsCles) query.motsCles = motsCles
+          if (isDebutantAccepte) query.debutantAccepte = true
+          if (typesContrats.length) query.typesContrats = typesContrats
+          if (durees.length) query.durees = durees
 
-      const result = await offresEmploiService.searchOffresEmploi(query)
-      setOffres(result)
-      setTrackingTitle(pageTracking + ' - Résultats')
-    } catch {
-      setSearchError('Une erreur est survenue. Vous pouvez réessayer')
-      setTrackingTitle(pageTracking + ' - Erreur')
-    } finally {
-      setIsSearching(false)
+          const result = await offresEmploiService.searchOffresEmploi(query)
+          setOffres(result)
+          setTrackingTitle(pageTracking + ' - Résultats')
+        } catch {
+          setSearchError('Une erreur est survenue. Vous pouvez réessayer')
+          setTrackingTitle(pageTracking + ' - Erreur')
+        } finally {
+          setIsSearching(false)
+        }
+        break
+      case TypeOffre.SERVICE_CIVIQUE:
+        if (!validateLocalite()) return
+
+        setIsSearching(true)
+        setOffres(undefined)
+        setSearchError(undefined)
+        try {
+          const query: SearchServicesCiviquesQuery = {}
+
+          if (localiteSaisie) {
+            const { longitude, latitude } = localiteSaisie as Commune
+            query.coordonnees = { lat: latitude, lon: longitude }
+          }
+
+          const result = await servicesCiviquesService.searchServicesCiviques(
+            query
+          )
+          console.log({ result })
+          setOffres(result)
+          setTrackingTitle(pageTracking + ' - Résultats')
+        } catch (e) {
+          console.log({ e })
+          setSearchError('Une erreur est survenue. Vous pouvez réessayer')
+          setTrackingTitle(pageTracking + ' - Erreur')
+        } finally {
+          setIsSearching(false)
+        }
+        break
     }
   }
 
   useEffect(() => {
     if (debouncedLocalisationInput) {
-      referentielService
-        .getCommunesEtDepartements(debouncedLocalisationInput)
-        .then((communesEtDepartements) => {
-          setLocalites(communesEtDepartements)
-          if (communesEtDepartements.length) {
-            setLocaliteSaisie(
-              findLocaliteInListe(
-                debouncedLocalisationInput,
-                communesEtDepartements
-              )
+      let fetch: (query: string) => Promise<Localite[]>
+      if (typeOffre === TypeOffre.EMPLOI) {
+        fetch = referentielService.getCommunesEtDepartements
+      } else {
+        fetch = referentielService.getCommunes
+      }
+
+      fetch(debouncedLocalisationInput).then((communesEtDepartements) => {
+        setLocalites(communesEtDepartements)
+        if (communesEtDepartements.length) {
+          setLocaliteSaisie(
+            findLocaliteInListe(
+              debouncedLocalisationInput,
+              communesEtDepartements
             )
-          }
-        })
+          )
+        }
+      })
     } else {
       setLocalites([])
     }
-  }, [debouncedLocalisationInput, referentielService])
+  }, [debouncedLocalisationInput, referentielService, typeOffre])
 
   useEffect(() => {
     if (localiteSaisie?.type === 'COMMUNE') {
@@ -223,7 +268,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       )}
 
       <form
-        onSubmit={rechercherOffresEmploi}
+        onSubmit={rechercherOffres}
         className={
           offres !== undefined
             ? 'bg-primary_lighten p-6 mb-10 rounded-small'
@@ -233,15 +278,15 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         <Etape numero={1} titre='Sélectionner un type d’offre'>
           <div className='flex flex-wrap'>
             <RadioButton
-              isSelected={typeOffre === 'EMPLOI'}
-              onChange={() => setTypeOffre('EMPLOI')}
+              isSelected={typeOffre === TypeOffre.EMPLOI}
+              onChange={() => setTypeOffre(TypeOffre.EMPLOI)}
               name='type-offre'
               id='type-offre--emploi'
               label='Offre d’emploi'
             />
             <RadioButton
-              isSelected={typeOffre === 'SERVICE_CIVIQUE'}
-              onChange={() => setTypeOffre('SERVICE_CIVIQUE')}
+              isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
+              onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
               name='type-offre'
               id='type-offre--service-civique'
               label='Service civique'
@@ -249,7 +294,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           </div>
         </Etape>
 
-        {typeOffre === 'EMPLOI' && (
+        {typeOffre === TypeOffre.EMPLOI && (
           <>
             <Etape numero={2} titre='Critères de recherche'>
               <Label htmlFor='mots-cles'>Mots clés (Métier, code ROME)</Label>
@@ -409,6 +454,32 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           </>
         )}
 
+        {typeOffre === TypeOffre.SERVICE_CIVIQUE && (
+          <>
+            <Etape numero={2} titre='Critères de recherche'>
+              <Label htmlFor='localisation'>
+                {{
+                  main: 'Localisation',
+                  sub: 'Saisissez une ville',
+                }}
+              </Label>
+              {localisationInput.error && (
+                <InputError id='localisation--error'>
+                  {localisationInput.error}
+                </InputError>
+              )}
+              <SelectAutocomplete
+                id='localisation'
+                options={localiteOptions}
+                onChange={handleLocalisationInputChanges}
+                onBlur={validateLocalite}
+                invalid={Boolean(localisationInput.error)}
+                value={localisationInput.value ?? ''}
+              />
+            </Etape>
+          </>
+        )}
+
         {typeOffre && (
           <>
             <div className='mt-5 mb-4 text-center'>
@@ -447,7 +518,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           <ul aria-describedby='result-title'>
             {offres!.map((offre) => (
               <li key={offre.id} className='mb-4'>
-                <OffreCard offre={offre} withPartage={true} />
+                {offre.type === TypeOffre.EMPLOI && (
+                  <OffreCard offre={offre} withPartage={true} />
+                )}
+                {offre.type === TypeOffre.SERVICE_CIVIQUE && (
+                  <span>
+                    Offre {offre.id} : {offre.titre}
+                  </span>
+                )}
               </li>
             ))}
           </ul>

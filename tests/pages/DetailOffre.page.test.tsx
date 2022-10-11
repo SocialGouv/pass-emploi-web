@@ -1,9 +1,9 @@
 import { render, screen, within } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { unDetailOffre } from 'fixtures/offre'
+import { unDetailOffreEmploi } from 'fixtures/offre'
 import { mockedOffresEmploiService } from 'fixtures/services'
-import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { DetailOffreEmploi } from 'interfaces/offre'
 import DetailOffre, { getServerSideProps } from 'pages/offres/[offre_id]'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -19,7 +19,7 @@ describe('Page Détail Offre', () => {
 
     beforeEach(() => {
       // Given
-      offre = unDetailOffre()
+      offre = unDetailOffreEmploi()
 
       // When
       render(<DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />)
@@ -150,7 +150,7 @@ describe('Page Détail Offre', () => {
     let offresEmploiService: OffresEmploiService
     beforeEach(() => {
       offresEmploiService = mockedOffresEmploiService({
-        getOffreEmploiServerSide: jest.fn(async () => unDetailOffre()),
+        getOffreEmploiServerSide: jest.fn(async () => unDetailOffreEmploi()),
       })
     })
 
@@ -171,7 +171,7 @@ describe('Page Détail Offre', () => {
 
     it('charge la page avec les détails de l’offre', async () => {
       // Given
-      const offre: DetailOffreEmploi = unDetailOffre()
+      const offre: DetailOffreEmploi = unDetailOffreEmploi()
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
         validSession: true,
         session: {

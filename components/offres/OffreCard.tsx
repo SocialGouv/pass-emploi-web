@@ -6,7 +6,7 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
-import { BaseOffreEmploi } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi } from 'interfaces/offre'
 
 interface OffreItemCardProps {
   offre: BaseOffreEmploi
