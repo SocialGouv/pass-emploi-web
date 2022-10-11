@@ -265,6 +265,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             className='mr-12'
           >
             Voir {hasMoreFilters ? 'moins' : 'plus'} de critères
+            <IconComponent
+              name={hasMoreFilters ? IconName.ChevronUp : IconName.ChevronDown}
+              className='h-4 w-4 fill-primary inline ml-2'
+              aria-hidden={true}
+              focusable={false}
+            ></IconComponent>
           </button>
         </div>
 
@@ -323,7 +329,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
               </fieldset>
             </div>
 
-            <fieldset className='mb-8'>
+            <fieldset>
               <legend className='text-base-bold mb-6'>Expérience</legend>
               <label htmlFor='debutants-acceptes' className='flex items-center'>
                 <Switch
@@ -338,7 +344,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             </fieldset>
 
             {afficherRayon && (
-              <fieldset>
+              <fieldset className='mt-8'>
                 <legend className='text-base-bold mb-4'>Distance</legend>
                 <label htmlFor='distance'>Dans un rayon de : {rayon}km</label>
                 <Input
