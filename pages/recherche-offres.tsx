@@ -14,7 +14,7 @@ import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { BaseOffreEmploi } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { Localite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -39,6 +39,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const referentielService =
     useDependance<ReferentielService>('referentielService')
 
+  const [typeOffre, setTypeOffre] = useState<TypeOffre | undefined>()
   const [localites, setLocalites] = useState<Localite[]>([])
   const [hasMoreFilters, setHasMoreFilters] = useState<boolean>(false)
   const [afficherRayon, setAfficherRayon] = useState<boolean>(false)
@@ -230,170 +231,206 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         }
       >
         <Etape numero={1} titre='Sélectionner un type d’offre'>
-          <RadioButton
-            isSelected={true}
-            onChange={() => {}}
-            disabled={true}
-            name='type-offre'
-            id='type-offre--emploi'
-            label='Offre d’emploi'
-          />
+          <div className='flex flex-wrap'>
+            <RadioButton
+              isSelected={typeOffre === 'EMPLOI'}
+              onChange={() => setTypeOffre('EMPLOI')}
+              name='type-offre'
+              id='type-offre--emploi'
+              label='Offre d’emploi'
+            />
+            <RadioButton
+              isSelected={typeOffre === 'SERVICE_CIVIQUE'}
+              onChange={() => setTypeOffre('SERVICE_CIVIQUE')}
+              name='type-offre'
+              id='type-offre--service-civique'
+              label='Service civique'
+            />
+          </div>
         </Etape>
 
-        <Etape numero={2} titre='Critères de recherche'>
-          <Label htmlFor='mots-cles'>Mots clés (Métier, code ROME)</Label>
-          <Input type='text' id='mots-cles' onChange={setMotsCles} />
+        {typeOffre === 'EMPLOI' && (
+          <>
+            <Etape numero={2} titre='Critères de recherche'>
+              <Label htmlFor='mots-cles'>Mots clés (Métier, code ROME)</Label>
+              <Input type='text' id='mots-cles' onChange={setMotsCles} />
 
-          <Label htmlFor='localisation'>
-            {{
-              main: 'Lieu de travail',
-              sub: 'Saisissez une ville ou un département',
-            }}
-          </Label>
-          {localisationInput.error && (
-            <InputError id='localisation--error'>
-              {localisationInput.error}
-            </InputError>
-          )}
-          <SelectAutocomplete
-            id='localisation'
-            options={localiteOptions}
-            onChange={handleLocalisationInputChanges}
-            onBlur={validateLocalite}
-            invalid={Boolean(localisationInput.error)}
-            value={localisationInput.value ?? ''}
-          />
-        </Etape>
+              <Label htmlFor='localisation'>
+                {{
+                  main: 'Lieu de travail',
+                  sub: 'Saisissez une ville ou un département',
+                }}
+              </Label>
+              {localisationInput.error && (
+                <InputError id='localisation--error'>
+                  {localisationInput.error}
+                </InputError>
+              )}
+              <SelectAutocomplete
+                id='localisation'
+                options={localiteOptions}
+                onChange={handleLocalisationInputChanges}
+                onBlur={validateLocalite}
+                invalid={Boolean(localisationInput.error)}
+                value={localisationInput.value ?? ''}
+              />
+            </Etape>
 
-        <div className='flex justify-end mb-6'>
-          <button
-            type='button'
-            onClick={() => setHasMoreFilters(!hasMoreFilters)}
-            className='mr-12'
-          >
-            Voir {hasMoreFilters ? 'moins' : 'plus'} de critères
-            <IconComponent
-              name={hasMoreFilters ? IconName.ChevronUp : IconName.ChevronDown}
-              className='h-4 w-4 fill-primary inline ml-2'
-              aria-hidden={true}
-              focusable={false}
-            ></IconComponent>
-          </button>
-        </div>
-
-        {hasMoreFilters && (
-          <fieldset>
-            <legend className='sr-only'>Étape 3 Plus de critères</legend>
-
-            <div className='flex mb-10'>
-              <fieldset className='grow flex flex-col gap-y-8'>
-                <legend className='contents text-base-bold'>
-                  Type de contrat
-                </legend>
-
-                <Checkbox
-                  id='contrat--cdi'
-                  label='CDI'
-                  value='CDI'
-                  checked={typesContrats.includes('CDI')}
-                  onChange={(value) => updateTypeContrat(value as TypeContrat)}
-                />
-                <Checkbox
-                  id='contrat--cdd'
-                  label='CDD - intérim - saisonnier'
-                  value='CDD-interim-saisonnier'
-                  checked={typesContrats.includes('CDD-interim-saisonnier')}
-                  onChange={(value) => updateTypeContrat(value as TypeContrat)}
-                />
-                <Checkbox
-                  id='contrat--autres'
-                  label='Autres'
-                  value='autre'
-                  checked={typesContrats.includes('autre')}
-                  onChange={(value) => updateTypeContrat(value as TypeContrat)}
-                />
-              </fieldset>
-
-              <fieldset className='grow flex flex-col gap-y-8'>
-                <legend className='contents text-base-bold'>
-                  Temps de travail
-                </legend>
-
-                <Checkbox
-                  id='temps-travail--plein'
-                  label='Temps plein'
-                  value='Temps plein'
-                  checked={durees.includes('Temps plein')}
-                  onChange={(value) => updateDuree(value as Duree)}
-                />
-                <Checkbox
-                  id='temps-travail--partiel'
-                  label='Temps partiel'
-                  value='Temps partiel'
-                  checked={durees.includes('Temps partiel')}
-                  onChange={(value) => updateDuree(value as Duree)}
-                />
-              </fieldset>
+            <div className='flex justify-end mb-6'>
+              <button
+                type='button'
+                onClick={() => setHasMoreFilters(!hasMoreFilters)}
+                className='mr-12'
+              >
+                Voir {hasMoreFilters ? 'moins' : 'plus'} de critères
+                <IconComponent
+                  name={
+                    hasMoreFilters ? IconName.ChevronUp : IconName.ChevronDown
+                  }
+                  className='h-4 w-4 fill-primary inline ml-2'
+                  aria-hidden={true}
+                  focusable={false}
+                ></IconComponent>
+              </button>
             </div>
 
-            <fieldset>
-              <legend className='text-base-bold mb-6'>Expérience</legend>
-              <label htmlFor='debutants-acceptes' className='flex items-center'>
-                <Switch
-                  id='debutants-acceptes'
-                  checked={isDebutantAccepte}
-                  onChange={() => setIsDebutantAccepte(!isDebutantAccepte)}
-                />
-                <span className='ml-8'>
-                  Afficher uniquement les offres débutant accepté
-                </span>
-              </label>
-            </fieldset>
+            {hasMoreFilters && (
+              <fieldset>
+                <legend className='sr-only'>Étape 3 Plus de critères</legend>
 
-            {afficherRayon && (
-              <fieldset className='mt-8 w-1/2 min-w-[300px]'>
-                <legend className='text-base-bold mb-4'>Distance</legend>
-                <label htmlFor='distance'>
-                  Dans un rayon de :{' '}
-                  <span className='text-base-bold'>{rayon}km</span>
-                </label>
-                <Input
-                  id='distance'
-                  type='range'
-                  className='block mt-4 w-full'
-                  value={rayon}
-                  min={RAYON_MIN}
-                  max={RAYON_MAX}
-                  onChange={(value: string) => setRayon(parseInt(value, 10))}
-                  list='distance-bornes'
-                />
-                <datalist id='distance-bornes' className='flex justify-between'>
-                  <option value='0' label='0km' className='text-s-bold' />
-                  <option value='100' label='100km' className='text-s-bold' />
-                </datalist>
+                <div className='flex mb-10'>
+                  <fieldset className='grow flex flex-col gap-y-8'>
+                    <legend className='contents text-base-bold'>
+                      Type de contrat
+                    </legend>
+
+                    <Checkbox
+                      id='contrat--cdi'
+                      label='CDI'
+                      value='CDI'
+                      checked={typesContrats.includes('CDI')}
+                      onChange={(value) =>
+                        updateTypeContrat(value as TypeContrat)
+                      }
+                    />
+                    <Checkbox
+                      id='contrat--cdd'
+                      label='CDD - intérim - saisonnier'
+                      value='CDD-interim-saisonnier'
+                      checked={typesContrats.includes('CDD-interim-saisonnier')}
+                      onChange={(value) =>
+                        updateTypeContrat(value as TypeContrat)
+                      }
+                    />
+                    <Checkbox
+                      id='contrat--autres'
+                      label='Autres'
+                      value='autre'
+                      checked={typesContrats.includes('autre')}
+                      onChange={(value) =>
+                        updateTypeContrat(value as TypeContrat)
+                      }
+                    />
+                  </fieldset>
+
+                  <fieldset className='grow flex flex-col gap-y-8'>
+                    <legend className='contents text-base-bold'>
+                      Temps de travail
+                    </legend>
+
+                    <Checkbox
+                      id='temps-travail--plein'
+                      label='Temps plein'
+                      value='Temps plein'
+                      checked={durees.includes('Temps plein')}
+                      onChange={(value) => updateDuree(value as Duree)}
+                    />
+                    <Checkbox
+                      id='temps-travail--partiel'
+                      label='Temps partiel'
+                      value='Temps partiel'
+                      checked={durees.includes('Temps partiel')}
+                      onChange={(value) => updateDuree(value as Duree)}
+                    />
+                  </fieldset>
+                </div>
+
+                <fieldset>
+                  <legend className='text-base-bold mb-6'>Expérience</legend>
+                  <label
+                    htmlFor='debutants-acceptes'
+                    className='flex items-center'
+                  >
+                    <Switch
+                      id='debutants-acceptes'
+                      checked={isDebutantAccepte}
+                      onChange={() => setIsDebutantAccepte(!isDebutantAccepte)}
+                    />
+                    <span className='ml-8'>
+                      Afficher uniquement les offres débutant accepté
+                    </span>
+                  </label>
+                </fieldset>
+
+                {afficherRayon && (
+                  <fieldset className='mt-8 w-1/2 min-w-[300px]'>
+                    <legend className='text-base-bold mb-4'>Distance</legend>
+                    <label htmlFor='distance'>
+                      Dans un rayon de :{' '}
+                      <span className='text-base-bold'>{rayon}km</span>
+                    </label>
+                    <Input
+                      id='distance'
+                      type='range'
+                      className='block mt-4 w-full'
+                      value={rayon}
+                      min={RAYON_MIN}
+                      max={RAYON_MAX}
+                      onChange={(value: string) =>
+                        setRayon(parseInt(value, 10))
+                      }
+                      list='distance-bornes'
+                    />
+                    <datalist
+                      id='distance-bornes'
+                      className='flex justify-between'
+                    >
+                      <option value='0' label='0km' className='text-s-bold' />
+                      <option
+                        value='100'
+                        label='100km'
+                        className='text-s-bold'
+                      />
+                    </datalist>
+                  </fieldset>
+                )}
               </fieldset>
             )}
-          </fieldset>
+          </>
         )}
 
-        <div className='mt-5 mb-4 text-center'>
-          [{countCriteres}] critère{countCriteres > 1 && 's'} sélectionné
-          {countCriteres > 1 && 's'}
-        </div>
+        {typeOffre && (
+          <>
+            <div className='mt-5 mb-4 text-center'>
+              [{countCriteres}] critère{countCriteres > 1 && 's'} sélectionné
+              {countCriteres > 1 && 's'}
+            </div>
 
-        <Button
-          type='submit'
-          className='mx-auto'
-          disabled={!formIsValid || isSearching}
-        >
-          <IconComponent
-            name={IconName.Search}
-            focusable={false}
-            aria-hidden={true}
-            className='w-4 h-4 mr-2'
-          />
-          Rechercher
-        </Button>
+            <Button
+              type='submit'
+              className='mx-auto'
+              disabled={!formIsValid || isSearching}
+            >
+              <IconComponent
+                name={IconName.Search}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 mr-2'
+              />
+              Rechercher
+            </Button>
+          </>
+        )}
       </form>
 
       {isSearching && (

@@ -1,3 +1,5 @@
+export type TypeOffre = 'EMPLOI' | 'SERVICE_CIVIQUE'
+
 export type BaseOffreEmploi = {
   id: string
   titre: string
