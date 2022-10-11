@@ -344,18 +344,26 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             </fieldset>
 
             {afficherRayon && (
-              <fieldset className='mt-8'>
+              <fieldset className='mt-8 w-1/2 min-w-[300px]'>
                 <legend className='text-base-bold mb-4'>Distance</legend>
-                <label htmlFor='distance'>Dans un rayon de : {rayon}km</label>
+                <label htmlFor='distance'>
+                  Dans un rayon de :{' '}
+                  <span className='text-base-bold'>{rayon}km</span>
+                </label>
                 <Input
                   id='distance'
                   type='range'
-                  className='block mt-4'
+                  className='block mt-4 w-full'
                   value={rayon}
                   min={RAYON_MIN}
                   max={RAYON_MAX}
                   onChange={(value: string) => setRayon(parseInt(value, 10))}
+                  list='distance-bornes'
                 />
+                <datalist id='distance-bornes' className='flex justify-between'>
+                  <option value='0' label='0km' className='text-s-bold' />
+                  <option value='100' label='100km' className='text-s-bold' />
+                </datalist>
               </fieldset>
             )}
           </fieldset>

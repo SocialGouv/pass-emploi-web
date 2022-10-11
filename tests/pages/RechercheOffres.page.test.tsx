@@ -13,6 +13,7 @@ import { Localite } from 'interfaces/referentiel'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
@@ -366,7 +367,7 @@ describe('Page Recherche Offres', () => {
         fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
           target: { value: 43 },
         })
-        expect(screen.getByText('Dans un rayon de : 43km')).toBeInTheDocument()
+        expect(getByTextContent('Dans un rayon de : 43km')).toBeInTheDocument()
         expect(
           screen.getByText('[4] critères sélectionnés')
         ).toBeInTheDocument()
