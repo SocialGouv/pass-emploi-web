@@ -349,21 +349,27 @@ describe('Page Recherche Offres', () => {
             /Afficher uniquement les offres débutant accepté/
           )
         )
-        expect(screen.getByText('[1] critère sélectionné'))
+        expect(screen.getByText('[1] critère sélectionné')).toBeInTheDocument()
 
         await userEvent.click(screen.getByLabelText('CDI'))
         await userEvent.click(screen.getByLabelText(/CDD/))
-        expect(screen.getByText('[2] critères sélectionnés'))
+        expect(
+          screen.getByText('[2] critères sélectionnés')
+        ).toBeInTheDocument()
 
         await userEvent.click(screen.getByLabelText('Temps plein'))
-        expect(screen.getByText('[3] critères sélectionnés'))
+        expect(
+          screen.getByText('[3] critères sélectionnés')
+        ).toBeInTheDocument()
 
         await saisirLocalite('paris 14')
         fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
           target: { value: 43 },
         })
         expect(screen.getByText('Dans un rayon de : 43km')).toBeInTheDocument()
-        expect(screen.getByText('[4] critères sélectionnés'))
+        expect(
+          screen.getByText('[4] critères sélectionnés')
+        ).toBeInTheDocument()
 
         // When
         await userEvent.click(screen.getByText('Voir moins de critères'))
