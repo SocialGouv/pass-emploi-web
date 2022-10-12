@@ -1,5 +1,6 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { GetServerSidePropsContext } from 'next/types'
 
 import {
@@ -15,6 +16,7 @@ import {
 import { BaseOffreEmploi, BaseServiceCivique } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
+import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
@@ -575,136 +577,154 @@ describe('Page Recherche Offres', () => {
         })
       })
 
-      // describe('permet d’affiner la recherche par des filtres', () => {
-      //   it('permet d’ajouter plus de filtre à notre recherche', async () => {
-      //     // Then
-      //     expect(() =>
-      //       screen.getByRole('group', { name: 'Étape 3 Plus de critères' })
-      //     ).toThrow()
-      //     expect(
-      //       screen.getByRole('button', { name: 'Voir plus de critères' })
-      //     ).toBeInTheDocument()
-      //
-      //     // When
-      //     await userEvent.click(screen.getByText('Voir plus de critères'))
-      //
-      //     // Then
-      //     const etape3 = screen.getByRole('group', {
-      //       name: 'Étape 3 Plus de critères',
-      //     })
-      //     expect(etape3).toBeInTheDocument()
-      //     expect(screen.getByText('Voir moins de critères')).toBeInTheDocument()
-      //   })
-      //
-      //   it('permet de selectionner un domaine', async () => {
-      //     // When
-      //     await userEvent.click(screen.getByText('Voir plus de critères'))
-      //
-      //     // Then
-      //     const etape3 = screen.getByRole('group', {
-      //       name: 'Étape 3 Plus de critères',
-      //     })
-      //     const selectDomaine = within(etape3).getByRole('combobox', {
-      //       name: 'Sélectionner domaine',
-      //     })
-      //     domainesServiceCivique.forEach((domaine) => {
-      //       expect(
-      //         within(selectDomaine).getByRole('option', {
-      //           name: domaine.libelle,
-      //         })
-      //       ).toHaveValue(domaine.code)
-      //     })
-      //   })
-      //
-      //   it("permet d'afficher uniquement les offres débutant dès que possible", async () => {
-      //     // When
-      //     await userEvent.click(screen.getByText('Voir plus de critères'))
-      //
-      //     // Then
-      //     const etape3 = screen.getByRole('group', {
-      //       name: 'Étape 3 Plus de critères',
-      //     })
-      //     const dateDebutGroupe = within(etape3).getByRole('group', {
-      //       name: 'Date de début',
-      //     })
-      //     expect(
-      //       within(dateDebutGroupe).getByRole('checkbox', {
-      //         name: /Dès que possible/,
-      //       })
-      //     ).not.toBeChecked()
-      //   })
-      //
-      //   it('permet de définir une date de début', async () => {
-      //     // When
-      //     await userEvent.click(screen.getByText('Voir plus de critères'))
-      //     const etape3 = screen.getByRole('group', {
-      //       name: 'Étape 3 Plus de critères',
-      //     })
-      //     expect(() => within(etape3).getByLabelText('Date de début')).toThrow()
-      //
-      //     await userEvent.click(screen.getByLabelText(/Dès que possible/))
-      //
-      //     // Then
-      //     const dateDebutGroupe = within(etape3).getByRole('group', {
-      //       name: 'Date de début',
-      //     })
-      //     const inputDate =
-      //       within(dateDebutGroupe).getByLabelText('Date de début')
-      //     // TODO default/min
-      //     // expect(inputDate).toHaveAttribute('value', '10')
-      //     // expect(inputDate).toHaveAttribute('type', 'range')
-      //     // expect(inputDate).toHaveAttribute('min', '0')
-      //     // expect(inputDate).toHaveAttribute('max', '100')
-      //   })
-      //
-      // it("retiens les critères d'affinage saisie", async () => {
-      //   // Given
-      //   await userEvent.click(screen.getByText('Voir plus de critères'))
-      //
-      //   // When-Then
-      //   await userEvent.click(
-      //     screen.getByLabelText(
-      //       /Afficher uniquement les offres débutant accepté/
-      //     )
-      //   )
-      //   expect(
-      //     screen.getByText('[1] critère sélectionné')
-      //   ).toBeInTheDocument()
-      //
-      //   await userEvent.click(screen.getByLabelText('CDI'))
-      //   await userEvent.click(screen.getByLabelText(/CDD/))
-      //   expect(
-      //     screen.getByText('[2] critères sélectionnés')
-      //   ).toBeInTheDocument()
-      //
-      //   await userEvent.click(screen.getByLabelText('Temps plein'))
-      //   expect(
-      //     screen.getByText('[3] critères sélectionnés')
-      //   ).toBeInTheDocument()
-      //
-      //   await saisirLocalite(/Lieu de travail/, 'paris 14')
-      //   fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
-      //     target: { value: 43 },
-      //   })
-      //   expect(
-      //     getByTextContent('Dans un rayon de : 43km')
-      //   ).toBeInTheDocument()
-      //   expect(
-      //     screen.getByText('[4] critères sélectionnés')
-      //   ).toBeInTheDocument()
-      //
-      //   // When
-      //   await userEvent.click(screen.getByText('Voir moins de critères'))
-      //   await userEvent.click(screen.getByText('Voir plus de critères'))
-      //
-      //   // Then
-      //   expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
-      //   expect(screen.getByLabelText(/CDI/)).toBeChecked()
-      //   expect(screen.getByLabelText(/CDD/)).toBeChecked()
-      //   expect(screen.getByLabelText(/Temps plein/)).toBeChecked()
-      //   expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
-      // })
-      // })
+      describe('permet d’affiner la recherche par des filtres', () => {
+        it('permet d’ajouter plus de filtre à notre recherche', async () => {
+          // Then
+          expect(() =>
+            screen.getByRole('group', { name: 'Étape 3 Plus de critères' })
+          ).toThrow()
+          expect(
+            screen.getByRole('button', { name: 'Voir plus de critères' })
+          ).toBeInTheDocument()
+
+          // When
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          // Then
+          expect(screen.getByText('Voir moins de critères')).toBeInTheDocument()
+        })
+
+        it('permet de selectionner un domaine', async () => {
+          // When
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          // Then
+          const etape3 = screen.getByRole('group', {
+            name: 'Étape 3 Plus de critères',
+          })
+          const selectDomaine = within(etape3).getByRole('combobox', {
+            name: 'Sélectionner domaine',
+          })
+          domainesServiceCivique.forEach((domaine) => {
+            expect(
+              within(selectDomaine).getByRole('option', {
+                name: domaine.libelle,
+              })
+            ).toHaveValue(domaine.code)
+          })
+        })
+
+        it("permet d'afficher uniquement les offres débutant dès que possible", async () => {
+          // When
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          // Then
+          const etape3 = screen.getByRole('group', {
+            name: 'Étape 3 Plus de critères',
+          })
+          const dateDebutGroupe = within(etape3).getByRole('group', {
+            name: 'Date de début',
+          })
+          expect(
+            within(dateDebutGroupe).getByRole('checkbox', {
+              name: /Dès que possible/,
+            })
+          ).toBeChecked()
+          expect(
+            within(dateDebutGroupe).getByRole('checkbox', {
+              name: /À partir de/,
+            })
+          ).not.toBeChecked()
+          expect(
+            within(dateDebutGroupe).getByRole('checkbox', {
+              name: /À partir de/,
+            })
+          ).toHaveAttribute('disabled')
+        })
+
+        it('permet de définir une date de début', async () => {
+          // Given
+          const today = '2022-10-12'
+          jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO(today))
+
+          // When
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+          const etape3 = screen.getByRole('group', {
+            name: 'Étape 3 Plus de critères',
+          })
+          expect(() => within(etape3).getByLabelText('Date de début')).toThrow()
+
+          await userEvent.click(screen.getByLabelText(/Dès que possible/))
+
+          // Then
+          const dateDebutGroupe = within(etape3).getByRole('group', {
+            name: 'Date de début',
+          })
+          expect(
+            within(dateDebutGroupe).getByRole('checkbox', {
+              name: /Dès que possible/,
+            })
+          ).not.toBeChecked()
+          expect(
+            within(dateDebutGroupe).getByRole('checkbox', {
+              name: /À partir de/,
+            })
+          ).toBeChecked()
+          const inputDate = within(dateDebutGroupe).getByLabelText(
+            'Sélectionner une date de début'
+          )
+          expect(inputDate).toHaveAttribute('type', 'date')
+          expect(inputDate).toHaveAttribute('value', today)
+        })
+
+        // it("retiens les critères d'affinage saisie", async () => {
+        //   // Given
+        //   await userEvent.click(screen.getByText('Voir plus de critères'))
+        //
+        //   // When-Then
+        //   await userEvent.click(
+        //     screen.getByLabelText(
+        //       /Afficher uniquement les offres débutant accepté/
+        //     )
+        //   )
+        //   expect(
+        //     screen.getByText('[1] critère sélectionné')
+        //   ).toBeInTheDocument()
+        //
+        //   await userEvent.click(screen.getByLabelText('CDI'))
+        //   await userEvent.click(screen.getByLabelText(/CDD/))
+        //   expect(
+        //     screen.getByText('[2] critères sélectionnés')
+        //   ).toBeInTheDocument()
+        //
+        //   await userEvent.click(screen.getByLabelText('Temps plein'))
+        //   expect(
+        //     screen.getByText('[3] critères sélectionnés')
+        //   ).toBeInTheDocument()
+        //
+        //   await saisirLocalite(/Lieu de travail/, 'paris 14')
+        //   fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+        //     target: { value: 43 },
+        //   })
+        //   expect(
+        //     getByTextContent('Dans un rayon de : 43km')
+        //   ).toBeInTheDocument()
+        //   expect(
+        //     screen.getByText('[4] critères sélectionnés')
+        //   ).toBeInTheDocument()
+        //
+        //   // When
+        //   await userEvent.click(screen.getByText('Voir moins de critères'))
+        //   await userEvent.click(screen.getByText('Voir plus de critères'))
+        //
+        //   // Then
+        //   expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
+        //   expect(screen.getByLabelText(/CDI/)).toBeChecked()
+        //   expect(screen.getByLabelText(/CDD/)).toBeChecked()
+        //   expect(screen.getByLabelText(/Temps plein/)).toBeChecked()
+        //   expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+        // })
+      })
 
       describe('recherche', () => {
         it('permet de rechercher des offres de services civiques', async () => {

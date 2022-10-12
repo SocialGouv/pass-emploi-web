@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
@@ -10,6 +11,7 @@ import { ApiError } from 'utils/httpClient'
 
 export type SearchServicesCiviquesQuery = {
   coordonnees?: { lon: number; lat: number }
+  dateDebut?: DateTime
 }
 
 export interface ServicesCiviquesService {
@@ -51,8 +53,6 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
       searchUrl,
       accessToken
     )
-
-    console.log({ content })
 
     return content.map(jsonToServiceCiviqueItem)
   }

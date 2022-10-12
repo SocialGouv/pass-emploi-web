@@ -34,6 +34,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
+import RechercheServiceCiviqueSecondary from 'components/offres/RechercheServicesCiviqueSecondary'
 
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
@@ -65,6 +66,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const [countCriteres, setCountCriteres] = useState<number>(0)
   const [queryOffresEmploi, setQueryOffresEmploi] =
     useState<SearchOffresEmploiQuery>({})
+  const [queryServiceCivique, setQueryServiceCivique] =
+    useState<SearchServicesCiviquesQuery>({})
+
   const RAYON_DEFAULT = 10
 
   const [offres, setOffres] = useState<BaseOffre[] | undefined>(undefined)
@@ -369,6 +373,13 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
+          />
+        )
+      case TypeOffre.SERVICE_CIVIQUE:
+        return (
+          <RechercheServiceCiviqueSecondary
+            query={queryServiceCivique}
+            onQueryUpdate={setQueryServiceCivique}
           />
         )
       default:

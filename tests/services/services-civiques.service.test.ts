@@ -1,14 +1,9 @@
 import { ApiClient } from 'clients/api.client'
 import {
-  listeBaseOffresEmploi,
   listeBaseServicesCiviques,
-  listeOffresEmploiJson,
   listeServicesCiviquesJson,
 } from 'fixtures/offre'
-import {
-  ServicesCiviquesApiService,
-  ServicesCiviquesService,
-} from 'services/services-civiques.service'
+import { ServicesCiviquesApiService } from 'services/services-civiques.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
@@ -68,9 +63,7 @@ describe('ServicesCiviqueApiService', () => {
     beforeEach(() => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: {
-          results: listeServicesCiviquesJson(),
-        },
+        content: listeServicesCiviquesJson(),
       })
     })
 
