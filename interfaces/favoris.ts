@@ -2,8 +2,9 @@ export interface Offre {
   id: string
   titre: string
   type: string
-  hasLinkPE: boolean
-  hasLinkServiceCivique: boolean
+  isEmploi: boolean
+  isAlternance: boolean
+  isServiceCivique: boolean
   organisation?: string
   localisation?: string
 }

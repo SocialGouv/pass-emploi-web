@@ -47,11 +47,14 @@ function Favoris({ offres, recherches }: FavorisProps) {
 
   async function handleRedirectionOffre(offre: Offre) {
     let redirectUrl: string | undefined
-    if (offre.hasLinkPE) {
+    if (offre.isEmploi) {
+      redirectUrl = '/offres/' + offre.id
+    } else if (offre.isAlternance) {
       redirectUrl = await offresEmploiService.getLienOffreEmploi(offre.id)
-    } else if (offre.hasLinkServiceCivique) {
+    } else if (offre.isServiceCivique) {
       redirectUrl = await servicesCiviqueService.getLienServiceCivique(offre.id)
     }
+
     if (redirectUrl) {
       window.open(redirectUrl, '_blank', 'noopener,noreferrer')
     } else {

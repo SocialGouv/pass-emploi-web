@@ -1,17 +1,12 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { GetServerSidePropsResult } from 'next'
-import { GetServerSidePropsContext } from 'next/types'
-import React from 'react'
 
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import {
-  mockedFavorisService,
-  mockedOffresEmploiService,
-} from 'fixtures/services'
-import Favoris, {
-  getServerSideProps,
-} from 'pages/mes-jeunes/[jeune_id]/favoris'
+import { mockedFavorisService, mockedOffresEmploiService } from 'fixtures/services'
+import { GetServerSidePropsResult } from 'next'
+import { GetServerSidePropsContext } from 'next/types'
+import Favoris, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]/favoris'
+import React from 'react'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ServicesCiviqueService } from 'services/services-civique.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -46,7 +41,7 @@ describe('Favoris', () => {
     it('affiche la liste des offres du jeune', () => {
       // Then
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Offres 3'
+        'Offres 4'
       )
       offres.forEach((offre) => {
         expect(screen.getByText(offre.titre)).toBeInTheDocument()
@@ -62,8 +57,24 @@ describe('Favoris', () => {
       // When
       await userEvent.click(offre)
       // Then
+      expect(mockOpen).toHaveBeenCalledWith(
+        '/offres/idOffre1',
+        '_blank',
+        'noopener,noreferrer'
+      )
+    })
+
+    it('permet d’accéder à l’offre d’alternance', async () => {
+      // Given
+      ;(offresEmploiService.getLienOffreEmploi as jest.Mock).mockResolvedValue(
+        'https://wwww.pole-emploi.fr/une-id'
+      )
+      const offre = screen.getByText('Alternance')
+      // When
+      await userEvent.click(offre)
+      // Then
       expect(offresEmploiService.getLienOffreEmploi).toHaveBeenCalledWith(
-        'idOffre1'
+        'idOffre4'
       )
       expect(mockOpen).toHaveBeenCalledWith(
         'https://wwww.pole-emploi.fr/une-id',
