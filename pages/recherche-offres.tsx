@@ -7,6 +7,7 @@ import RadioButton from 'components/action/RadioButton'
 import { OffreCard } from 'components/offres/OffreCard'
 import RechercheOffresEmploiMain from 'components/offres/RechercheOffresEmploiMain'
 import RechercheOffresEmploiSecondary from 'components/offres/RechercheOffresEmploiSecondary'
+import RechercheServiceCiviqueSecondary from 'components/offres/RechercheServicesCiviqueSecondary'
 import RechercheServicesCiviquesMain from 'components/offres/RechercheServicesCiviquesMain'
 import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
@@ -34,7 +35,6 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
-import RechercheServiceCiviqueSecondary from 'components/offres/RechercheServicesCiviqueSecondary'
 
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
@@ -201,6 +201,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   useEffect(() => {
     if (localite?.type === 'COMMUNE') {
       setQueryOffresEmploi((query) => ({ ...query, rayon: RAYON_DEFAULT }))
+      setQueryServiceCivique((query) => ({ ...query, rayon: RAYON_DEFAULT }))
     } else {
       setQueryOffresEmploi(({ rayon, ...query }) => query)
     }
@@ -378,6 +379,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       case TypeOffre.SERVICE_CIVIQUE:
         return (
           <RechercheServiceCiviqueSecondary
+            onCriteresChange={setCountCriteres}
             query={queryServiceCivique}
             onQueryUpdate={setQueryServiceCivique}
           />

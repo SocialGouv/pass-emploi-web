@@ -677,53 +677,79 @@ describe('Page Recherche Offres', () => {
           expect(inputDate).toHaveAttribute('value', today)
         })
 
-        // it("retiens les critères d'affinage saisie", async () => {
-        //   // Given
-        //   await userEvent.click(screen.getByText('Voir plus de critères'))
-        //
-        //   // When-Then
-        //   await userEvent.click(
-        //     screen.getByLabelText(
-        //       /Afficher uniquement les offres débutant accepté/
-        //     )
-        //   )
-        //   expect(
-        //     screen.getByText('[1] critère sélectionné')
-        //   ).toBeInTheDocument()
-        //
-        //   await userEvent.click(screen.getByLabelText('CDI'))
-        //   await userEvent.click(screen.getByLabelText(/CDD/))
-        //   expect(
-        //     screen.getByText('[2] critères sélectionnés')
-        //   ).toBeInTheDocument()
-        //
-        //   await userEvent.click(screen.getByLabelText('Temps plein'))
-        //   expect(
-        //     screen.getByText('[3] critères sélectionnés')
-        //   ).toBeInTheDocument()
-        //
-        //   await saisirLocalite(/Lieu de travail/, 'paris 14')
-        //   fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
-        //     target: { value: 43 },
-        //   })
-        //   expect(
-        //     getByTextContent('Dans un rayon de : 43km')
-        //   ).toBeInTheDocument()
-        //   expect(
-        //     screen.getByText('[4] critères sélectionnés')
-        //   ).toBeInTheDocument()
-        //
-        //   // When
-        //   await userEvent.click(screen.getByText('Voir moins de critères'))
-        //   await userEvent.click(screen.getByText('Voir plus de critères'))
-        //
-        //   // Then
-        //   expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
-        //   expect(screen.getByLabelText(/CDI/)).toBeChecked()
-        //   expect(screen.getByLabelText(/CDD/)).toBeChecked()
-        //   expect(screen.getByLabelText(/Temps plein/)).toBeChecked()
-        //   expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
-        // })
+        it('permet de définir un rayon de recherche si une commune est sélectionnée', async () => {
+          // When
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+          const etape3 = screen.getByRole('group', {
+            name: 'Étape 3 Plus de critères',
+          })
+          expect(() =>
+            within(etape3).getByRole('group', { name: 'Distance' })
+          ).toThrow()
+
+          await saisirLocalite(/Localisation/, 'paris 14')
+
+          // Then
+          const distanceGroup = within(etape3).getByRole('group', {
+            name: 'Distance',
+          })
+          const inputRange = within(distanceGroup).getByRole('slider', {
+            name: 'Dans un rayon de : 10km',
+          })
+          expect(inputRange).toHaveAttribute('value', '10')
+          expect(inputRange).toHaveAttribute('type', 'range')
+          expect(inputRange).toHaveAttribute('min', '0')
+          expect(inputRange).toHaveAttribute('max', '100')
+        })
+
+        it("retiens les critères d'affinage saisie", async () => {
+          // Given
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          // When-Then
+          await userEvent.selectOptions(
+            screen.getByLabelText('Sélectionner domaine'),
+            domainesServiceCivique[2].libelle
+          )
+          expect(
+            screen.getByText('[1] critère sélectionné')
+          ).toBeInTheDocument()
+
+          await userEvent.click(screen.getByLabelText(/Dès que possible/))
+          fireEvent.change(
+            screen.getByLabelText('Sélectionner une date de début'),
+            { target: { value: '2022-11-01' } }
+          )
+          expect(
+            screen.getByText('[2] critères sélectionnés')
+          ).toBeInTheDocument()
+
+          await saisirLocalite(/Localisation/, 'paris 14')
+          fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+            target: { value: 43 },
+          })
+          expect(
+            getByTextContent('Dans un rayon de : 43km')
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText('[3] critères sélectionnés')
+          ).toBeInTheDocument()
+
+          // When
+          await userEvent.click(screen.getByText('Voir moins de critères'))
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          // Then
+          expect(screen.getByLabelText(/domaine/)).toHaveValue(
+            domainesServiceCivique[2].code
+          )
+          expect(screen.getByLabelText(/Dès que possible/)).not.toBeChecked()
+          expect(screen.getByLabelText(/À partir de/)).toBeChecked()
+          expect(screen.getByLabelText(/date de début/)).toHaveValue(
+            '2022-11-01'
+          )
+          expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+        })
       })
 
       describe('recherche', () => {

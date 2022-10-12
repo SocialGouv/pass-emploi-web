@@ -11,7 +11,9 @@ import { ApiError } from 'utils/httpClient'
 
 export type SearchServicesCiviquesQuery = {
   coordonnees?: { lon: number; lat: number }
+  domaine?: string
   dateDebut?: DateTime
+  rayon?: number
 }
 
 export interface ServicesCiviquesService {
