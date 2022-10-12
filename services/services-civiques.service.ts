@@ -65,11 +65,14 @@ function buildSearchUrl(query: SearchServicesCiviquesQuery): string {
   if (!Object.entries(query).length) return path
 
   const searchParams = new URLSearchParams()
-  const { coordonnees } = query
+  const { coordonnees, domaine, dateDebut, rayon } = query
   if (coordonnees) {
     searchParams.set('lon', coordonnees.lon.toString(10))
     searchParams.set('lat', coordonnees.lat.toString(10))
   }
+  if (domaine) searchParams.set('domaine', domaine)
+  if (dateDebut) searchParams.set('dateDeDebutMinimum', dateDebut.toISO())
+  if (rayon) searchParams.set('distance', rayon.toString(10))
 
   return path + '?' + searchParams
 }

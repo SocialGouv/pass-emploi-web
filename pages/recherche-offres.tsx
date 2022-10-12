@@ -161,7 +161,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   }
 
   async function rechercherServicesCivique(): Promise<BaseServiceCivique[]> {
-    const query: SearchServicesCiviquesQuery = {}
+    const query: SearchServicesCiviquesQuery = queryServiceCivique
 
     if (localite) {
       const { longitude, latitude } = localite as Commune

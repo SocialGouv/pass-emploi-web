@@ -783,48 +783,43 @@ describe('Page Recherche Offres', () => {
             servicesCiviquesService.searchServicesCiviques
           ).toHaveBeenCalledWith({
             coordonnees: { lon: 2.323026, lat: 48.830108 },
-            // rayon: 10,
+            rayon: 10,
           })
         })
 
-        // it('construit la recherche avec les critères d’affinage', async () => {
-        //   // Given
-        //   await saisirLocalite('paris 14')
-        //   await userEvent.click(screen.getByText('Voir plus de critères'))
-        //
-        //   await userEvent.click(
-        //     screen.getByLabelText(
-        //       /Afficher uniquement les offres débutant accepté/
-        //     )
-        //   )
-        //
-        //   await userEvent.click(screen.getByLabelText('CDI'))
-        //   await userEvent.click(screen.getByLabelText(/CDD/))
-        //   await userEvent.click(screen.getByLabelText('Autres'))
-        //   await userEvent.click(screen.getByLabelText('Autres'))
-        //
-        //   await userEvent.click(screen.getByLabelText('Temps plein'))
-        //   await userEvent.click(screen.getByLabelText('Temps partiel'))
-        //   await userEvent.click(screen.getByLabelText('Temps partiel'))
-        //
-        //   fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
-        //     target: { value: 43 },
-        //   })
-        //
-        //   // When
-        //   await userEvent.click(
-        //     screen.getByRole('button', { name: 'Rechercher' })
-        //   )
-        //
-        //   // Then
-        //   expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-        //     commune: '75114',
-        //     debutantAccepte: true,
-        //     typesContrats: ['CDI', 'CDD-interim-saisonnier'],
-        //     durees: ['Temps plein'],
-        //     rayon: 43,
-        //   })
-        // })
+        it('construit la recherche avec les critères d’affinage', async () => {
+          // Given
+          await saisirLocalite(/Localisation/, 'paris 14')
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          await userEvent.selectOptions(
+            screen.getByLabelText('Sélectionner domaine'),
+            domainesServiceCivique[2].libelle
+          )
+          await userEvent.click(screen.getByLabelText(/Dès que possible/))
+          fireEvent.change(
+            screen.getByLabelText('Sélectionner une date de début'),
+            { target: { value: '2022-11-01' } }
+          )
+          fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+            target: { value: 43 },
+          })
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Rechercher' })
+          )
+
+          // Then
+          expect(
+            servicesCiviquesService.searchServicesCiviques
+          ).toHaveBeenCalledWith({
+            coordonnees: { lon: 2.323026, lat: 48.830108 },
+            domaine: domainesServiceCivique[2].code,
+            dateDebut: DateTime.fromISO('2022-11-01'),
+            rayon: 43,
+          })
+        })
       })
 
       describe('recherche réussie', () => {

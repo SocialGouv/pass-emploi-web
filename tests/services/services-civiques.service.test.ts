@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { ApiClient } from 'clients/api.client'
 import {
   listeBaseServicesCiviques,
@@ -18,11 +20,14 @@ describe('ServicesCiviqueApiService', () => {
   let apiClient: ApiClient
   let servicesCiviquesService: ServicesCiviquesApiService
 
+  beforeEach(() => {
+    apiClient = new FakeApiClient()
+    servicesCiviquesService = new ServicesCiviquesApiService(apiClient)
+  })
+
   describe('.getLienServiceCivique', () => {
     it('renvoie l’url du service civique si il est trouvée en base', async () => {
       // Given
-      apiClient = new FakeApiClient()
-      servicesCiviquesService = new ServicesCiviquesApiService(apiClient)
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
         if (url === `/services-civique/ID_SERVICE_CIVIQUE`)
           return {
@@ -88,6 +93,43 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
         '/services-civique?lon=2.323026&lat=48.830108',
+        'accessToken'
+      )
+    })
+
+    it('parse le domaine', async () => {
+      // When
+      await servicesCiviquesService.searchServicesCiviques({
+        domaine: 'code-domaine',
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/services-civique?domaine=code-domaine',
+        'accessToken'
+      )
+    })
+
+    it('parse la date de début', async () => {
+      // When
+      await servicesCiviquesService.searchServicesCiviques({
+        dateDebut: DateTime.fromISO('2022-11-01'),
+      })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/services-civique?dateDeDebutMinimum=2022-11-01T00%3A00%3A00.000%2B01%3A00',
+        'accessToken'
+      )
+    })
+
+    it('parse le rayon', async () => {
+      // When
+      await servicesCiviquesService.searchServicesCiviques({ rayon: 43 })
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/services-civique?distance=43',
         'accessToken'
       )
     })
