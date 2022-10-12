@@ -2,7 +2,10 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { listeBaseOffresEmploi, listeBaseServicesCiviques } from 'fixtures/offre'
+import {
+  listeBaseOffresEmploi,
+  listeBaseServicesCiviques,
+} from 'fixtures/offre'
 import { desCommunes, desLocalites } from 'fixtures/referentiel'
 import {
   mockedOffresEmploiService,
