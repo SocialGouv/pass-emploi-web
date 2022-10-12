@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { CommentaireAction } from 'components/action/CommentaireAction'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -26,6 +26,7 @@ export function CommentairesAction({
     useState<Commentaire[]>(commentairesInitiaux)
   const [nouveauCommentaire, setNouveauCommentaire] = useState<string>('')
   const [conseiller] = useConseiller()
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   function ajouterUnCommentaire() {
     actionsService
@@ -34,6 +35,7 @@ export function CommentairesAction({
         const commentairesMisAJour = [...commentaires, commentaireCree]
         setCommentaires(commentairesMisAJour)
         setNouveauCommentaire('')
+        inputRef.current!.value = ''
         onAjout(true)
       })
       .catch((error: Error) => {
@@ -67,7 +69,7 @@ export function CommentairesAction({
           Commentaire à destination du jeune
         </Label>
         <Textarea
-          value={nouveauCommentaire}
+          ref={inputRef}
           id='commentaire-action'
           onChange={(event) => {
             setNouveauCommentaire(event.target.value)
