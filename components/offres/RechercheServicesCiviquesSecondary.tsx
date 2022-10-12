@@ -9,17 +9,17 @@ import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { DATE_DASH_SEPARATOR } from 'utils/date'
 
-type RechercheOffresEmploiSecondaryProps = {
+type RechercheServicesCiviquesSecondaryProps = {
   onCriteresChange: (nbCriteres: number) => void
   query: SearchServicesCiviquesQuery
   onQueryUpdate: (query: SearchServicesCiviquesQuery) => void
 }
 
-export default function RechercheServiceCiviqueSecondary({
+export default function RechercheServicesCiviquesSecondary({
   onCriteresChange,
   query,
   onQueryUpdate,
-}: RechercheOffresEmploiSecondaryProps) {
+}: RechercheServicesCiviquesSecondaryProps) {
   const RAYON_MIN = 0
   const RAYON_MAX = 100
 

@@ -7,8 +7,8 @@ import RadioButton from 'components/action/RadioButton'
 import { OffreCard } from 'components/offres/OffreCard'
 import RechercheOffresEmploiMain from 'components/offres/RechercheOffresEmploiMain'
 import RechercheOffresEmploiSecondary from 'components/offres/RechercheOffresEmploiSecondary'
-import RechercheServiceCiviqueSecondary from 'components/offres/RechercheServicesCiviqueSecondary'
 import RechercheServicesCiviquesMain from 'components/offres/RechercheServicesCiviquesMain'
+import RechercheServicesCiviquesSecondary from 'components/offres/RechercheServicesCiviquesSecondary'
 import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -138,7 +138,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           break
         case TypeOffre.SERVICE_CIVIQUE:
           if (!validateLocalite()) return
-          result = await rechercherServicesCivique()
+          result = await rechercherServicesCiviques()
           break
       }
       setOffres(result)
@@ -157,10 +157,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     if (localite?.type === 'DEPARTEMENT') query.departement = localite.code
     if (localite?.type === 'COMMUNE') query.commune = localite.code
 
-    return await offresEmploiService.searchOffresEmploi(query)
+    return offresEmploiService.searchOffresEmploi(query)
   }
 
-  async function rechercherServicesCivique(): Promise<BaseServiceCivique[]> {
+  async function rechercherServicesCiviques(): Promise<BaseServiceCivique[]> {
     const query: SearchServicesCiviquesQuery = queryServiceCivique
 
     if (localite) {
@@ -168,7 +168,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       query.coordonnees = { lat: latitude, lon: longitude }
     }
 
-    return await servicesCiviquesService.searchServicesCiviques(query)
+    return servicesCiviquesService.searchServicesCiviques(query)
   }
 
   useEffect(() => {
@@ -203,7 +203,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       setQueryOffresEmploi((query) => ({ ...query, rayon: RAYON_DEFAULT }))
       setQueryServiceCivique((query) => ({ ...query, rayon: RAYON_DEFAULT }))
     } else {
-      setQueryOffresEmploi(({ rayon, ...query }) => query)
+      setQueryOffresEmploi((query) => ({ ...query, rayon: undefined }))
     }
   }, [localite?.type])
 
@@ -378,7 +378,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         )
       case TypeOffre.SERVICE_CIVIQUE:
         return (
-          <RechercheServiceCiviqueSecondary
+          <RechercheServicesCiviquesSecondary
             onCriteresChange={setCountCriteres}
             query={queryServiceCivique}
             onQueryUpdate={setQueryServiceCivique}
