@@ -11,8 +11,10 @@ import {
 
 type RechercheOffresEmploiSecondaryProps = {
   onCriteresChange: (nbCriteres: number) => void
-  query: SearchOffresEmploiQuery
-  onQueryUpdate: (query: SearchOffresEmploiQuery) => void
+  query: SearchOffresEmploiQuery & { hasError: boolean }
+  onQueryUpdate: (
+    query: SearchOffresEmploiQuery & { hasError: boolean }
+  ) => void
 }
 
 export default function RechercheOffresEmploiSecondary({

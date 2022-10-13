@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { FormEvent, useEffect, useMemo, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import RadioButton from 'components/action/RadioButton'
@@ -20,7 +20,6 @@ import {
   TypeOffre,
 } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { Commune, Localite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import {
   OffresEmploiService,
@@ -33,9 +32,9 @@ import {
 } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { useDebounce } from 'utils/hooks/useDebounce'
 import { useDependance } from 'utils/injectionDependances'
 
+type WithHasError<T> = T & { hasError: boolean }
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
 
 function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
@@ -51,23 +50,13 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const [typeOffre, setTypeOffre] = useState<TypeOffre | undefined>()
   const [showMoreFilters, setShowMoreFilters] = useState<boolean>(false)
 
-  const [localites, setLocalites] = useState<Localite[]>([])
-  const localitesOptions = useMemo(
-    () => localites.map(({ code, libelle }) => ({ id: code, value: libelle })),
-    [localites]
-  )
-  const [localisationInput, setLocalisationInput] = useState<{
-    value?: string
-    error?: string
-  }>({})
-  const debouncedLocalisationInput = useDebounce(localisationInput.value, 500)
-  const [localite, setLocalite] = useState<Localite | undefined>()
-
   const [countCriteres, setCountCriteres] = useState<number>(0)
-  const [queryOffresEmploi, setQueryOffresEmploi] =
-    useState<SearchOffresEmploiQuery>({})
-  const [queryServiceCivique, setQueryServiceCivique] =
-    useState<SearchServicesCiviquesQuery>({})
+  const [queryOffresEmploi, setQueryOffresEmploi] = useState<
+    WithHasError<SearchOffresEmploiQuery>
+  >({ hasError: false })
+  const [queryServiceCivique, setQueryServiceCivique] = useState<
+    WithHasError<SearchServicesCiviquesQuery>
+  >({ hasError: false })
 
   const RAYON_DEFAULT = 10
 
@@ -80,50 +69,13 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   if (partageSuccess) initialTracking += ' - Partage offre succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  const formIsValid = useMemo(
-    () => !localisationInput.error,
-    [localisationInput.error]
-  )
-
-  function handleLocalisationInputChanges(value: string) {
-    setLocalisationInput({
-      value: value.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-    })
-  }
-
-  function validateLocalite(): boolean {
-    if (!localisationInput.value) return true
-
-    const localiteCorrespondante = findLocaliteInListe(
-      localisationInput.value,
-      localites
-    )
-    if (!localiteCorrespondante) {
-      setLocalisationInput({
-        ...localisationInput,
-        error: 'Veuillez saisir une localisation correcte.',
-      })
-      return false
-    } else {
-      return true
-    }
-  }
-
-  function findLocaliteInListe(
-    value: string,
-    liste: Localite[]
-  ): Localite | undefined {
-    return liste.find(
-      ({ libelle }) =>
-        libelle.localeCompare(value, undefined, {
-          sensitivity: 'base',
-        }) === 0
-    )
-  }
+  const formIsInvalid =
+    queryOffresEmploi.hasError || queryServiceCivique.hasError
 
   async function rechercherOffres(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!typeOffre) return
+    if (formIsInvalid) return
 
     setIsSearching(true)
     setOffres(undefined)
@@ -133,11 +85,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       let result
       switch (typeOffre) {
         case TypeOffre.EMPLOI:
-          if (!validateLocalite()) return
           result = await rechercherOffresEmploi()
           break
         case TypeOffre.SERVICE_CIVIQUE:
-          if (!validateLocalite()) return
           result = await rechercherServicesCiviques()
           break
       }
@@ -152,60 +102,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   }
 
   async function rechercherOffresEmploi(): Promise<BaseOffreEmploi[]> {
-    const query: SearchOffresEmploiQuery = queryOffresEmploi
-
-    if (localite?.type === 'DEPARTEMENT') query.departement = localite.code
-    if (localite?.type === 'COMMUNE') query.commune = localite.code
-
+    const { hasError, ...query } = queryOffresEmploi
     return offresEmploiService.searchOffresEmploi(query)
   }
 
   async function rechercherServicesCiviques(): Promise<BaseServiceCivique[]> {
-    const query: SearchServicesCiviquesQuery = queryServiceCivique
-
-    if (localite) {
-      const { longitude, latitude } = localite as Commune
-      query.coordonnees = { lat: latitude, lon: longitude }
-    }
-
+    const { hasError, ...query } = queryServiceCivique
     return servicesCiviquesService.searchServicesCiviques(query)
   }
-
-  useEffect(() => {
-    if (debouncedLocalisationInput) {
-      let fetch: (query: string) => Promise<Localite[]>
-      if (typeOffre === TypeOffre.EMPLOI) {
-        fetch = referentielService.getCommunesEtDepartements
-      } else {
-        fetch = referentielService.getCommunes
-      }
-
-      fetch
-        .bind(referentielService)(debouncedLocalisationInput)
-        .then((communesEtDepartements) => {
-          setLocalites(communesEtDepartements)
-          if (communesEtDepartements.length) {
-            setLocalite(
-              findLocaliteInListe(
-                debouncedLocalisationInput,
-                communesEtDepartements
-              )
-            )
-          }
-        })
-    } else {
-      setLocalites([])
-    }
-  }, [debouncedLocalisationInput, referentielService, typeOffre])
-
-  useEffect(() => {
-    if (localite?.type === 'COMMUNE') {
-      setQueryOffresEmploi((query) => ({ ...query, rayon: RAYON_DEFAULT }))
-      setQueryServiceCivique((query) => ({ ...query, rayon: RAYON_DEFAULT }))
-    } else {
-      setQueryOffresEmploi((query) => ({ ...query, rayon: undefined }))
-    }
-  }, [localite?.type])
 
   useMatomo(trackingTitle)
 
@@ -279,7 +183,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
             <Button
               type='submit'
               className='mx-auto'
-              disabled={!formIsValid || isSearching}
+              disabled={formIsInvalid || isSearching}
             >
               <IconComponent
                 name={IconName.Search}
@@ -344,10 +248,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       case TypeOffre.EMPLOI:
         return (
           <RechercheOffresEmploiMain
-            localitesOptions={localitesOptions}
-            localisationInput={localisationInput}
-            onLocalisationInputChange={handleLocalisationInputChanges}
-            validateLocalite={validateLocalite}
+            fetchCommunesEtDepartements={referentielService.getCommunesEtDepartements.bind(
+              referentielService
+            )}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
           />
@@ -355,10 +258,11 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       case TypeOffre.SERVICE_CIVIQUE:
         return (
           <RechercheServicesCiviquesMain
-            localitesOptions={localitesOptions}
-            localisationInput={localisationInput}
-            onLocalisationInputChange={handleLocalisationInputChanges}
-            validateLocalite={validateLocalite}
+            fetchCommunes={referentielService.getCommunes.bind(
+              referentielService
+            )}
+            query={queryServiceCivique}
+            onQueryUpdate={setQueryServiceCivique}
           />
         )
       default:

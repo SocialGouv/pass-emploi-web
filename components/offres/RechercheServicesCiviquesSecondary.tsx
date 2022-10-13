@@ -11,8 +11,10 @@ import { DATE_DASH_SEPARATOR } from 'utils/date'
 
 type RechercheServicesCiviquesSecondaryProps = {
   onCriteresChange: (nbCriteres: number) => void
-  query: SearchServicesCiviquesQuery
-  onQueryUpdate: (query: SearchServicesCiviquesQuery) => void
+  query: SearchServicesCiviquesQuery & { hasError: boolean }
+  onQueryUpdate: (
+    query: SearchServicesCiviquesQuery & { hasError: boolean }
+  ) => void
 }
 
 export default function RechercheServicesCiviquesSecondary({

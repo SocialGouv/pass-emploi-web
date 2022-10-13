@@ -1,25 +1,45 @@
 import React from 'react'
 
 import { Etape } from 'components/ui/Form/Etape'
-import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
-import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import LocaliteSelectAutocomplete from 'components/ui/Form/LocaliteSelectAutocomplete'
+import { Commune, Localite } from 'interfaces/referentiel'
+import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 
+type Query = SearchServicesCiviquesQuery & { hasError: boolean }
 type RechercheServicesCiviquesMainProps = {
-  localitesOptions: Array<{ id: string; value: string }>
-  localisationInput: {
-    value?: string
-    error?: string
-  }
-  onLocalisationInputChange: (value: string) => void
-  validateLocalite: () => void
+  fetchCommunes: (search: string) => Promise<Commune[]>
+  query: Query
+  onQueryUpdate: (query: Query) => void
 }
+const RAYON_DEFAULT = 10
+
 export default function RechercheServicesCiviquesMain({
-  localitesOptions,
-  localisationInput,
-  onLocalisationInputChange,
-  validateLocalite,
+  fetchCommunes,
+  query,
+  onQueryUpdate,
 }: RechercheServicesCiviquesMainProps) {
+  function updateCoordonnees({
+    localite,
+    hasError,
+  }: {
+    localite: Localite | undefined
+    hasError: boolean
+  }) {
+    const { coordonnees, rayon, ...autresCriteres } = query
+    if (localite) {
+      const commune = localite as Commune
+      onQueryUpdate({
+        ...autresCriteres,
+        hasError,
+        coordonnees: { lon: commune.longitude, lat: commune.latitude },
+        rayon: rayon ?? RAYON_DEFAULT,
+      })
+    } else {
+      onQueryUpdate({ ...autresCriteres, hasError })
+    }
+  }
+
   return (
     <Etape numero={2} titre='Critères de recherche'>
       <Label htmlFor='localisation'>
@@ -28,18 +48,9 @@ export default function RechercheServicesCiviquesMain({
           sub: 'Saisissez une ville',
         }}
       </Label>
-      {localisationInput.error && (
-        <InputError id='localisation--error'>
-          {localisationInput.error}
-        </InputError>
-      )}
-      <SelectAutocomplete
-        id='localisation'
-        options={localitesOptions}
-        onChange={onLocalisationInputChange}
-        onBlur={validateLocalite}
-        invalid={Boolean(localisationInput.error)}
-        value={localisationInput.value ?? ''}
+      <LocaliteSelectAutocomplete
+        fetchLocalites={fetchCommunes}
+        onUpdateLocalite={updateCoordonnees}
       />
     </Etape>
   )
