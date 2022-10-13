@@ -113,6 +113,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   useEffect(() => {
     setOffres(undefined)
+    setQueryOffresEmploi({ hasError: false })
+    setQueryServiceCivique({ hasError: false })
   }, [typeOffre])
 
   useMatomo(trackingTitle)

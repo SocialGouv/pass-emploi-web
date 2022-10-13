@@ -23,6 +23,8 @@ import { ServicesCiviquesService } from 'services/services-civiques.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { mockSession } from 'next-auth/client/__tests__/helpers/mocks'
+import user = mockSession.user
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
@@ -426,6 +428,40 @@ describe('Page Recherche Offres', () => {
             durees: ['Temps plein'],
             rayon: 43,
           })
+        })
+
+        it('vide les critères lorsqu’on change le type d’offre', async () => {
+          // Given
+          await saisirLocalite(/Lieu de travail/, 'paris 14')
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          await userEvent.click(
+            screen.getByLabelText(
+              /Afficher uniquement les offres débutant accepté/
+            )
+          )
+
+          await userEvent.click(screen.getByLabelText('CDI'))
+          await userEvent.click(screen.getByLabelText('Temps plein'))
+          fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+            target: { value: 43 },
+          })
+
+          await userEvent.click(screen.getByText('Service civique'))
+          await userEvent.click(screen.getByText('Offre d’emploi'))
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Rechercher' })
+          )
+
+          // Then
+          expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+            {}
+          )
+          expect(
+            screen.getByText('[0] critère sélectionné')
+          ).toBeInTheDocument()
         })
       })
 
@@ -834,6 +870,41 @@ describe('Page Recherche Offres', () => {
             dateDebut: DateTime.fromISO('2022-11-01'),
             rayon: 43,
           })
+        })
+
+        it('vide les critères lorsqu’on change le type d’offre', async () => {
+          // Given
+          await saisirLocalite(/Localisation/, 'paris 14')
+          await userEvent.click(screen.getByText('Voir plus de critères'))
+
+          await userEvent.selectOptions(
+            screen.getByLabelText('Sélectionner domaine'),
+            domainesServiceCivique[2].libelle
+          )
+          await userEvent.click(screen.getByLabelText(/Dès que possible/))
+          fireEvent.change(
+            screen.getByLabelText('Sélectionner une date de début'),
+            { target: { value: '2022-11-01' } }
+          )
+          fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+            target: { value: 43 },
+          })
+
+          await userEvent.click(screen.getByText('Offre d’emploi'))
+          await userEvent.click(screen.getByText('Service civique'))
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Rechercher' })
+          )
+
+          // Then
+          expect(
+            servicesCiviquesService.searchServicesCiviques
+          ).toHaveBeenCalledWith({})
+          expect(
+            screen.getByText('[0] critère sélectionné')
+          ).toBeInTheDocument()
         })
       })
 
