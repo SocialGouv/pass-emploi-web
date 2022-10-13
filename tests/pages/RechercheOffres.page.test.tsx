@@ -487,6 +487,21 @@ describe('Page Recherche Offres', () => {
             ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
           })
         })
+
+        it('vide les resultats lorsqu’on change le type d’offre', async () => {
+          // Given
+          expect(within(offresList).getAllByRole('listitem').length).toEqual(
+            offresEmploi.length
+          )
+          // When
+          await userEvent.click(screen.getByText('Service civique'))
+          // Then
+          expect(
+            screen.queryByRole('list', {
+              description: 'Liste des résultats',
+            })
+          ).not.toBeInTheDocument()
+        })
       })
     })
 
@@ -880,6 +895,21 @@ describe('Page Recherche Offres', () => {
         //       ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
         //     })
         //   })
+
+        it('vide les resultats lorsqu’on change le type d’offre', async () => {
+          // Given
+          expect(within(offresList).getAllByRole('listitem').length).toEqual(
+            servicesCiviques.length
+          )
+          // When
+          await userEvent.click(screen.getByText('Offre d’emploi'))
+          // Then
+          expect(
+            screen.queryByRole('list', {
+              description: 'Liste des résultats',
+            })
+          ).not.toBeInTheDocument()
+        })
       })
     })
 

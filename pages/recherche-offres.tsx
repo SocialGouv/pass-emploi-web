@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import RadioButton from 'components/action/RadioButton'
@@ -110,6 +110,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     const { hasError, ...query } = queryServiceCivique
     return servicesCiviquesService.searchServicesCiviques(query)
   }
+
+  useEffect(() => {
+    setOffres(undefined)
+  }, [typeOffre])
 
   useMatomo(trackingTitle)
 
