@@ -9,7 +9,7 @@ import RechercheOffresEmploiMain from 'components/offres/RechercheOffresEmploiMa
 import RechercheOffresEmploiSecondary from 'components/offres/RechercheOffresEmploiSecondary'
 import RechercheServicesCiviquesMain from 'components/offres/RechercheServicesCiviquesMain'
 import RechercheServicesCiviquesSecondary from 'components/offres/RechercheServicesCiviquesSecondary'
-import Button from 'components/ui/Button/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -33,6 +33,11 @@ import {
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
+import { Tag } from 'components/ui/Indicateurs/Tag'
+import LienPartageOffre from 'components/offres/LienPartageOffre'
+import { DataTag } from 'components/ui/Indicateurs/DataTag'
+import Link from 'next/link'
+import { ServiceCiviqueCard } from 'components/offres/ServiceCiviqueCard'
 
 type WithHasError<T> = T & { hasError: boolean }
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
@@ -221,10 +226,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
                   <OffreCard offre={offre} withPartage={true} />
                 )}
                 {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-                  <div>
-                    <h3>Offre n°{offre.id}</h3>
-                    <p>{offre.titre}</p>
-                  </div>
+                  <ServiceCiviqueCard offre={offre} withPartage={false} />
                 )}
               </li>
             ))}

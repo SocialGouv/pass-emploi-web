@@ -44,4 +44,8 @@ export type BaseServiceCivique = {
   type: TypeOffre.SERVICE_CIVIQUE
   id: string
   titre: string
+  domaine: string // TODO ou enum a voir,
+  ville: string
+  organisation: string
+  dateDeDebut: string // todo formater 2022-02-15T10:12:14.000Z de dd mois AAAA
 }
