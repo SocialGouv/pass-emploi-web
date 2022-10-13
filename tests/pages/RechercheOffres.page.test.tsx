@@ -23,8 +23,6 @@ import { ServicesCiviquesService } from 'services/services-civiques.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { mockSession } from 'next-auth/client/__tests__/helpers/mocks'
-import user = mockSession.user
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
@@ -934,38 +932,19 @@ describe('Page Recherche Offres', () => {
         it('affiche chaque offre', async () => {
           servicesCiviques.forEach((offre) => {
             const offreCard = within(offresList).getByRole('heading', {
-              name: 'Offre n°' + offre.id,
+              name: offre.titre,
             }).parentElement!
-            expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
-            // expect(
-            //   within(offreCard).getByText(offre.typeContrat)
-            // ).toBeInTheDocument()
-            // expect(
-            //   within(offreCard).getByText(offre.duree!)
-            // ).toBeInTheDocument()
-            // expect(
-            //   within(offreCard).getByText(offre.nomEntreprise!)
-            // ).toBeInTheDocument()
-            // expect(
-            //   within(offreCard).getByText(offre.localisation!)
-            // ).toBeInTheDocument()
-            // expect(
-            //   within(offreCard).getByRole('link', {
-            //     name: 'Détail de l’offre ' + offre.id,
-            //   })
-            // ).toHaveAttribute('href', '/offres/' + offre.id)
+            expect(
+              within(offreCard).getByText(offre.domaine)
+            ).toBeInTheDocument()
+            expect(
+              within(offreCard).getByText(offre.organisation!)
+            ).toBeInTheDocument()
+            expect(
+              within(offreCard).getByText(offre.ville!)
+            ).toBeInTheDocument()
           })
         })
-
-        //   it('permet de partager chaque offre', () => {
-        //     servicesCiviques.forEach((offre) => {
-        //       expect(
-        //         within(offresList).getByRole('link', {
-        //           name: `Partager offre numéro ${offre.id}`,
-        //         })
-        //       ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
-        //     })
-        //   })
 
         it('vide les resultats lorsqu’on change le type d’offre', async () => {
           // Given

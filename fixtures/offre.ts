@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import {
   DetailOffreEmploiJson,
   OffreEmploiItemJson,
@@ -183,30 +185,30 @@ export function listeBaseServicesCiviques(): BaseServiceCivique[] {
       id: '6322ac0fe8f66b05ee325ece',
       titre:
         'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
-      // "organisation": "Ligue de l'enseignement fédération de Paris",
-      // "ville": "Paris",
-      // "domaine": "education",
-      // "dateDeDebut": "2022-11-01T00:00:00.000Z"
+      organisation: "Ligue de l'enseignement fédération de Paris",
+      ville: 'Paris',
+      domaine: 'education',
+      dateDeDebut: DateTime.fromISO('2022-11-01T00:00:00.000Z'),
     },
     {
       type: TypeOffre.SERVICE_CIVIQUE,
       id: '6322ac11e8f66b05ee325f10',
       titre:
         "Soutenir le développement, l'accès et la promotion de la pratique sportive",
-      // "organisation": "FEDERATION FRANCAISE DES CLUBS OMNISPORTS",
-      // "ville": "Massy",
-      // "domaine": "sport",
-      // "dateDeDebut": "2022-09-26T00:00:00.000Z"
+      organisation: 'FEDERATION FRANCAISE DES CLUBS OMNISPORTS',
+      ville: 'Massy',
+      domaine: 'sport',
+      dateDeDebut: DateTime.fromISO('2022-09-26T00:00:00.000Z'),
     },
     {
       type: TypeOffre.SERVICE_CIVIQUE,
       id: '6322ac12e8f66b05ee325f1d',
       titre:
         "Participer à la réussite en milieu scolaire à l'école française de Bonn (All.)",
-      // "organisation": "Ecole française de Gaulle-Adenauer",
-      // "ville": "Köln",
-      // "domaine": "education",
-      // "dateDeDebut": "2022-10-03T00:00:00.000Z"
+      organisation: 'Ecole française de Gaulle-Adenauer',
+      ville: 'Köln',
+      domaine: 'education',
+      dateDeDebut: DateTime.fromISO('2022-10-03T00:00:00.000Z'),
     },
   ]
 }
@@ -217,28 +219,28 @@ export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
       id: '6322ac0fe8f66b05ee325ece',
       titre:
         'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
-      // "organisation": "Ligue de l'enseignement fédération de Paris",
-      // "ville": "Paris",
-      // "domaine": "education",
-      // "dateDeDebut": "2022-11-01T00:00:00.000Z"
+      organisation: "Ligue de l'enseignement fédération de Paris",
+      ville: 'Paris',
+      domaine: 'education',
+      dateDeDebut: '2022-11-01T00:00:00.000Z',
     },
     {
       id: '6322ac11e8f66b05ee325f10',
       titre:
         "Soutenir le développement, l'accès et la promotion de la pratique sportive",
-      // "organisation": "FEDERATION FRANCAISE DES CLUBS OMNISPORTS",
-      // "ville": "Massy",
-      // "domaine": "sport",
-      // "dateDeDebut": "2022-09-26T00:00:00.000Z"
+      organisation: 'FEDERATION FRANCAISE DES CLUBS OMNISPORTS',
+      ville: 'Massy',
+      domaine: 'sport',
+      dateDeDebut: '2022-09-26T00:00:00.000Z',
     },
     {
       id: '6322ac12e8f66b05ee325f1d',
       titre:
         "Participer à la réussite en milieu scolaire à l'école française de Bonn (All.)",
-      // "organisation": "Ecole française de Gaulle-Adenauer",
-      // "ville": "Köln",
-      // "domaine": "education",
-      // "dateDeDebut": "2022-10-03T00:00:00.000Z"
+      organisation: 'Ecole française de Gaulle-Adenauer',
+      ville: 'Köln',
+      domaine: 'education',
+      dateDeDebut: '2022-10-03T00:00:00.000Z',
     },
   ]
 }

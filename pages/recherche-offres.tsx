@@ -4,12 +4,13 @@ import React, { FormEvent, useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import RadioButton from 'components/action/RadioButton'
-import { OffreCard } from 'components/offres/OffreCard'
+import { OffreEmploiCard } from 'components/offres/OffreEmploiCard'
 import RechercheOffresEmploiMain from 'components/offres/RechercheOffresEmploiMain'
 import RechercheOffresEmploiSecondary from 'components/offres/RechercheOffresEmploiSecondary'
 import RechercheServicesCiviquesMain from 'components/offres/RechercheServicesCiviquesMain'
 import RechercheServicesCiviquesSecondary from 'components/offres/RechercheServicesCiviquesSecondary'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { ServiceCiviqueCard } from 'components/offres/ServiceCiviqueCard'
+import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -33,11 +34,6 @@ import {
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
-import { Tag } from 'components/ui/Indicateurs/Tag'
-import LienPartageOffre from 'components/offres/LienPartageOffre'
-import { DataTag } from 'components/ui/Indicateurs/DataTag'
-import Link from 'next/link'
-import { ServiceCiviqueCard } from 'components/offres/ServiceCiviqueCard'
 
 type WithHasError<T> = T & { hasError: boolean }
 type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
@@ -62,8 +58,6 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const [queryServiceCivique, setQueryServiceCivique] = useState<
     WithHasError<SearchServicesCiviquesQuery>
   >({ hasError: false })
-
-  const RAYON_DEFAULT = 10
 
   const [offres, setOffres] = useState<BaseOffre[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -221,12 +215,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           </h2>
           <ul aria-describedby='result-title'>
             {offres!.map((offre) => (
-              <li key={offre.id} className='mb-4'>
+              <li key={`${offre.type}-${offre.id}`} className='mb-4'>
                 {offre.type === TypeOffre.EMPLOI && (
-                  <OffreCard offre={offre} withPartage={true} />
+                  <OffreEmploiCard offre={offre} withPartage={true} />
                 )}
                 {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-                  <ServiceCiviqueCard offre={offre} withPartage={false} />
+                  <ServiceCiviqueCard offre={offre} />
                 )}
               </li>
             ))}

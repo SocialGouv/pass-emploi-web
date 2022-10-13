@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -155,12 +155,12 @@ describe('Page Partage Offre', () => {
       }).parentElement!
       expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
       expect(within(offreCard).getByText(offre.typeContrat)).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.duree)).toBeInTheDocument()
+      expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
       expect(
-        within(offreCard).getByText(offre.nomEntreprise)
+        within(offreCard).getByText(offre.nomEntreprise!)
       ).toBeInTheDocument()
       expect(
-        within(offreCard).getByText(offre.localisation)
+        within(offreCard).getByText(offre.localisation!)
       ).toBeInTheDocument()
     })
 
