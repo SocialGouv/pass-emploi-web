@@ -2,14 +2,12 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { FormEvent, useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
 import RadioButton from 'components/action/RadioButton'
-import { OffreEmploiCard } from 'components/offres/OffreEmploiCard'
 import RechercheOffresEmploiMain from 'components/offres/RechercheOffresEmploiMain'
 import RechercheOffresEmploiSecondary from 'components/offres/RechercheOffresEmploiSecondary'
 import RechercheServicesCiviquesMain from 'components/offres/RechercheServicesCiviquesMain'
 import RechercheServicesCiviquesSecondary from 'components/offres/RechercheServicesCiviquesSecondary'
-import { ServiceCiviqueCard } from 'components/offres/ServiceCiviqueCard'
+import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
 import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -202,46 +200,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         )}
       </form>
 
-      {isSearching && (
-        <h2 className='animate-pulse text-m-medium text-primary mb-5'>
-          Liste des résultats
-        </h2>
-      )}
-
-      {offres && offres.length > 0 && (
-        <>
-          <h2 id='result-title' className='text-m-medium text-primary mb-5'>
-            Liste des résultats
-          </h2>
-          <ul aria-describedby='result-title'>
-            {offres!.map((offre) => (
-              <li key={`${offre.type}-${offre.id}`} className='mb-4'>
-                {offre.type === TypeOffre.EMPLOI && (
-                  <OffreEmploiCard offre={offre} withPartage={true} />
-                )}
-                {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-                  <ServiceCiviqueCard offre={offre} />
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      {offres && offres.length === 0 && (
-        <>
-          <h2 id='result-title' className='text-m-medium text-primary mb-5'>
-            Liste des résultats
-          </h2>
-          <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
-            className='m-auto w-[200px] h-[200px]'
-          />
-          <p className='text-base-bold text-center'>
-            Aucune offre ne correspond à vos critères de recherche.
-          </p>
-        </>
-      )}
+      <ResultatsRechercheOffre isSearching={isSearching} offres={offres} />
     </>
   )
 

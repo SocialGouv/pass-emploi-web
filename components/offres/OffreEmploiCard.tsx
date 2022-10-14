@@ -13,7 +13,7 @@ interface OffreEmploiCardProps {
   withPartage?: boolean
 }
 
-export function OffreEmploiCard({
+export default function OffreEmploiCard({
   offre,
   withPartage = false,
 }: OffreEmploiCardProps) {

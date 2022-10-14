@@ -11,7 +11,7 @@ interface ServiceCiviqueCardProps {
   offre: BaseServiceCivique
 }
 
-export function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
+export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
   return (
     <div className='rounded-small shadow-s p-6'>
       <div className='flex justify-between mb-4'>
