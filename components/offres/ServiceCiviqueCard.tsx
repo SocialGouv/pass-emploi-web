@@ -1,0 +1,56 @@
+import { DateTime } from 'luxon'
+import React from 'react'
+
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { DataTag } from 'components/ui/Indicateurs/DataTag'
+import { Tag } from 'components/ui/Indicateurs/Tag'
+import { BaseServiceCivique } from 'interfaces/offre'
+import { toFrenchString } from 'utils/date'
+
+interface ServiceCiviqueCardProps {
+  offre: BaseServiceCivique
+}
+
+export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
+  return (
+    <div className='rounded-small shadow-s p-6'>
+      <div className='flex justify-between mb-4'>
+        <Tag
+          label='Service civique'
+          color='accent_2'
+          backgroundColor='white'
+          className='text-s-regular'
+        />
+      </div>
+
+      <p className='text-base-bold text-accent_1 mb-2 capitalize'>
+        {offre.domaine}
+      </p>
+      <h3 className='text-base-bold mb-2'>{offre.titre}</h3>
+      {offre.organisation && (
+        <p className='text-s-bold mb-2'>{offre.organisation}</p>
+      )}
+      {offre.ville && (
+        <p className='flex items-center text-s-regular text-grey_800 mb-5'>
+          <IconComponent
+            name={IconName.Location}
+            className='w-4 h-4 mr-3 fill-primary'
+            focusable={false}
+            aria-hidden={true}
+          />
+          {offre.ville}
+        </p>
+      )}
+
+      <div className='flex justify-between'>
+        {offre.dateDeDebut && (
+          <DataTag
+            text={
+              'Dès le ' + toFrenchString(offre.dateDeDebut, DateTime.DATE_FULL)
+            }
+          />
+        )}
+      </div>
+    </div>
+  )
+}

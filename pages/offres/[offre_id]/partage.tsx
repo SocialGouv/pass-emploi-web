@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
-import { OffreCard } from 'components/offres/OffreCard'
+import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -13,7 +13,7 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
-import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { DetailOffreEmploi } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
@@ -84,7 +84,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
 
   return (
     <>
-      <OffreCard offre={offre} />
+      <OffreEmploiCard offre={offre} />
 
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>

@@ -1,4 +1,13 @@
+import { DateTime } from 'luxon'
+
+export enum TypeOffre {
+  EMPLOI = 'EMPLOI',
+  SERVICE_CIVIQUE = 'SERVICE_CIVIQUE',
+}
+export type BaseOffre = BaseOffreEmploi | BaseServiceCivique
+
 export type BaseOffreEmploi = {
+  type: TypeOffre.EMPLOI
   id: string
   titre: string
   typeContrat: string
@@ -31,4 +40,15 @@ export type DetailOffreEmploiInfoEntreprise = {
   lien?: string
   adaptee?: boolean
   accessibleTH?: boolean
+}
+
+export type BaseServiceCivique = {
+  type: TypeOffre.SERVICE_CIVIQUE
+  id: string
+  titre: string
+  domaine: string
+
+  ville?: string
+  organisation?: string
+  dateDeDebut?: DateTime
 }

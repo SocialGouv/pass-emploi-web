@@ -5,11 +5,9 @@ import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
-import {
-  ReferentielApiService,
-  ReferentielService,
-} from 'services/referentiel.service'
+import { ReferentielService } from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 
 export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
@@ -104,11 +102,12 @@ export function mockedConseillerService(
 }
 
 export function mockedReferentielService(
-  overrides: Partial<ReferentielApiService> = {}
+  overrides: Partial<ReferentielService> = {}
 ): ReferentielService {
   const defaults: ReferentielService = {
     getAgences: jest.fn(),
     getCommunesEtDepartements: jest.fn(),
+    getCommunes: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -140,6 +139,16 @@ export function mockedOffresEmploiService(
     getOffreEmploiServerSide: jest.fn(),
     getLienOffreEmploi: jest.fn(),
     searchOffresEmploi: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedServicesCiviquesService(
+  overrides: Partial<ServicesCiviquesService> = {}
+): ServicesCiviquesService {
+  const defaults: ServicesCiviquesService = {
+    getLienServiceCivique: jest.fn(),
+    searchServicesCiviques: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

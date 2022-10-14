@@ -1,14 +1,20 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { mockedFavorisService, mockedOffresEmploiService } from 'fixtures/services'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
-import Favoris, { getServerSideProps } from 'pages/mes-jeunes/[jeune_id]/favoris'
 import React from 'react'
+
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import {
+  mockedFavorisService,
+  mockedOffresEmploiService,
+  mockedServicesCiviquesService,
+} from 'fixtures/services'
+import Favoris, {
+  getServerSideProps,
+} from 'pages/mes-jeunes/[jeune_id]/favoris'
 import { OffresEmploiService } from 'services/offres-emploi.service'
-import { ServicesCiviqueService } from 'services/services-civique.service'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
@@ -23,18 +29,23 @@ describe('Favoris', () => {
 
   describe('client side', () => {
     let offresEmploiService: OffresEmploiService
-    let servicesCiviqueService: ServicesCiviqueService
+    let servicesCiviquesService: ServicesCiviquesService
     let mockOpen: () => null
 
     beforeEach(async () => {
       offresEmploiService = mockedOffresEmploiService()
-      servicesCiviqueService = { getLienServiceCivique: jest.fn() }
+      servicesCiviquesService = mockedServicesCiviquesService()
       mockOpen = jest.fn()
       jest.spyOn(window, 'open').mockImplementation(mockOpen)
 
       renderWithContexts(
         <Favoris offres={offres} recherches={recherches} pageTitle={''} />,
-        { customDependances: { offresEmploiService, servicesCiviqueService } }
+        {
+          customDependances: {
+            offresEmploiService,
+            servicesCiviquesService: servicesCiviquesService,
+          },
+        }
       )
     })
 
@@ -86,15 +97,15 @@ describe('Favoris', () => {
     it('permet d’accéder à l’offre de service civique', async () => {
       // Given
       ;(
-        servicesCiviqueService.getLienServiceCivique as jest.Mock
+        servicesCiviquesService.getLienServiceCivique as jest.Mock
       ).mockResolvedValue('https://wwww.service-civique.fr/une-id')
       const serviceCivique = screen.getByText('Service civique')
       // When
       await userEvent.click(serviceCivique)
       // Then
-      expect(servicesCiviqueService.getLienServiceCivique).toHaveBeenCalledWith(
-        'idOffre2'
-      )
+      expect(
+        servicesCiviquesService.getLienServiceCivique
+      ).toHaveBeenCalledWith('idOffre2')
       expect(mockOpen).toHaveBeenCalledWith(
         'https://wwww.service-civique.fr/une-id',
         '_blank',
@@ -105,15 +116,15 @@ describe('Favoris', () => {
     it('renvoit une 404 lorsque le lien n’a pas été trouvé', async () => {
       // Given
       ;(
-        servicesCiviqueService.getLienServiceCivique as jest.Mock
+        servicesCiviquesService.getLienServiceCivique as jest.Mock
       ).mockResolvedValue(undefined)
       const serviceCivique = screen.getByText('Service civique')
       // When
       await userEvent.click(serviceCivique)
       // Then
-      expect(servicesCiviqueService.getLienServiceCivique).toHaveBeenCalledWith(
-        'idOffre2'
-      )
+      expect(
+        servicesCiviquesService.getLienServiceCivique
+      ).toHaveBeenCalledWith('idOffre2')
       expect(mockOpen).toHaveBeenCalledWith('/404', '_blank')
     })
 

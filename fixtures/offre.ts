@@ -1,13 +1,22 @@
+import { DateTime } from 'luxon'
+
 import {
   DetailOffreEmploiJson,
   OffreEmploiItemJson,
-} from 'interfaces/json/offre'
-import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre-emploi'
+} from 'interfaces/json/offre-emploi'
+import { ServiceCiviqueItemJson } from 'interfaces/json/service-civique'
+import {
+  BaseOffreEmploi,
+  BaseServiceCivique,
+  DetailOffreEmploi,
+  TypeOffre,
+} from 'interfaces/offre'
 
-export function unDetailOffre(
+export function unDetailOffreEmploi(
   overrides: Partial<DetailOffreEmploi> = {}
 ): DetailOffreEmploi {
   const defaults: DetailOffreEmploi = {
+    type: TypeOffre.EMPLOI,
     id: 'id-offre',
     titre: "Offre d'emploi",
     urlPostulation: 'https://www.offres-emploi.fr/id-offre',
@@ -46,9 +55,10 @@ export function unDetailOffre(
   return { ...defaults, ...overrides }
 }
 
-export function listeBaseOffres(): BaseOffreEmploi[] {
+export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
   return [
     {
+      type: TypeOffre.EMPLOI,
       id: '7158498',
       titre: 'F/H Comptable auxiliaire (H/F)',
       nomEntreprise: 'Entreprise',
@@ -57,6 +67,7 @@ export function listeBaseOffres(): BaseOffreEmploi[] {
       duree: 'Temps plein',
     },
     {
+      type: TypeOffre.EMPLOI,
       id: '7157716',
       titre: 'Contrôleur de Gestion H/F',
       nomEntreprise: 'Entreprise',
@@ -65,6 +76,7 @@ export function listeBaseOffres(): BaseOffreEmploi[] {
       duree: 'Temps plein',
     },
     {
+      type: TypeOffre.EMPLOI,
       id: '137FPBC',
       titre: 'Serveur / Serveuse de bar-brasserie',
       nomEntreprise: 'Entreprise',
@@ -75,7 +87,7 @@ export function listeBaseOffres(): BaseOffreEmploi[] {
   ]
 }
 
-export function listeOffresJson(): OffreEmploiItemJson[] {
+export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
   return [
     {
       id: '7158498',
@@ -164,4 +176,71 @@ export function unDetailOffreJson(
     urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
   }
   return { ...defaults, ...overrides }
+}
+
+export function listeBaseServicesCiviques(): BaseServiceCivique[] {
+  return [
+    {
+      type: TypeOffre.SERVICE_CIVIQUE,
+      id: '6322ac0fe8f66b05ee325ece',
+      titre:
+        'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
+      organisation: "Ligue de l'enseignement fédération de Paris",
+      ville: 'Paris',
+      domaine: 'education',
+      dateDeDebut: DateTime.fromISO('2022-11-01T00:00:00.000Z'),
+    },
+    {
+      type: TypeOffre.SERVICE_CIVIQUE,
+      id: '6322ac11e8f66b05ee325f10',
+      titre:
+        "Soutenir le développement, l'accès et la promotion de la pratique sportive",
+      organisation: 'FEDERATION FRANCAISE DES CLUBS OMNISPORTS',
+      ville: 'Massy',
+      domaine: 'sport',
+      dateDeDebut: DateTime.fromISO('2022-09-26T00:00:00.000Z'),
+    },
+    {
+      type: TypeOffre.SERVICE_CIVIQUE,
+      id: '6322ac12e8f66b05ee325f1d',
+      titre:
+        "Participer à la réussite en milieu scolaire à l'école française de Bonn (All.)",
+      organisation: 'Ecole française de Gaulle-Adenauer',
+      ville: 'Köln',
+      domaine: 'education',
+      dateDeDebut: DateTime.fromISO('2022-10-03T00:00:00.000Z'),
+    },
+  ]
+}
+
+export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
+  return [
+    {
+      id: '6322ac0fe8f66b05ee325ece',
+      titre:
+        'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
+      organisation: "Ligue de l'enseignement fédération de Paris",
+      ville: 'Paris',
+      domaine: 'education',
+      dateDeDebut: '2022-11-01T00:00:00.000Z',
+    },
+    {
+      id: '6322ac11e8f66b05ee325f10',
+      titre:
+        "Soutenir le développement, l'accès et la promotion de la pratique sportive",
+      organisation: 'FEDERATION FRANCAISE DES CLUBS OMNISPORTS',
+      ville: 'Massy',
+      domaine: 'sport',
+      dateDeDebut: '2022-09-26T00:00:00.000Z',
+    },
+    {
+      id: '6322ac12e8f66b05ee325f1d',
+      titre:
+        "Participer à la réussite en milieu scolaire à l'école française de Bonn (All.)",
+      organisation: 'Ecole française de Gaulle-Adenauer',
+      ville: 'Köln',
+      domaine: 'education',
+      dateDeDebut: '2022-10-03T00:00:00.000Z',
+    },
+  ]
 }

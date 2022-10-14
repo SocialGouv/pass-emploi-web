@@ -2,6 +2,7 @@ import { FakeApiClient } from '../utils/fakeApiClient'
 
 import { ApiClient } from 'clients/api.client'
 import {
+  desCommunes,
   desLocalites,
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
@@ -73,12 +74,32 @@ describe('ReferentielApiService', () => {
       const actual = await referentielService.getCommunesEtDepartements(
         'Hauts de seine'
       )
+
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
         '/referentiels/communes-et-departements?recherche=Hauts%20de%20seine',
         'accessToken'
       )
       expect(actual).toEqual(desLocalites())
+    })
+  })
+
+  describe('.getCommunes', () => {
+    it('retourne un référentiel de communes avec des codes uniques', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: [...desCommunes(), ...desCommunes()],
+      })
+
+      // When
+      const actual = await referentielService.getCommunes("L'Haÿ-les-Roses")
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/referentiels/communes-et-departements?villesOnly=true&recherche=L'Ha%C3%BF-les-Roses",
+        'accessToken'
+      )
+      expect(actual).toEqual(desCommunes())
     })
   })
 })

@@ -1,8 +1,8 @@
 import { ApiClient } from 'clients/api.client'
 import {
-  listeBaseOffres,
-  listeOffresJson,
-  unDetailOffre,
+  listeBaseOffresEmploi,
+  listeOffresEmploiJson,
+  unDetailOffreEmploi,
   unDetailOffreJson,
 } from 'fixtures/offre'
 import { OffresEmploiApiService } from 'services/offres-emploi.service'
@@ -81,7 +81,7 @@ describe('OffresEmploiApiService', () => {
         '/offres-emploi/ID_OFFRE_EMPLOI',
         'accessToken'
       )
-      expect(actual).toStrictEqual(unDetailOffre())
+      expect(actual).toStrictEqual(unDetailOffreEmploi())
     })
 
     it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
@@ -106,7 +106,7 @@ describe('OffresEmploiApiService', () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
-          results: listeOffresJson(),
+          results: listeOffresEmploiJson(),
         },
       })
     })
@@ -120,7 +120,7 @@ describe('OffresEmploiApiService', () => {
         '/offres-emploi?alternance=false',
         'accessToken'
       )
-      expect(actual).toEqual(listeBaseOffres())
+      expect(actual).toEqual(listeBaseOffresEmploi())
     })
 
     it('parse les mots clés', async () => {

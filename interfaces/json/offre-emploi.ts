@@ -3,7 +3,8 @@ import {
   DetailOffreEmploi,
   DetailOffreEmploiExperience,
   DetailOffreEmploiInfoEntreprise,
-} from 'interfaces/offre-emploi'
+  TypeOffre,
+} from 'interfaces/offre'
 
 export type OffreEmploiItemJson = {
   id: string
@@ -57,6 +58,7 @@ export function jsonToOffreEmploiItem(
   json: OffreEmploiItemJson
 ): BaseOffreEmploi {
   const offreEmploiItem: BaseOffreEmploi = {
+    type: TypeOffre.EMPLOI,
     id: json.id,
     titre: json.titre,
     typeContrat: json.typeContrat,
@@ -75,6 +77,7 @@ export function jsonToDetailOffreEmploi(
 ): DetailOffreEmploi {
   const { id, data, urlRedirectPourPostulation } = json
   const offre: DetailOffreEmploi = {
+    type: TypeOffre.EMPLOI,
     id: id,
     dateActualisation: data.dateActualisation ?? data.dateCreation,
     titre: data.intitule,

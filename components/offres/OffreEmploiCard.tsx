@@ -6,14 +6,17 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
-import { BaseOffreEmploi } from 'interfaces/offre-emploi'
+import { BaseOffreEmploi } from 'interfaces/offre'
 
-interface OffreItemCardProps {
+interface OffreEmploiCardProps {
   offre: BaseOffreEmploi
   withPartage?: boolean
 }
 
-export function OffreCard({ offre, withPartage = false }: OffreItemCardProps) {
+export default function OffreEmploiCard({
+  offre,
+  withPartage = false,
+}: OffreEmploiCardProps) {
   return (
     <div className='rounded-small shadow-s p-6'>
       <div className='flex justify-between mb-4'>

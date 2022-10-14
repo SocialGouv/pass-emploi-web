@@ -25,7 +25,7 @@ import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { Chat } from 'interfaces/jeune'
 import { InfoOffre, Message, TypeMessage } from 'interfaces/message'
-import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { DetailOffreEmploi } from 'interfaces/offre'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
