@@ -55,6 +55,21 @@ export function unDetailOffreEmploi(
   return { ...defaults, ...overrides }
 }
 
+export function uneBaseOffreEmploi(
+  overrides: Partial<BaseOffreEmploi> = {}
+): BaseOffreEmploi {
+  const defaults: BaseOffreEmploi = {
+    type: TypeOffre.EMPLOI,
+    id: '142NCPN',
+    titre: 'Conducteur de ligne automatisée chaussures de sport  (H/F)',
+    typeContrat: 'CDI',
+    duree: 'Temps plein',
+    nomEntreprise: 'ADVANCED SHOE FACTORY 4.0',
+    localisation: '07 - ARDOIX',
+  }
+  return { ...defaults, ...overrides }
+}
+
 export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
   return [
     {
@@ -174,6 +189,21 @@ export function unDetailOffreJson(
       accessibleTH: true,
     },
     urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function uneBaseServiceCivique(
+  overrides: Partial<BaseServiceCivique> = {}
+): BaseServiceCivique {
+  const defaults: BaseServiceCivique = {
+    type: TypeOffre.SERVICE_CIVIQUE,
+    id: '631982fb221f8f05f031d6aa',
+    titre: 'ANIMATIONS COLLECTIVES ET ACCOMPAGNEMENT DES SENIORS',
+    organisation: 'Unis-Cité Vendée',
+    ville: 'La Roche-sur-Yon',
+    domaine: 'solidarite-insertion',
+    dateDeDebut: DateTime.fromISO('2022-10-17T00:00:00.000Z'),
   }
   return { ...defaults, ...overrides }
 }

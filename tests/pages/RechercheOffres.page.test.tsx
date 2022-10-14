@@ -2,10 +2,13 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
 
 import {
   listeBaseOffresEmploi,
   listeBaseServicesCiviques,
+  uneBaseOffreEmploi,
+  uneBaseServiceCivique,
 } from 'fixtures/offre'
 import { desCommunes, desLocalites } from 'fixtures/referentiel'
 import {
@@ -42,14 +45,20 @@ describe('Page Recherche Offres', () => {
       offresEmploi = listeBaseOffresEmploi()
       servicesCiviques = listeBaseServicesCiviques()
       offresEmploiService = mockedOffresEmploiService({
-        searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
+        searchOffresEmploi: jest.fn().mockResolvedValue({
+          metadonnees: { nombreTotal: 10, nombrePages: 4 },
+          offres: offresEmploi,
+        }),
       })
       referentielService = mockedReferentielService({
         getCommunesEtDepartements: jest.fn().mockResolvedValue(desLocalites()),
         getCommunes: jest.fn().mockResolvedValue(desCommunes()),
       })
       servicesCiviquesService = mockedServicesCiviquesService({
-        searchServicesCiviques: jest.fn().mockResolvedValue(servicesCiviques),
+        searchServicesCiviques: jest.fn().mockResolvedValue({
+          metadonnees: { nombreTotal: 10, nombrePages: 4 },
+          offres: servicesCiviques,
+        }),
       })
 
       renderWithContexts(<RechercheOffres pageTitle='' />, {
@@ -76,6 +85,12 @@ describe('Page Recherche Offres', () => {
 
       expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
       expect(() => screen.getByRole('button', { name: 'Rechercher' })).toThrow()
+    })
+
+    it('n’affiche pas de résultat par défaut', () => {
+      // Then
+      expect(() => screen.getByText('Liste des résultats')).toThrow()
+      expect(() => screen.getByRole('list')).toThrow()
     })
 
     describe('type offre : emploi', () => {
@@ -346,7 +361,8 @@ describe('Page Recherche Offres', () => {
 
           // Then
           expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
-            {}
+            {},
+            1
           )
         })
 
@@ -363,10 +379,13 @@ describe('Page Recherche Offres', () => {
           await userEvent.click(submitButton)
 
           // Then
-          expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-            motsCles: 'prof industrie',
-            departement: '75',
-          })
+          expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+            {
+              motsCles: 'prof industrie',
+              departement: '75',
+            },
+            1
+          )
         })
 
         it('construit la recherche avec une commune', async () => {
@@ -382,11 +401,14 @@ describe('Page Recherche Offres', () => {
           await userEvent.click(submitButton)
 
           // Then
-          expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-            motsCles: 'prof industrie',
-            commune: '75114',
-            rayon: 10,
-          })
+          expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+            {
+              motsCles: 'prof industrie',
+              commune: '75114',
+              rayon: 10,
+            },
+            1
+          )
         })
 
         it('construit la recherche avec les critères d’affinage', async () => {
@@ -419,13 +441,16 @@ describe('Page Recherche Offres', () => {
           )
 
           // Then
-          expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-            commune: '75114',
-            debutantAccepte: true,
-            typesContrats: ['CDI', 'CDD-interim-saisonnier'],
-            durees: ['Temps plein'],
-            rayon: 43,
-          })
+          expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+            {
+              commune: '75114',
+              debutantAccepte: true,
+              typesContrats: ['CDI', 'CDD-interim-saisonnier'],
+              durees: ['Temps plein'],
+              rayon: 43,
+            },
+            1
+          )
         })
 
         it('vide les critères lorsqu’on change le type d’offre', async () => {
@@ -455,7 +480,8 @@ describe('Page Recherche Offres', () => {
 
           // Then
           expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
-            {}
+            {},
+            1
           )
           expect(
             screen.getByText('[0] critère sélectionné')
@@ -476,11 +502,11 @@ describe('Page Recherche Offres', () => {
 
           // Then
           offresList = screen.getByRole('list', {
-            description: 'Liste des résultats',
+            description: `Liste des résultats (10 offres)`,
           })
         })
 
-        it('affiche toutes les offres', async () => {
+        it('affiche les offres', async () => {
           expect(within(offresList).getAllByRole('listitem').length).toEqual(
             offresEmploi.length
           )
@@ -522,19 +548,75 @@ describe('Page Recherche Offres', () => {
           })
         })
 
-        it('vide les resultats lorsqu’on change le type d’offre', async () => {
+        it("vide les resultats lorsqu'un champ du formulaire change", async () => {
           // Given
           expect(within(offresList).getAllByRole('listitem').length).toEqual(
             offresEmploi.length
           )
+
           // When
-          await userEvent.click(screen.getByText('Service civique'))
+          await userEvent.type(screen.getByLabelText(/Mots clés/), 'Boulanger')
+
           // Then
           expect(
             screen.queryByRole('list', {
               description: 'Liste des résultats',
             })
           ).not.toBeInTheDocument()
+        })
+
+        describe('pagination', () => {
+          beforeEach(() => {
+            ;(
+              offresEmploiService.searchOffresEmploi as jest.Mock
+            ).mockImplementation((_query, page) => ({
+              metadonnees: { nombreTotal: 10, nombrePages: 4 },
+              offres: [uneBaseOffreEmploi({ titre: 'Offre page ' + page })],
+            }))
+          })
+
+          it('met à jour les offres avec la page demandée ', async () => {
+            // When
+            await userEvent.click(screen.getByLabelText('Page 2'))
+
+            // Then
+            expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+              {},
+              2
+            )
+            expect(screen.getByText('Offre page 2')).toBeInTheDocument()
+          })
+
+          it('met à jour la page courante', async () => {
+            // When
+            await userEvent.click(screen.getByLabelText('Page suivante'))
+            await userEvent.click(screen.getByLabelText('Page suivante'))
+
+            // Then
+            expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+              {},
+              2
+            )
+            expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+              {},
+              3
+            )
+
+            expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
+              'aria-current',
+              'page'
+            )
+          })
+
+          it('ne recharge pas la page courante', async () => {
+            // When
+            await userEvent.click(screen.getByLabelText(`Page 1`))
+
+            // Then
+            expect(
+              offresEmploiService.searchOffresEmploi
+            ).toHaveBeenCalledTimes(1)
+          })
         })
       })
     })
@@ -814,7 +896,7 @@ describe('Page Recherche Offres', () => {
           // Then
           expect(
             servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledWith({})
+          ).toHaveBeenCalledWith({}, 1)
         })
 
         it('construit la recherche avec une commune', async () => {
@@ -830,10 +912,13 @@ describe('Page Recherche Offres', () => {
           // Then
           expect(
             servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledWith({
-            coordonnees: { lon: 2.323026, lat: 48.830108 },
-            rayon: 10,
-          })
+          ).toHaveBeenCalledWith(
+            {
+              coordonnees: { lon: 2.323026, lat: 48.830108 },
+              rayon: 10,
+            },
+            1
+          )
         })
 
         it('construit la recherche avec les critères d’affinage', async () => {
@@ -862,12 +947,15 @@ describe('Page Recherche Offres', () => {
           // Then
           expect(
             servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledWith({
-            coordonnees: { lon: 2.323026, lat: 48.830108 },
-            domaine: domainesServiceCivique[2].code,
-            dateDebut: DateTime.fromISO('2022-11-01'),
-            rayon: 43,
-          })
+          ).toHaveBeenCalledWith(
+            {
+              coordonnees: { lon: 2.323026, lat: 48.830108 },
+              domaine: domainesServiceCivique[2].code,
+              dateDebut: DateTime.fromISO('2022-11-01'),
+              rayon: 43,
+            },
+            1
+          )
         })
 
         it('vide les critères lorsqu’on change le type d’offre', async () => {
@@ -899,7 +987,7 @@ describe('Page Recherche Offres', () => {
           // Then
           expect(
             servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledWith({})
+          ).toHaveBeenCalledWith({}, 1)
           expect(
             screen.getByText('[0] critère sélectionné')
           ).toBeInTheDocument()
@@ -919,7 +1007,7 @@ describe('Page Recherche Offres', () => {
 
           // Then
           offresList = screen.getByRole('list', {
-            description: 'Liste des résultats',
+            description: 'Liste des résultats (10 offres)',
           })
         })
 
@@ -946,13 +1034,15 @@ describe('Page Recherche Offres', () => {
           })
         })
 
-        it('vide les resultats lorsqu’on change le type d’offre', async () => {
+        it("vide les resultats lorsqu'un champ du formulaire change", async () => {
           // Given
           expect(within(offresList).getAllByRole('listitem').length).toEqual(
-            servicesCiviques.length
+            offresEmploi.length
           )
+
           // When
-          await userEvent.click(screen.getByText('Offre d’emploi'))
+          await userEvent.type(screen.getByLabelText(/Localisation/), 'Rennes')
+
           // Then
           expect(
             screen.queryByRole('list', {
@@ -960,13 +1050,58 @@ describe('Page Recherche Offres', () => {
             })
           ).not.toBeInTheDocument()
         })
-      })
-    })
 
-    it('n’affiche pas de résultat par défaut', () => {
-      // Then
-      expect(() => screen.getByText('Liste des résultats')).toThrow()
-      expect(() => screen.getByRole('list')).toThrow()
+        describe('pagination', () => {
+          beforeEach(() => {
+            ;(
+              servicesCiviquesService.searchServicesCiviques as jest.Mock
+            ).mockImplementation((_query, page) => ({
+              metadonnees: { nombreTotal: 10, nombrePages: 4 },
+              offres: [uneBaseServiceCivique({ titre: 'Offre page ' + page })],
+            }))
+          })
+
+          it('met à jour les offres avec la page demandée ', async () => {
+            // When
+            await userEvent.click(screen.getByLabelText('Page 2'))
+
+            // Then
+            expect(
+              servicesCiviquesService.searchServicesCiviques
+            ).toHaveBeenCalledWith({}, 2)
+            expect(screen.getByText('Offre page 2')).toBeInTheDocument()
+          })
+
+          it('met à jour la page courante', async () => {
+            // When
+            await userEvent.click(screen.getByLabelText('Page suivante'))
+            await userEvent.click(screen.getByLabelText('Page suivante'))
+
+            // Then
+            expect(
+              servicesCiviquesService.searchServicesCiviques
+            ).toHaveBeenCalledWith({}, 2)
+            expect(
+              servicesCiviquesService.searchServicesCiviques
+            ).toHaveBeenCalledWith({}, 3)
+
+            expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
+              'aria-current',
+              'page'
+            )
+          })
+
+          it('ne recharge pas la page courante', async () => {
+            // When
+            await userEvent.click(screen.getByLabelText(`Page 1`))
+
+            // Then
+            expect(
+              servicesCiviquesService.searchServicesCiviques
+            ).toHaveBeenCalledTimes(1)
+          })
+        })
+      })
     })
 
     it('affiche une erreur si la recherche échoue', async () => {
@@ -993,9 +1128,10 @@ describe('Page Recherche Offres', () => {
       await userEvent.click(
         screen.getByRole('radio', { name: 'Offre d’emploi' })
       )
-      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockResolvedValue(
-        []
-      )
+      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockResolvedValue({
+        metadonnees: { nombreTotal: 0, nombrePages: 0 },
+        offres: [],
+      })
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })

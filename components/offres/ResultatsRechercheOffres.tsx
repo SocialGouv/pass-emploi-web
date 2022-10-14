@@ -3,24 +3,33 @@ import React from 'react'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
+import Pagination from 'components/ui/Table/Pagination'
 import { BaseOffre, TypeOffre } from 'interfaces/offre'
 
 type ResultatsRechercheOffreProps = {
   isSearching: boolean
   offres: BaseOffre[] | undefined
+  nbTotal: number | undefined
+  pageCourante: number
+  nbPages: number
+  onChangerPage: (page: number) => void
 }
 
 export default function ResultatsRechercheOffre({
   isSearching,
   offres,
+  nbTotal,
+  pageCourante,
+  nbPages,
+  onChangerPage,
 }: ResultatsRechercheOffreProps) {
   return (
-    <>
-      {isSearching && <ResultTitle pulse={true} />}
+    <div className={isSearching ? 'animate-pulse' : ''}>
+      {isSearching && <ResultTitle total={nbTotal} />}
 
       {offres && offres.length > 0 && (
         <>
-          <ResultTitle />
+          <ResultTitle total={nbTotal} />
           <ul aria-describedby='result-title'>
             {offres.map((offre) => (
               <li key={`${offre.type}-${offre.id}`} className='mb-4'>
@@ -38,7 +47,7 @@ export default function ResultatsRechercheOffre({
 
       {offres && offres.length === 0 && (
         <>
-          <ResultTitle />
+          <ResultTitle total={nbTotal} />
           <EmptyStateImage
             focusable='false'
             aria-hidden='true'
@@ -49,17 +58,23 @@ export default function ResultatsRechercheOffre({
           </p>
         </>
       )}
-    </>
+
+      {nbPages > 1 && (
+        <Pagination
+          pageCourante={pageCourante}
+          nombreDePages={nbPages}
+          allerALaPage={onChangerPage}
+        />
+      )}
+    </div>
   )
 }
 
-function ResultTitle({ pulse = false }: { pulse?: boolean }) {
-  let style: string = 'text-m-medium text-primary mb-5'
-  if (pulse) style += ' animate-pulse'
-
+function ResultTitle({ total }: { total: number | undefined }) {
   return (
-    <h2 id='result-title' className={style}>
+    <h2 id='result-title' className='text-m-medium text-primary mb-5'>
       Liste des résultats
+      {total !== undefined && ` (${total} offres)`}
     </h2>
   )
 }

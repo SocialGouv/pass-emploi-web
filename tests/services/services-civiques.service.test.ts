@@ -68,68 +68,80 @@ describe('ServicesCiviqueApiService', () => {
     beforeEach(() => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: listeServicesCiviquesJson(),
+        content: {
+          pagination: { total: 35 },
+          results: listeServicesCiviquesJson(),
+        },
       })
     })
 
-    it('renvoie une liste d’offres d’emploi', async () => {
+    it('renvoie une liste paginée d’offres d’emploi', async () => {
       // When
-      const actual = await servicesCiviquesService.searchServicesCiviques()
+      const actual = await servicesCiviquesService.searchServicesCiviques({}, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/services-civique',
+        '/v2/services-civique?page=3&limit=10',
         'accessToken'
       )
-      expect(actual).toEqual(listeBaseServicesCiviques())
+      expect(actual).toEqual({
+        metadonnees: {
+          nombrePages: 4,
+          nombreTotal: 35,
+        },
+        offres: listeBaseServicesCiviques(),
+      })
     })
 
     it('parse les coordonnées', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques({
-        coordonnees: { lon: 2.323026, lat: 48.830108 },
-      })
+      await servicesCiviquesService.searchServicesCiviques(
+        { coordonnees: { lon: 2.323026, lat: 48.830108 } },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/services-civique?lon=2.323026&lat=48.830108',
+        '/v2/services-civique?page=3&limit=10&lon=2.323026&lat=48.830108',
         'accessToken'
       )
     })
 
     it('parse le domaine', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques({
-        domaine: 'code-domaine',
-      })
+      await servicesCiviquesService.searchServicesCiviques(
+        { domaine: 'code-domaine' },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/services-civique?domaine=code-domaine',
+        '/v2/services-civique?page=3&limit=10&domaine=code-domaine',
         'accessToken'
       )
     })
 
     it('parse la date de début', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques({
-        dateDebut: DateTime.fromISO('2022-11-01'),
-      })
+      await servicesCiviquesService.searchServicesCiviques(
+        { dateDebut: DateTime.fromISO('2022-11-01') },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/services-civique?dateDeDebutMinimum=2022-11-01T00%3A00%3A00.000%2B01%3A00',
+        '/v2/services-civique?page=3&limit=10&dateDeDebutMinimum=2022-11-01T00%3A00%3A00.000%2B01%3A00',
         'accessToken'
       )
     })
 
     it('parse le rayon', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques({ rayon: 43 })
+      await servicesCiviquesService.searchServicesCiviques({ rayon: 43 }, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/services-civique?distance=43',
+        '/v2/services-civique?page=3&limit=10&distance=43',
         'accessToken'
       )
     })

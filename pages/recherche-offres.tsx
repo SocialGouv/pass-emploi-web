@@ -16,6 +16,7 @@ import {
   BaseOffre,
   BaseOffreEmploi,
   BaseServiceCivique,
+  MetadonneesOffres,
   TypeOffre,
 } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
@@ -34,7 +35,9 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 
 type WithHasError<T> = T & { hasError: boolean }
-type RechercheOffresProps = PageProps & { partageSuccess?: boolean }
+type RechercheOffresProps = PageProps & {
+  partageSuccess?: boolean
+}
 
 function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const referentielService =
@@ -57,9 +60,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     WithHasError<SearchServicesCiviquesQuery>
   >({ hasError: false })
 
-  const [offres, setOffres] = useState<BaseOffre[] | undefined>(undefined)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
+  const [offres, setOffres] = useState<BaseOffre[] | undefined>(undefined)
+  const [nbTotal, setNbTotal] = useState<number | undefined>(0)
+  const [pageCourante, setPageCourante] = useState<number>(0)
+  const [nbPages, setNbPages] = useState<number>(0)
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
@@ -69,26 +75,40 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const formIsInvalid =
     queryOffresEmploi.hasError || queryServiceCivique.hasError
 
-  async function rechercherOffres(e: FormEvent<HTMLFormElement>) {
+  async function rechercherPremierePage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (isSearching) return
     if (!typeOffre) return
     if (formIsInvalid) return
+    nettoyerResultats()
+
+    rechercherOffres(1)
+  }
+
+  async function rechercherOffres(page: number) {
+    if (page === pageCourante) return
+    if (isSearching) return
+    if (!typeOffre) return
 
     setIsSearching(true)
-    setOffres(undefined)
-    setSearchError(undefined)
-
     try {
       let result
       switch (typeOffre) {
         case TypeOffre.EMPLOI:
-          result = await rechercherOffresEmploi()
+          result = await rechercherOffresEmploi(page)
           break
         case TypeOffre.SERVICE_CIVIQUE:
-          result = await rechercherServicesCiviques()
+          result = await rechercherServicesCiviques(page)
           break
       }
-      setOffres(result)
+      const {
+        offres: offresPageCourante,
+        metadonnees: { nombreTotal, nombrePages },
+      } = result
+      setOffres(offresPageCourante)
+      setNbTotal(nombreTotal)
+      setPageCourante(page)
+      setNbPages(nombrePages)
       setTrackingTitle(pageTracking + ' - Résultats')
     } catch {
       setSearchError('Une erreur est survenue. Vous pouvez réessayer')
@@ -98,21 +118,38 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     }
   }
 
-  async function rechercherOffresEmploi(): Promise<BaseOffreEmploi[]> {
+  async function rechercherOffresEmploi(page: number): Promise<{
+    offres: BaseOffreEmploi[]
+    metadonnees: MetadonneesOffres
+  }> {
     const { hasError, ...query } = queryOffresEmploi
-    return offresEmploiService.searchOffresEmploi(query)
+    return offresEmploiService.searchOffresEmploi(query, page)
   }
 
-  async function rechercherServicesCiviques(): Promise<BaseServiceCivique[]> {
+  async function rechercherServicesCiviques(page: number): Promise<{
+    offres: BaseServiceCivique[]
+    metadonnees: MetadonneesOffres
+  }> {
     const { hasError, ...query } = queryServiceCivique
-    return servicesCiviquesService.searchServicesCiviques(query)
+    return servicesCiviquesService.searchServicesCiviques(query, page)
+  }
+
+  function nettoyerResultats() {
+    setOffres(undefined)
+    setNbTotal(undefined)
+    setPageCourante(0)
+    setNbPages(0)
+    setSearchError(undefined)
   }
 
   useEffect(() => {
-    setOffres(undefined)
     setQueryOffresEmploi({ hasError: false })
     setQueryServiceCivique({ hasError: false })
   }, [typeOffre])
+
+  useEffect(() => {
+    nettoyerResultats()
+  }, [queryOffresEmploi, queryServiceCivique])
 
   useMatomo(trackingTitle)
 
@@ -126,9 +163,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       )}
 
       <form
-        onSubmit={rechercherOffres}
+        onSubmit={rechercherPremierePage}
         className={
-          offres !== undefined
+          offres !== undefined || isSearching
             ? 'bg-primary_lighten p-6 mb-10 rounded-small'
             : ''
         }
@@ -200,7 +237,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         )}
       </form>
 
-      <ResultatsRechercheOffre isSearching={isSearching} offres={offres} />
+      <ResultatsRechercheOffre
+        isSearching={isSearching}
+        offres={offres}
+        pageCourante={pageCourante}
+        nbTotal={nbTotal}
+        nbPages={nbPages}
+        onChangerPage={rechercherOffres}
+      />
     </>
   )
 

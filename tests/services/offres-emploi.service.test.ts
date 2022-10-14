@@ -106,21 +106,25 @@ describe('OffresEmploiApiService', () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
+          pagination: { total: 35 },
           results: listeOffresEmploiJson(),
         },
       })
     })
 
-    it('renvoie une liste d’offres d’emploi', async () => {
+    it('renvoie une liste paginée d’offres d’emploi', async () => {
       // When
-      const actual = await offresEmploiService.searchOffresEmploi()
+      const actual = await offresEmploiService.searchOffresEmploi({}, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false',
+        '/offres-emploi?page=3&limit=10',
         'accessToken'
       )
-      expect(actual).toEqual(listeBaseOffresEmploi())
+      expect(actual).toEqual({
+        metadonnees: { nombreTotal: 35, nombrePages: 4 },
+        offres: listeBaseOffresEmploi(),
+      })
     })
 
     it('parse les mots clés', async () => {
@@ -128,91 +132,83 @@ describe('OffresEmploiApiService', () => {
       const query = 'prof industrie'
 
       // When
-      await offresEmploiService.searchOffresEmploi({
-        motsCles: query,
-      })
+      await offresEmploiService.searchOffresEmploi({ motsCles: query }, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&q=prof%20industrie',
+        '/offres-emploi?page=3&limit=10&q=prof%20industrie',
         'accessToken'
       )
     })
 
     it('parse le département', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({
-        departement: '75',
-      })
+      await offresEmploiService.searchOffresEmploi({ departement: '75' }, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&departement=75',
+        '/offres-emploi?page=3&limit=10&departement=75',
         'accessToken'
       )
     })
 
     it('parse la commune', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({
-        commune: '35238',
-      })
+      await offresEmploiService.searchOffresEmploi({ commune: '35238' }, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&commune=35238',
+        '/offres-emploi?page=3&limit=10&commune=35238',
         'accessToken'
       )
     })
 
     it('parse les types de contrat', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({
-        typesContrats: ['CDI', 'autre'],
-      })
+      await offresEmploiService.searchOffresEmploi(
+        { typesContrats: ['CDI', 'autre'] },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&contrat=CDI&contrat=autre',
+        '/offres-emploi?page=3&limit=10&contrat=CDI&contrat=autre',
         'accessToken'
       )
     })
 
     it('parse les durées', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({
-        durees: ['Temps plein', 'Temps partiel'],
-      })
+      await offresEmploiService.searchOffresEmploi(
+        { durees: ['Temps plein', 'Temps partiel'] },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&duree=1&duree=2',
+        '/offres-emploi?page=3&limit=10&duree=1&duree=2',
         'accessToken'
       )
     })
 
     it('parse la distance', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({
-        rayon: 32,
-      })
+      await offresEmploiService.searchOffresEmploi({ rayon: 32 }, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&rayon=32',
+        '/offres-emploi?page=3&limit=10&rayon=32',
         'accessToken'
       )
     })
 
     it("parse l'experience", async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({
-        debutantAccepte: true,
-      })
+      await offresEmploiService.searchOffresEmploi({ debutantAccepte: true }, 3)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi?alternance=false&debutantAccepte=true',
+        '/offres-emploi?page=3&limit=10&debutantAccepte=true',
         'accessToken'
       )
     })
