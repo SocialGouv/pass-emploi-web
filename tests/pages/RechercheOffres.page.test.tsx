@@ -565,6 +565,13 @@ describe('Page Recherche Offres', () => {
           ).not.toBeInTheDocument()
         })
 
+        it("bloque la recherche tant que les champs n'ont pas changés", () => {
+          // Then
+          expect(
+            screen.getByRole('button', { name: 'Rechercher' })
+          ).toHaveAttribute('disabled')
+        })
+
         describe('pagination', () => {
           beforeEach(() => {
             ;(
@@ -1049,6 +1056,13 @@ describe('Page Recherche Offres', () => {
               description: 'Liste des résultats',
             })
           ).not.toBeInTheDocument()
+        })
+
+        it("bloque la recherche tant que les champs n'ont pas changés", () => {
+          // Then
+          expect(
+            screen.getByRole('button', { name: 'Rechercher' })
+          ).toHaveAttribute('disabled')
         })
 
         describe('pagination', () => {
