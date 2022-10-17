@@ -72,8 +72,16 @@ export default function ResultatsRechercheOffre({
 }
 
 function ResultTitle({ total }: { total: number | undefined }) {
+  function scrollToRef(element: HTMLHeadingElement | null) {
+    if (element) element.scrollIntoView({ behavior: 'smooth' })
+  }
+
   return (
-    <h2 id='result-title' className='text-m-medium text-primary mb-5'>
+    <h2
+      ref={scrollToRef}
+      id='result-title'
+      className='text-m-medium text-primary mb-5'
+    >
       Liste des résultats
       {total !== undefined &&
         ` (${total > 1000 ? 'plus de 1000' : total} offres)`}
