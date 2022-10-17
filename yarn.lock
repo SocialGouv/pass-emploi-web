@@ -1607,10 +1607,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@badrap/bar-of-progress@npm:0.2.1":
-  version: 0.2.1
-  resolution: "@badrap/bar-of-progress@npm:0.2.1"
-  checksum: dc7f34efb7881b9f88e689e0ab336749250682eff4a13c35e433b696fb8ff16ead98bb516126cb1a1eb2395e172b3bfea5801a2ede9f78018aff9edb46a4cb4c
+"@badrap/bar-of-progress@npm:0.2.2":
+  version: 0.2.2
+  resolution: "@badrap/bar-of-progress@npm:0.2.2"
+  checksum: 9b0d7c276213024d7444414d90228e56622964e34d4c3eaa4db524b37442f3b6a4b55e6fcb9c1446550c8166ac619ebf5000689fbc797fe509b0aeceb5513c67
   languageName: node
   linkType: hard
 
@@ -14574,7 +14574,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pass-emploi-web@workspace:."
   dependencies:
-    "@badrap/bar-of-progress": 0.2.1
+    "@badrap/bar-of-progress": 0.2.2
     "@elastic/apm-rum": 5.12.0
     "@elastic/apm-rum-react": 1.4.2
     "@storybook/addon-a11y": ^6.5.12
