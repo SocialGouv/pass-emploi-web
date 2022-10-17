@@ -82,10 +82,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     if (formIsInvalid) return
     nettoyerResultats()
 
-    rechercherOffres(1)
+    rechercherOffres({ page: 1 })
   }
 
-  async function rechercherOffres(page: number) {
+  async function rechercherOffres({ page }: { page: number }) {
     if (page === pageCourante) return
     if (isSearching) return
     if (!typeOffre) return
@@ -243,7 +243,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         pageCourante={pageCourante}
         nbTotal={nbTotal}
         nbPages={nbPages}
-        onChangerPage={rechercherOffres}
+        onChangerPage={(page) => rechercherOffres({ page })}
       />
     </>
   )

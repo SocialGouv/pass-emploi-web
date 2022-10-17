@@ -64,6 +64,7 @@ export default function ResultatsRechercheOffre({
           pageCourante={pageCourante}
           nombreDePages={nbPages}
           allerALaPage={onChangerPage}
+          nombrePagesLimite={100} // Contrainte technique des partenaires
         />
       )}
     </div>
@@ -74,7 +75,8 @@ function ResultTitle({ total }: { total: number | undefined }) {
   return (
     <h2 id='result-title' className='text-m-medium text-primary mb-5'>
       Liste des résultats
-      {total !== undefined && ` (${total} offres)`}
+      {total !== undefined &&
+        ` (${total > 1000 ? 'plus de 1000' : total} offres)`}
     </h2>
   )
 }
