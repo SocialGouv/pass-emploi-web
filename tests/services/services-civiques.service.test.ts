@@ -5,6 +5,7 @@ import {
   listeBaseServicesCiviques,
   listeServicesCiviquesJson,
 } from 'fixtures/offre'
+import { uneCommune } from 'fixtures/referentiel'
 import { ServicesCiviquesApiService } from 'services/services-civiques.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -96,7 +97,7 @@ describe('ServicesCiviqueApiService', () => {
     it('parse les coordonnées', async () => {
       // When
       await servicesCiviquesService.searchServicesCiviques(
-        { coordonnees: { lon: 2.323026, lat: 48.830108 } },
+        { commune: uneCommune() },
         3
       )
 

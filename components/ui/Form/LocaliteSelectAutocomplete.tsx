@@ -11,10 +11,12 @@ type LocaliteSelectAutocompleteProps = {
     localite: Localite | undefined
     hasError: boolean
   }) => void
+  value?: string
 }
 export default function LocaliteSelectAutocomplete({
   fetchLocalites,
   onUpdateLocalite,
+  value,
 }: LocaliteSelectAutocompleteProps) {
   const [localites, setLocalites] = useState<Localite[]>([])
   const localitesOptions = useMemo(
@@ -24,14 +26,14 @@ export default function LocaliteSelectAutocomplete({
   const [localisationInput, setLocalisationInput] = useState<{
     value?: string
     error?: string
-  }>({})
+  }>({ value })
   const debouncedLocalisationInput = useDebounce(localisationInput.value, 500)
 
-  function handleLocalisationInputChanges(value: string) {
+  function handleLocalisationInputChanges(str: string) {
     setLocalisationInput({
-      value: value.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+      value: str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
     })
-    onUpdateLocalite({ localite: undefined, hasError: Boolean(value) })
+    onUpdateLocalite({ localite: undefined, hasError: Boolean(str) })
   }
 
   function updateLocalite(localite: Localite | undefined) {
@@ -54,12 +56,12 @@ export default function LocaliteSelectAutocomplete({
   }
 
   function findLocaliteInListe(
-    value: string,
+    str: string,
     liste: Localite[]
   ): Localite | undefined {
     return liste.find(
       ({ libelle }) =>
-        libelle.localeCompare(value, undefined, {
+        libelle.localeCompare(str, undefined, {
           sensitivity: 'base',
         }) === 0
     )

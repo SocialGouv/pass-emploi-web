@@ -55,7 +55,12 @@ export default function RechercheOffresEmploiMain({
   return (
     <Etape numero={2} titre='Critères de recherche'>
       <Label htmlFor='mots-cles'>Mots clés (Métier, code ROME)</Label>
-      <Input type='text' id='mots-cles' onChange={updateMotsCles} />
+      <Input
+        type='text'
+        id='mots-cles'
+        value={query.motsCles ?? ''}
+        onChange={updateMotsCles}
+      />
 
       <Label htmlFor='localisation'>
         {{
@@ -64,6 +69,7 @@ export default function RechercheOffresEmploiMain({
         }}
       </Label>
       <LocaliteSelectAutocomplete
+        value={query.commune ?? query.departement ?? ''}
         fetchLocalites={fetchCommunesEtDepartements}
         onUpdateLocalite={updateLocalite}
       />

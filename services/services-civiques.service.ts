@@ -7,10 +7,11 @@ import {
   ServiceCiviqueItemJson,
 } from 'interfaces/json/service-civique'
 import { BaseServiceCivique, MetadonneesOffres } from 'interfaces/offre'
+import { Commune } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export type SearchServicesCiviquesQuery = {
-  coordonnees?: { lon: number; lat: number }
+  commune?: Commune
   domaine?: string
   dateDebut?: DateTime
   rayon?: number
@@ -79,10 +80,10 @@ function buildSearchParams(
     limit: limit.toString(10),
   })
 
-  const { coordonnees, domaine, dateDebut, rayon } = query
-  if (coordonnees) {
-    searchParams.set('lon', coordonnees.lon.toString(10))
-    searchParams.set('lat', coordonnees.lat.toString(10))
+  const { commune, domaine, dateDebut, rayon } = query
+  if (commune) {
+    searchParams.set('lon', commune.longitude.toString(10))
+    searchParams.set('lat', commune.latitude.toString(10))
   }
   if (domaine) searchParams.set('domaine', domaine)
   if (dateDebut) searchParams.set('dateDeDebutMinimum', dateDebut.toISO())

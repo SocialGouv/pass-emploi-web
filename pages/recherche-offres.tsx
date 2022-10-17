@@ -139,8 +139,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       )}
 
       <FormRechercheOffres
-        isSearching={isSearching}
-        hasResults={offres !== undefined}
+        hasResults={isSearching || offres !== undefined}
         fetchCommunes={referentielService.getCommunes.bind(referentielService)}
         fetchCommunesEtDepartements={referentielService.getCommunesEtDepartements.bind(
           referentielService
