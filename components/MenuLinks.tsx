@@ -17,13 +17,14 @@ export enum MenuItem {
   Aide = 'Aide',
   Profil = 'Profil',
   Actualites = 'Actualites',
+  Raccourci = 'Raccourci,',
+  Messagerie = 'Messagerie',
 }
-type SidebarProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
-
+type MenuLinksProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
 export default function MenuLinks({
   showLabelsOnSmallScreen,
   items,
-}: SidebarProps) {
+}: MenuLinksProps) {
   const router = useRouter()
   const [isLoggedOut, setIsLoggedOut] = useState(false)
   const [conseiller] = useConseiller()
@@ -84,6 +85,30 @@ export default function MenuLinks({
               label='Réaffectation'
               href='/reaffectation'
               isActive={isCurrentRoute('/reaffectation')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          </>
+        )}
+
+        {items.includes(MenuItem.Messagerie) && (
+          <>
+            <MenuLink
+              iconName={IconName.Note}
+              label='Messagerie'
+              href='/mes-jeunes'
+              isActive={isCurrentRoute('/mes-jeunes')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          </>
+        )}
+
+        {items.includes(MenuItem.Raccourci) && (
+          <>
+            <MenuLink
+              iconName={IconName.Add}
+              label='Créer un raccourci'
+              href='/raccourci'
+              isActive={isCurrentRoute('/raccourci')}
               showLabelOnSmallScreen={showLabelsOnSmallScreen}
             />
           </>

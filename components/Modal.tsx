@@ -101,7 +101,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
           />
         </button>
       </div>
-      <div className='mt-2 p-6'>
+      <div className='px-6 pb-6'>
         {titleIcon && (
           <IconComponent
             name={titleIcon}

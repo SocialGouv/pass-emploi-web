@@ -111,7 +111,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
         <nav
           role='navigation'
           id='menu-mobile'
-          className='w-[70vw] flex flex-col bg-primary px-6 py-3 z-10 layout_s:hidden'
+          className='w-[100vw] flex flex-col bg-primary px-6 py-3 z-10 layout_s:hidden'
         >
           <button
             ref={closeMenuRef}
@@ -131,7 +131,10 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             />
           </button>
           <div className='grow flex flex-col justify-between'>
-            <MenuLinks showLabelsOnSmallScreen={true} items={[MenuItem.Aide]} />
+            <MenuLinks
+              showLabelsOnSmallScreen={true}
+              items={[MenuItem.Messagerie, MenuItem.Raccourci, MenuItem.Aide]}
+            />
           </div>
         </nav>
       )}
