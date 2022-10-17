@@ -6,7 +6,7 @@ import {
   jsonToServiceCiviqueItem,
   ServiceCiviqueItemJson,
 } from 'interfaces/json/service-civique'
-import { BaseServiceCivique } from 'interfaces/offre'
+import { BaseServiceCivique, MetadonneesOffres } from 'interfaces/offre'
 import { ApiError } from 'utils/httpClient'
 
 export type SearchServicesCiviquesQuery = {
@@ -19,8 +19,9 @@ export type SearchServicesCiviquesQuery = {
 export interface ServicesCiviquesService {
   getLienServiceCivique(idOffreEngagement: string): Promise<string | undefined>
   searchServicesCiviques(
-    query: SearchServicesCiviquesQuery
-  ): Promise<BaseServiceCivique[]>
+    query: SearchServicesCiviquesQuery,
+    page: number
+  ): Promise<{ offres: BaseServiceCivique[]; metadonnees: MetadonneesOffres }>
 }
 export class ServicesCiviquesApiService implements ServicesCiviquesService {
   constructor(private readonly apiClient: ApiClient) {}
@@ -45,26 +46,39 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
   }
 
   async searchServicesCiviques(
-    query: SearchServicesCiviquesQuery = {}
-  ): Promise<BaseServiceCivique[]> {
+    query: SearchServicesCiviquesQuery,
+    page: number
+  ): Promise<{ offres: BaseServiceCivique[]; metadonnees: MetadonneesOffres }> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
-    const searchUrl = buildSearchUrl(query)
-    const { content } = await this.apiClient.get<ServiceCiviqueItemJson[]>(
-      searchUrl,
-      accessToken
-    )
+    const LIMIT = 10
+    const path = '/v2/services-civique'
+    const searchParams = buildSearchParams(query, page, LIMIT)
+    const { content } = await this.apiClient.get<{
+      pagination: { total: number }
+      results: ServiceCiviqueItemJson[]
+    }>(path + '?' + searchParams, accessToken)
 
-    return content.map(jsonToServiceCiviqueItem)
+    const { pagination, results } = content
+    const metadonnees: MetadonneesOffres = {
+      nombreTotal: pagination.total,
+      nombrePages: Math.ceil(pagination.total / LIMIT),
+    }
+    return { metadonnees, offres: results.map(jsonToServiceCiviqueItem) }
   }
 }
 
-function buildSearchUrl(query: SearchServicesCiviquesQuery): string {
-  const path = '/services-civique'
-  if (!Object.entries(query).length) return path
+function buildSearchParams(
+  query: SearchServicesCiviquesQuery,
+  page: number,
+  limit: number
+): URLSearchParams {
+  const searchParams = new URLSearchParams({
+    page: page.toString(10),
+    limit: limit.toString(10),
+  })
 
-  const searchParams = new URLSearchParams()
   const { coordonnees, domaine, dateDebut, rayon } = query
   if (coordonnees) {
     searchParams.set('lon', coordonnees.lon.toString(10))
@@ -74,5 +88,5 @@ function buildSearchUrl(query: SearchServicesCiviquesQuery): string {
   if (dateDebut) searchParams.set('dateDeDebutMinimum', dateDebut.toISO())
   if (rayon) searchParams.set('distance', rayon.toString(10))
 
-  return path + '?' + searchParams
+  return searchParams
 }

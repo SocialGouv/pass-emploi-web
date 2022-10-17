@@ -7,7 +7,11 @@ import {
   jsonToOffreEmploiItem,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre-emploi'
-import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre'
+import {
+  BaseOffreEmploi,
+  DetailOffreEmploi,
+  MetadonneesOffres,
+} from 'interfaces/offre'
 import { ApiError } from 'utils/httpClient'
 
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
@@ -29,8 +33,9 @@ export interface OffresEmploiService {
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined>
   searchOffresEmploi(
-    recherche: SearchOffresEmploiQuery
-  ): Promise<BaseOffreEmploi[]>
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
 }
 
 export class OffresEmploiApiService implements OffresEmploiService {
@@ -56,17 +61,26 @@ export class OffresEmploiApiService implements OffresEmploiService {
   }
 
   async searchOffresEmploi(
-    options: SearchOffresEmploiQuery = {}
-  ): Promise<BaseOffreEmploi[]> {
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
-    const searchUrl = buildSearchUrl(options)
+    const LIMIT = 10
+    const path = '/offres-emploi'
+    const searchUrl = buildSearchParams(recherche, page, LIMIT)
     const { content } = await this.apiClient.get<{
+      pagination: { total: number }
       results: OffreEmploiItemJson[]
-    }>(searchUrl, accessToken)
+    }>(path + '?' + searchUrl, accessToken)
 
-    return content.results.map(jsonToOffreEmploiItem)
+    const { pagination, results } = content
+    const metadonnees: MetadonneesOffres = {
+      nombreTotal: pagination.total,
+      nombrePages: Math.ceil(pagination.total / LIMIT),
+    }
+    return { metadonnees, offres: results.map(jsonToOffreEmploiItem) }
   }
 
   private async getOffreEmploi(
@@ -89,17 +103,25 @@ export class OffresEmploiApiService implements OffresEmploiService {
   }
 }
 
-function buildSearchUrl({
-  commune,
-  departement,
-  motsCles,
-  typesContrats,
-  durees,
-  rayon,
-  debutantAccepte,
-}: SearchOffresEmploiQuery): string {
-  const path = '/offres-emploi'
-  const searchParams = new URLSearchParams({ alternance: 'false' })
+function buildSearchParams(
+  recherche: SearchOffresEmploiQuery,
+  page: number,
+  limit: number
+): string {
+  const searchParams = new URLSearchParams({
+    page: page.toString(10),
+    limit: limit.toString(10),
+  })
+
+  const {
+    durees,
+    typesContrats,
+    departement,
+    debutantAccepte,
+    commune,
+    rayon,
+    motsCles,
+  } = recherche
   const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
   if (departement) searchParams.set('departement', departement)
   if (commune) searchParams.set('commune', commune)
@@ -112,7 +134,7 @@ function buildSearchUrl({
     ?.map(dureeToQueryParam)
     .forEach((duree) => searchParams.append('duree', duree))
 
-  return path + '?' + searchParams + queryMotsCles
+  return searchParams + queryMotsCles
 }
 
 function dureeToQueryParam(duree: Duree): '1' | '2' {

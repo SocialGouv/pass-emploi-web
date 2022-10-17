@@ -52,3 +52,8 @@ export type BaseServiceCivique = {
   organisation?: string
   dateDeDebut?: DateTime
 }
+
+export interface MetadonneesOffres {
+  nombrePages: number
+  nombreTotal: number
+}
