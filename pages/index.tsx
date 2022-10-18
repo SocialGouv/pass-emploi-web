@@ -65,10 +65,6 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
 
       {conseiller?.structure === StructureConseiller.MILO && (
         <RenseignementAgenceMissionLocaleModal
-          //TODO-1127 remove struture
-          structureConseiller={
-            conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
-          }
           referentielAgences={referentielAgences}
           onAgenceChoisie={selectAgence}
           onClose={redirectToUrl}

@@ -1,7 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 
 import Modal from 'components/Modal'
-import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Label from 'components/ui/Form/Label'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
@@ -10,7 +9,6 @@ import Select from 'components/ui/Form/Select'
 import Input from 'components/ui/Form/Input'
 
 interface RenseignementAgenceMissionLocaleModalProps {
-  structureConseiller: string
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
   onClose: () => void
@@ -23,17 +21,25 @@ export default function RenseignementAgenceMissionLocaleModal({
 }: RenseignementAgenceMissionLocaleModalProps) {
   const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
     useState<Agence[]>(referentielAgences)
-  const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
-    useState<RequiredValue>({ value: '' })
+  const [agenceSelectionnee, setAgenceSelectionnee] = useState<
+    Agence | undefined
+  >()
   const [departement, setDepartement] = useState<string>('')
-  const [milo, setMilo] = useState<string>('')
+
+  function selectAgence(nomAgence: string) {
+    const agence = referentielAgences.find((a) => a.nom === nomAgence)
+    setAgenceSelectionnee(agence)
+  }
 
   function submitAgenceSelectionnee(e: FormEvent) {
     e.preventDefault()
+    if (agenceSelectionnee) {
+      console.log('AGENCE SELECTIONNEE ' + agenceSelectionnee.nom)
+      onAgenceChoisie(agenceSelectionnee!)
+    }
   }
 
   useEffect(() => {
-    setMilo('')
     setAgencesMiloFiltrees(
       departement !== ''
         ? referentielAgences.filter(
@@ -65,7 +71,7 @@ export default function RenseignementAgenceMissionLocaleModal({
           //TODO-1127 : reset select on departement changed
           id='intitule-action-predefinie'
           required={true}
-          onChange={setMilo}
+          onChange={selectAgence}
         >
           {agencesMiloFiltrees.map(({ id, nom }) => (
             <option key={id}>{nom}</option>
