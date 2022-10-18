@@ -10,7 +10,7 @@ import {
   uneBaseOffreEmploi,
   uneBaseServiceCivique,
 } from 'fixtures/offre'
-import { desCommunes, desLocalites } from 'fixtures/referentiel'
+import { desCommunes, desLocalites, uneCommune } from 'fixtures/referentiel'
 import {
   mockedOffresEmploiService,
   mockedReferentielService,
@@ -72,6 +72,10 @@ describe('Page Recherche Offres', () => {
 
     it('nécessite de selectionner un type d’offre', () => {
       // Then
+      expect(
+        screen.getByRole('heading', { level: 2, name: 'Ma recherche' })
+      ).toBeInTheDocument()
+
       const etape1 = screen.getByRole('group', {
         name: 'Étape 1 Sélectionner un type d’offre',
       })
@@ -483,9 +487,6 @@ describe('Page Recherche Offres', () => {
             {},
             1
           )
-          expect(
-            screen.getByText('[0] critère sélectionné')
-          ).toBeInTheDocument()
         })
       })
 
@@ -548,11 +549,31 @@ describe('Page Recherche Offres', () => {
           })
         })
 
+        it('cache le formulaire', async () => {
+          // Given
+          const queryEtape1 = () =>
+            screen.queryByRole('group', { name: /Étape 1/ })
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: /Cacher les critères/ })
+          )
+          // Then
+          expect(queryEtape1()).not.toBeInTheDocument()
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: /Voir les critères/ })
+          )
+          // Then
+          expect(queryEtape1()).toBeInTheDocument()
+        })
+
         it("vide les resultats lorsqu'un champ du formulaire change", async () => {
           // Given
-          expect(within(offresList).getAllByRole('listitem').length).toEqual(
-            offresEmploi.length
-          )
+          expect(
+            within(offresList).getAllByRole('listitem').length
+          ).toBeTruthy()
 
           // When
           await userEvent.type(screen.getByLabelText(/Mots clés/), 'Boulanger')
@@ -563,6 +584,13 @@ describe('Page Recherche Offres', () => {
               description: 'Liste des résultats',
             })
           ).not.toBeInTheDocument()
+        })
+
+        it("bloque la recherche tant que les champs n'ont pas changés", async () => {
+          // Then
+          expect(
+            screen.getByRole('button', { name: 'Rechercher' })
+          ).toHaveAttribute('disabled')
         })
 
         describe('pagination', () => {
@@ -914,7 +942,7 @@ describe('Page Recherche Offres', () => {
             servicesCiviquesService.searchServicesCiviques
           ).toHaveBeenCalledWith(
             {
-              coordonnees: { lon: 2.323026, lat: 48.830108 },
+              commune: uneCommune(),
               rayon: 10,
             },
             1
@@ -949,7 +977,7 @@ describe('Page Recherche Offres', () => {
             servicesCiviquesService.searchServicesCiviques
           ).toHaveBeenCalledWith(
             {
-              coordonnees: { lon: 2.323026, lat: 48.830108 },
+              commune: uneCommune(),
               domaine: domainesServiceCivique[2].code,
               dateDebut: DateTime.fromISO('2022-11-01'),
               rayon: 43,
@@ -988,9 +1016,6 @@ describe('Page Recherche Offres', () => {
           expect(
             servicesCiviquesService.searchServicesCiviques
           ).toHaveBeenCalledWith({}, 1)
-          expect(
-            screen.getByText('[0] critère sélectionné')
-          ).toBeInTheDocument()
         })
       })
 
@@ -1034,11 +1059,31 @@ describe('Page Recherche Offres', () => {
           })
         })
 
+        it('cache le formulaire', async () => {
+          // Given
+          const queryEtape1 = () =>
+            screen.queryByRole('group', { name: /Étape 1/ })
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: /Cacher les critères/ })
+          )
+          // Then
+          expect(queryEtape1()).not.toBeInTheDocument()
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: /Voir les critères/ })
+          )
+          // Then
+          expect(queryEtape1()).toBeInTheDocument()
+        })
+
         it("vide les resultats lorsqu'un champ du formulaire change", async () => {
           // Given
-          expect(within(offresList).getAllByRole('listitem').length).toEqual(
-            offresEmploi.length
-          )
+          expect(
+            within(offresList).getAllByRole('listitem').length
+          ).toBeTruthy()
 
           // When
           await userEvent.type(screen.getByLabelText(/Localisation/), 'Rennes')
@@ -1049,6 +1094,13 @@ describe('Page Recherche Offres', () => {
               description: 'Liste des résultats',
             })
           ).not.toBeInTheDocument()
+        })
+
+        it("bloque la recherche tant que les champs n'ont pas changés", async () => {
+          // Then
+          expect(
+            screen.getByRole('button', { name: 'Rechercher' })
+          ).toHaveAttribute('disabled')
         })
 
         describe('pagination', () => {

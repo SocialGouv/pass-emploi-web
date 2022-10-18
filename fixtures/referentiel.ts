@@ -52,6 +52,18 @@ export function desLocalites(): Localite[] {
     ...desCommunes(),
   ]
 }
+
+export function uneCommune(overrides: Partial<Commune> = {}): Commune {
+  const defaults: Commune = {
+    libelle: 'PARIS 14',
+    code: '75114',
+    type: 'COMMUNE',
+    longitude: 2.323026,
+    latitude: 48.830108,
+  }
+  return { ...defaults, ...overrides }
+}
+
 export function desCommunes(): Commune[] {
   return [
     {

@@ -19,20 +19,19 @@ export default function RechercheServicesCiviquesMain({
   query,
   onQueryUpdate,
 }: RechercheServicesCiviquesMainProps) {
-  function updateCoordonnees({
+  function updateCommune({
     localite,
     hasError,
   }: {
     localite: Localite | undefined
     hasError: boolean
   }) {
-    const { coordonnees, rayon, ...autresCriteres } = query
+    const { commune, rayon, ...autresCriteres } = query
     if (localite) {
-      const commune = localite as Commune
       onQueryUpdate({
         ...autresCriteres,
         hasError,
-        coordonnees: { lon: commune.longitude, lat: commune.latitude },
+        commune: localite as Commune,
         rayon: rayon ?? RAYON_DEFAULT,
       })
     } else {
@@ -49,8 +48,9 @@ export default function RechercheServicesCiviquesMain({
         }}
       </Label>
       <LocaliteSelectAutocomplete
+        value={query.commune?.libelle ?? ''}
         fetchLocalites={fetchCommunes}
-        onUpdateLocalite={updateCoordonnees}
+        onUpdateLocalite={updateCommune}
       />
     </Etape>
   )
