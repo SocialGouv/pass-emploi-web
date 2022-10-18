@@ -14,7 +14,7 @@ import { BaseJeune, JeuneFromListe } from 'interfaces/jeune'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import PartageOffre, {
   getServerSideProps,
-} from 'pages/offres/[offre_id]/partage'
+} from 'pages/offres/[offre_type]/[offre_id]/partage'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'

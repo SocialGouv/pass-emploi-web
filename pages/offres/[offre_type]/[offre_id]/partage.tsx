@@ -148,6 +148,9 @@ export const getServerSideProps: GetServerSideProps<
   )
   const jeunesService = withDependance<JeunesService>('jeunesService')
 
+  console.log('---------------------------------------------------------------')
+  console.log(context)
+
   const offre = await offresEmploiService.getOffreEmploiServerSide(
     context.query.offre_id as string,
     accessToken

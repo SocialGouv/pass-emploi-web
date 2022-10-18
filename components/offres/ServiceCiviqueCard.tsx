@@ -6,6 +6,7 @@ import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
 import { BaseServiceCivique } from 'interfaces/offre'
 import { toFrenchString } from 'utils/date'
+import Link from 'next/link'
 
 interface ServiceCiviqueCardProps {
   offre: BaseServiceCivique
@@ -50,6 +51,22 @@ export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
             }
           />
         )}
+        <div>
+          <Link href={`/offres/${offre.type.toLowerCase()}/${offre.id}`}>
+            <a
+              aria-label={`Détail de l’offre ${offre.id}`}
+              className='flex items-center text-s-regular hover:text-primary'
+            >
+              Voir le détail
+              <IconComponent
+                name={IconName.ChevronRight}
+                className='w-4 h-4 mr-3 fill-primary'
+                focusable={false}
+                aria-hidden={true}
+              />
+            </a>
+          </Link>
+        </div>
       </div>
     </div>
   )
