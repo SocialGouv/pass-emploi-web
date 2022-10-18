@@ -6,21 +6,32 @@ import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
 
 export interface ReferentielService {
   getAgences(structure: string, accessToken: string): Promise<Agence[]>
+
   getCommunesEtDepartements(query: string): Promise<Localite[]>
+
   getCommunes(query: string): Promise<Commune[]>
   getActionsPredefinies(accessToken: string): Promise<ActionPredefinie[]>
   getMetiers(query: string): Promise<Metier[]>
+}
+
+export type TempJsonAgence = {
+  id: string
+  nom: string
 }
 
 export class ReferentielApiService implements ReferentielService {
   constructor(private readonly apiClient: ApiClient) {}
 
   async getAgences(structure: string, accessToken: string): Promise<Agence[]> {
-    const { content: agences } = await this.apiClient.get<Agence[]>(
+    const { content: agences } = await this.apiClient.get<TempJsonAgence[]>(
       `/referentiels/agences?structure=${structure}`,
       accessToken
     )
-    return agences
+    return agences.map((jsonAgence) => ({
+      id: jsonAgence.id,
+      nom: jsonAgence.nom,
+      departement: (+jsonAgence.id % 50).toString(),
+    }))
   }
 
   async getCommunesEtDepartements(query: string) {

@@ -3,7 +3,7 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
-import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
+import RenseignementAgencePoleEmploiModal from 'components/RenseignementAgencePoleEmploiModal'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -14,6 +14,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import RenseignementAgenceMissionLocaleModal from 'components/RenseignementAgenceMissionLocaleModal'
 
 interface HomePageProps {
   redirectUrl: string
@@ -50,14 +51,29 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
 
   return (
     <>
-      <RenseignementAgenceModal
-        structureConseiller={
-          conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
-        }
-        referentielAgences={referentielAgences}
-        onAgenceChoisie={selectAgence}
-        onClose={redirectToUrl}
-      />
+      {conseiller?.structure === StructureConseiller.PASS_EMPLOI && (
+        <RenseignementAgencePoleEmploiModal
+          //TODO-1127 remove struture
+          structureConseiller={
+            conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
+          }
+          referentielAgences={referentielAgences}
+          onAgenceChoisie={selectAgence}
+          onClose={redirectToUrl}
+        />
+      )}
+
+      {conseiller?.structure === StructureConseiller.MILO && (
+        <RenseignementAgenceMissionLocaleModal
+          //TODO-1127 remove struture
+          structureConseiller={
+            conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
+          }
+          referentielAgences={referentielAgences}
+          onAgenceChoisie={selectAgence}
+          onClose={redirectToUrl}
+        />
+      )}
     </>
   )
 }
@@ -91,7 +107,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
   if (
-    Boolean(conseiller.agence) ||
+    //TODO-1127 GAD Boolean(conseiller.agence) ||
     user.structure === StructureConseiller.PASS_EMPLOI
   ) {
     return {

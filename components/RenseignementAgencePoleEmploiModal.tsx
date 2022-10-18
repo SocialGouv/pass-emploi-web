@@ -11,19 +11,19 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 
-interface RenseignementAgenceModalProps {
+interface RenseignementAgencePoleEmploiModalProps {
   structureConseiller: string
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
   onClose: () => void
 }
 
-export default function RenseignementAgenceModal({
+export default function RenseignementAgencePoleEmploiModal({
   structureConseiller,
   referentielAgences,
   onAgenceChoisie,
   onClose,
-}: RenseignementAgenceModalProps) {
+}: RenseignementAgencePoleEmploiModalProps) {
   const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
     useState<RequiredValue>({ value: '' })
   const [showAgenceLibre, setShowAgenceLibre] = useState<boolean>(false)
