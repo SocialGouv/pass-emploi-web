@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Etape } from 'components/ui/Form/Etape'
 import Label from 'components/ui/Form/Label'
-import LocaliteSelectAutocomplete from 'components/ui/Form/LocaliteSelectAutocomplete'
+import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
 import { Commune, Localite } from 'interfaces/referentiel'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 
@@ -20,18 +20,18 @@ export default function RechercheServicesCiviquesMain({
   onQueryUpdate,
 }: RechercheServicesCiviquesMainProps) {
   function updateCommune({
-    localite,
+    selected,
     hasError,
   }: {
-    localite: Localite | undefined
+    selected?: Localite
     hasError: boolean
   }) {
     const { commune, rayon, ...autresCriteres } = query
-    if (localite) {
+    if (selected) {
       onQueryUpdate({
         ...autresCriteres,
         hasError,
-        commune: localite as Commune,
+        commune: selected as Commune,
         rayon: rayon ?? RAYON_DEFAULT,
       })
     } else {
@@ -47,10 +47,13 @@ export default function RechercheServicesCiviquesMain({
           sub: 'Saisissez une ville',
         }}
       </Label>
-      <LocaliteSelectAutocomplete
-        value={query.commune?.libelle ?? ''}
-        fetchLocalites={fetchCommunes}
-        onUpdateLocalite={updateCommune}
+      <SelectAutocompleteWithFetch<Localite>
+        id='localisation'
+        fetch={fetchCommunes}
+        fieldNames={{ id: 'code', value: 'libelle' }}
+        onUpdateSelected={updateCommune}
+        errorMessage='Veuillez saisir une commune correcte.'
+        value={query.commune?.libelle}
       />
     </Etape>
   )

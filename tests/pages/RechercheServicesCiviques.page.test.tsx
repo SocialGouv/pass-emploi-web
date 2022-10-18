@@ -126,7 +126,7 @@ describe('Page Recherche Offres', () => {
 
       // Then
       expect(
-        screen.getByText('Veuillez saisir une localisation correcte.')
+        screen.getByText('Veuillez saisir une commune correcte.')
       ).toBeInTheDocument()
       expect(
         servicesCiviquesService.searchServicesCiviques
