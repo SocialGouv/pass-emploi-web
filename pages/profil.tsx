@@ -13,6 +13,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
+import ExternalLink from "components/ui/Navigation/ExternalLink";
 
 type ProfilProps = PageProps
 
@@ -47,7 +48,7 @@ function Profil(_: ProfilProps) {
     <>
       {conseiller && (
         <>
-          <section className='mb-8'>
+          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Informations</h2>
             <div className='pl-4'>
               <h3 className='text-base-bold'>
@@ -76,9 +77,25 @@ function Profil(_: ProfilProps) {
                   </>
                 )}
               </dl>
+              {conseiller.agence &&
+                conseiller.structure === StructureConseiller.MILO && (
+                  <div className='mt-4'>
+                    Vous avez besoin de modifier votre Mission Locale de référence ?
+                    Pour ce faire merci de
+                    <a className={'text-primary_darken hover:text-primary'}>
+                      <ExternalLink
+                          key={'mailto:support@pass-emploi.beta.gouv.fr'}
+                          href={'mailto:support@pass-emploi.beta.gouv.fr'}
+                          label={'contacter le support'}
+                          // TODO-1127 matomo ?
+                          onClick={() => console.log("mail click")}
+                      />
+                    </a>
+                  </div>
+                )}
             </div>
           </section>
-          <section className='mb-8'>
+          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Notifications</h2>
             <label
               htmlFor='notificationSonore'
@@ -98,7 +115,7 @@ function Profil(_: ProfilProps) {
               />
             </label>
           </section>
-          <section className='mb-8'>
+          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>
               Application CEJ jeune - mode démo
             </h2>
