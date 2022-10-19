@@ -19,34 +19,70 @@ export default function RenseignementAgenceMissionLocaleModal({
   onAgenceChoisie,
   onClose,
 }: RenseignementAgenceMissionLocaleModalProps) {
-  const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
-    useState<Agence[]>(referentielAgences)
+  const fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe = {
+    id: 'XXX',
+    nom: 'Ma mission locale n’apparaît pas dans la liste',
+    departement: 'XXX',
+  }
+  const [agencesMiloFiltrees, setAgencesMiloFiltrees] = useState<Agence[]>([
+    fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe,
+    ...referentielAgences,
+  ])
   const [agenceSelectionnee, setAgenceSelectionnee] = useState<
     Agence | undefined
   >()
   const [departement, setDepartement] = useState<string>('')
 
+  function selectDepartement(departement: string) {
+    setAgenceSelectionnee(undefined)
+    setDepartement(departement)
+  }
+
   function selectAgence(nomAgence: string) {
-    const agence = referentielAgences.find((a) => a.nom === nomAgence)
+    const agence =
+      nomAgence === fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe.nom
+        ? fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe
+        : referentielAgences.find((a) => a.nom === nomAgence)
     setAgenceSelectionnee(agence)
+  }
+
+  function agenceEstDansLaListe() {
+    return (
+      agenceSelectionnee &&
+      agenceSelectionnee.id !==
+        fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe.id
+    )
+  }
+
+  function agenceNestPasDansLaListe() {
+    return (
+      agenceSelectionnee &&
+      agenceSelectionnee.id ===
+        fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe.id
+    )
   }
 
   function submitAgenceSelectionnee(e: FormEvent) {
     e.preventDefault()
-    if (agenceSelectionnee) {
-      console.log('AGENCE SELECTIONNEE ' + agenceSelectionnee.nom)
+    if (agenceEstDansLaListe()) {
+      console.log('AGENCE SELECTIONNEE ' + agenceSelectionnee!.nom)
       onAgenceChoisie(agenceSelectionnee!)
+    } else if (agenceEstDansLaListe()) {
+      console.log('AGENCE n’apparait pas ' + agenceSelectionnee!.nom)
     }
   }
 
   useEffect(() => {
-    setAgencesMiloFiltrees(
+    const agencesFiltrees =
       departement !== ''
         ? referentielAgences.filter(
             (agence) => agence.departement === departement
           )
         : referentielAgences
-    )
+    setAgencesMiloFiltrees([
+      fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe,
+      ...agencesFiltrees,
+    ])
   }, [departement])
 
   return (
@@ -62,7 +98,7 @@ export default function RenseignementAgenceMissionLocaleModal({
 
       <form onSubmit={submitAgenceSelectionnee} className='px-10 pt-6'>
         <Label htmlFor='departement'>Departement de ma Mission Locale</Label>
-        <Input type='text' id='departement' onChange={setDepartement} />
+        <Input type='text' id='departement' onChange={selectDepartement} />
 
         <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
           Recherchez votre Mission Locale dans la liste suivante
@@ -78,13 +114,28 @@ export default function RenseignementAgenceMissionLocaleModal({
           ))}
         </Select>
 
+        {agenceNestPasDansLaListe() && (
+          <div className='mt-2'>
+            <InformationMessage
+              content={`Vous avez indiqué que votre agence Mission Locale est absente de la liste. 
+              Pour faire une demande d’ajout de votre mission locale, vous devez contacter le support.`}
+            />
+          </div>
+        )}
         <div className='mt-14 flex justify-center'>
           <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
             Annuler
           </Button>
-          <Button className='ml-6' type='submit'>
-            Ajouter
-          </Button>
+          {(!agenceSelectionnee || agenceEstDansLaListe()) && (
+            <Button className='ml-6' type='submit'>
+              Ajouter
+            </Button>
+          )}
+          {agenceNestPasDansLaListe() && (
+            <Button className='ml-6' type='button' style={ButtonStyle.PRIMARY}>
+              Contacter le support
+            </Button>
+          )}
         </div>
       </form>
     </Modal>
