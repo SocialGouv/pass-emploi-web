@@ -3,10 +3,15 @@ import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import {
+  jsonToDetailServiceCivique,
   jsonToServiceCiviqueItem,
   ServiceCiviqueItemJson,
 } from 'interfaces/json/service-civique'
-import { BaseServiceCivique, MetadonneesOffres } from 'interfaces/offre'
+import {
+  BaseServiceCivique,
+  DetailServiceCivique,
+  MetadonneesOffres,
+} from 'interfaces/offre'
 import { Commune } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
@@ -19,6 +24,10 @@ export type SearchServicesCiviquesQuery = {
 
 export interface ServicesCiviquesService {
   getLienServiceCivique(idOffreEngagement: string): Promise<string | undefined>
+  getServiceCiviqueServerSide(
+    idServiceCivique: string,
+    accessToken: string
+  ): Promise<DetailServiceCivique | undefined>
   searchServicesCiviques(
     query: SearchServicesCiviquesQuery,
     page: number
@@ -27,6 +36,7 @@ export interface ServicesCiviquesService {
 export class ServicesCiviquesApiService implements ServicesCiviquesService {
   constructor(private readonly apiClient: ApiClient) {}
 
+  //TODO evolution : a supprimer comme on a getServiceCivique maintenant
   async getLienServiceCivique(
     idOffreEngagement: string
   ): Promise<string | undefined> {
@@ -44,6 +54,40 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
       }
       throw e
     }
+  }
+
+  // TODO : a typé
+  private async getServiceCivique(
+    idServiceCivique: string,
+    accessToken: string
+  ) {
+    try {
+      const { content: serviceCiviqueJson } = await this.apiClient.get(
+        `/services-civique/${idServiceCivique}`,
+        accessToken
+      )
+      return serviceCiviqueJson
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+      throw e
+    }
+  }
+
+  async getServiceCiviqueServerSide(
+    idServiceCivique: string,
+    accessToken: string
+  ): Promise<DetailServiceCivique | undefined> {
+    const serviceCiviqueJson = await this.getServiceCivique(
+      idServiceCivique,
+      accessToken
+    )
+
+    return jsonToDetailServiceCivique(
+      idServiceCivique,
+      serviceCiviqueJson as ServiceCiviqueItemJson
+    )
   }
 
   async searchServicesCiviques(

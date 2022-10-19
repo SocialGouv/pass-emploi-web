@@ -13,7 +13,12 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import {
+  BaseServiceCivique,
+  DetailOffreEmploi,
+  DetailServiceCivique,
+  TypeOffre,
+} from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
@@ -24,15 +29,23 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
+import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
 
 type PartageOffresProps = PageProps & {
-  offre: DetailOffreEmploi
+  offre: DetailOffreEmploi | DetailServiceCivique
   jeunes: BaseJeune[]
+  typeOffre: string
   withoutChat: true
   returnTo: string
 }
 
-function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
+function PartageOffre({
+  offre,
+  jeunes,
+  typeOffre,
+  returnTo,
+}: PartageOffresProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
@@ -84,7 +97,12 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
 
   return (
     <>
-      <OffreEmploiCard offre={offre} />
+      {typeOffre.toUpperCase() === TypeOffre.EMPLOI && (
+        <OffreEmploiCard offre={offre} />
+      )}
+      {typeOffre.toUpperCase() === TypeOffre.SERVICE_CIVIQUE && (
+        <ServiceCiviqueCard offre={offre} />
+      )}
 
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>
@@ -143,18 +161,28 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const { user, accessToken } = sessionOrRedirect.session
+  let offre
   const offresEmploiService = withDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-
-  console.log('---------------------------------------------------------------')
-  console.log(context)
-
-  const offre = await offresEmploiService.getOffreEmploiServerSide(
-    context.query.offre_id as string,
-    accessToken
+  const serviceCiviqueService = withDependance<ServicesCiviquesService>(
+    'servicesCiviquesService'
   )
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+  const typeOffre = context.query.offre_type as string
+
+  if (typeOffre.toUpperCase() === TypeOffre.EMPLOI) {
+    offre = await offresEmploiService.getOffreEmploiServerSide(
+      context.query.offre_id as string,
+      accessToken
+    )
+  }
+  if (typeOffre.toUpperCase() === TypeOffre.SERVICE_CIVIQUE) {
+    offre = await serviceCiviqueService.getServiceCiviqueServerSide(
+      context.query.offre_id as string,
+      accessToken
+    )
+  }
   if (!offre) return { notFound: true }
 
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
@@ -165,6 +193,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       offre,
       jeunes,
+      typeOffre,
       pageTitle: 'Partager une offre',
       withoutChat: true,
       returnTo: '/recherche-offres',

@@ -1,6 +1,10 @@
 import { DateTime } from 'luxon'
 
-import { BaseServiceCivique, TypeOffre } from 'interfaces/offre'
+import {
+  BaseServiceCivique,
+  DetailServiceCivique,
+  TypeOffre,
+} from 'interfaces/offre'
 
 export type ServiceCiviqueItemJson = {
   id: string
@@ -10,6 +14,25 @@ export type ServiceCiviqueItemJson = {
   ville?: string
   organisation?: string
   dateDeDebut?: string
+}
+
+export function jsonToDetailServiceCivique(
+  id: string,
+  json: ServiceCiviqueItemJson
+) {
+  const serviceCivique: DetailServiceCivique = {
+    type: TypeOffre.SERVICE_CIVIQUE,
+    id: id,
+    titre: json.titre,
+    domaine: json.domaine,
+  }
+
+  if (json.ville) serviceCivique.ville = json.ville
+  if (json.organisation) serviceCivique.organisation = json.organisation
+  if (json.dateDeDebut)
+    serviceCivique.dateDeDebut = DateTime.fromISO(json.dateDeDebut).toString()
+
+  return serviceCivique
 }
 
 export function jsonToServiceCiviqueItem(

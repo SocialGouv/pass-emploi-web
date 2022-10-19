@@ -77,7 +77,7 @@ describe('Page Partage Offre', () => {
       it('charge la page avec les détails de l’offre', async () => {
         // When
         const actual = await getServerSideProps({
-          query: { offre_id: 'offre-id' },
+          query: { offre_type: 'emploi', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -88,6 +88,7 @@ describe('Page Partage Offre', () => {
           props: {
             offre,
             jeunes: expect.arrayContaining([]),
+            typeOffre: 'emploi',
             pageTitle: 'Partager une offre',
             returnTo: '/recherche-offres',
             withoutChat: true,
@@ -98,7 +99,7 @@ describe('Page Partage Offre', () => {
       it('charge les jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
-          query: { offre_id: 'offre-id' },
+          query: { offre_type: 'emploi', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -116,7 +117,7 @@ describe('Page Partage Offre', () => {
 
         // When
         const actual = await getServerSideProps({
-          query: { offre_id: 'offre-id' },
+          query: { offre_type: 'emploi', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -140,6 +141,7 @@ describe('Page Partage Offre', () => {
         <PartageOffre
           offre={offre}
           jeunes={jeunes}
+          typeOffre={offre.type.toLowerCase()}
           withoutChat={true}
           pageTitle=''
           returnTo='/return/to'

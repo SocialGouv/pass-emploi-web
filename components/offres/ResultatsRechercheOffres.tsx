@@ -37,7 +37,7 @@ export default function ResultatsRechercheOffre({
                   <OffreEmploiCard offre={offre} withPartage={true} />
                 )}
                 {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-                  <ServiceCiviqueCard offre={offre} />
+                  <ServiceCiviqueCard offre={offre} withPartage={true} />
                 )}
               </li>
             ))}

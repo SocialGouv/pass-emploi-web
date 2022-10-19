@@ -7,12 +7,18 @@ import { Tag } from 'components/ui/Indicateurs/Tag'
 import { BaseServiceCivique } from 'interfaces/offre'
 import { toFrenchString } from 'utils/date'
 import Link from 'next/link'
+import LienPartageOffre from 'components/offres/LienPartageOffre'
+import { ButtonStyle } from 'components/ui/Button/Button'
 
 interface ServiceCiviqueCardProps {
   offre: BaseServiceCivique
+  withPartage?: boolean
 }
 
-export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
+export default function ServiceCiviqueCard({
+  offre,
+  withPartage,
+}: ServiceCiviqueCardProps) {
   return (
     <div className='rounded-small shadow-s p-6'>
       <div className='flex justify-between mb-4'>
@@ -22,6 +28,13 @@ export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
           backgroundColor='white'
           className='text-s-regular'
         />
+        {withPartage && (
+          <LienPartageOffre
+            idOffre={offre.id}
+            typeOffre={offre.type.toLowerCase()}
+            style={ButtonStyle.TERTIARY}
+          />
+        )}
       </div>
 
       <p className='text-base-bold text-accent_1 mb-2 capitalize'>
