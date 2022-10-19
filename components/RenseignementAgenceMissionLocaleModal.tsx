@@ -19,13 +19,13 @@ export default function RenseignementAgenceMissionLocaleModal({
   onAgenceChoisie,
   onClose,
 }: RenseignementAgenceMissionLocaleModalProps) {
-  const fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe = {
+  const entreePourSelectionnerUneAgenceQuiNestPasDansLaListe = {
     id: 'XXX',
     nom: 'Ma mission locale n’apparaît pas dans la liste',
     departement: 'XXX',
   }
   const [agencesMiloFiltrees, setAgencesMiloFiltrees] = useState<Agence[]>([
-    fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe,
+    entreePourSelectionnerUneAgenceQuiNestPasDansLaListe,
     ...referentielAgences,
   ])
   const [agenceSelectionnee, setAgenceSelectionnee] = useState<
@@ -40,8 +40,8 @@ export default function RenseignementAgenceMissionLocaleModal({
 
   function selectAgence(nomAgence: string) {
     const agence =
-      nomAgence === fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe.nom
-        ? fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe
+      nomAgence === entreePourSelectionnerUneAgenceQuiNestPasDansLaListe.nom
+        ? entreePourSelectionnerUneAgenceQuiNestPasDansLaListe
         : referentielAgences.find((a) => a.nom === nomAgence)
     setAgenceSelectionnee(agence)
   }
@@ -50,7 +50,7 @@ export default function RenseignementAgenceMissionLocaleModal({
     return (
       agenceSelectionnee &&
       agenceSelectionnee.id !==
-        fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe.id
+        entreePourSelectionnerUneAgenceQuiNestPasDansLaListe.id
     )
   }
 
@@ -58,7 +58,7 @@ export default function RenseignementAgenceMissionLocaleModal({
     return (
       agenceSelectionnee &&
       agenceSelectionnee.id ===
-        fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe.id
+        entreePourSelectionnerUneAgenceQuiNestPasDansLaListe.id
     )
   }
 
@@ -80,7 +80,7 @@ export default function RenseignementAgenceMissionLocaleModal({
           )
         : referentielAgences
     setAgencesMiloFiltrees([
-      fausseAgencePourIndiquerUneAgenceQuiNestPasDansLaListe,
+      entreePourSelectionnerUneAgenceQuiNestPasDansLaListe,
       ...agencesFiltrees,
     ])
   }, [departement])
