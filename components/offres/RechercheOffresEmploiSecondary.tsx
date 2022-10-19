@@ -8,13 +8,12 @@ import {
   SearchOffresEmploiQuery,
   TypeContrat,
 } from 'services/offres-emploi.service'
+import { FormValues } from 'types/form'
 
 type RechercheOffresEmploiSecondaryProps = {
   onCriteresChange: (nbCriteres: number) => void
-  query: SearchOffresEmploiQuery & { hasError: boolean }
-  onQueryUpdate: (
-    query: SearchOffresEmploiQuery & { hasError: boolean }
-  ) => void
+  query: FormValues<SearchOffresEmploiQuery>
+  onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
 }
 
 export default function RechercheOffresEmploiSecondary({

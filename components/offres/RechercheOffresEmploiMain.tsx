@@ -6,12 +6,12 @@ import Label from 'components/ui/Form/Label'
 import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
 import { Localite } from 'interfaces/referentiel'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
+import { FormValues } from 'types/form'
 
-type Query = SearchOffresEmploiQuery & { hasError: boolean }
 type RechercheOffresEmploiMainProps = {
   fetchCommunesEtDepartements: (search: string) => Promise<Localite[]>
-  query: Query
-  onQueryUpdate: (query: Query) => void
+  query: FormValues<SearchOffresEmploiQuery>
+  onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
 }
 const RAYON_DEFAULT = 10
 

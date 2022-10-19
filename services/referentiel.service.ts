@@ -1,12 +1,13 @@
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { Agence, Commune, Localite } from 'interfaces/referentiel'
+import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
 
 export interface ReferentielService {
   getAgences(structure: string, accessToken: string): Promise<Agence[]>
   getCommunesEtDepartements(query: string): Promise<Localite[]>
   getCommunes(query: string): Promise<Commune[]>
+  getMetiers(query: string): Promise<Metier[]>
 }
 
 export class ReferentielApiService implements ReferentielService {
@@ -29,6 +30,15 @@ export class ReferentielApiService implements ReferentielService {
     const path = '/referentiels/communes-et-departements?villesOnly=true&'
     const communes = await this.getLocalites(path, query)
     return communes as Commune[]
+  }
+
+  async getMetiers(query: string): Promise<Metier[]> {
+    const session = await getSession()
+    const { content: metiers } = await this.apiClient.get<Metier[]>(
+      `/referentiels/metiers?recherche=${encodeURIComponent(query)}`,
+      session!.accessToken
+    )
+    return metiers
   }
 
   private async getLocalites(path: string, query: string): Promise<Localite[]> {

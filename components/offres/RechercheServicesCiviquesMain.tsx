@@ -3,14 +3,14 @@ import React from 'react'
 import { Etape } from 'components/ui/Form/Etape'
 import Label from 'components/ui/Form/Label'
 import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
-import { Commune, Localite } from 'interfaces/referentiel'
+import { Commune } from 'interfaces/referentiel'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
+import { FormValues } from 'types/form'
 
-type Query = SearchServicesCiviquesQuery & { hasError: boolean }
 type RechercheServicesCiviquesMainProps = {
   fetchCommunes: (search: string) => Promise<Commune[]>
-  query: Query
-  onQueryUpdate: (query: Query) => void
+  query: FormValues<SearchServicesCiviquesQuery>
+  onQueryUpdate: (query: FormValues<SearchServicesCiviquesQuery>) => void
 }
 const RAYON_DEFAULT = 10
 
@@ -23,7 +23,7 @@ export default function RechercheServicesCiviquesMain({
     selected,
     hasError,
   }: {
-    selected?: Localite
+    selected?: Commune
     hasError: boolean
   }) {
     const { commune, rayon, ...autresCriteres } = query
@@ -31,7 +31,7 @@ export default function RechercheServicesCiviquesMain({
       onQueryUpdate({
         ...autresCriteres,
         hasError,
-        commune: selected as Commune,
+        commune: selected,
         rayon: rayon ?? RAYON_DEFAULT,
       })
     } else {
@@ -47,7 +47,7 @@ export default function RechercheServicesCiviquesMain({
           sub: 'Saisissez une ville',
         }}
       </Label>
-      <SelectAutocompleteWithFetch<Localite>
+      <SelectAutocompleteWithFetch<Commune>
         id='localisation'
         fetch={fetchCommunes}
         fieldNames={{ id: 'code', value: 'libelle' }}

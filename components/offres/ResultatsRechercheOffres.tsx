@@ -39,6 +39,14 @@ export default function ResultatsRechercheOffre({
                 {offre.type === TypeOffre.SERVICE_CIVIQUE && (
                   <ServiceCiviqueCard offre={offre} withPartage={true} />
                 )}
+                {offre.type === TypeOffre.IMMERSION && (
+                  <div>
+                    <h3>{offre.metier}</h3>
+                    <p>{offre.nomEtablissement}</p>
+                    <p>{offre.ville}</p>
+                    <p>{offre.secteurActivite}</p>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

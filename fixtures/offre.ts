@@ -1,9 +1,11 @@
+import { ImmersionItemJson } from 'interfaces/json/immersion'
 import {
   DetailOffreEmploiJson,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre-emploi'
 import { ServiceCiviqueItemJson } from 'interfaces/json/service-civique'
 import {
+  BaseImmersion,
   BaseOffreEmploi,
   BaseServiceCivique,
   DetailOffreEmploi,
@@ -241,6 +243,47 @@ export function listeBaseServicesCiviques(): BaseServiceCivique[] {
   ]
 }
 
+export function listeBaseImmersions(): BaseImmersion[] {
+  return [
+    {
+      type: TypeOffre.IMMERSION,
+      id: '89081896600016-M1805',
+      metier: 'Études et développement informatique - MADO XR',
+      nomEtablissement: 'MADO XR',
+      secteurActivite:
+        'Production de films cinématographiques, de vidéo et de programmes de télévision',
+      ville: 'Paris',
+    },
+    {
+      type: TypeOffre.IMMERSION,
+      id: '91401957500010-M1805',
+      metier: 'Études et développement informatique - ESIFLY',
+      nomEtablissement: 'ESIFLY',
+      secteurActivite:
+        'Autres activités spécialisées, scientifiques et techniques n.c.a.',
+      ville: 'Paris',
+    },
+    {
+      type: TypeOffre.IMMERSION,
+      id: '88842904000015-M1805',
+      metier: 'Études et développement informatique - AFNETWORK-FRANCE',
+      nomEtablissement:
+        'AFRICAN FILMMAKERS NETWORK ASSOCIATION - (AFNETWORK-FRANCE)',
+      secteurActivite: 'Organisation de salons professionnels et congrès',
+      ville: 'Paris',
+    },
+    {
+      type: TypeOffre.IMMERSION,
+      id: '82987789300026-M1805',
+      metier: 'Études et développement informatique',
+      nomEtablissement: 'EURONIXA STUDIOS VR',
+      secteurActivite:
+        'Production de films cinématographiques, de vidéo et de programmes de télévision',
+      ville: 'PARIS 8',
+    },
+  ]
+}
+
 export function unServiceCiviqueJson(): ServiceCiviqueItemJson {
   return {
     id: '6322ac0fe8f66b05ee325ece',
@@ -273,6 +316,43 @@ export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
       ville: 'Köln',
       domaine: 'education',
       dateDeDebut: '2022-10-03T00:00:00.000Z',
+    },
+  ]
+}
+
+export function listeImmersionsJson(): ImmersionItemJson[] {
+  return [
+    {
+      id: '89081896600016-M1805',
+      metier: 'Études et développement informatique - MADO XR',
+      nomEtablissement: 'MADO XR',
+      secteurActivite:
+        'Production de films cinématographiques, de vidéo et de programmes de télévision',
+      ville: 'Paris',
+    },
+    {
+      id: '91401957500010-M1805',
+      metier: 'Études et développement informatique - ESIFLY',
+      nomEtablissement: 'ESIFLY',
+      secteurActivite:
+        'Autres activités spécialisées, scientifiques et techniques n.c.a.',
+      ville: 'Paris',
+    },
+    {
+      id: '88842904000015-M1805',
+      metier: 'Études et développement informatique - AFNETWORK-FRANCE',
+      nomEtablissement:
+        'AFRICAN FILMMAKERS NETWORK ASSOCIATION - (AFNETWORK-FRANCE)',
+      secteurActivite: 'Organisation de salons professionnels et congrès',
+      ville: 'Paris',
+    },
+    {
+      id: '82987789300026-M1805',
+      metier: 'Études et développement informatique',
+      nomEtablissement: 'EURONIXA STUDIOS VR',
+      secteurActivite:
+        'Production de films cinématographiques, de vidéo et de programmes de télévision',
+      ville: 'PARIS 8',
     },
   ]
 }

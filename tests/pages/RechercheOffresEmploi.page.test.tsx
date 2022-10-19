@@ -75,12 +75,12 @@ describe('Page Recherche Offres Emploi', () => {
       await saisirLocalite('Ardèche')
 
       // Then
-      expect(inputLocalisation).toHaveValue('Ardeche')
+      expect(inputLocalisation).toHaveValue('ARDECHE')
       expect(
         referentielService.getCommunesEtDepartements
       ).toHaveBeenCalledTimes(1)
       expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
-        'Ardeche'
+        'ARDECHE'
       )
     })
 
@@ -93,7 +93,7 @@ describe('Page Recherche Offres Emploi', () => {
         referentielService.getCommunesEtDepartements
       ).toHaveBeenCalledTimes(1)
       expect(referentielService.getCommunesEtDepartements).toHaveBeenCalledWith(
-        'Paris'
+        'PARIS'
       )
       expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(
         localites.length
@@ -102,9 +102,9 @@ describe('Page Recherche Offres Emploi', () => {
         expect(
           screen.getByRole('option', {
             hidden: true,
-            name: localite.libelle,
+            name: sanitize(localite.libelle),
           })
-        ).toHaveValue(localite.libelle)
+        ).toHaveValue(sanitize(localite.libelle))
       })
     })
 
@@ -430,6 +430,7 @@ describe('Page Recherche Offres Emploi', () => {
     it('affiche chaque offre', async () => {
       offresEmploi.forEach((offre) => {
         const offreCard = within(offresList).getByRole('heading', {
+          level: 3,
           name: 'Offre n°' + offre.id,
         }).parentElement!
         expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
@@ -559,4 +560,12 @@ describe('Page Recherche Offres Emploi', () => {
 async function saisirLocalite(text: string) {
   await userEvent.type(screen.getByLabelText(/Lieu de travail/), text)
   await act(() => new Promise((r) => setTimeout(r, 500)))
+}
+
+function sanitize(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['-]/g, ' ')
+    .toUpperCase()
 }
