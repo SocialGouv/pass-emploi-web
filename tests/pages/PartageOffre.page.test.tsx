@@ -4,14 +4,15 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
-import { unDetailOffreEmploi } from 'fixtures/offre'
+import { unDetailOffreEmploi, uneBaseServiceCivique } from 'fixtures/offre'
 import {
   mockedJeunesService,
   mockedMessagesService,
   mockedOffresEmploiService,
+  mockedServicesCiviquesService,
 } from 'fixtures/services'
 import { BaseJeune, JeuneFromListe } from 'interfaces/jeune'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import { DetailOffreEmploi, DetailServiceCivique } from 'interfaces/offre'
 import PartageOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]/partage'
@@ -21,6 +22,7 @@ import { OffresEmploiService } from 'services/offres-emploi.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -43,13 +45,19 @@ describe('Page Partage Offre', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
-      let offre: DetailOffreEmploi
+      let offreEmploi: DetailOffreEmploi
+      let serviceCivique: DetailServiceCivique
       let jeunes: JeuneFromListe[]
       let offresEmploiService: OffresEmploiService
+      let servicesCiviquesService: ServicesCiviquesService
       let jeunesService: JeunesService
       beforeEach(() => {
         // Given
-        offre = unDetailOffreEmploi()
+        offreEmploi = unDetailOffreEmploi()
+        serviceCivique = {
+          ...uneBaseServiceCivique(),
+          dateDeDebut: uneBaseServiceCivique().dateDeDebut!.toString(),
+        }
         jeunes = desItemsJeunes()
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
@@ -59,7 +67,10 @@ describe('Page Partage Offre', () => {
           },
         })
         offresEmploiService = mockedOffresEmploiService({
-          getOffreEmploiServerSide: jest.fn(async () => unDetailOffreEmploi()),
+          getOffreEmploiServerSide: jest.fn(async () => offreEmploi),
+        })
+        servicesCiviquesService = mockedServicesCiviquesService({
+          getServiceCiviqueServerSide: jest.fn(async () => serviceCivique),
         })
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn(async () =>
@@ -69,12 +80,14 @@ describe('Page Partage Offre', () => {
         ;(withDependance as jest.Mock).mockImplementation(
           (dependance: string) => {
             if (dependance === 'offresEmploiService') return offresEmploiService
+            if (dependance === 'servicesCiviquesService')
+              return servicesCiviquesService
             if (dependance === 'jeunesService') return jeunesService
           }
         )
       })
 
-      it('charge la page avec les détails de l’offre', async () => {
+      it('charge la page avec les détails de l’offre d’emploi', async () => {
         // When
         const actual = await getServerSideProps({
           query: { offre_type: 'emploi', offre_id: 'offre-id' },
@@ -86,9 +99,31 @@ describe('Page Partage Offre', () => {
         ).toHaveBeenCalledWith('offre-id', 'accessToken')
         expect(actual).toEqual({
           props: {
-            offre,
+            offre: offreEmploi,
             jeunes: expect.arrayContaining([]),
             typeOffre: 'emploi',
+            pageTitle: 'Partager une offre',
+            returnTo: '/recherche-offres',
+            withoutChat: true,
+          },
+        })
+      })
+
+      it('charge la page avec les détails du service civique', async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: { offre_type: 'service_civique', offre_id: 'offre-id' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(
+          servicesCiviquesService.getServiceCiviqueServerSide
+        ).toHaveBeenCalledWith('offre-id', 'accessToken')
+        expect(actual).toEqual({
+          props: {
+            offre: serviceCivique,
+            jeunes: expect.arrayContaining([]),
+            typeOffre: 'service_civique',
             pageTitle: 'Partager une offre',
             returnTo: '/recherche-offres',
             withoutChat: true,
