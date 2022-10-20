@@ -92,7 +92,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           result = await rechercherServicesCiviques(page)
           break
         case TypeOffre.IMMERSION:
-          result = await rechercherImmersions()
+          result = await rechercherImmersions(page)
           break
       }
       const {
@@ -129,16 +129,15 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     return servicesCiviquesService.searchServicesCiviques(query, page)
   }
 
-  async function rechercherImmersions(): Promise<{
+  async function rechercherImmersions(page: number): Promise<{
     offres: BaseImmersion[]
     metadonnees: MetadonneesOffres
   }> {
     const { hasError, ...query } = queryImmersions
-    const offres = await immersionsService.searchImmersions(
-      query as SearchImmersionsQuery
+    return immersionsService.searchImmersions(
+      query as SearchImmersionsQuery,
+      page
     )
-    const nombrePages = Math.ceil(offres.length / 10)
-    return { offres, metadonnees: { nombreTotal: offres.length, nombrePages } }
   }
 
   function nettoyerResultats() {

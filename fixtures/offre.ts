@@ -243,11 +243,30 @@ export function listeBaseServicesCiviques(): BaseServiceCivique[] {
   ]
 }
 
-export function listeBaseImmersions(): BaseImmersion[] {
+export function uneBaseImmersion(
+  overrides: Partial<BaseImmersion> = {}
+): BaseImmersion {
+  const defaults: BaseImmersion = {
+    type: TypeOffre.IMMERSION,
+    id: '89081896600016-M1805',
+    metier: 'Études et développement informatique - MADO XR',
+    nomEtablissement: 'MADO XR',
+    secteurActivite:
+      'Production de films cinématographiques, de vidéo et de programmes de télévision',
+    ville: 'Paris',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function listeBaseImmersions({
+  page,
+}: {
+  page?: number
+} = {}): BaseImmersion[] {
   return [
     {
       type: TypeOffre.IMMERSION,
-      id: '89081896600016-M1805',
+      id: '89081896600016-M1805' + (page ? '-page-' + page : ''),
       metier: 'Études et développement informatique - MADO XR',
       nomEtablissement: 'MADO XR',
       secteurActivite:
@@ -256,7 +275,7 @@ export function listeBaseImmersions(): BaseImmersion[] {
     },
     {
       type: TypeOffre.IMMERSION,
-      id: '91401957500010-M1805',
+      id: '91401957500010-M1805' + (page ? '-page-' + page : ''),
       metier: 'Études et développement informatique - ESIFLY',
       nomEtablissement: 'ESIFLY',
       secteurActivite:
@@ -265,7 +284,7 @@ export function listeBaseImmersions(): BaseImmersion[] {
     },
     {
       type: TypeOffre.IMMERSION,
-      id: '88842904000015-M1805',
+      id: '88842904000015-M1805' + (page ? '-page-' + page : ''),
       metier: 'Études et développement informatique - AFNETWORK-FRANCE',
       nomEtablissement:
         'AFRICAN FILMMAKERS NETWORK ASSOCIATION - (AFNETWORK-FRANCE)',
@@ -274,12 +293,20 @@ export function listeBaseImmersions(): BaseImmersion[] {
     },
     {
       type: TypeOffre.IMMERSION,
-      id: '82987789300026-M1805',
-      metier: 'Études et développement informatique',
+      id: '82987789300026-M1805' + (page ? '-page-' + page : ''),
+      metier: 'Études et développement informatique - EURONIXA',
       nomEtablissement: 'EURONIXA STUDIOS VR',
       secteurActivite:
         'Production de films cinématographiques, de vidéo et de programmes de télévision',
       ville: 'PARIS 8',
+    },
+    {
+      type: TypeOffre.IMMERSION,
+      id: '38953391000045-M1805' + (page ? '-page-' + page : ''),
+      metier: 'Études et développement informatique - PARIS LOG',
+      nomEtablissement: 'PARIS LOG',
+      secteurActivite: 'Programmation informatique',
+      ville: 'Torcy',
     },
   ]
 }
@@ -320,10 +347,12 @@ export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
   ]
 }
 
-export function listeImmersionsJson(): ImmersionItemJson[] {
+export function listeImmersionsJson({
+  page,
+}: { page?: number } = {}): ImmersionItemJson[] {
   return [
     {
-      id: '89081896600016-M1805',
+      id: '89081896600016-M1805' + (page ? '-page-' + page : ''),
       metier: 'Études et développement informatique - MADO XR',
       nomEtablissement: 'MADO XR',
       secteurActivite:
@@ -331,7 +360,7 @@ export function listeImmersionsJson(): ImmersionItemJson[] {
       ville: 'Paris',
     },
     {
-      id: '91401957500010-M1805',
+      id: '91401957500010-M1805' + (page ? '-page-' + page : ''),
       metier: 'Études et développement informatique - ESIFLY',
       nomEtablissement: 'ESIFLY',
       secteurActivite:
@@ -339,7 +368,7 @@ export function listeImmersionsJson(): ImmersionItemJson[] {
       ville: 'Paris',
     },
     {
-      id: '88842904000015-M1805',
+      id: '88842904000015-M1805' + (page ? '-page-' + page : ''),
       metier: 'Études et développement informatique - AFNETWORK-FRANCE',
       nomEtablissement:
         'AFRICAN FILMMAKERS NETWORK ASSOCIATION - (AFNETWORK-FRANCE)',
@@ -347,12 +376,19 @@ export function listeImmersionsJson(): ImmersionItemJson[] {
       ville: 'Paris',
     },
     {
-      id: '82987789300026-M1805',
-      metier: 'Études et développement informatique',
+      id: '82987789300026-M1805' + (page ? '-page-' + page : ''),
+      metier: 'Études et développement informatique - EURONIXA',
       nomEtablissement: 'EURONIXA STUDIOS VR',
       secteurActivite:
         'Production de films cinématographiques, de vidéo et de programmes de télévision',
       ville: 'PARIS 8',
+    },
+    {
+      id: '38953391000045-M1805' + (page ? '-page-' + page : ''),
+      metier: 'Études et développement informatique - PARIS LOG',
+      nomEtablissement: 'PARIS LOG',
+      secteurActivite: 'Programmation informatique',
+      ville: 'Torcy',
     },
   ]
 }

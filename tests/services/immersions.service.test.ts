@@ -27,17 +27,24 @@ describe('ImmersionsApiService', () => {
     beforeEach(() => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: listeImmersionsJson(),
+        content: [
+          ...listeImmersionsJson({ page: 1 }),
+          ...listeImmersionsJson({ page: 2 }),
+          ...listeImmersionsJson({ page: 3 }),
+        ],
       })
     })
 
-    it("renvoie une liste d'immersions", async () => {
+    it('renvoie une liste des 10 premieres immersions', async () => {
       // When
-      const actual = await immersionsService.searchImmersions({
-        commune: uneCommune(),
-        metier: unMetier(),
-        rayon: 52,
-      })
+      const actual = await immersionsService.searchImmersions(
+        {
+          commune: uneCommune(),
+          metier: unMetier(),
+          rayon: 52,
+        },
+        1
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -45,7 +52,96 @@ describe('ImmersionsApiService', () => {
         'accessToken'
       )
 
-      expect(actual).toEqual(listeBaseImmersions())
+      expect(actual).toEqual({
+        offres: [
+          ...listeBaseImmersions({ page: 1 }),
+          ...listeBaseImmersions({ page: 2 }),
+        ],
+        metadonnees: { nombreTotal: 15, nombrePages: 2 },
+      })
+    })
+
+    it('cache les données pour la pagination', async () => {
+      // Given
+      await immersionsService.searchImmersions(
+        {
+          commune: uneCommune(),
+          metier: unMetier(),
+          rayon: 52,
+        },
+        1
+      )
+
+      // When
+      const actual = await immersionsService.searchImmersions(
+        {
+          commune: uneCommune(),
+          metier: unMetier(),
+          rayon: 52,
+        },
+        1
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledTimes(1)
+      expect(actual).toEqual({
+        offres: [
+          ...listeBaseImmersions({ page: 1 }),
+          ...listeBaseImmersions({ page: 2 }),
+        ],
+        metadonnees: { nombreTotal: 15, nombrePages: 2 },
+      })
+    })
+
+    it('met à jour le cache si la requête change', async () => {
+      // Given
+      await immersionsService.searchImmersions(
+        {
+          commune: uneCommune(),
+          metier: unMetier(),
+          rayon: 52,
+        },
+        1
+      )
+
+      // When
+      const actual = await immersionsService.searchImmersions(
+        {
+          commune: uneCommune(),
+          metier: unMetier(),
+          rayon: 27,
+        },
+        1
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledTimes(2)
+      expect(actual).toEqual({
+        offres: [
+          ...listeBaseImmersions({ page: 1 }),
+          ...listeBaseImmersions({ page: 2 }),
+        ],
+        metadonnees: { nombreTotal: 15, nombrePages: 2 },
+      })
+    })
+
+    it('renvoie la page demandée', async () => {
+      // When
+      const actual = await immersionsService.searchImmersions(
+        {
+          commune: uneCommune(),
+          metier: unMetier(),
+          rayon: 52,
+        },
+        2
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledTimes(1)
+      expect(actual).toEqual({
+        offres: [...listeBaseImmersions({ page: 3 })],
+        metadonnees: { nombreTotal: 15, nombrePages: 2 },
+      })
     })
   })
 })

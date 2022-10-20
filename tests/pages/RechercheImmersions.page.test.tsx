@@ -2,7 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import { listeBaseImmersions } from 'fixtures/offre'
+import { listeBaseImmersions, uneBaseImmersion } from 'fixtures/offre'
 import {
   desCommunes,
   desMetiers,
@@ -35,7 +35,10 @@ describe('Page Recherche Immersions', () => {
     communes = desCommunes()
     immersions = listeBaseImmersions()
     immersionsService = mockedImmersionsService({
-      searchImmersions: jest.fn().mockResolvedValue(immersions),
+      searchImmersions: jest.fn(async () => ({
+        offres: immersions,
+        metadonnees: { nombrePages: 4, nombreTotal: 31 },
+      })),
     })
     referentielService = mockedReferentielService({
       getMetiers: jest.fn(async () => metiers),
@@ -351,11 +354,14 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(immersionsService.searchImmersions).toHaveBeenCalledWith({
-        metier: unMetier(),
-        commune: uneCommune(),
-        rayon: 10,
-      })
+      expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+        {
+          metier: unMetier(),
+          commune: uneCommune(),
+          rayon: 10,
+        },
+        1
+      )
     })
 
     it('vide les critères lorsqu’on change le type d’offre', async () => {
@@ -389,14 +395,12 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       offresList = screen.getByRole('list', {
-        description: `Liste des résultats (${immersions.length} offres)`,
+        description: `Liste des résultats (31 offres)`,
       })
     })
 
     it('affiche les offres', async () => {
-      expect(within(offresList).getAllByRole('listitem').length).toEqual(
-        immersions.length
-      )
+      expect(within(offresList).getAllByRole('listitem').length).toEqual(5)
     })
 
     it('affiche chaque offre', async () => {
@@ -467,51 +471,71 @@ describe('Page Recherche Immersions', () => {
         screen.getByRole('button', { name: 'Rechercher' })
       ).toHaveAttribute('disabled')
     })
-  })
 
-  //   describe('pagination', () => {
-  //     beforeEach(() => {
-  //       ;(immersionsService.searchImmersions as jest.Mock).mockImplementation(
-  //         (_query, page) => ({
-  //           metadonnees: { nombreTotal: 10, nombrePages: 4 },
-  //           offres: [uneBaseImmersion({ titre: 'Offre page ' + page })],
-  //         })
-  //       )
-  //     })
-  //
-  //     it('met à jour les offres avec la page demandée ', async () => {
-  //       // When
-  //       await userEvent.click(screen.getByLabelText('Page 2'))
-  //
-  //       // Then
-  //       expect(immersionsService.searchImmersions).toHaveBeenCalledWith({})
-  //       expect(screen.getByText('Offre page 2')).toBeInTheDocument()
-  //     })
-  //
-  //     it('met à jour la page courante', async () => {
-  //       // When
-  //       await userEvent.click(screen.getByLabelText('Page suivante'))
-  //       await userEvent.click(screen.getByLabelText('Page suivante'))
-  //
-  //       // Then
-  //       expect(immersionsService.searchImmersions).toHaveBeenCalledWith({})
-  //       expect(immersionsService.searchImmersions).toHaveBeenCalledWith({})
-  //
-  //       expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
-  //         'aria-current',
-  //         'page'
-  //       )
-  //     })
-  //
-  //     it('ne recharge pas la page courante', async () => {
-  //       // When
-  //       await userEvent.click(screen.getByLabelText(`Page 1`))
-  //
-  //       // Then
-  //       expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(1)
-  //     })
-  //   })
-  // })
+    describe('pagination', () => {
+      beforeEach(() => {
+        ;(immersionsService.searchImmersions as jest.Mock).mockImplementation(
+          (_query, page) => ({
+            metadonnees: { nombreTotal: 31, nombrePages: 4 },
+            offres: [uneBaseImmersion({ metier: 'Immersion page ' + page })],
+          })
+        )
+      })
+
+      it('met à jour les offres avec la page demandée ', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+          {
+            metier: unMetier(),
+            commune: uneCommune(),
+            rayon: 10,
+          },
+          2
+        )
+        expect(screen.getByText('Immersion page 2')).toBeInTheDocument()
+      })
+
+      it('met à jour la page courante', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page suivante'))
+        await userEvent.click(screen.getByLabelText('Page suivante'))
+
+        // Then
+        expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+          {
+            metier: unMetier(),
+            commune: uneCommune(),
+            rayon: 10,
+          },
+          2
+        )
+        expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+          {
+            metier: unMetier(),
+            commune: uneCommune(),
+            rayon: 10,
+          },
+          3
+        )
+
+        expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
+          'aria-current',
+          'page'
+        )
+      })
+
+      it('ne recharge pas la page courante', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText(`Page 1`))
+
+        // Then
+        expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(1)
+      })
+    })
+  })
 })
 
 async function saisirMetier(text: string) {
