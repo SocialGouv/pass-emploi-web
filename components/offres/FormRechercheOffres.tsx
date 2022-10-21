@@ -124,6 +124,13 @@ export default function FormRechercheOffres({
                 label='Offre d’emploi'
               />
               <RadioButton
+                isSelected={typeOffre === TypeOffre.ALTERNANCE}
+                onChange={() => setTypeOffre(TypeOffre.ALTERNANCE)}
+                name='type-offre'
+                id='type-offre--alternance'
+                label='Alternance'
+              />
+              <RadioButton
                 isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
                 onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
                 name='type-offre'
@@ -194,6 +201,7 @@ export default function FormRechercheOffres({
   function getRechercheMain(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiPrincipale
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
@@ -226,6 +234,7 @@ export default function FormRechercheOffres({
   function getRechercheSecondary(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiSecondaire
             onCriteresChange={setCountCriteres}

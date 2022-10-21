@@ -102,6 +102,21 @@ export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
   ]
 }
 
+export function uneBaseAlternance(
+  overrides: Partial<BaseOffreEmploi> = {}
+): BaseOffreEmploi {
+  const defaults: BaseOffreEmploi = {
+    type: TypeOffre.ALTERNANCE,
+    id: '142XDSV',
+    titre: 'Apprentissage vente en boulangerie - pâtisserie (H/F)',
+    typeContrat: 'CDD',
+    duree: 'Temps plein',
+    nomEntreprise: 'ICFA/LE FOURNIL DU PAQUEBOT',
+    localisation: '44 - ST NAZAIRE',
+  }
+  return { ...defaults, ...overrides }
+}
+
 export function listeBaseAlternances(): BaseOffreEmploi[] {
   return [
     {
@@ -110,6 +125,7 @@ export function listeBaseAlternances(): BaseOffreEmploi[] {
       titre: 'Canalisateur H/F',
       typeContrat: 'CDD',
       duree: 'Temps plein',
+      nomEntreprise: 'Canal+',
       localisation: '82 - GRISOLLES',
     },
     {
@@ -124,9 +140,10 @@ export function listeBaseAlternances(): BaseOffreEmploi[] {
     {
       type: TypeOffre.ALTERNANCE,
       id: '142XDMM',
-      titre: 'Vendeur(se) Conseil en Magasin Toulon  (H/F)',
+      titre: 'Vendeur(se) Conseil en Magasin Toulon (H/F)',
       typeContrat: 'CDD',
       duree: 'Temps plein',
+      nomEntreprise: 'Magasin Toulon',
       localisation: '83 - TOULON',
     },
   ]
@@ -432,6 +449,7 @@ export function listeAlternancesJson(): OffreEmploiItemJson[] {
       titre: 'Canalisateur H/F',
       typeContrat: 'CDD',
       duree: 'Temps plein',
+      nomEntreprise: 'Canal+',
       localisation: {
         nom: '82 - GRISOLLES',
       },
@@ -450,9 +468,10 @@ export function listeAlternancesJson(): OffreEmploiItemJson[] {
     },
     {
       id: '142XDMM',
-      titre: 'Vendeur(se) Conseil en Magasin Toulon  (H/F)',
+      titre: 'Vendeur(se) Conseil en Magasin Toulon (H/F)',
       typeContrat: 'CDD',
       duree: 'Temps plein',
+      nomEntreprise: 'Magasin Toulon',
       localisation: {
         nom: '83 - TOULON',
       },

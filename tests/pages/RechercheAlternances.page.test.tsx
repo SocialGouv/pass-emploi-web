@@ -2,7 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import { listeBaseOffresEmploi, uneBaseOffreEmploi } from 'fixtures/offre'
+import { listeBaseAlternances, uneBaseAlternance } from 'fixtures/offre'
 import { desLocalites } from 'fixtures/referentiel'
 import {
   mockedOffresEmploiService,
@@ -18,19 +18,19 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
-describe('Page Recherche Offres Emploi', () => {
+describe('Page Recherche Alternances', () => {
   let offresEmploiService: OffresEmploiService
   let referentielService: ReferentielService
 
-  let offresEmploi: BaseOffreEmploi[]
+  let alternances: BaseOffreEmploi[]
   let localites: Localite[]
   beforeEach(async () => {
     localites = desLocalites()
-    offresEmploi = listeBaseOffresEmploi()
+    alternances = listeBaseAlternances()
     offresEmploiService = mockedOffresEmploiService({
-      searchOffresEmploi: jest.fn().mockResolvedValue({
+      searchAlternances: jest.fn().mockResolvedValue({
         metadonnees: { nombreTotal: 10, nombrePages: 4 },
-        offres: offresEmploi,
+        offres: alternances,
       }),
     })
     referentielService = mockedReferentielService({
@@ -43,7 +43,7 @@ describe('Page Recherche Offres Emploi', () => {
         referentielService,
       },
     })
-    await userEvent.click(screen.getByRole('radio', { name: 'Offre d’emploi' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'Alternance' }))
   })
 
   it('permet de definir des critères de recherche', () => {
@@ -102,9 +102,9 @@ describe('Page Recherche Offres Emploi', () => {
         expect(
           screen.getByRole('option', {
             hidden: true,
-            name: toUpperCaseAlpha(localite.libelle),
+            name: sanitize(localite.libelle),
           })
-        ).toHaveValue(toUpperCaseAlpha(localite.libelle))
+        ).toHaveValue(sanitize(localite.libelle))
       })
     })
 
@@ -127,7 +127,7 @@ describe('Page Recherche Offres Emploi', () => {
       expect(
         screen.getByText('Veuillez saisir une localisation correcte.')
       ).toBeInTheDocument()
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledTimes(0)
+      expect(offresEmploiService.searchAlternances).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -282,7 +282,7 @@ describe('Page Recherche Offres Emploi', () => {
   })
 
   describe('recherche', () => {
-    it("permet de rechercher des offres d'emploi", async () => {
+    it('permet de rechercher des alternances', async () => {
       // Given
       const submitButton = screen.getByRole('button', {
         name: 'Rechercher',
@@ -292,7 +292,7 @@ describe('Page Recherche Offres Emploi', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({}, 1)
+      expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith({}, 1)
     })
 
     it('construit la recherche avec un département', async () => {
@@ -308,7 +308,7 @@ describe('Page Recherche Offres Emploi', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+      expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
         {
           motsCles: 'prof industrie',
           departement: '75',
@@ -330,7 +330,7 @@ describe('Page Recherche Offres Emploi', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+      expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
         {
           motsCles: 'prof industrie',
           commune: '75114',
@@ -366,7 +366,7 @@ describe('Page Recherche Offres Emploi', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
 
       // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+      expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
         {
           commune: '75114',
           debutantAccepte: true,
@@ -394,13 +394,13 @@ describe('Page Recherche Offres Emploi', () => {
       })
 
       await userEvent.click(screen.getByText('Service civique'))
-      await userEvent.click(screen.getByText('Offre d’emploi'))
+      await userEvent.click(screen.getByText('Alternance'))
 
       // When
       await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
 
       // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({}, 1)
+      expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith({}, 1)
     })
   })
 
@@ -423,45 +423,45 @@ describe('Page Recherche Offres Emploi', () => {
 
     it('affiche les offres', async () => {
       expect(within(offresList).getAllByRole('listitem').length).toEqual(
-        offresEmploi.length
+        alternances.length
       )
     })
 
     it('affiche chaque offre', async () => {
-      offresEmploi.forEach((offre) => {
+      alternances.forEach((alternance) => {
         const offreCard = within(offresList).getByRole('heading', {
           level: 3,
-          name: 'Offre n°' + offre.id,
+          name: 'Offre n°' + alternance.id,
         }).parentElement!
-        expect(within(offreCard).getByText('Emploi')).toBeInTheDocument()
-        expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
+        expect(within(offreCard).getByText('Alternance')).toBeInTheDocument()
+        expect(within(offreCard).getByText(alternance.titre)).toBeInTheDocument()
         expect(
-          within(offreCard).getByText(offre.typeContrat)
+          within(offreCard).getByText(alternance.typeContrat)
         ).toBeInTheDocument()
-        expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
+        expect(within(offreCard).getByText(alternance.duree!)).toBeInTheDocument()
         expect(
-          within(offreCard).getByText(offre.nomEntreprise!)
-        ).toBeInTheDocument()
-        expect(
-          within(offreCard).getByText(offre.localisation!)
+          within(offreCard).getByText(alternance.nomEntreprise!)
         ).toBeInTheDocument()
         expect(
-          within(offreCard).getByRole('link', {
-            name: 'Détail de l’offre ' + offre.id,
-          })
-        ).toHaveAttribute('href', '/offres/emploi/' + offre.id)
+          within(offreCard).getByText(alternance.localisation!)
+        ).toBeInTheDocument()
+        // expect(
+        //   within(offreCard).getByRole('link', {
+        //     name: 'Détail de l’offre ' + alternance.id,
+        //   })
+        // ).toHaveAttribute('href', '/offres/' + alternance.id)
       })
     })
 
-    it('permet de partager chaque offre', () => {
-      offresEmploi.forEach((offre) => {
-        expect(
-          within(offresList).getByRole('link', {
-            name: `Partager offre numéro ${offre.id}`,
-          })
-        ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
-      })
-    })
+    // it('permet de partager chaque offre', () => {
+    //   alternances.forEach((offre) => {
+    //     expect(
+    //       within(offresList).getByRole('link', {
+    //         name: `Partager offre numéro ${offre.id}`,
+    //       })
+    //     ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
+    //   })
+    // })
 
     it('cache le formulaire', async () => {
       // Given
@@ -507,10 +507,10 @@ describe('Page Recherche Offres Emploi', () => {
     describe('pagination', () => {
       beforeEach(() => {
         ;(
-          offresEmploiService.searchOffresEmploi as jest.Mock
+          offresEmploiService.searchAlternances as jest.Mock
         ).mockImplementation((_query, page) => ({
           metadonnees: { nombreTotal: 10, nombrePages: 4 },
-          offres: [uneBaseOffreEmploi({ titre: 'Offre page ' + page })],
+          offres: [uneBaseAlternance({ titre: 'Offre page ' + page })],
         }))
       })
 
@@ -519,7 +519,7 @@ describe('Page Recherche Offres Emploi', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+        expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
           {},
           2
         )
@@ -532,11 +532,11 @@ describe('Page Recherche Offres Emploi', () => {
         await userEvent.click(screen.getByLabelText('Page suivante'))
 
         // Then
-        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+        expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
           {},
           2
         )
-        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
+        expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
           {},
           3
         )
@@ -552,7 +552,7 @@ describe('Page Recherche Offres Emploi', () => {
         await userEvent.click(screen.getByLabelText(`Page 1`))
 
         // Then
-        expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledTimes(1)
+        expect(offresEmploiService.searchAlternances).toHaveBeenCalledTimes(1)
       })
     })
   })
@@ -563,7 +563,7 @@ async function saisirLocalite(text: string) {
   await act(() => new Promise((r) => setTimeout(r, 500)))
 }
 
-function toUpperCaseAlpha(str: string): string {
+function sanitize(str: string): string {
   return str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

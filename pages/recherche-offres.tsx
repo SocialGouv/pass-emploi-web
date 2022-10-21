@@ -89,6 +89,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         case TypeOffre.EMPLOI:
           result = await rechercherOffresEmploi(page)
           break
+        case TypeOffre.ALTERNANCE:
+          result = await rechercherAlternances(page)
+          break
         case TypeOffre.SERVICE_CIVIQUE:
           result = await rechercherServicesCiviques(page)
           break
@@ -120,6 +123,14 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   }> {
     const { hasError, ...query } = queryOffresEmploi
     return offresEmploiService.searchOffresEmploi(query, page)
+  }
+
+  async function rechercherAlternances(page: number): Promise<{
+    offres: BaseOffreEmploi[]
+    metadonnees: MetadonneesOffres
+  }> {
+    const { hasError, ...query } = queryOffresEmploi
+    return offresEmploiService.searchAlternances(query, page)
   }
 
   async function rechercherServicesCiviques(page: number): Promise<{
