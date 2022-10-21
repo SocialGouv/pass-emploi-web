@@ -1,11 +1,16 @@
 import { ApiClient } from 'clients/api.client'
 import {
+  listeAlternancesJson,
+  listeBaseAlternances,
   listeBaseOffresEmploi,
   listeOffresEmploiJson,
   unDetailOffreEmploi,
   unDetailOffreJson,
 } from 'fixtures/offre'
-import { OffresEmploiApiService } from 'services/offres-emploi.service'
+import {
+  OffresEmploiApiService,
+  OffresEmploiService,
+} from 'services/offres-emploi.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
@@ -18,7 +23,7 @@ jest.mock('next-auth/react', () => ({
 
 describe('OffresEmploiApiService', () => {
   let apiClient: ApiClient
-  let offresEmploiService: OffresEmploiApiService
+  let offresEmploiService: OffresEmploiService
 
   beforeEach(() => {
     apiClient = new FakeApiClient()
@@ -209,6 +214,119 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&debutantAccepte=true',
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.searchAlternances', () => {
+    beforeEach(() => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          pagination: { total: 35 },
+          results: listeAlternancesJson(),
+        },
+      })
+    })
+
+    it('renvoie une liste paginée d’alternances', async () => {
+      // When
+      const actual = await offresEmploiService.searchAlternances({}, 3)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true',
+        'accessToken'
+      )
+      expect(actual).toEqual({
+        metadonnees: { nombreTotal: 35, nombrePages: 4 },
+        offres: listeBaseAlternances(),
+      })
+    })
+
+    it('parse les mots clés', async () => {
+      // Given
+      const query = 'prof industrie'
+
+      // When
+      await offresEmploiService.searchAlternances({ motsCles: query }, 3)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true&q=prof%20industrie',
+        'accessToken'
+      )
+    })
+
+    it('parse le département', async () => {
+      // When
+      await offresEmploiService.searchAlternances({ departement: '75' }, 3)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true&departement=75',
+        'accessToken'
+      )
+    })
+
+    it('parse la commune', async () => {
+      // When
+      await offresEmploiService.searchAlternances({ commune: '35238' }, 3)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true&commune=35238',
+        'accessToken'
+      )
+    })
+
+    it('parse les types de contrat', async () => {
+      // When
+      await offresEmploiService.searchAlternances(
+        { typesContrats: ['CDI', 'autre'] },
+        3
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true&contrat=CDI&contrat=autre',
+        'accessToken'
+      )
+    })
+
+    it('parse les durées', async () => {
+      // When
+      await offresEmploiService.searchAlternances(
+        { durees: ['Temps plein', 'Temps partiel'] },
+        3
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true&duree=1&duree=2',
+        'accessToken'
+      )
+    })
+
+    it('parse la distance', async () => {
+      // When
+      await offresEmploiService.searchAlternances({ rayon: 32 }, 3)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true&rayon=32',
+        'accessToken'
+      )
+    })
+
+    it("parse l'experience", async () => {
+      // When
+      await offresEmploiService.searchAlternances({ debutantAccepte: true }, 3)
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi?page=3&limit=10&alternance=true&debutantAccepte=true',
         'accessToken'
       )
     })

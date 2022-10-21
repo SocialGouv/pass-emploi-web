@@ -36,6 +36,10 @@ export interface OffresEmploiService {
     recherche: SearchOffresEmploiQuery,
     page: number
   ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
+  searchAlternances(
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
 }
 
 export class OffresEmploiApiService implements OffresEmploiService {
@@ -64,23 +68,14 @@ export class OffresEmploiApiService implements OffresEmploiService {
     recherche: SearchOffresEmploiQuery,
     page: number
   ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
+    return this.searchOffres({ recherche, page, alternanceOnly: false })
+  }
 
-    const LIMIT = 10
-    const path = '/offres-emploi'
-    const searchUrl = buildSearchParams(recherche, page, LIMIT)
-    const { content } = await this.apiClient.get<{
-      pagination: { total: number }
-      results: OffreEmploiItemJson[]
-    }>(path + '?' + searchUrl, accessToken)
-
-    const { pagination, results } = content
-    const metadonnees: MetadonneesOffres = {
-      nombreTotal: pagination.total,
-      nombrePages: Math.ceil(pagination.total / LIMIT),
-    }
-    return { metadonnees, offres: results.map(jsonToOffreEmploiItem) }
+  async searchAlternances(
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+    return this.searchOffres({ recherche, page, alternanceOnly: true })
   }
 
   private async getOffreEmploi(
@@ -101,17 +96,47 @@ export class OffresEmploiApiService implements OffresEmploiService {
       throw e
     }
   }
+
+  private async searchOffres({
+    recherche,
+    page,
+    alternanceOnly,
+  }: {
+    recherche: SearchOffresEmploiQuery
+    page: number
+    alternanceOnly: boolean
+  }): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+    const session = await getSession()
+    const accessToken = session!.accessToken
+
+    const LIMIT = 10
+    const path = '/offres-emploi'
+    const searchUrl = buildSearchParams(recherche, page, LIMIT, alternanceOnly)
+    const { content } = await this.apiClient.get<{
+      pagination: { total: number }
+      results: OffreEmploiItemJson[]
+    }>(path + '?' + searchUrl, accessToken)
+
+    const { pagination, results } = content
+    const metadonnees: MetadonneesOffres = {
+      nombreTotal: pagination.total,
+      nombrePages: Math.ceil(pagination.total / LIMIT),
+    }
+    return { metadonnees, offres: results.map(jsonToOffreEmploiItem) }
+  }
 }
 
 function buildSearchParams(
   recherche: SearchOffresEmploiQuery,
   page: number,
-  limit: number
+  limit: number,
+  alternanceOnly: boolean
 ): string {
   const searchParams = new URLSearchParams({
     page: page.toString(10),
     limit: limit.toString(10),
   })
+  if (alternanceOnly) searchParams.set('alternance', 'true')
 
   const {
     durees,

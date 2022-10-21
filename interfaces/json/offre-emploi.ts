@@ -11,6 +11,7 @@ export type OffreEmploiItemJson = {
   titre: string
   typeContrat: string
 
+  alternance?: boolean
   duree?: string
   localisation?: { nom?: string }
   nomEntreprise?: string
@@ -58,7 +59,7 @@ export function jsonToOffreEmploiItem(
   json: OffreEmploiItemJson
 ): BaseOffreEmploi {
   const offreEmploiItem: BaseOffreEmploi = {
-    type: TypeOffre.EMPLOI,
+    type: json.alternance ? TypeOffre.ALTERNANCE : TypeOffre.EMPLOI,
     id: json.id,
     titre: json.titre,
     typeContrat: json.typeContrat,
