@@ -39,7 +39,7 @@ export default function SelectAutocompleteWithFetch<T>({
 
   function handleInputChange(str: string) {
     setInput({ value: sanitize(str) })
-    onUpdateSelected({ hasError: Boolean(str) })
+    onUpdateSelected({ hasError: Boolean(str || required) })
   }
 
   function validateSelected() {
