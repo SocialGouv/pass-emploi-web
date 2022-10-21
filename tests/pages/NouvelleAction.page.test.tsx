@@ -3,16 +3,21 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { mockedActionsService } from 'fixtures/services'
+import {
+  mockedActionsService,
+  mockedReferentielService,
+} from 'fixtures/services'
+import { ActionPredefinie } from 'interfaces/action'
 import NouvelleAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
-import { actionsPredefinies } from 'referentiel/action'
 import { ActionsService } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('utils/injectionDependances/withDependance')
 
 describe('NouvelleAction', () => {
   describe('server side', () => {
@@ -41,6 +46,17 @@ describe('NouvelleAction', () => {
           session: {},
         })
 
+        const actionsPredefinies: { titre: string; id: string }[] = [
+          {
+            id: 'action-predefinie-1',
+            titre: 'Identifier ses atouts et ses compétences',
+          },
+        ]
+        const referentielService = mockedReferentielService({
+          getActionsPredefinies: jest.fn(async () => actionsPredefinies),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(referentielService)
+
         // When
         const actual = await getServerSideProps({
           query: { jeune_id: 'id-jeune' },
@@ -50,6 +66,7 @@ describe('NouvelleAction', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
+            actionsPredefinies,
             withoutChat: true,
             pageTitle: 'Actions jeune – Création action',
             pageHeader: 'Créer une nouvelle action',
@@ -63,15 +80,29 @@ describe('NouvelleAction', () => {
   describe('client side', () => {
     let actionsService: ActionsService
     let push: Function
+    let actionsPredefinies: ActionPredefinie[]
     beforeEach(async () => {
       // Given
       push = jest.fn(async () => {})
       ;(useRouter as jest.Mock).mockReturnValue({ push })
       actionsService = mockedActionsService()
+      actionsPredefinies = [
+        {
+          id: 'action-predefinie-1',
+          titre: 'Identifier ses atouts et ses compétences',
+        },
+        { id: 'action-predefinie-2', titre: 'Identifier des pistes de métier' },
+        { id: 'action-predefinie-3', titre: 'Identifier des entreprises' },
+      ]
 
       // When
       renderWithContexts(
-        <NouvelleAction idJeune='id-jeune' withoutChat={true} pageTitle='' />,
+        <NouvelleAction
+          idJeune='id-jeune'
+          actionsPredefinies={actionsPredefinies}
+          withoutChat={true}
+          pageTitle=''
+        />,
         { customDependances: { actionsService } }
       )
     })
@@ -105,9 +136,9 @@ describe('NouvelleAction', () => {
         })
 
         expect(select).toHaveAttribute('required', '')
-        actionsPredefinies.forEach(({ content }) => {
+        actionsPredefinies.forEach(({ titre }) => {
           expect(
-            within(select).getByRole('option', { name: content })
+            within(select).getByRole('option', { name: titre })
           ).toBeInTheDocument()
         })
       })
@@ -141,10 +172,7 @@ describe('NouvelleAction', () => {
           const dateEcheance = screen.getByLabelText(/date d’échéance/)
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
-          await userEvent.selectOptions(
-            selectAction,
-            actionsPredefinies[3].content
-          )
+          await userEvent.selectOptions(selectAction, actionsPredefinies[1].titre)
           await userEvent.type(description, 'Commentaire action')
           await userEvent.type(dateEcheance, '2022-07-30')
         })
@@ -169,7 +197,7 @@ describe('NouvelleAction', () => {
             // Then
             expect(actionsService.createAction).toHaveBeenCalledWith(
               {
-                intitule: actionsPredefinies[3].content,
+                intitule: actionsPredefinies[1].titre,
                 commentaire: 'Commentaire action',
                 dateEcheance: '2022-07-30',
               },

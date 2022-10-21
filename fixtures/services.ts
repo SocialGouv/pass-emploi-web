@@ -109,6 +109,7 @@ export function mockedReferentielService(
     getAgences: jest.fn(),
     getCommunesEtDepartements: jest.fn(),
     getCommunes: jest.fn(),
+    getActionsPredefinies: jest.fn(),
     getMetiers: jest.fn(),
   }
   return { ...defaults, ...overrides }

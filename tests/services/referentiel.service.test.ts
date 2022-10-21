@@ -9,7 +9,10 @@ import {
   uneListeDAgencesPoleEmploi,
 } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { ReferentielApiService } from 'services/referentiel.service'
+import {
+  ReferentielApiService,
+  ReferentielService,
+} from 'services/referentiel.service'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(() => ({
@@ -19,7 +22,7 @@ jest.mock('next-auth/react', () => ({
 
 describe('ReferentielApiService', () => {
   let apiClient: ApiClient
-  let referentielService: ReferentielApiService
+  let referentielService: ReferentielService
   beforeEach(async () => {
     // Given
     apiClient = new FakeApiClient()
@@ -120,6 +123,35 @@ describe('ReferentielApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(desMetiers())
+    })
+  })
+
+  describe('.getActionsPredefinies', () => {
+    it('retourne les actions prédéfinies', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: [
+          {
+            id: 'action-predefinie-1',
+            titre: 'Identifier ses atouts et ses compétences',
+          },
+        ],
+      })
+
+      // When
+      const actual = await referentielService.getActionsPredefinies()
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/referentiels/actions-predefinies',
+        'accessToken'
+      )
+      expect(actual).toEqual([
+        {
+          id: 'action-predefinie-1',
+          titre: 'Identifier ses atouts et ses compétences',
+        },
+      ])
     })
   })
 })
