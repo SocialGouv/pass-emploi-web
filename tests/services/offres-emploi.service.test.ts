@@ -7,6 +7,7 @@ import {
   unDetailOffreEmploi,
   unDetailOffreJson,
 } from 'fixtures/offre'
+import { TypeOffre } from 'interfaces/offre'
 import {
   OffresEmploiApiService,
   OffresEmploiService,
@@ -87,6 +88,28 @@ describe('OffresEmploiApiService', () => {
         'accessToken'
       )
       expect(actual).toStrictEqual(unDetailOffreEmploi())
+    })
+
+    it('renvoie l’alternance si elle est trouvée en base', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unDetailOffreJson({ alternance: true }),
+      })
+
+      // When
+      const actual = await offresEmploiService.getOffreEmploiServerSide(
+        'ID_OFFRE_EMPLOI',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-emploi/ID_OFFRE_EMPLOI',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual(
+        unDetailOffreEmploi({ type: TypeOffre.ALTERNANCE })
+      )
     })
 
     it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {

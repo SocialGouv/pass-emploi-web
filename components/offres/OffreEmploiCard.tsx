@@ -59,22 +59,20 @@ export default function OffreEmploiCard({
           <DataTag text={offre.typeContrat} className='mr-6' />
           {offre.duree && <DataTag text={offre.duree} />}
         </div>
-        {offre.type === TypeOffre.EMPLOI && (
-          <Link href={`/offres/emploi/${offre.id}`}>
-            <a
-              aria-label={`Détail de l’offre ${offre.id}`}
-              className='flex items-center text-s-regular hover:text-primary'
-            >
-              Voir le détail
-              <IconComponent
-                name={IconName.ChevronRight}
-                className='w-4 h-4 mr-3 fill-primary'
-                focusable={false}
-                aria-hidden={true}
-              />
-            </a>
-          </Link>
-        )}
+        <Link href={`/offres/emploi/${offre.id}`}>
+          <a
+            aria-label={`Détail de l’offre ${offre.id}`}
+            className='flex items-center text-s-regular hover:text-primary'
+          >
+            Voir le détail
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-4 mr-3 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </a>
+        </Link>
       </div>
     </div>
   )

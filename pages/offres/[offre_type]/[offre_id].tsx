@@ -8,7 +8,7 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import { DetailOffreEmploi, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -49,11 +49,13 @@ function DetailOffre({ offre }: DetailOffreProps) {
         <p className='text-s-regular'>
           {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
         </p>
-        <LienPartageOffre
+        {offre.type === TypeOffre.EMPLOI && (
+          <LienPartageOffre
           idOffre={offre.id}
           href={`/offres/emploi/${offre.id}/partage`}
           style={ButtonStyle.PRIMARY}
         />
+        )}
       </div>
       <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
 

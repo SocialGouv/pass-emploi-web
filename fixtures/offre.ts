@@ -1,5 +1,6 @@
 import { ImmersionItemJson } from 'interfaces/json/immersion'
 import {
+  DataDetailOffreEmploiJson,
   DetailOffreEmploiJson,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre-emploi'
@@ -299,65 +300,65 @@ export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
 }
 
 export function unDetailOffreJson(
-  overrides: Partial<DetailOffreEmploiJson> = {}
+  overrides: Partial<DataDetailOffreEmploiJson> = {}
 ): DetailOffreEmploiJson {
-  const defaults: DetailOffreEmploiJson = {
-    id: 'id-offre',
-    data: {
-      intitule: "Offre d'emploi",
-      entreprise: {
-        nom: 'Mon Entreprise',
-        description: "Description longue de l'entreprise",
-        url: 'perdu.com',
-        entrepriseAdaptee: false,
-      },
-      typeContrat: 'CDI',
-      typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
-      lieuTravail: { libelle: 'Paris' },
-      dureeTravailLibelleConverti: 'Temps plein',
-      dateCreation: '2022-09-30T07:47:25.000Z',
-      salaire: { libelle: 'Selon profil' },
-      dureeTravailLibelle: '24H Horaires normaux',
-      description: 'une description d’offre d’emploi',
-      experienceLibelle: '1 an - en formation continue ou initiale',
-      experienceExige: 'E',
-      competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
-      qualitesProfessionnelles: [
-        { libelle: 'compétence pro 1' },
-        { libelle: 'compétence pro 2' },
-      ],
-      formations: [
-        {
-          commentaire: 'formation 1',
-        },
-        {
-          commentaire: 'formation 1',
-          niveauLibelle: 'bac +3',
-        },
-        {
-          commentaire: 'formation 1',
-          niveauLibelle: 'bac +3',
-          domaineLibelle: 'informatique',
-        },
-        {
-          niveauLibelle: 'bac +3',
-          domaineLibelle: 'informatique',
-        },
-        {
-          domaineLibelle: 'informatique',
-        },
-        {
-          commentaire: 'formation 1',
-          domaineLibelle: 'informatique',
-        },
-      ],
-      langues: [{ libelle: 'langue 1' }],
-      permis: [{ libelle: 'permis 1' }],
-      accessibleTH: true,
+  const defaults: DataDetailOffreEmploiJson = {
+    intitule: "Offre d'emploi",
+    entreprise: {
+      nom: 'Mon Entreprise',
+      description: "Description longue de l'entreprise",
+      url: 'perdu.com',
+      entrepriseAdaptee: false,
     },
-    urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
+    typeContrat: 'CDI',
+    typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
+    lieuTravail: { libelle: 'Paris' },
+    dureeTravailLibelleConverti: 'Temps plein',
+    dateCreation: '2022-09-30T07:47:25.000Z',
+    salaire: { libelle: 'Selon profil' },
+    dureeTravailLibelle: '24H Horaires normaux',
+    description: 'une description d’offre d’emploi',
+    experienceLibelle: '1 an - en formation continue ou initiale',
+    experienceExige: 'E',
+    competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
+    qualitesProfessionnelles: [
+      { libelle: 'compétence pro 1' },
+      { libelle: 'compétence pro 2' },
+    ],
+    formations: [
+      {
+        commentaire: 'formation 1',
+      },
+      {
+        commentaire: 'formation 1',
+        niveauLibelle: 'bac +3',
+      },
+      {
+        commentaire: 'formation 1',
+        niveauLibelle: 'bac +3',
+        domaineLibelle: 'informatique',
+      },
+      {
+        niveauLibelle: 'bac +3',
+        domaineLibelle: 'informatique',
+      },
+      {
+        domaineLibelle: 'informatique',
+      },
+      {
+        commentaire: 'formation 1',
+        domaineLibelle: 'informatique',
+      },
+    ],
+    langues: [{ libelle: 'langue 1' }],
+    permis: [{ libelle: 'permis 1' }],
+    accessibleTH: true,
   }
-  return { ...defaults, ...overrides }
+  return {
+    id: 'id-offre',
+    urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
+    data: { ...defaults, ...overrides },
+  }
 }
 
 export function unServiceCiviqueJson(): ServiceCiviqueItemJson {

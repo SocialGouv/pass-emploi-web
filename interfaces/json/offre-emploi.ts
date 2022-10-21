@@ -17,12 +17,13 @@ export type OffreEmploiItemJson = {
   nomEntreprise?: string
 }
 
-type DataDetailOffreEmploiJson = {
+export type DataDetailOffreEmploiJson = {
   intitule: string
   typeContrat: string
   typeContratLibelle: string
 
   accessibleTH?: boolean
+  alternance?: boolean
   competences?: Array<{ libelle?: string }>
   dateCreation: string
   dateActualisation?: string
@@ -78,7 +79,7 @@ export function jsonToDetailOffreEmploi(
 ): DetailOffreEmploi {
   const { id, data, urlRedirectPourPostulation } = json
   const offre: DetailOffreEmploi = {
-    type: TypeOffre.EMPLOI,
+    type: json.data.alternance ? TypeOffre.ALTERNANCE : TypeOffre.EMPLOI,
     id: id,
     dateActualisation: data.dateActualisation ?? data.dateCreation,
     titre: data.intitule,

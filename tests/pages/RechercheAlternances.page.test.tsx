@@ -434,22 +434,26 @@ describe('Page Recherche Alternances', () => {
           name: 'Offre n°' + alternance.id,
         }).parentElement!
         expect(within(offreCard).getByText('Alternance')).toBeInTheDocument()
-        expect(within(offreCard).getByText(alternance.titre)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(alternance.titre)
+        ).toBeInTheDocument()
         expect(
           within(offreCard).getByText(alternance.typeContrat)
         ).toBeInTheDocument()
-        expect(within(offreCard).getByText(alternance.duree!)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(alternance.duree!)
+        ).toBeInTheDocument()
         expect(
           within(offreCard).getByText(alternance.nomEntreprise!)
         ).toBeInTheDocument()
         expect(
           within(offreCard).getByText(alternance.localisation!)
         ).toBeInTheDocument()
-        // expect(
-        //   within(offreCard).getByRole('link', {
-        //     name: 'Détail de l’offre ' + alternance.id,
-        //   })
-        // ).toHaveAttribute('href', '/offres/' + alternance.id)
+        expect(
+          within(offreCard).getByRole('link', {
+            name: 'Détail de l’offre ' + alternance.id,
+          })
+        ).toHaveAttribute('href', '/offres/' + alternance.id)
       })
     })
 
