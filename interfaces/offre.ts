@@ -57,7 +57,7 @@ export type DetailServiceCivique = BaseServiceCivique
 export type BaseImmersion = {
   type: TypeOffre.IMMERSION
   id: string
-  metier: string
+  titre: string
   nomEtablissement: string
   ville: string
   secteurActivite: string

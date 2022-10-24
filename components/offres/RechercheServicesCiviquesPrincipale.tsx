@@ -7,18 +7,18 @@ import { Commune } from 'interfaces/referentiel'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
 
-type RechercheServicesCiviquesMainProps = {
-  fetchCommunes: (search: string) => Promise<Commune[]>
+type RechercheServicesCiviquesPrincipaleProps = {
+  recupererCommunes: (search: string) => Promise<Commune[]>
   query: FormValues<SearchServicesCiviquesQuery>
   onQueryUpdate: (query: FormValues<SearchServicesCiviquesQuery>) => void
 }
 const RAYON_DEFAULT = 10
 
-export default function RechercheServicesCiviquesMain({
-  fetchCommunes,
+export default function RechercheServicesCiviquesPrincipale({
+  recupererCommunes,
   query,
   onQueryUpdate,
-}: RechercheServicesCiviquesMainProps) {
+}: RechercheServicesCiviquesPrincipaleProps) {
   function updateCommune({
     selected,
     hasError,
@@ -44,12 +44,12 @@ export default function RechercheServicesCiviquesMain({
       <Label htmlFor='localisation'>
         {{
           main: 'Localisation',
-          sub: 'Saisissez une ville',
+          helpText: 'Saisissez une ville',
         }}
       </Label>
       <SelectAutocompleteWithFetch<Commune>
         id='localisation'
-        fetch={fetchCommunes}
+        fetch={recupererCommunes}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateCommune}
         errorMessage='Veuillez saisir une commune correcte.'

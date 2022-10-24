@@ -90,8 +90,10 @@ export default function JeunesMultiselectAutocomplete({
   return (
     <>
       <Label htmlFor='select-jeunes' inputRequired={true}>
-        Rechercher et ajouter des jeunes
-        <span className='text-s-regular block'>Nom et prénom</span>
+        {{
+          main: 'Rechercher et ajouter des jeunes',
+          helpText: 'Nom et prénom',
+        }}
       </Label>
       {error && (
         <InputError id='select-jeunes--error' className='mt-2'>

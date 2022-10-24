@@ -198,6 +198,8 @@ function getDefaultMessage(typeOffre: TypeOffre): string {
       return 'Bonjour, je vous partage une offre d’emploi qui pourrait vous intéresser.'
     case TypeOffre.SERVICE_CIVIQUE:
       return 'Bonjour, je vous partage une offre de service civique qui pourrait vous intéresser.'
+    case TypeOffre.IMMERSION:
+      return "Bonjour, je vous partage une offre d'immersion qui pourrait vous intéresser."
   }
 }
 

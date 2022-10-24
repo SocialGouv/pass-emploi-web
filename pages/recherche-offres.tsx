@@ -48,6 +48,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const immersionsService =
     useDependance<ImmersionsService>('immersionsService')
 
+  const RAYON_DEFAULT = 10
   const [typeOffre, setTypeOffre] = useState<TypeOffre | undefined>()
   const [queryOffresEmploi, setQueryOffresEmploi] = useState<
     FormValues<SearchOffresEmploiQuery>
@@ -57,7 +58,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   >({ hasError: false })
   const [queryImmersions, setQueryImmersions] = useState<
     FormValues<SearchImmersionsQuery>
-  >({ hasError: false })
+  >({ rayon: RAYON_DEFAULT, hasError: false })
 
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()

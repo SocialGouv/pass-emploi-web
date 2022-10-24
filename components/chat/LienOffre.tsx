@@ -4,15 +4,6 @@ import React from 'react'
 import { InfoOffre } from 'interfaces/message'
 import { TypeOffre } from 'interfaces/offre'
 
-function typeToUrlParam(typeOffre: TypeOffre): string {
-  switch (typeOffre) {
-    case TypeOffre.EMPLOI:
-      return 'emploi'
-    case TypeOffre.SERVICE_CIVIQUE:
-      return 'service-civique'
-  }
-}
-
 export default function LienOffre({
   infoOffre,
   isSentByConseiller,
@@ -41,13 +32,22 @@ export default function LienOffre({
         }`}
       >
         <Link
-          href={
-            '/offres/' + typeToUrlParam(infoOffre.type) + '/' + infoOffre.id
-          }
+          href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
         >
           <a className='underline text-[inherit]'>Voir l’offre</a>
         </Link>
       </div>
     </div>
   )
+}
+
+function typeToUrlParam(typeOffre: TypeOffre): string {
+  switch (typeOffre) {
+    case TypeOffre.EMPLOI:
+      return 'emploi'
+    case TypeOffre.SERVICE_CIVIQUE:
+      return 'service-civique'
+    case TypeOffre.IMMERSION:
+      return 'immersion'
+  }
 }

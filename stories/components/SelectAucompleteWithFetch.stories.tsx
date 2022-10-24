@@ -24,14 +24,14 @@ const Template: ComponentStory<typeof SelectAutocompleteWithFetch> = ({
 
   return (
     <>
-      <p>
+      <label htmlFor={id}>
         Localite :{' '}
         {query.selected && (
           <span>
             {query.selected.libelle} ({query.selected.code})
           </span>
         )}
-      </p>
+      </label>
       <p>Error : {query.hasError ? 'true' : 'false'}</p>
       <SelectAutocompleteWithFetch<Localite>
         id={id}

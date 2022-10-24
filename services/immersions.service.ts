@@ -31,7 +31,7 @@ export class ImmersionsApiService implements ImmersionsService {
     page: number
   ): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesOffres }> {
     let immersionsJson: ImmersionItemJson[]
-    if (this.cache && areSame(this.cache.query, query)) {
+    if (this.cache && areSameQueries(this.cache.query, query)) {
       immersionsJson = this.cache.resultsJson
     } else {
       const session = await getSession()
@@ -55,8 +55,9 @@ export class ImmersionsApiService implements ImmersionsService {
       metadonnees,
       offres: immersionsJson
         .slice(this.LIMIT * (page - 1), page * this.LIMIT)
-        .map((immersion) => ({
+        .map(({ metier, ...immersion }) => ({
           type: TypeOffre.IMMERSION,
+          titre: metier,
           ...immersion,
         })),
     }
@@ -72,7 +73,7 @@ function buildSearchParams(recherche: SearchImmersionsQuery): URLSearchParams {
   })
 }
 
-function areSame(
+function areSameQueries(
   query1: SearchImmersionsQuery,
   query2: SearchImmersionsQuery
 ): boolean {

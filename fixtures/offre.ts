@@ -249,7 +249,7 @@ export function uneBaseImmersion(
   const defaults: BaseImmersion = {
     type: TypeOffre.IMMERSION,
     id: '89081896600016-M1805',
-    metier: 'Études et développement informatique - MADO XR',
+    titre: 'Études et développement informatique - MADO XR',
     nomEtablissement: 'MADO XR',
     secteurActivite:
       'Production de films cinématographiques, de vidéo et de programmes de télévision',
@@ -267,7 +267,7 @@ export function listeBaseImmersions({
     {
       type: TypeOffre.IMMERSION,
       id: '89081896600016-M1805' + (page ? '-page-' + page : ''),
-      metier: 'Études et développement informatique - MADO XR',
+      titre: 'Études et développement informatique - MADO XR',
       nomEtablissement: 'MADO XR',
       secteurActivite:
         'Production de films cinématographiques, de vidéo et de programmes de télévision',
@@ -276,7 +276,7 @@ export function listeBaseImmersions({
     {
       type: TypeOffre.IMMERSION,
       id: '91401957500010-M1805' + (page ? '-page-' + page : ''),
-      metier: 'Études et développement informatique - ESIFLY',
+      titre: 'Études et développement informatique - ESIFLY',
       nomEtablissement: 'ESIFLY',
       secteurActivite:
         'Autres activités spécialisées, scientifiques et techniques n.c.a.',
@@ -285,7 +285,7 @@ export function listeBaseImmersions({
     {
       type: TypeOffre.IMMERSION,
       id: '88842904000015-M1805' + (page ? '-page-' + page : ''),
-      metier: 'Études et développement informatique - AFNETWORK-FRANCE',
+      titre: 'Études et développement informatique - AFNETWORK-FRANCE',
       nomEtablissement:
         'AFRICAN FILMMAKERS NETWORK ASSOCIATION - (AFNETWORK-FRANCE)',
       secteurActivite: 'Organisation de salons professionnels et congrès',
@@ -294,7 +294,7 @@ export function listeBaseImmersions({
     {
       type: TypeOffre.IMMERSION,
       id: '82987789300026-M1805' + (page ? '-page-' + page : ''),
-      metier: 'Études et développement informatique - EURONIXA',
+      titre: 'Études et développement informatique - EURONIXA',
       nomEtablissement: 'EURONIXA STUDIOS VR',
       secteurActivite:
         'Production de films cinématographiques, de vidéo et de programmes de télévision',
@@ -303,7 +303,7 @@ export function listeBaseImmersions({
     {
       type: TypeOffre.IMMERSION,
       id: '38953391000045-M1805' + (page ? '-page-' + page : ''),
-      metier: 'Études et développement informatique - PARIS LOG',
+      titre: 'Études et développement informatique - PARIS LOG',
       nomEtablissement: 'PARIS LOG',
       secteurActivite: 'Programmation informatique',
       ville: 'Torcy',

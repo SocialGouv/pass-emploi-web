@@ -47,7 +47,7 @@ describe('SelectAutocompleteWithFetch', () => {
       )
     })
 
-    it("contient un getSelect avec une liste d'autocompletion", () => {
+    it('contient une liste déroulante avec autocompletion', () => {
       // Then
       expect(getSelect()).toHaveAttribute('aria-autocomplete', 'list')
       expect(within(getOptions()).queryAllByRole('option')).toHaveLength(0)
@@ -64,7 +64,7 @@ describe('SelectAutocompleteWithFetch', () => {
       expect(fetchFunction).toHaveBeenCalledWith('RECHERCHE')
     })
 
-    it("construit une liste d'options nettoyées", async () => {
+    it("construit une liste d'options en majuscule avec uniquement des caractères alphabétiques", async () => {
       // When
       await userEvent.type(getSelect(), 'valeur')
       await waitForDebounce(500)

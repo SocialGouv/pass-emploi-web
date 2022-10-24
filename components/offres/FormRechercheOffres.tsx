@@ -6,14 +6,13 @@ import React, {
   useState,
 } from 'react'
 
-import RechercheImmersionsSecondary from './RechercheImmersionsSecondary'
-
 import RadioButton from 'components/action/RadioButton'
-import RechercheImmersionsMain from 'components/offres/RechercheImmersionsMain'
-import RechercheOffresEmploiMain from 'components/offres/RechercheOffresEmploiMain'
-import RechercheOffresEmploiSecondary from 'components/offres/RechercheOffresEmploiSecondary'
-import RechercheServicesCiviquesMain from 'components/offres/RechercheServicesCiviquesMain'
-import RechercheServicesCiviquesSecondary from 'components/offres/RechercheServicesCiviquesSecondary'
+import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
+import RechercheImmersionsSecondaire from 'components/offres/RechercheImmersionsSecondaire'
+import RechercheOffresEmploiPrincipale from 'components/offres/RechercheOffresEmploiPrincipale'
+import RechercheOffresEmploiSecondaire from 'components/offres/RechercheOffresEmploiSecondaire'
+import RechercheServicesCiviquesPrincipale from 'components/offres/RechercheServicesCiviquesPrincipale'
+import RechercheServicesCiviquesSecondaire from 'components/offres/RechercheServicesCiviquesSecondaire'
 import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -85,7 +84,10 @@ export default function FormRechercheOffres({
   useEffect(() => {
     setQueryOffresEmploi({ hasError: false })
     setQueryServicesCiviques({ hasError: false })
-    setQueryImmersions({ hasError: typeOffre === TypeOffre.IMMERSION })
+    setQueryImmersions({
+      rayon: 10,
+      hasError: typeOffre === TypeOffre.IMMERSION,
+    })
   }, [typeOffre])
 
   return (
@@ -193,25 +195,25 @@ export default function FormRechercheOffres({
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (
-          <RechercheOffresEmploiMain
-            fetchCommunesEtDepartements={fetchCommunesEtDepartements}
+          <RechercheOffresEmploiPrincipale
+            recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
           />
         )
       case TypeOffre.SERVICE_CIVIQUE:
         return (
-          <RechercheServicesCiviquesMain
-            fetchCommunes={fetchCommunes}
+          <RechercheServicesCiviquesPrincipale
+            recupererCommunes={fetchCommunes}
             query={queryServicesCiviques}
             onQueryUpdate={setQueryServicesCiviques}
           />
         )
       case TypeOffre.IMMERSION:
         return (
-          <RechercheImmersionsMain
-            fetchMetiers={fetchMetiers}
-            fetchCommunes={fetchCommunes}
+          <RechercheImmersionsPrincipale
+            recupererMetiers={fetchMetiers}
+            recupererCommunes={fetchCommunes}
             query={queryImmersions}
             onQueryUpdate={setQueryImmersions}
           />
@@ -225,7 +227,7 @@ export default function FormRechercheOffres({
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (
-          <RechercheOffresEmploiSecondary
+          <RechercheOffresEmploiSecondaire
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
@@ -233,7 +235,7 @@ export default function FormRechercheOffres({
         )
       case TypeOffre.SERVICE_CIVIQUE:
         return (
-          <RechercheServicesCiviquesSecondary
+          <RechercheServicesCiviquesSecondaire
             onCriteresChange={setCountCriteres}
             query={queryServicesCiviques}
             onQueryUpdate={setQueryServicesCiviques}
@@ -241,7 +243,7 @@ export default function FormRechercheOffres({
         )
       case TypeOffre.IMMERSION:
         return (
-          <RechercheImmersionsSecondary
+          <RechercheImmersionsSecondaire
             onCriteresChange={setCountCriteres}
             query={queryImmersions}
             onQueryUpdate={setQueryImmersions}

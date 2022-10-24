@@ -8,18 +8,18 @@ import { Localite } from 'interfaces/referentiel'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { FormValues } from 'types/form'
 
-type RechercheOffresEmploiMainProps = {
-  fetchCommunesEtDepartements: (search: string) => Promise<Localite[]>
+type RechercheOffresEmploiPrincipaleProps = {
+  recupererCommunesEtDepartements: (search: string) => Promise<Localite[]>
   query: FormValues<SearchOffresEmploiQuery>
   onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
 }
 const RAYON_DEFAULT = 10
 
-export default function RechercheOffresEmploiMain({
-  fetchCommunesEtDepartements,
+export default function RechercheOffresEmploiPrincipale({
+  recupererCommunesEtDepartements,
   query,
   onQueryUpdate,
-}: RechercheOffresEmploiMainProps) {
+}: RechercheOffresEmploiPrincipaleProps) {
   function updateMotsCles(value: string) {
     onQueryUpdate({ ...query, motsCles: value })
   }
@@ -65,12 +65,12 @@ export default function RechercheOffresEmploiMain({
       <Label htmlFor='localisation'>
         {{
           main: 'Lieu de travail',
-          sub: 'Saisissez une ville ou un département',
+          helpText: 'Saisissez une ville ou un département',
         }}
       </Label>
       <SelectAutocompleteWithFetch<Localite>
         id='localisation'
-        fetch={fetchCommunesEtDepartements}
+        fetch={recupererCommunesEtDepartements}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateLocalite}
         errorMessage='Veuillez saisir une localisation correcte.'

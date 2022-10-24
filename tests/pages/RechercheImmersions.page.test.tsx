@@ -99,9 +99,9 @@ describe('Page Recherche Immersions', () => {
         expect(
           screen.getByRole('option', {
             hidden: true,
-            name: sanitize(metier.libelle),
+            name: toUpperCaseAlpha(metier.libelle),
           })
-        ).toHaveValue(sanitize(metier.libelle))
+        ).toHaveValue(toUpperCaseAlpha(metier.libelle))
       })
     })
 
@@ -258,12 +258,6 @@ describe('Page Recherche Immersions', () => {
       const etape3 = screen.getByRole('group', {
         name: 'Étape 3 Plus de critères',
       })
-      expect(() =>
-        within(etape3).getByRole('group', { name: 'Distance' })
-      ).toThrow()
-
-      // When
-      await saisirCommune('paris 14')
 
       // Then
       const distanceGroup = within(etape3).getByRole('group', {
@@ -407,7 +401,7 @@ describe('Page Recherche Immersions', () => {
       immersions.forEach((immersion) => {
         const immersionCard = within(offresList).getByRole('heading', {
           level: 3,
-          name: immersion.metier,
+          name: immersion.titre,
         }).parentElement!
         expect(
           within(immersionCard).getByText(immersion.nomEtablissement)
@@ -477,7 +471,7 @@ describe('Page Recherche Immersions', () => {
         ;(immersionsService.searchImmersions as jest.Mock).mockImplementation(
           (_query, page) => ({
             metadonnees: { nombreTotal: 31, nombrePages: 4 },
-            offres: [uneBaseImmersion({ metier: 'Immersion page ' + page })],
+            offres: [uneBaseImmersion({ titre: 'Immersion page ' + page })],
           })
         )
       })
@@ -548,7 +542,7 @@ async function saisirCommune(text: string) {
   await act(() => new Promise((r) => setTimeout(r, 500)))
 }
 
-function sanitize(str: string): string {
+function toUpperCaseAlpha(str: string): string {
   return str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

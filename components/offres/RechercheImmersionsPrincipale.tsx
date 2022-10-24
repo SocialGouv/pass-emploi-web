@@ -7,20 +7,19 @@ import { Commune, Metier } from 'interfaces/referentiel'
 import { SearchImmersionsQuery } from 'services/immersions.service'
 import { FormValues } from 'types/form'
 
-type RechercheImmersionsMainProps = {
-  fetchMetiers: (search: string) => Promise<Metier[]>
-  fetchCommunes: (search: string) => Promise<Commune[]>
+type RechercheImmersionsPrincipaleProps = {
+  recupererMetiers: (search: string) => Promise<Metier[]>
+  recupererCommunes: (search: string) => Promise<Commune[]>
   query: FormValues<SearchImmersionsQuery>
   onQueryUpdate: (query: FormValues<SearchImmersionsQuery>) => void
 }
-const RAYON_DEFAULT = 10
 
-export default function RechercheImmersionsMain({
-  fetchMetiers,
-  fetchCommunes,
+export default function RechercheImmersionsPrincipale({
+  recupererMetiers,
+  recupererCommunes,
   query,
   onQueryUpdate,
-}: RechercheImmersionsMainProps) {
+}: RechercheImmersionsPrincipaleProps) {
   function updateMetier({ selected }: { selected?: Metier }) {
     const { metier, ...autresCriteres } = query
     onQueryUpdate({
@@ -31,12 +30,11 @@ export default function RechercheImmersionsMain({
   }
 
   function updateCommune({ selected }: { selected?: Commune }) {
-    const { commune, rayon, ...autresCriteres } = query
+    const { commune, ...autresCriteres } = query
     if (selected) {
       onQueryUpdate({
         ...autresCriteres,
         commune: selected,
-        rayon: rayon ?? RAYON_DEFAULT,
         hasError: !query.metier,
       })
     } else {
@@ -51,7 +49,7 @@ export default function RechercheImmersionsMain({
       </Label>
       <SelectAutocompleteWithFetch<Metier>
         id='metier'
-        fetch={fetchMetiers}
+        fetch={recupererMetiers}
         fieldNames={{ id: 'libelle', value: 'libelle' }}
         onUpdateSelected={updateMetier}
         errorMessage='Veuillez saisir un métier correct.'
@@ -62,12 +60,12 @@ export default function RechercheImmersionsMain({
       <Label htmlFor='localisation' inputRequired={true}>
         {{
           main: 'Localisation',
-          sub: 'Saisissez une ville',
+          helpText: 'Saisissez une ville',
         }}
       </Label>
       <SelectAutocompleteWithFetch<Commune>
         id='localisation'
-        fetch={fetchCommunes}
+        fetch={recupererCommunes}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateCommune}
         errorMessage='Veuillez saisir une commune correcte.'

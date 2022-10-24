@@ -102,9 +102,9 @@ describe('Page Recherche Offres Emploi', () => {
         expect(
           screen.getByRole('option', {
             hidden: true,
-            name: sanitize(localite.libelle),
+            name: toUpperCaseAlpha(localite.libelle),
           })
-        ).toHaveValue(sanitize(localite.libelle))
+        ).toHaveValue(toUpperCaseAlpha(localite.libelle))
       })
     })
 
@@ -448,7 +448,7 @@ describe('Page Recherche Offres Emploi', () => {
           within(offreCard).getByRole('link', {
             name: 'Détail de l’offre ' + offre.id,
           })
-        ).toHaveAttribute('href', '/offres/' + offre.id)
+        ).toHaveAttribute('href', '/offres/emploi/' + offre.id)
       })
     })
 
@@ -458,7 +458,7 @@ describe('Page Recherche Offres Emploi', () => {
           within(offresList).getByRole('link', {
             name: `Partager offre numéro ${offre.id}`,
           })
-        ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
+        ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
       })
     })
 
@@ -562,7 +562,7 @@ async function saisirLocalite(text: string) {
   await act(() => new Promise((r) => setTimeout(r, 500)))
 }
 
-function sanitize(str: string): string {
+function toUpperCaseAlpha(str: string): string {
   return str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

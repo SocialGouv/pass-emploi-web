@@ -21,7 +21,7 @@ export default function ImmersionCard({ offre }: ImmersionCardProps) {
         />
       </div>
 
-      <h3 className='text-base-bold mb-2'>{offre.metier}</h3>
+      <h3 className='text-base-bold mb-2'>{offre.titre}</h3>
       <p className='text-s-bold mb-2'>{offre.nomEtablissement}</p>
       <p className='flex items-center text-s-regular text-grey_800 mb-5'>
         <IconComponent
@@ -33,9 +33,7 @@ export default function ImmersionCard({ offre }: ImmersionCardProps) {
         {offre.ville}
       </p>
 
-      <div className='flex justify-between'>
-        <DataTag text={offre.secteurActivite} />
-      </div>
+      <DataTag text={offre.secteurActivite} />
     </div>
   )
 }

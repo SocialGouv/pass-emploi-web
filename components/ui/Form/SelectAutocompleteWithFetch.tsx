@@ -4,7 +4,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { useDebounce } from 'utils/hooks/useDebounce'
 
-type WithSanitized<T> = T & { sanitized: string }
+type WithSimplifiedLabel<T> = T & { upperCaseAlphaLabel: string }
 type SelectAutocompleteWithFetchProps<T> = {
   id: string
   fetch: (search: string) => Promise<T[]>
@@ -23,22 +23,22 @@ export default function SelectAutocompleteWithFetch<T>({
   value = '',
   required,
 }: SelectAutocompleteWithFetchProps<T>) {
-  const [entites, setEntites] = useState<WithSanitized<T>[]>([])
+  const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
   const options: Array<{ id: string; value: string }> = useMemo(
     () =>
       entites.map((entite) => ({
         id: (entite as any)[fieldNames.id],
-        value: entite.sanitized,
+        value: entite.upperCaseAlphaLabel,
       })),
     [entites]
   )
   const [input, setInput] = useState<{ value?: string; error?: string }>({
-    value: value && sanitize(value),
+    value: value && toUpperCaseAlpha(value),
   })
   const debouncedInput = useDebounce(input.value, 500)
 
   function handleInputChange(str: string) {
-    setInput({ value: sanitize(str) })
+    setInput({ value: toUpperCaseAlpha(str) })
     onUpdateSelected({ hasError: Boolean(str || required) })
   }
 
@@ -55,11 +55,13 @@ export default function SelectAutocompleteWithFetch<T>({
 
   function findEntiteInListe(
     str: string,
-    liste: WithSanitized<T>[]
+    liste: WithSimplifiedLabel<T>[]
   ): T | undefined {
-    const entiteWithSanitized = liste.find((entite) => entite.sanitized === str)
-    if (entiteWithSanitized) {
-      const { sanitized, ...entite } = entiteWithSanitized
+    const entiteWithSimplifiedLabel = liste.find(
+      (entite) => entite.upperCaseAlphaLabel === str
+    )
+    if (entiteWithSimplifiedLabel) {
+      const { upperCaseAlphaLabel, ...entite } = entiteWithSimplifiedLabel
       return entite as T
     }
   }
@@ -67,12 +69,14 @@ export default function SelectAutocompleteWithFetch<T>({
   useEffect(() => {
     if (debouncedInput) {
       fetch(debouncedInput).then((newEntites) => {
-        const sanitizedEntities = newEntites.map((e) => ({
-          ...e,
-          sanitized: sanitize((e as any)[fieldNames.value]),
-        }))
-        setEntites(sanitizedEntities)
-        const entite = findEntiteInListe(debouncedInput, sanitizedEntities)
+        const simplifiedEntities: WithSimplifiedLabel<T>[] = newEntites.map(
+          (e) => ({
+            ...e,
+            upperCaseAlphaLabel: toUpperCaseAlpha((e as any)[fieldNames.value]),
+          })
+        )
+        setEntites(simplifiedEntities)
+        const entite = findEntiteInListe(debouncedInput, simplifiedEntities)
         onUpdateSelected({ selected: entite, hasError: !entite })
       })
     } else {
@@ -99,7 +103,7 @@ export default function SelectAutocompleteWithFetch<T>({
   )
 }
 
-function sanitize(str: string): string {
+function toUpperCaseAlpha(str: string): string {
   return str
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
