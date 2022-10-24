@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import Modal from 'components/Modal'
 import { RequiredValue } from 'components/RequiredValue'
@@ -11,11 +11,12 @@ import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
+import { MotifSuppression } from 'interfaces/referentiel'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface DeleteJeuneActifModalProps {
   jeune: BaseJeune
-  motifsSuppression: string[]
+  motifsSuppression: MotifSuppression[]
   onClose: () => void
   soumettreSuppression: (payload: SuppressionJeuneFormData) => Promise<void>
 }
@@ -30,12 +31,17 @@ export default function DeleteJeuneActifModal({
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
   const MOTIF_SUPPRESSION_AUTRE = 'Autre'
+  const MOTIF_SUPPRESSION_DEMENAGEMENT =
+    'Déménagement ou changement de conseiller'
   const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<
     string | undefined
   >(undefined)
   const [commentaireMotif, setCommentaireMotif] = useState<RequiredValue>({
     value: '',
   })
+
+  const [motifDemenagementChecked, setMotifDemenagementChecked] =
+    useState<boolean>(false)
 
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Détail Jeune - Pop-in confirmation suppression'
@@ -63,6 +69,8 @@ export default function DeleteJeuneActifModal({
 
   function motifIsValid(): boolean {
     if (!motifSuppressionJeune) return false
+    if (motifSuppressionJeune === MOTIF_SUPPRESSION_DEMENAGEMENT)
+      return Boolean(motifDemenagementChecked)
     if (motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE)
       return Boolean(commentaireMotif.value)
     return true
@@ -146,12 +154,47 @@ export default function DeleteJeuneActifModal({
                 required
                 onChange={selectMotifSuppression}
               >
-                {motifsSuppression.map((motif) => (
+                {motifsSuppression.map(({ motif }) => (
                   <option key={motif} value={motif}>
                     {motif}
                   </option>
                 ))}
               </Select>
+
+              {Object.entries(motifsSuppression).map(([key, value]) => {
+                if (
+                  (value.motif &&
+                    motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE) ||
+                  (value.motif &&
+                    motifSuppressionJeune === MOTIF_SUPPRESSION_DEMENAGEMENT)
+                )
+                  return
+                if (value.motif === motifSuppressionJeune) {
+                  return (
+                    <p key={key} className='mb-3 text-s-regular'>
+                      {value.description}
+                    </p>
+                  )
+                }
+              })}
+
+              {motifSuppressionJeune === MOTIF_SUPPRESSION_DEMENAGEMENT && (
+                <>
+                  <Label htmlFor='motif-suppression-demenagement'>
+                    <input
+                      type='checkbox'
+                      id='motif-suppression-demenagement'
+                      required
+                      onChange={(e) =>
+                        setMotifDemenagementChecked(e.target.checked)
+                      }
+                      className='mr-2'
+                    />
+                    Uniquement dans le cas où vous ne pouvez pas réaffecter ce
+                    jeune. Dans le cas contraire, contactez votre superviseur.{' '}
+                  </Label>
+                </>
+              )}
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
                 <>
