@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 import {
   DetailOffreEmploiJson,
   OffreEmploiItemJson,

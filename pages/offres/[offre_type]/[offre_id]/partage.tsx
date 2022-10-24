@@ -15,9 +15,6 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import {
-  BaseOffre,
-  BaseOffreEmploi,
-  BaseServiceCivique,
   DetailOffreEmploi,
   DetailServiceCivique,
   TypeOffre,
@@ -94,11 +91,9 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
 
   return (
     <>
-      {offre.type === TypeOffre.EMPLOI && (
-        <OffreEmploiCard offre={offre as BaseOffreEmploi} />
-      )}
+      {offre.type === TypeOffre.EMPLOI && <OffreEmploiCard offre={offre} />}
       {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-        <ServiceCiviqueCard offre={offre as BaseServiceCivique} />
+        <ServiceCiviqueCard offre={offre} />
       )}
 
       <form onSubmit={partager} className='mt-8'>

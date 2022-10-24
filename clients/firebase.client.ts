@@ -298,8 +298,12 @@ function createFirebaseMessage(
 
   if (Object.prototype.hasOwnProperty.call(data, 'offre')) {
     firebaseMessage.type = TypeMessage.MESSAGE_OFFRE
-    const { id, titre, type } = (data as CreateFirebaseMessageWithOffre).offre
-    firebaseMessage.offre = { id, titre, type: typeToFirebase(type) }
+    const {
+      id,
+      titre,
+      type: typeOffre,
+    } = (data as CreateFirebaseMessageWithOffre).offre
+    firebaseMessage.offre = { id, titre, type: typeToFirebase(typeOffre) }
   }
 
   return firebaseMessage

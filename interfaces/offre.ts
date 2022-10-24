@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 export enum TypeOffre {
   EMPLOI = 'EMPLOI',
   SERVICE_CIVIQUE = 'SERVICE_CIVIQUE',
