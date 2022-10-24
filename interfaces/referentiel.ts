@@ -17,7 +17,7 @@ export type Metier = { code: string; libelle: string }
 export type Agence = {
   id: string
   nom: string
-  departement: string
+  codeDepartement: string
 }
 
 export type DomaineServiceCivique = {

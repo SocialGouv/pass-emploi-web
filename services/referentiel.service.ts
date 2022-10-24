@@ -14,24 +14,15 @@ export interface ReferentielService {
   getMetiers(query: string): Promise<Metier[]>
 }
 
-export type TempJsonAgence = {
-  id: string
-  nom: string
-}
-
 export class ReferentielApiService implements ReferentielService {
   constructor(private readonly apiClient: ApiClient) {}
 
   async getAgences(structure: string, accessToken: string): Promise<Agence[]> {
-    const { content: agences } = await this.apiClient.get<TempJsonAgence[]>(
+    const { content: agences } = await this.apiClient.get<Agence[]>(
       `/referentiels/agences?structure=${structure}`,
       accessToken
     )
-    return agences.map((jsonAgence) => ({
-      id: jsonAgence.id,
-      nom: jsonAgence.nom,
-      departement: (+jsonAgence.id % 50).toString(),
-    }))
+    return agences
   }
 
   async getCommunesEtDepartements(query: string) {

@@ -22,7 +22,7 @@ export default function RenseignementAgenceMissionLocaleModal({
   const entreePourSelectionnerUneAgenceQuiNestPasDansLaListe = {
     id: 'XXX',
     nom: 'Ma mission locale n’apparaît pas dans la liste',
-    departement: 'XXX',
+    codeDepartement: 'XXX',
   }
   const [agencesMiloFiltrees, setAgencesMiloFiltrees] = useState<Agence[]>([
     entreePourSelectionnerUneAgenceQuiNestPasDansLaListe,
@@ -76,7 +76,7 @@ export default function RenseignementAgenceMissionLocaleModal({
     const agencesFiltrees =
       departement !== ''
         ? referentielAgences.filter(
-            (agence) => agence.departement === departement
+            (agence) => agence.codeDepartement === departement
           )
         : referentielAgences
     setAgencesMiloFiltrees([
