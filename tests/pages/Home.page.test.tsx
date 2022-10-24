@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -24,7 +24,7 @@ jest.mock('components/Modal')
 
 describe('Home', () => {
   describe('client side', () => {
-    describe('contenu', () => {
+    describe('quand le conseiller est Pôle Emploi', () => {
       let agences: Agence[]
       let replace: jest.Mock
       let conseillerService: ConseillerService
@@ -38,7 +38,10 @@ describe('Home', () => {
         // When
         renderWithContexts(
           <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
-          { customDependances: { conseillerService } }
+          {
+            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            customDependances: { conseillerService },
+          }
         )
       })
 
@@ -101,6 +104,7 @@ describe('Home', () => {
         expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
           id: agence.id,
           nom: 'Agence Pôle emploi THIERS',
+          codeDepartement: '3',
         })
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
       })
@@ -175,44 +179,168 @@ describe('Home', () => {
     })
 
     describe('quand le conseiller est Mission locale', () => {
-      it("affiche 'Mission locale' au lieu de 'agence'", async () => {
+      let agences: Agence[]
+      let replace: jest.Mock
+      let conseillerService: ConseillerService
+      beforeEach(() => {
         // Given
+        replace = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+        agences = uneListeDAgencesMILO()
+        conseillerService = mockedConseillerService()
+
+        // When
         renderWithContexts(
-          <Home referentielAgences={[]} redirectUrl='/mes-jeunes' />,
-          { customConseiller: { structure: StructureConseiller.MILO } }
+          <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+            customDependances: { conseillerService },
+          }
         )
-        const searchMission = screen.getByRole('combobox', {
-          name: /votre Mission locale/,
+      })
+
+      it('contient un message pour demander la Mission locale du conseiller', () => {
+        // Then
+        expect(
+          screen.getByText(/Une fois votre Mission locale renseignée/)
+        ).toBeInTheDocument()
+      })
+
+      it('contient un input pour choisir un département', () => {
+        // Then
+        expect(
+          screen.getByRole('textbox', { name: /Département/ })
+        ).toBeInTheDocument()
+        agences.forEach((agence) =>
+          expect(
+            screen.getByRole('option', { hidden: true, name: agence.nom })
+          ).toBeInTheDocument()
+        )
+      })
+
+      it('contient un input pour choisir une Mission locale', () => {
+        // Then
+        expect(
+          screen.getByRole('combobox', {
+            name: /Recherchez votre Mission locale/,
+          })
+        ).toBeInTheDocument()
+        agences.forEach((agence) =>
+          expect(
+            screen.getByRole('option', { hidden: true, name: agence.nom })
+          ).toBeInTheDocument()
+        )
+      })
+
+      it('filtre les Missions locales selon le département entré', async () => {
+        // Given
+        const codeDepartement = '1'
+        const departementInput = screen.getByRole('textbox', {
+          name: /Département/,
+        })
+
+        // When
+        await userEvent.type(departementInput, codeDepartement)
+
+        // Then
+        agences
+          .filter((agence) => agence.codeDepartement === codeDepartement)
+          .forEach((agence) =>
+            expect(
+              screen.getByRole('option', { hidden: true, name: agence.nom })
+            ).toBeInTheDocument()
+          )
+
+        agences
+          .filter((agence) => agence.codeDepartement !== codeDepartement)
+          .forEach((agence) =>
+            expect(
+              screen.queryByRole('option', { hidden: true, name: agence.nom })
+            ).not.toBeInTheDocument()
+          )
+      })
+
+      it('contient une option pour dire que la Mission locale n’est pas dans la liste', () => {
+        // Then
+        expect(
+          screen.getByRole('option', {
+            hidden: true,
+            name: 'Ma mission locale n’apparaît pas dans la liste',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('affiche un lien vers le support quand la Mission locale n’est pas dans la liste', async () => {
+        // Given
+        const missionLocaleInput = screen.getByRole('combobox', {
+          name: /Recherchez votre Mission locale/,
+        })
+
+        // When
+        await userEvent.selectOptions(
+          missionLocaleInput,
+          'Ma mission locale n’apparaît pas dans la liste'
+        )
+
+        // Then
+        expect(
+          screen.getByText(/vous devez contacter le support/)
+        ).toBeInTheDocument()
+        // TODO-1127: tester le lien mailto
+      })
+
+      it('contient un bouton pour annuler', async () => {
+        // Given
+        const annuler = screen.getByRole('button', { name: 'Annuler' })
+
+        // When
+        await userEvent.click(annuler)
+
+        // Then
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
+      })
+
+      it("modifie le conseiller avec l'agence choisie", async () => {
+        // Given
+        const departementInput = screen.getByRole('textbox', {
+          name: /Département/,
+        })
+        const missionLocaleInput = screen.getByRole('combobox', {
+          name: /Recherchez votre Mission locale/,
         })
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
         // When
-        await userEvent.type(searchMission, 'pouet')
+        await userEvent.type(departementInput, '1')
+        await userEvent.selectOptions(
+            missionLocaleInput,
+            'MLS3F SAINT-LOUIS'
+        )
+        await userEvent.click(submit)
+
+        // Then
+        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          id: '443',
+          nom: 'MLS3F SAINT-LOUIS',
+          codeDepartement: '1',
+        })
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
+      })
+
+      // TODO-1197 fix test
+      it("prévient si l'agence n'est pas renseignée", async () => {
+        // Given
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
         await userEvent.click(submit)
 
         // Then
         expect(
-          screen.getByText(/La liste des Missions locales a été mise à jour/)
+          screen.getByText('Sélectionnez un élément dans la liste.')
         ).toBeInTheDocument()
-        expect(
-          screen.getByText(/Une fois votre Mission locale renseignée/)
-        ).toBeInTheDocument()
-        expect(
-          screen.getByText(/Sélectionner une Mission locale/)
-        ).toBeInTheDocument()
-
-        // When
-        const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
-          name: /Ma Mission locale n’apparaît pas/,
-        })
-        await userEvent.click(checkAgenceNonTrouvee)
-
-        // Then
-        expect(
-          screen.getByRole('textbox', {
-            name: /Saisir le nom de votre Mission locale/,
-          })
-        ).toBeInTheDocument()
+        expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+        expect(replace).not.toHaveBeenCalled()
       })
     })
   })
@@ -302,6 +430,7 @@ describe('Home', () => {
         referentielService = {
           getAgences: jest.fn(async () => uneListeDAgencesMILO()),
           getCommunesEtDepartements: jest.fn(),
+          getCommunes: jest.fn(),
         }
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'conseillerService') return conseillerService

@@ -30,18 +30,22 @@ export function uneListeDAgencesPoleEmploi() {
     {
       id: '457',
       nom: 'Agence Pôle emploi CLERMONT PRE LA REINE',
+      codeDepartement: '1'
     },
     {
       id: '458',
       nom: 'Agence Pôle emploi CLERMONT JOUHAUX',
+      codeDepartement: '2'
     },
     {
       id: '459',
       nom: 'Agence Pôle emploi THIERS',
+      codeDepartement: '3'
     },
     {
       id: '460',
       nom: 'Agence Pôle emploi ISSOIRE',
+      codeDepartement: '4'
     },
   ]
 }

@@ -40,6 +40,7 @@ export function RenseignementAgenceMissionLocaleForm({
   const [departement, setDepartement] = useState<string>('')
   const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
     useState<Agence[]>(referentielAgences)
+  // TODO-1127 required value ?
   const [optionSelectionnee, setOptionSelectionnee] = useState<
     OptionAgence | undefined
   >()
@@ -77,7 +78,7 @@ export function RenseignementAgenceMissionLocaleForm({
     )
   }
 
-  function submitAgenceSelectionnee(e: FormEvent) {
+  function submitMissionLocaleSelectionnee(e: FormEvent) {
     e.preventDefault()
     if (agenceEstDansLaListe()) {
       console.log('AGENCE SELECTIONNEE ' + optionSelectionnee!.value)
@@ -102,7 +103,7 @@ export function RenseignementAgenceMissionLocaleForm({
 
   return (
     <form
-      onSubmit={submitAgenceSelectionnee}
+      onSubmit={submitMissionLocaleSelectionnee}
       className={`${container === FormContainer.MODAL ? 'px-10 pt-6' : ''}`}
     >
       <div
@@ -113,13 +114,13 @@ export function RenseignementAgenceMissionLocaleForm({
         }`}
       >
         <div className={`${container === FormContainer.PAGE ? 'w-[30%]' : ''}`}>
-          <Label htmlFor='departement'>Departement de ma Mission Locale</Label>
+          <Label htmlFor='departement'>Département de ma Mission locale</Label>
           <Input type='text' id='departement' onChange={selectDepartement} />
         </div>
 
         <div className={`${container === FormContainer.PAGE ? 'w-[65%]' : ''}`}>
           <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
-            Recherchez votre Mission Locale dans la liste suivante
+            Recherchez votre Mission locale dans la liste suivante
           </Label>
           <Select
             //TODO-1127 : reset select on departement changed
