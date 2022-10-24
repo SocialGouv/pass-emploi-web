@@ -6,11 +6,6 @@ import Select from 'components/ui/Form/Select'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 
-export enum FormContainer {
-  MODAL,
-  PAGE,
-}
-
 interface RenseignementAgenceMissionLocaleFormProps {
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
@@ -18,7 +13,22 @@ interface RenseignementAgenceMissionLocaleFormProps {
   container: FormContainer
 }
 
-const contacterLeSupportLabel = `Vous avez indiqué que votre agence Mission Locale est absente de la liste. 
+export enum FormContainer {
+  MODAL,
+  PAGE,
+}
+
+interface OptionAgence {
+  id: string
+  value: string
+}
+
+const AGENCE_PAS_DANS_LA_LISTE_OPTION = {
+  id: 'agence-pas-dans-la-liste',
+  value: 'Ma mission locale n’apparaît pas dans la liste',
+}
+
+const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre agence Mission Locale est absente de la liste. 
   Pour faire une demande d’ajout de votre mission locale, vous devez contacter le support.`
 
 export function RenseignementAgenceMissionLocaleForm({
@@ -27,56 +37,54 @@ export function RenseignementAgenceMissionLocaleForm({
   onClose,
   container,
 }: RenseignementAgenceMissionLocaleFormProps) {
-  const entreePourSelectionnerUneAgenceQuiNestPasDansLaListe = {
-    id: 'XXX',
-    nom: 'Ma mission locale n’apparaît pas dans la liste',
-    codeDepartement: 'XXX',
-  }
-  const [agencesMiloFiltrees, setAgencesMiloFiltrees] = useState<Agence[]>([
-    entreePourSelectionnerUneAgenceQuiNestPasDansLaListe,
-    ...referentielAgences,
-  ])
-  const [agenceSelectionnee, setAgenceSelectionnee] = useState<
-    Agence | undefined
-  >()
   const [departement, setDepartement] = useState<string>('')
+  const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
+    useState<Agence[]>(referentielAgences)
+  const [optionSelectionnee, setOptionSelectionnee] = useState<
+    OptionAgence | undefined
+  >()
+
+  function buildOptions(): OptionAgence[] {
+    return [AGENCE_PAS_DANS_LA_LISTE_OPTION].concat(
+      agencesMiloFiltrees.map(agenceToOption)
+    )
+  }
 
   function selectDepartement(departement: string) {
-    setAgenceSelectionnee(undefined)
+    setOptionSelectionnee(undefined)
     setDepartement(departement)
   }
 
-  function selectAgence(nomAgence: string) {
-    const agence =
-      nomAgence === entreePourSelectionnerUneAgenceQuiNestPasDansLaListe.nom
-        ? entreePourSelectionnerUneAgenceQuiNestPasDansLaListe
-        : referentielAgences.find((a) => a.nom === nomAgence)
-    setAgenceSelectionnee(agence)
+  function selectOption(optionValue: string) {
+    const option =
+      optionValue === AGENCE_PAS_DANS_LA_LISTE_OPTION.value
+        ? AGENCE_PAS_DANS_LA_LISTE_OPTION
+        : buildOptions().find((a) => a.value === optionValue)
+    setOptionSelectionnee(option)
   }
 
   function agenceEstDansLaListe() {
     return (
-      agenceSelectionnee &&
-      agenceSelectionnee.id !==
-        entreePourSelectionnerUneAgenceQuiNestPasDansLaListe.id
+      optionSelectionnee &&
+      optionSelectionnee.value !== AGENCE_PAS_DANS_LA_LISTE_OPTION.value
     )
   }
 
   function agenceNestPasDansLaListe() {
     return (
-      agenceSelectionnee &&
-      agenceSelectionnee.id ===
-        entreePourSelectionnerUneAgenceQuiNestPasDansLaListe.id
+      optionSelectionnee &&
+      optionSelectionnee.value === AGENCE_PAS_DANS_LA_LISTE_OPTION.value
     )
   }
 
   function submitAgenceSelectionnee(e: FormEvent) {
     e.preventDefault()
     if (agenceEstDansLaListe()) {
-      console.log('AGENCE SELECTIONNEE ' + agenceSelectionnee!.nom)
-      onAgenceChoisie(agenceSelectionnee!)
+      console.log('AGENCE SELECTIONNEE ' + optionSelectionnee!.value)
+      const agence = referentielAgences.find((a) => a.id === optionSelectionnee!.id)
+      onAgenceChoisie(agence!)
     } else if (agenceEstDansLaListe()) {
-      console.log('AGENCE n’apparait pas ' + agenceSelectionnee!.nom)
+      console.log('AGENCE n’apparait pas ' + optionSelectionnee!.value)
     }
   }
 
@@ -87,17 +95,16 @@ export function RenseignementAgenceMissionLocaleForm({
             (agence) => agence.codeDepartement === departement
           )
         : referentielAgences
-    setAgencesMiloFiltrees([
-      entreePourSelectionnerUneAgenceQuiNestPasDansLaListe,
-      ...agencesFiltrees,
-    ])
+    setAgencesMiloFiltrees(agencesFiltrees)
   }, [departement])
 
   return (
     <form
       onSubmit={submitAgenceSelectionnee}
       className={`${
-        container === FormContainer.MODAL ? 'px-10 pt-6 ' : 'flex flex-wrap mt-4'
+        container === FormContainer.MODAL
+          ? 'px-10 pt-6 '
+          : 'flex flex-wrap mt-4'
       }`}
     >
       <Label htmlFor='departement'>Departement de ma Mission Locale</Label>
@@ -110,21 +117,21 @@ export function RenseignementAgenceMissionLocaleForm({
         //TODO-1127 : reset select on departement changed
         id='intitule-action-predefinie'
         required={true}
-        onChange={selectAgence}
+        onChange={selectOption}
       >
-        {agencesMiloFiltrees.map(({ id, nom }) => (
-          <option key={id}>{nom}</option>
+        {buildOptions().map(({ id, value }) => (
+          <option key={id}>{value}</option>
         ))}
       </Select>
 
       {agenceNestPasDansLaListe() && container === FormContainer.MODAL && (
         <div className='mt-2'>
-          <InformationMessage content={contacterLeSupportLabel} />
+          <InformationMessage content={CONTACTER_LE_SUPPORT_LABEL} />
         </div>
       )}
 
       {agenceNestPasDansLaListe() && container === FormContainer.PAGE && (
-        <div className='mb-4'>{contacterLeSupportLabel}</div>
+        <div className='mb-4'>{CONTACTER_LE_SUPPORT_LABEL}</div>
       )}
       <div
         className={`flex justify-center ${
@@ -141,7 +148,7 @@ export function RenseignementAgenceMissionLocaleForm({
             Annuler
           </Button>
         )}
-        {(!agenceSelectionnee || agenceEstDansLaListe()) && (
+        {(!optionSelectionnee || agenceEstDansLaListe()) && (
           <Button type='submit' className='mr-6'>
             Ajouter
           </Button>
@@ -154,4 +161,11 @@ export function RenseignementAgenceMissionLocaleForm({
       </div>
     </form>
   )
+}
+
+export function agenceToOption(agence: Agence): OptionAgence {
+  return {
+    id: agence.id,
+    value: agence.nom,
+  }
 }
