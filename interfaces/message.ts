@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 
 import { InfoFichier } from 'interfaces/fichier'
+import { TypeOffre } from 'interfaces/offre'
 
 export enum TypeMessage {
   NOUVEAU_CONSEILLER = 'NOUVEAU_CONSEILLER',
@@ -34,4 +35,5 @@ export interface ChatCredentials {
 export interface InfoOffre {
   id: string
   titre: string
+  type: TypeOffre
 }

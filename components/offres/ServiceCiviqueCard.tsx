@@ -1,14 +1,14 @@
 import { DateTime } from 'luxon'
+import Link from 'next/link'
 import React from 'react'
 
+import LienPartageOffre from 'components/offres/LienPartageOffre'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
 import { BaseServiceCivique } from 'interfaces/offre'
 import { toFrenchString } from 'utils/date'
-import Link from 'next/link'
-import LienPartageOffre from 'components/offres/LienPartageOffre'
-import { ButtonStyle } from 'components/ui/Button/Button'
 
 interface ServiceCiviqueCardProps {
   offre: BaseServiceCivique
@@ -31,7 +31,7 @@ export default function ServiceCiviqueCard({
         {withPartage && (
           <LienPartageOffre
             idOffre={offre.id}
-            typeOffre={offre.type.toLowerCase()}
+            href={`/offres/service_civique/${offre.id}/partage`}
             style={ButtonStyle.TERTIARY}
           />
         )}
@@ -60,12 +60,16 @@ export default function ServiceCiviqueCard({
         {offre.dateDeDebut && (
           <DataTag
             text={
-              'Dès le ' + toFrenchString(offre.dateDeDebut, DateTime.DATE_FULL)
+              'Dès le ' +
+              toFrenchString(
+                DateTime.fromISO(offre.dateDeDebut),
+                DateTime.DATE_FULL
+              )
             }
           />
         )}
         <div>
-          <Link href={`/offres/${offre.type.toLowerCase()}/${offre.id}`}>
+          <Link href={`/offres/service_civique/${offre.id}`}>
             <a
               aria-label={`Détail de l’offre ${offre.id}`}
               className='flex items-center text-s-regular hover:text-primary'

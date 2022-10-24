@@ -17,7 +17,7 @@ import {
   MessagesOfADay,
   TypeMessage,
 } from 'interfaces/message'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import { DetailOffreEmploi, DetailServiceCivique } from 'interfaces/offre'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import { toShortDate } from 'utils/date'
 
@@ -35,7 +35,7 @@ export type FormNouveauMessageGroupe = FormNouveauMessage & {
 }
 
 type FormPartageOffre = {
-  offre: DetailOffreEmploi
+  offre: DetailOffreEmploi | DetailServiceCivique
   idsDestinataires: string[]
   cleChiffrement: string
   message: string

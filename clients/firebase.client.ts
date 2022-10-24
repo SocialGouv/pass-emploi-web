@@ -25,7 +25,7 @@ import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { Chat } from 'interfaces/jeune'
 import { InfoOffre, Message, TypeMessage } from 'interfaces/message'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import { BaseOffre, TypeOffre } from 'interfaces/offre'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
 
@@ -44,7 +44,13 @@ interface FirebaseMessage {
   piecesJointes?: InfoFichier[]
   conseillerId: string | undefined
   type: TypeMessageFirebase | undefined
-  offre?: InfoOffre
+  offre?: InfoOffreFirebase
+}
+
+export type InfoOffreFirebase = {
+  id: string
+  titre: string
+  type?: string
 }
 
 type BaseCreateFirebaseMessage = {
@@ -56,7 +62,7 @@ export type CreateFirebaseMessage = BaseCreateFirebaseMessage & {
   infoPieceJointe?: InfoFichier
 }
 export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
-  offre: DetailOffreEmploi
+  offre: BaseOffre
 }
 
 class FirebaseClient {
@@ -292,8 +298,8 @@ function createFirebaseMessage(
 
   if (Object.prototype.hasOwnProperty.call(data, 'offre')) {
     firebaseMessage.type = TypeMessage.MESSAGE_OFFRE
-    const { id, titre } = (data as CreateFirebaseMessageWithOffre).offre
-    firebaseMessage.offre = { id, titre }
+    const { id, titre, type } = (data as CreateFirebaseMessageWithOffre).offre
+    firebaseMessage.offre = { id, titre, type: typeToFirebase(type) }
   }
 
   return firebaseMessage
@@ -310,6 +316,29 @@ interface FirebaseChat {
   lastConseillerReading: Timestamp | undefined
   lastJeuneReading: Timestamp | undefined
   lastMessageIv: string | undefined
+}
+
+function typeToFirebase(typeOffre: TypeOffre): string {
+  switch (typeOffre) {
+    case TypeOffre.EMPLOI:
+      return 'EMPLOI'
+    case TypeOffre.SERVICE_CIVIQUE:
+      return 'SERVICE_CIVIQUE'
+  }
+}
+
+function offreFromFirebase(offre: InfoOffreFirebase): InfoOffre {
+  let type: TypeOffre
+  switch (offre.type) {
+    case 'SERVICE_CIVIQUE':
+      type = TypeOffre.SERVICE_CIVIQUE
+      break
+    case 'EMPLOI':
+    default:
+      type = TypeOffre.EMPLOI
+  }
+
+  return { ...offre, type }
 }
 
 function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
@@ -389,8 +418,8 @@ function docSnapshotToMessage(
     message.infoPiecesJointes = firebaseMessage.piecesJointes ?? []
   }
 
-  if (message.type === TypeMessage.MESSAGE_OFFRE) {
-    message.infoOffre = firebaseMessage.offre
+  if (message.type === TypeMessage.MESSAGE_OFFRE && firebaseMessage.offre) {
+    message.infoOffre = offreFromFirebase(firebaseMessage.offre)
   }
 
   return message

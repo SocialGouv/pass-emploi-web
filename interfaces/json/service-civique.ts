@@ -16,10 +16,27 @@ export type ServiceCiviqueItemJson = {
   dateDeDebut?: string
 }
 
+export type DetailServiceCiviqueJson = {
+  domaine: string
+  titre: string
+  ville?: string
+  organisation?: string
+  dateDeDebut?: string
+  dateDeFin?: string
+  description?: string
+  lienAnnonce?: string
+  adresseOrganisation?: string
+  adresseMission?: string
+  urlOrganisation?: string
+  codeDepartement?: string
+  codePostal?: string
+  descriptionOrganisation?: string
+}
+
 export function jsonToDetailServiceCivique(
   id: string,
-  json: ServiceCiviqueItemJson
-) {
+  json: DetailServiceCiviqueJson
+): DetailServiceCivique {
   const serviceCivique: DetailServiceCivique = {
     type: TypeOffre.SERVICE_CIVIQUE,
     id: id,
@@ -47,8 +64,7 @@ export function jsonToServiceCiviqueItem(
 
   if (json.ville) serviceCivique.ville = json.ville
   if (json.organisation) serviceCivique.organisation = json.organisation
-  if (json.dateDeDebut)
-    serviceCivique.dateDeDebut = DateTime.fromISO(json.dateDeDebut)
+  if (json.dateDeDebut) serviceCivique.dateDeDebut = json.dateDeDebut
 
   return serviceCivique
 }

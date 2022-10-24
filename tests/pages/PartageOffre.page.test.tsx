@@ -297,7 +297,7 @@ describe('Page Partage Offre', () => {
             idsDestinataires: [jeunes[0].id, jeunes[2].id],
             cleChiffrement: 'cleChiffrement',
             message:
-              "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
+              'Bonjour, je vous partage une offre d’emploi qui pourrait vous intéresser.',
           })
         })
 

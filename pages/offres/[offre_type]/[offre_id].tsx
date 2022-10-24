@@ -51,7 +51,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
         </p>
         <LienPartageOffre
           idOffre={offre.id}
-          typeOffre={offre.type.toLowerCase()}
+          href={`/offres/emploi/${offre.id}/partage`}
           style={ButtonStyle.PRIMARY}
         />
       </div>

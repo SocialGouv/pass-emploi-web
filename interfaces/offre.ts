@@ -50,19 +50,10 @@ export type BaseServiceCivique = {
 
   ville?: string
   organisation?: string
-  dateDeDebut?: DateTime
-}
-
-export type DetailServiceCivique = {
-  type: TypeOffre.SERVICE_CIVIQUE
-  id: string
-  titre: string
-  domaine: string
-
-  ville?: string
-  organisation?: string
   dateDeDebut?: string
 }
+
+export type DetailServiceCivique = BaseServiceCivique
 
 export interface MetadonneesOffres {
   nombrePages: number

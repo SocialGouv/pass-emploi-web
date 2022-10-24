@@ -29,7 +29,7 @@ export default function OffreEmploiCard({
         {withPartage && (
           <LienPartageOffre
             idOffre={offre.id}
-            typeOffre={offre.type.toLowerCase()}
+            href={`/offres/emploi/${offre.id}/partage`}
             style={ButtonStyle.TERTIARY}
           />
         )}
@@ -60,7 +60,7 @@ export default function OffreEmploiCard({
           {offre.duree && <DataTag text={offre.duree} />}
         </div>
         <div>
-          <Link href={`/offres/${offre.type.toLowerCase()}/${offre.id}`}>
+          <Link href={`/offres/emploi/${offre.id}`}>
             <a
               aria-label={`Détail de l’offre ${offre.id}`}
               className='flex items-center text-s-regular hover:text-primary'

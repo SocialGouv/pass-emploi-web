@@ -4,6 +4,7 @@ import { ApiClient } from 'clients/api.client'
 import {
   listeBaseServicesCiviques,
   listeServicesCiviquesJson,
+  unServiceCiviqueJson,
 } from 'fixtures/offre'
 import { uneCommune } from 'fixtures/referentiel'
 import { ServicesCiviquesApiService } from 'services/services-civiques.service'
@@ -58,6 +59,53 @@ describe('ServicesCiviqueApiService', () => {
       // When
       const actual = await servicesCiviquesService.getLienServiceCivique(
         'ID_SERVICE_CIVIQUE'
+      )
+
+      // Then
+      expect(actual).toStrictEqual(undefined)
+    })
+  })
+
+  describe('.getServiceCiviqueServerSide', () => {
+    it('renvoie le service civique si il est trouvé en base', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unServiceCiviqueJson(),
+      })
+
+      // When
+      const actual = await servicesCiviquesService.getServiceCiviqueServerSide(
+        'ID_SERVICE_CIVIQUE',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/services-civique/ID_SERVICE_CIVIQUE',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        dateDeDebut: '2022-11-01T01:00:00.000+01:00',
+        domaine: 'education',
+        id: 'ID_SERVICE_CIVIQUE',
+        organisation: "Ligue de l'enseignement fédération de Paris",
+        titre:
+          'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
+        type: 'SERVICE_CIVIQUE',
+        ville: 'Paris',
+      })
+    })
+
+    it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'service civique non trouvé')
+      )
+
+      // When
+      const actual = await servicesCiviquesService.getServiceCiviqueServerSide(
+        'ID_SERVICE_CIVIQUE',
+        'accessToken'
       )
 
       // Then

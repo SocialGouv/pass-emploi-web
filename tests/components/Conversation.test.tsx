@@ -307,7 +307,7 @@ describe('<Conversation />', () => {
         within(message).getByRole('link', {
           name: 'Voir l’offre',
         })
-      ).toHaveAttribute('href', '/offres/id-offre')
+      ).toHaveAttribute('href', '/offres/emploi/id-offre')
     })
   })
 })

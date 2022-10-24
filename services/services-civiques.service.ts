@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import {
+  DetailServiceCiviqueJson,
   jsonToDetailServiceCivique,
   jsonToServiceCiviqueItem,
   ServiceCiviqueItemJson,
@@ -36,43 +37,18 @@ export interface ServicesCiviquesService {
 export class ServicesCiviquesApiService implements ServicesCiviquesService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  //TODO evolution : a supprimer comme on a getServiceCivique maintenant
   async getLienServiceCivique(
     idOffreEngagement: string
   ): Promise<string | undefined> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
-    try {
-      const { content: serviceCiviqueJson } = await this.apiClient.get<{
-        lienAnnonce: string
-      }>(`/services-civique/${idOffreEngagement}`, accessToken)
-      return serviceCiviqueJson.lienAnnonce
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        return undefined
-      }
-      throw e
-    }
-  }
+    const serviceCiviqueJson = await this.getServiceCivique(
+      idOffreEngagement,
+      accessToken
+    )
 
-  // TODO : a typé
-  private async getServiceCivique(
-    idServiceCivique: string,
-    accessToken: string
-  ) {
-    try {
-      const { content: serviceCiviqueJson } = await this.apiClient.get(
-        `/services-civique/${idServiceCivique}`,
-        accessToken
-      )
-      return serviceCiviqueJson
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        return undefined
-      }
-      throw e
-    }
+    return serviceCiviqueJson?.lienAnnonce
   }
 
   async getServiceCiviqueServerSide(
@@ -84,9 +60,9 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
       accessToken
     )
 
-    return jsonToDetailServiceCivique(
-      idServiceCivique,
-      serviceCiviqueJson as ServiceCiviqueItemJson
+    return (
+      serviceCiviqueJson &&
+      jsonToDetailServiceCivique(idServiceCivique, serviceCiviqueJson)
     )
   }
 
@@ -111,6 +87,25 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
       nombrePages: Math.ceil(pagination.total / LIMIT),
     }
     return { metadonnees, offres: results.map(jsonToServiceCiviqueItem) }
+  }
+
+  private async getServiceCivique(
+    idServiceCivique: string,
+    accessToken: string
+  ): Promise<DetailServiceCiviqueJson | undefined> {
+    try {
+      const { content: serviceCiviqueJson } =
+        await this.apiClient.get<DetailServiceCiviqueJson>(
+          `/services-civique/${idServiceCivique}`,
+          accessToken
+        )
+      return serviceCiviqueJson
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+      throw e
+    }
   }
 }
 

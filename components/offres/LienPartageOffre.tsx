@@ -6,15 +6,15 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function LienPartageOffre({
   idOffre,
-  typeOffre,
+  href,
   style,
 }: {
   idOffre: string
-  typeOffre: string
+  href: string
   style: ButtonStyle
 }) {
   return (
-    <ButtonLink href={`/offres/${typeOffre}/${idOffre}/partage`} style={style}>
+    <ButtonLink href={href} style={style}>
       <IconComponent
         name={IconName.Partage}
         className='w-4 h-4 mr-3'

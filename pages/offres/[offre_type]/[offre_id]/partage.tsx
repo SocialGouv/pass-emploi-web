@@ -5,6 +5,7 @@ import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
+import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -14,6 +15,7 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import {
+  BaseOffreEmploi,
   BaseServiceCivique,
   DetailOffreEmploi,
   DetailServiceCivique,
@@ -24,13 +26,12 @@ import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
-import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
 
 type PartageOffresProps = PageProps & {
   offre: DetailOffreEmploi | DetailServiceCivique
@@ -75,14 +76,15 @@ function PartageOffre({
     if (!formIsValid) return
 
     setIsPartageEnCours(true)
+
+    let messageDefault = getDefaultMessage(offre.type)
+
     try {
       await messagesService.partagerOffre({
         offre,
         idsDestinataires: idsDestinataires.value,
         cleChiffrement: chatCredentials!.cleChiffrement,
-        message:
-          message ||
-          "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
+        message: message || messageDefault,
       })
       await router.push({
         pathname: returnTo,
@@ -98,10 +100,10 @@ function PartageOffre({
   return (
     <>
       {typeOffre.toUpperCase() === TypeOffre.EMPLOI && (
-        <OffreEmploiCard offre={offre} />
+        <OffreEmploiCard offre={offre as BaseOffreEmploi} />
       )}
       {typeOffre.toUpperCase() === TypeOffre.SERVICE_CIVIQUE && (
-        <ServiceCiviqueCard offre={offre} />
+        <ServiceCiviqueCard offre={offre as BaseServiceCivique} />
       )}
 
       <form onSubmit={partager} className='mt-8'>
@@ -198,6 +200,15 @@ export const getServerSideProps: GetServerSideProps<
       withoutChat: true,
       returnTo: '/recherche-offres',
     },
+  }
+}
+
+function getDefaultMessage(typeOffre: TypeOffre): string {
+  switch (typeOffre) {
+    case TypeOffre.EMPLOI:
+      return 'Bonjour, je vous partage une offre d’emploi qui pourrait vous intéresser.'
+    case TypeOffre.SERVICE_CIVIQUE:
+      return 'Bonjour, je vous partage une offre de service civique qui pourrait vous intéresser.'
   }
 }
 
