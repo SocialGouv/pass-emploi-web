@@ -27,7 +27,7 @@ export function DistanceRange({
         value={value}
         min={DISTANCE_MIN}
         max={DISTANCE_MAX}
-        onChange={(value: string) => onChange(parseInt(value, 10))}
+        onChange={(str: string) => onChange(parseInt(str, 10))}
         list='distance-bornes'
         required={required}
       />

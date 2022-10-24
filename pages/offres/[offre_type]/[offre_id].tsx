@@ -51,10 +51,10 @@ function DetailOffre({ offre }: DetailOffreProps) {
         </p>
         {offre.type === TypeOffre.EMPLOI && (
           <LienPartageOffre
-          idOffre={offre.id}
-          href={`/offres/emploi/${offre.id}/partage`}
-          style={ButtonStyle.PRIMARY}
-        />
+            idOffre={offre.id}
+            href={`/offres/emploi/${offre.id}/partage`}
+            style={ButtonStyle.PRIMARY}
+          />
         )}
       </div>
       <h2 className='text-l-bold text-primary'>{offre.titre}</h2>

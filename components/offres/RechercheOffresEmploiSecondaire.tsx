@@ -21,9 +21,6 @@ export default function RechercheOffresEmploiSecondaire({
   query,
   onQueryUpdate,
 }: RechercheOffresEmploiSecondaireProps) {
-  const RAYON_MIN = 0
-  const RAYON_MAX = 100
-
   function updateTypeContrat(type: TypeContrat) {
     const typesContrats = query.typesContrats ?? []
     const index = typesContrats.indexOf(type)

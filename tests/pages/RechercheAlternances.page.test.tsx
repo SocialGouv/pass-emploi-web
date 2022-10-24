@@ -453,7 +453,7 @@ describe('Page Recherche Alternances', () => {
           within(offreCard).getByRole('link', {
             name: 'Détail de l’offre ' + alternance.id,
           })
-        ).toHaveAttribute('href', '/offres/' + alternance.id)
+        ).toHaveAttribute('href', '/offres/emploi/' + alternance.id)
       })
     })
 
