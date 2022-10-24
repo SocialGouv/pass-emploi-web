@@ -1,6 +1,12 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { ChangeEvent, useMemo } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
@@ -13,11 +19,20 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
-import ExternalLink from "components/ui/Navigation/ExternalLink";
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import withDependance from 'utils/injectionDependances/withDependance'
+import { ReferentielService } from 'services/referentiel.service'
+import { Agence } from 'interfaces/referentiel'
+import Input from 'components/ui/Form/Input'
+import Select from 'components/ui/Form/Select'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 
-type ProfilProps = PageProps
+type ProfilProps = PageProps & {
+  referentielAgences: Agence[]
+}
 
-function Profil(_: ProfilProps) {
+function Profil({ referentielAgences }: ProfilProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
 
@@ -80,15 +95,15 @@ function Profil(_: ProfilProps) {
               {conseiller.agence &&
                 conseiller.structure === StructureConseiller.MILO && (
                   <div className='mt-4'>
-                    Vous avez besoin de modifier votre Mission Locale de référence ?
-                    Pour ce faire merci de
+                    Vous avez besoin de modifier votre Mission Locale de
+                    référence ? Pour ce faire merci de
                     <a className={'text-primary_darken hover:text-primary'}>
                       <ExternalLink
-                          key={'mailto:support@pass-emploi.beta.gouv.fr'}
-                          href={'mailto:support@pass-emploi.beta.gouv.fr'}
-                          label={'contacter le support'}
-                          // TODO-1127 matomo ?
-                          onClick={() => console.log("mail click")}
+                        key={'mailto:support@pass-emploi.beta.gouv.fr'}
+                        href={'mailto:support@pass-emploi.beta.gouv.fr'}
+                        label={'contacter le support'}
+                        // TODO-1127 matomo ?
+                        onClick={() => console.log('mail click')}
                       />
                     </a>
                   </div>
@@ -164,8 +179,37 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
+
+  // TODO-1127 Keep useConseiller?
+  const conseillerService =
+    withDependance<ConseillerService>('conseillerService')
+  const conseiller = await conseillerService.getConseillerServerSide(
+    user,
+    accessToken
+  )
+  if (!conseiller) {
+    throw new Error(`Conseiller ${user.id} inexistant`)
+  }
+
+  let referentielAgences: Agence[]
+
+  if (!conseiller.agence && conseiller.structure === StructureConseiller.MILO) {
+    const agenceService =
+      withDependance<ReferentielService>('referentielService')
+    referentielAgences = await agenceService.getAgences(
+      user.structure,
+      accessToken
+    )
+  } else {
+    referentielAgences = []
+  }
+
   return {
     props: {
+      referentielAgences: referentielAgences,
       pageTitle: 'Mon profil',
       pageHeader: 'Profil',
     },
