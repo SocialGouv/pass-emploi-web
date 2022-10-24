@@ -5,6 +5,7 @@ import Input from 'components/ui/Form/Input'
 import Select from 'components/ui/Form/Select'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { RequiredValue } from 'components/RequiredValue'
 
 interface RenseignementAgenceMissionLocaleFormProps {
   referentielAgences: Agence[]
@@ -40,10 +41,8 @@ export function RenseignementAgenceMissionLocaleForm({
   const [departement, setDepartement] = useState<string>('')
   const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
     useState<Agence[]>(referentielAgences)
-  // TODO-1127 required value ?
-  const [optionSelectionnee, setOptionSelectionnee] = useState<
-    OptionAgence | undefined
-  >()
+  const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
+    useState<RequiredValue>({ value: '' })
 
   function buildOptions(): OptionAgence[] {
     return [AGENCE_PAS_DANS_LA_LISTE_OPTION].concat(
@@ -52,42 +51,40 @@ export function RenseignementAgenceMissionLocaleForm({
   }
 
   function selectDepartement(departement: string) {
-    setOptionSelectionnee(undefined)
+    setIdAgenceSelectionnee({ value: '' })
     setDepartement(departement)
   }
 
   function selectOption(optionValue: string) {
-    const option =
-      optionValue === AGENCE_PAS_DANS_LA_LISTE_OPTION.value
-        ? AGENCE_PAS_DANS_LA_LISTE_OPTION
-        : buildOptions().find((a) => a.value === optionValue)
-    setOptionSelectionnee(option)
+    if (optionValue === AGENCE_PAS_DANS_LA_LISTE_OPTION.value) {
+      setIdAgenceSelectionnee({ value: AGENCE_PAS_DANS_LA_LISTE_OPTION.id })
+    } else {
+      const agence = referentielAgences.find((a) => a.nom === optionValue)
+      setIdAgenceSelectionnee({ value: agence ? agence.id : '' })
+    }
   }
 
   function agenceEstDansLaListe() {
     return (
-      optionSelectionnee &&
-      optionSelectionnee.value !== AGENCE_PAS_DANS_LA_LISTE_OPTION.value
+      idAgenceSelectionnee.value !== '' &&
+      idAgenceSelectionnee.value !== AGENCE_PAS_DANS_LA_LISTE_OPTION.id
     )
   }
 
   function agenceNestPasDansLaListe() {
-    return (
-      optionSelectionnee &&
-      optionSelectionnee.value === AGENCE_PAS_DANS_LA_LISTE_OPTION.value
-    )
+    return idAgenceSelectionnee.value === AGENCE_PAS_DANS_LA_LISTE_OPTION.id
   }
 
   function submitMissionLocaleSelectionnee(e: FormEvent) {
     e.preventDefault()
     if (agenceEstDansLaListe()) {
-      console.log('AGENCE SELECTIONNEE ' + optionSelectionnee!.value)
+      console.log('AGENCE SELECTIONNEE ' + idAgenceSelectionnee.value)
       const agence = referentielAgences.find(
-        (a) => a.id === optionSelectionnee!.id
+        (a) => a.id === idAgenceSelectionnee.value
       )
       onAgenceChoisie(agence!)
     } else if (agenceEstDansLaListe()) {
-      console.log('AGENCE n’apparait pas ' + optionSelectionnee!.value)
+      console.log('AGENCE n’apparait pas ' + idAgenceSelectionnee.value)
     }
   }
 
@@ -161,7 +158,7 @@ export function RenseignementAgenceMissionLocaleForm({
             Annuler
           </Button>
         )}
-        {(!optionSelectionnee || agenceEstDansLaListe()) && (
+        {(idAgenceSelectionnee.value === '' || agenceEstDansLaListe()) && (
           <Button type='submit' className='mr-6'>
             Ajouter
           </Button>
