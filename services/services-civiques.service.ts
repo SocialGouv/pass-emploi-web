@@ -3,10 +3,16 @@ import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import {
+  DetailServiceCiviqueJson,
+  jsonToDetailServiceCivique,
   jsonToServiceCiviqueItem,
   ServiceCiviqueItemJson,
 } from 'interfaces/json/service-civique'
-import { BaseServiceCivique, MetadonneesOffres } from 'interfaces/offre'
+import {
+  BaseServiceCivique,
+  DetailServiceCivique,
+  MetadonneesOffres,
+} from 'interfaces/offre'
 import { Commune } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
@@ -19,6 +25,10 @@ export type SearchServicesCiviquesQuery = {
 
 export interface ServicesCiviquesService {
   getLienServiceCivique(idOffreEngagement: string): Promise<string | undefined>
+  getServiceCiviqueServerSide(
+    idServiceCivique: string,
+    accessToken: string
+  ): Promise<DetailServiceCivique | undefined>
   searchServicesCiviques(
     query: SearchServicesCiviquesQuery,
     page: number
@@ -33,17 +43,27 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
     const session = await getSession()
     const accessToken = session!.accessToken
 
-    try {
-      const { content: serviceCiviqueJson } = await this.apiClient.get<{
-        lienAnnonce: string
-      }>(`/services-civique/${idOffreEngagement}`, accessToken)
-      return serviceCiviqueJson.lienAnnonce
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        return undefined
-      }
-      throw e
-    }
+    const serviceCiviqueJson = await this.getServiceCivique(
+      idOffreEngagement,
+      accessToken
+    )
+
+    return serviceCiviqueJson?.lienAnnonce
+  }
+
+  async getServiceCiviqueServerSide(
+    idServiceCivique: string,
+    accessToken: string
+  ): Promise<DetailServiceCivique | undefined> {
+    const serviceCiviqueJson = await this.getServiceCivique(
+      idServiceCivique,
+      accessToken
+    )
+
+    return (
+      serviceCiviqueJson &&
+      jsonToDetailServiceCivique(idServiceCivique, serviceCiviqueJson)
+    )
   }
 
   async searchServicesCiviques(
@@ -67,6 +87,25 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
       nombrePages: Math.ceil(pagination.total / LIMIT),
     }
     return { metadonnees, offres: results.map(jsonToServiceCiviqueItem) }
+  }
+
+  private async getServiceCivique(
+    idServiceCivique: string,
+    accessToken: string
+  ): Promise<DetailServiceCiviqueJson | undefined> {
+    try {
+      const { content: serviceCiviqueJson } =
+        await this.apiClient.get<DetailServiceCiviqueJson>(
+          `/services-civique/${idServiceCivique}`,
+          accessToken
+        )
+      return serviceCiviqueJson
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+      throw e
+    }
   }
 }
 

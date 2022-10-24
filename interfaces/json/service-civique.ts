@@ -1,6 +1,8 @@
-import { DateTime } from 'luxon'
-
-import { BaseServiceCivique, TypeOffre } from 'interfaces/offre'
+import {
+  BaseServiceCivique,
+  DetailServiceCivique,
+  TypeOffre,
+} from 'interfaces/offre'
 
 export type ServiceCiviqueItemJson = {
   id: string
@@ -10,6 +12,41 @@ export type ServiceCiviqueItemJson = {
   ville?: string
   organisation?: string
   dateDeDebut?: string
+}
+
+export type DetailServiceCiviqueJson = {
+  domaine: string
+  titre: string
+  ville?: string
+  organisation?: string
+  dateDeDebut?: string
+  dateDeFin?: string
+  description?: string
+  lienAnnonce?: string
+  adresseOrganisation?: string
+  adresseMission?: string
+  urlOrganisation?: string
+  codeDepartement?: string
+  codePostal?: string
+  descriptionOrganisation?: string
+}
+
+export function jsonToDetailServiceCivique(
+  id: string,
+  json: DetailServiceCiviqueJson
+): DetailServiceCivique {
+  const serviceCivique: DetailServiceCivique = {
+    type: TypeOffre.SERVICE_CIVIQUE,
+    id: id,
+    titre: json.titre,
+    domaine: json.domaine,
+  }
+
+  if (json.ville) serviceCivique.ville = json.ville
+  if (json.organisation) serviceCivique.organisation = json.organisation
+  if (json.dateDeDebut) serviceCivique.dateDeDebut = json.dateDeDebut
+
+  return serviceCivique
 }
 
 export function jsonToServiceCiviqueItem(
@@ -24,8 +61,7 @@ export function jsonToServiceCiviqueItem(
 
   if (json.ville) serviceCivique.ville = json.ville
   if (json.organisation) serviceCivique.organisation = json.organisation
-  if (json.dateDeDebut)
-    serviceCivique.dateDeDebut = DateTime.fromISO(json.dateDeDebut)
+  if (json.dateDeDebut) serviceCivique.dateDeDebut = json.dateDeDebut
 
   return serviceCivique
 }

@@ -49,7 +49,11 @@ function DetailOffre({ offre }: DetailOffreProps) {
         <p className='text-s-regular'>
           {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
         </p>
-        <LienPartageOffre idOffre={offre.id} style={ButtonStyle.PRIMARY} />
+        <LienPartageOffre
+          idOffre={offre.id}
+          href={`/offres/emploi/${offre.id}/partage`}
+          style={ButtonStyle.PRIMARY}
+        />
       </div>
       <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
 

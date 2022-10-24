@@ -1,6 +1,9 @@
 import { DateTime } from 'luxon'
+import Link from 'next/link'
 import React from 'react'
 
+import LienPartageOffre from 'components/offres/LienPartageOffre'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
@@ -9,9 +12,13 @@ import { toFrenchString } from 'utils/date'
 
 interface ServiceCiviqueCardProps {
   offre: BaseServiceCivique
+  withPartage?: boolean
 }
 
-export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
+export default function ServiceCiviqueCard({
+  offre,
+  withPartage,
+}: ServiceCiviqueCardProps) {
   return (
     <div className='rounded-small shadow-s p-6'>
       <div className='flex justify-between mb-4'>
@@ -21,6 +28,13 @@ export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
           backgroundColor='white'
           className='text-s-regular'
         />
+        {withPartage && (
+          <LienPartageOffre
+            idOffre={offre.id}
+            href={`/offres/service-civique/${offre.id}/partage`}
+            style={ButtonStyle.TERTIARY}
+          />
+        )}
       </div>
 
       <p className='text-base-bold text-accent_1 mb-2 capitalize'>
@@ -46,10 +60,28 @@ export default function ServiceCiviqueCard({ offre }: ServiceCiviqueCardProps) {
         {offre.dateDeDebut && (
           <DataTag
             text={
-              'Dès le ' + toFrenchString(offre.dateDeDebut, DateTime.DATE_FULL)
+              'Dès le ' +
+              toFrenchString(
+                DateTime.fromISO(offre.dateDeDebut),
+                DateTime.DATE_FULL
+              )
             }
           />
         )}
+        <Link href={`/offres/service-civique/${offre.id}`}>
+          <a
+            aria-label={`Détail de l’offre ${offre.id}`}
+            className='flex items-center text-s-regular hover:text-primary'
+          >
+            Voir le détail
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-4 mr-3 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </a>
+        </Link>
       </div>
     </div>
   )

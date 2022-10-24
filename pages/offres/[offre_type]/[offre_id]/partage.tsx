@@ -5,6 +5,7 @@ import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
+import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -13,12 +14,17 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import {
+  DetailOffreEmploi,
+  DetailServiceCivique,
+  TypeOffre,
+} from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -26,7 +32,7 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type PartageOffresProps = PageProps & {
-  offre: DetailOffreEmploi
+  offre: DetailOffreEmploi | DetailServiceCivique
   jeunes: BaseJeune[]
   withoutChat: true
   returnTo: string
@@ -62,14 +68,15 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
     if (!formIsValid) return
 
     setIsPartageEnCours(true)
+
+    const messageDefault = getDefaultMessage(offre.type)
+
     try {
       await messagesService.partagerOffre({
         offre,
         idsDestinataires: idsDestinataires.value,
         cleChiffrement: chatCredentials!.cleChiffrement,
-        message:
-          message ||
-          "Bonjour, je vous partage une offre d'emploi qui pourrait vous intéresser.",
+        message: message || messageDefault,
       })
       await router.push({
         pathname: returnTo,
@@ -84,7 +91,10 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
 
   return (
     <>
-      <OffreEmploiCard offre={offre} />
+      {offre.type === TypeOffre.EMPLOI && <OffreEmploiCard offre={offre} />}
+      {offre.type === TypeOffre.SERVICE_CIVIQUE && (
+        <ServiceCiviqueCard offre={offre} />
+      )}
 
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>
@@ -146,12 +156,25 @@ export const getServerSideProps: GetServerSideProps<
   const offresEmploiService = withDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-
-  const offre = await offresEmploiService.getOffreEmploiServerSide(
-    context.query.offre_id as string,
-    accessToken
+  const serviceCiviqueService = withDependance<ServicesCiviquesService>(
+    'servicesCiviquesService'
   )
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+  const typeOffre = context.query.offre_type as string
+
+  let offre: DetailOffreEmploi | DetailServiceCivique | undefined
+  if (typeOffre === 'emploi') {
+    offre = await offresEmploiService.getOffreEmploiServerSide(
+      context.query.offre_id as string,
+      accessToken
+    )
+  }
+  if (typeOffre === 'service-civique') {
+    offre = await serviceCiviqueService.getServiceCiviqueServerSide(
+      context.query.offre_id as string,
+      accessToken
+    )
+  }
   if (!offre) return { notFound: true }
 
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
@@ -166,6 +189,15 @@ export const getServerSideProps: GetServerSideProps<
       withoutChat: true,
       returnTo: '/recherche-offres',
     },
+  }
+}
+
+function getDefaultMessage(typeOffre: TypeOffre): string {
+  switch (typeOffre) {
+    case TypeOffre.EMPLOI:
+      return 'Bonjour, je vous partage une offre d’emploi qui pourrait vous intéresser.'
+    case TypeOffre.SERVICE_CIVIQUE:
+      return 'Bonjour, je vous partage une offre de service civique qui pourrait vous intéresser.'
   }
 }
 

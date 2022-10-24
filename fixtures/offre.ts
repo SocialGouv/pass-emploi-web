@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 import {
   DetailOffreEmploiJson,
   OffreEmploiItemJson,
@@ -203,7 +201,7 @@ export function uneBaseServiceCivique(
     organisation: 'Unis-Cité Vendée',
     ville: 'La Roche-sur-Yon',
     domaine: 'solidarite-insertion',
-    dateDeDebut: DateTime.fromISO('2022-10-17T00:00:00.000Z'),
+    dateDeDebut: '2022-10-17T00:00:00.000Z',
   }
   return { ...defaults, ...overrides }
 }
@@ -218,7 +216,7 @@ export function listeBaseServicesCiviques(): BaseServiceCivique[] {
       organisation: "Ligue de l'enseignement fédération de Paris",
       ville: 'Paris',
       domaine: 'education',
-      dateDeDebut: DateTime.fromISO('2022-11-01T00:00:00.000Z'),
+      dateDeDebut: '2022-11-01T00:00:00.000Z',
     },
     {
       type: TypeOffre.SERVICE_CIVIQUE,
@@ -228,7 +226,7 @@ export function listeBaseServicesCiviques(): BaseServiceCivique[] {
       organisation: 'FEDERATION FRANCAISE DES CLUBS OMNISPORTS',
       ville: 'Massy',
       domaine: 'sport',
-      dateDeDebut: DateTime.fromISO('2022-09-26T00:00:00.000Z'),
+      dateDeDebut: '2022-09-26T00:00:00.000Z',
     },
     {
       type: TypeOffre.SERVICE_CIVIQUE,
@@ -238,22 +236,26 @@ export function listeBaseServicesCiviques(): BaseServiceCivique[] {
       organisation: 'Ecole française de Gaulle-Adenauer',
       ville: 'Köln',
       domaine: 'education',
-      dateDeDebut: DateTime.fromISO('2022-10-03T00:00:00.000Z'),
+      dateDeDebut: '2022-10-03T00:00:00.000Z',
     },
   ]
 }
 
+export function unServiceCiviqueJson(): ServiceCiviqueItemJson {
+  return {
+    id: '6322ac0fe8f66b05ee325ece',
+    titre:
+      'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
+    organisation: "Ligue de l'enseignement fédération de Paris",
+    ville: 'Paris',
+    domaine: 'education',
+    dateDeDebut: '2022-11-01T00:00:00.000Z',
+  }
+}
+
 export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
   return [
-    {
-      id: '6322ac0fe8f66b05ee325ece',
-      titre:
-        'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
-      organisation: "Ligue de l'enseignement fédération de Paris",
-      ville: 'Paris',
-      domaine: 'education',
-      dateDeDebut: '2022-11-01T00:00:00.000Z',
-    },
+    unServiceCiviqueJson(),
     {
       id: '6322ac11e8f66b05ee325f10',
       titre:

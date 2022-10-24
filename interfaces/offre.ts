@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 export enum TypeOffre {
   EMPLOI = 'EMPLOI',
   SERVICE_CIVIQUE = 'SERVICE_CIVIQUE',
@@ -50,8 +48,10 @@ export type BaseServiceCivique = {
 
   ville?: string
   organisation?: string
-  dateDeDebut?: DateTime
+  dateDeDebut?: string
 }
+
+export type DetailServiceCivique = BaseServiceCivique
 
 export interface MetadonneesOffres {
   nombrePages: number

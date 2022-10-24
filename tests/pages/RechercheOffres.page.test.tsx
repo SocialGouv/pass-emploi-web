@@ -535,7 +535,7 @@ describe('Page Recherche Offres', () => {
               within(offreCard).getByRole('link', {
                 name: 'Détail de l’offre ' + offre.id,
               })
-            ).toHaveAttribute('href', '/offres/' + offre.id)
+            ).toHaveAttribute('href', '/offres/emploi/' + offre.id)
           })
         })
 
@@ -545,7 +545,7 @@ describe('Page Recherche Offres', () => {
               within(offresList).getByRole('link', {
                 name: `Partager offre numéro ${offre.id}`,
               })
-            ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
+            ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
           })
         })
 
@@ -1056,6 +1056,24 @@ describe('Page Recherche Offres', () => {
             expect(
               within(offreCard).getByText(offre.ville!)
             ).toBeInTheDocument()
+            expect(
+              within(offreCard).getByRole('link', {
+                name: 'Détail de l’offre ' + offre.id,
+              })
+            ).toHaveAttribute('href', '/offres/service-civique/' + offre.id)
+          })
+        })
+
+        it('permet de partager chaque offre', () => {
+          servicesCiviques.forEach((offre) => {
+            expect(
+              within(offresList).getByRole('link', {
+                name: `Partager offre numéro ${offre.id}`,
+              })
+            ).toHaveAttribute(
+              'href',
+              `/offres/service-civique/${offre.id}/partage`
+            )
           })
         })
 

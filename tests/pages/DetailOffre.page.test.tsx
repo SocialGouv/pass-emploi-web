@@ -4,7 +4,9 @@ import { GetServerSidePropsContext } from 'next/types'
 import { unDetailOffreEmploi } from 'fixtures/offre'
 import { mockedOffresEmploiService } from 'fixtures/services'
 import { DetailOffreEmploi } from 'interfaces/offre'
-import DetailOffre, { getServerSideProps } from 'pages/offres/[offre_id]'
+import DetailOffre, {
+  getServerSideProps,
+} from 'pages/offres/[offre_type]/[offre_id]'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -29,7 +31,7 @@ describe('Page Détail Offre', () => {
       // Then
       expect(
         screen.getByRole('link', { name: `Partager offre numéro ${offre.id}` })
-      ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
+      ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
     })
 
     it("affiche la date d'actualisation de l'offre", () => {
