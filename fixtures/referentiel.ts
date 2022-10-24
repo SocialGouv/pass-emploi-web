@@ -5,18 +5,22 @@ export function uneListeDAgencesMILO() {
     {
       id: '443',
       nom: 'MLS3F SAINT-LOUIS',
+      codeDepartement: '1'
     },
     {
       id: '444',
       nom: 'PEIPS MISSION LOCALE DU SENONAIS',
+      codeDepartement: '2'
     },
     {
       id: '445',
       nom: 'REUSSIR EN SAMBRE AVESNOIS',
+      codeDepartement: '3'
     },
     {
       id: '446',
       nom: 'ROMORANTIN',
+      codeDepartement: '4'
     },
   ]
 }
