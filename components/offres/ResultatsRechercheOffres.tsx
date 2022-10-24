@@ -1,6 +1,7 @@
 import React from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import ImmersionCard from 'components/offres/ImmersionCard'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
 import Pagination from 'components/ui/Table/Pagination'
@@ -38,6 +39,9 @@ export default function ResultatsRechercheOffre({
                 )}
                 {offre.type === TypeOffre.SERVICE_CIVIQUE && (
                   <ServiceCiviqueCard offre={offre} withPartage={true} />
+                )}
+                {offre.type === TypeOffre.IMMERSION && (
+                  <ImmersionCard offre={offre} />
                 )}
               </li>
             ))}

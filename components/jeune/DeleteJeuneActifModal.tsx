@@ -135,11 +135,11 @@ export default function DeleteJeuneActifModal({
                 Choisir un motif de suppression
               </legend>
               <Label htmlFor='motif-suppression' inputRequired={true}>
-                Motif de suppression
-                <span className='text-base-regular block mb-3'>
-                  {' '}
-                  Veuillez sélectionner un motif de suppression de compte
-                </span>
+                {{
+                  main: 'Motif de suppression',
+                  helpText:
+                    'Veuillez sélectionner un motif de suppression de compte',
+                }}
               </Label>
               <Select
                 id='motif-suppression'

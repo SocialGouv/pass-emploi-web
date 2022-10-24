@@ -2,6 +2,7 @@ import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
+import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
@@ -108,6 +109,7 @@ export function mockedReferentielService(
     getAgences: jest.fn(),
     getCommunesEtDepartements: jest.fn(),
     getCommunes: jest.fn(),
+    getMetiers: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -150,6 +152,15 @@ export function mockedServicesCiviquesService(
     getLienServiceCivique: jest.fn(),
     searchServicesCiviques: jest.fn(),
     getServiceCiviqueServerSide: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedImmersionsService(
+  overrides: Partial<ImmersionsService> = {}
+) {
+  const defaults: ImmersionsService = {
+    searchImmersions: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

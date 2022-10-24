@@ -7,21 +7,25 @@ import React, {
 } from 'react'
 
 import RadioButton from 'components/action/RadioButton'
-import RechercheOffresEmploiMain from 'components/offres/RechercheOffresEmploiMain'
-import RechercheOffresEmploiSecondary from 'components/offres/RechercheOffresEmploiSecondary'
-import RechercheServicesCiviquesMain from 'components/offres/RechercheServicesCiviquesMain'
-import RechercheServicesCiviquesSecondary from 'components/offres/RechercheServicesCiviquesSecondary'
+import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
+import RechercheImmersionsSecondaire from 'components/offres/RechercheImmersionsSecondaire'
+import RechercheOffresEmploiPrincipale from 'components/offres/RechercheOffresEmploiPrincipale'
+import RechercheOffresEmploiSecondaire from 'components/offres/RechercheOffresEmploiSecondaire'
+import RechercheServicesCiviquesPrincipale from 'components/offres/RechercheServicesCiviquesPrincipale'
+import RechercheServicesCiviquesSecondaire from 'components/offres/RechercheServicesCiviquesSecondaire'
 import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TypeOffre } from 'interfaces/offre'
-import { Commune, Localite } from 'interfaces/referentiel'
+import { Commune, Localite, Metier } from 'interfaces/referentiel'
+import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
+import { FormValues } from 'types/form'
 
-type WithHasError<T> = T & { hasError: boolean }
 type FormRechercheOffresProps = {
   hasResults: boolean
+  fetchMetiers: (search: string) => Promise<Metier[]>
   fetchCommunes: (search: string) => Promise<Commune[]>
   fetchCommunesEtDepartements: (search: string) => Promise<Localite[]>
   stateTypeOffre: [
@@ -29,22 +33,28 @@ type FormRechercheOffresProps = {
     Dispatch<SetStateAction<TypeOffre | undefined>>
   ]
   stateQueryOffresEmploi: [
-    WithHasError<SearchOffresEmploiQuery>,
-    Dispatch<SetStateAction<WithHasError<SearchOffresEmploiQuery>>>
+    FormValues<SearchOffresEmploiQuery>,
+    Dispatch<SetStateAction<FormValues<SearchOffresEmploiQuery>>>
   ]
   stateQueryServicesCiviques: [
-    WithHasError<SearchServicesCiviquesQuery>,
-    Dispatch<SetStateAction<WithHasError<SearchServicesCiviquesQuery>>>
+    FormValues<SearchServicesCiviquesQuery>,
+    Dispatch<SetStateAction<FormValues<SearchServicesCiviquesQuery>>>
+  ]
+  stateQueryImmersions: [
+    FormValues<SearchImmersionsQuery>,
+    Dispatch<SetStateAction<FormValues<SearchImmersionsQuery>>>
   ]
   onNouvelleRecherche: () => void
 }
 export default function FormRechercheOffres({
+  fetchMetiers,
   fetchCommunes,
   fetchCommunesEtDepartements,
   hasResults,
   onNouvelleRecherche,
   stateQueryOffresEmploi,
   stateQueryServicesCiviques,
+  stateQueryImmersions,
   stateTypeOffre,
 }: FormRechercheOffresProps) {
   const [showForm, setShowForm] = useState<boolean>(true)
@@ -55,9 +65,12 @@ export default function FormRechercheOffres({
   const [queryOffresEmploi, setQueryOffresEmploi] = stateQueryOffresEmploi
   const [queryServicesCiviques, setQueryServicesCiviques] =
     stateQueryServicesCiviques
+  const [queryImmersions, setQueryImmersions] = stateQueryImmersions
 
   const formIsInvalid =
-    queryOffresEmploi.hasError || queryServicesCiviques.hasError
+    queryOffresEmploi.hasError ||
+    queryServicesCiviques.hasError ||
+    queryImmersions.hasError
 
   async function rechercherPremierePage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -71,6 +84,10 @@ export default function FormRechercheOffres({
   useEffect(() => {
     setQueryOffresEmploi({ hasError: false })
     setQueryServicesCiviques({ hasError: false })
+    setQueryImmersions({
+      rayon: 10,
+      hasError: typeOffre === TypeOffre.IMMERSION,
+    })
   }, [typeOffre])
 
   return (
@@ -112,6 +129,13 @@ export default function FormRechercheOffres({
                 name='type-offre'
                 id='type-offre--service-civique'
                 label='Service civique'
+              />
+              <RadioButton
+                isSelected={typeOffre === TypeOffre.IMMERSION}
+                onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
+                name='type-offre'
+                id='type-offre--immersion'
+                label='Immersion'
               />
             </div>
           </Etape>
@@ -171,21 +195,30 @@ export default function FormRechercheOffres({
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (
-          <RechercheOffresEmploiMain
-            fetchCommunesEtDepartements={fetchCommunesEtDepartements}
+          <RechercheOffresEmploiPrincipale
+            recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
           />
         )
       case TypeOffre.SERVICE_CIVIQUE:
         return (
-          <RechercheServicesCiviquesMain
-            fetchCommunes={fetchCommunes}
+          <RechercheServicesCiviquesPrincipale
+            recupererCommunes={fetchCommunes}
             query={queryServicesCiviques}
             onQueryUpdate={setQueryServicesCiviques}
           />
         )
-      default:
+      case TypeOffre.IMMERSION:
+        return (
+          <RechercheImmersionsPrincipale
+            recupererMetiers={fetchMetiers}
+            recupererCommunes={fetchCommunes}
+            query={queryImmersions}
+            onQueryUpdate={setQueryImmersions}
+          />
+        )
+      case undefined:
         return null
     }
   }
@@ -194,7 +227,7 @@ export default function FormRechercheOffres({
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (
-          <RechercheOffresEmploiSecondary
+          <RechercheOffresEmploiSecondaire
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
@@ -202,13 +235,21 @@ export default function FormRechercheOffres({
         )
       case TypeOffre.SERVICE_CIVIQUE:
         return (
-          <RechercheServicesCiviquesSecondary
+          <RechercheServicesCiviquesSecondaire
             onCriteresChange={setCountCriteres}
             query={queryServicesCiviques}
             onQueryUpdate={setQueryServicesCiviques}
           />
         )
-      default:
+      case TypeOffre.IMMERSION:
+        return (
+          <RechercheImmersionsSecondaire
+            onCriteresChange={setCountCriteres}
+            query={queryImmersions}
+            onQueryUpdate={setQueryImmersions}
+          />
+        )
+      case undefined:
         return null
     }
   }

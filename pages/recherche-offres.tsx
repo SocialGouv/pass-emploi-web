@@ -6,6 +6,7 @@ import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
+  BaseImmersion,
   BaseOffre,
   BaseOffreEmploi,
   BaseServiceCivique,
@@ -15,6 +16,10 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import {
+  ImmersionsService,
+  SearchImmersionsQuery,
+} from 'services/immersions.service'
+import {
   OffresEmploiService,
   SearchOffresEmploiQuery,
 } from 'services/offres-emploi.service'
@@ -23,11 +28,11 @@ import {
   SearchServicesCiviquesQuery,
   ServicesCiviquesService,
 } from 'services/services-civiques.service'
+import { FormValues } from 'types/form'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 
-type WithHasError<T> = T & { hasError: boolean }
 type RechercheOffresProps = PageProps & {
   partageSuccess?: boolean
 }
@@ -40,14 +45,20 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const servicesCiviquesService = useDependance<ServicesCiviquesService>(
     'servicesCiviquesService'
   )
+  const immersionsService =
+    useDependance<ImmersionsService>('immersionsService')
 
+  const RAYON_DEFAULT = 10
   const [typeOffre, setTypeOffre] = useState<TypeOffre | undefined>()
   const [queryOffresEmploi, setQueryOffresEmploi] = useState<
-    WithHasError<SearchOffresEmploiQuery>
+    FormValues<SearchOffresEmploiQuery>
   >({ hasError: false })
   const [queryServicesCiviques, setQueryServicesCiviques] = useState<
-    WithHasError<SearchServicesCiviquesQuery>
+    FormValues<SearchServicesCiviquesQuery>
   >({ hasError: false })
+  const [queryImmersions, setQueryImmersions] = useState<
+    FormValues<SearchImmersionsQuery>
+  >({ rayon: RAYON_DEFAULT, hasError: false })
 
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
@@ -73,13 +84,16 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
     setIsSearching(true)
     try {
-      let result
+      let result: { offres: BaseOffre[]; metadonnees: MetadonneesOffres }
       switch (typeOffre) {
         case TypeOffre.EMPLOI:
           result = await rechercherOffresEmploi(page)
           break
         case TypeOffre.SERVICE_CIVIQUE:
           result = await rechercherServicesCiviques(page)
+          break
+        case TypeOffre.IMMERSION:
+          result = await rechercherImmersions(page)
           break
       }
       const {
@@ -91,7 +105,8 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
       setPageCourante(page)
       setNbPages(nombrePages)
       setTrackingTitle(pageTracking + ' - Résultats')
-    } catch {
+    } catch (e) {
+      console.error(e)
       setSearchError('Une erreur est survenue. Vous pouvez réessayer')
       setTrackingTitle(pageTracking + ' - Erreur')
     } finally {
@@ -115,6 +130,17 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     return servicesCiviquesService.searchServicesCiviques(query, page)
   }
 
+  async function rechercherImmersions(page: number): Promise<{
+    offres: BaseImmersion[]
+    metadonnees: MetadonneesOffres
+  }> {
+    const { hasError, ...query } = queryImmersions
+    return immersionsService.searchImmersions(
+      query as SearchImmersionsQuery,
+      page
+    )
+  }
+
   function nettoyerResultats() {
     setOffres(undefined)
     setNbTotal(undefined)
@@ -125,7 +151,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   useEffect(() => {
     nettoyerResultats()
-  }, [queryOffresEmploi, queryServicesCiviques])
+  }, [queryOffresEmploi, queryServicesCiviques, queryImmersions])
 
   useMatomo(trackingTitle)
 
@@ -137,9 +163,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           onAcknowledge={() => setSearchError(undefined)}
         />
       )}
-
       <FormRechercheOffres
         hasResults={isSearching || offres !== undefined}
+        fetchMetiers={referentielService.getMetiers.bind(referentielService)}
         fetchCommunes={referentielService.getCommunes.bind(referentielService)}
         fetchCommunesEtDepartements={referentielService.getCommunesEtDepartements.bind(
           referentielService
@@ -150,9 +176,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
           queryServicesCiviques,
           setQueryServicesCiviques,
         ]}
+        stateQueryImmersions={[queryImmersions, setQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
-
       <ResultatsRechercheOffre
         isSearching={isSearching}
         offres={offres}

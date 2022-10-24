@@ -1,8 +1,9 @@
 export enum TypeOffre {
   EMPLOI = 'EMPLOI',
   SERVICE_CIVIQUE = 'SERVICE_CIVIQUE',
+  IMMERSION = 'IMMERSION',
 }
-export type BaseOffre = BaseOffreEmploi | BaseServiceCivique
+export type BaseOffre = BaseOffreEmploi | BaseServiceCivique | BaseImmersion
 
 export type BaseOffreEmploi = {
   type: TypeOffre.EMPLOI
@@ -52,6 +53,15 @@ export type BaseServiceCivique = {
 }
 
 export type DetailServiceCivique = BaseServiceCivique
+
+export type BaseImmersion = {
+  type: TypeOffre.IMMERSION
+  id: string
+  titre: string
+  nomEtablissement: string
+  ville: string
+  secteurActivite: string
+}
 
 export interface MetadonneesOffres {
   nombrePages: number

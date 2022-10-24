@@ -142,8 +142,7 @@ function FormulaireJeunePoleEmploi({
         )}
 
         <Label htmlFor='jeune-email' inputRequired={true}>
-          E-mail{' '}
-          <span className='text-base-regular'>(ex : monemail@exemple.com)</span>
+          {{ main: 'E-mail', helpText: '(ex : monemail@exemple.com)' }}
         </Label>
         <p className='text-base-regular mb-3'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le

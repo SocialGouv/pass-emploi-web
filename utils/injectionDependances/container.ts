@@ -1,8 +1,3 @@
-import {
-  OffresEmploiApiService,
-  OffresEmploiService,
-} from '../../services/offres-emploi.service'
-
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
@@ -12,11 +7,19 @@ import {
 } from 'services/conseiller.service'
 import { FavorisApiService, FavorisService } from 'services/favoris.service'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
+import {
+  ImmersionsApiService,
+  ImmersionsService,
+} from 'services/immersions.service'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import {
   MessagesFirebaseAndApiService,
   MessagesService,
 } from 'services/messages.service'
+import {
+  OffresEmploiApiService,
+  OffresEmploiService,
+} from 'services/offres-emploi.service'
 import {
   ReferentielApiService,
   ReferentielService,
@@ -43,6 +46,7 @@ export interface Dependencies {
   favorisService: FavorisService
   offresEmploiService: OffresEmploiService
   servicesCiviquesService: ServicesCiviquesService
+  immersionsService: ImmersionsService
 }
 
 export class Container {
@@ -74,6 +78,7 @@ export class Container {
       favorisService: new FavorisApiService(apiClient),
       offresEmploiService: new OffresEmploiApiService(apiClient),
       servicesCiviquesService: new ServicesCiviquesApiService(apiClient),
+      immersionsService: new ImmersionsApiService(apiClient),
     })
   }
 }

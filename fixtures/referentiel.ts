@@ -1,4 +1,4 @@
-import { Commune, Localite } from 'interfaces/referentiel'
+import { Commune, Localite, Metier } from 'interfaces/referentiel'
 
 export function uneListeDAgencesMILO() {
   return [
@@ -93,6 +93,35 @@ export function desCommunes(): Commune[] {
       type: 'COMMUNE',
       longitude: 2.347,
       latitude: 48.859,
+    },
+  ]
+}
+
+export function unMetier(overrides: Partial<Metier> = {}): Metier {
+  const defaults: Metier = {
+    libelle: 'Développeur / Développeuse web',
+    code: 'M1805',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function desMetiers(): Metier[] {
+  return [
+    {
+      libelle: 'Développeur / Développeuse web',
+      code: 'M1805',
+    },
+    {
+      libelle: 'Développeur / Développeuse économique',
+      code: 'K1802',
+    },
+    {
+      libelle: 'Développeur / Développeuse de photographies',
+      code: 'E1203',
+    },
+    {
+      libelle: 'Développeur / Développeuse back-end',
+      code: 'M1805',
     },
   ]
 }

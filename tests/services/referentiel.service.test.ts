@@ -4,6 +4,7 @@ import { ApiClient } from 'clients/api.client'
 import {
   desCommunes,
   desLocalites,
+  desMetiers,
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
 } from 'fixtures/referentiel'
@@ -100,6 +101,25 @@ describe('ReferentielApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(desCommunes())
+    })
+  })
+
+  describe('.getMetiers', () => {
+    it('retourne un référentiel de métiers', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: desMetiers(),
+      })
+
+      // When
+      const actual = await referentielService.getMetiers('Développeuse')
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/referentiels/metiers?recherche=D%C3%A9veloppeuse',
+        'accessToken'
+      )
+      expect(actual).toEqual(desMetiers())
     })
   })
 })

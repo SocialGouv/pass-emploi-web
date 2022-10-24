@@ -328,6 +328,8 @@ function typeToFirebase(typeOffre: TypeOffre): string {
       return 'EMPLOI'
     case TypeOffre.SERVICE_CIVIQUE:
       return 'SERVICE_CIVIQUE'
+    case TypeOffre.IMMERSION:
+      return 'IMMERSION'
   }
 }
 
@@ -336,6 +338,9 @@ function offreFromFirebase(offre: InfoOffreFirebase): InfoOffre {
   switch (offre.type) {
     case 'SERVICE_CIVIQUE':
       type = TypeOffre.SERVICE_CIVIQUE
+      break
+    case 'IMMERSION':
+      type = TypeOffre.IMMERSION
       break
     case 'EMPLOI':
     default:

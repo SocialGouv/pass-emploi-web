@@ -1,27 +1,27 @@
 import { DateTime } from 'luxon'
 import React, { useEffect } from 'react'
 
+import { DistanceRange } from 'components/offres/DistanceRange'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import { Switch } from 'components/ui/Form/Switch'
 import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
+import { FormValues } from 'types/form'
 import { DATE_DASH_SEPARATOR } from 'utils/date'
 
-type RechercheServicesCiviquesSecondaryProps = {
+type RechercheServicesCiviquesSecondaireProps = {
   onCriteresChange: (nbCriteres: number) => void
-  query: SearchServicesCiviquesQuery & { hasError: boolean }
-  onQueryUpdate: (
-    query: SearchServicesCiviquesQuery & { hasError: boolean }
-  ) => void
+  query: FormValues<SearchServicesCiviquesQuery>
+  onQueryUpdate: (query: FormValues<SearchServicesCiviquesQuery>) => void
 }
 
-export default function RechercheServicesCiviquesSecondary({
+export default function RechercheServicesCiviquesSecondaire({
   onCriteresChange,
   query,
   onQueryUpdate,
-}: RechercheServicesCiviquesSecondaryProps) {
+}: RechercheServicesCiviquesSecondaireProps) {
   const RAYON_MIN = 0
   const RAYON_MAX = 100
 
@@ -100,31 +100,14 @@ export default function RechercheServicesCiviquesSecondary({
             />
           </>
         )}
-
-        {query.rayon !== undefined && (
-          <fieldset className='mt-8 w-full'>
-            <legend className='text-base-bold mb-4'>Distance</legend>
-            <label htmlFor='distance'>
-              Dans un rayon de :{' '}
-              <span className='text-base-bold'>{query.rayon}km</span>
-            </label>
-            <Input
-              id='distance'
-              type='range'
-              className='block mt-4 w-full'
-              value={query.rayon}
-              min={RAYON_MIN}
-              max={RAYON_MAX}
-              onChange={(value: string) => updateRayon(parseInt(value, 10))}
-              list='distance-bornes'
-            />
-            <datalist id='distance-bornes' className='flex justify-between'>
-              <option value='0' label='0km' className='text-s-bold' />
-              <option value='100' label='100km' className='text-s-bold' />
-            </datalist>
-          </fieldset>
-        )}
       </fieldset>
+
+      {query.rayon !== undefined && (
+        <fieldset className='mt-8 w-full'>
+          <legend className='text-base-bold mb-4'>Distance</legend>
+          <DistanceRange value={query.rayon} onChange={updateRayon} />
+        </fieldset>
+      )}
     </fieldset>
   )
 }

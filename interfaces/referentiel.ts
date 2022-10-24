@@ -12,6 +12,8 @@ export type Commune = {
 }
 export type Localite = Commune | Departement
 
+export type Metier = { code: string; libelle: string }
+
 export type Agence = {
   id: string
   nom: string

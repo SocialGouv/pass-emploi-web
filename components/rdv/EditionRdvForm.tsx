@@ -360,8 +360,7 @@ export function EditionRdvForm({
 
       <Etape numero={3} titre='Lieu et date'>
         <Label htmlFor='date' inputRequired={true}>
-          Date
-          <span className='text-base-regular'> (format : jj/mm/aaaa)</span>
+          {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
         </Label>
         {date.error && (
           <InputError id='date--error' className='mb-2'>
@@ -379,8 +378,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='horaire' inputRequired={true}>
-          Heure
-          <span className='text-base-regular'> (format : hh:mm)</span>
+          {{ main: 'Heure', helpText: '(format : hh:mm)' }}
         </Label>
         {horaire.error && (
           <InputError id='horaire--error' className='mb-2'>
@@ -400,8 +398,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='duree' inputRequired={true}>
-          Durée
-          <span className='text-base-regular'> (format : hh:mm)</span>
+          {{ main: 'Durée', helpText: '(format : hh:mm)' }}
         </Label>
         {duree.error && (
           <InputError id='duree--error' className='mb-2'>
@@ -419,8 +416,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='adresse'>
-          Adresse
-          <span className='text-base-regular'> Ex : 12 rue duc, Brest</span>
+          {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
         </Label>
         <Input
           type='text'
@@ -431,11 +427,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='organisme'>
-          Organisme
-          <span className='text-base-regular'>
-            {' '}
-            Ex : prestataire, entreprise, etc.
-          </span>
+          {{
+            main: 'Organisme',
+            helpText: 'Ex : prestataire, entreprise, etc.',
+          }}
         </Label>
         <Input
           type='text'
@@ -501,7 +496,7 @@ export function EditionRdvForm({
         <Label htmlFor='commentaire' withBulleMessageSensible={true}>
           {{
             main: 'Commentaire à destination des jeunes',
-            sub: 'Le commentaire sera lu par l’ensemble des destinataires',
+            helpText: 'Le commentaire sera lu par l’ensemble des destinataires',
           }}
         </Label>
         <Textarea

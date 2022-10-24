@@ -3,52 +3,52 @@ import React from 'react'
 import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
-import LocaliteSelectAutocomplete from 'components/ui/Form/LocaliteSelectAutocomplete'
+import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
 import { Localite } from 'interfaces/referentiel'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
+import { FormValues } from 'types/form'
 
-type Query = SearchOffresEmploiQuery & { hasError: boolean }
-type RechercheOffresEmploiMainProps = {
-  fetchCommunesEtDepartements: (search: string) => Promise<Localite[]>
-  query: Query
-  onQueryUpdate: (query: Query) => void
+type RechercheOffresEmploiPrincipaleProps = {
+  recupererCommunesEtDepartements: (search: string) => Promise<Localite[]>
+  query: FormValues<SearchOffresEmploiQuery>
+  onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
 }
 const RAYON_DEFAULT = 10
 
-export default function RechercheOffresEmploiMain({
-  fetchCommunesEtDepartements,
+export default function RechercheOffresEmploiPrincipale({
+  recupererCommunesEtDepartements,
   query,
   onQueryUpdate,
-}: RechercheOffresEmploiMainProps) {
+}: RechercheOffresEmploiPrincipaleProps) {
   function updateMotsCles(value: string) {
     onQueryUpdate({ ...query, motsCles: value })
   }
 
   function updateLocalite({
-    localite,
+    selected,
     hasError,
   }: {
-    localite: Localite | undefined
+    selected?: Localite
     hasError: boolean
   }) {
     const { rayon, commune, departement, ...autresCriteres } = query
-    if (!localite) {
+    if (!selected) {
       onQueryUpdate({ ...autresCriteres, hasError })
       return
     }
 
-    if (localite?.type === 'COMMUNE')
+    if (selected?.type === 'COMMUNE')
       onQueryUpdate({
         ...autresCriteres,
         hasError,
-        commune: localite.code,
+        commune: selected.code,
         rayon: rayon ?? RAYON_DEFAULT,
       })
-    if (localite?.type === 'DEPARTEMENT')
+    if (selected?.type === 'DEPARTEMENT')
       onQueryUpdate({
         ...autresCriteres,
         hasError,
-        departement: localite.code,
+        departement: selected.code,
       })
   }
 
@@ -65,13 +65,16 @@ export default function RechercheOffresEmploiMain({
       <Label htmlFor='localisation'>
         {{
           main: 'Lieu de travail',
-          sub: 'Saisissez une ville ou un département',
+          helpText: 'Saisissez une ville ou un département',
         }}
       </Label>
-      <LocaliteSelectAutocomplete
-        value={query.commune ?? query.departement ?? ''}
-        fetchLocalites={fetchCommunesEtDepartements}
-        onUpdateLocalite={updateLocalite}
+      <SelectAutocompleteWithFetch<Localite>
+        id='localisation'
+        fetch={recupererCommunesEtDepartements}
+        fieldNames={{ id: 'code', value: 'libelle' }}
+        onUpdateSelected={updateLocalite}
+        errorMessage='Veuillez saisir une localisation correcte.'
+        value={query.commune ?? query.departement}
       />
     </Etape>
   )
