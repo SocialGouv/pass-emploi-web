@@ -21,6 +21,7 @@ import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
+import { IconName } from 'components/ui/IconComponent'
 
 type ProfilProps = PageProps & {
   referentielAgences: Agence[]
@@ -106,17 +107,24 @@ function Profil({ referentielAgences }: ProfilProps) {
             {conseiller.agence &&
               conseiller.structure === StructureConseiller.MILO && (
                 <div className='mt-4'>
-                  Vous avez besoin de modifier votre Mission Locale de référence
-                  ? Pour ce faire merci de
-                  <a className={'text-primary_darken hover:text-primary'}>
-                    <ExternalLink
-                      key={'mailto:support@pass-emploi.beta.gouv.fr'}
-                      href={'mailto:support@pass-emploi.beta.gouv.fr'}
-                      label={'contacter le support'}
-                      // TODO-1127 matomo ?
-                      onClick={() => console.log('mail click')}
-                    />
-                  </a>
+                  <p>
+                    Vous avez besoin de modifier votre Mission Locale de
+                    référence ?
+                  </p>
+
+                  <div className={'flex'}>
+                    <p>Pour ce faire merci de</p>
+                    <a className={'ml-1 text-primary_darken hover:text-primary'}>
+                      <ExternalLink
+                          key={'mailto:support@pass-emploi.beta.gouv.fr'}
+                          href={'mailto:support@pass-emploi.beta.gouv.fr'}
+                          label={'contacter le support'}
+                          iconName={IconName.Email}
+                          // TODO-1127 matomo ?
+                          onClick={() => console.log('mail click')}
+                      />
+                    </a>
+                  </div>
                 </div>
               )}
           </section>
