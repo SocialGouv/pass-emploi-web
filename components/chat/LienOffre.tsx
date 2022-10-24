@@ -9,7 +9,7 @@ function typeToUrlParam(typeOffre: TypeOffre): string {
     case TypeOffre.EMPLOI:
       return 'emploi'
     case TypeOffre.SERVICE_CIVIQUE:
-      return 'service_civique'
+      return 'service-civique'
   }
 }
 

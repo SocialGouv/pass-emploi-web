@@ -1060,7 +1060,7 @@ describe('Page Recherche Offres', () => {
               within(offreCard).getByRole('link', {
                 name: 'Détail de l’offre ' + offre.id,
               })
-            ).toHaveAttribute('href', '/offres/service_civique/' + offre.id)
+            ).toHaveAttribute('href', '/offres/service-civique/' + offre.id)
           })
         })
 
@@ -1072,7 +1072,7 @@ describe('Page Recherche Offres', () => {
               })
             ).toHaveAttribute(
               'href',
-              `/offres/service_civique/${offre.id}/partage`
+              `/offres/service-civique/${offre.id}/partage`
             )
           })
         })

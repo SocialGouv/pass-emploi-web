@@ -46,8 +46,7 @@ export function jsonToDetailServiceCivique(
 
   if (json.ville) serviceCivique.ville = json.ville
   if (json.organisation) serviceCivique.organisation = json.organisation
-  if (json.dateDeDebut)
-    serviceCivique.dateDeDebut = DateTime.fromISO(json.dateDeDebut).toString()
+  if (json.dateDeDebut) serviceCivique.dateDeDebut = json.dateDeDebut
 
   return serviceCivique
 }

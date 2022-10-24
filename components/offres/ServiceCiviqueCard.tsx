@@ -31,7 +31,7 @@ export default function ServiceCiviqueCard({
         {withPartage && (
           <LienPartageOffre
             idOffre={offre.id}
-            href={`/offres/service_civique/${offre.id}/partage`}
+            href={`/offres/service-civique/${offre.id}/partage`}
             style={ButtonStyle.TERTIARY}
           />
         )}
@@ -68,22 +68,20 @@ export default function ServiceCiviqueCard({
             }
           />
         )}
-        <div>
-          <Link href={`/offres/service_civique/${offre.id}`}>
-            <a
-              aria-label={`Détail de l’offre ${offre.id}`}
-              className='flex items-center text-s-regular hover:text-primary'
-            >
-              Voir le détail
-              <IconComponent
-                name={IconName.ChevronRight}
-                className='w-4 h-4 mr-3 fill-primary'
-                focusable={false}
-                aria-hidden={true}
-              />
-            </a>
-          </Link>
-        </div>
+        <Link href={`/offres/service-civique/${offre.id}`}>
+          <a
+            aria-label={`Détail de l’offre ${offre.id}`}
+            className='flex items-center text-s-regular hover:text-primary'
+          >
+            Voir le détail
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-4 mr-3 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </a>
+        </Link>
       </div>
     </div>
   )

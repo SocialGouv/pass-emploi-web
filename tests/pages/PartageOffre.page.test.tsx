@@ -54,10 +54,7 @@ describe('Page Partage Offre', () => {
       beforeEach(() => {
         // Given
         offreEmploi = unDetailOffreEmploi()
-        serviceCivique = {
-          ...uneBaseServiceCivique(),
-          dateDeDebut: uneBaseServiceCivique().dateDeDebut!.toString(),
-        }
+        serviceCivique = uneBaseServiceCivique()
         jeunes = desItemsJeunes()
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
@@ -101,7 +98,6 @@ describe('Page Partage Offre', () => {
           props: {
             offre: offreEmploi,
             jeunes: expect.arrayContaining([]),
-            typeOffre: 'emploi',
             pageTitle: 'Partager une offre',
             returnTo: '/recherche-offres',
             withoutChat: true,
@@ -112,7 +108,7 @@ describe('Page Partage Offre', () => {
       it('charge la page avec les détails du service civique', async () => {
         // When
         const actual = await getServerSideProps({
-          query: { offre_type: 'service_civique', offre_id: 'offre-id' },
+          query: { offre_type: 'service-civique', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -123,7 +119,6 @@ describe('Page Partage Offre', () => {
           props: {
             offre: serviceCivique,
             jeunes: expect.arrayContaining([]),
-            typeOffre: 'service_civique',
             pageTitle: 'Partager une offre',
             returnTo: '/recherche-offres',
             withoutChat: true,
@@ -176,7 +171,6 @@ describe('Page Partage Offre', () => {
         <PartageOffre
           offre={offre}
           jeunes={jeunes}
-          typeOffre={offre.type.toLowerCase()}
           withoutChat={true}
           pageTitle=''
           returnTo='/return/to'

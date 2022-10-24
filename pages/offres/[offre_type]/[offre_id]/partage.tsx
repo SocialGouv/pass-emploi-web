@@ -15,6 +15,7 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import {
+  BaseOffre,
   BaseOffreEmploi,
   BaseServiceCivique,
   DetailOffreEmploi,
@@ -36,17 +37,11 @@ import withDependance from 'utils/injectionDependances/withDependance'
 type PartageOffresProps = PageProps & {
   offre: DetailOffreEmploi | DetailServiceCivique
   jeunes: BaseJeune[]
-  typeOffre: string
   withoutChat: true
   returnTo: string
 }
 
-function PartageOffre({
-  offre,
-  jeunes,
-  typeOffre,
-  returnTo,
-}: PartageOffresProps) {
+function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
@@ -77,7 +72,7 @@ function PartageOffre({
 
     setIsPartageEnCours(true)
 
-    let messageDefault = getDefaultMessage(offre.type)
+    const messageDefault = getDefaultMessage(offre.type)
 
     try {
       await messagesService.partagerOffre({
@@ -99,10 +94,10 @@ function PartageOffre({
 
   return (
     <>
-      {typeOffre.toUpperCase() === TypeOffre.EMPLOI && (
+      {offre.type === TypeOffre.EMPLOI && (
         <OffreEmploiCard offre={offre as BaseOffreEmploi} />
       )}
-      {typeOffre.toUpperCase() === TypeOffre.SERVICE_CIVIQUE && (
+      {offre.type === TypeOffre.SERVICE_CIVIQUE && (
         <ServiceCiviqueCard offre={offre as BaseServiceCivique} />
       )}
 
@@ -163,7 +158,6 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const { user, accessToken } = sessionOrRedirect.session
-  let offre
   const offresEmploiService = withDependance<OffresEmploiService>(
     'offresEmploiService'
   )
@@ -173,13 +167,14 @@ export const getServerSideProps: GetServerSideProps<
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const typeOffre = context.query.offre_type as string
 
-  if (typeOffre.toUpperCase() === TypeOffre.EMPLOI) {
+  let offre: DetailOffreEmploi | DetailServiceCivique | undefined
+  if (typeOffre === 'emploi') {
     offre = await offresEmploiService.getOffreEmploiServerSide(
       context.query.offre_id as string,
       accessToken
     )
   }
-  if (typeOffre.toUpperCase() === TypeOffre.SERVICE_CIVIQUE) {
+  if (typeOffre === 'service-civique') {
     offre = await serviceCiviqueService.getServiceCiviqueServerSide(
       context.query.offre_id as string,
       accessToken
@@ -195,7 +190,6 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       offre,
       jeunes,
-      typeOffre,
       pageTitle: 'Partager une offre',
       withoutChat: true,
       returnTo: '/recherche-offres',

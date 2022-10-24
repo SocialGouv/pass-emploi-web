@@ -85,7 +85,7 @@ describe('ServicesCiviqueApiService', () => {
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        dateDeDebut: '2022-11-01T01:00:00.000+01:00',
+        dateDeDebut: '2022-11-01T00:00:00.000Z',
         domaine: 'education',
         id: 'ID_SERVICE_CIVIQUE',
         organisation: "Ligue de l'enseignement fédération de Paris",
