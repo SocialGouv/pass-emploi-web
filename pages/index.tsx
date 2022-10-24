@@ -2,8 +2,6 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-
-import RenseignementAgencePoleEmploiModal from 'components/RenseignementAgencePoleEmploiModal'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -14,7 +12,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import RenseignementAgenceMissionLocaleModal from 'components/RenseignementAgenceMissionLocaleModal'
+import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 
 interface HomePageProps {
   redirectUrl: string
@@ -50,27 +48,14 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
   useMatomo(trackingLabel)
 
   return (
-    <>
-      {conseiller?.structure === StructureConseiller.PASS_EMPLOI && (
-        <RenseignementAgencePoleEmploiModal
-          //TODO-1127 remove struture
-          structureConseiller={
-            conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
-          }
-          referentielAgences={referentielAgences}
-          onAgenceChoisie={selectAgence}
-          onClose={redirectToUrl}
-        />
-      )}
-
-      {conseiller?.structure === StructureConseiller.MILO && (
-        <RenseignementAgenceMissionLocaleModal
-          referentielAgences={referentielAgences}
-          onAgenceChoisie={selectAgence}
-          onClose={redirectToUrl}
-        />
-      )}
-    </>
+    <RenseignementAgenceModal
+      structureConseiller={
+        conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
+      }
+      referentielAgences={referentielAgences}
+      onAgenceChoisie={selectAgence}
+      onClose={redirectToUrl}
+    />
   )
 }
 
