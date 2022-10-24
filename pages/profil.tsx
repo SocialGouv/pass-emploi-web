@@ -1,12 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { ChangeEvent, useMemo } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
@@ -23,10 +17,10 @@ import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { ReferentielService } from 'services/referentiel.service'
 import { Agence } from 'interfaces/referentiel'
-import Input from 'components/ui/Form/Input'
-import Select from 'components/ui/Form/Select'
-import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import {
+  FormContainer,
+  RenseignementAgenceMissionLocaleForm,
+} from 'components/RenseignementAgenceMissionLocaleForm'
 
 type ProfilProps = PageProps & {
   referentielAgences: Agence[]
@@ -57,6 +51,16 @@ function Profil({ referentielAgences }: ProfilProps) {
     setConseiller(conseillerMisAJour)
   }
 
+  //TODO-1127 garder ID en nullable?
+  async function selectAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller!, agence: agence.nom })
+    //TODO-1127 setTrackingLabel('Succès ajout agence')
+  }
+
   useMatomo('Profil')
 
   return (
@@ -65,50 +69,56 @@ function Profil({ referentielAgences }: ProfilProps) {
         <>
           <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Informations</h2>
-            <div className='pl-4'>
-              <h3 className='text-base-bold'>
-                {conseiller.firstName} {conseiller.lastName}
-              </h3>
-              <dl className='mt-3'>
-                {conseiller.email && (
-                  <>
-                    <dt className='mt-2 inline text-base-regular'>
-                      Votre e-mail :
-                    </dt>
-                    <dd className='ml-2 inline text-base-medium'>
-                      {conseiller.email}
-                    </dd>
-                  </>
-                )}
+            <h3 className='text-base-bold'>
+              {conseiller.firstName} {conseiller.lastName}
+            </h3>
+            <dl className='mt-3'>
+              {conseiller.email && (
+                <>
+                  <dt className='mt-2 inline text-base-regular'>
+                    Votre e-mail :
+                  </dt>
+                  <dd className='ml-2 inline text-base-medium'>
+                    {conseiller.email}
+                  </dd>
+                </>
+              )}
 
-                {conseiller.agence && (
-                  <>
-                    <dt className='mt-2 inline before:block before:content-[""] text-base-regular'>
-                      Votre {labelAgence} :
-                    </dt>
-                    <dd className='ml-2 inline text-base-medium'>
-                      {conseiller.agence}
-                    </dd>
-                  </>
-                )}
-              </dl>
-              {conseiller.agence &&
-                conseiller.structure === StructureConseiller.MILO && (
-                  <div className='mt-4'>
-                    Vous avez besoin de modifier votre Mission Locale de
-                    référence ? Pour ce faire merci de
-                    <a className={'text-primary_darken hover:text-primary'}>
-                      <ExternalLink
-                        key={'mailto:support@pass-emploi.beta.gouv.fr'}
-                        href={'mailto:support@pass-emploi.beta.gouv.fr'}
-                        label={'contacter le support'}
-                        // TODO-1127 matomo ?
-                        onClick={() => console.log('mail click')}
-                      />
-                    </a>
-                  </div>
-                )}
-            </div>
+              {conseiller.agence && (
+                <>
+                  <dt className='mt-2 inline before:block before:content-[""] text-base-regular'>
+                    Votre {labelAgence} :
+                  </dt>
+                  <dd className='ml-2 inline text-base-medium'>
+                    {conseiller.agence}
+                  </dd>
+                </>
+              )}
+            </dl>
+            {!conseiller.agence &&
+              conseiller.structure === StructureConseiller.MILO && (
+                <RenseignementAgenceMissionLocaleForm
+                  referentielAgences={referentielAgences}
+                  onAgenceChoisie={selectAgence}
+                  container={FormContainer.PAGE}
+                />
+              )}
+            {conseiller.agence &&
+              conseiller.structure === StructureConseiller.MILO && (
+                <div className='mt-4'>
+                  Vous avez besoin de modifier votre Mission Locale de référence
+                  ? Pour ce faire merci de
+                  <a className={'text-primary_darken hover:text-primary'}>
+                    <ExternalLink
+                      key={'mailto:support@pass-emploi.beta.gouv.fr'}
+                      href={'mailto:support@pass-emploi.beta.gouv.fr'}
+                      label={'contacter le support'}
+                      // TODO-1127 matomo ?
+                      onClick={() => console.log('mail click')}
+                    />
+                  </a>
+                </div>
+              )}
           </section>
           <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Notifications</h2>
