@@ -81,7 +81,9 @@ export function RenseignementAgenceMissionLocaleForm({
     e.preventDefault()
     if (agenceEstDansLaListe()) {
       console.log('AGENCE SELECTIONNEE ' + optionSelectionnee!.value)
-      const agence = referentielAgences.find((a) => a.id === optionSelectionnee!.id)
+      const agence = referentielAgences.find(
+        (a) => a.id === optionSelectionnee!.id
+      )
       onAgenceChoisie(agence!)
     } else if (agenceEstDansLaListe()) {
       console.log('AGENCE n’apparait pas ' + optionSelectionnee!.value)
@@ -101,28 +103,36 @@ export function RenseignementAgenceMissionLocaleForm({
   return (
     <form
       onSubmit={submitAgenceSelectionnee}
-      className={`${
-        container === FormContainer.MODAL
-          ? 'px-10 pt-6 '
-          : 'flex flex-wrap mt-4'
-      }`}
+      className={`${container === FormContainer.MODAL ? 'px-10 pt-6' : ''}`}
     >
-      <Label htmlFor='departement'>Departement de ma Mission Locale</Label>
-      <Input type='text' id='departement' onChange={selectDepartement} />
-
-      <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
-        Recherchez votre Mission Locale dans la liste suivante
-      </Label>
-      <Select
-        //TODO-1127 : reset select on departement changed
-        id='intitule-action-predefinie'
-        required={true}
-        onChange={selectOption}
+      <div
+        className={`${
+          container === FormContainer.PAGE
+            ? 'flex flex-wrap items-baseline mt-4 gap-4'
+            : ''
+        }`}
       >
-        {buildOptions().map(({ id, value }) => (
-          <option key={id}>{value}</option>
-        ))}
-      </Select>
+        <div className={`${container === FormContainer.PAGE ? 'w-[30%]' : ''}`}>
+          <Label htmlFor='departement'>Departement de ma Mission Locale</Label>
+          <Input type='text' id='departement' onChange={selectDepartement} />
+        </div>
+
+        <div className={`${container === FormContainer.PAGE ? 'w-[65%]' : ''}`}>
+          <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
+            Recherchez votre Mission Locale dans la liste suivante
+          </Label>
+          <Select
+            //TODO-1127 : reset select on departement changed
+            id='intitule-action-predefinie'
+            required={true}
+            onChange={selectOption}
+          >
+            {buildOptions().map(({ id, value }) => (
+              <option key={id}>{value}</option>
+            ))}
+          </Select>
+        </div>
+      </div>
 
       {agenceNestPasDansLaListe() && container === FormContainer.MODAL && (
         <div className='mt-2'>
@@ -131,11 +141,13 @@ export function RenseignementAgenceMissionLocaleForm({
       )}
 
       {agenceNestPasDansLaListe() && container === FormContainer.PAGE && (
-        <div className='mb-4'>{CONTACTER_LE_SUPPORT_LABEL}</div>
+        <div className='mb-4'>
+          <p>{CONTACTER_LE_SUPPORT_LABEL}</p>
+        </div>
       )}
       <div
-        className={`flex justify-center ${
-          container === FormContainer.MODAL ? 'mt-14' : ''
+        className={`${
+          container === FormContainer.MODAL ? 'flex justify-center mt-14' : ''
         }`}
       >
         {container === FormContainer.MODAL && (
