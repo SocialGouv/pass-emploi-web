@@ -103,7 +103,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
   if (
-    //TODO-1127 GAD Boolean(conseiller.agence) ||
+    Boolean(conseiller.agence) ||
     user.structure === StructureConseiller.PASS_EMPLOI
   ) {
     return {
