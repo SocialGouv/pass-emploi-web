@@ -149,6 +149,7 @@ export function mockedServicesCiviquesService(
   const defaults: ServicesCiviquesService = {
     getLienServiceCivique: jest.fn(),
     searchServicesCiviques: jest.fn(),
+    getServiceCiviqueServerSide: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
