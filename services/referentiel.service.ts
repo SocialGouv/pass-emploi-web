@@ -10,7 +10,9 @@ export interface ReferentielService {
   getCommunesEtDepartements(query: string): Promise<Localite[]>
 
   getCommunes(query: string): Promise<Commune[]>
+
   getActionsPredefinies(accessToken: string): Promise<ActionPredefinie[]>
+
   getMetiers(query: string): Promise<Metier[]>
 }
 
