@@ -10,7 +10,7 @@ import {
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
 import { Switch } from 'components/ui/Form/Switch'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
@@ -83,8 +83,8 @@ function Profil({ referentielAgences }: ProfilProps) {
                   <dt className='mt-2 inline text-base-regular'>
                     Votre e-mail :
                   </dt>
-                  <dd className='ml-2 inline text-base-medium'>
-                    {conseiller.email}
+                  <dd className='ml-2 inline'>
+                    <Email email={conseiller.email} />
                   </dd>
                 </>
               )}
@@ -94,7 +94,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                   <dt className='mt-2 inline before:block before:content-[""] text-base-regular'>
                     Votre {labelAgence} :
                   </dt>
-                  <dd className='ml-2 inline text-base-medium'>
+                  <dd className='ml-2 inline text-base-bold'>
                     {conseiller.agence}
                   </dd>
                 </>
@@ -191,6 +191,21 @@ function Profil({ referentielAgences }: ProfilProps) {
         </>
       )}
     </>
+  )
+}
+
+function Email(props: { email: string }) {
+  return (
+    <span className='text-primary'>
+      <IconComponent
+        name={IconName.Email}
+        aria-label='e-mail'
+        aria-hidden={false}
+        focusable={false}
+        className='inline w-[15px] h-[13px] mr-2'
+      />
+      {props.email}
+    </span>
   )
 }
 

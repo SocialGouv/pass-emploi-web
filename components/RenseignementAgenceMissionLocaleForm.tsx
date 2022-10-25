@@ -106,16 +106,18 @@ export function RenseignementAgenceMissionLocaleForm({
       <div
         className={`${
           container === FormContainer.PAGE
-            ? 'flex flex-wrap items-baseline mt-4 gap-4'
+            ? 'flex flex-wrap items-end mt-4 gap-4'
             : ''
         }`}
       >
-        <div className={`${container === FormContainer.PAGE ? 'w-[30%]' : ''}`}>
-          <Label htmlFor='departement'>Département de ma Mission locale</Label>
+        <div className={`${container === FormContainer.PAGE ? 'w-[40%]' : ''}`}>
+          <Label htmlFor='departement'>
+            Département de ma Mission locale (format : 00)
+          </Label>
           <Input type='text' id='departement' onChange={selectDepartement} />
         </div>
 
-        <div className={`${container === FormContainer.PAGE ? 'w-[65%]' : ''}`}>
+        <div className={`${container === FormContainer.PAGE ? 'w-[55%]' : ''}`}>
           <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
             Recherchez votre Mission locale dans la liste suivante
           </Label>
