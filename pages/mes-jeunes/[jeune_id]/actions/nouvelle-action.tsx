@@ -12,19 +12,22 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
+import { ActionPredefinie } from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
-import { actionsPredefinies } from 'referentiel/action'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
+import { ReferentielService } from 'services/referentiel.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 interface EditionActionProps extends PageProps {
   idJeune: string
+  actionsPredefinies: ActionPredefinie[]
 }
 
-function EditionAction({ idJeune }: EditionActionProps) {
+function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   const router = useRouter()
   const actionsService = useDependance<ActionsService>('actionsService')
 
@@ -109,8 +112,8 @@ function EditionAction({ idJeune }: EditionActionProps) {
               required={true}
               onChange={setIntitule}
             >
-              {actionsPredefinies.map(({ id, content }) => (
-                <option key={id}>{content}</option>
+              {actionsPredefinies.map(({ id, titre }) => (
+                <option key={id}>{titre}</option>
               ))}
             </Select>
 
@@ -226,10 +229,15 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const referentielService =
+    withDependance<ReferentielService>('referentielService')
+
   const idJeune = context.query.jeune_id as string
+  const actionsPredefinies = await referentielService.getActionsPredefinies()
   return {
     props: {
       idJeune,
+      actionsPredefinies,
       withoutChat: true,
       pageTitle: 'Actions jeune – Création action',
       pageHeader: 'Créer une nouvelle action',

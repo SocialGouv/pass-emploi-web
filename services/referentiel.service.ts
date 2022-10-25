@@ -1,12 +1,14 @@
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
+import { ActionPredefinie } from 'interfaces/action'
 import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
 
 export interface ReferentielService {
   getAgences(structure: string, accessToken: string): Promise<Agence[]>
   getCommunesEtDepartements(query: string): Promise<Localite[]>
   getCommunes(query: string): Promise<Commune[]>
+  getActionsPredefinies(): Promise<ActionPredefinie[]>
   getMetiers(query: string): Promise<Metier[]>
 }
 
@@ -52,5 +54,13 @@ export class ReferentielApiService implements ReferentielService {
     return Array.from(
       new Map(localites.map((localite) => [localite.code, localite])).values()
     )
+  }
+
+  async getActionsPredefinies(): Promise<ActionPredefinie[]> {
+    const session = await getSession()
+    const { content: actionsPredefinies } = await this.apiClient.get<
+      ActionPredefinie[]
+    >(`/referentiels/actions-predefinies`, session!.accessToken)
+    return actionsPredefinies
   }
 }
