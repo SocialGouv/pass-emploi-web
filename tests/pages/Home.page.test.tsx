@@ -305,17 +305,14 @@ describe('Home', () => {
         const departementInput = screen.getByRole('textbox', {
           name: /Département/,
         })
+        await userEvent.type(departementInput, '1')
         const missionLocaleInput = screen.getByRole('combobox', {
           name: /Recherchez votre Mission locale/,
         })
-        const submit = screen.getByRole('button', { name: 'Ajouter' })
+        await userEvent.selectOptions(missionLocaleInput, 'MLS3F SAINT-LOUIS')
 
         // When
-        await userEvent.type(departementInput, '1')
-        await userEvent.selectOptions(
-            missionLocaleInput,
-            'MLS3F SAINT-LOUIS'
-        )
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
         await userEvent.click(submit)
 
         // Then
@@ -324,7 +321,6 @@ describe('Home', () => {
           nom: 'MLS3F SAINT-LOUIS',
           codeDepartement: '1',
         })
-        expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
       })
 
       it("ne fait rien si l'agence n'est pas renseignée", async () => {
@@ -427,6 +423,7 @@ describe('Home', () => {
           getAgences: jest.fn(async () => uneListeDAgencesMILO()),
           getCommunesEtDepartements: jest.fn(),
           getCommunes: jest.fn(),
+          getMetiers: jest.fn(),
         }
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'conseillerService') return conseillerService

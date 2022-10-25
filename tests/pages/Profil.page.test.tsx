@@ -353,14 +353,14 @@ describe('Page Profil conseiller', () => {
           const departementInput = screen.getByRole('textbox', {
             name: /Département/,
           })
+          await userEvent.type(departementInput, '1')
           const missionLocaleInput = screen.getByRole('combobox', {
             name: /Recherchez votre Mission locale/,
           })
-          const submit = screen.getByRole('button', { name: 'Ajouter' })
+          await userEvent.selectOptions(missionLocaleInput, 'MLS3F SAINT-LOUIS')
 
           // When
-          await userEvent.type(departementInput, '1')
-          await userEvent.selectOptions(missionLocaleInput, 'MLS3F SAINT-LOUIS')
+          const submit = screen.getByRole('button', { name: 'Ajouter' })
           await userEvent.click(submit)
 
           // Then
