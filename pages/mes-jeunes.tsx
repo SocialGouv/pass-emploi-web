@@ -8,7 +8,6 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import Button from 'components/ui/Button/Button'
-import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { TotalActions } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -35,7 +34,6 @@ interface MesJeunesProps extends PageProps {
   recuperationSuccess?: boolean
   creationSuccess?: boolean
   deletionSuccess?: boolean
-  ajoutAgenceSuccess?: boolean
   messageEnvoiGroupeSuccess?: boolean
 }
 
@@ -45,7 +43,6 @@ function MesJeunes({
   recuperationSuccess,
   creationSuccess,
   deletionSuccess,
-  ajoutAgenceSuccess,
   messageEnvoiGroupeSuccess,
 }: MesJeunesProps) {
   const [chatCredentials] = useChatCredentials()
@@ -65,10 +62,6 @@ function MesJeunes({
     setIsRecuperationBeneficiairesLoading,
   ] = useState<boolean>(false)
 
-  const [showAjoutAgenceSuccess, setShowAjoutAgenceSuccess] = useState<boolean>(
-    ajoutAgenceSuccess ?? false
-  )
-
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
@@ -77,11 +70,6 @@ function MesJeunes({
   if (recuperationSuccess) initialTracking += ' - Succès récupération'
   if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-
-  async function closeAjoutAgenceSuccessMessage(): Promise<void> {
-    setShowAjoutAgenceSuccess(false)
-    await router.replace('/mes-jeunes', undefined, { shallow: true })
-  }
 
   async function recupererBeneficiaires(): Promise<void> {
     setIsRecuperationBeneficiairesLoading(true)
@@ -154,17 +142,6 @@ function MesJeunes({
 
   return (
     <>
-      {showAjoutAgenceSuccess && (
-        <SuccessAlert
-          label={`Votre ${
-            conseiller?.structure === StructureConseiller.MILO
-              ? 'Mission locale'
-              : 'agence'
-          } a été ajoutée à votre profil`}
-          onAcknowledge={() => closeAjoutAgenceSuccessMessage()}
-        />
-      )}
-
       {conseiller?.aDesBeneficiairesARecuperer && (
         <div className='bg-primary_lighten rounded-medium p-6 mb-6 text-center'>
           <p className='text-base-bold text-primary'>
@@ -294,11 +271,6 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   if (context.query[QueryParam.envoiMessage]) {
     props.messageEnvoiGroupeSuccess =
       context.query[QueryParam.envoiMessage] === QueryValue.succes
-  }
-
-  if (context.query[QueryParam.choixAgence]) {
-    props.ajoutAgenceSuccess =
-      context.query[QueryParam.choixAgence] === QueryValue.succes
   }
 
   return { props }
