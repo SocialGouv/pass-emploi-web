@@ -345,7 +345,9 @@ describe('Page Profil conseiller', () => {
           expect(
             screen.getByText(/vous devez contacter le support/)
           ).toBeInTheDocument()
-          // TODO-1127: tester le lien mailto
+          expect(
+            screen.getByRole('link', { name: 'Contacter le support' })
+          ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
         })
 
         it("modifie le conseiller avec l'agence choisie", async () => {

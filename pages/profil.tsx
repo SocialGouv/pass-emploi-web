@@ -199,8 +199,7 @@ function Email(props: { email: string }) {
     <span className='text-primary'>
       <IconComponent
         name={IconName.Email}
-        aria-label='e-mail'
-        aria-hidden={false}
+        aria-hidden={true}
         focusable={false}
         className='inline w-[15px] h-[13px] mr-2'
       />

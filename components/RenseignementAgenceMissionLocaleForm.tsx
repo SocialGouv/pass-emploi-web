@@ -2,9 +2,11 @@ import React, { FormEvent, useEffect, useState } from 'react'
 
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Agence } from 'interfaces/referentiel'
 
@@ -166,15 +168,20 @@ export function RenseignementAgenceMissionLocaleForm({
           </Button>
         )}
         {agenceNestPasDansLaListe() && (
-          <form action='mailto:support@pass-emploi.beta.gouv.fr'>
-            <Button
-              type='submit'
-              style={ButtonStyle.PRIMARY}
-              onClick={onContacterSupportClick}
-            >
-              Contacter le support
-            </Button>
-          </form>
+          <ButtonLink
+            className={'w-[fit-content]'}
+            href={'mailto:support@pass-emploi.beta.gouv.fr'}
+            style={ButtonStyle.TERTIARY}
+            onClick={onContacterSupportClick}
+          >
+            <IconComponent
+              name={IconName.Email}
+              aria-hidden={true}
+              focusable={false}
+              className='inline w-[15px] h-[13px] mr-2'
+            />
+            Contacter le support
+          </ButtonLink>
         )}
       </div>
     </form>

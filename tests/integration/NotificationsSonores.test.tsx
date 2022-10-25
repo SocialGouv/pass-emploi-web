@@ -119,7 +119,7 @@ function renderWithNotificationsSonores(
 ) {
   renderWithContexts(
     <Layout>
-      <Profil pageTitle={'Profil'} />
+      <Profil referentielAgences={[]} pageTitle={'Profil'} />
     </Layout>,
     {
       customDependances: { jeunesService, conseillerService, messagesService },

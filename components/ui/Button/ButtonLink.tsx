@@ -11,6 +11,7 @@ interface Props {
   children: ReactNode
   style?: ButtonStyle
   className?: any
+  onClick?: () => void
 }
 
 export default function ButtonLink({
@@ -18,6 +19,7 @@ export default function ButtonLink({
   href,
   className,
   style = ButtonStyle.PRIMARY,
+  onClick = () => {},
 }: Props) {
   return (
     <Link href={href}>
@@ -25,6 +27,7 @@ export default function ButtonLink({
         className={`${className ? className : ''} text-s-bold ${
           styles.button
         } ${getColorStyleClassName(style)}`}
+        onClick={onClick}
       >
         {children}
       </a>
