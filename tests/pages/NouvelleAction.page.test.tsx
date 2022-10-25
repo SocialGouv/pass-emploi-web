@@ -43,7 +43,7 @@ describe('NouvelleAction', () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
-          session: {},
+          session: { accessToken: 'accessToken' },
         })
 
         const actionsPredefinies: { titre: string; id: string }[] = [
@@ -63,6 +63,9 @@ describe('NouvelleAction', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
+        expect(referentielService.getActionsPredefinies).toHaveBeenCalledWith(
+          'accessToken'
+        )
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
@@ -172,7 +175,10 @@ describe('NouvelleAction', () => {
           const dateEcheance = screen.getByLabelText(/date d’échéance/)
           submit = screen.getByRole('button', { name: 'Envoyer' })
 
-          await userEvent.selectOptions(selectAction, actionsPredefinies[1].titre)
+          await userEvent.selectOptions(
+            selectAction,
+            actionsPredefinies[1].titre
+          )
           await userEvent.type(description, 'Commentaire action')
           await userEvent.type(dateEcheance, '2022-07-30')
         })

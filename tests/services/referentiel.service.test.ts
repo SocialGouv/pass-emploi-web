@@ -139,7 +139,9 @@ describe('ReferentielApiService', () => {
       })
 
       // When
-      const actual = await referentielService.getActionsPredefinies()
+      const actual = await referentielService.getActionsPredefinies(
+        'accessToken'
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(

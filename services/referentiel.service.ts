@@ -8,7 +8,7 @@ export interface ReferentielService {
   getAgences(structure: string, accessToken: string): Promise<Agence[]>
   getCommunesEtDepartements(query: string): Promise<Localite[]>
   getCommunes(query: string): Promise<Commune[]>
-  getActionsPredefinies(): Promise<ActionPredefinie[]>
+  getActionsPredefinies(accessToken: string): Promise<ActionPredefinie[]>
   getMetiers(query: string): Promise<Metier[]>
 }
 
@@ -56,11 +56,12 @@ export class ReferentielApiService implements ReferentielService {
     )
   }
 
-  async getActionsPredefinies(): Promise<ActionPredefinie[]> {
-    const session = await getSession()
+  async getActionsPredefinies(
+    accessToken: string
+  ): Promise<ActionPredefinie[]> {
     const { content: actionsPredefinies } = await this.apiClient.get<
       ActionPredefinie[]
-    >(`/referentiels/actions-predefinies`, session!.accessToken)
+    >(`/referentiels/actions-predefinies`, accessToken)
     return actionsPredefinies
   }
 }

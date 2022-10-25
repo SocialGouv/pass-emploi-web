@@ -233,7 +233,9 @@ export const getServerSideProps: GetServerSideProps<
     withDependance<ReferentielService>('referentielService')
 
   const idJeune = context.query.jeune_id as string
-  const actionsPredefinies = await referentielService.getActionsPredefinies()
+  const actionsPredefinies = await referentielService.getActionsPredefinies(
+    sessionOrRedirect.session.accessToken
+  )
   return {
     props: {
       idJeune,
