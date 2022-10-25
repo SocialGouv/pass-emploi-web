@@ -164,9 +164,12 @@ export function RenseignementAgenceMissionLocaleForm({
           </Button>
         )}
         {agenceNestPasDansLaListe() && (
-          <Button type='button' style={ButtonStyle.PRIMARY}>
-            Contacter le support
-          </Button>
+          //TODO-1127 : tracking
+          <form action='mailto:support@pass-emploi.beta.gouv.fr'>
+            <Button type='submit' style={ButtonStyle.PRIMARY}>
+              Contacter le support
+            </Button>
+          </form>
         )}
       </div>
     </form>
