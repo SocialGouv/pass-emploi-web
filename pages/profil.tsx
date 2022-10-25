@@ -114,16 +114,17 @@ function Profil({ referentielAgences }: ProfilProps) {
 
                   <div className={'flex'}>
                     <p>Pour ce faire merci de</p>
-                    <a className={'ml-1 text-primary_darken hover:text-primary'}>
+                    <div
+                      className={'ml-1 text-primary_darken hover:text-primary'}
+                    >
                       <ExternalLink
-                          key={'mailto:support@pass-emploi.beta.gouv.fr'}
-                          href={'mailto:support@pass-emploi.beta.gouv.fr'}
-                          label={'contacter le support'}
-                          iconName={IconName.Email}
-                          // TODO-1127 matomo ?
-                          onClick={() => console.log('mail click')}
+                        href={'mailto:support@pass-emploi.beta.gouv.fr'}
+                        label={'contacter le support'}
+                        iconName={IconName.Email}
+                        // TODO-1127 matomo ?
+                        onClick={() => console.log('mail click')}
                       />
-                    </a>
+                    </div>
                   </div>
                 </div>
               )}
@@ -201,28 +202,27 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     session: { user, accessToken },
   } = sessionOrRedirect
 
-  // TODO-1127 Keep useConseiller?
-  const conseillerService =
-    withDependance<ConseillerService>('conseillerService')
-  const conseiller = await conseillerService.getConseillerServerSide(
-    user,
-    accessToken
-  )
-  if (!conseiller) {
-    throw new Error(`Conseiller ${user.id} inexistant`)
-  }
+  let referentielAgences: Agence[] = []
 
-  let referentielAgences: Agence[]
-
-  if (!conseiller.agence && conseiller.structure === StructureConseiller.MILO) {
-    const agenceService =
-      withDependance<ReferentielService>('referentielService')
-    referentielAgences = await agenceService.getAgences(
-      user.structure,
+  if (user.structure === StructureConseiller.MILO) {
+    const conseillerService =
+      withDependance<ConseillerService>('conseillerService')
+    const conseiller = await conseillerService.getConseillerServerSide(
+      user,
       accessToken
     )
-  } else {
-    referentielAgences = []
+    if (!conseiller) {
+      throw new Error(`Conseiller ${user.id} inexistant`)
+    }
+
+    if (!conseiller.agence) {
+      const agenceService =
+        withDependance<ReferentielService>('referentielService')
+      referentielAgences = await agenceService.getAgences(
+        user.structure,
+        accessToken
+      )
+    }
   }
 
   return {

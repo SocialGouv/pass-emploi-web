@@ -327,8 +327,7 @@ describe('Home', () => {
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
       })
 
-      // TODO-1197 fix test
-      it("prévient si l'agence n'est pas renseignée", async () => {
+      it("ne fait rien si l'agence n'est pas renseignée", async () => {
         // Given
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
@@ -336,9 +335,6 @@ describe('Home', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(
-          screen.getByText('Sélectionnez un élément dans la liste.')
-        ).toBeInTheDocument()
         expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
         expect(replace).not.toHaveBeenCalled()
       })
