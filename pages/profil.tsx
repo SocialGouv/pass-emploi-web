@@ -113,7 +113,7 @@ function Profil({ referentielAgences }: ProfilProps) {
               conseiller.structure === StructureConseiller.MILO && (
                 <div className='mt-4'>
                   <p>
-                    Vous avez besoin de modifier votre Mission Locale de
+                    Vous avez besoin de modifier votre Mission locale de
                     référence ?
                   </p>
 

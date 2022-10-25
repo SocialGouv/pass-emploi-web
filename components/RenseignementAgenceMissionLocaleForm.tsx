@@ -30,7 +30,7 @@ const AGENCE_PAS_DANS_LA_LISTE_OPTION = {
   value: 'Ma mission locale n’apparaît pas dans la liste',
 }
 
-const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre agence Mission Locale est absente de la liste. 
+const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre agence Mission locale est absente de la liste. 
   Pour faire une demande d’ajout de votre mission locale, vous devez contacter le support.`
 
 export function RenseignementAgenceMissionLocaleForm({
