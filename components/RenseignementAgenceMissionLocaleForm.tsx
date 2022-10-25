@@ -120,9 +120,9 @@ export function RenseignementAgenceMissionLocaleForm({
             Recherchez votre Mission locale dans la liste suivante
           </Label>
           <Select
-            //TODO-1127 : reset select on departement changed
             id='intitule-action-predefinie'
             required={true}
+            selectKey={departement}
             onChange={selectOption}
           >
             {buildOptions().map(({ id, value }) => (

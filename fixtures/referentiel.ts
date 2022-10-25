@@ -5,22 +5,22 @@ export function uneListeDAgencesMILO() {
     {
       id: '443',
       nom: 'MLS3F SAINT-LOUIS',
-      codeDepartement: '1'
+      codeDepartement: '1',
     },
     {
       id: '444',
       nom: 'PEIPS MISSION LOCALE DU SENONAIS',
-      codeDepartement: '2'
+      codeDepartement: '2',
     },
     {
       id: '445',
       nom: 'REUSSIR EN SAMBRE AVESNOIS',
-      codeDepartement: '3'
+      codeDepartement: '3',
     },
     {
       id: '446',
       nom: 'ROMORANTIN',
-      codeDepartement: '4'
+      codeDepartement: '4',
     },
   ]
 }
@@ -30,22 +30,22 @@ export function uneListeDAgencesPoleEmploi() {
     {
       id: '457',
       nom: 'Agence Pôle emploi CLERMONT PRE LA REINE',
-      codeDepartement: '1'
+      codeDepartement: '1',
     },
     {
       id: '458',
       nom: 'Agence Pôle emploi CLERMONT JOUHAUX',
-      codeDepartement: '2'
+      codeDepartement: '2',
     },
     {
       id: '459',
       nom: 'Agence Pôle emploi THIERS',
-      codeDepartement: '3'
+      codeDepartement: '3',
     },
     {
       id: '460',
       nom: 'Agence Pôle emploi ISSOIRE',
-      codeDepartement: '4'
+      codeDepartement: '4',
     },
   ]
 }

@@ -4,6 +4,7 @@ import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { unConseiller } from 'fixtures/conseiller'
+import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
   mockedConseillerService,
   mockedReferentielService,
@@ -11,13 +12,12 @@ import {
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import Profil, { getServerSideProps } from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
+import { ReferentielService } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { ReferentielService } from 'services/referentiel.service'
-import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
