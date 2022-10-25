@@ -40,7 +40,7 @@ export function RenseignementAgenceMissionLocaleForm({
   referentielAgences,
   onAgenceChoisie,
   onContacterSupportClick,
-  onClose,
+  onClose = () => {},
   container,
 }: RenseignementAgenceMissionLocaleFormProps) {
   const [departement, setDepartement] = useState<string>('')
