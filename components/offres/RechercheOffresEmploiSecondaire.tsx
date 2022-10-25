@@ -11,12 +11,14 @@ import {
 import { FormValues } from 'types/form'
 
 type RechercheOffresEmploiSecondaireProps = {
+  alternanceOnly: boolean
   onCriteresChange: (nbCriteres: number) => void
   query: FormValues<SearchOffresEmploiQuery>
   onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
 }
 
 export default function RechercheOffresEmploiSecondaire({
+  alternanceOnly,
   onCriteresChange,
   query,
   onQueryUpdate,
@@ -65,33 +67,35 @@ export default function RechercheOffresEmploiSecondaire({
       <legend className='sr-only'>Étape 3 Plus de critères</legend>
 
       <div className='flex mb-10'>
-        <fieldset className='grow flex flex-col gap-y-8'>
-          <legend className='contents text-base-bold'>Type de contrat</legend>
+        {!alternanceOnly && (
+          <fieldset className='grow flex flex-col gap-y-8'>
+            <legend className='contents text-base-bold'>Type de contrat</legend>
 
-          <Checkbox
-            id='contrat--cdi'
-            label='CDI'
-            value='CDI'
-            checked={Boolean(query.typesContrats?.includes('CDI'))}
-            onChange={(value) => updateTypeContrat(value as TypeContrat)}
-          />
-          <Checkbox
-            id='contrat--cdd'
-            label='CDD - intérim - saisonnier'
-            value='CDD-interim-saisonnier'
-            checked={Boolean(
-              query.typesContrats?.includes('CDD-interim-saisonnier')
-            )}
-            onChange={(value) => updateTypeContrat(value as TypeContrat)}
-          />
-          <Checkbox
-            id='contrat--autres'
-            label='Autres'
-            value='autre'
-            checked={Boolean(query.typesContrats?.includes('autre'))}
-            onChange={(value) => updateTypeContrat(value as TypeContrat)}
-          />
-        </fieldset>
+            <Checkbox
+              id='contrat--cdi'
+              label='CDI'
+              value='CDI'
+              checked={Boolean(query.typesContrats?.includes('CDI'))}
+              onChange={(value) => updateTypeContrat(value as TypeContrat)}
+            />
+            <Checkbox
+              id='contrat--cdd'
+              label='CDD - intérim - saisonnier'
+              value='CDD-interim-saisonnier'
+              checked={Boolean(
+                query.typesContrats?.includes('CDD-interim-saisonnier')
+              )}
+              onChange={(value) => updateTypeContrat(value as TypeContrat)}
+            />
+            <Checkbox
+              id='contrat--autres'
+              label='Autres'
+              value='autre'
+              checked={Boolean(query.typesContrats?.includes('autre'))}
+              onChange={(value) => updateTypeContrat(value as TypeContrat)}
+            />
+          </fieldset>
+        )}
 
         <fieldset className='grow flex flex-col gap-y-8'>
           <legend className='contents text-base-bold'>Temps de travail</legend>

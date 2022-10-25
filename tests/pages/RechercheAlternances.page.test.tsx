@@ -152,7 +152,7 @@ describe('Page Recherche Alternances', () => {
       expect(screen.getByText('Voir moins de critères')).toBeInTheDocument()
     })
 
-    it('permet de selectionner un ou plusieurs types de contrat', async () => {
+    it('ne permet pas de selectionner de type de contrat', async () => {
       // When
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
@@ -160,21 +160,11 @@ describe('Page Recherche Alternances', () => {
       const etape3 = screen.getByRole('group', {
         name: 'Étape 3 Plus de critères',
       })
-      const typeContratGroup = within(etape3).getByRole('group', {
-        name: 'Type de contrat',
-      })
-      expect(typeContratGroup).toBeInTheDocument()
-      expect(
-        within(typeContratGroup).getByRole('checkbox', { name: 'CDI' })
-      ).toBeInTheDocument()
-      expect(
-        within(typeContratGroup).getByRole('checkbox', {
-          name: 'CDD - intérim - saisonnier',
+      expect(() =>
+        within(etape3).getByRole('group', {
+          name: 'Type de contrat',
         })
-      ).toBeInTheDocument()
-      expect(
-        within(typeContratGroup).getByRole('checkbox', { name: 'Autres' })
-      ).toBeInTheDocument()
+      ).toThrow()
     })
 
     it('permet de selectionner un ou plusieurs temps de travail', async () => {
@@ -254,19 +244,15 @@ describe('Page Recherche Alternances', () => {
       )
       expect(screen.getByText('[1] critère sélectionné')).toBeInTheDocument()
 
-      await userEvent.click(screen.getByLabelText('CDI'))
-      await userEvent.click(screen.getByLabelText(/CDD/))
-      expect(screen.getByText('[2] critères sélectionnés')).toBeInTheDocument()
-
       await userEvent.click(screen.getByLabelText('Temps plein'))
-      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[2] critères sélectionnés')).toBeInTheDocument()
 
       await saisirLocalite('paris 14')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
       expect(getByTextContent('Dans un rayon de : 43km')).toBeInTheDocument()
-      expect(screen.getByText('[4] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
 
       // When
       await userEvent.click(screen.getByText('Voir moins de critères'))
@@ -274,8 +260,6 @@ describe('Page Recherche Alternances', () => {
 
       // Then
       expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
-      expect(screen.getByLabelText(/CDI/)).toBeChecked()
-      expect(screen.getByLabelText(/CDD/)).toBeChecked()
       expect(screen.getByLabelText(/Temps plein/)).toBeChecked()
       expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
     })
@@ -349,11 +333,6 @@ describe('Page Recherche Alternances', () => {
         screen.getByLabelText(/Afficher uniquement les offres débutant accepté/)
       )
 
-      await userEvent.click(screen.getByLabelText('CDI'))
-      await userEvent.click(screen.getByLabelText(/CDD/))
-      await userEvent.click(screen.getByLabelText('Autres'))
-      await userEvent.click(screen.getByLabelText('Autres'))
-
       await userEvent.click(screen.getByLabelText('Temps plein'))
       await userEvent.click(screen.getByLabelText('Temps partiel'))
       await userEvent.click(screen.getByLabelText('Temps partiel'))
@@ -370,7 +349,6 @@ describe('Page Recherche Alternances', () => {
         {
           commune: '75114',
           debutantAccepte: true,
-          typesContrats: ['CDI', 'CDD-interim-saisonnier'],
           durees: ['Temps plein'],
           rayon: 43,
         },
@@ -387,7 +365,6 @@ describe('Page Recherche Alternances', () => {
         screen.getByLabelText(/Afficher uniquement les offres débutant accepté/)
       )
 
-      await userEvent.click(screen.getByLabelText('CDI'))
       await userEvent.click(screen.getByLabelText('Temps plein'))
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
