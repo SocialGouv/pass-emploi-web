@@ -10,6 +10,7 @@ import { RequiredValue } from 'components/RequiredValue'
 interface RenseignementAgenceMissionLocaleFormProps {
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
+  onContacterSupportClick: () => void
   onClose?: () => void
   container: FormContainer
 }
@@ -35,6 +36,7 @@ const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre agence Mission 
 export function RenseignementAgenceMissionLocaleForm({
   referentielAgences,
   onAgenceChoisie,
+  onContacterSupportClick,
   onClose,
   container,
 }: RenseignementAgenceMissionLocaleFormProps) {
@@ -78,13 +80,10 @@ export function RenseignementAgenceMissionLocaleForm({
   function submitMissionLocaleSelectionnee(e: FormEvent) {
     e.preventDefault()
     if (agenceEstDansLaListe()) {
-      console.log('AGENCE SELECTIONNEE ' + idAgenceSelectionnee.value)
       const agence = referentielAgences.find(
         (a) => a.id === idAgenceSelectionnee.value
       )
       onAgenceChoisie(agence!)
-    } else if (agenceEstDansLaListe()) {
-      console.log('AGENCE n’apparait pas ' + idAgenceSelectionnee.value)
     }
   }
 
@@ -164,9 +163,12 @@ export function RenseignementAgenceMissionLocaleForm({
           </Button>
         )}
         {agenceNestPasDansLaListe() && (
-          //TODO-1127 : tracking
           <form action='mailto:support@pass-emploi.beta.gouv.fr'>
-            <Button type='submit' style={ButtonStyle.PRIMARY}>
+            <Button
+              type='submit'
+              style={ButtonStyle.PRIMARY}
+              onClick={onContacterSupportClick}
+            >
               Contacter le support
             </Button>
           </form>

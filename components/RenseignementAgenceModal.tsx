@@ -14,6 +14,7 @@ interface RenseignementAgenceModalProps {
   structureConseiller: string
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
+  onContacterSupportClick: () => void
   onClose: () => void
 }
 
@@ -21,6 +22,7 @@ export default function RenseignementAgenceModal({
   structureConseiller,
   referentielAgences,
   onAgenceChoisie,
+  onContacterSupportClick,
   onClose,
 }: RenseignementAgenceModalProps) {
   const labelAgence =
@@ -49,6 +51,7 @@ export default function RenseignementAgenceModal({
         <RenseignementAgenceMissionLocaleForm
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
+          onContacterSupportClick={onContacterSupportClick}
           onClose={onClose}
           container={FormContainer.MODAL}
         />

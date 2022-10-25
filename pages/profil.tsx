@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { ChangeEvent, useMemo } from 'react'
+import React, { ChangeEvent, useMemo, useState } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
@@ -32,6 +32,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     useDependance<ConseillerService>('conseillerService')
 
   const [conseiller, setConseiller] = useConseiller()
+  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   const labelAgence = useMemo(() => {
     if (!conseiller) return ''
@@ -52,17 +53,20 @@ function Profil({ referentielAgences }: ProfilProps) {
     setConseiller(conseillerMisAJour)
   }
 
-  //TODO-1127 garder ID en nullable?
   async function selectAgence(agence: {
     id?: string
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller!, agence: agence.nom })
-    //TODO-1127 setTrackingLabel('Succès ajout agence')
+    setTrackingLabel('Profil - Succès ajout agence')
   }
 
-  useMatomo('Profil')
+  function trackContacterSupportClick() {
+    setTrackingLabel('Profil - Contacter le support')
+  }
+
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -101,6 +105,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                 <RenseignementAgenceMissionLocaleForm
                   referentielAgences={referentielAgences}
                   onAgenceChoisie={selectAgence}
+                  onContacterSupportClick={trackContacterSupportClick}
                   container={FormContainer.PAGE}
                 />
               )}
@@ -121,8 +126,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                         href={'mailto:support@pass-emploi.beta.gouv.fr'}
                         label={'contacter le support'}
                         iconName={IconName.Email}
-                        // TODO-1127 matomo ?
-                        onClick={() => console.log('mail click')}
+                        onClick={trackContacterSupportClick}
                       />
                     </div>
                   </div>

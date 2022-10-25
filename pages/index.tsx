@@ -45,6 +45,10 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     await router.replace(redirectUrl)
   }
 
+  function trackContacterSupportClick() {
+    setTrackingLabel('Pop-in sélection agence - Contacter le support')
+  }
+
   useMatomo(trackingLabel)
 
   return (
@@ -54,6 +58,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
       }
       referentielAgences={referentielAgences}
       onAgenceChoisie={selectAgence}
+      onContacterSupportClick={trackContacterSupportClick}
       onClose={redirectToUrl}
     />
   )
