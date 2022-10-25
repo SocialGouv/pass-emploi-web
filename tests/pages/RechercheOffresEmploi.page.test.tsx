@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import { listeBaseOffresEmploi, uneBaseOffreEmploi } from 'fixtures/offre'
-import { desLocalites } from 'fixtures/referentiel'
+import { desLocalites, unDepartement, uneCommune } from 'fixtures/referentiel'
 import {
   mockedOffresEmploiService,
   mockedReferentielService,
@@ -311,7 +311,7 @@ describe('Page Recherche Offres Emploi', () => {
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
         {
           motsCles: 'prof industrie',
-          departement: '75',
+          departement: unDepartement(),
         },
         1
       )
@@ -333,7 +333,7 @@ describe('Page Recherche Offres Emploi', () => {
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
         {
           motsCles: 'prof industrie',
-          commune: '75114',
+          commune: uneCommune(),
           rayon: 10,
         },
         1
@@ -368,7 +368,7 @@ describe('Page Recherche Offres Emploi', () => {
       // Then
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith(
         {
-          commune: '75114',
+          commune: uneCommune(),
           debutantAccepte: true,
           typesContrats: ['CDI', 'CDD-interim-saisonnier'],
           durees: ['Temps plein'],

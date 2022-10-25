@@ -1,3 +1,11 @@
+import React, {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react'
+
 import RadioButton from 'components/action/RadioButton'
 import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
 import RechercheImmersionsSecondaire from 'components/offres/RechercheImmersionsSecondaire'
@@ -10,7 +18,6 @@ import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TypeOffre } from 'interfaces/offre'
 import { Commune, Localite, Metier } from 'interfaces/referentiel'
-import React, { Dispatch, FormEvent, SetStateAction, useEffect, useState } from 'react'
 import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'

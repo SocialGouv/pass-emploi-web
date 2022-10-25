@@ -41,14 +41,14 @@ export default function RechercheOffresEmploiPrincipale({
       onQueryUpdate({
         ...autresCriteres,
         hasError,
-        commune: selected.code,
+        commune: selected,
         rayon: rayon ?? RAYON_DEFAULT,
       })
     if (selected?.type === 'DEPARTEMENT')
       onQueryUpdate({
         ...autresCriteres,
         hasError,
-        departement: selected.code,
+        departement: selected,
       })
   }
 
@@ -74,7 +74,7 @@ export default function RechercheOffresEmploiPrincipale({
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateLocalite}
         errorMessage='Veuillez saisir une localisation correcte.'
-        value={query.commune ?? query.departement}
+        value={query.commune?.libelle ?? query.departement?.libelle}
       />
     </Etape>
   )

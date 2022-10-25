@@ -12,15 +12,16 @@ import {
   DetailOffreEmploi,
   MetadonneesOffres,
 } from 'interfaces/offre'
+import { Commune, Localite } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
 export type Duree = 'Temps plein' | 'Temps partiel'
 export type SearchOffresEmploiQuery = {
   motsCles?: string
-  commune?: string
+  commune?: Commune
   debutantAccepte?: boolean
-  departement?: string
+  departement?: Localite
   durees?: Array<Duree>
   rayon?: number
   typesContrats?: Array<TypeContrat>
@@ -148,8 +149,8 @@ function buildSearchParams(
     motsCles,
   } = recherche
   const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
-  if (departement) searchParams.set('departement', departement)
-  if (commune) searchParams.set('commune', commune)
+  if (departement) searchParams.set('departement', departement.code)
+  if (commune) searchParams.set('commune', commune.code)
   if (rayon) searchParams.set('rayon', rayon.toString(10))
   if (debutantAccepte) searchParams.set('debutantAccepte', 'true')
   typesContrats?.forEach((typeContrat) =>

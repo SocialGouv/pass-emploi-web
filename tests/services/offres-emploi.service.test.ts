@@ -7,6 +7,7 @@ import {
   unDetailOffreEmploi,
   unDetailOffreJson,
 } from 'fixtures/offre'
+import { unDepartement, uneCommune } from 'fixtures/referentiel'
 import { TypeOffre } from 'interfaces/offre'
 import {
   OffresEmploiApiService,
@@ -171,7 +172,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse le département', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({ departement: '75' }, 3)
+      await offresEmploiService.searchOffresEmploi(
+        { departement: unDepartement({ code: '75' }) },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -182,7 +186,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse la commune', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({ commune: '35238' }, 3)
+      await offresEmploiService.searchOffresEmploi(
+        { commune: uneCommune({ code: '35238' }) },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -284,7 +291,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse le département', async () => {
       // When
-      await offresEmploiService.searchAlternances({ departement: '75' }, 3)
+      await offresEmploiService.searchAlternances(
+        { departement: unDepartement({ code: '75' }) },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -295,7 +305,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse la commune', async () => {
       // When
-      await offresEmploiService.searchAlternances({ commune: '35238' }, 3)
+      await offresEmploiService.searchAlternances(
+        { commune: uneCommune({ code: '35238' }) },
+        3
+      )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(

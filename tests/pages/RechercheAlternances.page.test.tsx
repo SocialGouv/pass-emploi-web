@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import { listeBaseAlternances, uneBaseAlternance } from 'fixtures/offre'
-import { desLocalites } from 'fixtures/referentiel'
+import { desLocalites, unDepartement, uneCommune } from 'fixtures/referentiel'
 import {
   mockedOffresEmploiService,
   mockedReferentielService,
@@ -295,7 +295,7 @@ describe('Page Recherche Alternances', () => {
       expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
         {
           motsCles: 'prof industrie',
-          departement: '75',
+          departement: unDepartement(),
         },
         1
       )
@@ -317,7 +317,7 @@ describe('Page Recherche Alternances', () => {
       expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
         {
           motsCles: 'prof industrie',
-          commune: '75114',
+          commune: uneCommune(),
           rayon: 10,
         },
         1
@@ -347,7 +347,7 @@ describe('Page Recherche Alternances', () => {
       // Then
       expect(offresEmploiService.searchAlternances).toHaveBeenCalledWith(
         {
-          commune: '75114',
+          commune: uneCommune(),
           debutantAccepte: true,
           durees: ['Temps plein'],
           rayon: 43,
