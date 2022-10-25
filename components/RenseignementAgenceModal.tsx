@@ -1,14 +1,14 @@
 import React from 'react'
 
 import Modal from 'components/Modal'
-import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Agence } from 'interfaces/referentiel'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
-import { StructureConseiller } from 'interfaces/conseiller'
 import RenseignementAgencePoleEmploiForm from 'components/RenseignementAgencePoleEmploiForm'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { Agence } from 'interfaces/referentiel'
 
 interface RenseignementAgenceModalProps {
   structureConseiller: string

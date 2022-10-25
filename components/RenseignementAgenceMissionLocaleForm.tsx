@@ -1,11 +1,12 @@
 import React, { FormEvent, useEffect, useState } from 'react'
-import { Agence } from 'interfaces/referentiel'
-import Label from 'components/ui/Form/Label'
+
+import { RequiredValue } from 'components/RequiredValue'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
+import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { RequiredValue } from 'components/RequiredValue'
+import { Agence } from 'interfaces/referentiel'
 
 interface RenseignementAgenceMissionLocaleFormProps {
   referentielAgences: Agence[]
@@ -95,7 +96,7 @@ export function RenseignementAgenceMissionLocaleForm({
           )
         : referentielAgences
     setAgencesMiloFiltrees(agencesFiltrees)
-  }, [departement])
+  }, [departement, referentielAgences])
 
   return (
     <form

@@ -5,23 +5,23 @@ import React, { ChangeEvent, useMemo, useState } from 'react'
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
-import { Switch } from 'components/ui/Form/Switch'
-import { StructureConseiller } from 'interfaces/conseiller'
-import { PageProps } from 'interfaces/pageProps'
-import { ConseillerService } from 'services/conseiller.service'
-import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
-import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import withDependance from 'utils/injectionDependances/withDependance'
-import { ReferentielService } from 'services/referentiel.service'
-import { Agence } from 'interfaces/referentiel'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
+import { Switch } from 'components/ui/Form/Switch'
 import { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { PageProps } from 'interfaces/pageProps'
+import { Agence } from 'interfaces/referentiel'
+import { ConseillerService } from 'services/conseiller.service'
+import { ReferentielService } from 'services/referentiel.service'
+import useMatomo from 'utils/analytics/useMatomo'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 type ProfilProps = PageProps & {
   referentielAgences: Agence[]

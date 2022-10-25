@@ -2,6 +2,8 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+
+import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -12,7 +14,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 
 interface HomePageProps {
   redirectUrl: string
