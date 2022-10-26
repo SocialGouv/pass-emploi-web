@@ -415,15 +415,15 @@ describe('Page Recherche Immersions', () => {
       })
     })
 
-    //   it('permet de partager chaque offre', () => {
-    //     immersions.forEach((offre) => {
-    //       expect(
-    //         within(offresList).getByRole('link', {
-    //           name: `Partager offre numéro ${offre.id}`,
-    //         })
-    //       ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
-    //     })
-    //   })
+    it('permet de partager chaque offre', () => {
+      immersions.forEach((offre) => {
+        expect(
+          within(offresList).getByRole('link', {
+            name: `Partager offre ${offre.titre}`,
+          })
+        ).toHaveAttribute('href', `/offres/immersion/${offre.id}/partage`)
+      })
+    })
 
     it('cache le formulaire', async () => {
       // Given

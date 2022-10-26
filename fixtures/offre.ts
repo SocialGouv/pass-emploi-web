@@ -1,4 +1,7 @@
-import { ImmersionItemJson } from 'interfaces/json/immersion'
+import {
+  DetailImmersionJson,
+  ImmersionItemJson,
+} from 'interfaces/json/immersion'
 import {
   DataDetailOffreEmploiJson,
   DetailOffreEmploiJson,
@@ -9,6 +12,7 @@ import {
   BaseImmersion,
   BaseOffreEmploi,
   BaseServiceCivique,
+  DetailImmersion,
   DetailOffreEmploi,
   DetailServiceCivique,
   TypeOffre,
@@ -301,7 +305,7 @@ export const unDetailServiceCivique = (): DetailServiceCivique => ({
   titre: 'unTitre',
   domaine: 'Informatique',
   ville: 'paris',
-  organisation: 'orga de ouf',
+  organisation: 'Mon organisation',
   dateDeDebut: '2022-02-17T10:00:00.000Z',
   dateDeFin: '2022-07-17T10:00:00.000Z',
   lienAnnonce: 'lienoffre.com',
@@ -383,6 +387,50 @@ export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
       dateDeDebut: '2022-10-03T00:00:00.000Z',
     },
   ]
+}
+
+export function unDetailImmersion(
+  overrides: Partial<DetailImmersion> = {}
+): DetailImmersion {
+  const defaults: DetailImmersion = {
+    type: TypeOffre.IMMERSION,
+    id: '89081896600016-M1805',
+    titre: 'Études et développement informatique - MADO XR',
+    nomEtablissement: 'MADO XR',
+    secteurActivite:
+      'Production de films cinématographiques, de vidéo et de programmes de télévision',
+    ville: 'Paris',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function unDetailImmersionJson(
+  overrides: Partial<DetailImmersionJson> = {}
+): DetailImmersionJson {
+  const defaults: DetailImmersionJson = {
+    id: '89081896600016-M1805',
+    metier: 'Études et développement informatique',
+    nomEtablissement: 'MADO XR',
+    secteurActivite:
+      'Production de films cinématographiques, de vidéo et de programmes de télévision',
+    ville: 'Paris',
+    adresse: '33 Rue Claude Lorrain 75016 Paris',
+    estVolontaire: true,
+    localisation: {
+      latitude: 48.8411339,
+      longitude: 2.2610605,
+    },
+    contact: {
+      id: 'aa93a21d-9f0d-45ad-b1ca-abd2a9c08708',
+      nom: 'Louis',
+      prenom: 'de Castro',
+      telephone: '0967430054',
+      email: 'louis@madoxr.com',
+      role: 'Président',
+      modeDeContact: 'EMAIL',
+    },
+  }
+  return { ...defaults, ...overrides }
 }
 
 export function uneBaseImmersion(

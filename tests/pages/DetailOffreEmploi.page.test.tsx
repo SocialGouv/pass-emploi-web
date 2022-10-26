@@ -15,7 +15,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
-describe('Page Détail Offre', () => {
+describe('Page Détail Offre Emploi', () => {
   describe('client side', () => {
     let offre: DetailOffreEmploi
 
@@ -30,7 +30,7 @@ describe('Page Détail Offre', () => {
     it("permet de partager l'offre", () => {
       // Then
       expect(
-        screen.getByRole('link', { name: `Partager offre numéro ${offre.id}` })
+        screen.getByRole('link', { name: `Partager offre ${offre.titre}` })
       ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
     })
 

@@ -5,6 +5,10 @@ export enum TypeOffre {
   ALTERNANCE = 'ALTERNANCE',
 }
 export type BaseOffre = BaseOffreEmploi | BaseServiceCivique | BaseImmersion
+export type DetailOffre =
+  | DetailOffreEmploi
+  | DetailServiceCivique
+  | DetailImmersion
 
 export type BaseOffreEmploi = {
   type: TypeOffre.EMPLOI | TypeOffre.ALTERNANCE
@@ -73,6 +77,8 @@ export type BaseImmersion = {
   ville: string
   secteurActivite: string
 }
+
+export type DetailImmersion = BaseImmersion
 
 export interface MetadonneesOffres {
   nombrePages: number

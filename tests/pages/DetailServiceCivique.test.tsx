@@ -30,7 +30,7 @@ describe('Page Détail Service civique', () => {
       // Then
       expect(
         screen.getByRole('link', {
-          name: `Partager offre numéro ${offre.id}`,
+          name: `Partager offre ${offre.titre}`,
         })
       ).toHaveAttribute('href', `/offres/service-civique/${offre.id}/partage`)
     })

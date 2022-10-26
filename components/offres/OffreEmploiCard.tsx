@@ -28,7 +28,7 @@ export default function OffreEmploiCard({
         />
         {withPartage && offre.type === TypeOffre.EMPLOI && (
           <LienPartageOffre
-            idOffre={offre.id}
+            titreOffre={offre.titre}
             href={`/offres/emploi/${offre.id}/partage`}
             style={ButtonStyle.TERTIARY}
           />

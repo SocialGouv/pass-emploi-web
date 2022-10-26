@@ -42,7 +42,7 @@ export default function ResultatsRechercheOffre({
                   <ServiceCiviqueCard offre={offre} withPartage={true} />
                 )}
                 {offre.type === TypeOffre.IMMERSION && (
-                  <ImmersionCard offre={offre} />
+                  <ImmersionCard offre={offre} withPartage={true} />
                 )}
               </li>
             ))}

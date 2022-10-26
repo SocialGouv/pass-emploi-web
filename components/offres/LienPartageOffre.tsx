@@ -5,11 +5,11 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function LienPartageOffre({
-  idOffre,
+  titreOffre,
   href,
   style,
 }: {
-  idOffre: string
+  titreOffre: string
   href: string
   style: ButtonStyle
 }) {
@@ -21,7 +21,7 @@ export default function LienPartageOffre({
         focusable={false}
         aria-hidden={true}
       />
-      Partager <span className='sr-only'>offre numéro {idOffre}</span>
+      Partager <span className='sr-only'>offre {titreOffre}</span>
     </ButtonLink>
   )
 }

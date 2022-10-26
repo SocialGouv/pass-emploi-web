@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import ImmersionCard from 'components/offres/ImmersionCard'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
 import { RequiredValue } from 'components/RequiredValue'
@@ -14,13 +15,10 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
-import {
-  DetailOffreEmploi,
-  DetailServiceCivique,
-  TypeOffre,
-} from 'interfaces/offre'
+import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
@@ -32,7 +30,7 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type PartageOffresProps = PageProps & {
-  offre: DetailOffreEmploi | DetailServiceCivique
+  offre: DetailOffre
   jeunes: BaseJeune[]
   withoutChat: true
   returnTo: string
@@ -95,6 +93,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
       {offre.type === TypeOffre.SERVICE_CIVIQUE && (
         <ServiceCiviqueCard offre={offre} />
       )}
+      {offre.type === TypeOffre.IMMERSION && <ImmersionCard offre={offre} />}
 
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>
@@ -156,24 +155,34 @@ export const getServerSideProps: GetServerSideProps<
   const offresEmploiService = withDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-  const serviceCiviqueService = withDependance<ServicesCiviquesService>(
+  const servicesCiviquesService = withDependance<ServicesCiviquesService>(
     'servicesCiviquesService'
   )
+  const immersionsService =
+    withDependance<ImmersionsService>('immersionsService')
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const typeOffre = context.query.offre_type as string
 
-  let offre: DetailOffreEmploi | DetailServiceCivique | undefined
-  if (typeOffre === 'emploi') {
-    offre = await offresEmploiService.getOffreEmploiServerSide(
-      context.query.offre_id as string,
-      accessToken
-    )
-  }
-  if (typeOffre === 'service-civique') {
-    offre = await serviceCiviqueService.getServiceCiviqueServerSide(
-      context.query.offre_id as string,
-      accessToken
-    )
+  let offre: DetailOffre | undefined
+  switch (typeOffre) {
+    case 'emploi':
+      offre = await offresEmploiService.getOffreEmploiServerSide(
+        context.query.offre_id as string,
+        accessToken
+      )
+      break
+    case 'service-civique':
+      offre = await servicesCiviquesService.getServiceCiviqueServerSide(
+        context.query.offre_id as string,
+        accessToken
+      )
+      break
+    case 'immersion':
+      offre = await immersionsService.getImmersionServerSide(
+        context.query.offre_id as string,
+        accessToken
+      )
+      break
   }
   if (!offre) return { notFound: true }
 

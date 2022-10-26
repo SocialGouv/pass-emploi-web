@@ -1,9 +1,19 @@
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { ImmersionItemJson } from 'interfaces/json/immersion'
-import { BaseImmersion, MetadonneesOffres, TypeOffre } from 'interfaces/offre'
+import {
+  DetailImmersionJson,
+  ImmersionItemJson,
+  jsonToDetailImmersion,
+} from 'interfaces/json/immersion'
+import {
+  BaseImmersion,
+  DetailImmersion,
+  MetadonneesOffres,
+  TypeOffre,
+} from 'interfaces/offre'
 import { Commune, Metier } from 'interfaces/referentiel'
+import { ApiError } from 'utils/httpClient'
 
 export type SearchImmersionsQuery = {
   commune: Commune
@@ -12,6 +22,10 @@ export type SearchImmersionsQuery = {
 }
 
 export interface ImmersionsService {
+  getImmersionServerSide(
+    idImmersion: string,
+    accessToken: string
+  ): Promise<DetailImmersion | undefined>
   searchImmersions(
     query: SearchImmersionsQuery,
     page: number
@@ -25,6 +39,25 @@ export class ImmersionsApiService implements ImmersionsService {
   private LIMIT = 10
 
   constructor(private readonly apiClient: ApiClient) {}
+
+  async getImmersionServerSide(
+    idImmersion: string,
+    accessToken: string
+  ): Promise<DetailImmersion | undefined> {
+    try {
+      const { content: immersionJson } =
+        await this.apiClient.get<DetailImmersionJson>(
+          `/offres-immersion/${idImmersion}`,
+          accessToken
+        )
+      return jsonToDetailImmersion(immersionJson)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+      throw e
+    }
+  }
 
   async searchImmersions(
     query: SearchImmersionsQuery,

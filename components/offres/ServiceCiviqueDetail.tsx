@@ -32,7 +32,7 @@ export default function ServiceCiviqueDetail({
       <div className='flex justify-between items-center'>
         <p className='my-2 capitalize'>{offre.domaine}</p>
         <LienPartageOffre
-          idOffre={offre.id}
+          titreOffre={offre.titre}
           href={`/offres/service-civique/${offre.id}/partage`}
           style={ButtonStyle.PRIMARY}
         />
