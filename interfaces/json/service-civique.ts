@@ -45,6 +45,19 @@ export function jsonToDetailServiceCivique(
   if (json.ville) serviceCivique.ville = json.ville
   if (json.organisation) serviceCivique.organisation = json.organisation
   if (json.dateDeDebut) serviceCivique.dateDeDebut = json.dateDeDebut
+  if (json.dateDeFin) serviceCivique.dateDeFin = json.dateDeFin
+  if (json.lienAnnonce) serviceCivique.lienAnnonce = json.lienAnnonce
+  if (json.description) serviceCivique.description = json.description
+  if (json.descriptionOrganisation)
+    serviceCivique.descriptionOrganisation = json.descriptionOrganisation
+  if (json.urlOrganisation)
+    serviceCivique.urlOrganisation = json.urlOrganisation
+  if (json.adresseMission) serviceCivique.adresseMission = json.adresseMission
+  if (json.adresseOrganisation)
+    serviceCivique.adresseOrganisation = json.adresseOrganisation
+  if (json.codeDepartement)
+    serviceCivique.codeDepartement = json.codeDepartement
+  if (json.codePostal) serviceCivique.codePostal = json.codePostal
 
   return serviceCivique
 }
