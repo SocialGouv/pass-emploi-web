@@ -199,8 +199,8 @@ describe('Page Détail Offre Emploi', () => {
       expect(actual).toEqual({
         props: {
           offre,
-          pageTitle: 'Détail de l‘offre',
-          pageHeader: 'Offre n°id-offre',
+          pageTitle: 'Détail de l’offre',
+          pageHeader: 'Offre d’emploi',
         },
       })
     })
