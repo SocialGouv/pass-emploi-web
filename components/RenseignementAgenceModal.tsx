@@ -1,11 +1,11 @@
 import React from 'react'
 
 import Modal from 'components/Modal'
+import RenseignementAgenceForm from 'components/RenseignementAgenceForm'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
-import RenseignementAgencePoleEmploiForm from 'components/RenseignementAgencePoleEmploiForm'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
@@ -14,7 +14,7 @@ interface RenseignementAgenceModalProps {
   structureConseiller: string
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
-  onContacterSupportClick: () => void
+  onContacterSupport: () => void
   onClose: () => void
 }
 
@@ -22,7 +22,7 @@ export default function RenseignementAgenceModal({
   structureConseiller,
   referentielAgences,
   onAgenceChoisie,
-  onContacterSupportClick,
+  onContacterSupport,
   onClose,
 }: RenseignementAgenceModalProps) {
   const labelAgence =
@@ -51,14 +51,14 @@ export default function RenseignementAgenceModal({
         <RenseignementAgenceMissionLocaleForm
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
-          onContacterSupportClick={onContacterSupportClick}
+          onContacterSupport={onContacterSupport}
           onClose={onClose}
           container={FormContainer.MODAL}
         />
       )}
 
       {structureConseiller !== StructureConseiller.MILO && (
-        <RenseignementAgencePoleEmploiForm
+        <RenseignementAgenceForm
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
           onClose={onClose}

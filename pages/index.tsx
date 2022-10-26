@@ -9,6 +9,7 @@ import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -46,8 +47,13 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     await router.replace(redirectUrl)
   }
 
-  function trackContacterSupportClick() {
-    setTrackingLabel('Pop-in sélection agence - Contacter le support')
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
   }
 
   useMatomo(trackingLabel)
@@ -59,7 +65,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
       }
       referentielAgences={referentielAgences}
       onAgenceChoisie={selectAgence}
-      onContacterSupportClick={trackContacterSupportClick}
+      onContacterSupport={trackContacterSupport}
       onClose={redirectToUrl}
     />
   )

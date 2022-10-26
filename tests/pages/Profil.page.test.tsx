@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -14,9 +14,8 @@ import Profil, { getServerSideProps } from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
 import { ReferentielService } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -46,9 +45,7 @@ describe('Page Profil conseiller', () => {
 
       it('en tant que Pôle Emploi charge la page avec les bonnes props', async () => {
         // Given
-        const conseiller = {
-          ...unConseiller(),
-        }
+        const conseiller = unConseiller()
         const structure = 'POLE_EMPLOI'
 
         // When
@@ -67,10 +64,7 @@ describe('Page Profil conseiller', () => {
 
       it('en tant que Mission locale avec une agence déjà renseignée charge la page avec les bonnes props sans le referetiel d’agences', async () => {
         // Given
-        const conseiller = {
-          ...unConseiller(),
-          agence: 'MLS3F SAINT-LOUIS',
-        }
+        const conseiller = unConseiller({ agence: 'MLS3F SAINT-LOUIS' })
         const structure = 'MILO'
 
         // When
@@ -88,9 +82,7 @@ describe('Page Profil conseiller', () => {
 
       it('en tant que Mission locale sans agence déjà renseignée charge la page avec les bonnes props avec le referetiel d’agences', async () => {
         // Given
-        const conseiller = {
-          ...unConseiller(),
-        }
+        const conseiller = unConseiller()
         const structure = 'MILO'
 
         // When
@@ -151,13 +143,9 @@ describe('Page Profil conseiller', () => {
 
         // When
         await act(async () => {
-          render(
-            <DIProvider dependances={{ conseillerService }}>
-              <ConseillerProvider conseiller={conseiller}>
-                <Profil referentielAgences={[]} pageTitle='' />
-              </ConseillerProvider>
-            </DIProvider>
-          )
+          renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
+            customConseiller: conseiller,
+          })
         })
       })
 
@@ -188,13 +176,7 @@ describe('Page Profil conseiller', () => {
       it("n'affiche pas les informations manquantes", async () => {
         // When
         await act(async () => {
-          render(
-            <DIProvider dependances={{ conseillerService }}>
-              <ConseillerProvider conseiller={unConseiller()}>
-                <Profil referentielAgences={[]} pageTitle='' />
-              </ConseillerProvider>
-            </DIProvider>
-          )
+          renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />)
         })
 
         // Then
@@ -218,12 +200,9 @@ describe('Page Profil conseiller', () => {
 
           // When
           await act(async () => {
-            render(
-              <DIProvider dependances={{ conseillerService }}>
-                <ConseillerProvider conseiller={conseiller}>
-                  <Profil referentielAgences={[]} pageTitle='' />
-                </ConseillerProvider>
-              </DIProvider>
+            renderWithContexts(
+              <Profil referentielAgences={[]} pageTitle='' />,
+              { customConseiller: conseiller }
             )
           })
         })
@@ -255,12 +234,12 @@ describe('Page Profil conseiller', () => {
 
           // When
           await act(async () => {
-            render(
-              <DIProvider dependances={{ conseillerService }}>
-                <ConseillerProvider conseiller={conseiller}>
-                  <Profil referentielAgences={agences} pageTitle='' />
-                </ConseillerProvider>
-              </DIProvider>
+            renderWithContexts(
+              <Profil referentielAgences={agences} pageTitle='' />,
+              {
+                customConseiller: conseiller,
+                customDependances: { conseillerService },
+              }
             )
           })
         })
@@ -270,11 +249,6 @@ describe('Page Profil conseiller', () => {
           expect(
             screen.getByRole('textbox', { name: /Département/ })
           ).toBeInTheDocument()
-          agences.forEach((agence) =>
-            expect(
-              screen.getByRole('option', { hidden: true, name: agence.nom })
-            ).toBeInTheDocument()
-          )
         })
 
         it('contient un input pour choisir une Mission locale', () => {
@@ -317,6 +291,25 @@ describe('Page Profil conseiller', () => {
                 screen.queryByRole('option', { hidden: true, name: agence.nom })
               ).not.toBeInTheDocument()
             )
+        })
+
+        it('supprime les préfixes 0 dans l’application du filtre selon le département entré', async () => {
+          // Given
+          const codeDepartement = '01'
+          const departementInput = screen.getByRole('textbox', {
+            name: /Département/,
+          })
+
+          // When
+          await userEvent.type(departementInput, codeDepartement)
+
+          // Then
+          expect(
+            screen.getByRole('option', {
+              hidden: true,
+              name: 'MLS3F SAINT-LOUIS',
+            })
+          ).toBeInTheDocument()
         })
 
         it('contient une option pour dire que la Mission locale n’est pas dans la liste', () => {
@@ -394,13 +387,10 @@ describe('Page Profil conseiller', () => {
         })
 
         await act(async () => {
-          render(
-            <DIProvider dependances={{ conseillerService }}>
-              <ConseillerProvider conseiller={conseiller}>
-                <Profil referentielAgences={[]} pageTitle='' />
-              </ConseillerProvider>
-            </DIProvider>
-          )
+          renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
+            customConseiller: conseiller,
+            customDependances: { conseillerService },
+          })
         })
 
         const toggleNotifications = getToggleNotifications()

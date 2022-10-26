@@ -95,7 +95,7 @@ function Email(props: { email: string }) {
           aria-label='e-mail'
           aria-hidden={false}
           focusable={false}
-          className='w-[15px] h-[13px] mr-2'
+          className='w-4 h-4 fill-primary mr-2'
         />
       </dt>
       <dd className='text-primary'>{props.email}</dd>

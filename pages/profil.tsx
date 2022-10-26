@@ -17,6 +17,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { ConseillerService } from 'services/conseiller.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -63,7 +64,12 @@ function Profil({ referentielAgences }: ProfilProps) {
   }
 
   function trackContacterSupportClick() {
-    setTrackingLabel('Profil - Contacter le support')
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Profil',
+      nom: '',
+    })
   }
 
   useMatomo(trackingLabel)
@@ -79,59 +85,63 @@ function Profil({ referentielAgences }: ProfilProps) {
             </h3>
             <dl className='mt-3'>
               {conseiller.email && (
-                <>
+                <div>
                   <dt className='mt-2 inline text-base-regular'>
                     Votre e-mail :
                   </dt>
                   <dd className='ml-2 inline'>
                     <Email email={conseiller.email} />
                   </dd>
-                </>
+                </div>
               )}
 
               {conseiller.agence && (
-                <>
-                  <dt className='mt-2 inline before:block before:content-[""] text-base-regular'>
+                <div>
+                  <dt className='mt-2 inline text-base-regular'>
                     Votre {labelAgence} :
                   </dt>
                   <dd className='ml-2 inline text-base-bold'>
                     {conseiller.agence}
                   </dd>
-                </>
-              )}
-            </dl>
-            {!conseiller.agence &&
-              conseiller.structure === StructureConseiller.MILO && (
-                <RenseignementAgenceMissionLocaleForm
-                  referentielAgences={referentielAgences}
-                  onAgenceChoisie={selectAgence}
-                  onContacterSupportClick={trackContacterSupportClick}
-                  container={FormContainer.PAGE}
-                />
-              )}
-            {conseiller.agence &&
-              conseiller.structure === StructureConseiller.MILO && (
-                <div className='mt-4'>
-                  <p>
-                    Vous avez besoin de modifier votre Mission locale de
-                    référence ?
-                  </p>
-
-                  <div className={'flex'}>
-                    <p>Pour ce faire merci de</p>
-                    <div
-                      className={'ml-1 text-primary_darken hover:text-primary'}
-                    >
-                      <ExternalLink
-                        href={'mailto:support@pass-emploi.beta.gouv.fr'}
-                        label={'contacter le support'}
-                        iconName={IconName.Email}
-                        onClick={trackContacterSupportClick}
-                      />
-                    </div>
-                  </div>
                 </div>
               )}
+            </dl>
+
+            {conseiller.structure === StructureConseiller.MILO && (
+              <>
+                {conseiller.agence && (
+                  <div className='mt-4'>
+                    <p>
+                      Vous avez besoin de modifier votre Mission locale de
+                      référence ?
+                    </p>
+
+                    <p className='flex'>
+                      Pour ce faire merci de&nbsp;
+                      <span
+                        className={'text-primary_darken hover:text-primary'}
+                      >
+                        <ExternalLink
+                          href={'mailto:' + process.env.SUPPORT_MAIL}
+                          label={'contacter le support'}
+                          iconName={IconName.Email}
+                          onClick={trackContacterSupportClick}
+                        />
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+                {!conseiller.agence && (
+                  <RenseignementAgenceMissionLocaleForm
+                    referentielAgences={referentielAgences}
+                    onAgenceChoisie={selectAgence}
+                    onContacterSupport={trackContacterSupportClick}
+                    container={FormContainer.PAGE}
+                  />
+                )}
+              </>
+            )}
           </section>
           <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Notifications</h2>
@@ -201,7 +211,7 @@ function Email(props: { email: string }) {
         name={IconName.Email}
         aria-hidden={true}
         focusable={false}
-        className='inline w-[15px] h-[13px] mr-2'
+        className='inline w-4 h-4 mr-2 fill-primary'
       />
       {props.email}
     </span>

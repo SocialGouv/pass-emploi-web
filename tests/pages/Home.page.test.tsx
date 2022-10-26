@@ -24,7 +24,7 @@ jest.mock('components/Modal')
 
 describe('Home', () => {
   describe('client side', () => {
-    describe('quand le conseiller est Pôle Emploi', () => {
+    describe('quand le conseiller n’est pas Mission locale', () => {
       let agences: Agence[]
       let replace: jest.Mock
       let conseillerService: ConseillerService
@@ -211,11 +211,6 @@ describe('Home', () => {
         expect(
           screen.getByRole('textbox', { name: /Département/ })
         ).toBeInTheDocument()
-        agences.forEach((agence) =>
-          expect(
-            screen.getByRole('option', { hidden: true, name: agence.nom })
-          ).toBeInTheDocument()
-        )
       })
 
       it('contient un input pour choisir une Mission locale', () => {
@@ -258,6 +253,25 @@ describe('Home', () => {
               screen.queryByRole('option', { hidden: true, name: agence.nom })
             ).not.toBeInTheDocument()
           )
+      })
+
+      it('supprime les préfixes 0 dans l’application du filtre selon le département entré', async () => {
+        // Given
+        const codeDepartement = '01'
+        const departementInput = screen.getByRole('textbox', {
+          name: /Département/,
+        })
+
+        // When
+        await userEvent.type(departementInput, codeDepartement)
+
+        // Then
+        expect(
+          screen.getByRole('option', {
+            hidden: true,
+            name: 'MLS3F SAINT-LOUIS',
+          })
+        ).toBeInTheDocument()
       })
 
       it('contient une option pour dire que la Mission locale n’est pas dans la liste', () => {

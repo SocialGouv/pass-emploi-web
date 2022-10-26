@@ -8,17 +8,17 @@ import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { Agence } from 'interfaces/referentiel'
 
-interface RenseignementAgencePoleEmploiFormProps {
+interface RenseignementAgenceFormProps {
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
   onClose: () => void
 }
 
-export default function RenseignementAgencePoleEmploiForm({
+export default function RenseignementAgenceForm({
   referentielAgences,
   onAgenceChoisie,
   onClose,
-}: RenseignementAgencePoleEmploiFormProps) {
+}: RenseignementAgenceFormProps) {
   const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
     useState<RequiredValue>({ value: '' })
   const [showAgenceLibre, setShowAgenceLibre] = useState<boolean>(false)
