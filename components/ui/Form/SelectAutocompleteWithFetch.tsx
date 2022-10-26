@@ -20,7 +20,7 @@ export default function SelectAutocompleteWithFetch<T>({
   fieldNames,
   onUpdateSelected,
   errorMessage,
-  value = '',
+  value,
   required,
 }: SelectAutocompleteWithFetchProps<T>) {
   const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
@@ -32,9 +32,7 @@ export default function SelectAutocompleteWithFetch<T>({
       })),
     [entites]
   )
-  const [input, setInput] = useState<{ value?: string; error?: string }>({
-    value: value && toUpperCaseAlpha(value),
-  })
+  const [input, setInput] = useState<{ value?: string; error?: string }>({})
   const debouncedInput = useDebounce(input.value, 500)
 
   function handleInputChange(str: string) {
@@ -65,6 +63,10 @@ export default function SelectAutocompleteWithFetch<T>({
       return entite as T
     }
   }
+
+  useEffect(() => {
+    setInput({ value: value && toUpperCaseAlpha(value) })
+  }, [value])
 
   useEffect(() => {
     if (debouncedInput) {

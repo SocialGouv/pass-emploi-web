@@ -12,15 +12,16 @@ import {
   DetailOffreEmploi,
   MetadonneesOffres,
 } from 'interfaces/offre'
+import { Commune, Localite } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
 export type Duree = 'Temps plein' | 'Temps partiel'
 export type SearchOffresEmploiQuery = {
   motsCles?: string
-  commune?: string
+  commune?: Commune
   debutantAccepte?: boolean
-  departement?: string
+  departement?: Localite
   durees?: Array<Duree>
   rayon?: number
   typesContrats?: Array<TypeContrat>
@@ -33,6 +34,10 @@ export interface OffresEmploiService {
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined>
   searchOffresEmploi(
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
+  searchAlternances(
     recherche: SearchOffresEmploiQuery,
     page: number
   ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
@@ -64,23 +69,14 @@ export class OffresEmploiApiService implements OffresEmploiService {
     recherche: SearchOffresEmploiQuery,
     page: number
   ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
+    return this.searchOffres({ recherche, page, alternanceOnly: false })
+  }
 
-    const LIMIT = 10
-    const path = '/offres-emploi'
-    const searchUrl = buildSearchParams(recherche, page, LIMIT)
-    const { content } = await this.apiClient.get<{
-      pagination: { total: number }
-      results: OffreEmploiItemJson[]
-    }>(path + '?' + searchUrl, accessToken)
-
-    const { pagination, results } = content
-    const metadonnees: MetadonneesOffres = {
-      nombreTotal: pagination.total,
-      nombrePages: Math.ceil(pagination.total / LIMIT),
-    }
-    return { metadonnees, offres: results.map(jsonToOffreEmploiItem) }
+  async searchAlternances(
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+    return this.searchOffres({ recherche, page, alternanceOnly: true })
   }
 
   private async getOffreEmploi(
@@ -101,17 +97,47 @@ export class OffresEmploiApiService implements OffresEmploiService {
       throw e
     }
   }
+
+  private async searchOffres({
+    recherche,
+    page,
+    alternanceOnly,
+  }: {
+    recherche: SearchOffresEmploiQuery
+    page: number
+    alternanceOnly: boolean
+  }): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+    const session = await getSession()
+    const accessToken = session!.accessToken
+
+    const LIMIT = 10
+    const path = '/offres-emploi'
+    const searchUrl = buildSearchParams(recherche, page, LIMIT, alternanceOnly)
+    const { content } = await this.apiClient.get<{
+      pagination: { total: number }
+      results: OffreEmploiItemJson[]
+    }>(path + '?' + searchUrl, accessToken)
+
+    const { pagination, results } = content
+    const metadonnees: MetadonneesOffres = {
+      nombreTotal: pagination.total,
+      nombrePages: Math.ceil(pagination.total / LIMIT),
+    }
+    return { metadonnees, offres: results.map(jsonToOffreEmploiItem) }
+  }
 }
 
 function buildSearchParams(
   recherche: SearchOffresEmploiQuery,
   page: number,
-  limit: number
+  limit: number,
+  alternanceOnly: boolean
 ): string {
   const searchParams = new URLSearchParams({
     page: page.toString(10),
     limit: limit.toString(10),
   })
+  if (alternanceOnly) searchParams.set('alternance', 'true')
 
   const {
     durees,
@@ -123,8 +149,8 @@ function buildSearchParams(
     motsCles,
   } = recherche
   const queryMotsCles = motsCles ? `&q=${encodeURIComponent(motsCles)}` : ''
-  if (departement) searchParams.set('departement', departement)
-  if (commune) searchParams.set('commune', commune)
+  if (departement) searchParams.set('departement', departement.code)
+  if (commune) searchParams.set('commune', commune.code)
   if (rayon) searchParams.set('rayon', rayon.toString(10))
   if (debutantAccepte) searchParams.set('debutantAccepte', 'true')
   typesContrats?.forEach((typeContrat) =>

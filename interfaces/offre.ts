@@ -2,11 +2,12 @@ export enum TypeOffre {
   EMPLOI = 'EMPLOI',
   SERVICE_CIVIQUE = 'SERVICE_CIVIQUE',
   IMMERSION = 'IMMERSION',
+  ALTERNANCE = 'ALTERNANCE',
 }
 export type BaseOffre = BaseOffreEmploi | BaseServiceCivique | BaseImmersion
 
 export type BaseOffreEmploi = {
-  type: TypeOffre.EMPLOI
+  type: TypeOffre.EMPLOI | TypeOffre.ALTERNANCE
   id: string
   titre: string
   typeContrat: string

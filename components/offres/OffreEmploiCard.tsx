@@ -6,7 +6,7 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { Tag } from 'components/ui/Indicateurs/Tag'
-import { BaseOffreEmploi } from 'interfaces/offre'
+import { BaseOffreEmploi, TypeOffre } from 'interfaces/offre'
 
 interface OffreEmploiCardProps {
   offre: BaseOffreEmploi
@@ -21,12 +21,12 @@ export default function OffreEmploiCard({
     <div className='rounded-small shadow-s p-6'>
       <div className='flex justify-between mb-4'>
         <Tag
-          label='Emploi'
+          label={offre.type === TypeOffre.ALTERNANCE ? 'Alternance' : 'Emploi'}
           color='accent_2'
           backgroundColor='white'
           className='text-s-regular'
         />
-        {withPartage && (
+        {withPartage && offre.type === TypeOffre.EMPLOI && (
           <LienPartageOffre
             idOffre={offre.id}
             href={`/offres/emploi/${offre.id}/partage`}
@@ -59,22 +59,20 @@ export default function OffreEmploiCard({
           <DataTag text={offre.typeContrat} className='mr-6' />
           {offre.duree && <DataTag text={offre.duree} />}
         </div>
-        <div>
-          <Link href={`/offres/emploi/${offre.id}`}>
-            <a
-              aria-label={`Détail de l’offre ${offre.id}`}
-              className='flex items-center text-s-regular hover:text-primary'
-            >
-              Voir le détail
-              <IconComponent
-                name={IconName.ChevronRight}
-                className='w-4 h-4 mr-3 fill-primary'
-                focusable={false}
-                aria-hidden={true}
-              />
-            </a>
-          </Link>
-        </div>
+        <Link href={`/offres/emploi/${offre.id}`}>
+          <a
+            aria-label={`Détail de l’offre ${offre.id}`}
+            className='flex items-center text-s-regular hover:text-primary'
+          >
+            Voir le détail
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-4 mr-3 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </a>
+        </Link>
       </div>
     </div>
   )

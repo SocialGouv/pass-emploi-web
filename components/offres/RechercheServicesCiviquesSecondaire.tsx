@@ -22,9 +22,6 @@ export default function RechercheServicesCiviquesSecondaire({
   query,
   onQueryUpdate,
 }: RechercheServicesCiviquesSecondaireProps) {
-  const RAYON_MIN = 0
-  const RAYON_MAX = 100
-
   function updateDomaine(domaine: string) {
     onQueryUpdate({ ...query, domaine })
   }

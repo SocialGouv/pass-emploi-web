@@ -34,7 +34,8 @@ export default function ResultatsRechercheOffre({
           <ul aria-describedby='result-title'>
             {offres.map((offre) => (
               <li key={`${offre.type}-${offre.id}`} className='mb-4'>
-                {offre.type === TypeOffre.EMPLOI && (
+                {(offre.type === TypeOffre.EMPLOI ||
+                  offre.type === TypeOffre.ALTERNANCE) && (
                   <OffreEmploiCard offre={offre} withPartage={true} />
                 )}
                 {offre.type === TypeOffre.SERVICE_CIVIQUE && (

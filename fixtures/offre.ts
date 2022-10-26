@@ -1,5 +1,6 @@
 import { ImmersionItemJson } from 'interfaces/json/immersion'
 import {
+  DataDetailOffreEmploiJson,
   DetailOffreEmploiJson,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre-emploi'
@@ -102,95 +103,51 @@ export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
   ]
 }
 
-export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
-  return [
-    {
-      id: '7158498',
-      titre: 'F/H Comptable auxiliaire (H/F)',
-      nomEntreprise: 'Entreprise',
-      localisation: { nom: 'Adresse' },
-      typeContrat: 'CDI',
-      duree: 'Temps plein',
-    },
-    {
-      id: '7157716',
-      titre: 'Contrôleur de Gestion H/F',
-      nomEntreprise: 'Entreprise',
-      localisation: { nom: 'Adresse' },
-      typeContrat: 'CDD',
-      duree: 'Temps plein',
-    },
-    {
-      id: '137FPBC',
-      titre: 'Serveur / Serveuse de bar-brasserie',
-      nomEntreprise: 'Entreprise',
-      localisation: { nom: 'Adresse' },
-      typeContrat: 'CDI',
-      duree: 'Temps plein',
-    },
-  ]
-}
-
-export function unDetailOffreJson(
-  overrides: Partial<DetailOffreEmploiJson> = {}
-): DetailOffreEmploiJson {
-  const defaults: DetailOffreEmploiJson = {
-    id: 'id-offre',
-    data: {
-      intitule: "Offre d'emploi",
-      entreprise: {
-        nom: 'Mon Entreprise',
-        description: "Description longue de l'entreprise",
-        url: 'perdu.com',
-        entrepriseAdaptee: false,
-      },
-      typeContrat: 'CDI',
-      typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
-      lieuTravail: { libelle: 'Paris' },
-      dureeTravailLibelleConverti: 'Temps plein',
-      dateCreation: '2022-09-30T07:47:25.000Z',
-      salaire: { libelle: 'Selon profil' },
-      dureeTravailLibelle: '24H Horaires normaux',
-      description: 'une description d’offre d’emploi',
-      experienceLibelle: '1 an - en formation continue ou initiale',
-      experienceExige: 'E',
-      competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
-      qualitesProfessionnelles: [
-        { libelle: 'compétence pro 1' },
-        { libelle: 'compétence pro 2' },
-      ],
-      formations: [
-        {
-          commentaire: 'formation 1',
-        },
-        {
-          commentaire: 'formation 1',
-          niveauLibelle: 'bac +3',
-        },
-        {
-          commentaire: 'formation 1',
-          niveauLibelle: 'bac +3',
-          domaineLibelle: 'informatique',
-        },
-        {
-          niveauLibelle: 'bac +3',
-          domaineLibelle: 'informatique',
-        },
-        {
-          domaineLibelle: 'informatique',
-        },
-        {
-          commentaire: 'formation 1',
-          domaineLibelle: 'informatique',
-        },
-      ],
-      langues: [{ libelle: 'langue 1' }],
-      permis: [{ libelle: 'permis 1' }],
-      accessibleTH: true,
-    },
-    urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
+export function uneBaseAlternance(
+  overrides: Partial<BaseOffreEmploi> = {}
+): BaseOffreEmploi {
+  const defaults: BaseOffreEmploi = {
+    type: TypeOffre.ALTERNANCE,
+    id: '142XDSV',
+    titre: 'Apprentissage vente en boulangerie - pâtisserie (H/F)',
+    typeContrat: 'CDD',
+    duree: 'Temps plein',
+    nomEntreprise: 'ICFA/LE FOURNIL DU PAQUEBOT',
+    localisation: '44 - ST NAZAIRE',
   }
   return { ...defaults, ...overrides }
+}
+
+export function listeBaseAlternances(): BaseOffreEmploi[] {
+  return [
+    {
+      type: TypeOffre.ALTERNANCE,
+      id: '142XDVV',
+      titre: 'Canalisateur H/F',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'Canal+',
+      localisation: '82 - GRISOLLES',
+    },
+    {
+      type: TypeOffre.ALTERNANCE,
+      id: '142XDSV',
+      titre: 'Apprentissage vente en boulangerie - pâtisserie (H/F)',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'ICFA/LE FOURNIL DU PAQUEBOT',
+      localisation: '44 - ST NAZAIRE',
+    },
+    {
+      type: TypeOffre.ALTERNANCE,
+      id: '142XDMM',
+      titre: 'Vendeur(se) Conseil en Magasin Toulon (H/F)',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'Magasin Toulon',
+      localisation: '83 - TOULON',
+    },
+  ]
 }
 
 export function uneBaseServiceCivique(
@@ -311,6 +268,99 @@ export function listeBaseImmersions({
   ]
 }
 
+/*** JSON ***/
+
+export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
+  return [
+    {
+      id: '7158498',
+      titre: 'F/H Comptable auxiliaire (H/F)',
+      nomEntreprise: 'Entreprise',
+      localisation: { nom: 'Adresse' },
+      typeContrat: 'CDI',
+      duree: 'Temps plein',
+    },
+    {
+      id: '7157716',
+      titre: 'Contrôleur de Gestion H/F',
+      nomEntreprise: 'Entreprise',
+      localisation: { nom: 'Adresse' },
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+    },
+    {
+      id: '137FPBC',
+      titre: 'Serveur / Serveuse de bar-brasserie',
+      nomEntreprise: 'Entreprise',
+      localisation: { nom: 'Adresse' },
+      typeContrat: 'CDI',
+      duree: 'Temps plein',
+    },
+  ]
+}
+
+export function unDetailOffreJson(
+  overrides: Partial<DataDetailOffreEmploiJson> = {}
+): DetailOffreEmploiJson {
+  const defaults: DataDetailOffreEmploiJson = {
+    intitule: "Offre d'emploi",
+    entreprise: {
+      nom: 'Mon Entreprise',
+      description: "Description longue de l'entreprise",
+      url: 'perdu.com',
+      entrepriseAdaptee: false,
+    },
+    typeContrat: 'CDI',
+    typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
+    lieuTravail: { libelle: 'Paris' },
+    dureeTravailLibelleConverti: 'Temps plein',
+    dateCreation: '2022-09-30T07:47:25.000Z',
+    salaire: { libelle: 'Selon profil' },
+    dureeTravailLibelle: '24H Horaires normaux',
+    description: 'une description d’offre d’emploi',
+    experienceLibelle: '1 an - en formation continue ou initiale',
+    experienceExige: 'E',
+    competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
+    qualitesProfessionnelles: [
+      { libelle: 'compétence pro 1' },
+      { libelle: 'compétence pro 2' },
+    ],
+    formations: [
+      {
+        commentaire: 'formation 1',
+      },
+      {
+        commentaire: 'formation 1',
+        niveauLibelle: 'bac +3',
+      },
+      {
+        commentaire: 'formation 1',
+        niveauLibelle: 'bac +3',
+        domaineLibelle: 'informatique',
+      },
+      {
+        niveauLibelle: 'bac +3',
+        domaineLibelle: 'informatique',
+      },
+      {
+        domaineLibelle: 'informatique',
+      },
+      {
+        commentaire: 'formation 1',
+        domaineLibelle: 'informatique',
+      },
+    ],
+    langues: [{ libelle: 'langue 1' }],
+    permis: [{ libelle: 'permis 1' }],
+    accessibleTH: true,
+  }
+  return {
+    id: 'id-offre',
+    urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
+    data: { ...defaults, ...overrides },
+  }
+}
+
 export function unServiceCiviqueJson(): ServiceCiviqueItemJson {
   return {
     id: '6322ac0fe8f66b05ee325ece',
@@ -389,6 +439,44 @@ export function listeImmersionsJson({
       nomEtablissement: 'PARIS LOG',
       secteurActivite: 'Programmation informatique',
       ville: 'Torcy',
+    },
+  ]
+}
+
+export function listeAlternancesJson(): OffreEmploiItemJson[] {
+  return [
+    {
+      id: '142XDVV',
+      titre: 'Canalisateur H/F',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'Canal+',
+      localisation: {
+        nom: '82 - GRISOLLES',
+      },
+      alternance: true,
+    },
+    {
+      id: '142XDSV',
+      titre: 'Apprentissage vente en boulangerie - pâtisserie (H/F)',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'ICFA/LE FOURNIL DU PAQUEBOT',
+      localisation: {
+        nom: '44 - ST NAZAIRE',
+      },
+      alternance: true,
+    },
+    {
+      id: '142XDMM',
+      titre: 'Vendeur(se) Conseil en Magasin Toulon (H/F)',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'Magasin Toulon',
+      localisation: {
+        nom: '83 - TOULON',
+      },
+      alternance: true,
     },
   ]
 }

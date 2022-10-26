@@ -112,88 +112,94 @@ export default function FormRechercheOffres({
         )}
       </div>
 
-      {showForm && (
-        <>
-          <Etape numero={1} titre='Sélectionner un type d’offre'>
-            <div className='flex flex-wrap'>
-              <RadioButton
-                isSelected={typeOffre === TypeOffre.EMPLOI}
-                onChange={() => setTypeOffre(TypeOffre.EMPLOI)}
-                name='type-offre'
-                id='type-offre--emploi'
-                label='Offre d’emploi'
-              />
-              <RadioButton
-                isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
-                onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
-                name='type-offre'
-                id='type-offre--service-civique'
-                label='Service civique'
-              />
-              <RadioButton
-                isSelected={typeOffre === TypeOffre.IMMERSION}
-                onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
-                name='type-offre'
-                id='type-offre--immersion'
-                label='Immersion'
-              />
+      <div className={!showForm ? 'hidden' : ''} aria-hidden={!showForm}>
+        <Etape numero={1} titre='Sélectionner un type d’offre'>
+          <div className='flex flex-wrap'>
+            <RadioButton
+              isSelected={typeOffre === TypeOffre.EMPLOI}
+              onChange={() => setTypeOffre(TypeOffre.EMPLOI)}
+              name='type-offre'
+              id='type-offre--emploi'
+              label='Offre d’emploi'
+            />
+            <RadioButton
+              isSelected={typeOffre === TypeOffre.ALTERNANCE}
+              onChange={() => setTypeOffre(TypeOffre.ALTERNANCE)}
+              name='type-offre'
+              id='type-offre--alternance'
+              label='Alternance'
+            />
+            <RadioButton
+              isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
+              onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
+              name='type-offre'
+              id='type-offre--service-civique'
+              label='Service civique'
+            />
+            <RadioButton
+              isSelected={typeOffre === TypeOffre.IMMERSION}
+              onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
+              name='type-offre'
+              id='type-offre--immersion'
+              label='Immersion'
+            />
+          </div>
+        </Etape>
+
+        {getRechercheMain()}
+
+        {typeOffre && (
+          <div className='flex justify-end mb-6'>
+            <button
+              type='button'
+              onClick={() => setShowMoreFilters(!showMoreFilters)}
+              className='mr-12'
+            >
+              Voir {showMoreFilters ? 'moins' : 'plus'} de critères
+              <IconComponent
+                name={
+                  showMoreFilters ? IconName.ChevronUp : IconName.ChevronDown
+                }
+                className='h-4 w-4 fill-primary inline ml-2'
+                aria-hidden={true}
+                focusable={false}
+              ></IconComponent>
+            </button>
+          </div>
+        )}
+
+        {showMoreFilters && getRechercheSecondary()}
+
+        {typeOffre && (
+          <>
+            <div className='mt-5 mb-4 text-center'>
+              [{countCriteres}] critère{countCriteres > 1 && 's'} sélectionné
+              {countCriteres > 1 && 's'}
             </div>
-          </Etape>
 
-          {getRechercheMain()}
-
-          {typeOffre && (
-            <div className='flex justify-end mb-6'>
-              <button
-                type='button'
-                onClick={() => setShowMoreFilters(!showMoreFilters)}
-                className='mr-12'
-              >
-                Voir {showMoreFilters ? 'moins' : 'plus'} de critères
-                <IconComponent
-                  name={
-                    showMoreFilters ? IconName.ChevronUp : IconName.ChevronDown
-                  }
-                  className='h-4 w-4 fill-primary inline ml-2'
-                  aria-hidden={true}
-                  focusable={false}
-                ></IconComponent>
-              </button>
-            </div>
-          )}
-
-          {showMoreFilters && getRechercheSecondary()}
-
-          {typeOffre && (
-            <>
-              <div className='mt-5 mb-4 text-center'>
-                [{countCriteres}] critère{countCriteres > 1 && 's'} sélectionné
-                {countCriteres > 1 && 's'}
-              </div>
-
-              <Button
-                type='submit'
-                className='mx-auto'
-                disabled={formIsInvalid || hasResults}
-              >
-                <IconComponent
-                  name={IconName.Search}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-4 h-4 mr-2'
-                />
-                Rechercher
-              </Button>
-            </>
-          )}
-        </>
-      )}
+            <Button
+              type='submit'
+              className='mx-auto'
+              disabled={formIsInvalid || hasResults}
+            >
+              <IconComponent
+                name={IconName.Search}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 mr-2'
+              />
+              Rechercher
+            </Button>
+          </>
+        )}
+      </div>
     </form>
   )
 
   function getRechercheMain(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiPrincipale
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
@@ -226,8 +232,10 @@ export default function FormRechercheOffres({
   function getRechercheSecondary(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiSecondaire
+            alternanceOnly={typeOffre === TypeOffre.ALTERNANCE}
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}

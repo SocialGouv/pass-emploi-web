@@ -49,5 +49,7 @@ function typeToUrlParam(typeOffre: TypeOffre): string {
       return 'service-civique'
     case TypeOffre.IMMERSION:
       return 'immersion'
+    case TypeOffre.ALTERNANCE:
+      return 'alternance'
   }
 }

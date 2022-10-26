@@ -1,4 +1,4 @@
-import { Commune, Localite, Metier } from 'interfaces/referentiel'
+import { Commune, Departement, Localite, Metier } from 'interfaces/referentiel'
 
 export function uneListeDAgencesMILO() {
   return [
@@ -60,6 +60,17 @@ export function uneCommune(overrides: Partial<Commune> = {}): Commune {
     type: 'COMMUNE',
     longitude: 2.323026,
     latitude: 48.830108,
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function unDepartement(
+  overrides: Partial<Departement> = {}
+): Departement {
+  const defaults: Departement = {
+    libelle: 'Paris',
+    code: '75',
+    type: 'DEPARTEMENT',
   }
   return { ...defaults, ...overrides }
 }
