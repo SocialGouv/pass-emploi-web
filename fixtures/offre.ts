@@ -10,6 +10,7 @@ import {
   BaseOffreEmploi,
   BaseServiceCivique,
   DetailOffreEmploi,
+  DetailServiceCivique,
   TypeOffre,
 } from 'interfaces/offre'
 
@@ -165,6 +166,25 @@ export function uneBaseServiceCivique(
   return { ...defaults, ...overrides }
 }
 
+export const unDetailServiceCivique = (): DetailServiceCivique => ({
+  type: TypeOffre.SERVICE_CIVIQUE,
+  id: 'unId',
+  titre: 'unTitre',
+  domaine: 'Informatique',
+  ville: 'paris',
+  organisation: 'orga de ouf',
+  dateDeDebut: '2022-02-17T10:00:00.000Z',
+  dateDeFin: '2022-07-17T10:00:00.000Z',
+  lienAnnonce: 'lienoffre.com',
+  description: 'offre très intéressante',
+  urlOrganisation: 'lienorganisation.com',
+  descriptionOrganisation: 'description',
+  adresseMission: 'adresse mission',
+  adresseOrganisation: 'adresse organistation',
+  codeDepartement: '75',
+  codePostal: '75018',
+})
+
 export function listeBaseServicesCiviques(): BaseServiceCivique[] {
   return [
     {
@@ -189,6 +209,30 @@ export function listeBaseServicesCiviques(): BaseServiceCivique[] {
     },
     {
       type: TypeOffre.SERVICE_CIVIQUE,
+      id: '6322ac12e8f66b05ee325f1d',
+      titre:
+        "Participer à la réussite en milieu scolaire à l'école française de Bonn (All.)",
+      organisation: 'Ecole française de Gaulle-Adenauer',
+      ville: 'Köln',
+      domaine: 'education',
+      dateDeDebut: '2022-10-03T00:00:00.000Z',
+    },
+  ]
+}
+
+export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
+  return [
+    unServiceCiviqueJson(),
+    {
+      id: '6322ac11e8f66b05ee325f10',
+      titre:
+        "Soutenir le développement, l'accès et la promotion de la pratique sportive",
+      organisation: 'FEDERATION FRANCAISE DES CLUBS OMNISPORTS',
+      ville: 'Massy',
+      domaine: 'sport',
+      dateDeDebut: '2022-09-26T00:00:00.000Z',
+    },
+    {
       id: '6322ac12e8f66b05ee325f1d',
       titre:
         "Participer à la réussite en milieu scolaire à l'école française de Bonn (All.)",
@@ -268,7 +312,6 @@ export function listeBaseImmersions({
   ]
 }
 
-/*** JSON ***/
 
 export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
   return [
@@ -371,30 +414,6 @@ export function unServiceCiviqueJson(): ServiceCiviqueItemJson {
     domaine: 'education',
     dateDeDebut: '2022-11-01T00:00:00.000Z',
   }
-}
-
-export function listeServicesCiviquesJson(): ServiceCiviqueItemJson[] {
-  return [
-    unServiceCiviqueJson(),
-    {
-      id: '6322ac11e8f66b05ee325f10',
-      titre:
-        "Soutenir le développement, l'accès et la promotion de la pratique sportive",
-      organisation: 'FEDERATION FRANCAISE DES CLUBS OMNISPORTS',
-      ville: 'Massy',
-      domaine: 'sport',
-      dateDeDebut: '2022-09-26T00:00:00.000Z',
-    },
-    {
-      id: '6322ac12e8f66b05ee325f1d',
-      titre:
-        "Participer à la réussite en milieu scolaire à l'école française de Bonn (All.)",
-      organisation: 'Ecole française de Gaulle-Adenauer',
-      ville: 'Köln',
-      domaine: 'education',
-      dateDeDebut: '2022-10-03T00:00:00.000Z',
-    },
-  ]
 }
 
 export function listeImmersionsJson({
