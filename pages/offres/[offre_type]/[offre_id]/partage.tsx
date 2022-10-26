@@ -85,15 +85,23 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
     }
   }
 
+  function getCardOffre(): JSX.Element {
+    switch (offre.type) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return <OffreEmploiCard offre={offre} />
+      case TypeOffre.SERVICE_CIVIQUE:
+        return <ServiceCiviqueCard offre={offre} />
+      case TypeOffre.IMMERSION:
+        return <ImmersionCard offre={offre} />
+    }
+  }
+
   useMatomo('Partage offre')
 
   return (
     <>
-      {offre.type === TypeOffre.EMPLOI && <OffreEmploiCard offre={offre} />}
-      {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-        <ServiceCiviqueCard offre={offre} />
-      )}
-      {offre.type === TypeOffre.IMMERSION && <ImmersionCard offre={offre} />}
+      {getCardOffre()}
 
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>

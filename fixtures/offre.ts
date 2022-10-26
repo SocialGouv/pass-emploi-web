@@ -401,6 +401,7 @@ export function unDetailImmersion(
       'Production de films cinématographiques, de vidéo et de programmes de télévision',
     ville: 'Paris',
   }
+
   return { ...defaults, ...overrides }
 }
 
@@ -414,22 +415,8 @@ export function unDetailImmersionJson(
     secteurActivite:
       'Production de films cinématographiques, de vidéo et de programmes de télévision',
     ville: 'Paris',
-    adresse: '33 Rue Claude Lorrain 75016 Paris',
-    estVolontaire: true,
-    localisation: {
-      latitude: 48.8411339,
-      longitude: 2.2610605,
-    },
-    contact: {
-      id: 'aa93a21d-9f0d-45ad-b1ca-abd2a9c08708',
-      nom: 'Louis',
-      prenom: 'de Castro',
-      telephone: '0967430054',
-      email: 'louis@madoxr.com',
-      role: 'Président',
-      modeDeContact: 'EMAIL',
-    },
   }
+
   return { ...defaults, ...overrides }
 }
 

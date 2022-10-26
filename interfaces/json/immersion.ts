@@ -14,22 +14,6 @@ export type DetailImmersionJson = {
   nomEtablissement: string
   secteurActivite: string
   ville: string
-  adresse: string
-  estVolontaire: boolean
-
-  localisation?: {
-    latitude: number
-    longitude: number
-  }
-  contact?: {
-    id: string
-    nom: string
-    prenom: string
-    role: string
-    email?: string
-    telephone?: string
-    modeDeContact?: 'INCONNU' | 'EMAIL' | 'TELEPHONE' | 'PRESENTIEL'
-  }
 }
 
 export function jsonToDetailImmersion(
