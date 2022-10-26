@@ -2,6 +2,8 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
+import OffreEmploiDetail from 'components/offres/OffreEmploiDetail'
+import ServiceCiviqueDetail from 'components/offres/ServiceCiviqueDetail'
 import {
   DetailOffreEmploi,
   DetailServiceCivique,
@@ -9,12 +11,10 @@ import {
 } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
-import OffreEmploiDetail from 'components/offres/OffreEmploiDetail'
-import ServiceCiviqueDetail from 'components/offres/ServiceCiviqueDetail'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
 
 type DetailOffreProps = PageProps & {
   offre: DetailOffreEmploi | DetailServiceCivique

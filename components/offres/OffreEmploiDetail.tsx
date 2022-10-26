@@ -1,12 +1,13 @@
-import { DetailOffreEmploi, TypeOffre } from 'interfaces/offre'
+import { DateTime } from 'luxon'
+import React from 'react'
+
 import LienPartageOffre from 'components/offres/LienPartageOffre'
 import { ButtonStyle } from 'components/ui/Button/Button'
-import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import React from 'react'
+import { DetailOffreEmploi, TypeOffre } from 'interfaces/offre'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
-import { DateTime } from 'luxon'
 
 type DetailOffreEmploiProps = {
   offre: DetailOffreEmploi
