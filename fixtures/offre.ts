@@ -14,6 +14,21 @@ import {
   TypeOffre,
 } from 'interfaces/offre'
 
+export function uneBaseOffreEmploi(
+  overrides: Partial<BaseOffreEmploi> = {}
+): BaseOffreEmploi {
+  const defaults: BaseOffreEmploi = {
+    type: TypeOffre.EMPLOI,
+    id: '142NCPN',
+    titre: 'Conducteur de ligne automatisée chaussures de sport  (H/F)',
+    typeContrat: 'CDI',
+    duree: 'Temps plein',
+    nomEntreprise: 'ADVANCED SHOE FACTORY 4.0',
+    localisation: '07 - ARDOIX',
+  }
+  return { ...defaults, ...overrides }
+}
+
 export function unDetailOffreEmploi(
   overrides: Partial<DetailOffreEmploi> = {}
 ): DetailOffreEmploi {
@@ -57,19 +72,66 @@ export function unDetailOffreEmploi(
   return { ...defaults, ...overrides }
 }
 
-export function uneBaseOffreEmploi(
-  overrides: Partial<BaseOffreEmploi> = {}
-): BaseOffreEmploi {
-  const defaults: BaseOffreEmploi = {
-    type: TypeOffre.EMPLOI,
-    id: '142NCPN',
-    titre: 'Conducteur de ligne automatisée chaussures de sport  (H/F)',
+export function unDetailOffreJson(
+  overrides: Partial<DataDetailOffreEmploiJson> = {}
+): DetailOffreEmploiJson {
+  const defaults: DataDetailOffreEmploiJson = {
+    intitule: "Offre d'emploi",
+    entreprise: {
+      nom: 'Mon Entreprise',
+      description: "Description longue de l'entreprise",
+      url: 'perdu.com',
+      entrepriseAdaptee: false,
+    },
     typeContrat: 'CDI',
-    duree: 'Temps plein',
-    nomEntreprise: 'ADVANCED SHOE FACTORY 4.0',
-    localisation: '07 - ARDOIX',
+    typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
+    lieuTravail: { libelle: 'Paris' },
+    dureeTravailLibelleConverti: 'Temps plein',
+    dateCreation: '2022-09-30T07:47:25.000Z',
+    salaire: { libelle: 'Selon profil' },
+    dureeTravailLibelle: '24H Horaires normaux',
+    description: 'une description d’offre d’emploi',
+    experienceLibelle: '1 an - en formation continue ou initiale',
+    experienceExige: 'E',
+    competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
+    qualitesProfessionnelles: [
+      { libelle: 'compétence pro 1' },
+      { libelle: 'compétence pro 2' },
+    ],
+    formations: [
+      {
+        commentaire: 'formation 1',
+      },
+      {
+        commentaire: 'formation 1',
+        niveauLibelle: 'bac +3',
+      },
+      {
+        commentaire: 'formation 1',
+        niveauLibelle: 'bac +3',
+        domaineLibelle: 'informatique',
+      },
+      {
+        niveauLibelle: 'bac +3',
+        domaineLibelle: 'informatique',
+      },
+      {
+        domaineLibelle: 'informatique',
+      },
+      {
+        commentaire: 'formation 1',
+        domaineLibelle: 'informatique',
+      },
+    ],
+    langues: [{ libelle: 'langue 1' }],
+    permis: [{ libelle: 'permis 1' }],
+    accessibleTH: true,
   }
-  return { ...defaults, ...overrides }
+  return {
+    id: 'id-offre',
+    urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
+    data: { ...defaults, ...overrides },
+  }
 }
 
 export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
@@ -98,6 +160,35 @@ export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
       titre: 'Serveur / Serveuse de bar-brasserie',
       nomEntreprise: 'Entreprise',
       localisation: 'Adresse',
+      typeContrat: 'CDI',
+      duree: 'Temps plein',
+    },
+  ]
+}
+
+export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
+  return [
+    {
+      id: '7158498',
+      titre: 'F/H Comptable auxiliaire (H/F)',
+      nomEntreprise: 'Entreprise',
+      localisation: { nom: 'Adresse' },
+      typeContrat: 'CDI',
+      duree: 'Temps plein',
+    },
+    {
+      id: '7157716',
+      titre: 'Contrôleur de Gestion H/F',
+      nomEntreprise: 'Entreprise',
+      localisation: { nom: 'Adresse' },
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+    },
+    {
+      id: '137FPBC',
+      titre: 'Serveur / Serveuse de bar-brasserie',
+      nomEntreprise: 'Entreprise',
+      localisation: { nom: 'Adresse' },
       typeContrat: 'CDI',
       duree: 'Temps plein',
     },
@@ -151,6 +242,44 @@ export function listeBaseAlternances(): BaseOffreEmploi[] {
   ]
 }
 
+export function listeAlternancesJson(): OffreEmploiItemJson[] {
+  return [
+    {
+      id: '142XDVV',
+      titre: 'Canalisateur H/F',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'Canal+',
+      localisation: {
+        nom: '82 - GRISOLLES',
+      },
+      alternance: true,
+    },
+    {
+      id: '142XDSV',
+      titre: 'Apprentissage vente en boulangerie - pâtisserie (H/F)',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'ICFA/LE FOURNIL DU PAQUEBOT',
+      localisation: {
+        nom: '44 - ST NAZAIRE',
+      },
+      alternance: true,
+    },
+    {
+      id: '142XDMM',
+      titre: 'Vendeur(se) Conseil en Magasin Toulon (H/F)',
+      typeContrat: 'CDD',
+      duree: 'Temps plein',
+      nomEntreprise: 'Magasin Toulon',
+      localisation: {
+        nom: '83 - TOULON',
+      },
+      alternance: true,
+    },
+  ]
+}
+
 export function uneBaseServiceCivique(
   overrides: Partial<BaseServiceCivique> = {}
 ): BaseServiceCivique {
@@ -184,6 +313,18 @@ export const unDetailServiceCivique = (): DetailServiceCivique => ({
   codeDepartement: '75',
   codePostal: '75018',
 })
+
+export function unServiceCiviqueJson(): ServiceCiviqueItemJson {
+  return {
+    id: '6322ac0fe8f66b05ee325ece',
+    titre:
+      'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
+    organisation: "Ligue de l'enseignement fédération de Paris",
+    ville: 'Paris',
+    domaine: 'education',
+    dateDeDebut: '2022-11-01T00:00:00.000Z',
+  }
+}
 
 export function listeBaseServicesCiviques(): BaseServiceCivique[] {
   return [
@@ -312,110 +453,6 @@ export function listeBaseImmersions({
   ]
 }
 
-
-export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
-  return [
-    {
-      id: '7158498',
-      titre: 'F/H Comptable auxiliaire (H/F)',
-      nomEntreprise: 'Entreprise',
-      localisation: { nom: 'Adresse' },
-      typeContrat: 'CDI',
-      duree: 'Temps plein',
-    },
-    {
-      id: '7157716',
-      titre: 'Contrôleur de Gestion H/F',
-      nomEntreprise: 'Entreprise',
-      localisation: { nom: 'Adresse' },
-      typeContrat: 'CDD',
-      duree: 'Temps plein',
-    },
-    {
-      id: '137FPBC',
-      titre: 'Serveur / Serveuse de bar-brasserie',
-      nomEntreprise: 'Entreprise',
-      localisation: { nom: 'Adresse' },
-      typeContrat: 'CDI',
-      duree: 'Temps plein',
-    },
-  ]
-}
-
-export function unDetailOffreJson(
-  overrides: Partial<DataDetailOffreEmploiJson> = {}
-): DetailOffreEmploiJson {
-  const defaults: DataDetailOffreEmploiJson = {
-    intitule: "Offre d'emploi",
-    entreprise: {
-      nom: 'Mon Entreprise',
-      description: "Description longue de l'entreprise",
-      url: 'perdu.com',
-      entrepriseAdaptee: false,
-    },
-    typeContrat: 'CDI',
-    typeContratLibelle: 'Contrat à durée déterminée - 10 Mois',
-    lieuTravail: { libelle: 'Paris' },
-    dureeTravailLibelleConverti: 'Temps plein',
-    dateCreation: '2022-09-30T07:47:25.000Z',
-    salaire: { libelle: 'Selon profil' },
-    dureeTravailLibelle: '24H Horaires normaux',
-    description: 'une description d’offre d’emploi',
-    experienceLibelle: '1 an - en formation continue ou initiale',
-    experienceExige: 'E',
-    competences: [{ libelle: 'compétence 1' }, { libelle: 'compétence 2' }],
-    qualitesProfessionnelles: [
-      { libelle: 'compétence pro 1' },
-      { libelle: 'compétence pro 2' },
-    ],
-    formations: [
-      {
-        commentaire: 'formation 1',
-      },
-      {
-        commentaire: 'formation 1',
-        niveauLibelle: 'bac +3',
-      },
-      {
-        commentaire: 'formation 1',
-        niveauLibelle: 'bac +3',
-        domaineLibelle: 'informatique',
-      },
-      {
-        niveauLibelle: 'bac +3',
-        domaineLibelle: 'informatique',
-      },
-      {
-        domaineLibelle: 'informatique',
-      },
-      {
-        commentaire: 'formation 1',
-        domaineLibelle: 'informatique',
-      },
-    ],
-    langues: [{ libelle: 'langue 1' }],
-    permis: [{ libelle: 'permis 1' }],
-    accessibleTH: true,
-  }
-  return {
-    id: 'id-offre',
-    urlRedirectPourPostulation: 'https://www.offres-emploi.fr/id-offre',
-    data: { ...defaults, ...overrides },
-  }
-}
-
-export function unServiceCiviqueJson(): ServiceCiviqueItemJson {
-  return {
-    id: '6322ac0fe8f66b05ee325ece',
-    titre:
-      'Participer aux dispositifs éducatifs au sein de la Cité éducative des portes du 20ème',
-    organisation: "Ligue de l'enseignement fédération de Paris",
-    ville: 'Paris',
-    domaine: 'education',
-    dateDeDebut: '2022-11-01T00:00:00.000Z',
-  }
-}
-
 export function listeImmersionsJson({
   page,
 }: { page?: number } = {}): ImmersionItemJson[] {
@@ -458,44 +495,6 @@ export function listeImmersionsJson({
       nomEtablissement: 'PARIS LOG',
       secteurActivite: 'Programmation informatique',
       ville: 'Torcy',
-    },
-  ]
-}
-
-export function listeAlternancesJson(): OffreEmploiItemJson[] {
-  return [
-    {
-      id: '142XDVV',
-      titre: 'Canalisateur H/F',
-      typeContrat: 'CDD',
-      duree: 'Temps plein',
-      nomEntreprise: 'Canal+',
-      localisation: {
-        nom: '82 - GRISOLLES',
-      },
-      alternance: true,
-    },
-    {
-      id: '142XDSV',
-      titre: 'Apprentissage vente en boulangerie - pâtisserie (H/F)',
-      typeContrat: 'CDD',
-      duree: 'Temps plein',
-      nomEntreprise: 'ICFA/LE FOURNIL DU PAQUEBOT',
-      localisation: {
-        nom: '44 - ST NAZAIRE',
-      },
-      alternance: true,
-    },
-    {
-      id: '142XDMM',
-      titre: 'Vendeur(se) Conseil en Magasin Toulon (H/F)',
-      typeContrat: 'CDD',
-      duree: 'Temps plein',
-      nomEntreprise: 'Magasin Toulon',
-      localisation: {
-        nom: '83 - TOULON',
-      },
-      alternance: true,
     },
   ]
 }
