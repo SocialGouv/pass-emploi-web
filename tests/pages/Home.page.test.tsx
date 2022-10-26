@@ -425,6 +425,7 @@ describe('Home', () => {
           getAgences: jest.fn(async () => uneListeDAgencesMILO()),
           getCommunesEtDepartements: jest.fn(),
           getCommunes: jest.fn(),
+          getActionsPredefinies: jest.fn(),
           getMetiers: jest.fn(),
         }
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
