@@ -34,6 +34,7 @@ module.exports = withPWA({
     MATOMO_SOCIALGOUV_SITE_ID: process.env.MATOMO_SOCIALGOUV_SITE_ID,
     FAQ_MILO_EXTERNAL_LINK: process.env.FAQ_MILO_EXTERNAL_LINK,
     FAQ_PE_EXTERNAL_LINK: process.env.FAQ_PE_EXTERNAL_LINK,
+    SUPPORT_MAIL: process.env.SUPPORT_MAIL,
   },
 
   i18n: {

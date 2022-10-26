@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -24,7 +24,7 @@ jest.mock('components/Modal')
 
 describe('Home', () => {
   describe('client side', () => {
-    describe('contenu', () => {
+    describe('quand le conseiller n’est pas Mission locale', () => {
       let agences: Agence[]
       let replace: jest.Mock
       let conseillerService: ConseillerService
@@ -38,7 +38,10 @@ describe('Home', () => {
         // When
         renderWithContexts(
           <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
-          { customDependances: { conseillerService } }
+          {
+            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            customDependances: { conseillerService },
+          }
         )
       })
 
@@ -101,6 +104,7 @@ describe('Home', () => {
         expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
           id: agence.id,
           nom: 'Agence Pôle emploi THIERS',
+          codeDepartement: '3',
         })
         expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
       })
@@ -175,44 +179,176 @@ describe('Home', () => {
     })
 
     describe('quand le conseiller est Mission locale', () => {
-      it("affiche 'Mission locale' au lieu de 'agence'", async () => {
+      let agences: Agence[]
+      let replace: jest.Mock
+      let conseillerService: ConseillerService
+      beforeEach(() => {
         // Given
-        renderWithContexts(
-          <Home referentielAgences={[]} redirectUrl='/mes-jeunes' />,
-          { customConseiller: { structure: StructureConseiller.MILO } }
-        )
-        const searchMission = screen.getByRole('combobox', {
-          name: /votre Mission locale/,
-        })
-        const submit = screen.getByRole('button', { name: 'Ajouter' })
+        replace = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+        agences = uneListeDAgencesMILO()
+        conseillerService = mockedConseillerService()
 
         // When
-        await userEvent.type(searchMission, 'pouet')
-        await userEvent.click(submit)
+        renderWithContexts(
+          <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+            customDependances: { conseillerService },
+          }
+        )
+      })
 
+      it('contient un message pour demander la Mission locale du conseiller', () => {
         // Then
-        expect(
-          screen.getByText(/La liste des Missions locales a été mise à jour/)
-        ).toBeInTheDocument()
         expect(
           screen.getByText(/Une fois votre Mission locale renseignée/)
         ).toBeInTheDocument()
+      })
+
+      it('contient un input pour choisir un département', () => {
+        // Then
         expect(
-          screen.getByText(/Sélectionner une Mission locale/)
+          screen.getByRole('textbox', { name: /Département/ })
         ).toBeInTheDocument()
+      })
+
+      it('contient un input pour choisir une Mission locale', () => {
+        // Then
+        expect(
+          screen.getByRole('combobox', {
+            name: /Recherchez votre Mission locale/,
+          })
+        ).toBeInTheDocument()
+        agences.forEach((agence) =>
+          expect(
+            screen.getByRole('option', { hidden: true, name: agence.nom })
+          ).toBeInTheDocument()
+        )
+      })
+
+      it('filtre les Missions locales selon le département entré', async () => {
+        // Given
+        const codeDepartement = '1'
+        const departementInput = screen.getByRole('textbox', {
+          name: /Département/,
+        })
 
         // When
-        const checkAgenceNonTrouvee = screen.getByRole('checkbox', {
-          name: /Ma Mission locale n’apparaît pas/,
+        await userEvent.type(departementInput, codeDepartement)
+
+        // Then
+        agences
+          .filter((agence) => agence.codeDepartement === codeDepartement)
+          .forEach((agence) =>
+            expect(
+              screen.getByRole('option', { hidden: true, name: agence.nom })
+            ).toBeInTheDocument()
+          )
+
+        agences
+          .filter((agence) => agence.codeDepartement !== codeDepartement)
+          .forEach((agence) =>
+            expect(
+              screen.queryByRole('option', { hidden: true, name: agence.nom })
+            ).not.toBeInTheDocument()
+          )
+      })
+
+      it('supprime les préfixes 0 dans l’application du filtre selon le département entré', async () => {
+        // Given
+        const codeDepartement = '01'
+        const departementInput = screen.getByRole('textbox', {
+          name: /Département/,
         })
-        await userEvent.click(checkAgenceNonTrouvee)
+
+        // When
+        await userEvent.type(departementInput, codeDepartement)
 
         // Then
         expect(
-          screen.getByRole('textbox', {
-            name: /Saisir le nom de votre Mission locale/,
+          screen.getByRole('option', {
+            hidden: true,
+            name: 'MLS3F SAINT-LOUIS',
           })
         ).toBeInTheDocument()
+      })
+
+      it('contient une option pour dire que la Mission locale n’est pas dans la liste', () => {
+        // Then
+        expect(
+          screen.getByRole('option', {
+            hidden: true,
+            name: 'Ma mission locale n’apparaît pas dans la liste',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('affiche un lien vers le support quand la Mission locale n’est pas dans la liste', async () => {
+        // Given
+        const missionLocaleInput = screen.getByRole('combobox', {
+          name: /Recherchez votre Mission locale/,
+        })
+
+        // When
+        await userEvent.selectOptions(
+          missionLocaleInput,
+          'Ma mission locale n’apparaît pas dans la liste'
+        )
+
+        // Then
+        expect(
+          screen.getByText(/vous devez contacter le support/)
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', { name: 'Contacter le support' })
+        ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
+      })
+
+      it('contient un bouton pour annuler', async () => {
+        // Given
+        const annuler = screen.getByRole('button', { name: 'Annuler' })
+
+        // When
+        await userEvent.click(annuler)
+
+        // Then
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
+      })
+
+      it("modifie le conseiller avec l'agence choisie", async () => {
+        // Given
+        const departementInput = screen.getByRole('textbox', {
+          name: /Département/,
+        })
+        await userEvent.type(departementInput, '1')
+        const missionLocaleInput = screen.getByRole('combobox', {
+          name: /Recherchez votre Mission locale/,
+        })
+        await userEvent.selectOptions(missionLocaleInput, 'MLS3F SAINT-LOUIS')
+
+        // When
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+        await userEvent.click(submit)
+
+        // Then
+        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          id: '443',
+          nom: 'MLS3F SAINT-LOUIS',
+          codeDepartement: '1',
+        })
+      })
+
+      it("ne fait rien si l'agence n'est pas renseignée", async () => {
+        // Given
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
+        await userEvent.click(submit)
+
+        // Then
+        expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+        expect(replace).not.toHaveBeenCalled()
       })
     })
   })
@@ -302,6 +438,9 @@ describe('Home', () => {
         referentielService = {
           getAgences: jest.fn(async () => uneListeDAgencesMILO()),
           getCommunesEtDepartements: jest.fn(),
+          getCommunes: jest.fn(),
+          getActionsPredefinies: jest.fn(),
+          getMetiers: jest.fn(),
         }
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'conseillerService') return conseillerService

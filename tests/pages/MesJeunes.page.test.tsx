@@ -352,31 +352,6 @@ describe('Mes Jeunes', () => {
         expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
       })
     })
-
-    describe('quand on vient de selectionner une agence', () => {
-      it('affiche un message de succès', async () => {
-        // When
-        await act(() => {
-          renderWithContexts(
-            <MesJeunes
-              conseillerJeunes={jeunes}
-              isFromEmail
-              pageTitle=''
-              ajoutAgenceSuccess={true}
-            />,
-            {
-              customDependances: dependances,
-              customConseiller: { structure: StructureConseiller.MILO },
-            }
-          )
-        })
-
-        // Then
-        expect(
-          screen.getByText('Votre Mission locale a été ajoutée à votre profil')
-        ).toBeInTheDocument()
-      })
-    })
   })
 
   describe('server side', () => {
@@ -502,29 +477,6 @@ describe('Mes Jeunes', () => {
       expect(actual).toMatchObject({
         props: {
           recuperationSuccess: true,
-        },
-      })
-    })
-
-    it('traite la réussite du renseignement de mon agence', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
-          accessToken: 'accessToken',
-        },
-      })
-
-      // When
-      const actual = await getServerSideProps({
-        query: { choixAgence: 'succes' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(actual).toMatchObject({
-        props: {
-          ajoutAgenceSuccess: true,
         },
       })
     })

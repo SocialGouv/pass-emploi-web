@@ -5,12 +5,14 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 interface ExternalLinkProps {
   href: string
   label: string
+  iconName?: IconName
   onClick: () => void
 }
 
 export default function ExternalLink({
   href,
   label,
+  iconName,
   onClick,
 }: ExternalLinkProps) {
   return (
@@ -24,7 +26,7 @@ export default function ExternalLink({
     >
       {label}
       <IconComponent
-        name={IconName.Launch}
+        name={iconName ?? IconName.Launch}
         className='ml-1.5 w-3 h-3 fill-[currentColor]'
         focusable='false'
         aria-hidden={true}

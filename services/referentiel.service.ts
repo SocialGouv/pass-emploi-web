@@ -6,9 +6,13 @@ import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
 
 export interface ReferentielService {
   getAgences(structure: string, accessToken: string): Promise<Agence[]>
+
   getCommunesEtDepartements(query: string): Promise<Localite[]>
+
   getCommunes(query: string): Promise<Commune[]>
+
   getActionsPredefinies(accessToken: string): Promise<ActionPredefinie[]>
+
   getMetiers(query: string): Promise<Metier[]>
 }
 
