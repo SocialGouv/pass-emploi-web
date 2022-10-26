@@ -2,17 +2,22 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import {
+  DetailOffreEmploi,
+  DetailServiceCivique,
+  TypeOffre,
+} from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 import OffreEmploiDetail from 'components/offres/OffreEmploiDetail'
+import ServiceCiviqueDetail from 'components/offres/ServiceCiviqueDetail'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 
 type DetailOffreProps = PageProps & {
-  offre: DetailOffreEmploi
+  offre: DetailOffreEmploi | DetailServiceCivique
 }
 
 function DetailOffre({ offre }: DetailOffreProps) {
@@ -20,7 +25,17 @@ function DetailOffre({ offre }: DetailOffreProps) {
 
   useMatomo(labelMatomo)
 
-  return <OffreEmploiDetail offre={offre} setTrackingMatomo={setLabelMatomo} />
+  return (
+    <>
+      {(offre.type === TypeOffre.EMPLOI ||
+        offre.type === TypeOffre.ALTERNANCE) && (
+        <OffreEmploiDetail offre={offre} setTrackingMatomo={setLabelMatomo} />
+      )}
+      {offre.type === TypeOffre.SERVICE_CIVIQUE && (
+        <ServiceCiviqueDetail offre={offre} />
+      )}
+    </>
+  )
 }
 
 export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
@@ -35,11 +50,24 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
   const offresEmploiService = withDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-
-  const offre = await offresEmploiService.getOffreEmploiServerSide(
-    context.query.offre_id as string,
-    accessToken
+  const serviceCiviqueService = withDependance<ServicesCiviquesService>(
+    'servicesCiviquesService'
   )
+  const typeOffre = context.query.offre_type as string
+
+  let offre: DetailOffreEmploi | DetailServiceCivique | undefined
+
+  if (typeOffre === 'service-civique') {
+    offre = await serviceCiviqueService.getServiceCiviqueServerSide(
+      context.query.offre_id as string,
+      accessToken
+    )
+  } else {
+    offre = await offresEmploiService.getOffreEmploiServerSide(
+      context.query.offre_id as string,
+      accessToken
+    )
+  }
   if (!offre) return { notFound: true }
 
   return {

@@ -9,6 +9,9 @@ import { screen, within } from '@testing-library/react'
 import getByDescriptionTerm from 'tests/querySelector'
 import { unDetailServiceCivique } from 'fixtures/offre'
 
+jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('utils/injectionDependances/withDependance')
+
 describe('Page Détail Service civique', () => {
   describe('client side', () => {
     let offre: DetailServiceCivique
@@ -132,7 +135,10 @@ describe('Page Détail Service civique', () => {
 
       // When
       const actual = await getServerSideProps({
-        query: { service_civique_id: 'id-service-civique' },
+        query: {
+          offre_type: 'service-civique',
+          offre_id: 'id-service-civique',
+        },
       } as unknown as GetServerSidePropsContext)
 
       // Then
@@ -156,7 +162,10 @@ describe('Page Détail Service civique', () => {
 
       // When
       const actual = await getServerSideProps({
-        query: { service_civique_id: 'id-service-civique' },
+        query: {
+          offre_type: 'service-civique',
+          offre_id: 'id-service-civique',
+        },
       } as unknown as GetServerSidePropsContext)
 
       // Then
