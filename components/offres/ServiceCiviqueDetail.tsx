@@ -10,11 +10,11 @@ import { toShortDate } from 'utils/date'
 
 type ServiceCiviqueDetailProps = {
   offre: DetailServiceCivique
-  setTrackingMatomo: (label: string) => void
+  onLienExterne: (label: string) => void
 }
 export default function ServiceCiviqueDetail({
   offre,
-  setTrackingMatomo,
+  onLienExterne,
 }: ServiceCiviqueDetailProps) {
   const dateDeDebutFormate: string | undefined =
     offre.dateDeDebut && toShortDate(offre.dateDeDebut)
@@ -112,7 +112,7 @@ export default function ServiceCiviqueDetail({
             <ExternalLink
               href={offre.lienAnnonce}
               label='Voir l’offre détaillée'
-              onClick={() => setTrackingMatomo('Lien Offre externe')}
+              onClick={() => onLienExterne('Lien Offre externe')}
             />
           </p>
         )}
@@ -131,7 +131,7 @@ export default function ServiceCiviqueDetail({
             <ExternalLink
               href={offre.urlOrganisation}
               label='Site de l’entreprise'
-              onClick={() => setTrackingMatomo('Lien Site entreprise')}
+              onClick={() => onLienExterne('Lien Site entreprise')}
             />
           </p>
         )}

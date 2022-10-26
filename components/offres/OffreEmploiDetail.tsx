@@ -11,12 +11,12 @@ import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 
 type DetailOffreEmploiProps = {
   offre: DetailOffreEmploi
-  setTrackingMatomo: (label: string) => void
+  onLienExterne: (label: string) => void
 }
 
 export default function OffreEmploiDetail({
   offre,
-  setTrackingMatomo,
+  onLienExterne,
 }: DetailOffreEmploiProps) {
   const dateActualisation: string | undefined =
     offre.dateActualisation &&
@@ -122,7 +122,7 @@ export default function OffreEmploiDetail({
             <ExternalLink
               href={offre.urlPostulation}
               label="Voir l'offre détaillée"
-              onClick={() => setTrackingMatomo('Lien Offre externe')}
+              onClick={() => onLienExterne('Lien Offre externe')}
             />
           </p>
         )}
@@ -249,7 +249,7 @@ export default function OffreEmploiDetail({
                   <ExternalLink
                     href={offre.infoEntreprise.lien}
                     label="Site de l'entreprise"
-                    onClick={() => setTrackingMatomo('Lien Site entreprise')}
+                    onClick={() => onLienExterne('Lien Site entreprise')}
                   />
                 </dd>
               </>

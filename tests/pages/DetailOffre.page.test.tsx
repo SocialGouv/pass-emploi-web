@@ -188,7 +188,7 @@ describe('Page Détail Offre', () => {
 
       // When
       const actual = await getServerSideProps({
-        query: { offre_id: 'id-offre' },
+        query: { offre_type: 'emploi', offre_id: 'id-offre' },
       } as unknown as GetServerSidePropsContext)
 
       // Then
@@ -213,7 +213,7 @@ describe('Page Détail Offre', () => {
 
       // When
       const actual = await getServerSideProps({
-        query: { offre_id: 'offre-id' },
+        query: { offre_type: 'emploi', offre_id: 'offre-id' },
       } as unknown as GetServerSidePropsContext)
 
       // Then

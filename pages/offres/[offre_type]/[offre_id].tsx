@@ -29,13 +29,10 @@ function DetailOffre({ offre }: DetailOffreProps) {
     <>
       {(offre.type === TypeOffre.EMPLOI ||
         offre.type === TypeOffre.ALTERNANCE) && (
-        <OffreEmploiDetail offre={offre} setTrackingMatomo={setLabelMatomo} />
+        <OffreEmploiDetail offre={offre} onLienExterne={setLabelMatomo} />
       )}
       {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-        <ServiceCiviqueDetail
-          offre={offre}
-          setTrackingMatomo={setLabelMatomo}
-        />
+        <ServiceCiviqueDetail offre={offre} onLienExterne={setLabelMatomo} />
       )}
     </>
   )
@@ -60,17 +57,21 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
 
   let offre: DetailOffreEmploi | DetailServiceCivique | undefined
 
-  if (typeOffre === 'service-civique') {
-    offre = await serviceCiviqueService.getServiceCiviqueServerSide(
-      context.query.offre_id as string,
-      accessToken
-    )
-  } else {
-    offre = await offresEmploiService.getOffreEmploiServerSide(
-      context.query.offre_id as string,
-      accessToken
-    )
+  switch (typeOffre) {
+    case 'service-civique':
+      offre = await serviceCiviqueService.getServiceCiviqueServerSide(
+        context.query.offre_id as string,
+        accessToken
+      )
+      break
+    case 'emploi':
+      offre = await offresEmploiService.getOffreEmploiServerSide(
+        context.query.offre_id as string,
+        accessToken
+      )
+      break
   }
+
   if (!offre) return { notFound: true }
 
   return {
