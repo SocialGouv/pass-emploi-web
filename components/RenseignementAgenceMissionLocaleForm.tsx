@@ -53,9 +53,9 @@ export function RenseignementAgenceMissionLocaleForm({
     )
   }
 
-  function selectDepartement(departement: string) {
+  function selectDepartement(departementSelectionne: string) {
     setIdAgenceSelectionnee(undefined)
-    setDepartement(departement)
+    setDepartement(departementSelectionne)
   }
 
   function agenceEstDansLaListe() {
