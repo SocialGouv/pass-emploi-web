@@ -7,7 +7,6 @@ import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import React from 'react'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 import { DateTime } from 'luxon'
-import { PageProps } from 'interfaces/pageProps'
 
 type DetailOffreEmploiProps = {
   offre: DetailOffreEmploi

@@ -1,11 +1,13 @@
 import { mockedServicesCiviquesService } from 'fixtures/services'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { getServerSideProps } from 'pages/offres/[offre_type]/[offre_id]'
+import DetailOffre, {
+  getServerSideProps,
+} from 'pages/offres/[offre_type]/[offre_id]'
 import { GetServerSidePropsContext } from 'next/types'
 import { DetailServiceCivique } from 'interfaces/offre'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
-import { screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import getByDescriptionTerm from 'tests/querySelector'
 import { unDetailServiceCivique } from 'fixtures/offre'
 
@@ -16,11 +18,19 @@ describe('Page Détail Service civique', () => {
   describe('client side', () => {
     let offre: DetailServiceCivique
 
+    beforeEach(() => {
+      // Given
+      offre = unDetailServiceCivique()
+
+      // When
+      render(<DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />)
+    })
+
     it('permet de partager le service civique', () => {
       // Then
       expect(
         screen.getByRole('link', {
-          name: `Partager service civique numéro ${offre.id}`,
+          name: `Partager offre numéro ${offre.id}`,
         })
       ).toHaveAttribute('href', `/offres/service-civique/${offre.id}/partage`)
     })
@@ -33,9 +43,7 @@ describe('Page Détail Service civique', () => {
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Informations du service civique')
 
-      expect(getByDescriptionTerm('Domaine', section)).toHaveTextContent(
-        offre.domaine!
-      )
+      expect(screen.getByText(offre.domaine)).toBeInTheDocument()
       expect(
         screen.getByRole('heading', {
           level: 2,
@@ -46,48 +54,52 @@ describe('Page Détail Service civique', () => {
         offre.organisation!
       )
       expect(getByDescriptionTerm('Localisation', section)).toHaveTextContent(
-        offre.codeDepartement
+        offre.codeDepartement!
       )
       expect(getByDescriptionTerm('Date de début', section)).toHaveTextContent(
-        offre.dateDeDebut!
+        'Commence le 17/02/2022'
       )
       expect(getByDescriptionTerm('Date de fin', section)).toHaveTextContent(
-        offre.dateDeFin
+        'Termine le 17/07/2022'
       )
     })
 
     it('affiche le détail de la mission', () => {
       const section = screen.getByRole('region', {
-        name: 'Détail de la mission',
+        name: 'Mission',
       })
       expect(section).toBeInTheDocument()
       expect(
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Mission')
 
-      expect(within(section).getByText(offre.description)).toBeInTheDocument()
+      expect(within(section).getByText(offre.description!)).toBeInTheDocument()
+
+      expect(
+        within(section).getByRole('link', {
+          name: 'Voir l’offre détaillée (nouvelle fenêtre)',
+        })
+      ).toHaveAttribute('href', offre.lienAnnonce)
     })
 
     it('affiche le détail de l’organisation', () => {
       const section = screen.getByRole('region', {
-        name: 'Détail de l’organisation',
+        name: 'Organisation',
       })
       expect(section).toBeInTheDocument()
       expect(
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Organisation')
-
-      // expect(
-      //   within(section).getByText(offre.fullNameOrganisation)
-      // ).toBeInTheDocument() // todo a voir c'est quoi dans l'api
       expect(
-        within(section).getByText(offre.adresseOrganisation)
+        within(section).getByText(offre.adresseOrganisation!)
       ).toBeInTheDocument()
       expect(
-        within(section).getByText(offre.urlOrganisation)
-      ).toBeInTheDocument()
+        within(section).getByRole('link', {
+          name: 'Site de l’entreprise (nouvelle fenêtre)',
+        })
+      ).toHaveAttribute('href', offre.urlOrganisation)
       expect(
-        within(section).getByText(offre.descriptionOrganisation)
+        within(section).getByText(offre.descriptionOrganisation!)
       ).toBeInTheDocument()
     })
   })
@@ -148,8 +160,8 @@ describe('Page Détail Service civique', () => {
       expect(actual).toEqual({
         props: {
           offre,
-          pageTitle: 'Offre de service civique',
-          pageHeader: 'Offre de service civique',
+          pageTitle: 'Détail de l‘offre',
+          pageHeader: `Offre n°${offre.id}`,
         },
       })
     })

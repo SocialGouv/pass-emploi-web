@@ -32,7 +32,10 @@ function DetailOffre({ offre }: DetailOffreProps) {
         <OffreEmploiDetail offre={offre} setTrackingMatomo={setLabelMatomo} />
       )}
       {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-        <ServiceCiviqueDetail offre={offre} />
+        <ServiceCiviqueDetail
+          offre={offre}
+          setTrackingMatomo={setLabelMatomo}
+        />
       )}
     </>
   )

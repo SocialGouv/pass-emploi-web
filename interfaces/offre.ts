@@ -54,15 +54,15 @@ export type BaseServiceCivique = {
 }
 
 export type DetailServiceCivique = BaseServiceCivique & {
-  dateDeFin: string
-  lienAnnonce: string
-  description: string
-  descriptionOrganisation: string
-  urlOrganisation: string
-  adresseMission: string
-  adresseOrganisation: string
-  codeDepartement: string
-  codePostal: string
+  dateDeFin?: string
+  lienAnnonce?: string
+  description?: string
+  descriptionOrganisation?: string
+  urlOrganisation?: string
+  adresseMission?: string
+  adresseOrganisation?: string
+  codeDepartement?: string
+  codePostal?: string
 }
 
 export type BaseImmersion = {
