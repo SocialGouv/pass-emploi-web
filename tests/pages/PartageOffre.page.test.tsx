@@ -22,6 +22,7 @@ import {
   DetailOffre,
   DetailOffreEmploi,
   DetailServiceCivique,
+  TypeOffre,
 } from 'interfaces/offre'
 import PartageOffre, {
   getServerSideProps,
@@ -215,6 +216,38 @@ describe('Page Partage Offre', () => {
         const offreCard = screen.getByRole('heading', {
           name: 'Offre n°' + offre.id,
         }).parentElement!
+        expect(within(offreCard).getByText('Emploi')).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.typeContrat)
+        ).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.nomEntreprise!)
+        ).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.localisation!)
+        ).toBeInTheDocument()
+      })
+
+      it("affiche les informations de l’offre d'alternance", () => {
+        // Given
+        const offre = unDetailOffreEmploi({ type: TypeOffre.ALTERNANCE })
+        renderWithContexts(
+          <PartageOffre
+            offre={offre}
+            jeunes={[]}
+            withoutChat={true}
+            pageTitle=''
+            returnTo='/return/to'
+          />
+        )
+
+        // Then
+        const offreCard = screen.getByRole('heading', {
+          name: 'Offre n°' + offre.id,
+        }).parentElement!
+        expect(within(offreCard).getByText('Alternance')).toBeInTheDocument()
         expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
         expect(
           within(offreCard).getByText(offre.typeContrat)
