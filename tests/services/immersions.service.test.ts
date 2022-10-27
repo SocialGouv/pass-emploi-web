@@ -2,6 +2,7 @@ import { ApiClient } from 'clients/api.client'
 import {
   listeBaseImmersions,
   listeImmersionsJson,
+  unDetailImmersion,
   unDetailImmersionJson,
 } from 'fixtures/offre'
 import { uneCommune, unMetier } from 'fixtures/referentiel'
@@ -47,15 +48,7 @@ describe('ImmersionsApiService', () => {
         '/offres-immersion/ID_IMMERSION',
         'accessToken'
       )
-      expect(actual).toStrictEqual({
-        type: TypeOffre.IMMERSION,
-        id: '89081896600016-M1805',
-        titre: 'Études et développement informatique',
-        nomEtablissement: 'MADO XR',
-        secteurActivite:
-          'Production de films cinématographiques, de vidéo et de programmes de télévision',
-        ville: 'Paris',
-      })
+      expect(actual).toStrictEqual(unDetailImmersion())
     })
 
     it('renvoie undefined si l’immersion n’est pas trouvée en base', async () => {

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
@@ -27,7 +28,7 @@ export default function ImmersionCard({
         />
         {withPartage && (
           <LienPartageOffre
-            titreOffre={offre.titre}
+            titreOffre={'chez ' + offre.nomEtablissement}
             href={`/offres/immersion/${offre.id}/partage`}
             style={ButtonStyle.TERTIARY}
           />
@@ -46,7 +47,23 @@ export default function ImmersionCard({
         {offre.ville}
       </p>
 
-      <DataTag text={offre.secteurActivite} />
+      <div className='flex justify-between'>
+        <DataTag text={offre.secteurActivite} />
+        <Link href={`/offres/immersion/${offre.id}`}>
+          <a
+            aria-label={`Détail de l’immersion chez ${offre.nomEtablissement}`}
+            className='flex items-center text-s-regular hover:text-primary'
+          >
+            Voir le détail
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-4 mr-3 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </a>
+        </Link>
+      </div>
     </div>
   )
 }

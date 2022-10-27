@@ -2,14 +2,12 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
+import ImmersionDetail from 'components/offres/ImmersionDetail'
 import OffreEmploiDetail from 'components/offres/OffreEmploiDetail'
 import ServiceCiviqueDetail from 'components/offres/ServiceCiviqueDetail'
-import {
-  DetailOffreEmploi,
-  DetailServiceCivique,
-  TypeOffre,
-} from 'interfaces/offre'
+import { DetailOffre as _DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
+import { ImmersionsService } from 'services/immersions.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -17,25 +15,31 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type DetailOffreProps = PageProps & {
-  offre: DetailOffreEmploi | DetailServiceCivique
+  offre: _DetailOffre
 }
 
 function DetailOffre({ offre }: DetailOffreProps) {
   const [labelMatomo, setLabelMatomo] = useState<string>('Détail offre')
 
+  function getDetailOffre() {
+    switch (offre.type) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return (
+          <OffreEmploiDetail offre={offre} onLienExterne={setLabelMatomo} />
+        )
+      case TypeOffre.SERVICE_CIVIQUE:
+        return (
+          <ServiceCiviqueDetail offre={offre} onLienExterne={setLabelMatomo} />
+        )
+      case TypeOffre.IMMERSION:
+        return <ImmersionDetail offre={offre} />
+    }
+  }
+
   useMatomo(labelMatomo)
 
-  return (
-    <>
-      {(offre.type === TypeOffre.EMPLOI ||
-        offre.type === TypeOffre.ALTERNANCE) && (
-        <OffreEmploiDetail offre={offre} onLienExterne={setLabelMatomo} />
-      )}
-      {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-        <ServiceCiviqueDetail offre={offre} onLienExterne={setLabelMatomo} />
-      )}
-    </>
-  )
+  return getDetailOffre()
 }
 
 export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
@@ -50,21 +54,16 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
   const offresEmploiService = withDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-  const serviceCiviqueService = withDependance<ServicesCiviquesService>(
+  const servicesCiviquesService = withDependance<ServicesCiviquesService>(
     'servicesCiviquesService'
   )
+  const immersionsService =
+    withDependance<ImmersionsService>('immersionsService')
   const typeOffre = context.query.offre_type as string
 
-  let offre: DetailOffreEmploi | DetailServiceCivique | undefined
+  let offre: _DetailOffre | undefined
   let header: string
   switch (typeOffre) {
-    case 'service-civique':
-      offre = await serviceCiviqueService.getServiceCiviqueServerSide(
-        context.query.offre_id as string,
-        accessToken
-      )
-      header = 'Offre de service civique'
-      break
     case 'emploi':
       offre = await offresEmploiService.getOffreEmploiServerSide(
         context.query.offre_id as string,
@@ -74,6 +73,20 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
         offre?.type === TypeOffre.ALTERNANCE
           ? 'Offre d’alternance'
           : 'Offre d’emploi'
+      break
+    case 'service-civique':
+      offre = await servicesCiviquesService.getServiceCiviqueServerSide(
+        context.query.offre_id as string,
+        accessToken
+      )
+      header = 'Offre de service civique'
+      break
+    case 'immersion':
+      offre = await immersionsService.getImmersionServerSide(
+        context.query.offre_id as string,
+        accessToken
+      )
+      header = 'Offre d’immersion'
       break
   }
 

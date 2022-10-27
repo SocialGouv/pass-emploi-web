@@ -11,9 +11,7 @@ interface DataTagProps {
 export function DataTag({ text, iconName, className }: DataTagProps) {
   return (
     <span
-      className={`${
-        iconName ? 'inline-flex items-center' : ''
-      } bg-primary_lighten border border-solid border-primary rounded-x_large ${
+      className={`inline-flex items-center bg-primary_lighten border border-solid border-primary rounded-x_large ${
         iconName ? 'px-2' : 'px-4'
       } py-1 text-s-regular text-primary whitespace-nowrap ${className ?? ''}`}
     >
