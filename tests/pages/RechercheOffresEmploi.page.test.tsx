@@ -457,7 +457,7 @@ describe('Page Recherche Offres Emploi', () => {
       offresEmploi.forEach((offre) => {
         expect(
           within(offresList).getByRole('link', {
-            name: `Partager offre numéro ${offre.id}`,
+            name: `Partager offre ${offre.titre}`,
           })
         ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
       })

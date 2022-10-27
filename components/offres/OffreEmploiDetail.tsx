@@ -45,7 +45,7 @@ export default function OffreEmploiDetail({
         </p>
         {offre.type === TypeOffre.EMPLOI && (
           <LienPartageOffre
-            idOffre={offre.id}
+            titreOffre={offre.titre}
             href={`/offres/emploi/${offre.id}/partage`}
             style={ButtonStyle.PRIMARY}
           />

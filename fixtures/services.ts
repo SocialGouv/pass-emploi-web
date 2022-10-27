@@ -162,6 +162,7 @@ export function mockedImmersionsService(
   overrides: Partial<ImmersionsService> = {}
 ) {
   const defaults: ImmersionsService = {
+    getImmersionServerSide: jest.fn(),
     searchImmersions: jest.fn(),
   }
   return { ...defaults, ...overrides }

@@ -30,7 +30,7 @@ export default function ServiceCiviqueCard({
         />
         {withPartage && (
           <LienPartageOffre
-            idOffre={offre.id}
+            titreOffre={offre.titre}
             href={`/offres/service-civique/${offre.id}/partage`}
             style={ButtonStyle.TERTIARY}
           />

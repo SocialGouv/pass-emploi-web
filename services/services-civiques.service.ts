@@ -38,13 +38,13 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
   constructor(private readonly apiClient: ApiClient) {}
 
   async getLienServiceCivique(
-    idOffreEngagement: string
+    idServiceCivique: string
   ): Promise<string | undefined> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
     const serviceCiviqueJson = await this.getServiceCivique(
-      idOffreEngagement,
+      idServiceCivique,
       accessToken
     )
 

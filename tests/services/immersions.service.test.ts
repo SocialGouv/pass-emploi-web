@@ -1,11 +1,17 @@
 import { ApiClient } from 'clients/api.client'
-import { listeBaseImmersions, listeImmersionsJson } from 'fixtures/offre'
+import {
+  listeBaseImmersions,
+  listeImmersionsJson,
+  unDetailImmersionJson,
+} from 'fixtures/offre'
 import { uneCommune, unMetier } from 'fixtures/referentiel'
+import { TypeOffre } from 'interfaces/offre'
 import {
   ImmersionsApiService,
   ImmersionsService,
 } from 'services/immersions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
+import { ApiError } from 'utils/httpClient'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(async () => ({
@@ -21,6 +27,52 @@ describe('ImmersionsApiService', () => {
   beforeEach(() => {
     apiClient = new FakeApiClient()
     immersionsService = new ImmersionsApiService(apiClient)
+  })
+
+  describe('.getImmersionServerSide', () => {
+    it("renvoie l'immersion si elle est trouvée en base", async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: unDetailImmersionJson(),
+      })
+
+      // When
+      const actual = await immersionsService.getImmersionServerSide(
+        'ID_IMMERSION',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/offres-immersion/ID_IMMERSION',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        type: TypeOffre.IMMERSION,
+        id: '89081896600016-M1805',
+        titre: 'Études et développement informatique',
+        nomEtablissement: 'MADO XR',
+        secteurActivite:
+          'Production de films cinématographiques, de vidéo et de programmes de télévision',
+        ville: 'Paris',
+      })
+    })
+
+    it('renvoie undefined si l’immersion n’est pas trouvée en base', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'immersion non trouvée')
+      )
+
+      // When
+      const actual = await immersionsService.getImmersionServerSide(
+        'ID_IMMERSION',
+        'accessToken'
+      )
+
+      // Then
+      expect(actual).toStrictEqual(undefined)
+    })
   })
 
   describe('.searchImmersions', () => {
