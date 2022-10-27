@@ -25,7 +25,7 @@ export default function FilAriane({
     '/mes-jeunes/pole-emploi/creation-jeune': 'Création',
     '/mes-jeunes/[jeune_id]/actions/[action_id]': 'Détail action',
     '/offres': 'Offres',
-    '/offres/[offre_id]': "Détail de l'offre",
+    '/offres/[offre_type]/[offre_id]': "Détail de l'offre",
   }
 
   function creationFilAriane() {
