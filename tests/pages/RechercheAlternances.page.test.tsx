@@ -434,15 +434,15 @@ describe('Page Recherche Alternances', () => {
       })
     })
 
-    // it('permet de partager chaque offre', () => {
-    //   alternances.forEach((offre) => {
-    //     expect(
-    //       within(offresList).getByRole('link', {
-    //         name: `Partager offre numéro ${offre.id}`,
-    //       })
-    //     ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
-    //   })
-    // })
+    it('permet de partager chaque offre', () => {
+      alternances.forEach((offre) => {
+        expect(
+          within(offresList).getByRole('link', {
+            name: `Partager offre ${offre.titre}`,
+          })
+        ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
+      })
+    })
 
     it('cache le formulaire', async () => {
       // Given

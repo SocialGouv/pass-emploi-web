@@ -56,19 +56,24 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
   const typeOffre = context.query.offre_type as string
 
   let offre: DetailOffreEmploi | DetailServiceCivique | undefined
-
+  let header: string
   switch (typeOffre) {
     case 'service-civique':
       offre = await serviceCiviqueService.getServiceCiviqueServerSide(
         context.query.offre_id as string,
         accessToken
       )
+      header = 'Offre de service civique'
       break
     case 'emploi':
       offre = await offresEmploiService.getOffreEmploiServerSide(
         context.query.offre_id as string,
         accessToken
       )
+      header =
+        offre?.type === TypeOffre.ALTERNANCE
+          ? 'Offre d’alternance'
+          : 'Offre d’emploi'
       break
   }
 
@@ -77,8 +82,8 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
   return {
     props: {
       offre,
-      pageTitle: 'Détail de l‘offre',
-      pageHeader: `Offre n°${offre.id}`,
+      pageTitle: 'Détail de l’offre',
+      pageHeader: header!,
     },
   }
 }

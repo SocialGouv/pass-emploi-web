@@ -26,7 +26,7 @@ export default function OffreEmploiCard({
           backgroundColor='white'
           className='text-s-regular'
         />
-        {withPartage && offre.type === TypeOffre.EMPLOI && (
+        {withPartage && (
           <LienPartageOffre
             titreOffre={offre.titre}
             href={`/offres/emploi/${offre.id}/partage`}

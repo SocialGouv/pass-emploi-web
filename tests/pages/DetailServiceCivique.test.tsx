@@ -1,15 +1,16 @@
+import { render, screen, within } from '@testing-library/react'
+import { GetServerSidePropsContext } from 'next/types'
+
+import { unDetailServiceCivique } from 'fixtures/offre'
 import { mockedServicesCiviquesService } from 'fixtures/services'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { DetailServiceCivique } from 'interfaces/offre'
 import DetailOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]'
-import { GetServerSidePropsContext } from 'next/types'
-import { DetailServiceCivique } from 'interfaces/offre'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
-import { render, screen, within } from '@testing-library/react'
 import getByDescriptionTerm from 'tests/querySelector'
-import { unDetailServiceCivique } from 'fixtures/offre'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -160,8 +161,8 @@ describe('Page Détail Service civique', () => {
       expect(actual).toEqual({
         props: {
           offre,
-          pageTitle: 'Détail de l‘offre',
-          pageHeader: `Offre n°${offre.id}`,
+          pageTitle: 'Détail de l’offre',
+          pageHeader: 'Offre de service civique',
         },
       })
     })
