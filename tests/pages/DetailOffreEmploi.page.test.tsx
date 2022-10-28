@@ -83,9 +83,11 @@ describe('Page Détail Offre Emploi', () => {
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Détail de l’offre')
 
-      expect(within(section).getByText(offre.description!)).toBeInTheDocument()
+      expect(getByDescriptionTerm('Description', section)).toHaveTextContent(
+        offre.description!
+      )
       expect(
-        within(section).getByRole('link', {
+        within(getByDescriptionTerm('Lien offre', section)).getByRole('link', {
           name: "Voir l'offre détaillée (nouvelle fenêtre)",
         })
       ).toHaveAttribute('href', offre.urlPostulation)
@@ -130,9 +132,8 @@ describe('Page Détail Offre Emploi', () => {
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName("Informations de l' Entreprise")
 
-      const ddLien = getByDescriptionTerm('Lien site', section)
       expect(
-        within(ddLien).getByRole('link', {
+        within(getByDescriptionTerm('Lien site', section)).getByRole('link', {
           name: "Site de l'entreprise (nouvelle fenêtre)",
         })
       ).toHaveAttribute('href', offre.infoEntreprise!.lien)

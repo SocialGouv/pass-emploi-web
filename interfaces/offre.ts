@@ -78,7 +78,16 @@ export type BaseImmersion = {
   secteurActivite: string
 }
 
-export type DetailImmersion = BaseImmersion
+export type DetailImmersion = BaseImmersion & {
+  contact: {
+    adresse: string
+    nom?: string
+    prenom?: string
+    role?: string
+    telephone?: string
+    email?: string
+  }
+}
 
 export interface MetadonneesOffres {
   nombrePages: number

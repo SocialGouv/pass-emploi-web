@@ -25,9 +25,21 @@ export default function OffreEmploiDetail({
       WEEKDAY_MONTH_LONG
     )
 
-  const infoEntrepriseSrOnly =
-    Boolean(offre.infoEntreprise) &&
-    !Boolean(offre.infoEntreprise?.lien || offre.infoEntreprise?.detail)
+  const hasDetail = Boolean(offre.description || offre.urlPostulation)
+  const hasProfil = Boolean(
+    offre.experience ||
+      offre.competences.length ||
+      offre.competencesProfessionnelles.length ||
+      offre.formations.length ||
+      offre.langues.length ||
+      offre.permis.length
+  )
+  const hasEntreprise = Boolean(
+    offre.infoEntreprise?.lien ||
+      offre.infoEntreprise?.adaptee ||
+      offre.infoEntreprise?.accessibleTH ||
+      offre.infoEntreprise?.detail
+  )
 
   const sectionTitleStyle =
     'inline-flex items-center w-full text-m-bold pb-6 border-b border-solid border-primary_lighten'
@@ -104,148 +116,159 @@ export default function OffreEmploiDetail({
         </dl>
       </section>
 
-      <section aria-labelledby='heading-detail' className='mt-8'>
-        <h3 id='heading-detail' className={sectionTitleStyle}>
-          <SectionTitleDot />
-          Détail de l’offre
-        </h3>
+      {hasDetail && (
+        <section aria-labelledby='heading-detail' className='mt-8'>
+          <h3 id='heading-detail' className={sectionTitleStyle}>
+            <SectionTitleDot />
+            Détail de l’offre
+          </h3>
 
-        {offre.description && (
-          <p className={`${ddStyle} whitespace-pre-wrap`}>
-            {offre.description}
-          </p>
-        )}
-        {offre.urlPostulation && (
-          <p className={`${ddStyle} text-primary hover:text-primary_darken`}>
-            <ExternalLink
-              href={offre.urlPostulation}
-              label="Voir l'offre détaillée"
-              onClick={() => onLienExterne('Lien Offre externe')}
-            />
-          </p>
-        )}
-      </section>
-
-      <section aria-labelledby='heading-profil' className='mt-6'>
-        <h3 id='heading-profil' className={sectionTitleStyle}>
-          <SectionTitleDot />
-          Profil souhaité
-        </h3>
-
-        <dl>
-          {offre.experience && (
-            <>
-              <dt className={dtStyle}>Expériences</dt>
-              <dd className={`${ddStyle} flex`}>
-                {offre.experience.libelle}
-                {offre.experience.exigee && (
-                  <IconComponent
-                    name={IconName.Important}
-                    title='Expérience exigée'
-                    aria-label='Expérience exigée'
-                    focusable={false}
-                    aria-hidden={true}
-                    className='inline ml-2 h-5 w-5 fill-primary'
+          <dl>
+            {offre.description && (
+              <>
+                <dt className='sr-only'>Description</dt>
+                <dd className={`${ddStyle} whitespace-pre-wrap`}>
+                  {offre.description}
+                </dd>
+              </>
+            )}
+            {offre.urlPostulation && (
+              <>
+                <dt className='sr-only'>Lien offre</dt>
+                <dd
+                  className={`${ddStyle} text-primary hover:text-primary_darken`}
+                >
+                  <ExternalLink
+                    href={offre.urlPostulation}
+                    label="Voir l'offre détaillée"
+                    onClick={() => onLienExterne('Lien Offre externe')}
                   />
-                )}
-              </dd>
-            </>
-          )}
+                </dd>
+              </>
+            )}
+          </dl>
+        </section>
+      )}
 
-          {offre.competences.length > 0 && (
-            <>
-              <dt className={dtStyle}>Savoir et savoir faire</dt>
-              <dd className={ddStyle}>
-                <ul className={ulStyle}>
-                  {offre.competences.map((competence) => (
-                    <li key={competence} className={liStyle}>
-                      {competence}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </>
-          )}
+      {hasProfil && (
+        <section aria-labelledby='heading-profil' className='mt-6'>
+          <h3 id='heading-profil' className={sectionTitleStyle}>
+            <SectionTitleDot />
+            Profil souhaité
+          </h3>
 
-          {offre.competencesProfessionnelles.length > 0 && (
-            <>
-              <dt className={dtStyle}>Savoir être professionnel</dt>
-              <dd className={ddStyle}>
-                <ul className={ulStyle}>
-                  {offre.competencesProfessionnelles.map((competencePro) => (
-                    <li key={competencePro} className={liStyle}>
-                      {competencePro}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </>
-          )}
+          <dl>
+            {offre.experience && (
+              <>
+                <dt className={dtStyle}>Expériences</dt>
+                <dd className={`${ddStyle} flex`}>
+                  {offre.experience.libelle}
+                  {offre.experience.exigee && (
+                    <IconComponent
+                      name={IconName.Important}
+                      title='Expérience exigée'
+                      aria-label='Expérience exigée'
+                      focusable={false}
+                      aria-hidden={true}
+                      className='inline ml-2 h-5 w-5 fill-primary'
+                    />
+                  )}
+                </dd>
+              </>
+            )}
 
-          {offre.formations.length > 0 && (
-            <>
-              <dt className={dtStyle}>Formation</dt>
-              <dd className={ddStyle}>
-                <ul className={ulStyle}>
-                  {offre.formations.map((formation) => (
-                    <li key={formation} className={liStyle}>
-                      {formation}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </>
-          )}
+            {offre.competences.length > 0 && (
+              <>
+                <dt className={dtStyle}>Savoir et savoir faire</dt>
+                <dd className={ddStyle}>
+                  <ul className={ulStyle}>
+                    {offre.competences.map((competence) => (
+                      <li key={competence} className={liStyle}>
+                        {competence}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </>
+            )}
 
-          {offre.langues.length > 0 && (
-            <>
-              <dt className={dtStyle}>Langue</dt>
-              <dd className={ddStyle}>
-                <ul className={ulStyle}>
-                  {offre.langues.map((langue) => (
-                    <li key={langue} className={liStyle}>
-                      {langue}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </>
-          )}
+            {offre.competencesProfessionnelles.length > 0 && (
+              <>
+                <dt className={dtStyle}>Savoir être professionnel</dt>
+                <dd className={ddStyle}>
+                  <ul className={ulStyle}>
+                    {offre.competencesProfessionnelles.map((competencePro) => (
+                      <li key={competencePro} className={liStyle}>
+                        {competencePro}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </>
+            )}
 
-          {offre.permis.length > 0 && (
-            <>
-              <dt className={dtStyle}>Permis</dt>
-              <dd className={ddStyle}>
-                <ul className={ulStyle}>
-                  {offre.permis.map((permis) => (
-                    <li key={permis} className={liStyle}>
-                      {permis}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </>
-          )}
-        </dl>
-      </section>
+            {offre.formations.length > 0 && (
+              <>
+                <dt className={dtStyle}>Formation</dt>
+                <dd className={ddStyle}>
+                  <ul className={ulStyle}>
+                    {offre.formations.map((formation) => (
+                      <li key={formation} className={liStyle}>
+                        {formation}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </>
+            )}
 
-      {offre.infoEntreprise && (
-        <section
-          aria-labelledby='heading-entreprise'
-          className={infoEntrepriseSrOnly ? 'sr-only' : 'mt-6'}
-        >
+            {offre.langues.length > 0 && (
+              <>
+                <dt className={dtStyle}>Langue</dt>
+                <dd className={ddStyle}>
+                  <ul className={ulStyle}>
+                    {offre.langues.map((langue) => (
+                      <li key={langue} className={liStyle}>
+                        {langue}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </>
+            )}
+
+            {offre.permis.length > 0 && (
+              <>
+                <dt className={dtStyle}>Permis</dt>
+                <dd className={ddStyle}>
+                  <ul className={ulStyle}>
+                    {offre.permis.map((permis) => (
+                      <li key={permis} className={liStyle}>
+                        {permis}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </>
+            )}
+          </dl>
+        </section>
+      )}
+
+      {hasEntreprise && (
+        <section aria-labelledby='heading-entreprise' className='mt-6'>
           <h3 id='heading-entreprise' className={sectionTitleStyle}>
             <SectionTitleDot />
             <span className='sr-only'>Informations de l&apos;</span>Entreprise
           </h3>
 
           <dl>
-            {offre.infoEntreprise.lien && (
+            {offre.infoEntreprise!.lien && (
               <>
                 <dt className='sr-only'>Lien site</dt>
                 <dd className='mt-4 text-base-regular text-primary hover:text-primary_darken'>
                   <ExternalLink
-                    href={offre.infoEntreprise.lien}
+                    href={offre.infoEntreprise!.lien}
                     label="Site de l'entreprise"
                     onClick={() => onLienExterne('Lien Site entreprise')}
                   />
@@ -253,7 +276,7 @@ export default function OffreEmploiDetail({
               </>
             )}
 
-            {offre.infoEntreprise.adaptee && (
+            {offre.infoEntreprise!.adaptee && (
               <>
                 <dt className='mt-4'>
                   <DataTag text='Entreprise adaptée' />
@@ -262,7 +285,7 @@ export default function OffreEmploiDetail({
               </>
             )}
 
-            {offre.infoEntreprise.accessibleTH && (
+            {offre.infoEntreprise!.accessibleTH && (
               <>
                 <dt className='mt-4'>
                   <DataTag text='Entreprise handi-bienveillante'></DataTag>
@@ -271,11 +294,11 @@ export default function OffreEmploiDetail({
               </>
             )}
 
-            {offre.infoEntreprise.detail && (
+            {offre.infoEntreprise!.detail && (
               <>
                 <dt className={dtStyle}>Détail de l&apos;entreprise</dt>
                 <dd className='mt-4 text-s-regular whitespace-pre-wrap'>
-                  {offre.infoEntreprise.detail}
+                  {offre.infoEntreprise!.detail}
                 </dd>
               </>
             )}

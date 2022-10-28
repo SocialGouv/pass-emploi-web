@@ -8,7 +8,7 @@ import DetailOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
-import getByDescriptionTerm from 'tests/querySelector'
+import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -44,7 +44,7 @@ describe('Page Détail Service civique', () => {
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Informations du service civique')
 
-      expect(screen.getByText(offre.domaine)).toBeInTheDocument()
+      expect(getByTextContent('Domaine : ' + offre.domaine)).toBeInTheDocument()
       expect(
         screen.getByRole('heading', {
           level: 2,
@@ -74,10 +74,14 @@ describe('Page Détail Service civique', () => {
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Mission')
 
-      expect(within(section).getByText(offre.description!)).toBeInTheDocument()
-
+      expect(getByDescriptionTerm('Adresse', section)).toHaveTextContent(
+        `${offre.adresseMission!}, ${offre.codePostal} ${offre.ville}`
+      )
+      expect(getByDescriptionTerm('Description', section)).toHaveTextContent(
+        offre.description!
+      )
       expect(
-        within(section).getByRole('link', {
+        within(getByDescriptionTerm('Lien offre', section)).getByRole('link', {
           name: 'Voir l’offre détaillée (nouvelle fenêtre)',
         })
       ).toHaveAttribute('href', offre.lienAnnonce)
@@ -91,17 +95,22 @@ describe('Page Détail Service civique', () => {
       expect(
         within(section).getByRole('heading', { level: 3 })
       ).toHaveAccessibleName('Organisation')
+
+      expect(getByDescriptionTerm('Nom', section)).toHaveTextContent(
+        offre.organisation!
+      )
       expect(
-        within(section).getByText(offre.adresseOrganisation!)
-      ).toBeInTheDocument()
-      expect(
-        within(section).getByRole('link', {
-          name: 'Site de l’entreprise (nouvelle fenêtre)',
-        })
+        within(getByDescriptionTerm('Lien organisation', section)).getByRole(
+          'link',
+          { name: 'Site de l’entreprise (nouvelle fenêtre)' }
+        )
       ).toHaveAttribute('href', offre.urlOrganisation)
-      expect(
-        within(section).getByText(offre.descriptionOrganisation!)
-      ).toBeInTheDocument()
+      expect(getByDescriptionTerm('Adresse', section)).toHaveTextContent(
+        offre.adresseOrganisation!
+      )
+      expect(getByDescriptionTerm('Description', section)).toHaveTextContent(
+        offre.descriptionOrganisation!
+      )
     })
   })
 
