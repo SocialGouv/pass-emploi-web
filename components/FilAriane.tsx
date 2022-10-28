@@ -1,46 +1,31 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-import IconComponent, { IconName } from './ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import routesToLabel from 'utils/route-labels'
 
 interface FilArianeProps {
   currentPath: string
-  currentRoute: string
 }
 
-export default function FilAriane({
-  currentPath,
-  currentRoute,
-}: FilArianeProps) {
-  const [ariane, setAriane] = useState<{ label: string; href: string }[]>([])
+export default function FilAriane({ currentPath }: FilArianeProps) {
+  const [ariane, setAriane] = useState<Array<{ label: string; href: string }>>(
+    []
+  )
 
-  const routeToLabel: { [key: string]: string } = {
-    '/mes-jeunes': 'Portefeuille',
-    '/mes-jeunes/[jeune_id]': 'Fiche jeune',
-    '/mes-jeunes/[jeune_id]/favoris': 'Favoris',
-    '/mes-jeunes/[jeune_id]/historique': 'Historique',
-    '/mes-jeunes/[jeune_id]/indicateurs': 'Indicateurs',
-    '/mes-jeunes/[jeune_id]/rendez-vous-passes': 'Rendez-vous passés',
-    '/mes-jeunes/milo/creation-jeune': 'Création',
-    '/mes-jeunes/pole-emploi/creation-jeune': 'Création',
-    '/mes-jeunes/[jeune_id]/actions/[action_id]': 'Détail action',
-    '/offres': 'Offres',
-    '/offres/[offre_type]/[offre_id]': "Détail de l'offre",
-  }
-
-  function creationFilAriane() {
+  function creationFilAriane(path: string) {
     const liensFilAriane: { label: string; href: string }[] = []
-    const splittedPath = currentPath.split('/').slice(1)
-    const splittedRoute = currentRoute.split('/').slice(1)
+    const splittedPath = path.split('/').slice(1)
     let rebuiltPath = ''
-    let rebuiltRoute = ''
 
-    splittedPath.forEach((fragmentPath, index) => {
+    const regExps: RegExp[] = Array.from(routesToLabel.keys())
+    splittedPath.forEach((fragmentPath) => {
       rebuiltPath += `/${fragmentPath}`
-      rebuiltRoute += `/${splittedRoute[index]}`
-      if (routeToLabel.hasOwnProperty(rebuiltRoute)) {
+
+      const route = regExps.find((regex) => regex.test(rebuiltPath))
+      if (route) {
         liensFilAriane.push({
-          label: routeToLabel[rebuiltRoute] ?? fragmentPath,
+          label: routesToLabel.get(route) ?? fragmentPath,
           href: rebuiltPath,
         })
       }
@@ -50,9 +35,9 @@ export default function FilAriane({
   }
 
   useEffect(() => {
-    const filAriane = creationFilAriane()
+    const filAriane = creationFilAriane(currentPath)
     setAriane(filAriane)
-  }, [currentPath, currentRoute])
+  }, [currentPath])
 
   return (
     <nav aria-label="Fil d'ariane">

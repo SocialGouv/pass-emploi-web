@@ -106,6 +106,7 @@ describe('Page Partage Offre', () => {
       it('charge la page avec les détails de l’offre d’emploi', async () => {
         // When
         const actual = await getServerSideProps({
+          req: { headers: { referer: 'referer-url' } },
           query: { offre_type: 'emploi', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
@@ -118,7 +119,7 @@ describe('Page Partage Offre', () => {
             offre: offreEmploi,
             jeunes: expect.arrayContaining([]),
             pageTitle: 'Partager une offre',
-            returnTo: '/recherche-offres',
+            returnTo: 'referer-url',
             withoutChat: true,
           },
         })
@@ -127,6 +128,7 @@ describe('Page Partage Offre', () => {
       it('charge la page avec les détails du service civique', async () => {
         // When
         const actual = await getServerSideProps({
+          req: { headers: { referer: 'referer-url' } },
           query: { offre_type: 'service-civique', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
@@ -139,7 +141,7 @@ describe('Page Partage Offre', () => {
             offre: serviceCivique,
             jeunes: expect.arrayContaining([]),
             pageTitle: 'Partager une offre',
-            returnTo: '/recherche-offres',
+            returnTo: 'referer-url',
             withoutChat: true,
           },
         })
@@ -148,6 +150,7 @@ describe('Page Partage Offre', () => {
       it("charge la page avec les détails de l'immersion", async () => {
         // When
         const actual = await getServerSideProps({
+          req: { headers: { referer: 'referer-url' } },
           query: { offre_type: 'immersion', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
@@ -161,7 +164,7 @@ describe('Page Partage Offre', () => {
             offre: immersion,
             jeunes: expect.arrayContaining([]),
             pageTitle: 'Partager une offre',
-            returnTo: '/recherche-offres',
+            returnTo: 'referer-url',
             withoutChat: true,
           },
         })
@@ -170,6 +173,7 @@ describe('Page Partage Offre', () => {
       it('charge les jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
+          req: { headers: { referer: 'referer-url' } },
           query: { offre_type: 'emploi', offre_id: 'offre-id' },
         } as unknown as GetServerSidePropsContext)
 
