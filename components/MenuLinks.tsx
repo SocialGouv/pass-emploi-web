@@ -114,6 +114,10 @@ export default function MenuLinks({
           </>
         )}
 
+        {items.includes(MenuItem.Actualites) && (
+          <ActualitesMenuButton structure={conseiller?.structure} />
+        )}
+
         {items.includes(MenuItem.Aide) && (
           <MenuLink
             href={
@@ -126,10 +130,6 @@ export default function MenuLinks({
             isExternal={true}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
-        )}
-
-        {items.includes(MenuItem.Actualites) && (
-          <ActualitesMenuButton structure={conseiller?.structure} />
         )}
       </div>
       <div className='flex flex-col'>
