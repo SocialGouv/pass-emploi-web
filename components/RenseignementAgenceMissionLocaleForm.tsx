@@ -82,10 +82,10 @@ export function RenseignementAgenceMissionLocaleForm({
   useEffect(() => {
     const agencesFiltrees =
       departement !== ''
-        ? referentielAgences.filter(
-            (agence) =>
-              agence.codeDepartement.padStart(2, '0') ===
-              departement.padStart(2, '0')
+        ? referentielAgences.filter((agence) =>
+            agence.codeDepartement
+              .padStart(2, '0')
+              .startsWith(departement.padStart(2, '0'))
           )
         : referentielAgences
     setAgencesMiloFiltrees(agencesFiltrees)
@@ -103,7 +103,10 @@ export function RenseignementAgenceMissionLocaleForm({
       >
         <div className={`${container === FormContainer.PAGE ? 'w-[40%]' : ''}`}>
           <Label htmlFor='departement'>
-            Département de ma Mission locale (format : 00)
+            {{
+              main: 'Département de ma Mission locale',
+              helpText: '(ex : 1, 20, 973)',
+            }}
           </Label>
           <Input type='text' id='departement' onChange={selectDepartement} />
         </div>
