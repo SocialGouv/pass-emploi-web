@@ -165,7 +165,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const props: MesRendezvousProps = {
     pageTitle: 'Tableau de bord - Mes rendez-vous',
-    pageHeader: 'Mes rendez-vous',
+    pageHeader: 'Rendez-vous',
   }
 
   if (context.query[QueryParam.creationRdv])

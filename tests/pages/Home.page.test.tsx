@@ -37,7 +37,11 @@ describe('Home', () => {
 
         // When
         renderWithContexts(
-          <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
+          <Home
+            referentielAgences={agences}
+            redirectUrl='/mes-jeunes'
+            pageTitle=''
+          />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
             customDependances: { conseillerService },
@@ -191,7 +195,11 @@ describe('Home', () => {
 
         // When
         renderWithContexts(
-          <Home referentielAgences={agences} redirectUrl='/mes-jeunes' />,
+          <Home
+            referentielAgences={agences}
+            redirectUrl='/mes-jeunes'
+            pageTitle=''
+          />,
           {
             customConseiller: { structure: StructureConseiller.MILO },
             customDependances: { conseillerService },
@@ -447,6 +455,7 @@ describe('Home', () => {
           if (dependance === 'referentielService') return referentielService
         })
       })
+
       it('renvoie les props nécessaires pour demander l’agence', async () => {
         // When
         const actual = await getServerSideProps({
@@ -458,9 +467,11 @@ describe('Home', () => {
           props: {
             redirectUrl: '/mes-jeunes',
             referentielAgences: uneListeDAgencesMILO(),
+            pageTitle: 'Accueil',
           },
         })
       })
+
       it('renvoie l’url renseignée', async () => {
         // When
         const actual = await getServerSideProps({
@@ -472,6 +483,7 @@ describe('Home', () => {
           props: {
             redirectUrl: '/mes-rendezvous',
             referentielAgences: uneListeDAgencesMILO(),
+            pageTitle: 'Accueil',
           },
         })
       })

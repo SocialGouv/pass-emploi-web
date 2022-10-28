@@ -118,7 +118,8 @@ describe('Page Partage Offre', () => {
           props: {
             offre: offreEmploi,
             jeunes: expect.arrayContaining([]),
-            pageTitle: 'Partager une offre',
+            pageTitle: 'Recherche d’offres - Partager offre',
+            pageHeader: 'Partager une offre',
             returnTo: 'referer-url',
             withoutChat: true,
           },
@@ -140,7 +141,8 @@ describe('Page Partage Offre', () => {
           props: {
             offre: serviceCivique,
             jeunes: expect.arrayContaining([]),
-            pageTitle: 'Partager une offre',
+            pageTitle: 'Recherche d’offres - Partager offre',
+            pageHeader: 'Partager une offre',
             returnTo: 'referer-url',
             withoutChat: true,
           },
@@ -163,7 +165,8 @@ describe('Page Partage Offre', () => {
           props: {
             offre: immersion,
             jeunes: expect.arrayContaining([]),
-            pageTitle: 'Partager une offre',
+            pageTitle: 'Recherche d’offres - Partager offre',
+            pageHeader: 'Partager une offre',
             returnTo: 'referer-url',
             withoutChat: true,
           },

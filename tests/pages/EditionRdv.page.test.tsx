@@ -85,7 +85,8 @@ describe('EditionRdv', () => {
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
-            pageTitle: 'Nouveau rendez-vous',
+            pageTitle: 'Mes rendez-vous - Créer',
+            pageHeader: 'Créer un nouveau rendez-vous',
             returnTo: '/mes-jeunes',
             typesRendezVous: expect.arrayContaining([]),
           },
@@ -158,7 +159,11 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdv: unRendezVous(), pageTitle: 'Modification rendez-vous' },
+          props: {
+            rdv: unRendezVous(),
+            pageTitle: 'Mes rendez-vous - Modifier',
+            pageHeader: 'Modifier le rendez-vous',
+          },
         })
       })
 

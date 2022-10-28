@@ -170,7 +170,7 @@ describe('Page Détail Service civique', () => {
       expect(actual).toEqual({
         props: {
           offre,
-          pageTitle: 'Détail de l’offre',
+          pageTitle: 'Recherche d’offres - Détail de l’offre',
           pageHeader: 'Offre de service civique',
         },
       })

@@ -241,7 +241,7 @@ export const getServerSideProps: GetServerSideProps<
       idJeune,
       actionsPredefinies,
       withoutChat: true,
-      pageTitle: 'Actions jeune – Création action',
+      pageTitle: 'Actions jeune – Créer action',
       pageHeader: 'Créer une nouvelle action',
       returnTo: `/mes-jeunes/${idJeune}`,
     },

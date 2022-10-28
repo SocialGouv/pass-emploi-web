@@ -204,7 +204,8 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       offre,
       jeunes,
-      pageTitle: 'Partager une offre',
+      pageTitle: 'Recherche d’offres - Partager offre',
+      pageHeader: 'Partager une offre',
       withoutChat: true,
       returnTo: redirectTo,
     },

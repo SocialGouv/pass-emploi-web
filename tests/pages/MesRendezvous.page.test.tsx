@@ -167,7 +167,7 @@ describe('MesRendezvous', () => {
         expect(actual).toEqual({
           props: {
             pageTitle: 'Tableau de bord - Mes rendez-vous',
-            pageHeader: 'Mes rendez-vous',
+            pageHeader: 'Rendez-vous',
           },
         })
       })

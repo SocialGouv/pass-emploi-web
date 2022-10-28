@@ -183,7 +183,8 @@ describe("Page Qualification d'une action", () => {
             props: {
               action,
               situationsNonProfessionnelles,
-              pageTitle: 'Création d’une situation non professionnelle',
+              pageTitle: 'Actions jeune - Qualifier action',
+              pageHeader: 'Créer une situation non professionnelle',
               returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
               withoutChat: true,
             },

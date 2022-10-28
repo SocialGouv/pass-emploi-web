@@ -1,11 +1,11 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { GetServerSidePropsContext } from 'next/types'
-import React from 'react'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
+import { GetServerSidePropsContext } from 'next/types'
 import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
+import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { DIProvider } from 'utils/injectionDependances'
@@ -234,7 +234,6 @@ describe('Reaffectation', () => {
         expect(actual).toEqual({
           props: {
             pageTitle: 'Réaffectation',
-            pageHeader: 'Réaffectation des jeunes',
           },
         })
       })

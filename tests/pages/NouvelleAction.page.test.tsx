@@ -71,7 +71,7 @@ describe('NouvelleAction', () => {
             idJeune: 'id-jeune',
             actionsPredefinies,
             withoutChat: true,
-            pageTitle: 'Actions jeune – Création action',
+            pageTitle: 'Actions jeune – Créer action',
             pageHeader: 'Créer une nouvelle action',
             returnTo: '/mes-jeunes/id-jeune',
           },
