@@ -18,19 +18,40 @@ export default function ServiceCiviqueDetail({
 }: ServiceCiviqueDetailProps) {
   const dateDeDebutFormate: string | undefined =
     offre.dateDeDebut && toShortDate(offre.dateDeDebut)
-
   const dateDeFinFormate: string | undefined =
     offre.dateDeFin && toShortDate(offre.dateDeFin)
 
+  const hasInfo = Boolean(
+    offre.organisation ||
+      offre.codeDepartement ||
+      offre.ville ||
+      offre.dateDeDebut ||
+      offre.dateDeFin
+  )
+  const hasAdresse = Boolean(
+    offre.adresseMission || offre.codePostal || offre.ville
+  )
+  const hasDescription = Boolean(
+    hasAdresse || offre.description || offre.lienAnnonce
+  )
+  const hasOrganisation = Boolean(
+    offre.organisation ||
+      offre.urlOrganisation ||
+      offre.adresseOrganisation ||
+      offre.descriptionOrganisation
+  )
+
   const sectionTitleStyle =
     'inline-flex items-center w-full text-m-bold pb-6 border-b border-solid border-primary_lighten'
-
   const pStyle = 'mt-4 text-s-regular pb-4 '
 
   return (
     <div className='max-w-2xl mx-auto'>
       <div className='flex justify-between items-center'>
-        <p className='my-2 capitalize'>{offre.domaine}</p>
+        <p className='my-2'>
+          <span className='sr-only'>Domaine : </span>
+          <span className='capitalize'>{offre.domaine}</span>
+        </p>
         <LienPartageOffre
           titreOffre={offre.titre}
           href={`/offres/service-civique/${offre.id}/partage`}
@@ -40,112 +61,151 @@ export default function ServiceCiviqueDetail({
 
       <h2 className='text-l-bold text-primary'>{offre.titre}</h2>
 
-      <section aria-labelledby='heading-info' className='mt-6'>
-        <h3 id='heading-info' className='sr-only'>
-          Informations du service civique
-        </h3>
+      {hasInfo && (
+        <section aria-labelledby='heading-info' className='mt-6'>
+          <h3 id='heading-info' className='sr-only'>
+            Informations du service civique
+          </h3>
 
-        <dl>
-          {offre.organisation && (
-            <>
-              <dt className='sr-only'>Organisation</dt>
-              <dd>{offre.organisation}</dd>
-            </>
-          )}
+          <dl>
+            {offre.organisation && (
+              <>
+                <dt className='sr-only'>Organisation</dt>
+                <dd>{offre.organisation}</dd>
+              </>
+            )}
 
-          {offre.codeDepartement && (
-            <>
-              <dt className='sr-only'>Localisation</dt>
-              <dd className='mt-6'>
-                <DataTag
-                  text={`${offre.codeDepartement} - ${offre.ville}`}
-                  iconName={IconName.Location}
-                />
-              </dd>
-            </>
-          )}
+            {(offre.codeDepartement || offre.ville) && (
+              <>
+                <dt className='sr-only'>Localisation</dt>
+                <dd className='mt-6'>
+                  <DataTag
+                    text={`${offre.codeDepartement} - ${offre.ville}`}
+                    iconName={IconName.Location}
+                  />
+                </dd>
+              </>
+            )}
 
-          {offre.dateDeDebut && (
-            <>
-              <dt className='sr-only'>Date de début</dt>
-              <dd className='mt-2'>
-                <DataTag
-                  text={'Commence le ' + dateDeDebutFormate}
-                  iconName={IconName.Calendar}
-                />
-              </dd>
-            </>
-          )}
+            {offre.dateDeDebut && (
+              <>
+                <dt className='sr-only'>Date de début</dt>
+                <dd className='mt-2'>
+                  <DataTag
+                    text={'Commence le ' + dateDeDebutFormate}
+                    iconName={IconName.Calendar}
+                  />
+                </dd>
+              </>
+            )}
 
-          {offre.dateDeFin && (
-            <>
-              <dt className='sr-only'>Date de fin</dt>
-              <dd className='mt-2'>
-                <DataTag
-                  text={'Termine le ' + dateDeFinFormate}
-                  iconName={IconName.Calendar}
-                />
-              </dd>
-            </>
-          )}
-        </dl>
-      </section>
+            {offre.dateDeFin && (
+              <>
+                <dt className='sr-only'>Date de fin</dt>
+                <dd className='mt-2'>
+                  <DataTag
+                    text={'Termine le ' + dateDeFinFormate}
+                    iconName={IconName.Calendar}
+                  />
+                </dd>
+              </>
+            )}
+          </dl>
+        </section>
+      )}
 
-      <section aria-labelledby='heading-mission' className='mt-6'>
-        <h3 id='heading-mission' className={sectionTitleStyle}>
-          <SectionTitleDot />
-          Mission
-        </h3>
+      {hasDescription && (
+        <section aria-labelledby='heading-mission' className='mt-6'>
+          <h3 id='heading-mission' className={sectionTitleStyle}>
+            <SectionTitleDot />
+            Mission
+          </h3>
 
-        {offre.adresseMission && (
-          <p className={pStyle}>
-            {offre.adresseMission}, {offre.codePostal} {offre.ville}
-          </p>
-        )}
+          <dl>
+            {hasAdresse && (
+              <>
+                <dt className='sr-only'>Adresse</dt>
+                <dd className={pStyle}>
+                  {offre.adresseMission}, {offre.codePostal} {offre.ville}
+                </dd>
+              </>
+            )}
 
-        {offre.description && (
-          <p className={`${pStyle} whitespace-pre-wrap`}>{offre.description}</p>
-        )}
+            {offre.description && (
+              <>
+                <dt className='sr-only'>Description</dt>
+                <dd className={`${pStyle} whitespace-pre-wrap`}>
+                  {offre.description}
+                </dd>
+              </>
+            )}
 
-        {offre.lienAnnonce && (
-          <p className={`${pStyle} text-primary hover:text-primary_darken`}>
-            <ExternalLink
-              href={offre.lienAnnonce}
-              label='Voir l’offre détaillée'
-              onClick={() => onLienExterne('Lien Offre externe')}
-            />
-          </p>
-        )}
-      </section>
+            {offre.lienAnnonce && (
+              <>
+                <dt className='sr-only'>Lien offre</dt>
+                <dd
+                  className={`${pStyle} text-primary hover:text-primary_darken`}
+                >
+                  <ExternalLink
+                    href={offre.lienAnnonce}
+                    label='Voir l’offre détaillée'
+                    onClick={() => onLienExterne('Lien Offre externe')}
+                  />
+                </dd>
+              </>
+            )}
+          </dl>
+        </section>
+      )}
 
-      <section aria-labelledby='heading-organisation' className='mt-10'>
-        <h3 id='heading-organisation' className={sectionTitleStyle}>
-          <SectionTitleDot />
-          Organisation
-        </h3>
+      {hasOrganisation && (
+        <section aria-labelledby='heading-organisation' className='mt-10'>
+          <h3 id='heading-organisation' className={sectionTitleStyle}>
+            <SectionTitleDot />
+            Organisation
+          </h3>
 
-        {offre.organisation && <p className={pStyle}>{offre.organisation}</p>}
+          <dl>
+            {offre.organisation && (
+              <>
+                <dt className='sr-only'>Nom</dt>
+                <dd className={pStyle}>{offre.organisation}</dd>
+              </>
+            )}
 
-        {offre.urlOrganisation && (
-          <p className={`${pStyle} text-primary hover:text-primary_darken`}>
-            <ExternalLink
-              href={offre.urlOrganisation}
-              label='Site de l’entreprise'
-              onClick={() => onLienExterne('Lien Site entreprise')}
-            />
-          </p>
-        )}
+            {offre.urlOrganisation && (
+              <>
+                <dt className='sr-only'>Lien organisation</dt>
+                <dd
+                  className={`${pStyle} text-primary hover:text-primary_darken`}
+                >
+                  <ExternalLink
+                    href={offre.urlOrganisation}
+                    label='Site de l’entreprise'
+                    onClick={() => onLienExterne('Lien Site entreprise')}
+                  />
+                </dd>
+              </>
+            )}
 
-        {offre.adresseOrganisation && (
-          <p className={pStyle}>{offre.adresseOrganisation}</p>
-        )}
+            {offre.adresseOrganisation && (
+              <>
+                <dt className='sr-only'>Adresse</dt>
+                <dd className={pStyle}>{offre.adresseOrganisation}</dd>
+              </>
+            )}
 
-        {offre.descriptionOrganisation && (
-          <p className={`${pStyle} whitespace-pre-wrap`}>
-            {offre.descriptionOrganisation}
-          </p>
-        )}
-      </section>
+            {offre.descriptionOrganisation && (
+              <>
+                <dt className='sr-only'>Description</dt>
+                <dd className={`${pStyle} whitespace-pre-wrap`}>
+                  {offre.descriptionOrganisation}
+                </dd>
+              </>
+            )}
+          </dl>
+        </section>
+      )}
     </div>
   )
 }
