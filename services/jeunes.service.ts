@@ -25,7 +25,7 @@ import {
   MetadonneesFavorisJson,
   SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
-import { MotifSuppression } from 'interfaces/referentiel'
+import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export interface JeunesService {
@@ -79,7 +79,7 @@ export interface JeunesService {
     payload: SuppressionJeuneFormData
   ): Promise<void>
 
-  getMotifsSuppression(): Promise<MotifSuppression[]>
+  getMotifsSuppression(): Promise<MotifSuppressionJeune[]>
 
   getMetadonneesFavorisJeune(
     idConseiller: string,
@@ -273,12 +273,11 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
-  async getMotifsSuppression(): Promise<MotifSuppression[]> {
+  async getMotifsSuppression(): Promise<MotifSuppressionJeune[]> {
     const session = await getSession()
-    const { content: motifs } = await this.apiClient.get<MotifSuppression[]>(
-      '/v2/referentiels/motifs-suppression-jeune',
-      session!.accessToken
-    )
+    const { content: motifs } = await this.apiClient.get<
+      MotifSuppressionJeune[]
+    >('/v2/referentiels/motifs-suppression-jeune', session!.accessToken)
     return motifs
   }
 

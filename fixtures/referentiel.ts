@@ -3,7 +3,7 @@ import {
   Departement,
   Localite,
   Metier,
-  MotifSuppression,
+  MotifSuppressionJeune,
 } from 'interfaces/referentiel'
 
 export function uneListeDAgencesMILO() {
@@ -151,22 +151,22 @@ export function desMetiers(): Metier[] {
   ]
 }
 
-export function desMotifsDeSuppression(): MotifSuppression[] {
+export function desMotifsDeSuppression(): MotifSuppressionJeune[] {
   return [
     {
       motif: 'Emploi durable (plus de 6 mois)',
       description:
         'CDI, CDD de plus de 6 mois dont alternance, titularisation dans la fonction publique',
     },
-    { motif: 'Emploi court (moins de 6 mois)', description: '' },
-    { motif: 'Contrat arrivé à échéance', description: '' },
+    { motif: 'Emploi court (moins de 6 mois)' },
+    { motif: 'Contrat arrivé à échéance' },
     {
       motif: 'Limite d’âge atteinte',
       description:
         'Motif valable uniquement à partir de la fin du premier mois des 26 ans. À noter : dans le cas oû le jeune est considéré en tant que travailleur handicapé, l’âge passe à 30 ans.',
     },
-    { motif: 'Demande du jeune de sortir du dispositif', description: '' },
-    { motif: 'Non respect des engagements ou abandon', description: '' },
+    { motif: 'Demande du jeune de sortir du dispositif' },
+    { motif: 'Non respect des engagements ou abandon' },
     {
       motif: 'Déménagement ou changement de conseiller',
       description:

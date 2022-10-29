@@ -25,7 +25,7 @@ import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
-import { MotifSuppression } from 'interfaces/referentiel'
+import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import FicheJeune, {
   getServerSideProps,
   Onglet,
@@ -59,7 +59,7 @@ describe('Fiche Jeune', () => {
       })
     )
     const metadonneesFavoris = uneMetadonneeFavoris()
-    let motifsSuppression: MotifSuppression[]
+    let motifsSuppression: MotifSuppressionJeune[]
     let dependances: Pick<Dependencies, 'jeunesService'>
 
     let replace: jest.Mock
@@ -187,12 +187,11 @@ describe('Fiche Jeune', () => {
 
             // Then
             expect(selectMotif).toHaveAttribute('required', '')
-
-            const options: HTMLOptionElement[] =
-              within(selectMotif).getAllByRole('option')
-            expect(options.map((option) => option.value)).toEqual(
-              motifsSuppression.map((motif) => motif.motif)
-            )
+            motifsSuppression.forEach(({ motif }) => {
+              expect(
+                within(selectMotif).getByRole('option', { name: motif })
+              ).toBeInTheDocument()
+            })
           })
 
           it('affiche une description au motif quand il y en a une', async () => {

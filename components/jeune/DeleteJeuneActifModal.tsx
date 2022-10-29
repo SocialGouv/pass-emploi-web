@@ -11,12 +11,12 @@ import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { MotifSuppression } from 'interfaces/referentiel'
+import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface DeleteJeuneActifModalProps {
   jeune: BaseJeune
-  motifsSuppression: MotifSuppression[]
+  motifsSuppression: MotifSuppressionJeune[]
   onClose: () => void
   soumettreSuppression: (payload: SuppressionJeuneFormData) => Promise<void>
 }
@@ -91,6 +91,10 @@ export default function DeleteJeuneActifModal({
     await soumettreSuppression(payload)
   }
 
+  const descriptionMotif = motifsSuppression.find(
+    ({ motif }) => motif === motifSuppressionJeune
+  )?.description
+
   useMatomo(trackingLabel)
 
   return (
@@ -146,7 +150,7 @@ export default function DeleteJeuneActifModal({
                 {{
                   main: 'Motif de suppression',
                   helpText:
-                    'Veuillez sélectionner un motif de suppression de compte',
+                    'Pour nos statistiques, merci de sélectionner un motif',
                 }}
               </Label>
               <Select
@@ -161,39 +165,28 @@ export default function DeleteJeuneActifModal({
                 ))}
               </Select>
 
-              {Object.entries(motifsSuppression).map(([key, value]) => {
-                if (
-                  (value.motif &&
-                    motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE) ||
-                  (value.motif &&
-                    motifSuppressionJeune === MOTIF_SUPPRESSION_DEMENAGEMENT)
-                )
-                  return
-                if (value.motif === motifSuppressionJeune) {
-                  return (
-                    <p key={key} className='mb-3 text-s-regular'>
-                      {value.description}
-                    </p>
-                  )
-                }
-              })}
+              {motifSuppressionJeune !== MOTIF_SUPPRESSION_AUTRE &&
+                motifSuppressionJeune !== MOTIF_SUPPRESSION_DEMENAGEMENT &&
+                descriptionMotif && (
+                  <p className='mb-8 text-s-regular'>{descriptionMotif}</p>
+                )}
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_DEMENAGEMENT && (
-                <>
+                <div className='flex flex-row-reverse items-baseline'>
                   <Label htmlFor='motif-suppression-demenagement'>
-                    <input
-                      type='checkbox'
-                      id='motif-suppression-demenagement'
-                      required
-                      onChange={(e) =>
-                        setMotifDemenagementChecked(e.target.checked)
-                      }
-                      className='mr-2'
-                    />
                     Uniquement dans le cas où vous ne pouvez pas réaffecter ce
                     jeune. Dans le cas contraire, contactez votre superviseur.{' '}
                   </Label>
-                </>
+                  <input
+                    type='checkbox'
+                    id='motif-suppression-demenagement'
+                    required
+                    onChange={(e) =>
+                      setMotifDemenagementChecked(e.target.checked)
+                    }
+                    className='mr-2'
+                  />
+                </div>
               )}
 
               {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (

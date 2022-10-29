@@ -32,7 +32,7 @@ import {
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import { MotifSuppression } from 'interfaces/referentiel'
+import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -94,7 +94,7 @@ function FicheJeune({
   const [conseiller] = useConseiller()
 
   const [motifsSuppression, setMotifsSuppression] = useState<
-    MotifSuppression[]
+    MotifSuppressionJeune[]
   >([])
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)

@@ -17,7 +17,7 @@ import {
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { JeuneFromListe } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { MotifSuppression } from 'interfaces/referentiel'
+import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -323,7 +323,7 @@ describe('JeunesApiService', () => {
     it('renvoie les motifs de suppression', async () => {
       // Given
       const accessToken = 'accessToken'
-      const motifs: MotifSuppression[] = desMotifsDeSuppression()
+      const motifs: MotifSuppressionJeune[] = desMotifsDeSuppression()
 
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: motifs,
