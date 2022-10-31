@@ -154,8 +154,8 @@ export const getServerSideProps: GetServerSideProps<
       dossierId: dossierId || '',
       dossier,
       erreurMessageHttpMilo,
-      pageTitle: `Mes jeunes - Création d'un compte jeune`,
-      pageHeader: `Création d'un compte jeune`,
+      pageTitle: `Portefeuille - Créer bénéficiaire`,
+      pageHeader: `Créer un compte bénéficiaire`,
     },
   }
 }

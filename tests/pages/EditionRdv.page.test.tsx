@@ -85,7 +85,8 @@ describe('EditionRdv', () => {
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
-            pageTitle: 'Nouveau rendez-vous',
+            pageTitle: 'Mes rendez-vous - Créer',
+            pageHeader: 'Créer un nouveau rendez-vous',
             returnTo: '/mes-jeunes',
             typesRendezVous: expect.arrayContaining([]),
           },
@@ -158,7 +159,11 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdv: unRendezVous(), pageTitle: 'Modification rendez-vous' },
+          props: {
+            rdv: unRendezVous(),
+            pageTitle: 'Mes rendez-vous - Modifier',
+            pageHeader: 'Modifier le rendez-vous',
+          },
         })
       })
 
@@ -444,7 +449,9 @@ describe('EditionRdv', () => {
             name: /Commentaire à destination des jeunes/,
           })
 
-          buttonValider = screen.getByRole('button', { name: 'Envoyer' })
+          buttonValider = screen.getByRole('button', {
+            name: 'Créer le rendez-vous',
+          })
 
           // Given
           await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[0]))
@@ -886,7 +893,9 @@ describe('EditionRdv', () => {
             name: /Commentaire à destination des jeunes/,
           })
 
-          buttonValider = screen.getByRole('button', { name: 'Envoyer' })
+          buttonValider = screen.getByRole('button', {
+            name: 'Modifier le rendez-vous',
+          })
 
           // Given
           await userEvent.type(searchJeune, getNomJeuneComplet(jeunes[1]))
@@ -1096,7 +1105,7 @@ describe('EditionRdv', () => {
             screen.getByLabelText<HTMLInputElement>(/Commentaire/)
           await userEvent.clear(inputCommentaire)
           await userEvent.type(inputCommentaire, 'modification du commentaire')
-          const buttonSubmit = screen.getByText('Envoyer')
+          const buttonSubmit = screen.getByText('Modifier le rendez-vous')
 
           // When
           await userEvent.click(buttonSubmit)

@@ -81,8 +81,8 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      pageTitle: "Mes jeunes – Création d'un compte jeune",
-      pageHeader: "Création d'un compte jeune",
+      pageTitle: `Portefeuille - Créer bénéficiaire`,
+      pageHeader: `Créer un compte bénéficiaire`,
     },
   }
 }

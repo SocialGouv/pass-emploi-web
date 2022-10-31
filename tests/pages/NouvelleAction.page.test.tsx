@@ -71,7 +71,7 @@ describe('NouvelleAction', () => {
             idJeune: 'id-jeune',
             actionsPredefinies,
             withoutChat: true,
-            pageTitle: 'Actions jeune – Création action',
+            pageTitle: 'Actions jeune – Créer action',
             pageHeader: 'Créer une nouvelle action',
             returnTo: '/mes-jeunes/id-jeune',
           },
@@ -173,7 +173,7 @@ describe('NouvelleAction', () => {
           })
 
           const dateEcheance = screen.getByLabelText(/date d’échéance/)
-          submit = screen.getByRole('button', { name: 'Envoyer' })
+          submit = screen.getByRole('button', { name: 'Créer l’action' })
 
           await userEvent.selectOptions(
             selectAction,
@@ -265,7 +265,7 @@ describe('NouvelleAction', () => {
           })
           const dateEcheance = screen.getByLabelText(/date d’échéance/)
 
-          submit = screen.getByRole('button', { name: 'Envoyer' })
+          submit = screen.getByRole('button', { name: 'Créer l’action' })
 
           await userEvent.type(intitule, 'Intitulé action')
           await userEvent.type(description, 'Commentaire action')

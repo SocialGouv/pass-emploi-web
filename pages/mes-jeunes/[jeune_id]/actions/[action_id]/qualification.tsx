@@ -207,7 +207,8 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       action,
       situationsNonProfessionnelles,
-      pageTitle: 'Création d’une situation non professionnelle',
+      pageTitle: 'Actions jeune - Qualifier action',
+      pageHeader: 'Créer une situation non professionnelle',
       returnTo: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
       withoutChat: true,
     },

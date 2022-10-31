@@ -198,13 +198,16 @@ export const getServerSideProps: GetServerSideProps<
     user.id,
     accessToken
   )
+  const referer = context.req.headers.referer
+  const redirectTo = referer ?? '/recherche-offres'
   return {
     props: {
       offre,
       jeunes,
-      pageTitle: 'Partager une offre',
+      pageTitle: 'Recherche d’offres - Partager offre',
+      pageHeader: 'Partager une offre',
       withoutChat: true,
-      returnTo: '/recherche-offres',
+      returnTo: redirectTo,
     },
   }
 }

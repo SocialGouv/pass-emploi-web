@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ConseillerService } from 'services/conseiller.service'
@@ -16,7 +17,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface HomePageProps {
+interface HomePageProps extends PageProps {
   redirectUrl: string
   referentielAgences: Agence[]
 }
@@ -120,6 +121,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     props: {
       redirectUrl,
       referentielAgences,
+      pageTitle: 'Accueil',
     },
   }
 }

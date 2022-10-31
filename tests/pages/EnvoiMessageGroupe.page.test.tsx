@@ -73,7 +73,6 @@ describe('EnvoiMessageGroupe', () => {
         name: 'Envoyer',
       })
     })
-
     describe("quand le formulaire n'a pas encore été soumis", () => {
       it('devrait afficher les champs pour envoyer un message', () => {
         // Then

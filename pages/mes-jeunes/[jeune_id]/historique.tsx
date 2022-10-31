@@ -155,7 +155,8 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
       idJeune: jeune.id,
       situations: jeune.situations,
       conseillers: conseillers,
-      pageTitle: 'Historique',
+      pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom} - Historique`,
+      pageHeader: 'Historique',
     },
   }
 }

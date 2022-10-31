@@ -476,7 +476,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       pageTitle: 'Réaffectation',
-      pageHeader: 'Réaffectation des jeunes',
     },
   }
 }

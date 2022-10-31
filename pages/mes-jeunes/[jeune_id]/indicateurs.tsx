@@ -191,7 +191,8 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   return {
     props: {
       idJeune: context.query.jeune_id as string,
-      pageTitle: 'Indicateurs',
+      pageTitle: `Portefeuille - Bénéficiaire - Indicateurs`,
+      pageHeader: 'Indicateurs',
     },
   }
 }

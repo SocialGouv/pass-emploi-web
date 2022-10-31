@@ -127,7 +127,8 @@ describe('Indicateurs', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
-            pageTitle: 'Indicateurs',
+            pageTitle: 'Portefeuille - Bénéficiaire - Indicateurs',
+            pageHeader: 'Indicateurs',
           },
         })
       })
