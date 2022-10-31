@@ -35,9 +35,7 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
     organisation: offreJson.organisation,
     titre: offreJson.titre,
     type: jsonToTypeOffre(offreJson.type),
-    isEmploi: offreJson.type === 'OFFRE_EMPLOI',
-    isAlternance: offreJson.type === 'OFFRE_ALTERNANCE',
-    isServiceCivique: offreJson.type === 'OFFRE_SERVICE_CIVIQUE',
+    urlParam: jsonToUrlParam(offreJson.type),
   }
 }
 
@@ -54,6 +52,18 @@ export function jsonToTypeOffre(type: TypeOffreJson): string {
     default:
       console.warn(`Type offre ${type} inconnu`)
       return ''
+  }
+}
+
+export function jsonToUrlParam(type: TypeOffreJson): string {
+  switch (type) {
+    case 'OFFRE_EMPLOI':
+    case 'OFFRE_ALTERNANCE':
+      return 'emploi'
+    case 'OFFRE_IMMERSION':
+      return 'immersion'
+    case 'OFFRE_SERVICE_CIVIQUE':
+      return 'service-civique'
   }
 }
 
