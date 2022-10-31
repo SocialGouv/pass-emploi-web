@@ -14,8 +14,10 @@ import {
   uneMetadonneeFavoris,
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
+import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { JeuneFromListe } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
+import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
@@ -321,12 +323,7 @@ describe('JeunesApiService', () => {
     it('renvoie les motifs de suppression', async () => {
       // Given
       const accessToken = 'accessToken'
-      const motifs: string[] = [
-        'Sortie positive du CEJ',
-        'Radiation du CEJ',
-        'Recréation d’un compte jeune',
-        'Autre',
-      ]
+      const motifs: MotifSuppressionJeune[] = desMotifsDeSuppression()
 
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: motifs,
@@ -337,7 +334,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/referentiels/motifs-suppression-jeune',
+        '/v2/referentiels/motifs-suppression-jeune',
         accessToken
       )
       expect(actual).toEqual(motifs)

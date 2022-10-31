@@ -24,3 +24,8 @@ export type DomaineServiceCivique = {
   code: string
   libelle: string
 }
+
+export interface MotifSuppressionJeune {
+  motif: string
+  description?: string
+}

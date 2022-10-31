@@ -14,6 +14,7 @@ import {
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
+import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
 import {
   mockedActionsService,
@@ -24,6 +25,7 @@ import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import { rdvToListItem } from 'interfaces/rdv'
+import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import FicheJeune, {
   getServerSideProps,
   Onglet,
@@ -57,7 +59,7 @@ describe('Fiche Jeune', () => {
       })
     )
     const metadonneesFavoris = uneMetadonneeFavoris()
-    let motifsSuppression: string[]
+    let motifsSuppression: MotifSuppressionJeune[]
     let dependances: Pick<Dependencies, 'jeunesService'>
 
     let replace: jest.Mock
@@ -70,12 +72,7 @@ describe('Fiche Jeune', () => {
         push: push,
       })
 
-      motifsSuppression = [
-        'Sortie positive du CEJ',
-        'Radiation du CEJ',
-        'Recréation d’un compte jeune',
-        'Autre',
-      ]
+      motifsSuppression = desMotifsDeSuppression()
 
       dependances = {
         jeunesService: mockedJeunesService({
@@ -190,12 +187,31 @@ describe('Fiche Jeune', () => {
 
             // Then
             expect(selectMotif).toHaveAttribute('required', '')
+            motifsSuppression.forEach(({ motif }) => {
+              expect(
+                within(selectMotif).getByRole('option', { name: motif })
+              ).toBeInTheDocument()
+            })
+          })
 
-            const options: HTMLOptionElement[] =
-              within(selectMotif).getAllByRole('option')
-            expect(options.map((option) => option.value)).toEqual(
-              motifsSuppression
+          it('affiche une description au motif quand il y en a une', async () => {
+            // Given
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
+
+            // When
+            await userEvent.selectOptions(
+              selectMotif,
+              'Emploi durable (plus de 6 mois)'
             )
+
+            // Then
+            expect(
+              screen.getByText(
+                /CDI, CDD de plus de 6 mois dont alternance, titularisation dans la fonction publique/
+              )
+            ).toBeInTheDocument()
           })
 
           it('affiche le champ de saisie pour préciser le motif Autre', async () => {
@@ -214,6 +230,25 @@ describe('Fiche Jeune', () => {
               )
             ).toBeInTheDocument()
           })
+          it('affiche une case à cocher pour confirmer le motif Déménagement ou changement de conseiller', async () => {
+            // Given
+            const selectMotif = screen.getByRole('combobox', {
+              name: /Motif de suppression/,
+            })
+
+            // When
+            await userEvent.selectOptions(
+              selectMotif,
+              'Déménagement ou changement de conseiller'
+            )
+
+            // Then
+            expect(
+              screen.getByLabelText(
+                'Uniquement dans le cas où vous ne pouvez pas réaffecter ce jeune. Dans le cas contraire, contactez votre superviseur.'
+              )
+            ).toBeInTheDocument()
+          })
 
           it('lors de la confirmation, supprime le bénéficiaire', async () => {
             // Given
@@ -221,7 +256,10 @@ describe('Fiche Jeune', () => {
               name: /Motif de suppression/,
             })
             const supprimerButtonModal = screen.getByText('Confirmer')
-            await userEvent.selectOptions(selectMotif, 'Radiation du CEJ')
+            await userEvent.selectOptions(
+              selectMotif,
+              'Demande du jeune de sortir du dispositif'
+            )
 
             // When
             await userEvent.click(supprimerButtonModal)
@@ -230,7 +268,7 @@ describe('Fiche Jeune', () => {
             expect(
               dependances.jeunesService.archiverJeune
             ).toHaveBeenCalledWith(jeune.id, {
-              motif: 'Radiation du CEJ',
+              motif: 'Demande du jeune de sortir du dispositif',
               commentaire: undefined,
             })
             expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
