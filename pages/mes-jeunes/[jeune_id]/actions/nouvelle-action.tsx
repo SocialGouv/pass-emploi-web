@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -208,12 +208,12 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
             className='ml-6'
           >
             <IconComponent
-              name={IconName.Send}
-              focusable='false'
-              aria-hidden='true'
-              className='mr-2 w-4 h-4 fill-blanc'
+              name={IconName.Add}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
             />
-            Envoyer
+            Créer l’action
           </Button>
         </div>
       </form>

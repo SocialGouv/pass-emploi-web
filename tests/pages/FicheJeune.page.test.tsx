@@ -508,7 +508,7 @@ describe('Fiche Jeune', () => {
 
       it('ne permet pas la prise de rendez-vous', async () => {
         // Then
-        expect(() => screen.getByText('Fixer un rendez-vous')).toThrow()
+        expect(() => screen.getByText('Créer un rendez-vous')).toThrow()
       })
 
       it("n'affiche pas de lien vers les actions du jeune", async () => {

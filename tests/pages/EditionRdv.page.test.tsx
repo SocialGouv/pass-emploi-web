@@ -449,7 +449,9 @@ describe('EditionRdv', () => {
             name: /Commentaire à destination des jeunes/,
           })
 
-          buttonValider = screen.getByRole('button', { name: 'Envoyer' })
+          buttonValider = screen.getByRole('button', {
+            name: 'Créer le rendez-vous',
+          })
 
           // Given
           await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[0]))
@@ -891,7 +893,9 @@ describe('EditionRdv', () => {
             name: /Commentaire à destination des jeunes/,
           })
 
-          buttonValider = screen.getByRole('button', { name: 'Envoyer' })
+          buttonValider = screen.getByRole('button', {
+            name: 'Modifier le rendez-vous',
+          })
 
           // Given
           await userEvent.type(searchJeune, getNomJeuneComplet(jeunes[1]))
@@ -1101,7 +1105,7 @@ describe('EditionRdv', () => {
             screen.getByLabelText<HTMLInputElement>(/Commentaire/)
           await userEvent.clear(inputCommentaire)
           await userEvent.type(inputCommentaire, 'modification du commentaire')
-          const buttonSubmit = screen.getByText('Envoyer')
+          const buttonSubmit = screen.getByText('Modifier le rendez-vous')
 
           // When
           await userEvent.click(buttonSubmit)

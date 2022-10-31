@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import JeunesMultiselectAutocomplete, {
   jeuneToOption,
@@ -15,6 +15,7 @@ import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import { Switch } from 'components/ui/Form/Switch'
 import Textarea from 'components/ui/Form/Textarea'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
@@ -531,9 +532,22 @@ export function EditionRdvForm({
           </Button>
         )}
 
-        <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
-          Envoyer
-        </Button>
+        {rdv && (
+          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
+            Modifier le rendez-vous
+          </Button>
+        )}
+        {!rdv && (
+          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
+            <IconComponent
+              name={IconName.Add}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Créer le rendez-vous
+          </Button>
+        )}
       </div>
     </form>
   )

@@ -51,11 +51,11 @@ describe('MesRendezvous', () => {
         })
       })
 
-      it('a un lien pour fixer un rendez-vous', () => {
+      it('a un lien pour créer un rendez-vous', () => {
         // Then
         expect(
           screen.getByRole('link', {
-            name: 'Fixer un rendez-vous',
+            name: 'Créer un rendez-vous',
           })
         ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
