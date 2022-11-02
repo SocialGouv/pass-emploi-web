@@ -21,7 +21,7 @@ export type SearchOffresEmploiQuery = {
   motsCles?: string
   commune?: Commune
   debutantAccepte?: boolean
-  departement?: Localite
+  departement?: Localite // TODO-1027 Pourquoi 2 champs et surtout pourquoi si on en garde 2 le département est pas typé Departement ?
   durees?: Array<Duree>
   rayon?: number
   typesContrats?: Array<TypeContrat>
@@ -29,14 +29,17 @@ export type SearchOffresEmploiQuery = {
 
 export interface OffresEmploiService {
   getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
+
   getOffreEmploiServerSide(
     idOffreEmploi: string,
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined>
+
   searchOffresEmploi(
     recherche: SearchOffresEmploiQuery,
     page: number
   ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
+
   searchAlternances(
     recherche: SearchOffresEmploiQuery,
     page: number

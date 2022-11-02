@@ -37,6 +37,7 @@ import { useDependance } from 'utils/injectionDependances'
 type RechercheOffresProps = PageProps & {
   partageSuccess?: boolean
 }
+
 function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   const referentielService =
     useDependance<ReferentielService>('referentielService')
@@ -239,6 +240,16 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         stateQueryImmersions={[queryImmersions, updateQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
+      {/*
+      TODO-1027
+      - Un seul composant, avec ses règles d'affichage à gérer (mais où ? plutôt dans le composant ?)
+      - Un type d'offre
+      - Un Query selon le type d'offre
+      */}
+      {typeOffre === TypeOffre.EMPLOI &&
+        (queryOffresEmploi.commune || queryOffresEmploi.departement) && (
+          <div>Partager cette recherche à vos bénéficiaires</div>
+        )}
       <ResultatsRechercheOffre
         isSearching={isSearching}
         offres={offres}
