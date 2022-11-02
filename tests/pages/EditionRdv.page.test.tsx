@@ -228,37 +228,12 @@ describe('EditionRdv', () => {
         })
       })
 
-      describe('étape 1 bénéficiaires', () => {
-        let etape: HTMLFieldSetElement
-        beforeEach(() => {
-          etape = screen.getByRole('group', { name: 'Étape 1 Bénéficiaires' })
-        })
-
-        it('contient une liste pour choisir un jeune', () => {
-          // Then
-          const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter des jeunes Nom et prénom',
-          })
-          const options = within(etape).getByRole('listbox', { hidden: true })
-
-          expect(selectJeune).toHaveAttribute('aria-required', 'true')
-          expect(selectJeune).toHaveAttribute('multiple', '')
-          for (const jeune of jeunes) {
-            const jeuneOption = within(options).getByRole('option', {
-              name: `${jeune.nom} ${jeune.prenom}`,
-              hidden: true,
-            })
-            expect(jeuneOption).toBeInTheDocument()
-          }
-        })
-      })
-
-      describe('étape 2 type de rendez-vous', () => {
+      describe('étape 1 type d’événements', () => {
         let etape: HTMLFieldSetElement
         let selectType: HTMLSelectElement
         beforeEach(() => {
           etape = screen.getByRole('group', {
-            name: 'Étape 2 Type de rendez-vous',
+            name: 'Étape 1 Type d’événement',
           })
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
@@ -293,7 +268,38 @@ describe('EditionRdv', () => {
             expect(inputPresenceConseiller).toBeDisabled()
           })
         })
+      })
 
+      describe('étape 2 bénéficiaires', () => {
+        let etape: HTMLFieldSetElement
+        beforeEach(() => {
+          etape = screen.getByRole('group', { name: 'Étape 2 Bénéficiaires' })
+        })
+
+        it('contient une liste pour choisir un jeune', () => {
+          // Then
+          const selectJeune = within(etape).getByRole('combobox', {
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+          })
+          const options = within(etape).getByRole('listbox', { hidden: true })
+
+          expect(selectJeune).toHaveAttribute('aria-required', 'true')
+          expect(selectJeune).toHaveAttribute('multiple', '')
+          for (const jeune of jeunes) {
+            const jeuneOption = within(options).getByRole('option', {
+              name: `${jeune.nom} ${jeune.prenom}`,
+              hidden: true,
+            })
+            expect(jeuneOption).toBeInTheDocument()
+          }
+        })
+      })
+
+      describe('étape 3 lieu et date', () => {
+        let etape: HTMLFieldSetElement
+        beforeEach(() => {
+          etape = screen.getByRole('group', { name: 'Étape 3 Lieu et date' })
+        })
         it('contient une liste pour choisir une modalité', () => {
           // Then
           const selectModalite = within(etape).getByRole('combobox', {
@@ -305,13 +311,6 @@ describe('EditionRdv', () => {
               within(etape).getByRole('option', { name: modalite })
             ).toBeInTheDocument()
           }
-        })
-      })
-
-      describe('étape 3 lieu et date', () => {
-        let etape: HTMLFieldSetElement
-        beforeEach(() => {
-          etape = screen.getByRole('group', { name: 'Étape 3 Lieu et date' })
         })
 
         it('contient un champ pour choisir la date', () => {
