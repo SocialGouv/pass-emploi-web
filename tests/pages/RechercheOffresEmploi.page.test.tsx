@@ -378,6 +378,21 @@ describe('Page Recherche Offres Emploi', () => {
       )
     })
 
+    it('affiche le bouton de partage de critère de recherche à la saisie d’une localisation', async () => {
+      // When
+      await saisirLocalite('paris 14')
+
+      // Then
+      expect(
+        screen.getByText('Partager cette recherche à vos bénéficiaires')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toHaveAttribute('href', `/offres/partage-criteres`)
+    })
+
     it('vide les critères lorsqu’on change le type d’offre', async () => {
       // Given
       await saisirLocalite('paris 14')
