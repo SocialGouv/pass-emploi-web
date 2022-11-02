@@ -151,7 +151,7 @@ export function EditionRdvForm({
     })
   }
 
-  function validateTypeRendezVousAutre() {
+  function validateTypeEvenementAutre() {
     if (!precisionType.value) {
       setPrecisionType({
         value: precisionType.value,
@@ -293,23 +293,12 @@ export function EditionRdvForm({
           <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
-
-      <Etape numero={1} titre='Bénéficiaires'>
-        <JeunesMultiselectAutocomplete
-          jeunes={jeunes}
-          typeSelection='Bénéficiaires'
-          defaultJeunes={defaultJeunes}
-          onUpdate={updateIdsJeunes}
-          error={idsJeunes.error}
-        />
-      </Etape>
-
-      <Etape numero={2} titre='Type de rendez-vous'>
-        <Label htmlFor='typeRendezVous' inputRequired={true}>
+      <Etape numero={1} titre='Type d’événement'>
+        <Label htmlFor='typeEvenement' inputRequired={true}>
           Type
         </Label>
         <Select
-          id='typeRendezVous'
+          id='typeEvenement'
           defaultValue={codeTypeRendezVous}
           required={true}
           disabled={Boolean(rdv)}
@@ -325,30 +314,42 @@ export function EditionRdvForm({
         {showPrecisionType && (
           <>
             <Label
-              htmlFor='typeRendezVous-autre'
+              htmlFor='typeEvenement-autre'
               inputRequired={true}
               withBulleMessageSensible={true}
             >
               Préciser
             </Label>
             {precisionType.error && (
-              <InputError id='typeRendezVous-autre--error' className='mb-2'>
+              <InputError id='typeEvenement-autre--error' className='mb-2'>
                 {precisionType.error}
               </InputError>
             )}
             <Input
               type='text'
-              id='typeRendezVous-autre'
+              id='typeEvenement-autre'
               required={true}
               disabled={Boolean(rdv)}
               defaultValue={precisionType.value}
               onChange={(value: string) => setPrecisionType({ value })}
-              onBlur={validateTypeRendezVousAutre}
+              onBlur={validateTypeEvenementAutre}
               invalid={Boolean(precisionType.error)}
             />
           </>
         )}
+      </Etape>
 
+      <Etape numero={2} titre='Bénéficiaires'>
+        <JeunesMultiselectAutocomplete
+          jeunes={jeunes}
+          typeSelection='Bénéficiaires'
+          defaultJeunes={defaultJeunes}
+          onUpdate={updateIdsJeunes}
+          error={idsJeunes.error}
+        />
+      </Etape>
+
+      <Etape numero={3} titre='Lieu et date'>
         <Label htmlFor='modalite'>Modalité</Label>
         <Select id='modalite' defaultValue={modalite} onChange={setModalite}>
           {modalites.map((md) => (
@@ -357,9 +358,6 @@ export function EditionRdvForm({
             </option>
           ))}
         </Select>
-      </Etape>
-
-      <Etape numero={3} titre='Lieu et date'>
         <Label htmlFor='date' inputRequired={true}>
           {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
         </Label>
