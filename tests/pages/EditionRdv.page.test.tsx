@@ -196,6 +196,18 @@ describe('EditionRdv', () => {
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
     })
+    describe('quand le conseiller veut créer une animation collective', () => {
+      it('vérifie si le conseiller a renseigné son agence', () => {
+        // Given
+        // When
+        // Then
+      })
+      it('n’affiche pas la suite du formulaire si l’agence n’est pas renseignée', async () => {
+        // Given
+        // When
+        // Then
+      })
+    })
 
     describe('contenu', () => {
       beforeEach(() => {
@@ -247,13 +259,15 @@ describe('EditionRdv', () => {
           }
         })
 
+        it('n’affiche pas les autres étapes quand le type n’est pas sélectionné', () => {
+          // Then
+          expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
+          expect(() => screen.getByRole('group', { name: /Étape 3/ })).toThrow()
+          expect(() => screen.getByRole('group', { name: /Étape 4/ })).toThrow()
+        })
+
         describe('lorsque le type de rendez-vous est de type ENTRETIEN INDIVIDUEL CONSEILLER', () => {
           it('présence du conseiller est requise et non modifiable', async () => {
-            // Given
-            const inputPresenceConseiller = screen.getByLabelText(
-              /Informer les bénéficiaires qu’un conseiller sera présent au rendez-vous/i
-            )
-
             // When
             await userEvent.selectOptions(
               selectType,
@@ -261,6 +275,10 @@ describe('EditionRdv', () => {
             )
 
             // Then
+            const inputPresenceConseiller = screen.getByLabelText(
+              /Informer les bénéficiaires qu’un conseiller sera présent au rendez-vous/i
+            )
+
             expect(inputPresenceConseiller).toBeDisabled()
           })
         })
@@ -268,7 +286,12 @@ describe('EditionRdv', () => {
 
       describe('étape 2 bénéficiaires', () => {
         let etape: HTMLFieldSetElement
-        beforeEach(() => {
+
+        beforeEach(async () => {
+          const selectType = screen.getByRole('combobox', {
+            name: 'Type',
+          })
+          await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', { name: 'Étape 2 Bénéficiaires' })
         })
 
@@ -293,7 +316,11 @@ describe('EditionRdv', () => {
 
       describe('étape 3 lieu et date', () => {
         let etape: HTMLFieldSetElement
-        beforeEach(() => {
+        beforeEach(async () => {
+          const selectType = screen.getByRole('combobox', {
+            name: 'Type',
+          })
+          await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', { name: 'Étape 3 Lieu et date' })
         })
         it('contient une liste pour choisir une modalité', () => {
@@ -362,6 +389,15 @@ describe('EditionRdv', () => {
         let etape: HTMLFieldSetElement
         let inputPresenceConseiller: HTMLInputElement
         let inputEmailInvitation: HTMLInputElement
+        beforeEach(async () => {
+          const selectType = screen.getByRole('combobox', {
+            name: 'Type',
+          })
+          await userEvent.selectOptions(selectType, 'Activités extérieures')
+          etape = screen.getByRole('group', {
+            name: 'Étape 4 Informations conseiller',
+          })
+        })
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
           // Given
           inputPresenceConseiller = screen.getByLabelText(
@@ -410,11 +446,18 @@ describe('EditionRdv', () => {
         })
       })
 
-      it('contient un lien pour annuler', () => {
+      it('contient un bouton pour annuler', async () => {
+        // Given
+        const selectType = screen.getByRole('combobox', {
+          name: 'Type',
+        })
+
+        // When
+        await userEvent.selectOptions(selectType, 'Activités extérieures')
+
         // Then
-        const link = screen.getByText('Annuler')
-        expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute('href', '/mes-rendezvous')
+        const cancelButton = screen.getByText('Annuler')
+        expect(cancelButton).toBeInTheDocument()
       })
 
       describe('formulaire rempli', () => {
@@ -428,14 +471,16 @@ describe('EditionRdv', () => {
         let buttonValider: HTMLButtonElement
         beforeEach(async () => {
           // Given
+          selectType = screen.getByRole('combobox', {
+            name: 'Type',
+          })
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
+
           selectJeunes = screen.getByRole('combobox', {
             name: 'Rechercher et ajouter des jeunes Nom et prénom',
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
-          })
-          selectType = screen.getByRole('combobox', {
-            name: 'Type',
           })
           inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
           inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
@@ -452,7 +497,6 @@ describe('EditionRdv', () => {
           await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[0]))
           await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[2]))
           await userEvent.selectOptions(selectModalite, modalites[0])
-          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
           await userEvent.type(inputDate, '2022-03-03')
           await userEvent.type(inputHoraire, '10:30')
           await userEvent.type(inputDuree, '02:37')
@@ -539,16 +583,6 @@ describe('EditionRdv', () => {
               "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
             )
           ).toBeInTheDocument()
-        })
-
-        it("est désactivé quand aucun type de rendez-vous n'est sélectionné", async () => {
-          // When
-          await act(() => {
-            fireEvent.change(selectType, { target: { value: '' } })
-          })
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
         })
 
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
@@ -674,7 +708,7 @@ describe('EditionRdv', () => {
     })
 
     describe('quand un id de jeune est spécifié', () => {
-      it('initialise le destinataire', () => {
+      it('initialise le destinataire', async () => {
         // Given
         const idJeune = jeunes[2].id
         const jeuneFullname = getNomJeuneComplet(jeunes[2])
@@ -691,6 +725,10 @@ describe('EditionRdv', () => {
           />,
           { customDependances: { rendezVousService } }
         )
+        const selectType = screen.getByRole('combobox', {
+          name: 'Type',
+        })
+        await userEvent.selectOptions(selectType, 'Activités extérieures')
 
         // Then
         expect(() =>
