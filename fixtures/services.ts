@@ -140,7 +140,6 @@ export function mockedOffresEmploiService(
 ): OffresEmploiService {
   const defaults: OffresEmploiService = {
     getOffreEmploiServerSide: jest.fn(),
-    getLienOffreEmploi: jest.fn(),
     searchOffresEmploi: jest.fn(),
     searchAlternances: jest.fn(),
   }
@@ -151,7 +150,6 @@ export function mockedServicesCiviquesService(
   overrides: Partial<ServicesCiviquesService> = {}
 ): ServicesCiviquesService {
   const defaults: ServicesCiviquesService = {
-    getLienServiceCivique: jest.fn(),
     searchServicesCiviques: jest.fn(),
     getServiceCiviqueServerSide: jest.fn(),
   }

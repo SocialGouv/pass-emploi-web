@@ -24,7 +24,6 @@ export type SearchServicesCiviquesQuery = {
 }
 
 export interface ServicesCiviquesService {
-  getLienServiceCivique(idOffreEngagement: string): Promise<string | undefined>
   getServiceCiviqueServerSide(
     idServiceCivique: string,
     accessToken: string
@@ -36,20 +35,6 @@ export interface ServicesCiviquesService {
 }
 export class ServicesCiviquesApiService implements ServicesCiviquesService {
   constructor(private readonly apiClient: ApiClient) {}
-
-  async getLienServiceCivique(
-    idServiceCivique: string
-  ): Promise<string | undefined> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
-
-    const serviceCiviqueJson = await this.getServiceCivique(
-      idServiceCivique,
-      accessToken
-    )
-
-    return serviceCiviqueJson?.lienAnnonce
-  }
 
   async getServiceCiviqueServerSide(
     idServiceCivique: string,

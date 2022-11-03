@@ -28,7 +28,6 @@ export type SearchOffresEmploiQuery = {
 }
 
 export interface OffresEmploiService {
-  getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
   getOffreEmploiServerSide(
     idOffreEmploi: string,
     accessToken: string
@@ -46,23 +45,23 @@ export interface OffresEmploiService {
 export class OffresEmploiApiService implements OffresEmploiService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
-
-    const offre = await this.getOffreEmploi(idOffreEmploi, accessToken)
-    return offre?.urlRedirectPourPostulation
-  }
-
   async getOffreEmploiServerSide(
     idOffreEmploi: string,
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined> {
-    const offreEmploiJson = await this.getOffreEmploi(
-      idOffreEmploi,
-      accessToken
-    )
-    return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
+    try {
+      const { content: offreEmploiJson } =
+        await this.apiClient.get<DetailOffreEmploiJson>(
+          `/offres-emploi/${idOffreEmploi}`,
+          accessToken
+        )
+      return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) {
+        return undefined
+      }
+      throw e
+    }
   }
 
   async searchOffresEmploi(
@@ -77,25 +76,6 @@ export class OffresEmploiApiService implements OffresEmploiService {
     page: number
   ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
     return this.searchOffres({ recherche, page, alternanceOnly: true })
-  }
-
-  private async getOffreEmploi(
-    idOffreEmploi: string,
-    accessToken: string
-  ): Promise<DetailOffreEmploiJson | undefined> {
-    try {
-      const { content: offreEmploiJson } =
-        await this.apiClient.get<DetailOffreEmploiJson>(
-          `/offres-emploi/${idOffreEmploi}`,
-          accessToken
-        )
-      return offreEmploiJson
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        return undefined
-      }
-      throw e
-    }
   }
 
   private async searchOffres({

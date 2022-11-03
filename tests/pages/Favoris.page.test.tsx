@@ -38,41 +38,37 @@ describe('Favoris', () => {
     it('permet d’accéder à l’offre d’emploi', async () => {
       // Then
       const offre = screen.getByRole('row', {
-        name: 'Ouvrir l’offre offre 1 (nouvel onglet)',
+        name: 'Ouvrir l’offre offre 1',
       })
 
       expect(offre).toHaveAttribute('href', '/offres/emploi/idOffre1')
-      expect(offre).toHaveAttribute('target', '_blank')
     })
 
     it('permet d’accéder à l’offre de service civique', async () => {
       // Then
       const offre = screen.getByRole('row', {
-        name: 'Ouvrir l’offre offre 2 (nouvel onglet)',
+        name: 'Ouvrir l’offre offre 2',
       })
 
       expect(offre).toHaveAttribute('href', '/offres/service-civique/idOffre2')
-      expect(offre).toHaveAttribute('target', '_blank')
     })
 
     it('permet d’accéder à l’offre d’immersion', async () => {
       // Then
       const offre = screen.getByRole('row', {
-        name: 'Ouvrir l’offre offre 3 (nouvel onglet)',
+        name: 'Ouvrir l’offre offre 3',
       })
 
       expect(offre).toHaveAttribute('href', '/offres/immersion/idOffre3')
-      expect(offre).toHaveAttribute('target', '_blank')
     })
 
     it('permet d’accéder à l’offre d’alternance', async () => {
       // Then
       const offre = screen.getByRole('row', {
-        name: 'Ouvrir l’offre offre 4 (nouvel onglet)',
+        name: 'Ouvrir l’offre offre 4',
       })
 
       expect(offre).toHaveAttribute('href', '/offres/emploi/idOffre4')
-      expect(offre).toHaveAttribute('target', '_blank')
     })
 
     it('affiche la liste de ses recherches', async () => {
