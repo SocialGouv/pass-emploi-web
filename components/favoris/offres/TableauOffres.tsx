@@ -29,11 +29,6 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
               <HeaderCell>Titre</HeaderCell>
               <HeaderCell>Entreprise</HeaderCell>
               <HeaderCell>Type</HeaderCell>
-              <div
-                role='columnheader'
-                aria-hidden={true}
-                className='table-cell'
-              />
             </div>
           </div>
           <div role='rowgroup' className='table-row-group'>
