@@ -444,7 +444,8 @@ describe('Home', () => {
         })
 
         referentielService = {
-          getAgences: jest.fn(async () => uneListeDAgencesMILO()),
+          getAgencesServerSide: jest.fn(async () => uneListeDAgencesMILO()),
+          getAgencesClientSide: jest.fn(async () => uneListeDAgencesMILO()),
           getCommunesEtDepartements: jest.fn(),
           getCommunes: jest.fn(),
           getActionsPredefinies: jest.fn(),

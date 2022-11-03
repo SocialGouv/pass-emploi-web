@@ -246,7 +246,7 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     if (!conseiller.agence) {
       const agenceService =
         withDependance<ReferentielService>('referentielService')
-      referentielAgences = await agenceService.getAgences(
+      referentielAgences = await agenceService.getAgencesServerSide(
         user.structure,
         accessToken
       )

@@ -19,7 +19,12 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
-import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
+import {
+  isCodeTypeAnimationCollective,
+  Rdv,
+  TYPE_RENDEZ_VOUS,
+  TypeRendezVous,
+} from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
 import {
   DATE_DASH_SEPARATOR,
@@ -38,9 +43,11 @@ interface EditionRdvFormProps {
   soumettreRendezVous: (payload: RdvFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
+  conseillerAgence?: string
   rdv?: Rdv
   idJeune?: string
   showConfirmationModal: (payload: RdvFormData) => void
+  renseignerAgence: () => void
 }
 
 export function EditionRdvForm({
@@ -53,9 +60,11 @@ export function EditionRdvForm({
   soumettreRendezVous,
   leaveWithChanges,
   onChanges,
+  conseillerAgence,
   rdv,
   idJeune,
   showConfirmationModal,
+  renseignerAgence,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
   const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
@@ -93,6 +102,12 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
+
+  const isAgenceNecessaire =
+    isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseillerAgence
+  const afficherSuiteFormulaire =
+    codeTypeRendezVous &&
+    (!isCodeTypeAnimationCollective(codeTypeRendezVous) || conseillerAgence)
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -337,9 +352,26 @@ export function EditionRdvForm({
             />
           </>
         )}
+
+        {isAgenceNecessaire && (
+          <div>
+            <p>Votre Mission locale n’est pas renseignée</p>
+            <p>
+              Pour créer une information collective ou un atelier vous devez
+              renseigner votre Mission locale dans votre profil.
+            </p>
+            <Button
+              type='button'
+              style={ButtonStyle.PRIMARY}
+              onClick={renseignerAgence}
+            >
+              Renseigner votre Mission locale
+            </Button>
+          </div>
+        )}
       </Etape>
 
-      {codeTypeRendezVous && (
+      {afficherSuiteFormulaire && (
         <>
           <Etape numero={2} titre='Bénéficiaires'>
             <JeunesMultiselectAutocomplete
