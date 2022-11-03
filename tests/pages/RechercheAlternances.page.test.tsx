@@ -428,7 +428,7 @@ describe('Page Recherche Alternances', () => {
         ).toBeInTheDocument()
         expect(
           within(offreCard).getByRole('link', {
-            name: 'Détail de l’offre ' + alternance.id,
+            name: 'Détail de l’offre ' + alternance.titre,
           })
         ).toHaveAttribute('href', '/offres/emploi/' + alternance.id)
       })
