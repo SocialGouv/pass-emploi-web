@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   BaseImmersion,
@@ -32,9 +35,6 @@ import { FormValues } from 'types/form'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import { ButtonStyle } from 'components/ui/Button/Button'
 
 type RechercheOffresProps = PageProps & {
   partageSuccess?: boolean
