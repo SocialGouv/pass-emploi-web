@@ -156,6 +156,7 @@ export const getServerSideProps: GetServerSideProps<
       erreurMessageHttpMilo,
       pageTitle: `Portefeuille - Créer bénéficiaire`,
       pageHeader: `Créer un compte bénéficiaire`,
+      returnTo: '/mes-jeunes',
     },
   }
 }
