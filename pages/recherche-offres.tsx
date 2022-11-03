@@ -174,8 +174,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   useMatomo(trackingTitle)
 
   function getPartagerCriteresDeRechercheUrl() {
-    const { hasError, ...criteres } = queryOffresEmploi
-    const criteresToString = JSON.stringify(criteres)
+    const { hasError, commune, departement, ...criteres } = queryOffresEmploi
+    const criteresToString = JSON.stringify({
+      ...criteres,
+      departement: JSON.stringify(departement),
+      commune: JSON.stringify(commune),
+    })
     const criteresEncoded = new Buffer(criteresToString).toString('base64')
 
     return `/offres/partage-critere?type=${typeOffre}&criteres=${criteresEncoded}`
