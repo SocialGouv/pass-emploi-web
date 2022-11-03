@@ -439,7 +439,7 @@ describe('Page Recherche Offres', () => {
         expect(within(offreCard).getByText(offre.ville!)).toBeInTheDocument()
         expect(
           within(offreCard).getByRole('link', {
-            name: 'Détail de l’offre ' + offre.id,
+            name: 'Détail de l’offre ' + offre.titre,
           })
         ).toHaveAttribute('href', '/offres/service-civique/' + offre.id)
       })
