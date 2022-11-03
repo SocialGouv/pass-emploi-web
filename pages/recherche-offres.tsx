@@ -170,6 +170,13 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   useMatomo(trackingTitle)
 
+  function getCriteresRecherche() {
+    const query =
+      '{ "q": "élévation", "departement": "à paris", "alternance": true, "experience": [ "1" ], "debutant Accepte": true, "contrat": [ "CDI" ], "duree": [ "1" ], "commune": "string", "rayon": 0 }'
+
+    return new Buffer(query).toString('base64')
+  }
+
   return (
     <>
       {searchError && (
@@ -207,7 +214,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
               Partager cette recherche à vos bénéficiaires
             </p>
             <ButtonLink
-              href={'/offres/partage-criteres'}
+              href={
+                '/offres/partage-critere?criteres=' + getCriteresRecherche()
+              }
               style={ButtonStyle.SECONDARY}
             >
               <IconComponent
