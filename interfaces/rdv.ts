@@ -54,6 +54,10 @@ export const TYPE_RENDEZ_VOUS = {
   EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }
 
+export function isCodeTypeAnimationCollective(code: string): boolean {
+  return code === 'ATELIER' || code === 'INFORMATION_COLLECTIVE'
+}
+
 export enum PeriodeRdv {
   PASSES = 'PASSES',
   FUTURS = 'FUTURS',

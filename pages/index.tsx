@@ -113,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   }
 
   const agenceService = withDependance<ReferentielService>('referentielService')
-  const referentielAgences = await agenceService.getAgences(
+  const referentielAgences = await agenceService.getAgencesServerSide(
     user.structure,
     accessToken
   )

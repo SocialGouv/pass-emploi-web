@@ -1,16 +1,26 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
+import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
-import { mockedJeunesService, mockedRendezVousService } from 'fixtures/services'
+import {
+  mockedConseillerService,
+  mockedJeunesService,
+  mockedReferentielService,
+  mockedRendezVousService,
+} from 'fixtures/services'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
+import { ReferentielService } from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -183,6 +193,33 @@ describe('EditionRdv', () => {
         expect(actual).toMatchObject({ notFound: true })
       })
     })
+
+    describe('quand l’utilisateur est Pole Emploi', () => {
+      it('renvoie sur la liste des jeunes', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: {
+              id: 'id-conseiller',
+              structure: StructureConseiller.POLE_EMPLOI,
+            },
+            accessToken: 'accessToken',
+          },
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: {} },
+          query: {},
+        } as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          redirect: { destination: '/mes-jeunes', permanent: false },
+        })
+      })
+    })
   })
 
   describe('client side', () => {
@@ -199,18 +236,6 @@ describe('EditionRdv', () => {
 
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
-    })
-    describe('quand le conseiller veut créer une animation collective', () => {
-      it('vérifie si le conseiller a renseigné son agence', () => {
-        // Given
-        // When
-        // Then
-      })
-      it('n’affiche pas la suite du formulaire si l’agence n’est pas renseignée', async () => {
-        // Given
-        // When
-        // Then
-      })
     })
 
     describe('contenu', () => {
@@ -708,6 +733,116 @@ describe('EditionRdv', () => {
             )
           ).toBeInTheDocument()
         })
+      })
+    })
+
+    describe('quand un conseiller sans agence veut créer une animation collective', () => {
+      let agences: Agence[]
+      let referentielService: ReferentielService
+      let conseillerService: ConseillerService
+      beforeEach(async () => {
+        // Given
+        agences = uneListeDAgencesMILO()
+        referentielService = mockedReferentielService({
+          getAgencesClientSide: jest.fn(async () => agences),
+        })
+        conseillerService = mockedConseillerService()
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous'}
+            pageTitle={''}
+          />,
+          {
+            customDependances: {
+              rendezVousService,
+              referentielService,
+              conseillerService,
+            },
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
+        )
+
+        // When
+        await userEvent.selectOptions(
+          screen.getByRole('combobox', { name: 'Type' }),
+          'Atelier'
+        )
+      })
+
+      it('n’affiche pas la suite du formulaire', () => {
+        // Then
+        expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
+      })
+
+      it('demande de renseigner son agence', () => {
+        // Given
+        const etape1 = screen.getByRole('group', { name: /Étape 1/ })
+
+        // Then
+        expect(
+          within(etape1).getByText('Votre Mission locale n’est pas renseignée')
+        ).toBeInTheDocument()
+        expect(
+          within(etape1).getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de renseigner son agence', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        )
+
+        // Then
+        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+          StructureConseiller.MILO
+        )
+        expect(
+          screen.getByRole('combobox', { name: /votre Mission locale/ })
+        ).toBeInTheDocument()
+        agences.forEach((agence) =>
+          expect(
+            screen.getByRole('option', { hidden: true, name: agence.nom })
+          ).toBeInTheDocument()
+        )
+      })
+
+      it('sauvegarde l’agence et affiche la suite du formulaire', async () => {
+        // Given
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        )
+        const agence = agences[2]
+        const searchAgence = screen.getByRole('combobox', {
+          name: /votre Mission locale/,
+        })
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
+        await userEvent.selectOptions(searchAgence, agence.nom)
+        await userEvent.click(submit)
+
+        // Then
+        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          id: agence.id,
+          nom: agence.nom,
+          codeDepartement: '3',
+        })
+        expect(() =>
+          screen.getByText('Votre Mission locale n’est pas renseignée')
+        ).toThrow()
+        expect(
+          screen.getByRole('group', { name: /Étape 2/ })
+        ).toBeInTheDocument()
       })
     })
 

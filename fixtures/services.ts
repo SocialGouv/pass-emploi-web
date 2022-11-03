@@ -106,7 +106,8 @@ export function mockedReferentielService(
   overrides: Partial<ReferentielService> = {}
 ): ReferentielService {
   const defaults: ReferentielService = {
-    getAgences: jest.fn(),
+    getAgencesServerSide: jest.fn(),
+    getAgencesClientSide: jest.fn(),
     getCommunesEtDepartements: jest.fn(),
     getCommunes: jest.fn(),
     getActionsPredefinies: jest.fn(),
