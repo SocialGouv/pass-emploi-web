@@ -1,20 +1,15 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+
 import { PageProps } from 'interfaces/pageProps'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
 type PartageCritereProps = PageProps & {
   query: string
 }
 
-function PartageCritere({ query }) {
-  function decode(query: string) {
-    let buff = new Buffer(query, 'base64')
-    let queryParams = buff.toString('utf-8')
-    return queryParams
-  }
-
-  return <>{decode(query)}</>
+function PartageCritere({ query }: PartageCritereProps) {
+  return <>{query}</>
 }
 
 export const getServerSideProps: GetServerSideProps<
@@ -25,11 +20,14 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const q = context.query.criteres
+  const q = context.query.criteres as string
+
+  const buff = new Buffer(q, 'base64')
+  const queryParams = buff.toString('utf-8')
 
   const props: PartageCritereProps = {
     pageTitle: 'Partager une offre',
-    query: q as string,
+    query: queryParams,
   }
 
   return { props }
