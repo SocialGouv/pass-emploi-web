@@ -62,7 +62,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   >({ hasError: false })
   const [queryImmersions, setQueryImmersions] = useState<
     FormValues<SearchImmersionsQuery>
-  >({ rayon: RAYON_DEFAULT, hasError: false })
+  >({
+    rayon: RAYON_DEFAULT,
+    hasError: false,
+  })
 
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
@@ -170,11 +173,12 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   useMatomo(trackingTitle)
 
-  function getCriteresRecherche() {
-    const query =
-      '{ "q": "élévation", "departement": "à paris", "alternance": true, "experience": [ "1" ], "debutant Accepte": true, "contrat": [ "CDI" ], "duree": [ "1" ], "commune": "string", "rayon": 0 }'
+  function getPartagerCriteresDeRechercheUrl() {
+    const { hasError, ...criteres } = queryOffresEmploi
+    const criteresToString = JSON.stringify(criteres)
+    const criteresEncoded = new Buffer(criteresToString).toString('base64')
 
-    return new Buffer(query).toString('base64')
+    return `/offres/partage-critere?type=${typeOffre}&criteres=${criteresEncoded}`
   }
 
   return (
@@ -214,9 +218,7 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
               Partager cette recherche à vos bénéficiaires
             </p>
             <ButtonLink
-              href={
-                '/offres/partage-critere?criteres=' + getCriteresRecherche()
-              }
+              href={getPartagerCriteresDeRechercheUrl()}
               style={ButtonStyle.SECONDARY}
             >
               <IconComponent
