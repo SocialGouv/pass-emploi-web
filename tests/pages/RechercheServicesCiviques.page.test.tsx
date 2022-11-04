@@ -428,20 +428,24 @@ describe('Page Recherche Offres', () => {
 
     it('affiche chaque offre', async () => {
       servicesCiviques.forEach((offre) => {
-        const offreCard = within(offresList).getByRole('heading', {
-          level: 3,
-          name: offre.titre,
-        }).parentElement!
+        const offreCard = screen.getByRole('link', {
+          name: 'Détail de l’offre ' + offre.titre,
+        })
+        expect(offreCard).toHaveAttribute(
+          'href',
+          '/offres/service-civique/' + offre.id
+        )
+        expect(
+          within(offreCard).getByRole('heading', {
+            level: 3,
+            name: offre.titre,
+          })
+        ).toBeInTheDocument()
         expect(within(offreCard).getByText(offre.domaine)).toBeInTheDocument()
         expect(
           within(offreCard).getByText(offre.organisation!)
         ).toBeInTheDocument()
         expect(within(offreCard).getByText(offre.ville!)).toBeInTheDocument()
-        expect(
-          within(offreCard).getByRole('link', {
-            name: 'Détail de l’offre ' + offre.titre,
-          })
-        ).toHaveAttribute('href', '/offres/service-civique/' + offre.id)
       })
     })
 
