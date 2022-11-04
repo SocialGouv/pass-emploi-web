@@ -6,14 +6,16 @@ import { Localite } from 'interfaces/referentiel'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 
 interface CriteresOffresEmploiCardProps {
+  titre: string
+  localite?: Localite
   criteres: SearchOffresEmploiQuery
 }
 
 export default function CriteresOffresEmploiCard({
+  titre,
+  localite,
   criteres,
 }: CriteresOffresEmploiCardProps) {
-  const localite = getLocalite(criteres)
-  const titre = getTitre(criteres.motsCles, localite)
   return (
     <div className='rounded-small shadow-s p-6'>
       <p className='text-base-bold mb-2'>{titre}</p>
@@ -52,16 +54,4 @@ export default function CriteresOffresEmploiCard({
       )}
     </div>
   )
-}
-
-function getLocalite(criteres: SearchOffresEmploiQuery): Localite | undefined {
-  if (criteres.departement) {
-    return criteres.departement
-  } else if (criteres.commune) {
-    return criteres.commune
-  }
-}
-
-function getTitre(motsCles?: string, localite?: Localite): string {
-  return [motsCles, localite?.libelle].filter((e) => e).join(' - ')
 }

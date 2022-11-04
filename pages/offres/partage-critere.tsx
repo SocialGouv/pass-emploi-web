@@ -11,14 +11,16 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
-import { jsonStringToQueryOffreEmploi } from 'interfaces/json/search-offre-query'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
+import { Localite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
+import { RecherchesService } from 'services/recherches.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { decodeBase64 } from 'utils/encoding/base64-enconding'
+import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type PartageCritereProps = PageProps & {
@@ -35,11 +37,16 @@ function PartageCritere({
   criteresDeRecherche,
   returnTo,
 }: PartageCritereProps) {
+  const recherchesService =
+    useDependance<RecherchesService>('recherchesService')
   const router = useRouter()
   const [idsDestinataires, setIdsDestinataires] = useState<
     RequiredValue<string[]>
   >({ value: [] })
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
+
+  const localite = getLocalite(criteresDeRecherche)
+  const titre = getTitre(criteresDeRecherche.motsCles, localite)
 
   const formIsValid = useMemo(
     () => idsDestinataires.value.length > 0,
@@ -62,7 +69,12 @@ function PartageCritere({
     setIsPartageEnCours(true)
 
     try {
-      // TODO-1027 appel service
+      await recherchesService.postCriteresRechercheOffreEmploi(
+        idsDestinataires.value,
+        criteresDeRecherche,
+        titre,
+        localite?.libelle
+      )
       await router.push({
         pathname: '/recherche-offres',
         query: { [QueryParam.partageCriteres]: QueryValue.succes },
@@ -74,7 +86,11 @@ function PartageCritere({
 
   return (
     <>
-      <CriteresOffresEmploiCard criteres={criteresDeRecherche} />
+      <CriteresOffresEmploiCard
+        titre={titre}
+        localite={localite}
+        criteres={criteresDeRecherche}
+      />
       <p className='mt-8'>
         Ces critères apparaitrons dans la section favoris, catégorie recherches
         sauvegardées,du bénéficiaire de l’application CEJ.
@@ -114,6 +130,18 @@ function PartageCritere({
   )
 }
 
+function getLocalite(criteres: SearchOffresEmploiQuery): Localite | undefined {
+  if (criteres.departement) {
+    return criteres.departement
+  } else if (criteres.commune) {
+    return criteres.commune
+  }
+}
+
+function getTitre(motsCles?: string, localite?: Localite): string {
+  return [motsCles, localite?.libelle].filter((e) => e).join(' - ')
+}
+
 export const getServerSideProps: GetServerSideProps<
   PartageCritereProps
 > = async (context) => {
@@ -130,7 +158,7 @@ export const getServerSideProps: GetServerSideProps<
   )
 
   const criteresDecoded = decodeBase64(context.query.criteres as string)
-  const queryOffresEmploi = jsonStringToQueryOffreEmploi(criteresDecoded)
+  const queryOffresEmploi = JSON.parse(criteresDecoded)
 
   const referer = context.req.headers.referer
   const redirectTo = referer ?? '/recherche-offres'

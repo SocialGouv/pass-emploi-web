@@ -21,6 +21,10 @@ import {
   OffresEmploiService,
 } from 'services/offres-emploi.service'
 import {
+  RecherchesApiService,
+  RecherchesService,
+} from 'services/recherches.service'
+import {
   ReferentielApiService,
   ReferentielService,
 } from 'services/referentiel.service'
@@ -47,6 +51,7 @@ export interface Dependencies {
   offresEmploiService: OffresEmploiService
   servicesCiviquesService: ServicesCiviquesService
   immersionsService: ImmersionsService
+  recherchesService: RecherchesService
 }
 
 export class Container {
@@ -79,6 +84,7 @@ export class Container {
       offresEmploiService: new OffresEmploiApiService(apiClient),
       servicesCiviquesService: new ServicesCiviquesApiService(apiClient),
       immersionsService: new ImmersionsApiService(apiClient),
+      recherchesService: new RecherchesApiService(apiClient),
     })
   }
 }
