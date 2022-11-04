@@ -136,7 +136,7 @@ export const getServerSideProps: GetServerSideProps<
       criteresDeRecherche: queryOffresEmploi,
       returnTo: redirectTo,
       withoutChat: true,
-      pageTitle: 'Partager une offre',
+      pageTitle: 'Partager une recherche',
     },
   }
 }
