@@ -27,12 +27,14 @@ import {
   TypeRendezVous,
 } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
+import { JeunesApiService } from 'services/jeunes.service'
 import {
   DATE_DASH_SEPARATOR,
   TIME_24_SIMPLE,
   toFrenchFormat,
   toFrenchString,
 } from 'utils/date'
+import { useDependance } from 'utils/injectionDependances'
 
 interface EditionRdvFormProps {
   jeunes: BaseJeune[]
@@ -65,7 +67,11 @@ export function EditionRdvForm({
   showConfirmationModal,
   renseignerAgence,
 }: EditionRdvFormProps) {
+  const jeunesService = useDependance<JeunesApiService>('jeunesService')
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
+  const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
+    []
+  )
   const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
     value: defaultJeunes.map(({ id }) => id),
   })
@@ -152,11 +158,16 @@ export function EditionRdvForm({
     )
   }
 
-  function handleSelectedTypeRendezVous(value: string) {
+  async function handleSelectedTypeRendezVous(value: string) {
     setCodeTypeRendezVous(value)
     setShowPrecisionType(value === TYPE_RENDEZ_VOUS.Autre)
     if (value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
+    }
+    if (isCodeTypeAnimationCollective(codeTypeRendezVous)) {
+      setJeunesEtablissement(
+        await jeunesService.getJeunesParEtablissements('id-etablissement')
+      )
     }
   }
 
@@ -391,7 +402,11 @@ export function EditionRdvForm({
         <>
           <Etape numero={2} titre='Bénéficiaires'>
             <JeunesMultiselectAutocomplete
-              jeunes={jeunes}
+              jeunes={
+                !isCodeTypeAnimationCollective(codeTypeRendezVous)
+                  ? jeunes
+                  : jeunesEtablissement
+              }
               typeSelection='Bénéficiaires'
               defaultJeunes={defaultJeunes}
               onUpdate={updateIdsJeunes}
