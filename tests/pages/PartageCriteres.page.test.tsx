@@ -1,20 +1,30 @@
-import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
-import PartageCritere from 'pages/offres/partage-critere'
+import React from 'react'
+
 import { desItemsJeunes } from 'fixtures/jeune'
-import { TypeOffre } from 'interfaces/offre'
 import { uneCommune } from 'fixtures/referentiel'
+import { mockedRecherchesSerivice } from 'fixtures/services'
+import { TypeOffre } from 'interfaces/offre'
+import PartageCritere from 'pages/offres/partage-critere'
+import { RecherchesService } from 'services/recherches.service'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Partage Critères', () => {
+  let recherchesService: RecherchesService
+
+  beforeEach(() => {
+    recherchesService = mockedRecherchesSerivice()
+  })
+
   describe('Type Offre Emploi', () => {
     describe('client side', () => {
       let inputSearchJeune: HTMLSelectElement
       let submitButton: HTMLButtonElement
 
       beforeEach(() => {
-        render(
+        renderWithContexts(
           <PartageCritere
             pageTitle='Partager une recherche'
             jeunes={desItemsJeunes()}
@@ -25,7 +35,8 @@ describe('Partage Critères', () => {
             }}
             withoutChat={true}
             returnTo=''
-          />
+          />,
+          { customDependances: { recherchesService } }
         )
 
         //Given
@@ -76,7 +87,7 @@ describe('Partage Critères', () => {
           expect(screen.getByText('Bénéficiaires (2)')).toBeInTheDocument()
         })
 
-        it('envoi un message à plusieurs destinataires', async () => {
+        it('envoi une recherche à plusieurs destinataires', async () => {
           // When
           await userEvent.click(submitButton)
 
