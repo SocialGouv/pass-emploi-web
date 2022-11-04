@@ -354,9 +354,19 @@ export function EditionRdvForm({
         )}
 
         {isAgenceNecessaire && (
-          <div>
-            <p>Votre Mission locale n’est pas renseignée</p>
-            <p>
+          <div className='flex flex-col items-center bg-warning_lighten rounded-medium p-6'>
+            <div className='flex items-center mb-2'>
+              <IconComponent
+                focusable='false'
+                aria-hidden='true'
+                className='w-4 h-4 mr-2 fill-warning'
+                name={IconName.Important}
+              />
+              <p className='text-base-bold text-warning'>
+                Votre agence n’est pas renseignée
+              </p>
+            </div>
+            <p className='text-base-regular text-warning mb-6'>
               Pour créer une information collective ou un atelier vous devez
               renseigner votre Mission locale dans votre profil.
             </p>
@@ -365,7 +375,7 @@ export function EditionRdvForm({
               style={ButtonStyle.PRIMARY}
               onClick={renseignerAgence}
             >
-              Renseigner votre Mission locale
+              Renseigner votre agence
             </Button>
           </div>
         )}
