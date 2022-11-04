@@ -28,8 +28,6 @@ export type SearchOffresEmploiQuery = {
 }
 
 export interface OffresEmploiService {
-  getLienOffreEmploi(idOffreEmploi: string): Promise<string | undefined>
-
   getOffreEmploiServerSide(
     idOffreEmploi: string,
     accessToken: string
