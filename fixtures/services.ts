@@ -6,6 +6,7 @@ import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import { RecherchesService } from 'services/recherches.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
@@ -164,6 +165,15 @@ export function mockedImmersionsService(
   const defaults: ImmersionsService = {
     getImmersionServerSide: jest.fn(),
     searchImmersions: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedRecherchesSerivice(
+  overrides: Partial<RecherchesService> = {}
+) {
+  const defaults: RecherchesService = {
+    postCriteresRechercheOffreEmploi: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
