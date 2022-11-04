@@ -1,17 +1,15 @@
 import React from 'react'
 
 import OffreRow from 'components/favoris/offres/OffreRow'
+import { HeaderCell } from 'components/ui/Table/HeaderCell'
+import TableLayout from 'components/ui/Table/TableLayout'
 import { Offre } from 'interfaces/favoris'
 
 interface TableauOffresProps {
   offres: Offre[]
-  handleRedirectionOffre: (offre: Offre) => void
 }
 
-export default function TableauOffres({
-  offres,
-  handleRedirectionOffre,
-}: TableauOffresProps) {
+export default function TableauOffres({ offres }: TableauOffresProps) {
   return (
     <>
       {offres.length === 0 && (
@@ -21,27 +19,24 @@ export default function TableauOffres({
       )}
 
       {offres.length > 0 && (
-        <table className='w-full border-separate border-spacing-y-2'>
-          <caption className='sr-only'>Liste des offres en favoris</caption>
-          <thead>
-            <tr>
-              <th className='text-base-regular text-left p-4'>N°Offre</th>
-              <th className='text-base-regular text-left p-4'>Titre</th>
-              <th className='text-base-regular text-left p-4'>Entreprise</th>
-              <th className='text-base-regular text-left p-4'>Type</th>
-              <th className='aria-hidden' />
-            </tr>
-          </thead>
-          <tbody>
+        <TableLayout describedBy='table-offres-caption'>
+          <div id='table-offres-caption' className='sr-only'>
+            Liste des offres en favoris
+          </div>
+          <div role='rowgroup' className='table-header-group'>
+            <div role='row' className='table-row'>
+              <HeaderCell>N°Offre</HeaderCell>
+              <HeaderCell>Titre</HeaderCell>
+              <HeaderCell>Entreprise</HeaderCell>
+              <HeaderCell>Type</HeaderCell>
+            </div>
+          </div>
+          <div role='rowgroup' className='table-row-group'>
             {offres.map((offre) => (
-              <OffreRow
-                key={offre.id}
-                offre={offre}
-                handleRedirectionOffre={handleRedirectionOffre}
-              />
+              <OffreRow key={offre.id} offre={offre} />
             ))}
-          </tbody>
-        </table>
+          </div>
+        </TableLayout>
       )}
     </>
   )

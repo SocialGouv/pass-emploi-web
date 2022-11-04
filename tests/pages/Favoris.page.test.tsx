@@ -1,21 +1,14 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import {
-  mockedFavorisService,
-  mockedOffresEmploiService,
-  mockedServicesCiviquesService,
-} from 'fixtures/services'
+import { mockedFavorisService } from 'fixtures/services'
 import Favoris, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/favoris'
-import { OffresEmploiService } from 'services/offres-emploi.service'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
-import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -28,25 +21,8 @@ describe('Favoris', () => {
   const recherches = uneListeDeRecherches()
 
   describe('client side', () => {
-    let offresEmploiService: OffresEmploiService
-    let servicesCiviquesService: ServicesCiviquesService
-    let mockOpen: () => null
-
     beforeEach(async () => {
-      offresEmploiService = mockedOffresEmploiService()
-      servicesCiviquesService = mockedServicesCiviquesService()
-      mockOpen = jest.fn()
-      jest.spyOn(window, 'open').mockImplementation(mockOpen)
-
-      renderWithContexts(
-        <Favoris offres={offres} recherches={recherches} pageTitle={''} />,
-        {
-          customDependances: {
-            offresEmploiService,
-            servicesCiviquesService: servicesCiviquesService,
-          },
-        }
-      )
+      render(<Favoris offres={offres} recherches={recherches} pageTitle={''} />)
     })
 
     it('affiche la liste des offres du jeune', () => {
@@ -60,81 +36,39 @@ describe('Favoris', () => {
     })
 
     it('permet d’accéder à l’offre d’emploi', async () => {
-      // Given
-      ;(offresEmploiService.getLienOffreEmploi as jest.Mock).mockResolvedValue(
-        'https://wwww.pole-emploi.fr/une-id'
-      )
-      const offre = screen.getByText('Offre d’emploi')
-      // When
-      await userEvent.click(offre)
       // Then
-      expect(mockOpen).toHaveBeenCalledWith(
-        '/offres/idOffre1',
-        '_blank',
-        'noopener,noreferrer'
-      )
-    })
+      const offre = screen.getByRole('row', {
+        name: 'Ouvrir l’offre offre 1',
+      })
 
-    it('permet d’accéder à l’offre d’alternance', async () => {
-      // Given
-      ;(offresEmploiService.getLienOffreEmploi as jest.Mock).mockResolvedValue(
-        'https://wwww.pole-emploi.fr/une-id'
-      )
-      const offre = screen.getByText('Alternance')
-      // When
-      await userEvent.click(offre)
-      // Then
-      expect(offresEmploiService.getLienOffreEmploi).toHaveBeenCalledWith(
-        'idOffre4'
-      )
-      expect(mockOpen).toHaveBeenCalledWith(
-        'https://wwww.pole-emploi.fr/une-id',
-        '_blank',
-        'noopener,noreferrer'
-      )
+      expect(offre).toHaveAttribute('href', '/offres/emploi/idOffre1')
     })
 
     it('permet d’accéder à l’offre de service civique', async () => {
-      // Given
-      ;(
-        servicesCiviquesService.getLienServiceCivique as jest.Mock
-      ).mockResolvedValue('https://wwww.service-civique.fr/une-id')
-      const serviceCivique = screen.getByText('Service civique')
-      // When
-      await userEvent.click(serviceCivique)
       // Then
-      expect(
-        servicesCiviquesService.getLienServiceCivique
-      ).toHaveBeenCalledWith('idOffre2')
-      expect(mockOpen).toHaveBeenCalledWith(
-        'https://wwww.service-civique.fr/une-id',
-        '_blank',
-        'noopener,noreferrer'
-      )
+      const offre = screen.getByRole('row', {
+        name: 'Ouvrir l’offre offre 2',
+      })
+
+      expect(offre).toHaveAttribute('href', '/offres/service-civique/idOffre2')
     })
 
-    it('renvoit une 404 lorsque le lien n’a pas été trouvé', async () => {
-      // Given
-      ;(
-        servicesCiviquesService.getLienServiceCivique as jest.Mock
-      ).mockResolvedValue(undefined)
-      const serviceCivique = screen.getByText('Service civique')
-      // When
-      await userEvent.click(serviceCivique)
+    it('permet d’accéder à l’offre d’immersion', async () => {
       // Then
-      expect(
-        servicesCiviquesService.getLienServiceCivique
-      ).toHaveBeenCalledWith('idOffre2')
-      expect(mockOpen).toHaveBeenCalledWith('/404', '_blank')
+      const offre = screen.getByRole('row', {
+        name: 'Ouvrir l’offre offre 3',
+      })
+
+      expect(offre).toHaveAttribute('href', '/offres/immersion/idOffre3')
     })
 
-    it('ne permet pas d’acceder aux offres d’Immersion', async () => {
-      // Given
-      const immersion = screen.getByText('Immersion')
-      // When
-      await userEvent.click(immersion)
+    it('permet d’accéder à l’offre d’alternance', async () => {
       // Then
-      expect(mockOpen).toHaveBeenCalledTimes(0)
+      const offre = screen.getByRole('row', {
+        name: 'Ouvrir l’offre offre 4',
+      })
+
+      expect(offre).toHaveAttribute('href', '/offres/emploi/idOffre4')
     })
 
     it('affiche la liste de ses recherches', async () => {

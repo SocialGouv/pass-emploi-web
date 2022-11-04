@@ -27,45 +27,6 @@ describe('ServicesCiviqueApiService', () => {
     servicesCiviquesService = new ServicesCiviquesApiService(apiClient)
   })
 
-  describe('.getLienServiceCivique', () => {
-    it('renvoie l’url du service civique si il est trouvée en base', async () => {
-      // Given
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
-        if (url === `/services-civique/ID_SERVICE_CIVIQUE`)
-          return {
-            content: {
-              lienAnnonce: 'https://www.services-civique.fr/id-offre',
-            },
-          }
-      })
-
-      // When
-      const actual = await servicesCiviquesService.getLienServiceCivique(
-        'ID_SERVICE_CIVIQUE'
-      )
-
-      // Then
-      expect(actual).toStrictEqual('https://www.services-civique.fr/id-offre')
-    })
-
-    it('renvoie undefined si le service civique n’est pas trouvée en base', async () => {
-      // Given
-      apiClient = new FakeApiClient()
-      servicesCiviquesService = new ServicesCiviquesApiService(apiClient)
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'service civique non trouvé')
-      )
-
-      // When
-      const actual = await servicesCiviquesService.getLienServiceCivique(
-        'ID_SERVICE_CIVIQUE'
-      )
-
-      // Then
-      expect(actual).toStrictEqual(undefined)
-    })
-  })
-
   describe('.getServiceCiviqueServerSide', () => {
     it('renvoie le service civique si il est trouvé en base', async () => {
       // Given
