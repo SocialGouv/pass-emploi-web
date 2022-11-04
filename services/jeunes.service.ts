@@ -2,8 +2,10 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
+import { desItemsJeunes } from 'fixtures/jeune'
 import { Conseiller } from 'interfaces/conseiller'
 import {
+  BaseJeune,
   ConseillerHistorique,
   DetailJeune,
   IndicateursSemaine,
@@ -98,6 +100,8 @@ export interface JeunesService {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<IndicateursSemaine>
+
+  getJeunesParEtablissements(idEtablissement: string): Promise<BaseJeune[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -333,5 +337,17 @@ export class JeunesApiService implements JeunesService {
         session!.accessToken
       )
     return jsonToIndicateursSemaine(indicateurs)
+  }
+
+  async getJeunesParEtablissements(
+    idEtablissement: string
+  ): Promise<BaseJeune[]> {
+    // const session = await getSession()
+    // const { content: beneficiaires } = await this.apiClient.get<BaseJeune[]>(
+    //   `/etablissements/${idEtablissement}/jeunes`,
+    //   session!.accessToken
+    // )
+    //FIXME: retirer quand back prêt, voir si on change par BaseJeune
+    return desItemsJeunes()
   }
 }
