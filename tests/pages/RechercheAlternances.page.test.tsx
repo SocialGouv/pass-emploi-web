@@ -406,10 +406,19 @@ describe('Page Recherche Alternances', () => {
 
     it('affiche chaque offre', async () => {
       alternances.forEach((alternance) => {
-        const offreCard = within(offresList).getByRole('heading', {
-          level: 3,
-          name: 'Offre n°' + alternance.id,
-        }).parentElement!
+        const offreCard = screen.getByRole('link', {
+          name: 'Détail de l’offre ' + alternance.titre,
+        })
+        expect(offreCard).toHaveAttribute(
+          'href',
+          '/offres/emploi/' + alternance.id
+        )
+        expect(
+          within(offreCard).getByRole('heading', {
+            level: 3,
+            name: 'Offre n°' + alternance.id,
+          })
+        ).toBeInTheDocument()
         expect(within(offreCard).getByText('Alternance')).toBeInTheDocument()
         expect(
           within(offreCard).getByText(alternance.titre)
@@ -426,11 +435,6 @@ describe('Page Recherche Alternances', () => {
         expect(
           within(offreCard).getByText(alternance.localisation!)
         ).toBeInTheDocument()
-        expect(
-          within(offreCard).getByRole('link', {
-            name: 'Détail de l’offre ' + alternance.titre,
-          })
-        ).toHaveAttribute('href', '/offres/emploi/' + alternance.id)
       })
     })
 

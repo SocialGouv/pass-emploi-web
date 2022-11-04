@@ -19,9 +19,28 @@ export default function OffreCard({
   withPartage = false,
 }: OffreCardProps) {
   return (
-    <div className='relative rounded-small shadow-s p-6'>
+    <div className='relative'>
+      <Link href={`/offres/${offrePath}`}>
+        <a
+          aria-label={`Détail de l’offre ${titreLien}`}
+          className='block rounded-small shadow-s p-6 hover:bg-primary_lighten'
+        >
+          {children}
+
+          <div className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'>
+            Voir le détail
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-4 mr-2 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </div>
+        </a>
+      </Link>
+
       {withPartage && (
-        <div className='absolute right-6'>
+        <div className='absolute top-6 right-6'>
           <LienPartageOffre
             titreOffre={titreLien}
             href={`/offres/${offrePath}/partage`}
@@ -29,23 +48,6 @@ export default function OffreCard({
           />
         </div>
       )}
-
-      {children}
-
-      <Link href={`/offres/${offrePath}`}>
-        <a
-          aria-label={`Détail de l’offre ${titreLien}`}
-          className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'
-        >
-          Voir le détail
-          <IconComponent
-            name={IconName.ChevronRight}
-            className='w-4 h-4 mr-2 fill-primary'
-            focusable={false}
-            aria-hidden={true}
-          />
-        </a>
-      </Link>
     </div>
   )
 }

@@ -1,13 +1,21 @@
 import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import React from 'react'
 
 import { listeBaseImmersions, uneBaseImmersion } from 'fixtures/offre'
-import { desCommunes, desMetiers, uneCommune, unMetier } from 'fixtures/referentiel'
-import { mockedImmersionsService, mockedReferentielService } from 'fixtures/services'
+import {
+  desCommunes,
+  desMetiers,
+  uneCommune,
+  unMetier,
+} from 'fixtures/referentiel'
+import {
+  mockedImmersionsService,
+  mockedReferentielService,
+} from 'fixtures/services'
 import { BaseImmersion } from 'interfaces/offre'
 import { Commune, Metier } from 'interfaces/referentiel'
 import RechercheOffres from 'pages/recherche-offres'
-import React from 'react'
 import { ImmersionsService } from 'services/immersions.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -391,10 +399,19 @@ describe('Page Recherche Immersions', () => {
 
     it('affiche chaque offre', async () => {
       immersions.forEach((immersion) => {
-        const immersionCard = within(offresList).getByRole('heading', {
-          level: 3,
-          name: immersion.titre,
-        }).parentElement!
+        const immersionCard = screen.getByRole('link', {
+          name: 'Détail de l’offre chez ' + immersion.nomEtablissement,
+        })
+        expect(immersionCard).toHaveAttribute(
+          'href',
+          '/offres/immersion/' + immersion.id
+        )
+        expect(
+          within(immersionCard).getByRole('heading', {
+            level: 3,
+            name: immersion.titre,
+          })
+        ).toBeInTheDocument()
         expect(
           within(immersionCard).getByText(immersion.nomEtablissement)
         ).toBeInTheDocument()
@@ -404,11 +421,6 @@ describe('Page Recherche Immersions', () => {
         expect(
           within(immersionCard).getByText(immersion.secteurActivite)
         ).toBeInTheDocument()
-        expect(
-          within(immersionCard).getByRole('link', {
-            name: 'Détail de l’offre chez ' + immersion.nomEtablissement,
-          })
-        ).toHaveAttribute('href', '/offres/immersion/' + immersion.id)
       })
     })
 

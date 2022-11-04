@@ -429,10 +429,16 @@ describe('Page Recherche Offres Emploi', () => {
 
     it('affiche chaque offre', async () => {
       offresEmploi.forEach((offre) => {
-        const offreCard = within(offresList).getByRole('heading', {
-          level: 3,
-          name: 'Offre n°' + offre.id,
-        }).parentElement!
+        const offreCard = screen.getByRole('link', {
+          name: 'Détail de l’offre ' + offre.titre,
+        })
+        expect(offreCard).toHaveAttribute('href', '/offres/emploi/' + offre.id)
+        expect(
+          within(offreCard).getByRole('heading', {
+            level: 3,
+            name: 'Offre n°' + offre.id,
+          })
+        ).toBeInTheDocument()
         expect(within(offreCard).getByText('Emploi')).toBeInTheDocument()
         expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
         expect(
@@ -445,11 +451,6 @@ describe('Page Recherche Offres Emploi', () => {
         expect(
           within(offreCard).getByText(offre.localisation!)
         ).toBeInTheDocument()
-        expect(
-          within(offreCard).getByRole('link', {
-            name: 'Détail de l’offre ' + offre.titre,
-          })
-        ).toHaveAttribute('href', '/offres/emploi/' + offre.id)
       })
     })
 
