@@ -8,6 +8,7 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { queryOffreEmploiToJsonString } from 'interfaces/json/search-offre-query'
 import {
   BaseImmersion,
   BaseOffre,
@@ -34,6 +35,7 @@ import {
 import { FormValues } from 'types/form'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { encodeBase64 } from 'utils/encoding/base64-enconding'
 import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps & {
@@ -174,14 +176,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   useMatomo(trackingTitle)
 
   function getPartagerCriteresDeRechercheUrl() {
-    const { hasError, commune, departement, ...criteres } = queryOffresEmploi
-    const criteresToString = JSON.stringify({
-      ...criteres,
-      departement: JSON.stringify(departement),
-      commune: JSON.stringify(commune),
-    })
-    const criteresEncoded = new Buffer(criteresToString).toString('base64')
-
+    const { hasError, ...query } = queryOffresEmploi
+    const criteresToString = queryOffreEmploiToJsonString(query)
+    const criteresEncoded = encodeBase64(criteresToString)
     return `/offres/partage-critere?type=${typeOffre}&criteres=${criteresEncoded}`
   }
 

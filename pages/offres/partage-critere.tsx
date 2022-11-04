@@ -10,12 +10,14 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
+import { jsonStringToQueryOffreEmploi } from 'interfaces/json/search-offre-query'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { decodeBase64 } from 'utils/encoding/base64-enconding'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type PartageCritereProps = PageProps & {
@@ -120,22 +122,8 @@ export const getServerSideProps: GetServerSideProps<
     accessToken
   )
 
-  const criteresEncoded = context.query.criteres as string
-  const buff = new Buffer(criteresEncoded, 'base64')
-  const criteresDecoded = buff.toString('utf-8')
-
-  const queryOffresEmploiJson = JSON.parse(criteresDecoded)
-
-  const queryOffresEmploi: SearchOffresEmploiQuery = {
-    ...queryOffresEmploiJson,
-    //TODO-1027 Objet vide ou undefined ?
-    departement: queryOffresEmploiJson.departement
-      ? JSON.parse(queryOffresEmploiJson.departement)
-      : {},
-    commune: queryOffresEmploiJson.commune
-      ? JSON.parse(queryOffresEmploiJson.commune)
-      : {},
-  }
+  const criteresDecoded = decodeBase64(context.query.criteres as string)
+  const queryOffresEmploi = jsonStringToQueryOffreEmploi(criteresDecoded)
 
   const referer = context.req.headers.referer
   const redirectTo = referer ?? '/recherche-offres'
