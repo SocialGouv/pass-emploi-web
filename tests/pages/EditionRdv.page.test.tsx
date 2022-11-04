@@ -732,17 +732,121 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand un conseiller sans agence veut créer une animation collective', () => {
-      let agences: Agence[]
-      let referentielService: ReferentielService
-      let conseillerService: ConseillerService
-      beforeEach(async () => {
-        // Given
-        agences = uneListeDAgencesMILO()
-        referentielService = mockedReferentielService({
-          getAgencesClientSide: jest.fn(async () => agences),
+    describe('quand on veut créer une animation collective', () => {
+      describe('quand le conseiller n’a pas d’agence', () => {
+        let agences: Agence[]
+        let referentielService: ReferentielService
+        let conseillerService: ConseillerService
+        beforeEach(async () => {
+          // Given
+          agences = uneListeDAgencesMILO()
+          referentielService = mockedReferentielService({
+            getAgencesClientSide: jest.fn(async () => agences),
+          })
+          conseillerService = mockedConseillerService()
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunes}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/mes-rendezvous'}
+              pageTitle={''}
+            />,
+            {
+              customDependances: {
+                rendezVousService,
+                referentielService,
+                conseillerService,
+              },
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
+          )
+
+          // When
+          await userEvent.selectOptions(
+            screen.getByRole('combobox', { name: 'Type' }),
+            'Atelier'
+          )
         })
-        conseillerService = mockedConseillerService()
+
+        it('n’affiche pas la suite du formulaire', () => {
+          // Then
+          expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
+        })
+
+        it('demande de renseigner son agence', () => {
+          // Given
+          const etape1 = screen.getByRole('group', { name: /Étape 1/ })
+
+          // Then
+          expect(
+            within(etape1).getByText(
+              'Votre Mission locale n’est pas renseignée'
+            )
+          ).toBeInTheDocument()
+          expect(
+            within(etape1).getByRole('button', {
+              name: 'Renseigner votre Mission locale',
+            })
+          ).toBeInTheDocument()
+        })
+
+        it('permet de renseigner son agence', async () => {
+          // When
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Renseigner votre Mission locale',
+            })
+          )
+
+          // Then
+          expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+            StructureConseiller.MILO
+          )
+          expect(
+            screen.getByRole('combobox', { name: /votre Mission locale/ })
+          ).toBeInTheDocument()
+          agences.forEach((agence) =>
+            expect(
+              screen.getByRole('option', { hidden: true, name: agence.nom })
+            ).toBeInTheDocument()
+          )
+        })
+
+        it('sauvegarde l’agence et affiche la suite du formulaire', async () => {
+          // Given
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Renseigner votre Mission locale',
+            })
+          )
+          const agence = agences[2]
+          const searchAgence = screen.getByRole('combobox', {
+            name: /votre Mission locale/,
+          })
+          const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+          // When
+          await userEvent.selectOptions(searchAgence, agence.nom)
+          await userEvent.click(submit)
+
+          // Then
+          expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+            id: agence.id,
+            nom: agence.nom,
+            codeDepartement: '3',
+          })
+          expect(() =>
+            screen.getByText('Votre Mission locale n’est pas renseignée')
+          ).toThrow()
+          expect(
+            screen.getByRole('group', { name: /Étape 2/ })
+          ).toBeInTheDocument()
+        })
+      })
+
+      it('les bénéficiaires sont facultatifs', async () => {
+        // Given
         renderWithContexts(
           <EditionRdv
             jeunes={jeunes}
@@ -752,93 +856,38 @@ describe('EditionRdv', () => {
             pageTitle={''}
           />,
           {
-            customDependances: {
-              rendezVousService,
-              referentielService,
-              conseillerService,
-            },
-            customConseiller: { structure: StructureConseiller.MILO },
+            customDependances: { rendezVousService },
+            customConseiller: { agence: 'Mission locale Aubenas' },
           }
         )
-
-        // When
-        await userEvent.selectOptions(
-          screen.getByRole('combobox', { name: 'Type' }),
-          'Atelier'
-        )
-      })
-
-      it('n’affiche pas la suite du formulaire', () => {
-        // Then
-        expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
-      })
-
-      it('demande de renseigner son agence', () => {
-        // Given
-        const etape1 = screen.getByRole('group', { name: /Étape 1/ })
-
-        // Then
-        expect(
-          within(etape1).getByText('Votre Mission locale n’est pas renseignée')
-        ).toBeInTheDocument()
-        expect(
-          within(etape1).getByRole('button', {
-            name: 'Renseigner votre Mission locale',
-          })
-        ).toBeInTheDocument()
-      })
-
-      it('permet de renseigner son agence', async () => {
-        // When
-        await userEvent.click(
-          screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
-          })
-        )
-
-        // Then
-        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
-          StructureConseiller.MILO
-        )
-        expect(
-          screen.getByRole('combobox', { name: /votre Mission locale/ })
-        ).toBeInTheDocument()
-        agences.forEach((agence) =>
-          expect(
-            screen.getByRole('option', { hidden: true, name: agence.nom })
-          ).toBeInTheDocument()
-        )
-      })
-
-      it('sauvegarde l’agence et affiche la suite du formulaire', async () => {
-        // Given
-        await userEvent.click(
-          screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
-          })
-        )
-        const agence = agences[2]
-        const searchAgence = screen.getByRole('combobox', {
-          name: /votre Mission locale/,
+        const selectType = screen.getByRole('combobox', {
+          name: 'Type',
         })
-        const submit = screen.getByRole('button', { name: 'Ajouter' })
+        await userEvent.selectOptions(selectType, 'Atelier')
+
+        const selectJeunes = screen.getByRole('combobox', {
+          name: 'Rechercher et ajouter des jeunes Nom et prénom',
+        })
+        const inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
+        const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
+        const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+        await userEvent.type(inputDate, '2022-03-03')
+        await userEvent.type(inputHoraire, '10:30')
+        await userEvent.type(inputDuree, '02:37')
 
         // When
-        await userEvent.selectOptions(searchAgence, agence.nom)
-        await userEvent.click(submit)
+        const buttonValider = screen.getByRole('button', {
+          name: 'Créer le rendez-vous',
+        })
+        await userEvent.click(buttonValider)
 
         // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
-          id: agence.id,
-          nom: agence.nom,
-          codeDepartement: '3',
-        })
-        expect(() =>
-          screen.getByText('Votre Mission locale n’est pas renseignée')
-        ).toThrow()
-        expect(
-          screen.getByRole('group', { name: /Étape 2/ })
-        ).toBeInTheDocument()
+        expect(selectJeunes).toHaveAttribute('aria-required', 'false')
+        expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+          expect.objectContaining({
+            jeunesIds: [],
+          })
+        )
       })
     })
 
