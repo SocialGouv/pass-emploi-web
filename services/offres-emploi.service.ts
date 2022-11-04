@@ -147,7 +147,7 @@ function buildSearchParams(
   return searchParams + queryMotsCles
 }
 
-function dureeToQueryParam(duree: Duree): '1' | '2' {
+export function dureeToQueryParam(duree: Duree): '1' | '2' {
   switch (duree) {
     case 'Temps plein':
       return '1'

@@ -8,7 +8,6 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
-import { queryOffreEmploiToJsonString } from 'interfaces/json/search-offre-query'
 import {
   BaseImmersion,
   BaseOffre,
@@ -183,7 +182,7 @@ function RechercheOffres({
 
   function getPartagerCriteresDeRechercheUrl() {
     const { hasError, ...query } = queryOffresEmploi
-    const criteresToString = queryOffreEmploiToJsonString(query)
+    const criteresToString = JSON.stringify(query)
     const criteresEncoded = encodeBase64(criteresToString)
     return `/offres/partage-critere?type=${typeOffre}&criteres=${criteresEncoded}`
   }
