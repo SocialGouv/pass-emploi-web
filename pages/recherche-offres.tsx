@@ -39,10 +39,14 @@ import { encodeBase64 } from 'utils/encoding/base64-enconding'
 import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps & {
-  partageSuccess?: boolean
+  partageOffreSuccess?: boolean
+  partageCriteresSuccess?: boolean
 }
 
-function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
+function RechercheOffres({
+  partageOffreSuccess,
+  partageCriteresSuccess,
+}: RechercheOffresProps) {
   const referentielService =
     useDependance<ReferentielService>('referentielService')
   const offresEmploiService = useDependance<OffresEmploiService>(
@@ -78,7 +82,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
-  if (partageSuccess) initialTracking += ' - Partage offre succès'
+  if (partageOffreSuccess) initialTracking += ' - Partage offre succès'
+  // if (partageCriteresSuccess) // todo decommenter
+  // initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   async function rechercherPremierePage() {
@@ -258,8 +264,12 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   if (context.query[QueryParam.partageOffre])
-    props.partageSuccess =
+    props.partageOffreSuccess =
       context.query[QueryParam.partageOffre] === QueryValue.succes
+
+  if (context.query[QueryParam.partageCriteres])
+    props.partageCriteresSuccess =
+      context.query[QueryParam.partageCriteres] === QueryValue.succes
 
   return { props }
 }
