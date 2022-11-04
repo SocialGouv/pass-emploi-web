@@ -210,8 +210,7 @@ function EditionRdv({
         redirectTo={returnTo}
         aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
         conseillerIsCreator={!rdv || conseiller?.id === rdv.createur?.id}
-        conseillerEmail={conseiller?.email ?? ''}
-        conseillerAgence={conseiller?.agence}
+        conseiller={conseiller}
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
         leaveWithChanges={openLeavePageModal}
