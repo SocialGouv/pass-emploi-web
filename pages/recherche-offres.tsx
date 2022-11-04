@@ -2,11 +2,9 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
+import PartageCriteresOffreButton from 'components/offres/criteres/PartageCriteresOffreButton'
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
-import { ButtonStyle } from 'components/ui/Button/Button'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   BaseImmersion,
@@ -34,7 +32,6 @@ import {
 import { FormValues } from 'types/form'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { encodeBase64 } from 'utils/encoding/base64-enconding'
 import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps & {
@@ -82,8 +79,8 @@ function RechercheOffres({
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
   if (partageOffreSuccess) initialTracking += ' - Partage offre succès'
-  // if (partageCriteresSuccess) // todo decommenter
-  // initialTracking += ' - Partage critères recherche succès'
+  if (partageCriteresSuccess)
+    initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   async function rechercherPremierePage() {
@@ -131,12 +128,16 @@ function RechercheOffres({
     }
   }
 
+  function getQueryOffreEmploi(): SearchOffresEmploiQuery {
+    const { hasError, ...query } = queryOffresEmploi
+    return query
+  }
+
   async function rechercherOffresEmploi(page: number): Promise<{
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
   }> {
-    const { hasError, ...query } = queryOffresEmploi
-    return offresEmploiService.searchOffresEmploi(query, page)
+    return offresEmploiService.searchOffresEmploi(getQueryOffreEmploi(), page)
   }
 
   async function rechercherAlternances(page: number): Promise<{
@@ -180,13 +181,6 @@ function RechercheOffres({
 
   useMatomo(trackingTitle)
 
-  function getPartagerCriteresDeRechercheUrl() {
-    const { hasError, ...query } = queryOffresEmploi
-    const criteresToString = JSON.stringify(query)
-    const criteresEncoded = encodeBase64(criteresToString)
-    return `/offres/partage-critere?type=${typeOffre}&criteres=${criteresEncoded}`
-  }
-
   return (
     <>
       {searchError && (
@@ -211,32 +205,10 @@ function RechercheOffres({
         stateQueryImmersions={[queryImmersions, setQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
-      {/*
-      TODO-1027
-      - Un seul composant, avec ses règles d'affichage à gérer (mais où ? plutôt dans le composant ?)
-      - Un type d'offre
-      - Un Query selon le type d'offre
-      */}
-      {typeOffre === TypeOffre.EMPLOI &&
-        (queryOffresEmploi.commune || queryOffresEmploi.departement) && (
-          <div className='flex justify-end align-center'>
-            <p className='my-auto mr-4'>
-              Partager cette recherche à vos bénéficiaires
-            </p>
-            <ButtonLink
-              href={getPartagerCriteresDeRechercheUrl()}
-              style={ButtonStyle.SECONDARY}
-            >
-              <IconComponent
-                name={IconName.Partage}
-                className='w-4 h-4 mr-3'
-                focusable={false}
-                aria-hidden={true}
-              />
-              Partager <span className='sr-only'>critères de recherche</span>
-            </ButtonLink>
-          </div>
-        )}
+      <PartageCriteresOffreButton
+        typeOffre={typeOffre}
+        criteres={getQueryOffreEmploi()}
+      />
       <ResultatsRechercheOffre
         isSearching={isSearching}
         offres={offres}
