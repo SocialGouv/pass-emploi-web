@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import CriteresOffresEmploiCard from 'components/offres/criteres/CriteresOffresEmploiCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -73,6 +74,7 @@ function PartageCritere({
 
   return (
     <>
+      <CriteresOffresEmploiCard criteres={criteresDeRecherche} />
       <form onSubmit={partager} className='mt-8'></form>
       <Etape numero={1} titre='Bénéficiaires'>
         <JeunesMultiselectAutocomplete
