@@ -17,6 +17,7 @@ import { Switch } from 'components/ui/Form/Switch'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import {
@@ -39,11 +40,10 @@ interface EditionRdvFormProps {
   redirectTo: string
   aDesJeunesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
-  conseillerEmail: string
   soumettreRendezVous: (payload: RdvFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
-  conseillerAgence?: string
+  conseiller?: Conseiller
   rdv?: Rdv
   idJeune?: string
   showConfirmationModal: (payload: RdvFormData) => void
@@ -56,11 +56,10 @@ export function EditionRdvForm({
   redirectTo,
   aDesJeunesDUnAutrePortefeuille,
   conseillerIsCreator,
-  conseillerEmail,
+  conseiller,
   soumettreRendezVous,
   leaveWithChanges,
   onChanges,
-  conseillerAgence,
   rdv,
   idJeune,
   showConfirmationModal,
@@ -104,10 +103,14 @@ export function EditionRdvForm({
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
 
   const isAgenceNecessaire =
-    isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseillerAgence
+    isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
   const afficherSuiteFormulaire =
     codeTypeRendezVous &&
-    (!isCodeTypeAnimationCollective(codeTypeRendezVous) || conseillerAgence)
+    (!isCodeTypeAnimationCollective(codeTypeRendezVous) || conseiller?.agence)
+  const labelAgence =
+    conseiller?.structure === StructureConseiller.MILO
+      ? 'Mission locale'
+      : 'agence'
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -290,8 +293,7 @@ export function EditionRdvForm({
 
   function emailInvitationText(conseillerIsCreator: boolean) {
     if (conseillerIsCreator) {
-      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :
-      ${conseillerEmail}`
+      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
     } else {
       return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."
     }
@@ -354,28 +356,27 @@ export function EditionRdvForm({
         )}
 
         {isAgenceNecessaire && (
-          <div className='flex flex-col items-center bg-warning_lighten rounded-medium p-6'>
-            <div className='flex items-center mb-2'>
+          <div className='bg-warning_lighten rounded-medium p-6'>
+            <p className='flex justify-center items-center text-base-bold text-warning mb-2'>
               <IconComponent
-                focusable='false'
-                aria-hidden='true'
+                focusable={false}
+                aria-hidden={true}
                 className='w-4 h-4 mr-2 fill-warning'
                 name={IconName.Important}
               />
-              <p className='text-base-bold text-warning'>
-                Votre agence n’est pas renseignée
-              </p>
-            </div>
+              Votre {labelAgence} n’est pas renseignée
+            </p>
             <p className='text-base-regular text-warning mb-6'>
               Pour créer une information collective ou un atelier vous devez
-              renseigner votre Mission locale dans votre profil.
+              renseigner votre {labelAgence} dans votre profil.
             </p>
             <Button
               type='button'
               style={ButtonStyle.PRIMARY}
               onClick={renseignerAgence}
+              className='mx-auto'
             >
-              Renseigner votre agence
+              Renseigner votre {labelAgence}
             </Button>
           </div>
         )}
