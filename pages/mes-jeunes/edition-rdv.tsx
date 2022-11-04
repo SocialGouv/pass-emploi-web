@@ -284,6 +284,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     user.id,
     accessToken
   )
+
   const typesRendezVous = await rendezVousService.getTypesRendezVous(
     accessToken
   )
