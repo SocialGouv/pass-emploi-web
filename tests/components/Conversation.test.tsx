@@ -94,8 +94,8 @@ describe('<Conversation />', () => {
     const messageInput = screen.getByPlaceholderText(
       'Écrivez votre message ici...'
     )
-    await act(() => userEvent.upload(fileInput, file, { applyAccept: false }))
-    await act(() => userEvent.type(messageInput, 'TOTO'))
+    await userEvent.upload(fileInput, file, { applyAccept: false })
+    await userEvent.type(messageInput, 'TOTO')
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
@@ -169,7 +169,7 @@ describe('<Conversation />', () => {
       const lienRedirection = screen.getByText(/https/)
 
       // When
-      await act(() => userEvent.click(lienRedirection))
+      await userEvent.click(lienRedirection)
 
       // Then
       expect(modaleConfirmation).toHaveBeenCalledTimes(1)
@@ -191,7 +191,7 @@ describe('<Conversation />', () => {
       const lienRedirection = screen.getByText(/https/)
 
       // When
-      await act(() => userEvent.click(lienRedirection))
+      await userEvent.click(lienRedirection)
 
       // Then
       expect(modaleConfirmation).toHaveBeenCalledTimes(1)
@@ -223,8 +223,8 @@ describe('<Conversation />', () => {
       const submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
-      await act(() => userEvent.type(messageInput, newMessage))
-      await act(() => userEvent.click(submitButton))
+      await userEvent.type(messageInput, newMessage)
+      await userEvent.click(submitButton)
 
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
@@ -248,7 +248,7 @@ describe('<Conversation />', () => {
       submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
-      await act(() => userEvent.upload(fileInput, file, { applyAccept: false }))
+      await userEvent.upload(fileInput, file, { applyAccept: false })
     })
 
     it('téléverse un fichier et affiche son nom en cas de succès', async () => {
@@ -271,14 +271,14 @@ describe('<Conversation />', () => {
         'Supprimer la pièce jointe'
       )
       // When
-      await act(() => userEvent.click(boutonDeleteFichier))
+      await userEvent.click(boutonDeleteFichier)
       // Then
       expect(fichiersService.deleteFichier).toHaveBeenCalledWith('id-fichier')
       expect(() => screen.getByText('imageupload.png')).toThrow()
     })
 
     it('création d’un message avec une pièce jointe', async () => {
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
@@ -290,15 +290,24 @@ describe('<Conversation />', () => {
   })
 
   describe("quand on reçoit un message de partage d'offre", () => {
+    let message: HTMLElement
+    beforeEach(() => {
+      message = screen.getByText('Decrypted: Je vous partage cette offre')
+        .parentElement!
+    })
+
     it("affiche le titre de l'offre", async () => {
       // Then
-      expect(screen.getByText('Une offre')).toBeInTheDocument()
+      expect(within(message).getByText('Une offre')).toBeInTheDocument()
     })
+
     it("affiche le lien de l'offre", async () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Voir l’offre (nouvelle fenêtre)' })
-      ).toBeInTheDocument()
+        within(message).getByRole('link', {
+          name: 'Voir l’offre',
+        })
+      ).toHaveAttribute('href', '/offres/emploi/id-offre')
     })
   })
 })

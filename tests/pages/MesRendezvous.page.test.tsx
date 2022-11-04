@@ -51,11 +51,11 @@ describe('MesRendezvous', () => {
         })
       })
 
-      it('a un lien pour fixer un rendez-vous', () => {
+      it('a un lien pour créer un rendez-vous', () => {
         // Then
         expect(
           screen.getByRole('link', {
-            name: 'Fixer un rendez-vous',
+            name: 'Créer un rendez-vous',
           })
         ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
@@ -102,7 +102,7 @@ describe('MesRendezvous', () => {
         })
 
         // When
-        await act(() => userEvent.click(rdvsPassesButton))
+        await userEvent.click(rdvsPassesButton)
         // Then
         expect(
           rendezVousService.getRendezVousConseiller
@@ -110,7 +110,7 @@ describe('MesRendezvous', () => {
         expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
         // When
-        await act(() => userEvent.click(buttonRdvsSemaineCourante))
+        await userEvent.click(buttonRdvsSemaineCourante)
         // Then
         expect(rendezVousService.getRendezVousConseiller).toHaveBeenCalledWith(
           '1',
@@ -120,7 +120,7 @@ describe('MesRendezvous', () => {
         expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
         // When
-        await act(() => userEvent.click(rdvsFutursButton))
+        await userEvent.click(rdvsFutursButton)
         // Then
         expect(
           rendezVousService.getRendezVousConseiller
@@ -167,7 +167,7 @@ describe('MesRendezvous', () => {
         expect(actual).toEqual({
           props: {
             pageTitle: 'Tableau de bord - Mes rendez-vous',
-            pageHeader: 'Mes rendez-vous',
+            pageHeader: 'Rendez-vous',
           },
         })
       })

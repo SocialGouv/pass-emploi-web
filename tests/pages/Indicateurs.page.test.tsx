@@ -77,6 +77,9 @@ describe('Indicateurs', () => {
         getByTextContent('10Offres consultées', indicateursOffres!)
       ).toBeInTheDocument()
       expect(
+        getByTextContent('4Offres partagées', indicateursOffres!)
+      ).toBeInTheDocument()
+      expect(
         getByTextContent('6Favoris ajoutés', indicateursOffres!)
       ).toBeInTheDocument()
       expect(
@@ -124,7 +127,8 @@ describe('Indicateurs', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
-            pageTitle: 'Indicateurs',
+            pageTitle: 'Portefeuille - Bénéficiaire - Indicateurs',
+            pageHeader: 'Indicateurs',
           },
         })
       })

@@ -10,7 +10,7 @@ import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
 import { FavorisService } from 'services/favoris.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
-import { ServicesCiviqueService } from 'services/services-civique.service'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
@@ -31,8 +31,8 @@ function Favoris({ offres, recherches }: FavorisProps) {
   const offresEmploiService = useDependance<OffresEmploiService>(
     'offresEmploiService'
   )
-  const servicesCiviqueService = useDependance<ServicesCiviqueService>(
-    'servicesCiviqueService'
+  const servicesCiviquesService = useDependance<ServicesCiviquesService>(
+    'servicesCiviquesService'
   )
 
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.OFFRES)
@@ -47,11 +47,16 @@ function Favoris({ offres, recherches }: FavorisProps) {
 
   async function handleRedirectionOffre(offre: Offre) {
     let redirectUrl: string | undefined
-    if (offre.hasLinkPE) {
+    if (offre.isEmploi) {
+      redirectUrl = '/offres/' + offre.id
+    } else if (offre.isAlternance) {
       redirectUrl = await offresEmploiService.getLienOffreEmploi(offre.id)
-    } else if (offre.hasLinkServiceCivique) {
-      redirectUrl = await servicesCiviqueService.getLienServiceCivique(offre.id)
+    } else if (offre.isServiceCivique) {
+      redirectUrl = await servicesCiviquesService.getLienServiceCivique(
+        offre.id
+      )
     }
+
     if (redirectUrl) {
       window.open(redirectUrl, '_blank', 'noopener,noreferrer')
     } else {

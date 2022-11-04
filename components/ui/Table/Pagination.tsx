@@ -7,6 +7,7 @@ interface PaginationProps {
   nombreDePages: number
   allerALaPage: (page: number) => void
   nomListe?: string
+  nombrePagesLimite?: number
 }
 
 export default function Pagination({
@@ -14,7 +15,12 @@ export default function Pagination({
   nombreDePages,
   allerALaPage,
   nomListe,
+  nombrePagesLimite,
 }: PaginationProps) {
+  const dernierePage = nombrePagesLimite
+    ? Math.min(nombreDePages, nombrePagesLimite)
+    : nombreDePages
+
   function renderPaginationPage(page: number) {
     return (
       <PaginationItem
@@ -38,9 +44,9 @@ export default function Pagination({
 
     const debutGroupe = Math.max(
       1,
-      Math.min(nombreDePages - 4, pageCourante - 2)
+      Math.min(dernierePage - 4, pageCourante - 2)
     )
-    const finGroupe = Math.min(nombreDePages, debutGroupe + 4)
+    const finGroupe = Math.min(dernierePage, debutGroupe + 4)
 
     for (let page = debutGroupe; page <= finGroupe; page++) {
       pages.push(renderPaginationPage(page))
@@ -48,9 +54,8 @@ export default function Pagination({
 
     if (debutGroupe > 2) pages.unshift(renderEllipse('debut'))
     if (debutGroupe > 1) pages.unshift(renderPaginationPage(1))
-    if (finGroupe < nombreDePages - 1) pages.push(renderEllipse('fin'))
-    if (finGroupe < nombreDePages)
-      pages.push(renderPaginationPage(nombreDePages))
+    if (finGroupe < dernierePage - 1) pages.push(renderEllipse('fin'))
+    if (finGroupe < dernierePage) pages.push(renderPaginationPage(dernierePage))
 
     return pages
   }
@@ -85,7 +90,7 @@ export default function Pagination({
           page={pageCourante + 1}
           label='Page suivante'
           onClick={allerALaPage}
-          disabled={pageCourante >= nombreDePages}
+          disabled={pageCourante >= dernierePage}
         >
           <IconComponent
             name={IconName.ChevronRight}
@@ -93,10 +98,10 @@ export default function Pagination({
           />
         </PaginationItem>
         <PaginationItem
-          page={nombreDePages}
+          page={dernierePage}
           label='Dernière page'
           onClick={allerALaPage}
-          disabled={pageCourante >= nombreDePages}
+          disabled={pageCourante >= dernierePage}
         >
           <IconComponent
             name={IconName.ChevronLast}

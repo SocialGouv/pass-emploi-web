@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react'
+import { ChangeEvent, forwardRef } from 'react'
 
 import styles from 'styles/components/Input.module.css'
 
@@ -14,18 +14,21 @@ type TextareaProps = {
   invalid?: boolean
 }
 
-export default function Textarea({
-  id,
-  onChange,
-  rows,
-  defaultValue = '',
-  required = false,
-  disabled = false,
-  invalid = false,
-  onBlur,
-  maxLength,
-}: TextareaProps) {
-  return (
+const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  (
+    {
+      id,
+      onChange,
+      rows,
+      defaultValue = '',
+      required = false,
+      disabled = false,
+      invalid = false,
+      onBlur,
+      maxLength,
+    },
+    ref
+  ) => (
     <textarea
       id={id}
       required={required}
@@ -38,6 +41,10 @@ export default function Textarea({
       aria-invalid={invalid || undefined}
       aria-describedby={invalid ? `${id}--error` : undefined}
       className={`${styles.input} ${invalid ? 'invalid' : ''}`}
+      ref={ref}
     />
   )
-}
+)
+
+TextArea.displayName = 'TextArea'
+export default TextArea

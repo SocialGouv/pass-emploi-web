@@ -1,26 +1,39 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { ChangeEvent, useMemo } from 'react'
+import React, { ChangeEvent, useMemo, useState } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
+import {
+  FormContainer,
+  RenseignementAgenceMissionLocaleForm,
+} from 'components/RenseignementAgenceMissionLocaleForm'
 import { Switch } from 'components/ui/Form/Switch'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
+import { Agence } from 'interfaces/referentiel'
 import { ConseillerService } from 'services/conseiller.service'
+import { ReferentielService } from 'services/referentiel.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
-type ProfilProps = PageProps
+type ProfilProps = PageProps & {
+  referentielAgences: Agence[]
+}
 
-function Profil(_: ProfilProps) {
+function Profil({ referentielAgences }: ProfilProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
 
   const [conseiller, setConseiller] = useConseiller()
+  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   const labelAgence = useMemo(() => {
     if (!conseiller) return ''
@@ -41,50 +54,96 @@ function Profil(_: ProfilProps) {
     setConseiller(conseillerMisAJour)
   }
 
-  useMatomo('Profil')
+  async function selectAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller!, agence: agence.nom })
+    setTrackingLabel('Profil - Succès ajout agence')
+  }
+
+  function trackContacterSupportClick() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Profil',
+      nom: '',
+    })
+  }
+
+  useMatomo(trackingLabel)
 
   return (
     <>
       {conseiller && (
         <>
-          <section className='mb-8'>
+          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Informations</h2>
-            <div className='pl-4'>
-              <h3 className='text-base-bold'>
-                {conseiller.firstName} {conseiller.lastName}
-              </h3>
-              <dl className='mt-3'>
-                {conseiller.email && (
-                  <>
-                    <dt
-                      aria-label='Votre e-mail'
-                      className='mt-2 inline text-base-regular'
-                    >
-                      Votre e-mail :
-                    </dt>
-                    <dd className='ml-2 inline text-base-medium'>
-                      {conseiller.email}
-                    </dd>
-                  </>
+            <h3 className='text-base-bold'>
+              {conseiller.firstName} {conseiller.lastName}
+            </h3>
+            <dl className='mt-3'>
+              {conseiller.email && (
+                <div>
+                  <dt className='mt-2 inline text-base-regular'>
+                    Votre e-mail :
+                  </dt>
+                  <dd className='ml-2 inline'>
+                    <Email email={conseiller.email} />
+                  </dd>
+                </div>
+              )}
+
+              {conseiller.agence && (
+                <div>
+                  <dt className='mt-2 inline text-base-regular'>
+                    Votre {labelAgence} :
+                  </dt>
+                  <dd className='ml-2 inline text-base-bold'>
+                    {conseiller.agence}
+                  </dd>
+                </div>
+              )}
+            </dl>
+
+            {conseiller.structure === StructureConseiller.MILO && (
+              <>
+                {conseiller.agence && (
+                  <div className='mt-4'>
+                    <p>
+                      Vous avez besoin de modifier votre Mission locale de
+                      référence ?
+                    </p>
+
+                    <p className='flex'>
+                      Pour ce faire merci de&nbsp;
+                      <span
+                        className={'text-primary_darken hover:text-primary'}
+                      >
+                        <ExternalLink
+                          href={'mailto:' + process.env.SUPPORT_MAIL}
+                          label={'contacter le support'}
+                          iconName={IconName.Email}
+                          onClick={trackContacterSupportClick}
+                        />
+                      </span>
+                    </p>
+                  </div>
                 )}
 
-                {conseiller.agence && (
-                  <>
-                    <dt
-                      aria-label={`Votre ${labelAgence}`}
-                      className='mt-2 inline before:block before:content-[""] text-base-regular'
-                    >
-                      Votre {labelAgence} :
-                    </dt>
-                    <dd className='ml-2 inline text-base-medium'>
-                      {conseiller.agence}
-                    </dd>
-                  </>
+                {!conseiller.agence && (
+                  <RenseignementAgenceMissionLocaleForm
+                    referentielAgences={referentielAgences}
+                    onAgenceChoisie={selectAgence}
+                    onContacterSupport={trackContacterSupportClick}
+                    container={FormContainer.PAGE}
+                  />
                 )}
-              </dl>
-            </div>
+              </>
+            )}
           </section>
-          <section className='mb-8'>
+          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Notifications</h2>
             <label
               htmlFor='notificationSonore'
@@ -104,7 +163,7 @@ function Profil(_: ProfilProps) {
               />
             </label>
           </section>
-          <section className='mb-8'>
+          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>
               Application CEJ jeune - mode démo
             </h2>
@@ -145,6 +204,20 @@ function Profil(_: ProfilProps) {
   )
 }
 
+function Email(props: { email: string }) {
+  return (
+    <span className='text-primary'>
+      <IconComponent
+        name={IconName.Email}
+        aria-hidden={true}
+        focusable={false}
+        className='inline w-4 h-4 mr-2 fill-primary'
+      />
+      {props.email}
+    </span>
+  )
+}
+
 export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
   context
 ) => {
@@ -153,8 +226,36 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const {
+    session: { user, accessToken },
+  } = sessionOrRedirect
+
+  let referentielAgences: Agence[] = []
+
+  if (user.structure === StructureConseiller.MILO) {
+    const conseillerService =
+      withDependance<ConseillerService>('conseillerService')
+    const conseiller = await conseillerService.getConseillerServerSide(
+      user,
+      accessToken
+    )
+    if (!conseiller) {
+      throw new Error(`Conseiller ${user.id} inexistant`)
+    }
+
+    if (!conseiller.agence) {
+      const agenceService =
+        withDependance<ReferentielService>('referentielService')
+      referentielAgences = await agenceService.getAgences(
+        user.structure,
+        accessToken
+      )
+    }
+  }
+
   return {
     props: {
+      referentielAgences: referentielAgences,
       pageTitle: 'Mon profil',
       pageHeader: 'Profil',
     },

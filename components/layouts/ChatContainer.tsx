@@ -25,7 +25,7 @@ export default function ChatContainer({
   const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [conseiller] = useConseiller()
 
-  const [chats, setChats] = useState<JeuneChat[]>([])
+  const [chats, setChats] = useState<JeuneChat[]>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const destructorRef = useRef<() => void>(() => undefined)
 
@@ -70,18 +70,20 @@ export default function ChatContainer({
     return () => destructorRef.current()
 
     function updateChats(updatedChats: JeuneChat[]) {
-      setChats((prevChats) => {
-        updatedChats.forEach((updatedChat) => {
-          const prevChat = prevChats.find(
-            (chat) => chat.chatId === updatedChat.chatId
-          )
+      setChats((prevChats: JeuneChat[] | undefined) => {
+        if (prevChats) {
+          updatedChats.forEach((updatedChat) => {
+            const prevChat = prevChats.find(
+              (chat) => chat.chatId === updatedChat.chatId
+            )
 
-          if (prevChat) {
-            if (doitEmettreUnSon(prevChat, updatedChat)) {
-              audio?.play()
+            if (prevChat) {
+              if (doitEmettreUnSon(prevChat, updatedChat)) {
+                audio?.play()
+              }
             }
-          }
-        })
+          })
+        }
 
         return [...updatedChats].sort(compareJeuneChat)
       })

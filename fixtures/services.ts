@@ -1,12 +1,14 @@
 import { ActionsService } from 'services/actions.service'
-import { AgencesApiService, AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
+import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
+import { ReferentielService } from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import { ServicesCiviquesService } from 'services/services-civiques.service'
 
 export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
@@ -100,11 +102,15 @@ export function mockedConseillerService(
   return { ...defaults, ...overrides }
 }
 
-export function mockedAgencesService(
-  overrides: Partial<AgencesApiService> = {}
-): AgencesService {
-  const defaults: AgencesService = {
+export function mockedReferentielService(
+  overrides: Partial<ReferentielService> = {}
+): ReferentielService {
+  const defaults: ReferentielService = {
     getAgences: jest.fn(),
+    getCommunesEtDepartements: jest.fn(),
+    getCommunes: jest.fn(),
+    getActionsPredefinies: jest.fn(),
+    getMetiers: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -136,6 +142,28 @@ export function mockedOffresEmploiService(
     getOffreEmploiServerSide: jest.fn(),
     getLienOffreEmploi: jest.fn(),
     searchOffresEmploi: jest.fn(),
+    searchAlternances: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedServicesCiviquesService(
+  overrides: Partial<ServicesCiviquesService> = {}
+): ServicesCiviquesService {
+  const defaults: ServicesCiviquesService = {
+    getLienServiceCivique: jest.fn(),
+    searchServicesCiviques: jest.fn(),
+    getServiceCiviqueServerSide: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedImmersionsService(
+  overrides: Partial<ImmersionsService> = {}
+) {
+  const defaults: ImmersionsService = {
+    getImmersionServerSide: jest.fn(),
+    searchImmersions: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

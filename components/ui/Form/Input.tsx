@@ -36,11 +36,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         id={id}
         required={required}
         disabled={disabled}
-        defaultValue={defaultValue}
+        defaultValue={defaultValue || undefined}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
-        aria-invalid={invalid || undefined}
         aria-describedby={invalid ? `${id}--error` : undefined}
+        aria-invalid={invalid || undefined}
         className={`${styles.input} ${invalid ? styles.invalid : ''} ${
           icon
             ? `bg-${icon} bg-[center_right_1rem] bg-[length:24px_24px] bg-no-repeat`

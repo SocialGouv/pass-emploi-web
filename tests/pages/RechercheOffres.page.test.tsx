@@ -1,10 +1,9 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
 
-import { listeBaseOffres } from 'fixtures/offre'
 import { mockedOffresEmploiService } from 'fixtures/services'
-import { OffreEmploiItem } from 'interfaces/offre-emploi'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -12,26 +11,36 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
-
 describe('Page Recherche Offres', () => {
   describe('client side', () => {
     let offresEmploiService: OffresEmploiService
-    let offresEmploi: OffreEmploiItem[]
     beforeEach(() => {
-      offresEmploi = listeBaseOffres()
-      offresEmploiService = mockedOffresEmploiService({
-        searchOffresEmploi: jest.fn().mockResolvedValue(offresEmploi),
-      })
+      offresEmploiService = mockedOffresEmploiService({})
 
       renderWithContexts(<RechercheOffres pageTitle='' />, {
         customDependances: { offresEmploiService },
       })
     })
 
-    it('permet de saisir des mots clés', () => {
+    it('nécessite de selectionner un type d’offre', () => {
       // Then
-      expect(screen.getByLabelText(/Mots clés/)).toHaveAttribute('type', 'text')
+      expect(
+        screen.getByRole('heading', { level: 2, name: 'Ma recherche' })
+      ).toBeInTheDocument()
+
+      const etape1 = screen.getByRole('group', {
+        name: 'Étape 1 Sélectionner un type d’offre',
+      })
+      expect(etape1).toBeInTheDocument()
+      expect(
+        within(etape1).getByRole('radio', { name: 'Offre d’emploi' })
+      ).not.toHaveAttribute('disabled')
+      expect(
+        within(etape1).getByRole('radio', { name: 'Service civique' })
+      ).not.toHaveAttribute('disabled')
+
+      expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
+      expect(() => screen.getByRole('button', { name: 'Rechercher' })).toThrow()
     })
 
     it('n’affiche pas de résultat par défaut', () => {
@@ -40,92 +49,18 @@ describe('Page Recherche Offres', () => {
       expect(() => screen.getByRole('list')).toThrow()
     })
 
-    it("permet de rechercher des offres d'emploi", async () => {
-      // Given
-      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-
-      // When
-      await act(() => userEvent.click(submitButton))
-
-      // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({})
-    })
-
-    it('construit la recherche', async () => {
-      // Given
-      const inputMotsCles = screen.getByLabelText(/Mots clés/)
-      const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-
-      // When
-      await act(() => userEvent.type(inputMotsCles, 'prof industrie'))
-      await act(() => userEvent.click(submitButton))
-
-      // Then
-      expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({
-        motsCles: 'prof industrie',
-      })
-    })
-
-    describe('résultat de la recherche', () => {
-      let offresList: HTMLElement
-      beforeEach(async () => {
-        // Given
-        const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-
-        // When
-        await act(() => userEvent.click(submitButton))
-
-        // Then
-        offresList = screen.getByRole('list', {
-          description: 'Liste des résultats',
-        })
-      })
-
-      it('affiche toutes les offres', async () => {
-        expect(within(offresList).getAllByRole('listitem').length).toEqual(
-          offresEmploi.length
-        )
-      })
-
-      it('affiche chaque offre', async () => {
-        offresEmploi.forEach((offre) => {
-          const offreCard = within(offresList).getByRole('heading', {
-            name: 'Offre n°' + offre.id,
-          }).parentElement!
-          expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
-          expect(
-            within(offreCard).getByText(offre.typeContrat)
-          ).toBeInTheDocument()
-          expect(within(offreCard).getByText(offre.duree)).toBeInTheDocument()
-          expect(
-            within(offreCard).getByText(offre.nomEntreprise)
-          ).toBeInTheDocument()
-          expect(
-            within(offreCard).getByText(offre.localisation)
-          ).toBeInTheDocument()
-        })
-      })
-
-      it('permet de partager chaque offre', () => {
-        offresEmploi.forEach((offre) => {
-          expect(
-            within(offresList).getByRole('link', {
-              name: `Partager offre numéro ${offre.id}`,
-            })
-          ).toHaveAttribute('href', `/offres/${offre.id}/partage`)
-        })
-      })
-    })
-
     it('affiche une erreur si la recherche échoue', async () => {
       // Given
+      await userEvent.click(
+        screen.getByRole('radio', { name: 'Offre d’emploi' })
+      )
       ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockRejectedValue(
         'whatever'
       )
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(screen.getByRole('alert')).toHaveTextContent(
@@ -135,13 +70,17 @@ describe('Page Recherche Offres', () => {
 
     it("affiche un message s'il n'y a pas de résultat", async () => {
       // Given
-      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockResolvedValue(
-        []
+      await userEvent.click(
+        screen.getByRole('radio', { name: 'Offre d’emploi' })
       )
+      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockResolvedValue({
+        metadonnees: { nombreTotal: 0, nombrePages: 0 },
+        offres: [],
+      })
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(

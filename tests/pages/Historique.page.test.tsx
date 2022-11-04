@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -84,7 +84,7 @@ describe('Historique', () => {
           const tabConseillers = screen.getByRole('tab', {
             name: 'Historique des conseillers',
           })
-          await act(() => userEvent.click(tabConseillers))
+          await userEvent.click(tabConseillers)
 
           // Then
           expect(
@@ -100,7 +100,7 @@ describe('Historique', () => {
           const tabConseillers = screen.getByRole('tab', {
             name: 'Historique des conseillers',
           })
-          await act(() => userEvent.click(tabConseillers))
+          await userEvent.click(tabConseillers)
 
           //Then
           listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
@@ -193,7 +193,8 @@ describe('Historique', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'jeune-1',
-            pageTitle: 'Historique',
+            pageTitle: `Portefeuille - Kenji Jirac - Historique`,
+            pageHeader: 'Historique',
             situations: expect.arrayContaining(listeSituations),
             conseillers: expect.arrayContaining([]),
           },

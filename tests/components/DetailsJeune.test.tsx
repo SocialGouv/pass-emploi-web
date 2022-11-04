@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/dom'
-import { act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -49,6 +48,9 @@ describe('<DetailsJeune>', () => {
       'https://dossier-milo.fr'
     )
     expect(screen.getByText('07/12/2021')).toBeInTheDocument()
+    expect(
+      screen.getByText('Date de fin du CEJ', { exact: false })
+    ).toBeInTheDocument()
   })
 
   it("n'affiche pas le mail si le jeune n'en a pas", () => {
@@ -90,6 +92,55 @@ describe('<DetailsJeune>', () => {
     expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
   })
 
+  describe('Date de fin du CEJ', () => {
+    describe('Conseiller MILO', () => {
+      it('affiche la date de fin du CEJ si le jeune en a', () => {
+        // Given
+        const jeune = unDetailJeune({
+          dateFinCEJ: '2022-10-10T10:10:10Z',
+        })
+
+        // When
+        renderWithContexts(
+          <DetailsJeune
+            jeune={jeune}
+            structureConseiller={StructureConseiller.MILO}
+            onDossierMiloClick={() => {}}
+            onDeleteJeuneClick={() => {}}
+          />,
+          { customDependances: { jeunesService } }
+        )
+
+        // Then
+        expect(
+          screen.queryByText('Date de fin du CEJ', { exact: false })
+        ).toBeInTheDocument()
+        expect(screen.queryByText('10/10/2022')).toBeInTheDocument()
+      })
+      describe('Conseiller non MILO', () => {
+        it("n'affiche pas la date de fin du CEJ", () => {
+          // Given
+          const jeune = unDetailJeune({
+            dateFinCEJ: '2022-10-10T10:10:10Z',
+          })
+
+          // When
+          renderWithContexts(
+            <DetailsJeune
+              jeune={jeune}
+              structureConseiller={StructureConseiller.POLE_EMPLOI}
+              onDossierMiloClick={() => {}}
+              onDeleteJeuneClick={() => {}}
+            />,
+            { customDependances: { jeunesService } }
+          )
+
+          // Then
+          expect(screen.queryByText('/Date de fin du CEJ/')).toBeNull()
+        })
+      })
+    })
+  })
   describe('identifiant partenaire', () => {
     let routerPush: Function
 
@@ -133,12 +184,10 @@ describe('<DetailsJeune>', () => {
 
       describe('au clic sur le bouton Ajouter', () => {
         beforeEach(async () => {
-          await act(() =>
-            userEvent.click(
-              screen.getByRole('button', {
-                name: 'Ajouter l’identifiant Pôle emploi',
-              })
-            )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Ajouter l’identifiant Pôle emploi',
+            })
           )
         })
 
@@ -157,22 +206,18 @@ describe('<DetailsJeune>', () => {
 
         it('lors du clic sur Enregistrer, appelle le service et revient sur le détail du jeune avec l’identifiant présent', async () => {
           // Given
-          await act(() =>
-            userEvent.type(
-              screen.getByLabelText(
-                'Identifiant Pôle emploi (10 caractères maximum)'
-              ),
-              '12345'
-            )
+          await userEvent.type(
+            screen.getByLabelText(
+              'Identifiant Pôle emploi (10 caractères maximum)'
+            ),
+            '12345'
           )
 
           // When
-          await act(() =>
-            userEvent.click(
-              screen.getByRole('button', {
-                name: 'Enregistrer',
-              })
-            )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Enregistrer',
+            })
           )
 
           // Then
@@ -219,12 +264,10 @@ describe('<DetailsJeune>', () => {
 
       describe('au clic sur le bouton Modifier', () => {
         beforeEach(async () => {
-          await act(() =>
-            userEvent.click(
-              screen.getByRole('button', {
-                name: 'Modifier l’identifiant Pôle emploi',
-              })
-            )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Modifier l’identifiant Pôle emploi',
+            })
           )
         })
 
@@ -243,22 +286,18 @@ describe('<DetailsJeune>', () => {
 
         it('lors du clic sur Enregistrer, appelle le service et revient sur le détail du jeune avec le nouvel identifiant présent', async () => {
           // Given
-          await act(() =>
-            userEvent.type(
-              screen.getByLabelText(
-                'Identifiant Pôle emploi (10 caractères maximum)'
-              ),
-              '6789'
-            )
+          await userEvent.type(
+            screen.getByLabelText(
+              'Identifiant Pôle emploi (10 caractères maximum)'
+            ),
+            '6789'
           )
 
           // When
-          await act(() =>
-            userEvent.click(
-              screen.getByRole('button', {
-                name: 'Enregistrer',
-              })
-            )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Enregistrer',
+            })
           )
 
           // Then

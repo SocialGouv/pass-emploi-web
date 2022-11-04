@@ -21,16 +21,14 @@ export default function TableauOffres({
       )}
 
       {offres.length > 0 && (
-        <table className='w-full border-separate border-spacing-y-3'>
+        <table className='w-full border-separate border-spacing-y-2'>
           <caption className='sr-only'>Liste des offres en favoris</caption>
           <thead>
             <tr>
-              <th className='text-base-regular text-left pb-3 px-3'>N°Offre</th>
-              <th className='text-base-regular text-left pb-3 px-3'>Titre</th>
-              <th className='text-base-regular text-left pb-3 px-3'>
-                Entreprise
-              </th>
-              <th className='text-base-regular text-left pb-3 px-3'>Type</th>
+              <th className='text-base-regular text-left p-4'>N°Offre</th>
+              <th className='text-base-regular text-left p-4'>Titre</th>
+              <th className='text-base-regular text-left p-4'>Entreprise</th>
+              <th className='text-base-regular text-left p-4'>Type</th>
               <th className='aria-hidden' />
             </tr>
           </thead>

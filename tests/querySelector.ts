@@ -1,18 +1,48 @@
-import { queryHelpers } from '@testing-library/dom'
+import { getNodeText, queryHelpers } from '@testing-library/dom'
 import { screen, within } from '@testing-library/react'
 
-//FIXME: https://github.com/testing-library/dom-testing-library/issues/140#issuecomment-1113146869
-export default function getByDefinitionTerm(accessibleName: string) {
-  const termElement = screen.getByRole('term', { name: accessibleName })
-  const definitionElement = termElement.nextElementSibling
+export default function getByDescriptionTerm(
+  descriptionTerm: string,
+  parent?: HTMLElement
+): HTMLElement {
+  function isHTMLElement(element: any): element is HTMLElement {
+    return element instanceof HTMLElement
+  }
+  function isDescriptionTerm(node: HTMLElement): boolean {
+    return node.tagName === 'DT'
+  }
+  function hasText(node: HTMLElement): boolean {
+    return (
+      getNodeText(node) === descriptionTerm ||
+      Array.from(node.children).some(
+        (child) => isHTMLElement(child) && hasText(child)
+      )
+    )
+  }
 
-  if (!definitionElement || definitionElement.tagName !== 'DD')
-    throw queryHelpers.getElementError(
-      `No <dd /> element found for term "${accessibleName}"`,
-      document.body
+  const container = parent ? within(parent) : screen
+  const matches = container
+    .getAllByRole('definition')
+    .filter(
+      (node) =>
+        node.tagName === 'DD' &&
+        isHTMLElement(node.previousElementSibling) &&
+        isDescriptionTerm(node.previousElementSibling) &&
+        hasText(node?.previousElementSibling)
     )
 
-  return definitionElement
+  if (!matches.length)
+    throw queryHelpers.getElementError(
+      `No <dt /> or <dd /> element found with term "${descriptionTerm}"`,
+      parent ?? document.body
+    )
+  if (matches.length > 1)
+    throw queryHelpers.getElementError(
+      `Multiple <dt /> elements found with term "${descriptionTerm}"`,
+      parent ?? document.body
+    )
+
+  return matches[0]
 }
 
 export function getByTextContent(

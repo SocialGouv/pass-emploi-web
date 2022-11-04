@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
@@ -43,22 +43,20 @@ describe('PoleEmploiCreationJeune', () => {
       beforeEach(async () => {
         // Given
         const inputFirstname = screen.getByLabelText('* Prénom')
-        await act(() => userEvent.type(inputFirstname, 'Nadia'))
+        await userEvent.type(inputFirstname, 'Nadia')
         const inputName = screen.getByLabelText('* Nom')
-        await act(() => userEvent.type(inputName, 'Sanfamiye'))
+        await userEvent.type(inputName, 'Sanfamiye')
         const inputEmail = screen.getByLabelText(emailLabel)
-        await act(() =>
-          userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
-        )
+        await userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
       })
 
       it('demande le remplissage du prénom', async () => {
         // Given
         const inputFirstname = screen.getByLabelText('* Prénom')
-        await act(() => userEvent.clear(inputFirstname))
+        await userEvent.clear(inputFirstname)
 
         // When
-        await act(() => userEvent.click(submitButton))
+        await userEvent.click(submitButton)
 
         // Then
         expect(
@@ -72,10 +70,10 @@ describe('PoleEmploiCreationJeune', () => {
       it('demande le remplissage du nom', async () => {
         // Given
         const inputName = screen.getByLabelText('* Nom')
-        await act(() => userEvent.clear(inputName))
+        await userEvent.clear(inputName)
 
         // When
-        await act(() => userEvent.click(submitButton))
+        await userEvent.click(submitButton)
 
         // Then
         expect(
@@ -89,10 +87,10 @@ describe('PoleEmploiCreationJeune', () => {
       it("demande le remplissage de l'email", async () => {
         // Given
         const inputEmail = screen.getByLabelText(emailLabel)
-        await act(() => userEvent.clear(inputEmail))
+        await userEvent.clear(inputEmail)
 
         // When
-        await act(() => userEvent.click(submitButton))
+        await userEvent.click(submitButton)
 
         // Then
         expect(
@@ -109,13 +107,11 @@ describe('PoleEmploiCreationJeune', () => {
     beforeEach(async () => {
       // Given
       const inputFirstname = screen.getByLabelText('* Prénom')
-      await act(() => userEvent.type(inputFirstname, 'Nadia'))
+      await userEvent.type(inputFirstname, 'Nadia')
       const inputName = screen.getByLabelText('* Nom')
-      await act(() => userEvent.type(inputName, 'Sanfamiye'))
+      await userEvent.type(inputName, 'Sanfamiye')
       const inputEmail = screen.getByLabelText(emailLabel)
-      await act(() =>
-        userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
-      )
+      await userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
     })
 
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
@@ -129,7 +125,7 @@ describe('PoleEmploiCreationJeune', () => {
       })
 
       // When
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
@@ -154,7 +150,7 @@ describe('PoleEmploiCreationJeune', () => {
       })
 
       // When
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)

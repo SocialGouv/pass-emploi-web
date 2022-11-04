@@ -56,3 +56,8 @@ export interface CreateurCommentaire {
 }
 
 export type SituationNonProfessionnelle = { code: string; label: string }
+
+export type ActionPredefinie = {
+  id: string
+  titre: string
+}

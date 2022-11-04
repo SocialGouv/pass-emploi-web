@@ -10,35 +10,56 @@ interface SelectAutocompleteProps {
   required?: boolean
   invalid?: boolean
   disabled?: boolean
+  onBlur?: () => void
+  value?: string
 }
 
 const SelectAutocomplete = forwardRef<
   HTMLInputElement,
   SelectAutocompleteProps
->(({ disabled, id, invalid, multiple, onChange, options, required }, ref) => {
-  return (
-    <>
-      <Input
-        type='text'
-        id={id}
-        ref={ref}
-        list={`${id}--options`}
-        multiple={multiple ?? false}
-        aria-required={required}
-        onChange={onChange}
-        invalid={invalid}
-        disabled={disabled}
-      />
-      <datalist id={`${id}--options`}>
-        {options.map(({ id: optionId, value }) => (
-          <option key={optionId} value={value}>
-            {value}
-          </option>
-        ))}
-      </datalist>
-    </>
-  )
-})
+>(
+  (
+    {
+      disabled,
+      id,
+      invalid,
+      multiple,
+      onChange,
+      options,
+      required,
+      onBlur,
+      value,
+    },
+    ref
+  ) => {
+    return (
+      <>
+        <Input
+          type='text'
+          id={id}
+          ref={ref}
+          list={`${id}--options`}
+          multiple={multiple ?? false}
+          autoComplete='off'
+          aria-autocomplete='list'
+          aria-required={required}
+          onChange={onChange}
+          invalid={invalid}
+          disabled={disabled}
+          onBlur={onBlur}
+          value={value}
+        />
+        <datalist id={`${id}--options`}>
+          {options.map(({ id: optionId, value: optionValue }) => (
+            <option key={optionId} value={optionValue}>
+              {optionValue}
+            </option>
+          ))}
+        </datalist>
+      </>
+    )
+  }
+)
 SelectAutocomplete.displayName = 'SelectAutocomplete'
 
 export default SelectAutocomplete

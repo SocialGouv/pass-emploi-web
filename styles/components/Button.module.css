@@ -5,6 +5,7 @@
   transition: border-color 0.2s, color 0.2s, background-color 0.2s;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .button svg {
@@ -41,21 +42,25 @@
 }
 
 /**
-* Button Secondary
+* Button Secondary / Button Tertiary
 */
 
-.buttonSecondary {
+.buttonSecondary, .buttonTertiary {
   background-color: theme('colors.blanc');
   color: theme('colors.primary');
   border: 1px solid theme('colors.primary');
 }
 
+.buttonTertiary {
+  border: 1px solid transparent;
+}
+
 .buttonSecondary:hover,
-.buttonSecondary:active {
+.buttonSecondary:active, .buttonTertiary:hover, .buttonTertiary:active {
   background-color: theme('colors.primary_lighten');
 }
 
-.buttonSecondary[disabled] {
+.buttonSecondary[disabled], .buttonTertiary[disabled] {
   background-color: theme('colors.primary');
   opacity: 50%;
   cursor: not-allowed;

@@ -94,7 +94,13 @@ function MesRendezvous({
   return (
     <>
       <ButtonLink href={'/mes-jeunes/edition-rdv'} className='mb-6 w-fit'>
-        Fixer un rendez-vous
+        <IconComponent
+          name={IconName.Add}
+          focusable={false}
+          aria-hidden={true}
+          className='mr-2 w-4 h-4'
+        />
+        Créer un rendez-vous
       </ButtonLink>
 
       <div className='mb-12'>
@@ -165,7 +171,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const props: MesRendezvousProps = {
     pageTitle: 'Tableau de bord - Mes rendez-vous',
-    pageHeader: 'Mes rendez-vous',
+    pageHeader: 'Rendez-vous',
   }
 
   if (context.query[QueryParam.creationRdv])

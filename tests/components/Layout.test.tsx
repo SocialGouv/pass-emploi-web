@@ -1,7 +1,4 @@
 import { act, render, screen } from '@testing-library/react'
-import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
-import React from 'react'
 
 import AppHead from 'components/AppHead'
 import ChatRoom from 'components/chat/ChatRoom'
@@ -9,13 +6,12 @@ import AlertDisplayer from 'components/layouts/AlertDisplayer'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
-import {
-  mockedConseillerService,
-  mockedJeunesService,
-  mockedMessagesService,
-} from 'fixtures/services'
+import { mockedConseillerService, mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
+import React from 'react'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -278,15 +274,15 @@ describe('<Layout />', () => {
     })
   })
 
-  describe('quand la page nécessite un bouton "retour"', () => {
-    it('affiche un bouton "retour"', async () => {
+  describe('quand la page nécessite un lien de retour', () => {
+    it('affiche un lien vers la page demandée', async () => {
       // When
       await act(async () => {
         renderWithContexts(
           <Layout>
             <FakeComponent
               pageTitle='un titre'
-              returnTo='/path/to/previous/page'
+              returnTo='/mes-jeunes/id-jeune/actions/id-action'
             />
           </Layout>,
           {
@@ -301,8 +297,8 @@ describe('<Layout />', () => {
 
       // Then
       expect(
-        screen.getByRole('link', { name: 'Page précédente' })
-      ).toHaveAttribute('href', '/path/to/previous/page')
+        screen.getByRole('link', { name: 'Retour à Détail action' })
+      ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
     })
   })
 

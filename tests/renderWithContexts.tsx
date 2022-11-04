@@ -4,14 +4,16 @@ import React from 'react'
 import { unConseiller } from 'fixtures/conseiller'
 import {
   mockedActionsService,
-  mockedAgencesService,
   mockedConseillerService,
   mockedFavorisService,
   mockedFichiersService,
+  mockedImmersionsService,
   mockedJeunesService,
   mockedMessagesService,
   mockedOffresEmploiService,
+  mockedReferentielService,
   mockedRendezVousService,
+  mockedServicesCiviquesService,
 } from 'fixtures/services'
 import { Conseiller } from 'interfaces/conseiller'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
@@ -34,7 +36,7 @@ export default function renderWithContexts(
   const { customDependances, customConseiller, customCurrentJeune } = options
   const dependances: Dependencies = {
     actionsService: mockedActionsService(),
-    agencesService: mockedAgencesService(),
+    referentielService: mockedReferentielService(),
     conseillerService: mockedConseillerService(),
     fichiersService: mockedFichiersService(),
     jeunesService: mockedJeunesService(),
@@ -42,7 +44,8 @@ export default function renderWithContexts(
     rendezVousService: mockedRendezVousService(),
     favorisService: mockedFavorisService(),
     offresEmploiService: mockedOffresEmploiService(),
-    servicesCiviqueService: { getLienServiceCivique: jest.fn() },
+    servicesCiviquesService: mockedServicesCiviquesService(),
+    immersionsService: mockedImmersionsService(),
     ...customDependances,
   }
 

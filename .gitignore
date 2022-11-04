@@ -29,7 +29,6 @@ node_modules/
 
 # dotenv environment variables file
 .env
-.env.test
 .env.local
 
 # Next.js build output
@@ -53,3 +52,10 @@ storybook-static
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# next-pwa
+sw.js
+sw.js.map
+public/workbox*.js
+public/workbox*.js.map
+public/fallback-*.js

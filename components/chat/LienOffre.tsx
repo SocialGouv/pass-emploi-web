@@ -1,24 +1,16 @@
-import React, { useState } from 'react'
+import Link from 'next/link'
+import React from 'react'
 
-import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { InfoOffre } from 'interfaces/message'
-import useMatomo from 'utils/analytics/useMatomo'
+import { TypeOffre } from 'interfaces/offre'
 
-export function LienOffre({
+export default function LienOffre({
   infoOffre,
   isSentByConseiller,
 }: {
   infoOffre: InfoOffre
   isSentByConseiller: boolean
 }) {
-  const [trackingLabel, setLabelMatomo] = useState<string | undefined>(
-    undefined
-  )
-
-  useMatomo(trackingLabel)
-
-  const label = 'Voir l’offre'
-
   return (
     <div
       className={`mt-4 p-4 rounded-medium ${
@@ -33,18 +25,30 @@ export function LienOffre({
         {infoOffre.titre}
       </p>
       <div
-        className={`mt-4 w-max ml-auto ${
+        className={`mt-4 w-max ml-auto text-s-regular ${
           isSentByConseiller
             ? 'text-blanc hover:text-primary_lighten'
             : 'text-primary_darken hover:text-primary'
         }`}
       >
-        <ExternalLink
-          href={infoOffre.lien}
-          label={label}
-          onClick={() => setLabelMatomo(label)}
-        />
+        <Link
+          href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
+        >
+          <a className='underline text-[inherit]'>Voir l’offre</a>
+        </Link>
       </div>
     </div>
   )
+}
+
+function typeToUrlParam(typeOffre: TypeOffre): string {
+  switch (typeOffre) {
+    case TypeOffre.ALTERNANCE:
+    case TypeOffre.EMPLOI:
+      return 'emploi'
+    case TypeOffre.SERVICE_CIVIQUE:
+      return 'service-civique'
+    case TypeOffre.IMMERSION:
+      return 'immersion'
+  }
 }

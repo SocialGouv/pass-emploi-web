@@ -4,17 +4,20 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import { Agence, StructureConseiller } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { PageProps } from 'interfaces/pageProps'
+import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
-import { AgencesService } from 'services/agences.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { ReferentielService } from 'services/referentiel.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-interface HomePageProps {
+interface HomePageProps extends PageProps {
   redirectUrl: string
   referentielAgences: Agence[]
 }
@@ -45,19 +48,27 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     await router.replace(redirectUrl)
   }
 
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
+  }
+
   useMatomo(trackingLabel)
 
   return (
-    <>
-      <RenseignementAgenceModal
-        structureConseiller={
-          conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
-        }
-        referentielAgences={referentielAgences}
-        onAgenceChoisie={selectAgence}
-        onClose={redirectToUrl}
-      />
-    </>
+    <RenseignementAgenceModal
+      structureConseiller={
+        conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
+      }
+      referentielAgences={referentielAgences}
+      onAgenceChoisie={selectAgence}
+      onContacterSupport={trackContacterSupport}
+      onClose={redirectToUrl}
+    />
   )
 }
 
@@ -101,7 +112,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     }
   }
 
-  const agenceService = withDependance<AgencesService>('agencesService')
+  const agenceService = withDependance<ReferentielService>('referentielService')
   const referentielAgences = await agenceService.getAgences(
     user.structure,
     accessToken
@@ -110,6 +121,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     props: {
       redirectUrl,
       referentielAgences,
+      pageTitle: 'Accueil',
     },
   }
 }

@@ -86,7 +86,7 @@ function IndicateursActions({
           label='En retard'
           bgColor='alert_lighten'
           textColor='content_color'
-          iconName={IconName.WarningRounded}
+          iconName={IconName.ImportantOutline}
         />
         <TileIndicateur
           valeur={actions?.terminees.toString() ?? '-'}
@@ -151,6 +151,14 @@ function IndicateursOffres({
           textColor='primary_darken'
         />
         <TileIndicateur
+          valeur={offres?.partagees.toString() ?? '-'}
+          label={
+            offres?.partagees !== 1 ? 'Offres partagées' : 'Offre partagée'
+          }
+          bgColor='primary_lighten'
+          textColor='primary_darken'
+        />
+        <TileIndicateur
           valeur={favoris?.recherchesSauvegardees.toString() ?? '-'}
           label={
             favoris?.recherchesSauvegardees !== 1
@@ -183,7 +191,8 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   return {
     props: {
       idJeune: context.query.jeune_id as string,
-      pageTitle: 'Indicateurs',
+      pageTitle: `Portefeuille - Bénéficiaire - Indicateurs`,
+      pageHeader: 'Indicateurs',
     },
   }
 }

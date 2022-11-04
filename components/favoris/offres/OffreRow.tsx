@@ -12,7 +12,7 @@ export default function OffreRow({
   handleRedirectionOffre: (offre: Offre) => void
 }) {
   const hasLink: boolean = useMemo(
-    () => offre.hasLinkPE || offre.hasLinkServiceCivique,
+    () => offre.isEmploi || offre.isAlternance || offre.isServiceCivique,
     [offre]
   )
 

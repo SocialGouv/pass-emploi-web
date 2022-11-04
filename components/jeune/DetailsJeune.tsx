@@ -84,6 +84,7 @@ export const DetailsJeune = ({
         <BlocInformationJeune
           idJeune={jeune.id}
           creationDate={jeune.creationDate}
+          dateFinCEJ={jeune.dateFinCEJ}
           email={jeune.email}
           structureConseiller={structureConseiller}
           onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}

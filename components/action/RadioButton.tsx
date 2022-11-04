@@ -32,7 +32,7 @@ export default function RadioButton({
 
   return (
     <div
-      className={`flex items-center px-4 py-2 border border-solid rounded-full text-s-bold mr-4 cursor-pointer ${
+      className={`flex items-center w-fit px-4 py-2 border border-solid rounded-full text-s-bold mr-4 cursor-pointer ${
         isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
       } ${disabled ? 'hover:cursor-not-allowed' : ''}`}
       onClick={onClickDiv}

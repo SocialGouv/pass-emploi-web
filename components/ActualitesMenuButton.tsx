@@ -1,9 +1,10 @@
 import React from 'react'
 
 import { StructureConseiller } from '../interfaces/conseiller'
-import { LeanBe } from '../utils/useLeanBeWidget'
 
 import IconComponent, { IconName } from './ui/IconComponent'
+
+import { LeanBe } from 'utils/hooks/useLeanBeWidget'
 
 interface ActualitesMenuButtonProps {
   structure: StructureConseiller | undefined

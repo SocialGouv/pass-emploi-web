@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import JeunesMultiselectAutocomplete, {
   jeuneToOption,
@@ -8,6 +8,7 @@ import JeunesMultiselectAutocomplete, {
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -293,18 +294,7 @@ export function EditionRdvForm({
         </div>
       )}
 
-      <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre1}
-            role='img'
-            focusable='false'
-            aria-label='Étape 1'
-            className='mr-2 w-8 h-8'
-          />
-          Bénéficiaires :
-        </legend>
-
+      <Etape numero={1} titre='Bénéficiaires'>
         <JeunesMultiselectAutocomplete
           jeunes={jeunes}
           typeSelection='Bénéficiaires'
@@ -312,20 +302,9 @@ export function EditionRdvForm({
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
         />
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre2}
-            role='img'
-            focusable='false'
-            aria-label='Étape 2'
-            className='mr-2 w-8 h-8'
-          />
-          Type de rendez-vous :
-        </legend>
-
+      <Etape numero={2} titre='Type de rendez-vous'>
         <Label htmlFor='typeRendezVous' inputRequired={true}>
           Type
         </Label>
@@ -378,23 +357,11 @@ export function EditionRdvForm({
             </option>
           ))}
         </Select>
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre3}
-            role='img'
-            focusable='false'
-            aria-label='Étape 3'
-            className='mr-2 w-8 h-8'
-          />
-          Lieu et date :
-        </legend>
-
+      <Etape numero={3} titre='Lieu et date'>
         <Label htmlFor='date' inputRequired={true}>
-          Date
-          <span className='text-base-regular'> (format : jj/mm/aaaa)</span>
+          {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
         </Label>
         {date.error && (
           <InputError id='date--error' className='mb-2'>
@@ -412,8 +379,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='horaire' inputRequired={true}>
-          Heure
-          <span className='text-base-regular'> (format : hh:mm)</span>
+          {{ main: 'Heure', helpText: '(format : hh:mm)' }}
         </Label>
         {horaire.error && (
           <InputError id='horaire--error' className='mb-2'>
@@ -433,8 +399,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='duree' inputRequired={true}>
-          Durée
-          <span className='text-base-regular'> (format : hh:mm)</span>
+          {{ main: 'Durée', helpText: '(format : hh:mm)' }}
         </Label>
         {duree.error && (
           <InputError id='duree--error' className='mb-2'>
@@ -452,8 +417,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='adresse'>
-          Adresse
-          <span className='text-base-regular'> Ex : 12 rue duc, Brest</span>
+          {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
         </Label>
         <Input
           type='text'
@@ -464,11 +428,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='organisme'>
-          Organisme
-          <span className='text-base-regular'>
-            {' '}
-            Ex : prestataire, entreprise, etc.
-          </span>
+          {{
+            main: 'Organisme',
+            helpText: 'Ex : prestataire, entreprise, etc.',
+          }}
         </Label>
         <Input
           type='text'
@@ -476,20 +439,9 @@ export function EditionRdvForm({
           defaultValue={organisme}
           onChange={setOrganisme}
         />
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col'>
-        <legend className='flex items-center text-m-bold mb-4'>
-          <IconComponent
-            name={IconName.Chiffre4}
-            role='img'
-            focusable='false'
-            aria-label='Étape 4'
-            className='mr-2 w-8 h-8'
-          />
-          Informations conseiller :
-        </legend>
-
+      <Etape numero={4} titre='Informations conseiller'>
         {!conseillerIsCreator && (
           <>
             {rdv!.createur && (
@@ -545,7 +497,7 @@ export function EditionRdvForm({
         <Label htmlFor='commentaire' withBulleMessageSensible={true}>
           {{
             main: 'Commentaire à destination des jeunes',
-            sub: 'Le commentaire sera lu par l’ensemble des destinataires',
+            helpText: 'Le commentaire sera lu par l’ensemble des destinataires',
           }}
         </Label>
         <Textarea
@@ -554,7 +506,7 @@ export function EditionRdvForm({
           rows={3}
           onChange={(e) => setCommentaire(e.target.value)}
         />
-      </fieldset>
+      </Etape>
 
       <div className='flex justify-center'>
         {!formHasChanges() && (
@@ -580,9 +532,22 @@ export function EditionRdvForm({
           </Button>
         )}
 
-        <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
-          Envoyer
-        </Button>
+        {rdv && (
+          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
+            Modifier le rendez-vous
+          </Button>
+        )}
+        {!rdv && (
+          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
+            <IconComponent
+              name={IconName.Add}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Créer le rendez-vous
+          </Button>
+        )}
       </div>
     </form>
   )

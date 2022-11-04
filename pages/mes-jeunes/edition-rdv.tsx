@@ -20,10 +20,10 @@ import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
-import { useLeavePageModal } from 'utils/useLeavePageModal'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]
@@ -246,7 +246,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     typesRendezVous: typesRendezVous,
     withoutChat: true,
     returnTo: redirectTo,
-    pageTitle: 'Nouveau rendez-vous',
+    pageTitle: 'Mes rendez-vous - Créer',
+    pageHeader: 'Créer un nouveau rendez-vous',
   }
 
   const idRdv = context.query.idRdv as string | undefined
@@ -255,8 +256,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     if (!rdv) return { notFound: true }
     props.rdv = rdv
     props.idJeune = rdv.jeunes[0].id
-    props.pageTitle = 'Modification rendez-vous'
-    props.pageHeader = 'Modification rendez-vous'
+    props.pageTitle = 'Mes rendez-vous - Modifier'
+    props.pageHeader = 'Modifier le rendez-vous'
   } else if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
     const match = regex.exec(referer)

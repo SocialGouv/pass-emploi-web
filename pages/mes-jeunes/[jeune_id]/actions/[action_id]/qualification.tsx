@@ -6,6 +6,7 @@ import React, { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
@@ -97,34 +98,12 @@ function PageQualification({
 
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
-      <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-8'>
-          <IconComponent
-            name={IconName.Chiffre1}
-            role='img'
-            focusable={false}
-            aria-label='Étape 1'
-            className='mr-2 w-8 h-8'
-          />
-          Résumé de l&apos;action
-        </legend>
-
+      <Etape numero={1} titre="Résumé de l'action">
         <p className='text-m-bold'>{action.content}</p>
         <p className='pt-6 text-base-regular'>{action.comment}</p>
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-8'>
-          <IconComponent
-            name={IconName.Chiffre2}
-            role='img'
-            focusable={false}
-            aria-label='Étape 2'
-            className='mr-2 w-8 h-8'
-          />
-          Type
-        </legend>
-
+      <Etape numero={2} titre='Type'>
         <Label htmlFor='select-type' inputRequired={true}>
           Type
         </Label>
@@ -135,20 +114,9 @@ function PageQualification({
             </option>
           ))}
         </Select>
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-8'>
-          <IconComponent
-            name={IconName.Chiffre3}
-            role='img'
-            focusable={false}
-            aria-label='Étape 3'
-            className='mr-2 w-8 h-8'
-          />
-          Date de début de l’action
-        </legend>
-
+      <Etape numero={3} titre='Date de début de l’action'>
         <Label htmlFor='input-date-debut' inputRequired={true}>
           Date de début
         </Label>
@@ -163,20 +131,9 @@ function PageQualification({
           onChange={setDateDebut}
           required={true}
         />
-      </fieldset>
+      </Etape>
 
-      <fieldset className='border-none flex flex-col mb-8'>
-        <legend className='flex items-center text-m-bold mb-8'>
-          <IconComponent
-            name={IconName.Chiffre4}
-            role='img'
-            focusable={false}
-            aria-label='Étape 4'
-            className='mr-2 w-8 h-8'
-          />
-          Date de fin de l’action
-        </legend>
-
+      <Etape numero={4} titre='Date de fin de l’action'>
         <Label htmlFor='input-date-fin' inputRequired={true}>
           Date de fin
         </Label>
@@ -192,7 +149,7 @@ function PageQualification({
           onChange={setDateFin}
           required={true}
         />
-      </fieldset>
+      </Etape>
 
       <div className='flex justify-center'>
         <ButtonLink
@@ -250,7 +207,8 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       action,
       situationsNonProfessionnelles,
-      pageTitle: 'Création d’une situation non professionnelle',
+      pageTitle: 'Actions jeune - Qualifier action',
+      pageHeader: 'Créer une situation non professionnelle',
       returnTo: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
       withoutChat: true,
     },

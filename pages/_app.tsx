@@ -8,6 +8,7 @@ import React, { useEffect } from 'react'
 import 'styles/globals.css'
 import 'styles/typography.css'
 
+import AppHead from 'components/AppHead'
 import Footer from 'components/layouts/Footer'
 import Layout from 'components/layouts/Layout'
 import { init } from 'utils/analytics/matomo'
@@ -46,10 +47,13 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
       <DIProvider dependances={Container.getDIContainer().dependances}>
         <ConseillerProvider>
           {isLoginPage || isLogoutPage ? (
-            <div className='flex flex-col justify-center h-screen'>
-              <Component {...pageProps} />
-              {isLoginPage && <Footer />}
-            </div>
+            <>
+              <AppHead titre='' hasMessageNonLu={false} />
+              <div className='flex flex-col justify-center h-screen'>
+                <Component {...pageProps} />
+                {isLoginPage && <Footer />}
+              </div>
+            </>
           ) : (
             <ChatCredentialsProvider>
               <CurrentJeuneProvider>

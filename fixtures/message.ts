@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 
 import { Message, MessagesOfADay, TypeMessage } from 'interfaces/message'
+import { TypeOffre } from 'interfaces/offre'
 
 export const unMessage = (args: Partial<Message> = {}): Message => {
   const defaults: Message = {
@@ -15,7 +16,7 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
     infoOffre: {
       id: '',
       titre: '',
-      lien: '',
+      type: TypeOffre.EMPLOI,
     },
   }
 
@@ -59,7 +60,7 @@ export const desMessages = (): Message[] => [
     infoOffre: {
       id: 'id-offre',
       titre: 'Une offre',
-      lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
+      type: TypeOffre.EMPLOI,
     },
   }),
   unMessage({
@@ -119,7 +120,7 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
         infoOffre: {
           id: 'id-offre',
           titre: 'Une offre',
-          lien: 'https://candidat-r.pe-qvr.fr/offres/emploi',
+          type: TypeOffre.EMPLOI,
         },
       }),
     ],

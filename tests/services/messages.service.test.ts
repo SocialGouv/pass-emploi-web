@@ -9,10 +9,10 @@ import {
   unJeuneChat,
 } from 'fixtures/jeune'
 import { desMessages, desMessagesParJour } from 'fixtures/message'
-import { unDetailOffre } from 'fixtures/offre'
+import { unDetailOffreEmploi } from 'fixtures/offre'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
-import { DetailOffreEmploi } from 'interfaces/offre-emploi'
+import { DetailOffreEmploi } from 'interfaces/offre'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
@@ -512,7 +512,7 @@ describe('MessagesFirebaseAndApiService', () => {
       destinataires = desItemsJeunes()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'Regarde cette offre qui pourrait t’intéresser.'
-      offre = unDetailOffre()
+      offre = unDetailOffreEmploi()
 
       chats = idsJeunes.reduce((mappedChats, idJeune) => {
         mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })

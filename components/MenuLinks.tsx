@@ -7,7 +7,7 @@ import { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useLeanBeWidget } from 'utils/useLeanBeWidget'
+import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
 
 export enum MenuItem {
   Jeunes = 'Jeunes',
@@ -17,13 +17,14 @@ export enum MenuItem {
   Aide = 'Aide',
   Profil = 'Profil',
   Actualites = 'Actualites',
+  Raccourci = 'Raccourci,',
+  Messagerie = 'Messagerie',
 }
-type SidebarProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
-
+type MenuLinksProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
 export default function MenuLinks({
   showLabelsOnSmallScreen,
   items,
-}: SidebarProps) {
+}: MenuLinksProps) {
   const router = useRouter()
   const [isLoggedOut, setIsLoggedOut] = useState(false)
   const [conseiller] = useConseiller()
@@ -65,6 +66,18 @@ export default function MenuLinks({
           />
         )}
 
+        {items.includes(MenuItem.RechercheOffres) && (
+          <MenuLink
+            isActive={
+              isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
+            }
+            href='/recherche-offres'
+            label='Offres'
+            iconName={IconName.Search}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
+        )}
+
         {isSuperviseur && items.includes(MenuItem.Supervision) && (
           <>
             <MenuLink
@@ -75,6 +88,34 @@ export default function MenuLinks({
               showLabelOnSmallScreen={showLabelsOnSmallScreen}
             />
           </>
+        )}
+
+        {items.includes(MenuItem.Messagerie) && (
+          <>
+            <MenuLink
+              iconName={IconName.Note}
+              label='Messagerie'
+              href='/mes-jeunes'
+              isActive={isCurrentRoute('/mes-jeunes')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          </>
+        )}
+
+        {items.includes(MenuItem.Raccourci) && (
+          <>
+            <MenuLink
+              iconName={IconName.Add}
+              label='Créer un raccourci'
+              href='/raccourci'
+              isActive={isCurrentRoute('/raccourci')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          </>
+        )}
+
+        {items.includes(MenuItem.Actualites) && (
+          <ActualitesMenuButton structure={conseiller?.structure} />
         )}
 
         {items.includes(MenuItem.Aide) && (
@@ -89,10 +130,6 @@ export default function MenuLinks({
             isExternal={true}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
-        )}
-
-        {items.includes(MenuItem.Actualites) && (
-          <ActualitesMenuButton structure={conseiller?.structure} />
         )}
       </div>
       <div className='flex flex-col'>

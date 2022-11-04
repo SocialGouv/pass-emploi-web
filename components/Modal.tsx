@@ -101,7 +101,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
           />
         </button>
       </div>
-      <div className='mt-2 p-6'>
+      <div className='px-6 pb-6'>
         {titleIcon && (
           <IconComponent
             name={titleIcon}
@@ -110,12 +110,12 @@ const Modal = forwardRef((props: ModalProps, ref) => {
             className='w-20 h-20 m-auto fill-primary mb-8'
           />
         )}
-        <h1
+        <h2
           id='modal-title'
-          className='text-l-bold text-content_color text-center flex-auto mb-4'
+          className='text-l-bold text-primary text-center flex-auto mb-4'
         >
           {title}
-        </h1>
+        </h2>
         {modalContent}
       </div>
     </div>

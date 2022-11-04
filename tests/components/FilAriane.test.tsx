@@ -6,12 +6,7 @@ describe('<FilAriane/>', () => {
   describe('Pour une route spécifique', () => {
     it('Affiche le fil d’ariane pour une route de niveau 2', () => {
       // Given
-      render(
-        <FilAriane
-          currentPath='/mes-jeunes/id-jeune'
-          currentRoute='/mes-jeunes/[jeune_id]'
-        />
-      )
+      render(<FilAriane currentPath='/mes-jeunes/id-jeune' />)
       // Then
       expect(
         screen.getByRole('link', { name: 'Portefeuille' })
@@ -24,12 +19,7 @@ describe('<FilAriane/>', () => {
 
     it('Affiche le fil d’ariane pour une route de niveau 3', () => {
       // Given
-      render(
-        <FilAriane
-          currentPath='/mes-jeunes/id-jeune/actions/id-action'
-          currentRoute='/mes-jeunes/[jeune_id]/actions/[action_id]'
-        />
-      )
+      render(<FilAriane currentPath='/mes-jeunes/id-jeune/actions/id-action' />)
       // Then
       expect(screen.getByText('Portefeuille')).toBeInTheDocument()
       expect(screen.getByText('Fiche jeune')).toBeInTheDocument()
@@ -41,7 +31,7 @@ describe('<FilAriane/>', () => {
 
     it('N’affiche pas le fil d’ariane pour une route de niveau 1', () => {
       // Given
-      render(<FilAriane currentPath='/mes-jeunes' currentRoute='/mes-jeunes' />)
+      render(<FilAriane currentPath='/mes-jeunes' />)
       // Then
       expect(
         screen.queryByRole('link', { name: 'Portefeuille' })
@@ -52,12 +42,7 @@ describe('<FilAriane/>', () => {
   describe('Pour une route qui ne doit pas avoir de fil d’ariane', () => {
     it('N’affiche pas le fil d’ariane', () => {
       // Given
-      render(
-        <FilAriane
-          currentPath='/mes-rendezvous/id-rdv'
-          currentRoute='/mes-rendezvous/[rendezvous_id]'
-        />
-      )
+      render(<FilAriane currentPath='/mes-rendezvous/id-rdv' />)
       // Then
       expect(
         screen.queryByRole('link', { name: 'Mes rendez-vous' })

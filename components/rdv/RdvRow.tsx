@@ -52,7 +52,7 @@ export function RdvRow({
         {withNameJeune && <RowCell>{rdv.beneficiaires}</RowCell>}
 
         <RowCell>
-          <DataTag type={rdv.type} />
+          <DataTag text={rdv.type} />
         </RowCell>
 
         <RowCell>
@@ -60,7 +60,7 @@ export function RdvRow({
             name={IconName.Location}
             focusable='false'
             aria-hidden='true'
-            className='mr-2 inline'
+            className='inline mr-2 h-6 w-6 fill-primary'
           />
           {rdv.modality}
         </RowCell>

@@ -36,10 +36,10 @@ describe('MiloCreationJeune', () => {
         name: 'Valider le numéro',
       })
       const inputSearch = screen.getByLabelText('Numéro de dossier')
-      await act(() => userEvent.clear(inputSearch))
+      await userEvent.clear(inputSearch)
 
       // When
-      await act(() => userEvent.click(submitButton))
+      await userEvent.click(submitButton)
 
       // Then
       expect(
@@ -92,7 +92,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      await act(() => userEvent.click(createCompteButton))
+      await userEvent.click(createCompteButton)
 
       // Then
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledWith({
@@ -133,7 +133,7 @@ describe('MiloCreationJeune', () => {
         name: 'Créer le compte',
       })
 
-      await act(() => userEvent.click(createCompteButton))
+      await userEvent.click(createCompteButton)
 
       // Then
       expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
