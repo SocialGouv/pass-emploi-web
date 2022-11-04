@@ -55,7 +55,7 @@ function PartageCritere({
     })
   }
 
-  async function partager(e: FormEvent<HTMLFormElement>) {
+  async function partagerCriteresRecherche(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!formIsValid) return
 
@@ -64,8 +64,8 @@ function PartageCritere({
     try {
       // TODO-1027 appel service
       await router.push({
-        pathname: returnTo,
-        query: { [QueryParam.partageOffre]: QueryValue.succes },
+        pathname: '/recherche-offres',
+        query: { [QueryParam.partageCriteres]: QueryValue.succes },
       })
     } finally {
       setIsPartageEnCours(false)
@@ -75,36 +75,41 @@ function PartageCritere({
   return (
     <>
       <CriteresOffresEmploiCard criteres={criteresDeRecherche} />
-      <form onSubmit={partager} className='mt-8'></form>
-      <Etape numero={1} titre='Bénéficiaires'>
-        <JeunesMultiselectAutocomplete
-          jeunes={jeunes}
-          typeSelection='Bénéficiaires'
-          onUpdate={updateIdsDestinataires}
-          error={idsDestinataires.error}
-        />
-      </Etape>
-
-      <div className='flex justify-center'>
-        <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
-          Annuler
-        </ButtonLink>
-
-        <Button
-          type='submit'
-          className='ml-3 flex items-center'
-          disabled={!formIsValid}
-          isLoading={isPartageEnCours}
-        >
-          <IconComponent
-            name={IconName.Send}
-            aria-hidden={true}
-            focusable={false}
-            className='mr-2 h-4 w-4 fill-blanc'
+      <p className='mt-8'>
+        Ces critères apparaitrons dans la section favoris, catégorie recherches
+        sauvegardées,du bénéficiaire de l’application CEJ.
+      </p>
+      <form onSubmit={partagerCriteresRecherche} className='mt-8'>
+        <Etape numero={1} titre='Bénéficiaires'>
+          <JeunesMultiselectAutocomplete
+            jeunes={jeunes}
+            typeSelection='Bénéficiaires'
+            onUpdate={updateIdsDestinataires}
+            error={idsDestinataires.error}
           />
-          Envoyer
-        </Button>
-      </div>
+        </Etape>
+
+        <div className='flex justify-center'>
+          <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
+            Annuler
+          </ButtonLink>
+
+          <Button
+            type='submit'
+            className='ml-3 flex items-center'
+            disabled={!formIsValid}
+            isLoading={isPartageEnCours}
+          >
+            <IconComponent
+              name={IconName.Send}
+              aria-hidden={true}
+              focusable={false}
+              className='mr-2 h-4 w-4 fill-blanc'
+            />
+            Envoyer
+          </Button>
+        </div>
+      </form>
     </>
   )
 }
