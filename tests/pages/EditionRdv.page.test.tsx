@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import {
@@ -13,7 +13,7 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
@@ -35,6 +35,7 @@ describe('EditionRdv', () => {
     let jeunesService: JeunesService
     let rendezVousService: RendezVousService
     let jeunes: JeuneFromListe[]
+    let jeunesEtablissement: BaseJeune[]
     let typesRendezVous: TypeRendezVous[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
@@ -66,10 +67,14 @@ describe('EditionRdv', () => {
         })
 
         jeunes = desItemsJeunes()
+        jeunesEtablissement = [uneBaseJeune()]
         typesRendezVous = typesDeRendezVous()
 
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
+          getJeunesParEtablissements: jest
+            .fn()
+            .mockResolvedValue(jeunesEtablissement),
         })
         rendezVousService = mockedRendezVousService({
           getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
@@ -77,6 +82,32 @@ describe('EditionRdv', () => {
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'jeunesService') return jeunesService
           if (dependance === 'rendezVousService') return rendezVousService
+        })
+      })
+
+      describe('quand le conseiller créé une animation collective', () => {
+        it('récupère la liste des bénéficiaires d’un établissement', async () => {
+          // When
+          const actual = await getServerSideProps({
+            req: { headers: {} },
+            query: {},
+          } as GetServerSidePropsContext)
+
+          // Then
+          expect(
+            jeunesService.getJeunesParEtablissements('id-etablissement')
+          ).toHaveBeenCalledWith('id-etablissement')
+          expect(actual).toEqual({
+            props: {
+              jeunes: [jeunes[2], jeunes[0], jeunes[1]],
+              jeunesEtablissement: [jeunesEtablissement[0]],
+              withoutChat: true,
+              pageTitle: 'Mes rendez-vous - Créer',
+              pageHeader: 'Créer un nouveau rendez-vous',
+              returnTo: '/mes-jeunes',
+              typesRendezVous: expect.arrayContaining([]),
+            },
+          })
         })
       })
 

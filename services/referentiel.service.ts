@@ -1,5 +1,8 @@
 import { getSession } from 'next-auth/react'
 
+import { desItemsJeunes } from '../fixtures/jeune'
+import { BaseJeune } from '../interfaces/jeune'
+
 import { ApiClient } from 'clients/api.client'
 import { ActionPredefinie } from 'interfaces/action'
 import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
