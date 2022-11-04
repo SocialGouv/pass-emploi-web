@@ -1,0 +1,104 @@
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
+import PartageCritere from 'pages/offres/partage-critere'
+import { desItemsJeunes } from 'fixtures/jeune'
+import { TypeOffre } from 'interfaces/offre'
+import { uneCommune } from 'fixtures/referentiel'
+
+describe('Partage Critères', () => {
+  describe('Type Offre Emploi', () => {
+    describe('client side', () => {
+      let inputSearchJeune: HTMLSelectElement
+      let submitButton: HTMLButtonElement
+
+      beforeEach(() => {
+        render(
+          <PartageCritere
+            pageTitle='Partager une recherche'
+            jeunes={desItemsJeunes()}
+            type={TypeOffre.EMPLOI}
+            criteresDeRecherche={{
+              commune: uneCommune(),
+              motsCles: '',
+            }}
+            withoutChat={true}
+            returnTo=''
+          />
+        )
+
+        //Given
+        inputSearchJeune = screen.getByRole('combobox', {
+          name: 'Rechercher et ajouter des jeunes Nom et prénom',
+        })
+
+        submitButton = screen.getByRole('button', {
+          name: 'Envoyer',
+        })
+      })
+
+      describe("quand le formulaire n'a pas encore été soumis", () => {
+        it('devrait afficher les champs pour envoyer un message', () => {
+          // Then
+          expect(inputSearchJeune).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Envoyer' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('link', { name: 'Annuler' })
+          ).toBeInTheDocument()
+        })
+
+        it('ne devrait pas pouvoir cliquer sur le bouton envoyer sans avoir selectionner de bénéficiaire', async () => {
+          // Then
+          expect(inputSearchJeune.selectedOptions).toBe(undefined)
+          expect(submitButton).toHaveAttribute('disabled')
+        })
+      })
+
+      describe('quand on remplit le formulaire', () => {
+        let push: Function
+        let newMessage: string
+        beforeEach(async () => {
+          push = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ push })
+
+          // Given
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        })
+
+        it('sélectionne plusieurs jeunes dans la liste', () => {
+          // Then
+          expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
+          expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
+          expect(screen.getByText('Bénéficiaires (2)')).toBeInTheDocument()
+        })
+
+        it('envoi un message à plusieurs destinataires', async () => {
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
+          // TODO appel du service POST/recherche
+          // expect().toHaveBeenCalledWith(
+          //   {
+          //   }
+          // )
+        })
+
+        it('redirige vers la page précédente', async () => {
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
+          expect(push).toHaveBeenCalledWith({
+            pathname: '/recherche-offres',
+            query: { partageCriteres: 'succes' },
+          })
+        })
+      })
+    })
+  })
+})

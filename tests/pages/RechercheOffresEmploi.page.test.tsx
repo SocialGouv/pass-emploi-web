@@ -390,7 +390,10 @@ describe('Page Recherche Offres Emploi', () => {
         screen.getByRole('link', {
           name: `Partager critères de recherche`,
         })
-      ).toHaveAttribute('href', `/offres/partage-criteres`)
+      ).toHaveAttribute(
+        'href',
+        `/offres/partage-critere?type=EMPLOI&criteres=eyJjb21tdW5lIjp7ImxpYmVsbGUiOiJQQVJJUyAxNCIsImNvZGUiOiI3NTExNCIsInR5cGUiOiJDT01NVU5FIiwibG9uZ2l0dWRlIjoyLjMyMzAyNiwibGF0aXR1ZGUiOjQ4LjgzMDEwOH0sInJheW9uIjoxMH0=`
+      )
     })
 
     it('vide les critères lorsqu’on change le type d’offre', async () => {
