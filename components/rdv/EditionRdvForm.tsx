@@ -144,7 +144,7 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
-      Boolean(idsJeunes.value.length) &&
+      beneficiairesAreValid() &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
@@ -163,7 +163,7 @@ export function EditionRdvForm({
   function updateIdsJeunes(selectedIds: string[]) {
     setIdsJeunes({
       value: selectedIds,
-      error: !selectedIds.length
+      error: beneficiairesAreValid()
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
@@ -177,6 +177,11 @@ export function EditionRdvForm({
           "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
     }
+  }
+
+  function beneficiairesAreValid(): boolean {
+    if (isCodeTypeAnimationCollective(codeTypeRendezVous)) return true
+    return idsJeunes.value.length > 0
   }
 
   function dateIsValid(): boolean {
@@ -391,6 +396,7 @@ export function EditionRdvForm({
               defaultJeunes={defaultJeunes}
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
+              required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
             />
           </Etape>
           <Etape numero={3} titre='Lieu et date'>
