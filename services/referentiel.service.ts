@@ -5,7 +5,11 @@ import { ActionPredefinie } from 'interfaces/action'
 import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
 
 export interface ReferentielService {
-  getAgences(structure: string, accessToken: string): Promise<Agence[]>
+  getAgencesServerSide(
+    structure: string,
+    accessToken: string
+  ): Promise<Agence[]>
+  getAgencesClientSide(structure: string): Promise<Agence[]>
 
   getCommunesEtDepartements(query: string): Promise<Localite[]>
 
@@ -19,12 +23,16 @@ export interface ReferentielService {
 export class ReferentielApiService implements ReferentielService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getAgences(structure: string, accessToken: string): Promise<Agence[]> {
-    const { content: agences } = await this.apiClient.get<Agence[]>(
-      `/referentiels/agences?structure=${structure}`,
-      accessToken
-    )
-    return agences
+  async getAgencesServerSide(
+    structure: string,
+    accessToken: string
+  ): Promise<Agence[]> {
+    return this.getAgences(structure, accessToken)
+  }
+
+  async getAgencesClientSide(structure: string): Promise<Agence[]> {
+    const session = await getSession()
+    return this.getAgences(structure, session!.accessToken)
   }
 
   async getCommunesEtDepartements(query: string) {
@@ -45,6 +53,17 @@ export class ReferentielApiService implements ReferentielService {
       session!.accessToken
     )
     return metiers
+  }
+
+  private async getAgences(
+    structure: string,
+    accessToken: string
+  ): Promise<Agence[]> {
+    const { content: agences } = await this.apiClient.get<Agence[]>(
+      `/referentiels/agences?structure=${structure}`,
+      accessToken
+    )
+    return agences
   }
 
   private async getLocalites(path: string, query: string): Promise<Localite[]> {

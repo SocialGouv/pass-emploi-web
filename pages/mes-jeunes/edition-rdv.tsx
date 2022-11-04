@@ -7,15 +7,20 @@ import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
+import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
 import { PageProps } from 'interfaces/pageProps'
 import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
+import { ReferentielService } from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -43,7 +48,14 @@ function EditionRdv({
   const router = useRouter()
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
-  const [conseiller] = useConseiller()
+  const [conseiller, setConseiller] = useConseiller()
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
+
+  const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
+  const [agences, setAgences] = useState<Agence[]>([])
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
@@ -64,6 +76,16 @@ function EditionRdv({
     e.preventDefault()
     e.stopPropagation()
     openDeleteRdvModal()
+  }
+
+  async function openAgenceModal() {
+    if (!agences.length) {
+      setAgences(
+        await referentielService.getAgencesClientSide(conseiller!.structure)
+      )
+    }
+    setShowAgenceModal(true)
+    setTrackingTitle(initialTracking + ' - Pop-in sélection agence')
   }
 
   function openLeavePageModal() {
@@ -140,6 +162,16 @@ function EditionRdv({
     }
   }
 
+  async function renseignerAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller!, agence: agence.nom })
+    setTrackingTitle(initialTracking + ' - Succès ajout agence')
+    setShowAgenceModal(false)
+  }
+
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
   useMatomo(trackingTitle)
@@ -178,11 +210,12 @@ function EditionRdv({
         redirectTo={returnTo}
         aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
         conseillerIsCreator={!rdv || conseiller?.id === rdv.createur?.id}
-        conseillerEmail={conseiller?.email ?? ''}
+        conseiller={conseiller}
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
         leaveWithChanges={openLeavePageModal}
         showConfirmationModal={showConfirmationModal}
+        renseignerAgence={openAgenceModal}
       />
 
       {showLeavePageModal && (
@@ -197,6 +230,7 @@ function EditionRdv({
           destination={returnTo}
         />
       )}
+
       {payloadForConfirmationModal && (
         <ConfirmationUpdateRdvModal
           onCancel={closeConfirmationModal}
@@ -205,11 +239,22 @@ function EditionRdv({
           }
         />
       )}
+
       {showDeleteRdvModal && (
         <DeleteRdvModal
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={deleteRendezVous}
+        />
+      )}
+
+      {showAgenceModal && agences.length && (
+        <RenseignementAgenceModal
+          structureConseiller={conseiller!.structure}
+          referentielAgences={agences}
+          onAgenceChoisie={renseignerAgence}
+          onContacterSupport={() => {}}
+          onClose={() => {}}
         />
       )}
     </>
@@ -224,12 +269,17 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-  const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
+  if (user.structure === StructureConseiller.POLE_EMPLOI)
+    return {
+      redirect: { destination: '/mes-jeunes', permanent: false },
+    }
+
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+  const rendezVousService =
+    withDependance<RendezVousService>('rendezVousService')
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
     user.id,
     accessToken

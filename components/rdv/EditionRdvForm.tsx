@@ -17,9 +17,15 @@ import { Switch } from 'components/ui/Form/Switch'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { RdvFormData } from 'interfaces/json/rdv'
-import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
+import {
+  isCodeTypeAnimationCollective,
+  Rdv,
+  TYPE_RENDEZ_VOUS,
+  TypeRendezVous,
+} from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
 import {
   DATE_DASH_SEPARATOR,
@@ -34,13 +40,14 @@ interface EditionRdvFormProps {
   redirectTo: string
   aDesJeunesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
-  conseillerEmail: string
   soumettreRendezVous: (payload: RdvFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
+  conseiller?: Conseiller
   rdv?: Rdv
   idJeune?: string
   showConfirmationModal: (payload: RdvFormData) => void
+  renseignerAgence: () => void
 }
 
 export function EditionRdvForm({
@@ -49,13 +56,14 @@ export function EditionRdvForm({
   redirectTo,
   aDesJeunesDUnAutrePortefeuille,
   conseillerIsCreator,
-  conseillerEmail,
+  conseiller,
   soumettreRendezVous,
   leaveWithChanges,
   onChanges,
   rdv,
   idJeune,
   showConfirmationModal,
+  renseignerAgence,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
   const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
@@ -93,6 +101,16 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
+
+  const isAgenceNecessaire =
+    isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
+  const afficherSuiteFormulaire =
+    codeTypeRendezVous &&
+    (!isCodeTypeAnimationCollective(codeTypeRendezVous) || conseiller?.agence)
+  const labelAgence =
+    conseiller?.structure === StructureConseiller.MILO
+      ? 'Mission locale'
+      : 'agence'
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -151,7 +169,7 @@ export function EditionRdvForm({
     })
   }
 
-  function validateTypeRendezVousAutre() {
+  function validateTypeEvenementAutre() {
     if (!precisionType.value) {
       setPrecisionType({
         value: precisionType.value,
@@ -275,8 +293,7 @@ export function EditionRdvForm({
 
   function emailInvitationText(conseillerIsCreator: boolean) {
     if (conseillerIsCreator) {
-      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :
-      ${conseillerEmail}`
+      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
     } else {
       return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."
     }
@@ -293,23 +310,12 @@ export function EditionRdvForm({
           <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
-
-      <Etape numero={1} titre='Bénéficiaires'>
-        <JeunesMultiselectAutocomplete
-          jeunes={jeunes}
-          typeSelection='Bénéficiaires'
-          defaultJeunes={defaultJeunes}
-          onUpdate={updateIdsJeunes}
-          error={idsJeunes.error}
-        />
-      </Etape>
-
-      <Etape numero={2} titre='Type de rendez-vous'>
-        <Label htmlFor='typeRendezVous' inputRequired={true}>
+      <Etape numero={1} titre='Type d’événement'>
+        <Label htmlFor='typeEvenement' inputRequired={true}>
           Type
         </Label>
         <Select
-          id='typeRendezVous'
+          id='typeEvenement'
           defaultValue={codeTypeRendezVous}
           required={true}
           disabled={Boolean(rdv)}
@@ -325,230 +331,279 @@ export function EditionRdvForm({
         {showPrecisionType && (
           <>
             <Label
-              htmlFor='typeRendezVous-autre'
+              htmlFor='typeEvenement-autre'
               inputRequired={true}
               withBulleMessageSensible={true}
             >
               Préciser
             </Label>
             {precisionType.error && (
-              <InputError id='typeRendezVous-autre--error' className='mb-2'>
+              <InputError id='typeEvenement-autre--error' className='mb-2'>
                 {precisionType.error}
               </InputError>
             )}
             <Input
               type='text'
-              id='typeRendezVous-autre'
+              id='typeEvenement-autre'
               required={true}
               disabled={Boolean(rdv)}
               defaultValue={precisionType.value}
               onChange={(value: string) => setPrecisionType({ value })}
-              onBlur={validateTypeRendezVousAutre}
+              onBlur={validateTypeEvenementAutre}
               invalid={Boolean(precisionType.error)}
             />
           </>
         )}
 
-        <Label htmlFor='modalite'>Modalité</Label>
-        <Select id='modalite' defaultValue={modalite} onChange={setModalite}>
-          {modalites.map((md) => (
-            <option key={md} value={md}>
-              {md}
-            </option>
-          ))}
-        </Select>
+        {isAgenceNecessaire && (
+          <div className='bg-warning_lighten rounded-medium p-6'>
+            <p className='flex justify-center items-center text-base-bold text-warning mb-2'>
+              <IconComponent
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 mr-2 fill-warning'
+                name={IconName.Important}
+              />
+              Votre {labelAgence} n’est pas renseignée
+            </p>
+            <p className='text-base-regular text-warning mb-6'>
+              Pour créer une information collective ou un atelier vous devez
+              renseigner votre {labelAgence} dans votre profil.
+            </p>
+            <Button
+              type='button'
+              style={ButtonStyle.PRIMARY}
+              onClick={renseignerAgence}
+              className='mx-auto'
+            >
+              Renseigner votre {labelAgence}
+            </Button>
+          </div>
+        )}
       </Etape>
 
-      <Etape numero={3} titre='Lieu et date'>
-        <Label htmlFor='date' inputRequired={true}>
-          {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
-        </Label>
-        {date.error && (
-          <InputError id='date--error' className='mb-2'>
-            {date.error}
-          </InputError>
-        )}
-        <Input
-          type='date'
-          id='date'
-          defaultValue={date.value}
-          required={true}
-          onChange={(value: string) => setDate({ value })}
-          onBlur={validateDate}
-          invalid={Boolean(date.error)}
-        />
-
-        <Label htmlFor='horaire' inputRequired={true}>
-          {{ main: 'Heure', helpText: '(format : hh:mm)' }}
-        </Label>
-        {horaire.error && (
-          <InputError id='horaire--error' className='mb-2'>
-            {horaire.error}
-          </InputError>
-        )}
-        <Input
-          type='time'
-          id='horaire'
-          defaultValue={horaire.value}
-          required={true}
-          onChange={(value: string) => setHoraire({ value })}
-          onBlur={validateHoraire}
-          invalid={Boolean(horaire.error)}
-          aria-invalid={horaire.error ? true : undefined}
-          aria-describedby={horaire.error ? 'horaire--error' : undefined}
-        />
-
-        <Label htmlFor='duree' inputRequired={true}>
-          {{ main: 'Durée', helpText: '(format : hh:mm)' }}
-        </Label>
-        {duree.error && (
-          <InputError id='duree--error' className='mb-2'>
-            {duree.error}
-          </InputError>
-        )}
-        <Input
-          type='time'
-          id='duree'
-          required={true}
-          defaultValue={duree.value}
-          onChange={(value: string) => setDuree({ value })}
-          onBlur={validateDuree}
-          invalid={Boolean(duree.error)}
-        />
-
-        <Label htmlFor='adresse'>
-          {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
-        </Label>
-        <Input
-          type='text'
-          id='adresse'
-          defaultValue={adresse}
-          onChange={setAdresse}
-          icon='location'
-        />
-
-        <Label htmlFor='organisme'>
-          {{
-            main: 'Organisme',
-            helpText: 'Ex : prestataire, entreprise, etc.',
-          }}
-        </Label>
-        <Input
-          type='text'
-          id='organisme'
-          defaultValue={organisme}
-          onChange={setOrganisme}
-        />
-      </Etape>
-
-      <Etape numero={4} titre='Informations conseiller'>
-        {!conseillerIsCreator && (
-          <>
-            {rdv!.createur && (
-              <div className='mb-6'>
-                <InformationMessage
-                  content={`Le rendez-vous a été créé par un autre conseiller : ${
-                    rdv!.createur.prenom
-                  } ${
-                    rdv!.createur.nom
-                  }. Vous ne recevrez pas d'invitation dans votre agenda`}
-                />
-              </div>
+      {afficherSuiteFormulaire && (
+        <>
+          <Etape numero={2} titre='Bénéficiaires'>
+            <JeunesMultiselectAutocomplete
+              jeunes={jeunes}
+              typeSelection='Bénéficiaires'
+              defaultJeunes={defaultJeunes}
+              onUpdate={updateIdsJeunes}
+              error={idsJeunes.error}
+            />
+          </Etape>
+          <Etape numero={3} titre='Lieu et date'>
+            <Label htmlFor='modalite'>Modalité</Label>
+            <Select
+              id='modalite'
+              defaultValue={modalite}
+              onChange={setModalite}
+            >
+              {modalites.map((md) => (
+                <option key={md} value={md}>
+                  {md}
+                </option>
+              ))}
+            </Select>
+            <Label htmlFor='date' inputRequired={true}>
+              {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
+            </Label>
+            {date.error && (
+              <InputError id='date--error' className='mb-2'>
+                {date.error}
+              </InputError>
             )}
-            {!rdv!.createur && (
-              <div className='mb-6'>
-                <InformationMessage
-                  content={`Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
-                />
-              </div>
+            <Input
+              type='date'
+              id='date'
+              defaultValue={date.value}
+              required={true}
+              onChange={(value: string) => setDate({ value })}
+              onBlur={validateDate}
+              invalid={Boolean(date.error)}
+            />
+
+            <Label htmlFor='horaire' inputRequired={true}>
+              {{ main: 'Heure', helpText: '(format : hh:mm)' }}
+            </Label>
+            {horaire.error && (
+              <InputError id='horaire--error' className='mb-2'>
+                {horaire.error}
+              </InputError>
             )}
-          </>
-        )}
-
-        <div className='flex items-center mb-8'>
-          <label htmlFor='presenceConseiller' className='flex items-center'>
-            <span className='w-64 mr-4'>
-              Informer les bénéficiaires qu’un conseiller sera présent au
-              rendez-vous
-            </span>
-            <Switch
-              id='presenceConseiller'
-              checked={isConseillerPresent}
-              disabled={typeEntretienIndividuelConseillerSelected()}
-              onChange={handlePresenceConseiller}
+            <Input
+              type='time'
+              id='horaire'
+              defaultValue={horaire.value}
+              required={true}
+              onChange={(value: string) => setHoraire({ value })}
+              onBlur={validateHoraire}
+              invalid={Boolean(horaire.error)}
+              aria-invalid={horaire.error ? true : undefined}
+              aria-describedby={horaire.error ? 'horaire--error' : undefined}
             />
-          </label>
-        </div>
 
-        <div className='flex items-center mb-8'>
-          <label htmlFor='emailInvitation' className='flex items-center'>
-            <span className='w-64 mr-4'>
-              {emailInvitationText(conseillerIsCreator)}
-            </span>
-            <Switch
-              id='emailInvitation'
-              disabled={Boolean(rdv)}
-              checked={sendEmailInvitation}
-              onChange={(e) => setSendEmailInvitation(e.target.checked)}
+            <Label htmlFor='duree' inputRequired={true}>
+              {{ main: 'Durée', helpText: '(format : hh:mm)' }}
+            </Label>
+            {duree.error && (
+              <InputError id='duree--error' className='mb-2'>
+                {duree.error}
+              </InputError>
+            )}
+            <Input
+              type='time'
+              id='duree'
+              required={true}
+              defaultValue={duree.value}
+              onChange={(value: string) => setDuree({ value })}
+              onBlur={validateDuree}
+              invalid={Boolean(duree.error)}
             />
-          </label>
-        </div>
 
-        <Label htmlFor='commentaire' withBulleMessageSensible={true}>
-          {{
-            main: 'Commentaire à destination des jeunes',
-            helpText: 'Le commentaire sera lu par l’ensemble des destinataires',
-          }}
-        </Label>
-        <Textarea
-          id='commentaire'
-          defaultValue={commentaire}
-          rows={3}
-          onChange={(e) => setCommentaire(e.target.value)}
-        />
-      </Etape>
-
-      <div className='flex justify-center'>
-        {!formHasChanges() && (
-          <ButtonLink
-            href={redirectTo}
-            style={ButtonStyle.SECONDARY}
-            className='mr-3'
-          >
-            Annuler
-          </ButtonLink>
-        )}
-        {formHasChanges() && (
-          <Button
-            type='button'
-            label={`Quitter la ${
-              rdv ? 'modification' : 'création'
-            } du rendez-vous`}
-            onClick={leaveWithChanges}
-            style={ButtonStyle.SECONDARY}
-            className='mr-3'
-          >
-            Annuler
-          </Button>
-        )}
-
-        {rdv && (
-          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
-            Modifier le rendez-vous
-          </Button>
-        )}
-        {!rdv && (
-          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
-            <IconComponent
-              name={IconName.Add}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
+            <Label htmlFor='adresse'>
+              {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
+            </Label>
+            <Input
+              type='text'
+              id='adresse'
+              defaultValue={adresse}
+              onChange={setAdresse}
+              icon='location'
             />
-            Créer le rendez-vous
-          </Button>
-        )}
-      </div>
+
+            <Label htmlFor='organisme'>
+              {{
+                main: 'Organisme',
+                helpText: 'Ex : prestataire, entreprise, etc.',
+              }}
+            </Label>
+            <Input
+              type='text'
+              id='organisme'
+              defaultValue={organisme}
+              onChange={setOrganisme}
+            />
+          </Etape>
+
+          <Etape numero={4} titre='Informations conseiller'>
+            {!conseillerIsCreator && (
+              <>
+                {rdv!.createur && (
+                  <div className='mb-6'>
+                    <InformationMessage
+                      content={`Le rendez-vous a été créé par un autre conseiller : ${
+                        rdv!.createur.prenom
+                      } ${
+                        rdv!.createur.nom
+                      }. Vous ne recevrez pas d'invitation dans votre agenda`}
+                    />
+                  </div>
+                )}
+                {!rdv!.createur && (
+                  <div className='mb-6'>
+                    <InformationMessage
+                      content={`Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
+            <div className='flex items-center mb-8'>
+              <label htmlFor='presenceConseiller' className='flex items-center'>
+                <span className='w-64 mr-4'>
+                  Informer les bénéficiaires qu’un conseiller sera présent au
+                  rendez-vous
+                </span>
+                <Switch
+                  id='presenceConseiller'
+                  checked={isConseillerPresent}
+                  disabled={typeEntretienIndividuelConseillerSelected()}
+                  onChange={handlePresenceConseiller}
+                />
+              </label>
+            </div>
+
+            <div className='flex items-center mb-8'>
+              <label htmlFor='emailInvitation' className='flex items-center'>
+                <span className='w-64 mr-4'>
+                  {emailInvitationText(conseillerIsCreator)}
+                </span>
+                <Switch
+                  id='emailInvitation'
+                  disabled={Boolean(rdv)}
+                  checked={sendEmailInvitation}
+                  onChange={(e) => setSendEmailInvitation(e.target.checked)}
+                />
+              </label>
+            </div>
+
+            <Label htmlFor='commentaire' withBulleMessageSensible={true}>
+              {{
+                main: 'Commentaire à destination des jeunes',
+                helpText:
+                  'Le commentaire sera lu par l’ensemble des destinataires',
+              }}
+            </Label>
+            <Textarea
+              id='commentaire'
+              defaultValue={commentaire}
+              rows={3}
+              onChange={(e) => setCommentaire(e.target.value)}
+            />
+          </Etape>
+
+          <div className='flex justify-center'>
+            {!formHasChanges() && (
+              <ButtonLink
+                href={redirectTo}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3'
+              >
+                Annuler
+              </ButtonLink>
+            )}
+            {formHasChanges() && (
+              <Button
+                type='button'
+                label={`Quitter la ${
+                  rdv ? 'modification' : 'création'
+                } du rendez-vous`}
+                onClick={leaveWithChanges}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3'
+              >
+                Annuler
+              </Button>
+            )}
+
+            {rdv && (
+              <Button
+                type='submit'
+                disabled={!formHasChanges() || !formIsValid()}
+              >
+                Modifier le rendez-vous
+              </Button>
+            )}
+            {!rdv && (
+              <Button
+                type='submit'
+                disabled={!formHasChanges() || !formIsValid()}
+              >
+                <IconComponent
+                  name={IconName.Add}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+                Créer le rendez-vous
+              </Button>
+            )}
+          </div>
+        </>
+      )}
     </form>
   )
 
