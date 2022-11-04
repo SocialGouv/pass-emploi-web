@@ -2,6 +2,7 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
+import { desCriteresDeRecherchesOffreEmploiEnBase64 } from 'fixtures/base64'
 import { listeBaseOffresEmploi, uneBaseOffreEmploi } from 'fixtures/offre'
 import { desLocalites, unDepartement, uneCommune } from 'fixtures/referentiel'
 import {
@@ -281,6 +282,68 @@ describe('Page Recherche Offres Emploi', () => {
     })
   })
 
+  describe('partage des critères de recherche', () => {
+    it('n’affiche pas le bouton de partage s’il n’y a pas de localité renseignée', () => {
+      expect(() =>
+        screen.getByText(
+          'Suggérer ces critères de recherche à vos bénéficiaires'
+        )
+      ).toThrow()
+      expect(() =>
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toThrow()
+    })
+
+    it('affiche le bouton de partage de critère s’il y a une localité renseignée', async () => {
+      // When
+      await saisirLocalite('paris 14')
+
+      // Then
+      expect(
+        screen.getByText(
+          'Suggérer ces critères de recherche à vos bénéficiaires'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('construit le bon lien qui correspond aux critères de recherches en base 64', async () => {
+      // Given
+      const inputMotsCles = screen.getByLabelText(/Mots clés/)
+      await userEvent.type(inputMotsCles, 'Prof')
+      await saisirLocalite('paris 14')
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+
+      await userEvent.click(
+        screen.getByLabelText(/Afficher uniquement les offres débutant accepté/)
+      )
+      await userEvent.click(screen.getByLabelText('CDI'))
+      await userEvent.click(screen.getByLabelText('Autres'))
+      await userEvent.click(screen.getByLabelText('Temps plein'))
+      await userEvent.click(screen.getByLabelText('Temps partiel'))
+
+      fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+        target: { value: 100 },
+      })
+
+      // Then
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toHaveAttribute(
+        'href',
+        `/offres/partage-critere?type=EMPLOI&criteres=${desCriteresDeRecherchesOffreEmploiEnBase64()}`
+      )
+    })
+  })
+
   describe('recherche', () => {
     it("permet de rechercher des offres d'emploi", async () => {
       // Given
@@ -375,24 +438,6 @@ describe('Page Recherche Offres Emploi', () => {
           rayon: 43,
         },
         1
-      )
-    })
-
-    it('affiche le bouton de partage de critère de recherche à la saisie d’une localisation', async () => {
-      // When
-      await saisirLocalite('paris 14')
-
-      // Then
-      expect(
-        screen.getByText('Partager cette recherche à vos bénéficiaires')
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('link', {
-          name: `Partager critères de recherche`,
-        })
-      ).toHaveAttribute(
-        'href',
-        `/offres/partage-critere?type=EMPLOI&criteres=eyJjb21tdW5lIjp7ImxpYmVsbGUiOiJQQVJJUyAxNCIsImNvZGUiOiI3NTExNCIsInR5cGUiOiJDT01NVU5FIiwibG9uZ2l0dWRlIjoyLjMyMzAyNiwibGF0aXR1ZGUiOjQ4LjgzMDEwOH0sInJheW9uIjoxMH0=`
       )
     })
 
