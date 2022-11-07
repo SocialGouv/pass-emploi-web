@@ -399,19 +399,10 @@ describe('Page Recherche Immersions', () => {
 
     it('affiche chaque offre', async () => {
       immersions.forEach((immersion) => {
-        const immersionCard = screen.getByRole('link', {
-          name: 'Détail de l’offre chez ' + immersion.nomEtablissement,
-        })
-        expect(immersionCard).toHaveAttribute(
-          'href',
-          '/offres/immersion/' + immersion.id
-        )
-        expect(
-          within(immersionCard).getByRole('heading', {
-            level: 3,
-            name: immersion.titre,
-          })
-        ).toBeInTheDocument()
+        const immersionCard = within(offresList).getByRole('heading', {
+          level: 3,
+          name: immersion.titre,
+        }).parentElement!
         expect(
           within(immersionCard).getByText(immersion.nomEtablissement)
         ).toBeInTheDocument()
@@ -421,6 +412,11 @@ describe('Page Recherche Immersions', () => {
         expect(
           within(immersionCard).getByText(immersion.secteurActivite)
         ).toBeInTheDocument()
+        expect(
+          within(immersionCard).getByRole('link', {
+            name: 'Détail de l’offre chez ' + immersion.nomEtablissement,
+          })
+        ).toHaveAttribute('href', '/offres/immersion/' + immersion.id)
       })
     })
 
