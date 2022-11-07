@@ -26,7 +26,7 @@ export default function PartageSuggestionButton({
   function getPartagerSuggestionUrl(): string {
     const localite =
       suggestionOffreEmploi.commune ?? suggestionOffreEmploi.departement!
-    const url = '/offres/partage-critere'
+    const url = '/offres/partage-suggestion'
       .concat(`?type=${typeOffre}`)
       .concat(`&titre=${suggestionOffreEmploi.motsCles} - ${localite.libelle}`)
       .concat(`&motsCles=${suggestionOffreEmploi.motsCles}`)

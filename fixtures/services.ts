@@ -169,7 +169,7 @@ export function mockedImmersionsService(
   return { ...defaults, ...overrides }
 }
 
-export function mockedRecherchesSerivice(
+export function mockedSuggestionsService(
   overrides: Partial<SuggestionsService> = {}
 ) {
   const defaults: SuggestionsService = {
