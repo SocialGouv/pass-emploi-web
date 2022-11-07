@@ -21,7 +21,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-type PartageCritereProps = PageProps & {
+type PartageSuggestionProps = PageProps & {
   jeunes: BaseJeune[]
   type: TypeOffre
   titre: string
@@ -33,16 +33,15 @@ type PartageCritereProps = PageProps & {
   returnTo: string
 }
 
-function PartageCritere({
+function PartageSuggestion({
   jeunes,
-  type,
   titre,
   motsCles,
   typeLocalite,
   labelLocalite,
   codeLocalite,
   returnTo,
-}: PartageCritereProps) {
+}: PartageSuggestionProps) {
   const suggestionsService =
     useDependance<SuggestionsService>('suggestionsService')
   const router = useRouter()
@@ -136,7 +135,7 @@ function PartageCritere({
 }
 
 export const getServerSideProps: GetServerSideProps<
-  PartageCritereProps
+  PartageSuggestionProps
 > = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
@@ -169,4 +168,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default withTransaction(PartageCritere.name, 'page')(PartageCritere)
+export default withTransaction(
+  PartageSuggestion.name,
+  'page'
+)(PartageSuggestion)
