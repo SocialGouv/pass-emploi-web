@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { desItemsJeunes } from 'fixtures/jeune'
 import { Conseiller } from 'interfaces/conseiller'
 import {
   BaseJeune,
@@ -17,9 +16,11 @@ import {
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
 import {
+  BaseJeuneJson,
   DetailJeuneJson,
   IndicateursSemaineJson,
   ItemJeuneJson,
+  jsonToBaseJeune,
   jsonToDetailJeune,
   jsonToIndicateursSemaine,
   jsonToItemJeune,
@@ -342,12 +343,11 @@ export class JeunesApiService implements JeunesService {
   async getJeunesDeLEtablissement(
     idEtablissement: string
   ): Promise<BaseJeune[]> {
-    // const session = await getSession()
-    // const { content: beneficiaires } = await this.apiClient.get<BaseJeune[]>(
-    //   `/etablissements/${idEtablissement}/jeunes`,
-    //   session!.accessToken
-    // )
-    //FIXME: retirer quand back prêt
-    return desItemsJeunes()
+    const session = await getSession()
+    const { content: jeunes } = await this.apiClient.get<BaseJeuneJson[]>(
+      `/etablissements/${idEtablissement}/jeunes`,
+      session!.accessToken
+    )
+    return jeunes.map(jsonToBaseJeune)
   }
 }
