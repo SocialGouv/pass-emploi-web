@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
-import SuggestionOffresEmploiCard from 'components/offres/suggestions/SuggestionOffresEmploiCard'
+import SuggestionCard from 'components/offres/suggestions/SuggestionCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -35,6 +35,7 @@ type PartageSuggestionProps = PageProps & {
 
 function PartageSuggestion({
   jeunes,
+  type,
   titre,
   motsCles,
   typeLocalite,
@@ -90,7 +91,8 @@ function PartageSuggestion({
 
   return (
     <>
-      <SuggestionOffresEmploiCard
+      <SuggestionCard
+        type={type}
         titre={titre}
         motsCles={motsCles}
         labelLocalite={labelLocalite}
