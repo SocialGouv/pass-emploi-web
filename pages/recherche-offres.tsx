@@ -2,9 +2,9 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
-import PartageCriteresOffreButton from 'components/offres/criteres/PartageCriteresOffreButton'
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
+import PartageSuggestionButton from 'components/offres/suggestions/PartageSuggestionButton'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   BaseImmersion,
@@ -205,9 +205,9 @@ function RechercheOffres({
         stateQueryImmersions={[queryImmersions, setQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
-      <PartageCriteresOffreButton
+      <PartageSuggestionButton
         typeOffre={typeOffre}
-        criteres={getQueryOffreEmploi()}
+        suggestionOffreEmploi={getQueryOffreEmploi()}
       />
       <ResultatsRechercheOffre
         isSearching={isSearching}

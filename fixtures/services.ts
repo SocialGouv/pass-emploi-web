@@ -6,10 +6,10 @@ import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
-import { RecherchesService } from 'services/recherches.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
+import { SuggestionsService } from 'services/suggestions.service'
 
 export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
@@ -170,10 +170,10 @@ export function mockedImmersionsService(
 }
 
 export function mockedRecherchesSerivice(
-  overrides: Partial<RecherchesService> = {}
+  overrides: Partial<SuggestionsService> = {}
 ) {
-  const defaults: RecherchesService = {
-    postCriteresRechercheOffreEmploi: jest.fn(),
+  const defaults: SuggestionsService = {
+    postSuggestionOffreEmploi: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

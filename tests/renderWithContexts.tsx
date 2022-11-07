@@ -47,7 +47,7 @@ export default function renderWithContexts(
     offresEmploiService: mockedOffresEmploiService(),
     servicesCiviquesService: mockedServicesCiviquesService(),
     immersionsService: mockedImmersionsService(),
-    recherchesService: mockedRecherchesSerivice(),
+    suggestionsService: mockedRecherchesSerivice(),
     ...customDependances,
   }
 

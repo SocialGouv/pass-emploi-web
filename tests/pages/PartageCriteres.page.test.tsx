@@ -8,11 +8,11 @@ import { uneCommune } from 'fixtures/referentiel'
 import { mockedRecherchesSerivice } from 'fixtures/services'
 import { TypeOffre } from 'interfaces/offre'
 import PartageCritere from 'pages/offres/partage-critere'
-import { RecherchesService } from 'services/recherches.service'
+import { SuggestionsService } from 'services/suggestions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Partage Critères', () => {
-  let recherchesService: RecherchesService
+  let recherchesService: SuggestionsService
 
   beforeEach(() => {
     recherchesService = mockedRecherchesSerivice()
@@ -36,7 +36,7 @@ describe('Partage Critères', () => {
             withoutChat={true}
             returnTo=''
           />,
-          { customDependances: { recherchesService } }
+          { customDependances: { suggestionsService: recherchesService } }
         )
 
         //Given
@@ -70,7 +70,6 @@ describe('Partage Critères', () => {
 
       describe('quand on remplit le formulaire', () => {
         let push: Function
-        let newMessage: string
         beforeEach(async () => {
           push = jest.fn(() => Promise.resolve())
           ;(useRouter as jest.Mock).mockReturnValue({ push })
