@@ -2,7 +2,6 @@ import { act, fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
-import { desCriteresDeRecherchesOffreEmploiEnBase64 } from 'fixtures/base64'
 import { listeBaseOffresEmploi, uneBaseOffreEmploi } from 'fixtures/offre'
 import { desLocalites, unDepartement, uneCommune } from 'fixtures/referentiel'
 import {
@@ -283,7 +282,7 @@ describe('Page Recherche Offres Emploi', () => {
   })
 
   describe('partage des critères de recherche', () => {
-    it('n’affiche pas le bouton de partage s’il n’y a pas de localité renseignée', () => {
+    it('n’affiche pas le bouton de partage s’il n’y ni mots clés ni localité renseignés', () => {
       expect(() =>
         screen.getByText(
           'Suggérer ces critères de recherche à vos bénéficiaires'
@@ -296,8 +295,10 @@ describe('Page Recherche Offres Emploi', () => {
       ).toThrow()
     })
 
-    it('affiche le bouton de partage de critère s’il y a une localité renseignée', async () => {
+    it('affiche le bouton de partage de critère s’il y a des mots clés et une localité renseignés', async () => {
       // When
+      const inputMotsCles = screen.getByLabelText(/Mots clés/)
+      await userEvent.type(inputMotsCles, 'Prof')
       await saisirLocalite('paris 14')
 
       // Then
@@ -313,24 +314,11 @@ describe('Page Recherche Offres Emploi', () => {
       ).toBeInTheDocument()
     })
 
-    it('construit le bon lien qui correspond aux critères de recherches en base 64', async () => {
+    it('construit le bon lien qui correspond aux critères de recherches', async () => {
       // Given
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       await userEvent.type(inputMotsCles, 'Prof')
       await saisirLocalite('paris 14')
-      await userEvent.click(screen.getByText('Voir plus de critères'))
-
-      await userEvent.click(
-        screen.getByLabelText(/Afficher uniquement les offres débutant accepté/)
-      )
-      await userEvent.click(screen.getByLabelText('CDI'))
-      await userEvent.click(screen.getByLabelText('Autres'))
-      await userEvent.click(screen.getByLabelText('Temps plein'))
-      await userEvent.click(screen.getByLabelText('Temps partiel'))
-
-      fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
-        target: { value: 100 },
-      })
 
       // Then
       expect(
@@ -339,7 +327,7 @@ describe('Page Recherche Offres Emploi', () => {
         })
       ).toHaveAttribute(
         'href',
-        `/offres/partage-critere?type=EMPLOI&criteres=${desCriteresDeRecherchesOffreEmploiEnBase64()}`
+        `/offres/partage-critere?type=EMPLOI&titre=Prof%20-%20PARIS%2014&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014&codeLocalite=75114`
       )
     })
   })

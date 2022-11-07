@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
 import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
-import CriteresOffresEmploiCard from 'components/offres/criteres/CriteresOffresEmploiCard'
+import SuggestionOffresEmploiCard from 'components/offres/suggestions/SuggestionOffresEmploiCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -13,20 +13,22 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { Localite } from 'interfaces/referentiel'
+import { LocaliteType } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
-import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
-import { RecherchesService } from 'services/recherches.service'
+import { SuggestionsService } from 'services/suggestions.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { decodeBase64 } from 'utils/encoding/base64-enconding'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type PartageCritereProps = PageProps & {
   jeunes: BaseJeune[]
   type: TypeOffre
-  criteresDeRecherche: SearchOffresEmploiQuery
+  titre: string
+  motsCles: string
+  typeLocalite: LocaliteType
+  labelLocalite: string
+  codeLocalite: string
   withoutChat: true
   returnTo: string
 }
@@ -34,19 +36,20 @@ type PartageCritereProps = PageProps & {
 function PartageCritere({
   jeunes,
   type,
-  criteresDeRecherche,
+  titre,
+  motsCles,
+  typeLocalite,
+  labelLocalite,
+  codeLocalite,
   returnTo,
 }: PartageCritereProps) {
-  const recherchesService =
-    useDependance<RecherchesService>('recherchesService')
+  const suggestionsService =
+    useDependance<SuggestionsService>('suggestionsService')
   const router = useRouter()
   const [idsDestinataires, setIdsDestinataires] = useState<
     RequiredValue<string[]>
   >({ value: [] })
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
-
-  const localite = getLocalite(criteresDeRecherche)
-  const titre = getTitre(criteresDeRecherche.motsCles, localite)
 
   const formIsValid = useMemo(
     () => idsDestinataires.value.length > 0,
@@ -69,11 +72,13 @@ function PartageCritere({
     setIsPartageEnCours(true)
 
     try {
-      await recherchesService.postCriteresRechercheOffreEmploi(
+      await suggestionsService.postSuggestionOffreEmploi(
         idsDestinataires.value,
-        criteresDeRecherche,
         titre,
-        localite?.libelle
+        motsCles,
+        labelLocalite,
+        typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
+        typeLocalite === 'COMMUNE' ? codeLocalite : undefined
       )
       await router.push({
         pathname: '/recherche-offres',
@@ -86,10 +91,10 @@ function PartageCritere({
 
   return (
     <>
-      <CriteresOffresEmploiCard
+      <SuggestionOffresEmploiCard
         titre={titre}
-        localite={localite}
-        criteres={criteresDeRecherche}
+        motsCles={motsCles}
+        labelLocalite={labelLocalite}
       />
       <p className='mt-8'>
         Ces critères apparaitrons dans la section favoris, catégorie recherches
@@ -130,18 +135,6 @@ function PartageCritere({
   )
 }
 
-function getLocalite(criteres: SearchOffresEmploiQuery): Localite | undefined {
-  if (criteres.departement) {
-    return criteres.departement
-  } else if (criteres.commune) {
-    return criteres.commune
-  }
-}
-
-function getTitre(motsCles?: string, localite?: Localite): string {
-  return [motsCles, localite?.libelle].filter((e) => e).join(' - ')
-}
-
 export const getServerSideProps: GetServerSideProps<
   PartageCritereProps
 > = async (context) => {
@@ -157,18 +150,20 @@ export const getServerSideProps: GetServerSideProps<
     accessToken
   )
 
-  const criteresDecoded = decodeBase64(context.query.criteres as string)
-  const queryOffresEmploi = JSON.parse(criteresDecoded)
-
   const referer = context.req.headers.referer
   const redirectTo = referer ?? '/recherche-offres'
+
   return {
     props: {
       jeunes,
       type: context.query.type as TypeOffre,
-      criteresDeRecherche: queryOffresEmploi,
-      returnTo: redirectTo,
+      titre: context.query.titre as string,
+      motsCles: context.query.motsCles as string,
+      typeLocalite: context.query.typeLocalite as LocaliteType,
+      labelLocalite: context.query.labelLocalite as string,
+      codeLocalite: context.query.codeLocalite as string,
       withoutChat: true,
+      returnTo: redirectTo,
       pageTitle: 'Partager une recherche',
     },
   }
