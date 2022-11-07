@@ -46,6 +46,7 @@ function EditionRdv({
   rdv,
 }: EditionRdvProps) {
   const router = useRouter()
+  const jeunesService = useDependance<JeunesService>('jeunesService')
   const rendezVousService =
     useDependance<RendezVousService>('rendezVousService')
   const [conseiller, setConseiller] = useConseiller()
@@ -167,7 +168,7 @@ function EditionRdv({
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence: agence.nom })
+    setConseiller({ ...conseiller!, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
     setShowAgenceModal(false)
   }
@@ -175,6 +176,13 @@ function EditionRdv({
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
   useMatomo(trackingTitle)
+
+  function recupererJeunesDeLEtablissement() {
+    if (conseiller?.agence?.id) {
+      return jeunesService.getJeunesDeLEtablissement(conseiller.agence.id)
+    }
+    return Promise.resolve([])
+  }
 
   return (
     <>
@@ -203,7 +211,8 @@ function EditionRdv({
       )}
 
       <EditionRdvForm
-        jeunes={jeunes}
+        jeunesConseiller={jeunes}
+        recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
         typesRendezVous={typesRendezVous}
         idJeune={idJeune}
         rdv={rdv}

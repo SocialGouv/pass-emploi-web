@@ -46,7 +46,9 @@ describe('ConseillerApiService', () => {
         `/conseillers/${idConseiller}`,
         accessToken
       )
-      expect(actual).toEqual(unConseiller({ agence: 'Milo Marseille' }))
+      expect(actual).toEqual(
+        unConseiller({ agence: { nom: 'Milo Marseille', id: 'ID' } })
+      )
     })
   })
 
