@@ -46,7 +46,7 @@ describe('Partage Suggestion', () => {
       expect(actual).toEqual({ redirect: { destination: 'whatever' } })
     })
 
-    describe("quand l'utilisateur est connecté", () => {
+    describe('quand l’utilisateur est connecté', () => {
       let jeunes: JeuneFromListe[]
       let jeunesService: JeunesService
       beforeEach(() => {

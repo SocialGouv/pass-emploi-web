@@ -15,7 +15,7 @@ export default function PartageSuggestionButton({
   typeOffre,
   suggestionOffreEmploi,
 }: PartageSuggestionButtonProps) {
-  function suggestionEstPartageable() {
+  function laSuggestionEstPartageable() {
     return (
       typeOffre === TypeOffre.EMPLOI &&
       suggestionOffreEmploi.motsCles &&
@@ -38,7 +38,7 @@ export default function PartageSuggestionButton({
 
   return (
     <>
-      {suggestionEstPartageable() && (
+      {laSuggestionEstPartageable() && (
         <div className='flex justify-end items-center my-8'>
           <p className='mr-4'>
             Suggérer ces critères de recherche à vos bénéficiaires
