@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { ReactNode } from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
@@ -18,16 +19,28 @@ export default function OffreCard({
   children,
   withPartage = false,
 }: OffreCardProps) {
+  const router = useRouter()
+  const hrefDetail = '/offres/' + offrePath
+
+  function goToDetail() {
+    router.push(hrefDetail)
+  }
+
   return (
     <div className='relative'>
-      <Link href={`/offres/${offrePath}`}>
-        <a
-          aria-label={`Détail de l’offre ${titreLien}`}
-          className='block rounded-small shadow-s p-6 hover:bg-primary_lighten'
-        >
-          {children}
+      <div
+        tabIndex={0}
+        className='block rounded-small shadow-s p-6 cursor-pointer hover:bg-primary_lighten'
+        onClick={goToDetail}
+      >
+        {children}
 
-          <div className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'>
+        <Link href={hrefDetail}>
+          <a
+            className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`Détail de l’offre ${titreLien}`}
+          >
             Voir le détail
             <IconComponent
               name={IconName.ChevronRight}
@@ -35,9 +48,9 @@ export default function OffreCard({
               focusable={false}
               aria-hidden={true}
             />
-          </div>
-        </a>
-      </Link>
+          </a>
+        </Link>
+      </div>
 
       {withPartage && (
         <div className='absolute top-6 right-6'>
