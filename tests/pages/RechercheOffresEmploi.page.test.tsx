@@ -282,7 +282,7 @@ describe('Page Recherche Offres Emploi', () => {
   })
 
   describe('partage des critères de recherche', () => {
-    it('n’affiche pas le bouton de partage s’il n’y ni mots clés ni localité renseignés', () => {
+    it('n’affiche pas le bouton de partage s’il n’y a ni mots clés ni localité renseignés', () => {
       expect(() =>
         screen.getByText(
           'Suggérer ces critères de recherche à vos bénéficiaires'
