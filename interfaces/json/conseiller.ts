@@ -46,7 +46,7 @@ export function jsonToConseiller(
   }
 
   if (agence) {
-    conseiller.agence = agence.nom
+    conseiller.agence = agence
   }
 
   return conseiller

@@ -417,7 +417,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await jeunesService.getJeunesParEtablissements(
+      const actual = await jeunesService.getJeunesDeLEtablissement(
         'id-etablissement'
       )
 

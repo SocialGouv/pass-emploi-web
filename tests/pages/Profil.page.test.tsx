@@ -64,7 +64,9 @@ describe('Page Profil conseiller', () => {
 
       it('en tant que Mission locale avec une agence déjà renseignée charge la page avec les bonnes props sans le referetiel d’agences', async () => {
         // Given
-        const conseiller = unConseiller({ agence: 'MLS3F SAINT-LOUIS' })
+        const conseiller = unConseiller({
+          agence: { nom: 'MLS3F SAINT-LOUIS' },
+        })
         const structure = 'MILO'
 
         // When
@@ -138,7 +140,7 @@ describe('Page Profil conseiller', () => {
         // Given
         conseiller = unConseiller({
           email: 'nils.tavernier@mail.com',
-          agence: 'MLS3F SAINT-LOUIS',
+          agence: { nom: 'MLS3F SAINT-LOUIS' },
         })
 
         // When
@@ -195,7 +197,7 @@ describe('Page Profil conseiller', () => {
           // Given
           const conseiller = unConseiller({
             structure: StructureConseiller.MILO,
-            agence: 'MLS3F SAINT-LOUIS',
+            agence: { nom: 'MLS3F SAINT-LOUIS' },
           })
 
           // When

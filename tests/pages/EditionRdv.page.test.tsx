@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
 import {
@@ -222,12 +222,20 @@ describe('EditionRdv', () => {
     let jeunes: JeuneFromListe[]
     let jeunesEtablissement: BaseJeune[]
     let rendezVousService: RendezVousService
+    let jeunesService: JeunesService
     let typesRendezVous: TypeRendezVous[]
     let push: Function
     beforeEach(() => {
       jeunes = desItemsJeunes()
+      jeunesEtablissement = [
+        uneBaseJeune(),
+        uneBaseJeune({ id: '2', prenom: 'Nadia' }),
+      ]
       rendezVousService = mockedRendezVousService({
         deleteRendezVous: jest.fn(async () => undefined),
+      })
+      jeunesService = mockedJeunesService({
+        getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
       })
       typesRendezVous = typesDeRendezVous()
 
@@ -758,6 +766,7 @@ describe('EditionRdv', () => {
                 rendezVousService,
                 referentielService,
                 conseillerService,
+                jeunesService,
               },
               customConseiller: { structure: StructureConseiller.MILO },
             }
@@ -857,8 +866,10 @@ describe('EditionRdv', () => {
             pageTitle={''}
           />,
           {
-            customDependances: { rendezVousService },
-            customConseiller: { agence: 'Mission locale Aubenas' },
+            customDependances: { rendezVousService, jeunesService },
+            customConseiller: {
+              agence: { nom: 'Mission locale Aubenas', id: 'id-etablissement' },
+            },
           }
         )
         const selectType = screen.getByRole('combobox', {
@@ -888,6 +899,43 @@ describe('EditionRdv', () => {
           expect.objectContaining({
             jeunesIds: [],
           })
+        )
+      })
+      it('récupère les bénéficiaires de l’établissement', async () => {
+        // Given
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunes}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/mes-rendezvous'}
+            pageTitle={''}
+          />,
+          {
+            customDependances: { rendezVousService, jeunesService },
+            customConseiller: {
+              agence: { nom: 'Mission locale Aubenas', id: 'id-etablissement' },
+            },
+          }
+        )
+        const selectType = screen.getByRole('combobox', {
+          name: 'Type',
+        })
+
+        // When
+        await userEvent.selectOptions(selectType, 'Atelier')
+
+        // Then
+        jeunesEtablissement.forEach((jeune) =>
+          expect(
+            screen.getByRole('option', {
+              name: getNomJeuneComplet(jeune),
+              hidden: true,
+            })
+          ).toBeInTheDocument()
+        )
+        expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledWith(
+          'id-etablissement'
         )
       })
     })

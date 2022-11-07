@@ -27,17 +27,15 @@ import {
   TypeRendezVous,
 } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
-import { JeunesApiService } from 'services/jeunes.service'
 import {
   DATE_DASH_SEPARATOR,
   TIME_24_SIMPLE,
   toFrenchFormat,
   toFrenchString,
 } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 
 interface EditionRdvFormProps {
-  jeunes: BaseJeune[]
+  jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeRendezVous[]
   redirectTo: string
   aDesJeunesDUnAutrePortefeuille: boolean
@@ -50,10 +48,12 @@ interface EditionRdvFormProps {
   idJeune?: string
   showConfirmationModal: (payload: RdvFormData) => void
   renseignerAgence: () => void
+  recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
 }
 
 export function EditionRdvForm({
-  jeunes,
+  jeunesConseiller,
+  recupererJeunesDeLEtablissement,
   typesRendezVous,
   redirectTo,
   aDesJeunesDUnAutrePortefeuille,
@@ -67,7 +67,6 @@ export function EditionRdvForm({
   showConfirmationModal,
   renseignerAgence,
 }: EditionRdvFormProps) {
-  const jeunesService = useDependance<JeunesApiService>('jeunesService')
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
   const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
     []
@@ -163,11 +162,6 @@ export function EditionRdvForm({
     setShowPrecisionType(value === TYPE_RENDEZ_VOUS.Autre)
     if (value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
-    }
-    if (isCodeTypeAnimationCollective(codeTypeRendezVous)) {
-      setJeunesEtablissement(
-        await jeunesService.getJeunesParEtablissements('id-etablissement')
-      )
     }
   }
 
@@ -307,6 +301,19 @@ export function EditionRdvForm({
     else onChanges(false)
   })
 
+  useEffect(() => {
+    if (
+      isCodeTypeAnimationCollective(codeTypeRendezVous) &&
+      !jeunesEtablissement.length
+    ) {
+      recupererJeunesDeLEtablissement().then(setJeunesEtablissement)
+    }
+  }, [
+    codeTypeRendezVous,
+    jeunesEtablissement.length,
+    recupererJeunesDeLEtablissement,
+  ])
+
   function emailInvitationText(conseillerIsCreator: boolean) {
     if (conseillerIsCreator) {
       return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
@@ -404,7 +411,7 @@ export function EditionRdvForm({
             <JeunesMultiselectAutocomplete
               jeunes={
                 !isCodeTypeAnimationCollective(codeTypeRendezVous)
-                  ? jeunes
+                  ? jeunesConseiller
                   : jeunesEtablissement
               }
               typeSelection='Bénéficiaires'
@@ -636,7 +643,7 @@ export function EditionRdvForm({
       }))
     }
     if (idJeune) {
-      const jeune = jeunes.find(({ id }) => id === idJeune)!
+      const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
       return [jeuneToOption(jeune)]
     }
     return []

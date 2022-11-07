@@ -37,7 +37,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence: agence.nom })
+    setConseiller({ ...conseiller!, agence })
     setTrackingLabel('Succès ajout agence')
     await router.replace(
       `${redirectUrl}?${QueryParam.choixAgence}=${QueryValue.succes}`

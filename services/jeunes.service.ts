@@ -101,7 +101,7 @@ export interface JeunesService {
     dateFin: DateTime
   ): Promise<IndicateursSemaine>
 
-  getJeunesParEtablissements(idEtablissement: string): Promise<BaseJeune[]>
+  getJeunesDeLEtablissement(idEtablissement: string): Promise<BaseJeune[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -339,7 +339,7 @@ export class JeunesApiService implements JeunesService {
     return jsonToIndicateursSemaine(indicateurs)
   }
 
-  async getJeunesParEtablissements(
+  async getJeunesDeLEtablissement(
     idEtablissement: string
   ): Promise<BaseJeune[]> {
     // const session = await getSession()
@@ -347,7 +347,7 @@ export class JeunesApiService implements JeunesService {
     //   `/etablissements/${idEtablissement}/jeunes`,
     //   session!.accessToken
     // )
-    //FIXME: retirer quand back prêt, voir si on change par BaseJeune
+    //FIXME: retirer quand back prêt
     return desItemsJeunes()
   }
 }

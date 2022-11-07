@@ -59,7 +59,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence: agence.nom })
+    setConseiller({ ...conseiller!, agence })
     setTrackingLabel('Profil - Succès ajout agence')
   }
 
@@ -101,7 +101,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                     Votre {labelAgence} :
                   </dt>
                   <dd className='ml-2 inline text-base-bold'>
-                    {conseiller.agence}
+                    {conseiller.agence.nom}
                   </dd>
                 </div>
               )}
