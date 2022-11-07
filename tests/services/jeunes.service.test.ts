@@ -12,6 +12,7 @@ import {
   unDetailJeune,
   unDetailJeuneJson,
   uneBaseJeune,
+  uneBaseJeuneJson,
   uneMetadonneeFavoris,
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
@@ -408,12 +409,12 @@ describe('JeunesApiService', () => {
       expect(actual).toEqual(desIndicateursSemaine())
     })
   })
-  //FIXME: déplacer dans nouveau service
-  xdescribe('getEtablissements', () => {
+
+  describe('getJeunesDeLEtablissement', () => {
     it('retourne les bénéficiaires d’un établissement', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: [uneBaseJeune()],
+        content: [uneBaseJeuneJson()],
       })
 
       // When

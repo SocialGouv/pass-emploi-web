@@ -14,6 +14,7 @@ import {
 } from 'interfaces/jeune'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 import {
+  BaseJeuneJson,
   DetailJeuneJson,
   IndicateursSemaineJson,
   ItemJeuneJson,
@@ -120,6 +121,17 @@ export const desItemsJeunes = (): JeuneFromListe[] => [
     isActivated: true,
   }),
 ]
+
+export const uneBaseJeuneJson = (
+  overrides: Partial<BaseJeuneJson> = {}
+): BaseJeuneJson => {
+  const defaults: BaseJeuneJson = {
+    id: 'jeune-1',
+    firstName: 'Kenji',
+    lastName: 'Jirac',
+  }
+  return { ...defaults, ...overrides }
+}
 
 export const unDetailJeuneJson = (
   overrides: Partial<DetailJeuneJson> = {}
