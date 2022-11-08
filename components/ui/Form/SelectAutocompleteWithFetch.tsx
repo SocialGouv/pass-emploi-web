@@ -65,10 +65,6 @@ export default function SelectAutocompleteWithFetch<T>({
   }
 
   useEffect(() => {
-    setInput({ value: value && toUpperCaseAlpha(value) })
-  }, [value])
-
-  useEffect(() => {
     if (debouncedInput) {
       fetch(debouncedInput).then((newEntites) => {
         const simplifiedEntities: WithSimplifiedLabel<T>[] = newEntites.map(
