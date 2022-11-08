@@ -29,11 +29,10 @@ export default function SuggestionCard({
   }
 
   return (
-    <div className='rounded-small shadow-s p-6'>
+    <div className='rounded-large shadow-s p-6'>
       <p className='text-base-bold mb-2'>{titre}</p>
       <DataTag text={getTypeLabel()} />
       <DataTag className='ml-2' text={motsCles} />
-      {/* TODO-1027 autre moyen pour passer à la ligne que d'encapsuler dans div ? */}
       <div className='mt-4'>
         <DataTag text={labelLocalite} iconName={IconName.Location} />
       </div>

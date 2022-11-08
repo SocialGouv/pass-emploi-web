@@ -36,12 +36,12 @@ import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps & {
   partageOffreSuccess?: boolean
-  partageCriteresSuccess?: boolean
+  suggestionRechercheSuccess?: boolean
 }
 
 function RechercheOffres({
   partageOffreSuccess,
-  partageCriteresSuccess,
+  suggestionRechercheSuccess,
 }: RechercheOffresProps) {
   const referentielService =
     useDependance<ReferentielService>('referentielService')
@@ -79,7 +79,7 @@ function RechercheOffres({
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
   if (partageOffreSuccess) initialTracking += ' - Partage offre succès'
-  if (partageCriteresSuccess)
+  if (suggestionRechercheSuccess)
     initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -238,9 +238,9 @@ export const getServerSideProps: GetServerSideProps<
     props.partageOffreSuccess =
       context.query[QueryParam.partageOffre] === QueryValue.succes
 
-  if (context.query[QueryParam.partageCriteres])
-    props.partageCriteresSuccess =
-      context.query[QueryParam.partageCriteres] === QueryValue.succes
+  if (context.query[QueryParam.suggestionRecherche])
+    props.suggestionRechercheSuccess =
+      context.query[QueryParam.suggestionRecherche] === QueryValue.succes
 
   return { props }
 }
