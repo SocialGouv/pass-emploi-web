@@ -10,6 +10,7 @@ interface JeunesMultiselectAutocompleteProps {
   jeunes: BaseJeune[]
   typeSelection: string
   onUpdate: (selectedIds: string[]) => void
+  required?: boolean
   defaultJeunes?: OptionJeune[]
   error?: string
 }
@@ -25,6 +26,7 @@ export default function JeunesMultiselectAutocomplete({
   jeunes,
   onUpdate,
   typeSelection,
+  required = true,
   error,
   defaultJeunes = [],
 }: JeunesMultiselectAutocompleteProps) {
@@ -89,7 +91,7 @@ export default function JeunesMultiselectAutocomplete({
 
   return (
     <>
-      <Label htmlFor='select-jeunes' inputRequired={true}>
+      <Label htmlFor='select-jeunes' inputRequired={required}>
         {{
           main: 'Rechercher et ajouter des jeunes',
           helpText: 'Nom et prénom',
@@ -104,7 +106,7 @@ export default function JeunesMultiselectAutocomplete({
         id='select-jeunes'
         options={buildOptions()}
         onChange={(value: string) => selectJeune(value)}
-        required={true}
+        required={required}
         multiple={true}
         aria-controls='selected-jeunes'
         ref={input}

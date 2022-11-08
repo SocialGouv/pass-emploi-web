@@ -4,6 +4,7 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import {
+  BaseJeune,
   ConseillerHistorique,
   DetailJeune,
   IndicateursSemaine,
@@ -15,9 +16,11 @@ import {
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
 import {
+  BaseJeuneJson,
   DetailJeuneJson,
   IndicateursSemaineJson,
   ItemJeuneJson,
+  jsonToBaseJeune,
   jsonToDetailJeune,
   jsonToIndicateursSemaine,
   jsonToItemJeune,
@@ -98,6 +101,8 @@ export interface JeunesService {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<IndicateursSemaine>
+
+  getJeunesDeLEtablissement(idEtablissement: string): Promise<BaseJeune[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -333,5 +338,16 @@ export class JeunesApiService implements JeunesService {
         session!.accessToken
       )
     return jsonToIndicateursSemaine(indicateurs)
+  }
+
+  async getJeunesDeLEtablissement(
+    idEtablissement: string
+  ): Promise<BaseJeune[]> {
+    const session = await getSession()
+    const { content: jeunes } = await this.apiClient.get<BaseJeuneJson[]>(
+      `/etablissements/${idEtablissement}/jeunes`,
+      session!.accessToken
+    )
+    return jeunes.map(jsonToBaseJeune)
   }
 }

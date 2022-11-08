@@ -35,7 +35,7 @@ import {
 } from 'utils/date'
 
 interface EditionRdvFormProps {
-  jeunes: BaseJeune[]
+  jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeRendezVous[]
   redirectTo: string
   aDesJeunesDUnAutrePortefeuille: boolean
@@ -48,10 +48,12 @@ interface EditionRdvFormProps {
   idJeune?: string
   showConfirmationModal: (payload: RdvFormData) => void
   renseignerAgence: () => void
+  recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
 }
 
 export function EditionRdvForm({
-  jeunes,
+  jeunesConseiller,
+  recupererJeunesDeLEtablissement,
   typesRendezVous,
   redirectTo,
   aDesJeunesDUnAutrePortefeuille,
@@ -66,6 +68,9 @@ export function EditionRdvForm({
   renseignerAgence,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
+  const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
+    []
+  )
   const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
     value: defaultJeunes.map(({ id }) => id),
   })
@@ -100,6 +105,7 @@ export function EditionRdvForm({
   const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(
     Boolean(rdv?.invitation)
   )
+  const [titre, setTitre] = useState<RequiredValue>({ value: rdv?.titre ?? '' })
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
 
   const isAgenceNecessaire =
@@ -123,6 +129,7 @@ export function EditionRdvForm({
           duree.value ||
           adresse ||
           organisme ||
+          titre ||
           commentaire
       )
     }
@@ -137,6 +144,7 @@ export function EditionRdvForm({
       duree.value !== dureeRdv ||
       adresse !== rdv.adresse ||
       organisme !== rdv.organisme ||
+      titre.value !== rdv.titre ||
       commentaire !== rdv.comment ||
       isConseillerPresent !== rdv.presenceConseiller
     )
@@ -144,15 +152,16 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
-      Boolean(idsJeunes.value.length) &&
+      typeIsValid() &&
+      beneficiairesAreValid() &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
-      typeIsValid()
+      titreIsValid()
     )
   }
 
-  function handleSelectedTypeRendezVous(value: string) {
+  async function handleSelectedTypeRendezVous(value: string) {
     setCodeTypeRendezVous(value)
     setShowPrecisionType(value === TYPE_RENDEZ_VOUS.Autre)
     if (value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
@@ -163,7 +172,7 @@ export function EditionRdvForm({
   function updateIdsJeunes(selectedIds: string[]) {
     setIdsJeunes({
       value: selectedIds,
-      error: !selectedIds.length
+      error: beneficiairesAreValid()
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
@@ -177,6 +186,11 @@ export function EditionRdvForm({
           "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
       })
     }
+  }
+
+  function beneficiairesAreValid(): boolean {
+    if (isCodeTypeAnimationCollective(codeTypeRendezVous)) return true
+    return idsJeunes.value.length > 0
   }
 
   function dateIsValid(): boolean {
@@ -240,6 +254,24 @@ export function EditionRdvForm({
     return true
   }
 
+  function titreIsValid(): boolean {
+    return (
+      !isCodeTypeAnimationCollective(codeTypeRendezVous) || Boolean(titre.value)
+    )
+  }
+
+  function validateTitre() {
+    if (isCodeTypeAnimationCollective(codeTypeRendezVous) && !titre.value) {
+      setTitre({
+        ...titre,
+        error:
+          'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.',
+      })
+    } else {
+      setTitre({ value: titre.value })
+    }
+  }
+
   function typeEntretienIndividuelConseillerSelected() {
     return codeTypeRendezVous === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
   }
@@ -277,6 +309,7 @@ export function EditionRdvForm({
       modality: modalite || undefined,
       adresse: adresse || undefined,
       organisme: organisme || undefined,
+      titre: titre.value || undefined,
       comment: commentaire || undefined,
     }
     if (!conseillerIsCreator && sendEmailInvitation) {
@@ -290,6 +323,19 @@ export function EditionRdvForm({
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
   })
+
+  useEffect(() => {
+    if (
+      isCodeTypeAnimationCollective(codeTypeRendezVous) &&
+      !jeunesEtablissement.length
+    ) {
+      recupererJeunesDeLEtablissement().then(setJeunesEtablissement)
+    }
+  }, [
+    codeTypeRendezVous,
+    jeunesEtablissement.length,
+    recupererJeunesDeLEtablissement,
+  ])
 
   function emailInvitationText(conseillerIsCreator: boolean) {
     if (conseillerIsCreator) {
@@ -386,13 +432,19 @@ export function EditionRdvForm({
         <>
           <Etape numero={2} titre='Bénéficiaires'>
             <JeunesMultiselectAutocomplete
-              jeunes={jeunes}
+              jeunes={
+                !isCodeTypeAnimationCollective(codeTypeRendezVous)
+                  ? jeunesConseiller
+                  : jeunesEtablissement
+              }
               typeSelection='Bénéficiaires'
               defaultJeunes={defaultJeunes}
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
+              required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
             />
           </Etape>
+
           <Etape numero={3} titre='Lieu et date'>
             <Label htmlFor='modalite'>Modalité</Label>
             <Select
@@ -540,6 +592,27 @@ export function EditionRdvForm({
               </label>
             </div>
 
+            <Label
+              htmlFor='titre'
+              inputRequired={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+            >
+              Titre
+            </Label>
+            {titre.error && (
+              <InputError id='titre--error' className='mb-2'>
+                {titre.error}
+              </InputError>
+            )}
+            <Input
+              id='titre'
+              type='text'
+              defaultValue={titre.value}
+              required={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+              invalid={Boolean(titre.error)}
+              onChange={(value: string) => setTitre({ value })}
+              onBlur={validateTitre}
+            />
+
             <Label htmlFor='commentaire' withBulleMessageSensible={true}>
               {{
                 main: 'Commentaire à destination des jeunes',
@@ -551,7 +624,7 @@ export function EditionRdvForm({
               id='commentaire'
               defaultValue={commentaire}
               rows={3}
-              onChange={(e) => setCommentaire(e.target.value)}
+              onChange={setCommentaire}
             />
           </Etape>
 
@@ -615,7 +688,7 @@ export function EditionRdvForm({
       }))
     }
     if (idJeune) {
-      const jeune = jeunes.find(({ id }) => id === idJeune)!
+      const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
       return [jeuneToOption(jeune)]
     }
     return []

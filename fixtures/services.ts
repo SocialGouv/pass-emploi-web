@@ -29,6 +29,7 @@ export function mockedJeunesService(
     getMotifsSuppression: jest.fn(),
     getMetadonneesFavorisJeune: jest.fn(),
     modifierIdentifiantPartenaire: jest.fn(),
+    getJeunesDeLEtablissement: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

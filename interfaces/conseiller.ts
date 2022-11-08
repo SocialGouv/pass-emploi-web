@@ -21,5 +21,5 @@ export interface Conseiller {
   structure: StructureConseiller
   estSuperviseur: boolean
   email?: string
-  agence?: string
+  agence?: { nom: string; id?: string }
 }

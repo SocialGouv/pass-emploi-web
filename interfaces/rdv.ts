@@ -17,6 +17,7 @@ export interface RdvListItem {
 
 export interface Rdv {
   id: string
+  titre: string
   jeunes: BaseJeune[]
   type: TypeRendezVous
   precisionType: string

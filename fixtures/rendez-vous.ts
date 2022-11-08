@@ -44,6 +44,7 @@ export const typesDeRendezVous = (
 export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
   const defaults: Rdv = {
     id: '1',
+    titre: 'Prise de nouvelles par téléphone',
     jeunes: [
       {
         id: '1',
@@ -66,31 +67,6 @@ export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
 
   return { ...defaults, ...overrides }
 }
-
-export const uneListeDeRdv = (): Rdv[] => [
-  unRendezVous(),
-  {
-    id: '2',
-    jeunes: [
-      {
-        id: '2',
-        prenom: 'Raja',
-        nom: 'Jirac',
-      },
-    ],
-    type: { code: 'ATELIER', label: 'Atelier' },
-    precisionType: '',
-    modality: 'En agence',
-    date: '2021-10-25T12:00:00.000Z',
-    duration: 25,
-    adresse: '',
-    organisme: '',
-    presenceConseiller: true,
-    invitation: true,
-    comment: 'Mon premier rendez-vous',
-    createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
-  },
-]
 
 export function desRdvListItems(): RdvListItem[] {
   return [

@@ -11,6 +11,8 @@ import {
   desItemsJeunesJson,
   unDetailJeune,
   unDetailJeuneJson,
+  uneBaseJeune,
+  uneBaseJeuneJson,
   uneMetadonneeFavoris,
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
@@ -405,6 +407,27 @@ describe('JeunesApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(desIndicateursSemaine())
+    })
+  })
+
+  describe('getJeunesDeLEtablissement', () => {
+    it('retourne les bénéficiaires d’un établissement', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: [uneBaseJeuneJson()],
+      })
+
+      // When
+      const actual = await jeunesService.getJeunesDeLEtablissement(
+        'id-etablissement'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/etablissements/id-etablissement/jeunes',
+        'accessToken'
+      )
+      expect(actual).toEqual([uneBaseJeune()])
     })
   })
 })
