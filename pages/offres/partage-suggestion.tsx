@@ -99,7 +99,7 @@ function PartageSuggestion({
       />
       <p className='mt-8'>
         Ces critères apparaitrons dans la section favoris, catégorie recherches
-        sauvegardées,du bénéficiaire de l’application CEJ.
+        sauvegardées, du bénéficiaire de l’application CEJ.
       </p>
       <form onSubmit={partagerCriteresRecherche} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>

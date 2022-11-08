@@ -282,17 +282,18 @@ describe('Page Recherche Offres Emploi', () => {
   })
 
   describe('partage des critères de recherche', () => {
-    it('n’affiche pas le bouton de partage s’il n’y a ni mots clés ni localité renseignés', () => {
-      expect(() =>
-        screen.getByText(
-          'Suggérer ces critères de recherche à vos bénéficiaires'
-        )
-      ).toThrow()
-      expect(() =>
-        screen.getByRole('link', {
+    it('ne permet pas de partager s’il n’y a ni mots clés ni localité renseignés', async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
           name: `Partager critères de recherche`,
         })
-      ).toThrow()
+      )
+
+      expect(
+        screen.getByText(
+          'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail'
+        )
+      ).toBeInTheDocument()
     })
 
     it('affiche le bouton de partage de critère s’il y a des mots clés et une localité renseignés', async () => {

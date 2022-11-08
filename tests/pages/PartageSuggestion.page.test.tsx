@@ -197,7 +197,7 @@ describe('Partage Suggestion', () => {
       })
 
       describe('spécifique', () => {
-        it('envoi une suggestion d’offres d’emploi à plusieurs destinataires', async () => {
+        it('envoie une suggestion d’offres d’emploi à plusieurs destinataires', async () => {
           // When
           await userEvent.click(submitButton)
 
