@@ -31,8 +31,8 @@ export class SuggestionsApiService implements SuggestionsService {
     await this.apiClient.post(
       `/conseillers/${idConseiller}/recherches/suggestions/offres-emploi`,
       {
-        idsJeunes: idsJeunes,
-        titre: titre,
+        idsJeunes,
+        titre,
         q: motsCles,
         localisation: labelLocalite,
         departement: codeDepartement,
