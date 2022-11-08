@@ -6,28 +6,28 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TypeOffre } from 'interfaces/offre'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 
-interface PartageSuggestionButtonProps {
+interface PartageRechercheButtonProps {
   typeOffre?: TypeOffre
   suggestionOffreEmploi: SearchOffresEmploiQuery
 }
 
-export default function PartageSuggestionButton({
+export default function PartageRechercheButton({
   typeOffre,
   suggestionOffreEmploi,
-}: PartageSuggestionButtonProps) {
+}: PartageRechercheButtonProps) {
   const [errorMessage, setErrorMessage] = useState<boolean>()
 
-  function laSuggestionEstPartageable() {
+  function laRechercheEstPartageable() {
     return (
       suggestionOffreEmploi.motsCles &&
       (suggestionOffreEmploi.commune || suggestionOffreEmploi.departement)
     )
   }
 
-  function getPartagerSuggestionUrl(): string {
+  function getPartageRechercheUrl(): string {
     const localite =
       suggestionOffreEmploi.commune ?? suggestionOffreEmploi.departement!
-    const url = '/offres/partage-suggestion'
+    const url = '/offres/partage-recherche'
       .concat(`?type=${typeOffre}`)
       .concat(`&titre=${suggestionOffreEmploi.motsCles} - ${localite.libelle}`)
       .concat(`&motsCles=${suggestionOffreEmploi.motsCles}`)
@@ -60,9 +60,9 @@ export default function PartageSuggestionButton({
                 </p>
               )}
             </div>
-            {laSuggestionEstPartageable() && (
+            {laRechercheEstPartageable() && (
               <ButtonLink
-                href={getPartagerSuggestionUrl()}
+                href={getPartageRechercheUrl()}
                 style={ButtonStyle.SECONDARY}
               >
                 <IconComponent
@@ -74,7 +74,7 @@ export default function PartageSuggestionButton({
                 Partager <span className='sr-only'>critères de recherche</span>
               </ButtonLink>
             )}
-            {!laSuggestionEstPartageable() && (
+            {!laRechercheEstPartageable() && (
               <Button
                 style={ButtonStyle.SECONDARY}
                 onClick={() => setErrorMessage(true)}

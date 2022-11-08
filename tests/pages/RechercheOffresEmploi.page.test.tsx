@@ -328,7 +328,7 @@ describe('Page Recherche Offres Emploi', () => {
         })
       ).toHaveAttribute(
         'href',
-        `/offres/partage-suggestion?type=EMPLOI&titre=Prof%20-%20PARIS%2014&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014&codeLocalite=75114`
+        `/offres/partage-recherche?type=EMPLOI&titre=Prof%20-%20PARIS%2014&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014&codeLocalite=75114`
       )
     })
   })

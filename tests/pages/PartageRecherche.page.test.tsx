@@ -13,7 +13,7 @@ import { JeuneFromListe } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import PartageCritere, {
   getServerSideProps,
-} from 'pages/offres/partage-suggestion'
+} from 'pages/offres/partage-recherche'
 import { JeunesService } from 'services/jeunes.service'
 import { SuggestionsService } from 'services/suggestions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -23,7 +23,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
-describe('Partage Suggestion', () => {
+describe('Partage Recherche', () => {
   const TITRE = 'Prof - Marseille 06'
   const MOTS_CLES = 'Prof'
   const LABEL_LOCALITE = 'Marseille 06'
@@ -203,14 +203,13 @@ describe('Partage Suggestion', () => {
 
           expect(
             suggestionsService.envoyerSuggestionOffreEmploi
-          ).toHaveBeenCalledWith(
-            ['jeune-1', 'jeune-2'],
-            TITRE,
-            MOTS_CLES,
-            LABEL_LOCALITE,
-            undefined,
-            CODE_LOCALITE
-          )
+          ).toHaveBeenCalledWith({
+            idsJeunes: ['jeune-1', 'jeune-2'],
+            titre: TITRE,
+            motsCles: MOTS_CLES,
+            labelLocalite: LABEL_LOCALITE,
+            codeCommune: CODE_LOCALITE,
+          })
         })
       })
     })

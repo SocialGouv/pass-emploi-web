@@ -12,7 +12,7 @@ import {
   DetailOffreEmploi,
   MetadonneesOffres,
 } from 'interfaces/offre'
-import { Commune, Localite } from 'interfaces/referentiel'
+import { Commune, Departement } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
@@ -21,7 +21,7 @@ export type SearchOffresEmploiQuery = {
   motsCles?: string
   commune?: Commune
   debutantAccepte?: boolean
-  departement?: Localite // TODO-1027 Pourquoi 2 champs et surtout pourquoi si on en garde 2 le département est pas typé Departement ?
+  departement?: Departement
   durees?: Array<Duree>
   rayon?: number
   typesContrats?: Array<TypeContrat>

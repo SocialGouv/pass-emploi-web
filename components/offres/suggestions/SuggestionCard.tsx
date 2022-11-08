@@ -30,7 +30,7 @@ export default function SuggestionCard({
 
   return (
     <div className='rounded-large shadow-s p-6'>
-      <p className='text-base-bold mb-2'>{titre}</p>
+      <h2 className='text-base-bold mb-2'>{titre}</h2>
       <DataTag text={getTypeLabel()} />
       <DataTag className='ml-2' text={motsCles} />
       <div className='mt-4'>

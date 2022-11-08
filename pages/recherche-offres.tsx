@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
-import PartageSuggestionButton from 'components/offres/suggestions/PartageSuggestionButton'
+import PartageRechercheButton from 'components/offres/suggestions/PartageRechercheButton'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   BaseImmersion,
@@ -205,7 +205,7 @@ function RechercheOffres({
         stateQueryImmersions={[queryImmersions, setQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
-      <PartageSuggestionButton
+      <PartageRechercheButton
         typeOffre={typeOffre}
         suggestionOffreEmploi={getQueryOffreEmploi()}
       />
