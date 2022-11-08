@@ -153,7 +153,7 @@ export function EditionRdvForm({
   function formIsValid(): boolean {
     return (
       typeIsValid() &&
-      beneficiairesAreValid() &&
+      beneficiairesAreValid(idsJeunes.value) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
@@ -172,7 +172,7 @@ export function EditionRdvForm({
   function updateIdsJeunes(selectedIds: string[]) {
     setIdsJeunes({
       value: selectedIds,
-      error: beneficiairesAreValid()
+      error: !beneficiairesAreValid(selectedIds)
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
@@ -188,9 +188,9 @@ export function EditionRdvForm({
     }
   }
 
-  function beneficiairesAreValid(): boolean {
+  function beneficiairesAreValid(idsBeneficiaires: string[]): boolean {
     if (isCodeTypeAnimationCollective(codeTypeRendezVous)) return true
-    return idsJeunes.value.length > 0
+    return idsBeneficiaires.length > 0
   }
 
   function dateIsValid(): boolean {
