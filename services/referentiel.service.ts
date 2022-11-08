@@ -75,7 +75,9 @@ export class ReferentielApiService implements ReferentielService {
     )
 
     return Array.from(
-      new Map(localites.map((localite) => [localite.code, localite])).values()
+      new Map(
+        localites.map((json) => [json.code, jsonToLocalite(json)])
+      ).values()
     )
   }
 
@@ -87,4 +89,13 @@ export class ReferentielApiService implements ReferentielService {
     >(`/referentiels/actions-predefinies`, accessToken)
     return actionsPredefinies
   }
+}
+
+function jsonToLocalite(json: Localite): Localite {
+  if (json.type === 'COMMUNE')
+    return {
+      ...json,
+      libelle: `${json.libelle} (${json.code.slice(0, 2)})`,
+    }
+  return json
 }

@@ -69,7 +69,7 @@ export function desLocalites(): Localite[] {
 
 export function uneCommune(overrides: Partial<Commune> = {}): Commune {
   const defaults: Commune = {
-    libelle: 'PARIS 14',
+    libelle: 'PARIS 14 (75)',
     code: '75114',
     type: 'COMMUNE',
     longitude: 2.323026,
@@ -90,6 +90,50 @@ export function unDepartement(
 }
 
 export function desCommunes(): Commune[] {
+  return [
+    {
+      libelle: 'PARIS 14 (75)',
+      code: '75114',
+      type: 'COMMUNE',
+      longitude: 2.323026,
+      latitude: 48.830108,
+    },
+    {
+      libelle: 'PARIS 19 (75)',
+      code: '75119',
+      type: 'COMMUNE',
+      longitude: 2.387708,
+      latitude: 48.887252,
+    },
+    {
+      libelle: 'PARIS 07 (75)',
+      code: '75107',
+      type: 'COMMUNE',
+      longitude: 2.347,
+      latitude: 48.859,
+    },
+    {
+      libelle: 'PARIS 09 (75)',
+      code: '75109',
+      type: 'COMMUNE',
+      longitude: 2.347,
+      latitude: 48.859,
+    },
+  ]
+}
+
+export function desLocalitesJson(): Localite[] {
+  return [
+    {
+      libelle: 'Paris',
+      code: '75',
+      type: 'DEPARTEMENT',
+    },
+    ...desCommunesJson(),
+  ]
+}
+
+export function desCommunesJson(): Commune[] {
   return [
     {
       libelle: 'PARIS 14',

@@ -1,9 +1,9 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import {
   desCommunes,
+  desCommunesJson,
   desLocalites,
+  desLocalitesJson,
   desMetiers,
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
@@ -13,6 +13,7 @@ import {
   ReferentielApiService,
   ReferentielService,
 } from 'services/referentiel.service'
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(() => ({
@@ -103,7 +104,7 @@ describe('ReferentielApiService', () => {
     it('retourne un référentiel de communes et départements avec des codes uniques', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: [...desLocalites(), ...desLocalites()],
+        content: [...desLocalitesJson(), ...desLocalitesJson()],
       })
 
       // When
@@ -124,7 +125,7 @@ describe('ReferentielApiService', () => {
     it('retourne un référentiel de communes avec des codes uniques', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: [...desCommunes(), ...desCommunes()],
+        content: [...desCommunesJson(), ...desCommunesJson()],
       })
 
       // When
