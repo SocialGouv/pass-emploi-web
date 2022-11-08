@@ -300,7 +300,7 @@ describe('Page Recherche Offres Emploi', () => {
       // When
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       await userEvent.type(inputMotsCles, 'Prof')
-      await saisirLocalite('paris 14')
+      await saisirLocalite('paris 14 (75)')
 
       // Then
       expect(
@@ -319,7 +319,7 @@ describe('Page Recherche Offres Emploi', () => {
       // Given
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
       await userEvent.type(inputMotsCles, 'Prof')
-      await saisirLocalite('paris 14')
+      await saisirLocalite('paris 14 (75)')
 
       // Then
       expect(
@@ -328,7 +328,7 @@ describe('Page Recherche Offres Emploi', () => {
         })
       ).toHaveAttribute(
         'href',
-        `/offres/partage-recherche?type=EMPLOI&titre=Prof%20-%20PARIS%2014&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014&codeLocalite=75114`
+        `/offres/partage-recherche?type=EMPLOI&titre=Prof%20-%20PARIS%2014%20(75)&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014%20(75)&codeLocalite=75114`
       )
     })
   })
