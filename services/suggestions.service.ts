@@ -3,27 +3,27 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 
 export interface SuggestionsService {
-  envoyerSuggestionOffreEmploi(
-    idsJeunes: string[],
-    titre: string,
-    motCles: string,
-    localiteLabel: string,
-    departement?: string,
-    commune?: string
-  ): Promise<void>
+  envoyerSuggestionOffreEmploi(query: {
+    idsJeunes: string[]
+    titre: string
+    motsCles: string
+    labelLocalite: string
+    codeDepartement?: string
+    codeCommune?: string
+  }): Promise<void>
 }
 
 export class SuggestionsApiService implements SuggestionsService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async envoyerSuggestionOffreEmploi(
-    idsJeunes: string[],
-    titre: string,
-    labelLocalite: string,
-    motsCles: string,
-    codeDepartement?: string,
+  async envoyerSuggestionOffreEmploi(query: {
+    idsJeunes: string[]
+    titre: string
+    motsCles: string
+    labelLocalite: string
+    codeDepartement?: string
     codeCommune?: string
-  ): Promise<void> {
+  }): Promise<void> {
     const session = await getSession()
     const accessToken = session!.accessToken
     const idConseiller = session!.user.id
@@ -31,12 +31,12 @@ export class SuggestionsApiService implements SuggestionsService {
     await this.apiClient.post(
       `/conseillers/${idConseiller}/recherches/suggestions/offres-emploi`,
       {
-        idsJeunes,
-        titre,
-        q: motsCles,
-        localisation: labelLocalite,
-        departement: codeDepartement,
-        commune: codeCommune,
+        idsJeunes: query.idsJeunes,
+        titre: query.titre,
+        q: query.motsCles,
+        localisation: query.labelLocalite,
+        departement: query.codeDepartement,
+        commune: query.codeCommune,
       },
       accessToken
     )

@@ -28,14 +28,13 @@ describe('SuggestionsApiService', () => {
       const codeDepartement = '75'
 
       // When
-      await suggestionsService.envoyerSuggestionOffreEmploi(
+      await suggestionsService.envoyerSuggestionOffreEmploi({
         idsJeunes,
         titre,
-        labelLocalite,
         motsCles,
+        labelLocalite,
         codeDepartement,
-        undefined
-      )
+      })
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(

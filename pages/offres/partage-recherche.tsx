@@ -21,7 +21,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-type PartageSuggestionProps = PageProps & {
+type PartageRechercheProps = PageProps & {
   jeunes: BaseJeune[]
   type: TypeOffre
   titre: string
@@ -33,7 +33,7 @@ type PartageSuggestionProps = PageProps & {
   returnTo: string
 }
 
-function PartageSuggestion({
+function PartageRecherche({
   jeunes,
   type,
   titre,
@@ -42,7 +42,7 @@ function PartageSuggestion({
   labelLocalite,
   codeLocalite,
   returnTo,
-}: PartageSuggestionProps) {
+}: PartageRechercheProps) {
   const suggestionsService =
     useDependance<SuggestionsService>('suggestionsService')
   const router = useRouter()
@@ -72,14 +72,15 @@ function PartageSuggestion({
     setIsPartageEnCours(true)
 
     try {
-      await suggestionsService.envoyerSuggestionOffreEmploi(
-        idsDestinataires.value,
+      await suggestionsService.envoyerSuggestionOffreEmploi({
+        idsJeunes: idsDestinataires.value,
         titre,
         motsCles,
         labelLocalite,
-        typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
-        typeLocalite === 'COMMUNE' ? codeLocalite : undefined
-      )
+        codeDepartement:
+          typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
+        codeCommune: typeLocalite === 'COMMUNE' ? codeLocalite : undefined,
+      })
       await router.push({
         pathname: '/recherche-offres',
         query: { [QueryParam.suggestionRecherche]: QueryValue.succes },
@@ -137,7 +138,7 @@ function PartageSuggestion({
 }
 
 export const getServerSideProps: GetServerSideProps<
-  PartageSuggestionProps
+  PartageRechercheProps
 > = async (context) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
@@ -170,7 +171,4 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default withTransaction(
-  PartageSuggestion.name,
-  'page'
-)(PartageSuggestion)
+export default withTransaction(PartageRecherche.name, 'page')(PartageRecherche)
