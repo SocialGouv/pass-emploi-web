@@ -1,5 +1,5 @@
 import { BaseJeune } from 'interfaces/jeune'
-import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
 
 export interface RdvJson {
   id: string
@@ -9,6 +9,7 @@ export interface RdvJson {
   modality: string
   jeunes: BaseJeune[]
   precision?: string
+  title?: string
   comment?: string
   presenceConseiller?: boolean
   invitation?: boolean
@@ -30,6 +31,7 @@ export interface RdvFormData {
   modality?: string
   adresse?: string
   organisme?: string
+  titre?: string
   comment?: string
 }
 
@@ -39,9 +41,10 @@ export function rdvJeuneJsonToRdv(rdvJeuneJson: RdvJeuneJson): Rdv {
 }
 
 export function jsonToRdv(rdvJson: RdvJson): Rdv {
-  const { precision, createur, ...data } = rdvJson
+  const { precision, createur, title, ...data } = rdvJson
   return {
     ...data,
+    titre: jsonToTitreRdv(rdvJson),
     presenceConseiller: Boolean(rdvJson.presenceConseiller),
     invitation: Boolean(rdvJson.invitation),
     comment: rdvJson.comment ?? '',
@@ -50,4 +53,12 @@ export function jsonToRdv(rdvJson: RdvJson): Rdv {
     organisme: rdvJson.organisme ?? '',
     createur: createur ?? null,
   }
+}
+
+function jsonToTitreRdv(json: RdvJson): string {
+  const typeLabel =
+    json.type.code === TYPE_RENDEZ_VOUS.Autre && json.precision
+      ? json.precision
+      : json.type.label
+  return json.title || `${typeLabel} ${json.modality}`
 }

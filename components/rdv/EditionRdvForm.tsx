@@ -105,6 +105,7 @@ export function EditionRdvForm({
   const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(
     Boolean(rdv?.invitation)
   )
+  const [titre, setTitre] = useState<RequiredValue>({ value: rdv?.titre ?? '' })
   const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
 
   const isAgenceNecessaire =
@@ -128,6 +129,7 @@ export function EditionRdvForm({
           duree.value ||
           adresse ||
           organisme ||
+          titre ||
           commentaire
       )
     }
@@ -142,6 +144,7 @@ export function EditionRdvForm({
       duree.value !== dureeRdv ||
       adresse !== rdv.adresse ||
       organisme !== rdv.organisme ||
+      titre.value !== rdv.titre ||
       commentaire !== rdv.comment ||
       isConseillerPresent !== rdv.presenceConseiller
     )
@@ -149,11 +152,12 @@ export function EditionRdvForm({
 
   function formIsValid(): boolean {
     return (
+      typeIsValid() &&
       beneficiairesAreValid() &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
-      typeIsValid()
+      titreIsValid()
     )
   }
 
@@ -250,6 +254,24 @@ export function EditionRdvForm({
     return true
   }
 
+  function titreIsValid(): boolean {
+    return (
+      !isCodeTypeAnimationCollective(codeTypeRendezVous) || Boolean(titre.value)
+    )
+  }
+
+  function validateTitre() {
+    if (isCodeTypeAnimationCollective(codeTypeRendezVous) && !titre.value) {
+      setTitre({
+        ...titre,
+        error:
+          'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.',
+      })
+    } else {
+      setTitre({ value: titre.value })
+    }
+  }
+
   function typeEntretienIndividuelConseillerSelected() {
     return codeTypeRendezVous === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
   }
@@ -287,6 +309,7 @@ export function EditionRdvForm({
       modality: modalite || undefined,
       adresse: adresse || undefined,
       organisme: organisme || undefined,
+      titre: titre.value || undefined,
       comment: commentaire || undefined,
     }
     if (!conseillerIsCreator && sendEmailInvitation) {
@@ -421,6 +444,7 @@ export function EditionRdvForm({
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
             />
           </Etape>
+
           <Etape numero={3} titre='Lieu et date'>
             <Label htmlFor='modalite'>Modalité</Label>
             <Select
@@ -568,6 +592,27 @@ export function EditionRdvForm({
               </label>
             </div>
 
+            <Label
+              htmlFor='titre'
+              inputRequired={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+            >
+              Titre
+            </Label>
+            {titre.error && (
+              <InputError id='titre--error' className='mb-2'>
+                {titre.error}
+              </InputError>
+            )}
+            <Input
+              id='titre'
+              type='text'
+              defaultValue={titre.value}
+              required={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+              invalid={Boolean(titre.error)}
+              onChange={(value: string) => setTitre({ value })}
+              onBlur={validateTitre}
+            />
+
             <Label htmlFor='commentaire' withBulleMessageSensible={true}>
               {{
                 main: 'Commentaire à destination des jeunes',
@@ -579,7 +624,7 @@ export function EditionRdvForm({
               id='commentaire'
               defaultValue={commentaire}
               rows={3}
-              onChange={(e) => setCommentaire(e.target.value)}
+              onChange={setCommentaire}
             />
           </Etape>
 
