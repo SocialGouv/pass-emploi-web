@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 
 export interface SuggestionsService {
-  postSuggestionOffreEmploi(
+  envoyerSuggestionOffreEmploi(
     idsJeunes: string[],
     titre: string,
     motCles: string,
@@ -16,7 +16,7 @@ export interface SuggestionsService {
 export class SuggestionsApiService implements SuggestionsService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async postSuggestionOffreEmploi(
+  async envoyerSuggestionOffreEmploi(
     idsJeunes: string[],
     titre: string,
     labelLocalite: string,

@@ -11,7 +11,7 @@ export type Commune = {
   latitude: number
 }
 
-export type LocaliteType = 'DEPARTEMENT' | 'COMMUNE'
+export type TypeLocalite = 'DEPARTEMENT' | 'COMMUNE'
 
 export type Localite = Commune | Departement
 

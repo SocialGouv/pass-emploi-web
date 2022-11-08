@@ -160,7 +160,7 @@ describe('Partage Suggestion', () => {
         ).toBeInTheDocument()
       })
 
-      it('ne devrait pas pouvoir cliquer sur le bouton envoyer sans avoir selectionner de bénéficiaire', async () => {
+      it('ne devrait pas pouvoir cliquer sur le bouton envoyer sans avoir selectionner de destinataires', async () => {
         // Then
         expect(inputSearchJeune.selectedOptions).toBe(undefined)
         expect(submitButton).toHaveAttribute('disabled')
@@ -182,7 +182,7 @@ describe('Partage Suggestion', () => {
         // Then
         expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
         expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
-        expect(screen.getByText('Bénéficiaires (2)')).toBeInTheDocument()
+        expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
       })
 
       it('redirige vers la page précédente', async () => {
@@ -192,7 +192,7 @@ describe('Partage Suggestion', () => {
         // Then
         expect(push).toHaveBeenCalledWith({
           pathname: '/recherche-offres',
-          query: { partageCriteres: 'succes' },
+          query: { suggestionRecherche: 'succes' },
         })
       })
 
@@ -202,7 +202,7 @@ describe('Partage Suggestion', () => {
           await userEvent.click(submitButton)
 
           expect(
-            suggestionsService.postSuggestionOffreEmploi
+            suggestionsService.envoyerSuggestionOffreEmploi
           ).toHaveBeenCalledWith(
             ['jeune-1', 'jeune-2'],
             TITRE,

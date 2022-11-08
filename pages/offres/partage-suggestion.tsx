@@ -13,7 +13,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { LocaliteType } from 'interfaces/referentiel'
+import { TypeLocalite } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { JeunesService } from 'services/jeunes.service'
 import { SuggestionsService } from 'services/suggestions.service'
@@ -26,7 +26,7 @@ type PartageSuggestionProps = PageProps & {
   type: TypeOffre
   titre: string
   motsCles: string
-  typeLocalite: LocaliteType
+  typeLocalite: TypeLocalite
   labelLocalite: string
   codeLocalite: string
   withoutChat: true
@@ -72,7 +72,7 @@ function PartageSuggestion({
     setIsPartageEnCours(true)
 
     try {
-      await suggestionsService.postSuggestionOffreEmploi(
+      await suggestionsService.envoyerSuggestionOffreEmploi(
         idsDestinataires.value,
         titre,
         motsCles,
@@ -82,7 +82,7 @@ function PartageSuggestion({
       )
       await router.push({
         pathname: '/recherche-offres',
-        query: { [QueryParam.partageCriteres]: QueryValue.succes },
+        query: { [QueryParam.suggestionRecherche]: QueryValue.succes },
       })
     } finally {
       setIsPartageEnCours(false)
@@ -102,10 +102,10 @@ function PartageSuggestion({
         sauvegardées, du bénéficiaire de l’application CEJ.
       </p>
       <form onSubmit={partagerCriteresRecherche} className='mt-8'>
-        <Etape numero={1} titre='Bénéficiaires'>
+        <Etape numero={1} titre='Destinataires'>
           <JeunesMultiselectAutocomplete
             jeunes={jeunes}
-            typeSelection='Bénéficiaires'
+            typeSelection='Destinataires'
             onUpdate={updateIdsDestinataires}
             error={idsDestinataires.error}
           />
@@ -160,7 +160,7 @@ export const getServerSideProps: GetServerSideProps<
       type: context.query.type as TypeOffre,
       titre: context.query.titre as string,
       motsCles: context.query.motsCles as string,
-      typeLocalite: context.query.typeLocalite as LocaliteType,
+      typeLocalite: context.query.typeLocalite as TypeLocalite,
       labelLocalite: context.query.labelLocalite as string,
       codeLocalite: context.query.codeLocalite as string,
       withoutChat: true,

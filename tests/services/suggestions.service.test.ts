@@ -18,7 +18,7 @@ describe('SuggestionsApiService', () => {
     suggestionsService = new SuggestionsApiService(apiClient)
   })
 
-  describe('.postSuggestionOffreEmploi', () => {
+  describe('.envoyerSuggestionOffreEmploi', () => {
     it('envoie les bons paramètres de suggestions d’offre d’emploi', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
@@ -28,7 +28,7 @@ describe('SuggestionsApiService', () => {
       const codeDepartement = '75'
 
       // When
-      await suggestionsService.postSuggestionOffreEmploi(
+      await suggestionsService.envoyerSuggestionOffreEmploi(
         idsJeunes,
         titre,
         labelLocalite,

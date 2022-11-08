@@ -109,7 +109,7 @@ const ALERTS: DictAlerts = {
   },
   qualificationNonSNP: { title: 'L’action a été qualifiée' },
   partageOffre: { title: 'L’offre a bien été partagée' },
-  partageCriteres: {
+  suggestionRecherche: {
     title: 'La recherche et ses critères ont bien été partagés',
   },
 }
