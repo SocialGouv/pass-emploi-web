@@ -202,9 +202,7 @@ export default function DeleteJeuneActifModal({
                   <Textarea
                     id='commentaire-motif'
                     required
-                    onChange={(e) =>
-                      setCommentaireMotif({ value: e.target.value })
-                    }
+                    onChange={(value) => setCommentaireMotif({ value })}
                     onBlur={validateCommentaireMotif}
                     rows={3}
                     invalid={Boolean(commentaireMotif)}

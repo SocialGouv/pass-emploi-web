@@ -465,12 +465,14 @@ describe('EditionRdv', () => {
           expect(getEmailConseiller).toBeInTheDocument()
         })
 
-        it('contient un champ pour saisir des commentaires', () => {
-          // Given
-          etape = screen.getByRole('group', {
-            name: 'Étape 4 Informations conseiller',
-          })
+        it('contient un champ pour renseigner un titre', () => {
+          // Then
+          expect(
+            within(etape).getByRole('textbox', { name: 'Titre' })
+          ).toHaveProperty('required', false)
+        })
 
+        it('contient un champ pour saisir des commentaires', () => {
           // Then
           const inputCommentaires = within(etape).getByRole('textbox', {
             name: /Commentaire à destination des jeunes/,
@@ -501,6 +503,7 @@ describe('EditionRdv', () => {
         let inputDate: HTMLInputElement
         let inputHoraire: HTMLInputElement
         let inputDuree: HTMLInputElement
+        let inputTitre: HTMLInputElement
         let inputCommentaires: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
         beforeEach(async () => {
@@ -519,6 +522,7 @@ describe('EditionRdv', () => {
           inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
           inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
           inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+          inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputCommentaires = screen.getByRole('textbox', {
             name: /Commentaire à destination des jeunes/,
           })
@@ -534,6 +538,7 @@ describe('EditionRdv', () => {
           await userEvent.type(inputDate, '2022-03-03')
           await userEvent.type(inputHoraire, '10:30')
           await userEvent.type(inputDuree, '02:37')
+          await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
         })
 
@@ -545,6 +550,7 @@ describe('EditionRdv', () => {
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
               jeunesIds: [jeunes[0].id, jeunes[2].id],
+              titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
               modality: modalites[0],
               precision: undefined,
@@ -571,6 +577,7 @@ describe('EditionRdv', () => {
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
               jeunesIds: [jeunes[0].id, jeunes[2].id],
+              titre: 'Titre de l’événement',
               type: 'AUTRE',
               precision: 'un texte de précision',
               modality: modalites[0],
@@ -855,88 +862,96 @@ describe('EditionRdv', () => {
         })
       })
 
-      it('les bénéficiaires sont facultatifs', async () => {
-        // Given
-        renderWithContexts(
-          <EditionRdv
-            jeunes={jeunes}
-            typesRendezVous={typesRendezVous}
-            withoutChat={true}
-            returnTo={'/mes-rendezvous'}
-            pageTitle={''}
-          />,
-          {
-            customDependances: { rendezVousService, jeunesService },
-            customConseiller: {
-              agence: { nom: 'Mission locale Aubenas', id: 'id-etablissement' },
-            },
-          }
-        )
-        const selectType = screen.getByRole('combobox', {
-          name: 'Type',
-        })
-        await userEvent.selectOptions(selectType, 'Atelier')
+      describe('quand le conseiller a une agence', () => {
+        beforeEach(async () => {
+          // Given
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunes}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/mes-rendezvous'}
+              pageTitle={''}
+            />,
+            {
+              customDependances: { rendezVousService, jeunesService },
+              customConseiller: {
+                agence: {
+                  nom: 'Mission locale Aubenas',
+                  id: 'id-etablissement',
+                },
+              },
+            }
+          )
 
-        const selectJeunes = screen.getByRole('combobox', {
-          name: 'Rechercher et ajouter des jeunes Nom et prénom',
-        })
-        const inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
-        const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-        const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
-        await userEvent.type(inputDate, '2022-03-03')
-        await userEvent.type(inputHoraire, '10:30')
-        await userEvent.type(inputDuree, '02:37')
-
-        // When
-        const buttonValider = screen.getByRole('button', {
-          name: 'Créer le rendez-vous',
-        })
-        await userEvent.click(buttonValider)
-
-        // Then
-        expect(selectJeunes).toHaveAttribute('aria-required', 'false')
-        expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
-          expect.objectContaining({
-            jeunesIds: [],
+          const selectType = screen.getByRole('combobox', {
+            name: 'Type',
           })
-        )
-      })
-      it('récupère les bénéficiaires de l’établissement', async () => {
-        // Given
-        renderWithContexts(
-          <EditionRdv
-            jeunes={jeunes}
-            typesRendezVous={typesRendezVous}
-            withoutChat={true}
-            returnTo={'/mes-rendezvous'}
-            pageTitle={''}
-          />,
-          {
-            customDependances: { rendezVousService, jeunesService },
-            customConseiller: {
-              agence: { nom: 'Mission locale Aubenas', id: 'id-etablissement' },
-            },
-          }
-        )
-        const selectType = screen.getByRole('combobox', {
-          name: 'Type',
+          await userEvent.selectOptions(selectType, 'Atelier')
         })
 
-        // When
-        await userEvent.selectOptions(selectType, 'Atelier')
+        it('récupère les bénéficiaires de l’établissement', async () => {
+          // Then
+          expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledWith(
+            'id-etablissement'
+          )
+          jeunesEtablissement.forEach((jeune) =>
+            expect(
+              screen.getByRole('option', {
+                name: getNomJeuneComplet(jeune),
+                hidden: true,
+              })
+            ).toBeInTheDocument()
+          )
+        })
 
-        // Then
-        jeunesEtablissement.forEach((jeune) =>
+        it('le titre est obligatoire', async () => {
+          // Given
+          const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
+
+          // When
+          expect(inputTitre).toHaveAttribute('required', '')
+          await userEvent.click(inputTitre)
+          await userEvent.tab()
+
+          // Then
           expect(
-            screen.getByRole('option', {
-              name: getNomJeuneComplet(jeune),
-              hidden: true,
-            })
+            screen.getByText(
+              'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.'
+            )
           ).toBeInTheDocument()
-        )
-        expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledWith(
-          'id-etablissement'
-        )
+        })
+
+        it('les bénéficiaires sont facultatifs', async () => {
+          // Given
+          const inputDate = screen.getByLabelText(
+            '* Date (format : jj/mm/aaaa)'
+          )
+          const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
+          const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+          const inputTitre = screen.getByLabelText('* Titre')
+          await userEvent.type(inputDate, '2022-03-03')
+          await userEvent.type(inputHoraire, '10:30')
+          await userEvent.type(inputDuree, '02:37')
+          await userEvent.type(inputTitre, 'Titre de l’événement')
+
+          // When
+          const buttonValider = screen.getByRole('button', {
+            name: 'Créer le rendez-vous',
+          })
+          await userEvent.click(buttonValider)
+
+          // Then
+          const selectJeunes = screen.getByRole('combobox', {
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+          })
+          expect(selectJeunes).toHaveAttribute('aria-required', 'false')
+          expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+            expect.objectContaining({
+              jeunesIds: [],
+            })
+          )
+        })
       })
     })
 
@@ -1106,6 +1121,9 @@ describe('EditionRdv', () => {
         expect(
           screen.getByLabelText<HTMLInputElement>(/agenda/).checked
         ).toEqual(true)
+        expect(screen.getByLabelText<HTMLInputElement>('Titre')).toHaveValue(
+          'Prise de nouvelles par téléphone'
+        )
         expect(
           screen.getByLabelText<HTMLInputElement>(/Commentaire/).value
         ).toEqual('Rendez-vous avec Kenji')
@@ -1155,6 +1173,9 @@ describe('EditionRdv', () => {
           )
           const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
           const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+          const inputTitre = screen.getByRole('textbox', {
+            name: 'Titre',
+          })
           const inputCommentaires = screen.getByRole('textbox', {
             name: /Commentaire à destination des jeunes/,
           })
@@ -1174,6 +1195,8 @@ describe('EditionRdv', () => {
           await userEvent.type(inputHoraire, '10:30')
           await userEvent.clear(inputDuree)
           await userEvent.type(inputDuree, '02:37')
+          await userEvent.clear(inputTitre)
+          await userEvent.type(inputTitre, 'Nouveau titre')
           await userEvent.clear(inputCommentaires)
           await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
         })
@@ -1226,6 +1249,7 @@ describe('EditionRdv', () => {
               rdv.id,
               {
                 jeunesIds: [jeunes[0].id, jeunes[1].id],
+                titre: 'Nouveau titre',
                 type: 'AUTRE',
                 modality: modalites[0],
                 precision: 'Prise de nouvelles',
@@ -1402,6 +1426,7 @@ describe('EditionRdv', () => {
             {
               jeunesIds: [jeunes[0].id, 'jeune-autre-conseiller'],
               type: 'AUTRE',
+              titre: 'Prise de nouvelles par téléphone',
               modality: modalites[2],
               precision: 'Prise de nouvelles',
               date: '2021-10-21T12:00:00.000+02:00',

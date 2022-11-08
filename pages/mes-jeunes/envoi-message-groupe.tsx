@@ -208,12 +208,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             Message
           </Label>
 
-          <Textarea
-            id='message'
-            rows={10}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-          />
+          <Textarea id='message' rows={10} onChange={setMessage} required />
 
           <div>
             <div

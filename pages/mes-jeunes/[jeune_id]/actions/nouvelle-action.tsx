@@ -126,7 +126,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
             <Textarea
               id='commentaire-action-predefinie'
               defaultValue={commentaire}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={setDescription}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
             />
@@ -174,7 +174,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
             <Textarea
               id='commentaire-action-personnalisee'
               defaultValue={commentaire}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={setDescription}
               maxLength={INPUT_MAX_LENGTH}
               rows={3}
             />

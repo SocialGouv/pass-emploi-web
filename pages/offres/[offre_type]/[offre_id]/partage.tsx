@@ -117,13 +117,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
           <Label htmlFor='message' withBulleMessageSensible={true}>
             Message
           </Label>
-          <Textarea
-            id='message'
-            rows={10}
-            onChange={(e) => {
-              setMessage(e.target.value)
-            }}
-          />
+          <Textarea id='message' rows={10} onChange={setMessage} />
         </Etape>
 
         <div className='flex justify-center'>

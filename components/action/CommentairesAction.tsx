@@ -71,9 +71,7 @@ export function CommentairesAction({
         <Textarea
           ref={inputRef}
           id='commentaire-action'
-          onChange={(event) => {
-            setNouveauCommentaire(event.target.value)
-          }}
+          onChange={setNouveauCommentaire}
           rows={3}
         ></Textarea>
         <Button
