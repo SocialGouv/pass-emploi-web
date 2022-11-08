@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
+import PartageRechercheButton from 'components/offres/suggestions/PartageRechercheButton'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   BaseImmersion,
@@ -34,9 +35,14 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps & {
-  partageSuccess?: boolean
+  partageOffreSuccess?: boolean
+  suggestionRechercheSuccess?: boolean
 }
-function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
+
+function RechercheOffres({
+  partageOffreSuccess,
+  suggestionRechercheSuccess,
+}: RechercheOffresProps) {
   const referentielService =
     useDependance<ReferentielService>('referentielService')
   const offresEmploiService = useDependance<OffresEmploiService>(
@@ -58,7 +64,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
   >({ hasError: false })
   const [queryImmersions, setQueryImmersions] = useState<
     FormValues<SearchImmersionsQuery>
-  >({ rayon: RAYON_DEFAULT, hasError: false })
+  >({
+    rayon: RAYON_DEFAULT,
+    hasError: false,
+  })
 
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
@@ -69,7 +78,9 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
-  if (partageSuccess) initialTracking += ' - Partage offre succès'
+  if (partageOffreSuccess) initialTracking += ' - Partage offre succès'
+  if (suggestionRechercheSuccess)
+    initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   async function rechercherPremierePage() {
@@ -117,12 +128,16 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
     }
   }
 
+  function getQueryOffreEmploi(): SearchOffresEmploiQuery {
+    const { hasError, ...query } = queryOffresEmploi
+    return query
+  }
+
   async function rechercherOffresEmploi(page: number): Promise<{
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
   }> {
-    const { hasError, ...query } = queryOffresEmploi
-    return offresEmploiService.searchOffresEmploi(query, page)
+    return offresEmploiService.searchOffresEmploi(getQueryOffreEmploi(), page)
   }
 
   async function rechercherAlternances(page: number): Promise<{
@@ -190,6 +205,10 @@ function RechercheOffres({ partageSuccess }: RechercheOffresProps) {
         stateQueryImmersions={[queryImmersions, setQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
+      <PartageRechercheButton
+        typeOffre={typeOffre}
+        suggestionOffreEmploi={getQueryOffreEmploi()}
+      />
       <ResultatsRechercheOffre
         isSearching={isSearching}
         offres={offres}
@@ -216,8 +235,12 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   if (context.query[QueryParam.partageOffre])
-    props.partageSuccess =
+    props.partageOffreSuccess =
       context.query[QueryParam.partageOffre] === QueryValue.succes
+
+  if (context.query[QueryParam.suggestionRecherche])
+    props.suggestionRechercheSuccess =
+      context.query[QueryParam.suggestionRecherche] === QueryValue.succes
 
   return { props }
 }

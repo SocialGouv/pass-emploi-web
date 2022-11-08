@@ -11,6 +11,7 @@ import {
   mockedJeunesService,
   mockedMessagesService,
   mockedOffresEmploiService,
+  mockedSuggestionsService,
   mockedReferentielService,
   mockedRendezVousService,
   mockedServicesCiviquesService,
@@ -46,6 +47,7 @@ export default function renderWithContexts(
     offresEmploiService: mockedOffresEmploiService(),
     servicesCiviquesService: mockedServicesCiviquesService(),
     immersionsService: mockedImmersionsService(),
+    suggestionsService: mockedSuggestionsService(),
     ...customDependances,
   }
 

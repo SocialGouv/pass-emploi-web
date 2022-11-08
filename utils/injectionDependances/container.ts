@@ -32,6 +32,10 @@ import {
   ServicesCiviquesApiService,
   ServicesCiviquesService,
 } from 'services/services-civiques.service'
+import {
+  SuggestionsApiService,
+  SuggestionsService,
+} from 'services/suggestions.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import HttpClient from 'utils/httpClient'
 
@@ -47,6 +51,7 @@ export interface Dependencies {
   offresEmploiService: OffresEmploiService
   servicesCiviquesService: ServicesCiviquesService
   immersionsService: ImmersionsService
+  suggestionsService: SuggestionsService
 }
 
 export class Container {
@@ -79,6 +84,7 @@ export class Container {
       offresEmploiService: new OffresEmploiApiService(apiClient),
       servicesCiviquesService: new ServicesCiviquesApiService(apiClient),
       immersionsService: new ImmersionsApiService(apiClient),
+      suggestionsService: new SuggestionsApiService(apiClient),
     })
   }
 }

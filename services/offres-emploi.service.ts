@@ -12,7 +12,7 @@ import {
   DetailOffreEmploi,
   MetadonneesOffres,
 } from 'interfaces/offre'
-import { Commune, Localite } from 'interfaces/referentiel'
+import { Commune, Departement } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
@@ -21,7 +21,7 @@ export type SearchOffresEmploiQuery = {
   motsCles?: string
   commune?: Commune
   debutantAccepte?: boolean
-  departement?: Localite
+  departement?: Departement
   durees?: Array<Duree>
   rayon?: number
   typesContrats?: Array<TypeContrat>
@@ -32,10 +32,12 @@ export interface OffresEmploiService {
     idOffreEmploi: string,
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined>
+
   searchOffresEmploi(
     recherche: SearchOffresEmploiQuery,
     page: number
   ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
+
   searchAlternances(
     recherche: SearchOffresEmploiQuery,
     page: number

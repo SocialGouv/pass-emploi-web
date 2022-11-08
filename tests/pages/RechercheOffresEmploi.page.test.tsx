@@ -281,6 +281,58 @@ describe('Page Recherche Offres Emploi', () => {
     })
   })
 
+  describe('partage des critères de recherche', () => {
+    it('ne permet pas de partager s’il n’y a ni mots clés ni localité renseignés', async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: `Partager critères de recherche`,
+        })
+      )
+
+      expect(
+        screen.getByText(
+          'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail'
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('affiche le bouton de partage de critère s’il y a des mots clés et une localité renseignés', async () => {
+      // When
+      const inputMotsCles = screen.getByLabelText(/Mots clés/)
+      await userEvent.type(inputMotsCles, 'Prof')
+      await saisirLocalite('paris 14')
+
+      // Then
+      expect(
+        screen.getByText(
+          'Suggérer ces critères de recherche à vos bénéficiaires'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('construit le bon lien qui correspond aux critères de recherches', async () => {
+      // Given
+      const inputMotsCles = screen.getByLabelText(/Mots clés/)
+      await userEvent.type(inputMotsCles, 'Prof')
+      await saisirLocalite('paris 14')
+
+      // Then
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toHaveAttribute(
+        'href',
+        `/offres/partage-recherche?type=EMPLOI&titre=Prof%20-%20PARIS%2014&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014&codeLocalite=75114`
+      )
+    })
+  })
+
   describe('recherche', () => {
     it("permet de rechercher des offres d'emploi", async () => {
       // Given

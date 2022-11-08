@@ -143,7 +143,7 @@ describe('Page Recherche Offres', () => {
         props: {
           pageTitle: 'Recherche d’offres',
           pageHeader: 'Offres',
-          partageSuccess: true,
+          partageOffreSuccess: true,
         },
       })
     })

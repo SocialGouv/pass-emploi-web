@@ -18,6 +18,7 @@ export enum QueryParam {
   qualificationSNP = 'qualificationSNP',
   qualificationNonSNP = 'qualificationNonSNP',
   partageOffre = 'partageOffre',
+  suggestionRecherche = 'suggestionRecherche',
 }
 
 export enum QueryValue {

@@ -10,6 +10,9 @@ export type Commune = {
   longitude: number
   latitude: number
 }
+
+export type TypeLocalite = 'DEPARTEMENT' | 'COMMUNE'
+
 export type Localite = Commune | Departement
 
 export type Metier = { code: string; libelle: string }
