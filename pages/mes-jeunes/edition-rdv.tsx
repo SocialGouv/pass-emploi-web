@@ -22,6 +22,7 @@ import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { RendezVousService } from 'services/rendez-vous.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -87,6 +88,11 @@ function EditionRdv({
     }
     setShowAgenceModal(true)
     setTrackingTitle(initialTracking + ' - Pop-in sélection agence')
+  }
+
+  async function closeAgenceModal() {
+    setShowAgenceModal(false)
+    setTrackingTitle(initialTracking)
   }
 
   function openLeavePageModal() {
@@ -171,6 +177,15 @@ function EditionRdv({
     setConseiller({ ...conseiller!, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
     setShowAgenceModal(false)
+  }
+
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
   }
 
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
@@ -262,8 +277,8 @@ function EditionRdv({
           structureConseiller={conseiller!.structure}
           referentielAgences={agences}
           onAgenceChoisie={renseignerAgence}
-          onContacterSupport={() => {}}
-          onClose={() => {}}
+          onContacterSupport={trackContacterSupport}
+          onClose={closeAgenceModal}
         />
       )}
     </>
