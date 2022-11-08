@@ -219,7 +219,7 @@ describe('Page Recherche Alternances', () => {
         within(etape3).getByRole('group', { name: 'Distance' })
       ).toThrow()
 
-      await saisirLocalite('paris 14')
+      await saisirLocalite('paris 14 (75)')
 
       // Then
       const distanceGroup = within(etape3).getByRole('group', {
@@ -247,7 +247,7 @@ describe('Page Recherche Alternances', () => {
       await userEvent.click(screen.getByLabelText('Temps plein'))
       expect(screen.getByText('[2] critères sélectionnés')).toBeInTheDocument()
 
-      await saisirLocalite('paris 14')
+      await saisirLocalite('paris 14 (75)')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
@@ -310,7 +310,7 @@ describe('Page Recherche Alternances', () => {
 
       // When
       await userEvent.type(inputMotsCles, 'prof industrie')
-      await saisirLocalite('paris 14')
+      await saisirLocalite('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
@@ -326,7 +326,7 @@ describe('Page Recherche Alternances', () => {
 
     it('construit la recherche avec les critères d’affinage', async () => {
       // Given
-      await saisirLocalite('paris 14')
+      await saisirLocalite('paris 14 (75)')
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       await userEvent.click(
@@ -358,7 +358,7 @@ describe('Page Recherche Alternances', () => {
 
     it('vide les critères lorsqu’on change le type d’offre', async () => {
       // Given
-      await saisirLocalite('paris 14')
+      await saisirLocalite('paris 14 (75)')
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       await userEvent.click(

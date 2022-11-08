@@ -77,7 +77,7 @@ describe('Page Recherche Offres', () => {
       const inputLocalisation = screen.getByLabelText(/Localisation/)
 
       // When
-      await saisirLocalite('Épinay-sur-Seine')
+      await saisirCommune('Épinay-sur-Seine')
 
       // Then
       expect(inputLocalisation).toHaveValue('EPINAY SUR SEINE')
@@ -89,7 +89,7 @@ describe('Page Recherche Offres', () => {
 
     it('récupère les communes à la saisie', async () => {
       // When
-      await saisirLocalite('Epinay-sur-Seine')
+      await saisirCommune('Epinay-sur-Seine')
 
       // Then
       expect(referentielService.getCommunes).toHaveBeenCalledTimes(1)
@@ -244,7 +244,7 @@ describe('Page Recherche Offres', () => {
         within(etape3).getByRole('group', { name: 'Distance' })
       ).toThrow()
 
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
 
       // Then
       const distanceGroup = within(etape3).getByRole('group', {
@@ -277,7 +277,7 @@ describe('Page Recherche Offres', () => {
       )
       expect(screen.getByText('[2] critères sélectionnés')).toBeInTheDocument()
 
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
@@ -322,7 +322,7 @@ describe('Page Recherche Offres', () => {
       })
 
       // When
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
@@ -339,7 +339,7 @@ describe('Page Recherche Offres', () => {
 
     it('construit la recherche avec les critères d’affinage', async () => {
       // Given
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       await userEvent.selectOptions(
@@ -374,7 +374,7 @@ describe('Page Recherche Offres', () => {
 
     it('vide les critères lorsqu’on change le type d’offre', async () => {
       // Given
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       await userEvent.selectOptions(
@@ -549,7 +549,7 @@ describe('Page Recherche Offres', () => {
   })
 })
 
-async function saisirLocalite(text: string) {
+async function saisirCommune(text: string) {
   await userEvent.type(screen.getByLabelText(/Localisation/), text)
   await act(() => new Promise((r) => setTimeout(r, 500)))
 }

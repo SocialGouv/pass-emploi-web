@@ -277,7 +277,7 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       // When-Then
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
@@ -315,7 +315,7 @@ describe('Page Recherche Immersions', () => {
       })
 
       // When
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
@@ -344,7 +344,7 @@ describe('Page Recherche Immersions', () => {
 
       // When
       await saisirMetier('développeur / développeuse web')
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
@@ -384,7 +384,7 @@ describe('Page Recherche Immersions', () => {
 
       // When
       await saisirMetier('développeur / développeuse web')
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
