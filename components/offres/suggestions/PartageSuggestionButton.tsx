@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { ButtonStyle } from 'components/ui/Button/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TypeOffre } from 'interfaces/offre'
@@ -15,9 +15,10 @@ export default function PartageSuggestionButton({
   typeOffre,
   suggestionOffreEmploi,
 }: PartageSuggestionButtonProps) {
+  const [errorMessage, setErrorMessage] = useState<boolean>()
+
   function laSuggestionEstPartageable() {
     return (
-      typeOffre === TypeOffre.EMPLOI &&
       suggestionOffreEmploi.motsCles &&
       (suggestionOffreEmploi.commune || suggestionOffreEmploi.departement)
     )
@@ -36,26 +37,59 @@ export default function PartageSuggestionButton({
     return encodeURI(url)
   }
 
+  useEffect(() => {
+    setErrorMessage(false)
+  }, [suggestionOffreEmploi])
+
   return (
     <>
-      {laSuggestionEstPartageable() && (
-        <div className='flex justify-end items-center my-8'>
-          <p className='mr-4'>
-            Suggérer ces critères de recherche à vos bénéficiaires
-          </p>
-          <ButtonLink
-            href={getPartagerSuggestionUrl()}
-            style={ButtonStyle.SECONDARY}
+      {typeOffre === TypeOffre.EMPLOI && (
+        <>
+          <div
+            className={
+              'flex justify-end my-8 gap-4 ' +
+              (errorMessage ? 'items-start' : 'items-center')
+            }
           >
-            <IconComponent
-              name={IconName.Partage}
-              className='w-4 h-4 mr-3'
-              focusable={false}
-              aria-hidden={true}
-            />
-            Partager <span className='sr-only'>critères de recherche</span>
-          </ButtonLink>
-        </div>
+            <div className='max-w-[40%]'>
+              <p>Suggérer ces critères de recherche à vos bénéficiaires</p>
+              {errorMessage && (
+                <p className='text-warning'>
+                  Pour suggérer des critères de recherche, vous devez saisir un
+                  mot clé et un lieu de travail
+                </p>
+              )}
+            </div>
+            {laSuggestionEstPartageable() && (
+              <ButtonLink
+                href={getPartagerSuggestionUrl()}
+                style={ButtonStyle.SECONDARY}
+              >
+                <IconComponent
+                  name={IconName.Partage}
+                  className='w-4 h-4 mr-3'
+                  focusable={false}
+                  aria-hidden={true}
+                />
+                Partager <span className='sr-only'>critères de recherche</span>
+              </ButtonLink>
+            )}
+            {!laSuggestionEstPartageable() && (
+              <Button
+                style={ButtonStyle.SECONDARY}
+                onClick={() => setErrorMessage(true)}
+              >
+                <IconComponent
+                  name={IconName.Partage}
+                  className='w-4 h-4 mr-3'
+                  focusable={false}
+                  aria-hidden={true}
+                />
+                Partager <span className='sr-only'>critères de recherche</span>
+              </Button>
+            )}
+          </div>
+        </>
       )}
     </>
   )
