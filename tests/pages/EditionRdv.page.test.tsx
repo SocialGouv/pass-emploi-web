@@ -381,6 +381,14 @@ describe('EditionRdv', () => {
             expect(jeuneOption).toBeInTheDocument()
           }
         })
+
+        it('ne contient pas de message indiquant le caractère facultatif d’ajout de bénéficiaires', () => {
+          expect(() =>
+            screen.getByText(
+              'Pour les informations collectives, l’ajout de bénéficiaires est facultatif'
+            )
+          ).toThrow()
+        })
       })
 
       describe('étape 4 lieu et date', () => {
@@ -970,6 +978,11 @@ describe('EditionRdv', () => {
               jeunesIds: [],
             })
           )
+          expect(
+            screen.getByText(
+              'Pour les informations collectives, l’ajout de bénéficiaires est facultatif'
+            )
+          ).toBeInTheDocument()
         })
       })
     })

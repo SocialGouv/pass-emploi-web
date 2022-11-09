@@ -466,6 +466,15 @@ export function EditionRdvForm({
             />
           </Etape>
           <Etape numero={3} titre='Ajout de bénéficiaires'>
+            {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
+              <div className='mb-4'>
+                <InformationMessage
+                  content={
+                    'Pour les informations collectives, l’ajout de bénéficiaires est facultatif'
+                  }
+                />
+              </div>
+            )}
             <JeunesMultiselectAutocomplete
               jeunes={
                 !isCodeTypeAnimationCollective(codeTypeRendezVous)
