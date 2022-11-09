@@ -130,9 +130,9 @@ export function EditionRdvForm({
           date.value ||
           horaire.value ||
           duree.value ||
+          titre.value ||
           adresse ||
           organisme ||
-          titre ||
           description.value
       )
     }

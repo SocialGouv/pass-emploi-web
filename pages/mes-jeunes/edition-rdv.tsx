@@ -331,7 +331,6 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
     if (!rdv) return { notFound: true }
     props.rdv = rdv
-    props.idJeune = rdv.jeunes[0].id
     props.pageTitle = 'Mes rendez-vous - Modifier'
     props.pageHeader = 'Modifier le rendez-vous'
   } else if (idJeune) {
