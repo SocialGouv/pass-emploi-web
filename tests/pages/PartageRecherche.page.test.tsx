@@ -118,6 +118,39 @@ describe('Partage Recherche', () => {
         })
       })
 
+      it('charge la page avec les détails de suggestion d’alternance', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: { referer: 'referer-url' } },
+          query: {
+            type: TypeOffre.ALTERNANCE,
+            titre: TITRE,
+            motsCles: MOTS_CLES,
+            typeLocalite: TYPE_LOCALITE,
+            labelLocalite: LABEL_LOCALITE,
+            codeLocalite: CODE_LOCALITE,
+          },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          props: {
+            jeunes: expect.arrayContaining([]),
+            type: TypeOffre.ALTERNANCE,
+            criteresRecherche: {
+              titre: TITRE,
+              motsCles: MOTS_CLES,
+              typeLocalite: TYPE_LOCALITE,
+              labelLocalite: LABEL_LOCALITE,
+              codeLocalite: CODE_LOCALITE,
+            },
+            withoutChat: true,
+            returnTo: 'referer-url',
+            pageTitle: 'Partager une recherche',
+          },
+        })
+      })
+
       it('charge la page avec les détails de suggestion d’immersion', async () => {
         // When
         const actual = await getServerSideProps({
@@ -224,7 +257,7 @@ describe('Partage Recherche', () => {
         })
       })
 
-      describe("quand le formulaire n'a pas encore été soumis", () => {
+      describe('quand le formulaire n’a pas encore été soumis', () => {
         it('devrait afficher les champs pour envoyer un message', () => {
           // Then
           expect(inputSearchJeune).toBeInTheDocument()
@@ -305,14 +338,14 @@ describe('Partage Recherche', () => {
           })
         })
 
-        it("affiche les informations de la suggestion d’offre d'emploi", () => {
+        it('affiche les informations de la suggestion d’offre d’emploi', () => {
           expect(screen.getByText('Offre d’emploi')).toBeInTheDocument()
           expect(screen.getByText(TITRE)).toBeInTheDocument()
           expect(screen.getByText(MOTS_CLES)).toBeInTheDocument()
           expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
         })
 
-        it('envoie une suggestion d’offres d’emploi à plusieurs destinataires', async () => {
+        it('envoie une suggestion d’offre d’emploi à plusieurs destinataires', async () => {
           // Given
           push = jest.fn(() => Promise.resolve())
           ;(useRouter as jest.Mock).mockReturnValue({ push })
@@ -325,6 +358,67 @@ describe('Partage Recherche', () => {
           // Then
           expect(
             suggestionsService.envoyerSuggestionOffreEmploi
+          ).toHaveBeenCalledWith({
+            idsJeunes: ['jeune-1', 'jeune-2'],
+            titre: TITRE,
+            motsCles: MOTS_CLES,
+            labelLocalite: LABEL_LOCALITE,
+            codeCommune: CODE_LOCALITE,
+          })
+        })
+      })
+
+      describe('Alternance', () => {
+        beforeEach(() => {
+          // Given
+          renderWithContexts(
+            <PartageCritere
+              pageTitle='Partager une recherche'
+              jeunes={desItemsJeunes()}
+              type={TypeOffre.ALTERNANCE}
+              criteresRecherche={{
+                titre: TITRE,
+                motsCles: MOTS_CLES,
+                typeLocalite: TYPE_LOCALITE,
+                labelLocalite: LABEL_LOCALITE,
+                codeLocalite: CODE_LOCALITE,
+              }}
+              withoutChat={true}
+              returnTo=''
+            />,
+            { customDependances: { suggestionsService: suggestionsService } }
+          )
+
+          //Given
+          inputSearchJeune = screen.getByRole('combobox', {
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+          })
+
+          submitButton = screen.getByRole('button', {
+            name: 'Envoyer',
+          })
+        })
+
+        it('affiche les informations de la suggestion d’alternance', () => {
+          expect(screen.getByText('Alternance')).toBeInTheDocument()
+          expect(screen.getByText(TITRE)).toBeInTheDocument()
+          expect(screen.getByText(MOTS_CLES)).toBeInTheDocument()
+          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+        })
+
+        it('envoie une suggestion d’alternance à plusieurs destinataires', async () => {
+          // Given
+          push = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ push })
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
+          expect(
+            suggestionsService.envoyerSuggestionAlternance
           ).toHaveBeenCalledWith({
             idsJeunes: ['jeune-1', 'jeune-2'],
             titre: TITRE,

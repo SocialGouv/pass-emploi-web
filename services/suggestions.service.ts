@@ -12,6 +12,15 @@ export interface SuggestionsService {
     codeCommune?: string
   }): Promise<void>
 
+  envoyerSuggestionAlternance(query: {
+    idsJeunes: string[]
+    titre: string
+    motsCles: string
+    labelLocalite: string
+    codeDepartement?: string
+    codeCommune?: string
+  }): Promise<void>
+
   envoyerSuggestionImmersion(query: {
     idsJeunes: string[]
     titre: string
@@ -42,22 +51,18 @@ export class SuggestionsApiService implements SuggestionsService {
     codeDepartement?: string
     codeCommune?: string
   }): Promise<void> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
-    const idConseiller = session!.user.id
+    await this.envoyerSuggestionOffre(query, false)
+  }
 
-    await this.apiClient.post(
-      `/conseillers/${idConseiller}/recherches/suggestions/offres-emploi`,
-      {
-        idsJeunes: query.idsJeunes,
-        titre: query.titre,
-        q: query.motsCles,
-        localisation: query.labelLocalite,
-        departement: query.codeDepartement,
-        commune: query.codeCommune,
-      },
-      accessToken
-    )
+  async envoyerSuggestionAlternance(query: {
+    idsJeunes: string[]
+    titre: string
+    motsCles: string
+    labelLocalite: string
+    codeDepartement?: string
+    codeCommune?: string
+  }): Promise<void> {
+    await this.envoyerSuggestionOffre(query, true)
   }
 
   async envoyerSuggestionImmersion(query: {
@@ -107,6 +112,36 @@ export class SuggestionsApiService implements SuggestionsService {
         localisation: query.labelLocalite,
         lat: query.latitude,
         lon: query.longitude,
+      },
+      accessToken
+    )
+  }
+
+  private async envoyerSuggestionOffre(
+    query: {
+      idsJeunes: string[]
+      titre: string
+      motsCles: string
+      labelLocalite: string
+      codeDepartement?: string
+      codeCommune?: string
+    },
+    alternance: boolean
+  ) {
+    const session = await getSession()
+    const accessToken = session!.accessToken
+    const idConseiller = session!.user.id
+
+    await this.apiClient.post(
+      `/conseillers/${idConseiller}/recherches/suggestions/offres-emploi`,
+      {
+        idsJeunes: query.idsJeunes,
+        titre: query.titre,
+        q: query.motsCles,
+        localisation: query.labelLocalite,
+        departement: query.codeDepartement,
+        commune: query.codeCommune,
+        alternance: alternance,
       },
       accessToken
     )

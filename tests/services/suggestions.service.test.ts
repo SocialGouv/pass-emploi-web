@@ -45,6 +45,41 @@ describe('SuggestionsApiService', () => {
           q: motsCles,
           localisation: labelLocalite,
           departement: codeDepartement,
+          alternance: false,
+        },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.envoyerSuggestionAlternance', () => {
+    it('envoie les bons paramètres de suggestions d’alternance', async () => {
+      // Given
+      const idsJeunes = ['jeune-1', 'jeune-2']
+      const titre = 'Prof - Paris'
+      const labelLocalite = 'Paris'
+      const motsCles = 'Prof'
+      const codeDepartement = '75'
+
+      // When
+      await suggestionsService.envoyerSuggestionAlternance({
+        idsJeunes,
+        titre,
+        motsCles,
+        labelLocalite,
+        codeDepartement,
+      })
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/recherches/suggestions/offres-emploi',
+        {
+          idsJeunes: idsJeunes,
+          titre: titre,
+          q: motsCles,
+          localisation: labelLocalite,
+          departement: codeDepartement,
+          alternance: true,
         },
         'accessToken'
       )

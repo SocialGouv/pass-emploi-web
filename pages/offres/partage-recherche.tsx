@@ -79,12 +79,12 @@ function PartageRecherche({
   function getLabelMetier(): string | undefined {
     switch (type) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return (criteresRecherche as CriteresRechercheOffreEmploiProps).motsCles
       case TypeOffre.IMMERSION:
         return (criteresRecherche as CriteresRechercheImmersionProps)
           .labelMetier
       case TypeOffre.SERVICE_CIVIQUE:
-      default:
         return undefined
     }
   }
@@ -120,11 +120,14 @@ function PartageRecherche({
       case TypeOffre.EMPLOI:
         await envoyerSuggestionOffreEmploi()
         break
-      case TypeOffre.IMMERSION:
-        await envoyerSuggestionImmersion()
+      case TypeOffre.ALTERNANCE:
+        await envoyerSuggestionAlternance()
         break
       case TypeOffre.SERVICE_CIVIQUE:
         await envoyerSuggestionServiceCivique()
+        break
+      case TypeOffre.IMMERSION:
+        await envoyerSuggestionImmersion()
         break
     }
   }
@@ -134,6 +137,21 @@ function PartageRecherche({
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
     await suggestionsService.envoyerSuggestionOffreEmploi({
+      idsJeunes: idsDestinataires.value,
+      titre,
+      motsCles,
+      labelLocalite,
+      codeDepartement:
+        typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
+      codeCommune: typeLocalite === 'COMMUNE' ? codeLocalite : undefined,
+    })
+  }
+
+  async function envoyerSuggestionAlternance(): Promise<void> {
+    const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
+      criteresRecherche as CriteresRechercheOffreEmploiProps
+
+    await suggestionsService.envoyerSuggestionAlternance({
       idsJeunes: idsDestinataires.value,
       titre,
       motsCles,
@@ -246,6 +264,16 @@ export const getServerSideProps: GetServerSideProps<
   let criteresRecherche: CriteresRecherche
 
   switch (typeOffre) {
+    case TypeOffre.EMPLOI:
+    case TypeOffre.ALTERNANCE:
+      criteresRecherche = {
+        titre: context.query.titre as string,
+        motsCles: context.query.motsCles as string,
+        typeLocalite: context.query.typeLocalite as TypeLocalite,
+        labelLocalite: context.query.labelLocalite as string,
+        codeLocalite: context.query.codeLocalite as string,
+      }
+      break
     case TypeOffre.IMMERSION:
       criteresRecherche = {
         titre: context.query.titre as string,
@@ -262,16 +290,6 @@ export const getServerSideProps: GetServerSideProps<
         labelLocalite: context.query.labelLocalite as string,
         latitude: context.query.latitude as string,
         longitude: context.query.longitude as string,
-      }
-      break
-    case TypeOffre.EMPLOI:
-    default:
-      criteresRecherche = {
-        titre: context.query.titre as string,
-        motsCles: context.query.motsCles as string,
-        typeLocalite: context.query.typeLocalite as TypeLocalite,
-        labelLocalite: context.query.labelLocalite as string,
-        codeLocalite: context.query.codeLocalite as string,
       }
       break
   }
