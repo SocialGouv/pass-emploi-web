@@ -5,14 +5,14 @@ interface HeaderCellProps {
   className?: string
 }
 
-export function HeaderCell({ children, className }: HeaderCellProps) {
+export function HeaderCell({
+  children,
+  className = '',
+}: HeaderCellProps): JSX.Element {
+  const style = 'text-base-regular text-left p-4 ' + className
+
   return (
-    <div
-      role='columnheader'
-      className={`table-cell text-base-regular text-left p-4 ${
-        className ?? ''
-      }`}
-    >
+    <div role='columnheader' className={'table-cell ' + style}>
       {children}
     </div>
   )

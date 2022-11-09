@@ -15,7 +15,11 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
+import {
+  desRdvListItems,
+  unRdvListItem,
+  unRendezVous,
+} from 'fixtures/rendez-vous'
 import {
   mockedActionsService,
   mockedJeunesService,
@@ -24,7 +28,6 @@ import {
 import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
-import { rdvToListItem } from 'interfaces/rdv'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import FicheJeune, {
   getServerSideProps,
@@ -1256,7 +1259,7 @@ describe('Fiche Jeune', () => {
   })
 
   describe('server side', () => {
-    const rdvAVenir = unRendezVous({
+    const rdvAVenir = unRdvListItem({
       date: DateTime.now().plus({ day: 1 }).toISO(),
     })
     let jeunesService: JeunesService
@@ -1351,7 +1354,7 @@ describe('Fiche Jeune', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdvs: [rdvToListItem(rdvAVenir)] },
+          props: { rdvs: [rdvAVenir] },
         })
       })
 

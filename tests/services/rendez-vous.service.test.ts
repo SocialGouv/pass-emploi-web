@@ -3,10 +3,14 @@ import { DateTime } from 'luxon'
 import { ApiClient } from 'clients/api.client'
 import {
   typesDeRendezVous,
+  uneAnimationCollective,
+  unRdvListItem,
   unRendezVous,
+  unRendezVousJeuneJson,
   unRendezVousJson,
 } from 'fixtures/rendez-vous'
-import { RdvFormData } from 'interfaces/json/rdv'
+import { AnimationCollectiveJson, RdvFormData } from 'interfaces/json/rdv'
+import { AnimationCollective } from 'interfaces/rdv'
 import { modalites } from 'referentiel/rdv'
 import {
   RendezVousApiService,
@@ -147,11 +151,28 @@ describe('RendezVousApiService', () => {
       )
     })
   })
+
   describe('.getRendezVousConseiller', () => {
     it('url encode les date en paramètres et renvoie les rendez-vous d’un conseiller sur une période définie', async () => {
       // Given
-      const accessToken = 'accessToken'
-      const listeRdvs = [unRendezVousJson()]
+      const idConseiller = 'idConseiller'
+      const listeRdvs = [
+        unRendezVousJson(),
+        unRendezVousJson({
+          jeunes: [
+            {
+              id: '1',
+              prenom: 'Kenji',
+              nom: 'Jirac',
+            },
+            {
+              id: '2',
+              prenom: 'Nadia',
+              nom: 'Sanfamiye',
+            },
+          ],
+        }),
+      ]
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: listeRdvs,
       })
@@ -161,17 +182,20 @@ describe('RendezVousApiService', () => {
 
       // When
       const actual = await rendezVousService.getRendezVousConseiller(
-        accessToken,
+        idConseiller,
         dateDebut,
         dateFin
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        `/v2/conseillers/accessToken/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
-        accessToken
+        `/v2/conseillers/idConseiller/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
+        'accessToken'
       )
-      expect(actual).toEqual([unRendezVous()])
+      expect(actual).toEqual([
+        unRdvListItem(),
+        unRdvListItem({ beneficiaires: 'Bénéficiaires multiples' }),
+      ])
     })
   })
 
@@ -182,7 +206,7 @@ describe('RendezVousApiService', () => {
       const idJeune = 'id-jeune'
       const periode = 'PASSES'
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: [unRendezVousJson()],
+        content: [unRendezVousJeuneJson()],
       })
 
       // When
@@ -197,7 +221,65 @@ describe('RendezVousApiService', () => {
         `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
         accessToken
       )
-      expect(actual).toEqual([unRendezVous({ jeunes: [] })])
+      expect(actual).toEqual([unRdvListItem()])
+    })
+  })
+
+  describe('.getRendezVousEtablissement', () => {
+    it('renvoie les rendez-vous d’un établissement', async () => {
+      // Given
+      const now = DateTime.now()
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+      const animationsCollectivesJson: AnimationCollectiveJson[] = [
+        {
+          ...unRendezVousJson({
+            id: 'ac-passee',
+            title: 'Titre de l’AC',
+            type: { code: 'whatever', label: 'Information collective' },
+            date: now.minus({ day: 1 }).toISO(),
+          }),
+          statut: 'A_VENIR',
+        },
+        {
+          ...unRendezVousJson({
+            id: 'ac-future',
+            type: { code: 'whatever', label: 'Atelier' },
+            date: now.plus({ day: 1 }).toISO(),
+          }),
+          statut: 'CLOTUREE',
+        },
+      ]
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: animationsCollectivesJson,
+      })
+
+      // When
+      const actual = await rendezVousService.getRendezVousEtablissement(
+        'id-etablissement'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        `/etablissements/id-etablissement/animations-collectives`,
+        'accessToken'
+      )
+      const animationsCollectives: AnimationCollective[] = [
+        uneAnimationCollective({
+          id: 'ac-future',
+          type: 'Atelier',
+          titre: 'Atelier par téléphone',
+          date: now.plus({ day: 1 }),
+          statut: 'CLOTUREE',
+        }),
+        uneAnimationCollective({
+          id: 'ac-passee',
+          type: 'Information collective',
+          titre: 'Titre de l’AC',
+          date: now.minus({ day: 1 }),
+          statut: 'A_VENIR',
+        }),
+      ]
+      expect(actual).toEqual(animationsCollectives)
     })
   })
 })

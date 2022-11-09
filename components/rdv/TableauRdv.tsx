@@ -72,10 +72,7 @@ export default function TableauRdv({
       )}
 
       {rdvs.length > 0 && (
-        <TableLayout describedBy='table-caption'>
-          <div id='table-caption' className='sr-only'>
-            Liste de mes rendez-vous
-          </div>
+        <TableLayout caption='Liste de mes rendez-vous'>
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
               <HeaderCell>Horaires</HeaderCell>

@@ -58,9 +58,9 @@ export default function MenuLinks({
 
         {!isPoleEmploi && items.includes(MenuItem.Rdvs) && (
           <MenuLink
-            isActive={isCurrentRoute('/mes-rendezvous')}
-            href='/mes-rendezvous'
-            label='Rendez-vous'
+            isActive={isCurrentRoute('/agenda')}
+            href='/agenda'
+            label='Agenda'
             iconName={IconName.RendezVous}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />

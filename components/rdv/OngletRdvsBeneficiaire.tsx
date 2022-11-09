@@ -14,7 +14,7 @@ interface OngletRdvsProps {
   idJeune: string
 }
 
-export function OngletRdvs({
+export function OngletRdvsBeneficiaire({
   idConseiller,
   idJeune,
   poleEmploi,
