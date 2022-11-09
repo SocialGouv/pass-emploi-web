@@ -5,14 +5,11 @@ interface RowCellProps {
   className?: string
 }
 
-export default function RowCell({ className, children }: RowCellProps) {
+export default function RowCell({ children, className = '' }: RowCellProps) {
+  const style = 'p-4 align-middle text-base-regular ' + className
+
   return (
-    <div
-      role='cell'
-      className={`table-cell p-4 align-middle ${className ?? ''} ${
-        className ?? 'text-base-regular'
-      }`}
-    >
+    <div role='cell' className={'table-cell ' + style}>
       {children}
     </div>
   )

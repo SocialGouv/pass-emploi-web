@@ -5,9 +5,8 @@ import React from 'react'
 
 import renderWithContexts from '../renderWithContexts'
 
-import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
+import { desRdvListItems, unRdvListItem } from 'fixtures/rendez-vous'
 import { mockedRendezVousService } from 'fixtures/services'
-import { rdvToListItem } from 'interfaces/rdv'
 import RendezVousPasses, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/rendez-vous-passes'
@@ -59,7 +58,7 @@ describe('RendezVousPasses', () => {
     let rendezVousService: RendezVousService
     beforeEach(() => {
       rendezVousService = mockedRendezVousService({
-        getRendezVousJeune: jest.fn(async () => [unRendezVous()]),
+        getRendezVousJeune: jest.fn(async () => [unRdvListItem()]),
       })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
         if (dependance === 'rendezVousService') return rendezVousService
@@ -106,7 +105,7 @@ describe('RendezVousPasses', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdvs: [rdvToListItem(unRendezVous())] },
+          props: { rdvs: [unRdvListItem()] },
         })
       })
     })

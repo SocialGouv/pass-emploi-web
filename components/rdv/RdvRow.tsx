@@ -33,15 +33,15 @@ export function RdvRow({
     [date]
   )
   const timeAndDuration = useMemo(
-    () => `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duration} min`,
-    [date, rdv.duration]
+    () => `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`,
+    [date, rdv.duree]
   )
 
   return (
     <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
       <a
         role='row'
-        aria-label={`Modifier rendez-vous du ${fullDate} avec ${rdv.beneficiaires}`}
+        aria-label={`Consulter rendez-vous du ${fullDate} avec ${rdv.beneficiaires}`}
         className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
       >
         <RowCell className='rounded-l-small'>

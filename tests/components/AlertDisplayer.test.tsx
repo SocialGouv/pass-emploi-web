@@ -14,7 +14,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { creationRdv: 'succes' },
         push: routerPush,
       })
@@ -39,7 +39,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,
@@ -54,7 +54,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { modificationRdv: 'succes' },
         push: routerPush,
       })
@@ -79,7 +79,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,
@@ -94,7 +94,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { suppressionRdv: 'succes' },
         push: routerPush,
       })
@@ -119,7 +119,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,

@@ -1,8 +1,18 @@
 import { BaseJeune } from 'interfaces/jeune'
+import { DateTime } from 'luxon'
 
 export interface TypeRendezVous {
   code: string
   label: string
+}
+
+export interface AnimationCollective {
+  id: string
+  type: string
+  titre: string
+  date: DateTime
+  duree: number
+  statut: 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
 }
 
 export interface RdvListItem {
@@ -11,8 +21,8 @@ export interface RdvListItem {
   type: string
   modality: string
   date: string
-  duration: number
-  idCreateur: string | null
+  duree: number
+  idCreateur?: string
 }
 
 export interface Rdv {
@@ -23,31 +33,13 @@ export interface Rdv {
   precisionType: string
   modality: string
   date: string
-  duration: number
+  duree: number
   adresse: string
   organisme: string
   presenceConseiller: boolean
   invitation: boolean
   comment: string
   createur: { id: string; nom: string; prenom: string } | null
-}
-
-export function rdvToListItem(rdv: Rdv): RdvListItem {
-  return {
-    id: rdv.id,
-    beneficiaires: getBeneficiaires(rdv.jeunes),
-    type: rdv.type.label,
-    modality: rdv.modality,
-    date: rdv.date,
-    duration: rdv.duration,
-    idCreateur: rdv.createur?.id ?? null,
-  }
-}
-
-export function getBeneficiaires(jeunes: BaseJeune[]) {
-  if (jeunes.length > 1) return 'Bénéficiaires multiples'
-  if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
-  return ''
 }
 
 export const TYPE_RENDEZ_VOUS = {

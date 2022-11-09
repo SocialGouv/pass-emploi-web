@@ -42,7 +42,7 @@ describe('<FilAriane/>', () => {
   describe('Pour une route qui ne doit pas avoir de fil d’ariane', () => {
     it('N’affiche pas le fil d’ariane', () => {
       // Given
-      render(<FilAriane currentPath='/mes-rendezvous/id-rdv' />)
+      render(<FilAriane currentPath='/agenda/id-rdv' />)
       // Then
       expect(
         screen.queryByRole('link', { name: 'Mes rendez-vous' })

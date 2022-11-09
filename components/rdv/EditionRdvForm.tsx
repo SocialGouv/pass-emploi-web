@@ -96,7 +96,7 @@ export function EditionRdvForm({
     : ''
   const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
   const regexDuree = /^\d{2}:\d{2}$/
-  const dureeRdv = dureeFromMinutes(rdv?.duration)
+  const dureeRdv = dureeFromMinutes(rdv?.duree)
   const [duree, setDuree] = useState<RequiredValue>({ value: dureeRdv })
   const [adresse, setAdresse] = useState<string>(rdv?.adresse ?? '')
   const [organisme, setOrganisme] = useState<string>(rdv?.organisme ?? '')

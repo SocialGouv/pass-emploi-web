@@ -122,7 +122,7 @@ describe('EditionRdv', () => {
         const actual = await getServerSideProps({
           req: {
             headers: {
-              referer: '/mes-rendezvous',
+              referer: '/agenda',
             },
           },
           query: {},
@@ -130,7 +130,7 @@ describe('EditionRdv', () => {
 
         // Then
         expect(actual).toMatchObject({
-          props: { returnTo: '/mes-rendezvous' },
+          props: { returnTo: '/agenda' },
         })
       })
 
@@ -251,7 +251,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous'}
+            returnTo={'/agenda'}
             pageTitle={''}
           />,
           {
@@ -620,7 +620,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: '/mes-rendezvous',
+              pathname: '/agenda',
               query: { creationRdv: 'succes' },
             })
           })
@@ -803,7 +803,7 @@ describe('EditionRdv', () => {
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/mes-rendezvous'}
+              returnTo={'/agenda'}
               pageTitle={''}
             />,
             {
@@ -908,7 +908,7 @@ describe('EditionRdv', () => {
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/mes-rendezvous'}
+              returnTo={'/agenda'}
               pageTitle={''}
             />,
             {
@@ -1010,7 +1010,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous'}
+            returnTo={'/agenda'}
             idJeune={idJeune}
             pageTitle={''}
           />,
@@ -1060,7 +1060,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            returnTo={'/agenda?creationRdv=succes'}
             rdv={rdv}
             pageTitle={''}
           />,
@@ -1099,7 +1099,7 @@ describe('EditionRdv', () => {
             rdv.id
           )
           expect(push).toHaveBeenCalledWith({
-            pathname: '/mes-rendezvous',
+            pathname: '/agenda',
             query: { suppressionRdv: 'succes' },
           })
         })
@@ -1187,7 +1187,7 @@ describe('EditionRdv', () => {
         expect(link).toBeInTheDocument()
         expect(link).toHaveAttribute(
           'href',
-          '/mes-rendezvous?creationRdv=succes'
+          '/agenda?creationRdv=succes'
         )
       })
 
@@ -1313,7 +1313,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: '/mes-rendezvous',
+              pathname: '/agenda',
               query: { modificationRdv: 'succes' },
             })
           })
@@ -1347,7 +1347,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            returnTo={'/agenda?creationRdv=succes'}
             rdv={rdv}
             pageTitle={''}
           />,

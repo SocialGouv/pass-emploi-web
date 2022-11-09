@@ -109,10 +109,9 @@ export default function TableauActionsJeune({
       )}
 
       <div className={isLoading ? 'animate-pulse' : ''}>
-        <TableLayout describedBy='table-caption'>
-          <div id='table-caption' className='sr-only'>
-            {`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
-          </div>
+        <TableLayout
+          caption={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
+        >
           <div role='rowgroup' className='table-header-group '>
             <div role='row' className='table-row text-base-regular'>
               <HeaderCell>Intitulé de l’action</HeaderCell>
