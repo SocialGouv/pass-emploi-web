@@ -7,22 +7,23 @@ import { TypeOffre } from 'interfaces/offre'
 interface SuggestionCardProps {
   type: TypeOffre
   titre: string
-  motsCles: string
   labelLocalite: string
+  labelMetier?: string
 }
 
 export default function SuggestionCard({
   type,
   titre,
-  motsCles,
   labelLocalite,
+  labelMetier,
 }: SuggestionCardProps) {
   function getTypeLabel(): string {
     switch (type) {
       case TypeOffre.EMPLOI:
         return 'Offre d’emploi'
-      case TypeOffre.SERVICE_CIVIQUE:
       case TypeOffre.IMMERSION:
+        return 'Immersion'
+      case TypeOffre.SERVICE_CIVIQUE:
       case TypeOffre.ALTERNANCE:
         return ''
     }
@@ -32,7 +33,7 @@ export default function SuggestionCard({
     <div className='rounded-large shadow-s p-6'>
       <h2 className='text-base-bold mb-2'>{titre}</h2>
       <DataTag text={getTypeLabel()} />
-      <DataTag className='ml-2' text={motsCles} />
+      {labelMetier && <DataTag className='ml-2' text={labelMetier} />}
       <div className='mt-4'>
         <DataTag text={labelLocalite} iconName={IconName.Location} />
       </div>

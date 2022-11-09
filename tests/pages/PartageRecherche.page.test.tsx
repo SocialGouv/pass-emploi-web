@@ -26,9 +26,13 @@ jest.mock('utils/injectionDependances/withDependance')
 describe('Partage Recherche', () => {
   const TITRE = 'Prof - Marseille 06'
   const MOTS_CLES = 'Prof'
+  const LABEL_METIER = 'Professeur'
+  const CODE_METIER = 'K2107'
   const LABEL_LOCALITE = 'Marseille 06'
   const TYPE_LOCALITE = 'COMMUNE'
   const CODE_LOCALITE = '13006'
+  const LATITUDE = '43.365355'
+  const LONGITUDE = '5.321875'
 
   describe('server side', () => {
     it('requiert une session valide', async () => {
@@ -100,11 +104,48 @@ describe('Partage Recherche', () => {
           props: {
             jeunes: expect.arrayContaining([]),
             type: TypeOffre.EMPLOI,
+            criteresRecherche: {
+              titre: TITRE,
+              motsCles: MOTS_CLES,
+              typeLocalite: TYPE_LOCALITE,
+              labelLocalite: LABEL_LOCALITE,
+              codeLocalite: CODE_LOCALITE,
+            },
+            withoutChat: true,
+            returnTo: 'referer-url',
+            pageTitle: 'Partager une recherche',
+          },
+        })
+      })
+
+      it('charge la page avec les détails de suggestion d’immersion', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: { referer: 'referer-url' } },
+          query: {
+            type: TypeOffre.IMMERSION,
             titre: TITRE,
-            motsCles: MOTS_CLES,
-            typeLocalite: TYPE_LOCALITE,
+            labelMetier: LABEL_METIER,
+            codeMetier: CODE_METIER,
             labelLocalite: LABEL_LOCALITE,
-            codeLocalite: CODE_LOCALITE,
+            latitude: LATITUDE,
+            longitude: LONGITUDE,
+          },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          props: {
+            jeunes: expect.arrayContaining([]),
+            type: TypeOffre.IMMERSION,
+            criteresRecherche: {
+              titre: TITRE,
+              labelMetier: LABEL_METIER,
+              codeMetier: CODE_METIER,
+              labelLocalite: LABEL_LOCALITE,
+              latitude: LATITUDE,
+              longitude: LONGITUDE,
+            },
             withoutChat: true,
             returnTo: 'referer-url',
             pageTitle: 'Partager une recherche',
@@ -118,89 +159,139 @@ describe('Partage Recherche', () => {
     let suggestionsService: SuggestionsService
     let inputSearchJeune: HTMLSelectElement
     let submitButton: HTMLButtonElement
+    let push: Function
 
-    beforeEach(() => {
-      suggestionsService = mockedSuggestionsService()
+    describe('pour tous les partages de recherche', () => {
+      beforeEach(() => {
+        suggestionsService = mockedSuggestionsService()
 
-      renderWithContexts(
-        <PartageCritere
-          pageTitle='Partager une recherche'
-          jeunes={desItemsJeunes()}
-          type={TypeOffre.EMPLOI}
-          titre={TITRE}
-          motsCles={MOTS_CLES}
-          typeLocalite={TYPE_LOCALITE}
-          labelLocalite={LABEL_LOCALITE}
-          codeLocalite={CODE_LOCALITE}
-          withoutChat={true}
-          returnTo=''
-        />,
-        { customDependances: { suggestionsService: suggestionsService } }
-      )
+        renderWithContexts(
+          <PartageCritere
+            pageTitle='Partager une recherche'
+            jeunes={desItemsJeunes()}
+            type={TypeOffre.EMPLOI}
+            criteresRecherche={{
+              titre: TITRE,
+              motsCles: MOTS_CLES,
+              typeLocalite: TYPE_LOCALITE,
+              labelLocalite: LABEL_LOCALITE,
+              codeLocalite: CODE_LOCALITE,
+            }}
+            withoutChat={true}
+            returnTo=''
+          />,
+          { customDependances: { suggestionsService: suggestionsService } }
+        )
 
-      //Given
-      inputSearchJeune = screen.getByRole('combobox', {
-        name: 'Rechercher et ajouter des jeunes Nom et prénom',
-      })
+        //Given
+        inputSearchJeune = screen.getByRole('combobox', {
+          name: 'Rechercher et ajouter des jeunes Nom et prénom',
+        })
 
-      submitButton = screen.getByRole('button', {
-        name: 'Envoyer',
-      })
-    })
-
-    describe("quand le formulaire n'a pas encore été soumis", () => {
-      it('devrait afficher les champs pour envoyer un message', () => {
-        // Then
-        expect(inputSearchJeune).toBeInTheDocument()
-        expect(
-          screen.getByRole('button', { name: 'Envoyer' })
-        ).toBeInTheDocument()
-        expect(
-          screen.getByRole('link', { name: 'Annuler' })
-        ).toBeInTheDocument()
-      })
-
-      it('ne devrait pas pouvoir cliquer sur le bouton envoyer sans avoir selectionner de destinataires', async () => {
-        // Then
-        expect(inputSearchJeune.selectedOptions).toBe(undefined)
-        expect(submitButton).toHaveAttribute('disabled')
-      })
-    })
-
-    describe('quand on remplit le formulaire', () => {
-      let push: Function
-      beforeEach(async () => {
-        push = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ push })
-
-        // Given
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
-        await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-      })
-
-      it('sélectionne plusieurs jeunes dans la liste', () => {
-        // Then
-        expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
-        expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
-        expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
-      })
-
-      it('redirige vers la page précédente', async () => {
-        // When
-        await userEvent.click(submitButton)
-
-        // Then
-        expect(push).toHaveBeenCalledWith({
-          pathname: '/recherche-offres',
-          query: { suggestionRecherche: 'succes' },
+        submitButton = screen.getByRole('button', {
+          name: 'Envoyer',
         })
       })
 
-      describe('spécifique', () => {
-        it('envoie une suggestion d’offres d’emploi à plusieurs destinataires', async () => {
+      describe("quand le formulaire n'a pas encore été soumis", () => {
+        it('devrait afficher les champs pour envoyer un message', () => {
+          // Then
+          expect(inputSearchJeune).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Envoyer' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('link', { name: 'Annuler' })
+          ).toBeInTheDocument()
+        })
+
+        it('ne devrait pas pouvoir cliquer sur le bouton envoyer sans avoir selectionner de destinataires', async () => {
+          // Then
+          expect(inputSearchJeune.selectedOptions).toBe(undefined)
+          expect(submitButton).toHaveAttribute('disabled')
+        })
+      })
+
+      describe('quand on remplit le formulaire', () => {
+        beforeEach(async () => {
+          push = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ push })
+
+          // Given
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        })
+
+        it('sélectionne plusieurs jeunes dans la liste', () => {
+          // Then
+          expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
+          expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
+          expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
+        })
+
+        it('redirige vers la page précédente', async () => {
           // When
           await userEvent.click(submitButton)
 
+          // Then
+          expect(push).toHaveBeenCalledWith({
+            pathname: '/recherche-offres',
+            query: { suggestionRecherche: 'succes' },
+          })
+        })
+      })
+    })
+
+    describe('pour le partage de recherche d’un type d’offre particulier', () => {
+      describe('Offre Emploi', () => {
+        beforeEach(() => {
+          // Given
+          renderWithContexts(
+            <PartageCritere
+              pageTitle='Partager une recherche'
+              jeunes={desItemsJeunes()}
+              type={TypeOffre.EMPLOI}
+              criteresRecherche={{
+                titre: TITRE,
+                motsCles: MOTS_CLES,
+                typeLocalite: TYPE_LOCALITE,
+                labelLocalite: LABEL_LOCALITE,
+                codeLocalite: CODE_LOCALITE,
+              }}
+              withoutChat={true}
+              returnTo=''
+            />,
+            { customDependances: { suggestionsService: suggestionsService } }
+          )
+
+          //Given
+          inputSearchJeune = screen.getByRole('combobox', {
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+          })
+
+          submitButton = screen.getByRole('button', {
+            name: 'Envoyer',
+          })
+        })
+
+        it("affiche les informations de la suggestion d’offre d'emploi", () => {
+          expect(screen.getByText('Offre d’emploi')).toBeInTheDocument()
+          expect(screen.getByText(TITRE)).toBeInTheDocument()
+          expect(screen.getByText(MOTS_CLES)).toBeInTheDocument()
+          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+        })
+
+        it('envoie une suggestion d’offres d’emploi à plusieurs destinataires', async () => {
+          // Given
+          push = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ push })
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
           expect(
             suggestionsService.envoyerSuggestionOffreEmploi
           ).toHaveBeenCalledWith({
@@ -212,13 +303,69 @@ describe('Partage Recherche', () => {
           })
         })
       })
-    })
 
-    describe('spécifique', () => {
-      it("affiche les informations de la suggestion d’offre d'emploi", () => {
-        expect(screen.getByText('Offre d’emploi')).toBeInTheDocument()
-        expect(screen.getByText(TITRE)).toBeInTheDocument()
-        expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+      describe('Immersion', () => {
+        beforeEach(() => {
+          // Given
+          renderWithContexts(
+            <PartageCritere
+              pageTitle='Partager une recherche'
+              jeunes={desItemsJeunes()}
+              type={TypeOffre.IMMERSION}
+              criteresRecherche={{
+                titre: TITRE,
+                labelMetier: LABEL_METIER,
+                codeMetier: CODE_METIER,
+                labelLocalite: LABEL_LOCALITE,
+                latitude: LATITUDE,
+                longitude: LONGITUDE,
+              }}
+              withoutChat={true}
+              returnTo=''
+            />,
+            { customDependances: { suggestionsService: suggestionsService } }
+          )
+
+          //Given
+          inputSearchJeune = screen.getByRole('combobox', {
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+          })
+
+          submitButton = screen.getByRole('button', {
+            name: 'Envoyer',
+          })
+        })
+
+        it('affiche les informations de la suggestion d’immersion', () => {
+          expect(screen.getByText('Immersion')).toBeInTheDocument()
+          expect(screen.getByText(TITRE)).toBeInTheDocument()
+          expect(screen.getByText(LABEL_METIER)).toBeInTheDocument()
+          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+        })
+
+        it('envoie une suggestion d’immersion à plusieurs destinataires', async () => {
+          // Given
+          push = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ push })
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
+          expect(
+            suggestionsService.envoyerSuggestionImmersion
+          ).toHaveBeenCalledWith({
+            idsJeunes: ['jeune-1', 'jeune-2'],
+            titre: TITRE,
+            labelMetier: LABEL_METIER,
+            codeMetier: CODE_METIER,
+            labelLocalite: LABEL_LOCALITE,
+            latitude: Number(LATITUDE),
+            longitude: Number(LONGITUDE),
+          })
+        })
       })
     })
   })

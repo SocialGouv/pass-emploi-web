@@ -133,6 +133,11 @@ function RechercheOffres({
     return query
   }
 
+  function getQueryImmersion(): SearchImmersionsQuery {
+    const { hasError, ...query } = queryImmersions
+    return query as SearchImmersionsQuery
+  }
+
   async function rechercherOffresEmploi(page: number): Promise<{
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
@@ -160,11 +165,7 @@ function RechercheOffres({
     offres: BaseImmersion[]
     metadonnees: MetadonneesOffres
   }> {
-    const { hasError, ...query } = queryImmersions
-    return immersionsService.searchImmersions(
-      query as SearchImmersionsQuery,
-      page
-    )
+    return immersionsService.searchImmersions(getQueryImmersion(), page)
   }
 
   function nettoyerResultats() {
@@ -208,6 +209,7 @@ function RechercheOffres({
       <PartageRechercheButton
         typeOffre={typeOffre}
         suggestionOffreEmploi={getQueryOffreEmploi()}
+        suggestionImmersion={getQueryImmersion()}
       />
       <ResultatsRechercheOffre
         isSearching={isSearching}

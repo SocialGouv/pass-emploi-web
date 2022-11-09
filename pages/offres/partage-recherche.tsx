@@ -21,14 +21,32 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
+type CriteresRecherche =
+  | CriteresRechercheOffreEmploiProps
+  | CriteresRechercheImmersionProps
+
+type CriteresRechercheBase = {
+  titre: string
+  labelLocalite: string
+}
+
+type CriteresRechercheOffreEmploiProps = CriteresRechercheBase & {
+  motsCles: string
+  typeLocalite: TypeLocalite
+  codeLocalite: string
+}
+
+type CriteresRechercheImmersionProps = CriteresRechercheBase & {
+  labelMetier: string
+  codeMetier: string
+  latitude: string
+  longitude: string
+}
+
 type PartageRechercheProps = PageProps & {
   jeunes: BaseJeune[]
   type: TypeOffre
-  titre: string
-  motsCles: string
-  typeLocalite: TypeLocalite
-  labelLocalite: string
-  codeLocalite: string
+  criteresRecherche: CriteresRecherche
   withoutChat: true
   returnTo: string
 }
@@ -36,11 +54,7 @@ type PartageRechercheProps = PageProps & {
 function PartageRecherche({
   jeunes,
   type,
-  titre,
-  motsCles,
-  typeLocalite,
-  labelLocalite,
-  codeLocalite,
+  criteresRecherche,
   returnTo,
 }: PartageRechercheProps) {
   const suggestionsService =
@@ -55,6 +69,18 @@ function PartageRecherche({
     () => idsDestinataires.value.length > 0,
     [idsDestinataires]
   )
+
+  function getLabelMetier(): string | undefined {
+    switch (type) {
+      case TypeOffre.EMPLOI:
+        return (criteresRecherche as CriteresRechercheOffreEmploiProps).motsCles
+      case TypeOffre.IMMERSION:
+        return (criteresRecherche as CriteresRechercheImmersionProps)
+          .labelMetier
+      default:
+        return undefined
+    }
+  }
 
   function updateIdsDestinataires(selectedIds: string[]) {
     setIdsDestinataires({
@@ -72,15 +98,41 @@ function PartageRecherche({
     setIsPartageEnCours(true)
 
     try {
-      await suggestionsService.envoyerSuggestionOffreEmploi({
-        idsJeunes: idsDestinataires.value,
-        titre,
-        motsCles,
-        labelLocalite,
-        codeDepartement:
-          typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
-        codeCommune: typeLocalite === 'COMMUNE' ? codeLocalite : undefined,
-      })
+      if (type === TypeOffre.EMPLOI) {
+        const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
+          criteresRecherche as CriteresRechercheOffreEmploiProps
+
+        await suggestionsService.envoyerSuggestionOffreEmploi({
+          idsJeunes: idsDestinataires.value,
+          titre,
+          motsCles,
+          labelLocalite,
+          codeDepartement:
+            typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
+          codeCommune: typeLocalite === 'COMMUNE' ? codeLocalite : undefined,
+        })
+      }
+
+      if (type === TypeOffre.IMMERSION) {
+        const {
+          titre,
+          labelMetier,
+          codeMetier,
+          labelLocalite,
+          latitude,
+          longitude,
+        } = criteresRecherche as CriteresRechercheImmersionProps
+
+        await suggestionsService.envoyerSuggestionImmersion({
+          idsJeunes: idsDestinataires.value,
+          titre,
+          labelMetier,
+          codeMetier,
+          labelLocalite,
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+        })
+      }
       await router.push({
         pathname: '/recherche-offres',
         query: { [QueryParam.suggestionRecherche]: QueryValue.succes },
@@ -94,9 +146,9 @@ function PartageRecherche({
     <>
       <SuggestionCard
         type={type}
-        titre={titre}
-        motsCles={motsCles}
-        labelLocalite={labelLocalite}
+        titre={criteresRecherche.titre}
+        labelLocalite={criteresRecherche.labelLocalite}
+        labelMetier={getLabelMetier()}
       />
       <p className='mt-8'>
         Ces critères apparaitrons dans la section favoris, catégorie recherches
@@ -154,16 +206,39 @@ export const getServerSideProps: GetServerSideProps<
 
   const referer = context.req.headers.referer
   const redirectTo = referer ?? '/recherche-offres'
+  const typeOffre: TypeOffre = context.query.type as TypeOffre
+  let criteresRecherche:
+    | CriteresRechercheOffreEmploiProps
+    | CriteresRechercheImmersionProps
+
+  switch (typeOffre) {
+    case TypeOffre.IMMERSION:
+      criteresRecherche = {
+        titre: context.query.titre as string,
+        labelMetier: context.query.labelMetier as string,
+        codeMetier: context.query.codeMetier as string,
+        labelLocalite: context.query.labelLocalite as string,
+        latitude: context.query.latitude as string,
+        longitude: context.query.longitude as string,
+      }
+      break
+    case TypeOffre.EMPLOI:
+    default:
+      criteresRecherche = {
+        titre: context.query.titre as string,
+        motsCles: context.query.motsCles as string,
+        typeLocalite: context.query.typeLocalite as TypeLocalite,
+        labelLocalite: context.query.labelLocalite as string,
+        codeLocalite: context.query.codeLocalite as string,
+      }
+      break
+  }
 
   return {
     props: {
       jeunes,
-      type: context.query.type as TypeOffre,
-      titre: context.query.titre as string,
-      motsCles: context.query.motsCles as string,
-      typeLocalite: context.query.typeLocalite as TypeLocalite,
-      labelLocalite: context.query.labelLocalite as string,
-      codeLocalite: context.query.codeLocalite as string,
+      type: typeOffre,
+      criteresRecherche: criteresRecherche,
       withoutChat: true,
       returnTo: redirectTo,
       pageTitle: 'Partager une recherche',
