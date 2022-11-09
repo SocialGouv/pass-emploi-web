@@ -154,8 +154,7 @@ function RechercheOffres({
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
   }> {
-    const { hasError, ...query } = queryOffresEmploi
-    return offresEmploiService.searchAlternances(query, page)
+    return offresEmploiService.searchAlternances(getQueryOffreEmploi(), page)
   }
 
   async function rechercherServicesCiviques(page: number): Promise<{

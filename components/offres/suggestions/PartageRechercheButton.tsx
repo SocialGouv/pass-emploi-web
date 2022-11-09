@@ -26,6 +26,7 @@ export default function PartageRechercheButton({
   function laRechercheEstPartageable(): boolean {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return laRechercheOffreEmploiEstPartageable()
       case TypeOffre.IMMERSION:
         return laRechercheImmersionEstPartageable()
@@ -51,24 +52,15 @@ export default function PartageRechercheButton({
     return Boolean(suggestionServiceCivique.commune)
   }
 
-  function afficheLeBoutonDePartage(): boolean {
-    return (
-      typeOffre === TypeOffre.EMPLOI ||
-      typeOffre === TypeOffre.IMMERSION ||
-      typeOffre === TypeOffre.SERVICE_CIVIQUE
-    )
-  }
-
   function getPartageRechercheUrl(): string {
-    switch (typeOffre) {
+    switch (typeOffre!) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return getPartageRechercheOffreEmploiUrl()
       case TypeOffre.IMMERSION:
         return getPartageRechercheImmersionUrl()
       case TypeOffre.SERVICE_CIVIQUE:
         return getPartageRechercheServiceCiviqueUrl()
-      default:
-        return ''
     }
   }
 
@@ -110,15 +102,14 @@ export default function PartageRechercheButton({
   }
 
   function getLabelRechercheNonPartageable(): string {
-    switch (typeOffre) {
+    switch (typeOffre!) {
       case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
         return 'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail'
       case TypeOffre.IMMERSION:
         return 'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville'
       case TypeOffre.SERVICE_CIVIQUE:
         return 'Pour suggérer des critères de recherche, vous devez saisir une ville'
-      default:
-        return ''
     }
   }
 
@@ -128,7 +119,7 @@ export default function PartageRechercheButton({
 
   return (
     <>
-      {afficheLeBoutonDePartage() && (
+      {typeOffre && (
         <>
           <div
             className={

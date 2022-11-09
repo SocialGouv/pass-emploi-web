@@ -21,12 +21,12 @@ export default function SuggestionCard({
     switch (type) {
       case TypeOffre.EMPLOI:
         return 'Offre d’emploi'
-      case TypeOffre.IMMERSION:
-        return 'Immersion'
+      case TypeOffre.ALTERNANCE:
+        return 'Alternance'
       case TypeOffre.SERVICE_CIVIQUE:
         return 'Service civique'
-      case TypeOffre.ALTERNANCE:
-        return ''
+      case TypeOffre.IMMERSION:
+        return 'Immersion'
     }
   }
 
