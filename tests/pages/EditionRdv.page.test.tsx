@@ -1168,7 +1168,7 @@ describe('EditionRdv', () => {
 
       it('contient un lien pour annuler', () => {
         // Then
-        const link = screen.getByText('Annuler')
+        const link = screen.getByText('Annuler la modification')
         expect(link).toBeInTheDocument()
         expect(link).toHaveAttribute(
           'href',
@@ -1252,7 +1252,7 @@ describe('EditionRdv', () => {
 
         it("prévient avant d'annuler", async () => {
           // Given
-          const button = screen.getByText('Annuler')
+          const button = screen.getByText('Annuler la modification')
 
           // When
           await userEvent.click(button)
