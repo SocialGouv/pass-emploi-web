@@ -21,6 +21,14 @@ export interface SuggestionsService {
     latitude: number
     longitude: number
   }): Promise<void>
+
+  envoyerSuggestionServiceCivique(query: {
+    idsJeunes: string[]
+    titre: string
+    labelLocalite: string
+    latitude: number
+    longitude: number
+  }): Promise<void>
 }
 
 export class SuggestionsApiService implements SuggestionsService {
@@ -72,6 +80,30 @@ export class SuggestionsApiService implements SuggestionsService {
         titre: query.titre,
         metier: query.labelMetier,
         rome: query.codeMetier,
+        localisation: query.labelLocalite,
+        lat: query.latitude,
+        lon: query.longitude,
+      },
+      accessToken
+    )
+  }
+
+  async envoyerSuggestionServiceCivique(query: {
+    idsJeunes: string[]
+    titre: string
+    labelLocalite: string
+    latitude: number
+    longitude: number
+  }): Promise<void> {
+    const session = await getSession()
+    const accessToken = session!.accessToken
+    const idConseiller = session!.user.id
+
+    await this.apiClient.post(
+      `/conseillers/${idConseiller}/recherches/suggestions/services-civique`,
+      {
+        idsJeunes: query.idsJeunes,
+        titre: query.titre,
         localisation: query.labelLocalite,
         lat: query.latitude,
         lon: query.longitude,

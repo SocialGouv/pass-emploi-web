@@ -24,6 +24,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 type CriteresRecherche =
   | CriteresRechercheOffreEmploiProps
   | CriteresRechercheImmersionProps
+  | CriteresRechercheServiceCiviqueProps
 
 type CriteresRechercheBase = {
   titre: string
@@ -39,6 +40,11 @@ type CriteresRechercheOffreEmploiProps = CriteresRechercheBase & {
 type CriteresRechercheImmersionProps = CriteresRechercheBase & {
   labelMetier: string
   codeMetier: string
+  latitude: string
+  longitude: string
+}
+
+type CriteresRechercheServiceCiviqueProps = CriteresRechercheBase & {
   latitude: string
   longitude: string
 }
@@ -77,6 +83,7 @@ function PartageRecherche({
       case TypeOffre.IMMERSION:
         return (criteresRecherche as CriteresRechercheImmersionProps)
           .labelMetier
+      case TypeOffre.SERVICE_CIVIQUE:
       default:
         return undefined
     }
@@ -98,41 +105,7 @@ function PartageRecherche({
     setIsPartageEnCours(true)
 
     try {
-      if (type === TypeOffre.EMPLOI) {
-        const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
-          criteresRecherche as CriteresRechercheOffreEmploiProps
-
-        await suggestionsService.envoyerSuggestionOffreEmploi({
-          idsJeunes: idsDestinataires.value,
-          titre,
-          motsCles,
-          labelLocalite,
-          codeDepartement:
-            typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
-          codeCommune: typeLocalite === 'COMMUNE' ? codeLocalite : undefined,
-        })
-      }
-
-      if (type === TypeOffre.IMMERSION) {
-        const {
-          titre,
-          labelMetier,
-          codeMetier,
-          labelLocalite,
-          latitude,
-          longitude,
-        } = criteresRecherche as CriteresRechercheImmersionProps
-
-        await suggestionsService.envoyerSuggestionImmersion({
-          idsJeunes: idsDestinataires.value,
-          titre,
-          labelMetier,
-          codeMetier,
-          labelLocalite,
-          latitude: Number(latitude),
-          longitude: Number(longitude),
-        })
-      }
+      await envoyerSuggestion()
       await router.push({
         pathname: '/recherche-offres',
         query: { [QueryParam.suggestionRecherche]: QueryValue.succes },
@@ -140,6 +113,69 @@ function PartageRecherche({
     } finally {
       setIsPartageEnCours(false)
     }
+  }
+
+  async function envoyerSuggestion() {
+    switch (type) {
+      case TypeOffre.EMPLOI:
+        await envoyerSuggestionOffreEmploi()
+        break
+      case TypeOffre.IMMERSION:
+        await envoyerSuggestionImmersion()
+        break
+      case TypeOffre.SERVICE_CIVIQUE:
+        await envoyerSuggestionServiceCivique()
+        break
+    }
+  }
+
+  async function envoyerSuggestionOffreEmploi(): Promise<void> {
+    const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
+      criteresRecherche as CriteresRechercheOffreEmploiProps
+
+    await suggestionsService.envoyerSuggestionOffreEmploi({
+      idsJeunes: idsDestinataires.value,
+      titre,
+      motsCles,
+      labelLocalite,
+      codeDepartement:
+        typeLocalite === 'DEPARTEMENT' ? codeLocalite : undefined,
+      codeCommune: typeLocalite === 'COMMUNE' ? codeLocalite : undefined,
+    })
+  }
+
+  async function envoyerSuggestionImmersion(): Promise<void> {
+    const {
+      titre,
+      labelMetier,
+      codeMetier,
+      labelLocalite,
+      latitude,
+      longitude,
+    } = criteresRecherche as CriteresRechercheImmersionProps
+
+    await suggestionsService.envoyerSuggestionImmersion({
+      idsJeunes: idsDestinataires.value,
+      titre,
+      labelMetier,
+      codeMetier,
+      labelLocalite,
+      latitude: Number(latitude),
+      longitude: Number(longitude),
+    })
+  }
+
+  async function envoyerSuggestionServiceCivique(): Promise<void> {
+    const { titre, labelLocalite, latitude, longitude } =
+      criteresRecherche as CriteresRechercheServiceCiviqueProps
+
+    await suggestionsService.envoyerSuggestionServiceCivique({
+      idsJeunes: idsDestinataires.value,
+      titre,
+      labelLocalite,
+      latitude: Number(latitude),
+      longitude: Number(longitude),
+    })
   }
 
   return (
@@ -207,9 +243,7 @@ export const getServerSideProps: GetServerSideProps<
   const referer = context.req.headers.referer
   const redirectTo = referer ?? '/recherche-offres'
   const typeOffre: TypeOffre = context.query.type as TypeOffre
-  let criteresRecherche:
-    | CriteresRechercheOffreEmploiProps
-    | CriteresRechercheImmersionProps
+  let criteresRecherche: CriteresRecherche
 
   switch (typeOffre) {
     case TypeOffre.IMMERSION:
@@ -217,6 +251,14 @@ export const getServerSideProps: GetServerSideProps<
         titre: context.query.titre as string,
         labelMetier: context.query.labelMetier as string,
         codeMetier: context.query.codeMetier as string,
+        labelLocalite: context.query.labelLocalite as string,
+        latitude: context.query.latitude as string,
+        longitude: context.query.longitude as string,
+      }
+      break
+    case TypeOffre.SERVICE_CIVIQUE:
+      criteresRecherche = {
+        titre: context.query.titre as string,
         labelLocalite: context.query.labelLocalite as string,
         latitude: context.query.latitude as string,
         longitude: context.query.longitude as string,

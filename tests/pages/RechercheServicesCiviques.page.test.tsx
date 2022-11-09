@@ -299,6 +299,54 @@ describe('Page Recherche Offres', () => {
     })
   })
 
+  describe('partage des critères de recherche', () => {
+    it('ne permet pas de partager s’il n’y a pas de commune renseignée', async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: `Partager critères de recherche`,
+        })
+      )
+
+      expect(
+        screen.getByText(
+          'Pour suggérer des critères de recherche, vous devez saisir une ville'
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('affiche le bouton de partage de critère s’il y a une commune renseignés', async () => {
+      // When
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByText(
+          'Suggérer ces critères de recherche à vos bénéficiaires'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('construit le bon lien qui correspond aux critères de recherches', async () => {
+      // Given
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toHaveAttribute(
+        'href',
+        `/offres/partage-recherche?type=SERVICE_CIVIQUE&titre=PARIS%2014%20(75)&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
+      )
+    })
+  })
+
   describe('recherche', () => {
     it('permet de rechercher des offres de services civiques', async () => {
       // Given

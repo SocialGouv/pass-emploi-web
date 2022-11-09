@@ -52,7 +52,7 @@ describe('SuggestionsApiService', () => {
   })
 
   describe('.envoyerSuggestionImmersion', () => {
-    it('envoie les bons paramètres de suggestions immersion', async () => {
+    it('envoie les bons paramètres de suggestions d’immersion', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
       const titre = 'Vendeur - Paris'
@@ -81,6 +81,39 @@ describe('SuggestionsApiService', () => {
           titre: titre,
           metier: labelMetier,
           rome: codeMetier,
+          localisation: labelLocalite,
+          lat: latitude,
+          lon: longitude,
+        },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.envoyerSuggestionServiceCivique', () => {
+    it('envoie les bons paramètres de suggestions de service civique', async () => {
+      // Given
+      const idsJeunes = ['jeune-1', 'jeune-2']
+      const titre = 'Paris'
+      const labelLocalite = 'Paris'
+      const latitude = 2.323026
+      const longitude = 48.830208
+
+      // When
+      await suggestionsService.envoyerSuggestionServiceCivique({
+        idsJeunes,
+        titre,
+        labelLocalite,
+        latitude,
+        longitude,
+      })
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/recherches/suggestions/services-civique',
+        {
+          idsJeunes: idsJeunes,
+          titre: titre,
           localisation: labelLocalite,
           lat: latitude,
           lon: longitude,
