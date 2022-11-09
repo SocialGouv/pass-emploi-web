@@ -648,7 +648,7 @@ export function EditionRdvForm({
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
-                Annuler
+                Annuler {rdv ? 'la modification' : ''}
               </ButtonLink>
             )}
             {formHasChanges() && (
@@ -661,7 +661,7 @@ export function EditionRdvForm({
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
-                Annuler
+                Annuler {rdv ? ' la modification' : ''}
               </Button>
             )}
 
