@@ -6,17 +6,20 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TypeOffre } from 'interfaces/offre'
 import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
+import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 
 interface PartageRechercheButtonProps {
   typeOffre?: TypeOffre
   suggestionOffreEmploi: SearchOffresEmploiQuery
   suggestionImmersion: SearchImmersionsQuery
+  suggestionServiceCivique: SearchServicesCiviquesQuery
 }
 
 export default function PartageRechercheButton({
   typeOffre,
   suggestionOffreEmploi,
   suggestionImmersion,
+  suggestionServiceCivique,
 }: PartageRechercheButtonProps) {
   const [errorMessage, setErrorMessage] = useState<boolean>()
 
@@ -26,6 +29,8 @@ export default function PartageRechercheButton({
         return laRechercheOffreEmploiEstPartageable()
       case TypeOffre.IMMERSION:
         return laRechercheImmersionEstPartageable()
+      case TypeOffre.SERVICE_CIVIQUE:
+        return laRechercheServiceCiviqueEstPartageable()
       default:
         return false
     }
@@ -42,8 +47,16 @@ export default function PartageRechercheButton({
     return Boolean(suggestionImmersion.metier && suggestionImmersion.commune)
   }
 
+  function laRechercheServiceCiviqueEstPartageable(): boolean {
+    return Boolean(suggestionServiceCivique.commune)
+  }
+
   function afficheLeBoutonDePartage(): boolean {
-    return typeOffre === TypeOffre.EMPLOI || typeOffre === TypeOffre.IMMERSION
+    return (
+      typeOffre === TypeOffre.EMPLOI ||
+      typeOffre === TypeOffre.IMMERSION ||
+      typeOffre === TypeOffre.SERVICE_CIVIQUE
+    )
   }
 
   function getPartageRechercheUrl(): string {
@@ -52,6 +65,8 @@ export default function PartageRechercheButton({
         return getPartageRechercheOffreEmploiUrl()
       case TypeOffre.IMMERSION:
         return getPartageRechercheImmersionUrl()
+      case TypeOffre.SERVICE_CIVIQUE:
+        return getPartageRechercheServiceCiviqueUrl()
       default:
         return ''
     }
@@ -84,12 +99,24 @@ export default function PartageRechercheButton({
     return encodeURI(url)
   }
 
+  function getPartageRechercheServiceCiviqueUrl(): string {
+    const url = '/offres/partage-recherche'
+      .concat(`?type=${typeOffre}`)
+      .concat(`&titre=${suggestionServiceCivique.commune!.libelle}`)
+      .concat(`&labelLocalite=${suggestionServiceCivique.commune!.libelle}`)
+      .concat(`&latitude=${suggestionServiceCivique.commune!.latitude}`)
+      .concat(`&longitude=${suggestionServiceCivique.commune!.longitude}`)
+    return encodeURI(url)
+  }
+
   function getLabelRechercheNonPartageable(): string {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return 'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail'
       case TypeOffre.IMMERSION:
         return 'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville'
+      case TypeOffre.SERVICE_CIVIQUE:
+        return 'Pour suggérer des critères de recherche, vous devez saisir une ville'
       default:
         return ''
     }

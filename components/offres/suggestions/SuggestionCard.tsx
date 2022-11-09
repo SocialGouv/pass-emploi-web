@@ -24,6 +24,7 @@ export default function SuggestionCard({
       case TypeOffre.IMMERSION:
         return 'Immersion'
       case TypeOffre.SERVICE_CIVIQUE:
+        return 'Service civique'
       case TypeOffre.ALTERNANCE:
         return ''
     }

@@ -175,6 +175,7 @@ export function mockedSuggestionsService(
   const defaults: SuggestionsService = {
     envoyerSuggestionOffreEmploi: jest.fn(),
     envoyerSuggestionImmersion: jest.fn(),
+    envoyerSuggestionServiceCivique: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

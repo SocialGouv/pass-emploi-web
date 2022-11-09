@@ -152,6 +152,37 @@ describe('Partage Recherche', () => {
           },
         })
       })
+
+      it('charge la page avec les détails de suggestion de service civique', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: { referer: 'referer-url' } },
+          query: {
+            type: TypeOffre.SERVICE_CIVIQUE,
+            titre: TITRE,
+            labelLocalite: LABEL_LOCALITE,
+            latitude: LATITUDE,
+            longitude: LONGITUDE,
+          },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          props: {
+            jeunes: expect.arrayContaining([]),
+            type: TypeOffre.SERVICE_CIVIQUE,
+            criteresRecherche: {
+              titre: TITRE,
+              labelLocalite: LABEL_LOCALITE,
+              latitude: LATITUDE,
+              longitude: LONGITUDE,
+            },
+            withoutChat: true,
+            returnTo: 'referer-url',
+            pageTitle: 'Partager une recherche',
+          },
+        })
+      })
     })
   })
 
@@ -361,6 +392,65 @@ describe('Partage Recherche', () => {
             titre: TITRE,
             labelMetier: LABEL_METIER,
             codeMetier: CODE_METIER,
+            labelLocalite: LABEL_LOCALITE,
+            latitude: Number(LATITUDE),
+            longitude: Number(LONGITUDE),
+          })
+        })
+      })
+
+      describe('Service Civique', () => {
+        beforeEach(() => {
+          // Given
+          renderWithContexts(
+            <PartageCritere
+              pageTitle='Partager une recherche'
+              jeunes={desItemsJeunes()}
+              type={TypeOffre.SERVICE_CIVIQUE}
+              criteresRecherche={{
+                titre: TITRE,
+                labelLocalite: LABEL_LOCALITE,
+                latitude: LATITUDE,
+                longitude: LONGITUDE,
+              }}
+              withoutChat={true}
+              returnTo=''
+            />,
+            { customDependances: { suggestionsService: suggestionsService } }
+          )
+
+          //Given
+          inputSearchJeune = screen.getByRole('combobox', {
+            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+          })
+
+          submitButton = screen.getByRole('button', {
+            name: 'Envoyer',
+          })
+        })
+
+        it('affiche les informations de la suggestion de service civique', () => {
+          expect(screen.getByText('Service civique')).toBeInTheDocument()
+          expect(screen.getByText(TITRE)).toBeInTheDocument()
+          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+        })
+
+        it('envoie une suggestion de service civique à plusieurs destinataires', async () => {
+          // Given
+          push = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ push })
+          await userEvent.type(inputSearchJeune, 'Jirac Kenji')
+          await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+
+          // When
+          await userEvent.click(submitButton)
+
+          // Then
+          expect(
+            suggestionsService.envoyerSuggestionServiceCivique
+          ).toHaveBeenCalledWith({
+            idsJeunes: ['jeune-1', 'jeune-2'],
+            titre: TITRE,
             labelLocalite: LABEL_LOCALITE,
             latitude: Number(LATITUDE),
             longitude: Number(LONGITUDE),
