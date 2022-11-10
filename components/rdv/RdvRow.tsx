@@ -41,7 +41,7 @@ export function RdvRow({
     <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
       <a
         role='row'
-        aria-label={`Consulter rendez-vous du ${fullDate} avec ${rdv.beneficiaires}`}
+        aria-label={`Consulter l’événement du ${fullDate} avec ${rdv.beneficiaires}`}
         className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
       >
         <RowCell className='rounded-l-small'>

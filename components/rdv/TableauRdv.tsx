@@ -67,12 +67,12 @@ export default function TableauRdv({
     <>
       {rdvs.length === 0 && (
         <p className='text-base-regular mb-2'>
-          Il n’y a pas de rendez-vous sur cette période.
+          Il n’y a pas d’événement sur cette période.
         </p>
       )}
 
       {rdvs.length > 0 && (
-        <TableLayout caption='Liste de mes rendez-vous'>
+        <TableLayout caption='Liste de mes événements'>
           <div role='rowgroup' className='table-row-group'>
             <div role='row' className='table-row'>
               <HeaderCell>Horaires</HeaderCell>

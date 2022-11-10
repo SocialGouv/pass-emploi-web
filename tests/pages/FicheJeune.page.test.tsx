@@ -15,11 +15,7 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import {
-  desRdvListItems,
-  unRdvListItem,
-  unRendezVous,
-} from 'fixtures/rendez-vous'
+import { desRdvListItems, unRdvListItem } from 'fixtures/rendez-vous'
 import {
   mockedActionsService,
   mockedJeunesService,
@@ -388,7 +384,7 @@ describe('Fiche Jeune', () => {
         ).toBeInTheDocument()
 
         const indicateursRdv = screen.getByRole('heading', {
-          name: 'Les rendez-vous',
+          name: 'Les événements',
         }).parentElement
         expect(
           getByTextContent('3Cette semaine', indicateursRdv!)
@@ -421,7 +417,7 @@ describe('Fiche Jeune', () => {
       it('affiche un lien vers les rendez-vous passés du jeune', () => {
         // Then
         expect(
-          screen.getByRole('link', { name: 'Voir les rendez-vous passés' })
+          screen.getByRole('link', { name: 'Voir les événements passés' })
         ).toHaveAttribute('href', '/mes-jeunes/jeune-1/rendez-vous-passes')
       })
 
@@ -458,7 +454,7 @@ describe('Fiche Jeune', () => {
       it('permet la prise de rendez-vous', async () => {
         // Then
         expect(
-          screen.getByRole('link', { name: 'Créer un rendez-vous' })
+          screen.getByRole('link', { name: 'Créer un événement' })
         ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
 

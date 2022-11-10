@@ -18,7 +18,7 @@ describe('<TableauRdv>', () => {
     render(<TableauRdv rdvs={[]} idConseiller='1' />)
 
     // Then
-    expect(screen.getByText(/pas de rendez-vous/)).toBeInTheDocument()
+    expect(screen.getByText(/pas d’événement/)).toBeInTheDocument()
 
     expect(() => screen.getByRole('table')).toThrow()
   })
@@ -51,7 +51,7 @@ describe('<TableauRdv>', () => {
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
         const link = screen.getByLabelText(
-          `Consulter rendez-vous du ${toFrenchFormat(
+          `Consulter l’événement du ${toFrenchFormat(
             DateTime.fromISO(rdv.date),
             WEEKDAY_MONTH_LONG
           )} avec ${rdv.beneficiaires}`

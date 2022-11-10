@@ -30,7 +30,7 @@ export function OngletAgendaEtablissement({
   const [animationsCollectives, setAnimationsCollectives] =
     useState<AnimationCollective[]>()
 
-  function linkLabel(ac: AnimationCollective): string {
+  function labelLien(ac: AnimationCollective): string {
     return `Consulter ${ac.type} ${statusProps(ac).label} du ${fullDate(
       ac
     )} à ${heure(ac)}`
@@ -120,7 +120,7 @@ export function OngletAgendaEtablissement({
               <TR
                 key={ac.id}
                 href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
-                label={linkLabel(ac)}
+                label={labelLien(ac)}
               >
                 <RowCell className='capitalize'>{fullDate(ac)}</RowCell>
                 <RowCell>

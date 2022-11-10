@@ -81,9 +81,9 @@ export default function AlertDisplayer({
 }
 type DictAlerts = { [key in QueryParam]: { title: string; sub?: string } }
 const ALERTS: DictAlerts = {
-  creationRdv: { title: 'Le rendez-vous a bien été créé' },
-  modificationRdv: { title: 'Le rendez-vous a bien été modifié' },
-  suppressionRdv: { title: 'Le rendez-vous a bien été supprimé' },
+  creationRdv: { title: 'L’événement a bien été créé' },
+  modificationRdv: { title: 'L’événement a bien été modifié' },
+  suppressionRdv: { title: 'L’événement a bien été supprimé' },
   recuperation: { title: 'Vous avez récupéré vos bénéficiaires avec succès' },
   suppression: { title: 'Le compte du bénéficiaire a bien été supprimé' },
   creationBeneficiaire: {

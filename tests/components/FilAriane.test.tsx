@@ -45,7 +45,7 @@ describe('<FilAriane/>', () => {
       render(<FilAriane currentPath='/agenda/id-rdv' />)
       // Then
       expect(
-        screen.queryByRole('link', { name: 'Mes rendez-vous' })
+        screen.queryByRole('link', { name: 'Mes événements' })
       ).not.toBeInTheDocument()
       expect(
         screen.queryByRole('link', { name: 'id-rdv' })

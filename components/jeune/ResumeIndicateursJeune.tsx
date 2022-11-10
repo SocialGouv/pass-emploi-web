@@ -64,7 +64,7 @@ export function ResumeIndicateursJeune({
           </ul>
         </div>
         <div className='text-primary_darken text-base-bold'>
-          <h3 className='mb-2'>Les rendez-vous</h3>
+          <h3 className='mb-2'>Les événements</h3>
           <div className='flex gap-2'>
             <TileIndicateur
               valeur={indicateursSemaine?.rendezVous.toString() ?? '-'}

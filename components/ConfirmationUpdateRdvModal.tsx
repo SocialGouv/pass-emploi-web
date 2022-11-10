@@ -20,7 +20,7 @@ export default function ConfirmationUpdateRdvModal({
 
   return (
     <Modal
-      title='Modification du rendez-vous'
+      title='Modification de l’événement'
       onClose={onCancel}
       ref={modalRef}
     >
@@ -32,10 +32,10 @@ export default function ConfirmationUpdateRdvModal({
           className='w-[54px] h-[57px] m-auto fill-primary'
         />
         <p className='mt-6 text-base-bold'>
-          Vous avez modifié un rendez-vous dont vous n’êtes pas le créateur
+          Vous avez modifié un événement dont vous n’êtes pas le créateur
         </p>
         <p className='mt-6'>
-          Le créateur recevra un e-mail de modification du rendez-vous.
+          Le créateur recevra un e-mail de modification de l’événement.
         </p>
         <p className='mt-6'>
           Les bénéficiaires seront notifiés sur l’application CEJ.

@@ -31,7 +31,7 @@ export function OngletRdvsBeneficiaire({
           />
           <Link href={`/mes-jeunes/${idJeune}/rendez-vous-passes`}>
             <a className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
-              Voir les rendez-vous passés
+              Voir les événements passés
               <IconComponent
                 name={IconName.ChevronRight}
                 className='w-4 h-5 fill-[inherit]'
