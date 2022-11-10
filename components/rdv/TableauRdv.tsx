@@ -3,8 +3,10 @@ import React, { useMemo } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
-import { HeaderCell } from 'components/ui/Table/HeaderCell'
-import TableLayout from 'components/ui/Table/TableLayout'
+import Table from 'components/ui/Table/Table'
+import { TBody } from 'components/ui/Table/TBody'
+import { TH } from 'components/ui/Table/TH'
+import { THead } from 'components/ui/Table/THead'
 import { EvenementListItem } from 'interfaces/evenement'
 import {
   insertIntercalaires,
@@ -48,18 +50,16 @@ export default function TableauRdv({
       )}
 
       {rdvs.length > 0 && (
-        <TableLayout caption='Liste de mes événements'>
-          <div role='rowgroup' className='table-row-group'>
-            <div role='row' className='table-row'>
-              <HeaderCell>Horaires</HeaderCell>
-              {withNameJeune && <HeaderCell>Bénéficiaire</HeaderCell>}
-              <HeaderCell>Type</HeaderCell>
-              <HeaderCell>Modalité</HeaderCell>
-              <HeaderCell>Créé par vous</HeaderCell>
-            </div>
-          </div>
+        <Table asDiv={true} caption='Liste de mes événements'>
+          <THead>
+            <TH>Horaires</TH>
+            {withNameJeune && <TH>Bénéficiaire</TH>}
+            <TH>Type</TH>
+            <TH>Modalité</TH>
+            <TH>Créé par vous</TH>
+          </THead>
 
-          <div role='rowgroup' className='table-row-group'>
+          <TBody>
             {renderListeWithIntercalaires(rdvsAffiches, (rdv) => (
               <RdvRow
                 key={rdv.id}
@@ -69,8 +69,8 @@ export default function TableauRdv({
                 idConseiller={idConseiller}
               />
             ))}
-          </div>
-        </TableLayout>
+          </TBody>
+        </Table>
       )}
     </>
   )

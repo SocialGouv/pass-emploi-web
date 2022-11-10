@@ -8,6 +8,7 @@ import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import Button from 'components/ui/Button/Button'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -52,10 +53,9 @@ function MesJeunes({
   const router = useRouter()
 
   const [conseiller, setConseiller] = useConseiller()
-  const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>([])
-  const [jeunesFiltres, setJeunesFiltres] = useState<
-    JeuneAvecInfosComplementaires[]
-  >([])
+  const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>()
+  const [jeunesFiltres, setJeunesFiltres] =
+    useState<JeuneAvecInfosComplementaires[]>()
 
   const [
     isRecuperationBeneficiairesLoading,
@@ -89,7 +89,7 @@ function MesJeunes({
     (query: string) => {
       const querySplit = query.toLowerCase().split(/-|\s/)
       if (query) {
-        const jeunesFiltresResult = jeunes.filter((jeune) => {
+        const jeunesFiltresResult = jeunes!.filter((jeune) => {
           const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
           for (const item of querySplit) {
             if (jeuneLastName.includes(item)) {
@@ -113,7 +113,7 @@ function MesJeunes({
   )
 
   useEffect(() => {
-    if (!chatCredentials) return
+    if (!chatCredentials || !conseillerJeunes.length) return
 
     messagesService
       .signIn(chatCredentials.token)
@@ -161,13 +161,6 @@ function MesJeunes({
         </div>
       )}
 
-      {conseillerJeunes.length > 0 && (
-        <div className={`flex flex-wrap justify-between items-end mb-12`}>
-          <RechercheJeune onSearchFilterBy={onSearch} />
-          <AjouterJeuneButton structure={conseiller?.structure} />
-        </div>
-      )}
-
       {conseillerJeunes.length === 0 &&
         !conseiller?.aDesBeneficiairesARecuperer && (
           <div className='mx-auto my-0 flex flex-col items-center'>
@@ -186,21 +179,25 @@ function MesJeunes({
 
       {conseillerJeunes.length > 0 && (
         <>
-          <div className='flex justify-between text-m-regular text-primary'>
-            <h2>
-              Liste des bénéficiaires
-              {conseillerJeunes.length === jeunesFiltres.length &&
-                ` (${conseillerJeunes.length})`}
-            </h2>
+          <div className={`flex flex-wrap justify-between items-end mb-12`}>
+            <RechercheJeune onSearchFilterBy={onSearch} />
+            <AjouterJeuneButton structure={conseiller?.structure} />
           </div>
 
-          <TableauJeunes
-            jeunes={jeunesFiltres}
-            withActions={
-              conseiller?.structure !== StructureConseiller.POLE_EMPLOI
-            }
-            withSituations={conseiller?.structure === StructureConseiller.MILO}
-          />
+          {!jeunesFiltres && <SpinningLoader />}
+
+          {jeunesFiltres && (
+            <TableauJeunes
+              jeunesFiltres={jeunesFiltres}
+              totalJeunes={conseillerJeunes.length}
+              withActions={
+                conseiller?.structure !== StructureConseiller.POLE_EMPLOI
+              }
+              withSituations={
+                conseiller?.structure === StructureConseiller.MILO
+              }
+            />
+          )}
         </>
       )}
     </>
