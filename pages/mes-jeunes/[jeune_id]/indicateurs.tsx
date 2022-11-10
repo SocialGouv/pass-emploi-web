@@ -111,7 +111,7 @@ function IndicateursRendezvous({
 }: Partial<Pick<IndicateursSemaine, 'rendezVous'>>) {
   return (
     <div className='border border-solid rounded-medium w-full mt-6 p-4 border-grey_100'>
-      <h3 className='text-m-bold text-content_color mb-4'>Les rendez-vous</h3>
+      <h3 className='text-m-bold text-content_color mb-4'>Les événements</h3>
       <ul className='flex'>
         <TileIndicateur
           valeur={rendezVous?.toString() ?? '-'}

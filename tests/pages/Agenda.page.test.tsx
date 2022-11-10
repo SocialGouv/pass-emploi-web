@@ -80,7 +80,7 @@ describe('Agenda', () => {
         // Then
         expect(
           screen.getByRole('link', {
-            name: 'Créer un rendez-vous',
+            name: 'Créer un événement',
           })
         ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })

@@ -26,7 +26,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/Le rendez-vous a bien été créé/)
+        screen.getByText(/L’événement a bien été créé/)
       ).toBeInTheDocument()
     })
 
@@ -66,7 +66,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/rendez-vous a bien été modifié/)
+        screen.getByText(/événement a bien été modifié/)
       ).toBeInTheDocument()
     })
 
@@ -106,7 +106,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/rendez-vous a bien été supprimé/)
+        screen.getByText(/événement a bien été supprimé/)
       ).toBeInTheDocument()
     })
 

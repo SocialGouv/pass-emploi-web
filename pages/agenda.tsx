@@ -118,7 +118,7 @@ function Agenda({
           aria-hidden={true}
           className='mr-2 w-4 h-4'
         />
-        Créer un rendez-vous
+        Créer un événement
       </ButtonLink>
 
       <TabList className='mb-6'>
