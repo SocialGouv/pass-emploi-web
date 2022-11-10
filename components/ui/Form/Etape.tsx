@@ -37,7 +37,7 @@ export function Etape(props: EtapeProps) {
       case 4:
         return IconName.Chiffre4
       case 5:
-        return IconName.Chiffre4
+        return IconName.Chiffre5
     }
   }
 }
