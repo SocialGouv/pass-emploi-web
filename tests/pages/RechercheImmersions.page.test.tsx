@@ -303,7 +303,7 @@ describe('Page Recherche Immersions', () => {
 
       expect(
         screen.getByText(
-          'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville'
+          'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville.'
         )
       ).toBeInTheDocument()
     })

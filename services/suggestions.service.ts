@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 
 export interface SuggestionsService {
-  envoyerSuggestionOffreEmploi(query: {
+  partagerRechercheOffreEmploi(query: {
     idsJeunes: string[]
     titre: string
     motsCles: string
@@ -12,7 +12,7 @@ export interface SuggestionsService {
     codeCommune?: string
   }): Promise<void>
 
-  envoyerSuggestionAlternance(query: {
+  partagerRechercheAlternance(query: {
     idsJeunes: string[]
     titre: string
     motsCles: string
@@ -21,7 +21,7 @@ export interface SuggestionsService {
     codeCommune?: string
   }): Promise<void>
 
-  envoyerSuggestionImmersion(query: {
+  partagerRechercheImmersion(query: {
     idsJeunes: string[]
     titre: string
     labelMetier: string
@@ -31,7 +31,7 @@ export interface SuggestionsService {
     longitude: number
   }): Promise<void>
 
-  envoyerSuggestionServiceCivique(query: {
+  partagerRechercheServiceCivique(query: {
     idsJeunes: string[]
     titre: string
     labelLocalite: string
@@ -43,7 +43,7 @@ export interface SuggestionsService {
 export class SuggestionsApiService implements SuggestionsService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async envoyerSuggestionOffreEmploi(query: {
+  async partagerRechercheOffreEmploi(query: {
     idsJeunes: string[]
     titre: string
     motsCles: string
@@ -51,10 +51,11 @@ export class SuggestionsApiService implements SuggestionsService {
     codeDepartement?: string
     codeCommune?: string
   }): Promise<void> {
-    await this.envoyerSuggestionOffre(query, false)
+    const alternanceOnly = false
+    await this.envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
   }
 
-  async envoyerSuggestionAlternance(query: {
+  async partagerRechercheAlternance(query: {
     idsJeunes: string[]
     titre: string
     motsCles: string
@@ -62,10 +63,11 @@ export class SuggestionsApiService implements SuggestionsService {
     codeDepartement?: string
     codeCommune?: string
   }): Promise<void> {
-    await this.envoyerSuggestionOffre(query, true)
+    const alternanceOnly = true
+    await this.envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
   }
 
-  async envoyerSuggestionImmersion(query: {
+  async partagerRechercheImmersion(query: {
     idsJeunes: string[]
     titre: string
     labelMetier: string
@@ -93,7 +95,7 @@ export class SuggestionsApiService implements SuggestionsService {
     )
   }
 
-  async envoyerSuggestionServiceCivique(query: {
+  async partagerRechercheServiceCivique(query: {
     idsJeunes: string[]
     titre: string
     labelLocalite: string
@@ -117,7 +119,7 @@ export class SuggestionsApiService implements SuggestionsService {
     )
   }
 
-  private async envoyerSuggestionOffre(
+  private async envoyerSuggestionOffreEmploiOuAlternance(
     query: {
       idsJeunes: string[]
       titre: string
@@ -126,7 +128,7 @@ export class SuggestionsApiService implements SuggestionsService {
       codeDepartement?: string
       codeCommune?: string
     },
-    alternance: boolean
+    alternanceOnly: boolean
   ) {
     const session = await getSession()
     const accessToken = session!.accessToken
@@ -141,7 +143,7 @@ export class SuggestionsApiService implements SuggestionsService {
         localisation: query.labelLocalite,
         departement: query.codeDepartement,
         commune: query.codeCommune,
-        alternance: alternance,
+        alternance: alternanceOnly,
       },
       accessToken
     )

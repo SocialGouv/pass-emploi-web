@@ -33,11 +33,24 @@ export default function SuggestionCard({
   return (
     <div className='rounded-large shadow-s p-6'>
       <h2 className='text-base-bold mb-2'>{titre}</h2>
-      <DataTag text={getTypeLabel()} />
-      {labelMetier && <DataTag className='ml-2' text={labelMetier} />}
-      <div className='mt-4'>
-        <DataTag text={labelLocalite} iconName={IconName.Location} />
-      </div>
+      <dl>
+        <dt className='sr-only'>Type</dt>
+        <dd className='inline'>
+          <DataTag text={getTypeLabel()} />
+        </dd>
+        {labelMetier && (
+          <>
+            <dt className='sr-only'>Métier</dt>
+            <dd className='inline'>
+              <DataTag className='ml-2' text={labelMetier} />
+            </dd>
+          </>
+        )}
+        <dt className='sr-only'>Localité</dt>
+        <dd className='mt-4'>
+          <DataTag text={labelLocalite} iconName={IconName.Location} />
+        </dd>
+      </dl>
     </div>
   )
 }

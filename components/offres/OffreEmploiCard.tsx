@@ -29,28 +29,44 @@ export default function OffreEmploiCard({
       />
 
       <h3 className='text-base-bold text-accent_1 mb-2'>Offre n°{offre.id}</h3>
-      <p className='text-base-bold mb-2'>{offre.titre}</p>
-      {offre.nomEntreprise && (
-        <p className='text-s-bold mb-2'>{offre.nomEntreprise}</p>
-      )}
-      {offre.localisation && (
-        <>
-          <p className='flex items-center text-s-regular text-grey_800 mb-5'>
-            <IconComponent
-              name={IconName.Location}
-              className='w-4 h-4 mr-3 fill-primary'
-              focusable={false}
-              aria-hidden={true}
-            />
-            {offre.localisation}
-          </p>
-        </>
-      )}
+      <dl>
+        <dt className='sr-only'>Titre</dt>
+        <dd className='text-base-bold mb-2'>{offre.titre}</dd>
 
-      <div className='flex'>
-        <DataTag text={offre.typeContrat} className='mr-6' />
-        {offre.duree && <DataTag text={offre.duree} />}
-      </div>
+        {offre.nomEntreprise && (
+          <>
+            <dt className='sr-only'>Nom de l’entreprise</dt>
+            <dd className='text-s-bold mb-2'>{offre.nomEntreprise}</dd>
+          </>
+        )}
+
+        {offre.localisation && (
+          <>
+            <dt className='sr-only'>Localité</dt>
+            <dd className='flex items-center text-s-regular text-grey_800 mb-5'>
+              <IconComponent
+                name={IconName.Location}
+                className='w-4 h-4 mr-3 fill-primary'
+                focusable={false}
+                aria-hidden={true}
+              />
+              {offre.localisation}
+            </dd>
+          </>
+        )}
+        <dt className='sr-only'>Contrat</dt>
+        <dd className='inline'>
+          <DataTag text={offre.typeContrat} className='mr-6' />
+        </dd>
+        {offre.duree && (
+          <>
+            <dt className='sr-only'>Durée</dt>
+            <dd className='inline'>
+              <DataTag text={offre.duree} />
+            </dd>
+          </>
+        )}
+      </dl>
     </OffreCard>
   )
 }
