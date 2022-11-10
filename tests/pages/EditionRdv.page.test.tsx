@@ -747,7 +747,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              'Vous avez atteint le nombre maximal de caractères. Veuillez retirer des caractères.'
+              'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
             )
           ).toBeInTheDocument()
         })
@@ -995,7 +995,7 @@ describe('EditionRdv', () => {
           )
           expect(
             screen.getByText(
-              'Pour les informations collectives, l’ajout de bénéficiaires est facultatif'
+              'Pour les animations collectives, l’ajout de bénéficiaires est facultatif'
             )
           ).toBeInTheDocument()
         })
