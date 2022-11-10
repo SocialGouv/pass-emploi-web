@@ -6,6 +6,7 @@ import JeunesMultiselectAutocomplete, {
   OptionJeune,
 } from 'components/jeune/JeunesMultiselectAutocomplete'
 import { RequiredValue } from 'components/RequiredValue'
+import { RequiredValue as ValueWithError } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -106,7 +107,9 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [titre, setTitre] = useState<RequiredValue>({ value: rdv?.titre ?? '' })
-  const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
+  const [description, setDescription] = useState<ValueWithError>({
+    value: rdv?.comment ?? '',
+  })
 
   const isAgenceNecessaire =
     isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
@@ -130,7 +133,7 @@ export function EditionRdvForm({
           adresse ||
           organisme ||
           titre ||
-          commentaire
+          description.value
       )
     }
 
@@ -145,7 +148,7 @@ export function EditionRdvForm({
       adresse !== rdv.adresse ||
       organisme !== rdv.organisme ||
       titre.value !== rdv.titre ||
-      commentaire !== rdv.comment ||
+      description.value !== rdv.comment ||
       isConseillerPresent !== rdv.presenceConseiller
     )
   }
@@ -157,7 +160,8 @@ export function EditionRdvForm({
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
-      titreIsValid()
+      titreIsValid() &&
+      descriptionIsValid()
     )
   }
 
@@ -272,6 +276,21 @@ export function EditionRdvForm({
     }
   }
 
+  function descriptionIsValid(): boolean {
+    if (description.value.length >= 250) return false
+    return true
+  }
+
+  function validateDescription() {
+    if (description.value.length >= 250) {
+      setDescription({
+        ...description,
+        error:
+          'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.',
+      })
+    }
+  }
+
   function typeEntretienIndividuelConseillerSelected() {
     return codeTypeRendezVous === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
   }
@@ -310,7 +329,7 @@ export function EditionRdvForm({
       adresse: adresse || undefined,
       organisme: organisme || undefined,
       titre: titre.value || undefined,
-      comment: commentaire || undefined,
+      comment: description.value || undefined,
     }
     if (!conseillerIsCreator && sendEmailInvitation) {
       showConfirmationModal(payload)
@@ -430,7 +449,55 @@ export function EditionRdvForm({
 
       {afficherSuiteFormulaire && (
         <>
-          <Etape numero={2} titre='Bénéficiaires'>
+          <Etape numero={2} titre='Description'>
+            <Label
+              htmlFor='titre'
+              inputRequired={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+            >
+              Titre
+            </Label>
+            {titre.error && (
+              <InputError id='titre--error' className='mb-2'>
+                {titre.error}
+              </InputError>
+            )}
+            <Input
+              id='titre'
+              type='text'
+              defaultValue={titre.value}
+              required={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+              invalid={Boolean(titre.error)}
+              onChange={(value: string) => setTitre({ value })}
+              onBlur={validateTitre}
+            />
+
+            <Label htmlFor='description' withBulleMessageSensible={true}>
+              {{
+                main: 'Description',
+                helpText: '250 caractères maximum',
+              }}
+            </Label>
+            {description.error && (
+              <InputError id='description--error' className='mb-2'>
+                {description.error}
+              </InputError>
+            )}
+            <Textarea
+              id='description'
+              defaultValue={description.value}
+              rows={3}
+              maxLength={250}
+              onChange={(value: string) => setDescription({ value })}
+              invalid={Boolean(description.error)}
+              onBlur={validateDescription}
+            />
+          </Etape>
+          <Etape numero={3} titre='Ajout de bénéficiaires'>
+            {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
+              <div className='mb-4'>
+                <InformationMessage content='Pour les animations collectives, l’ajout de bénéficiaires est facultatif' />
+              </div>
+            )}
             <JeunesMultiselectAutocomplete
               jeunes={
                 !isCodeTypeAnimationCollective(codeTypeRendezVous)
@@ -445,7 +512,7 @@ export function EditionRdvForm({
             />
           </Etape>
 
-          <Etape numero={3} titre='Lieu et date'>
+          <Etape numero={4} titre='Lieu et date'>
             <Label htmlFor='modalite'>Modalité</Label>
             <Select
               id='modalite'
@@ -539,7 +606,7 @@ export function EditionRdvForm({
             />
           </Etape>
 
-          <Etape numero={4} titre='Informations conseiller'>
+          <Etape numero={5} titre='Gestion des accès'>
             {!conseillerIsCreator && (
               <>
                 {rdv!.createur && (
@@ -591,41 +658,6 @@ export function EditionRdvForm({
                 />
               </label>
             </div>
-
-            <Label
-              htmlFor='titre'
-              inputRequired={isCodeTypeAnimationCollective(codeTypeRendezVous)}
-            >
-              Titre
-            </Label>
-            {titre.error && (
-              <InputError id='titre--error' className='mb-2'>
-                {titre.error}
-              </InputError>
-            )}
-            <Input
-              id='titre'
-              type='text'
-              defaultValue={titre.value}
-              required={isCodeTypeAnimationCollective(codeTypeRendezVous)}
-              invalid={Boolean(titre.error)}
-              onChange={(value: string) => setTitre({ value })}
-              onBlur={validateTitre}
-            />
-
-            <Label htmlFor='commentaire' withBulleMessageSensible={true}>
-              {{
-                main: 'Commentaire à destination des jeunes',
-                helpText:
-                  'Le commentaire sera lu par l’ensemble des destinataires',
-              }}
-            </Label>
-            <Textarea
-              id='commentaire'
-              defaultValue={commentaire}
-              rows={3}
-              onChange={setCommentaire}
-            />
           </Etape>
 
           <div className='flex justify-center'>
@@ -635,7 +667,7 @@ export function EditionRdvForm({
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
-                Annuler
+                Annuler {rdv ? 'la modification' : ''}
               </ButtonLink>
             )}
             {formHasChanges() && (
@@ -648,7 +680,7 @@ export function EditionRdvForm({
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
-                Annuler
+                Annuler {rdv ? ' la modification' : ''}
               </Button>
             )}
 
@@ -671,7 +703,7 @@ export function EditionRdvForm({
                   aria-hidden={true}
                   className='mr-2 w-4 h-4'
                 />
-                Créer le rendez-vous
+                Créer l’événement
               </Button>
             )}
           </div>

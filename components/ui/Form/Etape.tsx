@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-type NumeroEtape = 1 | 2 | 3 | 4
+type NumeroEtape = 1 | 2 | 3 | 4 | 5
 type EtapeProps = {
   numero: NumeroEtape
   titre: string
@@ -36,6 +36,8 @@ export function Etape(props: EtapeProps) {
         return IconName.Chiffre3
       case 4:
         return IconName.Chiffre4
+      case 5:
+        return IconName.Chiffre5
     }
   }
 }

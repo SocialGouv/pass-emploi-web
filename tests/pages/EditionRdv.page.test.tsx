@@ -302,6 +302,7 @@ describe('EditionRdv', () => {
           expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
           expect(() => screen.getByRole('group', { name: /Étape 3/ })).toThrow()
           expect(() => screen.getByRole('group', { name: /Étape 4/ })).toThrow()
+          expect(() => screen.getByRole('group', { name: /Étape 5/ })).toThrow()
         })
 
         describe('lorsque le type de rendez-vous est de type ENTRETIEN INDIVIDUEL CONSEILLER', () => {
@@ -322,7 +323,7 @@ describe('EditionRdv', () => {
         })
       })
 
-      describe('étape 2 bénéficiaires', () => {
+      describe('étape 2 description', () => {
         let etape: HTMLFieldSetElement
 
         beforeEach(async () => {
@@ -330,7 +331,37 @@ describe('EditionRdv', () => {
             name: 'Type',
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
-          etape = screen.getByRole('group', { name: 'Étape 2 Bénéficiaires' })
+          etape = screen.getByRole('group', { name: 'Étape 2 Description' })
+        })
+
+        it('contient un champ pour renseigner un titre', () => {
+          // Then
+          expect(
+            within(etape).getByRole('textbox', { name: 'Titre' })
+          ).toHaveProperty('required', false)
+        })
+
+        it('contient un champ pour saisir une description', () => {
+          // Then
+          const inputDescription = within(etape).getByRole('textbox', {
+            name: /Description/,
+          })
+          expect(inputDescription).toBeInTheDocument()
+          expect(inputDescription).not.toHaveAttribute('required')
+        })
+      })
+
+      describe('étape 3 bénéficiaires', () => {
+        let etape: HTMLFieldSetElement
+
+        beforeEach(async () => {
+          const selectType = screen.getByRole('combobox', {
+            name: 'Type',
+          })
+          await userEvent.selectOptions(selectType, 'Activités extérieures')
+          etape = screen.getByRole('group', {
+            name: 'Étape 3 Ajout de bénéficiaires',
+          })
         })
 
         it('contient une liste pour choisir un jeune', () => {
@@ -350,16 +381,24 @@ describe('EditionRdv', () => {
             expect(jeuneOption).toBeInTheDocument()
           }
         })
+
+        it('ne contient pas de message indiquant le caractère facultatif d’ajout de bénéficiaires', () => {
+          expect(() =>
+            screen.getByText(
+              'Pour les informations collectives, l’ajout de bénéficiaires est facultatif'
+            )
+          ).toThrow()
+        })
       })
 
-      describe('étape 3 lieu et date', () => {
+      describe('étape 4 lieu et date', () => {
         let etape: HTMLFieldSetElement
         beforeEach(async () => {
           const selectType = screen.getByRole('combobox', {
             name: 'Type',
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
-          etape = screen.getByRole('group', { name: 'Étape 3 Lieu et date' })
+          etape = screen.getByRole('group', { name: 'Étape 4 Lieu et date' })
         })
         it('contient une liste pour choisir une modalité', () => {
           // Then
@@ -423,7 +462,7 @@ describe('EditionRdv', () => {
         })
       })
 
-      describe('étape 4 informations conseiller', () => {
+      describe('étape 5 gestion accès', () => {
         let etape: HTMLFieldSetElement
         let inputPresenceConseiller: HTMLInputElement
         let inputEmailInvitation: HTMLInputElement
@@ -433,7 +472,7 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: 'Étape 4 Informations conseiller',
+            name: 'Étape 5 Gestion des accès',
           })
         })
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
@@ -468,22 +507,6 @@ describe('EditionRdv', () => {
 
           expect(getEmailConseiller).toBeInTheDocument()
         })
-
-        it('contient un champ pour renseigner un titre', () => {
-          // Then
-          expect(
-            within(etape).getByRole('textbox', { name: 'Titre' })
-          ).toHaveProperty('required', false)
-        })
-
-        it('contient un champ pour saisir des commentaires', () => {
-          // Then
-          const inputCommentaires = within(etape).getByRole('textbox', {
-            name: /Commentaire à destination des jeunes/,
-          })
-          expect(inputCommentaires).toBeInTheDocument()
-          expect(inputCommentaires).not.toHaveAttribute('required')
-        })
       })
 
       it('contient un bouton pour annuler', async () => {
@@ -508,7 +531,7 @@ describe('EditionRdv', () => {
         let inputHoraire: HTMLInputElement
         let inputDuree: HTMLInputElement
         let inputTitre: HTMLInputElement
-        let inputCommentaires: HTMLTextAreaElement
+        let inputDescription: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
         beforeEach(async () => {
           // Given
@@ -527,12 +550,12 @@ describe('EditionRdv', () => {
           inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
           inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
-          inputCommentaires = screen.getByRole('textbox', {
-            name: /Commentaire à destination des jeunes/,
+          inputDescription = screen.getByRole('textbox', {
+            name: /Description/,
           })
 
           buttonValider = screen.getByRole('button', {
-            name: 'Créer le rendez-vous',
+            name: 'Créer l’événement',
           })
 
           // Given
@@ -543,7 +566,7 @@ describe('EditionRdv', () => {
           await userEvent.type(inputHoraire, '10:30')
           await userEvent.type(inputDuree, '02:37')
           await userEvent.type(inputTitre, 'Titre de l’événement')
-          await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
+          await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
         })
 
         describe('quand le formulaire est validé', () => {
@@ -710,6 +733,21 @@ describe('EditionRdv', () => {
           expect(
             screen.getByText(
               "Le champ durée n'est pas renseigné. Veuillez renseigner une durée."
+            )
+          ).toBeInTheDocument()
+        })
+
+        it('est désactivé quand la description dépasse 250 caractères', async () => {
+          // When
+          await userEvent.clear(inputDescription)
+          await userEvent.type(inputDescription, repeat('a', 250))
+          await userEvent.tab()
+
+          // Then
+          expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText(
+              'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
             )
           ).toBeInTheDocument()
         })
@@ -941,7 +979,7 @@ describe('EditionRdv', () => {
 
           // When
           const buttonValider = screen.getByRole('button', {
-            name: 'Créer le rendez-vous',
+            name: 'Créer l’événement',
           })
           await userEvent.click(buttonValider)
 
@@ -955,6 +993,11 @@ describe('EditionRdv', () => {
               jeunesIds: [],
             })
           )
+          expect(
+            screen.getByText(
+              'Pour les animations collectives, l’ajout de bénéficiaires est facultatif'
+            )
+          ).toBeInTheDocument()
         })
       })
     })
@@ -1129,7 +1172,7 @@ describe('EditionRdv', () => {
           'Prise de nouvelles par téléphone'
         )
         expect(
-          screen.getByLabelText<HTMLInputElement>(/Commentaire/).value
+          screen.getByLabelText<HTMLInputElement>(/Description/).value
         ).toEqual('Rendez-vous avec Kenji')
       })
 
@@ -1144,7 +1187,7 @@ describe('EditionRdv', () => {
 
       it('contient un lien pour annuler', () => {
         // Then
-        const link = screen.getByText('Annuler')
+        const link = screen.getByText('Annuler la modification')
         expect(link).toBeInTheDocument()
         expect(link).toHaveAttribute(
           'href',
@@ -1180,8 +1223,8 @@ describe('EditionRdv', () => {
           const inputTitre = screen.getByRole('textbox', {
             name: 'Titre',
           })
-          const inputCommentaires = screen.getByRole('textbox', {
-            name: /Commentaire à destination des jeunes/,
+          const inputDescription = screen.getByRole('textbox', {
+            name: /Description/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -1201,8 +1244,8 @@ describe('EditionRdv', () => {
           await userEvent.type(inputDuree, '02:37')
           await userEvent.clear(inputTitre)
           await userEvent.type(inputTitre, 'Nouveau titre')
-          await userEvent.clear(inputCommentaires)
-          await userEvent.type(inputCommentaires, 'Lorem ipsum dolor sit amet')
+          await userEvent.clear(inputDescription)
+          await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
         })
 
         // FIXME trouver comment tester
@@ -1228,7 +1271,7 @@ describe('EditionRdv', () => {
 
         it("prévient avant d'annuler", async () => {
           // Given
-          const button = screen.getByText('Annuler')
+          const button = screen.getByText('Annuler la modification')
 
           // When
           await userEvent.click(button)
@@ -1395,17 +1438,20 @@ describe('EditionRdv', () => {
 
       describe('quand on modifie le rendez-vous', () => {
         beforeEach(async () => {
-          const inputCommentaire =
-            screen.getByLabelText<HTMLInputElement>(/Commentaire/)
-          await userEvent.clear(inputCommentaire)
-          await userEvent.type(inputCommentaire, 'modification du commentaire')
+          const inputDescription =
+            screen.getByLabelText<HTMLInputElement>(/Description/)
+          await userEvent.clear(inputDescription)
+          await userEvent.type(
+            inputDescription,
+            'modification de la description'
+          )
           const buttonSubmit = screen.getByText('Modifier le rendez-vous')
 
           // When
           await userEvent.click(buttonSubmit)
         })
 
-        it('affiche une modal de verification', () => {
+        it('affiche une modale de verification', () => {
           // Then
           expect(
             screen.getByText(
@@ -1437,7 +1483,7 @@ describe('EditionRdv', () => {
               adresse: '36 rue de marseille, 93200 Saint-Denis',
               organisme: 'S.A.R.L',
               duration: 125,
-              comment: 'modification du commentaire',
+              comment: 'modification de la description',
               presenceConseiller: false,
               invitation: true,
             }
@@ -1447,3 +1493,6 @@ describe('EditionRdv', () => {
     })
   })
 })
+
+const repeat = (str: string, count: number) =>
+  new Array(count).fill(str).join('')
