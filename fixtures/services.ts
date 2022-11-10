@@ -173,10 +173,10 @@ export function mockedSuggestionsService(
   overrides: Partial<SuggestionsService> = {}
 ) {
   const defaults: SuggestionsService = {
-    envoyerSuggestionOffreEmploi: jest.fn(),
-    envoyerSuggestionAlternance: jest.fn(),
-    envoyerSuggestionImmersion: jest.fn(),
-    envoyerSuggestionServiceCivique: jest.fn(),
+    partagerRechercheOffreEmploi: jest.fn(),
+    partagerRechercheAlternance: jest.fn(),
+    partagerRechercheImmersion: jest.fn(),
+    partagerRechercheServiceCivique: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

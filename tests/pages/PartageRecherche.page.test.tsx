@@ -16,6 +16,7 @@ import PartageCritere, {
 } from 'pages/offres/partage-recherche'
 import { JeunesService } from 'services/jeunes.service'
 import { SuggestionsService } from 'services/suggestions.service'
+import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -71,11 +72,21 @@ describe('Partage Recherche', () => {
         ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
       })
 
+      it('renvoie une 404 si le type de suggestion n’est pas renseigné', async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: {},
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({ notFound: true })
+      })
+
       it('charge les jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: { referer: 'referer-url' } },
-          query: { offre_type: 'emploi', offre_id: 'offre-id' },
+          query: { type: TypeOffre.EMPLOI },
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -339,10 +350,14 @@ describe('Partage Recherche', () => {
         })
 
         it('affiche les informations de la suggestion d’offre d’emploi', () => {
-          expect(screen.getByText('Offre d’emploi')).toBeInTheDocument()
           expect(screen.getByText(TITRE)).toBeInTheDocument()
-          expect(screen.getByText(MOTS_CLES)).toBeInTheDocument()
-          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+          expect(getByDescriptionTerm('Type')).toHaveTextContent(
+            'Offre d’emploi'
+          )
+          expect(getByDescriptionTerm('Métier')).toHaveTextContent(MOTS_CLES)
+          expect(getByDescriptionTerm('Localité')).toHaveTextContent(
+            LABEL_LOCALITE
+          )
         })
 
         it('envoie une suggestion d’offre d’emploi à plusieurs destinataires', async () => {
@@ -357,7 +372,7 @@ describe('Partage Recherche', () => {
 
           // Then
           expect(
-            suggestionsService.envoyerSuggestionOffreEmploi
+            suggestionsService.partagerRechercheOffreEmploi
           ).toHaveBeenCalledWith({
             idsJeunes: ['jeune-1', 'jeune-2'],
             titre: TITRE,
@@ -400,10 +415,12 @@ describe('Partage Recherche', () => {
         })
 
         it('affiche les informations de la suggestion d’alternance', () => {
-          expect(screen.getByText('Alternance')).toBeInTheDocument()
           expect(screen.getByText(TITRE)).toBeInTheDocument()
-          expect(screen.getByText(MOTS_CLES)).toBeInTheDocument()
-          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+          expect(getByDescriptionTerm('Type')).toHaveTextContent('Alternance')
+          expect(getByDescriptionTerm('Métier')).toHaveTextContent(MOTS_CLES)
+          expect(getByDescriptionTerm('Localité')).toHaveTextContent(
+            LABEL_LOCALITE
+          )
         })
 
         it('envoie une suggestion d’alternance à plusieurs destinataires', async () => {
@@ -418,7 +435,7 @@ describe('Partage Recherche', () => {
 
           // Then
           expect(
-            suggestionsService.envoyerSuggestionAlternance
+            suggestionsService.partagerRechercheAlternance
           ).toHaveBeenCalledWith({
             idsJeunes: ['jeune-1', 'jeune-2'],
             titre: TITRE,
@@ -462,10 +479,12 @@ describe('Partage Recherche', () => {
         })
 
         it('affiche les informations de la suggestion d’immersion', () => {
-          expect(screen.getByText('Immersion')).toBeInTheDocument()
           expect(screen.getByText(TITRE)).toBeInTheDocument()
-          expect(screen.getByText(LABEL_METIER)).toBeInTheDocument()
-          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+          expect(getByDescriptionTerm('Type')).toHaveTextContent('Immersion')
+          expect(getByDescriptionTerm('Métier')).toHaveTextContent(MOTS_CLES)
+          expect(getByDescriptionTerm('Localité')).toHaveTextContent(
+            LABEL_LOCALITE
+          )
         })
 
         it('envoie une suggestion d’immersion à plusieurs destinataires', async () => {
@@ -480,7 +499,7 @@ describe('Partage Recherche', () => {
 
           // Then
           expect(
-            suggestionsService.envoyerSuggestionImmersion
+            suggestionsService.partagerRechercheImmersion
           ).toHaveBeenCalledWith({
             idsJeunes: ['jeune-1', 'jeune-2'],
             titre: TITRE,
@@ -524,9 +543,13 @@ describe('Partage Recherche', () => {
         })
 
         it('affiche les informations de la suggestion de service civique', () => {
-          expect(screen.getByText('Service civique')).toBeInTheDocument()
           expect(screen.getByText(TITRE)).toBeInTheDocument()
-          expect(screen.getByText(LABEL_LOCALITE)).toBeInTheDocument()
+          expect(getByDescriptionTerm('Type')).toHaveTextContent(
+            'Service civique'
+          )
+          expect(getByDescriptionTerm('Localité')).toHaveTextContent(
+            LABEL_LOCALITE
+          )
         })
 
         it('envoie une suggestion de service civique à plusieurs destinataires', async () => {
@@ -541,7 +564,7 @@ describe('Partage Recherche', () => {
 
           // Then
           expect(
-            suggestionsService.envoyerSuggestionServiceCivique
+            suggestionsService.partagerRechercheServiceCivique
           ).toHaveBeenCalledWith({
             idsJeunes: ['jeune-1', 'jeune-2'],
             titre: TITRE,

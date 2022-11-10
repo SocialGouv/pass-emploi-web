@@ -18,7 +18,7 @@ describe('SuggestionsApiService', () => {
     suggestionsService = new SuggestionsApiService(apiClient)
   })
 
-  describe('.envoyerSuggestionOffreEmploi', () => {
+  describe('.partagerRechercheOffreEmploi', () => {
     it('envoie les bons paramètres de suggestions d’offre d’emploi', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
@@ -28,7 +28,7 @@ describe('SuggestionsApiService', () => {
       const codeDepartement = '75'
 
       // When
-      await suggestionsService.envoyerSuggestionOffreEmploi({
+      await suggestionsService.partagerRechercheOffreEmploi({
         idsJeunes,
         titre,
         motsCles,
@@ -52,7 +52,7 @@ describe('SuggestionsApiService', () => {
     })
   })
 
-  describe('.envoyerSuggestionAlternance', () => {
+  describe('.partagerRechercheAlternance', () => {
     it('envoie les bons paramètres de suggestions d’alternance', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
@@ -62,7 +62,7 @@ describe('SuggestionsApiService', () => {
       const codeDepartement = '75'
 
       // When
-      await suggestionsService.envoyerSuggestionAlternance({
+      await suggestionsService.partagerRechercheAlternance({
         idsJeunes,
         titre,
         motsCles,
@@ -86,7 +86,7 @@ describe('SuggestionsApiService', () => {
     })
   })
 
-  describe('.envoyerSuggestionImmersion', () => {
+  describe('.partagerRechercheImmersion', () => {
     it('envoie les bons paramètres de suggestions d’immersion', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
@@ -98,7 +98,7 @@ describe('SuggestionsApiService', () => {
       const longitude = 48.830208
 
       // When
-      await suggestionsService.envoyerSuggestionImmersion({
+      await suggestionsService.partagerRechercheImmersion({
         idsJeunes,
         titre,
         labelMetier,
@@ -125,7 +125,7 @@ describe('SuggestionsApiService', () => {
     })
   })
 
-  describe('.envoyerSuggestionServiceCivique', () => {
+  describe('.partagerRechercheServiceCivique', () => {
     it('envoie les bons paramètres de suggestions de service civique', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
@@ -135,7 +135,7 @@ describe('SuggestionsApiService', () => {
       const longitude = 48.830208
 
       // When
-      await suggestionsService.envoyerSuggestionServiceCivique({
+      await suggestionsService.partagerRechercheServiceCivique({
         idsJeunes,
         titre,
         labelLocalite,

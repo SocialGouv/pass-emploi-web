@@ -105,7 +105,7 @@ function PartageRecherche({
     setIsPartageEnCours(true)
 
     try {
-      await envoyerSuggestion()
+      await partagerRecherche()
       await router.push({
         pathname: '/recherche-offres',
         query: { [QueryParam.suggestionRecherche]: QueryValue.succes },
@@ -115,28 +115,24 @@ function PartageRecherche({
     }
   }
 
-  async function envoyerSuggestion() {
+  async function partagerRecherche(): Promise<void> {
     switch (type) {
       case TypeOffre.EMPLOI:
-        await envoyerSuggestionOffreEmploi()
-        break
+        return partagerRechercheOffreEmploi()
       case TypeOffre.ALTERNANCE:
-        await envoyerSuggestionAlternance()
-        break
+        return partagerRechercheAlternance()
       case TypeOffre.SERVICE_CIVIQUE:
-        await envoyerSuggestionServiceCivique()
-        break
+        return partagerRechercheServiceCivique()
       case TypeOffre.IMMERSION:
-        await envoyerSuggestionImmersion()
-        break
+        return partagerRechercheImmersion()
     }
   }
 
-  async function envoyerSuggestionOffreEmploi(): Promise<void> {
+  async function partagerRechercheOffreEmploi(): Promise<void> {
     const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
-    await suggestionsService.envoyerSuggestionOffreEmploi({
+    await suggestionsService.partagerRechercheOffreEmploi({
       idsJeunes: idsDestinataires.value,
       titre,
       motsCles,
@@ -147,11 +143,11 @@ function PartageRecherche({
     })
   }
 
-  async function envoyerSuggestionAlternance(): Promise<void> {
+  async function partagerRechercheAlternance(): Promise<void> {
     const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
-    await suggestionsService.envoyerSuggestionAlternance({
+    await suggestionsService.partagerRechercheAlternance({
       idsJeunes: idsDestinataires.value,
       titre,
       motsCles,
@@ -162,7 +158,7 @@ function PartageRecherche({
     })
   }
 
-  async function envoyerSuggestionImmersion(): Promise<void> {
+  async function partagerRechercheImmersion(): Promise<void> {
     const {
       titre,
       labelMetier,
@@ -172,7 +168,7 @@ function PartageRecherche({
       longitude,
     } = criteresRecherche as CriteresRechercheImmersionProps
 
-    await suggestionsService.envoyerSuggestionImmersion({
+    await suggestionsService.partagerRechercheImmersion({
       idsJeunes: idsDestinataires.value,
       titre,
       labelMetier,
@@ -183,11 +179,11 @@ function PartageRecherche({
     })
   }
 
-  async function envoyerSuggestionServiceCivique(): Promise<void> {
+  async function partagerRechercheServiceCivique(): Promise<void> {
     const { titre, labelLocalite, latitude, longitude } =
       criteresRecherche as CriteresRechercheServiceCiviqueProps
 
-    await suggestionsService.envoyerSuggestionServiceCivique({
+    await suggestionsService.partagerRechercheServiceCivique({
       idsJeunes: idsDestinataires.value,
       titre,
       labelLocalite,
@@ -251,6 +247,9 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const typeOffre = context.query.type as TypeOffre
+  if (!typeOffre) return { notFound: true }
+
   const { user, accessToken } = sessionOrRedirect.session
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
@@ -260,7 +259,6 @@ export const getServerSideProps: GetServerSideProps<
 
   const referer = context.req.headers.referer
   const redirectTo = referer ?? '/recherche-offres'
-  const typeOffre: TypeOffre = context.query.type as TypeOffre
   let criteresRecherche: CriteresRecherche
 
   switch (typeOffre) {

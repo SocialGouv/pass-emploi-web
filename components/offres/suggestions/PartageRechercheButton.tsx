@@ -24,7 +24,7 @@ export default function PartageRechercheButton({
   const [errorMessage, setErrorMessage] = useState<boolean>()
 
   function laRechercheEstPartageable(): boolean {
-    switch (typeOffre) {
+    switch (typeOffre!) {
       case TypeOffre.EMPLOI:
       case TypeOffre.ALTERNANCE:
         return laRechercheOffreEmploiEstPartageable()
@@ -32,8 +32,6 @@ export default function PartageRechercheButton({
         return laRechercheImmersionEstPartageable()
       case TypeOffre.SERVICE_CIVIQUE:
         return laRechercheServiceCiviqueEstPartageable()
-      default:
-        return false
     }
   }
 
@@ -105,11 +103,11 @@ export default function PartageRechercheButton({
     switch (typeOffre!) {
       case TypeOffre.EMPLOI:
       case TypeOffre.ALTERNANCE:
-        return 'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail'
+        return 'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail.'
       case TypeOffre.IMMERSION:
-        return 'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville'
+        return 'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville.'
       case TypeOffre.SERVICE_CIVIQUE:
-        return 'Pour suggérer des critères de recherche, vous devez saisir une ville'
+        return 'Pour suggérer des critères de recherche, vous devez saisir une ville.'
     }
   }
 

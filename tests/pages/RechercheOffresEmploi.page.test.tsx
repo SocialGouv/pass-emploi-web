@@ -291,7 +291,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       expect(
         screen.getByText(
-          'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail'
+          'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail.'
         )
       ).toBeInTheDocument()
     })

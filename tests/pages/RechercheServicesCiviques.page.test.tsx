@@ -309,7 +309,7 @@ describe('Page Recherche Offres', () => {
 
       expect(
         screen.getByText(
-          'Pour suggérer des critères de recherche, vous devez saisir une ville'
+          'Pour suggérer des critères de recherche, vous devez saisir une ville.'
         )
       ).toBeInTheDocument()
     })
