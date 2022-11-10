@@ -106,7 +106,9 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [titre, setTitre] = useState<RequiredValue>({ value: rdv?.titre ?? '' })
-  const [description, setDescription] = useState<string>(rdv?.comment ?? '')
+  const [description, setDescription] = useState<RequiredValue>({
+    value: rdv?.comment ?? '',
+  })
 
   const isAgenceNecessaire =
     isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
@@ -145,7 +147,7 @@ export function EditionRdvForm({
       adresse !== rdv.adresse ||
       organisme !== rdv.organisme ||
       titre.value !== rdv.titre ||
-      description !== rdv.comment ||
+      description.value !== rdv.comment ||
       isConseillerPresent !== rdv.presenceConseiller
     )
   }
@@ -157,7 +159,8 @@ export function EditionRdvForm({
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
-      titreIsValid()
+      titreIsValid() &&
+      descriptionIsValid()
     )
   }
 
@@ -272,6 +275,21 @@ export function EditionRdvForm({
     }
   }
 
+  function descriptionIsValid(): boolean {
+    if (description.value.length >= 250) return false
+    return true
+  }
+
+  function validateDescription() {
+    if (description.value.length >= 250) {
+      setDescription({
+        ...description,
+        error:
+          'Vous avez atteint le nombre maximal de caractères. Veuillez retirer des caractères.',
+      })
+    }
+  }
+
   function typeEntretienIndividuelConseillerSelected() {
     return codeTypeRendezVous === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
   }
@@ -310,7 +328,7 @@ export function EditionRdvForm({
       adresse: adresse || undefined,
       organisme: organisme || undefined,
       titre: titre.value || undefined,
-      comment: description || undefined,
+      comment: description.value || undefined,
     }
     if (!conseillerIsCreator && sendEmailInvitation) {
       showConfirmationModal(payload)
@@ -458,11 +476,19 @@ export function EditionRdvForm({
                 helpText: '250 caractères maximum',
               }}
             </Label>
+            {description.error && (
+              <InputError id='description--error' className='mb-2'>
+                {description.error}
+              </InputError>
+            )}
             <Textarea
               id='description'
-              defaultValue={description}
+              defaultValue={description.value}
               rows={3}
-              onChange={setDescription}
+              maxLength={250}
+              onChange={(value: string) => setDescription({ value })}
+              invalid={Boolean(description.error)}
+              onBlur={validateDescription}
             />
           </Etape>
           <Etape numero={3} titre='Ajout de bénéficiaires'>

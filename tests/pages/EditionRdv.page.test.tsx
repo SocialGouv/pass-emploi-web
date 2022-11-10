@@ -737,6 +737,21 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
+        it('est désactivé quand la description dépasse 250 caractères', async () => {
+          // When
+          await userEvent.clear(inputDescription)
+          await userEvent.type(inputDescription, repeat('a', 250))
+          await userEvent.tab()
+
+          // Then
+          expect(buttonValider).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText(
+              'Vous avez atteint le nombre maximal de caractères. Veuillez retirer des caractères.'
+            )
+          ).toBeInTheDocument()
+        })
+
         // FIXME trouver comment tester
         // it('prévient avant de revenir à la page précédente', async () => {
         //   // Given
@@ -1478,3 +1493,6 @@ describe('EditionRdv', () => {
     })
   })
 })
+
+const repeat = (str: string, count: number) =>
+  new Array(count).fill(str).join('')
