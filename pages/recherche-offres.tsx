@@ -133,6 +133,16 @@ function RechercheOffres({
     return query
   }
 
+  function getQueryImmersion(): SearchImmersionsQuery {
+    const { hasError, ...query } = queryImmersions
+    return query as SearchImmersionsQuery
+  }
+
+  function getQueryServiceCivique(): SearchServicesCiviquesQuery {
+    const { hasError, ...query } = queryServicesCiviques
+    return query
+  }
+
   async function rechercherOffresEmploi(page: number): Promise<{
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
@@ -144,27 +154,24 @@ function RechercheOffres({
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
   }> {
-    const { hasError, ...query } = queryOffresEmploi
-    return offresEmploiService.searchAlternances(query, page)
+    return offresEmploiService.searchAlternances(getQueryOffreEmploi(), page)
   }
 
   async function rechercherServicesCiviques(page: number): Promise<{
     offres: BaseServiceCivique[]
     metadonnees: MetadonneesOffres
   }> {
-    const { hasError, ...query } = queryServicesCiviques
-    return servicesCiviquesService.searchServicesCiviques(query, page)
+    return servicesCiviquesService.searchServicesCiviques(
+      getQueryServiceCivique(),
+      page
+    )
   }
 
   async function rechercherImmersions(page: number): Promise<{
     offres: BaseImmersion[]
     metadonnees: MetadonneesOffres
   }> {
-    const { hasError, ...query } = queryImmersions
-    return immersionsService.searchImmersions(
-      query as SearchImmersionsQuery,
-      page
-    )
+    return immersionsService.searchImmersions(getQueryImmersion(), page)
   }
 
   function nettoyerResultats() {
@@ -208,6 +215,8 @@ function RechercheOffres({
       <PartageRechercheButton
         typeOffre={typeOffre}
         suggestionOffreEmploi={getQueryOffreEmploi()}
+        suggestionImmersion={getQueryImmersion()}
+        suggestionServiceCivique={getQueryServiceCivique()}
       />
       <ResultatsRechercheOffre
         isSearching={isSearching}

@@ -30,36 +30,52 @@ export default function ServiceCiviqueCard({
         className='text-s-regular mb-4'
       />
 
-      <p className='text-base-bold text-accent_1 mb-2 capitalize'>
-        {offre.domaine}
-      </p>
       <h3 className='text-base-bold mb-2'>{offre.titre}</h3>
-      {offre.organisation && (
-        <p className='text-s-bold mb-2'>{offre.organisation}</p>
-      )}
-      {offre.ville && (
-        <p className='flex items-center text-s-regular text-grey_800 mb-5'>
-          <IconComponent
-            name={IconName.Location}
-            className='w-4 h-4 mr-3 fill-primary'
-            focusable={false}
-            aria-hidden={true}
-          />
-          {offre.ville}
-        </p>
-      )}
+      <dl>
+        <dt className='sr-only'>Domaine</dt>
+        <dd className='text-base-bold text-accent_1 mb-2 capitalize'>
+          {offre.domaine}
+        </dd>
 
-      {offre.dateDeDebut && (
-        <DataTag
-          text={
-            'Dès le ' +
-            toFrenchString(
-              DateTime.fromISO(offre.dateDeDebut),
-              DateTime.DATE_FULL
-            )
-          }
-        />
-      )}
+        {offre.organisation && (
+          <>
+            <dt className='sr-only'>Organisation</dt>
+            <dd className='text-s-bold mb-2'>{offre.organisation}</dd>
+          </>
+        )}
+
+        {offre.ville && (
+          <>
+            <dt className='sr-only'>Ville</dt>
+            <dd className='flex items-center text-s-regular text-grey_800 mb-5'>
+              <IconComponent
+                name={IconName.Location}
+                className='w-4 h-4 mr-3 fill-primary'
+                focusable={false}
+                aria-hidden={true}
+              />
+              {offre.ville}
+            </dd>
+          </>
+        )}
+
+        {offre.dateDeDebut && (
+          <>
+            <dt className='sr-only'>Date de début</dt>
+            <dd>
+              <DataTag
+                text={
+                  'Dès le ' +
+                  toFrenchString(
+                    DateTime.fromISO(offre.dateDeDebut),
+                    DateTime.DATE_FULL
+                  )
+                }
+              />
+            </dd>
+          </>
+        )}
+      </dl>
     </OffreCard>
   )
 }

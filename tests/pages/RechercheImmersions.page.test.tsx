@@ -293,6 +293,56 @@ describe('Page Recherche Immersions', () => {
     })
   })
 
+  describe('partage des critères de recherche', () => {
+    it('ne permet pas de partager s’il n’y a ni métier ni commune renseignés', async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: `Partager critères de recherche`,
+        })
+      )
+
+      expect(
+        screen.getByText(
+          'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville.'
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('affiche le bouton de partage de critère s’il y a un métier et une commune renseignés', async () => {
+      // When
+      await saisirMetier('développeur / développeuse web')
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByText(
+          'Suggérer ces critères de recherche à vos bénéficiaires'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('construit le bon lien qui correspond aux critères de recherches', async () => {
+      // Given
+      await saisirMetier('développeur / développeuse web')
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toHaveAttribute(
+        'href',
+        `/offres/partage-recherche?type=IMMERSION&titre=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web%20-%20PARIS%2014%20(75)&labelMetier=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web&codeMetier=M1805&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
+      )
+    })
+  })
+
   describe('recherche', () => {
     it('requiert les champs', async () => {
       // Given

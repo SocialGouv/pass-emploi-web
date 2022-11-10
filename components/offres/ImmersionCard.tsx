@@ -29,18 +29,26 @@ export default function ImmersionCard({
       />
 
       <h3 className='text-base-bold mb-2'>{offre.titre}</h3>
-      <p className='text-s-bold mb-2'>{offre.nomEtablissement}</p>
-      <p className='flex items-center text-s-regular text-grey_800 mb-5'>
-        <IconComponent
-          name={IconName.Location}
-          className='w-4 h-4 mr-3 fill-primary'
-          focusable={false}
-          aria-hidden={true}
-        />
-        {offre.ville}
-      </p>
+      <dl>
+        <dt className='sr-only'>Établissement</dt>
+        <dd className='text-s-bold mb-2'>{offre.nomEtablissement}</dd>
 
-      <DataTag text={offre.secteurActivite} />
+        <dt className='sr-only'>Ville</dt>
+        <dd className='flex items-center text-s-regular text-grey_800 mb-5'>
+          <IconComponent
+            name={IconName.Location}
+            className='w-4 h-4 mr-3 fill-primary'
+            focusable={false}
+            aria-hidden={true}
+          />
+          {offre.ville}
+        </dd>
+
+        <dt className='sr-only'>Secteur</dt>
+        <dd>
+          <DataTag text={offre.secteurActivite} />
+        </dd>
+      </dl>
     </OffreCard>
   )
 }

@@ -4,27 +4,65 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TypeOffre } from 'interfaces/offre'
+import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
+import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 
 interface PartageRechercheButtonProps {
   typeOffre?: TypeOffre
   suggestionOffreEmploi: SearchOffresEmploiQuery
+  suggestionImmersion: SearchImmersionsQuery
+  suggestionServiceCivique: SearchServicesCiviquesQuery
 }
 
 export default function PartageRechercheButton({
   typeOffre,
   suggestionOffreEmploi,
+  suggestionImmersion,
+  suggestionServiceCivique,
 }: PartageRechercheButtonProps) {
   const [errorMessage, setErrorMessage] = useState<boolean>()
 
-  function laRechercheEstPartageable() {
-    return (
+  function laRechercheEstPartageable(): boolean {
+    switch (typeOffre!) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return laRechercheOffreEmploiEstPartageable()
+      case TypeOffre.IMMERSION:
+        return laRechercheImmersionEstPartageable()
+      case TypeOffre.SERVICE_CIVIQUE:
+        return laRechercheServiceCiviqueEstPartageable()
+    }
+  }
+
+  function laRechercheOffreEmploiEstPartageable(): boolean {
+    return Boolean(
       suggestionOffreEmploi.motsCles &&
-      (suggestionOffreEmploi.commune || suggestionOffreEmploi.departement)
+        (suggestionOffreEmploi.commune || suggestionOffreEmploi.departement)
     )
   }
 
+  function laRechercheImmersionEstPartageable(): boolean {
+    return Boolean(suggestionImmersion.metier && suggestionImmersion.commune)
+  }
+
+  function laRechercheServiceCiviqueEstPartageable(): boolean {
+    return Boolean(suggestionServiceCivique.commune)
+  }
+
   function getPartageRechercheUrl(): string {
+    switch (typeOffre!) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return getPartageRechercheOffreEmploiUrl()
+      case TypeOffre.IMMERSION:
+        return getPartageRechercheImmersionUrl()
+      case TypeOffre.SERVICE_CIVIQUE:
+        return getPartageRechercheServiceCiviqueUrl()
+    }
+  }
+
+  function getPartageRechercheOffreEmploiUrl(): string {
     const localite =
       suggestionOffreEmploi.commune ?? suggestionOffreEmploi.departement!
     const url = '/offres/partage-recherche'
@@ -37,13 +75,49 @@ export default function PartageRechercheButton({
     return encodeURI(url)
   }
 
+  function getPartageRechercheImmersionUrl(): string {
+    const url = '/offres/partage-recherche'
+      .concat(`?type=${typeOffre}`)
+      .concat(
+        `&titre=${suggestionImmersion.metier.libelle} - ${suggestionImmersion.commune.libelle}`
+      )
+      .concat(`&labelMetier=${suggestionImmersion.metier.libelle}`)
+      .concat(`&codeMetier=${suggestionImmersion.metier.code}`)
+      .concat(`&labelLocalite=${suggestionImmersion.commune.libelle}`)
+      .concat(`&latitude=${suggestionImmersion.commune.latitude}`)
+      .concat(`&longitude=${suggestionImmersion.commune.longitude}`)
+    return encodeURI(url)
+  }
+
+  function getPartageRechercheServiceCiviqueUrl(): string {
+    const url = '/offres/partage-recherche'
+      .concat(`?type=${typeOffre}`)
+      .concat(`&titre=${suggestionServiceCivique.commune!.libelle}`)
+      .concat(`&labelLocalite=${suggestionServiceCivique.commune!.libelle}`)
+      .concat(`&latitude=${suggestionServiceCivique.commune!.latitude}`)
+      .concat(`&longitude=${suggestionServiceCivique.commune!.longitude}`)
+    return encodeURI(url)
+  }
+
+  function getLabelRechercheNonPartageable(): string {
+    switch (typeOffre!) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return 'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail.'
+      case TypeOffre.IMMERSION:
+        return 'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville.'
+      case TypeOffre.SERVICE_CIVIQUE:
+        return 'Pour suggérer des critères de recherche, vous devez saisir une ville.'
+    }
+  }
+
   useEffect(() => {
     setErrorMessage(false)
   }, [suggestionOffreEmploi])
 
   return (
     <>
-      {typeOffre === TypeOffre.EMPLOI && (
+      {typeOffre && (
         <>
           <div
             className={
@@ -55,8 +129,7 @@ export default function PartageRechercheButton({
               <p>Suggérer ces critères de recherche à vos bénéficiaires</p>
               {errorMessage && (
                 <p className='text-warning'>
-                  Pour suggérer des critères de recherche, vous devez saisir un
-                  mot clé et un lieu de travail
+                  {getLabelRechercheNonPartageable()}
                 </p>
               )}
             </div>
