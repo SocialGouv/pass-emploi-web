@@ -1,16 +1,16 @@
 import { DateTime } from 'luxon'
-import Link from 'next/link'
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
-import RowCell from 'components/ui/Table/RowCell'
+import TD from 'components/ui/Table/TD'
+import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 import {
-  WEEKDAY_MONTH_LONG,
   TIME_24_H_SEPARATOR,
-  toShortDate,
   toFrenchFormat,
+  toShortDate,
+  WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
 interface RdvRowProps {
@@ -38,66 +38,63 @@ export function RdvRow({
   )
 
   return (
-    <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
-      <a
-        role='row'
-        aria-label={`Consulter l’événement du ${fullDate} avec ${rdv.beneficiaires}`}
-        className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
-      >
-        <RowCell className='rounded-l-small'>
-          <span aria-label={fullDate}>{withDate && `${shortDate} - `}</span>
-          {timeAndDuration}
-        </RowCell>
+    <TR
+      href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
+      label={`Consulter l’événement du ${fullDate} avec ${rdv.beneficiaires}`}
+    >
+      <TD className='rounded-l-small'>
+        <span aria-label={fullDate}>{withDate && `${shortDate} - `}</span>
+        {timeAndDuration}
+      </TD>
 
-        {withNameJeune && <RowCell>{rdv.beneficiaires}</RowCell>}
+      {withNameJeune && <TD>{rdv.beneficiaires}</TD>}
 
-        <RowCell>
-          <DataTag text={rdv.type} />
-        </RowCell>
+      <TD>
+        <DataTag text={rdv.type} />
+      </TD>
 
-        <RowCell>
+      <TD>
+        <IconComponent
+          name={IconName.Location}
+          focusable='false'
+          aria-hidden='true'
+          className='inline mr-2 h-6 w-6 fill-primary'
+        />
+        {rdv.modality}
+      </TD>
+
+      <TD className='rounded-r-small'>
+        <span className='flex items-center justify-between'>
+          {rdv.idCreateur === idConseiller && (
+            <>
+              <span className='sr-only'>oui</span>
+              <IconComponent
+                name={IconName.RoundedCheckFilled}
+                aria-hidden='true'
+                focusable='false'
+                className='h-3 fill-primary'
+              />
+            </>
+          )}
+          {rdv.idCreateur !== idConseiller && (
+            <>
+              <span className='sr-only'>non</span>
+              <IconComponent
+                name={IconName.Ko}
+                aria-hidden='true'
+                focusable='false'
+                className='h-3'
+              />
+            </>
+          )}
           <IconComponent
-            name={IconName.Location}
+            name={IconName.ChevronRight}
             focusable='false'
             aria-hidden='true'
-            className='inline mr-2 h-6 w-6 fill-primary'
+            className='w-6 h-6 fill-content_color'
           />
-          {rdv.modality}
-        </RowCell>
-
-        <RowCell className='rounded-r-small'>
-          <span className='flex items-center justify-between'>
-            {rdv.idCreateur === idConseiller && (
-              <>
-                <span className='sr-only'>oui</span>
-                <IconComponent
-                  name={IconName.RoundedCheckFilled}
-                  aria-hidden='true'
-                  focusable='false'
-                  className='h-3 fill-primary'
-                />
-              </>
-            )}
-            {rdv.idCreateur !== idConseiller && (
-              <>
-                <span className='sr-only'>non</span>
-                <IconComponent
-                  name={IconName.Ko}
-                  aria-hidden='true'
-                  focusable='false'
-                  className='h-3'
-                />
-              </>
-            )}
-            <IconComponent
-              name={IconName.ChevronRight}
-              focusable='false'
-              aria-hidden='true'
-              className='w-6 h-6 fill-content_color'
-            />
-          </span>
-        </RowCell>
-      </a>
-    </Link>
+        </span>
+      </TD>
+    </TR>
   )
 }

@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import React from 'react'
 
+import { Intercalaire } from 'components/ui/Table/Intercalaire'
 import {
   compareDates,
   dateIsToday,
@@ -94,37 +95,23 @@ function isApresMidi(heure: number) {
   return heure > 12
 }
 
-//FIXME: Balise <tr> ne peut pas être enfant d'une div, mais problème avec colSpan
-function intercalaireDate(item: IntercalaireJour) {
+function intercalaireDate({ label }: IntercalaireJour) {
   return (
-    <tr key={item.label}>
-      <th
-        colSpan={6}
-        className={`table-cell text-m-bold capitalize ${
-          item.label === AUJOURDHUI_LABEL
-            ? 'text-primary'
-            : 'text-content_color'
-        } `}
-      >
-        <span className='tracking-tighter' aria-hidden={true}>
-          ---------
-        </span>
-        <span className='mx-4'>{item.label}</span>
-        <span className='tracking-tighter' aria-hidden={true}>
-          ---------
-        </span>
-      </th>
-    </tr>
+    <Intercalaire
+      key={label}
+      className={`text-m-bold capitalize ${
+        label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'
+      } `}
+    >
+      {label}
+    </Intercalaire>
   )
 }
 
-//FIXME: Balise <tr> ne peut pas être enfant d'une div, mais problème avec colSpan
-function intercalairePlageHoraire(item: IntercalairePlageHoraire) {
+function intercalairePlageHoraire({ label, jour }: IntercalairePlageHoraire) {
   return (
-    <tr key={`${item.label} - ${item.jour}`}>
-      <th colSpan={1} className='table-cell text-s-bold text-content_color'>
-        <span className='float-left'>{item.label}</span>
-      </th>
-    </tr>
+    <Intercalaire key={`${label}-${jour}`} className='text-s-bold'>
+      {label}
+    </Intercalaire>
   )
 }

@@ -3,17 +3,14 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import { StatutAction } from 'interfaces/action'
 
 type FiltresStatutsActionsProps = {
-  style: string
   onFiltres: (statutsSelectionnes: StatutAction[]) => void
   defaultValue?: StatutAction[]
 }
 
 export default function FiltresStatutsActions({
-  style,
   onFiltres,
   defaultValue = [],
 }: FiltresStatutsActionsProps) {
@@ -61,7 +58,7 @@ export default function FiltresStatutsActions({
   }, [afficherFiltresStatuts])
 
   return (
-    <HeaderCell className={`relative ${style}`}>
+    <div className='relative'>
       <button
         aria-controls='filtres-statut'
         aria-expanded={afficherFiltresStatuts}
@@ -74,6 +71,8 @@ export default function FiltresStatutsActions({
           name={
             afficherFiltresStatuts ? IconName.ChevronUp : IconName.ChevronDown
           }
+          aria-hidden={true}
+          focusable={false}
           className='h-4 w-4 ml-2 fill-primary'
         />
       </button>
@@ -96,6 +95,6 @@ export default function FiltresStatutsActions({
           </Button>
         </form>
       )}
-    </HeaderCell>
+    </div>
   )
 }

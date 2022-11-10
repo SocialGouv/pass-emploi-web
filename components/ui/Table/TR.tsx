@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import React, { ReactNode } from 'react'
+import React, { ReactElement, MouseEvent } from 'react'
 
-type TRProps = { children: ReactNode }
-type TRLinkProps = TRProps & { href: string; label: string }
+type Children = { children: Array<ReactElement | false | undefined> }
+type TRProps = Children & { asDiv?: boolean; onClick?: (e: MouseEvent) => void }
+type TRLinkProps = Children & { href: string; label: string }
 
 export function TR(props: TRProps | TRLinkProps) {
   const style = 'focus-within:primary_lighten rounded-small shadow-s'
@@ -17,12 +18,28 @@ export function TR(props: TRProps | TRLinkProps) {
           title={props.label}
           className={`table-row ${style} ${clickableStyle}`}
         >
-          {props.children}
+          {React.Children.map(
+            props.children,
+            (child) => child && React.cloneElement(child, { asDiv: true })
+          )}
         </a>
       </Link>
     )
+  } else if (props.asDiv) {
+    return (
+      <div role='row' className={'table-row ' + style} onClick={props.onClick}>
+        {React.Children.map(
+          props.children,
+          (child) => child && React.cloneElement(child, { asDiv: true })
+        )}
+      </div>
+    )
   } else {
-    return <tr className={style}>{props.children}</tr>
+    return (
+      <tr className={style} onClick={props.onClick}>
+        {props.children}
+      </tr>
+    )
   }
 }
 
