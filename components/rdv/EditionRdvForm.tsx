@@ -6,6 +6,7 @@ import JeunesMultiselectAutocomplete, {
   OptionJeune,
 } from 'components/jeune/JeunesMultiselectAutocomplete'
 import { RequiredValue } from 'components/RequiredValue'
+import { RequiredValue as ValueWithError } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -106,7 +107,7 @@ export function EditionRdvForm({
     Boolean(rdv?.invitation)
   )
   const [titre, setTitre] = useState<RequiredValue>({ value: rdv?.titre ?? '' })
-  const [description, setDescription] = useState<RequiredValue>({
+  const [description, setDescription] = useState<ValueWithError>({
     value: rdv?.comment ?? '',
   })
 
@@ -132,7 +133,7 @@ export function EditionRdvForm({
           adresse ||
           organisme ||
           titre ||
-          description
+          description.value
       )
     }
 
@@ -285,7 +286,7 @@ export function EditionRdvForm({
       setDescription({
         ...description,
         error:
-          'Vous avez atteint le nombre maximal de caractères. Veuillez retirer des caractères.',
+          'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.',
       })
     }
   }
@@ -494,11 +495,7 @@ export function EditionRdvForm({
           <Etape numero={3} titre='Ajout de bénéficiaires'>
             {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
               <div className='mb-4'>
-                <InformationMessage
-                  content={
-                    'Pour les informations collectives, l’ajout de bénéficiaires est facultatif'
-                  }
-                />
+                <InformationMessage content='Pour les animations collectives, l’ajout de bénéficiaires est facultatif' />
               </div>
             )}
             <JeunesMultiselectAutocomplete
@@ -509,11 +506,7 @@ export function EditionRdvForm({
               }
               typeSelection='Bénéficiaires'
               defaultJeunes={defaultJeunes}
-              onUpdate={
-                !isCodeTypeAnimationCollective(codeTypeRendezVous)
-                  ? updateIdsJeunes
-                  : () => {}
-              }
+              onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
             />
