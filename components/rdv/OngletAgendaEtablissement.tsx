@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Tag } from 'components/ui/Indicateurs/Tag'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import RowCell from 'components/ui/Table/RowCell'
 import TableLayout from 'components/ui/Table/TableLayout'
@@ -25,9 +27,8 @@ export function OngletAgendaEtablissement({
   idEtablissement,
   recupererAnimationsCollectives,
 }: OngletAgendaEtablissementProps) {
-  const [animationsCollectives, setAnimationsCollectives] = useState<
-    AnimationCollective[]
-  >([])
+  const [animationsCollectives, setAnimationsCollectives] =
+    useState<AnimationCollective[]>()
 
   function linkLabel(ac: AnimationCollective): string {
     return `Consulter ${ac.type} ${statusProps(ac).label} du ${fullDate(
@@ -89,41 +90,60 @@ export function OngletAgendaEtablissement({
   }, [idEtablissement])
 
   return (
-    <TableLayout caption='Liste des animations collectives de mon établissement'>
-      <THead>
-        <HeaderCell>Date</HeaderCell>
-        <HeaderCell>Horaires</HeaderCell>
-        <HeaderCell>Titre</HeaderCell>
-        <HeaderCell>Type</HeaderCell>
-        <HeaderCell>Statut</HeaderCell>
-      </THead>
-      <TBody>
-        {animationsCollectives.map((ac) => (
-          <TR
-            key={ac.id}
-            href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
-            label={linkLabel(ac)}
-          >
-            <RowCell className='capitalize'>{fullDate(ac)}</RowCell>
-            <RowCell>
-              {heure(ac)} - {ac.duree} min
-            </RowCell>
-            <RowCell>{ac.titre}</RowCell>
-            <RowCell>{tagType(ac)}</RowCell>
-            <RowCell>
-              <div className='flex items-center justify-between'>
-                {tagStatut(ac)}
-                <IconComponent
-                  name={IconName.ChevronRight}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-6 h-6 fill-content_color'
-                />
-              </div>
-            </RowCell>
-          </TR>
-        ))}
-      </TBody>
-    </TableLayout>
+    <>
+      {!animationsCollectives && <SpinningLoader />}
+
+      {animationsCollectives && animationsCollectives.length === 0 && (
+        <div className='flex flex-col justify-center items-center'>
+          <EmptyStateImage
+            focusable='false'
+            aria-hidden='true'
+            className='w-[360px] h-[200px]'
+          />
+          <p className='mt-4 text-base-medium w-2/3 text-center'>
+            Aucune animation collective dans votre établissement.
+          </p>
+        </div>
+      )}
+
+      {animationsCollectives && animationsCollectives.length > 0 && (
+        <TableLayout caption='Liste des animations collectives de mon établissement'>
+          <THead>
+            <HeaderCell>Date</HeaderCell>
+            <HeaderCell>Horaires</HeaderCell>
+            <HeaderCell>Titre</HeaderCell>
+            <HeaderCell>Type</HeaderCell>
+            <HeaderCell>Statut</HeaderCell>
+          </THead>
+          <TBody>
+            {animationsCollectives.map((ac) => (
+              <TR
+                key={ac.id}
+                href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
+                label={linkLabel(ac)}
+              >
+                <RowCell className='capitalize'>{fullDate(ac)}</RowCell>
+                <RowCell>
+                  {heure(ac)} - {ac.duree} min
+                </RowCell>
+                <RowCell>{ac.titre}</RowCell>
+                <RowCell>{tagType(ac)}</RowCell>
+                <RowCell>
+                  <div className='flex items-center justify-between'>
+                    {tagStatut(ac)}
+                    <IconComponent
+                      name={IconName.ChevronRight}
+                      focusable={false}
+                      aria-hidden={true}
+                      className='w-6 h-6 fill-content_color'
+                    />
+                  </div>
+                </RowCell>
+              </TR>
+            ))}
+          </TBody>
+        </TableLayout>
+      )}
+    </>
   )
 }
