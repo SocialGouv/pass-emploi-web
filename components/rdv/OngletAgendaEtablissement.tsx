@@ -14,6 +14,11 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { AnimationCollective } from 'interfaces/rdv'
 import {
+  insertIntercalaires,
+  ItemOuIntercalaire,
+  renderListeWithIntercalaires,
+} from 'presentation/Intercalaires'
+import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
   WEEKDAY_MONTH_LONG,
@@ -34,8 +39,10 @@ export function OngletAgendaEtablissement({
   recupererAnimationsCollectives,
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
-  const [animationsCollectives, setAnimationsCollectives] =
-    useState<AnimationCollective[]>()
+  const [
+    animationsCollectivesWithIntercalaires,
+    setAnimationsCollectivesWithIntercalaires,
+  ] = useState<ItemOuIntercalaire<AnimationCollective>[]>()
 
   async function chargerEvenements(dateDebut: DateTime, dateFin: DateTime) {
     const evenements = await recupererAnimationsCollectives(
@@ -43,7 +50,9 @@ export function OngletAgendaEtablissement({
       dateDebut,
       dateFin
     )
-    setAnimationsCollectives(evenements)
+    setAnimationsCollectivesWithIntercalaires(
+      insertIntercalaires(evenements, ({ date }) => date)
+    )
   }
 
   function labelLien(ac: AnimationCollective): string {
@@ -108,60 +117,63 @@ export function OngletAgendaEtablissement({
         />
       )}
 
-      {!animationsCollectives && <SpinningLoader />}
+      {!animationsCollectivesWithIntercalaires && <SpinningLoader />}
 
-      {animationsCollectives && animationsCollectives.length === 0 && (
-        <div className='flex flex-col justify-center items-center'>
-          <EmptyStateImage
-            focusable={false}
-            aria-hidden={true}
-            className='w-[360px] h-[200px]'
-          />
-          <p className='mt-4 text-base-medium w-2/3 text-center'>
-            Il n’y a pas d’animation collective sur cette période dans votre
-            établissement.
-          </p>
-        </div>
-      )}
+      {animationsCollectivesWithIntercalaires &&
+        animationsCollectivesWithIntercalaires.length === 0 && (
+          <div className='flex flex-col justify-center items-center'>
+            <EmptyStateImage
+              focusable={false}
+              aria-hidden={true}
+              className='w-[360px] h-[200px]'
+            />
+            <p className='mt-4 text-base-medium w-2/3 text-center'>
+              Il n’y a pas d’animation collective sur cette période dans votre
+              établissement.
+            </p>
+          </div>
+        )}
 
-      {animationsCollectives && animationsCollectives.length > 0 && (
-        <TableLayout caption='Liste des animations collectives de mon établissement'>
-          <THead>
-            <HeaderCell>Date</HeaderCell>
-            <HeaderCell>Horaires</HeaderCell>
-            <HeaderCell>Titre</HeaderCell>
-            <HeaderCell>Type</HeaderCell>
-            <HeaderCell>Statut</HeaderCell>
-          </THead>
-          <TBody>
-            {animationsCollectives.map((ac) => (
-              <TR
-                key={ac.id}
-                href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
-                label={labelLien(ac)}
-              >
-                <RowCell className='capitalize'>{fullDate(ac)}</RowCell>
-                <RowCell>
-                  {heure(ac)} - {ac.duree} min
-                </RowCell>
-                <RowCell>{ac.titre}</RowCell>
-                <RowCell>{tagType(ac)}</RowCell>
-                <RowCell>
-                  <div className='flex items-center justify-between'>
-                    {tagStatut(ac)}
-                    <IconComponent
-                      name={IconName.ChevronRight}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='w-6 h-6 fill-content_color'
-                    />
-                  </div>
-                </RowCell>
-              </TR>
-            ))}
-          </TBody>
-        </TableLayout>
-      )}
+      {animationsCollectivesWithIntercalaires &&
+        animationsCollectivesWithIntercalaires.length > 0 && (
+          <TableLayout caption='Liste des animations collectives de mon établissement'>
+            <THead>
+              <HeaderCell>Horaires</HeaderCell>
+              <HeaderCell>Titre</HeaderCell>
+              <HeaderCell>Type</HeaderCell>
+              <HeaderCell>Statut</HeaderCell>
+            </THead>
+            <TBody>
+              {renderListeWithIntercalaires(
+                animationsCollectivesWithIntercalaires,
+                (ac) => (
+                  <TR
+                    key={ac.id}
+                    href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
+                    label={labelLien(ac)}
+                  >
+                    <RowCell>
+                      {heure(ac)} - {ac.duree} min
+                    </RowCell>
+                    <RowCell>{ac.titre}</RowCell>
+                    <RowCell>{tagType(ac)}</RowCell>
+                    <RowCell>
+                      <div className='flex items-center justify-between'>
+                        {tagStatut(ac)}
+                        <IconComponent
+                          name={IconName.ChevronRight}
+                          focusable={false}
+                          aria-hidden={true}
+                          className='w-6 h-6 fill-content_color'
+                        />
+                      </div>
+                    </RowCell>
+                  </TR>
+                )
+              )}
+            </TBody>
+          </TableLayout>
+        )}
     </>
   )
 }
