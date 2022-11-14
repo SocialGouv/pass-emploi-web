@@ -3,13 +3,21 @@ import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import {
+  jsonToRdvListItem,
   jsonToRdv,
   RdvFormData,
   RdvJeuneJson,
-  rdvJeuneJsonToRdv,
+  rdvJeuneJsonToRdvListItem,
   RdvJson,
+  jsonToAnimationCollective,
+  AnimationCollectiveJson,
 } from 'interfaces/json/rdv'
-import { Rdv, TypeRendezVous } from 'interfaces/rdv'
+import {
+  AnimationCollective,
+  Rdv,
+  RdvListItem,
+  TypeRendezVous,
+} from 'interfaces/rdv'
 import { ApiError } from 'utils/httpClient'
 
 export interface RendezVousService {
@@ -17,13 +25,15 @@ export interface RendezVousService {
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
-  ): Promise<Rdv[]>
-
+  ): Promise<RdvListItem[]>
   getRendezVousJeune(
     idJeune: string,
     periode: string,
     accessToken: string
-  ): Promise<Rdv[]>
+  ): Promise<RdvListItem[]>
+  getRendezVousEtablissement(
+    idEtablissement: string
+  ): Promise<AnimationCollective[]>
 
   getDetailsRendezVous(
     idRdv: string,
@@ -46,27 +56,48 @@ export class RendezVousApiService implements RendezVousService {
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
-  ): Promise<Rdv[]> {
+  ): Promise<RdvListItem[]> {
     const session = await getSession()
     const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
     const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-    const { content: rdvs } = await this.apiClient.get<RdvJson[]>(
+    const { content: rdvsJson } = await this.apiClient.get<RdvJson[]>(
       `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
       session!.accessToken
     )
-    return rdvs.map(jsonToRdv)
+    return rdvsJson.map(jsonToRdvListItem)
   }
 
   async getRendezVousJeune(
     idJeune: string,
     periode: string,
     accessToken: string
-  ): Promise<Rdv[]> {
+  ): Promise<RdvListItem[]> {
     const { content: rdvsJson } = await this.apiClient.get<RdvJeuneJson[]>(
       `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
       accessToken
     )
-    return rdvsJson.map(rdvJeuneJsonToRdv)
+    return rdvsJson.map(rdvJeuneJsonToRdvListItem)
+  }
+
+  async getRendezVousEtablissement(
+    idEtablissement: string
+  ): Promise<AnimationCollective[]> {
+    const session = await getSession()
+    const now = DateTime.now()
+    const { content: animationsCollectivesJson } = await this.apiClient.get<
+      AnimationCollectiveJson[]
+    >(
+      `/etablissements/${idEtablissement}/animations-collectives`,
+      session!.accessToken
+    )
+    // Séparation temporaire des passees/futures tant qu’on ne récupère pas une période spécifique
+    const passees: AnimationCollective[] = []
+    const futures: AnimationCollective[] = []
+    animationsCollectivesJson.map(jsonToAnimationCollective).forEach((ac) => {
+      if (ac.date.startOf('day') < now.startOf('day')) passees.push(ac)
+      else futures.push(ac)
+    })
+    return [...futures, ...passees.reverse()]
   }
 
   async getDetailsRendezVous(

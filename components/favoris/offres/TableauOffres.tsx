@@ -19,10 +19,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
       )}
 
       {offres.length > 0 && (
-        <TableLayout describedBy='table-offres-caption'>
-          <div id='table-offres-caption' className='sr-only'>
-            Liste des offres en favoris
-          </div>
+        <TableLayout caption='Liste des offres en favoris'>
           <div role='rowgroup' className='table-header-group'>
             <div role='row' className='table-row'>
               <HeaderCell>N°Offre</HeaderCell>

@@ -10,7 +10,7 @@ import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
-import { OngletRdvs } from 'components/rdv/OngletRdvs'
+import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -31,7 +31,7 @@ import {
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { PeriodeRdv, RdvListItem } from 'interfaces/rdv'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
@@ -326,7 +326,7 @@ function FicheJeune({
                 aria-hidden='true'
                 className='mr-2 w-4 h-4'
               />
-              Créer un rendez-vous
+              Créer un événement
             </ButtonLink>
           )}
 
@@ -384,7 +384,7 @@ function FicheJeune({
           id='liste-rdvs'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          <OngletRdvs
+          <OngletRdvsBeneficiaire
             poleEmploi={isPoleEmploi}
             rdvs={rdvs}
             idConseiller={conseiller?.id ?? ''}
@@ -481,7 +481,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     metadonneesFavoris,
-    rdvs: rdvs.map(rdvToListItem),
+    rdvs,
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,

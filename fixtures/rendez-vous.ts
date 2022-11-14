@@ -1,5 +1,12 @@
-import { RdvJson } from 'interfaces/json/rdv'
-import { Rdv, RdvListItem, TypeRendezVous } from 'interfaces/rdv'
+import { DateTime } from 'luxon'
+
+import { RdvJeuneJson, RdvJson } from 'interfaces/json/rdv'
+import {
+  AnimationCollective,
+  Rdv,
+  RdvListItem,
+  TypeRendezVous,
+} from 'interfaces/rdv'
 
 export const typesDeRendezVous = (
   overrides: TypeRendezVous[] = []
@@ -48,7 +55,7 @@ export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
     jeunes: [
       {
         id: '1',
-        prenom: 'kenji',
+        prenom: 'Kenji',
         nom: 'Jirac',
       },
     ],
@@ -56,7 +63,7 @@ export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
     precisionType: 'Prise de nouvelles',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
-    duration: 125,
+    duree: 125,
     adresse: '36 rue de marseille, 93200 Saint-Denis',
     organisme: 'S.A.R.L',
     presenceConseiller: false,
@@ -76,7 +83,7 @@ export function desRdvListItems(): RdvListItem[] {
       type: 'Autre',
       modality: 'par téléphone',
       date: '2021-10-21T10:00:00.000Z',
-      duration: 125,
+      duree: 125,
       idCreateur: '1',
     },
     {
@@ -85,21 +92,37 @@ export function desRdvListItems(): RdvListItem[] {
       type: 'Atelier',
       modality: 'En agence',
       date: '2021-10-25T12:00:00.000Z',
-      duration: 25,
+      duree: 25,
       idCreateur: '2',
     },
   ]
 }
 
-export function unRdvListItem(overrides: Partial<RdvListItem>): RdvListItem {
+export function unRdvListItem(
+  overrides: Partial<RdvListItem> = {}
+): RdvListItem {
   const defaults: RdvListItem = {
     id: '1',
     beneficiaires: 'Kenji Jirac',
     type: 'Autre',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
-    duration: 125,
+    duree: 125,
     idCreateur: '1',
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function uneAnimationCollective(
+  overrides: Partial<AnimationCollective> = {}
+): AnimationCollective {
+  const defaults: AnimationCollective = {
+    id: 'ac-1',
+    type: 'Atelier',
+    titre: 'Formation aux outils numériques',
+    date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
+    duree: 125,
+    statut: 'A_VENIR',
   }
   return { ...defaults, ...overrides }
 }
@@ -110,10 +133,36 @@ export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
     jeunes: [
       {
         id: '1',
-        prenom: 'kenji',
+        prenom: 'Kenji',
         nom: 'Jirac',
       },
     ],
+    type: { code: 'AUTRE', label: 'Autre' },
+    precision: 'Prise de nouvelles',
+    modality: 'par téléphone',
+    date: '2021-10-21T10:00:00.000Z',
+    duration: 125,
+    adresse: '36 rue de marseille, 93200 Saint-Denis',
+    organisme: 'S.A.R.L',
+    presenceConseiller: false,
+    invitation: true,
+    comment: 'Rendez-vous avec Kenji',
+    createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+  }
+
+  return { ...defaults, ...overrides }
+}
+
+export function unRendezVousJeuneJson(
+  overrides: Partial<RdvJeuneJson> = {}
+): RdvJeuneJson {
+  const defaults: RdvJeuneJson = {
+    id: '1',
+    jeune: {
+      id: '1',
+      prenom: 'Kenji',
+      nom: 'Jirac',
+    },
     type: { code: 'AUTRE', label: 'Autre' },
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',

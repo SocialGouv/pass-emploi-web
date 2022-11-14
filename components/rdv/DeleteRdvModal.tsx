@@ -19,11 +19,11 @@ export default function DeleteRdvModal({
   }
 
   const message = aDesJeunesDUnAutrePortefeuille
-    ? 'Vous allez supprimer un rendez-vous qui concerne des jeunes qui ne sont pas dans votre portefeuille'
+    ? 'Vous allez supprimer un événement qui concerne des jeunes qui ne sont pas dans votre portefeuille'
     : 'L’ensemble des bénéficiaires sera notifié de la suppression'
 
   return (
-    <Modal title='Suppression du rendez-vous' onClose={handleCloseModal}>
+    <Modal title='Suppression de l’événement' onClose={handleCloseModal}>
       <IconComponent
         name={IconName.Warning}
         focusable={false}
@@ -37,7 +37,7 @@ export default function DeleteRdvModal({
 
       {aDesJeunesDUnAutrePortefeuille && (
         <div className='text-base-regular text-content_color text-center mx-28 mt-12'>
-          <p>Le créateur recevra un email de suppression du rendez-vous.</p>
+          <p>Le créateur recevra un email de suppression de l’événement.</p>
           <p>Les bénéficiaires seront notifiés sur l’application CEJ.</p>
         </div>
       )}

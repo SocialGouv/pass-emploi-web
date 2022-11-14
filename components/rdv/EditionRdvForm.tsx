@@ -96,7 +96,7 @@ export function EditionRdvForm({
     : ''
   const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
   const regexDuree = /^\d{2}:\d{2}$/
-  const dureeRdv = dureeFromMinutes(rdv?.duration)
+  const dureeRdv = dureeFromMinutes(rdv?.duree)
   const [duree, setDuree] = useState<RequiredValue>({ value: dureeRdv })
   const [adresse, setAdresse] = useState<string>(rdv?.adresse ?? '')
   const [organisme, setOrganisme] = useState<string>(rdv?.organisme ?? '')
@@ -130,9 +130,9 @@ export function EditionRdvForm({
           date.value ||
           horaire.value ||
           duree.value ||
+          titre.value ||
           adresse ||
           organisme ||
-          titre ||
           description.value
       )
     }
@@ -187,7 +187,7 @@ export function EditionRdvForm({
       setPrecisionType({
         value: precisionType.value,
         error:
-          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
+          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement.",
       })
     }
   }
@@ -358,9 +358,9 @@ export function EditionRdvForm({
 
   function emailInvitationText(conseillerIsCreator: boolean) {
     if (conseillerIsCreator) {
-      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
+      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
     } else {
-      return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."
+      return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
     }
   }
 
@@ -372,7 +372,7 @@ export function EditionRdvForm({
 
       {aDesJeunesDUnAutrePortefeuille && (
         <div className='mb-6'>
-          <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
+          <InformationMessage content='Cet événement concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
       <Etape numero={1} titre='Type d’événement'>
@@ -612,7 +612,7 @@ export function EditionRdvForm({
                 {rdv!.createur && (
                   <div className='mb-6'>
                     <InformationMessage
-                      content={`Le rendez-vous a été créé par un autre conseiller : ${
+                      content={`L’événement a été créé par un autre conseiller : ${
                         rdv!.createur.prenom
                       } ${
                         rdv!.createur.nom
@@ -623,7 +623,7 @@ export function EditionRdvForm({
                 {!rdv!.createur && (
                   <div className='mb-6'>
                     <InformationMessage
-                      content={`Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
+                      content={`L’événement a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
                     />
                   </div>
                 )}
@@ -633,8 +633,8 @@ export function EditionRdvForm({
             <div className='flex items-center mb-8'>
               <label htmlFor='presenceConseiller' className='flex items-center'>
                 <span className='w-64 mr-4'>
-                  Informer les bénéficiaires qu’un conseiller sera présent au
-                  rendez-vous
+                  Informer les bénéficiaires qu’un conseiller sera présent à
+                  l’événement
                 </span>
                 <Switch
                   id='presenceConseiller'
@@ -675,7 +675,7 @@ export function EditionRdvForm({
                 type='button'
                 label={`Quitter la ${
                   rdv ? 'modification' : 'création'
-                } du rendez-vous`}
+                } de l’événement`}
                 onClick={leaveWithChanges}
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
@@ -689,7 +689,7 @@ export function EditionRdvForm({
                 type='submit'
                 disabled={!formHasChanges() || !formIsValid()}
               >
-                Modifier le rendez-vous
+                Modifier l’événement
               </Button>
             )}
             {!rdv && (

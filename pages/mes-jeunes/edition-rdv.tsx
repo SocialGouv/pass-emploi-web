@@ -203,7 +203,7 @@ function EditionRdv({
     <>
       {showDeleteRdvError && (
         <FailureAlert
-          label="Votre rendez-vous n'a pas été supprimé, veuillez essayer ultérieurement"
+          label="Votre événement n'a pas été supprimé, veuillez essayer ultérieurement"
           onAcknowledge={() => setShowDeleteRdvError(false)}
         />
       )}
@@ -212,7 +212,7 @@ function EditionRdv({
         <Button
           style={ButtonStyle.SECONDARY}
           onClick={handleDelete}
-          label={`Supprimer le rendez-vous du ${rdv.date}`}
+          label={`Supprimer l’événement du ${rdv.date}`}
           className='mb-4'
         >
           <IconComponent
@@ -245,8 +245,8 @@ function EditionRdv({
       {showLeavePageModal && (
         <LeavePageConfirmationModal
           message={`Vous allez quitter la ${
-            rdv ? 'modification du' : 'création d’un nouveau'
-          } rendez-vous`}
+            rdv ? 'modification de l’' : 'création d’un nouvel '
+          }événement`}
           commentaire={`Toutes les informations ${
             rdv ? 'modifiées' : 'saisies'
           } seront perdues`}
@@ -321,8 +321,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     typesRendezVous: typesRendezVous,
     withoutChat: true,
     returnTo: redirectTo,
-    pageTitle: 'Mes rendez-vous - Créer',
-    pageHeader: 'Créer un nouveau rendez-vous',
+    pageTitle: 'Mes événements - Créer',
+    pageHeader: 'Créer un nouvel événement',
   }
 
   const idRdv = context.query.idRdv as string | undefined
@@ -330,9 +330,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
     if (!rdv) return { notFound: true }
     props.rdv = rdv
-    props.idJeune = rdv.jeunes[0].id
-    props.pageTitle = 'Mes rendez-vous - Modifier'
-    props.pageHeader = 'Modifier le rendez-vous'
+    props.pageTitle = 'Mes événements - Modifier'
+    props.pageHeader = 'Modifier l’événement'
   } else if (referer) {
     const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
     const match = regex.exec(referer)

@@ -14,7 +14,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { creationRdv: 'succes' },
         push: routerPush,
       })
@@ -26,7 +26,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/Le rendez-vous a bien été créé/)
+        screen.getByText(/L’événement a bien été créé/)
       ).toBeInTheDocument()
     })
 
@@ -39,7 +39,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,
@@ -54,7 +54,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { modificationRdv: 'succes' },
         push: routerPush,
       })
@@ -66,7 +66,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/rendez-vous a bien été modifié/)
+        screen.getByText(/événement a bien été modifié/)
       ).toBeInTheDocument()
     })
 
@@ -79,7 +79,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,
@@ -94,7 +94,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { suppressionRdv: 'succes' },
         push: routerPush,
       })
@@ -106,7 +106,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/rendez-vous a bien été supprimé/)
+        screen.getByText(/événement a bien été supprimé/)
       ).toBeInTheDocument()
     })
 
@@ -119,7 +119,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,

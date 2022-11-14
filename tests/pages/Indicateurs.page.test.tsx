@@ -62,7 +62,7 @@ describe('Indicateurs', () => {
 
     it('affiche l’indicateur de rendez-vous', async () => {
       const indicateursRdv = screen.getByRole('heading', {
-        name: 'Les rendez-vous',
+        name: 'Les événements',
       }).parentElement
       expect(
         getByTextContent('3Cette semaine', indicateursRdv!)

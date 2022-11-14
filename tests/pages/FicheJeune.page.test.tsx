@@ -15,7 +15,7 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { desRdvListItems, unRendezVous } from 'fixtures/rendez-vous'
+import { desRdvListItems, unRdvListItem } from 'fixtures/rendez-vous'
 import {
   mockedActionsService,
   mockedJeunesService,
@@ -24,7 +24,6 @@ import {
 import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
-import { rdvToListItem } from 'interfaces/rdv'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import FicheJeune, {
   getServerSideProps,
@@ -385,7 +384,7 @@ describe('Fiche Jeune', () => {
         ).toBeInTheDocument()
 
         const indicateursRdv = screen.getByRole('heading', {
-          name: 'Les rendez-vous',
+          name: 'Les événements',
         }).parentElement
         expect(
           getByTextContent('3Cette semaine', indicateursRdv!)
@@ -418,7 +417,7 @@ describe('Fiche Jeune', () => {
       it('affiche un lien vers les rendez-vous passés du jeune', () => {
         // Then
         expect(
-          screen.getByRole('link', { name: 'Voir les rendez-vous passés' })
+          screen.getByRole('link', { name: 'Voir les événements passés' })
         ).toHaveAttribute('href', '/mes-jeunes/jeune-1/rendez-vous-passes')
       })
 
@@ -455,7 +454,7 @@ describe('Fiche Jeune', () => {
       it('permet la prise de rendez-vous', async () => {
         // Then
         expect(
-          screen.getByRole('link', { name: 'Créer un rendez-vous' })
+          screen.getByRole('link', { name: 'Créer un événement' })
         ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
 
@@ -1256,7 +1255,7 @@ describe('Fiche Jeune', () => {
   })
 
   describe('server side', () => {
-    const rdvAVenir = unRendezVous({
+    const rdvAVenir = unRdvListItem({
       date: DateTime.now().plus({ day: 1 }).toISO(),
     })
     let jeunesService: JeunesService
@@ -1351,7 +1350,7 @@ describe('Fiche Jeune', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdvs: [rdvToListItem(rdvAVenir)] },
+          props: { rdvs: [rdvAVenir] },
         })
       })
 

@@ -95,8 +95,8 @@ describe('EditionRdv', () => {
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
-            pageTitle: 'Mes rendez-vous - Créer',
-            pageHeader: 'Créer un nouveau rendez-vous',
+            pageTitle: 'Mes événements - Créer',
+            pageHeader: 'Créer un nouvel événement',
             returnTo: '/mes-jeunes',
             typesRendezVous: expect.arrayContaining([]),
           },
@@ -122,7 +122,7 @@ describe('EditionRdv', () => {
         const actual = await getServerSideProps({
           req: {
             headers: {
-              referer: '/mes-rendezvous',
+              referer: '/agenda',
             },
           },
           query: {},
@@ -130,7 +130,7 @@ describe('EditionRdv', () => {
 
         // Then
         expect(actual).toMatchObject({
-          props: { returnTo: '/mes-rendezvous' },
+          props: { returnTo: '/agenda' },
         })
       })
 
@@ -171,8 +171,8 @@ describe('EditionRdv', () => {
         expect(actual).toMatchObject({
           props: {
             rdv: unRendezVous(),
-            pageTitle: 'Mes rendez-vous - Modifier',
-            pageHeader: 'Modifier le rendez-vous',
+            pageTitle: 'Mes événements - Modifier',
+            pageHeader: 'Modifier l’événement',
           },
         })
       })
@@ -255,7 +255,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous'}
+            returnTo={'/agenda'}
             pageTitle={''}
           />,
           {
@@ -315,7 +315,7 @@ describe('EditionRdv', () => {
 
             // Then
             const inputPresenceConseiller = screen.getByLabelText(
-              /Informer les bénéficiaires qu’un conseiller sera présent au rendez-vous/i
+              /Informer les bénéficiaires qu’un conseiller sera présent à l’événement/i
             )
 
             expect(inputPresenceConseiller).toBeDisabled()
@@ -478,7 +478,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
           // Given
           inputPresenceConseiller = screen.getByLabelText(
-            /Informer les bénéficiaires qu’un conseiller sera présent au rendez-vous/i
+            /Informer les bénéficiaires qu’un conseiller sera présent à l’événement/i
           )
 
           // Then
@@ -489,7 +489,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
           // Given
           inputEmailInvitation = screen.getByLabelText(
-            /Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :/i
+            /Intégrer cet événement à mon agenda via l’adresse e-mail suivante :/i
           )
 
           // Then
@@ -624,7 +624,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: '/mes-rendezvous',
+              pathname: '/agenda',
               query: { creationRdv: 'succes' },
             })
           })
@@ -676,7 +676,7 @@ describe('EditionRdv', () => {
           expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
-              "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous."
+              "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement."
             )
           ).toBeInTheDocument()
         })
@@ -783,7 +783,7 @@ describe('EditionRdv', () => {
           expect(push).not.toHaveBeenCalled()
           expect(
             screen.getByText(
-              'Vous allez quitter la création d’un nouveau rendez-vous'
+              'Vous allez quitter la création d’un nouvel événement'
             )
           ).toBeInTheDocument()
         })
@@ -807,7 +807,7 @@ describe('EditionRdv', () => {
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/mes-rendezvous'}
+              returnTo={'/agenda'}
               pageTitle={''}
             />,
             {
@@ -912,7 +912,7 @@ describe('EditionRdv', () => {
               jeunes={jeunes}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/mes-rendezvous'}
+              returnTo={'/agenda'}
               pageTitle={''}
             />,
             {
@@ -1014,7 +1014,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous'}
+            returnTo={'/agenda'}
             idJeune={idJeune}
             pageTitle={''}
           />,
@@ -1064,7 +1064,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            returnTo={'/agenda?creationRdv=succes'}
             rdv={rdv}
             pageTitle={''}
           />,
@@ -1103,7 +1103,7 @@ describe('EditionRdv', () => {
             rdv.id
           )
           expect(push).toHaveBeenCalledWith({
-            pathname: '/mes-rendezvous',
+            pathname: '/agenda',
             query: { suppressionRdv: 'succes' },
           })
         })
@@ -1189,10 +1189,7 @@ describe('EditionRdv', () => {
         // Then
         const link = screen.getByText('Annuler la modification')
         expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute(
-          'href',
-          '/mes-rendezvous?creationRdv=succes'
-        )
+        expect(link).toHaveAttribute('href', '/agenda?creationRdv=succes')
       })
 
       describe('rendez-vous modifié', () => {
@@ -1228,7 +1225,7 @@ describe('EditionRdv', () => {
           })
 
           buttonValider = screen.getByRole('button', {
-            name: 'Modifier le rendez-vous',
+            name: 'Modifier l’événement',
           })
 
           // Given
@@ -1281,7 +1278,7 @@ describe('EditionRdv', () => {
           expect(push).not.toHaveBeenCalled()
           expect(
             screen.getByText(
-              'Vous allez quitter la modification du rendez-vous'
+              'Vous allez quitter la modification de l’événement'
             )
           ).toBeInTheDocument()
         })
@@ -1317,7 +1314,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(push).toHaveBeenCalledWith({
-              pathname: '/mes-rendezvous',
+              pathname: '/agenda',
               query: { modificationRdv: 'succes' },
             })
           })
@@ -1351,7 +1348,7 @@ describe('EditionRdv', () => {
             jeunes={jeunes}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/mes-rendezvous?creationRdv=succes'}
+            returnTo={'/agenda?creationRdv=succes'}
             rdv={rdv}
             pageTitle={''}
           />,
@@ -1406,7 +1403,7 @@ describe('EditionRdv', () => {
         // Then
         expect(
           screen.getByLabelText(
-            /Le créateur du rendez-vous recevra un mail pour l'informer de la modification./i
+            /Le créateur de l’événement recevra un mail pour l'informer de la modification./i
           )
         ).toBeInTheDocument()
       })
@@ -1415,7 +1412,7 @@ describe('EditionRdv', () => {
         // Then
         expect(
           screen.getByText(
-            "Le rendez-vous a été créé par un autre conseiller : Gaëlle Hermet. Vous ne recevrez pas d'invitation dans votre agenda"
+            "L’événement a été créé par un autre conseiller : Gaëlle Hermet. Vous ne recevrez pas d'invitation dans votre agenda"
           )
         ).toBeInTheDocument()
       })
@@ -1445,7 +1442,7 @@ describe('EditionRdv', () => {
             inputDescription,
             'modification de la description'
           )
-          const buttonSubmit = screen.getByText('Modifier le rendez-vous')
+          const buttonSubmit = screen.getByText('Modifier l’événement')
 
           // When
           await userEvent.click(buttonSubmit)
@@ -1455,7 +1452,7 @@ describe('EditionRdv', () => {
           // Then
           expect(
             screen.getByText(
-              'Vous avez modifié un rendez-vous dont vous n’êtes pas le créateur'
+              'Vous avez modifié un événement dont vous n’êtes pas le créateur'
             )
           ).toBeInTheDocument()
           expect(rendezVousService.updateRendezVous).not.toHaveBeenCalled()

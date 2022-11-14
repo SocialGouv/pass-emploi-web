@@ -359,7 +359,7 @@ describe('EnvoiMessageGroupe', () => {
       it('récupère la liste des jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
-          req: { headers: { referer: 'http://localhost:3000/mes-rendezvous' } },
+          req: { headers: { referer: 'http://localhost:3000/agenda' } },
         } as GetServerSidePropsContext)
 
         // Then
@@ -368,7 +368,7 @@ describe('EnvoiMessageGroupe', () => {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',
-            returnTo: 'http://localhost:3000/mes-rendezvous',
+            returnTo: 'http://localhost:3000/agenda',
           },
         })
       })

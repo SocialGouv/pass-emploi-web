@@ -80,6 +80,7 @@ export function mockedRendezVousService(
   const defaults: RendezVousService = {
     getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
+    getRendezVousEtablissement: jest.fn(),
     getDetailsRendezVous: jest.fn(),
     getTypesRendezVous: jest.fn(),
     postNewRendezVous: jest.fn(),

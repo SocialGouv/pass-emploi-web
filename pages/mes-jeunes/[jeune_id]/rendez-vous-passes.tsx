@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 
 import TableauRdv from 'components/rdv/TableauRdv'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
+import { PeriodeRdv, RdvListItem } from 'interfaces/rdv'
 import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      rdvs: rdvs.map(rdvToListItem),
+      rdvs,
       pageTitle: 'Rendez-vous passés',
     },
   }
