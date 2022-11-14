@@ -31,8 +31,11 @@ export interface RendezVousService {
     periode: string,
     accessToken: string
   ): Promise<RdvListItem[]>
+
   getRendezVousEtablissement(
-    idEtablissement: string
+    idEtablissement: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
   ): Promise<AnimationCollective[]>
 
   getDetailsRendezVous(
@@ -80,24 +83,21 @@ export class RendezVousApiService implements RendezVousService {
   }
 
   async getRendezVousEtablissement(
-    idEtablissement: string
+    idEtablissement: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
   ): Promise<AnimationCollective[]> {
     const session = await getSession()
-    const now = DateTime.now()
+    const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+    const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
     const { content: animationsCollectivesJson } = await this.apiClient.get<
       AnimationCollectiveJson[]
     >(
-      `/etablissements/${idEtablissement}/animations-collectives`,
+      `/etablissements/${idEtablissement}/animations-collectives?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
       session!.accessToken
     )
-    // Séparation temporaire des passees/futures tant qu’on ne récupère pas une période spécifique
-    const passees: AnimationCollective[] = []
-    const futures: AnimationCollective[] = []
-    animationsCollectivesJson.map(jsonToAnimationCollective).forEach((ac) => {
-      if (ac.date.startOf('day') < now.startOf('day')) passees.push(ac)
-      else futures.push(ac)
-    })
-    return [...futures, ...passees.reverse()]
+
+    return animationsCollectivesJson.map(jsonToAnimationCollective)
   }
 
   async getDetailsRendezVous(

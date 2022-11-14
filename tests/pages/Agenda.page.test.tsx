@@ -216,6 +216,17 @@ describe('Agenda', () => {
       })
 
       describe('agenda établissement', () => {
+        const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
+        const AOUT_31_23H = DateTime.fromISO('2022-08-31T23:59:59.999+02:00')
+        const SEPTEMBRE_1_0H = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+        const SEPTEMBRE_7_23H = DateTime.fromISO(
+          '2022-09-07T23:59:59.999+02:00'
+        )
+        const SEPTEMBRE_8_0H = DateTime.fromISO('2022-09-08T00:00:00.000+02:00')
+        const SEPTEMBRE_14_23H = DateTime.fromISO(
+          '2022-09-14T23:59:59.999+02:00'
+        )
+
         beforeEach(async () => {
           // When
           await userEvent.click(
@@ -223,12 +234,19 @@ describe('Agenda', () => {
           )
         })
 
-        it('affiche tous les événements de l’établissement', () => {
+        it('affiche une période de 7 jours à partir de la date du jour', async () => {
           // Then
           expect(
             rendezVousService.getRendezVousEtablissement
-          ).toHaveBeenCalledWith('id-etablissement')
+          ).toHaveBeenCalledWith(
+            'id-etablissement',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
+        })
 
+        it('affiche les événements de la période', () => {
+          // Then
           expect(
             screen.getByRole('table', {
               name: 'Liste des animations collectives de mon établissement',
@@ -249,6 +267,69 @@ describe('Agenda', () => {
               name: 'Consulter Atelier À venir du dimanche 4 septembre à 14h00',
             })
           ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-3')
+        })
+
+        it('a deux boutons de navigation', () => {
+          // When
+          const semaineFutures = screen.getByRole('button', {
+            name: 'Aller à la semaine suivante',
+          })
+
+          const semainePassees = screen.getByRole('button', {
+            name: 'Aller à la semaine précédente',
+          })
+
+          // Then
+          expect(semaineFutures).toBeInTheDocument()
+          expect(semainePassees).toBeInTheDocument()
+        })
+
+        it('permet de changer de période de 7 jours', async () => {
+          // Given
+          const rdvsPassesButton = screen.getByRole('button', {
+            name: 'Aller à la semaine précédente',
+          })
+          const buttonRdvsSemaineCourante = screen.getByRole('button', {
+            name: 'Aller à la Semaine en cours',
+          })
+          const rdvsFutursButton = screen.getByRole('button', {
+            name: 'Aller à la semaine suivante',
+          })
+
+          // When
+          await userEvent.click(rdvsPassesButton)
+          // Then
+          expect(
+            rendezVousService.getRendezVousEtablissement
+          ).toHaveBeenLastCalledWith(
+            'id-etablissement',
+            AOUT_25_0H,
+            AOUT_31_23H
+          )
+
+          // When
+          await userEvent.click(buttonRdvsSemaineCourante)
+
+          // Then
+          expect(
+            rendezVousService.getRendezVousEtablissement
+          ).toHaveBeenCalledWith(
+            'id-etablissement',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
+          expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
+
+          // When
+          await userEvent.click(rdvsFutursButton)
+          // Then
+          expect(
+            rendezVousService.getRendezVousEtablissement
+          ).toHaveBeenLastCalledWith(
+            'id-etablissement',
+            SEPTEMBRE_8_0H,
+            SEPTEMBRE_14_23H
+          )
         })
       })
     })

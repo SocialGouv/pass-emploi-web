@@ -93,9 +93,15 @@ function Agenda({
   }
 
   function recupererRdvsEtablissement(
-    idEtablissement: string
+    idEtablissement: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
   ): Promise<AnimationCollective[]> {
-    return rendezVousService.getRendezVousEtablissement(idEtablissement)
+    return rendezVousService.getRendezVousEtablissement(
+      idEtablissement,
+      dateDebut,
+      dateFin
+    )
   }
 
   function trackNavigation(append?: string) {
@@ -165,6 +171,7 @@ function Agenda({
           <OngletAgendaEtablissement
             idEtablissement={conseiller?.agence?.id}
             recupererAnimationsCollectives={recupererRdvsEtablissement}
+            trackNavigation={trackNavigation}
           />
         </div>
       )}
