@@ -21,16 +21,17 @@ export function OngletAgendaConseiller({
 }: OngletAgendaConseillerProps) {
   const [rdvs, setRdvs] = useState<RdvListItem[]>([])
 
-  async function chargerRdvs7Jours(dateDebut: DateTime, dateFin: DateTime) {
-    const rdvs7Jours = await recupererRdvs(idConseiller!, dateDebut, dateFin)
-    setRdvs(rdvs7Jours)
+  async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
+    const evenements = await recupererRdvs(idConseiller!, dateDebut, dateFin)
+    setRdvs(evenements)
   }
 
   return (
     <>
       {idConseiller && (
         <SelecteurPeriode
-          onNouvellePeriode={chargerRdvs7Jours}
+          onNouvellePeriode={chargerRdvs}
+          nombreJours={7}
           trackNavigation={trackNavigation}
         />
       )}

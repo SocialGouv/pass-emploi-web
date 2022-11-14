@@ -37,13 +37,13 @@ export function OngletAgendaEtablissement({
   const [animationsCollectives, setAnimationsCollectives] =
     useState<AnimationCollective[]>()
 
-  async function chargerRdvs7Jours(dateDebut: DateTime, dateFin: DateTime) {
-    const rdvs7Jours = await recupererAnimationsCollectives(
+  async function chargerEvenements(dateDebut: DateTime, dateFin: DateTime) {
+    const evenements = await recupererAnimationsCollectives(
       idEtablissement!,
       dateDebut,
       dateFin
     )
-    setAnimationsCollectives(rdvs7Jours)
+    setAnimationsCollectives(evenements)
   }
 
   function labelLien(ac: AnimationCollective): string {
@@ -102,7 +102,8 @@ export function OngletAgendaEtablissement({
     <>
       {idEtablissement && (
         <SelecteurPeriode
-          onNouvellePeriode={chargerRdvs7Jours}
+          onNouvellePeriode={chargerEvenements}
+          nombreJours={7}
           trackNavigation={trackNavigation}
         />
       )}
