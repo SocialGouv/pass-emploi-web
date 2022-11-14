@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { DateTime } from 'luxon'
+import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Tag } from 'components/ui/Indicateurs/Tag'
+import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import RowCell from 'components/ui/Table/RowCell'
@@ -20,15 +22,29 @@ import {
 type OngletAgendaEtablissementProps = {
   idEtablissement: string | undefined
   recupererAnimationsCollectives: (
-    idEtablissement: string
+    idEtablissement: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
   ) => Promise<AnimationCollective[]>
+  trackNavigation: (append?: string) => void
 }
+
 export function OngletAgendaEtablissement({
   idEtablissement,
   recupererAnimationsCollectives,
+  trackNavigation,
 }: OngletAgendaEtablissementProps) {
   const [animationsCollectives, setAnimationsCollectives] =
     useState<AnimationCollective[]>()
+
+  async function chargerEvenements(dateDebut: DateTime, dateFin: DateTime) {
+    const evenements = await recupererAnimationsCollectives(
+      idEtablissement!,
+      dateDebut,
+      dateFin
+    )
+    setAnimationsCollectives(evenements)
+  }
 
   function labelLien(ac: AnimationCollective): string {
     return `Consulter ${ac.type} ${statusProps(ac).label} du ${fullDate(
@@ -82,26 +98,28 @@ export function OngletAgendaEtablissement({
     )
   }
 
-  useEffect(() => {
-    if (idEtablissement)
-      recupererAnimationsCollectives(idEtablissement).then(
-        setAnimationsCollectives
-      )
-  }, [idEtablissement])
-
   return (
     <>
+      {idEtablissement && (
+        <SelecteurPeriode
+          onNouvellePeriode={chargerEvenements}
+          nombreJours={7}
+          trackNavigation={trackNavigation}
+        />
+      )}
+
       {!animationsCollectives && <SpinningLoader />}
 
       {animationsCollectives && animationsCollectives.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='w-[360px] h-[200px]'
           />
           <p className='mt-4 text-base-medium w-2/3 text-center'>
-            Aucune animation collective dans votre établissement.
+            Il n’y a pas d’animation collective sur cette période dans votre
+            établissement.
           </p>
         </div>
       )}

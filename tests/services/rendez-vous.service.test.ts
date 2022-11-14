@@ -228,15 +228,15 @@ describe('RendezVousApiService', () => {
   describe('.getRendezVousEtablissement', () => {
     it('renvoie les rendez-vous d’un établissement', async () => {
       // Given
-      const now = DateTime.now()
-      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+      const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
       const animationsCollectivesJson: AnimationCollectiveJson[] = [
         {
           ...unRendezVousJson({
             id: 'ac-passee',
             title: 'Titre de l’AC',
             type: { code: 'whatever', label: 'Information collective' },
-            date: now.minus({ day: 1 }).toISO(),
+            date: dateDebut.toISO(),
           }),
           statut: 'A_VENIR',
         },
@@ -244,7 +244,7 @@ describe('RendezVousApiService', () => {
           ...unRendezVousJson({
             id: 'ac-future',
             type: { code: 'whatever', label: 'Atelier' },
-            date: now.plus({ day: 1 }).toISO(),
+            date: dateFin.toISO(),
           }),
           statut: 'CLOTUREE',
         },
@@ -255,28 +255,30 @@ describe('RendezVousApiService', () => {
 
       // When
       const actual = await rendezVousService.getRendezVousEtablissement(
-        'id-etablissement'
+        'id-etablissement',
+        dateDebut,
+        dateFin
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        `/etablissements/id-etablissement/animations-collectives`,
+        `/etablissements/id-etablissement/animations-collectives?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         'accessToken'
       )
       const animationsCollectives: AnimationCollective[] = [
         uneAnimationCollective({
-          id: 'ac-future',
-          type: 'Atelier',
-          titre: 'Atelier par téléphone',
-          date: now.plus({ day: 1 }),
-          statut: 'CLOTUREE',
-        }),
-        uneAnimationCollective({
           id: 'ac-passee',
           type: 'Information collective',
           titre: 'Titre de l’AC',
-          date: now.minus({ day: 1 }),
+          date: dateDebut,
           statut: 'A_VENIR',
+        }),
+        uneAnimationCollective({
+          id: 'ac-future',
+          type: 'Atelier',
+          titre: 'Atelier par téléphone',
+          date: dateFin,
+          statut: 'CLOTUREE',
         }),
       ]
       expect(actual).toEqual(animationsCollectives)
