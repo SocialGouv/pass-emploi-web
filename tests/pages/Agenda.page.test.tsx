@@ -152,17 +152,17 @@ describe('Agenda', () => {
 
         it('a deux boutons de navigation', () => {
           // When
-          const semaineFutures = screen.getByRole('button', {
-            name: 'Aller à la semaine suivante',
+          const periodesFutures = screen.getByRole('button', {
+            name: 'Aller à la période suivante',
           })
 
-          const semainePassees = screen.getByRole('button', {
-            name: 'Aller à la semaine précédente',
+          const periodesPassees = screen.getByRole('button', {
+            name: 'Aller à la période précédente',
           })
 
           // Then
-          expect(semaineFutures).toBeInTheDocument()
-          expect(semainePassees).toBeInTheDocument()
+          expect(periodesFutures).toBeInTheDocument()
+          expect(periodesPassees).toBeInTheDocument()
         })
 
         it('affiche une période de 7 jours à partir de la date du jour', async () => {
@@ -179,18 +179,18 @@ describe('Agenda', () => {
 
         it('permet de changer de période de 7 jours', async () => {
           // Given
-          const rdvsPassesButton = screen.getByRole('button', {
-            name: 'Aller à la semaine précédente',
+          const periodePasseeButton = screen.getByRole('button', {
+            name: 'Aller à la période précédente',
           })
-          const buttonRdvsSemaineCourante = screen.getByRole('button', {
-            name: 'Aller à la Semaine en cours',
+          const buttonPeriodeCourante = screen.getByRole('button', {
+            name: 'Aller à la période en cours',
           })
-          const rdvsFutursButton = screen.getByRole('button', {
-            name: 'Aller à la semaine suivante',
+          const periodeFutureButton = screen.getByRole('button', {
+            name: 'Aller à la période suivante',
           })
 
           // When
-          await userEvent.click(rdvsPassesButton)
+          await userEvent.click(periodePasseeButton)
           // Then
           expect(
             rendezVousService.getRendezVousConseiller
@@ -198,7 +198,7 @@ describe('Agenda', () => {
           expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
           // When
-          await userEvent.click(buttonRdvsSemaineCourante)
+          await userEvent.click(buttonPeriodeCourante)
           // Then
           expect(
             rendezVousService.getRendezVousConseiller
@@ -206,7 +206,7 @@ describe('Agenda', () => {
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
           // When
-          await userEvent.click(rdvsFutursButton)
+          await userEvent.click(periodeFutureButton)
           // Then
           expect(
             rendezVousService.getRendezVousConseiller
@@ -271,33 +271,33 @@ describe('Agenda', () => {
 
         it('a deux boutons de navigation', () => {
           // When
-          const semaineFutures = screen.getByRole('button', {
-            name: 'Aller à la semaine suivante',
+          const periodesFuturesButton = screen.getByRole('button', {
+            name: 'Aller à la période suivante',
           })
 
-          const semainePassees = screen.getByRole('button', {
-            name: 'Aller à la semaine précédente',
+          const periodesPasseesButton = screen.getByRole('button', {
+            name: 'Aller à la période précédente',
           })
 
           // Then
-          expect(semaineFutures).toBeInTheDocument()
-          expect(semainePassees).toBeInTheDocument()
+          expect(periodesFuturesButton).toBeInTheDocument()
+          expect(periodesPasseesButton).toBeInTheDocument()
         })
 
         it('permet de changer de période de 7 jours', async () => {
           // Given
-          const rdvsPassesButton = screen.getByRole('button', {
-            name: 'Aller à la semaine précédente',
+          const periodesPasseesButton = screen.getByRole('button', {
+            name: 'Aller à la période précédente',
           })
-          const buttonRdvsSemaineCourante = screen.getByRole('button', {
-            name: 'Aller à la Semaine en cours',
+          const periodeCouranteButton = screen.getByRole('button', {
+            name: 'Aller à la période en cours',
           })
-          const rdvsFutursButton = screen.getByRole('button', {
-            name: 'Aller à la semaine suivante',
+          const periodesFuturesButton = screen.getByRole('button', {
+            name: 'Aller à la période suivante',
           })
 
           // When
-          await userEvent.click(rdvsPassesButton)
+          await userEvent.click(periodesPasseesButton)
           // Then
           expect(
             rendezVousService.getRendezVousEtablissement
@@ -308,7 +308,7 @@ describe('Agenda', () => {
           )
 
           // When
-          await userEvent.click(buttonRdvsSemaineCourante)
+          await userEvent.click(periodeCouranteButton)
 
           // Then
           expect(
@@ -321,7 +321,7 @@ describe('Agenda', () => {
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
           // When
-          await userEvent.click(rdvsFutursButton)
+          await userEvent.click(periodesFuturesButton)
           // Then
           expect(
             rendezVousService.getRendezVousEtablissement
