@@ -1,11 +1,10 @@
 import { DateTime } from 'luxon'
-import React, { useEffect, useState } from 'react'
-
-import Button, { ButtonStyle } from '../ui/Button/Button'
+import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Tag } from 'components/ui/Indicateurs/Tag'
+import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import RowCell from 'components/ui/Table/RowCell'
@@ -17,7 +16,6 @@ import { AnimationCollective } from 'interfaces/rdv'
 import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
-  toShortDate,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
@@ -30,6 +28,7 @@ type OngletAgendaEtablissementProps = {
   ) => Promise<AnimationCollective[]>
   trackNavigation: (append?: string) => void
 }
+
 export function OngletAgendaEtablissement({
   idEtablissement,
   recupererAnimationsCollectives,
@@ -38,41 +37,11 @@ export function OngletAgendaEtablissement({
   const [animationsCollectives, setAnimationsCollectives] =
     useState<AnimationCollective[]>()
 
-  const AUJOURDHUI = DateTime.now().startOf('day')
-  const [index7JoursAffiches, setIndex7JoursAffiches] = useState<number>(0)
-
-  function jourDeDebutDesRdvs(index7Jours?: number): DateTime {
-    return AUJOURDHUI.plus({
-      day: 7 * (index7Jours ?? index7JoursAffiches),
-    })
-  }
-
-  function jourDeFinDesRdvs(index7Jours?: number): DateTime {
-    return jourDeDebutDesRdvs(index7Jours ?? index7JoursAffiches)
-      .plus({ day: 6 })
-      .endOf('day')
-  }
-
-  async function allerRdvs7JoursPrecedents() {
-    setIndex7JoursAffiches(index7JoursAffiches - 1)
-    trackNavigation('passés')
-  }
-
-  async function allerRdvs7JoursSuivants() {
-    setIndex7JoursAffiches(index7JoursAffiches + 1)
-    trackNavigation('futurs')
-  }
-
-  async function allerRdvs7JoursActuels() {
-    setIndex7JoursAffiches(0)
-    trackNavigation()
-  }
-
-  async function chargerRdvs7Jours(index7Jours: number) {
+  async function chargerRdvs7Jours(dateDebut: DateTime, dateFin: DateTime) {
     const rdvs7Jours = await recupererAnimationsCollectives(
       idEtablissement!,
-      jourDeDebutDesRdvs(index7Jours),
-      jourDeFinDesRdvs(index7Jours)
+      dateDebut,
+      dateFin
     )
     setAnimationsCollectives(rdvs7Jours)
   }
@@ -129,62 +98,27 @@ export function OngletAgendaEtablissement({
     )
   }
 
-  useEffect(() => {
-    if (idEtablissement) chargerRdvs7Jours(index7JoursAffiches)
-  }, [idEtablissement, index7JoursAffiches])
-
   return (
     <>
-      {!animationsCollectives && <SpinningLoader />}
-      <div className='flex justify-between items-center'>
-        <p className='text-base-medium'>Période :</p>
-        <Button
-          type='button'
-          style={ButtonStyle.SECONDARY}
-          onClick={allerRdvs7JoursActuels}
-        >
-          <span className='sr-only'>Aller à la</span> Semaine en cours
-        </Button>
-      </div>
+      {idEtablissement && (
+        <SelecteurPeriode
+          onNouvellePeriode={chargerRdvs7Jours}
+          trackNavigation={trackNavigation}
+        />
+      )}
 
-      <div className='flex items-center mt-1'>
-        <p className='text-m-bold text-primary mr-6'>
-          du {toShortDate(jourDeDebutDesRdvs())} au{' '}
-          {toShortDate(jourDeFinDesRdvs())}
-        </p>
-        <button
-          aria-label='Aller à la semaine précédente'
-          onClick={allerRdvs7JoursPrecedents}
-        >
-          <IconComponent
-            name={IconName.ChevronLeft}
-            className='w-6 h-6 fill-primary hover:fill-primary_darken'
-            focusable='false'
-            title='Aller à la semaine précédente'
-          />
-        </button>
-        <button
-          aria-label='Aller à la semaine suivante'
-          onClick={allerRdvs7JoursSuivants}
-        >
-          <IconComponent
-            name={IconName.ChevronRight}
-            className='w-6 h-6 fill-primary ml-8 hover:fill-primary_darken'
-            focusable='false'
-            title='Aller à la semaine suivante'
-          />
-        </button>
-      </div>
+      {!animationsCollectives && <SpinningLoader />}
 
       {animationsCollectives && animationsCollectives.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='w-[360px] h-[200px]'
           />
           <p className='mt-4 text-base-medium w-2/3 text-center'>
-            Aucune animation collective dans votre établissement.
+            Il n’y a pas d’animation collective sur cette période dans votre
+            établissement.
           </p>
         </div>
       )}
