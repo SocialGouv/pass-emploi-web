@@ -234,7 +234,7 @@ describe('Agenda', () => {
           )
         })
 
-        it('affiche une période de 7 jours à partir de la date du jour', async () => {
+        it('récupère les événements sur une période de 7 jours à partir de la date du jour', async () => {
           // Then
           expect(
             rendezVousService.getRendezVousEtablissement
@@ -245,7 +245,7 @@ describe('Agenda', () => {
           )
         })
 
-        it('affiche les événements de la période', () => {
+        it('affiche les événements récupérés', () => {
           // Then
           expect(
             screen.getByRole('table', {
@@ -253,15 +253,25 @@ describe('Agenda', () => {
             })
           ).toBeInTheDocument()
           expect(
+            screen.getByRole('row', { name: 'lundi 29 août' }).nextSibling
+          ).toHaveAccessibleName('Après-midi')
+          expect(
             screen.getByRole('row', {
               name: 'Consulter Atelier Clos du lundi 29 août à 14h00',
             })
           ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-1')
           expect(
+            screen.getByRole('row', { name: 'aujourd’hui' }).nextSibling
+          ).toHaveAccessibleName('Après-midi')
+          expect(
             screen.getByRole('row', {
               name: 'Consulter Atelier À clore du jeudi 1 septembre à 14h00',
             })
           ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-2')
+          expect(
+            screen.getByRole('row', { name: 'dimanche 4 septembre' })
+              .nextSibling
+          ).toHaveAccessibleName('Après-midi')
           expect(
             screen.getByRole('row', {
               name: 'Consulter Atelier À venir du dimanche 4 septembre à 14h00',
