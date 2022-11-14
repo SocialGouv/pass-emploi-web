@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
 import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import TableLayout from 'components/ui/Table/TableLayout'
@@ -66,9 +67,16 @@ export default function TableauRdv({
   return (
     <>
       {rdvs.length === 0 && (
-        <p className='text-base-regular mb-2'>
-          Il n’y a pas d’événement sur cette période.
-        </p>
+        <div className='flex flex-col justify-center items-center'>
+          <EmptyStateImage
+            focusable={false}
+            aria-hidden={true}
+            className='w-[360px] h-[200px]'
+          />
+          <p className='mt-4 text-base-medium w-2/3 text-center'>
+            Il n’y a pas d’événement sur cette période.
+          </p>
+        </div>
       )}
 
       {rdvs.length > 0 && (
