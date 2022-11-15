@@ -18,6 +18,7 @@ import {
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import {
   mockedActionsService,
+  mockedAgendaService,
   mockedJeunesService,
   mockedRendezVousService,
 } from 'fixtures/services'
@@ -30,6 +31,7 @@ import FicheJeune, {
   Onglet,
 } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
+import { AgendaService } from 'services/agenda.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -59,7 +61,9 @@ describe('Fiche Jeune', () => {
     )
     const metadonneesFavoris = uneMetadonneeFavoris()
     let motifsSuppression: MotifSuppressionJeune[]
-    let dependances: Pick<Dependencies, 'jeunesService'>
+    let dependances: Partial<Dependencies>
+    let jeunesService: JeunesService
+    let agendaService: AgendaService
 
     let replace: jest.Mock
     let push: jest.Mock
@@ -73,11 +77,25 @@ describe('Fiche Jeune', () => {
 
       motifsSuppression = desMotifsDeSuppression()
 
+      jeunesService = mockedJeunesService({
+        getMotifsSuppression: jest.fn(async () => motifsSuppression),
+        getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
+      })
+      agendaService = mockedAgendaService({
+        recuperationAgendaMilo: jest.fn(async () => ({
+          actions: [],
+          rendezVous: [],
+          metadata: {
+            actionsEnRetard: 0,
+            dateDeDebut: DateTime.local(2022, 1, 1),
+            dateDeFin: DateTime.local(2022, 1, 14),
+          },
+        })),
+      })
+
       dependances = {
-        jeunesService: mockedJeunesService({
-          getMotifsSuppression: jest.fn(async () => motifsSuppression),
-          getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
-        }),
+        jeunesService: jeunesService,
+        agendaService: agendaService,
       }
     })
 
@@ -104,8 +122,8 @@ describe('Fiche Jeune', () => {
                 metadonneesFavoris={metadonneesFavoris}
               />,
               {
-                customCurrentJeune: { idSetter: setIdJeune },
                 customDependances: dependances,
+                customCurrentJeune: { idSetter: setIdJeune },
               }
             )
           })
@@ -264,9 +282,7 @@ describe('Fiche Jeune', () => {
             await userEvent.click(supprimerButtonModal)
 
             // Then
-            expect(
-              dependances.jeunesService.archiverJeune
-            ).toHaveBeenCalledWith(jeune.id, {
+            expect(jeunesService.archiverJeune).toHaveBeenCalledWith(jeune.id, {
               motif: 'Demande du jeune de sortir du dispositif',
               commentaire: undefined,
             })
@@ -323,9 +339,9 @@ describe('Fiche Jeune', () => {
           await userEvent.click(supprimerButtonModal)
 
           // Then
-          expect(
-            dependances.jeunesService.supprimerJeuneInactif
-          ).toHaveBeenCalledWith(jeune.id)
+          expect(jeunesService.supprimerJeuneInactif).toHaveBeenCalledWith(
+            jeune.id
+          )
           expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
         })
       })
@@ -401,6 +417,9 @@ describe('Fiche Jeune', () => {
       })
 
       it('affiche la liste des rendez-vous du jeune', async () => {
+        // Given
+        await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
+
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
@@ -414,7 +433,10 @@ describe('Fiche Jeune', () => {
         ).toThrow()
       })
 
-      it('affiche un lien vers les rendez-vous passés du jeune', () => {
+      it('affiche un lien vers les rendez-vous passés du jeune', async () => {
+        // Given
+        await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
+
         // Then
         expect(
           screen.getByRole('link', { name: 'Voir les événements passés' })
@@ -482,6 +504,7 @@ describe('Fiche Jeune', () => {
             metadonneesFavoris={metadonneesFavoris}
           />,
           {
+            customDependances: dependances,
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           }
         )
@@ -496,7 +519,21 @@ describe('Fiche Jeune', () => {
         ).toHaveAttribute('href', '/mes-jeunes/jeune-1/historique')
       })
 
+      it("n'affiche pas l’agenda du jeune (et ne tente pas de le récupérer)", async () => {
+        // Then
+        expect(
+          screen.getByText(
+            'Gérez les convocations et démarches de ce jeune depuis vos outils Pôle emploi.'
+          )
+        ).toBeInTheDocument()
+
+        expect(agendaService.recuperationAgendaMilo).not.toHaveBeenCalled()
+      })
+
       it("n'affiche pas la liste des rendez-vous du jeune", async () => {
+        // Given
+        await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
+
         // Then
         expect(
           screen.getByText(
@@ -560,6 +597,93 @@ describe('Fiche Jeune', () => {
           // Then
           expect(screen.getByText('Situation')).toBeInTheDocument()
           expect(screen.getByText('Sans situation')).toBeInTheDocument()
+        })
+      })
+
+      describe('affiche l’agenda du jeune', () => {
+        it('avec un message si le jeune n’a rien sur la période', async () => {
+          // Given
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions,
+                  page: 1,
+                  metadonnees: { nombreTotal: 14, nombrePages: 2 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customConseiller: { structure: StructureConseiller.MILO },
+                customDependances: dependances,
+              }
+            )
+          })
+
+          // Then
+          expect(
+            screen.getByRole('tab', {
+              name: /Agenda/,
+            })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Il n’y a pas encore de rendez-vous ni d’action prévus sur cette période.'
+            )
+          ).toBeInTheDocument()
+        })
+
+        it('avec un des rendez-vous et des actions si le jeune en a sur la période', async () => {
+          // Given
+          agendaService = mockedAgendaService({
+            recuperationAgendaMilo: jest.fn(async () => ({
+              actions: [uneAction()],
+              rendezVous: [unEvenementListItem()],
+              metadata: {
+                actionsEnRetard: 0,
+                dateDeDebut: DateTime.local(2022, 1, 1),
+                dateDeFin: DateTime.local(2022, 1, 14),
+              },
+            })),
+          })
+
+          await act(async () => {
+            await renderWithContexts(
+              <FicheJeune
+                jeune={jeune}
+                rdvs={[]}
+                actionsInitiales={{
+                  actions,
+                  page: 1,
+                  metadonnees: { nombreTotal: 14, nombrePages: 2 },
+                }}
+                pageTitle={''}
+                metadonneesFavoris={metadonneesFavoris}
+              />,
+              {
+                customConseiller: { structure: StructureConseiller.MILO },
+                customDependances: {
+                  jeunesService: jeunesService,
+                  agendaService: agendaService,
+                },
+              }
+            )
+          })
+
+          // Then
+          expect(
+            screen.getByRole('tab', {
+              name: /Agenda/,
+            })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText('Identifier ses atouts et ses compétences')
+          ).toBeInTheDocument()
+          expect(screen.getByText('À réaliser')).toBeInTheDocument()
+          expect(screen.getByText(/12h00 - Autre/)).toBeInTheDocument()
         })
       })
 

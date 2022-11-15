@@ -38,6 +38,7 @@ import {
 } from 'services/suggestions.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import HttpClient from 'utils/httpClient'
+import { AgendaApiService, AgendaService } from 'services/agenda.service'
 
 export interface Dependencies {
   referentielService: ReferentielService
@@ -52,6 +53,7 @@ export interface Dependencies {
   servicesCiviquesService: ServicesCiviquesService
   immersionsService: ImmersionsService
   suggestionsService: SuggestionsService
+  agendaService: AgendaService
 }
 
 export class Container {
@@ -85,6 +87,7 @@ export class Container {
       servicesCiviquesService: new ServicesCiviquesApiService(apiClient),
       immersionsService: new ImmersionsApiService(apiClient),
       suggestionsService: new SuggestionsApiService(apiClient),
+      agendaService: new AgendaApiService(apiClient),
     })
   }
 }

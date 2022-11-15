@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
+import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
 import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
@@ -45,16 +46,18 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 export enum Onglet {
-  RDVS = 'RDVS',
+  AGENDA = 'AGENDA',
   ACTIONS = 'ACTIONS',
+  RDVS = 'RDVS',
   FAVORIS = 'FAVORIS',
 }
 
 const ongletProps: {
   [key in Onglet]: { queryParam: string; trackingLabel: string }
 } = {
-  RDVS: { queryParam: 'rdvs', trackingLabel: 'Événements' },
+  AGENDA: { queryParam: 'agenda', trackingLabel: 'Agenda' },
   ACTIONS: { queryParam: 'actions', trackingLabel: 'Actions' },
+  RDVS: { queryParam: 'rdvs', trackingLabel: 'Événements' },
   FAVORIS: { queryParam: 'favoris', trackingLabel: 'Favoris' },
 }
 
@@ -97,7 +100,7 @@ function FicheJeune({
     MotifSuppressionJeune[]
   >([])
 
-  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.AGENDA)
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
@@ -114,6 +117,8 @@ function FicheJeune({
     showSuppressionCompteBeneficiaireError,
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
+
+  const [nombreEventDansAgenda, setNombreEventDansAgenda] = useState<number>()
 
   const aujourdHui = useMemo(() => DateTime.now(), [])
   const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
@@ -349,11 +354,11 @@ function FicheJeune({
 
       <TabList className='mt-10'>
         <Tab
-          label='Rendez-vous'
-          count={!isPoleEmploi ? rdvs.length : undefined}
-          selected={currentTab === Onglet.RDVS}
-          controls='liste-rdvs'
-          onSelectTab={() => switchTab(Onglet.RDVS)}
+          label='Agenda'
+          count={!isPoleEmploi ? nombreEventDansAgenda : undefined}
+          selected={currentTab === Onglet.AGENDA}
+          controls='agenda'
+          onSelectTab={() => switchTab(Onglet.AGENDA)}
           iconName={IconName.Calendar}
         />
         <Tab
@@ -363,6 +368,14 @@ function FicheJeune({
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
           iconName={IconName.Actions}
+        />
+        <Tab
+          label='Rendez-vous'
+          count={!isPoleEmploi ? rdvs.length : undefined}
+          selected={currentTab === Onglet.RDVS}
+          controls='liste-rdvs'
+          onSelectTab={() => switchTab(Onglet.RDVS)}
+          iconName={IconName.Calendar}
         />
         {metadonneesFavoris && (
           <Tab
@@ -375,6 +388,22 @@ function FicheJeune({
           />
         )}
       </TabList>
+
+      {currentTab === Onglet.AGENDA && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-rdvs--tab'
+          tabIndex={0}
+          id='liste-rdvs'
+          className='mt-8 pb-8 border-b border-primary_lighten'
+        >
+          <OngletAgendaBeneficiaire
+            idJeune={jeune.id}
+            isPoleEmploi={isPoleEmploi}
+            updateNombreEvenement={setNombreEventDansAgenda}
+          />
+        </div>
+      )}
 
       {currentTab === Onglet.RDVS && (
         <div
@@ -508,8 +537,16 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       context.query[QueryParam.envoiMessage] === QueryValue.succes
 
   if (context.query.onglet) {
-    props.onglet =
-      context.query.onglet === 'actions' ? Onglet.ACTIONS : Onglet.RDVS
+    switch (context.query.onglet) {
+      case 'actions':
+        props.onglet = Onglet.ACTIONS
+        break
+      case 'rdvs':
+        props.onglet = Onglet.RDVS
+        break
+      default:
+        props.onglet = Onglet.AGENDA
+    }
   }
 
   return {
