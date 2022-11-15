@@ -7,6 +7,7 @@ import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
+import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 import {
   insertIntercalaires,
@@ -52,11 +53,13 @@ export default function TableauRdv({
       {rdvs.length > 0 && (
         <Table asDiv={true} caption='Liste de mes événements'>
           <THead>
-            <TH>Horaires</TH>
-            {withNameJeune && <TH>Bénéficiaire</TH>}
-            <TH>Type</TH>
-            <TH>Modalité</TH>
-            <TH>Créé par vous</TH>
+            <TR isHeader={true}>
+              <TH>Horaires</TH>
+              {withNameJeune && <TH>Bénéficiaire</TH>}
+              <TH>Type</TH>
+              <TH>Modalité</TH>
+              <TH>Créé par vous</TH>
+            </TR>
           </THead>
 
           <TBody>

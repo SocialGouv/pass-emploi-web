@@ -209,89 +209,97 @@ export default function TableauJeunes({
             }}
           >
             <THead>
-              <TH className={columnHeaderButtonStyleHover}>
-                <button
-                  className={columnHeaderButtonStyle}
-                  onClick={() => sortJeunes(SortColumn.NOM)}
-                  aria-label={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
-                    isName && !sortDesc ? 'inversé' : ''
-                  }`}
-                  title={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
-                    isName && !sortDesc ? 'inversé' : ''
-                  }`}
-                >
-                  <span className='mr-1'>Bénéficiaire</span>
-                  <SortIcon isSorted={isName} isDesc={sortDesc} />
-                </button>
-              </TH>
-              {withSituations && (
+              <TR isHeader={true}>
                 <TH className={columnHeaderButtonStyleHover}>
                   <button
                     className={columnHeaderButtonStyle}
-                    onClick={() => sortJeunes(SortColumn.SITUATION)}
-                    aria-label={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
-                      isSituation && !sortDesc ? 'inversé' : ''
+                    onClick={() => sortJeunes(SortColumn.NOM)}
+                    aria-label={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
+                      isName && !sortDesc ? 'inversé' : ''
                     }`}
-                    title={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
-                      isSituation && !sortDesc ? 'inversé' : ''
+                    title={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
+                      isName && !sortDesc ? 'inversé' : ''
                     }`}
                   >
-                    <span className='mr-1'>Situation</span>
-                    <SortIcon isSorted={isSituation} isDesc={sortDesc} />
+                    <span className='mr-1'>Bénéficiaire</span>
+                    <SortIcon isSorted={isName} isDesc={sortDesc} />
                   </button>
                 </TH>
-              )}
-              <TH className={columnHeaderButtonStyleHover}>
-                <button
-                  className={columnHeaderButtonStyle}
-                  onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
-                  aria-label={`Afficher la liste des bénéficiaires triée par dates de dernière activité du bénéficiaire par ordre ${
-                    isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
-                  }`}
-                  title={`Afficher la liste des bénéficiaires triée par dates de dernière activité du bénéficiaire par ordre ${
-                    isDate && !sortDesc ? 'chronologique' : 'antéchronologique'
-                  }`}
-                >
-                  <span className='mr-1'>Dernière activité</span>
-                  <SortIcon isSorted={isDate} isDesc={sortDesc} />
-                </button>
-              </TH>
+                {withSituations && (
+                  <TH className={columnHeaderButtonStyleHover}>
+                    <button
+                      className={columnHeaderButtonStyle}
+                      onClick={() => sortJeunes(SortColumn.SITUATION)}
+                      aria-label={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
+                        isSituation && !sortDesc ? 'inversé' : ''
+                      }`}
+                      title={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
+                        isSituation && !sortDesc ? 'inversé' : ''
+                      }`}
+                    >
+                      <span className='mr-1'>Situation</span>
+                      <SortIcon isSorted={isSituation} isDesc={sortDesc} />
+                    </button>
+                  </TH>
+                )}
+                <TH className={columnHeaderButtonStyleHover}>
+                  <button
+                    className={columnHeaderButtonStyle}
+                    onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
+                    aria-label={`Afficher la liste des bénéficiaires triée par dates de dernière activité du bénéficiaire par ordre ${
+                      isDate && !sortDesc
+                        ? 'chronologique'
+                        : 'antéchronologique'
+                    }`}
+                    title={`Afficher la liste des bénéficiaires triée par dates de dernière activité du bénéficiaire par ordre ${
+                      isDate && !sortDesc
+                        ? 'chronologique'
+                        : 'antéchronologique'
+                    }`}
+                  >
+                    <span className='mr-1'>Dernière activité</span>
+                    <SortIcon isSorted={isDate} isDesc={sortDesc} />
+                  </button>
+                </TH>
 
-              {withActions && (
+                {withActions && (
+                  <TH className={columnHeaderButtonStyleHover}>
+                    <button
+                      className={`${columnHeaderButtonStyle} mx-auto`}
+                      onClick={() =>
+                        sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
+                      }
+                      aria-label={`Afficher la liste des bénéficiaires triée par nombre d'actions non terminées du jeune par ordre ${
+                        isAction && !sortDesc ? 'croissant' : 'décroissant'
+                      }`}
+                      title={`Afficher la liste des bénéficiaires triée par nombre d'actions non terminées du jeune par ordre ${
+                        isAction && !sortDesc ? 'croissant' : 'décroissant'
+                      }`}
+                    >
+                      <span className='mr-1'>Actions</span>
+                      <SortIcon isSorted={isAction} isDesc={sortDesc} />
+                    </button>
+                  </TH>
+                )}
+
                 <TH className={columnHeaderButtonStyleHover}>
                   <button
                     className={`${columnHeaderButtonStyle} mx-auto`}
-                    onClick={() =>
-                      sortJeunes(SortColumn.NB_ACTIONS_NON_TERMINEES)
-                    }
-                    aria-label={`Afficher la liste des bénéficiaires triée par nombre d'actions non terminées du jeune par ordre ${
-                      isAction && !sortDesc ? 'croissant' : 'décroissant'
+                    onClick={() => sortJeunes(SortColumn.MESSAGES)}
+                    aria-label={`Afficher la liste des messages non lus par nombre ${
+                      isMessage && !sortDesc ? 'croissant' : 'décroissant'
                     }`}
-                    title={`Afficher la liste des bénéficiaires triée par nombre d'actions non terminées du jeune par ordre ${
-                      isAction && !sortDesc ? 'croissant' : 'décroissant'
+                    title={`Afficher la liste des messages non lus par nombre ${
+                      isMessage && !sortDesc ? 'croissant' : 'décroissant'
                     }`}
                   >
-                    <span className='mr-1'>Actions</span>
-                    <SortIcon isSorted={isAction} isDesc={sortDesc} />
+                    <span className='mr-1'>
+                      Messages non lus par les jeunes
+                    </span>
+                    <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                   </button>
                 </TH>
-              )}
-
-              <TH className={columnHeaderButtonStyleHover}>
-                <button
-                  className={`${columnHeaderButtonStyle} mx-auto`}
-                  onClick={() => sortJeunes(SortColumn.MESSAGES)}
-                  aria-label={`Afficher la liste des messages non lus par nombre ${
-                    isMessage && !sortDesc ? 'croissant' : 'décroissant'
-                  }`}
-                  title={`Afficher la liste des messages non lus par nombre ${
-                    isMessage && !sortDesc ? 'croissant' : 'décroissant'
-                  }`}
-                >
-                  <span className='mr-1'>Messages non lus par les jeunes</span>
-                  <SortIcon isSorted={isMessage} isDesc={sortDesc} />
-                </button>
-              </TH>
+              </TR>
             </THead>
 
             <TBody>
@@ -299,7 +307,11 @@ export default function TableauJeunes({
                 <TR
                   key={jeune.id}
                   href={`/mes-jeunes/${jeune.id}`}
-                  label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}, dernière activité ${jeune.lastActivity}, ${jeune.messagesNonLus} messages non lus`}
+                  label={`Accéder à la fiche de ${jeune.prenom} ${
+                    jeune.nom
+                  }, dernière activité ${getLastActivity(jeune)}, ${
+                    jeune.messagesNonLus
+                  } messages non lus`}
                 >
                   <TD className='rounded-l-small'>
                     <span className='flex items-baseline'>
