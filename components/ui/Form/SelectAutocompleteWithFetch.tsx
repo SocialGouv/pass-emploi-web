@@ -11,7 +11,7 @@ type SelectAutocompleteWithFetchProps<T> = {
   fieldNames: { id: string; value: string }
   onUpdateSelected: (value: { selected?: T; hasError: boolean }) => void
   errorMessage: string
-  value?: string
+  defaultValue?: string
   required?: boolean
 }
 export default function SelectAutocompleteWithFetch<T>({
@@ -20,7 +20,7 @@ export default function SelectAutocompleteWithFetch<T>({
   fieldNames,
   onUpdateSelected,
   errorMessage,
-  value,
+  defaultValue,
   required,
 }: SelectAutocompleteWithFetchProps<T>) {
   const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
@@ -32,7 +32,9 @@ export default function SelectAutocompleteWithFetch<T>({
       })),
     [entites]
   )
-  const [input, setInput] = useState<{ value?: string; error?: string }>({})
+  const [input, setInput] = useState<{ value?: string; error?: string }>({
+    value: defaultValue && toUpperCaseAlpha(defaultValue),
+  })
   const debouncedInput = useDebounce(input.value, 500)
 
   function handleInputChange(str: string) {

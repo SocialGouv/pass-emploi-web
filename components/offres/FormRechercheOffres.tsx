@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import RadioButton from 'components/action/RadioButton'
 import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
@@ -28,21 +22,18 @@ type FormRechercheOffresProps = {
   fetchMetiers: (search: string) => Promise<Metier[]>
   fetchCommunes: (search: string) => Promise<Commune[]>
   fetchCommunesEtDepartements: (search: string) => Promise<Localite[]>
-  stateTypeOffre: [
-    TypeOffre | undefined,
-    Dispatch<SetStateAction<TypeOffre | undefined>>
-  ]
+  stateTypeOffre: [TypeOffre | undefined, (type: TypeOffre) => void]
   stateQueryOffresEmploi: [
     FormValues<SearchOffresEmploiQuery>,
-    Dispatch<SetStateAction<FormValues<SearchOffresEmploiQuery>>>
+    (query: FormValues<SearchOffresEmploiQuery>) => void
   ]
   stateQueryServicesCiviques: [
     FormValues<SearchServicesCiviquesQuery>,
-    Dispatch<SetStateAction<FormValues<SearchServicesCiviquesQuery>>>
+    (query: FormValues<SearchServicesCiviquesQuery>) => void
   ]
   stateQueryImmersions: [
     FormValues<SearchImmersionsQuery>,
-    Dispatch<SetStateAction<FormValues<SearchImmersionsQuery>>>
+    (query: FormValues<SearchImmersionsQuery>) => void
   ]
   onNouvelleRecherche: () => void
 }
@@ -67,28 +58,28 @@ export default function FormRechercheOffres({
     stateQueryServicesCiviques
   const [queryImmersions, setQueryImmersions] = stateQueryImmersions
 
-  const formIsInvalid =
-    queryOffresEmploi.hasError ||
-    queryServicesCiviques.hasError ||
-    queryImmersions.hasError
+  function formIsInvalid(): boolean {
+    switch (typeOffre) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return queryOffresEmploi.hasError
+      case TypeOffre.SERVICE_CIVIQUE:
+        return queryServicesCiviques.hasError
+      case TypeOffre.IMMERSION:
+        return queryImmersions.hasError
+      default:
+        return true
+    }
+  }
 
   async function rechercherPremierePage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (hasResults) return
-    if (formIsInvalid) return
+    if (formIsInvalid()) return
     if (!typeOffre) return
 
     onNouvelleRecherche()
   }
-
-  useEffect(() => {
-    setQueryOffresEmploi({ hasError: false })
-    setQueryServicesCiviques({ hasError: false })
-    setQueryImmersions({
-      rayon: 10,
-      hasError: typeOffre === TypeOffre.IMMERSION,
-    })
-  }, [typeOffre])
 
   return (
     <form
@@ -180,7 +171,7 @@ export default function FormRechercheOffres({
             <Button
               type='submit'
               className='mx-auto'
-              disabled={formIsInvalid || hasResults}
+              disabled={formIsInvalid() || hasResults}
             >
               <IconComponent
                 name={IconName.Search}
