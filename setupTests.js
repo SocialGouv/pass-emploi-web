@@ -20,5 +20,6 @@ jest.mock('next/router', () => ({
 }))
 
 afterEach(() => {
+  sessionStorage.clear()
   cleanup()
 })

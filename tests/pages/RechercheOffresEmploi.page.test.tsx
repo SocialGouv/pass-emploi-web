@@ -1,4 +1,10 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  RenderResult,
+  screen,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
@@ -11,6 +17,7 @@ import {
 import { BaseOffreEmploi } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
 import RechercheOffres from 'pages/recherche-offres'
+import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -21,15 +28,16 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 describe('Page Recherche Offres Emploi', () => {
   let offresEmploiService: OffresEmploiService
   let referentielService: ReferentielService
-
   let offresEmploi: BaseOffreEmploi[]
   let localites: Localite[]
+
+  let rendered: RenderResult
   beforeEach(async () => {
     localites = desLocalites()
     offresEmploi = listeBaseOffresEmploi()
     offresEmploiService = mockedOffresEmploiService({
       searchOffresEmploi: jest.fn().mockResolvedValue({
-        metadonnees: { nombreTotal: 10, nombrePages: 4 },
+        metadonnees: { nombreTotal: 37, nombrePages: 4 },
         offres: offresEmploi,
       }),
     })
@@ -37,7 +45,7 @@ describe('Page Recherche Offres Emploi', () => {
       getCommunesEtDepartements: jest.fn().mockResolvedValue(desLocalites()),
     })
 
-    renderWithContexts(<RechercheOffres pageTitle='' />, {
+    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
       customDependances: {
         offresEmploiService,
         referentielService,
@@ -469,7 +477,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // Then
       offresList = screen.getByRole('list', {
-        description: `Liste des résultats (10 offres)`,
+        description: `Liste des résultats (37 offres)`,
       })
     })
 
@@ -561,7 +569,7 @@ describe('Page Recherche Offres Emploi', () => {
         ;(
           offresEmploiService.searchOffresEmploi as jest.Mock
         ).mockImplementation((_query, page) => ({
-          metadonnees: { nombreTotal: 10, nombrePages: 4 },
+          metadonnees: { nombreTotal: 37, nombrePages: 4 },
           offres: [uneBaseOffreEmploi({ titre: 'Offre page ' + page })],
         }))
       })
@@ -606,6 +614,58 @@ describe('Page Recherche Offres Emploi', () => {
         // Then
         expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledTimes(1)
       })
+    })
+  })
+
+  describe('sauvegarde', () => {
+    it('retient l’état de la recherche', async () => {
+      // Given
+      await userEvent.type(screen.getByLabelText(/Mots clés/), 'prof industrie')
+      await saisirLocalite('paris 14 (75)')
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      await userEvent.click(
+        screen.getByLabelText(/Afficher uniquement les offres débutant accepté/)
+      )
+      await userEvent.click(screen.getByLabelText('CDI'))
+      await userEvent.click(screen.getByLabelText(/CDD/))
+      await userEvent.click(screen.getByLabelText('Temps plein'))
+      fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+        target: { value: 43 },
+      })
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Page 2' }))
+
+      // When
+      rendered.unmount()
+      renderWithContexts(<RechercheOffres pageTitle='' />, {
+        customDependances: {
+          offresEmploiService,
+          referentielService,
+        },
+      })
+
+      // Then
+      expect(screen.getByLabelText('Offre d’emploi')).toBeChecked()
+      expect(screen.getByLabelText(/Lieu de travail/)).toHaveValue(
+        'PARIS 14 (75)'
+      )
+      expect(screen.getByText('[4] critères sélectionnés')).toBeInTheDocument()
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
+      expect(screen.getByLabelText('CDI')).toBeChecked()
+      expect(screen.getByLabelText(/CDD/)).toBeChecked()
+      expect(screen.getByLabelText('Temps plein')).toBeChecked()
+      expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+      const offresList = screen.getByRole('list', {
+        description: 'Liste des résultats (37 offres)',
+      })
+      expect(within(offresList).getAllByRole('listitem').length).toEqual(
+        offresEmploi.length
+      )
+      expect(screen.getByRole('button', { name: 'Page 2' })).toHaveAttribute(
+        'aria-current',
+        'page'
+      )
     })
   })
 })

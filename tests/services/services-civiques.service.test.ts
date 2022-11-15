@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 import { ApiClient } from 'clients/api.client'
 import {
   listeBaseServicesCiviques,
@@ -134,7 +132,7 @@ describe('ServicesCiviqueApiService', () => {
     it('parse la date de début', async () => {
       // When
       await servicesCiviquesService.searchServicesCiviques(
-        { dateDebut: DateTime.fromISO('2022-11-01') },
+        { dateDebut: '2022-11-01' },
         3
       )
 

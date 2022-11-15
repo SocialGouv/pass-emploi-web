@@ -19,7 +19,7 @@ import { ApiError } from 'utils/httpClient'
 export type SearchServicesCiviquesQuery = {
   commune?: Commune
   domaine?: string
-  dateDebut?: DateTime
+  dateDebut?: string
   rayon?: number
 }
 
@@ -110,7 +110,8 @@ function buildSearchParams(
     searchParams.set('lat', commune.latitude.toString(10))
   }
   if (domaine) searchParams.set('domaine', domaine)
-  if (dateDebut) searchParams.set('dateDeDebutMinimum', dateDebut.toISO())
+  if (dateDebut)
+    searchParams.set('dateDeDebutMinimum', DateTime.fromISO(dateDebut).toISO())
   if (rayon) searchParams.set('distance', rayon.toString(10))
 
   return searchParams
