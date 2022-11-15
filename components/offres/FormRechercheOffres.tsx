@@ -199,9 +199,18 @@ export default function FormRechercheOffres({
   function getRechercheMain(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+        return (
+          <RechercheOffresEmploiPrincipale
+            key='recherche-offres--emploi--principale'
+            recupererCommunesEtDepartements={fetchCommunesEtDepartements}
+            query={queryOffresEmploi}
+            onQueryUpdate={setQueryOffresEmploi}
+          />
+        )
       case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiPrincipale
+            key='recherche-offres--alternance--principale'
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
@@ -232,10 +241,20 @@ export default function FormRechercheOffres({
   function getRechercheSecondary(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+        return (
+          <RechercheOffresEmploiSecondaire
+            key='recherche-offres--emploi--secondaire'
+            alternanceOnly={false}
+            onCriteresChange={setCountCriteres}
+            query={queryOffresEmploi}
+            onQueryUpdate={setQueryOffresEmploi}
+          />
+        )
       case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiSecondaire
-            alternanceOnly={typeOffre === TypeOffre.ALTERNANCE}
+            key='recherche-offres--alternance--secondaire'
+            alternanceOnly={true}
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
