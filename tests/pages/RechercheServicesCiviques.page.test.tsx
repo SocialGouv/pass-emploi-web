@@ -1,4 +1,10 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  RenderResult,
+  screen,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import React from 'react'
@@ -26,9 +32,10 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 describe('Page Recherche Offres', () => {
   let servicesCiviquesService: ServicesCiviquesService
   let referentielService: ReferentielService
-
   let servicesCiviques: BaseServiceCivique[]
   let communes: Localite[]
+
+  let rendered: RenderResult
   beforeEach(async () => {
     communes = desCommunes()
     servicesCiviques = listeBaseServicesCiviques()
@@ -38,12 +45,12 @@ describe('Page Recherche Offres', () => {
     })
     servicesCiviquesService = mockedServicesCiviquesService({
       searchServicesCiviques: jest.fn().mockResolvedValue({
-        metadonnees: { nombreTotal: 10, nombrePages: 4 },
+        metadonnees: { nombreTotal: 37, nombrePages: 4 },
         offres: servicesCiviques,
       }),
     })
 
-    renderWithContexts(<RechercheOffres pageTitle='' />, {
+    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
       customDependances: {
         referentielService,
         servicesCiviquesService,
@@ -413,7 +420,7 @@ describe('Page Recherche Offres', () => {
         {
           commune: uneCommune(),
           domaine: domainesServiceCivique[2].code,
-          dateDebut: DateTime.fromISO('2022-11-01'),
+          dateDebut: '2022-11-01',
           rayon: 43,
         },
         1
@@ -464,7 +471,7 @@ describe('Page Recherche Offres', () => {
 
       // Then
       offresList = screen.getByRole('list', {
-        description: 'Liste des résultats (10 offres)',
+        description: 'Liste des résultats (37 offres)',
       })
     })
 
@@ -549,7 +556,7 @@ describe('Page Recherche Offres', () => {
         ;(
           servicesCiviquesService.searchServicesCiviques as jest.Mock
         ).mockImplementation((_query, page) => ({
-          metadonnees: { nombreTotal: 10, nombrePages: 4 },
+          metadonnees: { nombreTotal: 37, nombrePages: 4 },
           offres: [uneBaseServiceCivique({ titre: 'Offre page ' + page })],
         }))
       })
@@ -593,6 +600,59 @@ describe('Page Recherche Offres', () => {
           servicesCiviquesService.searchServicesCiviques
         ).toHaveBeenCalledTimes(1)
       })
+    })
+  })
+
+  describe('sauvegarde', () => {
+    it('retient l’état de la recherche', async () => {
+      // Given
+      await saisirCommune('paris 14 (75)')
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      await userEvent.selectOptions(
+        screen.getByLabelText('Sélectionner domaine'),
+        domainesServiceCivique[2].libelle
+      )
+      await userEvent.click(screen.getByLabelText(/Dès que possible/))
+      fireEvent.change(
+        screen.getByLabelText('Sélectionner une date de début'),
+        { target: { value: '2022-11-01' } }
+      )
+      fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+        target: { value: 43 },
+      })
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Page 2' }))
+
+      // When
+      rendered.unmount()
+      renderWithContexts(<RechercheOffres pageTitle='' />, {
+        customDependances: {
+          referentielService,
+          servicesCiviquesService,
+        },
+      })
+
+      // Then
+      expect(screen.getByLabelText('Service civique')).toBeChecked()
+      expect(screen.getByLabelText(/Localisation/)).toHaveValue('PARIS 14 (75)')
+      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      expect(screen.getByLabelText(/domaine/)).toHaveValue(
+        domainesServiceCivique[2].code
+      )
+      expect(screen.getByLabelText(/Dès que possible/)).not.toBeChecked()
+      expect(screen.getByLabelText(/date de début/)).toHaveValue('2022-11-01')
+      expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+      const offresList = screen.getByRole('list', {
+        description: 'Liste des résultats (37 offres)',
+      })
+      expect(within(offresList).getAllByRole('listitem').length).toEqual(
+        servicesCiviques.length
+      )
+      expect(screen.getByRole('button', { name: 'Page 2' })).toHaveAttribute(
+        'aria-current',
+        'page'
+      )
     })
   })
 })

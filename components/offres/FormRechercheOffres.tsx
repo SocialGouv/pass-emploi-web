@@ -16,6 +16,7 @@ import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
+import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 
 type FormRechercheOffresProps = {
   hasResults: boolean
@@ -50,7 +51,10 @@ export default function FormRechercheOffres({
 }: FormRechercheOffresProps) {
   const [showForm, setShowForm] = useState<boolean>(true)
   const [showMoreFilters, setShowMoreFilters] = useState<boolean>(false)
-  const [countCriteres, setCountCriteres] = useState<number>(0)
+  const [countCriteres, setCountCriteres] = useSessionStorage<number>(
+    'recherche-offres--nb-criteres',
+    0
+  )
 
   const [typeOffre, setTypeOffre] = stateTypeOffre
   const [queryOffresEmploi, setQueryOffresEmploi] = stateQueryOffresEmploi
