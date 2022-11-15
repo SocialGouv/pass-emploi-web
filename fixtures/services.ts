@@ -1,4 +1,5 @@
 import { ActionsService } from 'services/actions.service'
+import { AgendaService } from 'services/agenda.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { FavorisService } from 'services/favoris.service'
@@ -179,5 +180,10 @@ export function mockedSuggestionsService(
     partagerRechercheImmersion: jest.fn(),
     partagerRechercheServiceCivique: jest.fn(),
   }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedAgendaService(overrides: Partial<AgendaService> = {}) {
+  const defaults: AgendaService = { recuperationAgendaMilo: jest.fn() }
   return { ...defaults, ...overrides }
 }
