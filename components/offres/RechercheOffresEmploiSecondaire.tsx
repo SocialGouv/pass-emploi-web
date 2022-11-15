@@ -60,7 +60,7 @@ export default function RechercheOffresEmploiSecondaire({
     if (query.debutantAccepte) nbCriteres++
     if (query.rayon !== undefined) nbCriteres++
     onCriteresChange(nbCriteres)
-  }, [onCriteresChange, query])
+  }, [query])
 
   return (
     <fieldset>

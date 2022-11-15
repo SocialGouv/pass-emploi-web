@@ -31,15 +31,11 @@ export default function RechercheImmersionsPrincipale({
 
   function updateCommune({ selected }: { selected?: Commune }) {
     const { commune, ...autresCriteres } = query
-    if (selected) {
-      onQueryUpdate({
-        ...autresCriteres,
-        commune: selected,
-        hasError: !query.metier,
-      })
-    } else {
-      onQueryUpdate({ ...autresCriteres, hasError: true })
-    }
+    onQueryUpdate({
+      ...autresCriteres,
+      commune: selected,
+      hasError: !selected || !query.metier,
+    })
   }
 
   return (
@@ -53,23 +49,23 @@ export default function RechercheImmersionsPrincipale({
         fieldNames={{ id: 'libelle', value: 'libelle' }}
         onUpdateSelected={updateMetier}
         errorMessage='Veuillez saisir un métier correct.'
-        value={query.metier?.libelle}
+        defaultValue={query.metier?.libelle}
         required={true}
       />
 
-      <Label htmlFor='localisation' inputRequired={true}>
+      <Label htmlFor='communes' inputRequired={true}>
         {{
           main: 'Localisation',
           helpText: 'Saisissez une ville',
         }}
       </Label>
       <SelectAutocompleteWithFetch<Commune>
-        id='localisation'
+        id='communes'
         fetch={recupererCommunes}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateCommune}
         errorMessage='Veuillez saisir une commune correcte.'
-        value={query.commune?.libelle}
+        defaultValue={query.commune?.libelle}
         required={true}
       />
     </Etape>

@@ -41,19 +41,19 @@ export default function RechercheServicesCiviquesPrincipale({
 
   return (
     <Etape numero={2} titre='Critères de recherche'>
-      <Label htmlFor='localisation'>
+      <Label htmlFor='communes'>
         {{
           main: 'Localisation',
           helpText: 'Saisissez une ville',
         }}
       </Label>
       <SelectAutocompleteWithFetch<Commune>
-        id='localisation'
+        id='communes'
         fetch={recupererCommunes}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateCommune}
         errorMessage='Veuillez saisir une commune correcte.'
-        value={query.commune?.libelle}
+        defaultValue={query.commune?.libelle}
       />
     </Etape>
   )
