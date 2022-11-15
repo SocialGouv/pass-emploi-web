@@ -138,10 +138,12 @@ export function OngletAgendaEtablissement({
         animationsCollectivesWithIntercalaires.length > 0 && (
           <Table caption='Liste des animations collectives de mon établissement'>
             <THead>
-              <TH>Horaires</TH>
-              <TH>Titre</TH>
-              <TH>Type</TH>
-              <TH>Statut</TH>
+              <TR isHeader={true}>
+                <TH>Horaires</TH>
+                <TH>Titre</TH>
+                <TH>Type</TH>
+                <TH>Statut</TH>
+              </TR>
             </THead>
             <TBody>
               {renderListeWithIntercalaires(

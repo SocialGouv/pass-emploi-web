@@ -12,6 +12,7 @@ import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
+import { TR } from 'components/ui/Table/TR'
 import {
   Action,
   EtatQualificationAction,
@@ -140,39 +141,41 @@ export default function TableauActionsJeune({
           caption={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
         >
           <THead>
-            <TH>Intitulé de l’action</TH>
-            <TH className={headerColumnWithButtonHover}>
-              <button
-                onClick={trierParDateCreation}
-                aria-label='Créée le - trier les actions'
-                className='flex items-center'
-              >
-                Créée le
-                <SortIcon
-                  isSorted={getIsSortedByCreationDate()}
-                  isDesc={getIsSortedDesc()}
+            <TR isHeader={true}>
+              <TH>Intitulé de l’action</TH>
+              <TH className={headerColumnWithButtonHover}>
+                <button
+                  onClick={trierParDateCreation}
+                  aria-label='Créée le - trier les actions'
+                  className='flex items-center'
+                >
+                  Créée le
+                  <SortIcon
+                    isSorted={getIsSortedByCreationDate()}
+                    isDesc={getIsSortedDesc()}
+                  />
+                </button>
+              </TH>
+              <TH className={headerColumnWithButtonHover}>
+                <button
+                  onClick={trierParDateEcheance}
+                  aria-label='Échéance - trier les actions'
+                  className='flex items-center'
+                >
+                  Échéance
+                  <SortIcon
+                    isSorted={getIsSortedByDateEcheance()}
+                    isDesc={getIsSortedDesc()}
+                  />
+                </button>
+              </TH>
+              <TH className={headerColumnWithButtonHover}>
+                <FiltresStatutsActions
+                  defaultValue={statutsValides}
+                  onFiltres={filtrerActionsParStatuts}
                 />
-              </button>
-            </TH>
-            <TH className={headerColumnWithButtonHover}>
-              <button
-                onClick={trierParDateEcheance}
-                aria-label='Échéance - trier les actions'
-                className='flex items-center'
-              >
-                Échéance
-                <SortIcon
-                  isSorted={getIsSortedByDateEcheance()}
-                  isDesc={getIsSortedDesc()}
-                />
-              </button>
-            </TH>
-            <TH className={headerColumnWithButtonHover}>
-              <FiltresStatutsActions
-                defaultValue={statutsValides}
-                onFiltres={filtrerActionsParStatuts}
-              />
-            </TH>
+              </TH>
+            </TR>
           </THead>
 
           <TBody>

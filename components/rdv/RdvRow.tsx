@@ -56,8 +56,8 @@ export function RdvRow({
       <TD>
         <IconComponent
           name={IconName.Location}
-          focusable='false'
-          aria-hidden='true'
+          focusable={false}
+          aria-hidden={true}
           className='inline mr-2 h-6 w-6 fill-primary'
         />
         {rdv.modality}
@@ -70,8 +70,8 @@ export function RdvRow({
               <span className='sr-only'>oui</span>
               <IconComponent
                 name={IconName.RoundedCheckFilled}
-                aria-hidden='true'
-                focusable='false'
+                aria-hidden={true}
+                focusable={false}
                 className='h-3 fill-primary'
               />
             </>
@@ -81,16 +81,16 @@ export function RdvRow({
               <span className='sr-only'>non</span>
               <IconComponent
                 name={IconName.Ko}
-                aria-hidden='true'
-                focusable='false'
+                aria-hidden={true}
+                focusable={false}
                 className='h-3'
               />
             </>
           )}
           <IconComponent
             name={IconName.ChevronRight}
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='w-6 h-6 fill-content_color'
           />
         </span>

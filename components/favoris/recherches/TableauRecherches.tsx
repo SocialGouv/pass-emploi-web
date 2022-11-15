@@ -5,6 +5,7 @@ import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
+import { TR } from 'components/ui/Table/TR'
 import { Recherche } from 'interfaces/favoris'
 
 interface TableauRecherchesProps {
@@ -25,10 +26,12 @@ export default function TableauRecherches({
       {recherches.length > 0 && (
         <Table caption='Liste des recherches sauvegardées'>
           <THead>
-            <TH>Nom de la recherche</TH>
-            <TH>Mot clé/métier</TH>
-            <TH>Lieu/localisation</TH>
-            <TH>Type</TH>
+            <TR isHeader={true}>
+              <TH>Nom de la recherche</TH>
+              <TH>Mot clé/métier</TH>
+              <TH>Lieu/localisation</TH>
+              <TH>Type</TH>
+            </TR>
           </THead>
           <TBody>
             {recherches.map((recherche) => (

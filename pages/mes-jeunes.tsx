@@ -179,7 +179,7 @@ function MesJeunes({
 
       {conseillerJeunes.length > 0 && (
         <>
-          <div className={`flex flex-wrap justify-between items-end mb-12`}>
+          <div className='flex flex-wrap justify-between items-end mb-12'>
             <RechercheJeune onSearchFilterBy={onSearch} />
             <AjouterJeuneButton structure={conseiller?.structure} />
           </div>

@@ -396,14 +396,16 @@ function Reaffectation(_: ReaffectationProps) {
             }}
           >
             <THead>
-              <TH>
-                <span onClick={(e) => selectionnerTousLesJeunes(e)}>
-                  <span className='sr-only'>Cocher/Décocher les jeunes</span>
-                </span>
-              </TH>
-              <TH>Nom et prénom</TH>
-              <TH>Conseiller précédent</TH>
-              <TH className='sr-only'>Email conseiller précédent</TH>
+              <TR isHeader={true}>
+                <TH>
+                  <span onClick={(e) => selectionnerTousLesJeunes(e)}>
+                    <span className='sr-only'>Cocher/Décocher les jeunes</span>
+                  </span>
+                </TH>
+                <TH>Nom et prénom</TH>
+                <TH>Conseiller précédent</TH>
+                <TH className='sr-only'>Email conseiller précédent</TH>
+              </TR>
             </THead>
             <TBody>
               <TR onClick={(e) => selectionnerTousLesJeunes(e)}>
