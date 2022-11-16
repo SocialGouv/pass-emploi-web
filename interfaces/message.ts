@@ -8,6 +8,7 @@ export enum TypeMessage {
   MESSAGE = 'MESSAGE',
   MESSAGE_PJ = 'MESSAGE_PJ',
   MESSAGE_OFFRE = 'MESSAGE_OFFRE',
+  MESSAGE_EVENEMENT = 'MESSAGE_EVENEMENT',
 }
 
 export interface Message {
@@ -20,6 +21,7 @@ export interface Message {
   type: TypeMessage
   infoPiecesJointes?: InfoFichier[]
   infoOffre?: InfoOffre
+  infoEvenement?: InfoEvenement
 }
 
 export interface MessagesOfADay {
@@ -36,4 +38,10 @@ export interface InfoOffre {
   id: string
   titre: string
   type: TypeOffre
+}
+
+export interface InfoEvenement {
+  id: string
+  titre: string
+  date: DateTime
 }
