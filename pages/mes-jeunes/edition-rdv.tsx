@@ -234,7 +234,7 @@ function EditionRdv({
         idJeune={idJeune}
         rdv={rdv}
         redirectTo={returnTo}
-        aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
+        aDesBeneficiairesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
         conseillerIsCreator={!rdv || conseiller?.id === rdv.createur.id}
         conseiller={conseiller}
         onChanges={setHasChanges}
