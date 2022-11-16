@@ -4,7 +4,6 @@ import {
   AnimationCollective,
   Evenement,
   EvenementListItem,
-  TYPE_EVENEMENT,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
@@ -16,14 +15,14 @@ export type EvenementJson = {
   type: TypeEvenement
   modality: string
   jeunes: BaseJeune[]
+  title: string
+  createur: { id: string; nom: string; prenom: string }
+  invitation: boolean
   precision?: string
-  title?: string
   comment?: string
   presenceConseiller?: boolean
-  invitation?: boolean
   adresse?: string
   organisme?: string
-  createur?: { id: string; nom: string; prenom: string }
 }
 
 export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
@@ -34,7 +33,7 @@ export type AnimationCollectiveJson = EvenementJson & {
   statut: 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
 }
 
-export interface EvenementFormData {
+export type EvenementFormData = {
   date: string
   duration: number
   jeunesIds: string[]
@@ -54,14 +53,14 @@ export function jsonToEvenement(evenementJson: EvenementJson): Evenement {
   return {
     ...data,
     duree: duration,
-    titre: jsonToTitreEvenement(evenementJson),
+    titre: evenementJson.title,
     presenceConseiller: Boolean(evenementJson.presenceConseiller),
     invitation: Boolean(evenementJson.invitation),
-    comment: evenementJson.comment ?? '',
-    precisionType: precision ?? '',
-    adresse: evenementJson.adresse ?? '',
-    organisme: evenementJson.organisme ?? '',
-    createur: createur ?? null,
+    comment: evenementJson.comment,
+    precisionType: precision,
+    adresse: evenementJson.adresse,
+    organisme: evenementJson.organisme,
+    createur: createur,
   }
 }
 
@@ -73,16 +72,15 @@ export function evenementJeuneJsonToListItem(
 }
 
 export function jsonToListItem(json: EvenementJson): EvenementListItem {
-  const evenementListItem: EvenementListItem = {
+  return {
     id: json.id,
     beneficiaires: jsonToBeneficiaires(json.jeunes),
     type: json.type.label,
     modality: json.modality,
     date: json.date,
     duree: json.duration,
+    idCreateur: json.createur.id,
   }
-  if (json.createur?.id) evenementListItem.idCreateur = json.createur.id
-  return evenementListItem
 }
 
 export function jsonToAnimationCollective(
@@ -91,19 +89,11 @@ export function jsonToAnimationCollective(
   return {
     id: json.id,
     type: json.type.label,
-    titre: jsonToTitreEvenement(json),
+    titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
     statut: json.statut,
   }
-}
-
-function jsonToTitreEvenement(json: EvenementJson): string {
-  const typeLabel =
-    json.type.code === TYPE_EVENEMENT.Autre && json.precision
-      ? json.precision
-      : json.type.label
-  return json.title || `${typeLabel} ${json.modality}`
 }
 
 function jsonToBeneficiaires(jeunes: BaseJeune[]) {

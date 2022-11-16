@@ -80,26 +80,6 @@ describe('EvenementsApiService', () => {
       expect(actual).toEqual(unEvenement())
     })
 
-    it("renvoie les détails d'un rdv sans créateur", async () => {
-      // Given
-      const rdvJson = unEvenementJson()
-      delete rdvJson.createur
-      ;(apiClient.get as jest.Mock).mockResolvedValue({ content: rdvJson })
-
-      // When
-      const actual = await evenementsService.getDetailsEvenement(
-        'id-rdv',
-        'accessToken'
-      )
-
-      // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/rendezvous/id-rdv',
-        'accessToken'
-      )
-      expect(actual).toEqual(unEvenement({ createur: null }))
-    })
-
     it("renvoie undefined si l’événement n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
@@ -237,7 +217,6 @@ describe('EvenementsApiService', () => {
         {
           ...unEvenementJson({
             id: 'ac-passee',
-            title: 'Titre de l’AC',
             type: { code: 'whatever', label: 'Information collective' },
             date: dateDebut.toISO(),
           }),
@@ -272,14 +251,12 @@ describe('EvenementsApiService', () => {
         uneAnimationCollective({
           id: 'ac-passee',
           type: 'Information collective',
-          titre: 'Titre de l’AC',
           date: dateDebut,
           statut: 'A_VENIR',
         }),
         uneAnimationCollective({
           id: 'ac-future',
           type: 'Atelier',
-          titre: 'Atelier par téléphone',
           date: dateFin,
           statut: 'CLOTUREE',
         }),
