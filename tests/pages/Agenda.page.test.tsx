@@ -6,10 +6,10 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
-import { uneAnimationCollective, unRdvListItem } from 'fixtures/rendez-vous'
+import { uneAnimationCollective, unEvenementListItem } from 'fixtures/evenement'
 import { mockedRendezVousService } from 'fixtures/services'
 import Agenda, { getServerSideProps } from 'pages/agenda'
-import { RendezVousService } from 'services/rendez-vous.service'
+import { EvenementsService } from 'services/evenements.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -19,7 +19,7 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Agenda', () => {
   describe('client side', () => {
-    let rendezVousService: RendezVousService
+    let rendezVousService: EvenementsService
     let replace: jest.Mock
 
     beforeEach(() => {
@@ -32,7 +32,7 @@ describe('Agenda', () => {
 
       rendezVousService = mockedRendezVousService({
         getRendezVousConseiller: jest.fn(async (_, dateDebut) => [
-          unRdvListItem({
+          unEvenementListItem({
             date: dateDebut.plus({ day: 3 }).toISO(),
           }),
         ]),

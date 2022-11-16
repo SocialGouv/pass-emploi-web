@@ -1,5 +1,6 @@
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { EvenementsService } from 'services/evenements.service'
 import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
 import { ImmersionsService } from 'services/immersions.service'
@@ -7,7 +8,6 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
 import { SuggestionsService } from 'services/suggestions.service'
 
@@ -75,13 +75,13 @@ export function mockedMessagesService(
 }
 
 export function mockedRendezVousService(
-  overrides: Partial<RendezVousService> = {}
-): RendezVousService {
-  const defaults: RendezVousService = {
+  overrides: Partial<EvenementsService> = {}
+): EvenementsService {
+  const defaults: EvenementsService = {
     getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
     getRendezVousEtablissement: jest.fn(),
-    getDetailsRendezVous: jest.fn(),
+    getDetailsEvenement: jest.fn(),
     getTypesRendezVous: jest.fn(),
     postNewRendezVous: jest.fn(),
     updateRendezVous: jest.fn(),

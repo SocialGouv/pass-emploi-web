@@ -5,6 +5,10 @@ import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
+import {
+  EvenementsApiService,
+  EvenementsService,
+} from 'services/evenements.service'
 import { FavorisApiService, FavorisService } from 'services/favoris.service'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 import {
@@ -25,10 +29,6 @@ import {
   ReferentielService,
 } from 'services/referentiel.service'
 import {
-  RendezVousApiService,
-  RendezVousService,
-} from 'services/rendez-vous.service'
-import {
   ServicesCiviquesApiService,
   ServicesCiviquesService,
 } from 'services/services-civiques.service'
@@ -45,7 +45,7 @@ export interface Dependencies {
   conseillerService: ConseillerService
   jeunesService: JeunesService
   messagesService: MessagesService
-  rendezVousService: RendezVousService
+  rendezVousService: EvenementsService
   fichiersService: FichiersService
   favorisService: FavorisService
   offresEmploiService: OffresEmploiService
@@ -78,7 +78,7 @@ export class Container {
         new ChatCrypto(),
         apiClient
       ),
-      rendezVousService: new RendezVousApiService(apiClient),
+      rendezVousService: new EvenementsApiService(apiClient),
       fichiersService: new FichiersApiService(apiClient),
       favorisService: new FavorisApiService(apiClient),
       offresEmploiService: new OffresEmploiApiService(apiClient),

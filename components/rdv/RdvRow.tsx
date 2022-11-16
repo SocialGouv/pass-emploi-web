@@ -5,7 +5,7 @@ import React, { useMemo } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import RowCell from 'components/ui/Table/RowCell'
-import { RdvListItem } from 'interfaces/rdv'
+import { EvenementListItem } from 'interfaces/evenement'
 import {
   WEEKDAY_MONTH_LONG,
   TIME_24_H_SEPARATOR,
@@ -14,7 +14,7 @@ import {
 } from 'utils/date'
 
 interface RdvRowProps {
-  rdv: RdvListItem
+  rdv: EvenementListItem
   idConseiller: string
   withNameJeune?: boolean
   withDate?: boolean

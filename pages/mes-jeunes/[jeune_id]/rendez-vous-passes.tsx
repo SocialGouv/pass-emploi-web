@@ -3,15 +3,15 @@ import { GetServerSideProps } from 'next'
 
 import TableauRdv from 'components/rdv/TableauRdv'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { PeriodeRdv, RdvListItem } from 'interfaces/rdv'
-import { RendezVousService } from 'services/rendez-vous.service'
+import { PeriodeEvenements, EvenementListItem } from 'interfaces/evenement'
+import { EvenementsService } from 'services/evenements.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface RendezVousPassesProps {
-  rdvs: RdvListItem[]
+  rdvs: EvenementListItem[]
 }
 
 function RendezVousPasses({ rdvs }: RendezVousPassesProps) {
@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
+    withDependance<EvenementsService>('rendezVousService')
 
   const {
     session: {
@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps<
     ? []
     : await rendezVousService.getRendezVousJeune(
         context.query.jeune_id as string,
-        PeriodeRdv.PASSES,
+        PeriodeEvenements.PASSES,
         accessToken
       )
 

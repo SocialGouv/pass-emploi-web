@@ -5,7 +5,7 @@ import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import { typesDeRendezVous, unRendezVous } from 'fixtures/rendez-vous'
+import { typesEvenement, unEvenement } from 'fixtures/evenement'
 import {
   mockedConseillerService,
   mockedJeunesService,
@@ -13,15 +13,15 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { Evenement, TypeEvenement } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
-import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { modalites } from 'referentiel/rdv'
 import { ConseillerService } from 'services/conseiller.service'
+import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -33,9 +33,9 @@ jest.mock('components/Modal')
 describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
-    let rendezVousService: RendezVousService
+    let rendezVousService: EvenementsService
     let jeunes: JeuneFromListe[]
-    let typesRendezVous: TypeRendezVous[]
+    let typesRendezVous: TypeEvenement[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
@@ -66,7 +66,7 @@ describe('EditionRdv', () => {
         })
 
         jeunes = desItemsJeunes()
-        typesRendezVous = typesDeRendezVous()
+        typesRendezVous = typesEvenement()
 
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
@@ -153,9 +153,9 @@ describe('EditionRdv', () => {
 
       it('récupère le rendez-vous concerné', async () => {
         // Given
-        ;(
-          rendezVousService.getDetailsRendezVous as jest.Mock
-        ).mockResolvedValue(unRendezVous())
+        ;(rendezVousService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+          unEvenement()
+        )
 
         // When
         const actual = await getServerSideProps({
@@ -164,13 +164,13 @@ describe('EditionRdv', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(rendezVousService.getDetailsRendezVous).toHaveBeenCalledWith(
+        expect(rendezVousService.getDetailsEvenement).toHaveBeenCalledWith(
           'id-rdv',
           'accessToken'
         )
         expect(actual).toMatchObject({
           props: {
-            rdv: unRendezVous(),
+            rdv: unEvenement(),
             pageTitle: 'Mes événements - Modifier',
             pageHeader: 'Modifier l’événement',
           },
@@ -179,9 +179,9 @@ describe('EditionRdv', () => {
 
       it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
         // Given
-        ;(
-          rendezVousService.getDetailsRendezVous as jest.Mock
-        ).mockResolvedValue(undefined)
+        ;(rendezVousService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+          undefined
+        )
 
         // When
         const actual = await getServerSideProps({
@@ -225,9 +225,9 @@ describe('EditionRdv', () => {
   describe('client side', () => {
     let jeunes: JeuneFromListe[]
     let jeunesEtablissement: BaseJeune[]
-    let rendezVousService: RendezVousService
+    let rendezVousService: EvenementsService
     let jeunesService: JeunesService
-    let typesRendezVous: TypeRendezVous[]
+    let typesRendezVous: TypeEvenement[]
     let push: Function
     beforeEach(() => {
       jeunes = desItemsJeunes()
@@ -241,7 +241,7 @@ describe('EditionRdv', () => {
       jeunesService = mockedJeunesService({
         getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
       })
-      typesRendezVous = typesDeRendezVous()
+      typesRendezVous = typesEvenement()
 
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
@@ -1042,7 +1042,7 @@ describe('EditionRdv', () => {
     })
 
     describe('quand on souhaite modifier un rdv existant', () => {
-      let rdv: Rdv
+      let rdv: Evenement
       beforeEach(() => {
         // Given
         const jeune0 = {
@@ -1056,7 +1056,7 @@ describe('EditionRdv', () => {
           nom: jeunes[2].nom,
         }
 
-        rdv = unRendezVous({ jeunes: [jeune0, jeune2] })
+        rdv = unEvenement({ jeunes: [jeune0, jeune2] })
 
         // When
         renderWithContexts(
@@ -1323,7 +1323,7 @@ describe('EditionRdv', () => {
     })
 
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée le rdv', () => {
-      let rdv: Rdv
+      let rdv: Evenement
       beforeEach(() => {
         // Given
         const jeune = {
@@ -1337,7 +1337,7 @@ describe('EditionRdv', () => {
           nom: 'Dupont',
         }
 
-        rdv = unRendezVous({
+        rdv = unEvenement({
           jeunes: [jeune, jeuneAutreConseiller],
           createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
         })
