@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { typesEvenement, unEvenement } from 'fixtures/evenement'
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import { typesEvenement, unEvenement } from 'fixtures/evenement'
 import {
   mockedConseillerService,
   mockedJeunesService,
@@ -223,17 +223,28 @@ describe('EditionRdv', () => {
   })
 
   describe('client side', () => {
-    let jeunes: JeuneFromListe[]
+    let jeunesConseiller: JeuneFromListe[]
+    let jeunesAutreConseiller: BaseJeune[]
     let jeunesEtablissement: BaseJeune[]
     let rendezVousService: EvenementsService
     let jeunesService: JeunesService
     let typesRendezVous: TypeEvenement[]
     let push: Function
     beforeEach(() => {
-      jeunes = desItemsJeunes()
+      jeunesConseiller = desItemsJeunes()
+      jeunesAutreConseiller = [
+        uneBaseJeune({
+          id: 'jeune-etablissement-1',
+          prenom: 'Jeune Etablissement 1',
+        }),
+        uneBaseJeune({
+          id: 'jeune-etablissement-2',
+          prenom: 'Jeune Etablissement 2',
+        }),
+      ]
       jeunesEtablissement = [
-        uneBaseJeune(),
-        uneBaseJeune({ id: '2', prenom: 'Nadia' }),
+        ...jeunesConseiller.map(({ id, nom, prenom }) => ({ id, nom, prenom })),
+        ...jeunesAutreConseiller,
       ]
       rendezVousService = mockedRendezVousService({
         deleteRendezVous: jest.fn(async () => undefined),
@@ -252,7 +263,7 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunes}
+            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo={'/agenda'}
@@ -373,7 +384,7 @@ describe('EditionRdv', () => {
 
           expect(selectJeune).toHaveAttribute('aria-required', 'true')
           expect(selectJeune).toHaveAttribute('multiple', '')
-          for (const jeune of jeunes) {
+          for (const jeune of jeunesConseiller) {
             const jeuneOption = within(options).getByRole('option', {
               name: `${jeune.nom} ${jeune.prenom}`,
               hidden: true,
@@ -559,8 +570,14 @@ describe('EditionRdv', () => {
           })
 
           // Given
-          await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[0]))
-          await userEvent.type(selectJeunes, getNomJeuneComplet(jeunes[2]))
+          await userEvent.type(
+            selectJeunes,
+            getNomJeuneComplet(jeunesConseiller[0])
+          )
+          await userEvent.type(
+            selectJeunes,
+            getNomJeuneComplet(jeunesConseiller[2])
+          )
           await userEvent.selectOptions(selectModalite, modalites[0])
           await userEvent.type(inputDate, '2022-03-03')
           await userEvent.type(inputHoraire, '10:30')
@@ -576,7 +593,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
-              jeunesIds: [jeunes[0].id, jeunes[2].id],
+              jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
               titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
               modality: modalites[0],
@@ -603,7 +620,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
-              jeunesIds: [jeunes[0].id, jeunes[2].id],
+              jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
               titre: 'Titre de l’événement',
               type: 'AUTRE',
               precision: 'un texte de précision',
@@ -804,7 +821,7 @@ describe('EditionRdv', () => {
           conseillerService = mockedConseillerService()
           renderWithContexts(
             <EditionRdv
-              jeunes={jeunes}
+              jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
               returnTo={'/agenda'}
@@ -909,7 +926,7 @@ describe('EditionRdv', () => {
           // Given
           renderWithContexts(
             <EditionRdv
-              jeunes={jeunes}
+              jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
               returnTo={'/agenda'}
@@ -999,19 +1016,35 @@ describe('EditionRdv', () => {
             )
           ).toBeInTheDocument()
         })
+
+        it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
+          // Given
+          await userEvent.type(
+            screen.getByLabelText(/ajouter des jeunes/),
+            getNomJeuneComplet(jeunesAutreConseiller[0])
+          )
+
+          // Then
+          expect(
+            screen.getByText(/des bénéficiaires que vous ne suivez pas/)
+          ).toBeInTheDocument()
+          expect(
+            screen.getByLabelText("Ce jeune n'est pas dans votre portefeuille")
+          ).toBeInTheDocument()
+        })
       })
     })
 
     describe('quand un id de jeune est spécifié', () => {
       it('initialise le destinataire', async () => {
         // Given
-        const idJeune = jeunes[2].id
-        const jeuneFullname = getNomJeuneComplet(jeunes[2])
+        const idJeune = jeunesConseiller[2].id
+        const jeuneFullname = getNomJeuneComplet(jeunesConseiller[2])
 
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunes}
+            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo={'/agenda'}
@@ -1046,14 +1079,14 @@ describe('EditionRdv', () => {
       beforeEach(() => {
         // Given
         const jeune0 = {
-          id: jeunes[0].id,
-          prenom: jeunes[0].prenom,
-          nom: jeunes[0].nom,
+          id: jeunesConseiller[0].id,
+          prenom: jeunesConseiller[0].prenom,
+          nom: jeunesConseiller[0].nom,
         }
         const jeune2 = {
-          id: jeunes[2].id,
-          prenom: jeunes[2].prenom,
-          nom: jeunes[2].nom,
+          id: jeunesConseiller[2].id,
+          prenom: jeunesConseiller[2].prenom,
+          nom: jeunesConseiller[2].nom,
         }
 
         rdv = unEvenement({ jeunes: [jeune0, jeune2] })
@@ -1061,7 +1094,7 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunes}
+            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo={'/agenda?creationRdv=succes'}
@@ -1110,8 +1143,8 @@ describe('EditionRdv', () => {
       })
 
       it('sélectionne les jeunes du rendez-vous', () => {
-        const jeune0Fullname = getNomJeuneComplet(jeunes[0])
-        const jeune2Fullname = getNomJeuneComplet(jeunes[2])
+        const jeune0Fullname = getNomJeuneComplet(jeunesConseiller[0])
+        const jeune2Fullname = getNomJeuneComplet(jeunesConseiller[2])
         expect(() =>
           screen.getByRole('option', {
             name: jeune0Fullname,
@@ -1203,7 +1236,7 @@ describe('EditionRdv', () => {
             name: /Bénéficiaires/,
           })
           const jeuneSelectionne = within(beneficiaires).getByText(
-            getNomJeuneComplet(jeunes[2])
+            getNomJeuneComplet(jeunesConseiller[2])
           )
           const enleverJeune = within(jeuneSelectionne).getByRole('button', {
             name: /Enlever/,
@@ -1229,7 +1262,10 @@ describe('EditionRdv', () => {
           })
 
           // Given
-          await userEvent.type(searchJeune, getNomJeuneComplet(jeunes[1]))
+          await userEvent.type(
+            searchJeune,
+            getNomJeuneComplet(jeunesConseiller[1])
+          )
           await userEvent.click(enleverJeune)
           await userEvent.selectOptions(selectModalite, modalites[0])
 
@@ -1292,7 +1328,7 @@ describe('EditionRdv', () => {
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
               rdv.id,
               {
-                jeunesIds: [jeunes[0].id, jeunes[1].id],
+                jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[1].id],
                 titre: 'Nouveau titre',
                 type: 'AUTRE',
                 modality: modalites[0],
@@ -1327,9 +1363,9 @@ describe('EditionRdv', () => {
       beforeEach(() => {
         // Given
         const jeune = {
-          id: jeunes[0].id,
-          prenom: jeunes[0].prenom,
-          nom: jeunes[0].nom,
+          id: jeunesConseiller[0].id,
+          prenom: jeunesConseiller[0].prenom,
+          nom: jeunesConseiller[0].nom,
         }
         const jeuneAutreConseiller = {
           id: 'jeune-autre-conseiller',
@@ -1345,7 +1381,7 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunes}
+            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo={'/agenda?creationRdv=succes'}
@@ -1359,7 +1395,7 @@ describe('EditionRdv', () => {
       it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", () => {
         // Then
         expect(
-          screen.getByText(/des jeunes que vous ne suivez pas/)
+          screen.getByText(/des bénéficiaires que vous ne suivez pas/)
         ).toBeInTheDocument()
       })
 
@@ -1371,7 +1407,7 @@ describe('EditionRdv', () => {
 
         // Then
         const jeune = within(beneficiaires).getByText(
-          getNomJeuneComplet(jeunes[0])
+          getNomJeuneComplet(jeunesConseiller[0])
         )
         expect(() =>
           within(jeune).getByLabelText(
@@ -1380,7 +1416,7 @@ describe('EditionRdv', () => {
         ).toThrow()
         expect(() =>
           screen.getByRole('option', {
-            name: getNomJeuneComplet(jeunes[0]),
+            name: getNomJeuneComplet(jeunesConseiller[0]),
             hidden: true,
           })
         ).toThrow()
@@ -1471,7 +1507,7 @@ describe('EditionRdv', () => {
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
             rdv.id,
             {
-              jeunesIds: [jeunes[0].id, 'jeune-autre-conseiller'],
+              jeunesIds: [jeunesConseiller[0].id, 'jeune-autre-conseiller'],
               type: 'AUTRE',
               titre: 'Prise de nouvelles par téléphone',
               modality: modalites[2],

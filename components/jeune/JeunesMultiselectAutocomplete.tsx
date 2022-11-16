@@ -7,11 +7,11 @@ import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 
 interface JeunesMultiselectAutocompleteProps {
-  jeunes: BaseJeune[]
+  jeunes: Array<BaseJeune & { isAutrePortefeuille?: boolean }>
   typeSelection: string
   onUpdate: (selectedIds: string[]) => void
   required?: boolean
-  defaultJeunes?: OptionJeune[]
+  defaultJeunes?: Array<BaseJeune & { isAutrePortefeuille?: boolean }>
   error?: string
 }
 
@@ -20,6 +20,7 @@ const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
 export interface OptionJeune {
   id: string
   value: string
+  isAutrePortefeuille?: boolean
 }
 
 export default function JeunesMultiselectAutocomplete({
@@ -31,8 +32,9 @@ export default function JeunesMultiselectAutocomplete({
   defaultJeunes = [],
 }: JeunesMultiselectAutocompleteProps) {
   const optionsJeunes: OptionJeune[] = jeunes.map(jeuneToOption)
-  const [selectedJeunes, setSelectedJeunes] =
-    useState<OptionJeune[]>(defaultJeunes)
+  const [selectedJeunes, setSelectedJeunes] = useState<OptionJeune[]>(
+    defaultJeunes.map(jeuneToOption)
+  )
   const input = useRef<HTMLInputElement>(null)
 
   function getJeunesNotSelected(): OptionJeune[] {
@@ -45,12 +47,11 @@ export default function JeunesMultiselectAutocomplete({
     const jeunesNotSelected = getJeunesNotSelected()
     if (!jeunesNotSelected.length) return []
     return [
-      { id: 'select-all-jeunes', value: SELECT_ALL_JEUNES_OPTION },
+      {
+        id: 'select-all-jeunes',
+        value: SELECT_ALL_JEUNES_OPTION,
+      },
     ].concat(jeunesNotSelected)
-  }
-
-  function estJeuneDUnAutrePortefeuille(id: string): boolean {
-    return !optionsJeunes.some((option) => option.id === id)
   }
 
   function selectAllJeunes(): OptionJeune[] {
@@ -123,11 +124,13 @@ export default function JeunesMultiselectAutocomplete({
       </p>
       {selectedJeunes.length > 0 && (
         <Multiselection
-          selection={selectedJeunes.map(({ id, value }) => ({
-            id,
-            value,
-            withInfo: estJeuneDUnAutrePortefeuille(id),
-          }))}
+          selection={selectedJeunes.map(
+            ({ id, value, isAutrePortefeuille }) => ({
+              id,
+              value,
+              withInfo: Boolean(isAutrePortefeuille),
+            })
+          )}
           typeSelection='jeune'
           infoLabel={`Ce jeune n'est pas dans votre portefeuille`}
           unselect={unselectJeune}
@@ -137,9 +140,12 @@ export default function JeunesMultiselectAutocomplete({
   )
 }
 
-export function jeuneToOption(jeune: BaseJeune): OptionJeune {
+function jeuneToOption(
+  jeune: BaseJeune & { isAutrePortefeuille?: boolean }
+): OptionJeune {
   return {
     id: jeune.id,
     value: getNomJeuneComplet(jeune),
+    isAutrePortefeuille: jeune.isAutrePortefeuille,
   }
 }

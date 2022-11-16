@@ -1,10 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import JeunesMultiselectAutocomplete, {
-  jeuneToOption,
-  OptionJeune,
-} from 'components/jeune/JeunesMultiselectAutocomplete'
+import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
 import {
   RequiredValue,
   RequiredValue as ValueWithError,
@@ -41,7 +38,7 @@ interface EditionRdvFormProps {
   jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeEvenement[]
   redirectTo: string
-  aDesJeunesDUnAutrePortefeuille: boolean
+  aDesBeneficiairesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
   soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   leaveWithChanges: () => void
@@ -59,7 +56,7 @@ export function EditionRdvForm({
   recupererJeunesDeLEtablissement,
   typesRendezVous,
   redirectTo,
-  aDesJeunesDUnAutrePortefeuille,
+  aDesBeneficiairesDUnAutrePortefeuille,
   conseillerIsCreator,
   conseiller,
   soumettreRendezVous,
@@ -110,7 +107,7 @@ export function EditionRdvForm({
   )
   const [titre, setTitre] = useState<RequiredValue>({ value: rdv?.titre ?? '' })
   const [description, setDescription] = useState<ValueWithError>({
-    value: rdv?.comment ?? '',
+    value: rdv?.commentaire ?? '',
   })
 
   const isAgenceNecessaire =
@@ -122,6 +119,46 @@ export function EditionRdvForm({
     conseiller?.structure === StructureConseiller.MILO
       ? 'Mission locale'
       : 'agence'
+
+  const afficherMessageBeneficiairesAutrePortefeuille =
+    aDesBeneficiairesDUnAutrePortefeuille ||
+    idsJeunes.value.some(
+      (id) => !jeunesConseiller.some((jeune) => jeune.id === id)
+    )
+
+  function buildOptionsJeunes(): Array<
+    BaseJeune & { isAutrePortefeuille: boolean }
+  > {
+    if (!isCodeTypeAnimationCollective(codeTypeRendezVous)) {
+      return jeunesConseiller.map((jeune) => ({
+        ...jeune,
+        isAutrePortefeuille: false,
+      }))
+    }
+
+    return jeunesEtablissement.map((jeune) => ({
+      ...jeune,
+      isAutrePortefeuille: !jeunesConseiller.some(({ id }) => jeune.id === id),
+    }))
+  }
+
+  function initJeunesFromRdvOrIdJeune(): Array<
+    BaseJeune & { isAutrePortefeuille: boolean }
+  > {
+    if (rdv) {
+      return rdv.jeunes.map((jeune) => ({
+        ...jeune,
+        isAutrePortefeuille: !jeunesConseiller.some(
+          ({ id }) => jeune.id === id
+        ),
+      }))
+    }
+    if (idJeune) {
+      const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
+      return [{ ...jeune, isAutrePortefeuille: false }]
+    }
+    return []
+  }
 
   function formHasChanges(): boolean {
     if (!rdv) {
@@ -150,7 +187,7 @@ export function EditionRdvForm({
       adresse !== rdv.adresse ||
       organisme !== rdv.organisme ||
       titre.value !== rdv.titre ||
-      description.value !== rdv.comment ||
+      description.value !== rdv.commentaire ||
       isConseillerPresent !== rdv.presenceConseiller
     )
   }
@@ -279,8 +316,7 @@ export function EditionRdvForm({
   }
 
   function descriptionIsValid(): boolean {
-    if (description.value.length >= 250) return false
-    return true
+    return description.value.length < 250
   }
 
   function validateDescription() {
@@ -372,11 +408,12 @@ export function EditionRdvForm({
         Tous les champs avec * sont obligatoires
       </p>
 
-      {aDesJeunesDUnAutrePortefeuille && (
+      {afficherMessageBeneficiairesAutrePortefeuille && (
         <div className='mb-6'>
-          <InformationMessage content='Cet événement concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
+          <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
+
       <Etape numero={1} titre='Type d’événement'>
         <Label htmlFor='typeEvenement' inputRequired={true}>
           Type
@@ -501,11 +538,7 @@ export function EditionRdvForm({
               </div>
             )}
             <JeunesMultiselectAutocomplete
-              jeunes={
-                !isCodeTypeAnimationCollective(codeTypeRendezVous)
-                  ? jeunesConseiller
-                  : jeunesEtablissement
-              }
+              jeunes={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
               defaultJeunes={defaultJeunes}
               onUpdate={updateIdsJeunes}
@@ -702,20 +735,6 @@ export function EditionRdvForm({
       )}
     </form>
   )
-
-  function initJeunesFromRdvOrIdJeune(): OptionJeune[] {
-    if (rdv) {
-      return rdv.jeunes.map(({ id, nom, prenom }) => ({
-        id,
-        value: nom + ' ' + prenom,
-      }))
-    }
-    if (idJeune) {
-      const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
-      return [jeuneToOption(jeune)]
-    }
-    return []
-  }
 }
 
 function dureeFromMinutes(duration?: number): string {
