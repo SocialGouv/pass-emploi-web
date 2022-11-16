@@ -610,26 +610,15 @@ export function EditionRdvForm({
 
           <Etape numero={5} titre='Gestion des accès'>
             {!conseillerIsCreator && (
-              <>
-                {rdv!.createur && (
-                  <div className='mb-6'>
-                    <InformationMessage
-                      content={`L’événement a été créé par un autre conseiller : ${
-                        rdv!.createur.prenom
-                      } ${
-                        rdv!.createur.nom
-                      }. Vous ne recevrez pas d'invitation dans votre agenda`}
-                    />
-                  </div>
-                )}
-                {!rdv!.createur && (
-                  <div className='mb-6'>
-                    <InformationMessage
-                      content={`L’événement a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
-                    />
-                  </div>
-                )}
-              </>
+              <div className='mb-6'>
+                <InformationMessage
+                  content={`L’événement a été créé par un autre conseiller : ${
+                    rdv!.createur.prenom
+                  } ${
+                    rdv!.createur.nom
+                  }. Vous ne recevrez pas d'invitation dans votre agenda`}
+                />
+              </div>
             )}
 
             <div className='flex items-center mb-8'>

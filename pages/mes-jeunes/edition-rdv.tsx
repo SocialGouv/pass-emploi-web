@@ -235,7 +235,7 @@ function EditionRdv({
         rdv={rdv}
         redirectTo={returnTo}
         aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
-        conseillerIsCreator={!rdv || conseiller?.id === rdv.createur?.id}
+        conseillerIsCreator={!rdv || conseiller?.id === rdv.createur.id}
         conseiller={conseiller}
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
