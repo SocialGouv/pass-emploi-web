@@ -30,12 +30,15 @@ export default function RechercheServicesCiviquesSecondaire({
     if (query.dateDebut) {
       onQueryUpdate({ ...query, dateDebut: undefined })
     } else {
-      onQueryUpdate({ ...query, dateDebut: DateTime.now() })
+      onQueryUpdate({
+        ...query,
+        dateDebut: DateTime.now().toFormat(DATE_DASH_SEPARATOR),
+      })
     }
   }
 
-  function updateDateDebut(value: string) {
-    onQueryUpdate({ ...query, dateDebut: DateTime.fromISO(value) })
+  function updateDateDebut(dateDebut: string) {
+    onQueryUpdate({ ...query, dateDebut })
   }
 
   function updateRayon(rayon: number) {
@@ -92,7 +95,7 @@ export default function RechercheServicesCiviquesSecondaire({
             <Input
               type='date'
               id='date-debut'
-              value={query.dateDebut.toFormat(DATE_DASH_SEPARATOR)}
+              value={query.dateDebut}
               onChange={updateDateDebut}
             />
           </>

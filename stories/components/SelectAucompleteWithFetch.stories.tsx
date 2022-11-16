@@ -14,7 +14,7 @@ export default {
 const Template: ComponentStory<typeof SelectAutocompleteWithFetch> = ({
   id,
   errorMessage,
-  value,
+  defaultValue,
   required,
 }) => {
   const [query, setQuery] = useState<{
@@ -39,7 +39,7 @@ const Template: ComponentStory<typeof SelectAutocompleteWithFetch> = ({
         fetch={fetchLocalites}
         onUpdateSelected={setQuery}
         errorMessage={errorMessage}
-        value={value}
+        defaultValue={defaultValue}
         required={required}
       />
     </>

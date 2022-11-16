@@ -5026,6 +5026,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.isequal@npm:^4":
+  version: 4.5.6
+  resolution: "@types/lodash.isequal@npm:4.5.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 0f065989408a9e0584e6c27495be2cd4602e62650f55266aa195812582444463c0c8570c674ae84f947c11748f49ab43fd5b482fa120e08eeee4c23b162edc38
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.14.189
+  resolution: "@types/lodash@npm:4.14.189"
+  checksum: 096d1e0954794fb76bd6a0ea443067f02004b53e3c59ac6e3fed88817a1468fc2e6614abdf44341f5e0fdff5f9a3c94a934cc9ff7126e07efbcd94355a21fe45
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:^4.14.167":
   version: 4.14.184
   resolution: "@types/lodash@npm:4.14.184"
@@ -13086,6 +13102,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.isequal@npm:4.5.0":
+  version: 4.5.0
+  resolution: "lodash.isequal@npm:4.5.0"
+  checksum: da27515dc5230eb1140ba65ff8de3613649620e8656b19a6270afe4866b7bd461d9ba2ac8a48dcc57f7adac4ee80e1de9f965d89d4d81a0ad52bb3eec2609644
+  languageName: node
+  linkType: hard
+
 "lodash.isinteger@npm:^4.0.4":
   version: 4.0.4
   resolution: "lodash.isinteger@npm:4.0.4"
@@ -14925,6 +14948,7 @@ __metadata:
     "@testing-library/user-event": ^14.4.3
     "@types/crypto-js": ^4.1.1
     "@types/jsonwebtoken": ^8.5.9
+    "@types/lodash.isequal": ^4
     "@types/luxon": ^3.0.2
     "@types/react": ^18.0.24
     autoprefixer: ^10.4.13
@@ -14942,6 +14966,7 @@ __metadata:
     jest: ^29.2.2
     jest-environment-jsdom: ^29.2.2
     jsonwebtoken: 8.5.1
+    lodash.isequal: 4.5.0
     luxon: 3.1.0
     matomo-tracker: 2.2.4
     next: 12.3.3

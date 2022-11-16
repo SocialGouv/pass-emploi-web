@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import isEqual from 'lodash.isequal'
 import { GetServerSideProps } from 'next'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
@@ -32,6 +33,7 @@ import {
 import { FormValues } from 'types/form'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { useDependance } from 'utils/injectionDependances'
 
 type RechercheOffresProps = PageProps & {
@@ -55,26 +57,41 @@ function RechercheOffres({
     useDependance<ImmersionsService>('immersionsService')
 
   const RAYON_DEFAULT = 10
-  const [typeOffre, setTypeOffre] = useState<TypeOffre | undefined>()
-  const [queryOffresEmploi, setQueryOffresEmploi] = useState<
+  const [typeOffre, setTypeOffre] = useSessionStorage<TypeOffre | undefined>(
+    'recherche-offres--type',
+    undefined
+  )
+  const [queryOffresEmploi, setQueryOffresEmploi] = useSessionStorage<
     FormValues<SearchOffresEmploiQuery>
-  >({ hasError: false })
-  const [queryServicesCiviques, setQueryServicesCiviques] = useState<
+  >('recherche-offres--query--emploi', { hasError: false })
+  const [queryServicesCiviques, setQueryServicesCiviques] = useSessionStorage<
     FormValues<SearchServicesCiviquesQuery>
-  >({ hasError: false })
-  const [queryImmersions, setQueryImmersions] = useState<
+  >('recherche-offres--query--service-civique', { hasError: false })
+  const [queryImmersions, setQueryImmersions] = useSessionStorage<
     FormValues<SearchImmersionsQuery>
-  >({
+  >('recherche-offres--query--immersion', {
     rayon: RAYON_DEFAULT,
     hasError: false,
   })
 
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [searchError, setSearchError] = useState<string | undefined>()
-  const [offres, setOffres] = useState<BaseOffre[] | undefined>(undefined)
-  const [nbTotal, setNbTotal] = useState<number | undefined>(0)
-  const [pageCourante, setPageCourante] = useState<number>(0)
-  const [nbPages, setNbPages] = useState<number>(0)
+
+  const [offres, setOffres] = useSessionStorage<BaseOffre[] | undefined>(
+    'recherche-offres--resultats',
+    undefined
+  )
+  const [nbTotalOffres, setNbTotalOffres] = useSessionStorage<
+    number | undefined
+  >('recherche-offres--resultats--nb-total-offres', 0)
+  const [pageCourante, setPageCourante] = useSessionStorage<number>(
+    'recherche-offres--resultats--page',
+    0
+  )
+  const [nbPages, setNbPages] = useSessionStorage<number>(
+    'recherche-offres--resultats--nb-pages',
+    0
+  )
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
@@ -83,8 +100,41 @@ function RechercheOffres({
     initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  async function rechercherPremierePage() {
+  function switchTypeOffre(type: TypeOffre) {
     nettoyerResultats()
+    setQueryOffresEmploi({ hasError: false })
+    setQueryServicesCiviques({ hasError: false })
+    setQueryImmersions({
+      rayon: 10,
+      hasError: typeOffre === TypeOffre.IMMERSION,
+    })
+    setTypeOffre(type)
+  }
+
+  function updateQueryEmplois(query: FormValues<SearchOffresEmploiQuery>) {
+    if (!isEqual(query, queryOffresEmploi)) {
+      nettoyerResultats()
+    }
+    setQueryOffresEmploi(query)
+  }
+
+  function updateQueryServicesCiviques(
+    query: FormValues<SearchServicesCiviquesQuery>
+  ) {
+    if (!isEqual(query, queryServicesCiviques)) {
+      nettoyerResultats()
+    }
+    setQueryServicesCiviques(query)
+  }
+
+  function updateQueryImmersions(query: FormValues<SearchImmersionsQuery>) {
+    if (!isEqual(query, queryImmersions)) {
+      nettoyerResultats()
+    }
+    setQueryImmersions(query)
+  }
+
+  async function rechercherPremierePage() {
     rechercherOffres({ page: 1 })
   }
 
@@ -115,12 +165,13 @@ function RechercheOffres({
         metadonnees: { nombreTotal, nombrePages },
       } = result
       setOffres(offresPageCourante)
-      setNbTotal(nombreTotal)
+      setNbTotalOffres(nombreTotal)
       setPageCourante(page)
       setNbPages(nombrePages)
       setTrackingTitle(pageTracking + ' - Résultats')
     } catch (e) {
       console.error(e)
+      nettoyerResultats()
       setSearchError('Une erreur est survenue. Vous pouvez réessayer')
       setTrackingTitle(pageTracking + ' - Erreur')
     } finally {
@@ -176,15 +227,11 @@ function RechercheOffres({
 
   function nettoyerResultats() {
     setOffres(undefined)
-    setNbTotal(undefined)
+    setNbTotalOffres(undefined)
     setPageCourante(0)
     setNbPages(0)
     setSearchError(undefined)
   }
-
-  useEffect(() => {
-    nettoyerResultats()
-  }, [queryOffresEmploi, queryServicesCiviques, queryImmersions])
 
   useMatomo(trackingTitle)
 
@@ -203,13 +250,13 @@ function RechercheOffres({
         fetchCommunesEtDepartements={referentielService.getCommunesEtDepartements.bind(
           referentielService
         )}
-        stateTypeOffre={[typeOffre, setTypeOffre]}
-        stateQueryOffresEmploi={[queryOffresEmploi, setQueryOffresEmploi]}
+        stateTypeOffre={[typeOffre, switchTypeOffre]}
+        stateQueryOffresEmploi={[queryOffresEmploi, updateQueryEmplois]}
         stateQueryServicesCiviques={[
           queryServicesCiviques,
-          setQueryServicesCiviques,
+          updateQueryServicesCiviques,
         ]}
-        stateQueryImmersions={[queryImmersions, setQueryImmersions]}
+        stateQueryImmersions={[queryImmersions, updateQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
       <PartageRechercheButton
@@ -222,7 +269,7 @@ function RechercheOffres({
         isSearching={isSearching}
         offres={offres}
         pageCourante={pageCourante}
-        nbTotal={nbTotal}
+        nbTotal={nbTotalOffres}
         nbPages={nbPages}
         onChangerPage={(page) => rechercherOffres({ page })}
       />
