@@ -1,19 +1,19 @@
 import { DateTime } from 'luxon'
 
-import { BaseJeune } from 'interfaces/jeune'
 import {
   AnimationCollective,
-  Rdv,
-  RdvListItem,
-  TYPE_RENDEZ_VOUS,
-  TypeRendezVous,
-} from 'interfaces/rdv'
+  Evenement,
+  EvenementListItem,
+  TYPE_EVENEMENT,
+  TypeEvenement,
+} from 'interfaces/evenement'
+import { BaseJeune } from 'interfaces/jeune'
 
-export interface RdvJson {
+export type EvenementJson = {
   id: string
   date: string
   duration: number
-  type: TypeRendezVous
+  type: TypeEvenement
   modality: string
   jeunes: BaseJeune[]
   precision?: string
@@ -26,13 +26,15 @@ export interface RdvJson {
   createur?: { id: string; nom: string; prenom: string }
 }
 
-export type RdvJeuneJson = Omit<RdvJson, 'jeunes'> & { jeune: BaseJeune }
+export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
+  jeune: BaseJeune
+}
 
-export type AnimationCollectiveJson = RdvJson & {
+export type AnimationCollectiveJson = EvenementJson & {
   statut: 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
 }
 
-export interface RdvFormData {
+export interface EvenementFormData {
   date: string
   duration: number
   jeunesIds: string[]
@@ -47,31 +49,31 @@ export interface RdvFormData {
   comment?: string
 }
 
-export function jsonToRdv(rdvJson: RdvJson): Rdv {
-  const { precision, createur, title, duration, ...data } = rdvJson
+export function jsonToEvenement(evenementJson: EvenementJson): Evenement {
+  const { precision, createur, title, duration, ...data } = evenementJson
   return {
     ...data,
     duree: duration,
-    titre: jsonToTitreRdv(rdvJson),
-    presenceConseiller: Boolean(rdvJson.presenceConseiller),
-    invitation: Boolean(rdvJson.invitation),
-    comment: rdvJson.comment ?? '',
+    titre: jsonToTitreEvenement(evenementJson),
+    presenceConseiller: Boolean(evenementJson.presenceConseiller),
+    invitation: Boolean(evenementJson.invitation),
+    comment: evenementJson.comment ?? '',
     precisionType: precision ?? '',
-    adresse: rdvJson.adresse ?? '',
-    organisme: rdvJson.organisme ?? '',
+    adresse: evenementJson.adresse ?? '',
+    organisme: evenementJson.organisme ?? '',
     createur: createur ?? null,
   }
 }
 
-export function rdvJeuneJsonToRdvListItem(
-  rdvJeuneJson: RdvJeuneJson
-): RdvListItem {
-  const { jeune, ...data } = rdvJeuneJson
-  return jsonToRdvListItem({ ...data, jeunes: [jeune] })
+export function evenementJeuneJsonToListItem(
+  evenementJeuneJson: EvenementJeuneJson
+): EvenementListItem {
+  const { jeune, ...data } = evenementJeuneJson
+  return jsonToListItem({ ...data, jeunes: [jeune] })
 }
 
-export function jsonToRdvListItem(json: RdvJson): RdvListItem {
-  const rdvListItem: RdvListItem = {
+export function jsonToListItem(json: EvenementJson): EvenementListItem {
+  const evenementListItem: EvenementListItem = {
     id: json.id,
     beneficiaires: jsonToBeneficiaires(json.jeunes),
     type: json.type.label,
@@ -79,8 +81,8 @@ export function jsonToRdvListItem(json: RdvJson): RdvListItem {
     date: json.date,
     duree: json.duration,
   }
-  if (json.createur?.id) rdvListItem.idCreateur = json.createur.id
-  return rdvListItem
+  if (json.createur?.id) evenementListItem.idCreateur = json.createur.id
+  return evenementListItem
 }
 
 export function jsonToAnimationCollective(
@@ -89,16 +91,16 @@ export function jsonToAnimationCollective(
   return {
     id: json.id,
     type: json.type.label,
-    titre: jsonToTitreRdv(json),
+    titre: jsonToTitreEvenement(json),
     date: DateTime.fromISO(json.date),
     duree: json.duration,
     statut: json.statut,
   }
 }
 
-function jsonToTitreRdv(json: RdvJson): string {
+function jsonToTitreEvenement(json: EvenementJson): string {
   const typeLabel =
-    json.type.code === TYPE_RENDEZ_VOUS.Autre && json.precision
+    json.type.code === TYPE_EVENEMENT.Autre && json.precision
       ? json.precision
       : json.type.label
   return json.title || `${typeLabel} ${json.modality}`

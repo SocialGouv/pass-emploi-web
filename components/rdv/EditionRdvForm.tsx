@@ -5,8 +5,10 @@ import JeunesMultiselectAutocomplete, {
   jeuneToOption,
   OptionJeune,
 } from 'components/jeune/JeunesMultiselectAutocomplete'
-import { RequiredValue } from 'components/RequiredValue'
-import { RequiredValue as ValueWithError } from 'components/RequiredValue'
+import {
+  RequiredValue,
+  RequiredValue as ValueWithError,
+} from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -19,14 +21,14 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
-import { RdvFormData } from 'interfaces/json/rdv'
 import {
+  Evenement,
   isCodeTypeAnimationCollective,
-  Rdv,
-  TYPE_RENDEZ_VOUS,
-  TypeRendezVous,
-} from 'interfaces/rdv'
+  TYPE_EVENEMENT,
+  TypeEvenement,
+} from 'interfaces/evenement'
+import { BaseJeune } from 'interfaces/jeune'
+import { EvenementFormData } from 'interfaces/json/evenement'
 import { modalites } from 'referentiel/rdv'
 import {
   DATE_DASH_SEPARATOR,
@@ -37,17 +39,17 @@ import {
 
 interface EditionRdvFormProps {
   jeunesConseiller: BaseJeune[]
-  typesRendezVous: TypeRendezVous[]
+  typesRendezVous: TypeEvenement[]
   redirectTo: string
   aDesJeunesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
-  soumettreRendezVous: (payload: RdvFormData) => Promise<void>
+  soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
   conseiller?: Conseiller
-  rdv?: Rdv
+  rdv?: Evenement
   idJeune?: string
-  showConfirmationModal: (payload: RdvFormData) => void
+  showConfirmationModal: (payload: EvenementFormData) => void
   renseignerAgence: () => void
   recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
 }
@@ -167,8 +169,8 @@ export function EditionRdvForm({
 
   async function handleSelectedTypeRendezVous(value: string) {
     setCodeTypeRendezVous(value)
-    setShowPrecisionType(value === TYPE_RENDEZ_VOUS.Autre)
-    if (value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
+    setShowPrecisionType(value === TYPE_EVENEMENT.Autre)
+    if (value === TYPE_EVENEMENT.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
   }
@@ -253,7 +255,7 @@ export function EditionRdvForm({
 
   function typeIsValid(): boolean {
     if (!codeTypeRendezVous) return false
-    if (codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre)
+    if (codeTypeRendezVous === TYPE_EVENEMENT.Autre)
       return Boolean(precisionType.value)
     return true
   }
@@ -292,7 +294,7 @@ export function EditionRdvForm({
   }
 
   function typeEntretienIndividuelConseillerSelected() {
-    return codeTypeRendezVous === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
+    return codeTypeRendezVous === TYPE_EVENEMENT.EntretienIndividuelConseiller
   }
 
   function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
@@ -314,7 +316,7 @@ export function EditionRdvForm({
       `${date.value} ${horaire.value}`,
       `${DATE_DASH_SEPARATOR} ${TIME_24_SIMPLE}`
     )
-    const payload: RdvFormData = {
+    const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous,
       date: dateTime.toISO(),
@@ -322,7 +324,7 @@ export function EditionRdvForm({
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
       precision:
-        codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre
+        codeTypeRendezVous === TYPE_EVENEMENT.Autre
           ? precisionType.value
           : undefined,
       modality: modalite || undefined,

@@ -1,16 +1,16 @@
 import { DateTime } from 'luxon'
 
-import { RdvJeuneJson, RdvJson } from 'interfaces/json/rdv'
 import {
   AnimationCollective,
-  Rdv,
-  RdvListItem,
-  TypeRendezVous,
-} from 'interfaces/rdv'
+  Evenement,
+  EvenementListItem,
+  TypeEvenement,
+} from 'interfaces/evenement'
+import { EvenementJeuneJson, EvenementJson } from 'interfaces/json/evenement'
 
-export const typesDeRendezVous = (
-  overrides: TypeRendezVous[] = []
-): TypeRendezVous[] => {
+export const typesEvenement = (
+  overrides: TypeEvenement[] = []
+): TypeEvenement[] => {
   return [
     {
       code: 'ACTIVITES_EXTERIEURES',
@@ -48,8 +48,8 @@ export const typesDeRendezVous = (
   ]
 }
 
-export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
-  const defaults: Rdv = {
+export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
+  const defaults: Evenement = {
     id: '1',
     titre: 'Prise de nouvelles par téléphone',
     jeunes: [
@@ -75,7 +75,7 @@ export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
   return { ...defaults, ...overrides }
 }
 
-export function desRdvListItems(): RdvListItem[] {
+export function desEvenementsListItems(): EvenementListItem[] {
   return [
     {
       id: '1',
@@ -98,10 +98,10 @@ export function desRdvListItems(): RdvListItem[] {
   ]
 }
 
-export function unRdvListItem(
-  overrides: Partial<RdvListItem> = {}
-): RdvListItem {
-  const defaults: RdvListItem = {
+export function unEvenementListItem(
+  overrides: Partial<EvenementListItem> = {}
+): EvenementListItem {
+  const defaults: EvenementListItem = {
     id: '1',
     beneficiaires: 'Kenji Jirac',
     type: 'Autre',
@@ -127,8 +127,10 @@ export function uneAnimationCollective(
   return { ...defaults, ...overrides }
 }
 
-export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
-  const defaults: RdvJson = {
+export function unEvenementJson(
+  overrides: Partial<EvenementJson> = {}
+): EvenementJson {
+  const defaults: EvenementJson = {
     id: '1',
     jeunes: [
       {
@@ -153,10 +155,10 @@ export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
   return { ...defaults, ...overrides }
 }
 
-export function unRendezVousJeuneJson(
-  overrides: Partial<RdvJeuneJson> = {}
-): RdvJeuneJson {
-  const defaults: RdvJeuneJson = {
+export function unEvenementJeuneJson(
+  overrides: Partial<EvenementJeuneJson> = {}
+): EvenementJeuneJson {
+  const defaults: EvenementJeuneJson = {
     id: '1',
     jeune: {
       id: '1',

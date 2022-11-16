@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 
 import { BaseJeune } from 'interfaces/jeune'
 
-export interface TypeRendezVous {
+export interface TypeEvenement {
   code: string
   label: string
 }
@@ -16,7 +16,7 @@ export interface AnimationCollective {
   statut: 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
 }
 
-export interface RdvListItem {
+export interface EvenementListItem {
   id: string
   beneficiaires: string
   type: string
@@ -26,11 +26,11 @@ export interface RdvListItem {
   idCreateur?: string
 }
 
-export interface Rdv {
+export interface Evenement {
   id: string
   titre: string
   jeunes: BaseJeune[]
-  type: TypeRendezVous
+  type: TypeEvenement
   precisionType: string
   modality: string
   date: string
@@ -43,7 +43,7 @@ export interface Rdv {
   createur: { id: string; nom: string; prenom: string } | null
 }
 
-export const TYPE_RENDEZ_VOUS = {
+export const TYPE_EVENEMENT = {
   Autre: 'AUTRE',
   EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }
@@ -52,7 +52,7 @@ export function isCodeTypeAnimationCollective(code: string): boolean {
   return code === 'ATELIER' || code === 'INFORMATION_COLLECTIVE'
 }
 
-export enum PeriodeRdv {
+export enum PeriodeEvenements {
   PASSES = 'PASSES',
   FUTURS = 'FUTURS',
 }

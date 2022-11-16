@@ -8,6 +8,7 @@ import React from 'react'
 
 import { uneAction, uneListeDActions } from 'fixtures/action'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
+import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
 import {
   desConseillersJeune,
   desIndicateursSemaine,
@@ -15,7 +16,6 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { desRdvListItems, unRdvListItem } from 'fixtures/rendez-vous'
 import {
   mockedActionsService,
   mockedJeunesService,
@@ -30,8 +30,8 @@ import FicheJeune, {
   Onglet,
 } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
+import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -45,7 +45,7 @@ jest.mock('components/Modal')
 describe('Fiche Jeune', () => {
   describe('client side', () => {
     const jeune = unDetailJeune()
-    const rdvs = desRdvListItems()
+    const rdvs = desEvenementsListItems()
     const actions = uneListeDActions().concat(
       uneAction({
         id: 'id-action-5',
@@ -1255,11 +1255,11 @@ describe('Fiche Jeune', () => {
   })
 
   describe('server side', () => {
-    const rdvAVenir = unRdvListItem({
+    const rdvAVenir = unEvenementListItem({
       date: DateTime.now().plus({ day: 1 }).toISO(),
     })
     let jeunesService: JeunesService
-    let rendezVousService: RendezVousService
+    let rendezVousService: EvenementsService
     let actionsService: ActionsService
     beforeEach(() => {
       jeunesService = mockedJeunesService({

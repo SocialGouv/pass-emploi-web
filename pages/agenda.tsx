@@ -11,10 +11,10 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { AnimationCollective, RdvListItem } from 'interfaces/rdv'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
-import { RendezVousService } from 'services/rendez-vous.service'
+import { EvenementsService } from 'services/evenements.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -40,7 +40,7 @@ function Agenda({
   messageEnvoiGroupeSuccess,
 }: AgendaProps) {
   const rendezVousService =
-    useDependance<RendezVousService>('rendezVousService')
+    useDependance<EvenementsService>('rendezVousService')
   const [conseiller] = useConseiller()
   const router = useRouter()
 
@@ -84,7 +84,7 @@ function Agenda({
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
-  ): Promise<RdvListItem[]> {
+  ): Promise<EvenementListItem[]> {
     return rendezVousService.getRendezVousConseiller(
       idConseiller,
       dateDebut,

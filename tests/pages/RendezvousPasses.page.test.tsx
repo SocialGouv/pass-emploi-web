@@ -5,12 +5,12 @@ import React from 'react'
 
 import renderWithContexts from '../renderWithContexts'
 
-import { desRdvListItems, unRdvListItem } from 'fixtures/rendez-vous'
+import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
 import { mockedRendezVousService } from 'fixtures/services'
 import RendezVousPasses, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/rendez-vous-passes'
-import { RendezVousService } from 'services/rendez-vous.service'
+import { EvenementsService } from 'services/evenements.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -23,7 +23,7 @@ describe('RendezVousPasses', () => {
       describe('quand il y a des rendez-vous passés', () => {
         it('affiche le tableau des rendez-vous passés du conseiller avec le jeune', async () => {
           // Given
-          const rdvs = desRdvListItems()
+          const rdvs = desEvenementsListItems()
 
           // When
           await act(async () => {
@@ -55,10 +55,10 @@ describe('RendezVousPasses', () => {
   })
 
   describe('server side', () => {
-    let rendezVousService: RendezVousService
+    let rendezVousService: EvenementsService
     beforeEach(() => {
       rendezVousService = mockedRendezVousService({
-        getRendezVousJeune: jest.fn(async () => [unRdvListItem()]),
+        getRendezVousJeune: jest.fn(async () => [unEvenementListItem()]),
       })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
         if (dependance === 'rendezVousService') return rendezVousService
@@ -105,7 +105,7 @@ describe('RendezVousPasses', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdvs: [unRdvListItem()] },
+          props: { rdvs: [unEvenementListItem()] },
         })
       })
     })

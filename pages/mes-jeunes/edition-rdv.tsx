@@ -12,16 +12,16 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { Evenement, TypeEvenement } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
-import { RdvFormData } from 'interfaces/json/rdv'
+import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ConseillerService } from 'services/conseiller.service'
+import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -33,10 +33,10 @@ import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]
-  typesRendezVous: TypeRendezVous[]
+  typesRendezVous: TypeEvenement[]
   returnTo: string
   idJeune?: string
-  rdv?: Rdv
+  rdv?: Evenement
 }
 
 function EditionRdv({
@@ -49,7 +49,7 @@ function EditionRdv({
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    useDependance<RendezVousService>('rendezVousService')
+    useDependance<EvenementsService>('rendezVousService')
   const [conseiller, setConseiller] = useConseiller()
   const referentielService =
     useDependance<ReferentielService>('referentielService')
@@ -63,7 +63,7 @@ function EditionRdv({
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
-    useState<RdvFormData | undefined>(undefined)
+    useState<EvenementFormData | undefined>(undefined)
 
   const [showDeleteRdvModal, setShowDeleteRdvModal] = useState<boolean>(false)
   const [showDeleteRdvError, setShowDeleteRdvError] = useState<boolean>(false)
@@ -107,7 +107,7 @@ function EditionRdv({
     setTrackingTitle(initialTracking)
   }
 
-  function showConfirmationModal(payload: RdvFormData) {
+  function showConfirmationModal(payload: EvenementFormData) {
     setPayloadForConfirmationModal(payload)
     setTrackingTitle(`${initialTracking} - Modale confirmation modification`)
   }
@@ -136,7 +136,9 @@ function EditionRdv({
     return false
   }
 
-  async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
+  async function soumettreRendezVous(
+    payload: EvenementFormData
+  ): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!rdv) {
       await rendezVousService.postNewRendezVous(payload)
@@ -303,7 +305,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
+    withDependance<EvenementsService>('rendezVousService')
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
     user.id,
     accessToken
@@ -328,7 +330,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const idRdv = context.query.idRdv as string | undefined
   const idJeune = context.query.idJeune as string | undefined
   if (idRdv) {
-    const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
+    const rdv = await rendezVousService.getDetailsEvenement(idRdv, accessToken)
     if (!rdv) return { notFound: true }
     props.rdv = rdv
     props.pageTitle = 'Mes événements - Modifier'
