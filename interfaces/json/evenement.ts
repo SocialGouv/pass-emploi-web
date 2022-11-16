@@ -8,6 +8,7 @@ import {
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
 
+type Auteur = { id: string; nom: string; prenom: string }
 export type EvenementJson = {
   id: string
   date: string
@@ -16,7 +17,8 @@ export type EvenementJson = {
   modality: string
   jeunes: BaseJeune[]
   title: string
-  createur: { id: string; nom: string; prenom: string }
+  createur: Auteur
+  historique: Array<{ date: string; auteur: Auteur }>
   invitation: boolean
   precision?: string
   comment?: string
@@ -49,7 +51,7 @@ export type EvenementFormData = {
 }
 
 export function jsonToEvenement(evenementJson: EvenementJson): Evenement {
-  const { precision, createur, title, duration, ...data } = evenementJson
+  const { precision, title, duration, historique, ...data } = evenementJson
   return {
     ...data,
     duree: duration,
@@ -60,7 +62,7 @@ export function jsonToEvenement(evenementJson: EvenementJson): Evenement {
     precisionType: precision,
     adresse: evenementJson.adresse,
     organisme: evenementJson.organisme,
-    createur: createur,
+    historique: jsonToHistorique(historique),
   }
 }
 
@@ -100,4 +102,11 @@ function jsonToBeneficiaires(jeunes: BaseJeune[]) {
   if (jeunes.length > 1) return 'Bénéficiaires multiples'
   if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
   return ''
+}
+
+function jsonToHistorique(historique: Array<{ date: string; auteur: Auteur }>) {
+  return historique.map(({ date, auteur }) => ({
+    date,
+    auteur: { nom: auteur.nom, prenom: auteur.prenom },
+  }))
 }

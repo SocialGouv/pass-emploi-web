@@ -70,6 +70,12 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    historique: [
+      {
+        date: '2021-10-21T10:00:00.000Z',
+        auteur: { nom: 'Lama', prenom: 'Serge' },
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }
@@ -151,6 +157,12 @@ export function unEvenementJson(
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    historique: [
+      {
+        date: '2021-10-21T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }
@@ -178,6 +190,12 @@ export function unEvenementJeuneJson(
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    historique: [
+      {
+        date: '2021-10-21T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }

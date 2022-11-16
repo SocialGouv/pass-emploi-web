@@ -26,6 +26,7 @@ export type EvenementListItem = {
   idCreateur: string
 }
 
+type Auteur = { nom: string; prenom: string }
 export type Evenement = {
   id: string
   titre: string
@@ -36,7 +37,8 @@ export type Evenement = {
   duree: number
   presenceConseiller: boolean
   invitation: boolean
-  createur: { id: string; nom: string; prenom: string }
+  createur: Auteur & { id: string }
+  historique: Array<{ date: string; auteur: Auteur }>
   comment?: string
   precisionType?: string
   adresse?: string
