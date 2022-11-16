@@ -11,6 +11,7 @@ import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
+import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toShortDate } from 'utils/date'
 
@@ -308,6 +309,37 @@ describe('<Conversation />', () => {
           name: 'Voir l’offre',
         })
       ).toHaveAttribute('href', '/offres/emploi/id-offre')
+    })
+  })
+
+  describe("quand on reçoit un message de partage d'événement", () => {
+    let message: HTMLElement
+    beforeEach(() => {
+      message = screen.getByText('Decrypted: Je vous partage cet événement')
+        .parentElement!
+    })
+
+    it("affiche le titre de l'événement", async () => {
+      // Then
+      expect(getByDescriptionTerm('Titre de l’événement :')).toHaveTextContent(
+        'Un atelier'
+      )
+    })
+
+    it("affiche la date de l'événement", async () => {
+      // Then
+      expect(getByDescriptionTerm('Date de l’événement :')).toHaveTextContent(
+        'le 22/12/2021'
+      )
+    })
+
+    it("affiche le lien de l'événement", async () => {
+      // Then
+      expect(
+        within(message).getByRole('link', {
+          name: 'Voir l’événement',
+        })
+      ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=id-evenement')
     })
   })
 })
