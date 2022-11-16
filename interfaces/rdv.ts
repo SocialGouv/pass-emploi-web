@@ -1,5 +1,6 @@
-import { BaseJeune } from 'interfaces/jeune'
 import { DateTime } from 'luxon'
+
+import { BaseJeune } from 'interfaces/jeune'
 
 export interface TypeRendezVous {
   code: string

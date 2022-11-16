@@ -2,6 +2,7 @@ import parse, { domToReact } from 'html-react-parser'
 import { DateTime } from 'luxon'
 import React, { useMemo } from 'react'
 
+import LienEvenement from 'components/chat/LienEvenement'
 import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import { UserType } from 'interfaces/conseiller'
@@ -102,6 +103,10 @@ export default function DisplayMessage({
             isSentByConseiller={isSentByConseiller}
           />
         )}
+        {message.type === TypeMessage.MESSAGE_EVENEMENT &&
+          message.infoEvenement && (
+            <LienEvenement infoEvenement={message.infoEvenement} />
+          )}
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&
           message.infoPiecesJointes.map(({ id, nom }) => (
