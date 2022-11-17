@@ -246,7 +246,7 @@ describe('EditionRdv', () => {
         ...jeunesAutreConseiller,
       ]
       rendezVousService = mockedRendezVousService({
-        deleteEvenement: jest.fn(async () => undefined),
+        supprimerEvenement: jest.fn(async () => undefined),
       })
       jeunesService = mockedJeunesService({
         getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
@@ -1383,7 +1383,7 @@ describe('EditionRdv', () => {
           await userEvent.click(deleteButtonFromModal)
 
           // Then
-          expect(rendezVousService.deleteEvenement).toHaveBeenCalledWith(
+          expect(rendezVousService.supprimerEvenement).toHaveBeenCalledWith(
             evenement.id
           )
           expect(push).toHaveBeenCalledWith({

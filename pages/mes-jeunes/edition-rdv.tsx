@@ -167,11 +167,11 @@ function EditionRdv({
     })
   }
 
-  async function deleteEvenement(): Promise<void> {
+  async function supprimerEvenement(): Promise<void> {
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
     try {
-      await rendezVousService.deleteEvenement(evenement!.id)
+      await rendezVousService.supprimerEvenement(evenement!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
       await router.push({
         pathname,
@@ -353,7 +353,7 @@ function EditionRdv({
         <DeleteRdvModal
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
-          performDelete={deleteEvenement}
+          performDelete={supprimerEvenement}
         />
       )}
 

@@ -311,10 +311,10 @@ describe('EvenementsApiService', () => {
     })
   })
 
-  describe('.deleteEvenement', () => {
+  describe('.supprimerEvenement', () => {
     it('supprime un événement', async () => {
       // When
-      await evenementsService.deleteEvenement('idEvenement')
+      await evenementsService.supprimerEvenement('idEvenement')
 
       // Then
       expect(apiClient.delete).toHaveBeenCalledWith(

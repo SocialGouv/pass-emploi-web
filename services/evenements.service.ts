@@ -49,7 +49,7 @@ export interface EvenementsService {
 
   updateRendezVous(idRdv: string, updatedRdv: EvenementFormData): Promise<void>
 
-  deleteEvenement(idRendezVous: string): Promise<void>
+  supprimerEvenement(idRendezVous: string): Promise<void>
 }
 
 export class EvenementsApiService implements EvenementsService {
@@ -157,7 +157,7 @@ export class EvenementsApiService implements EvenementsService {
     )
   }
 
-  async deleteEvenement(idRendezVous: string): Promise<void> {
+  async supprimerEvenement(idRendezVous: string): Promise<void> {
     const session = await getSession()
     await this.apiClient.delete(
       `/rendezvous/${idRendezVous}`,
