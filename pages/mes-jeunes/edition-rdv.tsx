@@ -12,6 +12,7 @@ import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, Modification, TypeEvenement } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
@@ -38,7 +39,7 @@ interface EditionRdvProps extends PageProps {
   typesRendezVous: TypeEvenement[]
   returnTo: string
   idJeune?: string
-  rdv?: Evenement
+  evenement?: Evenement
 }
 
 function EditionRdv({
@@ -46,7 +47,7 @@ function EditionRdv({
   typesRendezVous,
   idJeune,
   returnTo,
-  rdv,
+  evenement,
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -69,15 +70,20 @@ function EditionRdv({
 
   const [showDeleteRdvModal, setShowDeleteRdvModal] = useState<boolean>(false)
   const [showDeleteRdvError, setShowDeleteRdvError] = useState<boolean>(false)
+
+  const [
+    formHasBeneficiaireAutrePortefeuille,
+    setFormHasBeneficiaireAutrePortefeuille,
+  ] = useState<boolean>(false)
   const [hasChanges, setHasChanges] = useState<boolean>(false)
 
   const [historiqueModif, setHistoriqueModif] = useState<
     Modification[] | undefined
-  >(rdv && rdv.historique.slice(0, 2))
+  >(evenement && evenement.historique.slice(0, 2))
   const [showPlusHistorique, setShowPlusHistorique] = useState<boolean>(false)
 
   let initialTracking: string
-  if (rdv) initialTracking = `Modification rdv`
+  if (evenement) initialTracking = `Modification rdv`
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -135,26 +141,26 @@ function EditionRdv({
   }
 
   function aDesJeunesDUnAutrePortefeuille(): boolean {
-    if (rdv) {
-      return rdv.jeunes.some(
-        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
-      )
-    }
-    return false
+    const fromEvenement = evenement?.jeunes.some(
+      ({ id }) => !jeunes.some((jeune) => jeune.id === id)
+    )
+    return fromEvenement || formHasBeneficiaireAutrePortefeuille
   }
 
   async function soumettreRendezVous(
     payload: EvenementFormData
   ): Promise<void> {
     setConfirmBeforeLeaving(false)
-    if (!rdv) {
+    if (!evenement) {
       await rendezVousService.creerEvenement(payload)
     } else {
-      await rendezVousService.updateRendezVous(rdv.id, payload)
+      await rendezVousService.updateRendezVous(evenement.id, payload)
     }
 
     const { pathname, query } = getCleanUrlObject(returnTo)
-    const queryParam = rdv ? QueryParam.modificationRdv : QueryParam.creationRdv
+    const queryParam = evenement
+      ? QueryParam.modificationRdv
+      : QueryParam.creationRdv
     await router.push({
       pathname,
       query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
@@ -165,7 +171,7 @@ function EditionRdv({
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
     try {
-      await rendezVousService.deleteEvenement(rdv!.id)
+      await rendezVousService.deleteEvenement(evenement!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
       await router.push({
         pathname,
@@ -206,8 +212,8 @@ function EditionRdv({
 
   function togglePlusHistorique() {
     const newShowPlusHistorique = !showPlusHistorique
-    if (newShowPlusHistorique) setHistoriqueModif(rdv!.historique)
-    else setHistoriqueModif(rdv!.historique.slice(0, 2))
+    if (newShowPlusHistorique) setHistoriqueModif(evenement!.historique)
+    else setHistoriqueModif(evenement!.historique.slice(0, 2))
     setShowPlusHistorique(newShowPlusHistorique)
   }
 
@@ -224,12 +230,18 @@ function EditionRdv({
         />
       )}
 
-      {rdv && (
+      {aDesJeunesDUnAutrePortefeuille() && (
+        <div className='mb-6'>
+          <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
+        </div>
+      )}
+
+      {evenement && (
         <>
           <Button
             style={ButtonStyle.SECONDARY}
             onClick={handleDelete}
-            label={`Supprimer l’événement du ${rdv.date}`}
+            label={`Supprimer l’événement du ${evenement.date}`}
           >
             <IconComponent
               name={IconName.Delete}
@@ -243,12 +255,12 @@ function EditionRdv({
           <dl>
             <div className='mt-6 border border-solid border-grey_100 rounded-medium p-4'>
               <dt className='sr-only'>Type de l’événement</dt>
-              <dd className='text-base-bold'>{rdv.type.label}</dd>
+              <dd className='text-base-bold'>{evenement.type.label}</dd>
 
               <div className='mt-2'>
                 <dt className='inline'>Créé par : </dt>
                 <dd className='inline text-s-bold'>
-                  {rdv.createur.prenom} {rdv.createur.nom}
+                  {evenement.createur.prenom} {evenement.createur.nom}
                 </dd>
               </div>
             </div>
@@ -268,7 +280,7 @@ function EditionRdv({
                       </li>
                     ))}
                   </ul>
-                  {rdv.historique.length > 2 && (
+                  {evenement.historique.length > 2 && (
                     <button
                       type='button'
                       onClick={togglePlusHistorique}
@@ -299,10 +311,14 @@ function EditionRdv({
         recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
         typesRendezVous={typesRendezVous}
         idJeune={idJeune}
-        rdv={rdv}
+        evenement={evenement}
         redirectTo={returnTo}
-        aDesBeneficiairesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
-        conseillerIsCreator={!rdv || conseiller?.id === rdv.createur.id}
+        onBeneficiairesDUnAutrePortefeuille={
+          setFormHasBeneficiaireAutrePortefeuille
+        }
+        conseillerIsCreator={
+          !evenement || conseiller?.id === evenement.createur.id
+        }
         conseiller={conseiller}
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
@@ -314,10 +330,10 @@ function EditionRdv({
       {showLeavePageModal && (
         <LeavePageConfirmationModal
           message={`Vous allez quitter la ${
-            rdv ? 'modification de l’' : 'création d’un nouvel '
+            evenement ? 'modification de l’' : 'création d’un nouvel '
           }événement`}
           commentaire={`Toutes les informations ${
-            rdv ? 'modifiées' : 'saisies'
+            evenement ? 'modifiées' : 'saisies'
           } seront perdues`}
           onCancel={closeLeavePageModal}
           destination={returnTo}
@@ -397,9 +413,12 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const idRdv = context.query.idRdv as string | undefined
   const idJeune = context.query.idJeune as string | undefined
   if (idRdv) {
-    const rdv = await rendezVousService.getDetailsEvenement(idRdv, accessToken)
-    if (!rdv) return { notFound: true }
-    props.rdv = rdv
+    const evenement = await rendezVousService.getDetailsEvenement(
+      idRdv,
+      accessToken
+    )
+    if (!evenement) return { notFound: true }
+    props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
     props.pageHeader = 'Modifier l’événement'
   } else if (idJeune) {

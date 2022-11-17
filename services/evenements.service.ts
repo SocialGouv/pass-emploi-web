@@ -147,6 +147,7 @@ export class EvenementsApiService implements EvenementsService {
       adresse: updatedRdv.adresse,
       organisme: updatedRdv.organisme,
       presenceConseiller: updatedRdv.presenceConseiller,
+      titre: updatedRdv.titre,
       comment: updatedRdv.comment,
     }
     await this.apiClient.put(

@@ -18,7 +18,7 @@ import { Evenement, TypeEvenement } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
-import { modalites } from 'referentiel/rdv'
+import { modalites } from 'referentiel/evenement'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -169,7 +169,7 @@ describe('EditionRdv', () => {
         )
         expect(actual).toMatchObject({
           props: {
-            rdv: unEvenement(),
+            evenement: unEvenement(),
             pageTitle: 'Mes événements - Modifier',
             pageHeader: 'Modifier l’événement',
           },
@@ -496,7 +496,7 @@ describe('EditionRdv', () => {
           expect(inputPresenceConseiller).toBeInTheDocument()
         })
 
-        it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation au RDV', () => {
+        it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation à l’événement', () => {
           // Given
           inputEmailInvitation = screen.getByLabelText(
             /Intégrer cet événement à mon agenda via l’adresse e-mail suivante :/i
@@ -507,7 +507,7 @@ describe('EditionRdv', () => {
           expect(inputEmailInvitation).toBeInTheDocument()
         })
 
-        it('indique l’email auquel le conseiller va recevoir son invitation au RDV', () => {
+        it('indique l’email auquel le conseiller va recevoir son invitation à l’événement', () => {
           // Given
 
           let getEmailConseiller: HTMLInputElement =
@@ -1073,8 +1073,8 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on souhaite modifier un rdv existant', () => {
-      let rdv: Evenement
+    describe('quand on souhaite modifier un événement existant', () => {
+      let evenement: Evenement
       beforeEach(() => {
         // Given
         const jeune0 = {
@@ -1088,7 +1088,7 @@ describe('EditionRdv', () => {
           nom: jeunesConseiller[2].nom,
         }
 
-        rdv = unEvenement({ jeunes: [jeune0, jeune2] })
+        evenement = unEvenement({ jeunes: [jeune0, jeune2] })
 
         // When
         renderWithContexts(
@@ -1097,7 +1097,7 @@ describe('EditionRdv', () => {
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo={'/agenda?creationRdv=succes'}
-            rdv={rdv}
+            evenement={evenement}
             pageTitle={''}
           />,
           { customDependances: { rendezVousService } }
@@ -1118,7 +1118,7 @@ describe('EditionRdv', () => {
         // Then
         const historique = getByDescriptionTerm('Historique des modifications')
         expect(within(historique).getAllByRole('listitem').length).toEqual(2)
-        rdv.historique.slice(0, 2).forEach(({ date, auteur }) => {
+        evenement.historique.slice(0, 2).forEach(({ date, auteur }) => {
           expect(
             getByTextContent(
               `${toFrenchFormat(DateTime.fromISO(date), DATETIME_LONG)} : ${
@@ -1133,7 +1133,7 @@ describe('EditionRdv', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Voir plus' }))
         // Then
         expect(within(historique).getAllByRole('listitem').length).toEqual(
-          rdv.historique.length
+          evenement.historique.length
         )
         await userEvent.click(
           screen.getByRole('button', { name: 'Voir moins' })
@@ -1168,17 +1168,17 @@ describe('EditionRdv', () => {
         ).toBeInTheDocument()
       })
 
-      it('initialise les autres champs avec les données du rdv', () => {
+      it('initialise les autres champs avec les données de l’evenement', () => {
         // Then
         expect(screen.getByLabelText<HTMLSelectElement>(/Type/).value).toEqual(
-          rdv.type.code
+          evenement.type.code
         )
         expect(
           screen.getByLabelText<HTMLSelectElement>(/Préciser/).value
-        ).toEqual(rdv.precisionType)
+        ).toEqual(evenement.precisionType)
         expect(
           screen.getByLabelText<HTMLSelectElement>(/Modalité/).value
-        ).toEqual(rdv.modality)
+        ).toEqual(evenement.modality)
         expect(screen.getByLabelText<HTMLInputElement>(/Date/).value).toEqual(
           '2021-10-21'
         )
@@ -1325,7 +1325,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
-              rdv.id,
+              evenement.id,
               {
                 jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[1].id],
                 titre: 'Nouveau titre',
@@ -1384,7 +1384,7 @@ describe('EditionRdv', () => {
 
           // Then
           expect(rendezVousService.deleteEvenement).toHaveBeenCalledWith(
-            rdv.id
+            evenement.id
           )
           expect(push).toHaveBeenCalledWith({
             pathname: '/agenda',
@@ -1394,8 +1394,8 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand le conseiller connecté n’est pas le même que celui qui à crée le rdv', () => {
-      let rdv: Evenement
+    describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
+      let evenement: Evenement
       beforeEach(() => {
         // Given
         const jeune = {
@@ -1409,7 +1409,7 @@ describe('EditionRdv', () => {
           nom: 'Dupont',
         }
 
-        rdv = unEvenement({
+        evenement = unEvenement({
           jeunes: [jeune, jeuneAutreConseiller],
           createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
         })
@@ -1421,7 +1421,7 @@ describe('EditionRdv', () => {
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo={'/agenda?creationRdv=succes'}
-            rdv={rdv}
+            evenement={evenement}
             pageTitle={''}
           />,
           { customDependances: { rendezVousService } }
@@ -1471,7 +1471,7 @@ describe('EditionRdv', () => {
         ).toThrow()
       })
 
-      it('contient un champ pour demander si le créateur recevra un email d’invitation au RDV', () => {
+      it('contient un champ pour demander si le créateur recevra un email d’invitation à l’événement', () => {
         // Then
         expect(
           screen.getByLabelText(
@@ -1541,7 +1541,7 @@ describe('EditionRdv', () => {
 
           // Then
           expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
-            rdv.id,
+            evenement.id,
             {
               jeunesIds: [jeunesConseiller[0].id, 'jeune-autre-conseiller'],
               type: 'AUTRE',

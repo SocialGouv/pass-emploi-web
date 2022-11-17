@@ -26,7 +26,7 @@ import {
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
-import { modalites } from 'referentiel/rdv'
+import { modalites } from 'referentiel/evenement'
 import {
   DATE_DASH_SEPARATOR,
   TIME_24_SIMPLE,
@@ -38,17 +38,17 @@ interface EditionRdvFormProps {
   jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeEvenement[]
   redirectTo: string
-  aDesBeneficiairesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
   soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
   conseiller?: Conseiller
-  rdv?: Evenement
+  evenement?: Evenement
   idJeune?: string
   showConfirmationModal: (payload: EvenementFormData) => void
   renseignerAgence: () => void
   recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
+  onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
 }
 
 export function EditionRdvForm({
@@ -56,13 +56,13 @@ export function EditionRdvForm({
   recupererJeunesDeLEtablissement,
   typesRendezVous,
   redirectTo,
-  aDesBeneficiairesDUnAutrePortefeuille,
+  onBeneficiairesDUnAutrePortefeuille,
   conseillerIsCreator,
   conseiller,
   soumettreRendezVous,
   leaveWithChanges,
   onChanges,
-  rdv,
+  evenement,
   idJeune,
   showConfirmationModal,
   renseignerAgence,
@@ -74,40 +74,54 @@ export function EditionRdvForm({
   const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
     value: defaultJeunes.map(({ id }) => id),
   })
-  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
-    rdv?.type.code ?? ''
-  )
+  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<
+    string | undefined
+  >(evenement?.type.code)
 
-  const [precisionType, setPrecisionType] = useState<RequiredValue>({
-    value: rdv?.precisionType ?? '',
+  const [precisionType, setPrecisionType] = useState<
+    RequiredValue<string | undefined>
+  >({
+    value: evenement?.precisionType,
   })
   const [showPrecisionType, setShowPrecisionType] = useState<boolean>(
-    Boolean(rdv?.precisionType)
+    Boolean(evenement?.precisionType)
   )
-  const [modalite, setModalite] = useState<string>(rdv?.modality ?? '')
+  const [modalite, setModalite] = useState<string | undefined>(
+    evenement?.modality
+  )
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-  const dateRdv = rdv ? DateTime.fromISO(rdv.date) : undefined
-  const localDate = dateRdv ? toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR) : ''
-  const [date, setDate] = useState<RequiredValue>({ value: localDate })
+  const dateRdv = evenement && DateTime.fromISO(evenement.date)
+  const localDate = dateRdv && toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR)
+  const [date, setDate] = useState<RequiredValue<string | undefined>>({
+    value: localDate,
+  })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const localTime = dateRdv
-    ? toFrenchString(dateRdv, DateTime.TIME_24_SIMPLE)
-    : ''
-  const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
+  const localTime = dateRdv && toFrenchString(dateRdv, DateTime.TIME_24_SIMPLE)
+  const [horaire, setHoraire] = useState<RequiredValue<string | undefined>>({
+    value: localTime,
+  })
   const regexDuree = /^\d{2}:\d{2}$/
-  const dureeRdv = dureeFromMinutes(rdv?.duree)
-  const [duree, setDuree] = useState<RequiredValue>({ value: dureeRdv })
-  const [adresse, setAdresse] = useState<string>(rdv?.adresse ?? '')
-  const [organisme, setOrganisme] = useState<string>(rdv?.organisme ?? '')
+  const dureeRdv = dureeFromMinutes(evenement?.duree)
+  const [duree, setDuree] = useState<RequiredValue<string | undefined>>({
+    value: dureeRdv,
+  })
+  const [adresse, setAdresse] = useState<string | undefined>(evenement?.adresse)
+  const [organisme, setOrganisme] = useState<string | undefined>(
+    evenement?.organisme
+  )
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(
-    rdv?.presenceConseiller ?? true
+    evenement?.presenceConseiller ?? true
   )
   const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(
-    Boolean(rdv?.invitation)
+    Boolean(evenement?.invitation)
   )
-  const [titre, setTitre] = useState<RequiredValue>({ value: rdv?.titre ?? '' })
-  const [description, setDescription] = useState<ValueWithError>({
-    value: rdv?.commentaire ?? '',
+  const [titre, setTitre] = useState<RequiredValue<string | undefined>>({
+    value: evenement?.titre,
+  })
+  const [description, setDescription] = useState<
+    ValueWithError<string | undefined>
+  >({
+    value: evenement?.commentaire,
   })
 
   const isAgenceNecessaire =
@@ -119,12 +133,6 @@ export function EditionRdvForm({
     conseiller?.structure === StructureConseiller.MILO
       ? 'Mission locale'
       : 'agence'
-
-  const afficherMessageBeneficiairesAutrePortefeuille =
-    aDesBeneficiairesDUnAutrePortefeuille ||
-    idsJeunes.value.some(
-      (id) => !jeunesConseiller.some((jeune) => jeune.id === id)
-    )
 
   function buildOptionsJeunes(): Array<
     BaseJeune & { isAutrePortefeuille: boolean }
@@ -145,8 +153,8 @@ export function EditionRdvForm({
   function initJeunesFromRdvOrIdJeune(): Array<
     BaseJeune & { isAutrePortefeuille: boolean }
   > {
-    if (rdv) {
-      return rdv.jeunes.map((jeune) => ({
+    if (evenement) {
+      return evenement.jeunes.map((jeune) => ({
         ...jeune,
         isAutrePortefeuille: !jeunesConseiller.some(
           ({ id }) => jeune.id === id
@@ -161,7 +169,7 @@ export function EditionRdvForm({
   }
 
   function formHasChanges(): boolean {
-    if (!rdv) {
+    if (!evenement) {
       return Boolean(
         idsJeunes.value.length ||
           codeTypeRendezVous ||
@@ -176,19 +184,19 @@ export function EditionRdvForm({
       )
     }
 
-    const previousIds = rdv.jeunes.map(({ id }) => id).sort()
-    idsJeunes.value.sort()
+    const previousIds = evenement.jeunes.map(({ id }) => id).sort()
+    const currentIds = [...idsJeunes.value].sort()
     return (
-      previousIds.toString() !== idsJeunes.value.toString() ||
-      modalite !== rdv.modality ||
+      previousIds.toString() !== currentIds.toString() ||
+      modalite !== evenement.modality ||
       date.value !== localDate ||
       horaire.value !== localTime ||
       duree.value !== dureeRdv ||
-      adresse !== rdv.adresse ||
-      organisme !== rdv.organisme ||
-      titre.value !== rdv.titre ||
-      description.value !== rdv.commentaire ||
-      isConseillerPresent !== rdv.presenceConseiller
+      adresse !== evenement.adresse ||
+      organisme !== evenement.organisme ||
+      titre.value !== evenement.titre ||
+      description.value !== evenement.commentaire ||
+      isConseillerPresent !== evenement.presenceConseiller
     )
   }
 
@@ -219,6 +227,11 @@ export function EditionRdvForm({
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
+    onBeneficiairesDUnAutrePortefeuille(
+      selectedIds.some(
+        (id) => !jeunesConseiller.some((jeune) => jeune.id === id)
+      )
+    )
   }
 
   function validateTypeEvenementAutre() {
@@ -237,7 +250,7 @@ export function EditionRdvForm({
   }
 
   function dateIsValid(): boolean {
-    return regexDate.test(date.value)
+    return Boolean(date.value && regexDate.test(date.value))
   }
 
   function validateDate() {
@@ -251,7 +264,7 @@ export function EditionRdvForm({
   }
 
   function horaireIsValid() {
-    return regexHoraire.test(horaire.value)
+    return Boolean(horaire.value && regexHoraire.test(horaire.value))
   }
 
   function validateHoraire() {
@@ -270,8 +283,8 @@ export function EditionRdvForm({
     }
   }
 
-  function dureeIsValid() {
-    return regexDuree.test(duree.value)
+  function dureeIsValid(): boolean {
+    return Boolean(duree.value && regexDuree.test(duree.value))
   }
 
   function validateDuree() {
@@ -316,11 +329,11 @@ export function EditionRdvForm({
   }
 
   function descriptionIsValid(): boolean {
-    return description.value.length < 250
+    return !description.value || description.value.length < 250
   }
 
   function validateDescription() {
-    if (description.value.length >= 250) {
+    if (!descriptionIsValid()) {
       setDescription({
         ...description,
         error:
@@ -347,27 +360,29 @@ export function EditionRdvForm({
     if (!formHasChanges()) return Promise.resolve()
     if (!formIsValid()) return Promise.resolve()
 
-    const [dureeHeures, dureeMinutes] = duree.value.split(':')
+    const [dureeHeures, dureeMinutes] = duree.value!.split(':')
     const dateTime: DateTime = DateTime.fromFormat(
       `${date.value} ${horaire.value}`,
       `${DATE_DASH_SEPARATOR} ${TIME_24_SIMPLE}`
     )
+    const dureeEnMinutes =
+      parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10)
     const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
-      type: codeTypeRendezVous,
+      type: codeTypeRendezVous!,
       date: dateTime.toISO(),
-      duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
+      duration: dureeEnMinutes,
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
       precision:
         codeTypeRendezVous === TYPE_EVENEMENT.Autre
           ? precisionType.value
           : undefined,
-      modality: modalite || undefined,
-      adresse: adresse || undefined,
-      organisme: organisme || undefined,
-      titre: titre.value || undefined,
-      comment: description.value || undefined,
+      modality: modalite,
+      adresse,
+      organisme,
+      titre: titre.value,
+      comment: description.value,
     }
     if (!conseillerIsCreator && sendEmailInvitation) {
       showConfirmationModal(payload)
@@ -404,12 +419,6 @@ export function EditionRdvForm({
 
   return (
     <form onSubmit={handleSoumettreRdv}>
-      {afficherMessageBeneficiairesAutrePortefeuille && (
-        <div className='mb-6'>
-          <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
-        </div>
-      )}
-
       <p className='text-s-bold my-6'>
         Tous les champs avec * sont obligatoires
       </p>
@@ -422,7 +431,7 @@ export function EditionRdvForm({
           id='typeEvenement'
           defaultValue={codeTypeRendezVous}
           required={true}
-          disabled={Boolean(rdv)}
+          disabled={Boolean(evenement)}
           onChange={handleSelectedTypeRendezVous}
         >
           {typesRendezVous.map(({ code, label }) => (
@@ -450,7 +459,7 @@ export function EditionRdvForm({
               type='text'
               id='typeEvenement-autre'
               required={true}
-              disabled={Boolean(rdv)}
+              disabled={Boolean(evenement)}
               defaultValue={precisionType.value}
               onChange={(value: string) => setPrecisionType({ value })}
               onBlur={validateTypeEvenementAutre}
@@ -646,9 +655,9 @@ export function EditionRdvForm({
               <div className='mb-6'>
                 <InformationMessage
                   content={`L’événement a été créé par un autre conseiller : ${
-                    rdv!.createur.prenom
+                    evenement!.createur.prenom
                   } ${
-                    rdv!.createur.nom
+                    evenement!.createur.nom
                   }. Vous ne recevrez pas d'invitation dans votre agenda`}
                 />
               </div>
@@ -676,7 +685,7 @@ export function EditionRdvForm({
                 </span>
                 <Switch
                   id='emailInvitation'
-                  disabled={Boolean(rdv)}
+                  disabled={Boolean(evenement)}
                   checked={sendEmailInvitation}
                   onChange={(e) => setSendEmailInvitation(e.target.checked)}
                 />
@@ -691,24 +700,24 @@ export function EditionRdvForm({
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
-                Annuler {rdv ? 'la modification' : ''}
+                Annuler {evenement ? 'la modification' : ''}
               </ButtonLink>
             )}
             {formHasChanges() && (
               <Button
                 type='button'
                 label={`Quitter la ${
-                  rdv ? 'modification' : 'création'
+                  evenement ? 'modification' : 'création'
                 } de l’événement`}
                 onClick={leaveWithChanges}
                 style={ButtonStyle.SECONDARY}
                 className='mr-3'
               >
-                Annuler {rdv ? ' la modification' : ''}
+                Annuler {evenement ? ' la modification' : ''}
               </Button>
             )}
 
-            {rdv && (
+            {evenement && (
               <Button
                 type='submit'
                 disabled={!formHasChanges() || !formIsValid()}
@@ -716,7 +725,7 @@ export function EditionRdvForm({
                 Modifier l’événement
               </Button>
             )}
-            {!rdv && (
+            {!evenement && (
               <Button
                 type='submit'
                 disabled={!formHasChanges() || !formIsValid()}
@@ -737,8 +746,8 @@ export function EditionRdvForm({
   )
 }
 
-function dureeFromMinutes(duration?: number): string {
-  if (!duration) return ''
+function dureeFromMinutes(duration?: number): string | undefined {
+  if (!duration) return
 
   const hours = Math.floor(duration / 60)
   const minutes = duration % 60
