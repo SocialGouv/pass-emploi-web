@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -22,8 +23,10 @@ import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
+import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -243,7 +246,7 @@ describe('EditionRdv', () => {
         ...jeunesAutreConseiller,
       ]
       rendezVousService = mockedRendezVousService({
-        deleteRendezVous: jest.fn(async () => undefined),
+        deleteEvenement: jest.fn(async () => undefined),
       })
       jeunesService = mockedJeunesService({
         getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
@@ -588,7 +591,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
+            expect(rendezVousService.creerEvenement).toHaveBeenCalledWith({
               jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
               titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
@@ -615,7 +618,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith({
+            expect(rendezVousService.creerEvenement).toHaveBeenCalledWith({
               jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
               titre: 'Titre de l’événement',
               type: 'AUTRE',
@@ -1001,7 +1004,7 @@ describe('EditionRdv', () => {
             name: 'Rechercher et ajouter des jeunes Nom et prénom',
           })
           expect(selectJeunes).toHaveAttribute('aria-required', 'false')
-          expect(rendezVousService.postNewRendezVous).toHaveBeenCalledWith(
+          expect(rendezVousService.creerEvenement).toHaveBeenCalledWith(
             expect.objectContaining({
               jeunesIds: [],
             })
@@ -1101,41 +1104,41 @@ describe('EditionRdv', () => {
         )
       })
 
-      describe('Supprimer', () => {
-        beforeEach(async () => {
-          // Given
-          const deleteButtonFromPage = screen.getByText('Supprimer')
+      it('affiche le créateur de l’événement', () => {
+        // Then
+        expect(getByDescriptionTerm('Type de l’événement')).toHaveTextContent(
+          'Autre'
+        )
+        expect(getByDescriptionTerm('Créé par : ')).toHaveTextContent(
+          'Nils Tavernier'
+        )
+      })
 
-          // When
-          await userEvent.click(deleteButtonFromPage)
-        })
-
-        it('affiche une modale avec les bonnes informations', async () => {
-          // Then
+      it('affiche l’historique de modification de l’événement', async () => {
+        // Then
+        const historique = getByDescriptionTerm('Historique des modifications')
+        expect(within(historique).getAllByRole('listitem').length).toEqual(2)
+        rdv.historique.slice(0, 2).forEach(({ date, auteur }) => {
           expect(
-            screen.getByText(
-              'L’ensemble des bénéficiaires sera notifié de la suppression'
+            getByTextContent(
+              `${toFrenchFormat(DateTime.fromISO(date), DATETIME_LONG)} : ${
+                auteur.prenom
+              } ${auteur.nom}`,
+              historique
             )
           ).toBeInTheDocument()
-          expect(screen.getByText('Confirmer')).toBeInTheDocument()
         })
 
-        it('lors de la confirmation, supprime bien le rendez-vous et retourne à la page précédente', async () => {
-          // Given
-          const deleteButtonFromModal = screen.getByText('Confirmer')
-
-          // When
-          await userEvent.click(deleteButtonFromModal)
-
-          // Then
-          expect(rendezVousService.deleteRendezVous).toHaveBeenCalledWith(
-            rdv.id
-          )
-          expect(push).toHaveBeenCalledWith({
-            pathname: '/agenda',
-            query: { suppressionRdv: 'succes' },
-          })
-        })
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Voir plus' }))
+        // Then
+        expect(within(historique).getAllByRole('listitem').length).toEqual(
+          rdv.historique.length
+        )
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Voir moins' })
+        )
+        expect(within(historique).getAllByRole('listitem').length).toEqual(2)
       })
 
       it('sélectionne les jeunes du rendez-vous', () => {
@@ -1349,6 +1352,43 @@ describe('EditionRdv', () => {
               pathname: '/agenda',
               query: { modificationRdv: 'succes' },
             })
+          })
+        })
+      })
+
+      describe('Supprimer', () => {
+        beforeEach(async () => {
+          // Given
+          const deleteButtonFromPage = screen.getByText('Supprimer')
+
+          // When
+          await userEvent.click(deleteButtonFromPage)
+        })
+
+        it('affiche une modale avec les bonnes informations', async () => {
+          // Then
+          expect(
+            screen.getByText(
+              'L’ensemble des bénéficiaires sera notifié de la suppression'
+            )
+          ).toBeInTheDocument()
+          expect(screen.getByText('Confirmer')).toBeInTheDocument()
+        })
+
+        it('lors de la confirmation, supprime bien le rendez-vous et retourne à la page précédente', async () => {
+          // Given
+          const deleteButtonFromModal = screen.getByText('Confirmer')
+
+          // When
+          await userEvent.click(deleteButtonFromModal)
+
+          // Then
+          expect(rendezVousService.deleteEvenement).toHaveBeenCalledWith(
+            rdv.id
+          )
+          expect(push).toHaveBeenCalledWith({
+            pathname: '/agenda',
+            query: { suppressionRdv: 'succes' },
           })
         })
       })

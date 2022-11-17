@@ -264,4 +264,58 @@ describe('EvenementsApiService', () => {
       expect(actual).toEqual(animationsCollectives)
     })
   })
+
+  describe('.creerEvenement', () => {
+    it('crée un nouvel événement', async () => {
+      // Given
+      const rdvFormData: EvenementFormData = {
+        jeunesIds: ['jeune-1', 'jeune-2'],
+        type: 'AUTRE',
+        precision: 'un texte de précision',
+        modality: modalites[0],
+        date: '2022-03-03T09:30:00.000Z',
+        duration: 157,
+        adresse: undefined,
+        organisme: undefined,
+        presenceConseiller: true,
+        invitation: false,
+        comment: 'Lorem ipsum dolor sit amet',
+      }
+
+      // When
+      await evenementsService.creerEvenement(rdvFormData)
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/rendezvous',
+        {
+          jeunesIds: ['jeune-1', 'jeune-2'],
+          modality: modalites[0],
+          type: 'AUTRE',
+          date: '2022-03-03T09:30:00.000Z',
+          duration: 157,
+          adresse: undefined,
+          invitation: false,
+          organisme: undefined,
+          presenceConseiller: true,
+          precision: 'un texte de précision',
+          comment: 'Lorem ipsum dolor sit amet',
+        },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.deleteEvenement', () => {
+    it('supprime un événement', async () => {
+      // When
+      await evenementsService.deleteEvenement('idEvenement')
+
+      // Then
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        '/rendezvous/idEvenement',
+        'accessToken'
+      )
+    })
+  })
 })

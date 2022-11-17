@@ -404,15 +404,15 @@ export function EditionRdvForm({
 
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <p className='text-s-bold mb-6'>
-        Tous les champs avec * sont obligatoires
-      </p>
-
       {afficherMessageBeneficiairesAutrePortefeuille && (
         <div className='mb-6'>
           <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
+
+      <p className='text-s-bold my-6'>
+        Tous les champs avec * sont obligatoires
+      </p>
 
       <Etape numero={1} titre='Type d’événement'>
         <Label htmlFor='typeEvenement' inputRequired={true}>

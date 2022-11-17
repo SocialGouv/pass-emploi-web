@@ -45,11 +45,11 @@ export interface EvenementsService {
 
   getTypesRendezVous(accessToken: string): Promise<TypeEvenement[]>
 
-  postNewRendezVous(newRDV: EvenementFormData): Promise<void>
+  creerEvenement(newRDV: EvenementFormData): Promise<void>
 
   updateRendezVous(idRdv: string, updatedRdv: EvenementFormData): Promise<void>
 
-  deleteRendezVous(idRendezVous: string): Promise<void>
+  deleteEvenement(idRendezVous: string): Promise<void>
 }
 
 export class EvenementsApiService implements EvenementsService {
@@ -125,7 +125,7 @@ export class EvenementsApiService implements EvenementsService {
     return types
   }
 
-  async postNewRendezVous(newRDV: EvenementFormData): Promise<void> {
+  async creerEvenement(newRDV: EvenementFormData): Promise<void> {
     const session = await getSession()
     await this.apiClient.post(
       `/conseillers/${session!.user.id}/rendezvous`,
@@ -156,7 +156,7 @@ export class EvenementsApiService implements EvenementsService {
     )
   }
 
-  async deleteRendezVous(idRendezVous: string): Promise<void> {
+  async deleteEvenement(idRendezVous: string): Promise<void> {
     const session = await getSession()
     await this.apiClient.delete(
       `/rendezvous/${idRendezVous}`,

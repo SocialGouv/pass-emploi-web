@@ -68,9 +68,17 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
     organisme: 'S.A.R.L',
     presenceConseiller: false,
     invitation: true,
-    comment: 'Rendez-vous avec Kenji',
+    commentaire: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
     historique: [
+      {
+        date: '2021-10-23T10:00:00.000Z',
+        auteur: { nom: 'Lama', prenom: 'Serge' },
+      },
+      {
+        date: '2021-10-22T10:00:00.000Z',
+        auteur: { nom: 'Lama', prenom: 'Serge' },
+      },
       {
         date: '2021-10-21T10:00:00.000Z',
         auteur: { nom: 'Lama', prenom: 'Serge' },
@@ -158,6 +166,14 @@ export function unEvenementJson(
     comment: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
     historique: [
+      {
+        date: '2021-10-23T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
+      {
+        date: '2021-10-22T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
       {
         date: '2021-10-21T10:00:00.000Z',
         auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
