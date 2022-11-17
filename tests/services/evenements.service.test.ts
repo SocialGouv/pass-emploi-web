@@ -14,7 +14,7 @@ import {
   AnimationCollectiveJson,
   EvenementFormData,
 } from 'interfaces/json/evenement'
-import { modalites } from 'referentiel/rdv'
+import { modalites } from 'referentiel/evenement'
 import {
   EvenementsApiService,
   EvenementsService,
@@ -111,6 +111,7 @@ describe('EvenementsApiService', () => {
         organisme: undefined,
         presenceConseiller: true,
         invitation: false,
+        titre: 'Titre modifié',
         comment: 'Lorem ipsum dolor sit amet',
       }
 
@@ -128,6 +129,7 @@ describe('EvenementsApiService', () => {
           adresse: undefined,
           organisme: undefined,
           presenceConseiller: true,
+          titre: 'Titre modifié',
           comment: 'Lorem ipsum dolor sit amet',
         },
         'accessToken'

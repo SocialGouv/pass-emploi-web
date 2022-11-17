@@ -51,7 +51,7 @@ export const TYPE_EVENEMENT = {
   EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }
 
-export function isCodeTypeAnimationCollective(code: string): boolean {
+export function isCodeTypeAnimationCollective(code?: string): boolean {
   return code === 'ATELIER' || code === 'INFORMATION_COLLECTIVE'
 }
 
