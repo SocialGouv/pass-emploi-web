@@ -50,20 +50,26 @@ export type EvenementFormData = {
   comment?: string
 }
 
-export function jsonToEvenement(evenementJson: EvenementJson): Evenement {
-  const { precision, title, duration, historique, ...data } = evenementJson
-  return {
-    ...data,
-    duree: duration,
-    titre: evenementJson.title,
-    presenceConseiller: Boolean(evenementJson.presenceConseiller),
-    invitation: Boolean(evenementJson.invitation),
-    comment: evenementJson.comment,
-    precisionType: precision,
-    adresse: evenementJson.adresse,
-    organisme: evenementJson.organisme,
-    historique: jsonToHistorique(historique),
+export function jsonToEvenement(json: EvenementJson): Evenement {
+  const evenement: Evenement = {
+    id: json.id,
+    jeunes: json.jeunes,
+    date: json.date,
+    createur: json.createur,
+    type: json.type,
+    modality: json.modality,
+    duree: json.duration,
+    titre: json.title,
+    presenceConseiller: Boolean(json.presenceConseiller),
+    invitation: Boolean(json.invitation),
+    historique: jsonToHistorique(json.historique),
   }
+  if (json.comment) evenement.commentaire = json.comment
+  if (json.precision) evenement.precisionType = json.precision
+  if (json.adresse) evenement.adresse = json.adresse
+  if (json.organisme) evenement.organisme = json.organisme
+
+  return evenement
 }
 
 export function evenementJeuneJsonToListItem(

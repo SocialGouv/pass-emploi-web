@@ -79,12 +79,6 @@ module.exports = {
       x_large: '24px',
       full: '9999px',
     },
-
-    gridTemplateColumns: {
-      // Complex site-specific column configuration
-      table_large: '28% 2fr 3fr auto',
-    },
-
     screens: {
       layout_xs: '375px',
       layout_s: '600px',

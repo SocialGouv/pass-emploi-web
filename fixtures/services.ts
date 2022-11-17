@@ -83,9 +83,9 @@ export function mockedRendezVousService(
     getRendezVousEtablissement: jest.fn(),
     getDetailsEvenement: jest.fn(),
     getTypesRendezVous: jest.fn(),
-    postNewRendezVous: jest.fn(),
+    creerEvenement: jest.fn(),
     updateRendezVous: jest.fn(),
-    deleteRendezVous: jest.fn(),
+    deleteEvenement: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
