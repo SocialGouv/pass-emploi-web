@@ -176,7 +176,7 @@ export function unEvenementJson(
   return { ...defaults, ...overrides }
 }
 
-export function uneListeDeRendezVousJson() {
+export function uneListeDEvenementJson() {
   return [
     unEvenementJson(),
     unEvenementJson({
