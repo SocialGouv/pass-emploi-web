@@ -49,7 +49,7 @@ export function OngletAgendaBeneficiaire({
   useEffect(() => {
     if (!isPoleEmploi) {
       agendaService
-        .recupererAgendaMilo(idBeneficiaire, DateTime.now())
+        .recupererAgenda(idBeneficiaire, DateTime.now())
         .then((response) => {
           updateNombreEvenement(response.entrees.length)
           setActionsEtRendezVous(response.entrees)
@@ -80,9 +80,7 @@ export function OngletAgendaBeneficiaire({
             </p>
           )}
           {actionsEtRendezVous.length > 0 && (
-            <ol className='w-full grid grid-cols-[auto_1fr_auto] gap-4 border-spacing-y-2 border-separate'>
-              {actionEtRendezVousRows()}
-            </ol>
+            <ol className=''>{actionEtRendezVousRows()}</ol>
           )}
         </div>
       )}

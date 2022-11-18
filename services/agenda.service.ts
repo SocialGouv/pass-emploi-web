@@ -8,7 +8,7 @@ import { EvenementJeuneJson, rdvJsonToEntree } from 'interfaces/json/evenement'
 import { compareDates } from 'utils/date'
 
 export interface AgendaService {
-  recupererAgendaMilo(
+  recupererAgenda(
     idJeune: string,
     maintenant: DateTime
   ): Promise<{
@@ -31,7 +31,7 @@ type AgendaMetadataJson = {
 export class AgendaApiService implements AgendaService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async recupererAgendaMilo(
+  async recupererAgenda(
     idJeune: string,
     maintenant: DateTime
   ): Promise<{
