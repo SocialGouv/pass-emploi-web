@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
 
 import { ApiClient } from 'clients/api.client'
-import { uneListeDActions, uneListeDActionsJson } from 'fixtures/action'
-import { uneListeDeRendezVousJson, unRdvListItem } from 'fixtures/rendez-vous'
+import { uneListeDActionsJson } from 'fixtures/action'
+import { uneListeDEvenementJson } from 'fixtures/evenement'
 import { AgendaApiService, AgendaService } from 'services/agenda.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
@@ -28,7 +28,7 @@ describe('AgendaService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
-          rendezVous: uneListeDeRendezVousJson(),
+          rendezVous: uneListeDEvenementJson(),
           metadata: {
             dateDeDebut: '2022-09-01T00:00:00.000+02:00',
             dateDeFin: '2022-09-14T00:00:00.000+02:00',
