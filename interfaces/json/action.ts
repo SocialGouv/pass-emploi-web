@@ -7,6 +7,7 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
+import { EntreeAgenda } from 'interfaces/agenda'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
 type EtatQualificationActionJson =
@@ -94,6 +95,15 @@ export function jsonToAction(json: ActionJson): Action {
   }
 
   return action
+}
+
+export function actionJsonToEntree(action: ActionJson): EntreeAgenda {
+  return {
+    id: action.id,
+    type: 'action',
+    titre: action.content,
+    statut: jsonToActionStatus(action.status),
+  }
 }
 
 function jsonToActionStatus(jsonStatus: ActionStatusJson): StatutAction {

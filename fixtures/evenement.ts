@@ -91,15 +91,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
 
 export function desEvenementsListItems(): EvenementListItem[] {
   return [
-    {
-      id: '1',
-      beneficiaires: 'Kenji Jirac',
-      type: 'Autre',
-      modality: 'par téléphone',
-      date: '2021-10-21T10:00:00.000Z',
-      duree: 125,
-      idCreateur: '1',
-    },
+    unEvenementListItem(),
     {
       id: '2',
       beneficiaires: 'Raja Jirac',
@@ -182,6 +174,26 @@ export function unEvenementJson(
   }
 
   return { ...defaults, ...overrides }
+}
+
+export function uneListeDEvenementJson() {
+  return [
+    unEvenementJson(),
+    unEvenementJson({
+      jeunes: [
+        {
+          id: '1',
+          prenom: 'Kenji',
+          nom: 'Jirac',
+        },
+        {
+          id: '2',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+        },
+      ],
+    }),
+  ]
 }
 
 export function unEvenementJeuneJson(
