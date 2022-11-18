@@ -24,6 +24,7 @@ import {
   MetadonneesActions,
   StatutAction,
 } from 'interfaces/action'
+import { Agenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PeriodeEvenements, EvenementListItem } from 'interfaces/evenement'
 import {
@@ -36,6 +37,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
+import { AgendaService } from 'services/agenda.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -92,6 +94,7 @@ function FicheJeune({
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const agendaService = useDependance<AgendaService>('agendaService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
@@ -180,6 +183,15 @@ function FicheJeune({
 
     setTotalActions(result.metadonnees.nombreTotal)
     return result
+  }
+
+  async function recupererAgenda(): Promise<Agenda> {
+    return agendaService
+      .recupererAgenda(jeune.id, DateTime.now())
+      .then((agenda) => {
+        setNombreEvenementDansAgenda(agenda.entrees.length)
+        return agenda
+      })
   }
 
   async function openDeleteJeuneModal(e: React.MouseEvent<HTMLElement>) {
@@ -401,7 +413,7 @@ function FicheJeune({
           <OngletAgendaBeneficiaire
             idBeneficiaire={jeune.id}
             isPoleEmploi={isPoleEmploi}
-            updateNombreEvenement={setNombreEvenementDansAgenda}
+            recupererAgenda={recupererAgenda}
           />
         </div>
       )}

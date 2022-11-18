@@ -97,15 +97,12 @@ export function jsonToAction(json: ActionJson): Action {
   return action
 }
 
-export function actionJsonToEntree(
-  action: ActionJson
-): EntreeAgenda & { datePourLeTri: DateTime } {
+export function actionJsonToEntree(action: ActionJson): EntreeAgenda {
   return {
     id: action.id,
     type: 'action',
     titre: action.content,
     statut: jsonToActionStatus(action.status),
-    datePourLeTri: DateTime.fromISO(action.dateEcheance),
   }
 }
 
