@@ -8,6 +8,7 @@ import React from 'react'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective, unEvenementListItem } from 'fixtures/evenement'
 import { mockedRendezVousService } from 'fixtures/services'
+import { StatutAnimationCollective } from 'interfaces/evenement'
 import Agenda, { getServerSideProps } from 'pages/agenda'
 import { EvenementsService } from 'services/evenements.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -40,17 +41,17 @@ describe('Agenda', () => {
           uneAnimationCollective({
             id: 'ac-1',
             date: SEPTEMBRE_1_14H.minus({ day: 3 }),
-            statut: 'CLOTUREE',
+            statut: StatutAnimationCollective.Close,
           }),
           uneAnimationCollective({
             id: 'ac-2',
             date: SEPTEMBRE_1_14H,
-            statut: 'A_CLOTURER',
+            statut: StatutAnimationCollective.AClore,
           }),
           uneAnimationCollective({
             id: 'ac-3',
             date: SEPTEMBRE_1_14H.plus({ day: 3 }),
-            statut: 'A_VENIR',
+            statut: StatutAnimationCollective.AVenir,
           }),
         ]),
       })
@@ -229,8 +230,10 @@ describe('Agenda', () => {
 
         beforeEach(async () => {
           // When
-          await userEvent.click(
-            screen.getByRole('tab', { name: 'Agenda établissement' })
+          await act(async () =>
+            userEvent.click(
+              screen.getByRole('tab', { name: 'Agenda établissement' })
+            )
           )
         })
 

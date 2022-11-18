@@ -7,13 +7,19 @@ export type TypeEvenement = {
   label: string
 }
 
+export enum StatutAnimationCollective {
+  AVenir = 'AVenir',
+  AClore = 'AClore',
+  Close = 'Close',
+}
+
 export type AnimationCollective = {
   id: string
   type: string
   titre: string
   date: DateTime
   duree: number
-  statut: 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
+  statut: StatutAnimationCollective
 }
 
 export type EvenementListItem = {

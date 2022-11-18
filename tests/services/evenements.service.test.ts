@@ -4,12 +4,15 @@ import { ApiClient } from 'clients/api.client'
 import {
   typesEvenement,
   uneAnimationCollective,
-  unEvenementListItem,
   unEvenement,
   unEvenementJeuneJson,
   unEvenementJson,
+  unEvenementListItem,
 } from 'fixtures/evenement'
-import { AnimationCollective } from 'interfaces/evenement'
+import {
+  AnimationCollective,
+  StatutAnimationCollective,
+} from 'interfaces/evenement'
 import {
   AnimationCollectiveJson,
   EvenementFormData,
@@ -254,13 +257,13 @@ describe('EvenementsApiService', () => {
           id: 'ac-passee',
           type: 'Information collective',
           date: dateDebut,
-          statut: 'A_VENIR',
+          statut: StatutAnimationCollective.AVenir,
         }),
         uneAnimationCollective({
           id: 'ac-future',
           type: 'Atelier',
           date: dateFin,
-          statut: 'CLOTUREE',
+          statut: StatutAnimationCollective.Close,
         }),
       ]
       expect(actual).toEqual(animationsCollectives)

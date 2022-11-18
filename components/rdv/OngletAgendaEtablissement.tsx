@@ -1,7 +1,9 @@
 import { DateTime } from 'luxon'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Tag } from 'components/ui/Indicateurs/Tag'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
@@ -12,7 +14,10 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { AnimationCollective } from 'interfaces/evenement'
+import {
+  AnimationCollective,
+  StatutAnimationCollective,
+} from 'interfaces/evenement'
 import {
   insertIntercalaires,
   ItemOuIntercalaire,
@@ -39,88 +44,66 @@ export function OngletAgendaEtablissement({
   recupererAnimationsCollectives,
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
-  const [
-    animationsCollectivesWithIntercalaires,
-    setAnimationsCollectivesWithIntercalaires,
-  ] = useState<ItemOuIntercalaire<AnimationCollective>[]>()
+  const [animationsCollectives, setAnimationsCollectives] = useState<
+    AnimationCollective[]
+  >([])
+  const [animationsCollectivesFiltrees, setAnimationsCollectivesFiltrees] =
+    useState<AnimationCollective[]>([])
 
-  async function chargerEvenements(dateDebut: DateTime, dateFin: DateTime) {
+  const [animationsCollectivesGroupees, setAnimationsCollectivesGroupees] =
+    useState<ItemOuIntercalaire<AnimationCollective>[]>([])
+
+  const [statutsValides, setStatutsValides] = useState<
+    StatutAnimationCollective[]
+  >([])
+
+  async function chargerEvenementsPeriode(
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) {
     const evenements = await recupererAnimationsCollectives(
       idEtablissement!,
       dateDebut,
       dateFin
     )
-    setAnimationsCollectivesWithIntercalaires(
-      insertIntercalaires(evenements, ({ date }) => date)
-    )
+    setAnimationsCollectives(evenements)
   }
 
-  function labelLien(ac: AnimationCollective): string {
-    return `Consulter ${ac.type} ${statusProps(ac).label} du ${fullDate(
-      ac
-    )} à ${heure(ac)}`
-  }
-
-  function statusProps({ type, statut }: AnimationCollective): {
-    label: string
-    color: string
-  } {
-    switch (statut) {
-      case 'A_VENIR':
-        return { label: 'À venir', color: 'accent_1' }
-      case 'A_CLOTURER':
-        return { label: 'À clore', color: 'warning' }
-      case 'CLOTUREE':
-        return {
-          label: type === 'Atelier' ? 'Clos' : 'Close',
-          color: 'accent_2',
-        }
+  function filtrerAnimationsCollectives() {
+    if (!statutsValides.length)
+      setAnimationsCollectivesFiltrees(animationsCollectives)
+    else {
+      const acFiltrees = animationsCollectives.filter((ac) =>
+        statutsValides.includes(ac.statut)
+      )
+      setAnimationsCollectivesFiltrees(acFiltrees)
     }
   }
 
-  function fullDate({ date }: AnimationCollective): string {
-    return toFrenchFormat(date, WEEKDAY_MONTH_LONG)
-  }
+  useEffect(() => {
+    filtrerAnimationsCollectives()
+  }, [animationsCollectives, statutsValides])
 
-  function heure({ date }: AnimationCollective): string {
-    return toFrenchFormat(date, TIME_24_H_SEPARATOR)
-  }
-
-  function tagType({ type }: AnimationCollective): JSX.Element {
-    const color = type === 'Atelier' ? 'accent_2' : 'accent_4'
-    const iconName =
-      type === 'Information collective' ? IconName.ImportantOutline : undefined
-    return (
-      <Tag
-        label={type}
-        color={color}
-        backgroundColor={color + '_lighten'}
-        iconName={iconName}
-      />
+  useEffect(() => {
+    setAnimationsCollectivesGroupees(
+      insertIntercalaires(animationsCollectivesFiltrees, ({ date }) => date)
     )
-  }
-
-  function tagStatut(ac: AnimationCollective): JSX.Element {
-    const { label, color } = statusProps(ac)
-    return (
-      <Tag label={label} color={color} backgroundColor={color + '_lighten'} />
-    )
-  }
+  }, [animationsCollectivesFiltrees])
 
   return (
     <>
       {idEtablissement && (
         <SelecteurPeriode
-          onNouvellePeriode={chargerEvenements}
+          onNouvellePeriode={chargerEvenementsPeriode}
           nombreJours={7}
           trackNavigation={trackNavigation}
         />
       )}
 
-      {!animationsCollectivesWithIntercalaires && <SpinningLoader />}
+      {!animationsCollectivesGroupees && <SpinningLoader />}
 
-      {animationsCollectivesWithIntercalaires &&
-        animationsCollectivesWithIntercalaires.length === 0 && (
+      {animationsCollectivesGroupees &&
+        animationsCollectivesGroupees.length === 0 && (
           <div className='flex flex-col justify-center items-center'>
             <EmptyStateImage
               focusable={false}
@@ -131,23 +114,42 @@ export function OngletAgendaEtablissement({
               Il n’y a pas d’animation collective sur cette période dans votre
               établissement.
             </p>
+
+            {animationsCollectives.length > 0 && (
+              <Button
+                type='button'
+                style={ButtonStyle.PRIMARY}
+                onClick={() => setStatutsValides([])}
+                className='m-auto mt-8'
+              >
+                Réinitialiser les filtres
+              </Button>
+            )}
           </div>
         )}
 
-      {animationsCollectivesWithIntercalaires &&
-        animationsCollectivesWithIntercalaires.length > 0 && (
-          <Table caption='Liste des animations collectives de mon établissement'>
+      {animationsCollectivesGroupees &&
+        animationsCollectivesGroupees.length > 0 && (
+          <Table
+            asDiv={true}
+            caption='Liste des animations collectives de mon établissement'
+          >
             <THead>
               <TR isHeader={true}>
                 <TH>Horaires</TH>
                 <TH>Titre</TH>
                 <TH>Type</TH>
-                <TH>Statut</TH>
+                <TH>
+                  <FiltresStatutAnimationsCollectives
+                    onFiltres={setStatutsValides}
+                    defaultValue={statutsValides}
+                  />
+                </TH>
               </TR>
             </THead>
             <TBody>
               {renderListeWithIntercalaires(
-                animationsCollectivesWithIntercalaires,
+                animationsCollectivesGroupees,
                 (ac) => (
                   <TR
                     key={ac.id}
@@ -177,5 +179,58 @@ export function OngletAgendaEtablissement({
           </Table>
         )}
     </>
+  )
+}
+
+function labelLien(ac: AnimationCollective): string {
+  return `Consulter ${ac.type} ${statusProps(ac).label} du ${fullDate(
+    ac
+  )} à ${heure(ac)}`
+}
+
+function fullDate({ date }: AnimationCollective): string {
+  return toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+}
+
+function heure({ date }: AnimationCollective): string {
+  return toFrenchFormat(date, TIME_24_H_SEPARATOR)
+}
+
+function tagType({ type }: AnimationCollective): JSX.Element {
+  const color = type === 'Atelier' ? 'accent_2' : 'accent_4'
+  const iconName =
+    type === 'Information collective' ? IconName.ImportantOutline : undefined
+  return (
+    <Tag
+      label={type}
+      color={color}
+      backgroundColor={color + '_lighten'}
+      iconName={iconName}
+    />
+  )
+}
+
+function statusProps({ type, statut }: AnimationCollective): {
+  label: string
+  color: string
+} {
+  switch (statut) {
+    case StatutAnimationCollective.AVenir:
+      return { label: 'À venir', color: 'accent_1' }
+    case StatutAnimationCollective.AClore:
+      return { label: 'À clore', color: 'warning' }
+
+    case StatutAnimationCollective.Close:
+      return {
+        label: type === 'Atelier' ? 'Clos' : 'Close',
+        color: 'accent_2',
+      }
+  }
+}
+
+function tagStatut(ac: AnimationCollective): JSX.Element {
+  const { label, color } = statusProps(ac)
+  return (
+    <Tag label={label} color={color} backgroundColor={color + '_lighten'} />
   )
 }
