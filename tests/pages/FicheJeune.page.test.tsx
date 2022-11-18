@@ -23,6 +23,7 @@ import {
   mockedRendezVousService,
 } from 'fixtures/services'
 import { EtatQualificationAction, StatutAction } from 'interfaces/action'
+import { EntreeAgenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
@@ -83,10 +84,8 @@ describe('Fiche Jeune', () => {
       })
       agendaService = mockedAgendaService({
         recupererAgenda: jest.fn(async () => ({
-          actions: [],
-          rendezVous: [],
+          entrees: [],
           metadata: {
-            actionsEnRetard: 0,
             dateDeDebut: DateTime.local(2022, 1, 1),
             dateDeFin: DateTime.local(2022, 1, 14),
           },
@@ -640,10 +639,20 @@ describe('Fiche Jeune', () => {
           // Given
           agendaService = mockedAgendaService({
             recupererAgenda: jest.fn(async () => ({
-              actions: [uneAction()],
-              rendezVous: [unEvenementListItem()],
+              entrees: [
+                {
+                  id: 'id-action-1',
+                  type: 'action',
+                  titre: 'Identifier ses atouts et ses compétences',
+                  statut: StatutAction.ARealiser,
+                } as EntreeAgenda,
+                {
+                  id: '1',
+                  type: 'evenement',
+                  titre: '12h00 - Autre',
+                } as EntreeAgenda,
+              ],
               metadata: {
-                actionsEnRetard: 0,
                 dateDeDebut: DateTime.local(2022, 1, 1),
                 dateDeFin: DateTime.local(2022, 1, 14),
               },

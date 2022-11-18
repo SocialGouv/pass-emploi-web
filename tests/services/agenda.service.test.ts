@@ -45,10 +45,41 @@ describe('AgendaService', () => {
         'accessToken'
       )
       expect(actual).toEqual({
-        actions: uneListeDActions(),
-        rendezVous: [
-          unRdvListItem(),
-          unRdvListItem({ beneficiaires: 'Bénéficiaires multiples' }),
+        entrees: [
+          {
+            id: '1',
+            titre: '21/10/2021 à 12h00 - Prise de nouvelles par téléphone',
+            type: 'evenement',
+          },
+          {
+            id: '1',
+            titre: '21/10/2021 à 12h00 - Prise de nouvelles par téléphone',
+            type: 'evenement',
+          },
+          {
+            id: 'id-action-1',
+            statut: 'ARealiser',
+            titre: 'Identifier ses atouts et ses compétences',
+            type: 'action',
+          },
+          {
+            id: 'id-action-2',
+            statut: 'Commencee',
+            titre: 'Compléter son cv',
+            type: 'action',
+          },
+          {
+            id: 'id-action-3',
+            statut: 'Terminee',
+            titre: 'Chercher une formation',
+            type: 'action',
+          },
+          {
+            id: 'id-action-4',
+            statut: 'Terminee',
+            titre: "Consulter les offres d'emploi",
+            type: 'action',
+          },
         ],
         metadata: {
           dateDeDebut: DateTime.fromISO('2022-09-01T00:00:00.000+02:00'),
